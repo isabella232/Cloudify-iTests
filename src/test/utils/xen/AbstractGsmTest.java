@@ -1,4 +1,4 @@
-package test.gsm;
+package test.utils.xen;
 
 
 import java.util.concurrent.CountDownLatch;

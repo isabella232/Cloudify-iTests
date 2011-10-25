@@ -16,9 +16,9 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import test.cli.cloudify.CommandTestUtils;
-import test.gsm.GsmTestUtils;
 import test.utils.LogUtils;
 import test.utils.ScriptUtils;
+import test.utils.xen.GsmTestUtils;
 
 
 public class Stockdemo2ManagementsEsmFailOverTest extends AbstractApplicationFailOverXenTest {

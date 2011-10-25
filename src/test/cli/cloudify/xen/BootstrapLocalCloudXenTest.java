@@ -13,8 +13,8 @@ import org.openspaces.cloud.xenserver.XenServerMachineProvisioningConfig;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import test.gsm.AbstractXenGSMTest;
 import test.utils.AssertUtils.RepetitiveConditionProvider;
+import test.utils.xen.AbstractXenGSMTest;
 import test.utils.SSHUtils;
 
 public class BootstrapLocalCloudXenTest extends AbstractXenGSMTest {

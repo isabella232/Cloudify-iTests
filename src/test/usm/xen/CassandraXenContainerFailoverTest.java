@@ -11,11 +11,11 @@ import org.openspaces.admin.pu.elastic.config.ManualCapacityScaleConfigurer;
 import org.openspaces.core.util.MemoryUnit;
 import org.scale7.cassandra.pelops.*;
 import org.testng.annotations.Test;
-import test.gsm.AbstractXenGSMTest;
-import test.gsm.GsmTestUtils;
 import test.usm.USMTestUtils;
 import test.utils.LogUtils;
 import test.utils.SSHUtils;
+import test.utils.xen.AbstractXenGSMTest;
+import test.utils.xen.GsmTestUtils;
 
 import java.io.File;
 import java.io.IOException;

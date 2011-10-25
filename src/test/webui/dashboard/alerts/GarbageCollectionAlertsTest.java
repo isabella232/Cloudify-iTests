@@ -19,7 +19,8 @@ import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-import test.alerts.Message;
+
+import test.data.Message;
 import test.utils.AdminUtils;
 import test.utils.LogUtils;
 import test.utils.ProcessingUnitUtils;

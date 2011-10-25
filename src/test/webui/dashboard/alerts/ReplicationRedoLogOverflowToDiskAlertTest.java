@@ -30,7 +30,7 @@ import org.testng.annotations.Test;
 
 import com.gigaspaces.cluster.activeelection.SpaceMode;
 
-import test.alerts.Message;
+import test.data.Message;
 import test.utils.AdminUtils;
 import test.utils.LogUtils;
 import test.utils.ProcessingUnitUtils;

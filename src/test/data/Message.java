@@ -1,4 +1,4 @@
-package test.alerts;
+package test.data;
 
 
 import com.gigaspaces.annotation.pojo.SpaceProperty;

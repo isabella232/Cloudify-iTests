@@ -1,7 +1,0 @@
-<suite name="console">
-	<test name="console Tests">
-		<packages>
-			<package name="test.webui.console" />
-		</packages>
-	</test>
-</suite>

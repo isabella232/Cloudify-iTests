@@ -1,2 +1,0 @@
-gsa start-gsc
-1

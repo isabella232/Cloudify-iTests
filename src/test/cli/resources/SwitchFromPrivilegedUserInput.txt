@@ -1,8 +1,0 @@
-login
-Master
-master
-space sql -url jini://*/*/A -query select count(*) from test.cli.common.SpaceMessage
-login
-Writer
-writer
-space sql -url jini://*/*/A -query select count(*) from test.cli.common.SpaceMessage

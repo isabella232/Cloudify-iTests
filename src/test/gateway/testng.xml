@@ -1,9 +1,0 @@
-<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
-
-<suite name="Gateway Suite">
-	<test name="Genral">
-		<packages>
-			<package name="test.gateway" />
-		</packages>
-	</test>
-</suite>

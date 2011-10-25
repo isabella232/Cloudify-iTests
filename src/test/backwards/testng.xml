@@ -1,7 +1,0 @@
-<suite name="suite">
-	<test name="Backwards">
-		<packages>
-			<package name="test.backwards" />
-		</packages>
-	</test>
-</suite>

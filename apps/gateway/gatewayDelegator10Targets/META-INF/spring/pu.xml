@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?><beans xmlns="http://www.springframework.org/schema/beans" xmlns:context="http://www.springframework.org/schema/context" xmlns:os-core="http://www.openspaces.org/schema/core" xmlns:os-events="http://www.openspaces.org/schema/events" xmlns:os-gateway="http://www.openspaces.org/schema/core/gateway" xmlns:os-remoting="http://www.openspaces.org/schema/remoting" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd        http://www.openspaces.org/schema/core http://www.openspaces.org/schema/8.0/core/openspaces-core.xsd        http://www.openspaces.org/schema/events http://www.openspaces.org/schema/8.0/events/openspaces-events.xsd        http://www.openspaces.org/schema/remoting http://www.openspaces.org/schema/8.0/remoting/openspaces-remoting.xsd        http://www.openspaces.org/schema/core/gateway http://www.openspaces.org/schema/8.0/core/gateway/openspaces-gateway.xsd">
+
+
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer" id="propertiesConfigurer"/>
+
+    <context:annotation-config/>
+ 
+    <os-gateway:delegator gateway-lookups="gatewayLookups" id="delegator" local-gateway-name="${localGatewayName}">
+		<os-gateway:delegation target="${targetGatewayName0}"/>
+		<os-gateway:delegation target="${targetGatewayName1}"/>
+		<os-gateway:delegation target="${targetGatewayName2}"/>
+		<os-gateway:delegation target="${targetGatewayName3}"/>
+		<os-gateway:delegation target="${targetGatewayName4}"/>
+		<os-gateway:delegation target="${targetGatewayName5}"/>
+		<os-gateway:delegation target="${targetGatewayName6}"/>
+		<os-gateway:delegation target="${targetGatewayName7}"/>
+		<os-gateway:delegation target="${targetGatewayName8}"/>
+		<os-gateway:delegation target="${targetGatewayName9}"/>
+	</os-gateway:delegator>
+
+    <os-gateway:lookups id="gatewayLookups">
+    	<os-gateway:lookup  discovery-port="${localGatewayDiscoveryPort}" gateway-name="${localGatewayName}" host="${localGatewayHost}"/>
+		<os-gateway:lookup  discovery-port="${targetGatewayDiscoveryPort0}" gateway-name="${targetGatewayName0}" host="${targetGatewayHost0}"/>
+		<os-gateway:lookup  discovery-port="${targetGatewayDiscoveryPort1}" gateway-name="${targetGatewayName1}" host="${targetGatewayHost1}"/>
+		<os-gateway:lookup  discovery-port="${targetGatewayDiscoveryPort2}" gateway-name="${targetGatewayName2}" host="${targetGatewayHost2}"/>
+		<os-gateway:lookup  discovery-port="${targetGatewayDiscoveryPort3}" gateway-name="${targetGatewayName3}" host="${targetGatewayHost3}"/>
+		<os-gateway:lookup  discovery-port="${targetGatewayDiscoveryPort4}" gateway-name="${targetGatewayName4}" host="${targetGatewayHost4}"/>
+		<os-gateway:lookup  discovery-port="${targetGatewayDiscoveryPort5}" gateway-name="${targetGatewayName5}" host="${targetGatewayHost5}"/>
+		<os-gateway:lookup  discovery-port="${targetGatewayDiscoveryPort6}" gateway-name="${targetGatewayName6}" host="${targetGatewayHost6}"/>
+		<os-gateway:lookup  discovery-port="${targetGatewayDiscoveryPort7}" gateway-name="${targetGatewayName7}" host="${targetGatewayHost7}"/>
+		<os-gateway:lookup  discovery-port="${targetGatewayDiscoveryPort8}" gateway-name="${targetGatewayName8}" host="${targetGatewayHost8}"/>
+		<os-gateway:lookup  discovery-port="${targetGatewayDiscoveryPort9}" gateway-name="${targetGatewayName9}" host="${targetGatewayHost9}"/>
+	</os-gateway:lookups>
+
+
+
+
+</beans>

@@ -1,0 +1,111 @@
+<?xml version="1.0"?>
+
+<project name="simpledata-example" default="usage" basedir=".">
+
+	<import file="../../sgtest_build.xml" />
+    
+    <property name="common.dir" location="${basedir}/common"/>
+    <property name="meta-common.dir" location="${basedir}/../meta-common"/>
+    <property name="processor.dir" location="${basedir}/processor"/>
+
+    <property name="meta-common-src" value="${meta-common.dir}/src"/>
+    <property name="meta-common-target" value="${meta-common.dir}/target"/>
+    <property name="meta-common-classes" value="${meta-common-target}/classes"/>
+    <property name="meta-common-lib" value="${meta-common.dir}/lib"/>
+    
+    <property name="common-src" value="${common.dir}/src"/>
+    <property name="common-target" value="${common.dir}/target"/>
+    <property name="common-classes" value="${common-target}/classes"/>
+    <property name="common-lib" value="${common.dir}/lib"/>
+
+	<property name="processor-name" value="processor" />
+    <property name="processor-src" value="${processor.dir}/src"/>
+    <property name="processor-target" value="${processor.dir}/target"/>
+    <property name="processor-classes" value="${processor-target}/classes"/>
+    <property name="processor-lib" value="${processor.dir}/lib"/>
+
+    <path id="all-gs-libs">
+    	<fileset dir="${gsHome.dir}/lib">
+            <include name="**/*.jar"/>
+            <exclude name="**/mule-os.jar" />
+        </fileset>
+    </path>
+
+    <path id="all-common-libs">
+    	<fileset dir="${meta-common-lib}">
+            <include name="**/*.jar"/>
+        </fileset>
+        <fileset dir="${common-lib}">
+            <include name="**/*.jar"/>
+        </fileset>
+    </path>
+
+    <target name="usage">
+        <echo message=""/>
+        <echo message="OpenSpaces build script"/>
+        <echo message="-----------------------------------------"/>
+        <echo message=""/>
+        <echo message="Among the available targets are:"/>
+        <echo message=""/>
+        <echo message="clean                    --> Cleans all output dirs"/>
+        <echo message="build                    --> Build all; don't create JARs"/>
+        <echo message=""/>
+    </target>
+
+	<target name="clean">
+	        <delete dir="${common-target}"/>
+	        <delete dir="${processor-target}"/>
+	 </target>
+
+    <target  name="prepare">
+        <mkdir dir="${meta-common-target}"/>
+        <mkdir dir="${common-target}"/>
+        <mkdir dir="${processor-target}"/>
+        <mkdir dir="${meta-common-classes}"/>
+        <mkdir dir="${common-classes}"/>
+        <mkdir dir="${processor-classes}"/>
+    </target>
+
+    <target name="build" depends="clean, prepare">
+        <build src="${meta-common-src}" classes="${meta-common-classes}" />
+        <build src="${common-src}" classes="${common-classes}"/>
+        <build src="${processor-src}" classes="${processor-classes}" common-classpath="${common-classes}" meta-common-classpath="${meta-common-classes}" pu-lib="${processor-lib}"/>
+    </target>
+
+    <macrodef name="build">
+        <attribute name="src"/>
+        <attribute name="classes"/>
+        <attribute name="common-classpath" default=""/>
+        <attribute name="meta-common-classpath" default=""/>
+        <attribute name="pu-lib" default=""/>
+        <sequential>
+            <!--<mkdir dir="@{classes}"/>-->
+           
+            <javac destdir="@{classes}" source="1.6" target="1.6" debug="on"
+                   deprecation="false" optimize="false" failonerror="true">
+                <src path="@{src}"/>
+                <classpath refid="all-gs-libs"/>
+                <classpath refid="all-common-libs"/>
+                <classpath location="@{common-classpath}"/>
+                <classpath location="@{meta-common-classpath}"/>
+                <classpath>
+                  <fileset dir="@{pu-lib}">
+                    <include name="**/*.jar"/>
+                  </fileset>
+                </classpath>
+            </javac>
+             <copy todir="@{classes}" preservelastmodified="true">
+                <fileset dir="@{src}">
+                    <include name="META-INF/**/*"/>
+                    <include name="**/*.properties"/>
+                    <include name="**/*.handlers"/>
+                    <include name="**/*.schemas"/>
+                    <include name="**/*.xml"/>
+                    <include name="**/*.dtd"/>
+                    <include name="**/*.xsd"/>
+                </fileset>
+            </copy>
+        </sequential>
+    </macrodef>
+
+</project>

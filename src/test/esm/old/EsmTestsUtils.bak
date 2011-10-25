@@ -1,0 +1,72 @@
+package test.esm.old;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
+
+import org.openspaces.admin.Admin;
+import org.openspaces.admin.esm.ElasticServiceManager;
+import org.openspaces.admin.esm.deployment.ElasticDataGridDeployment;
+import org.openspaces.admin.esm.deployment.MemorySla;
+import org.openspaces.admin.pu.DeploymentStatus;
+import org.openspaces.admin.pu.ProcessingUnit;
+import org.openspaces.admin.vm.VirtualMachine;
+import org.openspaces.core.GigaSpace;
+
+import test.data.Person;
+import test.utils.ProcessingUnitUtils;
+
+public class EsmTestsUtils {
+
+	private final static AtomicLong idGenerator = new AtomicLong();
+	
+	public static ProcessingUnit deployElasticDataGrid(ElasticServiceManager esm, int minGscsExpected, int maxGscsExpected, String javaHeapSize, String threshold){
+		
+		int multiplier = Integer.valueOf(javaHeapSize.substring(0, javaHeapSize.length()-1)); //used for capacity calculations to set number of min/max gscs
+		
+		ProcessingUnit pu = esm.deploy(new ElasticDataGridDeployment("mygrid")
+		.capacity(String.valueOf(minGscsExpected*multiplier)+"g", String.valueOf(maxGscsExpected*multiplier)+"g")
+		.initialJavaHeapSize(javaHeapSize)
+		.maximumJavaHeapSize(javaHeapSize)
+		.addContextProperty("low_watermark_percentage", "90")
+		.addContextProperty("write_only_check_percentage", "90")
+		.addContextProperty("write_only_block_percentage", "90")
+		.addSla(new MemorySla(threshold,2))
+		);
+		
+		pu.waitForSpace();
+		ProcessingUnitUtils.waitForActiveElection(pu);
+		ProcessingUnitUtils.waitForDeploymentStatus(pu, DeploymentStatus.INTACT);
+		return pu;
+	}
+	
+	public static int writeBatch(GigaSpace gigaSpace, int numOfObjToWrite, int numOfObjToTake){
+		List<Person> batch=new ArrayList<Person>();
+		
+		for(int i=0; i< numOfObjToWrite; i++){
+			Person p=new Person();
+			long id=idGenerator.getAndIncrement();
+			p.setId(id);
+			p.setName("p"+id);
+			batch.add(p);
+		}
+		int actualSize = gigaSpace.writeMultiple(batch.toArray()).length;
+		System.out.println("Wrote "+actualSize+" Objects to space");
+		int tookActualSize = gigaSpace.takeMultiple(new Person(),numOfObjToTake).length;
+		System.out.println("Took "+tookActualSize+" Objects from space");
+		return actualSize;
+	}
+	
+	public static void CallGConVMs(Admin admin) {
+		for(VirtualMachine vm : admin.getVirtualMachines()){
+			vm.runGc();
+		}
+	}
+	
+	public static void cleanCluster(Admin admin){
+		GigaSpace gigaSpace = (admin.getSpaces().getSpaces())[0].getGigaSpace();
+		while (gigaSpace.takeMultiple(new Person(), 20000).length > 0){
+			CallGConVMs(admin);
+		}
+	}
+}

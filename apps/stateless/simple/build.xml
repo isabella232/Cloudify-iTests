@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+
+<project name="simple" default="dist" basedir=".">
+		
+	<import file="../../../sgtest_build.xml" />
+    <property name="simple-dir" location="${basedir}"/>
+	
+	<property name="simple-src" value="${simple-dir}/src"/>
+    <property name="simple-pu" value="${simple-dir}/target/simple"/>
+	<property name="simple-pu-jar" location="${simple-dir}/../jars/simpleStatelessPu.jar"/>
+    <property name="simple-lib" value="${simple-pu}/lib"/>
+	
+	<path id="all-libs">
+        <fileset dir="${gsHome.dir}/lib">
+            <include name="**/*.jar"/>
+            <exclude name="**/mule-os.jar" />
+        </fileset>
+    </path>
+	
+	<target name="clean">
+        <delete dir="${simple-dir}/target/"/>
+    </target>
+	
+	<target name="build" depends="clean">
+        <build src="${simple-src}" classes="${simple-pu}"/>
+    </target>
+	
+	<target name="dist" depends="build">
+		<jar basedir="${simple-pu}" jarfile="${simple-pu-jar}"/>
+		
+    </target>    
+	
+	<macrodef name="build">
+        <attribute name="src"/>
+        <attribute name="classes"/>
+        <sequential>
+            <mkdir dir="@{classes}"/>
+
+            <javac destdir="@{classes}" source="1.6" target="1.6" debug="on"
+                   deprecation="false" optimize="false" failonerror="true">
+                <src path="@{src}"/>
+                <classpath refid="all-libs"/>
+            </javac>
+
+            <copy todir="@{classes}" preservelastmodified="true">
+                <fileset dir="@{src}">
+                    <include name="**/*.properties"/>
+                    <include name="**/*.handlers"/>
+                    <include name="**/*.schemas"/>
+                    <include name="**/*.xml"/>
+                    <include name="**/*.dtd"/>
+                    <include name="**/*.xsd"/>
+                </fileset>
+            </copy>
+        </sequential>
+    </macrodef>
+</project>

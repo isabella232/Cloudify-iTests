@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" output="apps/local-view/local-view/target/classes" path="apps/local-view/local-view/src"/>
+	<classpathentry kind="src" output="apps/local-view/common/target/classes" path="apps/local-view/common/src"/>
+	<classpathentry kind="src" output="apps/local-view/embeddedFeeder/target/classes" path="apps/local-view/embeddedFeeder/src"/>
+	<classpathentry kind="src" output="apps/gatewayPUs/multisource-filter/target/classes" path="apps/gatewayPUs/multisource-filter/src"/>
+	<classpathentry kind="src" output="apps/gatewayPUs/gateway-conflict-resolver/target/classes" path="apps/gatewayPUs/gateway-conflict-resolver/src"/>
+	<classpathentry kind="src" output="apps/gatewayPUs/common/target/classes" path="apps/gatewayPUs/common/src"/>
+	<classpathentry kind="src" output="apps/stateless/simpleFaulty/target/classes" path="apps/stateless/simpleFaulty/src"/>
+	<classpathentry kind="src" output="apps/stateless/simpleSystemExit/target/classes" path="apps/stateless/simpleSystemExit/src"/>
+	<classpathentry kind="src" output="apps/gatewayPUs/processorAsyncPersistent/target/classes" path="apps/gatewayPUs/processorAsyncPersistent/src"/>
+	<classpathentry kind="src" output="apps/gatewayPUs/mirror/target/classes" path="apps/gatewayPUs/mirror/src"/>
+	<classpathentry kind="src" output="apps/gatewayPUs/processor-filter/target/classes" path="apps/gatewayPUs/processor-filter/src"/>
+	<classpathentry kind="src" output="apps/stateless/simple/target/classes" path="apps/stateless/simple/src"/>
+	<classpathentry kind="src" path="config"/>
+	<classpathentry kind="src" output="apps/security/common/target/classes" path="apps/security/common/src"/>
+	<classpathentry kind="src" output="apps/remoting/target/classes" path="apps/remoting/src"/>
+	<classpathentry kind="src" output="apps/MHEDS/runtime/target/classes" path="apps/MHEDS/runtime/src"/>
+	<classpathentry kind="src" output="apps/MHEDS/common/target/classes" path="apps/MHEDS/common/src"/>
+	<classpathentry kind="src" output="apps/MHEDS/loader/target/classes" path="apps/MHEDS/loader/src"/>
+	<classpathentry kind="src" output="apps/MHEDS/mirror/target/classes" path="apps/MHEDS/mirror/src"/>
+	<classpathentry kind="src" output="apps/data/feeder/target/classes" path="apps/data/feeder/src"/>
+	<classpathentry kind="src" output="apps/data/processor/target/classes" path="apps/data/processor/src"/>
+	<classpathentry kind="src" output="apps/data/common/target/classes" path="apps/data/common/src"/>
+	<classpathentry kind="src" output="apps/simpledata/common/target/classes" path="apps/simpledata/common/src"/>
+	<classpathentry kind="src" output="apps/simpledata/processor/target/classes" path="apps/simpledata/processor/src"/>
+	<classpathentry kind="src" output="apps/meta-common/target/classes" path="apps/meta-common/src"/>
+	<classpathentry kind="src" output="apps/custom-exception/mypu/target/classes" path="apps/custom-exception/mypu/src"/>
+	<classpathentry kind="src" output="apps/gatewayPUs/processor/target/classes" path="apps/gatewayPUs/processor/src"/>
+	<classpathentry kind="src" output="apps/gatewayPUs/feeder/target/classes" path="apps/gatewayPUs/feeder/src"/>
+	<classpathentry kind="src" output="apps/gatewayPUs/synthProcessor/target/classes" path="apps/gatewayPUs/synthProcessor/src"/>
+	<classpathentry kind="src" output="apps/remotingExceptionHandling/target/classes" path="apps/remotingExceptionHandling/src"/>
+	<classpathentry kind="src" output="apps/gatewayPUs/gateway-txn-conflict-handler/target/classes" path="apps/gatewayPUs/gateway-txn-conflict-handler/src"/>
+	<classpathentry kind="var" path="XAP_LATEST/lib/required/org.springframework.aop-3.0.5.RELEASE.jar"/>
+	<classpathentry kind="var" path="XAP_LATEST/lib/required/gs-runtime.jar" sourcepath="/GIGASPACES_PATH"/>
+	<classpathentry kind="var" path="XAP_LATEST/lib/required/gs-openspaces.jar" sourcepath="/XAP_LATEST/lib/optional/openspaces/gs-openspaces-src.zip"/>
+	<classpathentry kind="var" path="XAP_LATEST/lib/required/commons-logging.jar"/>
+	<classpathentry kind="var" path="XAP_LATEST/lib/optional/spring/com.springsource.net.sf.cglib-2.2.0.jar"/>
+	<classpathentry kind="var" path="XAP_LATEST/lib/optional/spring/com.springsource.javax.annotation-1.0.0.jar"/>
+	<classpathentry kind="var" path="XAP_LATEST/lib/required/org.springframework.asm-3.0.5.RELEASE.jar"/>
+	<classpathentry kind="var" path="XAP_LATEST/lib/required/org.springframework.aspects-3.0.5.RELEASE.jar"/>
+	<classpathentry kind="var" path="XAP_LATEST/lib/required/org.springframework.beans-3.0.5.RELEASE.jar"/>
+	<classpathentry kind="var" path="XAP_LATEST/lib/required/org.springframework.context-3.0.5.RELEASE.jar"/>
+	<classpathentry kind="var" path="XAP_LATEST/lib/required/dsl.jar"/>
+	<classpathentry kind="var" path="XAP_LATEST/lib/required/org.springframework.context.support-3.0.5.RELEASE.jar"/>
+	<classpathentry kind="var" path="XAP_LATEST/lib/required/org.springframework.core-3.0.5.RELEASE.jar"/>
+	<classpathentry kind="var" path="XAP_LATEST/lib/required/org.springframework.expression-3.0.5.RELEASE.jar"/>
+	<classpathentry kind="var" path="XAP_LATEST/lib/required/org.springframework.transaction-3.0.5.RELEASE.jar"/>
+	<classpathentry kind="var" path="XAP_LATEST/lib/optional/spring/org.springframework.jms-3.0.5.RELEASE.jar"/>
+	<classpathentry kind="var" path="XAP_LATEST/lib/platform/jdbc/hsqldb.jar"/>
+	<classpathentry kind="var" path="XAP_LATEST/lib/platform/jetty/jetty-server-7.4.5.v20110725.jar"/>
+	<classpathentry kind="var" path="XAP_LATEST/lib/platform/jetty/jetty-util-7.4.5.v20110725.jar"/>
+	<classpathentry kind="var" path="XAP_LATEST/lib/platform/jetty/servlet-api-2.5.jar"/>
+	<classpathentry kind="var" path="XAP_LATEST/lib/platform/jetty/jetty-http-7.4.5.v20110725.jar"/>
+	<classpathentry kind="var" path="XAP_LATEST/lib/platform/jetty/jetty-io-7.4.5.v20110725.jar"/>
+	<classpathentry kind="var" path="XAP_LATEST/lib/platform/jetty/jetty-continuation-7.4.5.v20110725.jar"/>
+	<classpathentry kind="var" path="XAP_LATEST/lib/required/com.springsource.org.aopalliance-1.0.0.jar"/>
+	<classpathentry kind="var" path="JRE_LIB"/>
+	<classpathentry kind="lib" path="lib/testng/testng-5.10-jdk15.jar" sourcepath="D:/testng-6.1.1.zip"/>
+	<classpathentry kind="lib" path="lib/commons/commons-httpclient-3.1.jar"/>
+	<classpathentry kind="lib" path="lib/commons/commons-lang-2.4.jar"/>
+	<classpathentry kind="lib" path="lib/commons/commons-collections-3.2.1.jar"/>
+	<classpathentry kind="lib" path="lib/commons/commons-codec-1.4.jar"/>
+	<classpathentry kind="lib" path="lib/hibernate/antlr-2.7.6.jar"/>
+	<classpathentry kind="lib" path="lib/hibernate/dom4j-1.6.1.jar"/>
+	<classpathentry kind="lib" path="lib/hibernate/geronimo-spec-jta-1.0.1B-rc4.jar"/>
+	<classpathentry kind="lib" path="lib/hibernate/hibernate-jpa-2.0-api-1.0.0.Final.jar"/>
+	<classpathentry kind="lib" path="lib/hibernate/hibernate3.jar"/>
+	<classpathentry kind="lib" path="lib/hibernate/javassist-3.9.0.GA.jar"/>
+	<classpathentry kind="lib" path="lib/hibernate/jta-1.1.jar"/>
+	<classpathentry kind="lib" path="lib/hibernate/slf4j-api-1.5.11.jar"/>
+	<classpathentry kind="lib" path="lib/hibernate/slf4j-jdk14-1.5.11.jar"/>
+	<classpathentry kind="lib" path="lib/xenserver/lib/commons-vfs2-2.0.jar"/>
+	<classpathentry kind="lib" path="lib/xenserver/lib/ws-commons-util-1.0.2.jar"/>
+	<classpathentry kind="lib" path="lib/xenserver/lib/xenserver-6.0.0-1.jar"/>
+	<classpathentry kind="lib" path="lib/xenserver/lib/xmlrpc-client-3.1.jar"/>
+	<classpathentry kind="lib" path="lib/xenserver/lib/xmlrpc-common-3.1.jar"/>
+	<classpathentry kind="lib" path="lib/xenserver/xenserver-machine-provisioning.jar" sourcepath="/xenserver/src"/>
+	<classpathentry kind="lib" path="lib/hamcrest/hamcrest-all-1.3RC0.jar"/>
+	<classpathentry kind="lib" path="lib/xml/javax.xml.stream-1.0.1.jar"/>
+	<classpathentry kind="lib" path="lib/spring/org.springframework.orm-3.0.5.RELEASE.jar"/>
+	<classpathentry kind="lib" path="lib/commons/commons-dbcp-1.2.1.jar"/>
+	<classpathentry kind="lib" path="lib/commons/commons-pool-1.5.5.jar"/>
+	<classpathentry kind="lib" path="lib/spring/org.springframework.jdbc-3.0.5.RELEASE.jar"/>
+	<classpathentry kind="lib" path="lib/xml/stax-1.2.0.jar"/>
+	<classpathentry kind="lib" path="lib/commons/commons-io-2.0.1.jar"/>
+	<classpathentry kind="lib" path="lib/commons/commons-logging-1.1.1.jar"/>
+	<classpathentry kind="lib" path="lib/xml/jaxb-api-2.2.2.jar"/>
+	<classpathentry kind="lib" path="apps/USM/usm/simplejavaprocess/simplejavaprocess.jar"/>
+	<classpathentry kind="lib" path="lib/sshd/mina-core-2.0.1.jar"/>
+	<classpathentry kind="lib" path="lib/sshd/sshd-core-0.5.0.jar"/>
+	<classpathentry kind="lib" path="lib/xenserver/lib/ant-1.8.2.jar"/>
+	<classpathentry kind="lib" path="lib/xenserver/lib/ant-jsch-1.8.2.jar"/>
+	<classpathentry kind="var" path="XAP_LATEST/lib/platform/sigar/sigar.jar"/>
+	<classpathentry kind="lib" path="lib/mail/mail.jar"/>
+	<classpathentry kind="var" path="XAP_LATEST/lib/platform/esm/esc.jar"/>
+	<classpathentry kind="var" path="XAP_LATEST/lib/platform/usm/usm.jar"/>
+	<classpathentry kind="var" path="XAP_LATEST/tools/cli/cli.jar"/>
+	<classpathentry kind="var" path="XAP_LATEST/tools/groovy/embeddable/groovy-all-1.8.0.jar"/>
+	<classpathentry kind="lib" path="lib/pelops/avro-1.4.0-cassandra-1.jar"/>
+	<classpathentry kind="lib" path="lib/pelops/cassandra-all-0.7.6.jar"/>
+	<classpathentry kind="lib" path="lib/pelops/concurrentlinkedhashmap-lru-1.1.jar"/>
+	<classpathentry kind="lib" path="lib/pelops/jackson-core-asl-1.4.0.jar"/>
+	<classpathentry kind="lib" path="lib/pelops/jackson-mapper-asl-1.4.0.jar"/>
+	<classpathentry kind="lib" path="lib/pelops/libthrift-0.5.0.jar"/>
+	<classpathentry kind="lib" path="lib/pelops/scale7-core-1.3.jar"/>
+	<classpathentry kind="lib" path="lib/pelops/scale7-pelops-1.2-0.7.x-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="lib/pelops/snakeyaml-1.6.jar"/>
+	<classpathentry kind="lib" path="lib/pelops/uuid-3.2.jar"/>
+	<classpathentry kind="lib" path="lib/commons/commons-net-3.0.1.jar"/>
+	<classpathentry kind="lib" path="lib/jsch/jsch-0.1.44.jar"/>
+	<classpathentry kind="lib" path="lib/selenium/apache-mime4j-0.6.jar"/>
+	<classpathentry kind="lib" path="lib/selenium/bsh-1.3.0.jar"/>
+	<classpathentry kind="lib" path="lib/selenium/cglib-nodep-2.1_3.jar"/>
+	<classpathentry kind="lib" path="lib/selenium/commons-codec-1.4.jar"/>
+	<classpathentry kind="lib" path="lib/selenium/commons-collections-3.2.1.jar"/>
+	<classpathentry kind="lib" path="lib/selenium/commons-io-2.0.1.jar"/>
+	<classpathentry kind="lib" path="lib/selenium/commons-jxpath-1.3.jar"/>
+	<classpathentry kind="lib" path="lib/selenium/commons-lang-2.6.jar"/>
+	<classpathentry kind="lib" path="lib/selenium/commons-logging-1.1.1.jar"/>
+	<classpathentry kind="lib" path="lib/selenium/cssparser-0.9.5.jar"/>
+	<classpathentry kind="lib" path="lib/selenium/guava-r09.jar"/>
+	<classpathentry kind="lib" path="lib/selenium/hamcrest-all-1.1.jar"/>
+	<classpathentry kind="lib" path="lib/selenium/htmlunit-2.9.jar"/>
+	<classpathentry kind="lib" path="lib/selenium/htmlunit-core-js-2.9.jar"/>
+	<classpathentry kind="lib" path="lib/selenium/httpclient-4.1.2.jar"/>
+	<classpathentry kind="lib" path="lib/selenium/httpcore-4.1.3.jar"/>
+	<classpathentry kind="lib" path="lib/selenium/httpmime-4.1.2.jar"/>
+	<classpathentry kind="lib" path="lib/selenium/jcommander-1.13.jar"/>
+	<classpathentry kind="lib" path="lib/selenium/jna-3.3.0.jar"/>
+	<classpathentry kind="lib" path="lib/selenium/json-20080701.jar"/>
+	<classpathentry kind="lib" path="lib/selenium/junit-dep-4.8.1.jar"/>
+	<classpathentry kind="lib" path="lib/selenium/nekohtml-1.9.15.jar"/>
+	<classpathentry kind="lib" path="lib/selenium/operadriver-v0.7.2.jar"/>
+	<classpathentry kind="lib" path="lib/selenium/protobuf-java-2.3.0.jar"/>
+	<classpathentry kind="lib" path="lib/selenium/sac-1.3.jar"/>
+	<classpathentry kind="lib" path="lib/selenium/serializer-2.7.1.jar"/>
+	<classpathentry kind="lib" path="lib/selenium/xalan-2.7.1.jar"/>
+	<classpathentry kind="lib" path="lib/selenium/xercesImpl-2.9.1.jar"/>
+	<classpathentry kind="lib" path="lib/selenium/xml-apis-1.3.04.jar"/>
+	<classpathentry kind="lib" path="lib/selenium/selenium-java-2.7.0.jar"/>
+	<classpathentry kind="lib" path="lib/selenium/selenium-server-standalone-2.7.0.jar"/>
+	<classpathentry kind="output" path="classes"/>
+</classpath>

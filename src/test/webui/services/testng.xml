@@ -1,0 +1,9 @@
+<suite name="services">
+	<test name="Services Tests">
+		<packages>
+			<package name="test.webui.services.deployment" />
+			<package name="test.webui.services.hosts" />
+			<package name="test.webui.services.pugrid" />
+		</packages>
+	</test>
+</suite>

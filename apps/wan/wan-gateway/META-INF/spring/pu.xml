@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:os-core="http://www.openspaces.org/schema/core"
+	xmlns:os-events="http://www.openspaces.org/schema/events"
+	xmlns:os-remoting="http://www.openspaces.org/schema/remoting"
+	xmlns:os-sla="http://www.openspaces.org/schema/sla"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd 
+       http://www.openspaces.org/schema/core http://www.openspaces.org/schema/core/openspaces-core.xsd
+       http://www.openspaces.org/schema/events http://www.openspaces.org/schema/events/openspaces-events.xsd
+       http://www.openspaces.org/schema/remoting http://www.openspaces.org/schema/remoting/openspaces-remoting.xsd
+       http://www.openspaces.org/schema/sla http://www.openspaces.org/schema/sla/openspaces-sla.xsd">
+	<context:annotation-config/>
+
+	<bean id="wanConfiguration" class="com.gigaspaces.wan.WanConfiguration">
+		<property name="locations">
+			<list>
+				<bean id="loc1" class="com.gigaspaces.wan.LocationConfiguration">
+						<property name="host" value="${ip1}" />
+						<property name="discoveryPort" value="${discoveryPort1}" />
+						<property name="replicationPort" value="${replicationPort1}" />
+						<property name="name" value="Site 1" />
+	
+					</bean>
+					<bean id="loc2" class="com.gigaspaces.wan.LocationConfiguration">
+						<property name="host" value="${ip2}" />
+						<property name="discoveryPort" value="${discoveryPort2}" />
+						<property name="replicationPort" value="${replicationPort2}" />
+						<property name="name" value="Site 2" />
+	
+					</bean>
+			</list>
+		
+		</property>
+	</bean>
+	
+	<bean id="filter" class="com.gigaspaces.wan.test.filter.TestFilter">
+		<property name="classToFilter" value="${classToFilter}" />
+		<property name="fieldToFilter" value="${fieldToFilter}" />
+		<property name="valueToFilter" value="${valueToFilter}" />
+		<property name="fieldToModify" value="${fieldToModify}" />
+		<property name="valueToModify" value="${valueToModify}" />
+	</bean>
+	
+	<bean id="wanGigaSpace" class="com.gigaspaces.wan.WanSpaceFactoryBean" destroy-method="destroy">
+		<property name="mySiteId" value="${mySiteId}" />	
+		<property name="wanSpaceUrl" value="${wanSpaceUrl}" />
+	</bean>
+
+	<!-- An external data source that will be responsible for sending data over 
+		the WAN -->
+	<bean id="wanDataSource" class="com.gigaspaces.wan.WanDataSource"
+		init-method="initialize" destroy-method="destroy">
+		
+		<property name="mySiteId" value="${mySiteId}" />
+		<property name="localClusterSpaceUrl" value="${localClusterSpaceUrl}" />
+		<property name="numberOfPartitions" value="${numOfPartitions}" />
+		<property name="wanLookupGroup" value="${wanLookupGroup}" />
+		<property name="useScriptForForking" value="${useScriptForForking}" />
+		<property name="persister" ref="testEDS" />
+		
+	</bean>
+
+	<!-- The mirror space. -->
+	<os-core:space id="mirrorSpace" url="${mirrorURL}"
+		schema="mirror" external-data-source="wanDataSource">
+		<os-core:properties>
+			<props>
+				<prop key="space-config.external-data-source.data-class">
+					com.gigaspaces.internal.transport.EntryPacket
+				</prop>
+				<prop key="space-config.mirror-service.cluster.name">
+					${siteSpaceName}
+				</prop>
+				<prop key="space-config.mirror-service.cluster.partitions">
+					${numOfPartitions}
+				</prop>
+				<prop key="space-config.mirror-service.cluster.backups-per-partition">
+					${numOfBackupsPerPartition}
+				</prop>
+				<prop key="space-config.mirror-service.operation-grouping">
+					${operationGrouping}
+				</prop>
+			</props>
+		</os-core:properties>
+	</os-core:space>
+
+	
+	<bean id="testEDS"
+		class="com.gigaspaces.wan.test.persistence.TestPersistenceEDS">
+
+	</bean>
+
+
+
+
+</beans>

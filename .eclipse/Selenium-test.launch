@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<launchConfiguration type="org.testng.eclipse.launchconfig">
+<stringAttribute key="bad_container_name" value="SGTest.eclipse"/>
+<mapAttribute key="org.eclipse.debug.core.environmentVariables">
+<mapEntry key="apache.home" value="C:/Program Files/Apache Software Foundation/Apache2.2"/>
+<mapEntry key="apache.port" value="8000"/>
+<mapEntry key="selenium.browser" value="Firefox"/>
+</mapAttribute>
+<listAttribute key="org.eclipse.debug.ui.favoriteGroups">
+<listEntry value="org.eclipse.debug.ui.launchGroup.debug"/>
+<listEntry value="org.eclipse.debug.ui.launchGroup.run"/>
+</listAttribute>
+<stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="org.testng.remote.RemoteTestNG"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="-listener framework.testng.SGTestNGListener"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="SGTest"/>
+<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Dcom.gs.jini_lus.groups=sgtest-elip&#13;&#10;-Dwebdriver.chrome.driver=src/test/webui/resources/chromedriver.exe&#13;&#10;-Dsgtest.suiteName=webui"/>
+<mapAttribute key="org.testng.eclipse.ALL_CLASS_METHODS">
+<mapEntry key="test.webui.loadbalancer.WebServerFailOverTest" value=""/>
+</mapAttribute>
+<listAttribute key="org.testng.eclipse.CLASS_TEST_LIST">
+<listEntry value="test.webui.loadbalancer.WebServerFailOverTest"/>
+</listAttribute>
+<listAttribute key="org.testng.eclipse.GROUP_LIST"/>
+<listAttribute key="org.testng.eclipse.GROUP_LIST_CLASS"/>
+<stringAttribute key="org.testng.eclipse.LOG_LEVEL" value="2"/>
+<listAttribute key="org.testng.eclipse.PACKAGE_TEST_LIST"/>
+<listAttribute key="org.testng.eclipse.SUITE_TEST_LIST">
+<listEntry value="classes/test/webui/services/testng.xml"/>
+</listAttribute>
+<intAttribute key="org.testng.eclipse.TYPE" value="1"/>
+</launchConfiguration>

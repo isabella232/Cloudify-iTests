@@ -1,0 +1,161 @@
+package test.esm.old;
+
+import static org.testng.AssertJUnit.assertTrue;
+
+import org.openspaces.admin.esm.ElasticServiceManager;
+import org.openspaces.admin.esm.deployment.ElasticDataGridDeployment;
+import org.openspaces.admin.esm.deployment.MemorySla;
+import org.openspaces.admin.machine.Machine;
+import org.openspaces.admin.pu.DeploymentStatus;
+import org.openspaces.admin.pu.ProcessingUnit;
+import org.openspaces.admin.pu.ProcessingUnitInstance;
+import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+
+import test.AbstractTest;
+import test.utils.ProcessingUnitUtils;
+import test.utils.TestUtils;
+/**
+ * tests the esm isolation levels functionality
+ * @setup:
+ * deploys a single instance pu on each of the 4 machines:
+ * 2 different PUS with dedicated isolation level
+ * another PU with public isolation level
+ * another PU with shared isolation level and "tenant1" as tenant
+ * 
+ * @test:
+ * deploys dedicated pu - should fail,no free machines
+ * deploys public pu - should succeed, but only on the machine the running PU with public isolation level is on 
+ * deploys shared pu with tenant2 - should fail, no free machines
+ * deploys shared pu with tenant1 - should succeed but only on the machine the running PU with shared isolation and tenan1 is on
+ * 
+ * @author rafi
+ *
+ */
+public class IsolationTest extends AbstractTest{
+
+	private ElasticServiceManager esm;
+
+	@BeforeMethod
+	public void setup(){
+		TestUtils.waitAndLoad(admin, 2, 0);
+		System.out.println("Locating ESM...");
+        esm = admin.getElasticServiceManagers().waitForAtLeastOne();
+        System.out.println("Found ESM");  
+
+        ProcessingUnit pu = deployDedicatedPU("dedicated1");
+        DeploymentStatus status = ProcessingUnitUtils.waitForDeploymentStatus(pu, DeploymentStatus.INTACT);
+		checkAssertions(pu,status,true);
+
+		ProcessingUnit pu2 = deployPublicPU("public1");
+        status=ProcessingUnitUtils.waitForDeploymentStatus(pu2, DeploymentStatus.INTACT);
+        checkAssertions(pu2,status,true);
+
+		ProcessingUnit pu3 = deploySharedPU("shared1","tenant1");
+		status=ProcessingUnitUtils.waitForDeploymentStatus(pu3, DeploymentStatus.INTACT);
+		checkAssertions(pu3,status,true);
+
+		ProcessingUnit pu4 = deployDedicatedPU("dedicated2");
+        status = ProcessingUnitUtils.waitForDeploymentStatus(pu4, DeploymentStatus.INTACT);
+		checkAssertions(pu4,status,true);
+	}
+
+	//@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="2")
+	public void test(){
+		//should fail
+		ProcessingUnit pu = deployDedicatedPU("dedicated-test");
+        DeploymentStatus status = ProcessingUnitUtils.waitForDeploymentStatus(pu, DeploymentStatus.INTACT);
+		checkAssertions(pu,status,false);
+		
+		//should succeed, but only on a machine which has a pu with the same isolation level :public
+		ProcessingUnit pu2 = deployPublicPU("public-test");
+		status = ProcessingUnitUtils.waitForDeploymentStatus(pu2, DeploymentStatus.INTACT);
+		checkAssertions(pu2,status,true);
+		checkMachineIsolation(pu2);
+		
+		//should fail
+		ProcessingUnit pu3 = deploySharedPU("shared-test","tenant2");
+		status = ProcessingUnitUtils.waitForDeploymentStatus(pu3, DeploymentStatus.INTACT);
+		checkAssertions(pu3,status,false);
+		
+		//should succeed, but only on a machine which has a pu with isolation level "shared" and same tenant
+		ProcessingUnit pu4 = deploySharedPU("shared-test2","tenant1");
+		status = ProcessingUnitUtils.waitForDeploymentStatus(pu4, DeploymentStatus.INTACT);
+		checkAssertions(pu4,status,true);
+		checkMachineIsolation(pu4);
+	}
+	
+	private void checkMachineIsolation(ProcessingUnit pu) {
+		String puIsolationLevel = pu.getBeanLevelProperties().getContextProperties().getProperty("deploymentIsolation");
+		String tenantName = pu.getBeanLevelProperties().getContextProperties().getProperty("tenant");
+		Machine machine = pu.getInstances()[0].getMachine();
+		for (ProcessingUnitInstance puInstance : machine.getProcessingUnitInstances()){
+			if (!puInstance.getProcessingUnit().getBeanLevelProperties().getContextProperties().getProperty("deploymentIsolation").equals(puIsolationLevel)){
+				Assert.fail("pu with isolation level: "+puIsolationLevel+" was deployed on a machine with an already deployed pu with isolation level:"+puIsolationLevel);
+			}
+			if(tenantName!=null && tenantName!="" && !puInstance.getProcessingUnit().getBeanLevelProperties().getContextProperties().getProperty("tenant").equals(tenantName)){
+				Assert.fail("2 ProcessingUnits with different tenant names resides on the same machine");
+			}
+		}
+	}
+/**
+ * help functions
+ */
+	
+	private void checkAssertions(ProcessingUnit pu, DeploymentStatus status, boolean expectedStatusINTACT) {
+		String msg = "be INTACT";
+		boolean result = status.equals(DeploymentStatus.INTACT);
+		
+		if (!expectedStatusINTACT){
+			msg = "not "+msg;
+			result = !result;
+			int processingUnitInstancesSize = admin.getProcessingUnits().getProcessingUnit(pu.getName()).getInstances().length;
+			assertTrue("ProcessingUnit Instances should be 0 but it is: "+processingUnitInstancesSize, processingUnitInstancesSize == 0);
+		}
+		assertTrue("PU deployment status should "+msg,result);
+	}
+	
+	private ProcessingUnit deployPUBase(ElasticDataGridDeployment dataGrid,String isolationLevel){
+		ProcessingUnit pu = esm.deploy(dataGrid);
+		System.out.println("PU deployed: " + pu.getName() + " " + pu.getNumberOfInstances()+","+pu.getNumberOfBackups()+",Isolation level : "+isolationLevel);
+		return pu;
+	}
+	
+	private ElasticDataGridDeployment createElasticDataGridBase(String name, boolean highlyAvailable) {
+		return new ElasticDataGridDeployment(name)
+		.capacity("100m", "100m")        
+		.initialJavaHeapSize("100m")
+		.maximumJavaHeapSize("100m")
+		.addSla(new MemorySla("99%"))
+		.highlyAvailable(highlyAvailable);		
+	}
+	
+	private ProcessingUnit deploySharedPU(String... names) {
+		boolean highlyAvailableFlag = false;
+		if (names.length == 3){
+			highlyAvailableFlag=true;
+		}
+		ElasticDataGridDeployment dataGrid = createElasticDataGridBase(names[0],highlyAvailableFlag).sharedDeploymentIsolation(names[1]);
+		return deployPUBase(dataGrid,"Shared");
+	}
+	
+	private ProcessingUnit deployPublicPU(String... names) {
+		boolean highlyAvailableFlag = false;
+		if (names.length == 2){
+			highlyAvailableFlag=true;
+		}
+		ElasticDataGridDeployment dataGrid = createElasticDataGridBase(names[0],highlyAvailableFlag).publicDeploymentIsolation();
+		return deployPUBase(dataGrid,"Public");
+	}
+
+	private ProcessingUnit deployDedicatedPU(String... names) {
+		boolean highlyAvailableFlag = false;
+		if (names.length == 2){
+			highlyAvailableFlag=true;
+		}
+		ElasticDataGridDeployment dataGrid = createElasticDataGridBase(names[0],highlyAvailableFlag).dedicatedDeploymentIsolation();
+		return deployPUBase(dataGrid,"Dedicated");
+	}
+	
+}

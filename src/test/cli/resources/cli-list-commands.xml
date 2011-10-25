@@ -1,0 +1,39 @@
+<commands>
+
+	<!--  
+		this test (list) will not pass under IDE Environment, as it is expecting to be run as part of
+		SGTest Evnvironmnet 
+	-->
+	<command args="list">
+		<pattern regex="][\t ]*[0-9]+[\t ]*GSC" expected-amount="6" />
+		<pattern regex="][\t ]*[0-9]+[\t ]*Grid Service Agent" expected-amount="4" />
+		<pattern regex="][\t ]*[0-9]+[\t ]*GSM" expected-amount="2" />
+		<pattern regex="][\t ]*[0-9]+[\t ]*A[^\.]" expected-amount="4" />
+		<pattern regex="][\t ]*A_container" expected-amount="4" />
+		<pattern regex="][\t ]*[0-9]+[\t ]*A\.1" expected-amount="2" />
+		<pattern regex="][\t ]*[0-9]+[\t ]*A\.2" expected-amount="2" />
+	</command> 
+
+	<command args="list gsc">
+		<pattern regex="total 6" expected-amount="1" />
+		<pattern regex="][\t ]*[0-9]+[\t ]*GSC" expected-amount="6" />
+		<pattern regex="No contained services" expected-amount="2" />
+		<pattern regex="A\.1" expected-amount="2" />
+		<pattern regex="A\.2" expected-amount="2" />
+	</command>
+	
+	<command args="list gsm">
+		<pattern regex="Found 2 GSMs" expected-amount="1" />
+		<pattern regex="][\t ]*[0-9]+[\t ]*GSM" expected-amount="2" />
+		<pattern regex="role=backup" expected-amount="1" />
+		<pattern regex="role=primary" expected-amount="1" />
+		<pattern regex="\tA\t" expected-amount="2" />
+		<pattern regex=" A\.1\t" expected-amount="2" />
+		<pattern regex=" A\.2\t" expected-amount="2" />
+		<pattern regex="\tplanned=2\tactual=2\tpending=0" expected-amount="2" />
+		<pattern regex="\tplanned=2\tactual=2\tpending=.n/a." expected-amount="2" />
+		<pattern regex=" id=1\t" expected-amount="4" />
+		<pattern regex=" id=2\t" expected-amount="4" />
+	</command>
+	
+</commands>

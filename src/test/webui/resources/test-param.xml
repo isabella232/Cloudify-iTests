@@ -1,0 +1,81 @@
+<tests>
+	<test name = "EDGDeployTest">
+		<param name="dataGridName" value="TestGrid" />
+		<param name="isSecured" value="false" />
+		<param name="userName" value="" />
+		<param name="password" value="" />
+		<param name="numberOfInstances" value="1" />
+		<param name="numberOfBackups" value="0" />
+		<param name="clusterSchema" value="[None]" />
+		<param name="maxInstPerVM" value="" />
+		<param name="maxInstPerMachine" value="" />
+	</test>
+	
+	<test name = "MemcachedDeployTest">
+		<param name="spaceUrl" value="/./test" />
+		<param name="isSecured" value="false" />
+		<param name="userName" value="" />
+		<param name="password" value="" />
+		<param name="numberOfInstances" value="1" />
+		<param name="numberOfBackups" value="0" />
+		<param name="clusterSchema" value="[None]" />
+		<param name="maxInstPerVM" value="" />
+		<param name="maxInstPerMachine" value="" />
+	</test>
+	
+	<test name = "CustomMetricSelectionTest">
+		<param name="type" value="SPACE" />
+		<param name="name" value="execute throughput" />
+	</test>
+	
+	<test name = "CustomMetricSelectionTest">
+		<param name="type" value="SPACE" />
+		<param name="name" value="notify ack throughput" />
+	</test>
+	
+	<test name = "CustomMetricSelectionTest">
+		<param name="type" value="SPACE" />
+		<param name="name" value="notify reg throughput" />
+	</test>
+	
+	<test name = "CustomMetricSelectionTest">
+		<param name="type" value="SPACE" />
+		<param name="name" value="notify trigger throughput" />
+	</test>
+	
+	<test name = "CustomMetricSelectionTest">
+		<param name="type" value="SPACE" />
+		<param name="name" value="read throughput" />
+	</test>
+	
+	<test name = "CustomMetricSelectionTest">
+		<param name="type" value="SPACE" />
+		<param name="name" value="remove throughput" />
+	</test>
+	
+	<test name = "CustomMetricSelectionTest">
+		<param name="type" value="SPACE" />
+		<param name="name" value="take throughput" />
+	</test>
+	
+	<test name = "CustomMetricSelectionTest">
+		<param name="type" value="SPACE" />
+		<param name="name" value="update throughput" />
+	</test>
+	
+	<test name = "CustomMetricSelectionTest">
+		<param name="type" value="SPACE" />
+		<param name="name" value="write throughput" />
+	</test>
+	
+	<test name = "CustomMetricSelectionTest">
+		<param name="type" value="VM" />
+		<param name="name" value="cpu" />
+	</test>
+	
+	<test name = "CustomMetricSelectionTest">
+		<param name="type" value="VM" />
+		<param name="name" value="gc" />
+	</test>
+	
+</tests>

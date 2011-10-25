@@ -1,0 +1,78 @@
+<?xml version="1.0"?>
+
+<project name="simpledata-example" default="usage" basedir=".">
+
+	<import file="../../sgtest_build.xml" />
+
+    <property name="mypu.dir" location="${basedir}/mypu"/>
+
+	<property name="mypu-name" value="mypu" />
+    <property name="mypu-src" value="${mypu.dir}/src"/>
+    <property name="mypu-target" value="${mypu.dir}/target"/>
+    <property name="mypu-classes" value="${mypu-target}/classes"/>
+    <property name="mypu-lib" value="${mypu.dir}/lib"/>
+
+    <path id="all-gs-libs">
+    	<fileset dir="${gsHome.dir}/lib">
+            <include name="**/*.jar"/>
+            <exclude name="**/mule-os.jar" />
+        </fileset>
+    </path>
+
+    <target name="usage">
+        <echo message=""/>
+        <echo message="OpenSpaces build script"/>
+        <echo message="-----------------------------------------"/>
+        <echo message=""/>
+        <echo message="Among the available targets are:"/>
+        <echo message=""/>
+        <echo message="clean                    --> Cleans all output dirs"/>
+        <echo message="build                    --> Build all; don't create JARs"/>
+        <echo message=""/>
+    </target>
+
+	<target name="clean">
+	        <delete dir="${mypu-target}"/>
+	 </target>
+
+    <target  name="prepare">
+        <mkdir dir="${mypu-target}"/>
+        <mkdir dir="${mypu-classes}"/>
+    </target>
+
+    <target name="build" depends="clean, prepare">
+        <build src="${mypu-src}" classes="${mypu-classes}"  pu-lib="${mypu-lib}"/>
+    </target>
+
+    <macrodef name="build">
+        <attribute name="src"/>
+        <attribute name="classes"/>
+        <attribute name="pu-lib" default=""/>
+        <sequential>
+            <!--<mkdir dir="@{classes}"/>-->
+           
+            <javac destdir="@{classes}" source="1.6" target="1.6" debug="on"
+                   deprecation="false" optimize="false" failonerror="true">
+                <src path="@{src}"/>
+                <classpath refid="all-gs-libs"/>
+                <classpath>
+                  <fileset dir="@{pu-lib}">
+                    <include name="**/*.jar"/>
+                  </fileset>
+                </classpath>
+            </javac>
+             <copy todir="@{classes}" preservelastmodified="true">
+                <fileset dir="@{src}">
+                    <include name="META-INF/**/*"/>
+                    <include name="**/*.properties"/>
+                    <include name="**/*.handlers"/>
+                    <include name="**/*.schemas"/>
+                    <include name="**/*.xml"/>
+                    <include name="**/*.dtd"/>
+                    <include name="**/*.xsd"/>
+                </fileset>
+            </copy>
+        </sequential>
+    </macrodef>
+
+</project>

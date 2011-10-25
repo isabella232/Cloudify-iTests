@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<application xmlns="http://java.sun.com/xml/ns/javaee" version="5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/application_5.xsd">
+	<display-name>Simple Session</display-name>
+	<module id="EjbModule_1">
+		<ejb>simplesession.jar</ejb>
+	</module>
+	<module id="WebModule_1">
+		<web>
+			<web-uri>simplesession.war</web-uri>
+			<context-root>simplesession</context-root>
+		</web>
+	</module>
+</application>

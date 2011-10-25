@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:os-gateway="http://www.openspaces.org/schema/core/gateway"
+       xmlns:os-core="http://www.openspaces.org/schema/core"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.openspaces.org/schema/core http://www.openspaces.org/schema/8.0/core/openspaces-core.xsd
+       http://www.openspaces.org/schema/core/gateway http://www.openspaces.org/schema/8.0/core/gateway/openspaces-gateway.xsd">
+
+    <bean id="propertiesConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
+
+    <context:annotation-config/>
+
+	<os-core:space id="space" url="${localClusterUrl}" />
+	<os-core:giga-space id="gigaSpace" space="space" />
+
+	<bean id="conflictResolver" class="${conflictResolverClassName}" />
+
+    <os-gateway:sink id="sink" local-gateway-name="${localGatewayName}" gateway-lookups="gatewayLookups" local-space-url="${localClusterUrl}">
+
+	    <os-gateway:sources>    
+	    	<os-gateway:source name="${localGatewayName}" />
+	    	<os-gateway:source name="${targetGatewayName}" />
+	    </os-gateway:sources>
+	    
+	    <os-gateway:error-handling conflict-resolver="conflictResolver" max-retries-on-tx-lock="${maxRetriesOnTxLock}" tx-lock-retry-interval="${txLockRetryIterval}" />
+	    
+    </os-gateway:sink>
+
+    <os-gateway:lookups id="gatewayLookups" lookup-group="${gatewayLookupGroup}">
+    	<os-gateway:lookup gateway-name="${localGatewayName}" host="${localGatewayHost}" discovery-port="${localGatewayDiscoveryPort}" communication-port="${localGatewayCommunicationPort}" />
+    	<os-gateway:lookup gateway-name="${targetGatewayName}" host="${targetGatewayHost}" discovery-port="${targetGatewayDiscoveryPort}" communication-port="${targetGatewayCommunicationPort}" />
+    </os-gateway:lookups>
+
+
+</beans>

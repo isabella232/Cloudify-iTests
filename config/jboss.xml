@@ -1,0 +1,5 @@
+<process initial-instances="script" restart-on-exit="never">
+    <script enable="true" work-dir="${com.gs.home}/bin" unix="/export/builds/tgrid/jboss/jboss-5.1.0.GA/bin/run.sh">
+        <argument></argument>
+    </script>
+</process>

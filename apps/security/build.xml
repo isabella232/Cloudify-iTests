@@ -1,0 +1,76 @@
+<?xml version="1.0"?>
+
+<project name="security_example" default="dist" basedir=".">
+		
+	<import file="../../sgtest_build.xml" />
+	<property name="common-dir" location="${basedir}/common"/>
+    <property name="processor-dir" location="${basedir}/processor"/>
+	<property file="build.properties"/>
+	
+	<property name="common-src" value="${common-dir}/src"/>
+    <property name="common-classes" value="${common-dir}/target/classes"/>
+	<property name="common-dist" value="${common-dir}/dist"/>
+    <property name="common-jar" value="${common-dist}/common.jar"/>
+	
+	<property name="processor-src" value="${processor-dir}/src"/>
+    <property name="processor-pu" value="${processor-dir}/target/processor"/>
+	<property name="processor-pu-jar" location="${processor-dir}/../jars/processor.jar"/>
+    <property name="processor-lib" value="${processor-pu}/lib"/>
+	
+	<path id="all-libs">
+        <fileset dir="${gsHome.dir}/lib">
+            <include name="**/*.jar"/>
+            <exclude name="**/mule-os.jar" />
+        </fileset>
+    </path>
+	
+	<target name="clean">
+        <delete dir="${common-classes}"/>
+        <delete dir="${common-dist}"/>
+        <delete dir="${processor-dir}/target/"/>				
+    </target>
+	
+	<target name="build" depends="clean">
+        <build src="${common-src}" classes="${common-classes}" additional-classpath=""/>
+        <build src="${processor-src}" classes="${processor-pu}" additional-classpath="${common-classes}"/>
+    </target>
+	
+	<target name="dist" depends="build">
+        <!-- Build the common jar file -->
+        <mkdir dir="${common-dist}"/>
+        <jar basedir="${common-classes}" jarfile="${common-jar}"/>
+        
+		<!-- Copy over the common jar file to the processor lib -->
+		<copydir dest="${processor-pu}" src="${common-classes}"></copydir>
+		<!-- Create a jar file containing the processor -->
+		<jar basedir="${processor-pu}" jarfile="${processor-pu-jar}"/>	
+		
+    </target>    
+	
+	<macrodef name="build">
+        <attribute name="src"/>
+        <attribute name="classes"/>
+        <attribute name="additional-classpath"/>
+        <sequential>
+            <mkdir dir="@{classes}"/>
+
+            <javac destdir="@{classes}" source="1.6" target="1.6" debug="on"
+                   deprecation="false" optimize="false" failonerror="true">
+                <src path="@{src}"/>
+                <classpath refid="all-libs"/>
+                <classpath location="@{additional-classpath}"/>
+            </javac>
+
+            <copy todir="@{classes}" preservelastmodified="true">
+                <fileset dir="@{src}">
+                    <include name="**/*.properties"/>
+                    <include name="**/*.handlers"/>
+                    <include name="**/*.schemas"/>
+                    <include name="**/*.xml"/>
+                    <include name="**/*.dtd"/>
+                    <include name="**/*.xsd"/>
+                </fileset>
+            </copy>
+        </sequential>
+    </macrodef>
+</project>

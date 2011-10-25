@@ -1,0 +1,4 @@
+FILE QUARANTINED
+
+Microsoft Online has removed winmail.dat->Unnamed Attachment->notepad\postDeploy.bat since it
+was found to match the FILE FILTER= unnamed: *.bat file filter.

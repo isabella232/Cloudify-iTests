@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<suite name="topology">
+	<test name="Topology Tests">
+		<packages>
+			<package name="test.webui.topology.applicationmap"/>
+			<package name="test.webui.topology.healthpanel"/>
+			<package name="test.webui.topology.detailspanel"/>
+			<package name="test.webui.topology.physicalpanel"/>
+		</packages>
+	</test>
+</suite>

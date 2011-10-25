@@ -1,0 +1,180 @@
+
+<project name="sgtest-runner" default="testsummary" basedir=".">
+
+    <!-- import user properties -->
+    <loadproperties srcfile="run.properties"/>
+
+    <!-- sgtest properties -->
+    <property name="sgtest.homedir" value="${basedir}\..\"/>
+    <property name="sgtest.jar.name" value="gs-sgtest.jar"/>
+    <property name="sgtest.jar" value="${sgtest.homedir}lib/${sgtest.jar.name}"/>
+    <property name="testng.tmp.reports.dir" value="${sgtest.homedir}/tmp-reports"/>
+    <property name="testng.summary.dir" value="${sgtest.homedir}/deploy/local-builds/build_${BUILD_NUMBER}/${SUITE_NAME}"/>
+	<property name="build.dir" value="${sgtest.homedir}/deploy/local-builds/build_${BUILD_NUMBER}/gigaspaces"/>
+	<property name="report.dir" value="${sgtest.homedir}/deploy/local-builds/build_${BUILD_NUMBER}"/>
+    <property name="testng.reports.dir" value="${sgtest.homedir}/deploy/local-builds/"/>
+    <property name="tmp.testng.classes" value="${sgtest.homedir}/tmp"/>
+	<property name="build.file" value="${build.folder}-b${BUILD_NUMBER}.zip"/>
+	<property name="build.location" value="${sgtest.homedir}..\"/>
+	<property name="GROUP_NAME" value="${group.name}"/>
+	
+	<condition property="CLI_DIR" value="${build.dir}/tools/cli" else="">
+		<and>
+		<equals arg1="${GROUP_NAME}" arg2="cloudify"/>
+		</and>
+	</condition>
+	
+	<echo message="Cli dir is ${CLI_DIR}"/>
+
+	
+    <!-- classpath -->
+    <path id="classpath">
+	
+        <!-- using all jars found in homedir/lib/ext -->
+        <fileset dir="${sgtest.homedir}/lib/testng">
+            <include name="**/*.jar"/>
+        </fileset>
+
+        <!-- commons jars -->
+        <fileset dir="${sgtest.homedir}/lib/commons">
+            <include name="**/*.jar"/>
+        </fileset>
+
+        <!-- hamcrest jars -->
+        <fileset dir="${sgtest.homedir}/lib/hamcrest">
+            <include name="**/*.jar"/>
+        </fileset>
+
+        <!-- hsql jar -->
+        <fileset dir="${sgtest.homedir}/lib/hsql">
+            <include name="**/*.jar"/>
+        </fileset>
+
+        <!-- xml jars -->
+        <fileset dir="${sgtest.homedir}/lib/xml">
+            <include name="**/*.jar"/>
+        </fileset>
+
+        <fileset dir="${build.dir}/lib/required">
+            <include name="**/*.jar"/>
+        </fileset>
+
+		<!-- hiberbate jars -->
+        <fileset dir="${sgtest.homedir}/lib/hibernate">
+            <include name="**/*.jar"/>
+        </fileset>
+    	
+    	<!-- spring jars -->
+        <fileset dir="${sgtest.homedir}/lib/spring">
+            <include name="**/*.jar"/>
+        </fileset>
+
+		<!-- Jsch jars -->
+		<fileset dir="${sgtest.homedir}/lib/jsch">
+			<include name="**/*.jar"/>
+		</fileset>
+				
+		<!-- XenServer jars -->
+		<fileset dir="${sgtest.homedir}/lib/xenserver">
+			<include name="**/*.jar"/>
+		</fileset>
+
+		<!-- Selenium jars -->
+		<fileset dir="${sgtest.homedir}/lib/selenium">
+			<include name="**/*.jar"/>
+		</fileset>
+    	
+		<!-- cli jars -->
+		<fileset dir="${CLI_DIR}">
+			<include name="**/*.jar"/>
+		</fileset>
+
+		
+		<!-- simplejavaprocessjars -->
+		<fileset dir="${sgtest.homedir}/apps/USM/usm/simplejavaprocess">
+			<include name="**/*.jar"/>
+		</fileset>
+		
+		<!-- sigar jars -->
+		<fileset dir="${build.dir}/lib/platform/sigar">
+        	<include name="**/*.jar"/>
+    	</fileset>
+
+		<!-- groovy jars -->
+		<fileset dir="${build.dir}/tools/groovy/lib">
+	        <include name="**/groovy*.jar"/>
+			<include name="**/commons-logging*.jar"/>
+			<include name="**/bsf*.jar"/>
+	    </fileset>	
+			
+		<!-- mail jars -->
+		<fileset dir="${sgtest.homedir}/lib/mail">
+        	<include name="**/*.jar"/>
+    	</fileset>
+	
+		<dirset dir="${sgtest.homedir}/config"/>
+		
+		
+		<dirset dir="${tmp.testng.classes}/apps">
+			
+			<!-- the following are to be included into sg-test classpath -->
+			<include name="**/common/**" />
+			<include name="**/remoting/**" />
+			 <include name="**/remotingExceptionHandling/**" />
+		</dirset>
+
+		<pathelement location="${sgtest.jar}"/>
+
+    </path>
+
+    <target name="prepare">
+        <delete dir="${tmp.testng.classes}"/>
+        <delete dir="${sgtest.homedir}/bin/apps"/>
+    </target>
+
+    <!--
+         Run test suite and generate test summary.
+    -->
+    <target name="testsummary" description="Run tests and generate test summary" depends="prepare">
+        <mkdir dir="${tmp.testng.classes}"/>
+        <unzip src="${sgtest.homedir}/lib/gs-sgtest.jar" dest="${tmp.testng.classes}"/>
+
+        <mkdir dir="${sgtest.homedir}/bin/apps"/>
+        <copy todir="${sgtest.homedir}/bin/apps">
+            <fileset dir="${tmp.testng.classes}/apps"/>
+        </copy>
+	 <taskdef resource="testngtasks" classpathref="classpath"/>
+    	<echo message="using group : ${group.name}"/>
+        <testng suitename="${SUITE_NAME}" testname="${SUITE_NAME}" classpathref="classpath" outputDir="${testng.summary.dir}"
+        	sourcedir="${tmp.testng.classes}" haltOnfailure="false" useDefaultListeners="false"	groups="${group.name}"
+        	listeners="framework.testng.SGTestNGListener, framework.testng.SGTestNGMethodInterceptor, org.uncommons.reportng.HTMLReporter">
+        	<jvmarg line="-Djava.security.policy=policy/policy.all -Djava.awt.headless=true -Xmx1024m -XX:MaxPermSize=512m"/>
+        	<classfileset dir="${tmp.testng.classes}" includes="${INCLUDE}" excludes="${EXCLUDE},${exclude.suite}"/>            	
+         <sysproperty key="org.uncommons.reportng.title" value="Service Grid Tests Report - Build ${BUILD_NUMBER}"/>
+	     <sysproperty key="sgtest.buildNumber" value="${BUILD_NUMBER}"/>
+	     <sysproperty key="sgtest.suiteName" value="${SUITE_NAME}"/>	
+            <sysproperty key="sgtest.buildFolder" value="${report.dir}/${SUITE_NAME}"/>
+            <sysproperty key="sgtest.url" value="http://192.168.9.121:8087/sgtest.webui/"/>
+        </testng>
+
+         <java classpath="${sgtest.homedir}/lib/gs-sgtest.jar" classname="framework.report.HTMLReport" >
+            <arg value="${testng.reports.dir}" />
+            <arg value="${BUILD_NUMBER}" />
+	     <jvmarg line="-Xmx1024 -XX:MaxPermSize=512m"/>
+	     <sysproperty key="sgtest.suiteName" value="${SUITE_NAME}"/>
+        </java>
+    </target>
+	
+	<target name="relocate-build">
+	
+		<unzip src="${build.location}${build.file}" dest="C:\Users\ca\sgtest-webui\deploy\local-builds\build_${BUILD_NUMBER}"/>
+		<rename src="C:\Users\ca\sgtest-webui\deploy\local-builds\build_${BUILD_NUMBER}\${build.folder}" dest="C:\Users\ca\sgtest-webui\deploy\local-builds\build_${BUILD_NUMBER}\gigaspaces"/>
+		<copy file="${sgtest.homedir}\config\hsqldb.xml" todir="C:\Users\ca\sgtest-webui\deploy\local-builds\build_${BUILD_NUMBER}\gigaspaces\config\gsa"/>
+		<mkdir dir="\\tarzan\users\ca\Eli_Test\gigaspaces"/>
+		<copy todir="\\tarzan\users\ca\Eli_Test\gigaspaces">
+			<fileset dir="C:\Users\ca\sgtest-webui\deploy\local-builds\build_${BUILD_NUMBER}\gigaspaces"/>
+		</copy>
+		
+	</target>
+
+</project>

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:os-core="http://www.openspaces.org/schema/core"
+      xmlns:os-events="http://www.openspaces.org/schema/events"
+      xmlns:os-remoting="http://www.openspaces.org/schema/remoting"
+      xmlns:os-sla="http://www.openspaces.org/schema/sla"
+      xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+      http://www.openspaces.org/schema/core http://www.openspaces.org/schema/core/openspaces-core.xsd
+      http://www.openspaces.org/schema/events http://www.openspaces.org/schema/events/openspaces-events.xsd
+      http://www.openspaces.org/schema/remoting http://www.openspaces.org/schema/remoting/openspaces-remoting.xsd
+      http://www.openspaces.org/schema/sla http://www.openspaces.org/schema/sla/openspaces-sla.xsd">
+
+   <!-- Spring property configurer which allows us to use system properties (such as user.name). -->
+   <bean id="propertiesConfigurer"
+         class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
+
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+    	<property name="driverClassName" value="org.hsqldb.jdbcDriver"/>
+    	<property name="url" value="jdbc:hsqldb:hsql://${host}:${port}"/>
+    	<property name="username" value="sa"/>
+    	<property name="password" value=""/>
+	</bean>
+
+	<bean id="sessionFactory" class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+	    <property name="dataSource" ref="dataSource"/>
+	    <property name="mappingResources">
+	        <list>
+	            <value>Account.hbm.xml</value>
+	            <value>ProcessedAccount.hbm.xml</value>
+	        </list>
+	    </property>
+	    <property name="hibernateProperties">
+	        <props>
+	            <prop key="hibernate.dialect">org.hibernate.dialect.HSQLDialect</prop>
+	            <prop key="hibernate.cache.provider_class">org.hibernate.cache.NoCacheProvider</prop>
+	            <prop key="hibernate.cache.use_second_level_cache">false</prop>
+	            <prop key="hibernate.cache.use_query_cache">false</prop>
+                <prop key="hibernate.jdbc.use_scrollable_resultset">true</prop>
+	            <prop key="hibernate.hbm2ddl.auto">update</prop>
+	        </props>
+	    </property>
+	</bean>
+
+	<bean id="hibernateDataSource" class="org.openspaces.persistency.hibernate.DefaultHibernateExternalDataSource">
+	    <property name="sessionFactory" ref="sessionFactory"/>
+	</bean>
+	
+	<!-- A bean representing a space (an IJSpace implementation)
+        if embedded use a /./ if not use jini://*/*/                      -->
+	<os-core:space id="space" url="/./hibernateSpace" schema="persistent" mirror="true" external-data-source="hibernateDataSource">
+		<os-core:properties>
+		    <props>
+		        <prop key="com.gs.cluster.cache-loader.external-data-source">true</prop>
+		        <prop key="com.gs.cluster.cache-loader.central-data-source">true</prop>
+		        <prop key="space-config.external-data-source.usage">read-only</prop>
+                <prop key="space-config.engine.cache_policy">1</prop>
+		    </props>
+		</os-core:properties>
+	</os-core:space>
+	<!--
+	
+	         <prop key="-Dspace-config.external-data-source.usage">read-only</prop>  
+	<os-core:space id="space" url="/./hibernateSpace" schema="default" mirror="true">
+	</os-core:space>
+	
+	 -->
+	 
+	<!-- OpenSpaces simplified space API built on top of IJSpace/JavaSpace. -->
+	<os-core:giga-space id="hibernateSpace" space="space"/>
+	
+	<!-- MyWorker Service -->
+	<bean id="MyWorker" class="com.gigaspaces.ps.hibernateimpl.worker.MyWorker">
+	</bean>
+	
+	 <!--
+	     A polling event container that performs (by default) polling take operations against
+	     the space using the provided template.
+	     Once a match is found, the data processor bean event listener is triggered using the
+	     annotation adapter.
+	     You must edit this to provide the Account attribute and its value to be used 
+	     for the template:
+	     See the FIXMEs...
+	 -->
+     <os-events:notify-container id="AccountEventContainer" giga-space="hibernateSpace">
+        <os-core:template>
+            <bean class="com.gigaspaces.ps.hibernateimpl.common.Account">
+            </bean>
+        </os-core:template>
+        <os-events:listener>
+            <os-events:annotation-adapter>
+                <os-events:delegate ref="MyWorker"/>
+            </os-events:annotation-adapter>
+        </os-events:listener>
+     </os-events:notify-container>
+
+     <os-sla:sla cluster-schema="partitioned-sync2backup" number-of-instances="2" number-of-backups="1">
+     </os-sla:sla>    
+
+     <!--     
+	<os-sla:sla cluster-schema="partitioned" number-of-instances="2" 
+                max-instances-per-vm="1">
+     </os-sla:sla>  -->    
+</beans>

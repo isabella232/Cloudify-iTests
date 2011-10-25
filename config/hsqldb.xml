@@ -1,0 +1,6 @@
+<process initial-instances="vm" restart-on-exit="never">
+	<vm enable="true" work-dir="${com.gs.home}/bin" main-class="org.hsqldb.Server">
+		<input-argument></input-argument>
+        <classpath>${com.gs.home}/lib/platform/jdbc/hsqldb.jar</classpath>
+    </vm>
+</process>

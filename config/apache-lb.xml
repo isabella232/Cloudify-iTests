@@ -1,0 +1,5 @@
+<process initial-instances="script" restart-on-exit="never">
+    <script enable="true" work-dir="${com.gs.home}/bin" unix="${com.gs.home}/tools/apache/apache-lb-agent.sh">
+        <argument></argument>
+    </script>
+</process>

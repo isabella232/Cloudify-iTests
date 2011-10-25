@@ -1,0 +1,13 @@
+<!--
+ * Title:        SGTest ant build.xml file.
+ * Description:  This Ant build.xml file builds sgtest project.
+ 			     Note that test folders are not complied here, nor added to gs-sgtest.jar.
+ *
+ * @author       Kobi
+ * @version      1.0
+-->
+
+<project name="sgtest-build-properties" basedir=".">
+     <property name="gsHome.dir" value="/export/users/kobi/8.0.2/gigaspaces-xap-premium-8.0.2-m1"/>
+
+</project>

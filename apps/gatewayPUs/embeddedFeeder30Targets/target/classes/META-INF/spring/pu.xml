@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?><beans xmlns="http://www.springframework.org/schema/beans" xmlns:context="http://www.springframework.org/schema/context" xmlns:os-core="http://www.openspaces.org/schema/core" xmlns:os-events="http://www.openspaces.org/schema/events" xmlns:os-gateway="http://www.openspaces.org/schema/core/gateway" xmlns:os-jms="http://www.openspaces.org/schema/jms" xmlns:os-remoting="http://www.openspaces.org/schema/remoting" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd        http://www.openspaces.org/schema/core http://www.openspaces.org/schema/8.0/core/openspaces-core.xsd        http://www.openspaces.org/schema/events http://www.openspaces.org/schema/8.0/events/openspaces-events.xsd        http://www.openspaces.org/schema/remoting http://www.openspaces.org/schema/8.0/remoting/openspaces-remoting.xsd        http://www.openspaces.org/schema/jms http://www.openspaces.org/schema/8.0/jms/openspaces-jms.xsd        http://www.openspaces.org/schema/core/gateway http://www.openspaces.org/schema/8.0/core/gateway/openspaces-gateway.xsd">
+
+
+	<!-- Spring propery configurer which allows us to use system properties 
+		(such as user.name). -->
+	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer" id="propertiesConfigurer">
+	</bean>
+
+	<context:annotation-config/>
+
+	<!-- Scan for components (both Spring ones and OpenSpaces ones) -->
+	<context:component-scan base-package="com.gatewayPUs.embeddedFeeder"/>
+
+	<!-- Enables the usage of @GigaSpaceContext annotation based injection. -->
+	<os-core:giga-space-context/>
+	
+	<os-core:space gateway-targets="gatewayTargets" id="space" url="${spaceUrl}"/>
+	
+	<!-- OpenSpaces simplified space API built on top of IJSpace/JavaSpace. -->
+	<os-core:giga-space id="gigaSpace" space="space"/>
+
+	<os-gateway:targets id="gatewayTargets" local-gateway-name="${localGatewayName}">
+		<os-gateway:target name="${gatewayTarget0}"/>
+		<os-gateway:target name="${gatewayTarget1}"/>
+		<os-gateway:target name="${gatewayTarget2}"/>
+		<os-gateway:target name="${gatewayTarget3}"/>
+		<os-gateway:target name="${gatewayTarget4}"/>
+		<os-gateway:target name="${gatewayTarget5}"/>
+		<os-gateway:target name="${gatewayTarget6}"/>
+		<os-gateway:target name="${gatewayTarget7}"/>
+		<os-gateway:target name="${gatewayTarget8}"/>
+		<os-gateway:target name="${gatewayTarget9}"/>
+		<os-gateway:target name="${gatewayTarget10}"/>
+		<os-gateway:target name="${gatewayTarget11}"/>
+		<os-gateway:target name="${gatewayTarget12}"/>
+		<os-gateway:target name="${gatewayTarget13}"/>
+		<os-gateway:target name="${gatewayTarget14}"/>
+		<os-gateway:target name="${gatewayTarget15}"/>
+		<os-gateway:target name="${gatewayTarget16}"/>
+		<os-gateway:target name="${gatewayTarget17}"/>
+		<os-gateway:target name="${gatewayTarget18}"/>
+		<os-gateway:target name="${gatewayTarget19}"/>
+		<os-gateway:target name="${gatewayTarget20}"/>
+		<os-gateway:target name="${gatewayTarget21}"/>
+		<os-gateway:target name="${gatewayTarget22}"/>
+		<os-gateway:target name="${gatewayTarget23}"/>
+		<os-gateway:target name="${gatewayTarget24}"/>
+		<os-gateway:target name="${gatewayTarget25}"/>
+		<os-gateway:target name="${gatewayTarget26}"/>
+		<os-gateway:target name="${gatewayTarget27}"/>
+		<os-gateway:target name="${gatewayTarget28}"/>
+		<os-gateway:target name="${gatewayTarget29}"/>
+	</os-gateway:targets>
+	
+	<!-- The Data feeder bean, writing new Data objects to the space in a constant 
+		interval. -->
+	<bean class="com.gatewayPUs.embeddedFeeder30Targets.EmbeddedGatewayFeeder30Targets" depends-on="gigaSpace" id="EmbeddedGatwayFeeder">
+		<property name="updatesPerThread" value="${updatesPerThread}"/>
+		<property name="numberOfThreads" value="${numberOfThreads}"/>
+		<property name="DEFAULT_TEST_TIMEOUT" value="${DEFAULT_TEST_TIMEOUT}"/>
+		<property name="initializationEndedMsgId" value="${initializationEndedMsgId}"/>
+		<property name="timeLogMsgId" value="${timeLogMsgId}"/>
+		<property name="warmUpConstant" value="${warmUpConstant}"/>
+	</bean>
+
+</beans>

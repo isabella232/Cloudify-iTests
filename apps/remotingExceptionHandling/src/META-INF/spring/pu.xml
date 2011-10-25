@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:os-core="http://www.openspaces.org/schema/core"
+       xmlns:os-events="http://www.openspaces.org/schema/events"
+       xmlns:os-remoting="http://www.openspaces.org/schema/remoting"
+       xmlns:os-sla="http://www.openspaces.org/schema/sla" xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                            http://www.springframework.org/schema/beans/spring-beans.xsd
+                            http://www.springframework.org/schema/context 
+                            http://www.springframework.org/schema/context/spring-context.xsd
+                            http://www.openspaces.org/schema/core 
+                            http://www.openspaces.org/schema/core/openspaces-core.xsd
+                            http://www.openspaces.org/schema/events 
+                            http://www.openspaces.org/schema/events/openspaces-events.xsd
+                            http://www.openspaces.org/schema/remoting 
+                            http://www.openspaces.org/schema/remoting/openspaces-remoting.xsd
+                            http://www.openspaces.org/schema/sla 
+                            http://www.openspaces.org/schema/sla/openspaces-sla.xsd
+                            http://www.springframework.org/schema/tx
+                            http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
+
+    <context:annotation-config/>
+    <os-core:annotation-support/>
+    <os-core:giga-space-context/>
+
+    <tx:annotation-driven transaction-manager="transactionManager" />
+
+    <os-core:space id="testSpace" url="/./testSpace" external-data-source="mockDataSource">
+        <os-core:properties>
+            <props>
+                <prop key="space-config.engine.cache_policy">1</prop>
+            </props>
+        </os-core:properties>
+    </os-core:space>
+
+    <os-core:distributed-tx-manager id="transactionManager" default-timeout="1000"/>
+    <os-core:giga-space id="testGigaSpace" space="testSpace" tx-manager="transactionManager"/>
+
+
+    <bean id="testService" class="com.gigaspaces.example.service.MyTestService">
+        <property name="gigaSpace" ref="testGigaSpace"/>
+    </bean>
+
+    <os-remoting:service-exporter id="serviceExporter">
+        <os-remoting:service ref="testService"/>
+    </os-remoting:service-exporter>
+
+    <bean id="mockDataSource" class="com.gigaspaces.example.dto.MockEDS"/>
+
+
+    <os-events:polling-container id="eventContainer" giga-space="testGigaSpace">
+        <os-events:listener ref="serviceExporter"/>
+    </os-events:polling-container>
+</beans>

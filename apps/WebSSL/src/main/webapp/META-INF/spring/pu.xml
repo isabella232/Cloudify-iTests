@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:os-core="http://www.openspaces.org/schema/core"
+       xmlns:os-events="http://www.openspaces.org/schema/events"
+       xmlns:os-remoting="http://www.openspaces.org/schema/remoting"
+       xmlns:os-sla="http://www.openspaces.org/schema/sla"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.openspaces.org/schema/core http://www.openspaces.org/schema/core/openspaces-core.xsd
+       http://www.openspaces.org/schema/events http://www.openspaces.org/schema/events/openspaces-events.xsd
+       http://www.openspaces.org/schema/remoting http://www.openspaces.org/schema/remoting/openspaces-remoting.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.openspaces.org/schema/sla http://www.openspaces.org/schema/sla/openspaces-sla.xsd">
+
+    <!--
+        Spring property configurer which allows us to use system properties (such as user.name).
+    -->
+    <bean id="propertiesConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
+
+    <!--
+        Enables the usage of @GigaSpaceContext annotation based injection.
+    -->
+    <os-core:giga-space-context/>
+    
+    <!--  Enables Spring Annotation configuration  -->
+    <context:annotation-config />
+    
+    <os-remoting:annotation-support />
+
+    <os-sla:sla number-of-instances="1"></os-sla:sla>
+    
+</beans>

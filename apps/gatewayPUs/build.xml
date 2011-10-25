@@ -1,0 +1,244 @@
+<?xml version="1.0"?>
+
+<project name="gatewayPUs" default="usage" basedir=".">
+
+	<import file="../../sgtest_build.xml" />
+    
+	<property name="meta-common.dir" location="${basedir}/../meta-common"/>
+	
+    <property name="common.dir" location="${basedir}/common"/>
+    <property name="feeder.dir" location="${basedir}/feeder"/>
+    <property name="embeddedFeeder1Target.dir" location="${basedir}/embeddedFeeder1Target"/>
+    <property name="embeddedFeeder10Targets.dir" location="${basedir}/embeddedFeeder10Targets"/>
+    <property name="embeddedFeeder20Targets.dir" location="${basedir}/embeddedFeeder20Targets"/>
+    <property name="embeddedFeeder30Targets.dir" location="${basedir}/embeddedFeeder30Targets"/>
+    <property name="processor.dir" location="${basedir}/processor"/>
+	<property name="synthProcessor.dir" location="${basedir}/synthProcessor"/>
+    <property name="processor-filter.dir" location="${basedir}/processor-filter"/>
+    <property name="mirror.dir" location="${basedir}/mirror"/>
+    <property name="gateway-conflict-resolver.dir" location="${basedir}/gateway-conflict-resolver"/>
+    <property name="gateway-txn-conflict-handler.dir" location="${basedir}/gateway-txn-conflict-handler"/>
+    <property name="processorAsyncPersistent.dir" location="${basedir}/processorAsyncPersistent"/>
+    <property name="multisource-filter.dir" location="${basedir}/multisource-filter"/>
+	
+	
+	<property name="meta-common-src" value="${meta-common.dir}/src"/>
+	<property name="meta-common-target" value="${meta-common.dir}/target"/>
+	<property name="meta-common-classes" value="${meta-common-target}/classes"/>
+	<property name="meta-common-lib" value="${meta-common.dir}/lib"/>
+	
+	<property name="common-name" value = "common" />
+    <property name="common-src" value="${common.dir}/src"/>
+    <property name="common-target" value="${common.dir}/target"/>
+    <property name="common-classes" value="${common-target}/classes"/>
+    <property name="common-lib" value="${common.dir}/lib"/>
+	
+	<property name="feeder-name" value = "feeder"/>
+	<property name="feeder-src" value="${feeder.dir}/src"/>
+	<property name="feeder-target" value="${feeder.dir}/target"/>
+	<property name="feeder-classes" value="${feeder-target}/classes"/>
+	<property name="feeder-lib" value="${feeder.dir}/lib"/>
+	
+	<property name="embeddedFeeder1Target-name" value = "embeddedFeeder1Target"/>
+	<property name="embeddedFeeder1Target-src" value="${embeddedFeeder1Target.dir}/src"/>
+	<property name="embeddedFeeder1Target-target" value="${embeddedFeeder1Target.dir}/target"/>
+	<property name="embeddedFeeder1Target-classes" value="${embeddedFeeder1Target-target}/classes"/>
+	<property name="embeddedFeeder1Target-lib" value="${embeddedFeeder1Target.dir}/lib"/>
+	
+	<property name="embeddedFeeder10Targets-name" value = "embeddedFeeder10Targets"/>
+	<property name="embeddedFeeder10Targets-src" value="${embeddedFeeder10Targets.dir}/src"/>
+	<property name="embeddedFeeder10Targets-target" value="${embeddedFeeder10Targets.dir}/target"/>
+	<property name="embeddedFeeder10Targets-classes" value="${embeddedFeeder10Targets-target}/classes"/>
+	<property name="embeddedFeeder10Targets-lib" value="${embeddedFeeder10Targets.dir}/lib"/>
+	
+	<property name="embeddedFeeder20Targets-name" value = "embeddedFeeder20Targets"/>
+	<property name="embeddedFeeder20Targets-src" value="${embeddedFeeder20Targets.dir}/src"/>
+	<property name="embeddedFeeder20Targets-target" value="${embeddedFeeder20Targets.dir}/target"/>
+	<property name="embeddedFeeder20Targets-classes" value="${embeddedFeeder20Targets-target}/classes"/>
+	<property name="embeddedFeeder20Targets-lib" value="${embeddedFeeder20Targets.dir}/lib"/>
+	
+	<property name="embeddedFeeder30Targets-name" value = "embeddedFeeder30Targets"/>
+	<property name="embeddedFeeder30Targets-src" value="${embeddedFeeder30Targets.dir}/src"/>
+	<property name="embeddedFeeder30Targets-target" value="${embeddedFeeder30Targets.dir}/target"/>
+	<property name="embeddedFeeder30Targets-classes" value="${embeddedFeeder30Targets-target}/classes"/>
+	<property name="embeddedFeeder30Targets-lib" value="${embeddedFeeder30Targets.dir}/lib"/>
+
+	<property name="processor-name" value="processor" />
+    <property name="processor-src" value="${processor.dir}/src"/>
+    <property name="processor-target" value="${processor.dir}/target"/>
+    <property name="processor-classes" value="${processor-target}/classes"/>
+    <property name="processor-lib" value="${processor.dir}/lib"/>
+
+    <property name="processor-filter-name" value="processor-filter" />
+    <property name="processor-filter-src" value="${processor-filter.dir}/src"/>
+    <property name="processor-filter-target" value="${processor-filter.dir}/target"/>
+    <property name="processor-filter-classes" value="${processor-filter-target}/classes"/>
+    <property name="processor-filter-lib" value="${processor-filter.dir}/lib"/>
+
+	<property name="synthProcessor-name" value="synthProcessor" />
+	<property name="synthProcessor-src" value="${synthProcessor.dir}/src"/>
+	<property name="synthProcessor-target" value="${synthProcessor.dir}/target"/>
+	<property name="synthProcessor-classes" value="${synthProcessor-target}/classes"/>
+	<property name="synthProcessor-lib" value="${synthProcessor.dir}/lib"/>
+
+    <property name="mirror-name" value="mirror" />
+	<property name="mirror-src" value="${mirror.dir}/src"/>
+	<property name="mirror-target" value="${mirror.dir}/target"/>
+	<property name="mirror-classes" value="${mirror-target}/classes"/>
+	<property name="mirror-lib" value="${mirror.dir}/lib"/>
+
+    <property name="processorAsyncPersistent-name" value="processorAsyncPersistent" />
+    <property name="processorAsyncPersistent-src" value="${processorAsyncPersistent.dir}/src"/>
+    <property name="processorAsyncPersistent-target" value="${processorAsyncPersistent.dir}/target"/>
+    <property name="processorAsyncPersistent-classes" value="${processorAsyncPersistent-target}/classes"/>
+    <property name="processorAsyncPersistent-lib" value="${processorAsyncPersistent.dir}/lib"/>
+
+    <property name="gateway-conflict-resolver-name" value="gateway-conflict-resolver" />
+	<property name="gateway-conflict-resolver-src" value="${gateway-conflict-resolver.dir}/src"/>
+	<property name="gateway-conflict-resolver-target" value="${gateway-conflict-resolver.dir}/target"/>
+	<property name="gateway-conflict-resolver-classes" value="${gateway-conflict-resolver-target}/classes"/>
+	<property name="gateway-conflict-resolver-lib" value="${gateway-conflict-resolver.dir}/lib"/>
+
+    <property name="gateway-txn-conflict-handler-name" value="gateway-txn-conflict-handler" />
+	<property name="gateway-txn-conflict-handler-src" value="${gateway-txn-conflict-handler.dir}/src"/>
+	<property name="gateway-txn-conflict-handler-target" value="${gateway-txn-conflict-handler.dir}/target"/>
+	<property name="gateway-txn-conflict-handler-classes" value="${gateway-txn-conflict-handler-target}/classes"/>
+	<property name="gateway-txn-conflict-handler-lib" value="${gateway-txn-conflict-handler.dir}/lib"/>
+
+	<property name="multisource-filter-name" value="multisource-filter" />
+	<property name="multisource-filter-src" value="${multisource-filter.dir}/src"/>
+	<property name="multisource-filter-target" value="${multisource-filter.dir}/target"/>
+	<property name="multisource-filter-classes" value="${multisource-filter-target}/classes"/>
+	<property name="multisource-filter-lib" value="${multisource-filter.dir}/lib"/>
+
+	<path id="all-gs-libs">
+    	<fileset dir="${gsHome.dir}/lib">
+            <include name="**/*.jar"/>
+            <exclude name="**/mule-os.jar" />
+        </fileset>
+    </path>
+
+    <path id="all-common-libs">
+    	<fileset dir="${meta-common-lib}">
+            <include name="**/*.jar"/>
+        </fileset>
+        <fileset dir="${common-lib}">
+            <include name="**/*.jar"/>
+        </fileset>
+    </path>
+
+    <target name="usage">
+        <echo message=""/>
+        <echo message="OpenSpaces build script"/>
+        <echo message="-----------------------------------------"/>
+        <echo message=""/>
+        <echo message="Among the available targets are:"/>
+        <echo message=""/>
+        <echo message="clean                    --> Cleans all output dirs"/>
+        <echo message="build                    --> Build all; don't create JARs"/>
+        <echo message=""/>
+    </target>
+
+	<target name="clean">
+	        <delete dir="${common-target}"/>
+	        <delete dir="${feeder-target}"/>
+	        <delete dir="${embeddedFeeder10Targets-target}"/>
+	        <delete dir="${embeddedFeeder20Targets-target}"/>
+	        <delete dir="${embeddedFeeder30Targets-target}"/>
+	        <delete dir="${processor-target}"/>
+            <delete dir="${processor-filter-target}"/>
+			<delete dir="${synthProcessor-target}"/>
+            <delete dir="${mirror-target}"/>
+            <delete dir="${gateway-conflict-resolver-target}"/>
+            <delete dir="${gateway-txn-conflict-handler-target}"/>
+            <delete dir="${processorAsyncPersistent-target}"/>
+            <delete dir="${multisource-filter-target}"/>
+	 </target>
+
+    <target  name="prepare">
+        <mkdir dir="${meta-common-target}"/>
+        <mkdir dir="${common-target}"/>
+        <mkdir dir="${processor-target}"/>
+        <mkdir dir="${processor-filter-target}"/>
+    	<mkdir dir="${synthProcessor-target}"/>
+        <mkdir dir="${feeder-target}"/>
+        <mkdir dir="${embeddedFeeder1Target-target}"/>
+        <mkdir dir="${embeddedFeeder10Targets-target}"/>
+        <mkdir dir="${embeddedFeeder20Targets-target}"/>
+        <mkdir dir="${embeddedFeeder30Targets-target}"/>
+        <mkdir dir="${mirror-target}"/>
+        <mkdir dir="${processorAsyncPersistent-target}"/>
+        <mkdir dir="${gateway-conflict-resolver-target}"/>
+    	<mkdir dir="${gateway-txn-conflict-handler-target}"/>
+    	<mkdir dir="${multisource-filter-target}"/>
+        <mkdir dir="${meta-common-classes}"/>
+        <mkdir dir="${common-classes}"/>
+        <mkdir dir="${processor-classes}"/>
+        <mkdir dir="${processor-filter-classes}"/>
+        <mkdir dir="${synthProcessor-classes}"/>
+        <mkdir dir="${feeder-classes}"/>
+        <mkdir dir="${embeddedFeeder10Targets-classes}"/>
+        <mkdir dir="${embeddedFeeder20Targets-classes}"/>
+        <mkdir dir="${embeddedFeeder30Targets-classes}"/>
+        <mkdir dir="${mirror-classes}"/>
+        <mkdir dir="${gateway-conflict-resolver-classes}"/>
+        <mkdir dir="${gateway-txn-conflict-handler-classes}"/>
+        <mkdir dir="${processorAsyncPersistent-classes}"/>
+        <mkdir dir="${multisource-filter-classes}"/>
+    </target>
+
+    <target name="build" depends="clean, prepare">
+        <build src="${meta-common-src}" classes="${meta-common-classes}" />
+        <build src="${common-src}" classes="${common-classes}"/>
+        <build src="${processor-src}" classes="${processor-classes}" common-classpath="${common-classes}" meta-common-classpath="${meta-common-classes}" pu-lib="${processor-lib}"/>
+        <build src="${processor-filter-src}" classes="${processor-filter-classes}" common-classpath="${common-classes}" meta-common-classpath="${meta-common-classes}" pu-lib="${processor-filter-lib}"/>
+        <build src="${synthProcessor-src}" classes="${synthProcessor-classes}" common-classpath="${common-classes}" meta-common-classpath="${meta-common-classes}" pu-lib="${synthProcessor-lib}"/>
+        <build src="${mirror-src}" classes="${mirror-classes}" common-classpath="${common-classes}" meta-common-classpath="${meta-common-classes}" pu-lib="${mirror-lib}"/>
+        <build src="${gateway-conflict-resolver-src}" classes="${gateway-conflict-resolver-classes}" common-classpath="${common-classes}" meta-common-classpath="${meta-common-classes}" pu-lib="${gateway-conflict-resolver-lib}"/>
+        <build src="${gateway-txn-conflict-handler-src}" classes="${gateway-txn-conflict-handler-classes}" common-classpath="${common-classes}" meta-common-classpath="${meta-common-classes}" pu-lib="${gateway-txn-conflict-handler-lib}"/>
+        <build src="${processorAsyncPersistent-src}" classes="${processorAsyncPersistent-classes}" common-classpath="${common-classes}" meta-common-classpath="${meta-common-classes}" pu-lib="${processorAsyncPersistent-lib}"/>
+        <build src="${feeder-src}" classes="${feeder-classes}" common-classpath="${common-classes}" meta-common-classpath="${meta-common-classes}" pu-lib="${feeder-lib}"/>
+        <build src="${embeddedFeeder1Target-src}" classes="${embeddedFeeder1Target-classes}" common-classpath="${common-classes}" meta-common-classpath="${meta-common-classes}" pu-lib="${embeddedFeeder1Target-lib}"/>
+        <build src="${embeddedFeeder10Targets-src}" classes="${embeddedFeeder10Targets-classes}" common-classpath="${common-classes}" meta-common-classpath="${meta-common-classes}" pu-lib="${embeddedFeeder10Targets-lib}"/>
+        <build src="${embeddedFeeder20Targets-src}" classes="${embeddedFeeder20Targets-classes}" common-classpath="${common-classes}" meta-common-classpath="${meta-common-classes}" pu-lib="${embeddedFeeder20Targets-lib}"/>
+        <build src="${embeddedFeeder30Targets-src}" classes="${embeddedFeeder30Targets-classes}" common-classpath="${common-classes}" meta-common-classpath="${meta-common-classes}" pu-lib="${embeddedFeeder30Targets-lib}"/>
+        <build src="${multisource-filter-src}" classes="${multisource-filter-classes}" common-classpath="${common-classes}" meta-common-classpath="${meta-common-classes}" pu-lib="${multisource-filter-lib}"/>
+    </target>
+
+    <macrodef name="build">
+        <attribute name="src"/>
+        <attribute name="classes"/>
+        <attribute name="common-classpath" default=""/>
+        <attribute name="meta-common-classpath" default=""/>
+        <attribute name="pu-lib" default=""/>
+        <sequential>
+            <!--<mkdir dir="@{classes}"/>-->
+           
+            <javac destdir="@{classes}" source="1.6" target="1.6" debug="on"
+                   deprecation="false" optimize="false" failonerror="true">
+                <src path="@{src}"/>
+                <classpath refid="all-gs-libs"/>
+                <classpath refid="all-common-libs"/>
+                <classpath location="@{common-classpath}"/>
+                <classpath location="@{meta-common-classpath}"/>
+                <classpath>
+                  <fileset dir="@{pu-lib}">
+                    <include name="**/*.jar"/>
+                  </fileset>
+                </classpath>
+            </javac>
+             <copy todir="@{classes}" preservelastmodified="true">
+                <fileset dir="@{src}">
+                    <include name="META-INF/**/*"/>
+                    <include name="**/*.properties"/>
+                    <include name="**/*.handlers"/>
+                    <include name="**/*.schemas"/>
+                    <include name="**/*.xml"/>
+                    <include name="**/*.dtd"/>
+                    <include name="**/*.xsd"/>
+                </fileset>
+            </copy>
+        </sequential>
+    </macrodef>
+
+</project>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:os-core="http://www.openspaces.org/schema/core"
+       xmlns:os-events="http://www.openspaces.org/schema/events"
+       xmlns:os-remoting="http://www.openspaces.org/schema/remoting"
+       xmlns:os-jms="http://www.openspaces.org/schema/jms"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.openspaces.org/schema/core http://www.openspaces.org/schema/core/openspaces-core.xsd
+       http://www.openspaces.org/schema/events http://www.openspaces.org/schema/events/openspaces-events.xsd
+       http://www.openspaces.org/schema/remoting http://www.openspaces.org/schema/remoting/openspaces-remoting.xsd
+       http://www.openspaces.org/schema/jms http://www.openspaces.org/schema/jms/openspaces-jms.xsd">
+    <bean id="propertiesConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="properties">
+            <props>
+                <prop key="accounts">10000</prop>
+                <prop key="delay">100</prop>
+            </props>
+        </property>
+    </bean>
+    <context:annotation-config/>
+
+    <os-core:giga-space-context/>
+
+    <os-core:space id="space" url="jini://*/*/hibernateSpace"/>
+    <os-core:giga-space id="hibernateSpace" space="space" default-write-lease="600000"/>
+    <os-core:local-cache id="localCacheSpace" space="space" update-mode="PULL"/>
+    <os-core:giga-space id="hibernateLocalCacheSpace" space="localCacheSpace" default-write-lease="600000"/>
+
+
+    <!-- MyDataLoader Service -->
+    <bean id="MyDataLoader" class="com.gigaspaces.ps.hibernateimpl.loader.MyDataLoader"
+          depends-on="hibernateLocalCacheSpace">
+        <property name="instanceId" value="${clusterInfo.instanceId}"/>
+        <property name="accounts" value="${accounts}"/>
+        <property name="delay" value="${delay}"/>
+    </bean>
+</beans>

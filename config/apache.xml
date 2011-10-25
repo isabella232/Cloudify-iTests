@@ -1,0 +1,5 @@
+<process initial-instances="script" restart-on-exit="never">
+    <script enable="true" work-dir="${com.gs.home}/bin" unix="/usr/local/apache2/bin/apachectl">
+        <argument></argument>
+    </script>
+</process>

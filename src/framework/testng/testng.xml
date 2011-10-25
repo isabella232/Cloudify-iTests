@@ -1,0 +1,5 @@
+<suite name="Template" verbose="1" >
+<listeners>
+    <listener class-name="framework.testng.SGTestNGListener" />
+</listeners>
+</suite>

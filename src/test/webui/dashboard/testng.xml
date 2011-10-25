@@ -1,0 +1,9 @@
+<suite name="dashboard">
+	<test name="Dashboard Tests">
+		<packages>
+			<package name="test.webui.dashboard.alerts" />
+			<package name="test.webui.dashboard.grid" />
+			<package name="test.webui.dashboard.services" />
+		</packages>
+	</test>
+</suite>

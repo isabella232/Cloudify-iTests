@@ -1,0 +1,44 @@
+#!/bin/bash
+
+##############################################
+# remote-sgteest-executer.sh args
+# 1 arg deploy root directory (sgtest/deploy).
+# 2 build root directory
+# 3 java type
+# 4 lookup groups
+##############################################
+
+ DEPLOY_ROOT_BIN_DIR=$1
+ BUILD_DIR=$2; export BUILD_DIR
+ JAVA_TYPE=$3
+ LOOKUPGROUPS=$4; export LOOKUPGROUPS
+ BUILD_NUMBER=$5
+
+
+ # set shell.
+# TERM=xterm export TERM
+ JSHOMEDIR=${BUILD_DIR}; export JSHOMEDIR
+
+ # set path of sgtest/bin (#1 script argument)
+ SGTEST_ROOT_BIN_DIR=${DEPLOY_ROOT_BIN_DIR}/../../bin/
+
+ # setup env variables and common functions
+ cd ${DEPLOY_ROOT_BIN_DIR}
+ . set-deploy-env.sh
+ ${CONFIG_JAVA_SCRIPT} ${JAVA_TYPE}
+
+ cd ${SGTEST_ROOT_BIN_DIR}
+
+ #start sgtest
+ ${SGTEST_ROOT_BIN_DIR}/sgtest-cmd.sh ${BUILD_NUMBER}
+
+ RESULT=$?
+
+ #write a result file
+ RESULT_INDICATOR_FILE="${DEPLOY_ROOT_BIN_DIR}/../result_indicator/sgtest_end"
+
+ touch ${RESULT_INDICATOR_FILE}
+ echo "result ${RESULT}" >> ${RESULT_INDICATOR_FILE}
+
+ #exit with sgtest System.exit status.
+ exit $?

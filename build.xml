@@ -144,15 +144,6 @@
         <!-- Compile the java code from ${src} into ${classes} -->
         <javac classpathref="classpath" srcdir="${src}" includes="**/*" destdir="${classes}" debug="on"
                executable="${java16.home}\bin\javac" taskname="javac1.6" fork="true">
-            <classpath location="${sgtest.home}/apps/MHEDS/common/target/classes"/>
-            <classpath location="${sgtest.home}/apps/data/common/target/classes"/>
-            <classpath location="${sgtest.home}/apps/simpledata/common/target/classes"/>
-            <classpath location="${sgtest.home}/apps/meta-common/target/classes"/>
-            <classpath location="${sgtest.home}/apps/security/common/target/classes"/>
-            <classpath location="${sgtest.home}/apps/remoting/target/classes"/>
-            <classpath location="${sgtest.home}/apps/remotingExceptionHandling/target/classes"/>
-            <classpath location="${sgtest.home}/apps/gatewayPUs/common/target/classes"/>
-            <classpath location="${sgtest.home}/apps/local-view/common/target/classes"/>
         </javac>
     	
     </target>

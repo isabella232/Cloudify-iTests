@@ -106,14 +106,6 @@
 	
 		<dirset dir="${sgtest.homedir}/config"/>
 		
-		<dirset dir="${tmp.testng.classes}/apps">
-			
-			<!-- the following are to be included into sg-test classpath -->
-			<include name="**/common/target/classes" />
-			<include name="**/remoting/target/classes" />
-			<include name="**/remotingExceptionHandling/**" />			
-		</dirset>
-		
 		<pathelement location="${sgtest.jar}"/>
 
     </path>

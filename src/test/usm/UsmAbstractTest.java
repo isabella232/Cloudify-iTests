@@ -8,8 +8,9 @@ import org.testng.annotations.BeforeMethod;
 
 import com.gigaspaces.cloudify.dsl.internal.packaging.PackagingException;
 
+import framework.utils.AdminUtils;
+
 import test.AbstractTest;
-import test.utils.AdminUtils;
 
 public class UsmAbstractTest extends AbstractTest{
 	

@@ -12,13 +12,14 @@ import org.openspaces.admin.space.Space;
 import org.testng.annotations.BeforeMethod;
 
 import test.cli.cloudify.CommandTestUtils;
-import test.utils.AssertUtils;
-import test.utils.AssertUtils.RepetitiveConditionProvider;
-import test.utils.LogUtils;
-import test.utils.TestUtils;
 
 import com.gigaspaces.cloudify.dsl.Service;
 import com.gigaspaces.cloudify.dsl.internal.ServiceReader;
+
+import framework.utils.AssertUtils;
+import framework.utils.LogUtils;
+import framework.utils.TestUtils;
+import framework.utils.AssertUtils.RepetitiveConditionProvider;
 
 /**
  * 

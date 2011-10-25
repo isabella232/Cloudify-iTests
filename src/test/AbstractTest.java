@@ -1,6 +1,6 @@
 package test;
 
-import static test.utils.LogUtils.log;
+import static framework.utils.LogUtils.log;
 
 import java.io.File;
 
@@ -8,13 +8,14 @@ import org.openspaces.admin.Admin;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 
-import test.utils.AdminUtils;
-import test.utils.AssertUtils;
-import test.utils.AssertUtils.RepetitiveConditionProvider;
-import test.utils.DumpUtils;
-import test.utils.LogUtils;
-import test.utils.SetupUtils;
-import test.utils.TeardownUtils;
+import framework.utils.AdminUtils;
+import framework.utils.AssertUtils;
+import framework.utils.DumpUtils;
+import framework.utils.LogUtils;
+import framework.utils.SetupUtils;
+import framework.utils.TeardownUtils;
+import framework.utils.AssertUtils.RepetitiveConditionProvider;
+
 
 
 public abstract class AbstractTest {

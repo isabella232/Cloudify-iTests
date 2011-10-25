@@ -1,6 +1,6 @@
 package test.cli.security.deploy;
 
-import static test.utils.LogUtils.log;
+import static framework.utils.LogUtils.log;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -11,7 +11,8 @@ import org.openspaces.admin.space.SpaceDeployment;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import test.utils.CliUtils;
+import framework.utils.CliUtils;
+
 
 /***
  * 

@@ -7,11 +7,6 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import test.utils.AssertUtils.RepetitiveConditionProvider;
-import test.utils.LogUtils;
-import test.utils.ProcessingUnitUtils;
-import test.utils.ScriptUtils;
-import test.utils.WebUiUtils;
 import test.webui.AbstractSeleniumTest;
 import test.webui.objects.LoginPage;
 import test.webui.objects.MainNavigation;
@@ -27,6 +22,11 @@ import test.webui.objects.topology.ApplicationMap;
 import test.webui.objects.topology.ApplicationMap.ApplicationNode;
 import test.webui.objects.topology.TopologyTab;
 import framework.tools.SGTestHelper;
+import framework.utils.LogUtils;
+import framework.utils.ProcessingUnitUtils;
+import framework.utils.ScriptUtils;
+import framework.utils.WebUiUtils;
+import framework.utils.AssertUtils.RepetitiveConditionProvider;
 
 public class WebServerFailOverTest extends AbstractSeleniumTest {
 	

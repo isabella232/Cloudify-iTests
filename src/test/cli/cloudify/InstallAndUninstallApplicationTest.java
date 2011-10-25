@@ -8,8 +8,9 @@ import org.openspaces.admin.pu.ProcessingUnit;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import framework.utils.AssertUtils.RepetitiveConditionProvider;
+
 import test.AbstractTest;
-import test.utils.AssertUtils.RepetitiveConditionProvider;
 
 public class InstallAndUninstallApplicationTest extends AbstractCommandTest {
 

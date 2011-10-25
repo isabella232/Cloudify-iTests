@@ -15,11 +15,12 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import test.utils.AdminUtils;
-import test.utils.LogUtils;
 
 import com.gigaspaces.cloudify.dsl.Service;
 import com.gigaspaces.cloudify.dsl.internal.packaging.PackagingException;
+
+import framework.utils.AdminUtils;
+import framework.utils.LogUtils;
 
 /**
  * cross platform example for the usm

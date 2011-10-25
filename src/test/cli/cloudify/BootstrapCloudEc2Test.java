@@ -1,9 +1,10 @@
 package test.cli.cloudify;
 
 import org.testng.Assert;
-import test.utils.AssertUtils.RepetitiveConditionProvider;
-import test.utils.ScriptUtils;
-import test.utils.WebUtils;
+
+import framework.utils.ScriptUtils;
+import framework.utils.WebUtils;
+import framework.utils.AssertUtils.RepetitiveConditionProvider;
 
 import java.net.URL;
 import java.util.concurrent.TimeUnit;

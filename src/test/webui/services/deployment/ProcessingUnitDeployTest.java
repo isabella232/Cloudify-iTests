@@ -1,8 +1,8 @@
 package test.webui.services.deployment;
 
-import static test.utils.AdminUtils.loadGSCs;
-import static test.utils.AdminUtils.loadGSM;
-import static test.utils.LogUtils.log;
+import static framework.utils.AdminUtils.loadGSCs;
+import static framework.utils.AdminUtils.loadGSM;
+import static framework.utils.LogUtils.log;
 
 import org.junit.Assert;
 import org.openspaces.admin.gsa.GridServiceAgent;
@@ -14,9 +14,10 @@ import org.openspaces.admin.pu.ProcessingUnitDeployment;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import test.utils.DeploymentUtils;
-import test.utils.LogUtils;
-import test.utils.ProcessingUnitUtils;
+import framework.utils.DeploymentUtils;
+import framework.utils.LogUtils;
+import framework.utils.ProcessingUnitUtils;
+
 import test.webui.AbstractSeleniumTest;
 import test.webui.interfaces.IDeployWindow;
 import test.webui.objects.LoginPage;

@@ -1,8 +1,8 @@
 package test.webui.services.deployment;
 
-import static test.utils.AdminUtils.loadGSCs;
-import static test.utils.AdminUtils.loadGSM;
-import static test.utils.LogUtils.log;
+import static framework.utils.AdminUtils.loadGSCs;
+import static framework.utils.AdminUtils.loadGSM;
+import static framework.utils.LogUtils.log;
 
 import java.io.IOException;
 import java.util.Iterator;
@@ -21,9 +21,10 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import test.utils.LogUtils;
-import test.utils.ProcessingUnitUtils;
-import test.utils.WebUiUtils;
+import framework.utils.LogUtils;
+import framework.utils.ProcessingUnitUtils;
+import framework.utils.WebUiUtils;
+
 import test.webui.AbstractSeleniumTest;
 import test.webui.interfaces.IDeployWindow;
 import test.webui.objects.LoginPage;

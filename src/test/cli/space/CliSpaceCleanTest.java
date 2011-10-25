@@ -1,9 +1,9 @@
 package test.cli.space;
 
 
-import static test.utils.AdminUtils.loadGSCs;
-import static test.utils.AdminUtils.loadGSM;
-import static test.utils.LogUtils.log;
+import static framework.utils.AdminUtils.loadGSCs;
+import static framework.utils.AdminUtils.loadGSM;
+import static framework.utils.LogUtils.log;
 
 import org.openspaces.admin.gsa.GridServiceAgent;
 import org.openspaces.admin.gsm.GridServiceManager;
@@ -17,9 +17,10 @@ import org.testng.annotations.Test;
 
 import test.AbstractTest;
 import test.cli.common.SpaceMessage;
-import test.utils.CliUtils;
 
 import com.gigaspaces.cluster.activeelection.SpaceMode;
+
+import framework.utils.CliUtils;
 
 /***
  * Setup: Load 1 GSM and 2 GSC's on 1 machine.

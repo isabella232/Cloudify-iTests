@@ -1,9 +1,9 @@
 package test.cli.deploy;
 
-import static test.utils.AdminUtils.loadGSCs;
-import static test.utils.AdminUtils.loadGSM;
-import static test.utils.LogUtils.log;
-import static test.utils.ProcessingUnitUtils.getProcessingUnitInstanceName;
+import static framework.utils.AdminUtils.loadGSCs;
+import static framework.utils.AdminUtils.loadGSM;
+import static framework.utils.LogUtils.log;
+import static framework.utils.ProcessingUnitUtils.getProcessingUnitInstanceName;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -19,8 +19,9 @@ import org.openspaces.admin.space.SpaceDeployment;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import framework.utils.CliUtils;
+
 import test.AbstractTest;
-import test.utils.CliUtils;
 
 /***
  * Setup: Bring up 1 GSM and 2 GSC's on on machine.

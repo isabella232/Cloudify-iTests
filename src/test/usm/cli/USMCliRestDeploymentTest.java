@@ -1,6 +1,8 @@
 package test.usm.cli;
 
 import framework.tools.SGTestHelper;
+import framework.utils.AdminUtils;
+
 import org.apache.sshd.ClientChannel;
 import org.apache.sshd.ClientSession;
 import org.apache.sshd.SshClient;
@@ -12,7 +14,6 @@ import org.openspaces.admin.pu.ProcessingUnit;
 import org.openspaces.admin.pu.ProcessingUnitDeployment;
 import org.testng.annotations.BeforeMethod;
 import test.AbstractTest;
-import test.utils.AdminUtils;
 
 import java.io.File;
 import java.text.MessageFormat;

@@ -8,9 +8,10 @@ import org.openspaces.admin.pu.ProcessingUnitInstance;
 import org.openspaces.admin.pu.events.ProcessingUnitInstanceAddedEventListener;
 import org.testng.annotations.Test;
 
+import framework.utils.AssertUtils.RepetitiveConditionProvider;
+
 import test.cli.cloudify.AbstractCommandTest;
 import test.cli.cloudify.CommandTestUtils;
-import test.utils.AssertUtils.RepetitiveConditionProvider;
 
 /**
  * This test checks the application dependency mechanism.

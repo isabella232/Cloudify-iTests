@@ -7,12 +7,13 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 
-import test.utils.LogUtils;
-import test.utils.WebUiUtils;
 import test.webui.objects.dashboard.ServicesGrid.Icon;
 import test.webui.resources.WebConstants;
 
 import com.thoughtworks.selenium.Selenium;
+
+import framework.utils.LogUtils;
+import framework.utils.WebUiUtils;
 
 public class LogicalPanel extends TopologySubPanel {
 	

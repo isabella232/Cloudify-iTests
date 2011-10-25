@@ -1,16 +1,17 @@
 package test;
 
-import static test.utils.LogUtils.log;
+import static framework.utils.LogUtils.log;
 
 import org.openspaces.admin.Admin;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 
-import test.utils.AdminUtils;
-import test.utils.DumpUtils;
-import test.utils.LogUtils;
-import test.utils.SetupUtils;
-import test.utils.TeardownUtils;
+import framework.utils.AdminUtils;
+import framework.utils.DumpUtils;
+import framework.utils.LogUtils;
+import framework.utils.SetupUtils;
+import framework.utils.TeardownUtils;
+
 
 public abstract class AbstractTestSuite {
 

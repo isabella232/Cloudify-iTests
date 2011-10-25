@@ -1,4 +1,4 @@
-package test.utils.xen;
+package framework.utils.xen;
 
 
 import java.util.concurrent.CountDownLatch;
@@ -16,10 +16,11 @@ import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 
+import framework.utils.AdminUtils;
+import framework.utils.GridServiceAgentsCounter;
+import framework.utils.GridServiceContainersCounter;
+
 import test.AbstractTest;
-import test.utils.AdminUtils;
-import test.utils.GridServiceAgentsCounter;
-import test.utils.GridServiceContainersCounter;
 
 
 /**

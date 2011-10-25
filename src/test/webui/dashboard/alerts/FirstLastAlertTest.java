@@ -1,7 +1,7 @@
 package test.webui.dashboard.alerts;
 
-import static test.utils.AdminUtils.loadGSM;
-import static test.utils.LogUtils.log;
+import static framework.utils.AdminUtils.loadGSM;
+import static framework.utils.LogUtils.log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,10 +22,6 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import test.utils.AdminUtils;
-import test.utils.AssertUtils.RepetitiveConditionProvider;
-import test.utils.LogUtils;
-import test.utils.WebUiUtils;
 import test.webui.AbstractSeleniumTest;
 import test.webui.objects.LoginPage;
 import test.webui.objects.dashboard.AlertsGrid;
@@ -34,6 +30,10 @@ import test.webui.objects.dashboard.DashboardTab;
 import test.webui.objects.dashboard.StatusGrid;
 import test.webui.objects.dashboard.StatusGrid.Memory;
 import framework.tools.SGTestHelper;
+import framework.utils.AdminUtils;
+import framework.utils.LogUtils;
+import framework.utils.WebUiUtils;
+import framework.utils.AssertUtils.RepetitiveConditionProvider;
 
 public class FirstLastAlertTest extends AbstractSeleniumTest {
 	

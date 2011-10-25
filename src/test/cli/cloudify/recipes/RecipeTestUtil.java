@@ -6,7 +6,8 @@ import java.net.ServerSocket;
 
 import org.junit.Assert;
 
-import test.utils.TestUtils;
+import framework.utils.TestUtils;
+
 
 public class RecipeTestUtil {
 	

@@ -1,8 +1,8 @@
 package test.usm;
 
-import static test.utils.AdminUtils.loadGSCs;
-import static test.utils.AdminUtils.loadGSM;
-import static test.utils.LogUtils.log;
+import static framework.utils.AdminUtils.loadGSCs;
+import static framework.utils.AdminUtils.loadGSM;
+import static framework.utils.LogUtils.log;
 
 import java.io.IOException;
 
@@ -20,10 +20,11 @@ import org.openspaces.usm.examples.simplejavaprocess.SimpleBlockingJavaProcessMB
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import test.utils.AssertUtils.RepetitiveConditionProvider;
-import test.utils.LogUtils;
 
 import com.gigaspaces.cloudify.dsl.Service;
+
+import framework.utils.LogUtils;
+import framework.utils.AssertUtils.RepetitiveConditionProvider;
 
 
 public class USMSimpleFailoverTest extends UsmAbstractTest {

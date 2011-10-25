@@ -1,7 +1,7 @@
 /**
  * 
  */
-package test.utils;
+package framework.utils;
 
 import java.io.File;
 import java.io.IOException;

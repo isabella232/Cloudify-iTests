@@ -1,4 +1,4 @@
-package test.utils;
+package framework.utils;
 
 import groovy.lang.GroovyClassLoader;
 import groovy.lang.GroovyObject;

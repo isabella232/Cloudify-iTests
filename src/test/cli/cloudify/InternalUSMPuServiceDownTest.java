@@ -17,15 +17,16 @@ import org.openspaces.pu.service.CustomServiceMonitors;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import test.utils.LogUtils;
-import test.utils.ProcessingUnitUtils;
-import test.utils.SSHUtils;
-import test.utils.ScriptUtils;
 
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gigaspaces.cloudify.dsl.internal.packaging.PackagingException;
+
+import framework.utils.LogUtils;
+import framework.utils.ProcessingUnitUtils;
+import framework.utils.SSHUtils;
+import framework.utils.ScriptUtils;
 
 
 public class InternalUSMPuServiceDownTest extends AbstractCommandTest {

@@ -13,12 +13,13 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebElement;
 import org.openspaces.admin.pu.DeploymentStatus;
 
-import test.utils.AssertUtils;
-import test.utils.AssertUtils.RepetitiveConditionProvider;
 import test.webui.interfaces.RenderedWebUIElement;
 import test.webui.resources.WebConstants;
 
 import com.thoughtworks.selenium.Selenium;
+
+import framework.utils.AssertUtils;
+import framework.utils.AssertUtils.RepetitiveConditionProvider;
 
 public class ApplicationMap {
 	

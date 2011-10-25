@@ -7,12 +7,13 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openspaces.admin.pu.DeploymentStatus;
 
-import test.utils.LogUtils;
-import test.utils.WebUiUtils;
 import test.webui.resources.WebConstants;
 
 import com.thoughtworks.selenium.Selenium;
 import com.thoughtworks.selenium.SeleniumException;
+
+import framework.utils.LogUtils;
+import framework.utils.WebUiUtils;
 
 /**
  * represents the Processing Unit Tree Grid found in the web-ui under the services tab.

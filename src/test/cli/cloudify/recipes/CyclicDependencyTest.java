@@ -6,9 +6,10 @@ import org.openspaces.admin.gsc.GridServiceContainer;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import framework.utils.LogUtils;
+
 import test.cli.cloudify.AbstractCommandTest;
 import test.cli.cloudify.CommandTestUtils;
-import test.utils.LogUtils;
 
 public class CyclicDependencyTest extends AbstractCommandTest {
 

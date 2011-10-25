@@ -1,8 +1,8 @@
 package test.webui.dashboard.alerts;
 
-import static test.utils.AdminUtils.loadGSCs;
-import static test.utils.AdminUtils.loadGSM;
-import static test.utils.LogUtils.log;
+import static framework.utils.AdminUtils.loadGSCs;
+import static framework.utils.AdminUtils.loadGSM;
+import static framework.utils.LogUtils.log;
 
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
@@ -24,17 +24,17 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import test.utils.AssertUtils;
-import test.utils.AssertUtils.RepetitiveConditionProvider;
-import test.utils.LogUtils;
-import test.utils.ProcessingUnitUtils;
-import test.utils.WebUiUtils;
 import test.webui.AbstractSeleniumTest;
 import test.webui.objects.LoginPage;
 import test.webui.objects.dashboard.AlertsGrid;
 import test.webui.objects.dashboard.AlertsGrid.WebUIAlert;
 import test.webui.objects.dashboard.DashboardTab;
 import framework.tools.SGTestHelper;
+import framework.utils.AssertUtils;
+import framework.utils.LogUtils;
+import framework.utils.ProcessingUnitUtils;
+import framework.utils.WebUiUtils;
+import framework.utils.AssertUtils.RepetitiveConditionProvider;
 
 public class RaisedAlertDuplicationAfterRefreshTest extends AbstractSeleniumTest {
 

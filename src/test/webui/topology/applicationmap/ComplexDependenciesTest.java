@@ -1,7 +1,7 @@
 package test.webui.topology.applicationmap;
 
-import static test.utils.AdminUtils.loadGSM;
-import static test.utils.LogUtils.log;
+import static framework.utils.AdminUtils.loadGSM;
+import static framework.utils.LogUtils.log;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,12 +19,6 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import test.usm.USMTestUtils;
-import test.utils.AdminUtils;
-import test.utils.DBUtils;
-import test.utils.DeploymentUtils;
-import test.utils.LogUtils;
-import test.utils.ProcessingUnitUtils;
-import test.utils.ToStringUtils;
 import test.webui.AbstractSeleniumTest;
 import test.webui.objects.LoginPage;
 import test.webui.objects.topology.ApplicationMap;
@@ -33,6 +27,13 @@ import test.webui.objects.topology.ApplicationMap.ServiceTypes;
 import test.webui.objects.topology.ApplicationMap.ApplicationNode.Connector;
 
 import com.gigaspaces.cloudify.dsl.internal.packaging.PackagingException;
+
+import framework.utils.AdminUtils;
+import framework.utils.DBUtils;
+import framework.utils.DeploymentUtils;
+import framework.utils.LogUtils;
+import framework.utils.ProcessingUnitUtils;
+import framework.utils.ToStringUtils;
 
 public class ComplexDependenciesTest extends AbstractSeleniumTest {
 	

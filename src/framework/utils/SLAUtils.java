@@ -1,7 +1,7 @@
-package test.utils;
+package framework.utils;
 
+import static framework.utils.ProcessingUnitUtils.getProcessingUnitInstanceName;
 import static org.testng.AssertJUnit.assertNotSame;
-import static test.utils.ProcessingUnitUtils.getProcessingUnitInstanceName;
 
 import org.openspaces.admin.Admin;
 import org.openspaces.admin.pu.ProcessingUnit;

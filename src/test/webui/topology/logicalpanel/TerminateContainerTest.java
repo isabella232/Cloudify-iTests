@@ -14,11 +14,12 @@ import org.testng.annotations.Test;
 
 import com.gigaspaces.cluster.activeelection.SpaceMode;
 
-import test.utils.AdminUtils;
-import test.utils.AssertUtils;
-import test.utils.LogUtils;
-import test.utils.ProcessingUnitUtils;
-import test.utils.AssertUtils.RepetitiveConditionProvider;
+import framework.utils.AdminUtils;
+import framework.utils.AssertUtils;
+import framework.utils.LogUtils;
+import framework.utils.ProcessingUnitUtils;
+import framework.utils.AssertUtils.RepetitiveConditionProvider;
+
 import test.webui.AbstractSeleniumTest;
 import test.webui.objects.LoginPage;
 import test.webui.objects.dashboard.ServicesGrid.Icon;

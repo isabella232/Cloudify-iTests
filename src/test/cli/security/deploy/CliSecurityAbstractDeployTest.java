@@ -1,15 +1,16 @@
 package test.cli.security.deploy;
 
-import static test.utils.LogUtils.log;
+import static framework.utils.LogUtils.log;
 
 import org.openspaces.admin.Admin;
 import org.openspaces.admin.gsa.GridServiceAgent;
 import org.openspaces.admin.gsm.GridServiceManager;
 import org.testng.annotations.BeforeMethod;
 
+import framework.utils.AdminUtils;
+import framework.utils.ScriptUtils;
+
 import test.AbstractTest;
-import test.utils.AdminUtils;
-import test.utils.ScriptUtils;
 
 public class CliSecurityAbstractDeployTest extends AbstractTest {
 

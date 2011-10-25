@@ -9,10 +9,11 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import test.cli.cloudify.AbstractCommandTest;
-import test.utils.ScriptUtils;
 
 import com.gigaspaces.cloudify.dsl.Service;
 import com.gigaspaces.cloudify.dsl.internal.ServiceReader;
+
+import framework.utils.ScriptUtils;
 
 public class RecipeTest extends AbstractCommandTest {
 	private String recipesDirPath = ScriptUtils.getBuildPath() + "/recipes";

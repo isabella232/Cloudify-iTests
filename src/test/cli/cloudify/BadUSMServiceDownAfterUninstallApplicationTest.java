@@ -5,9 +5,9 @@ import java.io.IOException;
 import org.openspaces.admin.machine.Machine;
 import org.testng.annotations.Test;
 
-import test.utils.AssertUtils;
-import test.utils.AssertUtils.RepetitiveConditionProvider;
 import framework.tools.SGTestHelper;
+import framework.utils.AssertUtils;
+import framework.utils.AssertUtils.RepetitiveConditionProvider;
 
 public class BadUSMServiceDownAfterUninstallApplicationTest extends AbstractCommandTest {
 	

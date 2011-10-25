@@ -1,6 +1,6 @@
-package test.utils;
+package framework.utils;
 
-import static test.utils.ScriptUtils.getBuildPath;
+import static framework.utils.ScriptUtils.getBuildPath;
 
 import java.io.File;
 

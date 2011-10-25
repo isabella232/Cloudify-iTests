@@ -12,11 +12,12 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import test.cli.cloudify.CommandTestUtils;
-import test.utils.LogUtils;
-import test.utils.ScriptUtils;
 
 import com.gigaspaces.cloudify.dsl.Service;
 import com.gigaspaces.cloudify.dsl.internal.ServiceReader;
+
+import framework.utils.LogUtils;
+import framework.utils.ScriptUtils;
 
 public class TravelAppFailOverUsingXenTest extends AbstractApplicationFailOverXenTest {
 	

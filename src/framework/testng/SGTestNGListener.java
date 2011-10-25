@@ -2,13 +2,14 @@ package framework.testng;
 
 import framework.report.MailReporterProperties;
 import framework.tools.SimpleMail;
+import framework.utils.DumpUtils;
+import framework.utils.LogUtils;
+import framework.utils.ZipUtils;
+
 import org.testng.ITestContext;
 import org.testng.ITestResult;
 import org.testng.Reporter;
 import org.testng.TestListenerAdapter;
-import test.utils.DumpUtils;
-import test.utils.LogUtils;
-import test.utils.ZipUtils;
 
 import java.io.*;
 import java.util.List;

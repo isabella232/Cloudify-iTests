@@ -1,7 +1,7 @@
 package test.usm;
 
-import static test.utils.AdminUtils.loadGSM;
-import static test.utils.LogUtils.log;
+import static framework.utils.AdminUtils.loadGSM;
+import static framework.utils.LogUtils.log;
 
 import java.io.File;
 
@@ -13,13 +13,13 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import test.cli.cloudify.CommandTestUtils;
-import test.utils.AdminUtils;
 
 import com.gigaspaces.cloudify.dsl.Service;
 import com.gigaspaces.cloudify.dsl.internal.ServiceReader;
 import com.gigaspaces.cloudify.dsl.internal.packaging.PackagingException;
 
 import framework.tools.SGTestHelper;
+import framework.utils.AdminUtils;
 
 public class USMSimpleOverrideServiceSettingsTest extends UsmAbstractTest {
 

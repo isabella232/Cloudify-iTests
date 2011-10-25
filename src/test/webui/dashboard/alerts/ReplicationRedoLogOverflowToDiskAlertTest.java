@@ -1,7 +1,7 @@
 package test.webui.dashboard.alerts;
 
-import static test.utils.AdminUtils.loadGSM;
-import static test.utils.LogUtils.log;
+import static framework.utils.AdminUtils.loadGSM;
+import static framework.utils.LogUtils.log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,10 +30,11 @@ import org.testng.annotations.Test;
 
 import com.gigaspaces.cluster.activeelection.SpaceMode;
 
+import framework.utils.AdminUtils;
+import framework.utils.LogUtils;
+import framework.utils.ProcessingUnitUtils;
+
 import test.data.Message;
-import test.utils.AdminUtils;
-import test.utils.LogUtils;
-import test.utils.ProcessingUnitUtils;
 import test.webui.AbstractSeleniumTest;
 import test.webui.objects.LoginPage;
 import test.webui.objects.dashboard.AlertsGrid;

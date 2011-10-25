@@ -1,4 +1,4 @@
-package test.utils.xen;
+package framework.utils.xen;
 
 
 import java.io.File;
@@ -36,17 +36,17 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 
 import test.AbstractTest;
-import test.utils.AdminUtils;
-import test.utils.DumpUtils;
-import test.utils.GridServiceAgentsCounter;
-import test.utils.GridServiceContainersCounter;
-import test.utils.LogUtils;
-import test.utils.ScriptUtils;
-import test.utils.TeardownUtils;
 
 import com.j_spaces.kernel.PlatformVersion;
 
 import framework.tools.SGTestHelper;
+import framework.utils.AdminUtils;
+import framework.utils.DumpUtils;
+import framework.utils.GridServiceAgentsCounter;
+import framework.utils.GridServiceContainersCounter;
+import framework.utils.LogUtils;
+import framework.utils.ScriptUtils;
+import framework.utils.TeardownUtils;
 
 
 public class AbstractXenGSMTest extends AbstractTest {

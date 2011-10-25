@@ -8,11 +8,12 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-import test.utils.AssertUtils;
 import test.webui.resources.WebConstants;
 
 import com.thoughtworks.selenium.Selenium;
 import com.thoughtworks.selenium.SeleniumException;
+
+import framework.utils.AssertUtils;
 
 public class DetailsPanel {
 	

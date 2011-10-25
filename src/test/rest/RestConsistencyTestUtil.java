@@ -1,6 +1,7 @@
 package test.rest;
 
 import framework.tools.SGTestHelper;
+import framework.utils.LogUtils;
 import junit.framework.Assert;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.type.TypeFactory;
@@ -11,7 +12,6 @@ import org.openspaces.admin.pu.ProcessingUnit;
 import org.openspaces.admin.pu.ProcessingUnitDeployment;
 import org.openspaces.admin.pu.ProcessingUnitInstance;
 import org.openspaces.pu.service.ServiceDetails;
-import test.utils.LogUtils;
 
 import java.io.BufferedReader;
 import java.io.File;

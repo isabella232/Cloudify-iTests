@@ -18,10 +18,11 @@ import org.openspaces.admin.lus.LookupService;
 import org.openspaces.cloud.xenserver.XenServerMachineProvisioningConfig;
 import org.testng.annotations.BeforeMethod;
 
-import test.utils.AssertUtils.RepetitiveConditionProvider;
-import test.utils.xen.AbstractXenGSMTest;
-import test.utils.LogUtils;
-import test.utils.SSHUtils;
+import framework.utils.LogUtils;
+import framework.utils.SSHUtils;
+import framework.utils.AssertUtils.RepetitiveConditionProvider;
+import framework.utils.xen.AbstractXenGSMTest;
+
 
 public class AbstractStartManagementXenTest extends AbstractXenGSMTest {
 	

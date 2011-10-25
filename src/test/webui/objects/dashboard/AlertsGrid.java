@@ -11,10 +11,11 @@ import org.openspaces.admin.alert.AlertSeverity;
 import org.openspaces.admin.alert.AlertStatus;
 import org.testng.Assert;
 
-import test.utils.LogUtils;
 import test.webui.resources.WebConstants;
 
 import com.thoughtworks.selenium.Selenium;
+
+import framework.utils.LogUtils;
 
 /**
  * represents the Alerts grid found in the web-ui under the Dashboard tab

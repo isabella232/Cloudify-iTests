@@ -1,8 +1,8 @@
-package test.utils;
+package framework.utils;
 
+import static framework.utils.LogUtils.log;
 import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.assertTrue;
-import static test.utils.LogUtils.log;
 
 import java.util.HashMap;
 import java.util.HashSet;

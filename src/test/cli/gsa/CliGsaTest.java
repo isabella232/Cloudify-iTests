@@ -1,6 +1,6 @@
 package test.cli.gsa;
 
-import static test.utils.LogUtils.log;
+import static framework.utils.LogUtils.log;
 
 import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
@@ -14,9 +14,10 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import framework.utils.CliUtils;
+import framework.utils.TeardownUtils;
+
 import test.AbstractTest;
-import test.utils.CliUtils;
-import test.utils.TeardownUtils;
 
 public class CliGsaTest extends AbstractTest {
 

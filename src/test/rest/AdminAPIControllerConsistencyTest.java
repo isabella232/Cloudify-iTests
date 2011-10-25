@@ -11,9 +11,10 @@ import org.openspaces.admin.space.SpaceDeployment;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import framework.utils.AdminUtils;
+import framework.utils.DeploymentUtils;
+
 import test.AbstractTest;
-import test.utils.AdminUtils;
-import test.utils.DeploymentUtils;
 
 
 public class AdminAPIControllerConsistencyTest extends AbstractTest {

@@ -1,7 +1,7 @@
 package test.webui.topology.applicationmap;
 
-import static test.utils.AdminUtils.loadGSM;
-import static test.utils.LogUtils.log;
+import static framework.utils.AdminUtils.loadGSM;
+import static framework.utils.LogUtils.log;
 
 import org.openspaces.admin.gsa.GridServiceAgent;
 import org.openspaces.admin.gsm.GridServiceManager;
@@ -12,11 +12,12 @@ import org.openspaces.admin.space.SpaceDeployment;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import test.utils.AdminUtils;
-import test.utils.AssertUtils;
-import test.utils.AssertUtils.RepetitiveConditionProvider;
-import test.utils.LogUtils;
-import test.utils.ProcessingUnitUtils;
+import framework.utils.AdminUtils;
+import framework.utils.AssertUtils;
+import framework.utils.LogUtils;
+import framework.utils.ProcessingUnitUtils;
+import framework.utils.AssertUtils.RepetitiveConditionProvider;
+
 import test.webui.AbstractSeleniumTest;
 import test.webui.objects.LoginPage;
 import test.webui.objects.topology.ApplicationMap;

@@ -1,8 +1,8 @@
 package test.webui.console;
 
-import static test.utils.AdminUtils.loadGSCs;
-import static test.utils.AdminUtils.loadGSM;
-import static test.utils.LogUtils.log;
+import static framework.utils.AdminUtils.loadGSCs;
+import static framework.utils.AdminUtils.loadGSM;
+import static framework.utils.LogUtils.log;
 
 import java.util.List;
 
@@ -17,7 +17,8 @@ import org.testng.annotations.Test;
 
 import com.gigaspaces.cluster.activeelection.SpaceMode;
 
-import test.utils.ProcessingUnitUtils;
+import framework.utils.ProcessingUnitUtils;
+
 import test.webui.AbstractSeleniumTest;
 import test.webui.objects.LoginPage;
 import test.webui.objects.console.ConsoleTab;

@@ -3,12 +3,13 @@ package test.webui.objects.dashboard;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 
-import test.utils.AssertUtils;
-import test.utils.AssertUtils.RepetitiveConditionProvider;
-import test.utils.WebUiUtils;
 import test.webui.resources.WebConstants;
 
 import com.thoughtworks.selenium.Selenium;
+
+import framework.utils.AssertUtils;
+import framework.utils.WebUiUtils;
+import framework.utils.AssertUtils.RepetitiveConditionProvider;
 
 public class ServicesGrid {
 	

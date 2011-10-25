@@ -14,9 +14,10 @@ import org.openspaces.pu.service.ServiceDetails;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 
+import framework.utils.AdminUtils;
+import framework.utils.LogUtils;
+
 import test.AbstractTest;
-import test.utils.AdminUtils;
-import test.utils.LogUtils;
 
 public abstract class AbstractCommandTest extends AbstractTest {
 

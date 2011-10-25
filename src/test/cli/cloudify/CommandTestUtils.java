@@ -8,10 +8,10 @@ import java.text.MessageFormat;
 import java.util.concurrent.atomic.AtomicReference;
 
 import test.AbstractTest;
-import test.utils.AssertUtils;
-import test.utils.LogUtils;
-import test.utils.ScriptUtils;
 import framework.tools.SGTestHelper;
+import framework.utils.AssertUtils;
+import framework.utils.LogUtils;
+import framework.utils.ScriptUtils;
 
 public class CommandTestUtils {
 

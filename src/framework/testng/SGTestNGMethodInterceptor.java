@@ -7,7 +7,8 @@ import org.testng.IMethodInstance;
 import org.testng.IMethodInterceptor;
 import org.testng.ITestContext;
 
-import test.utils.LogUtils;
+import framework.utils.LogUtils;
+
 
 /***
  * 

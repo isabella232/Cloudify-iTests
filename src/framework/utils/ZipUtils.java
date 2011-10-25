@@ -1,4 +1,4 @@
-package test.utils;
+package framework.utils;
 
 import com.j_spaces.kernel.PlatformVersion;
 import framework.tools.SGTestHelper;

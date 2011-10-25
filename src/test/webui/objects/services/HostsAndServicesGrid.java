@@ -4,11 +4,12 @@ import org.openqa.selenium.WebDriver;
 import org.openspaces.admin.gsa.GridServiceAgent;
 import org.openspaces.admin.gsc.GridServiceContainer;
 
-import test.utils.WebUiUtils;
 import test.webui.resources.WebConstants;
 
 import com.thoughtworks.selenium.Selenium;
 import com.thoughtworks.selenium.SeleniumException;
+
+import framework.utils.WebUiUtils;
 
 /**
  * represents the Host and Services grid found in the web-ui under the Topology tab

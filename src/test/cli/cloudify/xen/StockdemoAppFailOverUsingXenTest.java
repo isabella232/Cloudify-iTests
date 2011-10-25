@@ -7,9 +7,10 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import framework.utils.LogUtils;
+import framework.utils.ScriptUtils;
+
 import test.cli.cloudify.CommandTestUtils;
-import test.utils.LogUtils;
-import test.utils.ScriptUtils;
 
 public class StockdemoAppFailOverUsingXenTest extends AbstractApplicationFailOverXenTest {
 

@@ -1,7 +1,7 @@
 package test.webui.topology.applicationmap;
 
-import static test.utils.AdminUtils.loadGSM;
-import static test.utils.LogUtils.log;
+import static framework.utils.AdminUtils.loadGSM;
+import static framework.utils.LogUtils.log;
 
 import java.util.List;
 
@@ -14,13 +14,14 @@ import org.openspaces.admin.pu.ProcessingUnitDeployment;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import test.utils.AdminUtils;
-import test.utils.AssertUtils.RepetitiveConditionProvider;
-import test.utils.DBUtils;
-import test.utils.DeploymentUtils;
-import test.utils.LogUtils;
-import test.utils.ProcessingUnitUtils;
-import test.utils.ToStringUtils;
+import framework.utils.AdminUtils;
+import framework.utils.DBUtils;
+import framework.utils.DeploymentUtils;
+import framework.utils.LogUtils;
+import framework.utils.ProcessingUnitUtils;
+import framework.utils.ToStringUtils;
+import framework.utils.AssertUtils.RepetitiveConditionProvider;
+
 import test.webui.AbstractSeleniumTest;
 import test.webui.objects.LoginPage;
 import test.webui.objects.topology.ApplicationMap;

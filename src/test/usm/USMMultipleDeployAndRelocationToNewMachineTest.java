@@ -1,8 +1,8 @@
 package test.usm;
 
-import static test.utils.AdminUtils.loadGSC;
-import static test.utils.AdminUtils.loadGSM;
-import static test.utils.LogUtils.log;
+import static framework.utils.AdminUtils.loadGSC;
+import static framework.utils.AdminUtils.loadGSM;
+import static framework.utils.LogUtils.log;
 
 import java.util.concurrent.TimeUnit;
 

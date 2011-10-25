@@ -1,4 +1,4 @@
-package test.utils;
+package framework.utils;
 
 import org.openspaces.admin.Admin;
 import org.openspaces.admin.esm.ElasticServiceManager;
@@ -13,9 +13,9 @@ import org.openspaces.admin.machine.Machine;
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.openspaces.admin.pu.ProcessingUnitInstance;
 
-import static test.utils.LogUtils.log;
-import static test.utils.ToStringUtils.gscToString;
-import static test.utils.ToStringUtils.puInstanceToString;
+import static framework.utils.LogUtils.log;
+import static framework.utils.ToStringUtils.gscToString;
+import static framework.utils.ToStringUtils.puInstanceToString;
 
 /**
  * Utility methods for test teardown.

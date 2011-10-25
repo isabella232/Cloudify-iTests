@@ -3,7 +3,8 @@ package framework.tools;
 
 import java.io.File;
 
-import test.utils.ScriptUtils;
+import framework.utils.ScriptUtils;
+
 
 public class SGTestHelper {
 

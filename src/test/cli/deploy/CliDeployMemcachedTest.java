@@ -5,7 +5,8 @@ import java.util.concurrent.TimeUnit;
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.testng.annotations.Test;
 
-import test.utils.CliUtils;
+import framework.utils.CliUtils;
+
 
 /***
  * Setup: Bring up 1 GSM and 2 GSC's on on machine

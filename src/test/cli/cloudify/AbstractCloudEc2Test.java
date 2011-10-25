@@ -12,9 +12,10 @@ import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 
+import framework.utils.LogUtils;
+import framework.utils.ScriptUtils;
+
 import test.AbstractTest;
-import test.utils.LogUtils;
-import test.utils.ScriptUtils;
 
 public abstract class AbstractCloudEc2Test extends AbstractTest {
     

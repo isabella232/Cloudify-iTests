@@ -1,10 +1,10 @@
 /**
  * 
  */
-package test.utils;
+package framework.utils;
 
-import static test.utils.AdminUtils.loadGSCs;
-import static test.utils.AdminUtils.loadGSM;
+import static framework.utils.AdminUtils.loadGSCs;
+import static framework.utils.AdminUtils.loadGSM;
 
 import java.util.ArrayList;
 import java.util.List;

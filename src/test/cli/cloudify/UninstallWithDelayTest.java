@@ -8,11 +8,12 @@ import org.openspaces.admin.gsc.GridServiceContainer;
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.testng.annotations.Test;
 
-import test.utils.AssertUtils.RepetitiveConditionProvider;
 
 import com.gigaspaces.log.LogEntry;
 import com.gigaspaces.log.LogEntryMatcher;
 import com.gigaspaces.log.LogEntryMatchers;
+
+import framework.utils.AssertUtils.RepetitiveConditionProvider;
 /**
  * @since 8.0.4
  * @author dank

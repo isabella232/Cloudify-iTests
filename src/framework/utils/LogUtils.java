@@ -1,11 +1,10 @@
-package test.utils;
+package framework.utils;
 
 import junit.framework.Assert;
 
 import org.openspaces.admin.gsc.GridServiceContainer;
 import org.openspaces.admin.gsm.GridServiceManager;
 
-import test.utils.AssertUtils.RepetitiveConditionProvider;
 
 import com.gigaspaces.log.LogEntries;
 import com.gigaspaces.log.LogEntry;
@@ -13,6 +12,7 @@ import com.gigaspaces.log.LogEntryMatcher;
 import com.gigaspaces.log.LogEntryMatchers;
 
 import framework.testng.SGTestNGReporter;
+import framework.utils.AssertUtils.RepetitiveConditionProvider;
 
 public class LogUtils {
     

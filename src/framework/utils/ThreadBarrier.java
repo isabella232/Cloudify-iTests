@@ -4,7 +4,7 @@
  * Copyright 2006 GigaSpaces Technologies Inc.
  */
 
-package test.utils;
+package framework.utils;
 
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;

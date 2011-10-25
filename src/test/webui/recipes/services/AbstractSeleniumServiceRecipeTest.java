@@ -1,6 +1,6 @@
 package test.webui.recipes.services;
 
-import static test.utils.LogUtils.log;
+import static framework.utils.LogUtils.log;
 
 import java.io.IOException;
 
@@ -9,12 +9,13 @@ import org.openspaces.admin.pu.ProcessingUnit;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 
+import framework.utils.DumpUtils;
+import framework.utils.LogUtils;
+import framework.utils.ProcessingUnitUtils;
+import framework.utils.ScriptUtils;
+import framework.utils.TeardownUtils;
+
 import test.cli.cloudify.CommandTestUtils;
-import test.utils.DumpUtils;
-import test.utils.LogUtils;
-import test.utils.ProcessingUnitUtils;
-import test.utils.ScriptUtils;
-import test.utils.TeardownUtils;
 import test.webui.AbstractSeleniumTest;
 
 public class AbstractSeleniumServiceRecipeTest extends AbstractSeleniumTest {

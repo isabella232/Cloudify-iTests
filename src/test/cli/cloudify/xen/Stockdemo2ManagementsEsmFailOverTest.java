@@ -15,10 +15,11 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import framework.utils.LogUtils;
+import framework.utils.ScriptUtils;
+import framework.utils.xen.GsmTestUtils;
+
 import test.cli.cloudify.CommandTestUtils;
-import test.utils.LogUtils;
-import test.utils.ScriptUtils;
-import test.utils.xen.GsmTestUtils;
 
 
 public class Stockdemo2ManagementsEsmFailOverTest extends AbstractApplicationFailOverXenTest {

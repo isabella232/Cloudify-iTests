@@ -1,7 +1,7 @@
-package test.utils;
+package framework.utils;
 
+import static framework.utils.LogUtils.log;
 import static org.testng.AssertJUnit.assertEquals;
-import static test.utils.LogUtils.log;
 
 import java.io.File;
 import java.io.FileOutputStream;

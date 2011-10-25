@@ -1,4 +1,4 @@
-package test.utils;
+package framework.utils;
 
 import java.io.IOException;
 

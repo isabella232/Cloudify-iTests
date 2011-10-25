@@ -1,4 +1,4 @@
-package test.utils.xen;
+package framework.utils.xen;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -34,13 +34,14 @@ import org.openspaces.grid.gsm.rebalancing.RebalancingUtils;
 import org.testng.Assert;
 
 import test.data.Person;
-import test.utils.AdminUtils;
-import test.utils.AssertUtils;
-import test.utils.AssertUtils.RepetitiveConditionProvider;
-import test.utils.LogUtils;
-import test.utils.TeardownUtils;
 
 import com.j_spaces.core.client.ReadModifiers;
+
+import framework.utils.AdminUtils;
+import framework.utils.AssertUtils;
+import framework.utils.LogUtils;
+import framework.utils.TeardownUtils;
+import framework.utils.AssertUtils.RepetitiveConditionProvider;
 
 public class GsmTestUtils {
 

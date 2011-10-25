@@ -1,8 +1,8 @@
 package test.webui;
 
-import static test.utils.AdminUtils.loadGSCs;
-import static test.utils.AdminUtils.loadGSM;
-import static test.utils.LogUtils.log;
+import static framework.utils.AdminUtils.loadGSCs;
+import static framework.utils.AdminUtils.loadGSM;
+import static framework.utils.LogUtils.log;
 
 import org.openqa.selenium.WebDriver;
 import org.openspaces.admin.gsa.GridServiceAgent;
@@ -13,15 +13,16 @@ import org.openspaces.admin.pu.ProcessingUnit;
 import org.openspaces.admin.pu.ProcessingUnitDeployment;
 import org.testng.annotations.BeforeMethod;
 
-import test.utils.DeploymentUtils;
-import test.utils.LogUtils;
-import test.utils.ProcessingUnitUtils;
 import test.webui.objects.LoginPage;
 import test.webui.objects.MainNavigation;
 import test.webui.objects.services.PuTreeGrid.WebUIProcessingUnit;
 import test.webui.objects.services.ServicesTab;
 
 import com.thoughtworks.selenium.Selenium;
+
+import framework.utils.DeploymentUtils;
+import framework.utils.LogUtils;
+import framework.utils.ProcessingUnitUtils;
 
 public class WebSSLTest extends AbstractSeleniumTest {
 	

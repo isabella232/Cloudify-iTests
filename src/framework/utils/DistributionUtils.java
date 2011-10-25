@@ -1,4 +1,4 @@
-package test.utils;
+package framework.utils;
 import static org.testng.AssertJUnit.assertTrue;
 
 import org.openspaces.admin.Admin;
@@ -8,9 +8,10 @@ import org.openspaces.admin.machine.Machine;
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.openspaces.admin.pu.ProcessingUnitInstance;
 
-import test.utils.AssertUtils.RepetitiveConditionProvider;
 
 import com.gigaspaces.cluster.activeelection.SpaceMode;
+
+import framework.utils.AssertUtils.RepetitiveConditionProvider;
 
 /**
  * Utility methods for asserting distribution after deployment.

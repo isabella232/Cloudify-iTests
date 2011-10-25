@@ -9,10 +9,11 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import test.utils.AdminUtils;
-import test.utils.LogUtils;
 
 import com.gigaspaces.cloudify.dsl.Service;
+
+import framework.utils.AdminUtils;
+import framework.utils.LogUtils;
 
 public class USMMultipleDeployAndKillGSCTest extends UsmAbstractTest {
 

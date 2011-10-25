@@ -1,7 +1,7 @@
 package test.webui;
 
-import static test.utils.AdminUtils.loadGSM;
-import static test.utils.LogUtils.log;
+import static framework.utils.AdminUtils.loadGSM;
+import static framework.utils.LogUtils.log;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -39,13 +39,6 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 
 import test.AbstractTest;
-import test.utils.AdminUtils;
-import test.utils.AssertUtils;
-import test.utils.LogUtils;
-import test.utils.ProcessingUnitUtils;
-import test.utils.ScriptUtils;
-import test.utils.AssertUtils.RepetitiveConditionProvider;
-import test.utils.ScriptUtils.RunScript;
 import test.webui.objects.LoginPage;
 import test.webui.objects.dashboard.DashboardTab;
 import test.webui.resources.WebConstants;
@@ -54,6 +47,13 @@ import com.j_spaces.kernel.PlatformVersion;
 import com.thoughtworks.selenium.Selenium;
 
 import framework.tools.SGTestHelper;
+import framework.utils.AdminUtils;
+import framework.utils.AssertUtils;
+import framework.utils.LogUtils;
+import framework.utils.ProcessingUnitUtils;
+import framework.utils.ScriptUtils;
+import framework.utils.AssertUtils.RepetitiveConditionProvider;
+import framework.utils.ScriptUtils.RunScript;
 
 
 /**

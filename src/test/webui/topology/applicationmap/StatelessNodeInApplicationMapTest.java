@@ -11,12 +11,13 @@ import org.openspaces.admin.pu.ProcessingUnitDeployment;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import test.utils.AdminUtils;
-import test.utils.AssertUtils.RepetitiveConditionProvider;
-import test.utils.AssertUtils;
-import test.utils.DeploymentUtils;
-import test.utils.LogUtils;
-import test.utils.ProcessingUnitUtils;
+import framework.utils.AdminUtils;
+import framework.utils.AssertUtils;
+import framework.utils.DeploymentUtils;
+import framework.utils.LogUtils;
+import framework.utils.ProcessingUnitUtils;
+import framework.utils.AssertUtils.RepetitiveConditionProvider;
+
 import test.webui.AbstractSeleniumTest;
 import test.webui.objects.LoginPage;
 import test.webui.objects.topology.ApplicationMap;

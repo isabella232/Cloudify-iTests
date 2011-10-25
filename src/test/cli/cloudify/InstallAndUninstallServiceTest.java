@@ -8,10 +8,11 @@ import org.openspaces.admin.pu.ProcessingUnit;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import framework.utils.AssertUtils.RepetitiveConditionProvider;
+
 import test.cli.cloudify.AbstractCommandTest;
 import test.cli.cloudify.CommandTestUtils;
 import test.cli.cloudify.Constants;
-import test.utils.AssertUtils.RepetitiveConditionProvider;
 
 public class InstallAndUninstallServiceTest extends AbstractCommandTest {
 

@@ -14,7 +14,8 @@ import junit.framework.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import test.utils.LogUtils;
+import framework.utils.LogUtils;
+
 
 
 public class AdminApiControllerTest extends AbstractCommandTest {

@@ -1,6 +1,6 @@
-package test.utils;
+package framework.utils;
 
-import static test.utils.ProcessingUnitUtils.getProcessingUnitInstanceName;
+import static framework.utils.ProcessingUnitUtils.getProcessingUnitInstanceName;
 
 import java.util.Map;
 

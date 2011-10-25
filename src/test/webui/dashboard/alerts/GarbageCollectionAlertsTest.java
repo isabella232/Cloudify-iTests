@@ -1,6 +1,11 @@
 package test.webui.dashboard.alerts;
 
 import framework.tools.SGTestHelper;
+import framework.utils.AdminUtils;
+import framework.utils.LogUtils;
+import framework.utils.ProcessingUnitUtils;
+import framework.utils.WebUiUtils;
+
 import org.openspaces.admin.alert.Alert;
 import org.openspaces.admin.alert.AlertManager;
 import org.openspaces.admin.alert.AlertStatus;
@@ -21,10 +26,6 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import test.data.Message;
-import test.utils.AdminUtils;
-import test.utils.LogUtils;
-import test.utils.ProcessingUnitUtils;
-import test.utils.WebUiUtils;
 import test.webui.AbstractSeleniumTest;
 import test.webui.objects.dashboard.AlertsGrid;
 import test.webui.objects.dashboard.DashboardTab;
@@ -36,8 +37,8 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import static test.utils.AdminUtils.loadGSM;
-import static test.utils.LogUtils.log;
+import static framework.utils.AdminUtils.loadGSM;
+import static framework.utils.LogUtils.log;
 
 public class GarbageCollectionAlertsTest extends AbstractSeleniumTest {
 

@@ -3,8 +3,9 @@ package test;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import test.utils.LogUtils;
-import test.utils.SetupUtils;
+import framework.utils.LogUtils;
+import framework.utils.SetupUtils;
+
 
 /***
  * 

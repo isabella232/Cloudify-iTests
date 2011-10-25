@@ -1,7 +1,7 @@
 package test.cli.security.deploy;
 
+import static framework.utils.LogUtils.log;
 import static org.testng.AssertJUnit.assertNull;
-import static test.utils.LogUtils.log;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -10,7 +10,8 @@ import org.openspaces.admin.pu.ProcessingUnit;
 import org.openspaces.admin.pu.events.ProcessingUnitAddedEventListener;
 import org.testng.annotations.Test;
 
-import test.utils.CliUtils;
+import framework.utils.CliUtils;
+
 
 /***
  * 

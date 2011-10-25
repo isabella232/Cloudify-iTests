@@ -11,9 +11,10 @@ import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import framework.utils.LogUtils;
+import framework.utils.ScriptUtils;
+
 import test.AbstractTest;
-import test.utils.LogUtils;
-import test.utils.ScriptUtils;
 
 public class PetClinicApplicationTest extends AbstractTest {
 	

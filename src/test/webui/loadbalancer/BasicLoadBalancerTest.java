@@ -4,10 +4,6 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import test.utils.AssertUtils;
-import test.utils.AssertUtils.RepetitiveConditionProvider;
-import test.utils.ScriptUtils;
-import test.utils.WebUiUtils;
 import test.webui.AbstractSeleniumTest;
 import test.webui.objects.LoginPage;
 import test.webui.objects.MainNavigation;
@@ -17,6 +13,10 @@ import test.webui.objects.dashboard.ServicesGrid.ApplicationServicesGrid;
 import test.webui.objects.dashboard.ServicesGrid.ApplicationsMenuPanel;
 import test.webui.objects.dashboard.ServicesGrid.InfrastructureServicesGrid;
 import framework.tools.SGTestHelper;
+import framework.utils.AssertUtils;
+import framework.utils.ScriptUtils;
+import framework.utils.WebUiUtils;
+import framework.utils.AssertUtils.RepetitiveConditionProvider;
 
 public class BasicLoadBalancerTest extends AbstractSeleniumTest {
 	

@@ -7,28 +7,32 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import net.jini.core.discovery.LookupLocator;
+
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.openspaces.admin.gsa.GridServiceAgent;
 import org.openspaces.admin.gsm.GridServiceManager;
+import org.openspaces.admin.internal.InternalAdminFactory;
 import org.openspaces.admin.internal.gsa.InternalGridServiceAgent;
 import org.openspaces.admin.lus.LookupService;
 import org.openspaces.cloud.xenserver.XenServerMachineProvisioningConfig;
 import org.testng.annotations.BeforeMethod;
 
+import framework.utils.AssertUtils.RepetitiveConditionProvider;
 import framework.utils.LogUtils;
 import framework.utils.SSHUtils;
-import framework.utils.AssertUtils.RepetitiveConditionProvider;
 import framework.utils.xen.AbstractXenGSMTest;
-
 
 public class AbstractStartManagementXenTest extends AbstractXenGSMTest {
 	
     private static final String SHUTDOWN_MANAGEMENT_COMMAND = "/opt/gigaspaces/tools/cli/cloudify.sh shutdown-management --verbose";
 	private static final String SHUTDOWN_AGENT_COMMAND = "/opt/gigaspaces/tools/cli/cloudify.sh shutdown-agent --verbose";
+//	protected GridServiceAgentsCounter gsaCounterForAdditionalManagement;
     
+
 	@Override
 	protected void overrideXenServerProperties(XenServerMachineProvisioningConfig machineProvisioningConfig) {
         super.overrideXenServerProperties(machineProvisioningConfig);
@@ -78,8 +82,14 @@ public class AbstractStartManagementXenTest extends AbstractXenGSMTest {
 	protected void startAdditionalManagement() {
 		
 		final XenServerMachineProvisioningConfig agentConfig = getMachineProvisioningConfig();
+		agentConfig.setXapLocators(new String[]{"192.168.10.82:4166" , "192.168.10.23:4166"});
 	    agentConfig.setFileAgentRemoteLocation("/opt/cloudify-start-additional-management.sh");	    
-	    super.startNewVM(0,0, agentConfig,OPERATION_TIMEOUT, TimeUnit.MILLISECONDS); 
+	    GridServiceAgent gsa = super.startNewVM(0,0, agentConfig,OPERATION_TIMEOUT, TimeUnit.MILLISECONDS); 
+	    
+	    LookupLocator locator =  admin.getLocators()[0];
+	    String locators = locator.getHost() + ":" + locator.getPort() + "," + gsa.getMachine().getHostAddress() + ":4166";
+        admin = new InternalAdminFactory().singleThreadedEventListeners().useDaemonThreads(true).addLocators(locators).addGroup(admin.getGroups()[0]).createAdmin();
+        agentConfig.setXapLocators(locators.split(","));
 	}
 	
 	@Override
@@ -171,6 +181,7 @@ public class AbstractStartManagementXenTest extends AbstractXenGSMTest {
 	    String host = agent.getMachine().getHostAddress();		
 		SSHUtils.runCommand(host, 1000 * 60, SHUTDOWN_MANAGEMENT_COMMAND, username, password);
 	}
+	
 }
 
 

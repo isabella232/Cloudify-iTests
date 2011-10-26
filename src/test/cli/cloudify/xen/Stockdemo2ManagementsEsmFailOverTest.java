@@ -1,37 +1,38 @@
 package test.cli.cloudify.xen;
 
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import org.openspaces.admin.esm.ElasticServiceManager;
-import org.openspaces.admin.esm.ElasticServiceManagers;
-import org.openspaces.admin.esm.events.ElasticServiceManagerRemovedEventListener;
 import org.openspaces.admin.machine.Machine;
 import org.openspaces.cloud.xenserver.XenServerMachineProvisioningConfig;
-import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import test.cli.cloudify.CommandTestUtils;
 import framework.utils.LogUtils;
 import framework.utils.ScriptUtils;
 import framework.utils.xen.GsmTestUtils;
 
-import test.cli.cloudify.CommandTestUtils;
-
 
 public class Stockdemo2ManagementsEsmFailOverTest extends AbstractApplicationFailOverXenTest {
 	
-	protected final String stockdemoAppDirPath = ScriptUtils.getBuildPath() + "/examples/stockdemo";
-	protected int cassandraPort1;
-	protected int cassandraPort2;
-	protected String cassandraHostIp;
-
+	private final String stockdemoAppDirPath = ScriptUtils.getBuildPath() + "/examples/stockdemo";
+	private int cassandraPort1;
+	private int cassandraPort2;
+	private String cassandraHostIp;
+	private XenServerMachineProvisioningConfig xenConfigOfEsmMachine;
+	private Machine esmMachine;
+	
 	@BeforeClass
 	public void beforeClass()  {
 		super.beforeTest();
+		xenConfigOfEsmMachine = getMachineProvisioningConfig();
+		ElasticServiceManager esm = admin.getElasticServiceManagers().waitForAtLeastOne();
+		esmMachine = esm.getMachine();
+		
 		startAdditionalManagement();
 		
 		assignCassandraPorts(cassandraPort1, cassandraPort2, stockdemoAppDirPath);
@@ -40,9 +41,7 @@ public class Stockdemo2ManagementsEsmFailOverTest extends AbstractApplicationFai
 	    startAgent(0 ,"stockAnalyticsProcessor" ,"stockAnalyticsSpace");
 	    assertEquals("Expecting exactly 5 grid service agents to be added", 5, getNumberOfGSAsAdded());
 	    assertEquals("Expecting 0 agents to be removed", 0, getNumberOfGSAsRemoved());
-	    
 	    cassandraHostIp = admin.getZones().getByName("cassandra").getGridServiceAgents().getAgents()[0].getMachine().getHostAddress();
-
 	}
 	
 	@Override
@@ -75,85 +74,43 @@ public class Stockdemo2ManagementsEsmFailOverTest extends AbstractApplicationFai
 	 * 
 	 * @throws Exception
 	 */
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = true)
 	public void testEsmMachineShutdownFailover() throws Exception {
-		
-		XenServerMachineProvisioningConfig xenConfig = getMachineProvisioningConfig();
-		Machine esmMachine = admin.getElasticServiceManagers().waitForAtLeastOne().getMachine();
-		
 		LogUtils.log("Shuting down esm's mahcine gracefuly");
-		GsmTestUtils.shutdownMachine(esmMachine, xenConfig, DEFAULT_TEST_TIMEOUT);
+		GsmTestUtils.shutdownMachine(esmMachine, xenConfigOfEsmMachine, DEFAULT_TEST_TIMEOUT);
 		
 		LogUtils.log("asserting enviroment reconstracted");
+		isStockdemoAppInstalled(cassandraPort1 ,cassandraHostIp, cassandraPort2 ,cassandraHostIp);
 		assertEnvReconstracted();
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = false)
 	public void testEsmMachineHardShutdownFailover() throws Exception {
-		
-		XenServerMachineProvisioningConfig xenConfig = getMachineProvisioningConfig();
-		Machine esmMachine = admin.getElasticServiceManagers().waitForAtLeastOne().getMachine();
-		
 		LogUtils.log("Shuting down esm's mahcine");
-		GsmTestUtils.hardShutdownMachine(esmMachine, xenConfig, DEFAULT_TEST_TIMEOUT);
+		GsmTestUtils.hardShutdownMachine(esmMachine, xenConfigOfEsmMachine, DEFAULT_TEST_TIMEOUT);
 		
 		LogUtils.log("asserting enviroment reconstracted");
-		assertEnvReconstracted();
-	}
-	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = false)
-	public void testEsmRestart() throws Exception {
-		
-		ElasticServiceManager esm = admin.getElasticServiceManagers().waitForAtLeastOne();
-		LogUtils.log("killing esm");
-		killEsmAndWait(esm);
-		
-		LogUtils.log("asserting enviroment reconstracted");
-		assertEnvReconstracted();
-	}
-
-	private void assertEnvReconstracted() throws InterruptedException {
-		
-		boolean esmRestarted = admin.getElasticServiceManagers().waitFor(1, DEFAULT_TEST_TIMEOUT/3, TimeUnit.MICROSECONDS);
-		boolean gsmRestarted = admin.getGridServiceManagers().waitFor(2, DEFAULT_TEST_TIMEOUT/3, TimeUnit.MICROSECONDS);
-//		boolean lusRestarted = admin.getLookupServices().waitFor(2, DEFAULT_TEST_TIMEOUT/3, TimeUnit.MICROSECONDS);
-		boolean gsaRestarted = admin.getGridServiceAgents().waitFor(5, DEFAULT_TEST_TIMEOUT/3, TimeUnit.MICROSECONDS);
-		boolean restRestarted = admin.getProcessingUnits().waitFor("rest", DEFAULT_TEST_TIMEOUT/3, TimeUnit.MICROSECONDS).waitFor(2, DEFAULT_TEST_TIMEOUT/5, TimeUnit.MICROSECONDS);
-		boolean webuiRestarted = admin.getProcessingUnits().waitFor("webui", DEFAULT_TEST_TIMEOUT/3, TimeUnit.MICROSECONDS).waitFor(2, DEFAULT_TEST_TIMEOUT/5, TimeUnit.MICROSECONDS);
-		
-		assertTrue("esm did not restart" , esmRestarted);
-		assertTrue("gsm did not restart" , gsmRestarted);
-//		assertTrue("lus did not restart" , lusRestarted);
-		assertTrue("gsa did not restart" , gsaRestarted);
-		assertTrue("rest did not restart" , restRestarted);
-		assertTrue("webui did not restart" , webuiRestarted);
-		
 		isStockdemoAppInstalled(cassandraPort1 ,cassandraHostIp, cassandraPort2 ,cassandraHostIp);
+		assertEnvReconstracted();
+			
 	}
 	
-	private void killEsmAndWait(final ElasticServiceManager esm){
-		if (esm.isDiscovered()) {
-            final CountDownLatch latch = new CountDownLatch(1);
-            
-            ElasticServiceManagerRemovedEventListener removedEventListener = new ElasticServiceManagerRemovedEventListener() {
-
-                public void elasticServiceManagerRemoved(
-                        ElasticServiceManager elasticServiceManager) {
-                    if (elasticServiceManager.equals(esm)) {
-                        latch.countDown();
-                    }
-                }
-            };
-            ElasticServiceManagers managers = esm.getAdmin().getElasticServiceManagers();
-            managers.getElasticServiceManagerRemoved().add(removedEventListener);
-            try {
-                esm.kill();
-                latch.await();
-            } catch (InterruptedException e) {
-                Assert.fail("Interrupted while killing esm", e);
-            } finally {
-                managers.getElasticServiceManagerRemoved().remove(removedEventListener);
-            }
-        }
-	}
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////	
+	
+	 private void assertEnvReconstracted() throws InterruptedException {
+			
+			boolean esmRestarted = admin.getElasticServiceManagers().waitFor(1, DEFAULT_RECOVERY_TIME, TimeUnit.MICROSECONDS);
+			boolean gsmRestarted = admin.getGridServiceManagers().waitFor(2, DEFAULT_RECOVERY_TIME, TimeUnit.MICROSECONDS);
+			boolean lusRestarted = admin.getLookupServices().waitFor(2, DEFAULT_RECOVERY_TIME, TimeUnit.MICROSECONDS);
+			boolean gsaRestarted = admin.getGridServiceAgents().waitFor(5, DEFAULT_RECOVERY_TIME, TimeUnit.MICROSECONDS);
+			boolean restRestarted = admin.getProcessingUnits().waitFor("rest", DEFAULT_RECOVERY_TIME, TimeUnit.MICROSECONDS).waitFor(2, DEFAULT_TEST_TIMEOUT/5, TimeUnit.MICROSECONDS);
+			boolean webuiRestarted = admin.getProcessingUnits().waitFor("webui", DEFAULT_RECOVERY_TIME, TimeUnit.MICROSECONDS).waitFor(2, DEFAULT_TEST_TIMEOUT/5, TimeUnit.MICROSECONDS);
+			
+			assertTrue("esm did not restart" , esmRestarted);
+			assertTrue("gsm did not restart" , gsmRestarted);
+			assertTrue("lus did not restart" , lusRestarted);
+			assertTrue("gsa did not restart" , gsaRestarted);
+			assertTrue("rest did not restart" , restRestarted);
+			assertTrue("webui did not restart" , webuiRestarted);
+		}
 }

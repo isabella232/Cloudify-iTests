@@ -4,22 +4,29 @@ import java.io.File;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import org.junit.Assert;
+import org.openspaces.admin.esm.ElasticServiceManager;
+import org.openspaces.admin.esm.ElasticServiceManagers;
+import org.openspaces.admin.esm.events.ElasticServiceManagerRemovedEventListener;
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.openspaces.admin.space.Space;
+import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 
 import test.cli.cloudify.CommandTestUtils;
 
 import com.gigaspaces.cloudify.dsl.Service;
 import com.gigaspaces.cloudify.dsl.internal.ServiceReader;
+import com.gigaspaces.log.LogEntries;
+import com.gigaspaces.log.LogEntryMatcher;
+import com.gigaspaces.log.LogEntryMatchers;
 
 import framework.utils.AssertUtils;
+import framework.utils.AssertUtils.RepetitiveConditionProvider;
 import framework.utils.LogUtils;
 import framework.utils.TestUtils;
-import framework.utils.AssertUtils.RepetitiveConditionProvider;
 
 /**
  * 
@@ -30,6 +37,7 @@ import framework.utils.AssertUtils.RepetitiveConditionProvider;
 public class AbstractApplicationFailOverXenTest extends AbstractStartManagementXenTest {
 		
 	protected String restUrl;
+	protected final long DEFAULT_RECOVERY_TIME = DEFAULT_TEST_TIMEOUT/3;
 	
 	public AbstractApplicationFailOverXenTest(){
 		
@@ -61,8 +69,8 @@ public class AbstractApplicationFailOverXenTest extends AbstractStartManagementX
 			@Override
 			public void run() {
 				ProcessingUnit pu = admin.getProcessingUnits().getProcessingUnit(puName);
-				Assert.assertEquals(puName + " pu wasn't killed" ,puInstancesAfterInstall - 1, pu.getInstances().length);
-				Assert.assertTrue(puName + " port was not free after kill - port number " + port, portIsAvailible(port ,host));
+				assertEquals(puName + " pu wasn't killed" ,puInstancesAfterInstall - 1, pu.getInstances().length);
+				assertTrue(puName + " port was not free after kill - port number " + port, portIsAvailible(port ,host));
 			}
 		}, 1000 * 60);
 	}
@@ -103,7 +111,7 @@ public class AbstractApplicationFailOverXenTest extends AbstractStartManagementX
 	protected void assertPuInstanceRessurected(final String puName , final int port, final String bindAddr ,int puInstancesAfterInstall) {
 		ProcessingUnit pu = admin.getProcessingUnits().waitFor(puName);
 		LogUtils.log("waiting for " + puName + " pu instance ressurection");
-		Assert.assertTrue(puName + " pu was not recovered for " + DEFAULT_TEST_TIMEOUT + " seconds after fail over" ,
+		assertTrue(puName + " pu was not recovered for " + DEFAULT_TEST_TIMEOUT + " seconds after fail over" ,
 				pu.waitFor(puInstancesAfterInstall, DEFAULT_TEST_TIMEOUT, TimeUnit.SECONDS));
 		LogUtils.log(puName + " pu was ressurected");
 		
@@ -112,7 +120,7 @@ public class AbstractApplicationFailOverXenTest extends AbstractStartManagementX
 			TestUtils.repetitive(new Runnable(){
 				@Override
 				public void run() {
-					Assert.assertTrue(puName + " port was not occupied after ressurection - port number " + port, !portIsAvailible(port ,bindAddr));
+					assertTrue(puName + " port was not occupied after ressurection - port number " + port, !portIsAvailible(port ,bindAddr));
 				}
 			}, 1000 * 60);
 		}
@@ -162,13 +170,13 @@ public class AbstractApplicationFailOverXenTest extends AbstractStartManagementX
 		ProcessingUnit stockAnalyticsProcessor = admin.getProcessingUnits().waitFor("stockAnalyticsProcessor");
 		ProcessingUnit StockDemo = admin.getProcessingUnits().waitFor("StockDemo");
 		
-		Assert.assertNotNull("cassandra pu didn't deploy", cassandra);
-		Assert.assertNotNull("stockAnalytics pu didn't deploy", stockAnalytics);
-		Assert.assertNotNull("stockAnalyticsFeeder pu didn't deploy", stockAnalyticsFeeder);
-		Assert.assertNotNull("stockAnalyticsMirror pu didn't deploy", stockAnalyticsMirror);
-		Assert.assertNotNull("stockAnalyticsSpace pu didn't deploy", stockAnalyticsSpace);
-		Assert.assertNotNull("stockAnalyticsProcessor pu didn't deploy", stockAnalyticsProcessor);
-		Assert.assertNotNull("StockDemo pu didn't deploy", StockDemo);
+		assertNotNull("cassandra pu didn't deploy", cassandra);
+		assertNotNull("stockAnalytics pu didn't deploy", stockAnalytics);
+		assertNotNull("stockAnalyticsFeeder pu didn't deploy", stockAnalyticsFeeder);
+		assertNotNull("stockAnalyticsMirror pu didn't deploy", stockAnalyticsMirror);
+		assertNotNull("stockAnalyticsSpace pu didn't deploy", stockAnalyticsSpace);
+		assertNotNull("stockAnalyticsProcessor pu didn't deploy", stockAnalyticsProcessor);
+		assertNotNull("StockDemo pu didn't deploy", StockDemo);
 		
 		cassandra.waitFor(cassandra.getTotalNumberOfInstances());
 		stockAnalytics.waitFor(stockAnalytics.getTotalNumberOfInstances());
@@ -188,13 +196,13 @@ public class AbstractApplicationFailOverXenTest extends AbstractStartManagementX
 		boolean stockAnalyticsProcessorDeployed = stockAnalyticsProcessor.getInstances().length == stockAnalyticsProcessor.getTotalNumberOfInstances();
 		boolean StockDemoDeployed = StockDemo.getInstances().length == StockDemo.getTotalNumberOfInstances();
 		
-		Assert.assertTrue("cassandra pu didn't deploy all of it's instances", cassandraDeployed);
-		Assert.assertTrue("stockAnalytics pu didn't deploy all of it's instances", stockAnalyticsDeployed);
-		Assert.assertTrue("stockAnalyticsFeeder pu didn't deploy all of it's instances", stockAnalyticsFeederDeployed);
-		Assert.assertTrue("stockAnalyticsMirror pu didn't deploy all of it's instances", stockAnalyticsMirrorDeployed);
-		Assert.assertTrue("stockAnalyticsSpace pu didn't deploy all of it's instances", stockAnalyticsSpaceDeployed);
-		Assert.assertTrue("stockAnalyticsProcessor pu didn't deploy all of it's instances", stockAnalyticsProcessorDeployed);
-		Assert.assertTrue("StockDemo pu didn't deploy all of it's instances", StockDemoDeployed);
+		assertTrue("cassandra pu didn't deploy all of it's instances", cassandraDeployed);
+		assertTrue("stockAnalytics pu didn't deploy all of it's instances", stockAnalyticsDeployed);
+		assertTrue("stockAnalyticsFeeder pu didn't deploy all of it's instances", stockAnalyticsFeederDeployed);
+		assertTrue("stockAnalyticsMirror pu didn't deploy all of it's instances", stockAnalyticsMirrorDeployed);
+		assertTrue("stockAnalyticsSpace pu didn't deploy all of it's instances", stockAnalyticsSpaceDeployed);
+		assertTrue("stockAnalyticsProcessor pu didn't deploy all of it's instances", stockAnalyticsProcessorDeployed);
+		assertTrue("StockDemo pu didn't deploy all of it's instances", StockDemoDeployed);
 		
 		if(port1 > 0  && port2 > 0){
 			LogUtils.log("asserting needed ports for application are taken");
@@ -217,4 +225,71 @@ public class AbstractApplicationFailOverXenTest extends AbstractStartManagementX
 		cassandraPort1 = cassandraPorts.get(0);
 		cassandraPort2 = cassandraPorts.get(1);
 	}
+	
+	protected void assertEsmIsManagingEnvBySearchingLogs(ElasticServiceManager esm) {
+		
+		boolean esmRestarted = admin.getElasticServiceManagers().waitFor(1, DEFAULT_RECOVERY_TIME, TimeUnit.MICROSECONDS);
+		assertTrue("esm did not restart" , esmRestarted);
+		
+		String format1 = "Elastic properties for pu %s are being enforced";
+		String format2 = "Machines eager SLA for %s has been reached";
+		String format3 = "Eager containers SLA for %s has been reached";
+		
+		for(ProcessingUnit pu : admin.getProcessingUnits().getProcessingUnits()){
+			String requiredText1 = String.format(format1, pu.getName());
+			String requiredText2 = String.format(format2, pu.getName());
+			String requiredText3 = String.format(format3, pu.getName());
+			
+			repetativeScanElasticManagerLogsFor(esm, requiredText1, DEFAULT_RECOVERY_TIME);
+			repetativeScanElasticManagerLogsFor(esm, requiredText2, DEFAULT_RECOVERY_TIME);
+			repetativeScanElasticManagerLogsFor(esm, requiredText3, DEFAULT_RECOVERY_TIME);
+		}
+	}
+	
+	/**
+     * scans the logs of the ESM repetatively for a specific text message
+     * assert fails if text is not found in logs after timeout passes
+     * @param esm - the esm to scan
+     * @param text - the text to look for
+     */
+    
+    protected static void repetativeScanElasticManagerLogsFor(final ElasticServiceManager esm , final String text, long timeoutInMillis) {
+        RepetitiveConditionProvider condition = new RepetitiveConditionProvider() {
+            public boolean getCondition() {
+                LogEntryMatcher matcher = LogEntryMatchers.containsString(text);
+                LogEntries logEntriesGsm = esm.logEntries(matcher);
+                return logEntriesGsm.getEntries().size() > 1;
+            }
+        };
+        AssertUtils.repetitiveAssertTrue("Failed finding: " + text + " in the gsm logs", condition, timeoutInMillis);       
+    }
+    
+   
+	
+    protected void killEsmAndWait(final ElasticServiceManager esm){
+		if (esm.isDiscovered()) {
+            final CountDownLatch latch = new CountDownLatch(1);
+            
+            ElasticServiceManagerRemovedEventListener removedEventListener = new ElasticServiceManagerRemovedEventListener() {
+
+                public void elasticServiceManagerRemoved(
+                        ElasticServiceManager elasticServiceManager) {
+                    if (elasticServiceManager.equals(esm)) {
+                        latch.countDown();
+                    }
+                }
+            };
+            ElasticServiceManagers managers = esm.getAdmin().getElasticServiceManagers();
+            managers.getElasticServiceManagerRemoved().add(removedEventListener);
+            try {
+                esm.kill();
+                latch.await();
+            } catch (InterruptedException e) {
+                Assert.fail("Interrupted while killing esm", e);
+            } finally {
+                managers.getElasticServiceManagerRemoved().remove(removedEventListener);
+            }
+        }
+	}
+	
 }

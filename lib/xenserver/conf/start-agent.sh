@@ -12,8 +12,10 @@
 # UPDATE SETENV SCRIPT...
 /opt/setup-env.sh $1 $3 $4
 
-if [ ! -z "$5" ]; then
-  export GSA_JAVA_OPTIONS=-Dcom.gs.zones=$5
+if [ -z "$5" ]; then
+  export GSA_JAVA_OPTIONS=-Dcom.gs.agent.auto-shutdown-enabled=true
+else
+  export GSA_JAVA_OPTIONS=-Dcom.gs.agent.auto-shutdown-enabled=true -Dcom.gs.zones=$5
 fi
 
 cd /opt/gigaspaces/bin

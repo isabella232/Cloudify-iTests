@@ -28,8 +28,13 @@ public class ConfigSlurperTest extends AbstractCommandTest {
 			Assert.assertTrue(attributes.get("name").equals("slurper"));
 			Assert.assertTrue(attributes.get("type").equals("WEB_SERVER"));
 			Assert.assertTrue(attributes.get("tripletype").equals("WEB_SERVERWEB_SERVERWEB_SERVER"));
-			Assert.assertTrue(attributes.get("placeholderProp").equals("string"));
-			Assert.assertTrue(attributes.get("systemProp").equals(";"));
+			Assert.assertTrue(attributes.get("placeholderProp").toString().equals("string"));
+			
+			if(admin.getMachines().getMachines()[0].getOperatingSystem().getDetails().getName().equals("Linux"))
+				Assert.assertTrue(attributes.get("systemProp").toString().equals(":"));
+			else
+				Assert.assertTrue(attributes.get("systemProp").toString().equals(";"));
+			
 			
 			command = "connect " + restUrl + ";" + "uninstall-service slurper;exit";
 			runCommand(command);

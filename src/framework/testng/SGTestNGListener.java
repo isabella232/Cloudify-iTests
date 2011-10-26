@@ -106,7 +106,7 @@ public class SGTestNGListener extends TestListenerAdapter {
         	link = "<a href=http://192.168.9.121:8087/sgtest.webui/"  + "build_" + buildNumber + "/" + suiteName + "/html>"+buildNumber+" </a>";
         }
         else {
-        	link = "<a href=http://192.168.9.121:8087/sgtest/" + buildNumber + "/" + suiteName + "/html>"+buildNumber+" </a>";
+        	link = "<a href=http://192.168.9.121:8087/sgtest-cloudify/" + buildNumber + "/" + suiteName + "/html>"+buildNumber+" </a>";
         }
         StringBuilder sb = new StringBuilder();
         sb.append("<html>").append("\n");

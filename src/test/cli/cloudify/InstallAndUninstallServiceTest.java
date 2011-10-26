@@ -31,6 +31,9 @@ public class InstallAndUninstallServiceTest extends AbstractCommandTest {
 	public static final String USM_SERVICE_FOLDER_NAME = "simple";
 	public static final String USM_SERVICE_NAME = "simple";
 	
+	public static final String MIRROR_SERVICE_FOLDER_NAME = "stockAnalyticsMirror";
+	public static final String MIRROR_SERVICE_NAME = "stockAnalyticsMirror";
+	
 	@Override
 	@BeforeMethod
 	public void beforeTest() {
@@ -60,6 +63,11 @@ public class InstallAndUninstallServiceTest extends AbstractCommandTest {
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
 	public void testDataGridRecipeInstall() throws IOException, InterruptedException {
 		testRestApiInstall(DATAGRID_SERVICE_NAME, getUsmServicePath(DATAGRID_FOLDER_NAME));
+	}
+	
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
+	public void testMirrorRecipeInstall() throws IOException, InterruptedException {
+		testRestApiInstall(MIRROR_SERVICE_NAME, getUsmServicePath(MIRROR_SERVICE_FOLDER_NAME));
 	}
 	
 	void testRestApiInstall(String serviceName, String servicePath) throws IOException, InterruptedException{

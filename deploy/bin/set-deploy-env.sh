@@ -29,3 +29,13 @@
  # type of process to invoke. options are gs-agent.
  GSA_TYPE=1
  GSA_WAN_TYPE=2
+
+ # SGTEST Type values
+ BACKWARDS_SGTEST_TYPE=BACKWARDS
+ REGULAR_SGTEST_TYPE=REGULAR
+
+ # SGTEST Client Type values
+ SGTEST_OLD_CLIENT_TYPE=OLD_CLIENT
+ SGTEST_NEW_CLIENT_TYPE=NEW_CLIENT
+
+ 

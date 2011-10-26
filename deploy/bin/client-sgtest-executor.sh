@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh -x
 
 ##############################################
 # remote-sgteest-executer.sh args
@@ -13,6 +13,9 @@
  JAVA_TYPE=$3
  LOOKUPGROUPS=$4; export LOOKUPGROUPS
  BUILD_NUMBER=$5
+ INCLUDE=$6
+ EXCLUDE=$7
+ SUITE_NAME=$8
 
 
  # set shell.
@@ -22,15 +25,17 @@
  # set path of sgtest/bin (#1 script argument)
  SGTEST_ROOT_BIN_DIR=${DEPLOY_ROOT_BIN_DIR}/../../bin/
 
+
  # setup env variables and common functions
  cd ${DEPLOY_ROOT_BIN_DIR}
  . set-deploy-env.sh
  ${CONFIG_JAVA_SCRIPT} ${JAVA_TYPE}
 
- cd ${SGTEST_ROOT_BIN_DIR}
 
+ cd ${SGTEST_ROOT_BIN_DIR}
+ 
  #start sgtest
- ${SGTEST_ROOT_BIN_DIR}/sgtest-cmd.sh ${BUILD_NUMBER}
+ ${SGTEST_ROOT_BIN_DIR}/sgtest-cmd.sh ${BUILD_NUMBER} ${INCLUDE} ${EXCLUDE} ${SUITE_NAME}
 
  RESULT=$?
 

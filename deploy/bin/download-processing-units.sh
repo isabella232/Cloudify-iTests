@@ -3,9 +3,9 @@
  . set-deploy-env.sh
 
 if [ ${BRANCH_NAME} != "trunk" ]; then
-	SVN_SGTEST_REPOSITORY=svn://pc-lab14/SVN/branches/8_0_X/${BRANCH_NAME}/quality/SGTest	
+	SVN_SGTEST_REPOSITORY=svn://pc-lab14/SVN/cloudify/branches/8_0_X/${BRANCH_NAME}/quality/SGTest	
 else
-	SVN_SGTEST_REPOSITORY=svn://pc-lab14/SVN/trunk/quality/SGTest
+	SVN_SGTEST_REPOSITORY=svn://pc-lab14/SVN/cloudify/trunk/quality/SGTest
 fi
  # set local build directory with entered build number
  BUILD_CACHE_DIR=${BUILDS_CACHE_REPOSITORY}/${BUILD_NUMBER}
@@ -57,11 +57,6 @@ mv spring-test-security.properties ${BUILD_DIR}/config/security
 svn export ${SVN_SGTEST_REPOSITORY}/config/security/sgtest_login.properties
 mv sgtest_login.properties ${BUILD_DIR}/config/security
 
-rm -rf /export/tgrid/sgtest/lib/xenserver/
+rm -rf /export/tgrid/sgtest-cloudfiy/lib/xenserver/
 svn --force export ${SVN_SGTEST_REPOSITORY}/lib/xenserver
-mv xenserver /export/tgrid/sgtest/lib/
-
-### Copy ext
-rm -rf /export/tgrid/sgtest/ext
-svn --force export ${SVN_SGTEST_REPOSITORY}/ext
-mv ext/ /export/tgrid/sgtest/ext
+mv xenserver /export/tgrid/sgtest-cloudify/lib/

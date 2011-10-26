@@ -29,16 +29,27 @@ umask 000
  JVM_PROPERTIES=$9; export JVM_PROPERTIES
  SGTEST_CHECKOUT_FOLDER=${10}; export SGTEST_CHECKOUT_FOLDER
  TARGET_GSA_WAN_MACHINES=${11}
-
+ # SGTEST_TYPE could be REGULAR, BACKWARDS
+ SGTEST_TYPE=${12}; export SGTEST_TYPE
+ # SGTEST_CLIENT_TYPE could be OLD_CLIENT or NEW_CLIENT
+ SGTEST_CLIENT_TYPE=${13}; export SGTEST_CLIENT_TYPE
+ BRANCH_NAME=${14}; export BRANCH_NAME
+ INCLUDE=${15}; export INCLUDE
+ EXCLUDE=${16}; export EXCLUDE
+ SUITE_NAME=${17}; export SUITE_NAME
+ 
+ . set-deploy-env.sh
 
  #setup lookup group
  if [ "$SG_LOOKUPGROUPS" == "" ]
-  then
-     SG_LOOKUPGROUPS=sgtest
+  then if [ "${SGTEST_TYPE}" == "${BACKWARDS_SGTEST_TYPE}" ] 
+	then
+	  SG_LOOKUPGROUPS=backwards-sgtest-cloudify
+	else
+	  SG_LOOKUPGROUPS=sgtest-cloudify
+	fi
  fi
  LOOKUPGROUPS="${SG_LOOKUPGROUPS}"; export LOOKUPGROUPS
-
- . set-deploy-env.sh
 
  #setup functions
  . functions.sh $*
@@ -47,6 +58,7 @@ umask 000
  . setup-build.sh
  
  BUILD_DIR=${BUILD_CACHE_DIR}/${BUILD_INSTALL_DIR}; export BUILD_DIR
+ OLD_BUILD_DIR=/export/tgrid/sgtest/deploy/local-builds/build_5000/gigaspaces-xap-premium-8.0.0-ga; export OLD_BUILD_DIR
  
  if [ -d ${SGTEST_CHECKOUT_FOLDER} ];
  then
@@ -71,14 +83,6 @@ umask 000
  #---------------------------------------------------------
 
 
- echo "start apache web server"
- #---------------------------------------------------------
-# ${PDSH} -w ssh:pc-lab44 "/usr/local/apache2/bin/apachectl -k start &"
- 
- echo "start apache-lb-agent"
-# ${PDSH} -w ssh:pc-lab44 "${BUILD_DIR}/tools/apache/apache-lb-agent.sh -apache /usr/local/apache2 -update-interval 1000 &"
- 
- 
  #delete result file
  if [ -f ${RESULT_INDICATOR_FILE} ];
  then
@@ -89,9 +93,21 @@ umask 000
  echo "   ### start sgtest ###  "
  echo ---------------------------------------
 
- REMOTE_EXECUTOR_SCRIPT="${DEPLOY_ROOT_BIN_DIR}/remote-sgtest-executor.sh"
+CLIENT_EXECUTOR_SCRIPT="${DEPLOY_ROOT_BIN_DIR}/client-sgtest-executor.sh"
 
- ${PDSH} -w ssh:pc-lab[${TARGET_CLIENT_MACHINE}] "${REMOTE_EXECUTOR_SCRIPT} ${DEPLOY_ROOT_BIN_DIR} ${BUILD_DIR} ${CONFIG_JAVA_ORDER} ${LOOKUPGROUPS} ${BUILD_NUMBER} &"
+  if [ "${SGTEST_TYPE}" == "${BACKWARDS_SGTEST_TYPE}" ]
+  then if [ "${SGTEST_CLIENT_TYPE}" == "${SGTEST_OLD_CLIENT_TYPE}" ]
+        then
+          SGTEST_CLIENT_BUILD_DIR=${OLD_BUILD_DIR}
+        else
+          SGTEST_CLIENT_BUILD_DIR=${BUILD_DIR}
+        fi
+  else
+	SGTEST_CLIENT_BUILD_DIR=${BUILD_DIR}
+ fi
+
+
+ ${PDSH} -w ssh:pc-lab[${TARGET_CLIENT_MACHINE}] "${CLIENT_EXECUTOR_SCRIPT} ${DEPLOY_ROOT_BIN_DIR} ${SGTEST_CLIENT_BUILD_DIR} ${CONFIG_JAVA_ORDER} ${LOOKUPGROUPS} ${BUILD_NUMBER} ${INCLUDE} ${EXCLUDE} ${SUITE_NAME} &"
 
  while [ ! -f ${RESULT_INDICATOR_FILE} ]
  do
@@ -114,13 +130,8 @@ umask 000
  		cp ${SGTEST_DIR}/${OUTPUTFILE_NAME} ${SGTEST_DIR}/output/`date '+%d-%m-%y'`_${OUTPUTFILE_NAME}
  fi
 
-
  # f. kill all processes after sgtest returns.
  cd ${DEPLOY_ROOT_BIN_DIR}
  clean_machines
 
- echo "stop apache web server"
- # -----------------------------------------------
- # ${PDSH} -w ssh:pc-lab44 "/usr/local/apache2/bin/apachectl -k stop &"
- 
  exit ${EXIT_CODE}

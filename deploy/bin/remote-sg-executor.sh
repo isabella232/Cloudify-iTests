@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh -x
 
 ##
 # This script provides remote command execution of gigaspacs services (gs-agent).

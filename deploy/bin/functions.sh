@@ -23,10 +23,12 @@
 		then
 		. ${DEPLOY_ROOT_BIN_DIR}/preRemoteProcess.sh 2 ${TARGET_CLIENT_MACHINE}
 	 fi
-	if [ "$TARGET_WAN_MACHINES_ARRAY" != "" ]
+	if [ "$TARGET_GSA_WAN_MACHINES" != "" ]
                 then
-                . ${DEPLOY_ROOT_BIN_DIR}/preRemoteProcess.sh 2 ${TARGET_WAN_MACHINES_ARRAY}
-         fi
+                . ${DEPLOY_ROOT_BIN_DIR}/preRemoteProcess.sh 2 ${TARGET_GSA_WAN_MACHINES}
+         fi		
+		#{TARGET_GSA_WAN_MACHINES
+		#TARGET_WAN_MACHINES_ARRAY 						  
 
  }
 

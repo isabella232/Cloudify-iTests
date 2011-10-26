@@ -15,7 +15,19 @@
  LOC_REMOTE_MACHINES=$2
  GSA_TYPE=$3
 
- LOC_BUILD_DIR=${BUILD_DIR}
+
+ if [ "${SGTEST_TYPE}" == "${BACKWARDS_SGTEST_TYPE}" ] 
+  then if [ "${SGTEST_CLIENT_TYPE}" == "${SGTEST_OLD_CLIENT_TYPE}" ] 
+        then
+	  # IF OLD_CLIENt, so the server must be new, and vice versa
+          LOC_BUILD_DIR=${BUILD_DIR}
+        else
+          LOC_BUILD_DIR=${OLD_BUILD_DIR}
+        fi
+  else
+   	LOC_BUILD_DIR=${BUILD_DIR}
+ fi
+
  LOC_CONFIG_JAVA_ORDER=${CONFIG_JAVA_ORDER}
  LOC_JVM_PROPERTIES="${JVM_PROPERTIES}"
 
@@ -29,4 +41,9 @@
 
 
  # execute supplied remote commands on desired lab machines
+if [ "${OPERATION}" == "1" ] 
+then
  ${PDSH} -w ssh:pc-lab[${LOC_REMOTE_MACHINES}] "${REMOTE_EXECUTOR_SCRIPT} ${OPERATION} ${LOC_CONFIG_JAVA_ORDER} ${DEPLOY_ROOT_BIN_DIR} ${LOC_BUILD_DIR} ${GSA_TYPE} ${LOOKUPGROUPS} '${LOC_JVM_PROPERTIES}'"
+else
+ ${PDSH} -u 10 -w ssh:pc-lab[${LOC_REMOTE_MACHINES}] "${REMOTE_EXECUTOR_SCRIPT} ${OPERATION} ${LOC_CONFIG_JAVA_ORDER} ${DEPLOY_ROOT_BIN_DIR} ${LOC_BUILD_DIR} ${GSA_TYPE} ${LOOKUPGROUPS} '${LOC_JVM_PROPERTIES}'"
+fi

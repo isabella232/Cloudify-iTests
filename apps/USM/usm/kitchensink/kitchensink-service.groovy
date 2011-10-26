@@ -20,10 +20,10 @@ service {
 			sleep 15000 // sleep so that the test can pick up the event printouts from the log
 		}
 		
-//		details(["stam":{"HA HA HAAAAAAAAAAAAAAAAAAA"},
-//			"SomeKey":{"22222222222222222222222222"}])
-//		monitor(["NumberTwo":{return 2},
-//			"NumberOne":{return "1"}])
+		details(["stam":{"HA HA HAAAAAAAAAAAAAAAAAAA"},
+			"SomeKey":{"22222222222222222222222222"}])
+		monitors(["NumberTwo":{return 2},
+			"NumberOne":{return "1"}])
 		 
 	}
 

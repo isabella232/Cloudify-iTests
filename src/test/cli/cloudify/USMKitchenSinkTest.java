@@ -52,11 +52,11 @@ public class USMKitchenSinkTest extends AbstractCommandTest {
 			"shutdown fired" };
 
 	private static final String EXPECTED_DETAILS_FIELDS[] = { "Details",
-			"Counter", "Type" };
+			"Counter", "Type", "stam", "SomeKey" };
 
 	private static final String EXPECTED_MONITORS_FIELDS[] = {
 			"Counter", CloudifyConstants.USM_MONITORS_CHILD_PROCESS_ID,
-			CloudifyConstants.USM_MONITORS_ACTUAL_PROCESS_ID };
+			CloudifyConstants.USM_MONITORS_ACTUAL_PROCESS_ID, "NumberTwo", "NumberOne" };
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
 	public void testKitchenSink() throws IOException, InterruptedException,
@@ -158,6 +158,7 @@ public class USMKitchenSinkTest extends AbstractCommandTest {
 				+ "; invoke kitchensink-service cmd4");
 		if ((!invoke4Result.contains("1: OK"))
 				|| (!invoke4Result.contains("context_command"))
+				//TODO: what is this?
 //				|| (!invoke4Result.contains("instance is:"))
 				) {
 			AssertFail("Custom command cmd4 returned unexpected result: "

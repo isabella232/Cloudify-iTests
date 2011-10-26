@@ -3,9 +3,9 @@
  . set-deploy-env.sh
 
 if [ ${BRANCH_NAME} != "trunk" ]; then
-	SVN_SGTEST_REPOSITORY=svn://pc-lab14/SVN/cloudify/branches/8_0_X/${BRANCH_NAME}/quality/SGTest	
+	SVN_SGTEST_REPOSITORY=svn://pc-lab14/SVN/cloudify/branches/8_0_X/${BRANCH_NAME}/quality/frameworks/SGTest	
 else
-	SVN_SGTEST_REPOSITORY=svn://pc-lab14/SVN/cloudify/trunk/quality/SGTest
+	SVN_SGTEST_REPOSITORY=svn://pc-lab14/SVN/cloudify/trunk/quality/frameworks/SGTest
 fi
  # set local build directory with entered build number
  BUILD_CACHE_DIR=${BUILDS_CACHE_REPOSITORY}/${BUILD_NUMBER}

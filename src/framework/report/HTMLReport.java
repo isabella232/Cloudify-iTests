@@ -38,7 +38,7 @@ public class HTMLReport {
                         dateFormat.format(date) +" " + newBuildreport + "</font></a></br>";
                     }
                     else {
-                    	link = "<a href=http://192.168.9.121:8087/sgtest/" + newBuildreport + "/" + suiteName + "/html/><font color=\"0000FF\">" +
+                    	link = "<a href=http://192.168.9.121:8087/sgtest-cloudify/" + newBuildreport + "/" + suiteName + "/html/><font color=\"0000FF\">" +
                     		dateFormat.format(date) +" " + newBuildreport + "</font></a></br>";
                     }
                     sb.insert(startLinkIndex, link);

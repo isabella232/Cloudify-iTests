@@ -12,6 +12,6 @@
 /opt/setup-env.sh $1 $3 $4
 
 cd /opt/gigaspaces/tools/cli/
-nohup ./cloudify.sh start-management -no-web-services -timeout 30  > /dev/null &
+nohup ./cloudify.sh start-management -no-web-services -timeout 30 -auto-shutdown > /dev/null &
 
 exit 0

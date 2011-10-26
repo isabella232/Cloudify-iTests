@@ -1,5 +1,6 @@
 package test.cli.cloudify;
 
+import java.io.IOException;
 import java.util.Map;
 
 import org.openspaces.admin.pu.ProcessingUnit;
@@ -12,10 +13,10 @@ import framework.tools.SGTestHelper;
 public class ConfigSlurperTest extends AbstractCommandTest {
 	
 	@Test
-	public void test(){
+	public void test() throws IOException, InterruptedException{
 		String serviceDir = SGTestHelper.getSGTestRootDir().replace("\\", "/") + "/apps/USM/usm/slurper";
 		String command = "connect " + restUrl + ";install-service --verbose " + serviceDir + ";exit";
-		try {
+
 			runCommand(command);
 
 			ProcessingUnit pu = admin.getProcessingUnits().waitFor("slurper");
@@ -27,15 +28,13 @@ public class ConfigSlurperTest extends AbstractCommandTest {
 			Assert.assertTrue(attributes.get("name").equals("slurper"));
 			Assert.assertTrue(attributes.get("type").equals("WEB_SERVER"));
 			Assert.assertTrue(attributes.get("tripletype").equals("WEB_SERVERWEB_SERVERWEB_SERVER"));
+			Assert.assertTrue(attributes.get("placeholderProp").equals("string"));
+			Assert.assertTrue(attributes.get("systemProp").equals(";"));
 			
 			command = "connect " + restUrl + ";" + "uninstall-service slurper;exit";
 			runCommand(command);
 
 	
-		} catch (Exception e) {
-			e.printStackTrace();
-			super.afterTest();
-		}
 
 	}
 }

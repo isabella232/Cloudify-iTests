@@ -15,7 +15,6 @@ service {
 		preStart {println "This is the preStart event" }
 
 		start (["Win.*":"run.bat", "Linux":"run.sh"])
-//		
 
 		postStart {println "This is the postStart event" }
 
@@ -27,7 +26,10 @@ service {
 					"icon" : {conf.icon},
 					"type" : {conf.type},
 					"tripletype" : {conf.type3},
-					"jmx-port" : {"${jmx.ports.JMX_PORT}"}])
+					"jmx-port" : {"${jmx.ports.JMX_PORT}"},
+					"placeholderProp" : {property2},
+					"systemProp" : {systemProp}
+				])
 	}
 
 	

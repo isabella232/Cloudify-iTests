@@ -31,15 +31,15 @@ service {
 	}
 
 	plugins ([
-		plugin {
-			name "portLiveness"
-			className "com.gigaspaces.cloudify.usm.liveness.PortLivenessDetector"
-			config ([
-						"Port" : [3666, 3667],
-						"TimeoutInSeconds" : 30,
-						"Host" : "127.0.0.1"
-					])
-		},
+//		plugin {
+//			name "portLiveness"
+//			className "com.gigaspaces.cloudify.usm.liveness.PortLivenessDetector"
+//			config ([
+//						"Port" : [3666, 3667],
+//						"TimeoutInSeconds" : 30,
+//						"Host" : "127.0.0.1"
+//					])
+//		},
 		plugin {
 			name "jmx"
 			className "com.gigaspaces.cloudify.usm.jmx.JmxMonitor"

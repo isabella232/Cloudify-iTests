@@ -13,8 +13,8 @@ service {
 		}
 		preStart {println "This is the preStart event" }
 
-		start (["Win.*":"run.bat -port 3666,3667",
-				 "Linux":"run.sh -port 3666,3667"])
+		start (["Win.*":"run.bat -port 3668,3667",
+				 "Linux":"run.sh -port 3668,3667"])
 		//		start {
 		//			def fullPath =  context.dir + "\\run.bat"
 		//			println "Executing command: " + fullPath
@@ -33,7 +33,7 @@ service {
 			name "portLiveness"
 			className "com.gigaspaces.cloudify.usm.liveness.PortLivenessDetector"
 			config ([
-						"Port" : [3666, 3667],
+						"Port" : [3668, 3667],
 						"TimeoutInSeconds" : 30,
 						"Host" : "127.0.0.1"
 					])

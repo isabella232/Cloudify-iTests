@@ -168,7 +168,7 @@
 	<target name="relocate-build">
 		
 		<move todir="C:\Users\ca\sgwebui-cloudify\deploy\local-builds\${BUILD_NUMBER}">
-			<fileset dir="C:\Users\ca\sgwebui-cloudify\${build.folder}"/>
+			<fileset dir="C:\Users\ca\${build.folder}"/>
 		</move>
 		<copy file="${sgtest.homedir}\config\hsqldb.xml" todir="C:\Users\ca\sgwebui-cloudify\deploy\local-builds\${BUILD_NUMBER}\${build.folder}\config\gsa"/>
 		<mkdir dir="\\tarzan\users\ca\Eli_Test\${build.folder}"/>

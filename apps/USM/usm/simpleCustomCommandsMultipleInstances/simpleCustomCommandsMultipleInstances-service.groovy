@@ -1,6 +1,6 @@
 
 service {
-	numInstances 4
+	numInstances 1
 	name "simpleCustomCommandsMultipleInstances"
 
 	

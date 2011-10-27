@@ -58,16 +58,17 @@ call ant -buildfile %LOCAL_SGPATH%\bin\run.xml relocate-build -DBUILD_VERSION=%B
 @start %LOCAL_SGPATH%\src\test\webui\resources\psexec.exe \\pc-lab73 -u GSPACES\ca -p password -c -f %LOCAL_SGPATH%\src\test\webui\resources\scripts\start-agent.bat %BUILD_FOLDER% %USER_HOME%
 
 @set selenium.browser=Firefox
-@set group.name=webui-Firefox
+@set GROUP_NAME=webui-Firefox
 @echo running Firefox tests...
-call ant -buildfile run.xml testsummary -DBUILD_NUMBER=%BUILD_NUMBER%  -DSUITE_NAME=webui-Firefox -Dbuild.folder=%BUILD_FOLDER% 
-xcopy %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER%\webui-Firefox \\tarzan\tgrid\sgtest.webui\%BUILD_NUMBER%\webui-Firefox /s /i
+call ant -buildfile run.xml testsummary -DBUILD_NUMBER=%BUILD_NUMBER%  -DSUITE_NAME=webui-Firefox -Dbuild.folder=%BUILD_FOLDER% -Dgroup.name=%GROUP_NAME%
 
 rem @set selenium.browser=Chrome
-rem @set group.name=webui-Chrome
+rem @set GROUP_NAME=webui-Chrome
 rem @echo running Chrome tests...
-rem call ant -buildfile run.xml testsummary -DBUILD_NUMBER=%BUILD_NUMBER%  -DSUITE_NAME=webui-Chrome -Dbuild.folder=%BUILD_FOLDER% 
-rem xcopy %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER%\webui-Chrome \\tarzan\tgrid\sgtest.webui\%BUILD_NUMBER%\webui-Chrome /s /i
+rem call ant -buildfile run.xml testsummary -DBUILD_NUMBER=%BUILD_NUMBER%  -DSUITE_NAME=webui-Chrome -Dbuild.folder=%BUILD_FOLDER% -Dgroup.name=%GROUP_NAME% 
+
+@echo tranferring reports to tgrid
+xcopy %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER% \\tarzan\tgrid\sgtest.webui\%BUILD_NUMBER% /s /i
 
 rem @set selenium.browser=IE
 rem @echo running Internet Explorer tests...
@@ -78,7 +79,7 @@ rem xcopy %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER%\webui-IE \\tarzan\tg
 xcopy %LOCAL_SGPATH%\deploy\local-builds\index.htm \\tarzan\tgrid\sgtest.webui /y
 
 @echo shutting down agents
-@call %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER%\gigaspaces\tools\groovy\bin\groovy.bat %LOCAL_SGPATH%\src\test\webui\resources\scripts\shutdown
+@call %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER%\%BUILD_FOLDER%\tools\groovy\bin\groovy.bat %LOCAL_SGPATH%\src\test\webui\resources\scripts\shutdown
 
 @echo cleaning remote build folder
 @call %LOCAL_SGPATH%\src\test\webui\resources\psexec.exe \\pc-lab73 -u GSPACES\ca -p password -c -f %LOCAL_SGPATH%\src\test\webui\resources\scripts\clean-xap.bat %VERSION% %MILESTONE%

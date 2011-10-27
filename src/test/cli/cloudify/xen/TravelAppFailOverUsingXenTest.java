@@ -59,13 +59,13 @@ public class TravelAppFailOverUsingXenTest extends AbstractApplicationFailOverXe
 	}
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = false)
 	public void testTravelApp() throws Exception{
 		assertInstallApp(tomcatPort, travelHostIp, cassandraPort, travelHostIp, travelAppDirPath);
 		isTravelAppInstalled(cassandraPort , tomcatPort, travelHostIp);
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = false)
 	public void testTravelAppTomcatPuInstFailOver() throws Exception{
 		assertInstallApp(tomcatPort, travelHostIp, cassandraPort, travelHostIp, travelAppDirPath);
 		isTravelAppInstalled(cassandraPort , tomcatPort, travelHostIp);
@@ -79,7 +79,7 @@ public class TravelAppFailOverUsingXenTest extends AbstractApplicationFailOverXe
 		assertPuInstanceRessurected("tomcat" , tomcatPort ,travelHostIp, tomcatPuInstancesAfterInstall) ;
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = false)
 	public void testTravelAppTomcatGSCFailOver() throws Exception{
 		assertInstallApp(tomcatPort, travelHostIp, cassandraPort, travelHostIp, travelAppDirPath);
 		isTravelAppInstalled(cassandraPort , tomcatPort, travelHostIp);

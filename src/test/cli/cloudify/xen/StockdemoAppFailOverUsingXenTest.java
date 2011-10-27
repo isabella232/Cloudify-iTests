@@ -14,10 +14,10 @@ import framework.utils.ScriptUtils;
 
 public class StockdemoAppFailOverUsingXenTest extends AbstractApplicationFailOverXenTest {
 
-	protected final String stockdemoAppDirPath = ScriptUtils.getBuildPath() + "/examples/stockdemo";
-	protected int cassandraPort1;
-	protected int cassandraPort2;
-	protected String cassandraHostIp;
+	private final String stockdemoAppDirPath = ScriptUtils.getBuildPath() + "/examples/stockdemo";
+	private Integer cassandraPort1;
+	private Integer cassandraPort2;
+	private String cassandraHostIp;
 	
 	@BeforeClass
 	public void beforeClass()  {
@@ -56,14 +56,14 @@ public class StockdemoAppFailOverUsingXenTest extends AbstractApplicationFailOve
 	
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = false)
 	public void testStockdemoApplication() throws Exception {	    
 		assertInstallApp(cassandraPort1 ,cassandraHostIp, cassandraPort2 ,cassandraHostIp , stockdemoAppDirPath);
 		isStockdemoAppInstalled(cassandraPort1 ,cassandraHostIp, cassandraPort2 ,cassandraHostIp);
 	}
 	
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = false)
 	public void testStockdemoAppCassandraPuInstFailOver() throws Exception{
 		assertInstallApp(cassandraPort1 ,cassandraHostIp, cassandraPort2 ,cassandraHostIp , stockdemoAppDirPath);
 		isStockdemoAppInstalled(cassandraPort1 ,cassandraHostIp, cassandraPort2 ,cassandraHostIp);
@@ -76,7 +76,7 @@ public class StockdemoAppFailOverUsingXenTest extends AbstractApplicationFailOve
 		assertPuInstanceRessurected("cassandra" , cassandraPort1 , cassandraHostIp , cassandraPuInstancesAfterInstall);
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = false)
 	public void testStockdemoAppCassandraGSCFailOver() throws Exception{
 		assertInstallApp(cassandraPort1 ,cassandraHostIp, cassandraPort2 ,cassandraHostIp , stockdemoAppDirPath);
 		isStockdemoAppInstalled(cassandraPort1 ,cassandraHostIp, cassandraPort2 ,cassandraHostIp);
@@ -89,7 +89,7 @@ public class StockdemoAppFailOverUsingXenTest extends AbstractApplicationFailOve
 		assertPuInstanceRessurected("cassandra" , cassandraPort1 ,cassandraHostIp , cassandraPuInstancesAfterInstall);
 	}
 
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = false)
 	public void testStockdemoAppStockAnalyticsSpacePuInstFailOver() throws Exception{
 		assertInstallApp(cassandraPort1 ,cassandraHostIp, cassandraPort2 ,cassandraHostIp , stockdemoAppDirPath);
 		isStockdemoAppInstalled(cassandraPort1 ,cassandraHostIp, cassandraPort2 ,cassandraHostIp);
@@ -102,7 +102,7 @@ public class StockdemoAppFailOverUsingXenTest extends AbstractApplicationFailOve
 		assertPuInstanceRessurected("stockAnalyticsSpace" , spacePuInstancesAfterInstall);
 	}
 
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = false)
 	public void testStockdemoAppStockAnalyticsSpaceGSCFailOver() throws Exception{
 		assertInstallApp(cassandraPort1 ,cassandraHostIp, cassandraPort2 ,cassandraHostIp , stockdemoAppDirPath);
 		isStockdemoAppInstalled(cassandraPort1 ,cassandraHostIp, cassandraPort2 ,cassandraHostIp);
@@ -115,7 +115,7 @@ public class StockdemoAppFailOverUsingXenTest extends AbstractApplicationFailOve
 		assertPuInstanceRessurected("stockAnalyticsSpace" , spacePuInstancesAfterInstall);
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = false)
 	public void testEsmRestart() throws Exception {
 		assertInstallApp(cassandraPort1 ,cassandraHostIp, cassandraPort2 ,cassandraHostIp , stockdemoAppDirPath);
 		isStockdemoAppInstalled(cassandraPort1 ,cassandraHostIp, cassandraPort2 ,cassandraHostIp);

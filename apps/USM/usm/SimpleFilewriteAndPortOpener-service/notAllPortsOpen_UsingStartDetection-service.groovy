@@ -7,8 +7,8 @@ service {
 
 		//init "init.groovy";//{ println "This is the init event" }
 
-		preStart {ServiceUtils.isPortsFree([3666,3667], "127.0.0.1")}
-		startDetection {ServiceUtils.isPortsFree([3666,3667])}
+		preStart {ServiceUtils.isPortsFree([3668,3667], "127.0.0.1")}
+		startDetection {ServiceUtils.isPortsOccupied([3668,3667], "127.0.0.1")}
 		preInstall {println "This is the preInstall event" }
 		postInstall {println "This is the postInstall event"
 			//throw new IllegalStateException("HAHA")

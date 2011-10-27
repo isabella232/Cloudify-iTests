@@ -16,12 +16,8 @@
     <property name="tmp.testng.classes" value="${sgtest.homedir}/tmp"/>
 	<property name="build.file" value="${build.folder}-b${BUILD_VERSION}.zip"/>
 	<property name="build.location" value="${sgtest.homedir}..\"/>
-	
-	<condition property="CLI_DIR" value="${build.dir}/tools/cli" else="">
-		<and>
-		<equals arg1="${GROUP_NAME}" arg2="cloudify"/>
-		</and>
-	</condition>
+	<property name="CLI_DIR" value="${build.dir}/tools/cli" else=""/>
+
 	
 	<echo message="Cli dir is ${CLI_DIR}"/>
 

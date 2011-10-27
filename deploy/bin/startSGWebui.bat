@@ -47,7 +47,7 @@ call ant -buildfile %LOCAL_SGPATH%\build.xml jar1_6 -DBUILD_VERSION=%BUILD_VERSI
 @move %LOCAL_SGPATH%\output\gs-sgtest.jar %LOCAL_SGPATH%\lib
 
 call ant -buildfile %LOCAL_SGPATH%\bin\run.xml relocate-build -DBUILD_VERSION=%BUILD_VERSION% -DBUILD_NUMBER=%BUILD_NUMBER% -Dbuild.folder=%BUILD_FOLDER%
-@del %USER_HOME%\gigaspaces-cloudify-%VERSION%-%MILESTONE%-b%BUILD_NUMBER%.zip
+@del %USER_HOME%\gigaspaces-cloudify-%VERSION%-%MILESTONE%-b%BUILD_VERSION%.zip
 @rmdir %USER_HOME%\%BUILD_FOLDER% /s /q
 
 @cd %LOCAL_SGPATH%\bin

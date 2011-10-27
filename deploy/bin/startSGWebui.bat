@@ -82,4 +82,4 @@ xcopy %LOCAL_SGPATH%\deploy\local-builds\index.htm \\tarzan\tgrid\sgtest.webui /
 @echo cleaning remote build folder
 @call %LOCAL_SGPATH%\src\test\webui\resources\psexec.exe \\pc-lab73 -u GSPACES\ca -p password -c -f %LOCAL_SGPATH%\src\test\webui\resources\scripts\clean-xap.bat %VERSION% %MILESTONE%
 @echo cleaning local build folder
-@rmdir %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER%\%BUILD_FOLDER% /s /q
+@rmdir %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER%\gigaspaces /s /q

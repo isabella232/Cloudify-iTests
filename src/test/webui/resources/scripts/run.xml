@@ -16,7 +16,7 @@
     <property name="tmp.testng.classes" value="${sgtest.homedir}/tmp"/>
 	<property name="build.file" value="${build.folder}-b${BUILD_VERSION}.zip"/>
 	<property name="build.location" value="${sgtest.homedir}..\"/>
-	<property name="CLI_DIR" value="${build.dir}/tools/cli" else=""/>
+	<property name="CLI_DIR" value="${build.dir}/tools/cli"/>
 
 	
 	<echo message="Cli dir is ${CLI_DIR}"/>

@@ -2,7 +2,7 @@
 
 <project name="MHEDSDemo-example" default="usage" basedir=".">
 
-    <import file="../../sgtest_build.xml" />
+    <!-- <import file="../../sgtest_build.xml" /> -->
     
     <property name="common.dir" location="${basedir}/common"/>
     <property name="meta-common.dir" location="${basedir}/../meta-common"/>

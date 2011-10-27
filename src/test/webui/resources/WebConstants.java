@@ -103,6 +103,7 @@ public final class WebConstants {
 		public static final String sidePanelSpacesTree = "gs-side-panel-space-tree";
 		public static final String goToLogsItemID = "gs-logical-navigate_to_logs";
 		public static final String restartPuInstanceItem = "gs-logical-restart-pu-instance";
+		public static final String topologyCombobox = "gs-topology-application-combo";
 		
 		public static String getActionToolBoxId(String name) {
 			return "node-tool-ACTIONS-" + name;
@@ -269,7 +270,7 @@ public final class WebConstants {
 		}
 		
 		public static String getPathToComboSelection(String selection) {
-			return "//span[@class='combo-node'][text()='" + selection + "']";
+			return "//span[text()='" + selection + "']";
 		}
 		
 		public static String getPathToGsaOption(long gsaPid) {

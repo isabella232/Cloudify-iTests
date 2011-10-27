@@ -143,12 +143,13 @@ public abstract class AbstractSeleniumTest extends AbstractTest {
     }
     
     public void stopWebServer() throws IOException, InterruptedException {
-    	LogUtils.log("Launching browser...");
+    	LogUtils.log("Killing web server...");
     	scriptWebUI.kill();
     	Thread.sleep(5000);
     }
     
     public void startWebBrowser(String uRL) throws InterruptedException {
+    	LogUtils.log("Launching browser...");
     	if (System.getenv("selenium.browser") == null) {
     		driver = new FirefoxDriver();
     	}
@@ -192,6 +193,7 @@ public abstract class AbstractSeleniumTest extends AbstractTest {
     }
     
     public void stopWebBrowser() throws InterruptedException {
+    	LogUtils.log("Killing browser...");
     	for (Selenium selenium : seleniumBrowsers) {
     		selenium.stop();
     		Thread.sleep(1000);

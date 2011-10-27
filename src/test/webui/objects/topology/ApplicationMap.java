@@ -429,7 +429,7 @@ public class ApplicationMap {
 	public void selectApplication(final String applicationName) {
 		RepetitiveConditionProvider condition = new RepetitiveConditionProvider() {			
 			public boolean getCondition() {
-				WebElement arrowDown = driver.findElement(By.className("combo-arrow"));
+				WebElement arrowDown = driver.findElement(By.id(WebConstants.ID.topologyCombobox)).findElement(By.className("icon"));
 				arrowDown.click();
 				return (selenium.isElementPresent(WebConstants.Xpath.getPathToComboSelection(applicationName)));
 			}

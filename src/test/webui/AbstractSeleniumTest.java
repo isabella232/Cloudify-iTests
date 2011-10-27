@@ -137,11 +137,13 @@ public abstract class AbstractSeleniumTest extends AbstractTest {
     }
     
     public void startWebServer() throws Exception {	
+    	LogUtils.log("Starting webui server...");
     	scriptWebUI = ScriptUtils.runScript(scriptName);
     	Thread.sleep(5000);
     }
     
     public void stopWebServer() throws IOException, InterruptedException {
+    	LogUtils.log("Launching browser...");
     	scriptWebUI.kill();
     	Thread.sleep(5000);
     }

@@ -157,9 +157,8 @@ public class USMKitchenSinkTest extends AbstractCommandTest {
 		String invoke4Result = runCommand("connect " + this.restUrl
 				+ "; invoke kitchensink-service cmd4");
 		if ((!invoke4Result.contains("1: OK"))
-				|| (!invoke4Result.contains("context_command"))
-				//TODO: what is this?
-//				|| (!invoke4Result.contains("instance is:"))
+				|| (!invoke4Result.contains("context_command"))				
+				|| (!invoke4Result.contains("instance is:"))
 				) {
 			AssertFail("Custom command cmd4 returned unexpected result: "
 					+ invoke4Result);

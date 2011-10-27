@@ -6,7 +6,7 @@ import java.util.concurrent.TimeUnit;
      		
 try {
     
-    Admin admin = new AdminFactory().addGroups("sgtest-webui").useDaemonThreads(true).createAdmin(); 
+    Admin admin = new AdminFactory().addGroups("sgwebui-cloudify").useDaemonThreads(true).createAdmin(); 
     admin.getGridServiceAgents().waitFor(2,30, TimeUnit.SECONDS);       
 	GridServiceAgent[] agents = admin.getGridServiceAgents().getAgents();							
 	if (agents != null) {

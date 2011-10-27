@@ -144,7 +144,7 @@
         	sourcedir="${tmp.testng.classes}" haltOnfailure="false" useDefaultListeners="false"	groups="${group.name}"
         	listeners="framework.testng.SGTestNGListener, framework.testng.SGTestNGMethodInterceptor, org.uncommons.reportng.HTMLReporter">
         	<jvmarg line="-Djava.security.policy=policy/policy.all -Djava.awt.headless=true -Xmx1024m -XX:MaxPermSize=512m"/>
-        	<classfileset dir="${tmp.testng.classes}" includes="${INCLUDE}" excludes="${EXCLUDE},${exclude.suite}"/>            	
+        	<classfileset dir="${tmp.testng.classes}" includes="${INCLUDE}" excludes="${EXCLUDE}"/>            	
          <sysproperty key="org.uncommons.reportng.title" value="Service Grid Tests Report - Build ${BUILD_NUMBER}"/>
 	     <sysproperty key="sgtest.buildNumber" value="${BUILD_NUMBER}"/>
 	     <sysproperty key="sgtest.suiteName" value="${SUITE_NAME}"/>	

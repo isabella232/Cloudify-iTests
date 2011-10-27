@@ -95,6 +95,16 @@
 		<fileset dir="${sgtest.lib}/xenserver">
             <include name="**/*.jar"/>
 		</fileset>
+		
+        <!-- CLI jars --> 
+    	<fileset dir="${gsHome.dir}/tools/cli">
+            <include name="**/*.jar"/>
+        </fileset>
+    	
+        <!-- simplejavaprocessjars -->
+		<fileset dir="${sgtest.lib}/../apps/USM/usm/simplejavaprocess">
+			<include name="**/*.jar"/>
+		</fileset>
     	
         <!-- groovy jars -->
         <fileset dir="${gsHome.dir}/tools/groovy/lib">
@@ -122,14 +132,14 @@
         <delete dir="${classes}"/>
         <!-- Create the classes directory structure used by compile -->
         <mkdir dir="${classes}"/>
+    	<!-- Unzip the build file to be used in compile time -->
 		<unzip src="${build.location}${build.file}" dest="${build.location}"/>
-    	<rename dest="${build.location}gigaspaces" src="${build.location}${build.folder}"/>
     	
     </target>
 
     <target name="compile" depends="prepare, build-projects">
         <!-- Compile the java code from ${src} into ${classes} -->
-        <javac classpathref="classpath" srcdir="${src}" excludes="test/usm/**,test/cli/cloudify/**,test/rest/**,test/webui/StockDemoTest.java,test/webui/topology/**,test/webui/dashboard/services/USMTierTypeInfrastructureServicesGridTest.java" destdir="${classes}" debug="on"
+        <javac classpathref="classpath" srcdir="${src}" includes="**/*" destdir="${classes}" debug="on"
                 executable="${java16.home}\bin\javac" taskname="javac1.6" fork="true">
             <classpath location="${sgtest.home}/apps/MHEDS/common/target/classes"/>
             <classpath location="${sgtest.home}/apps/data/common/target/classes"/>

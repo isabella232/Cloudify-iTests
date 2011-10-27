@@ -167,12 +167,11 @@
 	
 	<target name="relocate-build">
 	
-		<unzip src="${build.location}${build.file}" dest="C:\Users\ca\sgtest-webui\deploy\local-builds\build_${BUILD_NUMBER}"/>
-		<rename src="C:\Users\ca\sgtest-webui\deploy\local-builds\build_${BUILD_NUMBER}\${build.folder}" dest="C:\Users\ca\sgtest-webui\deploy\local-builds\build_${BUILD_NUMBER}\gigaspaces"/>
-		<copy file="${sgtest.homedir}\config\hsqldb.xml" todir="C:\Users\ca\sgtest-webui\deploy\local-builds\build_${BUILD_NUMBER}\gigaspaces\config\gsa"/>
-		<mkdir dir="\\tarzan\users\ca\Eli_Test\gigaspaces"/>
-		<copy todir="\\tarzan\users\ca\Eli_Test\gigaspaces">
-			<fileset dir="C:\Users\ca\sgtest-webui\deploy\local-builds\build_${BUILD_NUMBER}\gigaspaces"/>
+		<unzip src="${build.location}${build.file}" dest="C:\Users\ca\sgwebui-cloudify\deploy\local-builds\${BUILD_NUMBER}"/>
+		<copy file="${sgtest.homedir}\config\hsqldb.xml" todir="C:\Users\ca\sgwebui-cloudify\deploy\local-builds\${BUILD_NUMBER}\${build.folder}\config\gsa"/>
+		<mkdir dir="\\tarzan\users\ca\Eli_Test\${build.folder}"/>
+		<copy todir="\\tarzan\users\ca\Eli_Test\${build.folder}">
+			<fileset dir="C:\Users\ca\sgtest-webui\deploy\local-builds\${BUILD_NUMBER}\${build.folder}"/>
 		</copy>
 		
 	</target>

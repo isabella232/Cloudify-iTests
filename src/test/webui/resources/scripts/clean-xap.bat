@@ -1,5 +1,4 @@
-@set XAP_VERSION=%1
+@set VERSION=%1
 @set MILESTONE=%2
-@set BUILD_NUMBER=%3
 
-@if exist C:\Users\ca\gigaspaces rmdir C:\Users\ca\gigaspaces /s /q
+@if exist C:\Users\ca\gigaspaces-clooudify-%VERSION%-%MILESTONE% rmdir C:\Users\ca\gigaspaces-clooudify-%VERSION%-%MILESTONE% /s /q

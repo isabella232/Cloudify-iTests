@@ -10,7 +10,7 @@
     <property name="sgtest.jar" value="${sgtest.homedir}lib/${sgtest.jar.name}"/>
     <property name="testng.tmp.reports.dir" value="${sgtest.homedir}/tmp-reports"/>
     <property name="testng.summary.dir" value="${sgtest.homedir}/deploy/local-builds/build_${BUILD_NUMBER}/${SUITE_NAME}"/>
-	<property name="build.dir" value="${sgtest.homedir}/deploy/local-builds/build_${BUILD_NUMBER}/gigaspaces"/>
+	<property name="build.dir" value="${sgtest.homedir}/deploy/local-builds/build_${BUILD_NUMBER}/${build.folder}"/>
 	<property name="report.dir" value="${sgtest.homedir}/deploy/local-builds/build_${BUILD_NUMBER}"/>
     <property name="testng.reports.dir" value="${sgtest.homedir}/deploy/local-builds/"/>
     <property name="tmp.testng.classes" value="${sgtest.homedir}/tmp"/>

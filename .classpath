@@ -65,7 +65,6 @@
 	<classpathentry kind="lib" path="lib/xenserver/lib/ant-jsch-1.8.2.jar"/>
 	<classpathentry kind="var" path="CLOUDIFY_LATEST/lib/platform/sigar/sigar.jar"/>
 	<classpathentry kind="lib" path="lib/mail/mail.jar"/>
-	<classpathentry kind="var" path="CLOUDIFY_LATEST/lib/platform/esm/esc.jar"/>
 	<classpathentry kind="var" path="CLOUDIFY_LATEST/lib/platform/usm/usm.jar"/>
 	<classpathentry kind="var" path="CLOUDIFY_LATEST/tools/cli/cli.jar"/>
 	<classpathentry kind="var" path="CLOUDIFY_LATEST/tools/groovy/embeddable/groovy-all-1.8.0.jar"/>

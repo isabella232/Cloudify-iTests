@@ -127,6 +127,7 @@ public class RepetitiveActualServiceFailoverTest extends AbstractCommandTest {
 		File tomcatRun = new File(pathToTomcat);
 		assertTrue(tomcatRun.delete());
 		LogUtils.log("killing tomcat process");
+		tomcatPId = getTomcatPId();
 		if (ScriptUtils.isWindows()) {	
 			int result = ScriptUtils.killWindowsProcess(tomcatPId.intValue());
 			assertTrue(result == 0);	

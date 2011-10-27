@@ -139,9 +139,8 @@
             <fileset dir="${tmp.testng.classes}/apps"/>
         </copy>
 	 <taskdef resource="testngtasks" classpathref="classpath"/>
-    	<echo message="using group : ${group.name}"/>
         <testng suitename="${SUITE_NAME}" testname="${SUITE_NAME}" classpathref="classpath" outputDir="${testng.summary.dir}"
-        	sourcedir="${tmp.testng.classes}" haltOnfailure="false" useDefaultListeners="false"	groups="${group.name}"
+        	sourcedir="${tmp.testng.classes}" haltOnfailure="false" useDefaultListeners="false" 
         	listeners="framework.testng.SGTestNGListener, framework.testng.SGTestNGMethodInterceptor, org.uncommons.reportng.HTMLReporter">
         	<jvmarg line="-Djava.security.policy=policy/policy.all -Djava.awt.headless=true -Xmx1024m -XX:MaxPermSize=512m"/>
         	<classfileset dir="${tmp.testng.classes}" includes="${INCLUDE}" excludes="${EXCLUDE}"/>            	

@@ -16,7 +16,7 @@
     <property name="resources" value="${src}/resources"/>
 	<property name="cli.dir" value="${src}/test/cli"/>
 	<property name="cli.resources" value="${cli.dir}/resources"/>
-	<property name="build.file" value="${build.folder}-b${BUILD_NUMBER}.zip"/>
+	<property name="build.file" value="${build.folder}-b${BUILD_VERSION}.zip"/>
 	<property name="build.location" value="${sgtest.home}/../"/>
 
 

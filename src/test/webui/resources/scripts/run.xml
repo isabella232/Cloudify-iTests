@@ -14,7 +14,7 @@
 	<property name="report.dir" value="${sgtest.homedir}/deploy/local-builds/build_${BUILD_NUMBER}"/>
     <property name="testng.reports.dir" value="${sgtest.homedir}/deploy/local-builds/"/>
     <property name="tmp.testng.classes" value="${sgtest.homedir}/tmp"/>
-	<property name="build.file" value="${build.folder}-b${BUILD_NUMBER}.zip"/>
+	<property name="build.file" value="${build.folder}-b${BUILD_VERSION}.zip"/>
 	<property name="build.location" value="${sgtest.homedir}..\"/>
 	<property name="GROUP_NAME" value="${group.name}"/>
 	

@@ -3,20 +3,21 @@
 @title Executing Selenium tests
 @echo on
 
-@set USER_HOME=C:\Users\ca
-@set svn-srv=192.168.9.34
-@set SVN_REPOSITORY=svn://%svn-srv%/SVN
-@set VERSION=%1
-@set MILESTONE=%2
-@set BUILD_NUMBER=%3
-@set LOCAL_SGPATH=%USER_HOME%\sgwebui-cloudify
-@set REMOTE_BUILD_DIR=\\tarzan\builds\%VERSION%\%BUILD_NUMBER%
-@set BASE_DIR=.\
-@set apache.port=8000
-@set apache.home=%USER_HOME%\Apache Software Foundation\Apache2.2
-@set SVN_URL=%SVN_REPOSITORY%/cloudify/trunk
-@set PRODUCT=cloudify
-@set SVN_SGPATH=%SVN_URL%/quality/frameworks/SGTest
+set USER_HOME=C:\Users\ca
+set svn-srv=192.168.9.34
+set SVN_REPOSITORY=svn://%svn-srv%/SVN
+set VERSION=%1
+set MILESTONE=%2
+set BUILD_NUMBER=%3
+set BUILD_VERSION=%4
+set LOCAL_SGPATH=%USER_HOME%\sgwebui-cloudify
+set REMOTE_BUILD_DIR=\\tarzan\builds\%VERSION%\%BUILD_NUMBER%
+set BASE_DIR=.\
+set apache.port=8000
+set apache.home=%USER_HOME%\Apache Software Foundation\Apache2.2
+set SVN_URL=%SVN_REPOSITORY%/cloudify/trunk
+set PRODUCT=cloudify
+set SVN_SGPATH=%SVN_URL%/quality/frameworks/SGTest
 
 @echo checking out SGTest from svn... 
 svn checkout %SVN_SGPATH% %LOCAL_SGPATH%
@@ -27,7 +28,7 @@ svn checkout %SVN_SGPATH% %LOCAL_SGPATH%
 @if exist \\tarzan\tgrid\sgtest.webui\%BUILD_NUMBER% rmdir \\tarzan\tgrid\sgtest.webui\%BUILD_NUMBER% /s /q
 
 @echo retrieving build from tarzan...
-xcopy %REMOTE_BUILD_DIR%\cloudify\1.5\gigaspaces-cloudify-%VERSION%-%MILESTONE%-b%BUILD_NUMBER%.zip %BASE_DIR%
+xcopy %REMOTE_BUILD_DIR%\cloudify\1.5\gigaspaces-cloudify-%VERSION%-%MILESTONE%-b%BUILD_VERSION%.zip %BASE_DIR%
 
 @set BUILD_FOLDER=gigaspaces-cloudify-%VERSION%-%MILESTONE%
 
@@ -42,10 +43,10 @@ xcopy %REMOTE_BUILD_DIR%\cloudify\1.5\gigaspaces-cloudify-%VERSION%-%MILESTONE%-
 @copy %LOCAL_SGPATH%\src\test\webui\resources\scripts\run.properties %LOCAL_SGPATH%\bin
 
 @echo building sgtest.jar...
-call ant -buildfile %LOCAL_SGPATH%\build.xml jar1_6 -DBUILD_NUMBER=%BUILD_NUMBER% -Dbuild.folder=%BUILD_FOLDER% -DgsHome.dir=%USER_HOME%\%BUILD_FOLDER%
+call ant -buildfile %LOCAL_SGPATH%\build.xml jar1_6 -DBUILD_VERSION=%BUILD_VERSION% -DBUILD_NUMBER=%BUILD_NUMBER% -Dbuild.folder=%BUILD_FOLDER% -DgsHome.dir=%USER_HOME%\%BUILD_FOLDER%
 @move %LOCAL_SGPATH%\output\gs-sgtest.jar %LOCAL_SGPATH%\lib
 
-call ant -buildfile %LOCAL_SGPATH%\bin\run.xml relocate-build -DBUILD_NUMBER=%BUILD_NUMBER% -Dbuild.folder=%BUILD_FOLDER%
+call ant -buildfile %LOCAL_SGPATH%\bin\run.xml relocate-build -DBUILD_VERSION=%BUILD_VERSION% -DBUILD_NUMBER=%BUILD_NUMBER% -Dbuild.folder=%BUILD_FOLDER%
 @del %USER_HOME%\gigaspaces-cloudify-%VERSION%-%MILESTONE%-b%BUILD_NUMBER%.zip
 @rmdir %USER_HOME%\%BUILD_FOLDER% /s /q
 

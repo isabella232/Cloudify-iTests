@@ -32,7 +32,7 @@ service {
 		"cmd1" : { println "This is the cmd1 custom command"},
 		"cmd2" : { throw new Exception("This is the cmd2 custom command - This is an error test")},
 		"cmd3" : { "This is the cmd3 custom command. Service Dir is: " + context.serviceDirectory },
-		"cmd4" : {"context_command.groovy"},
+		"cmd4" : "context_command.groovy",
 		"cmd5" : {"this is the custom parameters command. expecting 123: "+1+x+y}
 	])
 

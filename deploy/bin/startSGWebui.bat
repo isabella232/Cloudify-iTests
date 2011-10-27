@@ -58,14 +58,12 @@ call ant -buildfile %LOCAL_SGPATH%\bin\run.xml relocate-build -DBUILD_VERSION=%B
 @start %LOCAL_SGPATH%\src\test\webui\resources\psexec.exe \\pc-lab73 -u GSPACES\ca -p password -c -f %LOCAL_SGPATH%\src\test\webui\resources\scripts\start-agent.bat %BUILD_FOLDER% %USER_HOME%
 
 @set selenium.browser=Firefox
-@set GROUP_NAME=webui-Firefox
 @echo running Firefox tests...
-call ant -buildfile run.xml testsummary -DBUILD_NUMBER=%BUILD_NUMBER%  -DSUITE_NAME=webui-Firefox -Dbuild.folder=%BUILD_FOLDER% -Dgroup.name=%GROUP_NAME%
+call ant -buildfile run.xml testsummary -DBUILD_NUMBER=%BUILD_NUMBER%  -DSUITE_NAME=webui-Firefox -Dbuild.folder=%BUILD_FOLDER%
 
 rem @set selenium.browser=Chrome
-rem @set GROUP_NAME=webui-Chrome
 rem @echo running Chrome tests...
-rem call ant -buildfile run.xml testsummary -DBUILD_NUMBER=%BUILD_NUMBER%  -DSUITE_NAME=webui-Chrome -Dbuild.folder=%BUILD_FOLDER% -Dgroup.name=%GROUP_NAME% 
+rem call ant -buildfile run.xml testsummary -DBUILD_NUMBER=%BUILD_NUMBER%  -DSUITE_NAME=webui-Chrome -Dbuild.folder=%BUILD_FOLDER%
 
 @echo tranferring reports to tgrid
 xcopy %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER% \\tarzan\tgrid\sgtest.webui\%BUILD_NUMBER% /s /i

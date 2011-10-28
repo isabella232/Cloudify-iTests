@@ -105,6 +105,8 @@
     	</fileset>
 	
 		<dirset dir="${sgtest.homedir}/config"/>
+    	
+        <dirset dir="${tmp.testng.classes}/apps"/>
 		
 		<pathelement location="${sgtest.jar}"/>
 

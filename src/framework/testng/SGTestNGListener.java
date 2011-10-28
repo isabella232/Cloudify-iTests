@@ -103,7 +103,7 @@ public class SGTestNGListener extends TestListenerAdapter {
         MailReporterProperties mailProperties = new MailReporterProperties(props);
         String link = null;
         if (suiteName.contains("webui")) {
-        	link = "<a href=http://192.168.9.121:8087/sgtest.webui/"  + "build_" + buildNumber + "/" + suiteName + "/html>"+buildNumber+" </a>";
+        	link = "<a href=http://192.168.9.121:8087/sgtest.webui/" + buildNumber + "/" + suiteName + "/html>"+buildNumber+" </a>";
         }
         else {
         	link = "<a href=http://192.168.9.121:8087/sgtest-cloudify/" + buildNumber + "/" + suiteName + "/html>"+buildNumber+" </a>";

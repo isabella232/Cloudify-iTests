@@ -77,12 +77,7 @@ public class DumpUtils {
 
         if (!buildFolder.exists())
             buildFolder.mkdir();
-        if (testName.contains("webui")) {
-        	testFolder = new File(buildFolder.getAbsolutePath() + "/" + System.getProperty("sgtest.suiteName") + "/" + testName);
-        }
-        else {
-        	testFolder = new File(buildFolder.getAbsolutePath() + "/" + testName);
-        }
+        testFolder = new File(buildFolder.getAbsolutePath() + "/" + testName);
         if (!testFolder.exists())
             testFolder.mkdir();
 

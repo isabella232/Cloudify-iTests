@@ -77,7 +77,7 @@ rem xcopy %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER%\webui-IE \\tarzan\tg
 xcopy %LOCAL_SGPATH%\deploy\local-builds\index.htm \\tarzan\tgrid\sgtest.webui /y
 
 @echo shutting down agents
-@call %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER%\%BUILD_FOLDER%\tools\groovy\bin\groovy.bat %LOCAL_SGPATH%\src\test\webui\resources\scripts\shutdown
+@call %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER%\gigaspaces\tools\groovy\bin\groovy.bat %LOCAL_SGPATH%\src\test\webui\resources\scripts\shutdown
 
 @echo cleaning remote build folder
 @call %LOCAL_SGPATH%\src\test\webui\resources\psexec.exe \\pc-lab73 -u GSPACES\ca -p password -c -f %LOCAL_SGPATH%\src\test\webui\resources\scripts\clean-xap.bat %VERSION% %MILESTONE%

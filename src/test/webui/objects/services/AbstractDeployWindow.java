@@ -49,7 +49,7 @@ public abstract class AbstractDeployWindow implements IDeployWindow {
 			selenium.type(WebConstants.ID.usernameInput, userName);
 		}
 		selenium.click(WebConstants.Xpath.clusterSchemaCombo);
-		selenium.mouseDown(WebConstants.Xpath.getPathToComboSelection(clusterSchema));
+		selenium.mouseDown(WebConstants.Xpath.getPathToComboSelectionInServicesTab(clusterSchema));
 		selenium.type(WebConstants.ID.numberOfInstInput,numberOfInst);
 		if (clusterSchema == "partitioned_sync2backup") {
 			for (int i = 0 ; i < Integer.parseInt(numberOfBackups) ; i++) {

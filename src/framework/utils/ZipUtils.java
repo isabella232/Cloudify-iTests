@@ -19,12 +19,7 @@ public class ZipUtils {
         String buildNumber = PlatformVersion.getBuildNumber();
         File buildFolder = new File(SGTestHelper.getSGTestRootDir()+"/deploy/local-builds/build_" + buildNumber);
         File testFolder = null;
-        if (testName.contains("webui")) {
-        	testFolder = new File(buildFolder + "/" + System.getProperty("sgtest.suiteName") + "/" + testName);
-        }
-        else {
-        	testFolder = new File(buildFolder +"/" +testName);
-        }
+        testFolder = new File(buildFolder +"/" +testName);
         File[] children = testFolder.listFiles();
         if (children == null)
             return;

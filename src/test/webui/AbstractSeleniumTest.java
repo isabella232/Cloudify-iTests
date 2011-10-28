@@ -310,15 +310,13 @@ public abstract class AbstractSeleniumTest extends AbstractTest {
 
 	public void takeScreenShot(Class<?> cls, String testMethod) {
 		
-		String groupName = System.getenv("group.name");
-		
 		File scrFile = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
 
 		String buildDir = SGTestHelper.getSGTestRootDir() + "/deploy/local-builds/build_" + PlatformVersion.BUILD_NUM ;
 		
 		String testLogsDir = cls.getName() + "." + testMethod + "()";
 		
-		String to = buildDir + "/" + groupName + "/" + testLogsDir + "/" + testMethod + ".png";
+		String to = buildDir  + "/" + testLogsDir + "/" + testMethod + ".png";
 
 		try {
 			FileUtils.copyFile(scrFile, new File(to));

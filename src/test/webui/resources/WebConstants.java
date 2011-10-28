@@ -270,7 +270,7 @@ public final class WebConstants {
 		}
 		
 		public static String getPathToComboSelection(String selection) {
-			return "//div[text()='" + selection + "']";
+			return "//span[text()='" + selection + "']";
 		}
 		
 		public static String getPathToGsaOption(long gsaPid) {

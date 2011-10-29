@@ -49,12 +49,6 @@ public class ProcessingUnitDeployTest extends AbstractSeleniumTest {
 		
 		//we deploy 2 processing units with the Admin API so that they will appear in the deployment list on the web-ui
 		
-		DeploymentUtils.prepareApp("data");
-		ProcessingUnit puProcessor = gsmA.deploy(new ProcessingUnitDeployment(DeploymentUtils.getProcessingUnit("data", "processor")));
-		ProcessingUnitUtils.waitForDeploymentStatus(puProcessor, DeploymentStatus.INTACT);
-		puProcessor.undeploy();
-		ProcessingUnitUtils.waitForDeploymentStatus(puProcessor, DeploymentStatus.UNDEPLOYED);
-		
 		ProcessingUnit puSessionTest = gsmA.deploy(new ProcessingUnitDeployment(DeploymentUtils.getArchive("session-test-embedded.war")));
 		ProcessingUnitUtils.waitForDeploymentStatus(puSessionTest, DeploymentStatus.INTACT);
 		puSessionTest.undeploy();
@@ -65,17 +59,17 @@ public class ProcessingUnitDeployTest extends AbstractSeleniumTest {
 	 @Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = {"cloudify" , "xap"})
 	public void puDeploymentTest() throws InterruptedException {
 		
-		String puName = "processor";
-		
 		// get new login page
 		LoginPage loginPage = getLoginPage();
 		
 		// get new topology tab
-		ServicesTab topologyTab = loginPage.login().switchToServices();
+		ServicesTab servicesTab = loginPage.login().switchToServices();
 		
-		LogUtils.log("deplying processor...");
-		// open the deployment window
-		IDeployWindow puDeploy = topologyTab.openProcessingUnitDeployWindow(puName, 
+		String puName = "session-test-embedded";
+		
+		LogUtils.log("deplyong session test embedded...");
+		// open a different deployment window
+		IDeployWindow puDeploy = servicesTab.openProcessingUnitDeployWindow(puName, 
 				null, null, null, null, null, "[None]", null, null);
 		
 		// submit deployment specs
@@ -98,48 +92,10 @@ public class ProcessingUnitDeployTest extends AbstractSeleniumTest {
 		// close the deployment window
 		puDeploy.closeWindow();
 		
-		// get pu tree grid
-		PuTreeGrid puGrid = topologyTab.getPuTreeGrid();
+		PuTreeGrid puGrid = servicesTab.getPuTreeGrid();
 		
 		// assert pu is present
 		WebUIProcessingUnit processingUnit = puGrid.getProcessingUnit(puName);
-		
-		assertTrue(processingUnit != null);
-		
-		// undeploy pu
-		pu.undeploy();
-		ProcessingUnitUtils.waitForDeploymentStatus(pu, DeploymentStatus.UNDEPLOYED);
-		
-		puName = "session-test-embedded";
-		
-		LogUtils.log("deplyong session test embedded...");
-		// open a different deployment window
-		puDeploy = topologyTab.openProcessingUnitDeployWindow(puName, 
-				null, null, null, null, null, "[None]", null, null);
-		
-		// submit deployment specs
-		puDeploy.sumbitDeploySpecs();
-		
-		// deploy onto the grid
-		puDeploy.deploy();
-		
-		// wait for PU
-		pu = null;
-		seconds = 0;
-		while (pu == null) {
-			if (seconds >= 30) Assert.fail("admin wasnt able to capture pu"); 
-			pu = admin.getProcessingUnits().getProcessingUnit(puName);
-			seconds++;
-			Thread.sleep(1000);
-		}
-		ProcessingUnitUtils.waitForDeploymentStatus(pu, DeploymentStatus.INTACT);
-		
-		// close the deployment window
-		puDeploy.closeWindow();
-		
-		
-		// assert pu is present
-		processingUnit = puGrid.getProcessingUnit(puName);
 		
 		assertTrue(processingUnit != null);
 		

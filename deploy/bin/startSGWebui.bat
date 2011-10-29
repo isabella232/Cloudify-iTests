@@ -65,16 +65,10 @@ rem @set selenium.browser=Chrome
 rem @echo running Chrome tests...
 rem call ant -buildfile run.xml testsummary -DBUILD_NUMBER=%BUILD_NUMBER%  -DSUITE_NAME=webui-Chrome -Dbuild.folder=%BUILD_FOLDER%
 
-@echo tranferring reports to tgrid
-xcopy %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER% \\tarzan\tgrid\sgtest.webui\%BUILD_NUMBER% /s /i
-
 rem @set selenium.browser=IE
 rem @echo running Internet Explorer tests...
 rem call ant -buildfile run.xml testsummary -DBUILD_NUMBER=%BUILD_NUMBER%  -DSUITE_NAME=webui-IE -Dbuild.folder=%BUILD_FOLDER% 
 rem xcopy %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER%\webui-IE \\tarzan\tgrid\sgtest.webui\%BUILD_NUMBER%\webui-IE /s /i
-
-@echo tranfering reports to tgrid...
-xcopy %LOCAL_SGPATH%\deploy\local-builds\index.htm \\tarzan\tgrid\sgtest.webui /y
 
 @echo shutting down agents
 @call %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER%\gigaspaces\tools\groovy\bin\groovy.bat %LOCAL_SGPATH%\src\test\webui\resources\scripts\shutdown
@@ -83,3 +77,7 @@ xcopy %LOCAL_SGPATH%\deploy\local-builds\index.htm \\tarzan\tgrid\sgtest.webui /
 @call %LOCAL_SGPATH%\src\test\webui\resources\psexec.exe \\pc-lab73 -u GSPACES\ca -p password -c -f %LOCAL_SGPATH%\src\test\webui\resources\scripts\clean-xap.bat %VERSION% %MILESTONE%
 @echo cleaning local build folder
 @rmdir %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER%\gigaspaces /s /q
+
+@echo tranferring reports to tgrid
+xcopy %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER% \\tarzan\tgrid\sgtest.webui\%BUILD_NUMBER% /s /i
+xcopy %LOCAL_SGPATH%\deploy\local-builds\index.htm \\tarzan\tgrid\sgtest.webui /y

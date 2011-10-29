@@ -273,6 +273,10 @@ public final class WebConstants {
 			return "//span[text()='" + selection + "']";
 		}
 		
+		public static String getPathToComboSelectionInServicesTab(String selection) {
+			return "//div[text()='" + selection + "']";
+		}
+		
 		public static String getPathToGsaOption(long gsaPid) {
 			return "//div[@id='hosts_tree_grid_gsa[" + gsaPid + "]']/div/span[3]/a/img";
 		}

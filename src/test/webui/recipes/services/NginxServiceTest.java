@@ -2,10 +2,6 @@ package test.webui.recipes.services;
 
 import org.openspaces.admin.pu.DeploymentStatus;
 import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
-
-import framework.utils.AssertUtils;
-import framework.utils.AssertUtils.RepetitiveConditionProvider;
 
 import test.webui.objects.LoginPage;
 import test.webui.objects.MainNavigation;
@@ -18,6 +14,8 @@ import test.webui.objects.services.ServicesTab;
 import test.webui.objects.topology.ApplicationMap;
 import test.webui.objects.topology.ApplicationMap.ApplicationNode;
 import test.webui.objects.topology.TopologyTab;
+import framework.utils.AssertUtils;
+import framework.utils.AssertUtils.RepetitiveConditionProvider;
 
 public class NginxServiceTest extends AbstractSeleniumServiceRecipeTest {
 	
@@ -28,7 +26,7 @@ public class NginxServiceTest extends AbstractSeleniumServiceRecipeTest {
 		super.beforeTest();
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT)
+	//@Test(timeOut = DEFAULT_TEST_TIMEOUT)
 	public void mongosTest() throws InterruptedException {
 		
 		// get new login page

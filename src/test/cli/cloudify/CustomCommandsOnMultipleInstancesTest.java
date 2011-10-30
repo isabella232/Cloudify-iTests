@@ -1,25 +1,16 @@
 package test.cli.cloudify;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.InetAddress;
 import java.util.concurrent.TimeUnit;
 
 import junit.framework.Assert;
 
-import org.openspaces.admin.AdminFactory;
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import com.gigaspaces.cloudify.dsl.internal.ServiceReader;
-import com.gigaspaces.cloudify.dsl.internal.packaging.PackagingException;
-import com.sun.jini.logging.LogUtil;
-
 import framework.utils.LogUtils;
-import framework.utils.ScriptUtils;
 
 public class CustomCommandsOnMultipleInstancesTest extends AbstractCommandTest {
 	

@@ -49,7 +49,7 @@ public class AfterPuInstanceRestartTest extends AbstractSeleniumTest {
 		ProcessingUnitUtils.waitForDeploymentStatus(Pu, DeploymentStatus.INTACT);
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = {"cloudify" , "xap"})
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT)
 	public void basicTest() throws InterruptedException {
 		
 		// get new login page

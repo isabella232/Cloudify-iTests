@@ -70,7 +70,7 @@ public class PuNodeAddedTest extends AbstractSeleniumTest {
 		ProcessingUnitUtils.waitForDeploymentStatus(puSessionTest, DeploymentStatus.INTACT);
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = {"cloudify" , "xap"})
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT)
 	public void additionEventsTest() throws InterruptedException {
 		
 		int waitingTime = 10000;

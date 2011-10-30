@@ -64,7 +64,7 @@ public class MirrorNodeInApplicationMapTest extends AbstractSeleniumTest {
                 setContextProperty("com.gs.application", application));
 	}
 	
-	 @Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = {"cloudify" , "xap"})
+	 @Test(timeOut = DEFAULT_TEST_TIMEOUT)
 	public void mirrorTest() throws InterruptedException {
 		
 		// get new login page

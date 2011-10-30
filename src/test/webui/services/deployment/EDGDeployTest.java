@@ -54,7 +54,7 @@ public class EDGDeployTest extends AbstractSeleniumTest {
 		
 	}
 	
-	@Test(dataProvider = "TestParamProvider" ,timeOut = DEFAULT_TEST_TIMEOUT, groups = {"cloudify" , "xap"})
+	@Test(dataProvider = "TestParamProvider" ,timeOut = DEFAULT_TEST_TIMEOUT)
 	public void deployEdgTest(String dataGridName, String isSecured, String userName, 
 			String password, String numberOfInstances,
 			String numberOfBackups, String clusterSchema, String maxInstPerVM,

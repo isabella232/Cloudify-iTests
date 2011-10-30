@@ -58,7 +58,7 @@ public class UpadateEventsApplicationContextTest extends AbstractSeleniumTest {
 
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = {"cloudify" , "xap"})
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT)
 	public void updateEventsTest() throws InterruptedException {
 		
 		// get new login page

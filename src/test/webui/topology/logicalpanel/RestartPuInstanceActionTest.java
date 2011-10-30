@@ -50,7 +50,7 @@ public class RestartPuInstanceActionTest extends AbstractSeleniumTest {
 		ProcessingUnitUtils.waitForDeploymentStatus(Pu, DeploymentStatus.INTACT);
 	}
 
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = {"cloudify" , "xap"})
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT)
 	public void restartInstanceTest() throws InterruptedException {
 
 		// get new login page

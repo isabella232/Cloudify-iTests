@@ -58,7 +58,7 @@ public class PuBoxesOfCurrentApplicationOrderDisplayTest extends AbstractSeleniu
 		ProcessingUnitUtils.waitForDeploymentStatus(test2, DeploymentStatus.INTACT);
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = {"cloudify" , "xap"})
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT)
 	public void orderTest() throws InterruptedException {
 		
 		// get new login page

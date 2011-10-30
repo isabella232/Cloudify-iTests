@@ -63,7 +63,7 @@ public class PuStatusInApplicationContextTest extends AbstractSeleniumTest {
 
 	}
 
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = {"cloudify" , "xap"})
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT)
 	public void puStatusIconTest() throws InterruptedException {
 
 		// get new login page

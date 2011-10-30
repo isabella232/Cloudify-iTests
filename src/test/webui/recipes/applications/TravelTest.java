@@ -37,7 +37,7 @@ public class TravelTest extends AbstractSeleniumApplicationRecipeTest {
 		super.beforeTest();
 	}
 
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, groups = {"cloudify"})
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2)
 	public void simpleRecipeTest() throws InterruptedException {
 
 		// get new login page

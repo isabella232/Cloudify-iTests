@@ -28,7 +28,7 @@ public class NginxServiceTest extends AbstractSeleniumServiceRecipeTest {
 		super.beforeTest();
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = {"cloudify"})
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT)
 	public void mongosTest() throws InterruptedException {
 		
 		// get new login page

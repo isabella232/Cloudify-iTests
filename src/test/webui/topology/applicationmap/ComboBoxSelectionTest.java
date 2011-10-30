@@ -56,7 +56,7 @@ public class ComboBoxSelectionTest extends AbstractSeleniumTest {
 		
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = {"cloudify" , "xap"})
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT)
 	public void testCombo() throws InterruptedException {
 		
 		// get new login page

@@ -37,7 +37,7 @@ public class PetClinicTest extends AbstractSeleniumApplicationRecipeTest {
 		super.beforeTest();
 	}
 
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, groups = {"cloudify"})
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4)
 	public void stockDemoTest() throws Exception {
 		
 		// get new login page

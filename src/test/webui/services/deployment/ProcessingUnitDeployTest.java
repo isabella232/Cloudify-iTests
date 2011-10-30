@@ -56,7 +56,7 @@ public class ProcessingUnitDeployTest extends AbstractSeleniumTest {
 		
 	}
 	
-	 @Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = {"cloudify" , "xap"})
+	 @Test(timeOut = DEFAULT_TEST_TIMEOUT)
 	public void puDeploymentTest() throws InterruptedException {
 		
 		// get new login page

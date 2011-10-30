@@ -53,7 +53,7 @@ public class ActualInstancesCompromisedPuTest extends AbstractSeleniumTest {
 		
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = {"cloudify" , "xap"})
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT)
 	public void actualInstancesTest() throws InterruptedException {
 		
 		// get new login page

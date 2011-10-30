@@ -52,7 +52,7 @@ public class PuNodeActionUndeployTest extends AbstractSeleniumTest {
 		
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = {"cloudify" , "xap"})
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT)
 	public void undeployNode() throws Exception {
 		
 		LoginPage loginPage = getLoginPage();

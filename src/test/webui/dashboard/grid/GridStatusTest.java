@@ -39,7 +39,7 @@ public class GridStatusTest extends AbstractSeleniumTest {
 		loadGSCs(machineA, 2);
 	}
 	
-	 @Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = {"cloudify" , "xap"})
+	 @Test(timeOut = DEFAULT_TEST_TIMEOUT)
 	public void gridStatusTest() throws InterruptedException {
 		
 		// get new login page

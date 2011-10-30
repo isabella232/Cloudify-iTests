@@ -53,7 +53,7 @@ public class SpaceAdditionAutoRefreshTest extends AbstractSeleniumTest {
 		
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = {"cloudify" , "xap"})
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT)
 	public void spaceAdditionTest() throws InterruptedException {
 		
 		LoginPage loginPage = getLoginPage();

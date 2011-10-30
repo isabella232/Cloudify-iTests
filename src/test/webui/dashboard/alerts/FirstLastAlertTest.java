@@ -64,7 +64,7 @@ public class FirstLastAlertTest extends AbstractSeleniumTest {
 		GridServiceManager gsmA = loadGSM(machineA);
 	}
 	
-	 @Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = {"cloudify" , "xap"})
+	 @Test(timeOut = DEFAULT_TEST_TIMEOUT)
 	public void physicalMemTest() throws InterruptedException {
 		 
 		String methodName = "physicalMemTest";	

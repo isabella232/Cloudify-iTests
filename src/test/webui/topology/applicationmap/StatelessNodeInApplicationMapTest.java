@@ -51,7 +51,7 @@ public class StatelessNodeInApplicationMapTest extends AbstractSeleniumTest {
 		pu = gsmA.deploy(new ProcessingUnitDeployment(DeploymentUtils.getArchive("simpleStatelessPu.jar")).setContextProperty(APPLICATION_CONTEXT_PROPERY, "App"));
 	}
 	
-	 @Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = {"cloudify" , "xap"})
+	 @Test(timeOut = DEFAULT_TEST_TIMEOUT)
 	public void webAppNodeTest() throws InterruptedException {
 		
 		// get new login page

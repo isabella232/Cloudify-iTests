@@ -67,7 +67,7 @@ public class IncermentWebPuNodeInstanceTest extends AbstractSeleniumTest {
 		ProcessingUnitUtils.waitForDeploymentStatus(puSessionTest, DeploymentStatus.INTACT);
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = {"cloudify" , "xap"})
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT)
 	public void inceremntInst() throws InterruptedException {
 		
 		// get new login page

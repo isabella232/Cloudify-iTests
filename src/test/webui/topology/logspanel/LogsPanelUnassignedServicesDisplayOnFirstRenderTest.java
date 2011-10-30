@@ -51,7 +51,7 @@ public class LogsPanelUnassignedServicesDisplayOnFirstRenderTest extends Abstrac
 		ProcessingUnitUtils.waitForDeploymentStatus(space, DeploymentStatus.INTACT);
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = {"cloudify" , "xap"})
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT)
 	public void applicationNameTest() throws InterruptedException {
 		
 		LoginPage loginPage = getLoginPage();

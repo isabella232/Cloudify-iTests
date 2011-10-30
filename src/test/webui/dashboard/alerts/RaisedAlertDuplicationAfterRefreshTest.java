@@ -73,7 +73,7 @@ public class RaisedAlertDuplicationAfterRefreshTest extends AbstractSeleniumTest
 	}
 	
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = {"cloudify" , "xap"})
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT)
 	public void duplicateAlerts() throws InterruptedException {
 
 		final CountDownLatch raisedReplicationAlertLatch = new CountDownLatch(1);

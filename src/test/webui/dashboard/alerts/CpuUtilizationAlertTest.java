@@ -64,7 +64,7 @@ public class CpuUtilizationAlertTest extends AbstractSeleniumTest {
 		gsmA = loadGSM(machineA);
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = {"cloudify" , "xap"})
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT)
 	public void cpuUtilizationTest() throws InterruptedException {
 		
 		final List<Alert> adminAlerts = new ArrayList<Alert>();

@@ -66,7 +66,7 @@ public class PhysicalMemoryAlertTest extends AbstractSeleniumTest {
 		gsmA = loadGSM(machineA);
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = {"cloudify" , "xap"})
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT)
 	public void physicalMemoryTest() throws InterruptedException {
 		
 		String methodName = "physicalMemoryTest";

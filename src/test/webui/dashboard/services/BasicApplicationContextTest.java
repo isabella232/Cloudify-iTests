@@ -98,7 +98,7 @@ public class BasicApplicationContextTest extends AbstractSeleniumTest {
 
 	}
 	
-	 @Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = {"cloudify" , "xap"})
+	 @Test(timeOut = DEFAULT_TEST_TIMEOUT)
 	public void applicationsTest() throws InterruptedException {
 		
 		 final int machines = admin.getMachines().getMachines().length;

@@ -41,7 +41,7 @@ public class BasicLoadBalancerTest extends AbstractSeleniumTest {
 		}
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = {"cloudify" , "xap"})
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT)
 	public void testLoadBalancer() throws InterruptedException {
 		
 		final int machines = admin.getMachines().getMachines().length;

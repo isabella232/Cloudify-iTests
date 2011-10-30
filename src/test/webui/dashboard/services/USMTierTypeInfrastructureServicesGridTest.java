@@ -55,7 +55,7 @@ public class USMTierTypeInfrastructureServicesGridTest extends AbstractSeleniumT
 		usmJar = USMTestUtils.usmCreateJar("/apps/USM/usm/cassandra");
     }
     
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = {"cloudify"})
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT)
 	public void universalPuTest() throws InterruptedException {
 		
     	int waitingTime = 5000;

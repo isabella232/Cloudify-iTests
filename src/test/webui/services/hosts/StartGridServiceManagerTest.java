@@ -41,7 +41,7 @@ public class StartGridServiceManagerTest extends AbstractSeleniumTest {
 		loadGSCs(machineA, 2);
 	}
 	
-	 @Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = {"cloudify" , "xap"})
+	 @Test(timeOut = DEFAULT_TEST_TIMEOUT)
 	public void startManager() throws InterruptedException {
 		
 		// get new login page

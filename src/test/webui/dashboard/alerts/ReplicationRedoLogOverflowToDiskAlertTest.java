@@ -73,7 +73,7 @@ public class ReplicationRedoLogOverflowToDiskAlertTest extends AbstractSeleniumT
 
     }
 
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = {"cloudify" , "xap"})
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT)
     public void redoLogOverflowToDisk() throws InterruptedException {
 
         final List<Alert> adminAlerts = new ArrayList<Alert>();

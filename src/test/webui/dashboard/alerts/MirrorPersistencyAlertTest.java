@@ -89,7 +89,7 @@ public class MirrorPersistencyAlertTest extends AbstractSeleniumTest {
   
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = {"cloudify" , "xap"})
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT)
 	public void mirrorPersist() throws InterruptedException {
 		
 		// get new login page

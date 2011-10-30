@@ -120,7 +120,7 @@ public class ComplexDependenciesTest extends AbstractSeleniumTest {
 		
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = {"cloudify" , "xap"})
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT)
 	public void antualInstancesTest() throws InterruptedException {
 		
 		// get new login page

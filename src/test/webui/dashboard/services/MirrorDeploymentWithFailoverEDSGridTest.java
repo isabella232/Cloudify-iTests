@@ -78,7 +78,7 @@ public class MirrorDeploymentWithFailoverEDSGridTest extends AbstractSeleniumTes
         loader.waitFor(loader.getTotalNumberOfInstances());
 	}
 	
-	 @Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = {"cloudify" , "xap"})
+	 @Test(timeOut = DEFAULT_TEST_TIMEOUT)
 	public void mirrorTest() throws InterruptedException {
 		
 		int waitingTime = 20000;

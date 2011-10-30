@@ -69,7 +69,7 @@ public class ParallelApplicationDeploymentTest extends AbstractSeleniumTest {
 		loadGSCs(machine, 4);
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = {"cloudify" , "xap"})
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT)
 	public void parallelDeploymentTest() throws InterruptedException {
 		
 		LoginPage loginPage = getLoginPage();

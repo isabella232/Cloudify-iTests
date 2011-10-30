@@ -56,7 +56,7 @@ public class PuStatusChangedTest extends AbstractSeleniumTest {
 		ProcessingUnitUtils.waitForDeploymentStatus(pu, DeploymentStatus.INTACT);
     }
 
-	 @Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = {"cloudify" , "xap"})
+	 @Test(timeOut = DEFAULT_TEST_TIMEOUT)
     public void statusChanged() throws InterruptedException {
     	
 		// get new login page

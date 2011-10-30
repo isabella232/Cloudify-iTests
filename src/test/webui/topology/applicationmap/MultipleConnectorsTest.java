@@ -77,7 +77,7 @@ public class MultipleConnectorsTest extends AbstractSeleniumTest {
 		.setContextProperty(DEPENDS_ON_CONTEXT_PROPERTY, "[Test1,Test2]").setContextProperty(APPLICATION_CONTEXT_PROPERY, "App"));
 	}
 
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = {"cloudify" , "xap"})
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT)
 	public void multipleConnectoresTest() throws InterruptedException {
 
 		// get new login page

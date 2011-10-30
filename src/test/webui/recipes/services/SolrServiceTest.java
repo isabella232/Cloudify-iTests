@@ -35,7 +35,7 @@ public class SolrServiceTest extends AbstractSeleniumServiceRecipeTest {
 	}
 
 
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = {"cloudify"})
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT)
 	public void simpleRecipeTest() throws InterruptedException {
 
 		// get new login page

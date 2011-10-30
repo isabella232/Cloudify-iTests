@@ -80,7 +80,7 @@ public class GarbageCollectionAlertsTest extends AbstractSeleniumTest {
         log("finished deploying");
     }
 
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = {"cloudify" , "xap"})
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT)
     public void garbageCollection() throws InterruptedException {
 
         final List<Alert> adminAlerts = new ArrayList<Alert>();

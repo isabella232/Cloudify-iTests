@@ -55,7 +55,7 @@ public class ServicesGridTest extends AbstractSeleniumTest {
 		ProcessingUnitUtils.waitForDeploymentStatus(pu, DeploymentStatus.INTACT);
 	}
 	
-	 @Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = {"cloudify" , "xap"})
+	 @Test(timeOut = DEFAULT_TEST_TIMEOUT)
 	public void applicationsGrid() throws InterruptedException {
 		 
 		 final int machines = admin.getMachines().getMachines().length;

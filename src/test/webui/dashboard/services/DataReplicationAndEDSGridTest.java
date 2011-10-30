@@ -84,7 +84,7 @@ public class DataReplicationAndEDSGridTest extends AbstractSeleniumTest {
 
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = {"cloudify" , "xap"})
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT)
 	public void loaderUndeployTest() throws InterruptedException {
 		
 		int waitingTime = 10000;

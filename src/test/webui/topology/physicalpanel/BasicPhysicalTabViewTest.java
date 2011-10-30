@@ -56,7 +56,7 @@ public class BasicPhysicalTabViewTest extends AbstractSeleniumTest {
 		ProcessingUnitUtils.waitForDeploymentStatus(test2, DeploymentStatus.INTACT);
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = {"cloudify" , "xap"})
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT)
 	public void basicApplicationMapTest() throws InterruptedException, MalformedURLException {
 		
 		// get new login page

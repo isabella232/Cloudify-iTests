@@ -49,7 +49,7 @@ public class ProcessingUnitInstanceAddedTest extends AbstractSeleniumTest {
 	
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = {"cloudify" , "xap"})
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT)
 	public void basicTest() throws InterruptedException {
 		
 		// get new login page

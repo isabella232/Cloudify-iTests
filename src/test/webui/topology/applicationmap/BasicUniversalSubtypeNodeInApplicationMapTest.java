@@ -56,7 +56,7 @@ public class BasicUniversalSubtypeNodeInApplicationMapTest extends AbstractSelen
 		// TODO ask barak why no other app is working besides cassandra
     }
     
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = {"cloudify"})
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT)
 	public void universalPuTest() throws InterruptedException {
 		
     	int waitingTime = 5000;

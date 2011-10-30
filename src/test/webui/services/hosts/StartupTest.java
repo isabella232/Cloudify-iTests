@@ -38,7 +38,7 @@ public class StartupTest extends AbstractSeleniumTest {
 		loadGSCs(machineA, 2);
 	}
 	
-	 @Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = {"cloudify" , "xap"})
+	 @Test(timeOut = DEFAULT_TEST_TIMEOUT)
 	public void testGsAgentStartup() throws Exception {
 		
 		String hostname = machineA.getHostName();

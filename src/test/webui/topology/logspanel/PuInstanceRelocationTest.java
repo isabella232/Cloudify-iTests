@@ -56,7 +56,7 @@ public class PuInstanceRelocationTest extends AbstractSeleniumTest {
 		ProcessingUnitUtils.waitForDeploymentStatus(space, DeploymentStatus.INTACT);
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = {"cloudify" , "xap"})
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT)
 	public void relocationTest() throws InterruptedException {
 		
 		LoginPage loginPage = getLoginPage();

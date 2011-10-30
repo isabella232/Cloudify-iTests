@@ -49,7 +49,7 @@ public class MultipleProcessingUnitsTopologyLayoutTest extends AbstractSeleniumT
 		AdminUtils.loadGSCs(machineA, 2);
 	}
 	
-	 @Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = {"cloudify" , "xap"})
+	 @Test(timeOut = DEFAULT_TEST_TIMEOUT)
 	public void multiplePus() throws InterruptedException {
 		
 		int waitingTime = 10000;

@@ -55,7 +55,7 @@ public class PuInstanceInContainerTest extends AbstractSeleniumTest {
 		ProcessingUnitUtils.waitForDeploymentStatus(space, DeploymentStatus.INTACT);
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = {"cloudify" , "xap"})
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT)
 	public void applicationNameTest() throws InterruptedException {
 		
 		LoginPage loginPage = getLoginPage();

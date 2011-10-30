@@ -57,7 +57,7 @@ public class SpaceTreeNodeFilterTest extends AbstractSeleniumTest {
 		ProcessingUnitUtils.waitForDeploymentStatus(pu, DeploymentStatus.INTACT);
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = {"cloudify" , "xap"})
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT)
 	public void filterTest() throws InterruptedException {
 		
 		LoginPage loginPage = getLoginPage();

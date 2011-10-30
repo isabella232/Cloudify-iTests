@@ -51,7 +51,7 @@ public class WebAppNodeInApplicationMapTest extends AbstractSeleniumTest {
 		puSessionTest = gsmA.deploy(new ProcessingUnitDeployment(DeploymentUtils.getArchive("session-test-embedded.war")));
 	}
 	
-	 @Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = {"cloudify" , "xap"})
+	 @Test(timeOut = DEFAULT_TEST_TIMEOUT)
 	public void webAppNodeTest() throws InterruptedException {
 		
 		// get new login page

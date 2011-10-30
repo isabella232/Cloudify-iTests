@@ -69,7 +69,7 @@ public class UniversalProcessingUnitNodeInApplicationMapTest extends AbstractSel
 
     }
     
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = {"cloudify"})
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT)
 	public void universalPuTest() throws InterruptedException {
 		
     	int waitingTime = 5000;

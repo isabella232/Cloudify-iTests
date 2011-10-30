@@ -54,7 +54,7 @@ public class UndeployProcessingUnitTest extends AbstractSeleniumTest {
 		ProcessingUnitUtils.waitForDeploymentStatus(Pu, DeploymentStatus.INTACT);
 	}
 	
-	 @Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = {"cloudify" , "xap"})
+	 @Test(timeOut = DEFAULT_TEST_TIMEOUT)
 	public void undeployPu() throws InterruptedException, IOException {
 		
 		// get new login page

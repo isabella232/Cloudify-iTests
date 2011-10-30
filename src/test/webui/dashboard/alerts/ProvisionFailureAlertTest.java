@@ -57,7 +57,7 @@ public class ProvisionFailureAlertTest extends AbstractSeleniumTest {
         AdminUtils.loadGSC(machineA);
     }
 
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = {"cloudify" , "xap"})
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT)
     public void provisionTest() throws InterruptedException {
     	
     	final CountDownLatch resolvedLatch = new CountDownLatch(2);

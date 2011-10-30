@@ -54,7 +54,7 @@ public class WarDeploymentModulesGridTest extends AbstractSeleniumTest {
 		ProcessingUnitUtils.waitForDeploymentStatus(puSessionTest, DeploymentStatus.INTACT);
 	}
 	
-	 @Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = {"cloudify" , "xap"})
+	 @Test(timeOut = DEFAULT_TEST_TIMEOUT)
 	public void checkModules() throws InterruptedException {
 		
 		// get new login page

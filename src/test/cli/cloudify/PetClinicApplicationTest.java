@@ -33,7 +33,7 @@ public class PetClinicApplicationTest extends AbstractTest {
 		admin.close();
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
 	public void testPetClinincApplication() {
 		
 		String serviceDir = ScriptUtils.getBuildPath() + "/examples/petclinic";

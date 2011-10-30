@@ -104,6 +104,7 @@ public final class WebConstants {
 		public static final String goToLogsItemID = "gs-logical-navigate_to_logs";
 		public static final String restartPuInstanceItem = "gs-logical-restart-pu-instance";
 		public static final String topologyCombobox = "gs-topology-application-combo";
+		public static final String logoutButton = "gs-logout-button";
 		
 		public static String getActionToolBoxId(String name) {
 			return "node-tool-ACTIONS-" + name;

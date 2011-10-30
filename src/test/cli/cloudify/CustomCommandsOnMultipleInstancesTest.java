@@ -1,50 +1,49 @@
 package test.cli.cloudify;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import junit.framework.Assert;
 
 import org.openspaces.admin.pu.ProcessingUnit;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+
+import com.gigaspaces.cloudify.dsl.internal.ServiceReader;
+import com.gigaspaces.cloudify.dsl.internal.packaging.PackagingException;
 
 import framework.utils.LogUtils;
 
-public class CustomCommandsOnMultipleInstancesTest extends AbstractCommandTest {
+public class CustomCommandsOnMultipleInstancesTest extends AbstractLocalCloudTest {
 	
 	private final String RECIPE_DIR_PATH = CommandTestUtils
 									.getPath("apps/USM/usm/simpleCustomCommandsMultipleInstances");
 	private int totalInstances;
-
 	
 	@Override
-	@BeforeMethod
-	public void beforeTest(){
-		super.beforeTest();
-		try {
-			runCommand("connect " + this.restUrl + ";install-service --verbose " + RECIPE_DIR_PATH);
-		} catch (Exception e) {
-			e.printStackTrace();
-		} 
+	@BeforeClass
+	public void beforeClass() throws FileNotFoundException, PackagingException, IOException, InterruptedException{			
+		super.beforeClass();
+		installService();
 		ProcessingUnit pu = admin.getProcessingUnits().waitFor("simpleCustomCommandsMultipleInstances");
 		assertTrue("service was not installed", pu.waitFor(pu.getTotalNumberOfInstances(), 30, TimeUnit.SECONDS));
 		totalInstances = pu.getTotalNumberOfInstances();
 	}
 	
 	@Override
-	@AfterMethod
-	public void afterTest(){
-		try {
-			runCommand("connect " + this.restUrl + ";uninstall-service --verbose simpleCustomCommandsMultipleInstances");
-		} catch (Exception e) {
-			e.printStackTrace();
-		} 
-		super.afterTest();
+	@AfterClass
+	public void afterClass() throws IOException, InterruptedException{	
+		runCommand("connect " + this.restUrl + 
+			";uninstall-service --verbose simpleCustomCommandsMultipleInstances");
+		super.afterClass();
 	}
+	
 //////////////////////////////////////////////////////////////////////////////////////////////////////////	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = false)
+	
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = true)
 	public void testPrintCommand() throws Exception {
 		LogUtils.log("Checking print command on all instances");
 		checkPrintCommand();
@@ -54,7 +53,7 @@ public class CustomCommandsOnMultipleInstancesTest extends AbstractCommandTest {
 			checkPrintCommand(i);
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = true)
 	public void testParamsCommand() throws Exception {
 		LogUtils.log("Checking params command on all instances");
 		checkParamsCommand();
@@ -64,8 +63,8 @@ public class CustomCommandsOnMultipleInstancesTest extends AbstractCommandTest {
 			checkParamsCommand(i);		
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = false)
-	public void testExceptionCommand() throws Exception {
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = true)
+	public void testXceptionCommand() throws Exception {
 		LogUtils.log("Checking exception command on all instances");
 		checkExceptionCommand();
 		
@@ -74,7 +73,7 @@ public class CustomCommandsOnMultipleInstancesTest extends AbstractCommandTest {
 			checkExceptionCommand(i);
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = true)
 	public void testRunScriptCommand() throws Exception {
 		LogUtils.log("Checking runScript command on all instances");
 		checkRunScriptCommand();
@@ -84,8 +83,7 @@ public class CustomCommandsOnMultipleInstancesTest extends AbstractCommandTest {
 			checkRunScriptCommand(i);
 	}
 	
-	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = true)
 	public void testContextCommand() throws Exception {
 		LogUtils.log("Checking context command on all instances");
 		checkContextCommand();
@@ -197,7 +195,7 @@ public class CustomCommandsOnMultipleInstancesTest extends AbstractCommandTest {
 				+ "; invoke simpleCustomCommandsMultipleInstances context");
 		
 		for(int i=1 ; i <= totalInstances ; i++){
-			assertTrue("Custom command 'runScript' returned unexpected result from instance #" + i +": " + invokeContextResult
+			assertTrue("Custom command 'context' returned unexpected result from instance #" + i +": " + invokeContextResult
 					,invokeContextResult.contains("OK from instance #" + i) && invokeContextResult.contains("Service Dir is:"));
 		}
 	}
@@ -206,7 +204,7 @@ public class CustomCommandsOnMultipleInstancesTest extends AbstractCommandTest {
 		String invokeContextResult = runCommand("connect " + this.restUrl
 				+ "; invoke -instanceid " + instanceId + " simpleCustomCommandsMultipleInstances context");
 		
-		assertTrue("Custom command 'exception' returned unexpected result from instance #" + instanceId +": " + invokeContextResult
+		assertTrue("Custom command 'context' returned unexpected result from instance #" + instanceId +": " + invokeContextResult
 				,invokeContextResult.contains("OK from instance #" + instanceId) && invokeContextResult.contains("Service Dir is:"));
 		
 		for(int i=1 ; i <= totalInstances ; i++){
@@ -215,5 +213,11 @@ public class CustomCommandsOnMultipleInstancesTest extends AbstractCommandTest {
 			Assert.assertFalse("should not recive any output from instance" + i ,invokeContextResult.contains("instance #" + i));
 		}
 	}
-	
+	private void installService() throws FileNotFoundException,
+		PackagingException, IOException, InterruptedException {
+		File serviceDir = new File(RECIPE_DIR_PATH);
+		ServiceReader.getServiceFromDirectory(serviceDir).getService();
+		
+		runCommand("connect " + this.restUrl + ";install-service --verbose " + RECIPE_DIR_PATH);
+	}
 }

@@ -23,6 +23,13 @@ public class MainNavigation {
 		this.driver = driver;
 	}
 	
+	public LoginPage logout() throws InterruptedException {
+		selenium.click(WebConstants.ID.logoutButton);
+		selenium.click(WebConstants.Xpath.acceptAlert);
+		Thread.sleep(1000);
+		return new LoginPage(selenium, driver);
+	}
+	
 	public ServicesTab switchToServices() {
 		selenium.click(WebConstants.Xpath.servicesButton);
 		try {

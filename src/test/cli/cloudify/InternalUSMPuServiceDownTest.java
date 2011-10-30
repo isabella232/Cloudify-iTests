@@ -14,9 +14,8 @@ import org.openspaces.admin.pu.ProcessingUnit;
 import org.openspaces.admin.pu.ProcessingUnitInstance;
 import org.openspaces.admin.pu.events.ProcessingUnitInstanceLifecycleEventListener;
 import org.openspaces.pu.service.CustomServiceMonitors;
-import org.testng.annotations.BeforeTest;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-
 
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.WebClient;
@@ -37,7 +36,7 @@ public class InternalUSMPuServiceDownTest extends AbstractCommandTest {
 	WebClient client;
 	
 	@Override
-	@BeforeTest
+	@BeforeMethod
 	public void beforeTest() {
 		super.beforeTest();
 	}

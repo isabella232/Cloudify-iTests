@@ -13,9 +13,8 @@ import org.openspaces.admin.pu.ProcessingUnit;
 import org.openspaces.admin.pu.ProcessingUnitInstance;
 import org.openspaces.admin.pu.events.ProcessingUnitInstanceLifecycleEventListener;
 import org.openspaces.pu.service.CustomServiceMonitors;
-import org.testng.annotations.BeforeTest;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-
 
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.WebClient;
@@ -23,11 +22,11 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gigaspaces.cloudify.dsl.internal.packaging.PackagingException;
 
 import framework.utils.AssertUtils;
+import framework.utils.AssertUtils.RepetitiveConditionProvider;
 import framework.utils.LogUtils;
 import framework.utils.ProcessingUnitUtils;
 import framework.utils.SSHUtils;
 import framework.utils.ScriptUtils;
-import framework.utils.AssertUtils.RepetitiveConditionProvider;
 
 /**
  * 1. install tomcat service
@@ -47,7 +46,7 @@ public class RepetitiveActualServiceFailoverTest extends AbstractCommandTest {
 	WebClient client;
 	
 	@Override
-	@BeforeTest
+	@BeforeMethod
 	public void beforeTest() {
 		super.beforeTest();
 		client = new WebClient(BrowserVersion.getDefault());

@@ -68,14 +68,16 @@ public class Stockdemo2ManagementsEsmFailOverTest extends AbstractApplicationFai
 	 * 
 	 * @throws Exception
 	 */
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = true)
 	public void testEsmMachineShutdownFailover() throws Exception {
 		LogUtils.log("Shuting down esm's mahcine gracefuly");
 		GsmTestUtils.shutdownMachine(esmMachine, xenConfigOfEsmMachine, DEFAULT_TEST_TIMEOUT);
 		
 		assertDesiredLogic();
 	}
-	
+	/**
+	 * GS-8637
+	 */
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = false)
 	public void testEsmMachineHardShutdownFailover() throws Exception {
 		LogUtils.log("Shuting down esm's mahcine");

@@ -34,7 +34,7 @@ public class HTMLReport {
                     DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
                     String link = null;
                     if (suiteName.contains("webui")) {
-                    	link = "<a href=http://192.168.9.121:8087/sgtest.webui/" + newBuildreport + "/" + suiteName + "/html/><font color=\"0000FF\">" +
+                    	link = "<a href=http://192.168.9.121:8087/sgtest.webui.cloudify/" + newBuildreport + "/" + suiteName + "/html/><font color=\"0000FF\">" +
                         dateFormat.format(date) +" " + newBuildreport + "</font></a></br>";
                     }
                     else {

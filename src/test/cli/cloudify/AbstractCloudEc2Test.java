@@ -13,6 +13,7 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 
 import test.AbstractTest;
+import framework.tools.SGTestHelper;
 import framework.utils.LogUtils;
 import framework.utils.ScriptUtils;
 
@@ -56,21 +57,26 @@ public abstract class AbstractCloudEc2Test extends AbstractTest {
     
 	private void bootstrapCloud() throws IOException, InterruptedException {
 		
-	    String applicationPath = "./apps/USM/usm/applications/simple";
-		String ec2TestPath = "./apps/cloudify/cloud/";
+	    String applicationPath = (SGTestHelper.getSGTestRootDir() + "/apps/USM/usm/applications/simple").replace('\\', '/');
+		String ec2TestPath = (SGTestHelper.getSGTestRootDir() + "/apps/cloudify/cloud/").replace('\\', '/');
 		String sshKeyPemFile = "cloud-demo.pem";
 		String ec2DslFile = "ec2-cloud.groovy";
 		
 		// ec2 plugin should include recipe that includes secret key 
 		File ec2PluginDir = new File(ScriptUtils.getBuildPath() , "tools/cli/plugins/esc/ec2/");
-		FileUtils.copyFile(new File(ec2TestPath ,ec2DslFile), new File(ec2PluginDir, ec2DslFile));
-
+		File targetPluginDsl = new File(ec2PluginDir, ec2DslFile);
+        FileUtils.copyFile(new File(ec2TestPath ,ec2DslFile), targetPluginDsl);
+		assertTrue("File not found", targetPluginDsl.isFile());
+		
 		// each cloudify service needs its own copy of cloud recipe
 		serviceCloudFile = new File(applicationPath, "simple/" + ec2DslFile);
 		FileUtils.copyFile(new File(ec2TestPath , ec2DslFile), serviceCloudFile);
-		
+		assertTrue("File not found", serviceCloudFile.isFile());
+
 		// upload dir needs to contain the sshKeyPem 
-		FileUtils.copyFile(new File(ec2TestPath, sshKeyPemFile), new File(ScriptUtils.getBuildPath(), "tools/cli/plugins/esc/ec2/upload/" + sshKeyPemFile));
+		File targetPem = new File(ScriptUtils.getBuildPath(), "tools/cli/plugins/esc/ec2/upload/" + sshKeyPemFile);
+        FileUtils.copyFile(new File(ec2TestPath, sshKeyPemFile), targetPem);
+        assertTrue("File not found", targetPem.isFile());
 		
         // upload gigaspaces.zip to s3 (to the locations defined in the cloud dsl)
 		// TODO: commit pending code to CLI

@@ -1,15 +1,16 @@
 package test.cli.cloudify;
 
-import org.testng.Assert;
-
-import framework.utils.ScriptUtils;
-import framework.utils.WebUtils;
-import framework.utils.AssertUtils.RepetitiveConditionProvider;
-
 import java.net.URL;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.testng.Assert;
+import org.testng.annotations.Test;
+
+import framework.tools.SGTestHelper;
+import framework.utils.AssertUtils.RepetitiveConditionProvider;
+import framework.utils.WebUtils;
 
 
 public class BootstrapCloudEc2Test extends AbstractCloudEc2Test {
@@ -20,7 +21,7 @@ public class BootstrapCloudEc2Test extends AbstractCloudEc2Test {
 	 * @throws Exception 
 	 * @see AbstractCloudEc2Test
 	 */
-	//@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, groups = "1", enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, groups = "1", enabled = true)
 	public void bootstrapEc2CloudTest() throws Exception {
 	    
 		for (int i = 0; i < NUM_OF_MANAGEMENT_MACHINES; i++) {
@@ -35,9 +36,13 @@ public class BootstrapCloudEc2Test extends AbstractCloudEc2Test {
 	    		NUM_OF_MANAGEMENT_MACHINES, getNumberOfMachines(machinesURL));
 	    
 	    //running install application on simple
-	    String installCommand = "install-application --verbose -timeout " + 
-		TimeUnit.MILLISECONDS.toMinutes(DEFAULT_TEST_TIMEOUT * 2) + 
-		" " + ScriptUtils.getBuildPath() + "/examples/simple";
+	    String installCommand = new StringBuilder()
+	        .append("install-application ")
+	        .append("--verbose ")
+	        .append("-timeout ")
+	        .append(TimeUnit.MILLISECONDS.toMinutes(DEFAULT_TEST_TIMEOUT * 2)).append(" ")
+	        .append((SGTestHelper.getSGTestRootDir() + "/apps/USM/usm/applications/simple").replace('\\', '/'))
+	        .toString();
 	    
 	    String output = CommandTestUtils.runCommandAndWait(connectCommand + installCommand);
 	    

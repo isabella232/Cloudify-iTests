@@ -12,10 +12,9 @@ import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 
+import test.AbstractTest;
 import framework.utils.LogUtils;
 import framework.utils.ScriptUtils;
-
-import test.AbstractTest;
 
 public abstract class AbstractCloudEc2Test extends AbstractTest {
     
@@ -31,7 +30,7 @@ public abstract class AbstractCloudEc2Test extends AbstractTest {
     protected URL[] restAdminUrl = new URL[NUM_OF_MANAGEMENT_MACHINES];
     protected URL[] webUIUrl = new URL[NUM_OF_MANAGEMENT_MACHINES];
     
-    private File simpleExampleCloudFile;
+    private File serviceCloudFile;
     
 	@Override
     @BeforeMethod
@@ -57,26 +56,26 @@ public abstract class AbstractCloudEc2Test extends AbstractTest {
     
 	private void bootstrapCloud() throws IOException, InterruptedException {
 		
+	    String applicationPath = "./apps/USM/usm/applications/simple";
 		String ec2TestPath = "./apps/cloudify/cloud/";
 		String sshKeyPemFile = "cloud-demo.pem";
 		String ec2DslFile = "ec2-cloud.groovy";
-		String serviceEc2DslFile = "service-cloud.groovy";
 		
 		// ec2 plugin should include recipe that includes secret key 
 		File ec2PluginDir = new File(ScriptUtils.getBuildPath() , "tools/cli/plugins/esc/ec2/");
 		FileUtils.copyFile(new File(ec2TestPath ,ec2DslFile), new File(ec2PluginDir, ec2DslFile));
 
 		// each cloudify service needs its own copy of cloud recipe
-		simpleExampleCloudFile = new File(ScriptUtils.getBuildPath() , "examples/simple/simple/" + ec2DslFile);
-		FileUtils.copyFile(new File(ec2TestPath , ec2DslFile), simpleExampleCloudFile);
+		serviceCloudFile = new File(applicationPath, "simple/" + ec2DslFile);
+		FileUtils.copyFile(new File(ec2TestPath , ec2DslFile), serviceCloudFile);
 		
 		// upload dir needs to contain the sshKeyPem 
 		FileUtils.copyFile(new File(ec2TestPath, sshKeyPemFile), new File(ScriptUtils.getBuildPath(), "tools/cli/plugins/esc/ec2/upload/" + sshKeyPemFile));
 		
-		// TODO fix uploadCloudifyInstallationToS3. currently we simply assume that gigaspaces.zip is located as described in the dsl
         // upload gigaspaces.zip to s3 (to the locations defined in the cloud dsl)
-//            LogUtils.log("Uploading cloudify to S3. This might take a while");
-//            uploadCloudifyInstallationToS3(ec2PluginDir);
+		// TODO: commit pending code to CLI
+//        LogUtils.log("Uploading cloudify to S3. This might take a while");
+//        uploadCloudifyInstallationToS3();
 		
 		String output = CommandTestUtils.runCommandAndWait("bootstrap-cloud --verbose ec2");
 
@@ -112,13 +111,13 @@ public abstract class AbstractCloudEc2Test extends AbstractTest {
     }
 
 	private void deleteSimpleExampleCloudFile() {
-		if (simpleExampleCloudFile != null) {
+		if (serviceCloudFile != null) {
 			try {
-				FileUtils.forceDelete(simpleExampleCloudFile);
+				FileUtils.forceDelete(serviceCloudFile);
 			} catch (FileNotFoundException e) {
 				//ignore
 			} catch (IOException e) {
-				LogUtils.log("Failed to delete " + simpleExampleCloudFile + " delete file manually");
+				LogUtils.log("Failed to delete " + serviceCloudFile + " delete file manually");
 			}
 		}
 	}
@@ -137,31 +136,26 @@ public abstract class AbstractCloudEc2Test extends AbstractTest {
 		}
 	}
 	
-//	private static void uploadCloudifyInstallationToS3(File cloudDslDir) throws IOException {
-//	    
-//	    Cloud cloudDsl = ServiceReader.getCloudFromDirectory(cloudDslDir);
-//	    File cloudifyInstallation = ScriptUtils.getGigaspacesZipFile();
-//	    
-//	    BlobStoreContext context = null;
-//	    try {
-//    	    BlobStoreContextFactory contextFactory = new BlobStoreContextFactory();
-//    	    context = contextFactory.createContext("aws-s3", cloudDsl.getUser(), cloudDsl.getApiKey());
-//
-//    	    S3Client client = S3Client.class.cast(context.getProviderSpecificContext().getApi());
-//    	    
-//    	    S3Object object = client.newS3Object();
-//    	    object.setPayload(cloudifyInstallation);
-//    	    object.getMetadata().setKey("cloudify/gigaspaces.zip");
-//    	    
-//    	    client.putObject("test-repository-ec2dev", object, 
-//    	            PutObjectOptions.Builder.withAcl(CannedAccessPolicy.PUBLIC_READ));
-//	    } catch (Exception e) {
-//    	    e.printStackTrace();
-//	    } finally {
-//	        if (context != null) {
-//    	        context.close();
-//	        }
-//	    }
-//	}
+	// TODO: commit pending code to CLI
+	private static void uploadCloudifyInstallationToS3() throws IOException, InterruptedException {
+	    
+	    String container = "test-repository-ec2dev";
+	    String path = "cloudify/gigaspaces.zip";
+	    File cloudifyInstallation = ScriptUtils.getGigaspacesZipFile();
+
+	    String command = new StringBuilder()
+	        .append("upload-cloud ")
+	        .append("-check-changed ")
+	        .append("-public ")
+	        .append("-destination ").append(path).append(" ")
+	        .append("-container ").append(container).append(" ")
+	        .append("-source ").append(cloudifyInstallation.getAbsolutePath().replace('\\', '/')).append(" ")
+	        .append("--verbose ")
+	        .append("ec2")
+	        .toString();
+	    
+	    CommandTestUtils.runCommandAndWait(command);
+	    
+	}
 	
 }

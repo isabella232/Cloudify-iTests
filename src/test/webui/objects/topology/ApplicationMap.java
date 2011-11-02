@@ -427,18 +427,31 @@ public class ApplicationMap {
 	}
 	
 	public void selectApplication(final String applicationName) {
+		
 		RepetitiveConditionProvider condition = new RepetitiveConditionProvider() {			
 			public boolean getCondition() {
 				WebElement arrowDown = driver.findElement(By.id(WebConstants.ID.topologyCombobox)).findElement(By.className("icon"));
 				arrowDown.click();
-				return (selenium.isElementPresent(WebConstants.Xpath.getPathToComboSelection(applicationName)));
+				List<WebElement> visibleApps = driver.findElements(By.xpath("//li[@class='visible']"));
+				WebElement activeApp = driver.findElement(By.xpath("//li[@class='visible active']"));
+				List<WebElement> allApps = visibleApps;
+				allApps.add(activeApp);
+				WebElement app = null;
+				for (WebElement e : allApps) {
+					if (e.getText().equals(applicationName)) app = e;
+				}
+				if (app.isDisplayed()) {
+					app.click();
+					return true;
+				}
+				else {
+					return false;
+				}
 			}
 		};
-		
-		AssertUtils.repetitiveAssertTrue("Application is not present in the applications menu panel", condition,10000);
-		selenium.click(WebConstants.Xpath.getPathToComboSelection(applicationName));
-	}
-	
+
+		AssertUtils.repetitiveAssertTrue("Application is not present in the applications menu panel", condition,10000);	}
+
 	public ApplicationNode getApplicationNode(String name) {
 		ApplicationNode appNode = new ApplicationNode(name);
 		if (appNode.getName() != null) {

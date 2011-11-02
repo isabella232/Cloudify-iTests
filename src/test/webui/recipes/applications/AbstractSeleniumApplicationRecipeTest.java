@@ -30,6 +30,7 @@ public class AbstractSeleniumApplicationRecipeTest extends AbstractSeleniumRecip
 	
 	@BeforeMethod
 	public void bootstrapAndInstall() throws IOException, InterruptedException {
+		LogUtils.log("LOOKUPGROUPS = " + System.getenv("LOOKUPGROUPS"));
 		admin = newAdmin();
 		machines = admin.getMachines().getMachines();
 		admin.close();

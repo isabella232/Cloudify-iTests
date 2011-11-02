@@ -433,7 +433,7 @@ public class ApplicationMap {
 			public boolean getCondition() {
 				WebElement arrowDown = driver.findElement(By.id(WebConstants.ID.topologyCombobox)).findElement(By.className("icon"));
 				arrowDown.click();
-				List<WebElement> visibleApps = driver.findElements(By.xpath("//li[@class='visible']"));
+				List<WebElement> visibleApps = driver.findElement(By.id(WebConstants.ID.topologyCombobox)).findElements(By.xpath("//li[@class='visible']"));
 				WebElement activeApp = driver.findElement(By.xpath("//li[@class='visible active']"));
 				List<WebElement> allApps = visibleApps;
 				allApps.add(activeApp);

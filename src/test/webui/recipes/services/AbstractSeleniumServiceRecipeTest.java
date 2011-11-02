@@ -32,16 +32,19 @@ public class AbstractSeleniumServiceRecipeTest extends AbstractSeleniumRecipeTes
 	public void bootstrapAndInstall() throws IOException, InterruptedException {
 		LogUtils.log("LOOKUPGROUPS = " + System.getenv("LOOKUPGROUPS"));
 		admin = newAdmin();
+		admin.getGridServiceAgents().waitFor(2);
 		machines = admin.getMachines().getMachines();
 		admin.close();
 		admin = null;
 		if (bootstrapLocalCloud() && installService(currentRecipe)) {
+			LogUtils.log("Number of machines discovered : " + machines.length);
 			AdminFactory factory = new AdminFactory();
+			LogUtils.log("Adding locators to new admin factory");
 			for (Machine machine : machines){
 				LogUtils.log("adding " + machine.getHostName() + ":4168 to admin locators" );
 				factory.addLocator(machine.getHostAddress() + ":4168");
 			}
-			LogUtils.log("creating new admin");
+			LogUtils.log("creating new admin from factory");
 			admin = factory.createAdmin();
 			LogUtils.log("retrieving webui url");
 			ProcessingUnit webui = admin.getProcessingUnits().waitFor("webui");

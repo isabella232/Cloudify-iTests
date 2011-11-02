@@ -1,5 +1,6 @@
 package test.webui.recipes.applications;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.openspaces.admin.pu.DeploymentStatus;
@@ -26,9 +27,9 @@ public class PetClinicTest extends AbstractSeleniumApplicationRecipeTest {
 
 	@Override
 	@BeforeMethod
-	public void beforeTest() {
-		setCurrentRecipe("petclinic");
-		super.beforeTest();
+	public void bootstrapAndInstall() throws IOException, InterruptedException {
+		setCurrentApplication("petclinic");
+		super.bootstrapAndInstall();
 	}
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4)

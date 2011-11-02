@@ -1,5 +1,6 @@
 package test.webui.recipes.applications;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.openspaces.admin.pu.DeploymentStatus;
@@ -28,9 +29,9 @@ public class TravelTest extends AbstractSeleniumApplicationRecipeTest {
 
 	@Override
 	@BeforeMethod
-	public void beforeTest() {
-		setCurrentRecipe("travel");
-		super.beforeTest();
+	public void bootstrapAndInstall() throws IOException, InterruptedException {
+		setCurrentApplication("travel");
+		super.bootstrapAndInstall();
 	}
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2)

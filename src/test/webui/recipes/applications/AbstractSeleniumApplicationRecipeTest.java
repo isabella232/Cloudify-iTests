@@ -10,91 +10,56 @@ import org.openspaces.admin.pu.ProcessingUnit;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 
+import test.AbstractTest;
+import test.webui.recipes.AbstractSeleniumRecipeTest;
 import framework.utils.DumpUtils;
 import framework.utils.LogUtils;
 import framework.utils.ProcessingUnitUtils;
-import framework.utils.ScriptUtils;
 import framework.utils.TeardownUtils;
 
-import test.AbstractTest;
-import test.cli.cloudify.CommandTestUtils;
-import test.webui.AbstractSeleniumTest;
-
-public class AbstractSeleniumApplicationRecipeTest extends AbstractSeleniumTest {
+public class AbstractSeleniumApplicationRecipeTest extends AbstractSeleniumRecipeTest {
 	
 	ProcessingUnit pu;
 	private String currentApplication;
 	public static final String MANAGEMENT = "management";
 	Machine[] machines;
 	
-	public void setCurrentRecipe(String recipe) {
-		this.currentApplication = recipe;
+	public void setCurrentApplication(String application) {
+		this.currentApplication = application;
 	}
 	
-	@Override
 	@BeforeMethod
-	public void beforeTest() {
-		
+	public void bootstrapAndInstall() throws IOException, InterruptedException {
 		admin = newAdmin();
 		machines = admin.getMachines().getMachines();
 		admin.close();
-		String gigaDir = ScriptUtils.getBuildPath();
-		
-		String pathToService = gigaDir + "/examples/" + currentApplication;
-		
-		boolean success = false;
-		
-		try {
-			String command = "bootstrap-localcloud --verbose;install-application --verbose -timeout 25 " + pathToService + ";exit";
-			String output = CommandTestUtils.runCommandAndWait(command);
-			String applicationName = null;
-			if (currentApplication.contains("petclinic")) {
-				applicationName = currentApplication + "-mongo";
+		admin = null;
+		if (bootstrapLocalCloud() && installApplication(currentApplication)) {
+			AdminFactory factory = new AdminFactory();
+			for (Machine machine : machines){
+				LogUtils.log("adding " + machine.getHostName() + ":4168 to admin locators" );
+				factory.addLocator(machine.getHostAddress() + ":4168");
 			}
-			else {
-				applicationName = currentApplication;
-			}
-			if (isApplicationInstalled(applicationName, output)) {
-				success = true;
-				AdminFactory factory = new AdminFactory();
-				for (Machine machine : machines){
-					LogUtils.log("adding " + machine.getHostName() + ":4168 to admin locators" );
-					factory.addLocator(machine.getHostAddress() + ":4168");
-				}
-				LogUtils.log("creating new admin");
-				admin = factory.createAdmin();
-				
-				LogUtils.log("retrieving webui url");
-				ProcessingUnit webui = admin.getProcessingUnits().waitFor("webui");
-				assertTrue(webui != null);
-				assertTrue(webui.getInstances().length != 0);	
-				String url = ProcessingUnitUtils.getWebProcessingUnitURL(webui).toString();	
-				startWebBrowser(url); 
-			}
-		} catch (IOException e) {
-			LogUtils.log("bootstrap-cloud failed.", e);
-		} catch (InterruptedException e) {
-			LogUtils.log("bootstrap-cloud failed.", e);
+			LogUtils.log("creating new admin");
+			admin = factory.createAdmin();
+			LogUtils.log("retrieving webui url");
+			ProcessingUnit webui = admin.getProcessingUnits().waitFor("webui");
+			assertTrue(webui != null);
+			assertTrue(webui.getInstances().length != 0);	
+			String url = ProcessingUnitUtils.getWebProcessingUnitURL(webui).toString();	
+			startWebBrowser(url); 
 		}
-		finally {
-			if (!success) {
-				admin = newAdmin();
-				afterTest();
-				AbstractTest.AssertFail("Application wasnt installed");
-			}
+		else {
+			tearDownLocalCloud();
+			AbstractTest.AssertFail("Failed to install application");
 		}
 	}
 	
-	@Override
 	@AfterMethod
-	public void afterTest() {
-		
-		String command = "teardown-localcloud;" + "exit;";
+	public void tearDown() throws IOException, InterruptedException {
 		if (admin != null) {
 			try {
 		        DumpUtils.dumpLogs(admin);
-		        CommandTestUtils.runCommandAndWait(command);
-		        stopWebBrowser();
 		    } catch (Throwable t) {
 		        log("failed to dump logs", t);
 		    }
@@ -106,9 +71,7 @@ public class AbstractSeleniumApplicationRecipeTest extends AbstractSeleniumTest 
 			admin.close();
 			admin = null;
 		}
-	}
-	
-	private boolean isApplicationInstalled(String applicationName, String cliOutPut) {
-		return cliOutPut.contains("Application" + applicationName + "installed successfully");
+		tearDownLocalCloud();
+		stopWebBrowser();
 	}
 }

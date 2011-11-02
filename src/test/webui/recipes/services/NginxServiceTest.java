@@ -1,5 +1,7 @@
 package test.webui.recipes.services;
 
+import java.io.IOException;
+
 import org.openspaces.admin.pu.DeploymentStatus;
 import org.testng.annotations.BeforeMethod;
 
@@ -21,9 +23,9 @@ public class NginxServiceTest extends AbstractSeleniumServiceRecipeTest {
 	
 	@Override
 	@BeforeMethod
-	public void beforeTest() {
+	public void bootstrapAndInstall() throws IOException, InterruptedException {
 		setCurrentRecipe("nginx");
-		super.beforeTest();
+		super.bootstrapAndInstall();
 	}
 	
 	//@Test(timeOut = DEFAULT_TEST_TIMEOUT)

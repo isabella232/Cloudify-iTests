@@ -1,5 +1,6 @@
 package test.webui.recipes.applications;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,9 +28,9 @@ public class StockDemoTest extends AbstractSeleniumApplicationRecipeTest {
 
 	@Override
 	@BeforeMethod
-	public void beforeTest() {
-		setCurrentRecipe("stockdemo");
-		super.beforeTest();
+	public void bootstrapAndInstall() throws IOException, InterruptedException {
+		setCurrentApplication("stockdemo");
+		super.bootstrapAndInstall();
 	}
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4)

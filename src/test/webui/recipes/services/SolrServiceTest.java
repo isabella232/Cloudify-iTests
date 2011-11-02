@@ -1,5 +1,7 @@
 package test.webui.recipes.services;
 
+import java.io.IOException;
+
 import org.openspaces.admin.pu.DeploymentStatus;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -23,9 +25,9 @@ public class SolrServiceTest extends AbstractSeleniumServiceRecipeTest {
 	
 	@Override
 	@BeforeMethod
-	public void beforeTest() {
+	public void bootstrapAndInstall() throws IOException, InterruptedException {
 		setCurrentRecipe("solr");
-		super.beforeTest();
+		super.bootstrapAndInstall();
 	}
 
 

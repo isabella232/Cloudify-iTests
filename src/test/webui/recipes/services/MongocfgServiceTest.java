@@ -1,5 +1,7 @@
 package test.webui.recipes.services;
 
+import java.io.IOException;
+
 import org.openspaces.admin.pu.DeploymentStatus;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -24,9 +26,9 @@ public class MongocfgServiceTest extends AbstractSeleniumServiceRecipeTest {
 	
 	@Override
 	@BeforeMethod
-	public void beforeTest() {
+	public void bootstrapAndInstall() throws IOException, InterruptedException {
 		setCurrentRecipe("mongodb/mongo-cfg");
-		super.beforeTest();
+		super.bootstrapAndInstall();
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT)

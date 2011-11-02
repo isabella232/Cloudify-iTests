@@ -10,17 +10,14 @@ import org.openspaces.admin.pu.ProcessingUnit;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 
+import test.AbstractTest;
+import test.webui.recipes.AbstractSeleniumRecipeTest;
 import framework.utils.DumpUtils;
 import framework.utils.LogUtils;
 import framework.utils.ProcessingUnitUtils;
-import framework.utils.ScriptUtils;
 import framework.utils.TeardownUtils;
 
-import test.AbstractTest;
-import test.cli.cloudify.CommandTestUtils;
-import test.webui.AbstractSeleniumTest;
-
-public class AbstractSeleniumServiceRecipeTest extends AbstractSeleniumTest {
+public class AbstractSeleniumServiceRecipeTest extends AbstractSeleniumRecipeTest {
 	
 	ProcessingUnit pu;
 	private String currentRecipe;
@@ -31,59 +28,39 @@ public class AbstractSeleniumServiceRecipeTest extends AbstractSeleniumTest {
 		this.currentRecipe = recipe;
 	}
 	
-	@Override
 	@BeforeMethod
-	public void beforeTest() {
+	public void bootstrapAndInstall() throws IOException, InterruptedException {
 		admin = newAdmin();
 		machines = admin.getMachines().getMachines();
 		admin.close();
-		String gigaDir = ScriptUtils.getBuildPath();	
-		String pathToService = gigaDir + "/recipes/" + currentRecipe;	
-		boolean success = false;
-		
-		try {
-			String command = "bootstrap-localcloud --verbose;install-service --verbose -timeout 25 " + pathToService + ";exit";
-			String output = CommandTestUtils.runCommandAndWait(command);
-			if (isServiceInstalled(currentRecipe, output)) {
-				success = true;
-				AdminFactory factory = new AdminFactory();
-				for (Machine machine : machines){
-					LogUtils.log("adding " + machine.getHostName() + ":4168 to admin locators" );
-					factory.addLocator(machine.getHostAddress() + ":4168");
-				}
-				LogUtils.log("creating new admin");
-				admin = factory.createAdmin();
-				
-				LogUtils.log("retrieving webui url");
-				ProcessingUnit webui = admin.getProcessingUnits().waitFor("webui");
-				assertTrue(webui != null);
-				assertTrue(webui.getInstances().length != 0);	
-				String url = ProcessingUnitUtils.getWebProcessingUnitURL(webui).toString();	
-				startWebBrowser(url); 
+		admin = null;
+		if (bootstrapLocalCloud() && installService(currentRecipe)) {
+			AdminFactory factory = new AdminFactory();
+			for (Machine machine : machines){
+				LogUtils.log("adding " + machine.getHostName() + ":4168 to admin locators" );
+				factory.addLocator(machine.getHostAddress() + ":4168");
 			}
-		} catch (IOException e) {
-			LogUtils.log("bootstrap-cloud failed.", e);
-		} catch (InterruptedException e) {
-			LogUtils.log("bootstrap-cloud failed.", e);
+			LogUtils.log("creating new admin");
+			admin = factory.createAdmin();
+			LogUtils.log("retrieving webui url");
+			ProcessingUnit webui = admin.getProcessingUnits().waitFor("webui");
+			assertTrue(webui != null);
+			assertTrue(webui.getInstances().length != 0);	
+			String url = ProcessingUnitUtils.getWebProcessingUnitURL(webui).toString();	
+			startWebBrowser(url); 
 		}
-		finally {
-			if (!success) {
-				admin = newAdmin();
-				afterTest();
-				AbstractTest.AssertFail("Application wasnt installed");
-			}
+		else {
+			tearDownLocalCloud();
+			AbstractTest.AssertFail("Failed to install application");
 		}
 	}
 	
-	@Override
 	@AfterMethod
-	public void afterTest() {
-		
-		String command = "teardown-localcloud;" + "exit;";
+	public void tearDown() {
 		if (admin != null) {
 			try {
 		        DumpUtils.dumpLogs(admin);
-		        CommandTestUtils.runCommandAndWait(command);
+		        tearDownLocalCloud();
 		        stopWebBrowser();
 		    } catch (Throwable t) {
 		        log("failed to dump logs", t);
@@ -96,9 +73,5 @@ public class AbstractSeleniumServiceRecipeTest extends AbstractSeleniumTest {
 			admin.close();
 			admin = null;
 		}
-	}
-	
-	private boolean isServiceInstalled(String serviceName, String cliOutPut) {
-		return cliOutPut.contains("Service" + serviceName + "successfully installed");
 	}
 }

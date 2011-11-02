@@ -71,6 +71,8 @@ public class RepetitiveActualServiceFailoverTest extends AbstractTest {
 				LogUtils.log("adding locator to admin : " + machine.getHostName() + ":4168");
 				factory.addLocator(machine.getHostAddress() + ":4168");
 			}
+			LogUtils.log("adding localhost locator to admin");
+			factory.addLocator("127.0.0.1:4168");
 			LogUtils.log("creating new admin");
 			admin = factory.createAdmin();
 		} catch (IOException e) {

@@ -33,11 +33,11 @@ public class PetClinicApplicationTest extends AbstractTest {
 		admin.close();
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, groups = "1", enabled = true)
 	public void testPetClinincApplication() {
 		
 		String applicationDir = ScriptUtils.getBuildPath() + "/examples/petclinic";
-		String command = "bootstrap-localcloud ; install-application " + "--verbose -timeout 10 " + applicationDir;
+		String command = "bootstrap-localcloud ; install-application " + "--verbose -timeout 25 " + applicationDir;
 		try {
 			CommandTestUtils.runCommandAndWait(command);
 			AdminFactory factory = new AdminFactory();
@@ -45,6 +45,8 @@ public class PetClinicApplicationTest extends AbstractTest {
 				LogUtils.log("adding locator to admin : " + machine.getHostName() + ":1468");
 				factory.addLocator(machine.getHostAddress() + ":4168");
 			}
+			LogUtils.log("adding localhost locator to admin");
+			factory.addLocator("127.0.0.1:4168");
 			LogUtils.log("creating new admin");
 			admin = factory.createAdmin();
 			mongod = admin.getProcessingUnits().waitFor("mongod", 20, TimeUnit.SECONDS);

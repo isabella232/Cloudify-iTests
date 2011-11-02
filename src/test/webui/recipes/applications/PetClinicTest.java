@@ -38,7 +38,7 @@ public class PetClinicTest extends AbstractSeleniumApplicationRecipeTest {
 	}
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4)
-	public void stockDemoTest() throws Exception {
+	public void petClinicDemoTest() throws Exception {
 		
 		// get new login page
 		LoginPage loginPage = getLoginPage();

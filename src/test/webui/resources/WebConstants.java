@@ -271,7 +271,7 @@ public final class WebConstants {
 		}
 		
 		public static String getPathToComboSelection(String selection) {
-			return "//li[text()='" + selection + "']";
+			return "//div[text()='" + selection + "']";
 		}
 		
 		public static String getPathToComboSelectionInServicesTab(String selection) {

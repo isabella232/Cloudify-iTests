@@ -68,6 +68,7 @@ public class AbstractSeleniumServiceRecipeTest extends AbstractSeleniumTest {
 		}
 		finally {
 			if (!success) {
+				admin = newAdmin();
 				afterTest();
 				AbstractTest.AssertFail("Application wasnt installed");
 			}
@@ -79,31 +80,25 @@ public class AbstractSeleniumServiceRecipeTest extends AbstractSeleniumTest {
 	public void afterTest() {
 		
 		String command = "teardown-localcloud;" + "exit;";
-		try {
-	    	if (admin != null) {
-		    	try {
-		            DumpUtils.dumpLogs(admin);
-		        } catch (Throwable t) {
-		            log("failed to dump logs", t);
-		        }
-		        try {
-		            TeardownUtils.teardownAll(admin);
-		        } catch (Throwable t) {
-		            log("failed to teardown", t);
-		        }
-	        	admin.close();
-	        	admin = null;
-	        }
-			CommandTestUtils.runCommandAndWait(command);
-			stopWebBrowser();
-		} catch (IOException e) {
-			LogUtils.log("teardown-cloud failed.", e);
-		} catch (InterruptedException e) {
-			LogUtils.log("teardown-cloud failed.", e);
+		if (admin != null) {
+			try {
+		        DumpUtils.dumpLogs(admin);
+		        CommandTestUtils.runCommandAndWait(command);
+		        stopWebBrowser();
+		    } catch (Throwable t) {
+		        log("failed to dump logs", t);
+		    }
+		    try {
+		        TeardownUtils.teardownAll(admin);
+		    } catch (Throwable t) {
+		        log("failed to teardown", t);
+		    }
+			admin.close();
+			admin = null;
 		}
 	}
 	
 	private boolean isServiceInstalled(String serviceName, String cliOutPut) {
-		return cliOutPut.contains("Service" + serviceName + "installed successfully");
+		return cliOutPut.contains("Service" + serviceName + "successfully installed");
 	}
 }

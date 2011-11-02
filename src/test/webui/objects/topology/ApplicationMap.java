@@ -350,6 +350,7 @@ public class ApplicationMap {
 		
 		public void assertActionMenuNotVisible() {
 			try {
+				@SuppressWarnings("unused")
 				WebElement menu = driver.findElement(By.className("x-menu-list"));
 				Assert.fail("Menu list item is still visible");
 			}

@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.util.List;
 
 import org.openspaces.admin.gsa.GridServiceAgent;
-import org.openspaces.admin.gsm.GridServiceManager;
 import org.openspaces.admin.machine.Machine;
 import org.openspaces.admin.pu.DeploymentStatus;
 import org.openspaces.admin.pu.ProcessingUnit;
@@ -30,8 +29,8 @@ import com.gigaspaces.cloudify.dsl.internal.packaging.PackagingException;
 
 import framework.utils.AdminUtils;
 import framework.utils.AssertUtils;
-import framework.utils.ProcessingUnitUtils;
 import framework.utils.AssertUtils.RepetitiveConditionProvider;
+import framework.utils.ProcessingUnitUtils;
 
 public class UniversalProcessingUnitNodeInApplicationMapTest extends AbstractSeleniumTest {
 
@@ -55,7 +54,7 @@ public class UniversalProcessingUnitNodeInApplicationMapTest extends AbstractSel
 
         //Start GSM A, GSC A
         log("starting: 1 GSM and 1 GSC at 1 machines");
-        GridServiceManager gsmA = loadGSM(machineA); //GSM A
+        loadGSM(machineA); //GSM A
         loadGSCs(machineA, 1); //GSC A
         
 		String testGroups = AdminUtils.getTestGroups();

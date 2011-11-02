@@ -16,7 +16,6 @@ import org.openspaces.admin.alert.config.PhysicalMemoryUtilizationAlertConfigure
 import org.openspaces.admin.alert.events.AlertTriggeredEventListener;
 import org.openspaces.admin.gsa.GridServiceAgent;
 import org.openspaces.admin.gsc.GridServiceContainer;
-import org.openspaces.admin.gsm.GridServiceManager;
 import org.openspaces.admin.machine.Machine;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -31,9 +30,9 @@ import test.webui.objects.dashboard.StatusGrid;
 import test.webui.objects.dashboard.StatusGrid.Memory;
 import framework.tools.SGTestHelper;
 import framework.utils.AdminUtils;
+import framework.utils.AssertUtils.RepetitiveConditionProvider;
 import framework.utils.LogUtils;
 import framework.utils.WebUiUtils;
-import framework.utils.AssertUtils.RepetitiveConditionProvider;
 
 public class FirstLastAlertTest extends AbstractSeleniumTest {
 	
@@ -61,7 +60,7 @@ public class FirstLastAlertTest extends AbstractSeleniumTest {
 		machineA = gsaA.getMachine();
 		
 		log("loading GSM");
-		GridServiceManager gsmA = loadGSM(machineA);
+		loadGSM(machineA);
 	}
 	
 	 @Test(timeOut = DEFAULT_TEST_TIMEOUT)

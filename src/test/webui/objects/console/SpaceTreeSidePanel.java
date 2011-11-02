@@ -14,6 +14,7 @@ import com.thoughtworks.selenium.Selenium;
 
 public class SpaceTreeSidePanel {
 	
+	@SuppressWarnings("unused")
 	private Selenium selenium;
 	private WebDriver driver;
 	
@@ -116,14 +117,6 @@ public class SpaceTreeSidePanel {
 				if (nodes.size() == 1) return true;
 			}
 			return false;
-			
-		}
-		
-		private void expand() {
-			
-		}
-		
-		private void collapse() {
 			
 		}
 		

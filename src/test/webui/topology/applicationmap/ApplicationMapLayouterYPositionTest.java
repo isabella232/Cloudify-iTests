@@ -14,17 +14,16 @@ import org.openspaces.admin.space.SpaceDeployment;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import framework.utils.AssertUtils;
-import framework.utils.DeploymentUtils;
-import framework.utils.LogUtils;
-import framework.utils.ProcessingUnitUtils;
-import framework.utils.AssertUtils.RepetitiveConditionProvider;
-
 import test.webui.AbstractSeleniumTest;
 import test.webui.objects.LoginPage;
 import test.webui.objects.topology.ApplicationMap;
-import test.webui.objects.topology.TopologyTab;
 import test.webui.objects.topology.ApplicationMap.ApplicationNode;
+import test.webui.objects.topology.TopologyTab;
+import framework.utils.AssertUtils;
+import framework.utils.AssertUtils.RepetitiveConditionProvider;
+import framework.utils.DeploymentUtils;
+import framework.utils.LogUtils;
+import framework.utils.ProcessingUnitUtils;
 
 /**
  * when focused on one application and deloying into it a pu of a type that exists in another application
@@ -57,7 +56,7 @@ public class ApplicationMapLayouterYPositionTest extends AbstractSeleniumTest {
 		loadGSCs(machineA, 2);
 		
 		LogUtils.log("deploying processing unit...");
-		ProcessingUnit puSessionTest = gsmA.deploy(new ProcessingUnitDeployment(DeploymentUtils.getArchive("session-test-embedded.war"))
+		gsmA.deploy(new ProcessingUnitDeployment(DeploymentUtils.getArchive("session-test-embedded.war"))
 			.setContextProperty(APPLICATION_CONTEXT_PROPERY, "App1"));
 		
 		LogUtils.log("deploying processing unit...");

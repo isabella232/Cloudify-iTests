@@ -6,7 +6,9 @@ import com.thoughtworks.selenium.Selenium;
 
 public class SpaceTypesGrid {
 
+	@SuppressWarnings("unused")
 	private Selenium selenium;
+	@SuppressWarnings("unused")
 	private WebDriver driver;
 	
 	public SpaceTypesGrid(Selenium selenium, WebDriver driver) {

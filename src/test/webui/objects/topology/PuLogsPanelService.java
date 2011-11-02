@@ -42,6 +42,7 @@ public class PuLogsPanelService {
 	
 	public class LogsMachine {
 		
+		@SuppressWarnings("unused")
 		private String machineName;
 		private String xpath;
 		private String puName;
@@ -120,9 +121,12 @@ public class PuLogsPanelService {
 		
 		public class LogsGridServiceContainer {
 		
+			@SuppressWarnings("unused")
 			private String contianerId;
 			private String xpath;
+			@SuppressWarnings("unused")
 			private String puName;
+			@SuppressWarnings("unused")
 			private String agentId;
 			
 			public LogsGridServiceContainer(String contianerId,String agentId ,String puName) {

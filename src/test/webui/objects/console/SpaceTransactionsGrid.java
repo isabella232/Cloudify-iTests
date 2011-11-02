@@ -6,7 +6,9 @@ import com.thoughtworks.selenium.Selenium;
 
 public class SpaceTransactionsGrid {
 
+	@SuppressWarnings("unused")
 	private Selenium selenium;
+	@SuppressWarnings("unused")
 	private WebDriver driver;
 	
 	public SpaceTransactionsGrid(Selenium selenium, WebDriver driver) {

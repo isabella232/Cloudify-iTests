@@ -9,7 +9,9 @@ import com.thoughtworks.selenium.Selenium;
 
 public class SpaceConfigurationGrid {
 
+	@SuppressWarnings("unused")
 	private Selenium selenium;
+	@SuppressWarnings("unused")
 	private WebDriver driver;
 	
 	public SpaceConfigurationGrid(Selenium selenium, WebDriver driver) {

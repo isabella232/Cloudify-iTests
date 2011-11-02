@@ -109,6 +109,7 @@ public class AlertsGrid {
 	 * @param status
 	 * @return
 	 */
+	@SuppressWarnings("unused")
 	public List<WebUIAlert> getAlertsByStatus(AlertStatus status) {
 		
 		Exception exception = null;
@@ -143,6 +144,7 @@ public class AlertsGrid {
 	 * @param type
 	 * @return
 	 */
+	@SuppressWarnings("unused")
 	public List<WebUIAlert> getAlertsByType(String type) {
 		
 		Exception exception = null;
@@ -177,6 +179,7 @@ public class AlertsGrid {
 	 * @param type
 	 * @return
 	 */
+	@SuppressWarnings("unused")
 	public List<WebUIAlert> getAlertsAppartFrom(String type) {
 		
 		Exception exception = null;
@@ -212,6 +215,7 @@ public class AlertsGrid {
 	 * @param type
 	 * @return
 	 */
+	@SuppressWarnings("unused")
 	public List<WebUIAlert> getParentAlertsAppartFrom(String type) {
 		
 		Exception exception = null;
@@ -240,6 +244,7 @@ public class AlertsGrid {
 		return alerts;
 	}
 	
+	@SuppressWarnings("unused")
 	public List<WebUIAlert> getParentAlertsByType(String type) {
 		
 		Exception exception = null;

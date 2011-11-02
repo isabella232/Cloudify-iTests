@@ -39,6 +39,7 @@ public class LogicalPanel extends TopologySubPanel {
 			
 			try {
 				String id = WebConstants.ID.getPuInstanceId(name);
+				@SuppressWarnings("unused")
 				WebElement hostElement = driver.findElement(By.id(id));
 				this.name = name;
 			}

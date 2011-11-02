@@ -5,7 +5,6 @@ import static framework.utils.AdminUtils.loadGSM;
 import static framework.utils.LogUtils.log;
 
 import org.openspaces.admin.gsa.GridServiceAgent;
-import org.openspaces.admin.gsm.GridServiceManager;
 import org.openspaces.admin.machine.Machine;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -34,7 +33,7 @@ public class StartupTest extends AbstractSeleniumTest {
 		machineA = gsaA.getMachine();
 		
 		log("starting: 1 GSM and 2 GSC's on 1 machine");
-		GridServiceManager gsmA = loadGSM(machineA); 
+		loadGSM(machineA); 
 		loadGSCs(machineA, 2);
 	}
 	

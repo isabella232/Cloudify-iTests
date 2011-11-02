@@ -16,6 +16,7 @@ import com.thoughtworks.selenium.Selenium;
 
 public class SpaceInstancesGrid {
 	
+	@SuppressWarnings("unused")
 	private Selenium selenium;
 	private WebDriver driver;
 

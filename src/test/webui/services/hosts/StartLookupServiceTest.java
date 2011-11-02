@@ -5,19 +5,17 @@ import static framework.utils.AdminUtils.loadGSM;
 import static framework.utils.LogUtils.log;
 
 import org.openspaces.admin.gsa.GridServiceAgent;
-import org.openspaces.admin.gsm.GridServiceManager;
 import org.openspaces.admin.machine.Machine;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-
-import framework.utils.AssertUtils;
-import framework.utils.LogUtils;
-import framework.utils.AssertUtils.RepetitiveConditionProvider;
 
 import test.webui.AbstractSeleniumTest;
 import test.webui.objects.LoginPage;
 import test.webui.objects.services.HostsAndServicesGrid;
 import test.webui.objects.services.ServicesTab;
+import framework.utils.AssertUtils;
+import framework.utils.AssertUtils.RepetitiveConditionProvider;
+import framework.utils.LogUtils;
 
 public class StartLookupServiceTest extends AbstractSeleniumTest {
 	
@@ -38,7 +36,7 @@ public class StartLookupServiceTest extends AbstractSeleniumTest {
 		machineA = gsaA.getMachine();
 
 		log("starting: 1 GSM and 2 GSC's on 1 machine");
-		GridServiceManager gsmA = loadGSM(machineA); 
+		loadGSM(machineA); 
 		loadGSCs(machineA, 2);
 	}
 	

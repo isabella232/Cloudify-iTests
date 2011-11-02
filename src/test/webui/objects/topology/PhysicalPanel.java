@@ -55,6 +55,7 @@ public class PhysicalPanel extends TopologySubPanel {
 	 */
 	public class Host {
 		
+		@SuppressWarnings("unused")
 		private WebElement host;
 		private String name;
 		

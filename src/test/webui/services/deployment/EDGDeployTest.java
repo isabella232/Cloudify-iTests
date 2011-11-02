@@ -13,7 +13,6 @@ import javax.xml.stream.XMLStreamException;
 
 import org.junit.Assert;
 import org.openspaces.admin.gsa.GridServiceAgent;
-import org.openspaces.admin.gsm.GridServiceManager;
 import org.openspaces.admin.machine.Machine;
 import org.openspaces.admin.pu.DeploymentStatus;
 import org.openspaces.admin.pu.ProcessingUnit;
@@ -21,15 +20,14 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import framework.utils.LogUtils;
-import framework.utils.ProcessingUnitUtils;
-import framework.utils.WebUiUtils;
-
 import test.webui.AbstractSeleniumTest;
 import test.webui.interfaces.IDeployWindow;
 import test.webui.objects.LoginPage;
-import test.webui.objects.services.ServicesTab;
 import test.webui.objects.services.PuTreeGrid.WebUIProcessingUnit;
+import test.webui.objects.services.ServicesTab;
+import framework.utils.LogUtils;
+import framework.utils.ProcessingUnitUtils;
+import framework.utils.WebUiUtils;
 
 public class EDGDeployTest extends AbstractSeleniumTest {
 	
@@ -49,7 +47,7 @@ public class EDGDeployTest extends AbstractSeleniumTest {
 		machineA = gsaA.getMachine();
 
 		log("starting: 1 GSM and 2 GSC's on 1 machine");
-		GridServiceManager gsmA = loadGSM(machineA); 
+		loadGSM(machineA); 
 		loadGSCs(machineA, 2);
 		
 	}

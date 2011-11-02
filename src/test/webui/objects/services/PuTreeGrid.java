@@ -34,6 +34,7 @@ public class PuTreeGrid {
 		return new PuTreeGrid(selenium, driver);
 	}
 	
+	@SuppressWarnings("unused")
 	public WebUIProcessingUnit getProcessingUnit(String name) {
 		
 		Exception exception = null;

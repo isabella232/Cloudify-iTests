@@ -110,7 +110,6 @@ public class ReplicationAlertsTest extends AbstractSeleniumTest {
 		LogUtils.log("retrieving alerts from webui...");
 		AlertsGrid alertGrid = dashboardTab.getAlertsGrid();
 		List<WebUIAlert> replicationAlerts = alertGrid.getAlertsByType(AlertsGrid.REPLICATION);
-		List<WebUIAlert> otherAlerts = alertGrid.getAlertsAppartFrom(AlertsGrid.REPLICATION);
 		
 		alertGrid.assertAlertsConsistency(replicationAlerts, adminAlerts);
 		LogUtils.log("finished");

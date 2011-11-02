@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
+import org.openspaces.admin.AdminFactory;
 import org.openspaces.admin.gsc.GridServiceContainer;
 import org.openspaces.admin.machine.Machine;
 import org.openspaces.admin.pu.DeploymentStatus;
@@ -16,6 +17,8 @@ import org.openspaces.admin.pu.events.ProcessingUnitInstanceLifecycleEventListen
 import org.openspaces.pu.service.CustomServiceMonitors;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import test.AbstractTest;
 
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.WebClient;
@@ -28,27 +31,39 @@ import framework.utils.SSHUtils;
 import framework.utils.ScriptUtils;
 
 
-public class InternalUSMPuServiceDownTest extends AbstractCommandTest {
+public class InternalUSMPuServiceDownTest extends AbstractTest {
 	
 	ProcessingUnit tomcat;
 	Long tomcatPId;
 	Machine machineA;
 	WebClient client;
-	
+	Machine[] machines;
+
 	@Override
 	@BeforeMethod
 	public void beforeTest() {
-		super.beforeTest();
+		super.beforeTest();	
+		machines = admin.getMachines().getMachines();
+		admin.close();
+		client = new WebClient(BrowserVersion.getDefault());
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, groups = "1", enabled = true)
 	public void tomcatServiceDownAndCorruptedTest() throws IOException, InterruptedException, PackagingException {
 		
 		String serviceDir = ScriptUtils.getBuildPath() + "/recipes/tomcat";
-		String command = "connect " + restUrl + ";install-service --verbose -timeout 10 " + serviceDir;
+		String command = "bootstrap-localcloud ; install-service " + "--verbose -timeout 10 " + serviceDir;
 		try {
 			LogUtils.log("installing tomcat service using Cli");
-			runCommand(command);
+			CommandTestUtils.runCommandAndWait(command);
+			AdminFactory factory = new AdminFactory();
+			for (Machine machine : machines) {
+				LogUtils.log("adding locator to admin : " + machine.getHostName() + ":4168");
+				factory.addLocator(machine.getHostAddress() + ":4168");
+			}
+			LogUtils.log("creating new admin");
+			admin = factory.createAdmin();
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (InterruptedException e) {

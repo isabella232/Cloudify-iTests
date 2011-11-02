@@ -23,7 +23,7 @@ import test.webui.objects.topology.TopologyTab;
 public class ActiveMqServiceTest extends AbstractSeleniumServiceRecipeTest {
 	
 	@Override
-	@BeforeMethod(alwaysRun = true)
+	@BeforeMethod
 	public void beforeTest() {
 		setCurrentRecipe("activemq");
 		super.beforeTest();

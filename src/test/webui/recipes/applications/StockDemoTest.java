@@ -26,7 +26,7 @@ import framework.utils.AssertUtils.RepetitiveConditionProvider;
 public class StockDemoTest extends AbstractSeleniumApplicationRecipeTest {
 
 	@Override
-	@BeforeMethod(alwaysRun = true)
+	@BeforeMethod
 	public void beforeTest() {
 		setCurrentRecipe("stockdemo");
 		super.beforeTest();

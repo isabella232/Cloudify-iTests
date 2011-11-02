@@ -27,7 +27,7 @@ import framework.utils.AssertUtils.RepetitiveConditionProvider;
 public class TravelTest extends AbstractSeleniumApplicationRecipeTest {
 
 	@Override
-	@BeforeMethod(alwaysRun = true)
+	@BeforeMethod
 	public void beforeTest() {
 		setCurrentRecipe("travel");
 		super.beforeTest();

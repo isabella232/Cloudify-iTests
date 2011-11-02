@@ -22,7 +22,7 @@ import framework.utils.AssertUtils.RepetitiveConditionProvider;
 public class TomcatServiceTest extends AbstractSeleniumServiceRecipeTest {
 
 	@Override
-	@BeforeMethod(alwaysRun = true)
+	@BeforeMethod
 	public void beforeTest() {
 		setCurrentRecipe("tomcat");
 		super.beforeTest();

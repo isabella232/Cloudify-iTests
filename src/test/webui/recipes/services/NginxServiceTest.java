@@ -20,7 +20,7 @@ import framework.utils.AssertUtils.RepetitiveConditionProvider;
 public class NginxServiceTest extends AbstractSeleniumServiceRecipeTest {
 	
 	@Override
-	@BeforeMethod(alwaysRun = true)
+	@BeforeMethod
 	public void beforeTest() {
 		setCurrentRecipe("nginx");
 		super.beforeTest();

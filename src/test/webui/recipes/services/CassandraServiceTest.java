@@ -22,7 +22,7 @@ import framework.utils.AssertUtils.RepetitiveConditionProvider;
 public class CassandraServiceTest extends AbstractSeleniumServiceRecipeTest  {
 	
 	@Override
-	@BeforeMethod(alwaysRun = true)
+	@BeforeMethod
 	public void beforeTest() {
 		setCurrentRecipe("cassandra");
 		super.beforeTest();

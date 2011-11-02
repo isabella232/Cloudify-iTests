@@ -23,7 +23,7 @@ import test.webui.objects.topology.ApplicationMap.ApplicationNode;
 public class MongodServiceTest extends AbstractSeleniumServiceRecipeTest {
 	
 	@Override
-	@BeforeMethod(alwaysRun = true)
+	@BeforeMethod
 	public void beforeTest() {
 		setCurrentRecipe("mongodb/mongod");
 		super.beforeTest();

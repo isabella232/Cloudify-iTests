@@ -22,7 +22,7 @@ import framework.utils.AssertUtils.RepetitiveConditionProvider;
 public class SolrServiceTest extends AbstractSeleniumServiceRecipeTest {
 	
 	@Override
-	@BeforeMethod(alwaysRun = true)
+	@BeforeMethod
 	public void beforeTest() {
 		setCurrentRecipe("solr");
 		super.beforeTest();

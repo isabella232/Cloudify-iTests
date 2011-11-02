@@ -21,7 +21,7 @@ import framework.utils.AssertUtils.RepetitiveConditionProvider;
 public class HsqlDBServiceTest extends AbstractSeleniumServiceRecipeTest {
 	
 	@Override
-	@BeforeMethod(alwaysRun = true)
+	@BeforeMethod
 	public void beforeTest() {
 		setCurrentRecipe("hsqldb");
 		super.beforeTest();

@@ -25,7 +25,7 @@ import framework.utils.AssertUtils.RepetitiveConditionProvider;
 public class PetClinicTest extends AbstractSeleniumApplicationRecipeTest {
 
 	@Override
-	@BeforeMethod(alwaysRun = true)
+	@BeforeMethod
 	public void beforeTest() {
 		setCurrentRecipe("petclinic");
 		super.beforeTest();
@@ -173,7 +173,6 @@ public class PetClinicTest extends AbstractSeleniumApplicationRecipeTest {
 		assertTrue(puTreeGrid.getProcessingUnit("mongo-cfg") != null);
 		
 		takeScreenShot(this.getClass(), "passed-services");
-
 	}
 
 }

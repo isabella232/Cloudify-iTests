@@ -22,7 +22,7 @@ public class StockdemoAppFailOverUsingXenTest extends AbstractApplicationFailOve
 	@BeforeClass
 	public void beforeClass()  {
 		super.beforeTest();
-		assignCassandraPorts(cassandraPort1 , cassandraPort2 , stockdemoAppDirPath);
+		assignCassandraPorts(stockdemoAppDirPath);
 																			   
 		startAgent(0 ,"stockAnalytics" ,"stockAnalyticsMirror" ,"StockDemo"  ,"cassandra");
 	    startAgent(0 ,"stockAnalyticsProcessor" ,"stockAnalyticsSpace","stockAnalyticsFeeder");

@@ -36,12 +36,12 @@ import framework.utils.TestUtils;
  */
 public class AbstractApplicationFailOverXenTest extends AbstractStartManagementXenTest {
 		
+    protected Integer cassandraPort1;
+    protected Integer cassandraPort2;
+    protected String cassandraHostIp;
+    
 	protected String restUrl;
 	protected final long DEFAULT_RECOVERY_TIME = DEFAULT_TEST_TIMEOUT/3;
-	
-	public AbstractApplicationFailOverXenTest(){
-		
-	}
 	
 	@Override
 	@BeforeMethod
@@ -214,12 +214,12 @@ public class AbstractApplicationFailOverXenTest extends AbstractStartManagementX
 		LogUtils.log("Stockdemo application installed");
 	}
 	
-	protected void assignCassandraPorts(int cassandraPort1 , int cassandraPort2 , String stockdemoAppDirPath){
+	protected void assignCassandraPorts(String stockdemoAppDirPath) {
 		Service cassandraService = null;
 		try {
 			cassandraService = ServiceReader.getServiceFromDirectory(new File(stockdemoAppDirPath + "/cassandra")).getService();
 		} catch (Exception e) {
-			e.printStackTrace();
+		    AssertFail("Failed assiging cassandra ports", e);
 		} 
 		ArrayList<Integer> cassandraPorts = (ArrayList<Integer>) cassandraService.getPlugins().get(0).getConfig().get("Port");
 		cassandraPort1 = cassandraPorts.get(0);

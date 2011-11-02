@@ -1,21 +1,17 @@
 package test.cli.cloudify.xen;
 
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import net.jini.core.discovery.LookupLocator;
-
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.BasicResponseHandler;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.openspaces.admin.gsa.GridServiceAgent;
 import org.openspaces.admin.gsm.GridServiceManager;
-import org.openspaces.admin.internal.InternalAdminFactory;
 import org.openspaces.admin.internal.gsa.InternalGridServiceAgent;
 import org.openspaces.admin.lus.LookupService;
 import org.openspaces.cloud.xenserver.XenServerMachineProvisioningConfig;
@@ -24,19 +20,44 @@ import org.testng.annotations.BeforeMethod;
 import framework.utils.AssertUtils.RepetitiveConditionProvider;
 import framework.utils.LogUtils;
 import framework.utils.SSHUtils;
+import framework.utils.WebUtils;
 import framework.utils.xen.AbstractXenGSMTest;
 
 public class AbstractStartManagementXenTest extends AbstractXenGSMTest {
 	
     private static final String SHUTDOWN_MANAGEMENT_COMMAND = "/opt/gigaspaces/tools/cli/cloudify.sh shutdown-management --verbose";
 	private static final String SHUTDOWN_AGENT_COMMAND = "/opt/gigaspaces/tools/cli/cloudify.sh shutdown-agent --verbose";
-//	protected GridServiceAgentsCounter gsaCounterForAdditionalManagement;
-    
-
+	
+	private boolean twoManagementMachines;
+	
 	@Override
 	protected void overrideXenServerProperties(XenServerMachineProvisioningConfig machineProvisioningConfig) {
         super.overrideXenServerProperties(machineProvisioningConfig);
         machineProvisioningConfig.setFileAgentRemoteLocation("/opt/cloudify-start-management.sh");
+        
+        if (twoManagementMachines) {
+            // skipping the first (as it belongs to the master machine)
+            // We are going to assume that the next first two mac addresses of the configuration
+            // will be free when we start the machines. if they aren't, hell breaks loose.
+            
+            Map<String, String> mapping = loadXenServerMappingProperties();
+            
+            String mac1 = machineProvisioningConfig.getMachineMacAddresses()[1].replaceAll(":", "");
+            String mac2 = machineProvisioningConfig.getMachineMacAddresses()[2].replaceAll(":", "");
+            
+            assertTrue("Mapping for " + mac1 + "does not exist", 
+                    mapping.containsKey(mac1));
+            assertTrue("Mapping for " + mac2 + "does not exist", 
+                    mapping.containsKey(mac2));
+            
+            String[] lookupLocators = new String[] {
+                mapping.get(mac1),
+                mapping.get(mac2)
+            };
+            
+            machineProvisioningConfig.setXapLocators(lookupLocators);
+        }
+        
     }
 	
 	@Override
@@ -44,60 +65,56 @@ public class AbstractStartManagementXenTest extends AbstractXenGSMTest {
 	public void beforeTest() {
 	    super.setAcceptGSCsOnStartup(true);
 	    super.beforeTest(); 
-	    try {
-			assertManagementStarted();
-		} catch (URISyntaxException e) {		
-			e.printStackTrace();
-		}
+		try {
+            assertManagementStarted();
+        } catch (MalformedURLException e) {
+            AssertFail("Setup failed", e);
+        } catch (URISyntaxException e) {
+            AssertFail("Setup failed", e);
+        }
 	    assertEquals("Expecting exactly 1 agent to be added", 1, getNumberOfGSAsAdded());
 	    assertEquals("Expecting 0 agents to be removed", 0, getNumberOfGSAsRemoved());
 	}
 
-	protected void assertManagementStarted() throws URISyntaxException {
+	protected void assertManagementStarted() throws URISyntaxException, MalformedURLException {
 		// test management rest and webui services
 		for (GridServiceManager gsm : admin.getGridServiceManagers()) {
 	    	String host = gsm.getMachine().getHostAddress();
 	    
-		    final URI restAdminURI = new URI("http", null, host, 8100, null, null, null);
-		    final URI webUIURI = new URI("http", null, host, 8099, null, null, null);
+		    final URL restAdminURI = new URI("http", null, host, 8100, null, null, null).toURL();
+		    final URL webUIURI = new URI("http", null, host, 8099, null, null, null).toURL();
 		    
 		    repetitiveAssertTrue("Failed waiting for REST/WebIU services", new RepetitiveConditionProvider() {
 	            public boolean getCondition() {
-	                return isURIAvailable(restAdminURI) &&
-	                       isURIAvailable(webUIURI);
+	                try {
+                        return WebUtils.isURLAvailable(restAdminURI) &&
+                               WebUtils.isURLAvailable(webUIURI);
+                    } catch (Exception e) {
+                        return false;
+                    }
 	            }
 	        }, OPERATION_TIMEOUT);
 	    }
 	}
 	
-	protected void startAgent(int extraMemoryCapacityInMB ,String... zones) {
-		
+    protected void startAdditionalManagement() {
+        final XenServerMachineProvisioningConfig agentConfig = getMachineProvisioningConfig();
+        agentConfig.setFileAgentRemoteLocation("/opt/cloudify-start-additional-management.sh");     
+        super.startNewVM(0, 0, agentConfig, OPERATION_TIMEOUT, TimeUnit.MILLISECONDS); 
+    }
+	
+	protected void startAgent(int extraMemoryCapacityInMB, String... zones) {
 		final XenServerMachineProvisioningConfig agentConfig = getMachineProvisioningConfig();
 	    agentConfig.setFileAgentRemoteLocation("/opt/cloudify-start-agent.sh");
 	    agentConfig.setGridServiceAgentZones(zones);
 	    int memoryCapacityInMB = agentConfig.getMemoryCapacityPerMachineInMB() + extraMemoryCapacityInMB;
-	    super.startNewVM(0,memoryCapacityInMB, agentConfig,OPERATION_TIMEOUT, TimeUnit.MILLISECONDS); 
-	}
-	
-	protected void startAdditionalManagement() {
-		
-		final XenServerMachineProvisioningConfig agentConfig = getMachineProvisioningConfig();
-		agentConfig.setXapLocators(new String[]{"192.168.10.82:4166" , "192.168.10.23:4166"});
-	    agentConfig.setFileAgentRemoteLocation("/opt/cloudify-start-additional-management.sh");	    
-	    GridServiceAgent gsa = super.startNewVM(0,0, agentConfig,OPERATION_TIMEOUT, TimeUnit.MILLISECONDS); 
-	    
-	    LookupLocator locator =  admin.getLocators()[0];
-	    String locators = locator.getHost() + ":" + locator.getPort() + "," + gsa.getMachine().getHostAddress() + ":4166";
-        admin = new InternalAdminFactory().singleThreadedEventListeners().useDaemonThreads(true).addLocators(locators).addGroup(admin.getGroups()[0]).createAdmin();
-        agentConfig.setXapLocators(locators.split(","));
+	    super.startNewVM(0, memoryCapacityInMB, agentConfig, OPERATION_TIMEOUT, TimeUnit.MILLISECONDS); 
 	}
 	
 	@Override
 	public void teardownAllVMs() {
-	
 		shutdownAgents();
 		shutdownManagements();
-		
 	    super.teardownAllVMs();
 	}
 	
@@ -111,9 +128,7 @@ public class AbstractStartManagementXenTest extends AbstractXenGSMTest {
 		    	}
 		    }
 		}
-		
 	    waitForAgentsShutdown(agentsShutdown);
-		
 	}
 
 	private void shutdownAgents() {
@@ -126,7 +141,6 @@ public class AbstractStartManagementXenTest extends AbstractXenGSMTest {
 		    	}
 		    }
 		}
-		
 	    waitForAgentsShutdown(agentsShutdown);
 	}
 	
@@ -150,7 +164,6 @@ public class AbstractStartManagementXenTest extends AbstractXenGSMTest {
         }, OPERATION_TIMEOUT);
 	}
 
-
 	public boolean isManagementMachine(GridServiceAgent agent) {
 		boolean isManagementMachine = false;
 		for (LookupService lus : admin.getLookupServices()) {
@@ -162,26 +175,17 @@ public class AbstractStartManagementXenTest extends AbstractXenGSMTest {
 		return isManagementMachine;
 	}
 
-	public boolean isURIAvailable(URI uri) {
-	    HttpClient client = new DefaultHttpClient();
-	    HttpGet httpGet = new HttpGet(uri);
-	    try {
-	        client.execute(httpGet, new BasicResponseHandler());
-	        return true;
-	    } catch (Exception e) {
-	        return false;
-	    } finally {
-	        client.getConnectionManager().shutdown();
-	    }
-	}
-	
-	void runCommand(GridServiceAgent agent, String command) {
+	private void runCommand(GridServiceAgent agent, String command) {
 	    String username = getMachineProvisioningConfig().getSshUsername();
 	    String password = getMachineProvisioningConfig().getSshPassword();
 	    String host = agent.getMachine().getHostAddress();		
-		SSHUtils.runCommand(host, 1000 * 60, SHUTDOWN_MANAGEMENT_COMMAND, username, password);
+		SSHUtils.runCommand(host, 1000 * 60, command, username, password);
 	}
-	
+
+    public void setTwoManagementMachines() {
+        this.twoManagementMachines = true;
+    }
+
 }
 
 

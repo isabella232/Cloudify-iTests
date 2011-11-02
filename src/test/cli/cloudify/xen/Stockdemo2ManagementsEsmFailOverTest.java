@@ -17,16 +17,16 @@ import framework.utils.xen.GsmTestUtils;
 public class Stockdemo2ManagementsEsmFailOverTest extends AbstractApplicationFailOverXenTest {
 	
 	private final String stockdemoAppDirPath = ScriptUtils.getBuildPath() + "/examples/stockdemo";
-	private Integer cassandraPort1;
-	private Integer cassandraPort2;
-	private String cassandraHostIp;
 	private XenServerMachineProvisioningConfig xenConfigOfEsmMachine;
 	private Machine esmMachine;
 	
 	@BeforeMethod
-	public void beforeTest(){
+	public void beforeTest() {
+	    
+	    setTwoManagementMachines();
 		super.beforeTest();
-		assignCassandraPorts(cassandraPort1 , cassandraPort2 , stockdemoAppDirPath);
+		
+		assignCassandraPorts(stockdemoAppDirPath);
 		
 		xenConfigOfEsmMachine = getMachineProvisioningConfig();
 		ElasticServiceManager esm = admin.getElasticServiceManagers().waitForAtLeastOne();
@@ -61,7 +61,8 @@ public class Stockdemo2ManagementsEsmFailOverTest extends AbstractApplicationFai
 		super.afterTest();
 	}
 	
-	/** TODO: shutting down the machine running the esm closes all others
+	/** 
+	 * TODO: shutting down the machine running the esm closes all others
 	 * 
 	 * @throws Exception
 	 */
@@ -72,6 +73,7 @@ public class Stockdemo2ManagementsEsmFailOverTest extends AbstractApplicationFai
 		
 		assertDesiredLogic();
 	}
+	
 	/**
 	 * GS-8637
 	 */
@@ -86,33 +88,32 @@ public class Stockdemo2ManagementsEsmFailOverTest extends AbstractApplicationFai
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////	
 	
 	 private void assertEnvSanity() throws InterruptedException {
-			
-			boolean esmRestarted = admin.getElasticServiceManagers().waitFor(1, DEFAULT_RECOVERY_TIME, TimeUnit.MICROSECONDS);
-			boolean gsmUp = admin.getGridServiceManagers().waitFor(1, DEFAULT_RECOVERY_TIME, TimeUnit.MICROSECONDS);
-			boolean lusUp = admin.getLookupServices().waitFor(1, DEFAULT_RECOVERY_TIME, TimeUnit.MICROSECONDS);
-			boolean gsaUp = admin.getGridServiceAgents().waitFor(4, DEFAULT_RECOVERY_TIME, TimeUnit.MICROSECONDS);
-			boolean restUp = admin.getProcessingUnits().waitFor("rest", DEFAULT_RECOVERY_TIME, TimeUnit.MICROSECONDS)
-													   .waitFor(1, DEFAULT_TEST_TIMEOUT/5, TimeUnit.MICROSECONDS);
-			boolean webuiUp = admin.getProcessingUnits().waitFor("webui", DEFAULT_RECOVERY_TIME, TimeUnit.MICROSECONDS)
-														.waitFor(1, DEFAULT_TEST_TIMEOUT/5, TimeUnit.MICROSECONDS);
-			
-			assertTrue("esm did not restart" , esmRestarted);
-			assertTrue("gsm did not restart" , gsmUp);
-			assertTrue("lus did not restart" , lusUp);
-			assertTrue("gsa did not restart" , gsaUp);
-			assertTrue("rest did not restart" , restUp);
-			assertTrue("webui did not restart" , webuiUp);
+		boolean esmRestarted = admin.getElasticServiceManagers().waitFor(1, DEFAULT_RECOVERY_TIME, TimeUnit.MICROSECONDS);
+		boolean gsmUp = admin.getGridServiceManagers().waitFor(1, DEFAULT_RECOVERY_TIME, TimeUnit.MICROSECONDS);
+		boolean lusUp = admin.getLookupServices().waitFor(1, DEFAULT_RECOVERY_TIME, TimeUnit.MICROSECONDS);
+		boolean gsaUp = admin.getGridServiceAgents().waitFor(4, DEFAULT_RECOVERY_TIME, TimeUnit.MICROSECONDS);
+		boolean restUp = admin.getProcessingUnits().waitFor("rest", DEFAULT_RECOVERY_TIME, TimeUnit.MICROSECONDS)
+												   .waitFor(1, DEFAULT_TEST_TIMEOUT/5, TimeUnit.MICROSECONDS);
+		boolean webuiUp = admin.getProcessingUnits().waitFor("webui", DEFAULT_RECOVERY_TIME, TimeUnit.MICROSECONDS)
+													.waitFor(1, DEFAULT_TEST_TIMEOUT/5, TimeUnit.MICROSECONDS);
+		
+		assertTrue("esm did not restart" , esmRestarted);
+		assertTrue("gsm did not restart" , gsmUp);
+		assertTrue("lus did not restart" , lusUp);
+		assertTrue("gsa did not restart" , gsaUp);
+		assertTrue("rest did not restart" , restUp);
+		assertTrue("webui did not restart" , webuiUp);
 	}
 	 
-	 private void assertDesiredLogic() throws InterruptedException {
-			LogUtils.log("asserting enviroment reconstracted");
-			assertEnvSanity();
-			
-			LogUtils.log("asserting stockdemo application is still installed");
-			isStockdemoAppInstalled(cassandraPort1 ,cassandraHostIp, cassandraPort2 ,cassandraHostIp);
-			
-			ElasticServiceManager esm = admin.getElasticServiceManagers().waitForAtLeastOne();
-			LogUtils.log("asserting esm is managing the application");
-			assertEsmIsManagingEnvBySearchingLogs(esm);
-		}
+	private void assertDesiredLogic() throws InterruptedException {
+		LogUtils.log("asserting enviroment reconstracted");
+		assertEnvSanity();
+		
+		LogUtils.log("asserting stockdemo application is still installed");
+		isStockdemoAppInstalled(cassandraPort1 ,cassandraHostIp, cassandraPort2 ,cassandraHostIp);
+		
+		ElasticServiceManager esm = admin.getElasticServiceManagers().waitForAtLeastOne();
+		LogUtils.log("asserting esm is managing the application");
+		assertEsmIsManagingEnvBySearchingLogs(esm);
+	}
 }

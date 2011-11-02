@@ -21,6 +21,7 @@ import junit.framework.Assert;
 
 import org.openspaces.admin.Admin;
 import org.openspaces.admin.AdminException;
+import org.openspaces.admin.AdminFactory;
 import org.openspaces.admin.gsa.GridServiceAgent;
 import org.openspaces.admin.gsm.GridServiceManager;
 import org.openspaces.admin.internal.InternalAdminFactory;
@@ -167,6 +168,24 @@ public class AbstractXenGSMTest extends AbstractTest {
         
     }
     
+    protected Map<String, String> loadXenServerMappingProperties() {
+        File root = null;
+        String pathname = SGTestHelper.getSGTestRootDir() + "/lib/xenserver";
+        try {
+            root = new File(pathname).getCanonicalFile();
+        } catch (IOException e1) {
+            AssertFail("Cannot resolve " + new File(pathname).getAbsolutePath() +" directory");
+        }
+        
+        File path = new File(root, "conf/xenserver-mapping.properties");
+        try {
+            return ScriptUtils.loadPropertiesFromFile(path);
+        } catch (IOException e) {
+            AssertFail("failed reading " + path, e);
+            return null;
+        }
+    }
+    
 	protected void overrideXenServerProperties(XenServerMachineProvisioningConfig machineProvisioningConfig) {
 		
 	}
@@ -231,7 +250,6 @@ public class AbstractXenGSMTest extends AbstractTest {
     }
     
     private void startFirstVM() {
-
     	String group = AdminUtils.getTestGroups()+"-xenserver"+new Random().nextLong();
 		machineProvisioningConfig.setXapGroups(new String[]{group});
 		machineProvisioningConfig.setLookupServicePort(lookupPort);
@@ -239,14 +257,26 @@ public class AbstractXenGSMTest extends AbstractTest {
             GridServiceAgent gsa = XenUtils.startFirstVirtualMachine(machineProvisioningConfig.getProperties(), 15 * 60, TimeUnit.SECONDS);
 
             // we replace the admin with a single threaded admin needed for test
-            String locator = gsa.getMachine().getHostAddress() + ":" + lookupPort;
+            String[] locators = machineProvisioningConfig.getXapLocators();
+            if (locators.length == 0) {
+                locators = new String[] { gsa.getMachine().getHostAddress() + ":" + lookupPort };
+            }
+            
             gsa.getAdmin().close();
             System.setProperty("com.gs.multicast.enabled", "false");
-            admin = new InternalAdminFactory().singleThreadedEventListeners().useDaemonThreads(true).addLocator(locator).addGroup(group).createAdmin();
-
-            machineProvisioningConfig.setXapLocators(new String[] {locator});
-            gsm = admin.getGridServiceManagers().waitForAtLeastOne();
             
+            AdminFactory adminFactory = new InternalAdminFactory()
+                .singleThreadedEventListeners()
+                .useDaemonThreads(true)
+                .addGroup(group);
+            
+            for (String locator : locators) {
+                adminFactory.addLocator(locator);
+            }
+            
+            admin = adminFactory.createAdmin();
+
+            gsm = admin.getGridServiceManagers().waitForAtLeastOne();
             
             if (admin.getMachines().getSize() > 1) {
             	Machine[] machines = admin.getMachines().getMachines();

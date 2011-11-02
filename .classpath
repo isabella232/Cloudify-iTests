@@ -27,7 +27,6 @@
 	<classpathentry kind="var" path="CLOUDIFY_LATEST/lib/platform/jetty/jetty-io-7.4.5.v20110725.jar"/>
 	<classpathentry kind="var" path="CLOUDIFY_LATEST/lib/platform/jetty/jetty-continuation-7.4.5.v20110725.jar"/>
 	<classpathentry kind="var" path="CLOUDIFY_LATEST/lib/required/com.springsource.org.aopalliance-1.0.0.jar"/>
-	<classpathentry kind="var" path="JRE_LIB"/>
 	<classpathentry kind="lib" path="lib/testng/testng-5.10-jdk15.jar" sourcepath="D:/testng-6.1.1.zip"/>
 	<classpathentry kind="lib" path="lib/commons/commons-httpclient-3.1.jar"/>
 	<classpathentry kind="lib" path="lib/commons/commons-lang-2.4.jar"/>

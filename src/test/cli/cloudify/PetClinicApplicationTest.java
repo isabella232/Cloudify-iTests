@@ -7,8 +7,8 @@ import org.openspaces.admin.AdminFactory;
 import org.openspaces.admin.machine.Machine;
 import org.openspaces.admin.pu.DeploymentStatus;
 import org.openspaces.admin.pu.ProcessingUnit;
-import org.testng.annotations.AfterTest;
-import org.testng.annotations.BeforeTest;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import framework.utils.LogUtils;
@@ -26,7 +26,7 @@ public class PetClinicApplicationTest extends AbstractTest {
 	Machine[] machines;
 	
 	@Override
-	@BeforeTest
+	@BeforeMethod
 	public void beforeTest() {
 		super.beforeTest();	
 		machines = admin.getMachines().getMachines();
@@ -71,7 +71,7 @@ public class PetClinicApplicationTest extends AbstractTest {
 	}
 	
 	@Override
-	@AfterTest
+	@AfterMethod
 	public void afterTest() {
 		try {
 			LogUtils.log("tearing down local cloud");

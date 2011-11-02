@@ -146,7 +146,8 @@
         	<classfileset dir="${tmp.testng.classes}" includes="${INCLUDE}" excludes="${EXCLUDE}"/>            	
          <sysproperty key="org.uncommons.reportng.title" value="Service Grid Tests Report - Build ${BUILD_NUMBER}"/>
 	     <sysproperty key="sgtest.buildNumber" value="${BUILD_NUMBER}"/>
-	     <sysproperty key="sgtest.suiteName" value="${SUITE_NAME}"/>	
+	     <sysproperty key="sgtest.suiteName" value="${SUITE_NAME}"/>
+        	<sysproperty key="LOOKUPGROUPS" value="sgwebui-cloudify"/>
             <sysproperty key="sgtest.buildFolder" value="${report.dir}"/>
             <sysproperty key="sgtest.url" value="http://192.168.9.121:8087/sgtest.webui.cloudify/"/>
         </testng>

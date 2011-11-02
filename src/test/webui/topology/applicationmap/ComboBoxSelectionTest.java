@@ -38,19 +38,19 @@ public class ComboBoxSelectionTest extends AbstractSeleniumTest {
 		AdminUtils.loadGSCs(machine, 2);
 		
         LogUtils.log("deploying spaces onto 4 different applications");
-		SpaceDeployment deployment = new SpaceDeployment("space1").partitioned(1, 1).maxInstancesPerVM(1).setContextProperty("com.gs.application", "App1");
+		SpaceDeployment deployment = new SpaceDeployment("space1").partitioned(1, 0).maxInstancesPerVM(1).setContextProperty("com.gs.application", "App1");
 		ProcessingUnit mySpacePu = gsm.deploy(deployment);
 		ProcessingUnitUtils.waitForDeploymentStatus(mySpacePu, DeploymentStatus.INTACT);
 		
-		deployment = new SpaceDeployment("space2").partitioned(1, 1).maxInstancesPerVM(1).setContextProperty("com.gs.application", "App2");
+		deployment = new SpaceDeployment("space2").partitioned(1, 0).maxInstancesPerVM(1).setContextProperty("com.gs.application", "App2");
 		mySpacePu = gsm.deploy(deployment);
 		ProcessingUnitUtils.waitForDeploymentStatus(mySpacePu, DeploymentStatus.INTACT);
 		
-		deployment = new SpaceDeployment("space3").partitioned(1, 1).maxInstancesPerVM(1).setContextProperty("com.gs.application", "App3");
+		deployment = new SpaceDeployment("space3").partitioned(1, 0).maxInstancesPerVM(1).setContextProperty("com.gs.application", "App3");
 		mySpacePu = gsm.deploy(deployment);
 		ProcessingUnitUtils.waitForDeploymentStatus(mySpacePu, DeploymentStatus.INTACT);
 
-		deployment = new SpaceDeployment("space4").partitioned(1, 1).maxInstancesPerVM(1).setContextProperty("com.gs.application", "App4");
+		deployment = new SpaceDeployment("space4").partitioned(1, 0).maxInstancesPerVM(1).setContextProperty("com.gs.application", "App4");
 		mySpacePu = gsm.deploy(deployment);
 		ProcessingUnitUtils.waitForDeploymentStatus(mySpacePu, DeploymentStatus.INTACT);
 		

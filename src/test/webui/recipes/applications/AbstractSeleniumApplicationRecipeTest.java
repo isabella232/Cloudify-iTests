@@ -42,7 +42,7 @@ public class AbstractSeleniumApplicationRecipeTest extends AbstractSeleniumTest 
 		boolean success = false;
 		
 		try {
-			String command = "bootstrap-localcloud --verbose;install-application --verbose -timeout 10 " + pathToService + ";exit";
+			String command = "bootstrap-localcloud --verbose;install-application --verbose -timeout 25 " + pathToService + ";exit";
 			String output = CommandTestUtils.runCommandAndWait(command);
 			if (output.contains("installed successfully")) {
 				success = true;

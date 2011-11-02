@@ -3,14 +3,9 @@ package test.webui.recipes.applications;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.openspaces.admin.machine.Machine;
 import org.openspaces.admin.pu.DeploymentStatus;
-import org.openspaces.admin.pu.ProcessingUnit;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-
-import framework.utils.AssertUtils;
-import framework.utils.AssertUtils.RepetitiveConditionProvider;
 
 import test.webui.objects.LoginPage;
 import test.webui.objects.MainNavigation;
@@ -25,11 +20,10 @@ import test.webui.objects.topology.ApplicationMap.ApplicationNode;
 import test.webui.objects.topology.ApplicationMap.ApplicationNode.Connector;
 import test.webui.objects.topology.TopologyTab;
 import test.webui.recipes.services.AbstractSeleniumServiceRecipeTest;
+import framework.utils.AssertUtils;
+import framework.utils.AssertUtils.RepetitiveConditionProvider;
 
 public class StockDemoTest extends AbstractSeleniumApplicationRecipeTest {
-
-	private Machine machineA;
-	private ProcessingUnit pu;
 
 	@Override
 	@BeforeMethod(alwaysRun = true)

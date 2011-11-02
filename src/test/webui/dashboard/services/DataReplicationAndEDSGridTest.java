@@ -12,24 +12,22 @@ import org.openspaces.admin.pu.ProcessingUnitDeployment;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import test.webui.AbstractSeleniumTest;
+import test.webui.objects.LoginPage;
+import test.webui.objects.dashboard.DashboardTab;
+import test.webui.objects.dashboard.ServicesGrid;
+import test.webui.objects.dashboard.ServicesGrid.ApplicationsMenuPanel;
+import test.webui.objects.dashboard.ServicesGrid.DataReplicationGrid;
+import test.webui.objects.dashboard.ServicesGrid.EDSGrid;
+import test.webui.objects.dashboard.ServicesGrid.Icon;
 import framework.utils.AdminUtils;
 import framework.utils.AssertUtils;
+import framework.utils.AssertUtils.RepetitiveConditionProvider;
 import framework.utils.DBUtils;
 import framework.utils.DeploymentUtils;
 import framework.utils.LogUtils;
 import framework.utils.ProcessingUnitUtils;
 import framework.utils.ToStringUtils;
-import framework.utils.AssertUtils.RepetitiveConditionProvider;
-
-import test.webui.AbstractSeleniumTest;
-import test.webui.objects.LoginPage;
-import test.webui.objects.dashboard.DashboardTab;
-import test.webui.objects.dashboard.ServicesGrid;
-import test.webui.objects.dashboard.ServicesGrid.ApplicationServicesGrid;
-import test.webui.objects.dashboard.ServicesGrid.ApplicationsMenuPanel;
-import test.webui.objects.dashboard.ServicesGrid.DataReplicationGrid;
-import test.webui.objects.dashboard.ServicesGrid.EDSGrid;
-import test.webui.objects.dashboard.ServicesGrid.Icon;
 
 public class DataReplicationAndEDSGridTest extends AbstractSeleniumTest {
 	
@@ -145,10 +143,7 @@ public class DataReplicationAndEDSGridTest extends AbstractSeleniumTest {
 		
 		runtime.undeploy();
 		ProcessingUnitUtils.waitForDeploymentStatus(runtime, DeploymentStatus.UNDEPLOYED);
-		
-		
-		final ApplicationServicesGrid applicationServices = appGrid.getApplicationServicesGrid();
-		
+				
 		condition = new RepetitiveConditionProvider() {			
 			public boolean getCondition() {
 				return (replicationGrid.getBytesPerSecond().getCount() == 0);

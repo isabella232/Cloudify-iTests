@@ -1,12 +1,7 @@
 package test.webui.recipes.services;
 
-import org.openspaces.admin.machine.Machine;
 import org.openspaces.admin.pu.DeploymentStatus;
-import org.openspaces.admin.pu.ProcessingUnit;
 import org.testng.annotations.BeforeMethod;
-
-import framework.utils.AssertUtils;
-import framework.utils.AssertUtils.RepetitiveConditionProvider;
 
 import test.webui.objects.LoginPage;
 import test.webui.objects.MainNavigation;
@@ -19,11 +14,10 @@ import test.webui.objects.services.ServicesTab;
 import test.webui.objects.topology.ApplicationMap;
 import test.webui.objects.topology.ApplicationMap.ApplicationNode;
 import test.webui.objects.topology.TopologyTab;
+import framework.utils.AssertUtils;
+import framework.utils.AssertUtils.RepetitiveConditionProvider;
 
 public class ElasticSearchServiceTest extends AbstractSeleniumServiceRecipeTest {
-
-	private Machine machineA;
-	private ProcessingUnit pu;
 	
 	@Override
 	@BeforeMethod(alwaysRun = true)

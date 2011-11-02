@@ -29,7 +29,6 @@ public class PuStatusBeforeDeploymentEndsTest extends AbstractSeleniumTest {
 	Machine machineA;
 	ProcessingUnit pu;
 	GridServiceManager gsmA;
-	private int waitingTime = 5000;
 	
 	@BeforeMethod(alwaysRun = true)
 	public void startSetup() {

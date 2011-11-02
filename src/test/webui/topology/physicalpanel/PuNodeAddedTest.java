@@ -34,7 +34,6 @@ import test.webui.objects.topology.TopologyTab;
 public class PuNodeAddedTest extends AbstractSeleniumTest {
 	
 	private Machine machineA;
-	private Machine machineB;
 	ProcessingUnit puSessionTest;
 	ProcessingUnit mySpacePu;
 	GridServiceManager gsm;

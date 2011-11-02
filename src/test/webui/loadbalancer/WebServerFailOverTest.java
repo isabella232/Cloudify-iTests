@@ -22,11 +22,11 @@ import test.webui.objects.topology.ApplicationMap;
 import test.webui.objects.topology.ApplicationMap.ApplicationNode;
 import test.webui.objects.topology.TopologyTab;
 import framework.tools.SGTestHelper;
+import framework.utils.AssertUtils.RepetitiveConditionProvider;
 import framework.utils.LogUtils;
 import framework.utils.ProcessingUnitUtils;
 import framework.utils.ScriptUtils;
 import framework.utils.WebUiUtils;
-import framework.utils.AssertUtils.RepetitiveConditionProvider;
 
 public class WebServerFailOverTest extends AbstractSeleniumTest {
 	
@@ -55,8 +55,6 @@ public class WebServerFailOverTest extends AbstractSeleniumTest {
 	public void failoverTest() throws InterruptedException {
 		
 		String methodName = "failoverTest";
-		
-		int waitingTime = 10000;
 		
 		LoginPage loginPage = getLoginPage();
 		

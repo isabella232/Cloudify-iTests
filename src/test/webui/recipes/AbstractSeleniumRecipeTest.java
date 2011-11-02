@@ -5,6 +5,7 @@ import java.io.IOException;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 
+import framework.utils.LogUtils;
 import framework.utils.ScriptUtils;
 
 import test.cli.cloudify.CommandTestUtils;
@@ -15,7 +16,7 @@ public class AbstractSeleniumRecipeTest extends AbstractSeleniumTest {
 	@Override
 	@BeforeMethod
 	public void beforeTest() {
-	
+		LogUtils.log("Test Configuration Started : " + this.getClass());
 	}
 	
 	@Override

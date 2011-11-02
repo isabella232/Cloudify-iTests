@@ -36,8 +36,8 @@ public class PetClinicApplicationTest extends AbstractTest {
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
 	public void testPetClinincApplication() {
 		
-		String serviceDir = ScriptUtils.getBuildPath() + "/examples/petclinic";
-		String command = "bootstrap-localcloud ; install-application " + "--verbose -timeout 10 " + serviceDir;
+		String applicationDir = ScriptUtils.getBuildPath() + "/examples/petclinic";
+		String command = "bootstrap-localcloud ; install-application " + "--verbose -timeout 10 " + applicationDir;
 		try {
 			CommandTestUtils.runCommandAndWait(command);
 			AdminFactory factory = new AdminFactory();

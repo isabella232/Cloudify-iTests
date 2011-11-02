@@ -132,6 +132,8 @@ public class MirrorPersistencyAlertTest extends AbstractSeleniumTest {
 		LogUtils.log("Killing HSQL process");
 		gsa.killByAgentId(hsqlId);
 		
+		Thread.sleep(waitingTime);
+		
 		LogUtils.log("Waiting for alert raised event");
 		alertRaised.await(60, TimeUnit.SECONDS);
 		assertTrue(alertRaised.getCount() == 0);

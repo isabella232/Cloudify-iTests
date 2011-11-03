@@ -147,6 +147,8 @@ public class ConnectorStatusMirrorToDbTest extends AbstractSeleniumTest {
 		LogUtils.log("Killing HSQL process");
 		gsa.killByAgentId(hsqlId);
 		
+		Thread.sleep(10000);
+		
 		LogUtils.log("Waiting for alert raised event");
 		alertRaised.await(60, TimeUnit.SECONDS);
 		assertTrue(alertRaised.getCount() == 0);

@@ -60,7 +60,7 @@ public class PuStatusBeforeDeploymentEndsTest extends AbstractSeleniumTest {
 		final ApplicationServicesGrid applicationServices = appGrid.getApplicationServicesGrid();
 		
 		// deploy a pu
-		SpaceDeployment deployment = new SpaceDeployment("Test").partitioned(2, 1).maxInstancesPerVM(1);
+		SpaceDeployment deployment = new SpaceDeployment("Test").partitioned(2, 0).maxInstancesPerVM(1);
 		pu = gsmA.deploy(deployment);
 		
 		RepetitiveConditionProvider condition = new RepetitiveConditionProvider() {
@@ -71,14 +71,24 @@ public class PuStatusBeforeDeploymentEndsTest extends AbstractSeleniumTest {
 				return false;
 			}
 		};
-		AssertUtils.repetitiveAssertTrue(null, condition, 5000);
+		AssertUtils.repetitiveAssertTrue(null, condition, waitingTime);
 		
 		DeploymentStatus testStatus = admin.getProcessingUnits().getProcessingUnit("Test").getStatus();
 		StatefullModule module = applicationServices.getStatefullModule();
 		while (!testStatus.equals(DeploymentStatus.INTACT)) {
-			assertTrue(module.getIcon() == null || !module.getIcon().equals(Icon.OK));
+			assertTrue(!module.getIcon().equals(Icon.OK));
 			testStatus = admin.getProcessingUnits().getProcessingUnit("Test").getStatus();
 		}
+		
+		condition = new RepetitiveConditionProvider() {
+			
+			@Override
+			public boolean getCondition() {
+				StatefullModule module = applicationServices.getStatefullModule();
+				return module.getIcon().equals(Icon.OK);
+			}
+		};
+		AssertUtils.repetitiveAssertTrue(null, condition, waitingTime);
 		
 	}
 

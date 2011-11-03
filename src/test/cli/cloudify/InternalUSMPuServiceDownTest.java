@@ -135,7 +135,7 @@ public class InternalUSMPuServiceDownTest extends AbstractTest {
 		}
 		
 		LogUtils.log("waiting for tomcat pu instances to decrease");
-		removed.await();
+		assertTrue("Tomcat PU instance was not decresed", removed.await(20, TimeUnit.SECONDS));
 		assertTrue("ProcessingUnitInstanceRemoved event has not been fired", removed.getCount() == 0);
 		LogUtils.log("waiting for tomcat pu instances to increase");
 		added.await();

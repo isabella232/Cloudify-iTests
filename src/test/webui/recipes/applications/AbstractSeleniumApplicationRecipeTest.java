@@ -29,33 +29,25 @@ public class AbstractSeleniumApplicationRecipeTest extends AbstractSeleniumRecip
 	}
 	
 	@BeforeMethod
-	public void bootstrapAndInstall() throws IOException, InterruptedException {
-		LogUtils.log("LOOKUPGROUPS = " + System.getenv("LOOKUPGROUPS"));
-		admin = newAdmin();
-		admin.getGridServiceAgents().waitFor(2);
-		machines = admin.getMachines().getMachines();
-		admin.close();
-		admin = null;
-		if (bootstrapLocalCloud() && installApplication(currentApplication)) {
-			LogUtils.log("Number of machines discovered : " + machines.length);
-			LogUtils.log("Adding locators to new admin factory");
-			AdminFactory factory = new AdminFactory();
-			for (Machine machine : machines){
-				LogUtils.log("adding " + machine.getHostName() + ":4168 to admin locators" );
-				factory.addLocator(machine.getHostAddress() + ":4168");
-			}
+	public void bootstrapAndInstall() throws IOException, InterruptedException {		
+		AdminFactory factory = new AdminFactory();
+		LogUtils.log("Adding locators to new admin factory");
+		factory.addLocator("127.0.0.1:4168");
+		if (bootstrapLocalCloud()) {
 			LogUtils.log("creating new admin from factory");
 			admin = factory.createAdmin();
-			LogUtils.log("retrieving webui url");
-			ProcessingUnit webui = admin.getProcessingUnits().waitFor("webui");
-			assertTrue(webui != null);
-			assertTrue(webui.getInstances().length != 0);	
-			String url = ProcessingUnitUtils.getWebProcessingUnitURL(webui).toString();	
-			startWebBrowser(url); 
-		}
-		else {
-			tearDownLocalCloud();
-			AbstractTest.AssertFail("Failed to install application");
+			if (installApplication(currentApplication)) {
+				LogUtils.log("retrieving webui url");
+				ProcessingUnit webui = admin.getProcessingUnits().waitFor("webui");
+				assertTrue(webui != null);
+				assertTrue(webui.getInstances().length != 0);	
+				String url = ProcessingUnitUtils.getWebProcessingUnitURL(webui).toString();	
+				startWebBrowser(url); 
+			}
+			else {
+				tearDownLocalCloud();
+				AbstractTest.AssertFail("Failed to install application");
+			}
 		}
 	}
 	

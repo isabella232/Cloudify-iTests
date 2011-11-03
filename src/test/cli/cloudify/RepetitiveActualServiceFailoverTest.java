@@ -14,6 +14,7 @@ import org.openspaces.admin.pu.ProcessingUnit;
 import org.openspaces.admin.pu.ProcessingUnitInstance;
 import org.openspaces.admin.pu.events.ProcessingUnitInstanceLifecycleEventListener;
 import org.openspaces.pu.service.CustomServiceMonitors;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -176,12 +177,27 @@ public class RepetitiveActualServiceFailoverTest extends AbstractTest {
 	private Long getTomcatPId() {
 		
 		ProcessingUnit tomcat = admin.getProcessingUnits().getProcessingUnit("tomcat");
+		assertNotNull(tomcat);
 		ProcessingUnitUtils.waitForDeploymentStatus(tomcat, DeploymentStatus.INTACT);
 		assertTrue(tomcat.getStatus().equals(DeploymentStatus.INTACT));
 		
 		ProcessingUnitInstance tomcatInstance = tomcat.getInstances()[0];	
 		CustomServiceMonitors customServiceDetails = (CustomServiceMonitors) tomcatInstance.getStatistics().getMonitors().get("USM");
 		return (Long) customServiceDetails.getMonitors().get("Actual Process ID");
+	}
+	
+	@Override
+	@AfterMethod
+	public void afterTest() {
+		try {
+			LogUtils.log("tearing down local cloud");
+			CommandTestUtils.runCommandAndWait("teardown-localcloud");
+		} catch (IOException e) {
+			LogUtils.log("teardown-localcloud failed", e);
+		} catch (InterruptedException e) {
+			LogUtils.log("teardown-localcloud failed", e);
+		}
+		super.afterTest();	
 	}
 
 }

@@ -22,6 +22,7 @@ import test.webui.AbstractSeleniumTest;
 import test.webui.objects.LoginPage;
 import test.webui.objects.MainNavigation;
 import test.webui.objects.dashboard.DashboardTab;
+import test.webui.objects.dashboard.ServicesGrid.ApplicationsMenuPanel;
 import test.webui.objects.dashboard.ServicesGrid.InfrastructureServicesGrid;
 import test.webui.objects.topology.ApplicationMap;
 import test.webui.objects.topology.ApplicationMap.ApplicationNode;
@@ -72,6 +73,8 @@ public class FirstApplicationSelectedTest extends AbstractSeleniumTest {
 		
 		final InfrastructureServicesGrid infrastructureGrid = dashboardTab.getServicesGrid().getInfrastructureGrid();
 		
+		final ApplicationsMenuPanel appMenuPanel = dashboardTab.getServicesGrid().getApplicationsMenuPanel();
+		
 		final int machines = admin.getGridServiceAgents().getAgents().length;
 		
 		RepetitiveConditionProvider condition = new RepetitiveConditionProvider() {
@@ -80,6 +83,16 @@ public class FirstApplicationSelectedTest extends AbstractSeleniumTest {
 			public boolean getCondition() {
 				return ((infrastructureGrid.getGSAInst().getCount() == machines)
 						&& (infrastructureGrid.getHosts().getCount() == machines));
+			}
+		};
+		AssertUtils.repetitiveAssertTrue(null, condition, waitingTime);
+		
+		
+		condition = new RepetitiveConditionProvider() {
+			
+			@Override
+			public boolean getCondition() {
+				return (appMenuPanel.isApplicationPresent("MyApp"));
 			}
 		};
 		AssertUtils.repetitiveAssertTrue(null, condition, waitingTime);
@@ -96,7 +109,7 @@ public class FirstApplicationSelectedTest extends AbstractSeleniumTest {
 				return (node != null);
 			}
 		};
-		AssertUtils.repetitiveAssertTrue(null, condition, 5000);
+		AssertUtils.repetitiveAssertTrue(null, condition, waitingTime);
     	
     }
     

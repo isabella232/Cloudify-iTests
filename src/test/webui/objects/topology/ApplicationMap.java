@@ -434,7 +434,7 @@ public class ApplicationMap {
 				WebElement arrowDown = driver.findElement(By.id(WebConstants.ID.topologyCombobox)).findElement(By.className("icon"));
 				arrowDown.click();
 				List<WebElement> visibleApps = driver.findElement(By.id(WebConstants.ID.topologyCombobox)).findElements(By.xpath("//li[@class='visible']"));
-				WebElement activeApp = driver.findElement(By.xpath("//li[@class='visible active']"));
+				WebElement activeApp = driver.findElement(By.id(WebConstants.ID.topologyCombobox)).findElement(By.xpath("//li[@class='visible active']"));
 				List<WebElement> allApps = visibleApps;
 				allApps.add(activeApp);
 				WebElement app = null;
@@ -451,7 +451,8 @@ public class ApplicationMap {
 			}
 		};
 
-		AssertUtils.repetitiveAssertTrue("Application is not present in the applications menu panel", condition,10000);	}
+		AssertUtils.repetitiveAssertTrue("Application is not present in the applications menu panel", condition,10000);
+	}
 
 	public ApplicationNode getApplicationNode(String name) {
 		ApplicationNode appNode = new ApplicationNode(name);

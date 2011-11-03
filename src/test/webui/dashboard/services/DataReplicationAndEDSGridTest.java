@@ -150,11 +150,34 @@ public class DataReplicationAndEDSGridTest extends AbstractSeleniumTest {
 			}
 		};	
 		AssertUtils.repetitiveAssertTrue(null, condition,waitingTime);
-		assertTrue(replicationGrid.getBytesPerSecond().getIcon().equals(Icon.NA));
-		assertTrue(replicationGrid.getPacketsPerSecond().getCount() == 0);
-		assertTrue(replicationGrid.getPacketsPerSecond().getIcon().equals(Icon.NA));
+		
+		condition = new RepetitiveConditionProvider() {			
+			public boolean getCondition() {
+				return (replicationGrid.getBytesPerSecond().getIcon().equals(Icon.NA));
+			}
+		};	
+		AssertUtils.repetitiveAssertTrue(null, condition,waitingTime);
+		
+		condition = new RepetitiveConditionProvider() {			
+			public boolean getCondition() {
+				return (replicationGrid.getPacketsPerSecond().getCount() == 0);
+			}
+		};	
+		AssertUtils.repetitiveAssertTrue(null, condition,waitingTime);
+		
+		condition = new RepetitiveConditionProvider() {			
+			public boolean getCondition() {
+				return (replicationGrid.getPacketsPerSecond().getIcon().equals(Icon.NA));
+			}
+		};	
+		AssertUtils.repetitiveAssertTrue(null, condition,waitingTime);
 
-		assertTrue(edsGrid.getBytesPerSecond().getCount() == 0);
+		condition = new RepetitiveConditionProvider() {			
+			public boolean getCondition() {
+				return (edsGrid.getBytesPerSecond().getCount() == 0);
+			}
+		};	
+		AssertUtils.repetitiveAssertTrue(null, condition,waitingTime);
 				
 		condition = new RepetitiveConditionProvider() {			
 			public boolean getCondition() {
@@ -162,7 +185,13 @@ public class DataReplicationAndEDSGridTest extends AbstractSeleniumTest {
 			}
 		};
 		AssertUtils.repetitiveAssertTrue(null, condition,waitingTime);
-		assertTrue(edsGrid.getPacketsPerSecond().getCount() == 0);
+		
+		condition = new RepetitiveConditionProvider() {			
+			public boolean getCondition() {
+				return (edsGrid.getPacketsPerSecond().getCount() == 0);
+			}
+		};
+		AssertUtils.repetitiveAssertTrue(null, condition,waitingTime);
 	}
 
 }

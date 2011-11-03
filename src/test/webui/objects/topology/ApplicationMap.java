@@ -441,7 +441,7 @@ public class ApplicationMap {
 				for (WebElement e : allApps) {
 					if (e.getText().equals(applicationName)) app = e;
 				}
-				if (app.isDisplayed()) {
+				if ((app != null) && app.isDisplayed()) {
 					app.click();
 					return true;
 				}

@@ -72,11 +72,12 @@ public class PuStatusBeforeDeploymentEndsTest extends AbstractSeleniumTest {
 			}
 		};
 		AssertUtils.repetitiveAssertTrue(null, condition, waitingTime);
+		StatefullModule module = applicationServices.getStatefullModule();
 		
 		DeploymentStatus testStatus = admin.getProcessingUnits().getProcessingUnit("Test").getStatus();
-		StatefullModule module = applicationServices.getStatefullModule();
 		while (!testStatus.equals(DeploymentStatus.INTACT)) {
-			assertTrue(!module.getIcon().equals(Icon.OK));
+			Icon icon = module.getIcon();
+			assertTrue((icon != null) && !icon.equals(Icon.OK));
 			testStatus = admin.getProcessingUnits().getProcessingUnit("Test").getStatus();
 		}
 		

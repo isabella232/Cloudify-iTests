@@ -60,7 +60,7 @@ public class PuStatusBeforeDeploymentEndsTest extends AbstractSeleniumTest {
 		final ApplicationServicesGrid applicationServices = appGrid.getApplicationServicesGrid();
 		
 		// deploy a pu
-		SpaceDeployment deployment = new SpaceDeployment("Test").partitioned(2, 0).maxInstancesPerVM(1);
+		SpaceDeployment deployment = new SpaceDeployment("Test").partitioned(2, 1).maxInstancesPerVM(1);
 		pu = gsmA.deploy(deployment);
 		
 		RepetitiveConditionProvider condition = new RepetitiveConditionProvider() {

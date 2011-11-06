@@ -104,15 +104,15 @@ public class CustomCommandsOnMultipleInstancesTest extends AbstractLocalCloudTes
 					,invokePrintResult.contains("OK from instance #" + i));
 		}
 	}
-	private void checkPrintCommand(int instanceId) throws IOException, InterruptedException {
+	private void checkPrintCommand(int instanceid) throws IOException, InterruptedException {
 		String invokePrintResult = runCommand("connect " + this.restUrl
-				+ "; invoke instanceid " + instanceId + " simpleCustomCommandsMultipleInstances print");
+				+ "; invoke -instanceid " + -instanceid + " simpleCustomCommandsMultipleInstances print");
 		
-		assertTrue("Custom command 'print' returned unexpected result from instance #" + instanceId +": " + invokePrintResult
-				,invokePrintResult.contains("OK from instance #" + instanceId));
+		assertTrue("Custom command 'print' returned unexpected result from instance #" + -instanceid +": " + invokePrintResult
+				,invokePrintResult.contains("OK from instance #" + -instanceid));
 		
 		for(int i=1 ; i <= totalInstances ; i++){
-			if(i == instanceId)
+			if(i == -instanceid)
 				continue;
 			Assert.assertFalse("should not recive any output from instance" + i ,invokePrintResult.contains("instance #" + i));
 		}
@@ -128,15 +128,15 @@ public class CustomCommandsOnMultipleInstancesTest extends AbstractLocalCloudTes
 		}
 	}
 	
-	private void checkParamsCommand(int instanceId) throws IOException, InterruptedException {
+	private void checkParamsCommand(int instanceid) throws IOException, InterruptedException {
 		String invokeParamsResult = runCommand("connect " + this.restUrl
-				+ "; invoke instanceid " + instanceId + " simpleCustomCommandsMultipleInstances params");
+				+ "; invoke -instanceid " + -instanceid + " simpleCustomCommandsMultipleInstances params");
 		
-		assertTrue("Custom command 'params' returned unexpected result from instance #" + instanceId +": " + invokeParamsResult
-				,invokeParamsResult.contains("OK from instance #" + instanceId) && invokeParamsResult.contains("Result: this is the custom parameters command. expecting 123: 123"));
+		assertTrue("Custom command 'params' returned unexpected result from instance #" + -instanceid +": " + invokeParamsResult
+				,invokeParamsResult.contains("OK from instance #" + -instanceid) && invokeParamsResult.contains("Result: this is the custom parameters command. expecting 123: 123"));
 		
 		for(int i=1 ; i <= totalInstances ; i++){
-			if(i == instanceId)
+			if(i == -instanceid)
 				continue;	
 			Assert.assertFalse("should not recive any output from instance" + i ,invokeParamsResult.contains("instance #" + i));
 		}
@@ -152,15 +152,15 @@ public class CustomCommandsOnMultipleInstancesTest extends AbstractLocalCloudTes
 		}
 	}
 	
-	private void checkExceptionCommand(int instanceId) throws IOException, InterruptedException {
+	private void checkExceptionCommand(int instanceid) throws IOException, InterruptedException {
 		String invokeExceptionResult = runCommand("connect " + this.restUrl
-				+ "; invoke instanceid " + instanceId + " simpleCustomCommandsMultipleInstances exception");
+				+ "; invoke -instanceid " + -instanceid + " simpleCustomCommandsMultipleInstances exception");
 		
-		assertTrue("Custom command 'exception' returned unexpected result from instance #" + instanceId +": " + invokeExceptionResult
-				,invokeExceptionResult.contains("FAILED from instance #" + instanceId) && invokeExceptionResult.contains("This is an error test"));
+		assertTrue("Custom command 'exception' returned unexpected result from instance #" + -instanceid +": " + invokeExceptionResult
+				,invokeExceptionResult.contains("FAILED from instance #" + -instanceid) && invokeExceptionResult.contains("This is an error test"));
 		
 		for(int i=1 ; i <= totalInstances ; i++){
-			if(i == instanceId)
+			if(i == -instanceid)
 				continue;	
 			Assert.assertFalse("should not recive any output from instance" + i ,invokeExceptionResult.contains("instance #" + i));
 		}
@@ -176,15 +176,15 @@ public class CustomCommandsOnMultipleInstancesTest extends AbstractLocalCloudTes
 		}
 	}
 	
-	private void checkRunScriptCommand(int instanceId) throws IOException, InterruptedException {
+	private void checkRunScriptCommand(int instanceid) throws IOException, InterruptedException {
 		String invokeRunScriptResult = runCommand("connect " + this.restUrl
-				+ "; invoke instanceid " + instanceId + " simpleCustomCommandsMultipleInstances runScript");
+				+ "; invoke -instanceid " + -instanceid + " simpleCustomCommandsMultipleInstances runScript");
 		
-		assertTrue("Custom command 'exception' returned unexpected result from instance #" + instanceId +": " + invokeRunScriptResult
-				,invokeRunScriptResult.contains("OK from instance #" + instanceId) && invokeRunScriptResult.contains("Result: 2"));
+		assertTrue("Custom command 'exception' returned unexpected result from instance #" + -instanceid +": " + invokeRunScriptResult
+				,invokeRunScriptResult.contains("OK from instance #" + -instanceid) && invokeRunScriptResult.contains("Result: 2"));
 		
 		for(int i=1 ; i <= totalInstances ; i++){
-			if(i == instanceId)
+			if(i == -instanceid)
 				continue;	
 			Assert.assertFalse("should not recive any output from instance" + i ,invokeRunScriptResult.contains("instance #" + i));
 		}
@@ -200,15 +200,15 @@ public class CustomCommandsOnMultipleInstancesTest extends AbstractLocalCloudTes
 		}
 	}
 	
-	private void checkContextCommand(int instanceId) throws IOException, InterruptedException {
+	private void checkContextCommand(int instanceid) throws IOException, InterruptedException {
 		String invokeContextResult = runCommand("connect " + this.restUrl
-				+ "; invoke instanceid " + instanceId + " simpleCustomCommandsMultipleInstances context");
+				+ "; invoke -instanceid " + -instanceid + " simpleCustomCommandsMultipleInstances context");
 		
-		assertTrue("Custom command 'context' returned unexpected result from instance #" + instanceId +": " + invokeContextResult
-				,invokeContextResult.contains("OK from instance #" + instanceId) && invokeContextResult.contains("Service Dir is:"));
+		assertTrue("Custom command 'context' returned unexpected result from instance #" + -instanceid +": " + invokeContextResult
+				,invokeContextResult.contains("OK from instance #" + -instanceid) && invokeContextResult.contains("Service Dir is:"));
 		
 		for(int i=1 ; i <= totalInstances ; i++){
-			if(i == instanceId)
+			if(i == -instanceid)
 				continue;	
 			Assert.assertFalse("should not recive any output from instance" + i ,invokeContextResult.contains("instance #" + i));
 		}

@@ -21,7 +21,7 @@ public class BootstrapCloudEc2Test extends AbstractCloudEc2Test {
 	 * @throws Exception 
 	 * @see AbstractCloudEc2Test
 	 */
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, groups = "1", enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, groups = "1", enabled = false)
 	public void bootstrapEc2CloudTest() throws Exception {
 	    
 		for (int i = 0; i < NUM_OF_MANAGEMENT_MACHINES; i++) {

@@ -13,16 +13,15 @@ import org.openspaces.admin.space.SpaceDeployment;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import framework.utils.AssertUtils;
-import framework.utils.AssertUtils.RepetitiveConditionProvider;
-
 import test.webui.AbstractSeleniumTest;
 import test.webui.objects.LoginPage;
 import test.webui.objects.dashboard.DashboardTab;
 import test.webui.objects.dashboard.ServicesGrid;
 import test.webui.objects.dashboard.ServicesGrid.ApplicationServicesGrid;
-import test.webui.objects.dashboard.ServicesGrid.ApplicationServicesGrid.StatefullModule;
 import test.webui.objects.dashboard.ServicesGrid.Icon;
+import framework.utils.AssertUtils;
+import framework.utils.AssertUtils.RepetitiveConditionProvider;
+import framework.utils.ProcessingUnitUtils;
 
 public class PuStatusBeforeDeploymentEndsTest extends AbstractSeleniumTest {
 	
@@ -72,21 +71,25 @@ public class PuStatusBeforeDeploymentEndsTest extends AbstractSeleniumTest {
 			}
 		};
 		AssertUtils.repetitiveAssertTrue(null, condition, waitingTime);
-		StatefullModule module = applicationServices.getStatefullModule();
-		
-		DeploymentStatus testStatus = admin.getProcessingUnits().getProcessingUnit("Test").getStatus();
-		while (!testStatus.equals(DeploymentStatus.INTACT)) {
-			Icon icon = module.getIcon();
-			assertTrue((icon != null) && !icon.equals(Icon.OK));
-			testStatus = admin.getProcessingUnits().getProcessingUnit("Test").getStatus();
-		}
 		
 		condition = new RepetitiveConditionProvider() {
 			
 			@Override
 			public boolean getCondition() {
-				StatefullModule module = applicationServices.getStatefullModule();
-				return module.getIcon().equals(Icon.OK);
+				Icon icon = applicationServices.getStatefullModule().getIcon();
+				return ((icon != null) && (!icon.equals(Icon.OK)));
+			}
+		};
+		AssertUtils.repetitiveAssertTrue(null, condition, waitingTime);
+		
+		ProcessingUnitUtils.waitForDeploymentStatus(admin.getProcessingUnits().getProcessingUnit("Test"), DeploymentStatus.INTACT);
+		
+		condition = new RepetitiveConditionProvider() {
+			
+			@Override
+			public boolean getCondition() {
+				Icon icon = applicationServices.getStatefullModule().getIcon();
+				return ((icon != null) && (icon.equals(Icon.OK)));
 			}
 		};
 		AssertUtils.repetitiveAssertTrue(null, condition, waitingTime);

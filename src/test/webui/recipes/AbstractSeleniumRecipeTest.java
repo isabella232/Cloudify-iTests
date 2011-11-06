@@ -39,7 +39,7 @@ public class AbstractSeleniumRecipeTest extends AbstractSeleniumTest {
 	
 	public boolean installApplication(String applicationName) throws IOException, InterruptedException {
 		String gigaDir = ScriptUtils.getBuildPath();	
-		String pathToApplication = gigaDir + "/recipes/" + applicationName;	
+		String pathToApplication = gigaDir + "/examples/" + applicationName;	
 		String command = "connect localhost:8100;install-application --verbose -timeout 25 " + pathToApplication;
 		String output = CommandTestUtils.runCommandAndWait(command);
 		return output.contains("installed successfully");

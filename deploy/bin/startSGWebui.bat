@@ -24,8 +24,6 @@ svn checkout %SVN_SGPATH% %LOCAL_SGPATH%
 
 @echo cleaning sgtest...
 @if exist %BASE_DIR%\sgwebui-cloudify\deploy\local-builds\%BUILD_NUMBER% rmdir %BASE_DIR%\sgwebui-cloudify\deploy\local-builds\%BUILD_NUMBER% /s /q
-@if exist \\tarzan\tgrid\sgtest.webui.cloudify\index.htm del \\tarzan\tgrid\sgtest.webui.cloudify\index.htm
-@if exist \\tarzan\tgrid\sgtest.webui.cloudify\%BUILD_NUMBER% rmdir \\tarzan\tgrid\sgtest.webui.cloudify\%BUILD_NUMBER% /s /q
 
 @echo retrieving build from tarzan...
 xcopy %REMOTE_BUILD_DIR%\cloudify\1.5\gigaspaces-cloudify-%VERSION%-%MILESTONE%-b%BUILD_VERSION%.zip %BASE_DIR%
@@ -68,7 +66,6 @@ rem call ant -buildfile run.xml testsummary -DBUILD_NUMBER=%BUILD_NUMBER%  -DSUI
 rem @set selenium.browser=IE
 rem @echo running Internet Explorer tests...
 rem call ant -buildfile run.xml testsummary -DBUILD_NUMBER=%BUILD_NUMBER%  -DSUITE_NAME=webui-IE -Dbuild.folder=%BUILD_FOLDER% 
-rem xcopy %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER%\webui-IE \\tarzan\tgrid\sgtest.webui.cloudify\%BUILD_NUMBER%\webui-IE /s /i
 
 @echo shutting down agents
 @call %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER%\gigaspaces\tools\groovy\bin\groovy.bat %LOCAL_SGPATH%\src\test\webui\resources\scripts\shutdown
@@ -79,5 +76,4 @@ rem xcopy %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER%\webui-IE \\tarzan\tg
 @rmdir %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER%\gigaspaces /s /q
 
 @echo tranferring reports to tgrid
-xcopy %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER% \\tarzan\tgrid\sgtest.webui.cloudify\%BUILD_NUMBER% /s /i
-xcopy %LOCAL_SGPATH%\deploy\local-builds\index.htm \\tarzan\tgrid\sgtest.webui.cloudify /y
+xcopy %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER% \\tarzan\tgrid\sgtest-cloudify\%BUILD_NUMBER% /s /i

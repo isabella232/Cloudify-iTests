@@ -48,8 +48,8 @@ public class BootstrapLocalCloudXenTest extends AbstractXenGSMTest {
 	    username = getMachineProvisioningConfig().getSshUsername();
 	    password = getMachineProvisioningConfig().getSshPassword();
 	    
-	    assertEquals("Expecting exactly 1 agent to be added", 1, getNumberOfGSAsAdded());
-	    assertEquals("Expecting 0 agents to be removed", 0, getNumberOfGSAsRemoved());
+	    repetitiveAssertNumberOfGSAsAdded(1, OPERATION_TIMEOUT);
+	    repetitiveAssertNumberOfGSAsRemoved(0, OPERATION_TIMEOUT);
 	    
 	    final URI restAdminURI = new URI("http", null, host, 8100, null, null, null);
 	    final URI webUIURI = new URI("http", null, host, 8099, null, null, null);
@@ -61,7 +61,7 @@ public class BootstrapLocalCloudXenTest extends AbstractXenGSMTest {
             }
         }, OPERATION_TIMEOUT);
 	    
-	    assertEquals("Expecting 0 agents to be removed", 0, getNumberOfGSAsRemoved());
+	    repetitiveAssertNumberOfGSAsRemoved(0, OPERATION_TIMEOUT);
 	    SSHUtils.runCommand(host, 1000 * 10, cliTeardownLocalcloudCommand(), username, password);
 	    repetitiveAssertTrue("Failed waiting for agent to be removed", new RepetitiveConditionProvider() {
             public boolean getCondition() {

@@ -42,7 +42,7 @@ public class Stockdemo2ManagementsEsmFailOverTest extends AbstractApplicationFai
 	    assertTrue(agents);
 	    
 //	    assertEquals("Expecting exactly 5 grid service agents to be added", 5, getNumberOfGSAsAdded());
-	    assertEquals("Expecting 0 agents to be removed", 0, getNumberOfGSAsRemoved());
+	    repetitiveAssertNumberOfGSAsRemoved(0, OPERATION_TIMEOUT);
 	    cassandraHostIp = admin.getZones().getByName("cassandra").getGridServiceAgents().getAgents()[0].getMachine().getHostAddress();
 	    
 	    try {

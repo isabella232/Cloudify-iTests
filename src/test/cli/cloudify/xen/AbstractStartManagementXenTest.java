@@ -72,8 +72,8 @@ public class AbstractStartManagementXenTest extends AbstractXenGSMTest {
         } catch (URISyntaxException e) {
             AssertFail("Setup failed", e);
         }
-	    assertEquals("Expecting exactly 1 agent to be added", 1, getNumberOfGSAsAdded());
-	    assertEquals("Expecting 0 agents to be removed", 0, getNumberOfGSAsRemoved());
+	    repetitiveAssertNumberOfGSAsAdded(1, OPERATION_TIMEOUT);
+	    repetitiveAssertNumberOfGSAsRemoved(0, OPERATION_TIMEOUT);
 	}
 
 	protected void assertManagementStarted() throws URISyntaxException, MalformedURLException {

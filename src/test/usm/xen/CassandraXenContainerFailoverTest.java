@@ -82,8 +82,8 @@ public class CassandraXenContainerFailoverTest extends AbstractXenGSMTest {
 		 File cassandraJar = USMTestUtils.usmCreateJar(CASSANDRA);
 
 	    // make sure no gscs yet created
-	    assertEquals(0, getNumberOfGSCsAdded());
-	    assertEquals(1, getNumberOfGSAsAdded());	    
+	    repetitiveAssertNumberOfGSCsAdded(0, OPERATION_TIMEOUT);
+	    repetitiveAssertNumberOfGSAsAdded(1, OPERATION_TIMEOUT);	    
 	    
 	    final int expectedNumberOfMachines = (int)  
     		Math.ceil(numberOfCpuCores/super.getMachineProvisioningConfig().getNumberOfCpuCoresPerMachine());
@@ -102,10 +102,10 @@ public class CassandraXenContainerFailoverTest extends AbstractXenGSMTest {
 	    
 	    pu.waitFor(expectedNumberOfContainers);
 	    	    
-	    assertEquals("Number of GSCs removed", 0, getNumberOfGSCsRemoved());	    	
-	    assertEquals("Number of GSCs added",   expectedNumberOfContainers, getNumberOfGSCsAdded());
-	    assertEquals("Number of GSAs added",   expectedNumberOfMachines, getNumberOfGSAsAdded());
-	    assertEquals("Number of GSAs removed", 0, getNumberOfGSAsRemoved());
+	    repetitiveAssertNumberOfGSCsRemoved(0, OPERATION_TIMEOUT);	    	
+	    repetitiveAssertNumberOfGSCsAdded(expectedNumberOfContainers, OPERATION_TIMEOUT);
+	    repetitiveAssertNumberOfGSAsAdded(expectedNumberOfMachines, OPERATION_TIMEOUT);
+	    repetitiveAssertNumberOfGSAsRemoved(0, OPERATION_TIMEOUT);
 	    
 	    createSchema();
         
@@ -138,10 +138,10 @@ public class CassandraXenContainerFailoverTest extends AbstractXenGSMTest {
                 GsmTestUtils.killContainer(container);
                 pu.waitFor(expectedNumberOfContainers);
                 
-                assertEquals("Number of GSCs removed", 1, getNumberOfGSCsRemoved());	    	
-        	    assertEquals("Number of GSCs added",   expectedNumberOfContainers+1, getNumberOfGSCsAdded());
-        	    assertEquals("Number of GSAs added",   expectedNumberOfMachines, getNumberOfGSAsAdded());
-        	    assertEquals("Number of GSAs removed", 0, getNumberOfGSAsRemoved());
+                repetitiveAssertNumberOfGSCsRemoved(1, OPERATION_TIMEOUT);	    	
+        	    repetitiveAssertNumberOfGSCsAdded(expectedNumberOfContainers+1,  OPERATION_TIMEOUT);
+        	    repetitiveAssertNumberOfGSAsAdded(expectedNumberOfMachines, OPERATION_TIMEOUT);
+        	    repetitiveAssertNumberOfGSAsRemoved(0, OPERATION_TIMEOUT);
         	    
             }
             

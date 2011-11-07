@@ -33,8 +33,8 @@ public class TravelAppFailOverUsingXenTest extends AbstractApplicationFailOverXe
 		cassandraPort = cassandraPort();
 		
 		startAgent(0 ,"tomcat","cassandra");
-	    assertEquals("Expecting exactly 2 grid service agents to be added", 2, getNumberOfGSAsAdded());
-	    assertEquals("Expecting 0 agents to be removed", 0, getNumberOfGSAsRemoved());	 
+	    repetitiveAssertNumberOfGSAsAdded(2, OPERATION_TIMEOUT);
+	    repetitiveAssertNumberOfGSAsRemoved(0, OPERATION_TIMEOUT);	 
 	    travelHostIp = admin.getZones().getByName("cassandra").getGridServiceAgents().getAgents()[0].getMachine().getHostAddress();
 	}
 	@Override

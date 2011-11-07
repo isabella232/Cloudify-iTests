@@ -118,20 +118,21 @@ public class AbstractGsmTest extends AbstractTest {
        	super.afterTest();
     }
 
-    public int getNumberOfGSCsAdded() {
-        return gscCounter.getNumberOfGSCsAdded();
+    public void repetitiveAssertNumberOfGSAsAdded(int expected, long timeoutMilliseconds) {
+    	gsaCounter.repetitiveAssertNumberOfGridServiceAgentsAdded(expected, timeoutMilliseconds);
     }
     
-    public int getNumberOfGSCsRemoved() {
-    	return gscCounter.getNumberOfGSCsRemoved();
-    }    
-    
-    public int getNumberOfGSAsAdded() {
-        return gsaCounter.getNumberOfGSAsAdded();
+    public void repetitiveAssertNumberOfGSAsRemoved(int expected, long timeoutMilliseconds) {
+    	gsaCounter.repetitiveAssertNumberOfGridServiceAgentsRemoved(expected, timeoutMilliseconds);
     }
     
-    public int getNumberOfGSAsRemoved() {
-        return gsaCounter.getNumberOfGSAsRemoved();
+    public void repetitiveAssertNumberOfGSCsAdded(int expected, long timeoutMilliseconds) {
+    	gscCounter.repetitiveAssertNumberOfGridServiceContainersAdded(expected, timeoutMilliseconds);
     }
+    
+    public void repetitiveAssertNumberOfGSCsRemoved(int expected, long timeoutMilliseconds) {
+    	gscCounter.repetitiveAssertNumberOfGridServiceContainersRemoved(expected, timeoutMilliseconds);
+    }
+    
     
 }

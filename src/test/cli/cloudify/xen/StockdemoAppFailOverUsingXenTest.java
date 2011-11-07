@@ -27,8 +27,9 @@ public class StockdemoAppFailOverUsingXenTest extends AbstractApplicationFailOve
 		startAgent(0 ,"stockAnalytics" ,"stockAnalyticsMirror" ,"StockDemo"  ,"cassandra");
 	    startAgent(0 ,"stockAnalyticsProcessor" ,"stockAnalyticsSpace","stockAnalyticsFeeder");
 	    startAgent(0 ,"stockAnalyticsProcessor" ,"stockAnalyticsSpace");
-	    assertEquals("Expecting exactly 4 grid service agents to be added", 4, getNumberOfGSAsAdded());
-	    assertEquals("Expecting 0 agents to be removed", 0, getNumberOfGSAsRemoved());
+
+	    repetitiveAssertNumberOfGSAsAdded(4, OPERATION_TIMEOUT);
+	    repetitiveAssertNumberOfGSAsRemoved(0, OPERATION_TIMEOUT);
 	    
 	    cassandraHostIp = admin.getZones().getByName("cassandra").getGridServiceAgents().getAgents()[0].getMachine().getHostAddress();
 	}

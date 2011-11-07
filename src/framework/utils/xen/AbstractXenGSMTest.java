@@ -123,17 +123,17 @@ public class AbstractXenGSMTest extends AbstractTest {
         gsaCounter = new GridServiceAgentsCounter(admin);
         
         if (!acceptGSCsOnStartup) {
-    	    assertEquals(0, getNumberOfGSCsAdded());
+    	    assertEquals(0, gscCounter.getNumberOfGSCsAdded());
         }
         
-		while (getNumberOfGSAsAdded() == 0) {
+		while (gsaCounter.getNumberOfGSAsAdded() == 0) {
 			try {
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {
 				Assert.fail(e.getMessage());
 			}
 		}
-	    assertEquals(1, getNumberOfGSAsAdded());
+	    assertEquals(1, gsaCounter.getNumberOfGSAsAdded());
     }
     
     protected void loadXenServerProperties() {
@@ -459,22 +459,22 @@ public class AbstractXenGSMTest extends AbstractTest {
 		} 
     }
     
-    public int getNumberOfGSCsAdded() {
-        return gscCounter.getNumberOfGSCsAdded();
+    public void repetitiveAssertNumberOfGSAsAdded(int expected, long timeoutMilliseconds) {
+    	gsaCounter.repetitiveAssertNumberOfGridServiceAgentsAdded(expected, timeoutMilliseconds);
     }
     
-    public int getNumberOfGSCsRemoved() {
-    	return gscCounter.getNumberOfGSCsRemoved();
+    public void repetitiveAssertNumberOfGSAsRemoved(int expected, long timeoutMilliseconds) {
+    	gsaCounter.repetitiveAssertNumberOfGridServiceAgentsRemoved(expected, timeoutMilliseconds);
     }
     
-    public int getNumberOfGSAsAdded() {
-        return gsaCounter.getNumberOfGSAsAdded();
+    public void repetitiveAssertNumberOfGSCsAdded(int expected, long timeoutMilliseconds) {
+    	gscCounter.repetitiveAssertNumberOfGridServiceContainersAdded(expected, timeoutMilliseconds);
     }
     
-    public int getNumberOfGSAsRemoved() {
-        return gsaCounter.getNumberOfGSAsRemoved();
+    public void repetitiveAssertNumberOfGSCsRemoved(int expected, long timeoutMilliseconds) {
+    	gscCounter.repetitiveAssertNumberOfGridServiceContainersRemoved(expected, timeoutMilliseconds);
     }
-    
+        
 	public int countMachines() {
 		try {
 			return XenUtils.getAllMachinesByNameLabelStartsWith(machineProvisioningConfig, machineProvisioningConfig.getStartMachineNameLabel()).size();

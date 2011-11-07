@@ -9,6 +9,8 @@ import org.openspaces.admin.gsc.events.GridServiceContainerAddedEventListener;
 import org.openspaces.admin.gsc.events.GridServiceContainerRemovedEventListener;
 import org.openspaces.admin.internal.admin.InternalAdmin;
 
+import framework.utils.AssertUtils.RepetitiveConditionProvider;
+
 public class GridServiceContainersCounter implements GridServiceContainerAddedEventListener, GridServiceContainerRemovedEventListener {
 
 	Admin admin;
@@ -56,5 +58,46 @@ public class GridServiceContainersCounter implements GridServiceContainerAddedEv
 	public void gridServiceContainerRemoved(
 			GridServiceContainer gridServiceContainer) {
 		numberOfRemovedGSCs.incrementAndGet();		
+	}
+	
+	public void repetitiveAssertNumberOfGridServiceContainersAdded(final int expected, long timeoutMilliseconds) {
+		if (numberOfAddedGSCs.get() > expected) {
+			AssertUtils.AssertFail("Expected " + expected +" GSCs Added. actual " + numberOfAddedGSCs.get());
+		}
+		
+		AssertUtils.repetitiveAssertTrue("Expected " + expected +" GSCs Added.", new RepetitiveConditionProvider() {
+			
+			@Override
+			public boolean getCondition() {
+				int actual = numberOfAddedGSCs.get();
+				boolean condition = expected == actual;
+				if (!condition) {
+					LogUtils.log("Expected " + expected +" GSCs Added. actual " + actual);
+				}
+				return condition;
+			}
+		}, 
+		timeoutMilliseconds);
+	}
+	
+	public void repetitiveAssertNumberOfGridServiceContainersRemoved(final int expected, long timeoutMilliseconds) {
+		
+		if (numberOfRemovedGSCs.get() > expected) {
+			AssertUtils.AssertFail("Expected " + expected +" GSCs Removed. actual " + numberOfRemovedGSCs.get());
+		}
+		
+		AssertUtils.repetitiveAssertTrue("Expected " + expected +" GSCs Removed.", new RepetitiveConditionProvider() {
+			
+			@Override
+			public boolean getCondition() {
+				int actual = numberOfRemovedGSCs.get();
+				boolean condition = expected == actual;
+				if (!condition) {
+					LogUtils.log("Expected " + expected +" GSCs Removed. actual " + actual);
+				}
+				return condition;
+			}
+		}, 
+		timeoutMilliseconds);
 	}
 }

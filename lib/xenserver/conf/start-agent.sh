@@ -15,7 +15,7 @@
 if [ -z "$5" ]; then
   export GSA_JAVA_OPTIONS=-Dcom.gs.agent.auto-shutdown-enabled=true
 else
-  export GSA_JAVA_OPTIONS=-Dcom.gs.agent.auto-shutdown-enabled=true -Dcom.gs.zones=$5
+  export GSA_JAVA_OPTIONS="-Dcom.gs.agent.auto-shutdown-enabled=true -Dcom.gs.zones=$5"
 fi
 
 cd /opt/gigaspaces/bin

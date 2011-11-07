@@ -24,7 +24,7 @@ public class CustomCommandsOnMultipleInstancesApplicationTest extends AbstractLo
 	private int totalInstancesService2;
 
 	@Override
-	@BeforeClass
+	@BeforeClass(enabled = false)
 	public void beforeClass() throws FileNotFoundException, PackagingException, IOException, InterruptedException{
 		super.beforeClass();
 		installApplication();
@@ -38,7 +38,7 @@ public class CustomCommandsOnMultipleInstancesApplicationTest extends AbstractLo
 	}
 
 	@Override
-	@AfterClass
+	@AfterClass(enabled = false)
 	public void afterClass() throws IOException, InterruptedException{
 		
 		runCommand("connect " + this.restUrl + 
@@ -47,7 +47,7 @@ public class CustomCommandsOnMultipleInstancesApplicationTest extends AbstractLo
 	}
 //////////////////////////////////////////////////////////////////////////////////////////////////////////	
 		
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = false)
 	public void testPrintCommandOnApp() throws Exception {
 		LogUtils.log("Checking print command on all instances");
 		checkPrintCommandOnapp();
@@ -57,7 +57,7 @@ public class CustomCommandsOnMultipleInstancesApplicationTest extends AbstractLo
 			checkPrintCommandOnApp(i);
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = false)
 	public void testParamsCommand() throws Exception {
 		LogUtils.log("Checking params command on all instances");
 		checkParamsCommand();
@@ -67,7 +67,7 @@ public class CustomCommandsOnMultipleInstancesApplicationTest extends AbstractLo
 			checkParamsCommand(i);		
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = false)
 	public void testExceptionCommand() throws Exception {
 		LogUtils.log("Checking exception command on all instances");
 		checkExceptionCommand();
@@ -77,7 +77,7 @@ public class CustomCommandsOnMultipleInstancesApplicationTest extends AbstractLo
 			checkExceptionCommand(i);
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = false)
 	public void testRunScriptCommand() throws Exception {
 		LogUtils.log("Checking runScript command on all instances");
 		checkRunScriptCommand();
@@ -87,7 +87,7 @@ public class CustomCommandsOnMultipleInstancesApplicationTest extends AbstractLo
 			checkRunScriptCommand(i);
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = false)
 	public void testContextCommand() throws Exception {
 		LogUtils.log("Checking context command on all instances");
 		checkContextCommandOnApp();

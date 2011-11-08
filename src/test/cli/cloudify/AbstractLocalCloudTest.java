@@ -8,7 +8,6 @@ import java.net.InetAddress;
 import java.util.concurrent.TimeUnit;
 
 import org.openspaces.admin.AdminFactory;
-import org.openspaces.admin.gsa.GridServiceAgent;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
@@ -17,8 +16,11 @@ import org.testng.annotations.BeforeMethod;
 import com.gigaspaces.cloudify.dsl.internal.packaging.PackagingException;
 
 import framework.utils.DumpUtils;
+import framework.utils.LogUtils;
 
 public class AbstractLocalCloudTest extends AbstractCommandTest {
+	
+	protected final int WAIT_FOR_TIMEOUT = 20;
 	
 	@BeforeClass
 	public void beforeClass() throws FileNotFoundException, PackagingException, IOException, InterruptedException{		
@@ -26,20 +28,16 @@ public class AbstractLocalCloudTest extends AbstractCommandTest {
 		factory.addLocator(InetAddress.getLocalHost().getHostAddress() + ":4168");
 		this.admin = factory.create();
 		
-		if(admin.getGridServiceAgents() != null){
-			if(admin.getGridServiceAgents().waitFor(1, 10, TimeUnit.SECONDS))
-				for(GridServiceAgent gsa : admin.getGridServiceAgents().getAgents())
-					gsa.shutdown();
-		}
+		runCommand("teardown-localcloud");
 		runCommand("bootstrap-localcloud");
-		assertTrue("Could not find LUS of local cloud", admin.getLookupServices().waitFor(1, 10, TimeUnit.SECONDS));
+		assertTrue("Could not find LUS of local cloud", admin.getLookupServices().waitFor(1, WAIT_FOR_TIMEOUT, TimeUnit.SECONDS));
 		this.restUrl = "http://" + InetAddress.getLocalHost().getHostAddress() + ":8100";			
 	}
 	
 	@Override
 	@BeforeMethod
 	public void beforeTest(){
-		
+		LogUtils.log("Test Configuration Started: "+ this.getClass());
 	}
 	
 	@Override
@@ -57,11 +55,5 @@ public class AbstractLocalCloudTest extends AbstractCommandTest {
 	@AfterClass
 	public void afterClass() throws IOException, InterruptedException{	
 		runCommand("teardown-localcloud");
-		
-		if(admin.getGridServiceAgents() != null){
-			if(admin.getGridServiceAgents().waitFor(1, 10, TimeUnit.SECONDS))
-				for(GridServiceAgent gsa : admin.getGridServiceAgents().getAgents())
-					gsa.shutdown();
-		}
 	}
 }

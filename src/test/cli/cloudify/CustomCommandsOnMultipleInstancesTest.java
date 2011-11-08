@@ -28,8 +28,8 @@ public class CustomCommandsOnMultipleInstancesTest extends AbstractLocalCloudTes
 	public void beforeClass() throws FileNotFoundException, PackagingException, IOException, InterruptedException{			
 		super.beforeClass();
 		installService();
-		ProcessingUnit pu = admin.getProcessingUnits().waitFor("simpleCustomCommandsMultipleInstances");
-		assertTrue("service was not installed", pu.waitFor(pu.getTotalNumberOfInstances(), 30, TimeUnit.SECONDS));
+		ProcessingUnit pu = admin.getProcessingUnits().waitFor("simpleCustomCommandsMultipleInstances" , WAIT_FOR_TIMEOUT , TimeUnit.SECONDS);
+		assertTrue("service was not installed", pu.waitFor(pu.getTotalNumberOfInstances(), WAIT_FOR_TIMEOUT, TimeUnit.SECONDS));
 		totalInstances = pu.getTotalNumberOfInstances();
 	}
 	

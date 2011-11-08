@@ -24,21 +24,22 @@ public class CustomCommandsOnMultipleInstancesApplicationTest extends AbstractLo
 	private int totalInstancesService2;
 
 	@Override
-	@BeforeClass(enabled = false)
+	@BeforeClass
 	public void beforeClass() throws FileNotFoundException, PackagingException, IOException, InterruptedException{
 		super.beforeClass();
 		installApplication();
-		ProcessingUnit pu1 = admin.getProcessingUnits().waitFor("simpleCustomCommandsMultipleInstances-1");
-		ProcessingUnit pu2 = admin.getProcessingUnits().waitFor("simpleCustomCommandsMultipleInstances-2");
+		ProcessingUnit pu1 = admin.getProcessingUnits().waitFor("simpleCustomCommandsMultipleInstances-1" , WAIT_FOR_TIMEOUT , TimeUnit.SECONDS);
+		ProcessingUnit pu2 = admin.getProcessingUnits().waitFor("simpleCustomCommandsMultipleInstances-2", WAIT_FOR_TIMEOUT , TimeUnit.SECONDS);
 		assertNotNull(pu1);
 		assertNotNull(pu2);
-		assertTrue("applications was not installed", pu1.waitFor(pu1.getTotalNumberOfInstances(), 30, TimeUnit.SECONDS));
-		assertTrue("applications was not installed", pu1.waitFor(pu2.getTotalNumberOfInstances(), 30, TimeUnit.SECONDS));
+		assertTrue("applications was not installed", pu1.waitFor(pu1.getTotalNumberOfInstances(), WAIT_FOR_TIMEOUT, TimeUnit.SECONDS));
+		assertTrue("applications was not installed", pu1.waitFor(pu2.getTotalNumberOfInstances(), WAIT_FOR_TIMEOUT, TimeUnit.SECONDS));
+		assertNotNull("applications was not installed", admin.getApplications().getApplication("simpleCustomCommandsMultipleInstances"));
 		totalInstancesService2 = pu2.getTotalNumberOfInstances();
 	}
 
 	@Override
-	@AfterClass(enabled = false)
+	@AfterClass
 	public void afterClass() throws IOException, InterruptedException{
 		
 		runCommand("connect " + this.restUrl + 
@@ -47,7 +48,7 @@ public class CustomCommandsOnMultipleInstancesApplicationTest extends AbstractLo
 	}
 //////////////////////////////////////////////////////////////////////////////////////////////////////////	
 		
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = true)
 	public void testPrintCommandOnApp() throws Exception {
 		LogUtils.log("Checking print command on all instances");
 		checkPrintCommandOnapp();
@@ -57,7 +58,7 @@ public class CustomCommandsOnMultipleInstancesApplicationTest extends AbstractLo
 			checkPrintCommandOnApp(i);
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = true)
 	public void testParamsCommand() throws Exception {
 		LogUtils.log("Checking params command on all instances");
 		checkParamsCommand();
@@ -67,7 +68,7 @@ public class CustomCommandsOnMultipleInstancesApplicationTest extends AbstractLo
 			checkParamsCommand(i);		
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = true)
 	public void testExceptionCommand() throws Exception {
 		LogUtils.log("Checking exception command on all instances");
 		checkExceptionCommand();
@@ -77,7 +78,7 @@ public class CustomCommandsOnMultipleInstancesApplicationTest extends AbstractLo
 			checkExceptionCommand(i);
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = true)
 	public void testRunScriptCommand() throws Exception {
 		LogUtils.log("Checking runScript command on all instances");
 		checkRunScriptCommand();
@@ -87,7 +88,7 @@ public class CustomCommandsOnMultipleInstancesApplicationTest extends AbstractLo
 			checkRunScriptCommand(i);
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = true)
 	public void testContextCommand() throws Exception {
 		LogUtils.log("Checking context command on all instances");
 		checkContextCommandOnApp();

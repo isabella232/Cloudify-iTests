@@ -46,8 +46,8 @@ public class Stockdemo2ManagementsEsmFailOverTest extends AbstractApplicationFai
 	    cassandraHostIp = admin.getZones().getByName("cassandra").getGridServiceAgents().getAgents()[0].getMachine().getHostAddress();
 	    
 	    try {
-			assertInstallApp(cassandraPort1 ,cassandraHostIp, cassandraPort2 ,cassandraHostIp , stockdemoAppDirPath);
-			isStockdemoAppInstalled(cassandraPort1 ,cassandraHostIp, cassandraPort2 ,cassandraHostIp);
+			installApp(cassandraPort1 ,cassandraHostIp, cassandraPort2 ,cassandraHostIp , stockdemoAppDirPath);
+			assertStockdemoAppInstalled(cassandraPort1 ,cassandraHostIp, cassandraPort2 ,cassandraHostIp);
 		
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -77,7 +77,7 @@ public class Stockdemo2ManagementsEsmFailOverTest extends AbstractApplicationFai
 	/**
 	 * GS-8637
 	 */
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = true)
 	public void testEsmMachineHardShutdownFailover() throws Exception {
 		LogUtils.log("Shuting down esm's mahcine");
 		GsmTestUtils.hardShutdownMachine(esmMachine, xenConfigOfEsmMachine, DEFAULT_TEST_TIMEOUT);
@@ -110,7 +110,7 @@ public class Stockdemo2ManagementsEsmFailOverTest extends AbstractApplicationFai
 		assertEnvSanity();
 		
 		LogUtils.log("asserting stockdemo application is still installed");
-		isStockdemoAppInstalled(cassandraPort1 ,cassandraHostIp, cassandraPort2 ,cassandraHostIp);
+		assertStockdemoAppInstalled(cassandraPort1 ,cassandraHostIp, cassandraPort2 ,cassandraHostIp);
 		
 		ElasticServiceManager esm = admin.getElasticServiceManagers().waitForAtLeastOne();
 		LogUtils.log("asserting esm is managing the application");

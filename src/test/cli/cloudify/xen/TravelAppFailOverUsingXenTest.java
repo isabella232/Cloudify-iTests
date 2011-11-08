@@ -46,6 +46,7 @@ public class TravelAppFailOverUsingXenTest extends AbstractApplicationFailOverXe
 	@Override
 	@AfterMethod
 	public void afterTest() {
+		LogUtils.log("Test Configuration Started " + this.getClass());
 		try {			
 			CommandTestUtils.runCommandAndWait("connect " + restUrl + " ;uninstall-application travel");
 		} catch (Exception e) {	}
@@ -61,13 +62,13 @@ public class TravelAppFailOverUsingXenTest extends AbstractApplicationFailOverXe
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = false)
 	public void testTravelApp() throws Exception{
-		assertInstallApp(tomcatPort, travelHostIp, cassandraPort, travelHostIp, travelAppDirPath);
+		installApp(tomcatPort, travelHostIp, cassandraPort, travelHostIp, travelAppDirPath);
 		isTravelAppInstalled(cassandraPort , tomcatPort, travelHostIp);
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = false)
 	public void testTravelAppTomcatPuInstFailOver() throws Exception{
-		assertInstallApp(tomcatPort, travelHostIp, cassandraPort, travelHostIp, travelAppDirPath);
+		installApp(tomcatPort, travelHostIp, cassandraPort, travelHostIp, travelAppDirPath);
 		isTravelAppInstalled(cassandraPort , tomcatPort, travelHostIp);
 		
 		ProcessingUnit tomcat = admin.getProcessingUnits().getProcessingUnit("tomcat");
@@ -81,7 +82,7 @@ public class TravelAppFailOverUsingXenTest extends AbstractApplicationFailOverXe
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = false)
 	public void testTravelAppTomcatGSCFailOver() throws Exception{
-		assertInstallApp(tomcatPort, travelHostIp, cassandraPort, travelHostIp, travelAppDirPath);
+		installApp(tomcatPort, travelHostIp, cassandraPort, travelHostIp, travelAppDirPath);
 		isTravelAppInstalled(cassandraPort , tomcatPort, travelHostIp);
 		
 		ProcessingUnit tomcat = admin.getProcessingUnits().getProcessingUnit("tomcat");

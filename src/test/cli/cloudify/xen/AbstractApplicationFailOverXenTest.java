@@ -51,7 +51,7 @@ public class AbstractApplicationFailOverXenTest extends AbstractStartManagementX
 		restUrl = host + ":8100";		
 	}
 	
-	protected void assertInstallApp(int port1 , String host1, int port2 ,String host2 ,String appDirPath) throws Exception{
+	protected void installApp(int port1 , String host1, int port2 ,String host2 ,String appDirPath) throws Exception{
 		LogUtils.log("asserting needed ports for application are availible");
 		boolean port1Availible = portIsAvailible(port1 ,host1);
 		boolean port2Availible = portIsAvailible(port2 ,host2);
@@ -161,7 +161,7 @@ public class AbstractApplicationFailOverXenTest extends AbstractStartManagementX
 		}				
 	}
 	
-	protected void isStockdemoAppInstalled(int port1 ,String host1 ,int port2 ,String host2) throws InterruptedException {
+	protected void assertStockdemoAppInstalled(int port1 ,String host1 ,int port2 ,String host2) throws InterruptedException {
 		Space stockAnalyticsSpace = admin.getSpaces().waitFor("stockAnalyticsSpace");
 		ProcessingUnit cassandra = admin.getProcessingUnits().waitFor("cassandra");
 		ProcessingUnit stockAnalytics = admin.getProcessingUnits().waitFor("stockAnalytics");
@@ -228,7 +228,7 @@ public class AbstractApplicationFailOverXenTest extends AbstractStartManagementX
 	
 	protected void assertEsmIsManagingEnvBySearchingLogs(ElasticServiceManager esm) {
 		
-		boolean esmRestarted = admin.getElasticServiceManagers().waitFor(1, DEFAULT_RECOVERY_TIME, TimeUnit.MICROSECONDS);
+		boolean esmRestarted = admin.getElasticServiceManagers().waitFor(1, DEFAULT_RECOVERY_TIME, TimeUnit.MILLISECONDS);
 		assertTrue("esm did not restart" , esmRestarted);
 		
 		String format1 = "Elastic properties for pu %s are being enforced";

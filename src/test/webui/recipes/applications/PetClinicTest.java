@@ -13,6 +13,7 @@ import test.webui.objects.dashboard.DashboardTab;
 import test.webui.objects.dashboard.ServicesGrid.ApplicationServicesGrid;
 import test.webui.objects.dashboard.ServicesGrid.ApplicationsMenuPanel;
 import test.webui.objects.dashboard.ServicesGrid.Icon;
+import test.webui.objects.dashboard.ServicesGrid.InfrastructureServicesGrid;
 import test.webui.objects.services.PuTreeGrid;
 import test.webui.objects.services.ServicesTab;
 import test.webui.objects.topology.ApplicationMap;
@@ -41,6 +42,18 @@ public class PetClinicTest extends AbstractSeleniumApplicationRecipeTest {
 		MainNavigation mainNav = loginPage.login();
 
 		DashboardTab dashboardTab = mainNav.switchToDashboard();
+		
+		final InfrastructureServicesGrid infrastructureServicesGrid = dashboardTab.getServicesGrid().getInfrastructureGrid();
+		
+		RepetitiveConditionProvider condition = new RepetitiveConditionProvider() {
+			
+			@Override
+			public boolean getCondition() {
+				return ((infrastructureServicesGrid.getESMInst().getCount() == 1) 
+						&& (infrastructureServicesGrid.getESMInst().getIcon().equals(Icon.OK)));
+			}
+		};
+		AssertUtils.repetitiveAssertTrue("No esm in showing in the dashboard", condition, waitingTime);
 
 		ApplicationsMenuPanel appMenuPanel = dashboardTab.getServicesGrid().getApplicationsMenuPanel();
 
@@ -48,7 +61,7 @@ public class PetClinicTest extends AbstractSeleniumApplicationRecipeTest {
 
 		final ApplicationServicesGrid applicationServices = dashboardTab.getServicesGrid().getApplicationServicesGrid();
 
-		RepetitiveConditionProvider condition = new RepetitiveConditionProvider() {
+		condition = new RepetitiveConditionProvider() {
 
 			@Override
 			public boolean getCondition() {

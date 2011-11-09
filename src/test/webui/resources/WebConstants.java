@@ -106,6 +106,8 @@ public final class WebConstants {
 		public static final String topologyCombobox = "gs-topology-application-combo";
 		public static final String logoutButton = "gs-logout-button";
 		public static final String resourceDistribESM = "resource_distrib-grid_null_esm";
+		public static final String comparisonMetricTop = "comparisonMetricPanelTop";
+		public static final String comparisonMetricBottom = "comparisonMetricPanelBottom";
 		
 		public static String getActionToolBoxId(String name) {
 			return "node-tool-ACTIONS-" + name;

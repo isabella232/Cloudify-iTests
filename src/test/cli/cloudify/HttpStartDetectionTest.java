@@ -32,7 +32,7 @@ public class HttpStartDetectionTest extends AbstractCommandTest {
 	}
 	
 	private void doTest(String serviceDir) {
-		machineA = admin.getProcessingUnits().getProcessingUnit(ServiceUtils.getAbsolutePUName(DEFAULT_APPLICTION_NAME, "rest")).getInstances()[0].getMachine();
+		machineA = admin.getProcessingUnits().getProcessingUnit("rest").getInstances()[0].getMachine();
 		String command = "connect " + restUrl + ";install-service --verbose " + serviceDir + ";exit";
 		try {
 			

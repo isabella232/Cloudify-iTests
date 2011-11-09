@@ -19,6 +19,7 @@ import framework.utils.AssertUtils.RepetitiveConditionProvider;
 
 public class InstallAndUninstallServiceTest extends AbstractTest {
 
+	private static final String DEFAULT_APPLICATION_NAME = "default";
 	public static final String SERVLET_WAR_NAME = "servlet.war";
 	public static final String SERVLET_SERVICE_NAME = "servlet";
 	
@@ -45,40 +46,34 @@ public class InstallAndUninstallServiceTest extends AbstractTest {
 		machines = admin.getMachines().getMachines();
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
 	public void testServletInstall() throws IOException, InterruptedException {
-		String absolutePUName = ServiceUtils.getAbsolutePUName("default", SERVLET_SERVICE_NAME);
-		testRestApiInstall(absolutePUName, getArchiveServicePath(SERVLET_WAR_NAME));
+		testRestApiInstall(SERVLET_SERVICE_NAME, getArchiveServicePath(SERVLET_WAR_NAME));
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
 	public void testUSMInstall() throws IOException, InterruptedException {
-		String absolutePUName = ServiceUtils.getAbsolutePUName("default", USM_SERVICE_NAME);
-		testRestApiInstall(absolutePUName, getUsmServicePath(USM_SERVICE_FOLDER_NAME));
+		testRestApiInstall(USM_SERVICE_NAME, getUsmServicePath(USM_SERVICE_FOLDER_NAME));
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
 	public void testServletRecipeInstall() throws IOException, InterruptedException {
-		String absolutePUName = ServiceUtils.getAbsolutePUName("default", SERVLET_RECIPE_SERVICE_NAME);
-		testRestApiInstall(absolutePUName, getUsmServicePath(SERVLET_FOLDER_NAME));
+		testRestApiInstall(SERVLET_RECIPE_SERVICE_NAME, getUsmServicePath(SERVLET_FOLDER_NAME));
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
 	public void testStatefulRecipeInstall() throws IOException, InterruptedException {
-		String absolutePUName = ServiceUtils.getAbsolutePUName("default", STATEFUL_SERVICE_NAME);
-		testRestApiInstall(absolutePUName, getUsmServicePath(STATEFUL_FOLDER_NAME));
+		testRestApiInstall(STATEFUL_SERVICE_NAME, getUsmServicePath(STATEFUL_FOLDER_NAME));
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
 	public void testDataGridRecipeInstall() throws IOException, InterruptedException {
-		String absolutePUName = ServiceUtils.getAbsolutePUName("default", DATAGRID_SERVICE_NAME);
-		testRestApiInstall(absolutePUName, getUsmServicePath(DATAGRID_FOLDER_NAME));
+		testRestApiInstall(DATAGRID_SERVICE_NAME, getUsmServicePath(DATAGRID_FOLDER_NAME));
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
 	public void testMirrorRecipeInstall() throws IOException, InterruptedException {
-		String absolutePUName = ServiceUtils.getAbsolutePUName("default", MIRROR_SERVICE_NAME);
-		testRestApiInstall(absolutePUName, getUsmServicePath(MIRROR_SERVICE_FOLDER_NAME));
+		testRestApiInstall(MIRROR_SERVICE_NAME, getUsmServicePath(MIRROR_SERVICE_FOLDER_NAME));
 	}
 	
 	void testRestApiInstall(String serviceName, String servicePath) throws IOException, InterruptedException{
@@ -88,8 +83,8 @@ public class InstallAndUninstallServiceTest extends AbstractTest {
 				";");
 		
 		admin = getAdminWithLocators();
-		
-		ProcessingUnit processingUnit = admin.getProcessingUnits().waitFor(serviceName, Constants.PROCESSINGUNIT_TIMEOUT_SEC, TimeUnit.SECONDS);
+		String absolutePUName = ServiceUtils.getAbsolutePUName(DEFAULT_APPLICATION_NAME, serviceName);
+		ProcessingUnit processingUnit = admin.getProcessingUnits().waitFor(absolutePUName, Constants.PROCESSINGUNIT_TIMEOUT_SEC, TimeUnit.SECONDS);
         assertTrue("Instance of '" + serviceName + "' service was not found", 
         		processingUnit != null && 
         		processingUnit.waitFor(1, Constants.PROCESSINGUNIT_TIMEOUT_SEC, TimeUnit.SECONDS));

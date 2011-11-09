@@ -6,6 +6,8 @@ import org.openspaces.admin.gsc.GridServiceContainer;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import com.gigaspaces.cloudify.dsl.utils.ServiceUtils;
+
 import framework.utils.LogUtils;
 
 import test.cli.cloudify.AbstractCommandTest;
@@ -61,11 +63,11 @@ public class CyclicDependencyTest extends AbstractCommandTest {
 		//this app is only a mock so the command to install it is not successful
 		CommandTestUtils.runCommand("connect " + this.restUrl + ";install-application " + path + ";exit");
 
-		admin.getZones().waitFor("D").getGridServiceContainers().waitFor(1);
+		admin.getZones().waitFor(ServiceUtils.getAbsolutePUName("diamond", "D")).getGridServiceContainers().waitFor(1);
 
 		GridServiceContainer [] gscs = admin.getGridServiceContainers().getContainers();
 		for (GridServiceContainer gsc : gscs) {
-				if(gsc.getZones().containsKey("D"));
+				if(gsc.getZones().containsKey("diamond.D"));
 				LogUtils.scanContainerLogsFor(gsc, "D1 PreStart completed successfully");
 		}
 	}

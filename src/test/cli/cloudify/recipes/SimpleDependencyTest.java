@@ -8,10 +8,9 @@ import org.openspaces.admin.pu.ProcessingUnitInstance;
 import org.openspaces.admin.pu.events.ProcessingUnitInstanceAddedEventListener;
 import org.testng.annotations.Test;
 
-import framework.utils.AssertUtils.RepetitiveConditionProvider;
-
 import test.cli.cloudify.AbstractCommandTest;
 import test.cli.cloudify.CommandTestUtils;
+import framework.utils.AssertUtils.RepetitiveConditionProvider;
 
 /**
  * This test checks the application dependency mechanism.
@@ -39,10 +38,10 @@ public class SimpleDependencyTest extends AbstractCommandTest{
 			public void processingUnitInstanceAdded(
 					ProcessingUnitInstance processingUnitInstance) {
 				String name = processingUnitInstance.getProcessingUnit().getName();
-				if (name.equals("first")) {
+				if (name.equals("simpleDependency.first")) {
 					firstStarted.incrementAndGet();
 				}
-				else if (name.equals("second")) {
+				else if (name.equals("simpleDependency.second")) {
 					// This is where we check dependency order
 					if (firstStarted.get() == 0) {
 						testFailed.set(true);

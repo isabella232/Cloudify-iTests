@@ -15,12 +15,14 @@ import test.cli.cloudify.CommandTestUtils;
 
 import com.gigaspaces.cloudify.dsl.Service;
 import com.gigaspaces.cloudify.dsl.internal.ServiceReader;
+import com.gigaspaces.cloudify.dsl.utils.ServiceUtils;
 
 import framework.utils.LogUtils;
 import framework.utils.ScriptUtils;
 
 public class TravelAppFailOverUsingXenTest extends AbstractApplicationFailOverXenTest {
 	
+	private static final String TRAVEL_APPLICATION_NAME = "travel";
 	private final String travelAppDirPath = ScriptUtils.getBuildPath() + "/examples/travel";
 	private int tomcatPort;
 	private int cassandraPort;
@@ -51,7 +53,7 @@ public class TravelAppFailOverUsingXenTest extends AbstractApplicationFailOverXe
 			CommandTestUtils.runCommandAndWait("connect " + restUrl + " ;uninstall-application travel");
 		} catch (Exception e) {	}
 		
-		assertAppUninstalled("trave");	
+		assertAppUninstalled("travel");	
 	}
 	
 	@AfterClass
@@ -71,7 +73,7 @@ public class TravelAppFailOverUsingXenTest extends AbstractApplicationFailOverXe
 		installApp(tomcatPort, travelHostIp, cassandraPort, travelHostIp, travelAppDirPath);
 		isTravelAppInstalled(cassandraPort , tomcatPort, travelHostIp);
 		
-		ProcessingUnit tomcat = admin.getProcessingUnits().getProcessingUnit("tomcat");
+		ProcessingUnit tomcat = admin.getProcessingUnits().getProcessingUnit(ServiceUtils.getAbsolutePUName(TRAVEL_APPLICATION_NAME, "tomcat"));
 		
 		int tomcatPuInstancesAfterInstall = tomcat.getInstances().length;
 		LogUtils.log("destroying the pu instance holding tomcat");
@@ -85,7 +87,7 @@ public class TravelAppFailOverUsingXenTest extends AbstractApplicationFailOverXe
 		installApp(tomcatPort, travelHostIp, cassandraPort, travelHostIp, travelAppDirPath);
 		isTravelAppInstalled(cassandraPort , tomcatPort, travelHostIp);
 		
-		ProcessingUnit tomcat = admin.getProcessingUnits().getProcessingUnit("tomcat");
+		ProcessingUnit tomcat = admin.getProcessingUnits().getProcessingUnit(ServiceUtils.getAbsolutePUName(TRAVEL_APPLICATION_NAME, "tomcat"));
 		int tomcatPuInstancesAfterInstall = tomcat.getInstances().length;
 		LogUtils.log("restarting GSC containing tomcat");
 		tomcat.getInstances()[0].getGridServiceContainer().kill();
@@ -96,8 +98,8 @@ public class TravelAppFailOverUsingXenTest extends AbstractApplicationFailOverXe
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
 	private void isTravelAppInstalled(int port1 ,int port2 ,String host) {
-		ProcessingUnit cassandra = admin.getProcessingUnits().waitFor("cassandra");
-		ProcessingUnit tomcat = admin.getProcessingUnits().waitFor("tomcat");
+		ProcessingUnit cassandra = admin.getProcessingUnits().waitFor(ServiceUtils.getAbsolutePUName(TRAVEL_APPLICATION_NAME, "cassandra"));
+		ProcessingUnit tomcat = admin.getProcessingUnits().waitFor(ServiceUtils.getAbsolutePUName(TRAVEL_APPLICATION_NAME, "tomcat"));
 		Assert.assertNotNull("cassandra was not deployed", cassandra);
 		Assert.assertNotNull("tomcat was not deployed", tomcat);
 		

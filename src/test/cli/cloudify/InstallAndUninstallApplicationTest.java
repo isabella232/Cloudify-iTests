@@ -8,11 +8,15 @@ import org.openspaces.admin.pu.ProcessingUnit;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import com.gigaspaces.cloudify.dsl.utils.ServiceUtils;
+
 import framework.utils.AssertUtils.RepetitiveConditionProvider;
 
 import test.AbstractTest;
 
 public class InstallAndUninstallApplicationTest extends AbstractCommandTest {
+
+	private static final String SERVICE_NAME = "simple";
 
 	@Override
 	@BeforeMethod
@@ -24,7 +28,7 @@ public class InstallAndUninstallApplicationTest extends AbstractCommandTest {
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
 	public void testInstallAndUninstall() throws IOException, InterruptedException {
-		doTest("simple");
+		doTest(SERVICE_NAME);
 	}
 
 	private void doTest(final String serviceGroovyFilename) throws IOException, InterruptedException {
@@ -33,11 +37,12 @@ public class InstallAndUninstallApplicationTest extends AbstractCommandTest {
 		
 
 		runCommand("connect " + this.restUrl + ";install-application --verbose " + applicationDir);
-		final ProcessingUnit processingUnit = admin.getProcessingUnits().waitFor(serviceGroovyFilename, 10, TimeUnit.SECONDS);
+		String absolutePUName = ServiceUtils.getAbsolutePUName("simple", "simple");
+		final ProcessingUnit processingUnit = admin.getProcessingUnits().waitFor(absolutePUName, 10, TimeUnit.SECONDS);
 		if (processingUnit == null) {
-			AbstractTest.AssertFail("Processing unit '" + serviceGroovyFilename + "' was not found");
+			AbstractTest.AssertFail("Processing unit '" + absolutePUName + "' was not found");
 		}
-		AbstractTest.assertTrue("Instance of '" + serviceGroovyFilename + "' service was not found",
+		AbstractTest.assertTrue("Instance of '" + absolutePUName + "' service was not found",
 		processingUnit.waitFor(1, 10, TimeUnit.SECONDS));
 
 	    final GridServiceContainer gsc = processingUnit.getInstances()[0].getGridServiceContainer();

@@ -21,6 +21,7 @@ import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gigaspaces.cloudify.dsl.internal.packaging.PackagingException;
+import com.gigaspaces.cloudify.dsl.utils.ServiceUtils;
 
 import framework.utils.LogUtils;
 import framework.utils.ProcessingUnitUtils;
@@ -58,7 +59,7 @@ public class InternalUSMPuServiceDownTest extends AbstractLocalCloudTest {
 		}
 		
 		LogUtils.log("Retrieving tomcat process pid from admin");
-		tomcat = admin.getProcessingUnits().waitFor("tomcat", 10, TimeUnit.SECONDS);
+		tomcat = admin.getProcessingUnits().waitFor(ServiceUtils.getAbsolutePUName("default", "tomcat"), 10, TimeUnit.SECONDS);
 		assertNotNull(tomcat);
 		ProcessingUnitUtils.waitForDeploymentStatus(tomcat, DeploymentStatus.INTACT);
 		assertTrue(tomcat.getStatus().equals(DeploymentStatus.INTACT));

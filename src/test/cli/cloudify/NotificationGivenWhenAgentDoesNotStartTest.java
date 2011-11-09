@@ -39,7 +39,9 @@ public class NotificationGivenWhenAgentDoesNotStartTest extends AbstractCommandT
 	@AfterMethod
 	public void afterTest(){
 		try{
+			LogUtils.log("tearing down local cloud");
 			runCommand("teardown-localcloud");	
+			LogUtils.log("Shutting down managment");
 			runCommand("shutdown-management");	
 			super.afterTest();
 		}catch(Exception e){

@@ -5,6 +5,8 @@ import java.io.IOException;
 import org.openspaces.admin.machine.Machine;
 import org.testng.annotations.Test;
 
+import com.gigaspaces.cloudify.dsl.utils.ServiceUtils;
+
 import framework.tools.SGTestHelper;
 import framework.utils.AssertUtils;
 import framework.utils.AssertUtils.RepetitiveConditionProvider;
@@ -29,7 +31,7 @@ public class BadUSMServiceDownAfterUninstallApplicationTest extends AbstractComm
 			RepetitiveConditionProvider condition = new RepetitiveConditionProvider() {
 				@Override
 				public boolean getCondition() {
-					return admin.getProcessingUnits().getProcessingUnit("simple") == null;
+					return admin.getProcessingUnits().getProcessingUnit(ServiceUtils.getAbsolutePUName("simple", "simple")) == null;
 				}
 			};
 			AssertUtils.repetitiveAssertTrue(null, condition, 10000);

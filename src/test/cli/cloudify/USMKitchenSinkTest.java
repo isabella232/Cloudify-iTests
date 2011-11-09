@@ -23,6 +23,7 @@ import org.testng.annotations.Test;
 import com.gigaspaces.cloudify.dsl.internal.CloudifyConstants;
 import com.gigaspaces.cloudify.dsl.internal.ServiceReader;
 import com.gigaspaces.cloudify.dsl.internal.packaging.PackagingException;
+import com.gigaspaces.cloudify.dsl.utils.ServiceUtils;
 import com.gigaspaces.log.AllLogEntryMatcher;
 import com.gigaspaces.log.ContinuousLogEntryMatcher;
 import com.gigaspaces.log.LogEntries;
@@ -46,7 +47,7 @@ public class USMKitchenSinkTest extends AbstractCommandTest {
 			"preInstall fired Test Property number 2",
 			"postInstall fired Test Property number 1",
 			"preStart fired Test Property number 2", "postStart fired",
-			"Instantiated kitchensink-service" };
+			"Instantiated default.kitchensink-service" };
 	private static final String[] EXPECTED_SHUTDOWN_EVENT_STRINGS = {
 			"preStop fired", "String_with_Spaces", "postStop fired",
 			"shutdown fired" };
@@ -237,7 +238,7 @@ public class USMKitchenSinkTest extends AbstractCommandTest {
 
 	private ProcessingUnit findPU() {
 		ProcessingUnit pu = this.admin.getProcessingUnits().waitFor(
-				"kitchensink-service", 30, TimeUnit.SECONDS);
+				ServiceUtils.getAbsolutePUName(DEFAULT_APPLICTION_NAME, "kitchensink-service"), 30, TimeUnit.SECONDS);
 		assertNotNull("Could not find processing unit for installed service",
 				pu);
 		return pu;

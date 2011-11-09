@@ -9,6 +9,7 @@ import org.openspaces.admin.pu.ProcessingUnit;
 import org.testng.annotations.Test;
 
 
+import com.gigaspaces.cloudify.dsl.utils.ServiceUtils;
 import com.gigaspaces.log.LogEntry;
 import com.gigaspaces.log.LogEntryMatcher;
 import com.gigaspaces.log.LogEntryMatchers;
@@ -33,7 +34,8 @@ public class UninstallWithDelayTest extends AbstractCommandTest {
 	public void testUninstallService() throws IOException, InterruptedException {
 		runCommand("connect " + this.restUrl + ";" + "install-service " + SERVICE_DIRECTORY + ";");
 		
-		ProcessingUnit processingUnit = admin.getProcessingUnits().waitFor(SERVICE_NAME);
+		String absolutePUName = ServiceUtils.getAbsolutePUName(DEFAULT_APPLICTION_NAME, SERVICE_NAME);
+		ProcessingUnit processingUnit = admin.getProcessingUnits().waitFor(absolutePUName);
         assertTrue("Instance of '" + SERVICE_NAME + "' service was not found", processingUnit.waitFor(1, Constants.PROCESSINGUNIT_TIMEOUT_SEC,  TimeUnit.SECONDS));
 		
         final GridServiceContainer gsc = processingUnit.getInstances()[0].getGridServiceContainer();
@@ -50,7 +52,8 @@ public class UninstallWithDelayTest extends AbstractCommandTest {
 	public void testUninstallApplication() throws IOException, InterruptedException {
 	    runCommand("connect " + this.restUrl + ";" + "install-application " + APPLICATION_DIRECTORY + ";");
 	    
-	    ProcessingUnit processingUnit = admin.getProcessingUnits().waitFor(SERVICE_NAME);
+	    String absolutePUName = ServiceUtils.getAbsolutePUName("simple", SERVICE_NAME);
+	    ProcessingUnit processingUnit = admin.getProcessingUnits().waitFor(absolutePUName);
 	    assertTrue("Instance of '" + SERVICE_NAME + "' service was not found", processingUnit.waitFor(1, Constants.PROCESSINGUNIT_TIMEOUT_SEC,  TimeUnit.SECONDS));
 	    
 	    final GridServiceContainer gsc = processingUnit.getInstances()[0].getGridServiceContainer();

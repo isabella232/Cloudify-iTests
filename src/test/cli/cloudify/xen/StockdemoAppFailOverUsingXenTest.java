@@ -8,6 +8,8 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import com.gigaspaces.cloudify.dsl.utils.ServiceUtils;
+
 import test.cli.cloudify.CommandTestUtils;
 import framework.utils.LogUtils;
 import framework.utils.ScriptUtils;
@@ -67,7 +69,8 @@ public class StockdemoAppFailOverUsingXenTest extends AbstractApplicationFailOve
 		installApp(cassandraPort1 ,cassandraHostIp, cassandraPort2 ,cassandraHostIp , stockdemoAppDirPath);
 		assertStockdemoAppInstalled(cassandraPort1 ,cassandraHostIp, cassandraPort2 ,cassandraHostIp);
 		
-		ProcessingUnit cassandra = admin.getProcessingUnits().getProcessingUnit("cassandra");
+		String cassandraAbsolutePUName = ServiceUtils.getAbsolutePUName("stockdemo", "cassandra");
+		ProcessingUnit cassandra = admin.getProcessingUnits().getProcessingUnit(cassandraAbsolutePUName);
 		int cassandraPuInstancesAfterInstall = cassandra.getInstances().length;
 		LogUtils.log("destroying the pu instance holding cassandra");
 		cassandra.getInstances()[0].destroy();
@@ -80,7 +83,8 @@ public class StockdemoAppFailOverUsingXenTest extends AbstractApplicationFailOve
 		installApp(cassandraPort1 ,cassandraHostIp, cassandraPort2 ,cassandraHostIp , stockdemoAppDirPath);
 		assertStockdemoAppInstalled(cassandraPort1 ,cassandraHostIp, cassandraPort2 ,cassandraHostIp);
 		
-		ProcessingUnit cassandra = admin.getProcessingUnits().getProcessingUnit("cassandra");
+		String cassandraAbsolutePUName = ServiceUtils.getAbsolutePUName("stockdemo", "cassandra");
+		ProcessingUnit cassandra = admin.getProcessingUnits().getProcessingUnit(cassandraAbsolutePUName);
 		int cassandraPuInstancesAfterInstall = cassandra.getInstances().length;
 		LogUtils.log("restarting GSC containing cassandra");
 		cassandra.getInstances()[0].getGridServiceContainer().kill();
@@ -93,7 +97,8 @@ public class StockdemoAppFailOverUsingXenTest extends AbstractApplicationFailOve
 		installApp(cassandraPort1 ,cassandraHostIp, cassandraPort2 ,cassandraHostIp , stockdemoAppDirPath);
 		assertStockdemoAppInstalled(cassandraPort1 ,cassandraHostIp, cassandraPort2 ,cassandraHostIp);
 		
-		ProcessingUnit stockAnalyticsSpace = admin.getProcessingUnits().getProcessingUnit("stockAnalyticsSpace");
+		String stockAnalyticsSpaceAbsolutePUName = ServiceUtils.getAbsolutePUName("stockdemo", "stockAnalyticsSpace");
+		ProcessingUnit stockAnalyticsSpace = admin.getProcessingUnits().getProcessingUnit(stockAnalyticsSpaceAbsolutePUName);
 		int spacePuInstancesAfterInstall = stockAnalyticsSpace.getInstances().length;
 		LogUtils.log("destroying the pu instance holding stockAnalyticsSpace");
 		stockAnalyticsSpace.getInstances()[0].destroy();
@@ -106,7 +111,8 @@ public class StockdemoAppFailOverUsingXenTest extends AbstractApplicationFailOve
 		installApp(cassandraPort1 ,cassandraHostIp, cassandraPort2 ,cassandraHostIp , stockdemoAppDirPath);
 		assertStockdemoAppInstalled(cassandraPort1 ,cassandraHostIp, cassandraPort2 ,cassandraHostIp);
 		
-		ProcessingUnit stockAnalyticsSpace = admin.getProcessingUnits().getProcessingUnit("stockAnalyticsSpace");
+		String stockAnalyticsSpaceAbsolutePUName = ServiceUtils.getAbsolutePUName("stockdemo", "stockAnalyticsSpace");
+		ProcessingUnit stockAnalyticsSpace = admin.getProcessingUnits().getProcessingUnit(stockAnalyticsSpaceAbsolutePUName);
 		int spacePuInstancesAfterInstall = stockAnalyticsSpace.getInstances().length;
 		LogUtils.log("restarting GSC containing stockAnalyticsFeeder");
 		stockAnalyticsSpace.getInstances()[0].getGridServiceContainer().kill();

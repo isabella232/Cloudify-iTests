@@ -24,6 +24,7 @@ import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gigaspaces.cloudify.dsl.internal.packaging.PackagingException;
+import com.gigaspaces.cloudify.dsl.utils.ServiceUtils;
 
 import framework.utils.AssertUtils;
 import framework.utils.AssertUtils.RepetitiveConditionProvider;
@@ -82,7 +83,7 @@ public class RepetitiveActualServiceFailoverTest extends AbstractTest {
 			e.printStackTrace();
 		}
 		
-		ProcessingUnit tomcat = admin.getProcessingUnits().waitFor("tomcat", 10, TimeUnit.SECONDS);
+		ProcessingUnit tomcat = admin.getProcessingUnits().waitFor(ServiceUtils.getAbsolutePUName("default", "tomcat"), 10, TimeUnit.SECONDS);
 		machineA = admin.getGridServiceContainers().getContainers()[0].getMachine();
 		
 			
@@ -176,7 +177,7 @@ public class RepetitiveActualServiceFailoverTest extends AbstractTest {
 	
 	private Long getTomcatPId() {
 		
-		ProcessingUnit tomcat = admin.getProcessingUnits().getProcessingUnit("tomcat");
+		ProcessingUnit tomcat = admin.getProcessingUnits().getProcessingUnit(ServiceUtils.getAbsolutePUName("default", "tomcat"));
 		assertNotNull(tomcat);
 		ProcessingUnitUtils.waitForDeploymentStatus(tomcat, DeploymentStatus.INTACT);
 		assertTrue(tomcat.getStatus().equals(DeploymentStatus.INTACT));

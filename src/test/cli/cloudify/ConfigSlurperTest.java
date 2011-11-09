@@ -8,6 +8,8 @@ import org.openspaces.pu.service.ServiceDetails;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import com.gigaspaces.cloudify.dsl.utils.ServiceUtils;
+
 import framework.tools.SGTestHelper;
 
 public class ConfigSlurperTest extends AbstractCommandTest {
@@ -19,7 +21,7 @@ public class ConfigSlurperTest extends AbstractCommandTest {
 
 			runCommand(command);
 
-			ProcessingUnit pu = admin.getProcessingUnits().waitFor("slurper");
+			ProcessingUnit pu = admin.getProcessingUnits().waitFor(ServiceUtils.getAbsolutePUName(DEFAULT_APPLICTION_NAME, "slurper"));
 			
 			Map<String, ServiceDetails> serviceDetails = pu.getInstances()[0].getServiceDetailsByServiceId();
 			Map<String, Object> attributes = serviceDetails.get("USM").getAttributes();

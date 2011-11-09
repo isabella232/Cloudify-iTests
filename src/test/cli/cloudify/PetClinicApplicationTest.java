@@ -11,6 +11,8 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import com.gigaspaces.cloudify.dsl.utils.ServiceUtils;
+
 import framework.utils.LogUtils;
 import framework.utils.ScriptUtils;
 
@@ -42,23 +44,23 @@ public class PetClinicApplicationTest extends AbstractTest {
 			CommandTestUtils.runCommandAndWait(command);
 			AdminFactory factory = new AdminFactory();
 			for (Machine machine : machines) {
-				LogUtils.log("adding locator to admin : " + machine.getHostName() + ":1468");
+				LogUtils.log("adding locator to admin : " + machine.getHostName() + ":4168");
 				factory.addLocator(machine.getHostAddress() + ":4168");
 			}
 			LogUtils.log("adding localhost locator to admin");
 			factory.addLocator("127.0.0.1:4168");
 			LogUtils.log("creating new admin");
 			admin = factory.createAdmin();
-			mongod = admin.getProcessingUnits().waitFor("mongod", 20, TimeUnit.SECONDS);
+			mongod = admin.getProcessingUnits().waitFor(ServiceUtils.getAbsolutePUName("petclinic-mongo", "mongod"), 20, TimeUnit.SECONDS);
 			assertNotNull(mongod);
 			assertTrue(mongod.getStatus().equals(DeploymentStatus.INTACT));
-			mongocfg = admin.getProcessingUnits().waitFor("mongo-cfg", 20, TimeUnit.SECONDS);
+			mongocfg = admin.getProcessingUnits().waitFor(ServiceUtils.getAbsolutePUName("petclinic-mongo", "mongo-cfg"), 20, TimeUnit.SECONDS);
 			assertNotNull(mongocfg);
 			assertTrue(mongocfg.getStatus().equals(DeploymentStatus.INTACT));
-			mongos = admin.getProcessingUnits().waitFor("mongos", 20, TimeUnit.SECONDS);
+			mongos = admin.getProcessingUnits().waitFor(ServiceUtils.getAbsolutePUName("petclinic-mongo", "mongos"), 20, TimeUnit.SECONDS);
 			assertNotNull(mongos);
 			assertTrue(mongos.getStatus().equals(DeploymentStatus.INTACT));
-			tomcat = admin.getProcessingUnits().waitFor("tomcat", 20, TimeUnit.SECONDS);
+			tomcat = admin.getProcessingUnits().waitFor(ServiceUtils.getAbsolutePUName("petclinic-mongo", "tomcat"), 20, TimeUnit.SECONDS);
 			assertNotNull(tomcat);
 			assertTrue(tomcat.getStatus().equals(DeploymentStatus.INTACT));
 			

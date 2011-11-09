@@ -19,6 +19,7 @@ import test.cli.cloudify.CommandTestUtils;
 
 import com.gigaspaces.cloudify.dsl.Service;
 import com.gigaspaces.cloudify.dsl.internal.ServiceReader;
+import com.gigaspaces.cloudify.dsl.utils.ServiceUtils;
 import com.gigaspaces.log.LogEntries;
 import com.gigaspaces.log.LogEntryMatcher;
 import com.gigaspaces.log.LogEntryMatchers;
@@ -137,8 +138,9 @@ public class AbstractApplicationFailOverXenTest extends AbstractStartManagementX
 	protected void assertAppUninstalled(final String appName) {
 		AssertUtils.repetitiveAssertTrue(appName + " application was not uninstalled", new RepetitiveConditionProvider() {				
 			@Override
-			public boolean getCondition() {			
-				ProcessingUnit cassandra = admin.getProcessingUnits().waitFor("cassandra", 1, TimeUnit.SECONDS);
+			public boolean getCondition() {		
+				String absolutePUName = ServiceUtils.getAbsolutePUName(appName, "cassandra");
+				ProcessingUnit cassandra = admin.getProcessingUnits().waitFor(absolutePUName, 1, TimeUnit.SECONDS);
 				boolean condition = cassandra==null && admin.getApplications().getApplication(appName) == null;
 				return condition;
 			}

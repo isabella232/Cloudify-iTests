@@ -22,6 +22,7 @@ import test.AbstractTest;
 public abstract class AbstractCommandTest extends AbstractTest {
 
 	private static final long REST_PROCESSINGUNIT_TIMEOUT_SEC = 60;
+	protected static final String DEFAULT_APPLICTION_NAME = "default";
 
 	private static final int PU_UNDEPLOY_TIMEOUT = 20000;
 	

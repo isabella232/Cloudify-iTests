@@ -7,6 +7,8 @@ import org.openspaces.admin.pu.ProcessingUnit;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import com.gigaspaces.cloudify.dsl.utils.ServiceUtils;
+
 public class FailedToInstallServiceApplicationTest extends AbstractCommandTest {
 
 	
@@ -14,6 +16,7 @@ public class FailedToInstallServiceApplicationTest extends AbstractCommandTest {
 	//public static final String USM_SERVICE_FOLDER_NAME = "simpleService";
 	public static final String USM_SERVICE_FOLDER_NAME = "simpleService";
 	public static final String USM_SERVICE_NAME = "simple";
+	public static final String USM_APPLICATION_SERVICE_NAME = "simple";
 	
 	//public static final String USM_APPLICATION_FOLDER_NAME = "simpleApplication";
 	public static final String USM_APPLICATION_FOLDER_NAME = "simpleApplication";
@@ -26,7 +29,7 @@ public class FailedToInstallServiceApplicationTest extends AbstractCommandTest {
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
 	public void testBadInstallService() throws IOException, InterruptedException {
-		testBadServiceInstall(getUsmBadServicePath(USM_SERVICE_FOLDER_NAME), USM_SERVICE_NAME);
+		testBadServiceInstall(getUsmBadServicePath(USM_SERVICE_FOLDER_NAME), ServiceUtils.getAbsolutePUName(DEFAULT_APPLICTION_NAME, USM_SERVICE_NAME));
 	}
 	
 	private void testBadServiceInstall(String servicePath, String serviceName) throws IOException, InterruptedException {
@@ -43,7 +46,7 @@ public class FailedToInstallServiceApplicationTest extends AbstractCommandTest {
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
 	public void testBadInstallApplication() throws IOException, InterruptedException {
-		testBadApplicationInstall(getUsmBadServicePath(USM_APPLICATION_FOLDER_NAME), USM_SERVICE_NAME);
+		testBadApplicationInstall(getUsmBadServicePath(USM_APPLICATION_FOLDER_NAME), ServiceUtils.getAbsolutePUName("simple", USM_APPLICATION_SERVICE_NAME));
 	}
 	
 	private void testBadApplicationInstall(String usmBadServicePath,

@@ -11,16 +11,15 @@ import org.openspaces.admin.space.SpaceDeployment;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import framework.utils.AdminUtils;
-import framework.utils.LogUtils;
-import framework.utils.ProcessingUnitUtils;
-
 import test.webui.AbstractSeleniumTest;
 import test.webui.objects.LoginPage;
 import test.webui.objects.topology.ApplicationMap;
 import test.webui.objects.topology.DetailsPanel;
-import test.webui.objects.topology.DetailsPanel.WebUIServiceDetails;
 import test.webui.objects.topology.TopologyTab;
+import test.webui.objects.topology.WebUIServiceDetails;
+import framework.utils.AdminUtils;
+import framework.utils.LogUtils;
+import framework.utils.ProcessingUnitUtils;
 
 public class BasicServiceDetailsTest extends AbstractSeleniumTest {
 	
@@ -64,8 +63,7 @@ public class BasicServiceDetailsTest extends AbstractSeleniumTest {
 		applicationMap.selectApplication("MyApp");
 		
 		DetailsPanel detailsPanel = topologyTab.getDetailsPanel();
-		detailsPanel.showServiceDetails();
-		WebUIServiceDetails serviceDetails = detailsPanel.getServiceDetails();
+		WebUIServiceDetails serviceDetails = detailsPanel.switchToServiceDetails();
 		Map<String, Map<String, String>> spaceDetails = serviceDetails.getDetails();
 		assertTrue(spaceDetails.size() != 0);	
 	}

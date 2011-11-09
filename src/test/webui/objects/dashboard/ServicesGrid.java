@@ -121,6 +121,11 @@ public class ServicesGrid {
 			return new LUSInst();
 		}
 		
+		public ESMInst getESMInst() {
+			return new ESMInst();
+			
+		}
+		
 		public class Hosts {
 			
 			public Icon getIcon() {
@@ -144,6 +149,19 @@ public class ServicesGrid {
 			
 			public int getCount() {
 				return Integer.parseInt(selenium.getText(WebConstants.Xpath.pathToGSA + WebConstants.Xpath.pathToNumberInResourceGrid));			}
+			
+		}
+		
+		public class ESMInst {
+			
+			public Icon getIcon() {
+				String style = WebUiUtils.retrieveAttribute(By.xpath(WebConstants.Xpath.pathToESM + WebConstants.Xpath.pathToIconInResourceGrid), "class",driver);
+				return ServicesGrid.this.getIcon(style);
+					
+			}
+			
+			public int getCount() {
+				return Integer.parseInt(selenium.getText(WebConstants.Xpath.pathToESM + WebConstants.Xpath.pathToNumberInResourceGrid));			}
 			
 		}
 		

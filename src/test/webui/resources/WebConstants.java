@@ -105,6 +105,7 @@ public final class WebConstants {
 		public static final String restartPuInstanceItem = "gs-logical-restart-pu-instance";
 		public static final String topologyCombobox = "gs-topology-application-combo";
 		public static final String logoutButton = "gs-logout-button";
+		public static final String resourceDistribESM = "resource_distrib-grid_null_esm";
 		
 		public static String getActionToolBoxId(String name) {
 			return "node-tool-ACTIONS-" + name;
@@ -171,6 +172,7 @@ public final class WebConstants {
 		public static final String pathToGSM = "//div[@id='" + ID.resourceDistribGSM + "']";
 		public static final String pathToGSC = "//div[@id='" + ID.resourceDistribGSC + "']";
 		public static final String pathToLUS = "//div[@id='" + ID.resourceDistribLUS + "']";
+		public static final String pathToESM = "//div[@id='" + ID.resourceDistribESM + "']";
 		public static final String pathToWebModule = "//div[@id='" + ID.moduleWeb + "']";
 		public static final String pathToStatefullModule = "//div[@id='" + ID.moduleStateful + "']";
 		public static final String pathToStatelessModule = "//div[@id='" + ID.moduleStateless + "']";

@@ -9,15 +9,13 @@
 
 <project name="sgtest-builder" basedir="." default="sgtest_zip_1.6">
 
+    <import file="sgtest_build.xml"/>
     <property name="sgtest.home" value="${basedir}"/>
     <property name="src" value="src"/>
     <property name="classes" value="classes"/>
     <property name="resources" value="${src}/resources"/>
-	<property name="cli.dir" value="${src}/test/cli"/>
-	<property name="cli.resources" value="${cli.dir}/resources"/>
-	<property name="build.file" value="${build.folder}-b${BUILD_VERSION}.zip"/>
-	<property name="build.location" value="${sgtest.home}/../"/>
-
+    <property name="cli.dir" value="${src}/test/cli"/>
+    <property name="cli.resources" value="${cli.dir}/resources"/>
 
     <!-- sgtest output -->
     <property name="sgtest.output.dir" value="${sgtest.home}/output"/>
@@ -27,8 +25,9 @@
     <!-- sgtest libraries -->
     <property name="sgtest.lib" value="${sgtest.home}/lib"/>
     <property name="sgtest.testng" value="${sgtest.lib}/testng/testng-5.10-jdk15.jar"/>
-    <property name="java16.home" value="C:\java\jdk1.6.0_26"/>	
+    <property name="java16.home" value="C:\Java\jdk1.6.0_26"/>
 
+	
     <!-- sgtest classpath -->
     <path id="classpath">
         <fileset dir="${gsHome.dir}/lib">
@@ -40,17 +39,17 @@
         <!--<pathelement path="${sgtest.junit}"/>-->
         <pathelement path="${sgtest.testng}"/>
 
-        <!-- commons jars -->
+    	<!-- commons jars -->
         <fileset dir="${sgtest.lib}/commons">
             <include name="**/*.jar"/>
         </fileset>
-    	
-    	<!-- selenium jars -->
-    	<fileset dir="${sgtest.lib}/selenium">
-    	    <include name="**/*.jar"/>
-    	</fileset>
-    	
-    	<!-- hamcrest jars -->
+
+        <!-- selenium jars -->
+        <fileset dir="${sgtest.lib}/selenium">
+            <include name="**/*.jar"/>
+        </fileset>
+
+        <!-- hamcrest jars -->
         <fileset dir="${sgtest.lib}/hamcrest">
             <include name="**/*.jar"/>
         </fileset>
@@ -64,99 +63,105 @@
         <fileset dir="${sgtest.lib}/xml">
             <include name="**/*.jar"/>
         </fileset>
-    	
-    	<!-- hiberbate jars -->
+
+        <!-- hiberbate jars -->
         <fileset dir="${sgtest.lib}/hibernate">
             <include name="**/*.jar"/>
         </fileset>
-    	
-    	<!-- spring jars -->
+
+        <!-- spring jars -->
         <fileset dir="${sgtest.lib}/spring">
             <include name="**/*.jar"/>
         </fileset>
 
-		<!-- Jsch jars -->
-		<fileset dir="${sgtest.lib}/jsch">
+        <!-- Jsch jars -->
+        <fileset dir="${sgtest.lib}/jsch">
             <include name="**/*.jar"/>
         </fileset>
-    	
-    <!-- SSHD jars -->
-      <fileset dir="${sgtest.lib}/sshd">
-          <include name="**/*.jar"/>
-      </fileset>
-    
-    <!-- Cassandra client jars -->
-      <fileset dir="${sgtest.lib}/pelops">
-          <include name="**/*.jar"/>
-      </fileset>
-          
-		<!-- XenServer jars -->
-		<fileset dir="${sgtest.lib}/xenserver">
-            <include name="**/*.jar"/>
-		</fileset>
-		
-        <!-- CLI jars --> 
-    	<fileset dir="${gsHome.dir}/tools/cli">
+
+        <!-- SSHD jars -->
+        <fileset dir="${sgtest.lib}/sshd">
             <include name="**/*.jar"/>
         </fileset>
-    	
+
+        <!-- Cassandra client jars -->
+        <fileset dir="${sgtest.lib}/pelops">
+            <include name="**/*.jar"/>
+        </fileset>
+
+        <!-- XenServer jars -->
+        <fileset dir="${sgtest.lib}/xenserver">
+            <include name="**/*.jar"/>
+        </fileset>
+
+        <!-- CLI jars -->
+        <fileset dir="${gsHome.dir}/tools/cli">
+            <include name="**/*.jar"/>
+        </fileset>
+
         <!-- simplejavaprocessjars -->
-		<fileset dir="${sgtest.lib}/../apps/USM/usm/simplejavaprocess">
-			<include name="**/*.jar"/>
-		</fileset>
-    	
-        <!-- groovy jars -->
-        <fileset dir="${gsHome.dir}/tools/groovy/lib">
-            <include name="**/groovy*.jar"/>
-            <include name="**/commons-logging*.jar"/>
-            <include name="**/bsf*.jar"/>
+        <fileset dir="${sgtest.lib}/../apps/USM/usm/simplejavaprocess">
+            <include name="**/*.jar"/>
         </fileset>
 
 
         <!-- mail jars -->
-		<fileset dir="${sgtest.lib}/mail">
+        <fileset dir="${sgtest.lib}/mail">
             <include name="**/*.jar"/>
-		</fileset>
-    	
+        </fileset>
+
+        <!-- groovy jars -->
+        <fileset dir="${gsHome.dir}/tools/groovy/lib">
+            <include name="**/groovy*.jar"/>
+            <include name="**/commons-logging*.jar"/>
+            <include name="**/commons-cli*.jar"/>
+            <include name="**/bsf*.jar"/>
+        </fileset>
+
     </path>
 
     <!-- The project targets -->
     <target name="prepare">
         <!-- Create the time stamp -->
-    	
         <tstamp/>
+
         <delete dir="${sgtest.home}/output"/>
         <mkdir dir="${sgtest.home}/output"/>
 
         <delete dir="${classes}"/>
         <!-- Create the classes directory structure used by compile -->
         <mkdir dir="${classes}"/>
-    	<!-- Unzip the build file to be used in compile time -->
-		<unzip src="${build.location}${build.file}" dest="${build.location}"/>
     	
-    </target>
+    	<copy todir="${classes}">
+    	  <fileset dir="${src}">
+    	    <include name="**/*.groovy"/>
+    	    <exclude name="**/test/webui/resources/**/*.groovy"/>
+    	  </fileset>
+    	</copy>
+    </target> 
 
     <target name="compile" depends="prepare, build-projects">
         <!-- Compile the java code from ${src} into ${classes} -->
         <javac classpathref="classpath" srcdir="${src}" includes="**/*" destdir="${classes}" debug="on"
-                executable="${java16.home}\bin\javac" taskname="javac1.6" fork="true">
-            <classpath location="${sgtest.home}/apps/MHEDS/common/target/classes"/>
-            <classpath location="${sgtest.home}/apps/data/common/target/classes"/>
-            <classpath location="${sgtest.home}/apps/simpledata/common/target/classes"/>
-            <classpath location="${sgtest.home}/apps/meta-common/target/classes"/>
-        	<classpath location="${sgtest.home}/apps/security/common/target/classes"/>
-        	<classpath location="${sgtest.home}/apps/remoting/target/classes"/>
-            <classpath location="${sgtest.home}/apps/remotingExceptionHandling/target/classes"/>
-        	<classpath location="${sgtest.home}/apps/gatewayPUs/common/target/classes"/>
-        	<classpath location="${sgtest.home}/apps/local-view/common/target/classes"/>
+               executable="${java16.home}\bin\javac" taskname="javac1.6" fork="true">
         </javac>
+    	
     </target>
 
-     <target  name="build-projects">
+    <target name="build-projects">
         <subant target="build-projects">
             <fileset dir="${basedir}/apps" includes="build.xml" excludes=""/>
         </subant>
     </target>
+	
+	<target name="compile groovy" depends="prepare">
+		<!--	define task to compile .groovy -->
+				<taskdef name="groovyc" classname="org.codehaus.groovy.ant.Groovyc" 
+					classpathref="classpath"/> 
+		<!--	compiling .groovy to .class -->
+				<mkdir dir="${classes}/groovy"/>
+		   		<groovyc srcdir="${src}" destdir="${classes}/groovy"/> 
+	</target>
 
     <!--
    ========================
@@ -164,19 +169,17 @@
    ======================== -->
 
     <target name="jar1_6" depends="compile">
-    
         <jar jarfile="${sgtest.output.dir}/${sgtest.jar.name}">
             <manifest>
                 <attribute name="Build-Version" value="${sgtest.version}"/>
                 <attribute name="Jdk" value="1.6"/>
             </manifest>
-			
+
             <fileset dir="${classes}"/>
-        	<fileset dir="${src}" includes="**/resources/**" />
-			<fileset dir="${src}" includes="**/mailreporter.properties"/>
+            <fileset dir="${src}" includes="**/resources/**"/>
+            <fileset dir="${src}" includes="**/mailreporter.properties"/>
             <fileset dir="${sgtest.home}" includes="apps/**"/>
         </jar>
-    	
     </target>
 
     <!--
@@ -196,8 +199,8 @@
             <mkdir dir="${sgtest.home}/output/tmp/output"/>
             <mkdir dir="${sgtest.home}/deploy/local-builds"/>
             <mkdir dir="${sgtest.home}/deploy/result_indicator"/>
-            <make-dos2unix workingDir="${sgtest.home}/deploy/bin" />
-            <make-dos2unix workingDir="${sgtest.home}/bin" />
+            <make-dos2unix workingDir="${sgtest.home}/deploy/bin"/>
+            <make-dos2unix workingDir="${sgtest.home}/bin"/>
             <echo message="create zip"/>
             <zip destfile="${sgtest.output.dir}/@{dirName}-@{jdkVer}.zip" update="true">
                 <zipfileset dir="${sgtest.home}" prefix="@{dirName}" filemode="775" includes="changeLog.txt"/>
@@ -216,13 +219,13 @@
                 <zipfileset dir="${sgtest.lib}/htmlunit" prefix="@{dirName}/lib/htmlunit" includes="*.jar"
                             filemode="775"/>
                 <zipfileset dir="${sgtest.lib}/xml" prefix="@{dirName}/lib/xml" includes="*.jar" filemode="775"/>
-            	<zipfileset dir="${sgtest.lib}/xml" prefix="@{dirName}/lib/hamcrest" includes="*.jar" filemode="775"/>
-            	<zipfileset dir="${sgtest.lib}/xml" prefix="@{dirName}/lib/hibernate" includes="*.jar" filemode="775"/>
-            	<zipfileset dir="${sgtest.lib}/xml" prefix="@{dirName}/lib/hsql" includes="*.jar" filemode="775"/>
-            	<zipfileset dir="${sgtest.lib}/xml" prefix="@{dirName}/lib/jsch" includes="*.jar" filemode="775"/>
-            	<zipfileset dir="${sgtest.lib}/xml" prefix="@{dirName}/lib/selenium" includes="*.jar" filemode="775"/>
-            	<zipfileset dir="${sgtest.lib}/xml" prefix="@{dirName}/lib/spring" includes="*.jar" filemode="775"/>
-            	<zipfileset dir="${sgtest.lib}/xml" prefix="@{dirName}/lib/xenserver" includes="*.jar" filemode="775"/>
+                <zipfileset dir="${sgtest.lib}/xml" prefix="@{dirName}/lib/hamcrest" includes="*.jar" filemode="775"/>
+                <zipfileset dir="${sgtest.lib}/xml" prefix="@{dirName}/lib/hibernate" includes="*.jar" filemode="775"/>
+                <zipfileset dir="${sgtest.lib}/xml" prefix="@{dirName}/lib/hsql" includes="*.jar" filemode="775"/>
+                <zipfileset dir="${sgtest.lib}/xml" prefix="@{dirName}/lib/jsch" includes="*.jar" filemode="775"/>
+                <zipfileset dir="${sgtest.lib}/xml" prefix="@{dirName}/lib/selenium" includes="*.jar" filemode="775"/>
+                <zipfileset dir="${sgtest.lib}/xml" prefix="@{dirName}/lib/spring" includes="*.jar" filemode="775"/>
+                <zipfileset dir="${sgtest.lib}/xml" prefix="@{dirName}/lib/xenserver" includes="*.jar" filemode="775"/>
                 <zipfileset dir="${sgtest.home}/output/tmp/output" prefix="@{dirName}/output" filemode="775"
                             excludes="**.*"/>
                 <zipfileset dir="${sgtest.home}/deploy" prefix="@{dirName}/deploy" filemode="775"/>

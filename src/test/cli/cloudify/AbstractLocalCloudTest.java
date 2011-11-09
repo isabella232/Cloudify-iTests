@@ -23,13 +23,12 @@ public class AbstractLocalCloudTest extends AbstractCommandTest {
 	protected final int WAIT_FOR_TIMEOUT = 20;
 	
 	@BeforeClass
-	public void beforeClass() throws FileNotFoundException, PackagingException, IOException, InterruptedException{		
+	public void beforeClass() throws FileNotFoundException, PackagingException, IOException, InterruptedException{
 		AdminFactory factory = new AdminFactory();
-		factory.addLocator(InetAddress.getLocalHost().getHostAddress() + ":4168");
-		this.admin = factory.create();
-		
+		factory.addLocator(InetAddress.getLocalHost().getHostAddress() + ":4168");	
 		runCommand("teardown-localcloud");
 		runCommand("bootstrap-localcloud");
+		this.admin = factory.create();
 		assertTrue("Could not find LUS of local cloud", admin.getLookupServices().waitFor(1, WAIT_FOR_TIMEOUT, TimeUnit.SECONDS));
 		this.restUrl = "http://" + InetAddress.getLocalHost().getHostAddress() + ":8100";			
 	}
@@ -52,7 +51,7 @@ public class AbstractLocalCloudTest extends AbstractCommandTest {
 	    }
 	}
 	
-	@AfterClass
+	@AfterClass(alwaysRun = true)
 	public void afterClass() throws IOException, InterruptedException{	
 		runCommand("teardown-localcloud");
 	}

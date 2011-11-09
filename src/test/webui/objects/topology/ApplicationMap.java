@@ -450,6 +450,11 @@ public class ApplicationMap {
 
 		AssertUtils.repetitiveAssertTrue("Application is not present in the applications menu panel", condition,10000);
 	}
+	
+	public void deselectAllNodes() {
+		WebElement graphCanvas = driver.findElement(By.id("graph-canvas"));
+		graphCanvas.click();
+	}
 
 	public ApplicationNode getApplicationNode(String name) {
 		ApplicationNode appNode = new ApplicationNode(name);

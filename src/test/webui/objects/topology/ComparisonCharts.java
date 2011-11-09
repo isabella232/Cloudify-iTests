@@ -45,8 +45,11 @@ public class ComparisonCharts {
 			return false;
 		}
 		
+		/**
+		 * return the number of lines currently in the Metric
+		 * @return
+		 */
 		public int getNumberOfGraphs() {
-			
 			WebElement highChartsTracker = metric.findElement(By.className("highcharts-tracker"));
 			List<WebElement> paths = highChartsTracker.findElements(By.tagName("path"));
 			return paths.size();

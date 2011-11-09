@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import org.openspaces.admin.AdminFactory;
 import org.openspaces.admin.gsc.GridServiceContainer;
 import org.openspaces.admin.machine.Machine;
 import org.openspaces.admin.pu.DeploymentStatus;
@@ -15,11 +14,8 @@ import org.openspaces.admin.pu.ProcessingUnit;
 import org.openspaces.admin.pu.ProcessingUnitInstance;
 import org.openspaces.admin.pu.events.ProcessingUnitInstanceLifecycleEventListener;
 import org.openspaces.pu.service.CustomServiceMonitors;
-import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-
-import test.AbstractTest;
 
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.WebClient;
@@ -32,7 +28,7 @@ import framework.utils.SSHUtils;
 import framework.utils.ScriptUtils;
 
 
-public class InternalUSMPuServiceDownTest extends AbstractTest {
+public class InternalUSMPuServiceDownTest extends AbstractLocalCloudTest {
 	
 	ProcessingUnit tomcat;
 	Long tomcatPId;
@@ -44,8 +40,6 @@ public class InternalUSMPuServiceDownTest extends AbstractTest {
 	@BeforeMethod
 	public void beforeTest() {
 		super.beforeTest();	
-		machines = admin.getMachines().getMachines();
-		admin.close();
 		client = new WebClient(BrowserVersion.getDefault());
 	}
 	
@@ -53,20 +47,10 @@ public class InternalUSMPuServiceDownTest extends AbstractTest {
 	public void tomcatServiceDownAndCorruptedTest() throws IOException, InterruptedException, PackagingException {
 		
 		String serviceDir = ScriptUtils.getBuildPath() + "/recipes/tomcat";
-		String command = "bootstrap-localcloud ; install-service " + "--verbose -timeout 10 " + serviceDir;
+		String command = "connect " + this.restUrl + ";" + "install-service " + "--verbose -timeout 10 " + serviceDir;
 		try {
 			LogUtils.log("installing tomcat service using Cli");
 			CommandTestUtils.runCommandAndWait(command);
-			AdminFactory factory = new AdminFactory();
-			for (Machine machine : machines) {
-				LogUtils.log("adding locator to admin : " + machine.getHostName() + ":4168");
-				factory.addLocator(machine.getHostAddress() + ":4168");
-			}
-			LogUtils.log("adding localhost locator to admin");
-			factory.addLocator("127.0.0.1:4168");
-			LogUtils.log("creating new admin");
-			admin = factory.createAdmin();
-
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (InterruptedException e) {
@@ -159,19 +143,5 @@ public class InternalUSMPuServiceDownTest extends AbstractTest {
         }
         assertEquals("OK", page.getWebResponse().getStatusMessage());
 		
-	}
-	
-	@Override
-	@AfterMethod
-	public void afterTest() {
-		try {
-			LogUtils.log("tearing down local cloud");
-			CommandTestUtils.runCommandAndWait("teardown-localcloud");
-		} catch (IOException e) {
-			LogUtils.log("teardown-localcloud failed", e);
-		} catch (InterruptedException e) {
-			LogUtils.log("teardown-localcloud failed", e);
-		}
-		super.afterTest();	
 	}
 }

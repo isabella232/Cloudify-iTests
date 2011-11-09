@@ -9,7 +9,6 @@
 
 <project name="sgtest-builder" basedir="." default="sgtest_zip_1.6">
 
-    <import file="sgtest_build.xml"/>
     <property name="sgtest.home" value="${basedir}"/>
     <property name="src" value="src"/>
     <property name="classes" value="classes"/>

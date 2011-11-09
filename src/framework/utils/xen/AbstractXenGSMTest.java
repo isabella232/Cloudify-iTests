@@ -1,6 +1,5 @@
 package framework.utils.xen;
 
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -194,7 +193,7 @@ public class AbstractXenGSMTest extends AbstractTest {
         
         try {
             
-            List<String> machineLabels = XenUtils.getAllMachineLabels(machineProvisioningConfig);
+            List<String> machineLabels = getAllMachineNameLabels();
             
             for (String label : machineLabels) {
                 if (label.startsWith(xenServerMasterMachineLabelPrefix) &&
@@ -221,6 +220,30 @@ public class AbstractXenGSMTest extends AbstractTest {
 		}
         
     }
+
+	/**
+	 * Cleanup has a hard time accessing the xen for the first time still it's still working on the shutdown of prev test machines.
+	 * That's why there is a retry mechanism here to improve reliability.
+	 */
+	private List<String> getAllMachineNameLabels() throws XenServerException, InterruptedException {
+		int retryCount = 3;
+		final long sleepBetweenRetriesMilliseconds = 5000;
+		while (true) {
+			try {
+				List<String> machineLabels = XenUtils.getAllMachineLabels(machineProvisioningConfig);
+				return machineLabels;
+			}
+			catch(XenServerException e) {
+				if (retryCount == 0) {
+					throw e;
+				}
+				retryCount--;
+				LogUtils.log("Failed retrieving list of xen machines", e);
+				Thread.sleep(sleepBetweenRetriesMilliseconds);
+			}
+		}
+		
+	}
     
     private void prepareXapInstallation() {
         File gigaspacesZipFile = null;
@@ -458,7 +481,7 @@ public class AbstractXenGSMTest extends AbstractTest {
         	LogUtils.log("Failed removing VMs with label: " + label, e);
 		} 
     }
-    
+
     public void repetitiveAssertNumberOfGSAsAdded(int expected, long timeoutMilliseconds) {
     	gsaCounter.repetitiveAssertNumberOfGridServiceAgentsAdded(expected, timeoutMilliseconds);
     }
@@ -474,7 +497,7 @@ public class AbstractXenGSMTest extends AbstractTest {
     public void repetitiveAssertNumberOfGSCsRemoved(int expected, long timeoutMilliseconds) {
     	gscCounter.repetitiveAssertNumberOfGridServiceContainersRemoved(expected, timeoutMilliseconds);
     }
-        
+    
 	public int countMachines() {
 		try {
 			return XenUtils.getAllMachinesByNameLabelStartsWith(machineProvisioningConfig, machineProvisioningConfig.getStartMachineNameLabel()).size();

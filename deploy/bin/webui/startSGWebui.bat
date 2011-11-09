@@ -4,7 +4,6 @@
 @echo on
 
 set USER_HOME=C:\Users\ca
-set SVN_REPOSITORY=svn://%svn-srv%/SVN
 set VERSION=%1
 set MILESTONE=%2
 set BUILD_NUMBER=%3
@@ -13,9 +12,6 @@ set SGTEST_CHECKOUT_FOLDER=%5
 set LOCAL_SGPATH=%USER_HOME%\sgwebui-cloudify
 set REMOTE_BUILD_DIR=\\tarzan\builds\%VERSION%\%BUILD_NUMBER%
 set BASE_DIR=C:\Users\ca
-set apache.port=8000
-set apache.home=%USER_HOME%\Apache Software Foundation\Apache2.2
-set SVN_URL=%SVN_REPOSITORY%/cloudify/trunk
 set PRODUCT=cloudify
 
 @echo cleaning sgtest...

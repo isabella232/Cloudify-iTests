@@ -3,7 +3,6 @@ package test.webui.objects.topology;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.remote.RemoteWebElement;
 
 import test.webui.resources.WebConstants;
 
@@ -67,26 +66,5 @@ public class TopologySubPanel {
 			e.printStackTrace();
 		}
 		return new LogicalPanel(selenium, driver);
-	}
-	
-	public Metric getMetric(WebElement metric, String type) {
-		return new Metric(metric, type);
-	}
-	
-	public class Metric {
-
-		WebElement metric;
-		String type;
-
-		public Metric(WebElement metric, String type) {
-			this.metric = metric;
-			this.type = type;
-		}
-
-		public boolean isDisplayed() {
-			RemoteWebElement node = (RemoteWebElement) metric;
-			return node.isDisplayed();
-		}
-
 	}
 }

@@ -22,6 +22,6 @@ public class TopologyTab extends MainNavigation {
 	}
 	
 	public DetailsPanel getDetailsPanel() {
-		return DetailsPanel.getInstance(driver, selenium);
+		return new DetailsPanel(driver, selenium);
 	}
 }

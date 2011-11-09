@@ -106,16 +106,17 @@ public class LogicalPanel extends TopologySubPanel {
 			
 		}
 		
-		public void showComparisonCharts() {
+		public String showComparisonCharts() {
 			
 			int seconds = 0;
 			while (seconds < WebUiUtils.ajaxWaitingTime) {
 				try {
 					String id = WebConstants.ID.getPuInstanceId(name);
-					WebElement hostElement = driver.findElement(By.id(id));
-					WebElement cores = hostElement.findElement(By.className("x-grid3-td-chart_selection"));
-					cores.click();
-					break;
+					WebElement instanceElement = driver.findElement(By.id(id));
+					WebElement chartSelection = instanceElement.findElement(By.className("x-grid3-td-chart_selection"));
+					chartSelection.click();
+					String color = instanceElement.findElement(By.className("x-grid3-td-selected_color")).findElement(By.tagName("circle")).getAttribute("fill");
+					return color;
 				}
 				catch (StaleElementReferenceException e) {
 					LogUtils.log("Failed to discover element due to statistics update, retyring...");
@@ -127,6 +128,7 @@ public class LogicalPanel extends TopologySubPanel {
 					seconds++;
 				}
 			}
+			return null;
 			
 		}
 		

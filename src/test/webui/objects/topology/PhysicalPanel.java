@@ -38,8 +38,8 @@ public class PhysicalPanel extends TopologySubPanel {
 	 * @param name - host name to be retrieved
 	 * @return a table row of the physical tab containing all possible information about a specific host
 	 */
-	public Host getHost(String name) {
-		Host host = new Host(name);
+	public HostData getHostData(String name) {
+		HostData host = new HostData(name);
 		if (host.getName() != null) return host;
 		return null;
 	}
@@ -53,13 +53,13 @@ public class PhysicalPanel extends TopologySubPanel {
 	 * @author elip
 	 *
 	 */
-	public class Host {
+	public class HostData {
 		
 		@SuppressWarnings("unused")
 		private WebElement host;
 		private String name;
 		
-		public Host(String hostName) {
+		public HostData(String hostName) {
 			try {
 				String id = WebConstants.ID.getHostId(hostName);
 				WebElement hostElement = driver.findElement(By.id(id));
@@ -172,7 +172,7 @@ public class PhysicalPanel extends TopologySubPanel {
 		/**
 		 * 
 		 * @return all ProcessingUnitInstances deployed on the host. 
-		 * this is represented as a list of {@link test.webui.objects.topology.Host.PuIBox}
+		 * this is represented as a list of {@link test.webui.objects.topology.HostData.PuIBox}
 		 * @throws InterruptedException 
 		 */
 		public PuIBoxes getPUIs() {
@@ -443,6 +443,33 @@ public class PhysicalPanel extends TopologySubPanel {
 			public String getAssociatedProcessingUnitName() {
 				return puName;
 			}
+		}
+		
+		public String selectComparisonCharts() {
+			
+			int seconds = 0;
+			while (seconds < WebUiUtils.ajaxWaitingTime) {
+				try {
+					String id = WebConstants.ID.getHostId(name);
+					WebElement hostElement = driver.findElement(By.id(id));
+					WebElement chartSelection = hostElement.findElement(By.className("x-grid3-td-chart_selection"));
+					chartSelection.click();
+					String color = hostElement.findElement(By.className("x-grid3-td-selected_color")).findElement(By.tagName("circle")).getAttribute("fill");
+					return color;
+				}
+
+				catch (StaleElementReferenceException e) {
+					LogUtils.log("Failed to discover element due to statistics update, retyring...");
+					try {
+						Thread.sleep(1000);
+					} catch (InterruptedException e1) {
+						e1.printStackTrace();
+					}
+					seconds++;
+				}
+			}
+			return null;	
+			
 		}
 	}
 	

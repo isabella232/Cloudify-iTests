@@ -20,8 +20,8 @@ import test.webui.objects.LoginPage;
 import test.webui.objects.topology.ApplicationMap;
 import test.webui.objects.topology.ApplicationMap.ApplicationNode;
 import test.webui.objects.topology.PhysicalPanel;
-import test.webui.objects.topology.PhysicalPanel.Host;
-import test.webui.objects.topology.PhysicalPanel.Host.PuIBox;
+import test.webui.objects.topology.PhysicalPanel.HostData;
+import test.webui.objects.topology.PhysicalPanel.HostData.PuIBox;
 import test.webui.objects.topology.TopologyTab;
 
 public class PuBoxesNumberOfInstancesOnFirstRenderTest extends AbstractSeleniumTest {
@@ -77,7 +77,7 @@ public class PuBoxesNumberOfInstancesOnFirstRenderTest extends AbstractSeleniumT
 		
 		PhysicalPanel physicalPanel = topologyTab.getTopologySubPanel().switchToPhysicalPanel();
 		
-		Host me = physicalPanel.getHost(machineA.getHostName());
+		HostData me = physicalPanel.getHostData(machineA.getHostName());
 		
 		List<PuIBox> puBoxes = me.getPUIs().getBoxes();
 		

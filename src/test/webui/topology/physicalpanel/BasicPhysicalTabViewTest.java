@@ -19,7 +19,7 @@ import test.webui.AbstractSeleniumTest;
 import test.webui.objects.LoginPage;
 import test.webui.objects.dashboard.ServicesGrid.Icon;
 import test.webui.objects.topology.PhysicalPanel;
-import test.webui.objects.topology.PhysicalPanel.Host;
+import test.webui.objects.topology.PhysicalPanel.HostData;
 import test.webui.objects.topology.TopologyTab;
 
 public class BasicPhysicalTabViewTest extends AbstractSeleniumTest {
@@ -67,7 +67,7 @@ public class BasicPhysicalTabViewTest extends AbstractSeleniumTest {
 
 		PhysicalPanel physicalPanel = topologyTab.getTopologySubPanel().switchToPhysicalPanel();
 		
-		Host me = physicalPanel.getHost(machineA.getHostName());
+		HostData me = physicalPanel.getHostData(machineA.getHostName());
 		
 		assertTrue(me != null);
 		assertTrue(me.getGSACount() == 1);

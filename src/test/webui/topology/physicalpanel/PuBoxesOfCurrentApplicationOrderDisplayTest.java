@@ -21,8 +21,8 @@ import test.webui.objects.topology.ApplicationMap;
 import test.webui.objects.topology.ApplicationMap.ApplicationNode;
 import test.webui.objects.topology.PhysicalPanel;
 import test.webui.objects.topology.TopologyTab;
-import test.webui.objects.topology.PhysicalPanel.Host;
-import test.webui.objects.topology.PhysicalPanel.Host.PuIBox;
+import test.webui.objects.topology.PhysicalPanel.HostData;
+import test.webui.objects.topology.PhysicalPanel.HostData.PuIBox;
 
 public class PuBoxesOfCurrentApplicationOrderDisplayTest extends AbstractSeleniumTest {
 
@@ -80,7 +80,7 @@ public class PuBoxesOfCurrentApplicationOrderDisplayTest extends AbstractSeleniu
 		
 		PhysicalPanel physical = topologyTab.getTopologySubPanel().switchToPhysicalPanel();
 		
-		Host hostA = physical.getHost(machineA.getHostName());
+		HostData hostA = physical.getHostData(machineA.getHostName());
 		
 		List<PuIBox> puis = hostA.getPUIs().getBoxes();
 		
@@ -95,7 +95,7 @@ public class PuBoxesOfCurrentApplicationOrderDisplayTest extends AbstractSeleniu
 		
 		test1.select();
 		
-		hostA = physical.getHost(machineA.getHostName());
+		hostA = physical.getHostData(machineA.getHostName());
 		
 		puis = hostA.getPUIs().getBoxes();
 		

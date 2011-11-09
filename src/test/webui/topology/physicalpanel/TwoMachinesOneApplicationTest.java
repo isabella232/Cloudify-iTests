@@ -24,8 +24,8 @@ import test.webui.AbstractSeleniumTest;
 import test.webui.objects.LoginPage;
 import test.webui.objects.topology.ApplicationMap;
 import test.webui.objects.topology.PhysicalPanel;
-import test.webui.objects.topology.PhysicalPanel.Host;
-import test.webui.objects.topology.PhysicalPanel.Host.PuIBox;
+import test.webui.objects.topology.PhysicalPanel.HostData;
+import test.webui.objects.topology.PhysicalPanel.HostData.PuIBox;
 import test.webui.objects.topology.PhysicalPanel.OS;
 import test.webui.objects.topology.TopologyTab;
 
@@ -89,7 +89,7 @@ public class TwoMachinesOneApplicationTest extends AbstractSeleniumTest {
 		String hostAName = machineA.getHostName();
 		String hostBName = machineB.getHostName();
 		
-		Host hostA = physicalPanel.getHost(hostAName);
+		HostData hostA = physicalPanel.getHostData(hostAName);
 		assertTrue(hostA != null);
 		assertTrue(hostA.getGSACount() == machineA.getGridServiceAgents().getAgents().length);
 		assertTrue(hostA.getGSCCount() == machineA.getGridServiceContainers().getContainers().length);
@@ -100,7 +100,7 @@ public class TwoMachinesOneApplicationTest extends AbstractSeleniumTest {
 		assertTrue(puis.size() == 2);
 		assertTrue(hostA.getOS().equals(OS.WINDOWS32));
 		
-		Host hostB = physicalPanel.getHost(hostBName);
+		HostData hostB = physicalPanel.getHostData(hostBName);
 		assertTrue(hostB != null);
 		assertTrue(hostB.getGSACount() == machineB.getGridServiceAgents().getAgents().length);
 		assertTrue(hostB.getGSCCount() == machineB.getGridServiceContainers().getContainers().length);

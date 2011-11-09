@@ -27,8 +27,8 @@ import test.webui.AbstractSeleniumTest;
 import test.webui.objects.LoginPage;
 import test.webui.objects.topology.ApplicationMap;
 import test.webui.objects.topology.PhysicalPanel;
-import test.webui.objects.topology.PhysicalPanel.Host;
-import test.webui.objects.topology.PhysicalPanel.Host.PuIBox;
+import test.webui.objects.topology.PhysicalPanel.HostData;
+import test.webui.objects.topology.PhysicalPanel.HostData.PuIBox;
 import test.webui.objects.topology.TopologyTab;
 
 public class PuNodeAddedTest extends AbstractSeleniumTest {
@@ -86,7 +86,7 @@ public class PuNodeAddedTest extends AbstractSeleniumTest {
 		
 		final PhysicalPanel physical = topologyTab.getTopologySubPanel().switchToPhysicalPanel();
 		
-		Host hostA = physical.getHost(machineA.getHostName());
+		HostData hostA = physical.getHostData(machineA.getHostName());
 		
 		List<PuIBox> puis = hostA.getPUIs().getBoxes();
 		assertTrue(puis.size() == 2);
@@ -99,7 +99,7 @@ public class PuNodeAddedTest extends AbstractSeleniumTest {
 		RepetitiveConditionProvider condition = new RepetitiveConditionProvider() {
 			@Override
 			public boolean getCondition() {
-				Host hostA = physical.getHost(machineA.getHostName());
+				HostData hostA = physical.getHostData(machineA.getHostName());
 				List<PuIBox> puis = hostA.getPUIs().getBoxes();
 				return (puis.size() == 3);
 			}
@@ -112,7 +112,7 @@ public class PuNodeAddedTest extends AbstractSeleniumTest {
 		condition = new RepetitiveConditionProvider() {
 			@Override
 			public boolean getCondition() {
-				Host hostA = physical.getHost(machineA.getHostName());
+				HostData hostA = physical.getHostData(machineA.getHostName());
 				return (hostA.getGSCCount() == admin.getGridServiceContainers().getContainers().length);
 			}
 		};
@@ -126,7 +126,7 @@ public class PuNodeAddedTest extends AbstractSeleniumTest {
 		condition = new RepetitiveConditionProvider() {
 			@Override
 			public boolean getCondition() {
-				Host hostA = physical.getHost(machineA.getHostName());
+				HostData hostA = physical.getHostData(machineA.getHostName());
 				List<PuIBox> puis = hostA.getPUIs().getBoxes();
 				for (PuIBox p : puis) {
 					if (p.getAssociatedProcessingUnitName().equals("session-test-remote")) {

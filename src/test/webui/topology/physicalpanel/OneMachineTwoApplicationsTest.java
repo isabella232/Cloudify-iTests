@@ -25,9 +25,9 @@ import test.webui.AbstractSeleniumTest;
 import test.webui.objects.LoginPage;
 import test.webui.objects.topology.ApplicationMap;
 import test.webui.objects.topology.PhysicalPanel;
-import test.webui.objects.topology.PhysicalPanel.Host;
-import test.webui.objects.topology.PhysicalPanel.Host.PuIBox;
-import test.webui.objects.topology.PhysicalPanel.Host.PuIBoxes;
+import test.webui.objects.topology.PhysicalPanel.HostData;
+import test.webui.objects.topology.PhysicalPanel.HostData.PuIBox;
+import test.webui.objects.topology.PhysicalPanel.HostData.PuIBoxes;
 import test.webui.objects.topology.PhysicalPanel.OS;
 import test.webui.objects.topology.TopologyTab;
 
@@ -121,7 +121,7 @@ public class OneMachineTwoApplicationsTest extends AbstractSeleniumTest {
 		
 		PhysicalPanel physicalPanel = topologyTab.getTopologySubPanel().switchToPhysicalPanel();
 		
-		Host me = physicalPanel.getHost(machine.getHostName());
+		HostData me = physicalPanel.getHostData(machine.getHostName());
 		
 		assertTrue(me.getGSMCount() == admin.getGridServiceManagers().getManagers().length);
 		assertTrue(me.getGSCCount() == admin.getGridServiceContainers().getContainers().length);
@@ -143,7 +143,7 @@ public class OneMachineTwoApplicationsTest extends AbstractSeleniumTest {
 		
 		appMap.selectApplication(webApp);
 		
-		me = physicalPanel.getHost(machine.getHostName());
+		me = physicalPanel.getHostData(machine.getHostName());
 		
 		assertTrue(me.getGSMCount() == admin.getGridServiceManagers().getManagers().length);
 		assertTrue(me.getGSCCount() == admin.getGridServiceContainers().getContainers().length);

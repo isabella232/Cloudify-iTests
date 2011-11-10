@@ -1,30 +1,21 @@
 package test.cli.cloudify;
 
 import java.io.IOException;
-import java.util.concurrent.TimeUnit;
 
-import org.openspaces.admin.AdminFactory;
 import org.openspaces.admin.machine.Machine;
-import org.openspaces.admin.pu.DeploymentStatus;
-import org.openspaces.admin.pu.ProcessingUnit;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import com.gigaspaces.cloudify.dsl.utils.ServiceUtils;
+import com.gigaspaces.cloudify.shell.commands.CLIException;
 
 import framework.utils.LogUtils;
 import framework.utils.ScriptUtils;
 
-import test.AbstractTest;
-
-public class PetClinicApplicationTest extends AbstractTest {
+public class PetClinicApplicationTest extends AbstractLocalCloudTest {
 	
-	ProcessingUnit mongod;
-	ProcessingUnit mongocfg;
-	ProcessingUnit mongos;
-	ProcessingUnit tomcat;
-	String petClinicAppName = "petclinic";
+	private static final String PETCLINIC_APPLICTION_NAME = "petclinic-mongo";
 	Machine[] machines;
 	
 	@Override
@@ -36,33 +27,25 @@ public class PetClinicApplicationTest extends AbstractTest {
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, groups = "1", enabled = true)
-	public void testPetClinincApplication() {
+	public void testPetClinincApplication() throws CLIException {
 		
 		String applicationDir = ScriptUtils.getBuildPath() + "/examples/petclinic";
-		String command = "bootstrap-localcloud ; install-application " + "--verbose -timeout 25 " + applicationDir;
+		String command = "connect " + this.restUrl + ";" + "install-application " + "--verbose -timeout 25 " + applicationDir;
 		try {
 			CommandTestUtils.runCommandAndWait(command);
-			AdminFactory factory = new AdminFactory();
-			for (Machine machine : machines) {
-				LogUtils.log("adding locator to admin : " + machine.getHostName() + ":4168");
-				factory.addLocator(machine.getHostAddress() + ":4168");
-			}
-			LogUtils.log("adding localhost locator to admin");
-			factory.addLocator("127.0.0.1:4168");
-			LogUtils.log("creating new admin");
-			admin = factory.createAdmin();
-			mongod = admin.getProcessingUnits().waitFor(ServiceUtils.getAbsolutePUName("petclinic-mongo", "mongod"), 20, TimeUnit.SECONDS);
-			assertNotNull(mongod);
-			assertTrue(mongod.getStatus().equals(DeploymentStatus.INTACT));
-			mongocfg = admin.getProcessingUnits().waitFor(ServiceUtils.getAbsolutePUName("petclinic-mongo", "mongo-cfg"), 20, TimeUnit.SECONDS);
-			assertNotNull(mongocfg);
-			assertTrue(mongocfg.getStatus().equals(DeploymentStatus.INTACT));
-			mongos = admin.getProcessingUnits().waitFor(ServiceUtils.getAbsolutePUName("petclinic-mongo", "mongos"), 20, TimeUnit.SECONDS);
-			assertNotNull(mongos);
-			assertTrue(mongos.getStatus().equals(DeploymentStatus.INTACT));
-			tomcat = admin.getProcessingUnits().waitFor(ServiceUtils.getAbsolutePUName("petclinic-mongo", "tomcat"), 20, TimeUnit.SECONDS);
-			assertNotNull(tomcat);
-			assertTrue(tomcat.getStatus().equals(DeploymentStatus.INTACT));
+			int currentNumberOfInstances;
+			
+			currentNumberOfInstances = getProcessingUnitInstanceCount(ServiceUtils.getAbsolutePUName(PETCLINIC_APPLICTION_NAME, "mongod"));
+			assertTrue("Expected 2 PU instances. Actual number of instances is " + currentNumberOfInstances, currentNumberOfInstances == 2);
+			
+			currentNumberOfInstances = getProcessingUnitInstanceCount(ServiceUtils.getAbsolutePUName(PETCLINIC_APPLICTION_NAME, "mongo-cfg"));
+			assertTrue("Expected 1 PU instances. Actual number of instances is " + currentNumberOfInstances, currentNumberOfInstances == 1);
+			
+			currentNumberOfInstances = getProcessingUnitInstanceCount(ServiceUtils.getAbsolutePUName(PETCLINIC_APPLICTION_NAME, "mongos"));
+			assertTrue("Expected 1 PU instances. Actual number of instances is " + currentNumberOfInstances,currentNumberOfInstances == 1);
+
+			currentNumberOfInstances = getProcessingUnitInstanceCount(ServiceUtils.getAbsolutePUName(PETCLINIC_APPLICTION_NAME, "tomcat"));
+			assertTrue("Expected 1 PU instances. Actual number of instances is " + currentNumberOfInstances, currentNumberOfInstances == 1);
 			
 		} catch (IOException e) {
 			LogUtils.log("bootstrap-localcloud failed", e);

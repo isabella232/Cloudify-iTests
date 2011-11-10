@@ -40,8 +40,10 @@ public class AbstractLocalCloudTest extends AbstractCommandTest {
 	@BeforeClass
 	public void beforeClass() throws FileNotFoundException, PackagingException, IOException, InterruptedException{
 		AdminFactory factory = new AdminFactory();
-		factory.addLocator(InetAddress.getLocalHost().getHostAddress() + ":4168");	
+		factory.addLocator(InetAddress.getLocalHost().getHostAddress() + ":4168");
+		LogUtils.log("Tearing-down existion localclouds");
 		runCommand("teardown-localcloud");
+		LogUtils.log("Performing bootstrap");
 		runCommand("bootstrap-localcloud");
 		this.admin = factory.create();
 		assertTrue("Could not find LUS of local cloud", admin.getLookupServices().waitFor(1, WAIT_FOR_TIMEOUT, TimeUnit.SECONDS));
@@ -57,6 +59,14 @@ public class AbstractLocalCloudTest extends AbstractCommandTest {
 	@Override
 	@AfterMethod
 	public void afterTest(){
+		try {
+			LogUtils.log("Tearing-down localcloud");
+			runCommand("teardown-localcloud");
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 		if (admin != null) {
 	    	try {
 	            DumpUtils.dumpLogs(admin);

@@ -1,10 +1,4 @@
-set BUILD_NUMBER=%1
-set SUITE_NAME=%2
-set BUILD_FOLDER=%3
-set USER_HOME=C:\Users\ca
-set apache.port=8000
-set apache.home=%USER_HOME%\Apache Software Foundation\Apache2.2
-set LOCAL_SGPATH=%USER_HOME%\sgwebui-cloudify
+set SUITE_NAME=%1
 
 @cd %LOCAL_SGPATH%\bin
 
@@ -19,4 +13,5 @@ if %SUITE_NAME% == "webui-IE" (
 )
  
 @echo running %selenium.browser% tests...
-call ant -buildfile run.xml testsummary -DBUILD_NUMBER=%BUILD_NUMBER%  -DSUITE_NAME=$SUITE_NAME% -Dbuild.folder=%BUILD_FOLDER%
+@set LOOKUPGROUPS=sgwebui-cloudify
+call ant -buildfile %LOCAL_SGPATH%\bin\run.xml testsummary -DBUILD_NUMBER=%BUILD_NUMBER% -DSUITE_NAME=%SUITE_NAME% -DBUILD_DIR=%RUNTIME_BUILD_LOCATION%

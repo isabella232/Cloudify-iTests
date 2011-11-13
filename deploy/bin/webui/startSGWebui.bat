@@ -3,41 +3,46 @@
 @title Executing Selenium tests
 @echo on
 
-set USER_HOME=C:\Users\ca
 set VERSION=%1
 set MILESTONE=%2
 set BUILD_NUMBER=%3
 set BUILD_VERSION=%4
 set SGTEST_CHECKOUT_FOLDER=%5
-set LOCAL_SGPATH=%USER_HOME%\sgwebui-cloudify
-set REMOTE_BUILD_DIR=\\tarzan\builds\%VERSION%\%BUILD_NUMBER%
-set BASE_DIR=C:\Users\ca
-set PRODUCT=cloudify
+
+
+@echo setting up enviroment variables
+call set-build-env.bat
 
 @echo cleaning sgtest...
 @if exist %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER% rmdir %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER% /s /q
 
 @echo retrieving build from tarzan...
-xcopy %REMOTE_BUILD_DIR%\cloudify\1.5\gigaspaces-cloudify-%VERSION%-%MILESTONE%-b%BUILD_VERSION%.zip %BASE_DIR%
+@mkdir %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER%
+xcopy %REMOTE_BUILD_DIR%\cloudify\1.5\gigaspaces-cloudify-%VERSION%-%MILESTONE%-b%BUILD_VERSION%.zip %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER%
+@echo extracting build file to local-builds folder
+7z x %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER%\gigaspaces-cloudify-%VERSION%-%MILESTONE%-b%BUILD_VERSION%.zip -o%LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER%
+@del %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER%\gigaspaces-cloudify-%VERSION%-%MILESTONE%-b%BUILD_VERSION%.zip
 
-@set BUILD_FOLDER=gigaspaces-cloudify-%VERSION%-%MILESTONE%
+@call set-deploy-env.bat
+@echo starting agents machines : pc-lab73 , pc-lab72
+@call %LOCAL_SGPATH%\deploy\bin\webui\start-agents.bat
 
-@call %LOCAL_SGPATH%\deploy\bin\webui\create_sgtest_jar.bat %SGTEST_CHECKOUT_FOLDER% %BUILD_FOLDER%
+@echo creating sgtest.jar...
+@call %LOCAL_SGPATH%\deploy\bin\webui\create_sgtest_jar.bat
 
-call ant -buildfile %LOCAL_SGPATH%\bin\run.xml relocate-build -DBUILD_VERSION=%BUILD_VERSION% -DBUILD_NUMBER=%BUILD_NUMBER% -Dbuild.folder=%BUILD_FOLDER%
-@del %USER_HOME%\gigaspaces-cloudify-%VERSION%-%MILESTONE%-b%BUILD_VERSION%.zip
+@call %LOCAL_SGPATH%\deploy\bin\webui\download_processing_units.bat
 
-@start %LOCAL_SGPATH%\deploy\bin\webui\start-agents.bat %BUILD_NUMBER% %BUILD_FOLDER%
-
-@call %LOCAL_SGPATH%\deploy\bin\webui\start-suite.bat %BUILD_NUMBER% webui-Firefox %BUILD_FOLDER%
+@echo Running Firefox Suite : 
+@call %LOCAL_SGPATH%\deploy\bin\webui\start-suite.bat webui-Firefox
 
 @echo shutting down agents
-@call %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER%\gigaspaces\tools\groovy\bin\groovy.bat %LOCAL_SGPATH%\src\test\webui\resources\scripts\shutdown
+@call %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER%\%BUILD_FOLDER%\tools\groovy\bin\groovy.bat %LOCAL_SGPATH%\src\test\webui\resources\scripts\shutdown
+
+@echo tranferring reports to tgrid
+xcopy %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER% \\tarzan\tgrid\sgtest-cloudify\deploy\local-builds\%BUILD_NUMBER% /s /i /y
 
 @echo cleaning remote build folder
 @call %LOCAL_SGPATH%\src\test\webui\resources\psexec.exe \\pc-lab73 -u GSPACES\ca -p password -c -f %LOCAL_SGPATH%\src\test\webui\resources\scripts\clean-xap.bat %VERSION% %MILESTONE%
 @echo cleaning local build folder
-@rmdir %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER%\gigaspaces /s /q
-
-@echo tranferring reports to tgrid
-xcopy %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER% \\tarzan\tgrid\sgtest-cloudify\deploy\local-builds\%BUILD_NUMBER% /s /i
+@rmdir %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER% /s /q
+@rmdir %USER_HOME%\%BUILD_FOLDER% /s /q

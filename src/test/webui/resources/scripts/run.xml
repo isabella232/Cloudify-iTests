@@ -3,23 +3,19 @@
 
     <!-- import user properties -->
     <loadproperties srcfile="run.properties"/>
+	
+	<echo message="SUITE_NAME=${SUITE_NAME}"></echo>
+	<echo message="BUILD_DIR=${BUILD_DIR}"></echo>
+	<echo message="BUILD_NUMBER=${BUILD_NUMBER}"></echo>
 
     <!-- sgtest properties -->
-    <property name="sgtest.homedir" value="${basedir}\..\"/>
+    <property name="sgtest.homedir" value="${basedir}/../"/>
     <property name="sgtest.jar.name" value="gs-sgtest.jar"/>
     <property name="sgtest.jar" value="${sgtest.homedir}lib/${sgtest.jar.name}"/>
     <property name="testng.tmp.reports.dir" value="${sgtest.homedir}/tmp-reports"/>
     <property name="testng.summary.dir" value="${sgtest.homedir}/deploy/local-builds/${BUILD_NUMBER}/${SUITE_NAME}"/>
-	<property name="build.dir" value="${sgtest.homedir}/deploy/local-builds/${BUILD_NUMBER}/gigaspaces"/>
-	<property name="report.dir" value="${sgtest.homedir}/deploy/local-builds/${BUILD_NUMBER}"/>
     <property name="testng.reports.dir" value="${sgtest.homedir}/deploy/local-builds/"/>
     <property name="tmp.testng.classes" value="${sgtest.homedir}/tmp"/>
-	<property name="build.file" value="${build.folder}-b${BUILD_VERSION}.zip"/>
-	<property name="build.location" value="${sgtest.homedir}..\"/>
-	<property name="CLI_DIR" value="${build.dir}/tools/cli"/>
-
-	
-	<echo message="Cli dir is ${CLI_DIR}"/>
 
 	
     <!-- classpath -->
@@ -50,7 +46,7 @@
             <include name="**/*.jar"/>
         </fileset>
 
-        <fileset dir="${build.dir}/lib/required">
+        <fileset dir="${BUILD_DIR}/lib/required">
             <include name="**/*.jar"/>
         </fileset>
 
@@ -78,9 +74,14 @@
 		<fileset dir="${sgtest.homedir}/lib/selenium">
 			<include name="**/*.jar"/>
 		</fileset>
-    	
+
+		<!-- DSL jars -->
+    		<fileset dir="${BUILD_DIR}/lib/platform/usm">
+			<include name="**/dsl.jar"/>
+		</fileset>
+		
 		<!-- cli jars -->
-		<fileset dir="${CLI_DIR}">
+		<fileset dir="${BUILD_DIR}/tools/cli">
 			<include name="**/*.jar"/>
 		</fileset>
 
@@ -89,35 +90,28 @@
 		<fileset dir="${sgtest.homedir}/apps/USM/usm/simplejavaprocess">
 			<include name="**/*.jar"/>
 		</fileset>
-		
+
 		<!-- sigar jars -->
-		<fileset dir="${build.dir}/lib/platform/sigar">
+		<fileset dir="${BUILD_DIR}/lib/platform/sigar">
         	<include name="**/*.jar"/>
     	</fileset>
-
+		
 		<!-- groovy jars -->
-		<fileset dir="${build.dir}/tools/groovy/lib">
-	        <include name="**/groovy*.jar"/>
+		<fileset dir="${BUILD_DIR}/tools/groovy/lib">
+	        	<include name="**/groovy*.jar"/>
 			<include name="**/commons-logging*.jar"/>
 			<include name="**/bsf*.jar"/>
-	    </fileset>	
-			
+	    	</fileset>			
+
 		<!-- mail jars -->
 		<fileset dir="${sgtest.homedir}/lib/mail">
         	<include name="**/*.jar"/>
     	</fileset>
 	
 		<dirset dir="${sgtest.homedir}/config"/>
+    	
+        <dirset dir="${tmp.testng.classes}/apps"/>
 		
-		
-		<dirset dir="${tmp.testng.classes}/apps">
-			
-			<!-- the following are to be included into sg-test classpath -->
-			<include name="**/common/**" />
-			<include name="**/remoting/**" />
-			 <include name="**/remotingExceptionHandling/**" />
-		</dirset>
-
 		<pathelement location="${sgtest.jar}"/>
 
     </path>
@@ -132,45 +126,34 @@
     -->
     <target name="testsummary" description="Run tests and generate test summary" depends="prepare">
         <mkdir dir="${tmp.testng.classes}"/>
+
         <unzip src="${sgtest.homedir}/lib/gs-sgtest.jar" dest="${tmp.testng.classes}"/>
 
         <mkdir dir="${sgtest.homedir}/bin/apps"/>
         <copy todir="${sgtest.homedir}/bin/apps">
             <fileset dir="${tmp.testng.classes}/apps"/>
         </copy>
+        <mkdir dir="${testng.summary.dir}"/>
 	 <taskdef resource="testngtasks" classpathref="classpath"/>
         <testng suitename="${SUITE_NAME}" testname="${SUITE_NAME}" classpathref="classpath" outputDir="${testng.summary.dir}"
-        	sourcedir="${tmp.testng.classes}" haltOnfailure="false" useDefaultListeners="false" 
-        	listeners="framework.testng.SGTestNGListener, framework.testng.SGTestNGMethodInterceptor, org.uncommons.reportng.HTMLReporter">
-        	<jvmarg line="-Djava.security.policy=policy/policy.all -Djava.awt.headless=true -Xmx1024m -XX:MaxPermSize=512m"/>
-        	<classfileset dir="${tmp.testng.classes}" includes="${INCLUDE}" excludes="${EXCLUDE}"/>            	
-         <sysproperty key="org.uncommons.reportng.title" value="Service Grid Tests Report - Build ${BUILD_NUMBER}"/>
+                haltOnfailure="false" useDefaultListeners="false"
+				listeners="framework.testng.SGTestNGListener, framework.testng.SGTestNGMethodInterceptor, org.uncommons.reportng.HTMLReporter">
+            <jvmarg line="-Djava.security.policy=policy/policy.all -Djava.awt.headless=true -Xmx1024m -XX:MaxPermSize=512m"/>
+            <classfileset dir="${tmp.testng.classes}" includes="${INCLUDE}" excludes="${EXCLUDE}"/>
+            <sysproperty key="org.uncommons.reportng.title" value="Service Grid Tests Report - Build ${BUILD_NUMBER}"/>
 	     <sysproperty key="sgtest.buildNumber" value="${BUILD_NUMBER}"/>
 	     <sysproperty key="sgtest.suiteName" value="${SUITE_NAME}"/>
-        	<sysproperty key="LOOKUPGROUPS" value="sgwebui-cloudify"/>
-            <sysproperty key="sgtest.buildFolder" value="${report.dir}"/>
+            <sysproperty key="org.openspaces.admin.internal.discovery.DiscoveryService.level" value="ALL"/>
+            <sysproperty key="sgtest.buildFolder" value="${sgtest.homedir}/deploy/local-builds/${BUILD_NUMBER}"/>
             <sysproperty key="sgtest.url" value="http://192.168.9.121:8087/sgtest-cloudify/"/>
         </testng>
-
+       
          <java classpath="${sgtest.homedir}/lib/gs-sgtest.jar" classname="framework.report.HTMLReport" >
             <arg value="${testng.reports.dir}" />
             <arg value="${BUILD_NUMBER}" />
-	     <jvmarg line="-Xmx1024 -XX:MaxPermSize=512m"/>
+	     <jvmarg line="-Xmx1024m -XX:MaxPermSize=512m"/>
 	     <sysproperty key="sgtest.suiteName" value="${SUITE_NAME}"/>
         </java>
     </target>
-	
-	<target name="relocate-build">
-		
-		<move todir="C:\Users\ca\sgwebui-cloudify\deploy\local-builds\${BUILD_NUMBER}\gigaspaces">
-			<fileset dir="C:\Users\ca\${build.folder}"/>
-		</move>
-		<copy file="${sgtest.homedir}\config\hsqldb.xml" todir="C:\Users\ca\sgwebui-cloudify\deploy\local-builds\${BUILD_NUMBER}\gigaspaces\config\gsa"/>
-		<mkdir dir="\\tarzan\users\ca\Eli_Test\${build.folder}"/>
-		<copy todir="\\tarzan\users\ca\Eli_Test\${build.folder}">
-			<fileset dir="C:\Users\ca\sgwebui-cloudify\deploy\local-builds\${BUILD_NUMBER}\gigaspaces"/>
-		</copy>
-		
-	</target>
 
 </project>

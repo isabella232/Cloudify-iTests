@@ -3,21 +3,18 @@ package test.cli.cloudify;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
-import org.openspaces.admin.Admin;
-import org.openspaces.admin.AdminFactory;
 import org.openspaces.admin.gsc.GridServiceContainer;
-import org.openspaces.admin.machine.Machine;
 import org.openspaces.admin.pu.ProcessingUnit;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import com.gigaspaces.cloudify.dsl.utils.ServiceUtils;
 
-import test.AbstractTest;
-import framework.utils.LogUtils;
 import framework.utils.AssertUtils.RepetitiveConditionProvider;
+import framework.utils.LogUtils;
 
-public class InstallAndUninstallServiceTest extends AbstractTest {
+public class InstallAndUninstallServiceTest extends AbstractLocalCloudTest {
 
 	private static final String DEFAULT_APPLICATION_NAME = "default";
 	public static final String SERVLET_WAR_NAME = "servlet.war";
@@ -37,13 +34,11 @@ public class InstallAndUninstallServiceTest extends AbstractTest {
 	
 	public static final String MIRROR_SERVICE_FOLDER_NAME = "stockAnalyticsMirror";
 	public static final String MIRROR_SERVICE_NAME = "stockAnalyticsMirror";
-	private Machine[] machines;
 	
 	@Override
 	@BeforeMethod
 	public void beforeTest() {
 		super.beforeTest();
-		machines = admin.getMachines().getMachines();
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
@@ -66,7 +61,7 @@ public class InstallAndUninstallServiceTest extends AbstractTest {
 		testRestApiInstall(STATEFUL_SERVICE_NAME, getUsmServicePath(STATEFUL_FOLDER_NAME));
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = false)
 	public void testDataGridRecipeInstall() throws IOException, InterruptedException {
 		testRestApiInstall(DATAGRID_SERVICE_NAME, getUsmServicePath(DATAGRID_FOLDER_NAME));
 	}
@@ -78,11 +73,9 @@ public class InstallAndUninstallServiceTest extends AbstractTest {
 	
 	void testRestApiInstall(String serviceName, String servicePath) throws IOException, InterruptedException{
 		
-		CommandTestUtils.runCommandAndWait("bootstrap-localcloud " +
-				";install-service --verbose " + servicePath + 
-				";");
+		CommandTestUtils.runCommandAndWait("connect " + restUrl + 
+				";install-service --verbose " + servicePath );
 		
-		admin = getAdminWithLocators();
 		String absolutePUName = ServiceUtils.getAbsolutePUName(DEFAULT_APPLICATION_NAME, serviceName);
 		ProcessingUnit processingUnit = admin.getProcessingUnits().waitFor(absolutePUName, Constants.PROCESSINGUNIT_TIMEOUT_SEC, TimeUnit.SECONDS);
         assertTrue("Instance of '" + serviceName + "' service was not found", 
@@ -95,17 +88,6 @@ public class InstallAndUninstallServiceTest extends AbstractTest {
 	    CommandTestUtils.runCommandAndWait("teardown-localcloud");
 		
 		assertGSCIsNotDiscovered(gsc);
-	}
-	
-	private Admin getAdminWithLocators() {
-		AdminFactory factory = new AdminFactory();
-		for (Machine machine : machines) {
-			LogUtils.log("adding locator to admin : " + machine.getHostName() + ":4168");
-			factory.addLocator(machine.getHostAddress() + ":4168");
-		}
-		LogUtils.log("adding localhost locator to admin");
-		factory.addLocator("127.0.0.1:4168");
-		return factory.createAdmin();
 	}
 
 	private static void assertGSCIsNotDiscovered(final GridServiceContainer gsc) {
@@ -122,5 +104,19 @@ public class InstallAndUninstallServiceTest extends AbstractTest {
 	
 	private String getUsmServicePath(String dirOrFilename) {
 		return CommandTestUtils.getPath("apps/USM/usm/" + dirOrFilename);
+	}
+	
+	@Override
+	@AfterMethod
+	public void afterTest() {
+		try {
+			CommandTestUtils.runCommandAndWait("teardown-localcloud");
+		} catch (IOException e) {
+			LogUtils.log("teardown Failed");
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			LogUtils.log("teardown Failed");
+			e.printStackTrace();
+		}
 	}
 }

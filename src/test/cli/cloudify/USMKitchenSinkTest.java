@@ -29,7 +29,7 @@ import com.gigaspaces.cloudify.dsl.internal.ServiceReader;
 import com.gigaspaces.cloudify.dsl.internal.packaging.PackagingException;
 import com.gigaspaces.cloudify.dsl.utils.ServiceUtils;
 import com.gigaspaces.cloudify.usm.USMUtils;
-import com.gigaspaces.cloudify.usm.launcher.USMException;
+import com.gigaspaces.cloudify.usm.USMException;
 import com.gigaspaces.internal.sigar.SigarHolder;
 import com.gigaspaces.log.AllLogEntryMatcher;
 import com.gigaspaces.log.ContinuousLogEntryMatcher;
@@ -71,7 +71,7 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 			CloudifyConstants.USM_MONITORS_ACTUAL_PROCESS_ID, "NumberTwo",
 			"NumberOne" };
 	
-	private static final String[] EXPECTED_PROCESS_PRINTOUTS ={"Opening port:", "dieOnParentDeath = false" };
+	private static final String[] EXPECTED_PROCESS_PRINTOUTS ={"Opening port:"};
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
 	public void testKitchenSink() throws IOException, InterruptedException,
@@ -119,10 +119,18 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 		checkMonitors(pui);
 		assertEquals("The actual PID value should not change after a GSC restart", initialActualPid, this.actualPid);
 
+		// reset the matcher
+		matcher = new ContinuousLogEntryMatcher(
+				new AllLogEntryMatcher(), new AllLogEntryMatcher());
+
 		// check that previous log entries have been printed to this log
+
 		logger.info("Checking that previous process printouts are printed to the new GSC logs");
 		checkForPrintouts(pui, pid, matcher, EXPECTED_PROCESS_PRINTOUTS);
  
+		// reset the matcher
+		matcher = new ContinuousLogEntryMatcher(
+				new AllLogEntryMatcher(), new AllLogEntryMatcher());
 		// check that the process printouts only appear once - to make sure that additional process invocations were not still in the same file
 		final int numOfStartupEntries = calculateNumberOfRecurrencesInGSCLog(pui, pid, matcher, EXPECTED_PROCESS_PRINTOUTS[0]);
 		assertEquals("Process startup log entries should only appear once in the log file", 1, numOfStartupEntries);
@@ -132,6 +140,8 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 
 		
 		// test shutdown events
+		matcher = new ContinuousLogEntryMatcher(
+				new AllLogEntryMatcher(), new AllLogEntryMatcher());
 		checkForShutdownPrintouts(pui, pid, matcher);
 
 		// check port closed.
@@ -372,7 +382,7 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 		}
 
 		if (index != expectedValues.length) {
-			AssertFail("A printout entry was not found. The missing entry was: "
+			AssertFail("A printout entry was not found. The mi  ssing entry was: "
 					+ expectedValues[index]);
 		}
 	}

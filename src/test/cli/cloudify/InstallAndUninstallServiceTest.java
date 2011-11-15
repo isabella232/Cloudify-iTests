@@ -5,14 +5,12 @@ import java.util.concurrent.TimeUnit;
 
 import org.openspaces.admin.gsc.GridServiceContainer;
 import org.openspaces.admin.pu.ProcessingUnit;
-import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import com.gigaspaces.cloudify.dsl.utils.ServiceUtils;
 
 import framework.utils.AssertUtils.RepetitiveConditionProvider;
-import framework.utils.LogUtils;
 
 public class InstallAndUninstallServiceTest extends AbstractLocalCloudTest {
 
@@ -104,19 +102,5 @@ public class InstallAndUninstallServiceTest extends AbstractLocalCloudTest {
 	
 	private String getUsmServicePath(String dirOrFilename) {
 		return CommandTestUtils.getPath("apps/USM/usm/" + dirOrFilename);
-	}
-	
-	@Override
-	@AfterMethod
-	public void afterTest() {
-		try {
-			CommandTestUtils.runCommandAndWait("teardown-localcloud");
-		} catch (IOException e) {
-			LogUtils.log("teardown Failed");
-			e.printStackTrace();
-		} catch (InterruptedException e) {
-			LogUtils.log("teardown Failed");
-			e.printStackTrace();
-		}
 	}
 }

@@ -58,7 +58,7 @@ public class PetClinicApplicationTest extends AbstractLocalCloudTest {
 	}
 	
 	@Override
-	@AfterMethod
+	@AfterMethod(alwaysRun=true)
 	public void afterTest() {
 		try {
 			LogUtils.log("tearing down local cloud");

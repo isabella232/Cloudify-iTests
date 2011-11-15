@@ -17,7 +17,7 @@ import com.gigaspaces.cloudify.dsl.internal.packaging.PackagingException;
 
 import framework.utils.LogUtils;
 
-public class CustomCommandsOnMultipleInstancesTest extends AbstractLocalCloudTest {
+public class CustomCommandsOnMultipleInstancesTest extends AbstractSingleBootstrapTest {
 	
 	private final String RECIPE_DIR_PATH = CommandTestUtils
 									.getPath("apps/USM/usm/simpleCustomCommandsMultipleInstances");

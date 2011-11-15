@@ -3,7 +3,6 @@ package test.cli.cloudify;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.Collection;
@@ -12,7 +11,6 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.hyperic.sigar.SigarException;
-import org.openspaces.admin.AdminFactory;
 import org.openspaces.admin.gsc.GridServiceContainer;
 import org.openspaces.admin.gsc.events.GridServiceContainerAddedEventListener;
 import org.openspaces.admin.gsc.events.GridServiceContainerRemovedEventListener;
@@ -29,26 +27,26 @@ import org.testng.annotations.Test;
 import com.gigaspaces.cloudify.dsl.internal.CloudifyConstants;
 import com.gigaspaces.cloudify.dsl.internal.ServiceReader;
 import com.gigaspaces.cloudify.dsl.internal.packaging.PackagingException;
-import com.gigaspaces.cloudify.usm.USMUtils;
-import com.gigaspaces.cloudify.usm.USMException;
-import com.gigaspaces.internal.sigar.SigarHolder;
 import com.gigaspaces.cloudify.dsl.utils.ServiceUtils;
-
+import com.gigaspaces.cloudify.usm.USMUtils;
+import com.gigaspaces.cloudify.usm.launcher.USMException;
+import com.gigaspaces.internal.sigar.SigarHolder;
 import com.gigaspaces.log.AllLogEntryMatcher;
 import com.gigaspaces.log.ContinuousLogEntryMatcher;
 import com.gigaspaces.log.LogEntries;
 import com.gigaspaces.log.LogEntry;
 import com.gigaspaces.log.LogProcessType;
 
-public class USMKitchenSinkTest extends AbstractCommandTest {
+public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 
 	private static final String LOCAL_GROUP_NAME = "kitchensinktest";
 
 	@Override
 	@BeforeMethod
 	public void beforeTest() {
+		super.beforeTest();
 	}
-
+	
 	final private String RECIPE_DIR_PATH = CommandTestUtils
 			.getPath("apps/USM/usm/kitchensink");
 
@@ -525,17 +523,7 @@ public class USMKitchenSinkTest extends AbstractCommandTest {
 		File serviceDir = new File(RECIPE_DIR_PATH);
 		ServiceReader.getServiceFromDirectory(serviceDir).getService();
 
-		runCommand("bootstrap-localcloud;install-service --verbose "
-				+ RECIPE_DIR_PATH);
-		AdminFactory factory = new AdminFactory();
-		factory.addLocator(InetAddress.getLocalHost().getHostAddress()
-				+ ":4168");
-		this.admin = factory.create();
-		assertTrue("Could not find LUS of local cloud", admin
-				.getLookupServices().waitFor(1, 10, TimeUnit.SECONDS));
-
-		this.restUrl = "http://" + InetAddress.getLocalHost().getHostAddress()
-				+ ":8100";
+		runCommand("connect " + restUrl + ";install-service --verbose " + RECIPE_DIR_PATH);
 	}
 
 	private boolean isPortOpen(String host) {

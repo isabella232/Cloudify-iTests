@@ -6,8 +6,11 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+
+import net.jini.discovery.Constants;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -18,6 +21,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.type.TypeFactory;
 import org.codehaus.jackson.type.JavaType;
+import org.openspaces.admin.Admin;
 import org.openspaces.admin.AdminFactory;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
@@ -37,23 +41,40 @@ public class AbstractLocalCloudTest extends AbstractCommandTest {
 	protected final int WAIT_FOR_TIMEOUT = 20;
 	private final int HTTP_STATUS_OK = 200;
 	
+	//Teardown any existing localclouds left from previous tests
 	@BeforeClass
 	public void beforeClass() throws FileNotFoundException, PackagingException, IOException, InterruptedException{
-		AdminFactory factory = new AdminFactory();
-		factory.addLocator(InetAddress.getLocalHost().getHostAddress() + ":4168");
 		LogUtils.log("Tearing-down existion localclouds");
 		runCommand("teardown-localcloud");
-		LogUtils.log("Performing bootstrap");
-		runCommand("bootstrap-localcloud");
-		this.admin = factory.create();
-		assertTrue("Could not find LUS of local cloud", admin.getLookupServices().waitFor(1, WAIT_FOR_TIMEOUT, TimeUnit.SECONDS));
-		this.restUrl = "http://" + InetAddress.getLocalHost().getHostAddress() + ":8100";			
 	}
 	
 	@Override
 	@BeforeMethod
 	public void beforeTest(){
 		LogUtils.log("Test Configuration Started: "+ this.getClass());
+		try {
+			LogUtils.log("Performing bootstrap");
+			runCommand("bootstrap-localcloud");
+		} catch (IOException e) {
+			LogUtils.log("Booststrap Failed.");
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			LogUtils.log("Booststrap Failed.");
+			e.printStackTrace();
+		}
+		
+		try {
+			this.admin = getAdminWithLocators();
+		} catch (UnknownHostException e1) {
+			LogUtils.log("Could not create admin " + e1);
+			e1.printStackTrace();
+		}
+		assertTrue("Could not find LUS of local cloud", admin.getLookupServices().waitFor(1, WAIT_FOR_TIMEOUT, TimeUnit.SECONDS));
+		try {
+			this.restUrl = "http://" + InetAddress.getLocalHost().getHostAddress() + ":8100";
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+		}		
 	}
 	
 	@Override
@@ -74,6 +95,17 @@ public class AbstractLocalCloudTest extends AbstractCommandTest {
 	            log("failed to dump logs", t);
 	        }
 	    }
+	}
+	
+	private Admin getAdminWithLocators() throws UnknownHostException {
+		admin = newAdmin();
+		//Class LocalhostGridAgentBootsrapper defines the locator discovery addresses.
+		String nicAddress = Constants.getHostAddress();
+		//int defaultLusPort = Constants.getDiscoveryPort();
+		AdminFactory factory = new AdminFactory();
+		LogUtils.log("adding locator to admin : " + nicAddress + ":4168");
+		factory.addLocator(nicAddress + ":4168");
+		return factory.createAdmin();
 	}
 	
 	@AfterClass(alwaysRun = true)

@@ -2,8 +2,6 @@ package test.cli.cloudify;
 
 import java.io.IOException;
 
-import org.openspaces.admin.machine.Machine;
-import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -16,14 +14,12 @@ import framework.utils.ScriptUtils;
 public class PetClinicApplicationTest extends AbstractLocalCloudTest {
 	
 	private static final String PETCLINIC_APPLICTION_NAME = "petclinic-mongo";
-	Machine[] machines;
+//	Machine[] machines;
 	
 	@Override
 	@BeforeMethod
 	public void beforeTest() {
 		super.beforeTest();	
-		machines = admin.getMachines().getMachines();
-		admin.close();
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, groups = "1", enabled = true)
@@ -34,7 +30,6 @@ public class PetClinicApplicationTest extends AbstractLocalCloudTest {
 		try {
 			CommandTestUtils.runCommandAndWait(command);
 			int currentNumberOfInstances;
-			
 			currentNumberOfInstances = getProcessingUnitInstanceCount(ServiceUtils.getAbsolutePUName(PETCLINIC_APPLICTION_NAME, "mongod"));
 			assertTrue("Expected 2 PU instances. Actual number of instances is " + currentNumberOfInstances, currentNumberOfInstances == 2);
 			
@@ -55,20 +50,6 @@ public class PetClinicApplicationTest extends AbstractLocalCloudTest {
 			afterTest();
 		}
 		
-	}
-	
-	@Override
-	@AfterMethod(alwaysRun=true)
-	public void afterTest() {
-		try {
-			LogUtils.log("tearing down local cloud");
-			CommandTestUtils.runCommandAndWait("teardown-localcloud");
-		} catch (IOException e) {
-			LogUtils.log("teardown-localcloud failed", e);
-		} catch (InterruptedException e) {
-			LogUtils.log("teardown-localcloud failed", e);
-		}
-		super.afterTest();	
 	}
 
 }

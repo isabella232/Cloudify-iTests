@@ -13,32 +13,36 @@ service {
 
 		postStart "post_start.groovy"
 
-		preStop (["pre_stop.groovy", "true", "String_with_Spaces", "1234"])
+		preStop ([
+			"pre_stop.groovy",
+			"true",
+			"String_with_Spaces",
+			"1234"
+		])
 		postStop{ println "postStop fired" }
-		shutdown { 
+		shutdown {
 			println "shutdown fired"
 			sleep 15000 // sleep so that the test can pick up the event printouts from the log
 		}
-		
+
 		details(["stam":{"HA HA HAAAAAAAAAAAAAAAAAAA"},
 			"SomeKey":{"22222222222222222222222222"}])
-		monitors(["NumberTwo":{return 2},
+		monitors (["NumberTwo":{return 2},
 			"NumberOne":{return "1"}])
-		 
+
 	}
 
-	
-	customCommands ([
-		"cmd1" : { println "This is the cmd1 custom command"},
-		"cmd2" : { throw new Exception("This is the cmd2 custom command - This is an error test")},
-		"cmd3" : { "This is the cmd3 custom command. Service Dir is: " + context.serviceDirectory },
-		"cmd4" : "context_command.groovy",
-		"cmd5" : {"this is the custom parameters command. expecting 123: "+1+x+y}
-	])
 
-	
+	customCommands ([
+				"cmd1" : { println "This is the cmd1 custom command"},
+				"cmd2" : { throw new Exception("This is the cmd2 custom command - This is an error test")},
+				"cmd3" : { "This is the cmd3 custom command. Service Dir is: " + context.serviceDirectory },
+				"cmd4" : "context_command.groovy",
+				"cmd5" : {"this is the custom parameters command. expecting 123: "+1+x+y}
+			])
+
+
 	plugins ([
-		
 		plugin {
 			name "portLiveness"
 			className "com.gigaspaces.cloudify.usm.liveness.PortLivenessDetector"
@@ -48,7 +52,6 @@ service {
 						"Host" : "127.0.0.1"
 					])
 		},
-	
 		plugin{
 
 			name "JMX Metrics"
@@ -96,4 +99,9 @@ service {
 					])
 		}
 	])
+
+	customProperties ([
+				"TailerInterval": "1"
+			])
+
 }

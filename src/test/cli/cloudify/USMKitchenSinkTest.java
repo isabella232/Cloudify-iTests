@@ -11,9 +11,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import org.hyperic.sigar.SigarException;
 import org.openspaces.admin.AdminFactory;
+import org.openspaces.admin.gsc.GridServiceContainer;
+import org.openspaces.admin.gsc.events.GridServiceContainerAddedEventListener;
+import org.openspaces.admin.gsc.events.GridServiceContainerRemovedEventListener;
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.openspaces.admin.pu.ProcessingUnitInstance;
+import org.openspaces.admin.pu.events.ProcessingUnitInstanceAddedEventListener;
+import org.openspaces.admin.pu.events.ProcessingUnitInstanceRemovedEventListener;
 import org.openspaces.pu.service.ServiceDetails;
 import org.openspaces.pu.service.ServiceMonitors;
 import org.testng.annotations.AfterMethod;
@@ -23,7 +29,11 @@ import org.testng.annotations.Test;
 import com.gigaspaces.cloudify.dsl.internal.CloudifyConstants;
 import com.gigaspaces.cloudify.dsl.internal.ServiceReader;
 import com.gigaspaces.cloudify.dsl.internal.packaging.PackagingException;
+import com.gigaspaces.cloudify.usm.USMUtils;
+import com.gigaspaces.cloudify.usm.USMException;
+import com.gigaspaces.internal.sigar.SigarHolder;
 import com.gigaspaces.cloudify.dsl.utils.ServiceUtils;
+
 import com.gigaspaces.log.AllLogEntryMatcher;
 import com.gigaspaces.log.ContinuousLogEntryMatcher;
 import com.gigaspaces.log.LogEntries;
@@ -42,6 +52,9 @@ public class USMKitchenSinkTest extends AbstractCommandTest {
 	final private String RECIPE_DIR_PATH = CommandTestUtils
 			.getPath("apps/USM/usm/kitchensink");
 
+	// set in checkMonitors
+	private long actualPid;
+
 	private static final String[] EXPECTED_STARTUP_EVENT_STRINGS = {
 			"init fired Test Property number 1",
 			"preInstall fired Test Property number 2",
@@ -52,12 +65,15 @@ public class USMKitchenSinkTest extends AbstractCommandTest {
 			"preStop fired", "String_with_Spaces", "postStop fired",
 			"shutdown fired" };
 
-	private static final String EXPECTED_DETAILS_FIELDS[] = { "Details",
+	private static final String[] EXPECTED_DETAILS_FIELDS = { "Details",
 			"Counter", "Type", "stam", "SomeKey" };
 
-	private static final String EXPECTED_MONITORS_FIELDS[] = {
-			"Counter", CloudifyConstants.USM_MONITORS_CHILD_PROCESS_ID,
-			CloudifyConstants.USM_MONITORS_ACTUAL_PROCESS_ID, "NumberTwo", "NumberOne" };
+	private static final String[] EXPECTED_MONITORS_FIELDS = { "Counter",
+			CloudifyConstants.USM_MONITORS_CHILD_PROCESS_ID,
+			CloudifyConstants.USM_MONITORS_ACTUAL_PROCESS_ID, "NumberTwo",
+			"NumberOne" };
+	
+	private static final String[] EXPECTED_PROCESS_PRINTOUTS ={"Opening port:", "dieOnParentDeath = false" };
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
 	public void testKitchenSink() throws IOException, InterruptedException,
@@ -73,7 +89,8 @@ public class USMKitchenSinkTest extends AbstractCommandTest {
 		final String host = pui.getGridServiceContainer().getMachine()
 				.getHostAddress();
 
-		assertTrue("Process port is not open! Process did start as expected",
+		assertTrue(
+				"Process port is not open! Process did not start as expected",
 				isPortOpen(host));
 
 		long pid = pui.getGridServiceContainer().getVirtualMachine()
@@ -82,18 +99,40 @@ public class USMKitchenSinkTest extends AbstractCommandTest {
 		ContinuousLogEntryMatcher matcher = new ContinuousLogEntryMatcher(
 				new AllLogEntryMatcher(), new AllLogEntryMatcher());
 
+		// run tests
 		checkForStartupPrintouts(pui, pid, matcher);
 
-		// verify details
 		checkDetails(pui);
 
 		checkMonitors(pui);
 
 		checkCustomCommands();
 
+		long initialActualPid = this.actualPid;
+		
+		checkKillGSC(pid, host, pu);
+				
+		// pui was restarted, so find the new one
+		pui = findPUI(pu);
+		pid = pui.getGridServiceContainer().getVirtualMachine()
+				.getDetails().getPid();
+		
+		// this will reset the actualPid
+		checkMonitors(pui);
+		assertEquals("The actual PID value should not change after a GSC restart", initialActualPid, this.actualPid);
+
+		// check that previous log entries have been printed to this log
+		logger.info("Checking that previous process printouts are printed to the new GSC logs");
+		checkForPrintouts(pui, pid, matcher, EXPECTED_PROCESS_PRINTOUTS);
+ 
+		// check that the process printouts only appear once - to make sure that additional process invocations were not still in the same file
+		final int numOfStartupEntries = calculateNumberOfRecurrencesInGSCLog(pui, pid, matcher, EXPECTED_PROCESS_PRINTOUTS[0]);
+		assertEquals("Process startup log entries should only appear once in the log file", 1, numOfStartupEntries);
+		
 		// undeploy
 		pu.undeploy();
 
+		
 		// test shutdown events
 		checkForShutdownPrintouts(pui, pid, matcher);
 
@@ -102,6 +141,197 @@ public class USMKitchenSinkTest extends AbstractCommandTest {
 				"Process port is still open! Process did not shut down as expected",
 				!isPortOpen(host));
 
+	}
+
+	private static final java.util.logging.Logger logger = java.util.logging.Logger
+			.getLogger(USMKitchenSinkTest.class.getName());
+
+	private static class KitchenSinkEventListener implements
+			GridServiceContainerAddedEventListener,
+			GridServiceContainerRemovedEventListener,
+			ProcessingUnitInstanceAddedEventListener,
+			ProcessingUnitInstanceRemovedEventListener {
+
+		private GridServiceContainer gscRemoved = null;
+		private GridServiceContainer gscAdded = null;
+		private ProcessingUnitInstance puiRemoved = null;
+		private ProcessingUnitInstance puiAdded = null;
+		private boolean errorEncountered = false;
+		private String errorMessage = null;
+
+		@Override
+		public synchronized void gridServiceContainerRemoved(
+				GridServiceContainer gridServiceContainer) {
+			logger.info("gridServiceContainerRemoved");
+			if (checkPreConditions(this.gscRemoved, gridServiceContainer,
+					"gridServiceContainerRemoved")) {
+				this.gscRemoved = gridServiceContainer;
+				this.notify();
+			}
+
+		}
+
+		private synchronized boolean checkPreConditions(Object currentObject,
+				Object newObject, String objectType) {
+			
+			if (this.errorEncountered) {
+				return false;
+			}
+			if (currentObject != null) {
+				this.errorEncountered = true;
+				this.errorMessage = "Message of type " + objectType
+						+ " was encountered twice";
+			}
+
+			return true;
+
+		}
+
+		@Override
+		public synchronized void gridServiceContainerAdded(
+				GridServiceContainer gridServiceContainer) {
+			logger.info("gridServiceContainerAdded");
+			if (checkPreConditions(this.gscAdded, gridServiceContainer,
+					"gridServiceContainerRemoved")) {
+				this.gscAdded = gridServiceContainer;
+				this.notify();
+			}
+
+		}
+
+		@Override
+		public synchronized void processingUnitInstanceRemoved(
+				ProcessingUnitInstance processingUnitInstance) {
+			logger.info("processingUnitInstanceRemoved");
+			if (checkPreConditions(this.puiRemoved, processingUnitInstance,
+					"processingUnitInstanceRemoved")) {
+				this.puiRemoved = processingUnitInstance;
+				this.notify();
+			}
+
+		}
+
+		@Override
+		public synchronized void processingUnitInstanceAdded(
+				ProcessingUnitInstance processingUnitInstance) {
+			logger.info("processingUnitInstanceAdded");
+			if (checkPreConditions(this.puiAdded, processingUnitInstance,
+					"processingUnitInstanceAdded")) {
+				this.puiAdded = processingUnitInstance;
+				this.notify();
+			}
+
+		}
+
+		public GridServiceContainer getGscRemoved() {
+			return gscRemoved;
+		}
+
+		public GridServiceContainer getGscAdded() {
+			return gscAdded;
+		}
+
+		public ProcessingUnitInstance getPuiRemoved() {
+			return puiRemoved;
+		}
+
+		public ProcessingUnitInstance getPuiAdded() {
+			return puiAdded;
+		}
+
+		public boolean isErrorEncountered() {
+			return errorEncountered;
+		}
+
+		public String getErrorMessage() {
+			return errorMessage;
+		}
+
+	}
+
+	private void checkKillGSC(long pid, String host, ProcessingUnit pu)
+			throws InterruptedException {
+
+		KitchenSinkEventListener listener = new KitchenSinkEventListener();
+
+		this.admin.getGridServiceContainers().getGridServiceContainerAdded()
+				.add(listener, false);
+		this.admin.getGridServiceContainers().getGridServiceContainerRemoved()
+				.add(listener);
+		pu.getProcessingUnitInstanceAdded().add(listener, false);
+		pu.getProcessingUnitInstanceRemoved().add(listener);
+
+		synchronized (listener) {
+			logger.info("Killin GSC (PID - " + pid + ")");
+			killProcess(pid);
+
+			// check that the simple process port is still open.
+			assertTrue(
+					"Process port is not open! Process did not start as expected",
+					isPortOpen(host));
+
+			logger.info("Waiting for Admin API to regsiter GSC Remove/Add and PUI Remove/Add");
+			waitForCorrectListenerState(listener, 10000, 300000);
+
+			// verify correct number of instances
+			final boolean foundInstance = pu.waitFor(1, 30, TimeUnit.SECONDS);
+			assertTrue("New pui was not found after GSC failure", foundInstance);
+
+		}
+		// kill the GSC process and verify it is dead.
+
+		admin.removeEventListener(listener);
+
+		// check that process restarted correctly
+
+	}
+
+	private boolean checkListenerState(KitchenSinkEventListener listener) {
+		// if(listener.getGscRemoved() == null && listener.getPuiRemoved() ==
+		// null) {
+		// AssertFail("Neither GSC not PUI were removed during the first interval");
+		// }
+
+		if (listener.getGscRemoved() != null
+				&& listener.getPuiRemoved() != null
+				&& listener.getGscAdded() != null
+				&& listener.getPuiAdded() != null) {
+			return true;
+		}
+
+		return false;
+
+	}
+
+	private void waitForCorrectListenerState(KitchenSinkEventListener listener,
+			long interval, long timeout) throws InterruptedException {
+		final long start = System.currentTimeMillis();
+		final long end = start + timeout;
+		boolean checkSucceeded = false;
+		while (!checkSucceeded && System.currentTimeMillis() < end) {
+			listener.wait(interval);
+			checkSucceeded = checkListenerState(listener);
+		}
+
+		assertTrue("GSC and PUI did not start", checkSucceeded);
+	}
+
+	private void killProcess(long pid) {
+		try {
+			SigarHolder.getSigar().kill(pid, "SIGTERM");
+		} catch (SigarException e) {
+			throw new IllegalStateException("Failed to kill GSC PID: " + pid, e);
+		}
+
+		sleep(1000);
+
+		try {
+			assertTrue(
+					"Process port is not open after killing GSC! Process died unexpectedly",
+					!USMUtils.isProcessAlive(pid));
+		} catch (USMException e) {
+			throw new IllegalStateException("Failed to kill GSC PID: " + pid, e);
+		}
 	}
 
 	private void checkForShutdownPrintouts(ProcessingUnitInstance pui,
@@ -125,7 +355,48 @@ public class USMKitchenSinkTest extends AbstractCommandTest {
 					+ EXPECTED_SHUTDOWN_EVENT_STRINGS[shutdownEventIndex]);
 		}
 	}
+	
+	private void checkForPrintouts(ProcessingUnitInstance pui,
+			long pid, ContinuousLogEntryMatcher matcher, final String[] expectedValues) {
+		LogEntries entries = pui.getGridServiceContainer()
+				.getGridServiceAgent()
+				.logEntries(LogProcessType.GSC, pid, matcher);
+		
+		int index = 0;
+		for (LogEntry logEntry : entries) {
+			String text = logEntry.getText();
+			if (text.contains(expectedValues[index])) {
+				++index;
+				if (index == expectedValues.length) {
+					break;
+				}
+			}
+		}
 
+		if (index != expectedValues.length) {
+			AssertFail("A printout entry was not found. The missing entry was: "
+					+ expectedValues[index]);
+		}
+	}
+
+
+	private int calculateNumberOfRecurrencesInGSCLog(ProcessingUnitInstance pui,
+			long pid, ContinuousLogEntryMatcher matcher, final String expectedValue) {
+		LogEntries entries = pui.getGridServiceContainer()
+				.getGridServiceAgent()
+				.logEntries(LogProcessType.GSC, pid, matcher);
+		int result = 0;
+		for (LogEntry logEntry : entries) {
+			String text = logEntry.getText();
+			if (text.contains(expectedValue)) {
+				++result;
+			}
+		}
+
+		return result;
+	}
+
+	
 	private void checkCustomCommands() throws IOException, InterruptedException {
 		// test custom commands
 		String invoke1Result = runCommand("connect " + this.restUrl
@@ -158,18 +429,18 @@ public class USMKitchenSinkTest extends AbstractCommandTest {
 		String invoke4Result = runCommand("connect " + this.restUrl
 				+ "; invoke kitchensink-service cmd4");
 		if ((!invoke4Result.contains("1: OK"))
-				|| (!invoke4Result.contains("context_command"))				
-				|| (!invoke4Result.contains("instance is:"))
-				) {
+				|| (!invoke4Result.contains("context_command"))
+				|| (!invoke4Result.contains("instance is:"))) {
 			AssertFail("Custom command cmd4 returned unexpected result: "
 					+ invoke4Result);
 		}
-		
+
 		String invoke5Result = runCommand("connect " + this.restUrl
 				+ "; invoke kitchensink-service cmd5 ['x=2' 'y=3']");
 
 		if ((!invoke5Result.contains("1: OK"))
-				|| (!invoke5Result.contains("this is the custom parameters command. expecting 123: 123"))) {
+				|| (!invoke5Result
+						.contains("this is the custom parameters command. expecting 123: 123"))) {
 			AssertFail("Custom command cmd5 returned unexpected result: "
 					+ invoke1Result);
 		}
@@ -183,11 +454,16 @@ public class USMKitchenSinkTest extends AbstractCommandTest {
 		for (ServiceMonitors serviceMonitors : allSserviceMonitors) {
 			allMonitors.putAll(serviceMonitors.getMonitors());
 		}
+		
+		 
 
 		for (String monitorKey : EXPECTED_MONITORS_FIELDS) {
 			assertTrue("Missing Monitor Key: " + monitorKey,
 					allMonitors.containsKey(monitorKey));
 		}
+		
+		this.actualPid = (Long) allMonitors.get(CloudifyConstants.USM_MONITORS_ACTUAL_PROCESS_ID);
+		assertTrue("Actual PID should not be zero", this.actualPid > 0);
 	}
 
 	private void checkDetails(ProcessingUnitInstance pui) {
@@ -249,13 +525,17 @@ public class USMKitchenSinkTest extends AbstractCommandTest {
 		File serviceDir = new File(RECIPE_DIR_PATH);
 		ServiceReader.getServiceFromDirectory(serviceDir).getService();
 
-		runCommand("bootstrap-localcloud;install-service --verbose " + RECIPE_DIR_PATH);
+		runCommand("bootstrap-localcloud;install-service --verbose "
+				+ RECIPE_DIR_PATH);
 		AdminFactory factory = new AdminFactory();
-		factory.addLocator(InetAddress.getLocalHost().getHostAddress() + ":4168");
+		factory.addLocator(InetAddress.getLocalHost().getHostAddress()
+				+ ":4168");
 		this.admin = factory.create();
-		assertTrue("Could not find LUS of local cloud", admin.getLookupServices().waitFor(1, 10, TimeUnit.SECONDS));
-		
-		this.restUrl = "http://" + InetAddress.getLocalHost().getHostAddress() + ":8100";
+		assertTrue("Could not find LUS of local cloud", admin
+				.getLookupServices().waitFor(1, 10, TimeUnit.SECONDS));
+
+		this.restUrl = "http://" + InetAddress.getLocalHost().getHostAddress()
+				+ ":8100";
 	}
 
 	private boolean isPortOpen(String host) {

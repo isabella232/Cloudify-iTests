@@ -6,11 +6,14 @@ if (args && args[0].toFloat() > 0) numTweets = args[0]
 
 def context = com.gigaspaces.cloudify.dsl.context.ServiceContextFactory.getServiceContext()
 println "context is:  " + context
-def serviceName = context.clusterInfo.name;
-println "Service name is: " + serviceName
-def service = context.waitForService(serviceName, 20, TimeUnit.SECONDS)
+def puName = context.clusterInfo.name;
+println "PU name is: " + puName 
+println "Service name is: " + context.serviceName
+println "Application name is: " + context.applicationName
+
+def service = context.waitForService(context.serviceName, 20, TimeUnit.SECONDS)
 if(service == null) {
-	throw new Exception("Could not find service: " + serviceName)
+	throw new Exception("Could not find service: " + puName)
 }
 println "service is: " + service
 

@@ -5,7 +5,7 @@ println "context_command"
 
 def context = com.gigaspaces.cloudify.dsl.context.ServiceContextFactory.getServiceContext()
 println "context is:  " + context
-def serviceName = context.clusterInfo.name;
+def serviceName = context.serviceName;
 println "Service name is: " + serviceName
 def service = context.waitForService(serviceName, 20, TimeUnit.SECONDS)
 if(service == null) {

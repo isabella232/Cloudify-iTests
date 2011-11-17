@@ -13,5 +13,5 @@ if %SUITE_NAME% == "webui-IE" (
 )
  
 @echo running %selenium.browser% tests...
-@set LOOKUPGROUPS=sgwebui-cloudify
+@set LOOKUPGROUPS=sgwebui-xap
 call ant -buildfile %LOCAL_SGPATH%\bin\run.xml testsummary -DBUILD_NUMBER=%BUILD_NUMBER% -DSUITE_NAME=%SUITE_NAME% -DBUILD_DIR=%RUNTIME_BUILD_LOCATION%

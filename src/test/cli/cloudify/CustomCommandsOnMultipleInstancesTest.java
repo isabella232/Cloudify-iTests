@@ -12,6 +12,7 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import com.gigaspaces.cloudify.dsl.internal.CloudifyConstants;
 import com.gigaspaces.cloudify.dsl.internal.ServiceReader;
 import com.gigaspaces.cloudify.dsl.internal.packaging.PackagingException;
 
@@ -216,7 +217,7 @@ public class CustomCommandsOnMultipleInstancesTest extends AbstractSingleBootstr
 	private void installService() throws FileNotFoundException,
 		PackagingException, IOException, InterruptedException {
 		File serviceDir = new File(RECIPE_DIR_PATH);
-		ServiceReader.getServiceFromDirectory(serviceDir).getService();
+		ServiceReader.getServiceFromDirectory(serviceDir, CloudifyConstants.DEFAULT_APPLICATION_NAME).getService();
 		
 		runCommand("connect " + this.restUrl + ";install-service --verbose " + RECIPE_DIR_PATH);
 	}

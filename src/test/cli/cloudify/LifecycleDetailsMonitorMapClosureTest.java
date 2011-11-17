@@ -16,6 +16,7 @@ import org.openspaces.pu.service.ServiceDetails;
 import org.openspaces.pu.service.ServiceMonitors;
 import org.testng.annotations.Test;
 
+import com.gigaspaces.cloudify.dsl.internal.CloudifyConstants;
 import com.gigaspaces.cloudify.dsl.internal.ServiceReader;
 import com.gigaspaces.cloudify.dsl.internal.packaging.PackagingException;
 import com.gigaspaces.cloudify.dsl.utils.ServiceUtils;
@@ -54,7 +55,7 @@ public class LifecycleDetailsMonitorMapClosureTest extends AbstractCommandTest{
 	private void installService() throws FileNotFoundException,
 	PackagingException, IOException, InterruptedException {
 		File serviceDir = new File(RECIPE_DIR_PATH);
-		ServiceReader.getServiceFromDirectory(serviceDir).getService();
+		ServiceReader.getServiceFromDirectory(serviceDir, CloudifyConstants.DEFAULT_APPLICATION_NAME).getService();
 
 		runCommand("bootstrap-localcloud;install-service --verbose " + RECIPE_DIR_PATH);
 		AdminFactory factory = new AdminFactory();

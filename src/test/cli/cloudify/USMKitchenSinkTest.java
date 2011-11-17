@@ -124,7 +124,6 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 				new AllLogEntryMatcher(), new AllLogEntryMatcher());
 
 		// check that previous log entries have been printed to this log
-
 		logger.info("Checking that previous process printouts are printed to the new GSC logs");
 		checkForPrintouts(pui, pid, matcher, EXPECTED_PROCESS_PRINTOUTS);
  
@@ -371,8 +370,9 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 				.logEntries(LogProcessType.GSC, pid, matcher);
 		
 		int index = 0;
-		for (LogEntry logEntry : entries) {
+		for (LogEntry logEntry : entries) {			
 			String text = logEntry.getText();
+			logger.info(text);
 			if (text.contains(expectedValues[index])) {
 				++index;
 				if (index == expectedValues.length) {
@@ -531,7 +531,7 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 	private void installService() throws FileNotFoundException,
 			PackagingException, IOException, InterruptedException {
 		File serviceDir = new File(RECIPE_DIR_PATH);
-		ServiceReader.getServiceFromDirectory(serviceDir).getService();
+		ServiceReader.getServiceFromDirectory(serviceDir, CloudifyConstants.DEFAULT_APPLICATION_NAME).getService();
 
 		runCommand("connect " + restUrl + ";install-service --verbose " + RECIPE_DIR_PATH);
 	}

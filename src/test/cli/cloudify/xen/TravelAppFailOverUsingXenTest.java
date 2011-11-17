@@ -14,6 +14,7 @@ import org.testng.annotations.Test;
 import test.cli.cloudify.CommandTestUtils;
 
 import com.gigaspaces.cloudify.dsl.Service;
+import com.gigaspaces.cloudify.dsl.internal.CloudifyConstants;
 import com.gigaspaces.cloudify.dsl.internal.ServiceReader;
 import com.gigaspaces.cloudify.dsl.utils.ServiceUtils;
 
@@ -122,7 +123,7 @@ public class TravelAppFailOverUsingXenTest extends AbstractApplicationFailOverXe
 	private int tomcatPort(){
 		Service tomcatService = null;
 		try {
-			tomcatService = ServiceReader.getServiceFromDirectory(new File(travelAppDirPath + "/tomcat")).getService();
+			tomcatService = ServiceReader.getServiceFromDirectory(new File(travelAppDirPath + "/tomcat"), CloudifyConstants.DEFAULT_APPLICATION_NAME).getService();
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -133,7 +134,7 @@ public class TravelAppFailOverUsingXenTest extends AbstractApplicationFailOverXe
 	private int cassandraPort(){
 		Service cassandraService = null;
 		try {
-			cassandraService = ServiceReader.getServiceFromDirectory(new File(travelAppDirPath + "/cassandra")).getService();
+			cassandraService = ServiceReader.getServiceFromDirectory(new File(travelAppDirPath + "/cassandra"), CloudifyConstants.DEFAULT_APPLICATION_NAME).getService();
 		} catch (Exception e) {
 			e.printStackTrace();
 		} 

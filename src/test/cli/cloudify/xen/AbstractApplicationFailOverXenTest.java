@@ -18,6 +18,7 @@ import org.testng.annotations.BeforeMethod;
 import test.cli.cloudify.CommandTestUtils;
 
 import com.gigaspaces.cloudify.dsl.Service;
+import com.gigaspaces.cloudify.dsl.internal.CloudifyConstants;
 import com.gigaspaces.cloudify.dsl.internal.ServiceReader;
 import com.gigaspaces.cloudify.dsl.utils.ServiceUtils;
 import com.gigaspaces.log.LogEntries;
@@ -219,7 +220,7 @@ public class AbstractApplicationFailOverXenTest extends AbstractStartManagementX
 	protected void assignCassandraPorts(String stockdemoAppDirPath) {
 		Service cassandraService = null;
 		try {
-			cassandraService = ServiceReader.getServiceFromDirectory(new File(stockdemoAppDirPath + "/cassandra")).getService();
+			cassandraService = ServiceReader.getServiceFromDirectory(new File(stockdemoAppDirPath + "/cassandra"), CloudifyConstants.DEFAULT_APPLICATION_NAME).getService();
 		} catch (Exception e) {
 		    AssertFail("Failed assiging cassandra ports", e);
 		} 

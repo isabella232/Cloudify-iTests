@@ -12,7 +12,6 @@ import org.testng.annotations.Test;
 import test.cli.cloudify.AbstractCommandTest;
 import test.cli.cloudify.CommandTestUtils;
 
-import com.gigaspaces.cloudify.dsl.internal.CloudifyConstants;
 import com.gigaspaces.cloudify.dsl.internal.ServiceReader;
 
 public class TestRecipeCommandTest extends AbstractCommandTest {
@@ -33,8 +32,7 @@ public class TestRecipeCommandTest extends AbstractCommandTest {
 		File serviceFile = new File(SIMPLE_RECIPE_DIR_PATH,
 				"simplejava-modifiedservice.groovy");
 		com.gigaspaces.cloudify.dsl.Service service = ServiceReader
-				.getServiceFromFile(serviceFile, serviceDir,
-						CloudifyConstants.DEFAULT_APPLICATION_NAME)
+				.getServiceFromFile(serviceFile, serviceDir)
 				.getService();
 		int port = (Integer) service.getPlugins().get(0).getConfig()
 				.get("port");

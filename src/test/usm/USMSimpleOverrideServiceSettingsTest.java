@@ -15,7 +15,6 @@ import org.testng.annotations.Test;
 import test.cli.cloudify.CommandTestUtils;
 
 import com.gigaspaces.cloudify.dsl.Service;
-import com.gigaspaces.cloudify.dsl.internal.CloudifyConstants;
 import com.gigaspaces.cloudify.dsl.internal.ServiceReader;
 import com.gigaspaces.cloudify.dsl.internal.packaging.PackagingException;
 
@@ -58,7 +57,7 @@ public class USMSimpleOverrideServiceSettingsTest extends UsmAbstractTest {
 		int numberOfInstances = 2;
 
 		File folderPath = new File(CommandTestUtils.getPath("apps/USM/usm/" + processName));
-		Service service = ServiceReader.readService(folderPath, CloudifyConstants.DEFAULT_APPLICATION_NAME);
+		Service service = ServiceReader.readService(folderPath);
 		service.setNumInstances(numberOfInstances);
 		USMTestUtils.packAndDeploy(folderPath.getAbsolutePath(), service);
 
@@ -82,7 +81,7 @@ public class USMSimpleOverrideServiceSettingsTest extends UsmAbstractTest {
 		int maxJarSize = 1024;
 
 		File folderPath = new File(SGTestHelper.getSGTestRootDir() , "apps/USM/usm/" + processName);
-		Service service = ServiceReader.readService(folderPath, CloudifyConstants.DEFAULT_APPLICATION_NAME);
+		Service service = ServiceReader.readService(folderPath);
 		service.setMaxJarSize(maxJarSize);
 		
 		try {

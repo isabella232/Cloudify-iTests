@@ -56,10 +56,10 @@ public class USMTestUtils {
     	
     	Service service;
     	if (serviceFileName == null) {
-    		service = ServiceReader.readService(new File(folderPath), CloudifyConstants.DEFAULT_APPLICATION_NAME);
+    		service = ServiceReader.readService(new File(folderPath));
     	}
     	else {
-    		service = ServiceReader.readService(new File(folderPath,serviceFileName), CloudifyConstants.DEFAULT_APPLICATION_NAME);
+    		service = ServiceReader.readService(new File(folderPath,serviceFileName));
     	}
 
     	return packAndDeploy(folderPath, serviceFileName, service);

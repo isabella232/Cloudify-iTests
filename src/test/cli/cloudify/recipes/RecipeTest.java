@@ -11,7 +11,6 @@ import org.testng.annotations.Test;
 import test.cli.cloudify.AbstractCommandTest;
 
 import com.gigaspaces.cloudify.dsl.Service;
-import com.gigaspaces.cloudify.dsl.internal.CloudifyConstants;
 import com.gigaspaces.cloudify.dsl.internal.ServiceReader;
 
 import framework.utils.ScriptUtils;
@@ -96,7 +95,7 @@ public class RecipeTest extends AbstractCommandTest {
 	public void testCassandraByPort() throws IOException, InterruptedException{
 		String cassandraDirPath = recipesDirPath + "/cassandra";
 		String CassandraServiceGroovyPath = cassandraDirPath + "/" + "cassandra-service.groovy";
-		Service service = ServiceReader.getServiceFromFile(new File(CassandraServiceGroovyPath) , new File(cassandraDirPath), CloudifyConstants.DEFAULT_APPLICATION_NAME).getService();
+		Service service = ServiceReader.getServiceFromFile(new File(CassandraServiceGroovyPath) , new File(cassandraDirPath)).getService();
 		ArrayList<Integer> ports = (ArrayList<Integer>) service.getPlugins().get(0).getConfig().get("Port");
 		int port = ports.get(0);
 		new Thread(new RecipeTestUtil.AsinchronicPortCheck(port)).start();

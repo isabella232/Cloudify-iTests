@@ -25,6 +25,9 @@ service {
 		preStop {println "This is the preStop event" }
 		postStop {println "This is the postStop event" }
 		shutdown {println "This is the shutdown event" }
+		
+		details { return ["1":1, "2":2] }
+		monitors { return ["3":3, "4":4] }
 	}
 
 	

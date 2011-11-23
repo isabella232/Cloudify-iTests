@@ -8,6 +8,8 @@ import org.openspaces.admin.pu.ProcessingUnit;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import test.usm.USMTestUtils;
+
 import com.gigaspaces.cloudify.dsl.utils.ServiceUtils;
 
 import framework.utils.LogUtils;
@@ -83,7 +85,7 @@ public class InstallAndUninstallServiceTest extends AbstractLocalCloudTest {
         //assert USM service is in a RUNNING state.
         if (serviceName.equals(USM_SERVICE_NAME)){
         	 LogUtils.log("Verifing USM service state is ser to RUNNING");
-        	assertTrue(isUSMServiceRunning(absolutePUName));
+        	assertTrue(USMTestUtils.waitForPuRunningState(absolutePUName, 60, TimeUnit.SECONDS, admin));
         }
 
 

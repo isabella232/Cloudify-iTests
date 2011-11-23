@@ -180,4 +180,5 @@ public class AbstractLocalCloudTest extends AbstractCommandTest {
 		ObjectMapper objectMapper = new ObjectMapper();
 		return objectMapper.readValue(response, javaType);
 	}
+	
 }

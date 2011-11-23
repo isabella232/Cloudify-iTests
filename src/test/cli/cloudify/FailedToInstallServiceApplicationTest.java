@@ -58,9 +58,7 @@ public class FailedToInstallServiceApplicationTest extends AbstractCommandTest {
 		ProcessingUnit processingUnit = admin.getProcessingUnits().waitFor(usmServiceName, Constants.PROCESSINGUNIT_TIMEOUT_SEC, TimeUnit.SECONDS);
 		assertTrue("Deployed Successfully. Test Failed", 
     		processingUnit == null || processingUnit.waitFor(0, Constants.PROCESSINGUNIT_TIMEOUT_SEC, TimeUnit.SECONDS));
-		assertTrue(output.contains("Application simple could not be installed"));
-		
-		
+		assertTrue("Expected command output is: Application simple could not be installed", output.contains("Application simple could not be installed"));
 	}
 
 	private String getUsmBadServicePath(String dirOrFilename) {

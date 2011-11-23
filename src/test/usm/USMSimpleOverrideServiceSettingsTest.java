@@ -91,7 +91,7 @@ public class USMSimpleOverrideServiceSettingsTest extends UsmAbstractTest {
 		service.setMaxJarSize(maxJarSize);
 		
 		try {
-			USMTestUtils.packAndDeploy(folderPath.getAbsolutePath(), service, CloudifyConstants.DEFAULT_APPLICATION_NAME + "." + processName);
+			USMTestUtils.packAndDeploy(folderPath.getAbsolutePath(), service, processName);
 			assertTrue(USMTestUtils.waitForPuRunningState(processName, 60, TimeUnit.SECONDS, admin));
 			Assert.fail("Failed overriding max jar property");
 		} catch (PackagingException e) {

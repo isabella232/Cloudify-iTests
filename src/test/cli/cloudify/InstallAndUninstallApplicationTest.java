@@ -13,6 +13,7 @@ import com.gigaspaces.cloudify.dsl.utils.ServiceUtils;
 import framework.utils.AssertUtils.RepetitiveConditionProvider;
 
 import test.AbstractTest;
+import test.usm.USMTestUtils;
 
 public class InstallAndUninstallApplicationTest extends AbstractCommandTest {
 
@@ -44,6 +45,7 @@ public class InstallAndUninstallApplicationTest extends AbstractCommandTest {
 		}
 		AbstractTest.assertTrue("Instance of '" + absolutePUName + "' service was not found",
 		processingUnit.waitFor(1, 10, TimeUnit.SECONDS));
+		assertTrue(USMTestUtils.waitForPuRunningState(absolutePUName, 60, TimeUnit.SECONDS, admin));
 
 	    final GridServiceContainer gsc = processingUnit.getInstances()[0].getGridServiceContainer();
 

@@ -10,6 +10,7 @@ import org.testng.annotations.Test;
 
 import com.gigaspaces.cloudify.dsl.utils.ServiceUtils;
 
+import framework.utils.LogUtils;
 import framework.utils.AssertUtils.RepetitiveConditionProvider;
 
 public class InstallAndUninstallServiceTest extends AbstractLocalCloudTest {
@@ -59,12 +60,12 @@ public class InstallAndUninstallServiceTest extends AbstractLocalCloudTest {
 		testRestApiInstall(STATEFUL_SERVICE_NAME, getUsmServicePath(STATEFUL_FOLDER_NAME));
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
 	public void testDataGridRecipeInstall() throws IOException, InterruptedException {
 		testRestApiInstall(DATAGRID_SERVICE_NAME, getUsmServicePath(DATAGRID_FOLDER_NAME));
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = false)
 	public void testMirrorRecipeInstall() throws IOException, InterruptedException {
 		testRestApiInstall(MIRROR_SERVICE_NAME, getUsmServicePath(MIRROR_SERVICE_FOLDER_NAME));
 	}
@@ -79,6 +80,12 @@ public class InstallAndUninstallServiceTest extends AbstractLocalCloudTest {
         assertTrue("Instance of '" + serviceName + "' service was not found", 
         		processingUnit != null && 
         		processingUnit.waitFor(1, Constants.PROCESSINGUNIT_TIMEOUT_SEC, TimeUnit.SECONDS));
+        //assert USM service is in a RUNNING state.
+        if (serviceName.equals(USM_SERVICE_NAME)){
+        	 LogUtils.log("Verifing USM service state is ser to RUNNING");
+        	assertTrue(isUSMServiceRunning(absolutePUName));
+        }
+
 
 		
 	    final GridServiceContainer gsc = processingUnit.getInstances()[0].getGridServiceContainer();

@@ -63,7 +63,7 @@ public class USMMultipleDeployAndUndeployTest extends UsmAbstractTest {
         USMTestUtils.assertMonitors(pu);
 
         pu.undeploy();
-        Assert.assertNull(admin.getProcessingUnits().getProcessingUnit(service.getName()));
+        Assert.assertNull(admin.getProcessingUnits().getProcessingUnit(processName));
     }
 
 }

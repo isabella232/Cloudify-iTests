@@ -8,6 +8,8 @@ import java.util.concurrent.TimeUnit;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import com.gigaspaces.cloudify.dsl.internal.CloudifyConstants;
+
 public class USMPortLivenessTest extends UsmAbstractTest{
 
 
@@ -18,7 +20,7 @@ public class USMPortLivenessTest extends UsmAbstractTest{
 		super.beforeTest();
 		loadGSM(admin.getGridServiceAgents().waitForAtLeastOne(10, TimeUnit.SECONDS));
 		loadGSC(admin.getGridServiceAgents().waitForAtLeastOne(10, TimeUnit.SECONDS));
-		this.processName = "SimpleFilewriteAndPortOpener-service";
+		this.processName = CloudifyConstants.DEFAULT_APPLICATION_NAME + "." + "SimpleFilewriteAndPortOpener-service";
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)

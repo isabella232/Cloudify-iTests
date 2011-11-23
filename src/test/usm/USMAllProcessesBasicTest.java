@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.openspaces.admin.gsa.GridServiceAgent;
 import org.openspaces.admin.gsc.GridServiceContainer;
@@ -15,8 +16,8 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-
 import com.gigaspaces.cloudify.dsl.Service;
+import com.gigaspaces.cloudify.dsl.internal.CloudifyConstants;
 import com.gigaspaces.cloudify.dsl.internal.packaging.PackagingException;
 
 import framework.utils.AdminUtils;
@@ -51,12 +52,13 @@ public class USMAllProcessesBasicTest extends UsmAbstractTest {
 		gscA = AdminUtils.loadGSC(machineA); // GSC A
 	}
 
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1")
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
 	public void jmxTest() throws Exception {
-		setProcessName(UsmAbstractTest.SIMPLE_JAVA);
+		setProcessName(CloudifyConstants.DEFAULT_APPLICATION_NAME + "." + UsmAbstractTest.SIMPLE_JAVA);
 		final Service service = USMTestUtils.usmDeploy(processName, UsmAbstractTest.SIMPLE_JAVA_SERVICE_FILE_NAME);
-		final ProcessingUnit pu = admin.getProcessingUnits().waitFor(service.getName());
+		final ProcessingUnit pu = admin.getProcessingUnits().waitFor(processName);
 		pu.waitFor(pu.getTotalNumberOfInstances());
+		assertTrue(USMTestUtils.waitForPuRunningState(processName, 60, TimeUnit.SECONDS, admin));
 		pu.startStatisticsMonitor();
 		final ProcessingUnitInstance pui = pu.getInstances()[0];
 		final Map<String, Object> monitors = pui.getStatistics().getMonitors().get("USM").getMonitors();
@@ -71,15 +73,16 @@ public class USMAllProcessesBasicTest extends UsmAbstractTest {
 	 * The modified version opens port 7790. The test checks that the port opens, and then un-deploys.
 	 * @throws Exception .
 	 */
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1")
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
 	public void simpleProcessModifiedTest() throws Exception {
-		setProcessName(UsmAbstractTest.SIMPLE_JAVA);
+		setProcessName(CloudifyConstants.DEFAULT_APPLICATION_NAME + "." + UsmAbstractTest.SIMPLE_JAVA);
 		this.serviceFileName = "simplejava-modifiedservice.groovy";
 
 		final Service service = USMTestUtils.usmDeploy(processName, this.serviceFileName);
-		final ProcessingUnit pu = admin.getProcessingUnits().waitFor(service.getName());
+		final ProcessingUnit pu = admin.getProcessingUnits().waitFor(processName);
 
 		pu.waitFor(pu.getTotalNumberOfInstances());
+		assertTrue(USMTestUtils.waitForPuRunningState(processName, 60, TimeUnit.SECONDS, admin));
 		final ProcessingUnitInstance pui = pu.getInstances()[0];
 		final String address = pui.getMachine().getHostAddress();
 		assertTrue("Connection test to simple process port failed", isPortOpen(address, MODIFIED_PORT));
@@ -109,16 +112,16 @@ public class USMAllProcessesBasicTest extends UsmAbstractTest {
 		}
 	}
 
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1")
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
 	public void simpleProcessTest() throws Exception {
-		setProcessName(UsmAbstractTest.SIMPLE_JAVA);
+		setProcessName(CloudifyConstants.DEFAULT_APPLICATION_NAME + "." + UsmAbstractTest.SIMPLE_JAVA);
 		this.serviceFileName = UsmAbstractTest.SIMPLE_JAVA_SERVICE_FILE_NAME;
 		basicTest();
 	}
 
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1")
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = false)
 	public void cassandraTest() throws Exception {
-		setProcessName(UsmAbstractTest.CASSANDRA);
+		setProcessName(CloudifyConstants.DEFAULT_APPLICATION_NAME + "." + UsmAbstractTest.CASSANDRA);
 		this.serviceFileName = UsmAbstractTest.CASSANDRA_SERVICE_FILE_NAME;
 		extendedTest(new String[] { "Completed Tasks", "Pending Tasks" });
 	}
@@ -129,8 +132,9 @@ public class USMAllProcessesBasicTest extends UsmAbstractTest {
 
 	void extendedTest(final String[] monitors) throws IOException, PackagingException {
 		final Service service = USMTestUtils.usmDeploy(processName, this.serviceFileName);
-		final ProcessingUnit pu = admin.getProcessingUnits().waitFor(service.getName());
+		final ProcessingUnit pu = admin.getProcessingUnits().waitFor(processName);
 		pu.waitFor(pu.getTotalNumberOfInstances());
+		assertTrue(USMTestUtils.waitForPuRunningState(processName, 60, TimeUnit.SECONDS, admin));
 		pu.startStatisticsMonitor();
 
 		USMTestUtils.assertMonitors(pu, monitors);

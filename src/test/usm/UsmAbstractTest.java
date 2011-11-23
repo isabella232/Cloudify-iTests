@@ -6,11 +6,11 @@ import java.util.concurrent.TimeUnit;
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.testng.annotations.BeforeMethod;
 
+import test.AbstractTest;
+
 import com.gigaspaces.cloudify.dsl.internal.packaging.PackagingException;
 
 import framework.utils.AdminUtils;
-
-import test.AbstractTest;
 
 public class UsmAbstractTest extends AbstractTest{
 	

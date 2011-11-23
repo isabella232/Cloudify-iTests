@@ -87,7 +87,7 @@ public class USMIncrementDecrementTest extends UsmAbstractTest {
         Assert.assertEquals(1, admin.getProcessingUnits().getProcessingUnit(service.getName()).getInstances().length);
 
         pu.undeploy();
-        Assert.assertNull(admin.getProcessingUnits().getProcessingUnit(service.getName()));
+        Assert.assertNull(admin.getProcessingUnits().getProcessingUnit(processName));
 
     }
 

@@ -57,6 +57,7 @@ public class USMMultipleDeployAndRelocationToNewMachineTest extends UsmAbstractT
 
         ProcessingUnit pu = admin.getProcessingUnits().waitFor(processName, 30, TimeUnit.SECONDS);
         pu.waitFor(pu.getTotalNumberOfInstances());
+        assertTrue(USMTestUtils.waitForPuRunningState(processName, 60, TimeUnit.SECONDS, admin));
         pu.startStatisticsMonitor();
 
         USMTestUtils.assertMonitors(pu);
@@ -70,7 +71,7 @@ public class USMMultipleDeployAndRelocationToNewMachineTest extends UsmAbstractT
         Assert.assertEquals(1, admin.getProcessingUnits().getProcessingUnit(processName).getInstances().length);
 
         pu.undeploy();
-        Assert.assertNull(admin.getProcessingUnits().getProcessingUnit(service.getName()));
+        Assert.assertNull(admin.getProcessingUnits().getProcessingUnit(processName));
 
     }
 

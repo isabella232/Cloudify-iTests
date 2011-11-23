@@ -4,6 +4,7 @@ import static org.testng.AssertJUnit.fail;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.UnknownHostException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -16,6 +17,8 @@ import org.openspaces.pu.service.CustomServiceMonitors;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import test.usm.USMTestUtils;
 
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.WebClient;
@@ -46,7 +49,6 @@ public class RepetitiveActualServiceFailoverTest extends AbstractLocalCloudTest 
 	Long tomcatPId;
 	Machine machineA;
 	WebClient client;
-	Machine[] machines;
 	
 	@Override
 	@BeforeMethod
@@ -161,14 +163,16 @@ public class RepetitiveActualServiceFailoverTest extends AbstractLocalCloudTest 
 		
 	}
 	
-	private Long getTomcatPId() {
+	private Long getTomcatPId() throws UnknownHostException {
 		
-		ProcessingUnit tomcat = admin.getProcessingUnits().getProcessingUnit(ServiceUtils.getAbsolutePUName("default", "tomcat"));
+		String absolutePUName = ServiceUtils.getAbsolutePUName("default", "tomcat");
+		ProcessingUnit tomcat = admin.getProcessingUnits().getProcessingUnit(absolutePUName);
 		assertNotNull(tomcat);
 		ProcessingUnitUtils.waitForDeploymentStatus(tomcat, DeploymentStatus.INTACT);
 		assertTrue(tomcat.getStatus().equals(DeploymentStatus.INTACT));
 		
-		ProcessingUnitInstance tomcatInstance = tomcat.getInstances()[0];	
+		ProcessingUnitInstance tomcatInstance = tomcat.getInstances()[0];
+		assertTrue("USM Service State is not RUNNING", USMTestUtils.waitForPuRunningState(absolutePUName, 60, TimeUnit.SECONDS, admin));
 		CustomServiceMonitors customServiceDetails = (CustomServiceMonitors) tomcatInstance.getStatistics().getMonitors().get("USM");
 		return (Long) customServiceDetails.getMonitors().get("Actual Process ID");
 	}

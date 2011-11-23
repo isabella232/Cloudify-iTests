@@ -119,7 +119,7 @@ public class USMAllProcessesBasicTest extends UsmAbstractTest {
 		basicTest();
 	}
 
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
 	public void cassandraTest() throws Exception {
 		setProcessName(CloudifyConstants.DEFAULT_APPLICATION_NAME + "." + UsmAbstractTest.CASSANDRA);
 		this.serviceFileName = UsmAbstractTest.CASSANDRA_SERVICE_FILE_NAME;

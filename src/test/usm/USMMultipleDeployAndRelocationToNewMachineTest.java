@@ -57,7 +57,8 @@ public class USMMultipleDeployAndRelocationToNewMachineTest extends UsmAbstractT
 
         ProcessingUnit pu = admin.getProcessingUnits().waitFor(processName, 30, TimeUnit.SECONDS);
         pu.waitFor(pu.getTotalNumberOfInstances());
-        assertTrue(USMTestUtils.waitForPuRunningState(processName, 60, TimeUnit.SECONDS, admin));
+        assertTrue("Service " + processName + " State is not RUNNING.",
+        		USMTestUtils.waitForPuRunningState(processName, 60, TimeUnit.SECONDS, admin));
         pu.startStatisticsMonitor();
 
         USMTestUtils.assertMonitors(pu);
@@ -65,7 +66,8 @@ public class USMMultipleDeployAndRelocationToNewMachineTest extends UsmAbstractT
         GridServiceContainer gscB = loadGSC(machineB); //GSC B
         pu.getInstances()[0].relocateAndWait(gscB);
         pu.waitFor(pu.getTotalNumberOfInstances(), 30, TimeUnit.SECONDS);
-        assertTrue(USMTestUtils.waitForPuRunningState(processName, 60, TimeUnit.SECONDS, admin));
+        assertTrue("Service " + processName + " State is not RUNNING.",
+        		USMTestUtils.waitForPuRunningState(processName, 60, TimeUnit.SECONDS, admin));
         USMTestUtils.assertMonitors(pu);
 
         Assert.assertEquals(1, admin.getProcessingUnits().getProcessingUnit(processName).getInstances().length);

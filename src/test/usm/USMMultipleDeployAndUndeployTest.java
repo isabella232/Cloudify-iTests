@@ -57,7 +57,8 @@ public class USMMultipleDeployAndUndeployTest extends UsmAbstractTest {
 
         ProcessingUnit pu = admin.getProcessingUnits().waitFor(processName);
         pu.waitFor(pu.getTotalNumberOfInstances());
-        assertTrue(USMTestUtils.waitForPuRunningState(processName, 60, TimeUnit.SECONDS, admin));
+        assertTrue("Service " + processName + " State is not RUNNING.",
+        		USMTestUtils.waitForPuRunningState(processName, 60, TimeUnit.SECONDS, admin));
         pu.startStatisticsMonitor();
 
         USMTestUtils.assertMonitors(pu);

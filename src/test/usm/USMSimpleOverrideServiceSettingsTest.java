@@ -70,7 +70,8 @@ public class USMSimpleOverrideServiceSettingsTest extends UsmAbstractTest {
 
 		pu.waitFor(pu.getTotalNumberOfInstances());
 		
-		assertTrue(USMTestUtils.waitForPuRunningState(processName, 60, TimeUnit.SECONDS, admin));
+		assertTrue("Service " + processName + " State is not RUNNING.",
+				USMTestUtils.waitForPuRunningState(processName, 60, TimeUnit.SECONDS, admin));
 		
 		pu.startStatisticsMonitor();
 
@@ -92,7 +93,8 @@ public class USMSimpleOverrideServiceSettingsTest extends UsmAbstractTest {
 		
 		try {
 			USMTestUtils.packAndDeploy(folderPath.getAbsolutePath(), service, processName);
-			assertTrue(USMTestUtils.waitForPuRunningState(processName, 60, TimeUnit.SECONDS, admin));
+			assertTrue("Service " + processName + " State is not RUNNING.",
+					USMTestUtils.waitForPuRunningState(processName, 60, TimeUnit.SECONDS, admin));
 			Assert.fail("Failed overriding max jar property");
 		} catch (PackagingException e) {
 			assertTrue("Unexpected exception", e.getMessage().contains("it must be smaller than: 1 KB"));

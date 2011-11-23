@@ -59,7 +59,8 @@ public class USMIncrementDecrementTest extends UsmAbstractTest {
 
         ProcessingUnit pu = admin.getProcessingUnits().waitFor(processName);
         pu.waitFor(pu.getTotalNumberOfInstances());
-        assertTrue(USMTestUtils.waitForPuRunningState(processName, 60, TimeUnit.SECONDS, admin));
+        assertTrue("Service " + processName + " State is not RUNNING.", 
+        		USMTestUtils.waitForPuRunningState(processName, 60, TimeUnit.SECONDS, admin));
         pu.startStatisticsMonitor();
 
         USMTestUtils.assertMonitors(pu);
@@ -79,7 +80,7 @@ public class USMIncrementDecrementTest extends UsmAbstractTest {
         long pidToDec = USMTestUtils.getActualPID(pu.getInstances()[0]);
         pu.getInstances()[0].decrement();
         pu.waitFor(1);
-
+        
         USMTestUtils.assertPIDDoesntExist(pu, pidToDec);
 
         USMTestUtils.assertMonitors(pu);

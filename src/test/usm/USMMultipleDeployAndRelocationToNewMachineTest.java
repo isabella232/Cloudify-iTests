@@ -16,6 +16,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import com.gigaspaces.cloudify.dsl.Service;
+import com.gigaspaces.cloudify.dsl.internal.CloudifyConstants;
 
 
 public class USMMultipleDeployAndRelocationToNewMachineTest extends UsmAbstractTest {
@@ -46,7 +47,7 @@ public class USMMultipleDeployAndRelocationToNewMachineTest extends UsmAbstractT
         GridServiceManager gsmA = loadGSM(machineA); //GSM A
         GridServiceContainer gscA = loadGSC(machineA); //GSC A
         loadGSM(machineB); //GSM B
-
+        processName = CloudifyConstants.DEFAULT_APPLICATION_NAME + "." + processName;
 
     }
 
@@ -63,7 +64,7 @@ public class USMMultipleDeployAndRelocationToNewMachineTest extends UsmAbstractT
         GridServiceContainer gscB = loadGSC(machineB); //GSC B
         pu.getInstances()[0].relocateAndWait(gscB);
         pu.waitFor(pu.getTotalNumberOfInstances(), 30, TimeUnit.SECONDS);
-
+        assertTrue(USMTestUtils.waitForPuRunningState(processName, 60, TimeUnit.SECONDS, admin));
         USMTestUtils.assertMonitors(pu);
 
         Assert.assertEquals(1, admin.getProcessingUnits().getProcessingUnit(service.getName()).getInstances().length);

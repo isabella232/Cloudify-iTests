@@ -80,12 +80,13 @@ public final class WebConstants {
 		public static final String naIcon = "gs-status-icon-not-initialized";
 		public static final String healthGaugePointer = "health-gauge-pointer";
 		public static final String applicationsMenuPanel = "gs-applications-menu-panel";
-		public static final String applicationMap = "app-map-canvas";
+//		public static final String applicationMap = "app-map-canvas";
+		public static final String applicationMap = "graph-canvas";
 		public static final String nodeStatusOk = "node-status-ok";
 		public static final String statusGrid = "gs-window-grid-status";
 		public static final String nodeStatusWarning = "node-status-warn";
 		public static final String nodeStatusBroken = "node-status-critical";
-		public static final String TopologySubPanel = "topology_bottom_tab_panel";
+//		public static final String TopologySubPanel = "topology_bottom_tab_panel";	// not found in DOM
 		public static final String nodePath = "node-shape-path-";
 		public static final String detailsPanel = "gs-side-panel-details";
 		public static final String healthPanelToggle = "gs-tab-item-health-toggler-button";
@@ -94,8 +95,8 @@ public final class WebConstants {
 		public static final String logicalPanelToggle = "gs-tab-item-logical-toggler-button";
 		public static final String healthPanel = "gs-sub-panel-health";
 		public static final String physicalPanel = "gs-tab-item-physical";
-		public static final String topMetric = "metricPanelTop";
-		public static final String bottomMetric = "metricPanelBottom";
+//		public static final String topMetric = "metricPanelTop";	// not found in DOM
+//		public static final String bottomMetric = "metricPanelBottom";	// not found in DOM
 		public static final String spaceInstancesGrid = "gs-space-instances-grid";
 		public static final String spaceConfigurationGrid = "gs-space-info-grid";
 		public static final String spaceTypesGrid = "gs-space-types-grid";
@@ -222,7 +223,7 @@ public final class WebConstants {
 		public static final String pathToPuOptionsButton = "/table/tbody/tr/td[1]/div/div/div/span[3]/a/img";
 		public static final String pathToMetricType = "//div/span";
 		public static final String pathToMetricBalance = "div[2]/div/div[2]";
-		public static final String pathToTopologySubPanel = "//div[@id='" + ID.TopologySubPanel + "']";
+//		public static final String pathToTopologySubPanel = "//div[@id='" + ID.TopologySubPanel + "']";
 		public static final String pathToApplicationComboBox = "";
 		public static final String pathToDetailsPanel = "//div[@id='" + ID.detailsPanel + "']";
 		public static final String pathToMetricSelection = "//li[1]/img";
@@ -250,8 +251,8 @@ public final class WebConstants {
 		public static final String closeWindow = "//button[text()='Close']";
 		public static final String pathToTopMetricSelection = "//div[@id='" + ID.detailsPanel + "']/div[2]/div/div/div[2]/div/div/div/div[1]";
 		public static final String pathToBottomMetricSelection = "//div[@id='" + ID.detailsPanel + "']/div[2]/div/div/div[2]/div/div/div/div[3]";
-		public static final String pathToBottomMetric = "//div[@id='" + ID.bottomMetric + "']/div";
-		public static final String pathToTopMetric = "//div[@id='" + ID.topMetric + "']/div";
+//		public static final String pathToBottomMetric = "//div[@id='" + ID.bottomMetric + "']/div";
+//		public static final String pathToTopMetric = "//div[@id='" + ID.topMetric + "']/div";
 		public static final String pathToSpaceInstanceGrid = "//div[@id='" + ID.spaceInstancesGrid + "']";
 		public static final String pathToSpaceConfigurationGrid = "//div[@id='" + ID.spaceConfigurationGrid + "']";
 		public static final String pathToSpaceTypesGrid = "//div[@id='" + ID.spaceTypesGrid + "']";

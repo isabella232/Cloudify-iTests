@@ -1,5 +1,7 @@
 package test.usm;
 
+import java.util.concurrent.TimeUnit;
+
 import org.openspaces.admin.gsa.GridServiceAgent;
 import org.openspaces.admin.gsc.GridServiceContainer;
 import org.openspaces.admin.gsm.GridServiceManager;
@@ -11,6 +13,7 @@ import org.testng.annotations.Test;
 
 
 import com.gigaspaces.cloudify.dsl.Service;
+import com.gigaspaces.cloudify.dsl.internal.CloudifyConstants;
 
 import framework.utils.AdminUtils;
 import framework.utils.LogUtils;
@@ -44,7 +47,7 @@ public class USMMultipleDeployAndKillGSCTest extends UsmAbstractTest {
 		final GridServiceManager gsmA = AdminUtils.loadGSM(machineA); // GSM A
 		gscA = AdminUtils.loadGSC(machineA); // GSC A
 		// loadGSM(machineB); //GSM B
-
+		processName = CloudifyConstants.DEFAULT_APPLICATION_NAME + "." + processName;
 	}
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "2")
@@ -64,6 +67,7 @@ public class USMMultipleDeployAndKillGSCTest extends UsmAbstractTest {
 		// loadGSM(machineB); //GSM B
 		final ProcessingUnit pu = admin.getProcessingUnits().waitFor(service.getName());
 		pu.waitFor(pu.getTotalNumberOfInstances());
+		assertTrue(USMTestUtils.waitForPuRunningState(processName, 60, TimeUnit.SECONDS, admin));
 		pu.startStatisticsMonitor();
 
 		USMTestUtils.assertMonitors(pu);

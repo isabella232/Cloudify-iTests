@@ -56,6 +56,8 @@ public class UsmAbstractTest extends AbstractTest{
 		pu = admin.getProcessingUnits().waitFor(processName, PROCESSING_UNIT_TIMEOUT, TimeUnit.SECONDS);
 		//We expect to have 0 instance of the process
 		assertTrue(pu.waitFor(0, PROCESSING_UNIT_TIMEOUT, TimeUnit.SECONDS));
+		
+		assertTrue(!USMTestUtils.waitForPuRunningState(processName, 30, TimeUnit.SECONDS, admin));
 	}
 	
 	public void assertOnePUForProcess() throws InterruptedException, IOException, PackagingException{
@@ -70,5 +72,7 @@ public class UsmAbstractTest extends AbstractTest{
 		pu = admin.getProcessingUnits().waitFor(processName, PROCESSING_UNIT_TIMEOUT, TimeUnit.SECONDS);
 		//We expect to have one instance of the process
 		assertTrue(pu.waitFor(1, PROCESSING_UNIT_TIMEOUT, TimeUnit.SECONDS));
+		
+		assertTrue(USMTestUtils.waitForPuRunningState(processName, 60, TimeUnit.SECONDS, admin));
 	}
 }

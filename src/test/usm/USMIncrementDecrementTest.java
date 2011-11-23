@@ -4,6 +4,8 @@ import static framework.utils.AdminUtils.loadGSC;
 import static framework.utils.AdminUtils.loadGSM;
 import static framework.utils.LogUtils.log;
 
+import java.util.concurrent.TimeUnit;
+
 import org.openspaces.admin.gsa.GridServiceAgent;
 import org.openspaces.admin.gsc.GridServiceContainer;
 import org.openspaces.admin.gsm.GridServiceManager;
@@ -15,6 +17,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import com.gigaspaces.cloudify.dsl.Service;
+import com.gigaspaces.cloudify.dsl.internal.CloudifyConstants;
 
 
 public class USMIncrementDecrementTest extends UsmAbstractTest {
@@ -46,15 +49,17 @@ public class USMIncrementDecrementTest extends UsmAbstractTest {
         GridServiceContainer gscA = loadGSC(machineA); //GSC A
         //loadGSM(machineB); //GSM B
         GridServiceContainer gscB = loadGSC(machineB); //GSC B
-
+        processName = CloudifyConstants.DEFAULT_APPLICATION_NAME + "." + processName;
     }
 
     @Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "2")
     public void test() throws Exception {
+
         Service service = USMTestUtils.usmDeploy(processName, this.serviceFileName);
 
-        ProcessingUnit pu = admin.getProcessingUnits().waitFor(service.getName());
+        ProcessingUnit pu = admin.getProcessingUnits().waitFor(processName);
         pu.waitFor(pu.getTotalNumberOfInstances());
+        assertTrue(USMTestUtils.waitForPuRunningState(processName, 60, TimeUnit.SECONDS, admin));
         pu.startStatisticsMonitor();
 
         USMTestUtils.assertMonitors(pu);

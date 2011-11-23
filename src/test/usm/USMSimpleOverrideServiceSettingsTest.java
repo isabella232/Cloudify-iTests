@@ -19,6 +19,7 @@ import com.gigaspaces.cloudify.dsl.Service;
 import com.gigaspaces.cloudify.dsl.internal.CloudifyConstants;
 import com.gigaspaces.cloudify.dsl.internal.ServiceReader;
 import com.gigaspaces.cloudify.dsl.internal.packaging.PackagingException;
+import com.gigaspaces.cloudify.dsl.utils.ServiceUtils;
 
 import framework.tools.SGTestHelper;
 import framework.utils.AdminUtils;
@@ -50,7 +51,7 @@ public class USMSimpleOverrideServiceSettingsTest extends UsmAbstractTest {
 		loadGSM(machineA); // GSM A
 		AdminUtils.loadGSC(gsaA);
 		AdminUtils.loadGSC(gsaB);
-
+		processName = CloudifyConstants.DEFAULT_APPLICATION_NAME + "." + processName;
 	}
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "2")
@@ -58,25 +59,25 @@ public class USMSimpleOverrideServiceSettingsTest extends UsmAbstractTest {
 		
 		int numberOfInstances = 2;
 
-		File folderPath = new File(CommandTestUtils.getPath("apps/USM/usm/" + processName));
+		File folderPath = new File(CommandTestUtils.getPath("apps/USM/usm/" + ServiceUtils.getFullServiceName(processName)));
 		Service service = ServiceReader.readService(folderPath);
 		service.setNumInstances(numberOfInstances);
-		USMTestUtils.packAndDeploy(folderPath.getAbsolutePath(), service, CloudifyConstants.DEFAULT_APPLICATION_NAME + "." + processName);
+		USMTestUtils.packAndDeploy(folderPath.getAbsolutePath(), service, processName);
 
-		ProcessingUnit pu = admin.getProcessingUnits().waitFor(CloudifyConstants.DEFAULT_APPLICATION_NAME + "." + processName);
+		ProcessingUnit pu = admin.getProcessingUnits().waitFor(processName);
 
 		assertEquals(numberOfInstances, pu.getTotalNumberOfInstances());
 
 		pu.waitFor(pu.getTotalNumberOfInstances());
 		
-		assertTrue(USMTestUtils.waitForPuRunningState(CloudifyConstants.DEFAULT_APPLICATION_NAME + "." + processName, 60, TimeUnit.SECONDS, admin));
+		assertTrue(USMTestUtils.waitForPuRunningState(processName, 60, TimeUnit.SECONDS, admin));
 		
 		pu.startStatisticsMonitor();
 
 		USMTestUtils.assertMonitors(pu);
 
 		pu.undeploy();
-		Assert.assertNull(admin.getProcessingUnits().getProcessingUnit(service.getName()));
+		Assert.assertNull(admin.getProcessingUnits().getProcessingUnit(processName));
 
 	}
 
@@ -85,13 +86,13 @@ public class USMSimpleOverrideServiceSettingsTest extends UsmAbstractTest {
 
 		int maxJarSize = 1024;
 
-		File folderPath = new File(SGTestHelper.getSGTestRootDir() , "apps/USM/usm/" + processName);
+		File folderPath = new File(SGTestHelper.getSGTestRootDir() , "apps/USM/usm/" + ServiceUtils.getFullServiceName(processName));
 		Service service = ServiceReader.readService(folderPath);
 		service.setMaxJarSize(maxJarSize);
 		
 		try {
 			USMTestUtils.packAndDeploy(folderPath.getAbsolutePath(), service, CloudifyConstants.DEFAULT_APPLICATION_NAME + "." + processName);
-			assertTrue(USMTestUtils.waitForPuRunningState(CloudifyConstants.DEFAULT_APPLICATION_NAME + "." + processName, 60, TimeUnit.SECONDS, admin));
+			assertTrue(USMTestUtils.waitForPuRunningState(processName, 60, TimeUnit.SECONDS, admin));
 			Assert.fail("Failed overriding max jar property");
 		} catch (PackagingException e) {
 			assertTrue("Unexpected exception", e.getMessage().contains("it must be smaller than: 1 KB"));

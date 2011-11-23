@@ -56,7 +56,7 @@ public class USMMultipleDeployAndRestartTest extends UsmAbstractTest {
     public void test() throws Exception {
     	Service service = USMTestUtils.usmDeploy(processName, this.serviceFileName);
 
-        ProcessingUnit pu = admin.getProcessingUnits().waitFor(service.getName());
+        ProcessingUnit pu = admin.getProcessingUnits().waitFor(processName);
         pu.waitFor(pu.getTotalNumberOfInstances());
         assertTrue(USMTestUtils.waitForPuRunningState(processName, 60, TimeUnit.SECONDS, admin));
         pu.startStatisticsMonitor();

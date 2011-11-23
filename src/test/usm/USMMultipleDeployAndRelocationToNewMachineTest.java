@@ -55,7 +55,7 @@ public class USMMultipleDeployAndRelocationToNewMachineTest extends UsmAbstractT
     public void test() throws Exception {
     	Service service = USMTestUtils.usmDeploy(processName, this.serviceFileName);
 
-        ProcessingUnit pu = admin.getProcessingUnits().waitFor(service.getName(), 30, TimeUnit.SECONDS);
+        ProcessingUnit pu = admin.getProcessingUnits().waitFor(processName, 30, TimeUnit.SECONDS);
         pu.waitFor(pu.getTotalNumberOfInstances());
         pu.startStatisticsMonitor();
 
@@ -67,7 +67,7 @@ public class USMMultipleDeployAndRelocationToNewMachineTest extends UsmAbstractT
         assertTrue(USMTestUtils.waitForPuRunningState(processName, 60, TimeUnit.SECONDS, admin));
         USMTestUtils.assertMonitors(pu);
 
-        Assert.assertEquals(1, admin.getProcessingUnits().getProcessingUnit(service.getName()).getInstances().length);
+        Assert.assertEquals(1, admin.getProcessingUnits().getProcessingUnit(processName).getInstances().length);
 
         pu.undeploy();
         Assert.assertNull(admin.getProcessingUnits().getProcessingUnit(service.getName()));

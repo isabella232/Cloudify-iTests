@@ -65,7 +65,7 @@ public class USMMultipleDeployAndKillGSCTest extends UsmAbstractTest {
 		// + f.lastModified());
 
 		// loadGSM(machineB); //GSM B
-		final ProcessingUnit pu = admin.getProcessingUnits().waitFor(service.getName());
+		final ProcessingUnit pu = admin.getProcessingUnits().waitFor(processName);
 		pu.waitFor(pu.getTotalNumberOfInstances());
 		assertTrue(USMTestUtils.waitForPuRunningState(processName, 60, TimeUnit.SECONDS, admin));
 		pu.startStatisticsMonitor();
@@ -78,7 +78,7 @@ public class USMMultipleDeployAndKillGSCTest extends UsmAbstractTest {
 
 		USMTestUtils.assertMonitors(pu);
 
-		Assert.assertEquals(1, admin.getProcessingUnits().getProcessingUnit(service.getName()).getInstances().length);
+		Assert.assertEquals(1, admin.getProcessingUnits().getProcessingUnit(processName).getInstances().length);
 
 		final GridServiceContainer gscA = AdminUtils.loadGSC(machineA); // GSC A
 		gscB.kill();
@@ -87,7 +87,7 @@ public class USMMultipleDeployAndKillGSCTest extends UsmAbstractTest {
 		USMTestUtils.assertMonitors(pu);
 
 		pu.undeploy();
-		Assert.assertNull(admin.getProcessingUnits().getProcessingUnit(service.getName()));
+		Assert.assertNull(admin.getProcessingUnits().getProcessingUnit(processName));
 
 	}
 

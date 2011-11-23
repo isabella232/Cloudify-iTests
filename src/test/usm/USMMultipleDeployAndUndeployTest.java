@@ -4,6 +4,8 @@ import static framework.utils.AdminUtils.loadGSCs;
 import static framework.utils.AdminUtils.loadGSM;
 import static framework.utils.LogUtils.log;
 
+import java.util.concurrent.TimeUnit;
+
 import org.openspaces.admin.gsa.GridServiceAgent;
 import org.openspaces.admin.gsm.GridServiceManager;
 import org.openspaces.admin.machine.Machine;
@@ -13,6 +15,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import com.gigaspaces.cloudify.dsl.Service;
+import com.gigaspaces.cloudify.dsl.internal.CloudifyConstants;
 
 
 public class USMMultipleDeployAndUndeployTest extends UsmAbstractTest {
@@ -44,7 +47,7 @@ public class USMMultipleDeployAndUndeployTest extends UsmAbstractTest {
         loadGSCs(machineA, 1); //GSC A
         //loadGSM(machineB); //GSM B
         loadGSCs(machineB, 1); //GSC B
-
+        this.processName = CloudifyConstants.DEFAULT_APPLICATION_NAME + "." + processName;
 
     }
 
@@ -52,8 +55,9 @@ public class USMMultipleDeployAndUndeployTest extends UsmAbstractTest {
     public void test() throws Exception {
         Service service = USMTestUtils.usmDeploy(processName, this.serviceFileName);
 
-        ProcessingUnit pu = admin.getProcessingUnits().waitFor(service.getName());
+        ProcessingUnit pu = admin.getProcessingUnits().waitFor(processName);
         pu.waitFor(pu.getTotalNumberOfInstances());
+        assertTrue(USMTestUtils.waitForPuRunningState(processName, 60, TimeUnit.SECONDS, admin));
         pu.startStatisticsMonitor();
 
         USMTestUtils.assertMonitors(pu);

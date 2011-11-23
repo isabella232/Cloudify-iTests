@@ -2,6 +2,7 @@ package test.usm;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.UnknownHostException;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
@@ -12,16 +13,20 @@ import org.openspaces.admin.gsm.GridServiceManager;
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.openspaces.admin.pu.ProcessingUnitDeployment;
 import org.openspaces.admin.pu.ProcessingUnitInstance;
+import org.openspaces.admin.pu.ProcessingUnitInstanceStatistics;
 import org.openspaces.pu.service.ServiceMonitors;
 import org.testng.Assert;
 
 import com.gigaspaces.cloudify.dsl.Service;
 import com.gigaspaces.cloudify.dsl.internal.CloudifyConstants;
 import com.gigaspaces.cloudify.dsl.internal.ServiceReader;
+import com.gigaspaces.cloudify.dsl.internal.CloudifyConstants.USMState;
 import com.gigaspaces.cloudify.dsl.internal.packaging.Packager;
 import com.gigaspaces.cloudify.dsl.internal.packaging.PackagingException;
+import com.gigaspaces.cloudify.dsl.utils.ServiceUtils;
 
 import framework.tools.SGTestHelper;
+import framework.utils.LogUtils;
 
 public class USMTestUtils {
 
@@ -49,7 +54,7 @@ public class USMTestUtils {
 
 
     
-    private static Service packAndDeploy(final String folderPath, final String serviceFileName) throws IOException,
+    private static Service packAndDeploy(final String folderPath, final String serviceFileName, String processName) throws IOException,
     PackagingException {
     	
     	System.setProperty("com.gs.home", SGTestHelper.getBuildDir());
@@ -62,21 +67,21 @@ public class USMTestUtils {
     		service = ServiceReader.readService(new File(folderPath,serviceFileName));
     	}
 
-    	return packAndDeploy(folderPath, serviceFileName, service);
+    	return packAndDeploy(folderPath, serviceFileName, service, processName);
     }
 
 
-    public static Service packAndDeploy(final String folderPath, Service service) throws IOException, PackagingException {
-    	return packAndDeploy(folderPath, null, service);
+    public static Service packAndDeploy(final String folderPath, Service service, String absolutePuName) throws IOException, PackagingException {
+    	return packAndDeploy(folderPath, null, service, absolutePuName);
     }
     
     
 
-	private static Service packAndDeploy(final String folderPath, final String serviceFileName, Service service) throws IOException,
+	private static Service packAndDeploy(final String folderPath, final String serviceFileName, Service service, String absolutePuName) throws IOException,
 			PackagingException {
 		final File puZipFile = Packager.pack(new File(folderPath), service);
 
-    	final ProcessingUnitDeployment processingUnitDeployment = new ProcessingUnitDeployment(puZipFile).numberOfInstances(service.getNumInstances());    	
+    	final ProcessingUnitDeployment processingUnitDeployment = new ProcessingUnitDeployment(puZipFile).numberOfInstances(service.getNumInstances()).name(absolutePuName);    	
     	deploy(processingUnitDeployment, puZipFile, serviceFileName);
     	logger.info("deployed " + puZipFile.getName());
     	puZipFile.deleteOnExit();
@@ -158,9 +163,9 @@ public class USMTestUtils {
 	}
 	
 	public static Service usmDeploy(String processName, String serviceFileName) throws IOException, PackagingException {
-		final String processFolder = SGTestHelper.getSGTestRootDir() + "/apps/USM/usm/" + processName;
+		final String processFolder = SGTestHelper.getSGTestRootDir() + "/apps/USM/usm/" + ServiceUtils.getFullServiceName(processName).getServiceName();
 		
-		return packAndDeploy(processFolder, serviceFileName);
+		return packAndDeploy(processFolder, serviceFileName, processName);
 	}
 	    
     public static Long getActualPID(ProcessingUnitInstance puInstance) {
@@ -216,5 +221,44 @@ public class USMTestUtils {
 			}
 		}
 		Assert.fail("pid " + pid1 + " doesnt exist");
+	}
+	
+	public static boolean waitForPuRunningState(String absolutePuName, long timeout, TimeUnit timeunit,Admin admin) throws UnknownHostException{
+		long end = System.currentTimeMillis() + timeunit.toMillis(timeout);
+		while (System.currentTimeMillis() < end) {
+			if (isUSMServiceRunning(absolutePuName, admin)){
+				return true;
+			}
+		}
+		LogUtils.log("USM Service state is " + getUSMServiceState(absolutePuName, admin));
+		return false;
+	}
+	
+	public static USMState getUSMServiceState(String absoluteServiceName, Admin admin) throws UnknownHostException{
+		ProcessingUnit processingUnit = admin.getProcessingUnits().waitFor(absoluteServiceName, 60, TimeUnit.SECONDS);
+		int state = 0;
+		boolean instance = processingUnit.waitFor(1,60, TimeUnit.SECONDS);
+		if(instance){
+			ProcessingUnitInstance processingUnitInstance = processingUnit.getInstances()[0];
+			ProcessingUnitInstanceStatistics statistics = processingUnitInstance.getStatistics();
+			ServiceMonitors serviceMonitors = statistics.getMonitors().get(CloudifyConstants.USM_MONITORS_SERVICE_ID);
+			state = (Integer)serviceMonitors.getMonitors().get(CloudifyConstants.USM_MONITORS_STATE_ID);
+		}
+		return USMState.values()[state];
+	}
+	
+	public static USMState getServiceState(String serviceName, String applicationName, Admin admin) throws UnknownHostException{
+		String absolutePUName = ServiceUtils.getAbsolutePUName(applicationName, serviceName);
+		return getUSMServiceState(absolutePUName, admin);
+	}
+	
+	public static boolean isUSMServiceRunning(String absoluteServiceName, Admin admin) throws UnknownHostException{
+		USMState serviceState = getUSMServiceState(absoluteServiceName, admin);
+		return serviceState.equals(USMState.RUNNING);
+	}
+	
+	public static boolean isUSMServiceRunning(String serviceName, String applicationName, Admin admin) throws UnknownHostException{
+		String absolutePUName = ServiceUtils.getAbsolutePUName(applicationName, serviceName);
+		return isUSMServiceRunning(absolutePUName, admin);
 	}
 }

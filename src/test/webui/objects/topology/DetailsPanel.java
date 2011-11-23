@@ -30,10 +30,5 @@ public class DetailsPanel {
 		selenium.click(WebConstants.Xpath.pathToServiceDetails);
 		return new WebUIServiceDetails(selenium, driver);
 	}
-
-	public ServiceMetrics switchToServiceMetrics() {
-		selenium.click(WebConstants.Xpath.pathToMetricSelection);
-		return new ServiceMetrics(selenium, driver);
-	}
 	
 }

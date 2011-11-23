@@ -88,7 +88,7 @@ public class USMAllProcessesBasicTest extends UsmAbstractTest {
 		assertTrue("Connection test to simple process port failed", isPortOpen(address, MODIFIED_PORT));
 
 		pu.undeploy();
-		Assert.assertNull(admin.getProcessingUnits().getProcessingUnit(service.getName()));
+		Assert.assertNull(admin.getProcessingUnits().getProcessingUnit(processName));
 
 	}
 
@@ -140,7 +140,7 @@ public class USMAllProcessesBasicTest extends UsmAbstractTest {
 		USMTestUtils.assertMonitors(pu, monitors);
 
 		pu.undeploy();
-		Assert.assertNull(admin.getProcessingUnits().getProcessingUnit(service.getName()));
+		Assert.assertNull(admin.getProcessingUnits().getProcessingUnit(processName));
 
 	}
 

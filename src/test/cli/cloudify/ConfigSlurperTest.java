@@ -25,7 +25,7 @@ public class ConfigSlurperTest extends AbstractCommandTest {
 			runCommand(command);
 			String absolutePuName = ServiceUtils.getAbsolutePUName(DEFAULT_APPLICTION_NAME, "slurper");
 			ProcessingUnit pu = admin.getProcessingUnits().waitFor(absolutePuName);
-			USMTestUtils.waitForPuRunningState(absolutePuName, 60, TimeUnit.SECONDS, admin);
+			assertTrue("USM Service state is NOT RUNNING", USMTestUtils.waitForPuRunningState(absolutePuName, 60, TimeUnit.SECONDS, admin));
 			Map<String, ServiceDetails> serviceDetails = pu.getInstances()[0].getServiceDetailsByServiceId();
 			Map<String, Object> attributes = serviceDetails.get("USM").getAttributes();
 			Assert.assertTrue(attributes.get("icon").equals("icon.png"));

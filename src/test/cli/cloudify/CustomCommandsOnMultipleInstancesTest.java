@@ -12,9 +12,12 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import test.usm.USMTestUtils;
+
 import com.gigaspaces.cloudify.dsl.internal.CloudifyConstants;
 import com.gigaspaces.cloudify.dsl.internal.ServiceReader;
 import com.gigaspaces.cloudify.dsl.internal.packaging.PackagingException;
+import com.gigaspaces.cloudify.dsl.utils.ServiceUtils;
 
 import framework.utils.LogUtils;
 
@@ -29,8 +32,10 @@ public class CustomCommandsOnMultipleInstancesTest extends AbstractSingleBootstr
 	public void beforeClass() throws FileNotFoundException, PackagingException, IOException, InterruptedException{			
 		super.beforeClass();
 		installService();
-		ProcessingUnit pu = admin.getProcessingUnits().waitFor("simpleCustomCommandsMultipleInstances" , WAIT_FOR_TIMEOUT , TimeUnit.SECONDS);
+		String absolutePUName = ServiceUtils.getAbsolutePUName("simpleCustomCommandsMultipleInstances", "simpleCustomCommandsMultipleInstances");
+		ProcessingUnit pu = admin.getProcessingUnits().waitFor(absolutePUName , WAIT_FOR_TIMEOUT , TimeUnit.SECONDS);
 		assertTrue("service was not installed", pu.waitFor(pu.getTotalNumberOfInstances(), WAIT_FOR_TIMEOUT, TimeUnit.SECONDS));
+		assertTrue("USM Service State is NOT RUNNING", USMTestUtils.waitForPuRunningState(absolutePUName, 60, TimeUnit.SECONDS, admin));
 		totalInstances = pu.getTotalNumberOfInstances();
 	}
 	

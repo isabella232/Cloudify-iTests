@@ -12,8 +12,11 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import test.usm.USMTestUtils;
+
 import com.gigaspaces.cloudify.dsl.internal.ServiceReader;
 import com.gigaspaces.cloudify.dsl.internal.packaging.PackagingException;
+import com.gigaspaces.cloudify.dsl.utils.ServiceUtils;
 
 import framework.utils.LogUtils;
 
@@ -28,13 +31,18 @@ public class CustomCommandsOnMultipleInstancesApplicationTest extends AbstractSi
 	public void beforeClass() throws FileNotFoundException, PackagingException, IOException, InterruptedException{
 		super.beforeClass();
 		installApplication();
-		ProcessingUnit pu1 = admin.getProcessingUnits().waitFor("simpleCustomCommandsMultipleInstances-1" , WAIT_FOR_TIMEOUT , TimeUnit.SECONDS);
-		ProcessingUnit pu2 = admin.getProcessingUnits().waitFor("simpleCustomCommandsMultipleInstances-2", WAIT_FOR_TIMEOUT , TimeUnit.SECONDS);
+		String absolutePUNameSimple1 = ServiceUtils.getAbsolutePUName("simpleCustomCommandsMultipleInstances", "simpleCustomCommandsMultipleInstances-1");
+		String absolutePUNameSimple2 = ServiceUtils.getAbsolutePUName("simpleCustomCommandsMultipleInstances", "simpleCustomCommandsMultipleInstances-2");
+		ProcessingUnit pu1 = admin.getProcessingUnits().waitFor(absolutePUNameSimple1 , WAIT_FOR_TIMEOUT , TimeUnit.SECONDS);
+		ProcessingUnit pu2 = admin.getProcessingUnits().waitFor(absolutePUNameSimple2, WAIT_FOR_TIMEOUT , TimeUnit.SECONDS);
+		//assertTrue("USM Service state is NOT RUNNING", USMTestUtils.waitForPuRunningState(absolutePuName, 60, TimeUnit.SECONDS, admin));
 		assertNotNull(pu1);
 		assertNotNull(pu2);
 		assertTrue("applications was not installed", pu1.waitFor(pu1.getTotalNumberOfInstances(), WAIT_FOR_TIMEOUT, TimeUnit.SECONDS));
 		assertTrue("applications was not installed", pu1.waitFor(pu2.getTotalNumberOfInstances(), WAIT_FOR_TIMEOUT, TimeUnit.SECONDS));
 		assertNotNull("applications was not installed", admin.getApplications().getApplication("simpleCustomCommandsMultipleInstances"));
+		assertTrue("USM Service State is NOT RUNNING", USMTestUtils.waitForPuRunningState(absolutePUNameSimple1, 60, TimeUnit.SECONDS, admin));
+		assertTrue("USM Service State is NOT RUNNING", USMTestUtils.waitForPuRunningState(absolutePUNameSimple2, 60, TimeUnit.SECONDS, admin));
 		totalInstancesService2 = pu2.getTotalNumberOfInstances();
 	}
 

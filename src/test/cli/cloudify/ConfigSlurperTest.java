@@ -2,11 +2,14 @@ package test.cli.cloudify;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.openspaces.pu.service.ServiceDetails;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import test.usm.USMTestUtils;
 
 import com.gigaspaces.cloudify.dsl.utils.ServiceUtils;
 
@@ -20,9 +23,9 @@ public class ConfigSlurperTest extends AbstractCommandTest {
 		String command = "connect " + restUrl + ";install-service --verbose " + serviceDir + ";exit";
 
 			runCommand(command);
-
-			ProcessingUnit pu = admin.getProcessingUnits().waitFor(ServiceUtils.getAbsolutePUName(DEFAULT_APPLICTION_NAME, "slurper"));
-			
+			String absolutePuName = ServiceUtils.getAbsolutePUName(DEFAULT_APPLICTION_NAME, "slurper");
+			ProcessingUnit pu = admin.getProcessingUnits().waitFor(absolutePuName);
+			USMTestUtils.waitForPuRunningState(absolutePuName, 60, TimeUnit.SECONDS, admin);
 			Map<String, ServiceDetails> serviceDetails = pu.getInstances()[0].getServiceDetailsByServiceId();
 			Map<String, Object> attributes = serviceDetails.get("USM").getAttributes();
 			Assert.assertTrue(attributes.get("icon").equals("icon.png"));

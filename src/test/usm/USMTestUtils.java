@@ -45,7 +45,7 @@ public class USMTestUtils {
 	public static File usmCreateJar(String processFolder) {
 		System.setProperty("com.gs.home", SGTestHelper.getBuildDir());
 		try {
-			return Packager.pack(new File(SGTestHelper.getSGTestRootDir() , processFolder), CloudifyConstants.DEFAULT_APPLICATION_NAME);
+			return Packager.pack(new File(SGTestHelper.getSGTestRootDir() , processFolder));
 		} catch (Exception e) {
 			Assert.fail("failed to create usm jar file",e);
 			return null;

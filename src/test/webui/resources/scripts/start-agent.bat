@@ -12,6 +12,7 @@ xcopy %REMOTE_BUILD_FILE% %USER_HOME%
 @echo extracting build file to local-builds folder
 7z x %USER_HOME%\gigaspaces-cloudify-%VERSION%-%MILESTONE%-b%BUILD_VERSION%.zip -o%USER_HOME%
 @del %USER_HOME%\gigaspaces-cloudify-%VERSION%-%MILESTONE%-b%BUILD_VERSION%.zip
+xcopy %USER_HOME%\hsqldb.xml %RUNTIME_BUILD_LOCATION%\config\gsa
 
 @echo starting agent
 @set LOOKUPGROUPS=sgwebui-cloudify

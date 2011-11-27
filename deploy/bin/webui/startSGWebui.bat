@@ -39,7 +39,7 @@ xcopy %REMOTE_BUILD_DIR%\xap-premium\1.5\gigaspaces-xap-premium-%VERSION%-%MILES
 @call %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER%\%BUILD_FOLDER%\tools\groovy\bin\groovy.bat %LOCAL_SGPATH%\src\test\webui\resources\scripts\shutdown
 
 @echo tranferring reports to tgrid
-xcopy %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER% \\tarzan\tgrid\sgtest-xap\deploy\local-builds\%BUILD_NUMBER% /s /i /y
+xcopy %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER% Y:\%BUILD_NUMBER% /s /i /y
 
 @echo cleaning remote build folder
 @call %LOCAL_SGPATH%\src\test\webui\resources\psexec.exe \\pc-lab73 -u GSPACES\ca -p password -c -f %LOCAL_SGPATH%\src\test\webui\resources\scripts\clean-xap.bat %VERSION% %MILESTONE%

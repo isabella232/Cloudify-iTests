@@ -3,13 +3,11 @@ package test.cli.cloudify;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.InetAddress;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import org.openspaces.admin.AdminFactory;
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.openspaces.admin.pu.ProcessingUnitInstance;
 import org.openspaces.pu.service.ServiceDetails;
@@ -22,7 +20,7 @@ import com.gigaspaces.cloudify.dsl.internal.packaging.PackagingException;
 import com.gigaspaces.cloudify.dsl.utils.ServiceUtils;
 
 
-public class LifecycleDetailsMonitorMapClosureTest extends AbstractCommandTest{
+public class LifecycleDetailsMonitorMapClosureTest extends AbstractLocalCloudTest{
 
 	final private String RECIPE_DIR_PATH = CommandTestUtils
 	.getPath("apps/USM/usm/simple");
@@ -57,13 +55,13 @@ public class LifecycleDetailsMonitorMapClosureTest extends AbstractCommandTest{
 		File serviceDir = new File(RECIPE_DIR_PATH);
 		ServiceReader.getServiceFromDirectory(serviceDir, CloudifyConstants.DEFAULT_APPLICATION_NAME).getService();
 
-		runCommand("bootstrap-localcloud;install-service --verbose " + RECIPE_DIR_PATH);
-		AdminFactory factory = new AdminFactory();
-		factory.addLocator(InetAddress.getLocalHost().getHostAddress() + ":4168");
-		this.admin = factory.create();
+		runCommand("connect " + this.restUrl + ";install-service --verbose " + RECIPE_DIR_PATH);
+//		AdminFactory factory = new AdminFactory();
+//		factory.addLocator(InetAddress.getLocalHost().getHostAddress() + ":4168");
+//		this.admin = factory.create();
 		assertTrue("Could not find LUS of local cloud", admin.getLookupServices().waitFor(1, 10, TimeUnit.SECONDS));
 
-		this.restUrl = "http://" + InetAddress.getLocalHost().getHostAddress() + ":8100";
+//		this.restUrl = "http://" + InetAddress.getLocalHost().getHostAddress() + ":8100";
 	}
 	
 	private void checkDetails(ProcessingUnitInstance pui) {

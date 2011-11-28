@@ -8,6 +8,8 @@ import org.openspaces.admin.pu.DeploymentStatus;
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.testng.annotations.Test;
 
+import test.usm.USMTestUtils;
+
 import com.gigaspaces.cloudify.dsl.utils.ServiceUtils;
 
 import framework.tools.SGTestHelper;
@@ -43,6 +45,8 @@ public class HttpStartDetectionTest extends AbstractCommandTest {
 			assertTrue("tomcat service should not be installed.", !admin.getProcessingUnits().getProcessingUnit(tomcatAbsolutePuName).getStatus().equals(DeploymentStatus.INTACT));
 			ProcessingUnit tomcatPu = admin.getProcessingUnits().waitFor(tomcatAbsolutePuName, Constants.PROCESSINGUNIT_TIMEOUT_SEC, TimeUnit.SECONDS);
 			assertTrue("Expected processing unit instances of tomcat service is not 0", !tomcatPu.waitFor(1, Constants.PROCESSINGUNIT_TIMEOUT_SEC, TimeUnit.SECONDS));
+			assertTrue("Service " + tomcatAbsolutePuName + " State is RUNNING.", 
+					!USMTestUtils.waitForPuRunningState(tomcatAbsolutePuName, 60, TimeUnit.SECONDS, admin));
 		
 		} catch (IOException e) {
 			e.printStackTrace();

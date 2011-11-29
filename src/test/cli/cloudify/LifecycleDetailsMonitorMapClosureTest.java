@@ -14,6 +14,8 @@ import org.openspaces.pu.service.ServiceDetails;
 import org.openspaces.pu.service.ServiceMonitors;
 import org.testng.annotations.Test;
 
+import test.usm.USMTestUtils;
+
 import com.gigaspaces.cloudify.dsl.internal.CloudifyConstants;
 import com.gigaspaces.cloudify.dsl.internal.ServiceReader;
 import com.gigaspaces.cloudify.dsl.internal.packaging.PackagingException;
@@ -54,14 +56,9 @@ public class LifecycleDetailsMonitorMapClosureTest extends AbstractLocalCloudTes
 	PackagingException, IOException, InterruptedException {
 		File serviceDir = new File(RECIPE_DIR_PATH);
 		ServiceReader.getServiceFromDirectory(serviceDir, CloudifyConstants.DEFAULT_APPLICATION_NAME).getService();
-
 		runCommand("connect " + this.restUrl + ";install-service --verbose " + RECIPE_DIR_PATH);
-//		AdminFactory factory = new AdminFactory();
-//		factory.addLocator(InetAddress.getLocalHost().getHostAddress() + ":4168");
-//		this.admin = factory.create();
 		assertTrue("Could not find LUS of local cloud", admin.getLookupServices().waitFor(1, 10, TimeUnit.SECONDS));
-
-//		this.restUrl = "http://" + InetAddress.getLocalHost().getHostAddress() + ":8100";
+		assertTrue("USM Service State is not RUNNING", USMTestUtils.waitForPuRunningState("default.simple", 20, TimeUnit.SECONDS, admin));
 	}
 	
 	private void checkDetails(ProcessingUnitInstance pui) {

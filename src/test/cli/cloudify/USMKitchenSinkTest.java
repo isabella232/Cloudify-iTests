@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -24,12 +25,14 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import test.usm.USMTestUtils;
+
 import com.gigaspaces.cloudify.dsl.internal.CloudifyConstants;
 import com.gigaspaces.cloudify.dsl.internal.ServiceReader;
 import com.gigaspaces.cloudify.dsl.internal.packaging.PackagingException;
 import com.gigaspaces.cloudify.dsl.utils.ServiceUtils;
-import com.gigaspaces.cloudify.usm.USMUtils;
 import com.gigaspaces.cloudify.usm.USMException;
+import com.gigaspaces.cloudify.usm.USMUtils;
 import com.gigaspaces.internal.sigar.SigarHolder;
 import com.gigaspaces.log.AllLogEntryMatcher;
 import com.gigaspaces.log.ContinuousLogEntryMatcher;
@@ -63,11 +66,9 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 			"preStop fired", "String_with_Spaces", "postStop fired",
 			"shutdown fired" };
 
-	private static final String[] EXPECTED_DETAILS_FIELDS = { "Details",
-			"Counter", "Type", "stam", "SomeKey" };
+	private static final String[] EXPECTED_DETAILS_FIELDS = {"stam", "SomeKey" };
 
-	private static final String[] EXPECTED_MONITORS_FIELDS = { "Counter",
-			CloudifyConstants.USM_MONITORS_CHILD_PROCESS_ID,
+	private static final String[] EXPECTED_MONITORS_FIELDS = {CloudifyConstants.USM_MONITORS_CHILD_PROCESS_ID,
 			CloudifyConstants.USM_MONITORS_ACTUAL_PROCESS_ID, "NumberTwo",
 			"NumberOne" };
 	
@@ -125,6 +126,7 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 
 		// check that previous log entries have been printed to this log
 		logger.info("Checking that previous process printouts are printed to the new GSC logs");
+		sleep(5000);
 		checkForPrintouts(pui, pid, matcher, EXPECTED_PROCESS_PRINTOUTS);
  
 		// reset the matcher
@@ -134,8 +136,13 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 		final int numOfStartupEntries = calculateNumberOfRecurrencesInGSCLog(pui, pid, matcher, EXPECTED_PROCESS_PRINTOUTS[0]);
 		assertEquals("Process startup log entries should only appear once in the log file", 1, numOfStartupEntries);
 		
-		// undeploy
-		pu.undeploy();
+		//TODO:Remove this and uncomment the code below. This is a workaround
+		//that is ment to solve the pu.undeploy getting stuck issue.
+		while (this.admin.getProcessingUnits().waitFor("default.kitchensink-service", 10, TimeUnit.SECONDS).getInstances().length != 0){
+			pu.undeployAndWait(10, TimeUnit.SECONDS);
+		}
+//		// undeploy
+//		pu.undeploy();
 
 		
 		// test shutdown events
@@ -512,8 +519,9 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 		return matcher;
 	}
 
-	private ProcessingUnitInstance findPUI(ProcessingUnit pu) {
+	private ProcessingUnitInstance findPUI(ProcessingUnit pu) throws UnknownHostException {
 		boolean found = pu.waitFor(1, 30, TimeUnit.SECONDS);
+		assertTrue("USM Service state is not RUNNING", USMTestUtils.waitForPuRunningState("default.kitchensink-servic", 20, TimeUnit.SECONDS, admin));
 		assertTrue("Could not find instance of deployed service", found);
 
 		ProcessingUnitInstance pui = pu.getInstances()[0];

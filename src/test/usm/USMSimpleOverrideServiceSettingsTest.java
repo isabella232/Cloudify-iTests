@@ -87,7 +87,7 @@ public class USMSimpleOverrideServiceSettingsTest extends UsmAbstractTest {
 
 		int maxJarSize = 1024;
 
-		File folderPath = new File(SGTestHelper.getSGTestRootDir() , "apps/USM/usm/" + ServiceUtils.getFullServiceName(processName));
+		File folderPath = new File(SGTestHelper.getSGTestRootDir() , "apps/USM/usm/" + ServiceUtils.getFullServiceName(processName).getServiceName());
 		Service service = ServiceReader.readService(folderPath);
 		service.setMaxJarSize(maxJarSize);
 		

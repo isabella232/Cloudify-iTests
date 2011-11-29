@@ -75,7 +75,7 @@ public class USMIncrementDecrementTest extends UsmAbstractTest {
         	USMTestUtils.assertMonitors(puInstance);
         }
 
-        Assert.assertEquals(2, admin.getProcessingUnits().getProcessingUnit(service.getName()).getInstances().length);
+        Assert.assertEquals(2, admin.getProcessingUnits().waitFor(processName, 20, TimeUnit.SECONDS).getInstances().length);
 
         long pidToDec = USMTestUtils.getActualPID(pu.getInstances()[0]);
         pu.getInstances()[0].decrement();

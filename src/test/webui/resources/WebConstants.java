@@ -20,6 +20,8 @@ public final class WebConstants {
 	public final static String MAGENTA = "#ec008c";
 	public final static String MAGENTA_RED = "#ed145b";
 	public final static String GREY = "#666666";
+	public static final String CHROME = "Chrome";
+	public static final String FIREFOX = "Firefox";
 	
 	public static final class ID {
 		public static final String topologyPanel = "gs-tab-item-topology";
@@ -440,6 +442,8 @@ public final class WebConstants {
 		public static final String primarySpaceImage = "gs-space-instance-icon-primary";
 		public static final String backupSpaceImage = "gs-space-instance-icon-backup";
 		public static final String selectedItemInLogsTree = "x-ftree2-selected";
+		public static final String barLineChartContainer = "highcharts-container";
+		public static final String balanceGauge = "gs-cursor-pointer";
 		
 		public static final String win32OS = "gs-os-icon-Win32";
 		
@@ -448,7 +452,11 @@ public final class WebConstants {
 		}
 		
 		public static final String getMetricClassName(String name) {
-			return "gs-monitoring-component-" + name;
+			return "gs-metric-" + name;
+		}
+		
+		public static final String getMetricClassNameByIndex(int index) {
+			return "gs-monitoring-component-" + index;
 		}
 
 		public static String getPuInstanceClassName(String name) {

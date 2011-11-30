@@ -2,6 +2,7 @@ package test.webui.objects;
 
 import org.junit.Assert;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -82,7 +83,7 @@ public class LoginPage {
 	 * @throws InterruptedException 
 	 */
 	public MainNavigation login() throws InterruptedException {
-		selenium.windowMaximize();
+		maximize();
 		Thread.sleep(1000);
 		inputDiscovery();
 		selenium.click(WebConstants.Xpath.loginButton);
@@ -125,5 +126,9 @@ public class LoginPage {
     	}
 	}
 
+    private void maximize(){ 
+        String script = "if (window.screen){window.moveTo(0, 0);window.resizeTo(window.screen.availWidth,window.screen.availHeight);};"; 
+        ((JavascriptExecutor) driver).executeScript(script); 
+    } 
 	
 }

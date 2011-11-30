@@ -37,6 +37,7 @@ import org.openspaces.admin.pu.ProcessingUnitDeployment;
 import org.openspaces.admin.space.SpaceDeployment;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.BeforeSuite;
 
 import test.AbstractTest;
 import test.webui.objects.LoginPage;
@@ -49,10 +50,10 @@ import com.thoughtworks.selenium.Selenium;
 import framework.tools.SGTestHelper;
 import framework.utils.AdminUtils;
 import framework.utils.AssertUtils;
+import framework.utils.AssertUtils.RepetitiveConditionProvider;
 import framework.utils.LogUtils;
 import framework.utils.ProcessingUnitUtils;
 import framework.utils.ScriptUtils;
-import framework.utils.AssertUtils.RepetitiveConditionProvider;
 import framework.utils.ScriptUtils.RunScript;
 
 
@@ -92,7 +93,17 @@ public abstract class AbstractSeleniumTest extends AbstractTest {
     protected GridServiceManager webUIGSM;
     ProcessingUnit gswebui;
     
+    private String defaultBrowser;
+    
     List<Selenium> seleniumBrowsers = new ArrayList<Selenium>();
+    
+    @BeforeSuite
+    public void getRuntimeBrowser() {
+    	if (System.getProperty("selenium.browser") != null) {
+    		defaultBrowser = System.getProperty("selenium.browser");
+    	}
+    	else defaultBrowser = WebConstants.FIREFOX;
+    }
     
     /**
      * starts the web-ui browser from the batch file in gigaspaces
@@ -121,6 +132,7 @@ public abstract class AbstractSeleniumTest extends AbstractTest {
     	try {
     		stopWebServer();
     		stopWebBrowser();
+    		restorePreviousBrowser();
     	}
     	catch (Exception e) {
     		e.printStackTrace();
@@ -150,15 +162,16 @@ public abstract class AbstractSeleniumTest extends AbstractTest {
     
     public void startWebBrowser(String uRL) throws InterruptedException {
     	LogUtils.log("Launching browser...");
-    	if (System.getenv("selenium.browser") == null) {
+    	String browser = System.getProperty("selenium.browser");
+		if (browser == null) {
     		driver = new FirefoxDriver();
     	}
     	else {
-    		if (System.getenv("selenium.browser").equals("Firefox")) {
+    		if (browser.equals("Firefox")) {
     			driver = new FirefoxDriver();
     		}
     		else {
-    			if (System.getenv("selenium.browser").equals("IE")) {
+    			if (browser.equals("IE")) {
     				DesiredCapabilities desired = DesiredCapabilities.internetExplorer();
     				desired.setCapability(InternetExplorerDriver.INTRODUCE_FLAKINESS_BY_IGNORING_SECURITY_DOMAINS, true);
     				driver = new InternetExplorerDriver(desired);
@@ -350,6 +363,14 @@ public abstract class AbstractSeleniumTest extends AbstractTest {
 	 */
 	public void windowMaximize() {
 		selenium.windowMaximize();
+	}
+	
+	public void setBrowser(String browser) {
+		System.setProperty("selenium.browser", browser);
+	}
+	
+	public void restorePreviousBrowser() {
+		System.setProperty("selenium.browser", defaultBrowser);
 	}
 	
 	/**

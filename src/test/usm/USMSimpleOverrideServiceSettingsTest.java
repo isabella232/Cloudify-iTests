@@ -18,6 +18,7 @@ import test.cli.cloudify.CommandTestUtils;
 import com.gigaspaces.cloudify.dsl.Service;
 import com.gigaspaces.cloudify.dsl.internal.CloudifyConstants;
 import com.gigaspaces.cloudify.dsl.internal.ServiceReader;
+import com.gigaspaces.cloudify.dsl.internal.packaging.Packager;
 import com.gigaspaces.cloudify.dsl.internal.packaging.PackagingException;
 import com.gigaspaces.cloudify.dsl.utils.ServiceUtils;
 
@@ -92,9 +93,8 @@ public class USMSimpleOverrideServiceSettingsTest extends UsmAbstractTest {
 		service.setMaxJarSize(maxJarSize);
 		
 		try {
-			USMTestUtils.packAndDeploy(folderPath.getAbsolutePath(), service, processName);
-			assertTrue("Service " + processName + " State is not RUNNING.",
-					USMTestUtils.waitForPuRunningState(processName, 60, TimeUnit.SECONDS, admin));
+			//Sould throw an exception.
+			Packager.pack(folderPath, service);
 			Assert.fail("Failed overriding max jar property");
 		} catch (PackagingException e) {
 			assertTrue("Unexpected exception", e.getMessage().contains("it must be smaller than: 1 KB"));

@@ -22,7 +22,6 @@ import org.openspaces.admin.machine.Machine;
 import org.openspaces.admin.pu.DeploymentStatus;
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.openspaces.admin.pu.ProcessingUnitDeployment;
-import org.openspaces.admin.space.Space;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 

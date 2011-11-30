@@ -8,6 +8,8 @@ import org.openspaces.admin.gsc.GridServiceContainer;
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.testng.annotations.Test;
 
+import test.usm.USMTestUtils;
+
 
 import com.gigaspaces.cloudify.dsl.utils.ServiceUtils;
 import com.gigaspaces.log.LogEntry;
@@ -55,6 +57,7 @@ public class UninstallWithDelayTest extends AbstractCommandTest {
 	    String absolutePUName = ServiceUtils.getAbsolutePUName("simple", SERVICE_NAME);
 	    ProcessingUnit processingUnit = admin.getProcessingUnits().waitFor(absolutePUName);
 	    assertTrue("Instance of '" + SERVICE_NAME + "' service was not found", processingUnit.waitFor(1, Constants.PROCESSINGUNIT_TIMEOUT_SEC,  TimeUnit.SECONDS));
+	    assertTrue("USM Service State is not RUNNING", USMTestUtils.waitForPuRunningState(absolutePUName, 20, TimeUnit.SECONDS, admin));
 	    
 	    final GridServiceContainer gsc = processingUnit.getInstances()[0].getGridServiceContainer();
 	    

@@ -1,5 +1,6 @@
 @echo off
 rem taskkill /fi "STATUS eq RUNNING" /f /im javaw.exe
+set SGTEST_TOOLS=%~dp0
 pushd "%~dp0"
 setlocal
 echo checking java version
@@ -20,6 +21,9 @@ goto exit
 
 rem check gigaspaces\tools\build.properties build number
 pushd ..\..\gigaspaces\tools
+if not "%1"=="gigaspaces" goto not_force_compile_gigaspaces
+del build.properties
+:not_force_compile_gigaspaces
 if not exist build.properties goto gs_build
 FOR /F "eol=; tokens=2,2 delims==" %%i IN ('findstr /i "buildnumber" build.properties') DO set buildnumber1=%%i
 FOR /F "eol=; tokens=1,2 delims=-" %%i IN ('findstr /i "version" build.properties') DO set versionnumber1=%%i
@@ -57,10 +61,12 @@ if not exist %temp%\pv.txt goto cont1
 del /q %temp%\pv.txt
 :cont1
 call %JAVACMD% -classpath %GS_JARS% com.j_spaces.kernel.PlatformVersion > %temp%\pv.txt
-FOR /F "eol=) tokens=7" %%i IN ('findstr /i "build" %temp%\pv.txt') DO set gs_buildnumber=%%i
+type %temp%\pv.txt
+FOR /F "eol=) tokens=6" %%i IN ('findstr /i "build" %temp%\pv.txt') DO set gs_buildnumber=%%i
 set gs_buildnumber=%gs_buildnumber:~0,-1%
 popd
 if %buildnumber%==%gs_buildnumber% goto nocopy
+echo wrong build number of gigaspaces folder. expected %buildnumber% , actual %gs_buildnumber%
 rem delete old xap version
 rmdir /s /q gigaspaces
 if exist gigaspaces goto jar_locked_error
@@ -91,23 +97,29 @@ call ant buildmain,fulljar,srczip
 if not exist lib\required\gs-openspaces.jar goto compile_error
 if not exist lib\optional\openspaces\gs-openspaces-src.zip goto compile_error
 echo copying lib\required\gs-runtime.jar
-del /f ..\SGTest\tools\gigaspaces\lib\required\gs-runtime.jar
-if exist ..\SGTest\tools\gigaspaces\lib\required\gs-runtime.jar goto jar_locked_error
-copy /y ..\gigaspaces\releases\build_%buildnumber%\jars\1.5\xap\gs-runtime.jar ..\SGTest\tools\gigaspaces\lib\required\*.jar
+del /f %SGTEST_TOOLS%\gigaspaces\lib\required\gs-runtime.jar
+if exist %SGTEST_TOOLS%\gigaspaces\lib\required\gs-runtime.jar goto jar_locked_error
+copy /y ..\gigaspaces\releases\build_%buildnumber%\jars\1.5\xap\gs-runtime.jar %SGTEST_TOOLS%\gigaspaces\lib\required\*.jar
+if errorlevel 1 goto copy_error
 echo copying lib\platform\boot\gs-boot.jar
-del /f ..\SGTest\tools\gigaspaces\lib\platform\boot\gs-boot.jar
-if exist ..\SGTest\tools\gigaspaces\lib\platform\boot\gs-boot.jar goto jar_locked_error
-copy /y ..\gigaspaces\releases\build_%buildnumber%\jars\1.5\xap\gs-boot.jar ..\SGTest\tools\gigaspaces\lib\platform\boot\*.jar
+del /f %SGTEST_TOOLS%\gigaspaces\lib\platform\boot\gs-boot.jar
+if exist %SGTEST_TOOLS%\gigaspaces\lib\platform\boot\gs-boot.jar goto jar_locked_error
+copy /y ..\gigaspaces\releases\build_%buildnumber%\jars\1.5\xap\gs-boot.jar %SGTEST_TOOLS%\gigaspaces\lib\platform\boot\*.jar
+if errorlevel 1 goto copy_error
 echo copying lib\required\gs-openspaces.jar
-del /f ..\SGTest\tools\gigaspaces\lib\required\gs-openspaces.jar
-if exist ..\SGTest\tools\gigaspaces\lib\required\gs-openspaces.jar goto jar_locked_error
-copy /y lib\required\gs-openspaces.jar ..\SGTest\tools\gigaspaces\lib\required\*.jar
+del /f %SGTEST_TOOLS%\gigaspaces\lib\required\gs-openspaces.jar
+if exist %SGTEST_TOOLS%\gigaspaces\lib\required\gs-openspaces.jar goto jar_locked_error
+copy /y lib\required\gs-openspaces.jar %SGTEST_TOOLS%\gigaspaces\lib\required\*.jar
+if errorlevel 1 goto copy_error
 echo copying lib\optional\openspaces\gs-openspaces-src.zip
-del /f ..\SGTest\tools\gigaspaces\lib\optional\openspaces\gs-openspaces-src.zip
-if exist ..\SGTest\tools\gigaspaces\lib\optional\openspaces\gs-openspaces-src.zip goto jar_locked_error
-copy /y lib\optional\openspaces\gs-openspaces-src.zip ..\SGTest\tools\gigaspaces\lib\optional\openspaces\*.zip
-
+del /f %SGTEST_TOOLS%\gigaspaces\lib\optional\openspaces\gs-openspaces-src.zip
+if exist %SGTEST_TOOLS%\gigaspaces\lib\optional\openspaces\gs-openspaces-src.zip goto jar_locked_error
+copy /y lib\optional\openspaces\gs-openspaces-src.zip %SGTEST_TOOLS%\gigaspaces\lib\optional\openspaces\*.zip
+if errorlevel 1 goto copy_error
 goto end_openspace_compile
+:copy_error
+echo copy error %cd%
+goto exit
 :compile_error
 echo compilation error
 goto exit

@@ -79,7 +79,7 @@ public class USMTestUtils {
 
 	private static Service packAndDeploy(final String folderPath, final String serviceFileName, Service service, String absolutePuName) throws IOException,
 			PackagingException {
-		final File puZipFile = Packager.pack(new File(folderPath), service);
+		final File puZipFile = Packager.pack(new File(folderPath));
 
     	final ProcessingUnitDeployment processingUnitDeployment = new ProcessingUnitDeployment(puZipFile).numberOfInstances(service.getNumInstances()).name(absolutePuName);    	
     	deploy(processingUnitDeployment, puZipFile, serviceFileName);

@@ -521,7 +521,7 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 
 	private ProcessingUnitInstance findPUI(ProcessingUnit pu) throws UnknownHostException {
 		boolean found = pu.waitFor(1, 30, TimeUnit.SECONDS);
-		assertTrue("USM Service state is not RUNNING", USMTestUtils.waitForPuRunningState("default.kitchensink-servic", 20, TimeUnit.SECONDS, admin));
+		assertTrue("USM Service state is not RUNNING", USMTestUtils.waitForPuRunningState("default.kitchensink-service", 20, TimeUnit.SECONDS, admin));
 		assertTrue("Could not find instance of deployed service", found);
 
 		ProcessingUnitInstance pui = pu.getInstances()[0];

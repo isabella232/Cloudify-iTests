@@ -100,7 +100,8 @@ public class InternalUSMPuServiceDownTest extends AbstractLocalCloudTest {
 		String pathToTomcat;
 		
 		LogUtils.log("deleting catalina.sh/bat from pu folder");
-		String catalinaPath = "/work/processing-units/default_tomcat_1/ext/install/apache-tomcat-7.0.22/bin/catalina.";
+		// TODO - this is hard coded to a specific tomcat version!
+		String catalinaPath = "/work/processing-units/default_tomcat_1/ext/install/apache-tomcat-7.0.23/bin/catalina.";
 		String filePath = ScriptUtils.getBuildPath()+ catalinaPath;
 		if (isWindows()) {
 			pathToTomcat = filePath + "bat";
@@ -111,7 +112,7 @@ public class InternalUSMPuServiceDownTest extends AbstractLocalCloudTest {
 		
 		File tomcatRun = new File(pathToTomcat);
 		
-		assertTrue(tomcatRun.delete());
+		assertTrue("failed while deleting file: " + tomcatRun, tomcatRun.delete());
 		
 		LogUtils.log("killing tomcat process");
 		if (isWindows()) {	

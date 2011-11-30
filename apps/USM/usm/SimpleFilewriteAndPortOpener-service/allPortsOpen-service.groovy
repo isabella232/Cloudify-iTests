@@ -43,17 +43,9 @@ service {
 			className "com.gigaspaces.cloudify.usm.jmx.JmxMonitor"
 			config ([
 
-				"Details" : [
-					"org.openspaces.usm.examples.simplejavaprocess:type=SimpleBlockingJavaProcess",
-					"Details"
-				],
 				"Counter" : [
 					"org.openspaces.usm.examples.simplejavaprocess:type=SimpleBlockingJavaProcess",
 					"Counter"
-				],
-				"Type" : [
-					"org.openspaces.usm.examples.simplejavaprocess:type=SimpleBlockingJavaProcess",
-					"Type"
 				],
 				"port" : 9999
 			])

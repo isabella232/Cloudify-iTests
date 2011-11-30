@@ -34,7 +34,7 @@ public class CustomCommandsOnMultipleInstancesTest extends AbstractSingleBootstr
 		installService();
 		String absolutePUName = ServiceUtils.getAbsolutePUName("default", "simpleCustomCommandsMultipleInstances");
 		ProcessingUnit pu = admin.getProcessingUnits().waitFor(absolutePUName , WAIT_FOR_TIMEOUT , TimeUnit.SECONDS);
-		assertTrue("service was not installed", pu.waitFor(pu.getTotalNumberOfInstances(), WAIT_FOR_TIMEOUT, TimeUnit.SECONDS));
+//		assertTrue("service was not installed", pu.waitFor(pu.getTotalNumberOfInstances(), WAIT_FOR_TIMEOUT, TimeUnit.SECONDS));
 		assertTrue("USM Service State is NOT RUNNING", USMTestUtils.waitForPuRunningState(absolutePUName, 60, TimeUnit.SECONDS, admin));
 		totalInstances = pu.getTotalNumberOfInstances();
 	}

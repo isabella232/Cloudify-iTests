@@ -15,6 +15,7 @@ import com.gigaspaces.cloudify.dsl.utils.ServiceUtils;
 import framework.utils.LogUtils;
 import framework.utils.AssertUtils.RepetitiveConditionProvider;
 
+//TODO: this class should extend AbstractSingleBootstrapTest. 
 public class InstallAndUninstallServiceTest extends AbstractLocalCloudTest {
 
 	private static final String DEFAULT_APPLICATION_NAME = "default";
@@ -67,7 +68,7 @@ public class InstallAndUninstallServiceTest extends AbstractLocalCloudTest {
 		testRestApiInstall(DATAGRID_SERVICE_NAME, getUsmServicePath(DATAGRID_FOLDER_NAME));
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
 	public void testMirrorRecipeInstall() throws IOException, InterruptedException {
 		testRestApiInstall(MIRROR_SERVICE_NAME, getUsmServicePath(MIRROR_SERVICE_FOLDER_NAME));
 	}

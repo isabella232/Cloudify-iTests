@@ -60,7 +60,7 @@ public class USMSimpleOverrideServiceSettingsTest extends UsmAbstractTest {
 		
 		int numberOfInstances = 2;
 
-		File folderPath = new File(CommandTestUtils.getPath("apps/USM/usm/" + ServiceUtils.getFullServiceName(processName)));
+		File folderPath = new File(CommandTestUtils.getPath("apps/USM/usm/" + ServiceUtils.getFullServiceName(processName).getServiceName()));
 		Service service = ServiceReader.readService(folderPath);
 		service.setNumInstances(numberOfInstances);
 		USMTestUtils.packAndDeploy(folderPath.getAbsolutePath(), service, processName);
@@ -94,7 +94,7 @@ public class USMSimpleOverrideServiceSettingsTest extends UsmAbstractTest {
 		
 		try {
 			//Sould throw an exception.
-			Packager.pack(folderPath, service);
+			Packager.pack(ServiceReader.findServiceFile(folderPath), service);
 			Assert.fail("Failed overriding max jar property");
 		} catch (PackagingException e) {
 			assertTrue("Unexpected exception", e.getMessage().contains("it must be smaller than: 1 KB"));

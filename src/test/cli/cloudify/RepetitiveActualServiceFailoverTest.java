@@ -141,7 +141,7 @@ public class RepetitiveActualServiceFailoverTest extends AbstractLocalCloudTest 
 		}
 		
 		LogUtils.log("waiting for tomcat pu instances to decrease");
-		assertTrue("Tomcat PU instance was not decresed", removed.await(20, TimeUnit.SECONDS));
+		assertTrue("Tomcat PU instance was not decresed", removed.await(180, TimeUnit.SECONDS));
 		assertTrue("ProcessingUnitInstanceRemoved event has not been fired", removed.getCount() == 0);
 		LogUtils.log("waiting for tomcat pu instances to increase");
 		added.await();

@@ -63,6 +63,7 @@ public class InternalUSMPuServiceDownTest extends AbstractLocalCloudTest {
 		LogUtils.log("Retrieving tomcat process pid from admin");
 		tomcat = admin.getProcessingUnits().waitFor(ServiceUtils.getAbsolutePUName("default", "tomcat"), 10, TimeUnit.SECONDS);
 		assertNotNull(tomcat);
+		assertTrue("USM Service state is not RUNNING", USMTestUtils.waitForPuRunningState("default.tomcat", 100, TimeUnit.SECONDS, admin));
 		ProcessingUnitUtils.waitForDeploymentStatus(tomcat, DeploymentStatus.INTACT);
 		assertTrue(tomcat.getStatus().equals(DeploymentStatus.INTACT));
 		
@@ -124,7 +125,7 @@ public class InternalUSMPuServiceDownTest extends AbstractLocalCloudTest {
 		}
 		
 		LogUtils.log("waiting for tomcat pu instances to decrease");
-		assertTrue("Tomcat PU instance was not decresed", removed.await(20, TimeUnit.SECONDS));
+		assertTrue("Tomcat PU instance was not decresed", removed.await(180, TimeUnit.SECONDS));
 		assertTrue("ProcessingUnitInstanceRemoved event has not been fired", removed.getCount() == 0);
 		LogUtils.log("waiting for tomcat pu instances to increase");
 		added.await();

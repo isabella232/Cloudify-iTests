@@ -2,7 +2,6 @@
 
 @rem - Replace default configuration files with local-machine specific files.
 
-del %SGTEST_CHECKOUT_FOLDER%\sgtest_build.xml
 del %SGTEST_CHECKOUT_FOLDER%\build.xml
 copy %SGTEST_CHECKOUT_FOLDER%\src\test\webui\resources\scripts\build.xml %SGTEST_CHECKOUT_FOLDER%
 

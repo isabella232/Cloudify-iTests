@@ -128,7 +128,7 @@ public class InternalUSMPuServiceDownTest extends AbstractLocalCloudTest {
 		assertTrue("Tomcat PU instance was not decresed", removed.await(180, TimeUnit.SECONDS));
 		assertTrue("ProcessingUnitInstanceRemoved event has not been fired", removed.getCount() == 0);
 		LogUtils.log("waiting for tomcat pu instances to increase");
-		added.await();
+		added.await(180, TimeUnit.SECONDS);
 		assertTrue("ProcessingUnitInstanceAdded event has not been fired", added.getCount() == 0);	
 		LogUtils.log("verifiying tomcat service in running");
 		assertTomcatPageExists(client);	

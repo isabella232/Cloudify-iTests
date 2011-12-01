@@ -63,7 +63,7 @@ public class USMSimpleOverrideServiceSettingsTest extends UsmAbstractTest {
 		File folderPath = new File(CommandTestUtils.getPath("apps/USM/usm/" + ServiceUtils.getFullServiceName(processName).getServiceName()));
 		Service service = ServiceReader.readService(folderPath);
 		service.setNumInstances(numberOfInstances);
-		USMTestUtils.packAndDeploy(folderPath.getAbsolutePath(), ServiceReader.findServiceFile(folderPath).getName(), processName);
+		USMTestUtils.packAndDeploy(folderPath.getAbsolutePath(), serviceFileName, service, processName);
 
 		ProcessingUnit pu = admin.getProcessingUnits().waitFor(processName);
 

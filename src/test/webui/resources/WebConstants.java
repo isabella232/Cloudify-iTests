@@ -452,7 +452,7 @@ public final class WebConstants {
 		}
 		
 		public static final String getMetricClassName(String name) {
-			return "gs-metric-" + name;
+			return "gs-metric-title-" + name;
 		}
 		
 		public static final String getMetricClassNameByIndex(int index) {

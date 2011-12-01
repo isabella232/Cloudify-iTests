@@ -142,6 +142,7 @@
             <classfileset dir="${tmp.testng.classes}" includes="${INCLUDE}" excludes="${EXCLUDE}"/>
             <sysproperty key="org.uncommons.reportng.title" value="Service Grid Tests Report - Build ${BUILD_NUMBER}"/>
 	     <sysproperty key="sgtest.buildNumber" value="${BUILD_NUMBER}"/>
+   	     <sysproperty key="selenium.browser" value="${SELENIUM_BROWSER}"/>
 	     <sysproperty key="sgtest.suiteName" value="${SUITE_NAME}"/>
             <sysproperty key="org.openspaces.admin.internal.discovery.DiscoveryService.level" value="ALL"/>
             <sysproperty key="sgtest.buildFolder" value="${sgtest.homedir}/deploy/local-builds/${BUILD_NUMBER}"/>

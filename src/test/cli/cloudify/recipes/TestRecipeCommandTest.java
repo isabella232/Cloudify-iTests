@@ -36,6 +36,7 @@ public class TestRecipeCommandTest extends AbstractCommandTest {
 				.getService();
 		int port = (Integer) service.getPlugins().get(0).getConfig()
 				.get("port");
+		//TODO: is this thread even doing somthing? Check
 		new Thread(new RecipeTestUtil.AsinchronicPortCheck(port)).start();
 
 		String consoleOutput = runCommand("test-recipe "

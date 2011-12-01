@@ -8,7 +8,7 @@ service {
 		preInstall{ println "preInstall fired ${var2}"}
 		postInstall{ println "postInstall fired " + var1 }
 		preStart{ println "preStart fired " + var2 }
-		start ([ "Linux": "run.sh -dieOnParentDeath false -port 7777" ,
+		start ([ "Linux": "nohup run.sh -dieOnParentDeath false -port 7777" ,
 					"Win.*": "run.bat -dieOnParentDeath false -port 7777" ])
 
 		postStart "post_start.groovy"
@@ -60,18 +60,18 @@ service {
 
 			config ([
 
-						"Details" : [
-							"org.openspaces.usm.examples.simplejavaprocess:type=SimpleBlockingJavaProcess",
-							"Details"
-						],
-						"Counter" : [
-							"org.openspaces.usm.examples.simplejavaprocess:type=SimpleBlockingJavaProcess",
-							"Counter"
-						],
-						"Type" : [
-							"org.openspaces.usm.examples.simplejavaprocess:type=SimpleBlockingJavaProcess",
-							"Type"
-						],
+//						"Details" : [
+//							"org.openspaces.usm.examples.simplejavaprocess:type=SimpleBlockingJavaProcess",
+//							"Details"
+//						],
+//						"Counter" : [
+//							"org.openspaces.usm.examples.simplejavaprocess:type=SimpleBlockingJavaProcess",
+//							"Counter"
+//						],
+//						"Type" : [
+//							"org.openspaces.usm.examples.simplejavaprocess:type=SimpleBlockingJavaProcess",
+//							"Type"
+//						],
 						port : 9999
 					])
 		},
@@ -83,18 +83,18 @@ service {
 
 			config ([
 
-						"Details" : [
-							"org.openspaces.usm.examples.simplejavaprocess:type=SimpleBlockingJavaProcess",
-							"Details"
-						],
-						"Counter" : [
-							"org.openspaces.usm.examples.simplejavaprocess:type=SimpleBlockingJavaProcess",
-							"Counter"
-						],
-						"Type" : [
-							"org.openspaces.usm.examples.simplejavaprocess:type=SimpleBlockingJavaProcess",
-							"Type"
-						],
+//						"Details" : [
+//							"org.openspaces.usm.examples.simplejavaprocess:type=SimpleBlockingJavaProcess",
+//							"Details"
+//						],
+//						"Counter" : [
+//							"org.openspaces.usm.examples.simplejavaprocess:type=SimpleBlockingJavaProcess",
+//							"Counter"
+//						],
+//						"Type" : [
+//							"org.openspaces.usm.examples.simplejavaprocess:type=SimpleBlockingJavaProcess",
+//							"Type"
+//						],
 						port : 9999
 					])
 		}

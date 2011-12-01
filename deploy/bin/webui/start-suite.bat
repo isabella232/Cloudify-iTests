@@ -2,13 +2,13 @@ set SUITE_NAME=%1
 
 @cd %LOCAL_SGPATH%\bin
 
-if %SUITE_NAME% == "webui-Firefox" (
+if %SUITE_NAME% == webui-Firefox (
 	set selenium.browser=Firefox
 )
-if %SUITE_NAME% == "webui-Chrome" (
+if %SUITE_NAME% == webui-Chrome (
 	set selenium.browser=Chrome
 )
-if %SUITE_NAME% == "webui-IE" (
+if %SUITE_NAME% == webui-IE (
 	set selenium.browser=IE
 )
  

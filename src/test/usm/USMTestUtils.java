@@ -52,9 +52,7 @@ public class USMTestUtils {
 		}
 	}
 
-
-    
-    private static Service packAndDeploy(final String folderPath, final String serviceFileName, String processName) throws IOException,
+    public static Service packAndDeploy(final String folderPath, final String serviceFileName, String processName) throws IOException,
     PackagingException {
     	
     	System.setProperty("com.gs.home", SGTestHelper.getBuildDir());

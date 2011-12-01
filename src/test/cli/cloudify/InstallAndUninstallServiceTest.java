@@ -15,8 +15,7 @@ import com.gigaspaces.cloudify.dsl.utils.ServiceUtils;
 import framework.utils.LogUtils;
 import framework.utils.AssertUtils.RepetitiveConditionProvider;
 
-//TODO: this class should extend AbstractSingleBootstrapTest. 
-public class InstallAndUninstallServiceTest extends AbstractLocalCloudTest {
+public class InstallAndUninstallServiceTest extends AbstractSingleBootstrapTest {
 
 	private static final String DEFAULT_APPLICATION_NAME = "default";
 	public static final String SERVLET_WAR_NAME = "servlet.war";
@@ -75,6 +74,7 @@ public class InstallAndUninstallServiceTest extends AbstractLocalCloudTest {
 	
 	void testRestApiInstall(String serviceName, String servicePath) throws IOException, InterruptedException{
 		
+		LogUtils.log("Installing service " + serviceName);
 		CommandTestUtils.runCommandAndWait("connect " + restUrl + 
 				";install-service --verbose " + servicePath );
 		
@@ -85,7 +85,7 @@ public class InstallAndUninstallServiceTest extends AbstractLocalCloudTest {
         		processingUnit.waitFor(1, Constants.PROCESSINGUNIT_TIMEOUT_SEC, TimeUnit.SECONDS));
         //assert USM service is in a RUNNING state.
         if (serviceName.equals(USM_SERVICE_NAME)){
-        	 LogUtils.log("Verifing USM service state is ser to RUNNING");
+        	 LogUtils.log("Verifing USM service state is set to RUNNING");
         	assertTrue(USMTestUtils.waitForPuRunningState(absolutePUName, 60, TimeUnit.SECONDS, admin));
         }
 
@@ -93,7 +93,8 @@ public class InstallAndUninstallServiceTest extends AbstractLocalCloudTest {
 		
 	    final GridServiceContainer gsc = processingUnit.getInstances()[0].getGridServiceContainer();
 	    
-	    CommandTestUtils.runCommandAndWait("teardown-localcloud");
+	    LogUtils.log("Uninstalling service " + serviceName);
+	    CommandTestUtils.runCommandAndWait("connect " + this.restUrl + "; uninstall-service " + serviceName + "; exit;");
 		
 		assertGSCIsNotDiscovered(gsc);
 	}

@@ -78,7 +78,7 @@ public class USMSimpleOverrideServiceSettingsTest extends UsmAbstractTest {
 
 		USMTestUtils.assertMonitors(pu);
 
-		pu.undeploy();
+		pu.undeployAndWait();
 		Assert.assertNull(admin.getProcessingUnits().getProcessingUnit(processName));
 
 	}

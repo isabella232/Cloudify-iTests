@@ -8,7 +8,7 @@ service {
 		preInstall{ println "preInstall fired ${var2}"}
 		postInstall{ println "postInstall fired " + var1 }
 		preStart{ println "preStart fired " + var2 }
-		start ([ "Linux": "nohup run.sh -dieOnParentDeath false -port 7777" ,
+		start ([ "Linux": "run.sh -dieOnParentDeath false -port 7777" ,
 					"Win.*": "run.bat -dieOnParentDeath false -port 7777" ])
 
 		postStart "post_start.groovy"

@@ -3,6 +3,8 @@ package test.webui.dashboard.services;
 import static framework.utils.AdminUtils.loadGSM;
 import static framework.utils.LogUtils.log;
 
+import org.openspaces.admin.application.Application;
+import org.openspaces.admin.application.ApplicationDeployment;
 import org.openspaces.admin.gsa.GridServiceAgent;
 import org.openspaces.admin.gsm.GridServiceManager;
 import org.openspaces.admin.machine.Machine;
@@ -44,8 +46,8 @@ public class BasicApplicationContextTest extends AbstractSeleniumTest {
 	ProcessingUnit runtime;
 	ProcessingUnit puSessionTest;
 	ProcessingUnit mySpacePu;
-	private String mirrorApp = "MirrorApp";
-	private String webApp = "WebRemoteSpaceApp";
+	private String mirrorAppName = "MirrorApp";
+	private String webAppName = "WebRemoteSpaceApp";
 	GridServiceManager gsm;
 	
 	@BeforeMethod(alwaysRun = true)
@@ -61,40 +63,63 @@ public class BasicApplicationContextTest extends AbstractSeleniumTest {
 		log("loading 1 GSC on 1 machine");
 		AdminUtils.loadGSCs(machine, 4);
 		
-		LogUtils.log("Deploying application with mirror : " + mirrorApp);
-		
         log("load HSQL DB on machine - "+ToStringUtils.machineToString(machine));
         hsqlId = DBUtils.loadHSQLDB(machine, "MirrorPersistFailureAlertTest", HSQL_DB_PORT);
         LogUtils.log("Loaded HSQL successfully, id ["+hsqlId+"]");
         
-        log("deploy mirror via GSM");
+        LogUtils.log("Deploying application with mirror : " + mirrorAppName);
+		
         DeploymentUtils.prepareApp("MHEDS");
-		mirror = gsm.deploy(new ProcessingUnitDeployment(DeploymentUtils.getProcessingUnit("MHEDS", "mirror")).
-                setContextProperty("port", String.valueOf(HSQL_DB_PORT)).setContextProperty("host", machine.getHostAddress()).setContextProperty("com.gs.application", mirrorApp));
-		mirror.waitFor(mirror.getTotalNumberOfInstances());
-
-        log("deploy runtime(1,1) via GSM");
-        runtime = gsm.deploy(new ProcessingUnitDeployment(DeploymentUtils.getProcessingUnit("MHEDS", "runtime")).
-                numberOfInstances(1).numberOfBackups(1).maxInstancesPerVM(0).setContextProperty("port", String.valueOf(HSQL_DB_PORT)).
-                setContextProperty("host", machine.getHostAddress()).setContextProperty("com.gs.application", mirrorApp));
+		
+        Application mirrorApp = 
+        gsm.deploy(new ApplicationDeployment(mirrorAppName,
+		
+        		new ProcessingUnitDeployment(DeploymentUtils.getProcessingUnit("MHEDS", "mirror"))
+       				.setContextProperty("port", String.valueOf(HSQL_DB_PORT))
+       				.setContextProperty("host", machine.getHostAddress()),
+        				
+        		new ProcessingUnitDeployment(DeploymentUtils.getProcessingUnit("MHEDS", "runtime"))
+       				.numberOfInstances(1)
+       				.numberOfBackups(1)
+       				.maxInstancesPerVM(0)
+        			.setContextProperty("port", String.valueOf(HSQL_DB_PORT))
+        			.setContextProperty("host", machine.getHostAddress())
+        			.addDependency("mirror"),
+        				
+        		new ProcessingUnitDeployment(DeploymentUtils.getProcessingUnit("MHEDS", "loader"))
+        			.setContextProperty("accounts", String.valueOf(10000))
+        			.setContextProperty("delay", "100")
+        			.addDependency("runtime")
+		));
+		
+        LogUtils.log("Deploying web application with remote space : " + webAppName);
+        
+        Application webApp = 
+        gsm.deploy(new ApplicationDeployment(webAppName,
+        		
+        		new SpaceDeployment("mySpace")
+        		.partitioned(1, 1)
+        		.maxInstancesPerVM(1),
+        		
+        		new ProcessingUnitDeployment(DeploymentUtils.getArchive("session-test-remote.war"))
+        		.addDependency("mySpace")
+   		));
+        		
+        				
+		mirror = mirrorApp.getProcessingUnits().getProcessingUnit("mirror");
+        runtime = mirrorApp.getProcessingUnits().getProcessingUnit("runtime");
+        loader = mirrorApp.getProcessingUnits().getProcessingUnit("loader");
+        
+        mirror.waitFor(mirror.getTotalNumberOfInstances());
         runtime.waitFor(runtime.getTotalNumberOfInstances());
         ProcessingUnitUtils.waitForDeploymentStatus(runtime, DeploymentStatus.INTACT);
-        
-        log("deploy loader via GSM");
-        loader = gsm.deploy(new ProcessingUnitDeployment(DeploymentUtils.getProcessingUnit("MHEDS", "loader"))
-        .setContextProperty("accounts", String.valueOf(10000)).setContextProperty("delay", "100").setContextProperty("com.gs.application", mirrorApp));
         loader.waitFor(loader.getTotalNumberOfInstances());
         
-        LogUtils.log("Deploying web application with remote space : " + webApp);
         
-        LogUtils.log("deploying mySpace");
-		SpaceDeployment deployment = new SpaceDeployment("mySpace").partitioned(1, 1).maxInstancesPerVM(1).setContextProperty("com.gs.application", webApp);
-		mySpacePu = gsm.deploy(deployment);
+        mySpacePu = webApp.getProcessingUnits().getProcessingUnit("mySpace");
+		puSessionTest = webApp.getProcessingUnits().getProcessingUnit("session-test-remote");
 		ProcessingUnitUtils.waitForDeploymentStatus(mySpacePu, DeploymentStatus.INTACT);
-    	
-		LogUtils.log("deploying web app remote");
-		puSessionTest = gsm.deploy(new ProcessingUnitDeployment(DeploymentUtils.getArchive("session-test-remote.war")).setContextProperty("com.gs.application", webApp));
-		ProcessingUnitUtils.waitForDeploymentStatus(puSessionTest, DeploymentStatus.INTACT);
+    	ProcessingUnitUtils.waitForDeploymentStatus(puSessionTest, DeploymentStatus.INTACT);
 
 	}
 	
@@ -206,7 +231,7 @@ public class BasicApplicationContextTest extends AbstractSeleniumTest {
 		ApplicationsMenuPanel applicationsPanel = appGrid.getApplicationsMenuPanel();
 		
 		// select application and verify modules for specific application
-		applicationsPanel.selectApplication(mirrorApp);
+		applicationsPanel.selectApplication(mirrorAppName);
 		
 		assertTrue(applicationServices.getMirrorModule().getCount() == 1);
 		assertTrue(applicationServices.getMirrorModule().getIcon().equals(Icon.OK));
@@ -252,7 +277,7 @@ public class BasicApplicationContextTest extends AbstractSeleniumTest {
 		assertTrue(edsGrid.getPacketsPerSecond().getIcon().equals(Icon.OK));
         	
 		// select application and verify modules for specific application
-		applicationsPanel.selectApplication(webApp);
+		applicationsPanel.selectApplication(webAppName);
 		
 		assertTrue(applicationServices.getWebModule().getCount() == 1);
 		assertTrue(applicationServices.getWebModule().getIcon().equals(Icon.OK));

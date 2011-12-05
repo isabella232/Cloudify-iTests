@@ -39,7 +39,7 @@ public class TestRecipeCommandTest extends AbstractCommandTest {
 		//TODO: is this thread even doing somthing? Check
 		new Thread(new RecipeTestUtil.AsinchronicPortCheck(port)).start();
 
-		String consoleOutput = runCommand("test-recipe "
+		String consoleOutput = runCommand("test-recipe --verbose "
 				+ SIMPLE_RECIPE_DIR_PATH
 				+ " 30 simplejava-modifiedservice.groovy");
 		Assert.assertFalse("The command threw an exception - check the log",

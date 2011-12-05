@@ -91,7 +91,6 @@ public class StatelessNodeInApplicationMapTest extends AbstractSeleniumTest {
 		HealthPanel healthPanel = topologyTab.getTopologySubPanel().switchToHealthPanel();
 		
 		// check the correct metrics are shown
-		assertTrue(healthPanel.getAssociatedPuName().equals(testNode.getName()));
 		assertTrue(healthPanel.getMetric("CPU") != null);
 		assertTrue(healthPanel.getMetric("Memory") != null);
 		assertTrue(healthPanel.getMetric("GC") != null);

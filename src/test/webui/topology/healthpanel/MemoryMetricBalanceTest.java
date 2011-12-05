@@ -48,7 +48,7 @@ public class MemoryMetricBalanceTest extends AbstractSeleniumTest {
 		ProcessingUnitUtils.waitForDeploymentStatus(pu, DeploymentStatus.INTACT);
 	}
 	
-	 @Test(timeOut = DEFAULT_TEST_TIMEOUT)
+	 @Test(timeOut = DEFAULT_TEST_TIMEOUT , enabled = false)
 	public void memoryMetricTest() throws InterruptedException {
 		
 		// get new login page

@@ -87,7 +87,6 @@ public class MultipleProcessingUnitsTopologyLayoutTest extends AbstractSeleniumT
 		ApplicationNode testNode = map.getApplicationNode("Test");
 		
 		// check the correct metrics are shown
-		assertTrue(healthPanel.getAssociatedPuName().equals(testNode.getName()));
 		assertTrue(healthPanel.getMetric("CPU").isDisplayed());
 		assertTrue(healthPanel.getMetric("Memory").isDisplayed());
 		assertTrue(healthPanel.getMetric("GC").isDisplayed());
@@ -124,7 +123,6 @@ public class MultipleProcessingUnitsTopologyLayoutTest extends AbstractSeleniumT
 		ApplicationNode testNode2 = map.getApplicationNode("Test2");
 		
 		// check the correct metrics are shown
-		assertTrue(healthPanel.getAssociatedPuName().equals(testNode2.getName()));
 		assertTrue(healthPanel.getMetric("CPU").isDisplayed());
 		assertTrue(healthPanel.getMetric("Memory").isDisplayed());
 		assertTrue(healthPanel.getMetric("GC").isDisplayed());

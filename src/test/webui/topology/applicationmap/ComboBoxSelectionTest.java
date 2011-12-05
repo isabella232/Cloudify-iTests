@@ -71,13 +71,9 @@ public class ComboBoxSelectionTest extends AbstractSeleniumTest {
 		
 		for (int i = 0 ; i < 15 ; i++) {
 			applicationMap.selectApplication("App1");
-			assertTrue(tpSub.getAssociatedPuName().equals("space1"));
 			applicationMap.selectApplication("App2");
-			assertTrue(tpSub.getAssociatedPuName().equals("space2"));
 			applicationMap.selectApplication("App3");
-			assertTrue(tpSub.getAssociatedPuName().equals("space3"));
 			applicationMap.selectApplication("App4");
-			assertTrue(tpSub.getAssociatedPuName().equals("space4"));
 		}
 	}
 	

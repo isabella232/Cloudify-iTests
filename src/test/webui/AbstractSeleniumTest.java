@@ -93,7 +93,7 @@ public abstract class AbstractSeleniumTest extends AbstractTest {
     protected GridServiceManager webUIGSM;
     ProcessingUnit gswebui;
     
-    private String defaultBrowser;
+    private String defaultBrowser = WebConstants.FIREFOX;
     
     List<Selenium> seleniumBrowsers = new ArrayList<Selenium>();
     

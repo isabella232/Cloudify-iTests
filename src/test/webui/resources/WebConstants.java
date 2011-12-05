@@ -228,9 +228,8 @@ public final class WebConstants {
 //		public static final String pathToTopologySubPanel = "//div[@id='" + ID.TopologySubPanel + "']";
 		public static final String pathToApplicationComboBox = "";
 		public static final String pathToDetailsPanel = "//div[@id='" + ID.detailsPanel + "']";
-		public static final String pathToMetricSelection = "//li[1]/img";
-		public static final String pathToServiceDetails = "//li[2]/img";
-		public static final String pathToComparisonCharts = "//li[3]/img";
+		public static final String pathToServiceDetails = "//li[1]/img";
+		public static final String pathToComparisonCharts = "//li[2]/img";
 		public static final String pathToAttributeName = "/table/tbody/tr/td[1]/div/span";
 		public static final String pathToAttributeValue = "/table/tbody/tr/td[2]/div/span";
 		public static final String pathToApplicationMenuButtonSelection = "/div/div/div/div/table/tbody/tr/td/div/img";

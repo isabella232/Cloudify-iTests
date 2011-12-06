@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import org.openspaces.admin.gsm.GridServiceManager;
+import org.openspaces.admin.machine.Machine;
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.openspaces.admin.pu.ProcessingUnitInstance;
 import org.openspaces.admin.pu.elastic.ElasticStatelessProcessingUnitDeployment;
@@ -16,6 +17,7 @@ import org.testng.annotations.BeforeMethod;
 
 import framework.utils.AdminUtils;
 import framework.utils.LogUtils;
+import framework.utils.PortConnectionUtils;
 
 import test.AbstractTest;
 
@@ -23,7 +25,7 @@ public abstract class AbstractCommandTest extends AbstractTest {
 
 	private static final long REST_PROCESSINGUNIT_TIMEOUT_SEC = 60;
 	protected static final String DEFAULT_APPLICTION_NAME = "default";
-
+	protected final String restPort = "8100";
 	private static final int PU_UNDEPLOY_TIMEOUT = 20000;
 	
 	protected String restUrl = null;
@@ -63,12 +65,20 @@ public abstract class AbstractCommandTest extends AbstractTest {
 	public String deployRestServer() {
 		LogUtils.log("Deploying REST Server in GSC");
 		final GridServiceManager gsm = admin.getGridServiceManagers().waitForAtLeastOne();
-
+		
+		for(Machine machine : admin.getMachines()){
+			boolean portOpenBeforeRestDeployment = 
+					PortConnectionUtils.isPortOpen(machine.getHostAddress(), Integer.parseInt(restPort));
+			
+			assertTrue("port "+restPort +" is open on " + machine.getHostAddress() + " before rest deployment. will not try to deploy rest"
+					, !portOpenBeforeRestDeployment);
+		}
+			
 		//final ProcessingUnit pu = gsm.deploy(new ProcessingUnitDeployment(Constants.RESTFUL_WAR_PATH));
 		final ProcessingUnit pu = gsm.deploy(new ElasticStatelessProcessingUnitDeployment(Constants.RESTFUL_WAR_PATH)
 		.memoryCapacityPerContainer(128,MemoryUnit.MEGABYTES)
 		.addContextProperty("com.gs.application","Management")
-		.addContextProperty("web.port", "8100")
+		.addContextProperty("web.port", restPort)
 		.scale(new ManualCapacityScaleConfigurer().memoryCapacity(128,MemoryUnit.MEGABYTES).create())
 		.sharedMachineProvisioning("public",
 		new DiscoveredMachineProvisioningConfigurer()

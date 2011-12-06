@@ -35,16 +35,17 @@ import com.gigaspaces.cloudify.shell.rest.ErrorStatusException;
 
 import framework.utils.DumpUtils;
 import framework.utils.LogUtils;
+import framework.utils.PortConnectionUtils;
 
 public class AbstractLocalCloudTest extends AbstractCommandTest {
 	
 	protected final int WAIT_FOR_TIMEOUT = 20;
 	private final int HTTP_STATUS_OK = 200;
-	
+	private final int restPort = 8100;
 	//Teardown any existing localclouds left from previous tests
 	@BeforeClass
 	public void beforeClass() throws FileNotFoundException, PackagingException, IOException, InterruptedException{
-		LogUtils.log("Tearing-down existion localclouds");
+		LogUtils.log("Tearing-down existing localclouds");
 		runCommand("teardown-localcloud");
 	}
 	
@@ -54,6 +55,9 @@ public class AbstractLocalCloudTest extends AbstractCommandTest {
 		LogUtils.log("Test Configuration Started: "+ this.getClass());
 		try {
 			LogUtils.log("Performing bootstrap");
+			boolean portOpenBeforeBootstrap =  PortConnectionUtils.isPortOpen("localhost", restPort);
+			assertTrue("port " + restPort +" is open on localhost before rest deployment. will not try to deploy rest"
+					, !portOpenBeforeBootstrap);
 			runCommand("bootstrap-localcloud");
 		} catch (IOException e) {
 			LogUtils.log("Booststrap Failed.");
@@ -74,7 +78,7 @@ public class AbstractLocalCloudTest extends AbstractCommandTest {
 			this.restUrl = "http://" + InetAddress.getLocalHost().getHostAddress() + ":8100";
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
-		}		
+		}
 	}
 	
 	@Override

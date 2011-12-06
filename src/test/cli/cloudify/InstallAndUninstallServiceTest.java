@@ -12,6 +12,7 @@ import test.usm.USMTestUtils;
 
 import com.gigaspaces.cloudify.dsl.utils.ServiceUtils;
 
+import framework.utils.DumpUtils;
 import framework.utils.LogUtils;
 import framework.utils.AssertUtils.RepetitiveConditionProvider;
 
@@ -78,8 +79,19 @@ public class InstallAndUninstallServiceTest extends AbstractSingleBootstrapTest 
 		CommandTestUtils.runCommandAndWait("connect " + restUrl + 
 				";install-service --verbose " + servicePath );
 		
-		String absolutePUName = ServiceUtils.getAbsolutePUName(DEFAULT_APPLICATION_NAME, serviceName);
-		ProcessingUnit processingUnit = admin.getProcessingUnits().waitFor(absolutePUName, Constants.PROCESSINGUNIT_TIMEOUT_SEC, TimeUnit.SECONDS);
+		final String absolutePUName = ServiceUtils.getAbsolutePUName(DEFAULT_APPLICATION_NAME, serviceName);
+		final ProcessingUnit processingUnit = admin.getProcessingUnits().waitFor(absolutePUName, Constants.PROCESSINGUNIT_TIMEOUT_SEC, TimeUnit.SECONDS);
+		assertTrue("Processing unit :" + absolutePUName + " Was not found", processingUnit != null);
+		repetitiveAssertTrue("No instance of: " + absolutePUName + " is null.", new RepetitiveConditionProvider() {
+			
+			@Override
+			public boolean getCondition() {
+				LogUtils.log("Trying to debug why PU is not discovered");
+				DumpUtils.dumpProcessingUnit(admin);
+				return (processingUnit.getProcessingUnits().getProcessingUnit(absolutePUName) != null);
+			}
+		}
+		, 20000);
         assertTrue("Instance of '" + absolutePUName + "' service was not found", 
         		processingUnit != null && 
         		processingUnit.waitFor(1, Constants.PROCESSINGUNIT_TIMEOUT_SEC, TimeUnit.SECONDS));

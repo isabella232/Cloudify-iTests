@@ -93,16 +93,18 @@ public abstract class AbstractSeleniumTest extends AbstractTest {
     protected GridServiceManager webUIGSM;
     ProcessingUnit gswebui;
     
-    private String defaultBrowser = WebConstants.FIREFOX;
+    private String defaultBrowser;
     
     List<Selenium> seleniumBrowsers = new ArrayList<Selenium>();
     
-    @BeforeSuite
-    public void getRuntimeBrowser() {
+    @BeforeSuite(alwaysRun = true)
+    public void getDefaultBrowser() {
+    	LogUtils.log("determening default browser...");
     	if (System.getProperty("selenium.browser") != null) {
     		defaultBrowser = System.getProperty("selenium.browser");
     	}
     	else defaultBrowser = WebConstants.FIREFOX;
+    	LogUtils.log("default browser is : " + defaultBrowser);
     }
     
     /**
@@ -110,7 +112,7 @@ public abstract class AbstractSeleniumTest extends AbstractTest {
      * also opens a browser and connect to the server
      */
     @Override
-    @BeforeMethod(groups = {"cloudify" , "xap"})
+    @BeforeMethod
     public void beforeTest() { 
     	super.beforeTest();
     	try {
@@ -126,7 +128,7 @@ public abstract class AbstractSeleniumTest extends AbstractTest {
      * stops the server and kills all open browsers
      */
     @Override
-    @AfterMethod(groups = {"cloudify" , "xap"})
+    @AfterMethod
     public void afterTest() {  
     	super.afterTest();
     	try {
@@ -163,6 +165,7 @@ public abstract class AbstractSeleniumTest extends AbstractTest {
     public void startWebBrowser(String uRL) throws InterruptedException {
     	LogUtils.log("Launching browser...");
     	String browser = System.getProperty("selenium.browser");
+    	LogUtils.log("Current browser is " + browser);
 		if (browser == null) {
     		driver = new FirefoxDriver();
     	}
@@ -202,7 +205,6 @@ public abstract class AbstractSeleniumTest extends AbstractTest {
     		Assert.fail("Test Failed because it was unable to connect to Web server");
     	}
 		selenium = new WebDriverBackedSelenium(driver, uRL);
-		seleniumBrowsers.add(selenium);
     }
     
     public void stopWebBrowser() throws InterruptedException {
@@ -370,6 +372,7 @@ public abstract class AbstractSeleniumTest extends AbstractTest {
 	}
 	
 	public void restorePreviousBrowser() {
+		LogUtils.log("restoring browser setting to " + defaultBrowser);
 		System.setProperty("selenium.browser", defaultBrowser);
 	}
 	

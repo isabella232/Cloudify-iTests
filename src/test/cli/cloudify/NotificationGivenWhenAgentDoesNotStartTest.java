@@ -51,7 +51,7 @@ public class NotificationGivenWhenAgentDoesNotStartTest extends AbstractCommandT
 	}
 	
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = false)
 	public void testBootstrapLocalCloud() throws Exception {
 		String output = runCommandSetEnv("bootstrap-localcloud", true, false, newPath);
 		// TODO: assert some informative message was printed to cli due to agent not starting
@@ -59,7 +59,7 @@ public class NotificationGivenWhenAgentDoesNotStartTest extends AbstractCommandT
 				
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = false)
 	public void testStartManagement() throws Exception {
 		String output = runCommandSetEnv("start-management", true, false, newPath);
 		// TODO: assert some informative message was printed to cli due to agent not starting

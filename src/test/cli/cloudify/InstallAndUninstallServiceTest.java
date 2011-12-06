@@ -80,7 +80,7 @@ public class InstallAndUninstallServiceTest extends AbstractSingleBootstrapTest 
 		
 		String absolutePUName = ServiceUtils.getAbsolutePUName(DEFAULT_APPLICATION_NAME, serviceName);
 		ProcessingUnit processingUnit = admin.getProcessingUnits().waitFor(absolutePUName, Constants.PROCESSINGUNIT_TIMEOUT_SEC, TimeUnit.SECONDS);
-        assertTrue("Instance of '" + serviceName + "' service was not found", 
+        assertTrue("Instance of '" + absolutePUName + "' service was not found", 
         		processingUnit != null && 
         		processingUnit.waitFor(1, Constants.PROCESSINGUNIT_TIMEOUT_SEC, TimeUnit.SECONDS));
         //assert USM service is in a RUNNING state.

@@ -80,7 +80,20 @@ public class InstallAndUninstallServiceTest extends AbstractSingleBootstrapTest 
 				";install-service --verbose " + servicePath );
 		
 		final String absolutePUName = ServiceUtils.getAbsolutePUName(DEFAULT_APPLICATION_NAME, serviceName);
+		
+		repetitiveAssertTrue("Processing unit: " + absolutePUName + " was not found", new RepetitiveConditionProvider() {
+			
+			@Override
+			public boolean getCondition() {
+				LogUtils.log("Trying to debug why PU is not discovered");
+				DumpUtils.dumpProcessingUnit(admin);
+				return (admin.getProcessingUnits().waitFor(absolutePUName, 1000, TimeUnit.SECONDS) != null);
+			}
+		}
+		, 40000);
+		
 		final ProcessingUnit processingUnit = admin.getProcessingUnits().waitFor(absolutePUName, Constants.PROCESSINGUNIT_TIMEOUT_SEC, TimeUnit.SECONDS);
+		
 		assertTrue("Processing unit :" + absolutePUName + " Was not found", processingUnit != null);
 		repetitiveAssertTrue("No instance of: " + absolutePUName + " is null.", new RepetitiveConditionProvider() {
 			

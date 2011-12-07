@@ -49,7 +49,7 @@ public class AdminApiControllerTest extends AbstractCommandTest {
 
 				for (String url : urls){
 					String html = getHtmlFromURL(url);
-					LogUtils.log("OK " + url);
+					//LogUtils.log("OK " + url);
 					List<String> links = getUrlsFromHTML(html);
 					recurseThroughLinks(links, rounds - 1);
 				}

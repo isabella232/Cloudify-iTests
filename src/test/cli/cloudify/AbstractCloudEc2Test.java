@@ -17,7 +17,7 @@ import framework.tools.SGTestHelper;
 import framework.utils.LogUtils;
 import framework.utils.ScriptUtils;
 
-public abstract class AbstractCloudEc2Test extends AbstractTest {
+public class AbstractCloudEc2Test extends AbstractTest {
     
 	protected static final String WEBUI_PORT = String.valueOf(8099); 
 	protected static final String REST_PORT = String.valueOf(8100); 
@@ -25,13 +25,13 @@ public abstract class AbstractCloudEc2Test extends AbstractTest {
 	private static final String WEBUI_URL_REGEX= "Webui service is available at: (http://" + IP_REGEX + ":" + WEBUI_PORT +")";
 	private static final String REST_URL_REGEX= "Rest service is available at: (http://" + IP_REGEX + ":" + REST_PORT + ")";
 	protected static final int NUM_OF_MANAGEMENT_MACHINES = 2;
-	protected static final String INSTALL_SIMPLE_EXPECTED_OUTPUT = "Application simple installed successfully";
-	protected static final String UNINSTALL_SIMPLE_EXPECTED_OUTPUT = "Application simple uninstalled successfully";
+	protected static final String INSTALL_TRAVEL_EXPECTED_OUTPUT = "Application travel installed successfully";
+	protected static final String UNINSTALL_TRAVEL_EXPECTED_OUTPUT = "Application travel uninstalled successfully";
 	
     protected URL[] restAdminUrl = new URL[NUM_OF_MANAGEMENT_MACHINES];
     protected URL[] webUIUrl = new URL[NUM_OF_MANAGEMENT_MACHINES];
     
-    private File serviceCloudFile;
+    private File[] serviceCloudFiles = new File[2];
     
 	@Override
     @BeforeMethod
@@ -47,6 +47,9 @@ public abstract class AbstractCloudEc2Test extends AbstractTest {
 		catch (InterruptedException e) {
 			LogUtils.log("bootstrap-cloud failed.", e);
 		} 
+		catch (Exception e) {
+		    LogUtils.log("bootstrap-cloud failed.", e);
+		}
 		finally {
         	if (!success) {
         		teardownCloud();
@@ -57,26 +60,27 @@ public abstract class AbstractCloudEc2Test extends AbstractTest {
     
 	private void bootstrapCloud() throws IOException, InterruptedException {
 		
-	    String applicationPath = (SGTestHelper.getSGTestRootDir() + "/apps/USM/usm/applications/simple").replace('\\', '/');
+	    String applicationPath = (new File(ScriptUtils.getBuildPath(), "examples/travel").toString()).replace('\\', '/');
 		String ec2TestPath = (SGTestHelper.getSGTestRootDir() + "/apps/cloudify/cloud/").replace('\\', '/');
 		String sshKeyPemName = "cloud-demo.pem";
 		String ec2DslName = "ec2-cloud.groovy";
 		
+		File ec2DslFile = new File(ec2TestPath , ec2DslName);
+		
 		// ec2 plugin should include recipe that includes secret key 
 		File ec2PluginDir = new File(ScriptUtils.getBuildPath() , "tools/cli/plugins/esc/ec2/");
 		File targetPluginDsl = new File(ec2PluginDir, ec2DslName);
-        FileUtils.copyFile(new File(ec2TestPath ,ec2DslName), targetPluginDsl);
+        FileUtils.copyFile(ec2DslFile, targetPluginDsl);
 		assertTrue("File not found", targetPluginDsl.isFile());
 		
 		// each cloudify service needs its own copy of cloud recipe
-		serviceCloudFile = new File(applicationPath, "simple/" + ec2DslName);
-		File ec2DslFile = new File(ec2TestPath , ec2DslName);
-		FileUtils.copyFile(ec2DslFile, serviceCloudFile);
-		assertTrue("File not found", serviceCloudFile.isFile());
+		serviceCloudFiles[0] = new File(applicationPath, "cassandra/" + ec2DslName);
+		serviceCloudFiles[1] = new File(applicationPath, "tomcat/" + ec2DslName);
 		
-		// each cloudify application needs its own copy of cloud recipe
-		File applicationCloudFile = new File(applicationPath , ec2DslName);
-		FileUtils.copyFile(ec2DslFile, applicationCloudFile);
+		for (int i = 0; i < serviceCloudFiles.length; i++) {
+    		FileUtils.copyFile(ec2DslFile, serviceCloudFiles[i]);
+    		assertTrue("File not found", serviceCloudFiles[i].isFile());
+		}
 		
 		// upload dir needs to contain the sshKeyPem 
 		File targetPem = new File(ScriptUtils.getBuildPath(), "tools/cli/plugins/esc/ec2/upload/" + sshKeyPemName);
@@ -100,7 +104,6 @@ public abstract class AbstractCloudEc2Test extends AbstractTest {
 		
 		assertTrue("Could not find remote (internal) webui url", webUIMatcher.find()); 
 		assertTrue("Could not find remote (internal) rest url", restMatcher.find());
-
 		
 		for (int i = 0; i < NUM_OF_MANAGEMENT_MACHINES ; i++) {
 			assertTrue("Could not find actual webui url", webUIMatcher.find());
@@ -121,15 +124,17 @@ public abstract class AbstractCloudEc2Test extends AbstractTest {
         teardownCloud();
     }
 
-	private void deleteSimpleExampleCloudFile() {
-		if (serviceCloudFile != null) {
-			try {
-				FileUtils.forceDelete(serviceCloudFile);
-			} catch (FileNotFoundException e) {
-				//ignore
-			} catch (IOException e) {
-				LogUtils.log("Failed to delete " + serviceCloudFile + " delete file manually");
-			}
+	private void deleteCloudFiles() {
+		if (serviceCloudFiles != null) {
+		    for (int i = 0; i < serviceCloudFiles.length; i++) {
+    			try {
+    				FileUtils.forceDelete(serviceCloudFiles[i]);
+    			} catch (FileNotFoundException e) {
+    				//ignore
+    			} catch (IOException e) {
+    				LogUtils.log("Failed to delete " + serviceCloudFiles[i] + " delete file manually");
+    			}
+		    }
 		}
 	}
 
@@ -143,7 +148,7 @@ public abstract class AbstractCloudEc2Test extends AbstractTest {
 			Assert.fail("teardown-cloud failed. SHUTDOWN VIRTUAL MACHINES MANUALLY !!!",e);
 		}
 		finally {
-			deleteSimpleExampleCloudFile();
+			deleteCloudFiles();
 		}
 	}
 	

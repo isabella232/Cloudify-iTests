@@ -1,5 +1,6 @@
 package test.cli.cloudify;
 
+import java.io.File;
 import java.net.URL;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
@@ -8,8 +9,8 @@ import java.util.regex.Pattern;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import framework.tools.SGTestHelper;
 import framework.utils.AssertUtils.RepetitiveConditionProvider;
+import framework.utils.ScriptUtils;
 import framework.utils.WebUtils;
 
 
@@ -41,23 +42,23 @@ public class BootstrapCloudEc2Test extends AbstractCloudEc2Test {
 	        .append("--verbose ")
 	        .append("-timeout ")
 	        .append(TimeUnit.MILLISECONDS.toMinutes(DEFAULT_TEST_TIMEOUT * 2)).append(" ")
-	        .append((SGTestHelper.getSGTestRootDir() + "/apps/USM/usm/applications/simple").replace('\\', '/'))
+	        .append((new File(ScriptUtils.getBuildPath(), "examples/travel").toString()).replace('\\', '/'))
 	        .toString();
 	    
 	    String output = CommandTestUtils.runCommandAndWait(connectCommand + installCommand);
 	    
-	    Assert.assertTrue(output.contains(INSTALL_SIMPLE_EXPECTED_OUTPUT));
+	    Assert.assertTrue(output.contains(INSTALL_TRAVEL_EXPECTED_OUTPUT));
 
-	    // Simple is started with 1 instance so we are expecting one more machine
+	    // Travel is started with 2 instances (1 tomcat, 1 cassandra) so we are expecting two more machine
         assertEquals("Expecting " + (NUM_OF_MANAGEMENT_MACHINES+1) + " machines", 
-                NUM_OF_MANAGEMENT_MACHINES+1, getNumberOfMachines(machinesURL));
+                NUM_OF_MANAGEMENT_MACHINES+2, getNumberOfMachines(machinesURL));
 	    
 	    
 	    //uninstall simple application
-	    String uninstallCommand = "uninstall-application --verbose simple";
+	    String uninstallCommand = "uninstall-application --verbose travel";
 	    output = CommandTestUtils.runCommandAndWait(connectCommand + uninstallCommand);
 	    
-	    Assert.assertTrue(output.contains(UNINSTALL_SIMPLE_EXPECTED_OUTPUT));
+	    Assert.assertTrue(output.contains(UNINSTALL_TRAVEL_EXPECTED_OUTPUT));
 	    
 	}
 	

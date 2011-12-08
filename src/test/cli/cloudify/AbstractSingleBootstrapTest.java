@@ -38,12 +38,12 @@ public class AbstractSingleBootstrapTest extends AbstractCommandTest {
 	}
 	
 	private Admin getAdminWithLocators() throws UnknownHostException {
-		admin = newAdmin();
+		// admin = newAdmin();
 		//Class LocalhostGridAgentBootsrapper defines the locator discovery addresses.
 		String nicAddress = Constants.getHostAddress();
 		//int defaultLusPort = Constants.getDiscoveryPort();
 		AdminFactory factory = new AdminFactory();
-		LogUtils.log("adding locator to admin : " + nicAddress + ":4168");
+		LogUtils.log("adding locator to admin: " + nicAddress + ":4168");
 		factory.addLocator(nicAddress + ":4168");
 		return factory.createAdmin();
 	}

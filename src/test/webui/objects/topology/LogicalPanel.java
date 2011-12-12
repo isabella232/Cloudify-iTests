@@ -31,6 +31,7 @@ public class LogicalPanel extends TopologySubPanel {
 	}
 	
 	
+	
 	public class WebUIProcessingUnitInstance {
 		
 		private String name;
@@ -47,6 +48,28 @@ public class LogicalPanel extends TopologySubPanel {
 			}
 			catch (WebDriverException e) {
 			}
+		}
+		
+		public boolean select() {
+			int seconds = 0;
+			while (seconds < WebUiUtils.ajaxWaitingTime) {
+				try {
+					String id = WebConstants.ID.getPuInstanceId(name);
+					WebElement hostElement = driver.findElement(By.id(id));
+					hostElement.click();
+					return true;
+				}
+				catch (StaleElementReferenceException e) {
+					LogUtils.log("Failed to discover element due to statistics update, retyring...");
+					try {
+						Thread.sleep(1000);
+					} catch (InterruptedException e1) {
+						e1.printStackTrace();
+					}
+					seconds++;
+				}
+			}
+			return false;
 		}
 		
 		public String getName() {

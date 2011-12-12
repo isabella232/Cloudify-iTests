@@ -91,6 +91,7 @@ public final class WebConstants {
 //		public static final String TopologySubPanel = "topology_bottom_tab_panel";	// not found in DOM
 		public static final String nodePath = "node-shape-path-";
 		public static final String detailsPanel = "gs-side-panel-details";
+		public static final String serviceDetails = "Service Details";
 		public static final String healthPanelToggle = "gs-tab-item-health-toggler-button";
 		public static final String physicalPanelToggle = "gs-tab-item-physical-toggler-button";
 		public static final String logsPanelToggle = "gs-tab-item-logs-toggler-button";
@@ -227,7 +228,7 @@ public final class WebConstants {
 		public static final String pathToMetricBalance = "div[2]/div/div[2]";
 //		public static final String pathToTopologySubPanel = "//div[@id='" + ID.TopologySubPanel + "']";
 		public static final String pathToApplicationComboBox = "";
-		public static final String pathToDetailsPanel = "//div[@id='" + ID.detailsPanel + "']";
+		public static final String pathToDetailsPanel = "//div[@id='" + ID.serviceDetails + "']";
 		public static final String pathToServiceDetails = "//li[1]/img";
 		public static final String pathToComparisonCharts = "//li[2]/img";
 		public static final String pathToAttributeName = "/table/tbody/tr/td[1]/div/span";
@@ -377,7 +378,7 @@ public final class WebConstants {
 		}
 
 		public static String getPathToDetailsGroup(int i) {
-			return Xpath.pathToDetailsPanel + "/div/div[2]/div[2]/div/div/div/div/div[2]/div/div[" + i + "]";
+			return Xpath.pathToDetailsPanel + "/div/div/div/div/div[2]/div/div[" + i + "]";
 		}
 
 		public static String getPathToAttributeInGroup(int j) {

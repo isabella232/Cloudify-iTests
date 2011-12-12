@@ -93,17 +93,13 @@ public abstract class AbstractSeleniumTest extends AbstractTest {
     protected GridServiceManager webUIGSM;
     ProcessingUnit gswebui;
     
-    private String defaultBrowser;
+    private final String defaultBrowser = 
+    	(System.getProperty("selenium.browser") != null) ? System.getProperty("selenium.browser"): "Firefox";
     
     List<Selenium> seleniumBrowsers = new ArrayList<Selenium>();
     
     @BeforeSuite(alwaysRun = true)
     public void getDefaultBrowser() {
-    	LogUtils.log("determening default browser...");
-    	if (System.getProperty("selenium.browser") != null) {
-    		defaultBrowser = System.getProperty("selenium.browser");
-    	}
-    	else defaultBrowser = WebConstants.FIREFOX;
     	LogUtils.log("default browser is : " + defaultBrowser);
     }
     
@@ -187,9 +183,8 @@ public abstract class AbstractSeleniumTest extends AbstractTest {
     	}
     	int seconds = 0;
     	driver.get(uRL);
-    	Thread.sleep(1000);
+    	Thread.sleep(3000);
     	while (seconds < 10) {
-    		driver.navigate().refresh();
     		try {
     			driver.findElement(By.xpath(WebConstants.Xpath.loginButton));
     			LogUtils.log("Web server connection established");
@@ -197,6 +192,7 @@ public abstract class AbstractSeleniumTest extends AbstractTest {
     		}
     		catch (NoSuchElementException e) {
     			LogUtils.log("Unable to connect to Web server, retrying...Attempt number " + (seconds + 1));
+    			driver.navigate().refresh();
     			Thread.sleep(1000);
     			seconds++;
     		}

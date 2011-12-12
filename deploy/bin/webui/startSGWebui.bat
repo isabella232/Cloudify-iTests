@@ -8,6 +8,7 @@ set MILESTONE=%2
 set BUILD_NUMBER=%3
 set BUILD_VERSION=%4
 set SGTEST_CHECKOUT_FOLDER=%5
+set selenium.browser=%6
 
 
 @echo setting up enviroment variables
@@ -32,8 +33,8 @@ xcopy %REMOTE_BUILD_DIR%\xap-premium\1.5\gigaspaces-xap-premium-%VERSION%-%MILES
 
 @call %LOCAL_SGPATH%\deploy\bin\webui\download_processing_units.bat
 
-@echo Running Firefox Suite : 
-@call %LOCAL_SGPATH%\deploy\bin\webui\start-suite.bat webui-Firefox
+@echo Running %selenium.browser% Suite : 
+@call %LOCAL_SGPATH%\deploy\bin\webui\start-suite.bat webui-%selenium.browser%
 
 @echo shutting down agents
 @call %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER%\%BUILD_FOLDER%\tools\groovy\bin\groovy.bat %LOCAL_SGPATH%\src\test\webui\resources\scripts\shutdown

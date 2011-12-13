@@ -1,6 +1,6 @@
 
 application {
-	name="simple"
+	name="simpleToDel"
 	
 	service {
 		name = "simple1"	

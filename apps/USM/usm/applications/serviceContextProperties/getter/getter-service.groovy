@@ -1,4 +1,5 @@
 service {
+	numInstances 2
 	name "getter"
 	icon "icon.png"
 	type "WEB"
@@ -19,15 +20,13 @@ service {
 				postStop {println "This is the postStop event" }
 				
 			}
-		
-			
 	customCommands ([
-	            "cmd1" : {println context.properties.application["myKey"]},
-				"cmd2" : "get_application_context_property.groovy",
-				"cmd3" : {println context.properties.instance["myKey"]},
-				"cmd4" : "get_instance_context_property.groovy",
-				"cmd5" : {println context.properties.service["myKey"]},
-				"cmd6" : "get_service_context_property.groovy",
+	            "getApp" : {context.properties.application["myKey"]},
+				"getAppScript" : "get_application_context_property.groovy",
+				"getInstance" : {context.properties.instance["myKey"]},
+				"getInstanceScript" : "get_instance_context_property.groovy",
+				"getService" : {context.properties.service["myKey"]},
+				"getServiceScript" : "get_service_context_property.groovy",
+				"getAppCustom" : {context.properties.service[x]
 			])
-
 }

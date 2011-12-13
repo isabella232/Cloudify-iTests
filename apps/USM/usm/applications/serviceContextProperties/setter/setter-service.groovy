@@ -1,4 +1,5 @@
 service {
+	numInstances 2
 	name "setter"
 	icon "icon.png"
 	type "WEB"
@@ -22,8 +23,15 @@ service {
 		
 			
 	customCommands ([
-	            "cmd1" : {context.properties.application["myKey"] = "myValue"},
-				"cmd2" : "set_application_context_property.groovy"
+	            "setApp" : {context.properties.application["myKey"] = "myValue"},
+				"setAppScript" : "set_application_context_property.groovy",
+				"setInstance" : {context.properties.instance["myKey"] = "myValue"},
+				"setInstanceScript" : "set_instance_context_property.groovy",
+				"setService" : {context.properties.service["myKey"] = "myValue"},
+				"setServiceScript" : "set_service_context_property.groovy",
+				"setAppCustom" : {context.properties.application[x] = y,
+				"getInstance" : {context.properties.instance["myKey"]},
+				"getService" : {context.properties.service["myKey"]}
 			])
 
 }

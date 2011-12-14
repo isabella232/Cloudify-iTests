@@ -34,7 +34,7 @@ public class StockDemoTest extends AbstractSeleniumApplicationRecipeTest {
 		super.bootstrapAndInstall();
 	}
 
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = false)
 	public void stockDemoTest() throws Exception {
 
 		// get new login page

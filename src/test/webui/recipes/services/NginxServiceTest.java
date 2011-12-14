@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import org.openspaces.admin.pu.DeploymentStatus;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
 import test.webui.objects.LoginPage;
 import test.webui.objects.MainNavigation;
@@ -30,7 +31,7 @@ public class NginxServiceTest extends AbstractSeleniumServiceRecipeTest {
 		super.bootstrapAndInstall();
 	}
 	
-	//@Test(timeOut = DEFAULT_TEST_TIMEOUT)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = false)
 	public void mongosTest() throws InterruptedException {
 		
 		// get new login page

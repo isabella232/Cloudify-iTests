@@ -5,7 +5,7 @@ set BUILD_NUMBER=%4
 set USER_HOME=C:\Users\ca
 set BUILD_FOLDER=gigaspaces-cloudify-%VERSION%-%MILESTONE%
 set RUNTIME_BUILD_LOCATION=%USER_HOME%\%BUILD_FOLDER%
-set REMOTE_BUILD_DIR=\\tarzan\builds\%VERSION%\%BUILD_NUMBER%
+set REMOTE_BUILD_DIR=\\tarzan\builds\cloudify\%VERSION%\%BUILD_NUMBER%
 set REMOTE_BUILD_FILE=%REMOTE_BUILD_DIR%\cloudify\1.5\gigaspaces-cloudify-%VERSION%-%MILESTONE%-b%BUILD_VERSION%.zip
 @echo retrieving build from tarzan...
 xcopy %REMOTE_BUILD_FILE% %USER_HOME%

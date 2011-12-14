@@ -24,7 +24,7 @@ public class HeritageTest extends AbstractCommandTest {
 	public void simpleHeritageTest() throws FileNotFoundException, PackagingException, IOException, InterruptedException{
 		String appChildDirPath = CommandTestUtils.getPath("apps/USM/usm/applications/travelExtended");
 		
-		Service tomcatParent = ServiceReader.getServiceFromFile(new File(tomcatParentPath));
+		Service tomcatParent = ServiceReader.readService(new File(tomcatParentPath));
 		installApplication(appChildDirPath);
 		Service s1 = app.getServices().get(0);
 		Service s2 = app.getServices().get(1);

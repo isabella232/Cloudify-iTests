@@ -19,10 +19,10 @@ call set-build-env.bat
 
 @echo retrieving build from tarzan...
 @mkdir %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER%
-xcopy %REMOTE_BUILD_DIR%\xap-premium\1.5\gigaspaces-xap-premium-%VERSION%-%MILESTONE%-b%BUILD_VERSION%.zip %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER%
+xcopy %REMOTE_BUILD_DIR%\cloudify\1.5\gigaspaces-cloudify-%VERSION%-%MILESTONE%-b%BUILD_VERSION%.zip %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER%
 @echo extracting build file to local-builds folder
-7z x %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER%\gigaspaces-xap-premium-%VERSION%-%MILESTONE%-b%BUILD_VERSION%.zip -o%LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER%
-@del %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER%\gigaspaces-xap-premium-%VERSION%-%MILESTONE%-b%BUILD_VERSION%.zip
+7z x %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER%\gigaspaces-cloudify-%VERSION%-%MILESTONE%-b%BUILD_VERSION%.zip -o%LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER%
+@del %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER%\gigaspaces-cloudify-%VERSION%-%MILESTONE%-b%BUILD_VERSION%.zip
 
 @call set-deploy-env.bat
 @echo starting agents machines : pc-lab73 , pc-lab72

@@ -12,15 +12,14 @@ import org.openspaces.admin.space.SpaceDeployment;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import test.webui.AbstractSeleniumTest;
+import test.webui.objects.LoginPage;
+import test.webui.objects.topology.TopologySubPanel;
+import test.webui.objects.topology.TopologyTab;
+import test.webui.objects.topology.applicationmap.ApplicationMap;
 import framework.utils.AdminUtils;
 import framework.utils.LogUtils;
 import framework.utils.ProcessingUnitUtils;
-
-import test.webui.AbstractSeleniumTest;
-import test.webui.objects.LoginPage;
-import test.webui.objects.topology.ApplicationMap;
-import test.webui.objects.topology.TopologySubPanel;
-import test.webui.objects.topology.TopologyTab;
 
 public class ComboBoxSelectionTest extends AbstractSeleniumTest {
 	

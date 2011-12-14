@@ -1,9 +1,7 @@
-package test.webui.objects.topology;
+package test.webui.objects.topology.sidepanel;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import org.openqa.selenium.WebDriver;
 
 import test.webui.resources.WebConstants;
 
@@ -13,10 +11,8 @@ import com.thoughtworks.selenium.SeleniumException;
 public class WebUIServiceDetails {
 	
 	private Selenium selenium;
-	private WebDriver driver;
 	
-	public WebUIServiceDetails(Selenium selenium , WebDriver driver) {
-		this.driver = driver;
+	public WebUIServiceDetails(Selenium selenium) {
 		this.selenium = selenium;
 	}
 	

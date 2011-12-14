@@ -15,16 +15,15 @@ import org.openspaces.admin.space.SpaceDeployment;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import framework.utils.LogUtils;
-import framework.utils.ProcessingUnitUtils;
-
 import test.webui.AbstractSeleniumTest;
 import test.webui.objects.LoginPage;
-import test.webui.objects.topology.LogsPanel;
-import test.webui.objects.topology.PuLogsPanelService;
-import test.webui.objects.topology.PuLogsPanelService.LogsMachine;
-import test.webui.objects.topology.PuLogsPanelService.LogsMachine.LogsGridServiceContainer;
 import test.webui.objects.topology.TopologyTab;
+import test.webui.objects.topology.logspanel.LogsGridServiceContainer;
+import test.webui.objects.topology.logspanel.LogsMachine;
+import test.webui.objects.topology.logspanel.LogsPanel;
+import test.webui.objects.topology.logspanel.PuLogsPanelService;
+import framework.utils.LogUtils;
+import framework.utils.ProcessingUnitUtils;
 
 public class PuInstanceInContainerTest extends AbstractSeleniumTest {
 	

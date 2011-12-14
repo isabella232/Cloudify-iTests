@@ -13,20 +13,19 @@ import org.openspaces.admin.space.SpaceDeployment;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import framework.utils.AssertUtils;
-import framework.utils.LogUtils;
-import framework.utils.ProcessingUnitUtils;
-import framework.utils.AssertUtils.RepetitiveConditionProvider;
-
 import test.webui.AbstractSeleniumTest;
 import test.webui.objects.LoginPage;
 import test.webui.objects.MainNavigation;
 import test.webui.objects.dashboard.DashboardTab;
 import test.webui.objects.dashboard.ServicesGrid.ApplicationsMenuPanel;
 import test.webui.objects.dashboard.ServicesGrid.InfrastructureServicesGrid;
-import test.webui.objects.topology.ApplicationMap;
-import test.webui.objects.topology.ApplicationMap.ApplicationNode;
 import test.webui.objects.topology.TopologyTab;
+import test.webui.objects.topology.applicationmap.ApplicationMap;
+import test.webui.objects.topology.applicationmap.ApplicationNode;
+import framework.utils.AssertUtils;
+import framework.utils.AssertUtils.RepetitiveConditionProvider;
+import framework.utils.LogUtils;
+import framework.utils.ProcessingUnitUtils;
 
 public class FirstApplicationSelectedTest extends AbstractSeleniumTest {
 	

@@ -1,9 +1,10 @@
-package test.webui.objects.topology;
+package test.webui.objects.topology.logspanel;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
+import test.webui.objects.topology.TopologySubPanel;
 import test.webui.resources.WebConstants;
 
 import com.thoughtworks.selenium.Selenium;

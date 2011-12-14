@@ -11,17 +11,16 @@ import org.openspaces.admin.pu.ProcessingUnit;
 import org.openspaces.admin.space.SpaceDeployment;
 import org.testng.annotations.BeforeMethod;
 
-import framework.utils.AdminUtils;
-import framework.utils.LogUtils;
-import framework.utils.ProcessingUnitUtils;
-
 import test.webui.AbstractSeleniumTest;
 import test.webui.objects.LoginPage;
 import test.webui.objects.services.PuTreeGrid.WebUIProcessingUnit;
 import test.webui.objects.services.ServicesTab;
-import test.webui.objects.topology.ApplicationMap;
-import test.webui.objects.topology.ApplicationMap.ApplicationNode;
 import test.webui.objects.topology.TopologyTab;
+import test.webui.objects.topology.applicationmap.ApplicationMap;
+import test.webui.objects.topology.applicationmap.ApplicationNode;
+import framework.utils.AdminUtils;
+import framework.utils.LogUtils;
+import framework.utils.ProcessingUnitUtils;
 
 public class PartinionedNoBackupsNodeTest extends AbstractSeleniumTest {
 	

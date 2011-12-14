@@ -17,9 +17,9 @@ import test.webui.resources.WebConstants;
 
 public class Metric {
 	
-	WebElement metric;
-	String type;
-	WebDriver driver;
+	private WebElement metric;
+	private String type;
+	private WebDriver driver;
 
 	public Metric(WebElement metric, WebDriver driver) {
 		this.driver = driver;
@@ -34,6 +34,7 @@ public class Metric {
 	public boolean hasBalanceGuage() {
 		
 		try {
+			@SuppressWarnings("unused")
 			WebElement element = metric.findElement(By.className(WebConstants.ClassNames.balanceGauge));
 			return true;
 			
@@ -46,6 +47,7 @@ public class Metric {
 	public boolean hasBarLineChart() {
 		
 		try {
+			@SuppressWarnings("unused")
 			WebElement element = metric.findElement(By.className(WebConstants.ClassNames.barLineChartContainer));
 			return true;
 			
@@ -75,10 +77,17 @@ public class Metric {
 		builder.moveToElement(nameElement).release()
 			.build().perform();
 		
+		try {
+			Thread.sleep(5000);
+		} catch (InterruptedException e1) {
+			e1.printStackTrace();
+		}
+		
 		RepetitiveConditionProvider condition = new RepetitiveConditionProvider() {		
 			@Override
 			public boolean getCondition() {
 				try {
+					@SuppressWarnings("unused")
 					WebElement nameElement = driver.findElement(By.linkText(name));
 					return true;
 				}

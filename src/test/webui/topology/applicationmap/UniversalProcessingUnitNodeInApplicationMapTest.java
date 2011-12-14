@@ -19,10 +19,10 @@ import test.webui.AbstractSeleniumTest;
 import test.webui.objects.LoginPage;
 import test.webui.objects.services.PuTreeGrid.WebUIProcessingUnit;
 import test.webui.objects.services.ServicesTab;
-import test.webui.objects.topology.ApplicationMap;
-import test.webui.objects.topology.ApplicationMap.ApplicationNode;
-import test.webui.objects.topology.HealthPanel;
 import test.webui.objects.topology.TopologyTab;
+import test.webui.objects.topology.applicationmap.ApplicationMap;
+import test.webui.objects.topology.applicationmap.ApplicationNode;
+import test.webui.objects.topology.healthpanel.HealthPanel;
 
 import com.gigaspaces.cloudify.dsl.Service;
 import com.gigaspaces.cloudify.dsl.internal.packaging.PackagingException;
@@ -112,7 +112,6 @@ public class UniversalProcessingUnitNodeInApplicationMapTest extends AbstractSel
 		HealthPanel healthPanel = topologyTab.getTopologySubPanel().switchToHealthPanel();
 		
 		// check the correct metrics are shown
-		assertTrue(healthPanel.getAssociatedPuName().equals(testNode.getName()));
 		assertTrue(healthPanel.getMetric("Total Process Virtual Memory") != null);
 		assertTrue(healthPanel.getMetric("Process Cpu Usage") != null);
 		assertTrue(healthPanel.getMetric("Completed Tasks") != null);

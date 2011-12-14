@@ -16,9 +16,9 @@ import framework.utils.ProcessingUnitUtils;
 
 import test.webui.AbstractSeleniumTest;
 import test.webui.objects.LoginPage;
-import test.webui.objects.topology.LogicalPanel;
-import test.webui.objects.topology.LogicalPanel.WebUIProcessingUnitInstance;
-import test.webui.objects.topology.LogsPanel;
+import test.webui.objects.topology.logicalpanel.LogicalPanel;
+import test.webui.objects.topology.logicalpanel.LogicalPanel.WebUIProcessingUnitInstance;
+import test.webui.objects.topology.logspanel.LogsPanel;
 import test.webui.objects.topology.TopologyTab;
 
 public class GoToLogsActionTest extends AbstractSeleniumTest {

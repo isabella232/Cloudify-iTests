@@ -1,4 +1,4 @@
-package test.webui.objects.topology;
+package test.webui.objects.topology.sidepanel;
 
 import org.openqa.selenium.WebDriver;
 
@@ -6,12 +6,12 @@ import test.webui.resources.WebConstants;
 
 import com.thoughtworks.selenium.Selenium;
 
-public class DetailsPanel {
+public class TopologySidePanel {
 	
 	WebDriver driver;
 	Selenium selenium;
 	
-	public DetailsPanel(WebDriver driver, Selenium selenium) {
+	public TopologySidePanel(WebDriver driver, Selenium selenium) {
 		this.driver = driver;
 		this.selenium = selenium;
 	}
@@ -22,13 +22,13 @@ public class DetailsPanel {
 	
 	public ComparisonCharts switchToComparisonCharts() {
 		selenium.click(WebConstants.Xpath.pathToComparisonCharts);
-		return new ComparisonCharts(selenium, driver);
+		return new ComparisonCharts(driver);
 	}
 	
 	
 	public WebUIServiceDetails switchToServiceDetails() {
 		selenium.click(WebConstants.Xpath.pathToServiceDetails);
-		return new WebUIServiceDetails(selenium, driver);
+		return new WebUIServiceDetails(selenium);
 	}
 	
 }

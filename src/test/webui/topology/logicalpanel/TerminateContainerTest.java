@@ -23,8 +23,8 @@ import framework.utils.AssertUtils.RepetitiveConditionProvider;
 import test.webui.AbstractSeleniumTest;
 import test.webui.objects.LoginPage;
 import test.webui.objects.dashboard.ServicesGrid.Icon;
-import test.webui.objects.topology.LogicalPanel;
-import test.webui.objects.topology.LogicalPanel.WebUIProcessingUnitInstance;
+import test.webui.objects.topology.logicalpanel.LogicalPanel;
+import test.webui.objects.topology.logicalpanel.LogicalPanel.WebUIProcessingUnitInstance;
 import test.webui.objects.topology.TopologyTab;
 
 public class TerminateContainerTest extends AbstractSeleniumTest {

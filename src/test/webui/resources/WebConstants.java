@@ -113,6 +113,8 @@ public final class WebConstants {
 		public static final String comparisonMetricTop = "comparisonMetricPanelTop";
 		public static final String comparisonMetricBottom = "comparisonMetricPanelBottom";
 		
+		public static final String morePopup = "gs-popup-grid-instances";
+		
 		public static String getActionToolBoxId(String name) {
 			return "node-tool-ACTIONS-" + name;
 		}
@@ -143,6 +145,9 @@ public final class WebConstants {
 		public static String getLogsContianerId(String contianerId, String agentId, 
 				String puName) {
 			return "gs-services-logs-selection-tree_" + puName + "_gsc-" + agentId + "[" + contianerId + "]";
+		}
+		public static String getMoreButtonId(String ip) {
+			return "gs-more-button-" + ip;
 		}
 	}
 	
@@ -263,7 +268,14 @@ public final class WebConstants {
 		public static final String pathToLogsSamplingButton = "//div[@id='gs-services-logs-tool-bar']/table/tbody/tr/td/table/tbody/tr[2]/td[2]/em/button";
 		public static final String pathToApplicationNameInLogsPanel = "//div[@id='gs-tab-item-logs']/div/div/div[1]/span";
 		public static final String pathToLogsMachineExpandButton = "/div[1]/img[2]";
-
+		
+		public static final String pathToMoreButton = "//div/div/div[2]";
+		public static final String pathToPuIBoxes = "//div/div/div[1]";
+		
+		public static final String getPathToInst(int i) {
+			return "//div/div/div[2]/div/div[" + i + "]";
+		}
+		
 		public static final String getPathToMenuSelection(String st) {
 			return "//a[contains(text(),'" + st + "')]";
 		}

@@ -21,10 +21,10 @@ import org.testng.annotations.Test;
 import test.usm.USMTestUtils;
 import test.webui.AbstractSeleniumTest;
 import test.webui.objects.LoginPage;
-import test.webui.objects.topology.ApplicationMap;
 import test.webui.objects.topology.TopologyTab;
-import test.webui.objects.topology.ApplicationMap.ServiceTypes;
-import test.webui.objects.topology.ApplicationMap.ApplicationNode.Connector;
+import test.webui.objects.topology.applicationmap.ApplicationMap;
+import test.webui.objects.topology.applicationmap.ApplicationMap.ServiceTypes;
+import test.webui.objects.topology.applicationmap.Connector;
 
 import com.gigaspaces.cloudify.dsl.internal.packaging.PackagingException;
 

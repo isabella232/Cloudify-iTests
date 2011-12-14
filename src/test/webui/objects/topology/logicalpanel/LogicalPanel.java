@@ -1,4 +1,4 @@
-package test.webui.objects.topology;
+package test.webui.objects.topology.logicalpanel;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
@@ -8,6 +8,7 @@ import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 
 import test.webui.objects.dashboard.ServicesGrid.Icon;
+import test.webui.objects.topology.TopologySubPanel;
 import test.webui.resources.WebConstants;
 
 import com.thoughtworks.selenium.Selenium;
@@ -29,7 +30,6 @@ public class LogicalPanel extends TopologySubPanel {
 		}
 		return null;
 	}
-	
 	
 	
 	public class WebUIProcessingUnitInstance {

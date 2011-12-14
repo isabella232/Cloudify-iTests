@@ -1,21 +1,18 @@
-package test.webui.objects.topology;
+package test.webui.objects.topology.sidepanel;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
+import test.webui.objects.topology.Metric;
 import test.webui.resources.WebConstants;
-
-import com.thoughtworks.selenium.Selenium;
 
 public class ComparisonCharts {
 	
-	private Selenium selenium;
 	private WebDriver driver;
 	
-	public ComparisonCharts(Selenium selenium , WebDriver driver) {
+	public ComparisonCharts(WebDriver driver) {
 		this.driver = driver;
-		this.selenium = selenium;
 	}
 	
 	public Metric getTopMetric() {

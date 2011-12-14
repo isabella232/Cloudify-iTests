@@ -25,7 +25,7 @@ import test.webui.objects.LoginPage;
 import test.webui.objects.MainNavigation;
 import test.webui.objects.dashboard.DashboardTab;
 import test.webui.objects.dashboard.ServicesGrid.ApplicationServicesGrid;
-import test.webui.objects.topology.ApplicationMap.ServiceTypes;
+import test.webui.objects.topology.applicationmap.ApplicationMap.ServiceTypes;
 
 public class USMTierTypeInfrastructureServicesGridTest extends AbstractSeleniumTest {
 

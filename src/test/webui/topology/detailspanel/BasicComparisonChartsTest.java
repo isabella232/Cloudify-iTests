@@ -1,7 +1,6 @@
 package test.webui.topology.detailspanel;
 
 import org.openspaces.admin.gsa.GridServiceAgent;
-
 import org.openspaces.admin.gsm.GridServiceManager;
 import org.openspaces.admin.machine.Machine;
 import org.openspaces.admin.pu.DeploymentStatus;
@@ -12,11 +11,11 @@ import org.testng.annotations.Test;
 
 import test.webui.AbstractSeleniumTest;
 import test.webui.objects.LoginPage;
-import test.webui.objects.topology.ApplicationMap;
-import test.webui.objects.topology.ComparisonCharts;
-import test.webui.objects.topology.PhysicalPanel;
-import test.webui.objects.topology.PhysicalPanel.HostData;
 import test.webui.objects.topology.TopologyTab;
+import test.webui.objects.topology.applicationmap.ApplicationMap;
+import test.webui.objects.topology.physicalpanel.HostData;
+import test.webui.objects.topology.physicalpanel.PhysicalPanel;
+import test.webui.objects.topology.sidepanel.ComparisonCharts;
 import framework.utils.AdminUtils;
 import framework.utils.LogUtils;
 import framework.utils.ProcessingUnitUtils;

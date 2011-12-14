@@ -13,12 +13,12 @@ import org.testng.annotations.Test;
 
 import test.webui.AbstractSeleniumTest;
 import test.webui.objects.LoginPage;
-import test.webui.objects.topology.ApplicationMap;
-import test.webui.objects.topology.DetailsPanel;
-import test.webui.objects.topology.LogicalPanel;
-import test.webui.objects.topology.LogicalPanel.WebUIProcessingUnitInstance;
+import test.webui.objects.topology.applicationmap.ApplicationMap;
+import test.webui.objects.topology.logicalpanel.LogicalPanel;
+import test.webui.objects.topology.logicalpanel.LogicalPanel.WebUIProcessingUnitInstance;
+import test.webui.objects.topology.sidepanel.TopologySidePanel;
+import test.webui.objects.topology.sidepanel.WebUIServiceDetails;
 import test.webui.objects.topology.TopologyTab;
-import test.webui.objects.topology.WebUIServiceDetails;
 import framework.utils.AdminUtils;
 import framework.utils.LogUtils;
 import framework.utils.ProcessingUnitUtils;
@@ -69,7 +69,7 @@ public class BasicServiceDetailsTest extends AbstractSeleniumTest {
 		WebUIProcessingUnitInstance inst1 = logicalPanel.getProcessingUnitInstance(Pu.getInstances()[0].getProcessingUnitInstanceName());
 		assertTrue(inst1.select());
 		
-		DetailsPanel detailsPanel = topologyTab.getDetailsPanel();
+		TopologySidePanel detailsPanel = topologyTab.getDetailsPanel();
 		WebUIServiceDetails serviceDetails = detailsPanel.switchToServiceDetails();
 		Map<String, Map<String, String>> spaceDetails = serviceDetails.getDetails();
 		assertTrue(spaceDetails.size() != 0);	

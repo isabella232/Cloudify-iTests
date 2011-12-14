@@ -8,7 +8,7 @@ import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-import test.webui.objects.topology.PhysicalPanel.OS;
+import test.webui.objects.topology.physicalpanel.PhysicalPanel.OS;
 import test.webui.resources.WebConstants;
 
 import com.gigaspaces.cluster.activeelection.SpaceMode;

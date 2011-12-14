@@ -15,19 +15,18 @@ import org.openspaces.admin.space.SpaceDeployment;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import test.webui.AbstractSeleniumTest;
+import test.webui.objects.LoginPage;
+import test.webui.objects.topology.TopologyTab;
+import test.webui.objects.topology.applicationmap.ApplicationMap;
+import test.webui.objects.topology.physicalpanel.HostData;
+import test.webui.objects.topology.physicalpanel.PhysicalPanel;
+import test.webui.objects.topology.physicalpanel.PhysicalPanel.OS;
+import test.webui.objects.topology.physicalpanel.PuIBox;
 import framework.utils.AdminUtils;
 import framework.utils.DeploymentUtils;
 import framework.utils.LogUtils;
 import framework.utils.ProcessingUnitUtils;
-
-import test.webui.AbstractSeleniumTest;
-import test.webui.objects.LoginPage;
-import test.webui.objects.topology.ApplicationMap;
-import test.webui.objects.topology.PhysicalPanel;
-import test.webui.objects.topology.PhysicalPanel.HostData;
-import test.webui.objects.topology.PhysicalPanel.HostData.PuIBox;
-import test.webui.objects.topology.PhysicalPanel.OS;
-import test.webui.objects.topology.TopologyTab;
 
 public class TwoMachinesOneApplicationTest extends AbstractSeleniumTest {
 	

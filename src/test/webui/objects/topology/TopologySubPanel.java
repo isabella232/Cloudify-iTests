@@ -4,6 +4,10 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
+import test.webui.objects.topology.healthpanel.HealthPanel;
+import test.webui.objects.topology.logicalpanel.LogicalPanel;
+import test.webui.objects.topology.logspanel.LogsPanel;
+import test.webui.objects.topology.physicalpanel.PhysicalPanel;
 import test.webui.resources.WebConstants;
 
 import com.thoughtworks.selenium.Selenium;
@@ -18,10 +22,6 @@ public class TopologySubPanel {
 	public TopologySubPanel(Selenium selenium, WebDriver driver) {
 		this.selenium = selenium;
 		this.driver = driver;
-	}
-	
-	public String getAssociatedPuName() {
-		return selenium.getText(WebConstants.Xpath.pathToTopologySubPanelName);
 	}
 	
 	public LogsPanel switchToLogsPanel() {

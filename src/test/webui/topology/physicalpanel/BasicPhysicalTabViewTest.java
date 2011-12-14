@@ -11,16 +11,15 @@ import org.openspaces.admin.space.SpaceDeployment;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import framework.utils.AdminUtils;
-import framework.utils.LogUtils;
-import framework.utils.ProcessingUnitUtils;
-
 import test.webui.AbstractSeleniumTest;
 import test.webui.objects.LoginPage;
 import test.webui.objects.dashboard.ServicesGrid.Icon;
-import test.webui.objects.topology.PhysicalPanel;
-import test.webui.objects.topology.PhysicalPanel.HostData;
 import test.webui.objects.topology.TopologyTab;
+import test.webui.objects.topology.physicalpanel.HostData;
+import test.webui.objects.topology.physicalpanel.PhysicalPanel;
+import framework.utils.AdminUtils;
+import framework.utils.LogUtils;
+import framework.utils.ProcessingUnitUtils;
 
 public class BasicPhysicalTabViewTest extends AbstractSeleniumTest {
 	

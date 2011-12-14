@@ -19,8 +19,8 @@ import framework.utils.ProcessingUnitUtils;
 
 import test.webui.AbstractSeleniumTest;
 import test.webui.objects.LoginPage;
-import test.webui.objects.topology.LogsPanel;
 import test.webui.objects.topology.TopologyTab;
+import test.webui.objects.topology.logspanel.LogsPanel;
 
 public class LogsPanelUnassignedServicesDisplayOnFirstRenderTest extends AbstractSeleniumTest {
 	

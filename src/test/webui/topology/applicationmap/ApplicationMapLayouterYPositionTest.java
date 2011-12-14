@@ -16,9 +16,9 @@ import org.testng.annotations.Test;
 
 import test.webui.AbstractSeleniumTest;
 import test.webui.objects.LoginPage;
-import test.webui.objects.topology.ApplicationMap;
-import test.webui.objects.topology.ApplicationMap.ApplicationNode;
 import test.webui.objects.topology.TopologyTab;
+import test.webui.objects.topology.applicationmap.ApplicationMap;
+import test.webui.objects.topology.applicationmap.ApplicationNode;
 import framework.utils.AssertUtils;
 import framework.utils.AssertUtils.RepetitiveConditionProvider;
 import framework.utils.DeploymentUtils;

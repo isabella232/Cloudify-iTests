@@ -17,8 +17,8 @@ import framework.utils.ProcessingUnitUtils;
 import test.data.Person;
 import test.webui.AbstractSeleniumTest;
 import test.webui.objects.LoginPage;
-import test.webui.objects.topology.HealthPanel;
 import test.webui.objects.topology.TopologyTab;
+import test.webui.objects.topology.healthpanel.HealthPanel;
 
 public class MemoryMetricBalanceTest extends AbstractSeleniumTest {
 	

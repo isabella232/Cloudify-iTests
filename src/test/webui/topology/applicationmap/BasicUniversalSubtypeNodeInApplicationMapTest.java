@@ -15,17 +15,16 @@ import org.openspaces.admin.pu.ProcessingUnitDeployment;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import framework.utils.AssertUtils;
-import framework.utils.ProcessingUnitUtils;
-import framework.utils.AssertUtils.RepetitiveConditionProvider;
-
 import test.usm.USMTestUtils;
 import test.webui.AbstractSeleniumTest;
 import test.webui.objects.LoginPage;
-import test.webui.objects.topology.ApplicationMap;
-import test.webui.objects.topology.ApplicationMap.ApplicationNode;
-import test.webui.objects.topology.ApplicationMap.ServiceTypes;
 import test.webui.objects.topology.TopologyTab;
+import test.webui.objects.topology.applicationmap.ApplicationMap;
+import test.webui.objects.topology.applicationmap.ApplicationMap.ServiceTypes;
+import test.webui.objects.topology.applicationmap.ApplicationNode;
+import framework.utils.AssertUtils;
+import framework.utils.AssertUtils.RepetitiveConditionProvider;
+import framework.utils.ProcessingUnitUtils;
 
 public class BasicUniversalSubtypeNodeInApplicationMapTest extends AbstractSeleniumTest {
 

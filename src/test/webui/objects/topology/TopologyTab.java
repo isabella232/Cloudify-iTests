@@ -3,6 +3,8 @@ package test.webui.objects.topology;
 import org.openqa.selenium.WebDriver;
 
 import test.webui.objects.MainNavigation;
+import test.webui.objects.topology.applicationmap.ApplicationMap;
+import test.webui.objects.topology.sidepanel.TopologySidePanel;
 
 import com.thoughtworks.selenium.Selenium;
 
@@ -14,14 +16,14 @@ public class TopologyTab extends MainNavigation {
 	}
 
 	public ApplicationMap getApplicationMap() {
-		return ApplicationMap.getInstance(selenium, driver);
+		return new ApplicationMap(driver);
 	}
 	
 	public TopologySubPanel getTopologySubPanel() {
 		return new TopologySubPanel(selenium, driver);
 	}
 	
-	public DetailsPanel getDetailsPanel() {
-		return new DetailsPanel(driver, selenium);
+	public TopologySidePanel getDetailsPanel() {
+		return new TopologySidePanel(driver, selenium);
 	}
 }

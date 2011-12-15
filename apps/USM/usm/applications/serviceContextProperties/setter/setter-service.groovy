@@ -23,15 +23,15 @@ service {
 		
 			
 	customCommands ([
-	            "setApp" : {context.properties.application["myKey"] = "myValue"},
+	            "setApp" : {context.attributes.thisApplication["myKey"] = "myValue"},
 				"setAppScript" : "set_application_context_property.groovy",
-				"setInstance" : {context.properties.instance["myKey"] = "myValue"},
+				"setInstance" : {context.attributes.thisInstance["myKey"] = "myValue"},
 				"setInstanceScript" : "set_instance_context_property.groovy",
-				"setService" : {context.properties.service["myKey"] = "myValue"},
+				"setService" : {context.attributes.thisService["myKey"] = "myValue"},
 				"setServiceScript" : "set_service_context_property.groovy",
-				"setAppCustom" : {context.properties.application[x] = y,
-				"getInstance" : {context.properties.instance["myKey"]},
-				"getService" : {context.properties.service["myKey"]}
+				"setAppCustom" : {context.attributes.thisApplication[x] = y,
+				"getInstance" : {context.attributes.thisInstance["myKey"]},
+				"getService" : {context.attributes.thisService["myKey"]}
 			])
 
 }

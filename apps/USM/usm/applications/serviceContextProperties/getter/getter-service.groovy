@@ -21,12 +21,12 @@ service {
 				
 			}
 	customCommands ([
-	            "getApp" : {context.properties.application["myKey"]},
+	            "getApp" : {context.attributes.thisApplication["myKey"]},
 				"getAppScript" : "get_application_context_property.groovy",
-				"getInstance" : {context.properties.instance["myKey"]},
+				"getInstance" : {context.attributes.thisinstance["myKey"]},
 				"getInstanceScript" : "get_instance_context_property.groovy",
-				"getService" : {context.properties.service["myKey"]},
+				"getService" : {context.attributes.thisService["myKey"]},
 				"getServiceScript" : "get_service_context_property.groovy",
-				"getAppCustom" : {context.properties.service[x]
+				"getAppCustom" : {context.attributes.thisService[x]
 			])
 }

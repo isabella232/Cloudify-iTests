@@ -124,7 +124,7 @@ public class SGTestNGListener extends TestListenerAdapter {
         	if (suiteName.equals("CLOUDIFY")) mailRecipients = mailProperties.getCloudifyRecipients();
         	if (suiteName.equals("ESM")) mailRecipients = mailProperties.getESMRecipients();
             SimpleMail.send(mailProperties.getMailHost(), mailProperties.getUsername(), mailProperties.getPassword(),
-                    "SGTest Suite " + testContext.getSuite().getName() + " results", sb.toString(), mailRecipients);
+                    "SGTest Suite Cloudify " + testContext.getSuite().getName() + " results", sb.toString(), mailRecipients);
         } catch (Exception e) {
             e.printStackTrace();
         }

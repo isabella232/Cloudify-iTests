@@ -29,6 +29,8 @@ import framework.utils.LogUtils;
 import framework.utils.ProcessingUnitUtils;
 import framework.utils.SSHUtils;
 import framework.utils.ScriptUtils;
+import groovy.util.ConfigObject;
+import groovy.util.ConfigSlurper;
 
 
 public class InternalUSMPuServiceDownTest extends AbstractLocalCloudTest {
@@ -46,6 +48,7 @@ public class InternalUSMPuServiceDownTest extends AbstractLocalCloudTest {
 		client = new WebClient(BrowserVersion.getDefault());
 	}
 	
+	@SuppressWarnings("deprecation")
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, groups = "1", enabled = true)
 	public void tomcatServiceDownAndCorruptedTest() throws IOException, InterruptedException, PackagingException {
 		
@@ -101,8 +104,9 @@ public class InternalUSMPuServiceDownTest extends AbstractLocalCloudTest {
 		String pathToTomcat;
 		
 		LogUtils.log("deleting catalina.sh/bat from pu folder");
-		// TODO - this is hard coded to a specific tomcat version!
-		String catalinaPath = "/work/processing-units/default_tomcat_1/ext/install/apache-tomcat-7.0.23/bin/catalina.";
+		ConfigObject tomcatConfig = new ConfigSlurper().parse(new File(serviceDir, "tomcat.properties").toURL());
+		String tomcatVersion = (String) tomcatConfig.get("version");
+		String catalinaPath = "/work/processing-units/default_tomcat_1/ext/install/apache-tomcat-" + tomcatVersion + "/bin/catalina.";
 		String filePath = ScriptUtils.getBuildPath()+ catalinaPath;
 		if (isWindows()) {
 			pathToTomcat = filePath + "bat";

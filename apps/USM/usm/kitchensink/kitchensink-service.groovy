@@ -40,7 +40,7 @@ service {
 				"cmd4" : "context_command.groovy",
 				"cmd5" : {"this is the custom parameters command. expecting 123: "+1+x+y},
 				"cmd6" : {context.properties.service["myKey"] = "myValue"},
-				"cmd7" : {{context.properties.service["myKey"]}
+				"cmd7" : {context.properties.service["myKey"]}
 			])
 
 

@@ -4,5 +4,5 @@ println "get_application_context_property"
 
 def context = com.gigaspaces.cloudify.dsl.context.ServiceContextFactory.getServiceContext()
 
-println context.attributes.thisService["myKey"];
+context.attributes.thisService["myKey"];
 

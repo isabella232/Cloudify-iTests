@@ -1,5 +1,5 @@
 service {
-	extend "../../../tomcatHttpLivenessDetectorPlugin"
+	extend "../../../tomcat"
 	name "tomcat-extend"
 	
 }

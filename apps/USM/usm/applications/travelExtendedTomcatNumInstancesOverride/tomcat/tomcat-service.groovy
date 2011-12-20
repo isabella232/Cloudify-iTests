@@ -1,4 +1,4 @@
 service {
-	extend "../../../tomcatHttpLivenessDetectorPlugin"
+	extend "../../../tomcat"
 	numInstances 3
 }

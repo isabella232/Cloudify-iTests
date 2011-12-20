@@ -3,11 +3,11 @@ application {
 	name="serviceContextProperties"
 	
 	service {
-		name = "setter"	
+		name = "getter"	
 	}
 	
 	service {
-		name = "getter"
+		name = "setter"
 	}
 	
 	

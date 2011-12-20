@@ -1,6 +1,6 @@
 
 application {
-	name="travel"
+	name="travelExtended"
 	
 	service {
 		name = "cassandra"	
@@ -10,6 +10,4 @@ application {
 		name = "tomcat"
 		dependsOn = ["cassandra"]
 	}
-	
-	
 }

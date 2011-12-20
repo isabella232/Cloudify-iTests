@@ -1,6 +1,6 @@
 
 application {
-	name="travel"
+	name="travelExtendedTomcatNumInstancesOverride"
 	
 	service {
 		name = "cassandra"	

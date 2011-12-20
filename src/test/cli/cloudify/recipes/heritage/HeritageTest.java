@@ -20,7 +20,7 @@ public class HeritageTest extends AbstractCommandTest {
 	private String cassandraParent = CommandTestUtils.getPath("apps/USM/usm/cassandra");
 	private Application app;
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = false)
 	public void simpleHeritageTest() throws FileNotFoundException, PackagingException, IOException, InterruptedException{
 		String appChildDirPath = CommandTestUtils.getPath("apps/USM/usm/applications/travelExtended");
 		
@@ -46,6 +46,7 @@ public class HeritageTest extends AbstractCommandTest {
 		Service tomcat = s1.getName().equals("tomcat") ? s1 : s2;
 		int tomcatChildPort = tomcat.getNetwork().getPort();
 		assertEquals("tomcat's child port was not overriden", 9876, tomcatChildPort);
+		
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = false)
@@ -63,6 +64,7 @@ public class HeritageTest extends AbstractCommandTest {
 	File applicationDir = new File(appDirPath);
 	app = ServiceReader.getApplicationFromFile(applicationDir).getApplication();
 	
-	runCommand("connect " + this.restUrl + ";install-application --verbose " + appDirPath);
-}
+	String output = runCommand("connect " + this.restUrl + ";install-application --verbose " + appDirPath);
+	assertTrue("couldn't install application", output.contains("installed successfully"));
+	}
 }

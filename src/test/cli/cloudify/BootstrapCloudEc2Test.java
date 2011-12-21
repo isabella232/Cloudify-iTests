@@ -50,7 +50,7 @@ public class BootstrapCloudEc2Test extends AbstractCloudEc2Test {
 	    Assert.assertTrue(output.contains(INSTALL_TRAVEL_EXPECTED_OUTPUT));
 
 	    // Travel is started with 2 instances (1 tomcat, 1 cassandra) so we are expecting two more machine
-        assertEquals("Expecting " + (NUM_OF_MANAGEMENT_MACHINES+1) + " machines", 
+        assertEquals("Expecting " + (NUM_OF_MANAGEMENT_MACHINES+2) + " machines", 
                 NUM_OF_MANAGEMENT_MACHINES+2, getNumberOfMachines(machinesURL));
 	    
 	    

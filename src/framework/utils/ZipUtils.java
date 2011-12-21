@@ -1,10 +1,11 @@
 package framework.utils;
 
-import com.j_spaces.kernel.PlatformVersion;
-import framework.tools.SGTestHelper;
-import org.apache.commons.io.IOUtils;
-
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Set;
@@ -13,10 +14,14 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
+import org.apache.commons.io.IOUtils;
+
+import framework.tools.SGTestHelper;
+
 public class ZipUtils {
 
     public static void unzipArchive(String testName) {
-        String buildNumber = PlatformVersion.getBuildNumber();
+        String buildNumber = System.getProperty("sgtest.buildNumber").split("_")[1];
         File buildFolder = new File(SGTestHelper.getSGTestRootDir()+"/deploy/local-builds/build_" + buildNumber);
         File testFolder = null;
         testFolder = new File(buildFolder +"/" +testName);

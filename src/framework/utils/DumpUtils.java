@@ -15,7 +15,6 @@ import com.gigaspaces.internal.dump.log.LogDumpProcessor;
 import com.gigaspaces.internal.dump.pu.ProcessingUnitsDumpProcessor;
 import com.gigaspaces.internal.dump.summary.SummaryDumpProcessor;
 import com.gigaspaces.internal.dump.thread.ThreadDumpProcessor;
-import com.j_spaces.kernel.PlatformVersion;
 
 import framework.tools.SGTestHelper;
 
@@ -71,7 +70,7 @@ public class DumpUtils {
     }
 
     public static File createTestFolder(String testName) {
-        String buildNumber = PlatformVersion.getBuildNumber();
+        String buildNumber = System.getProperty("sgtest.buildNumber").split("_")[1];
 
         File buildFolder = new File(SGTestHelper.getSGTestRootDir() + "/deploy/local-builds/build_" + buildNumber);
 

@@ -322,7 +322,7 @@ public abstract class AbstractSeleniumTest extends AbstractTest {
 		
 		File scrFile = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
 
-		String buildDir = SGTestHelper.getSGTestRootDir() + "/deploy/local-builds/build_" + System.getProperty("sgtest.buildNumber").split("-")[1] ;
+		String buildDir = SGTestHelper.getSGTestRootDir() + "/deploy/local-builds/build_" + System.getProperty("sgtest.buildNumber").split("_")[1] ;
 		
 		String testLogsDir = cls.getName() + "." + testMethod + "()";
 		

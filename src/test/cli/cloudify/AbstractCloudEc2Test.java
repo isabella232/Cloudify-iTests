@@ -141,7 +141,7 @@ public class AbstractCloudEc2Test extends AbstractTest {
 	private void teardownCloud() {
 		
 		try {
-			CommandTestUtils.runCommandAndWait("teardown-cloud --verbose ec2");
+			CommandTestUtils.runCommandAndWait("teardown-cloud --verbose -force ec2");
 		} catch (IOException e) {
 			Assert.fail("teardown-cloud failed. SHUTDOWN VIRTUAL MACHINES MANUALLY !!!",e);
 		} catch (InterruptedException e) {

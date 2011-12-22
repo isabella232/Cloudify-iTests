@@ -19,7 +19,7 @@ cloud {
 		
 
 		sshLoggingLevel "WARNING"
-		managementGroup "SGTEST_management_machine"
+		managementGroup "sgtest_management_machine"
 		numberOfManagementMachines 2
 		zones (["agent"])
 		reservedMemoryCapacityPerMachineInMB 1024

@@ -69,7 +69,7 @@ public class CustomPropertiesTest extends AbstractSingleBootstrapTest {
 	}
 //////////////////////////////////////////////////////////////////////////////////////////////////////////	
 		
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = true)
 	public void testSimpleApplicationSetContext() throws Exception {
 		LogUtils.log("setting an application attribute from setter service");
 		runCommand("connect " + this.restUrl + ";use-application serviceContextProperties" 
@@ -93,7 +93,7 @@ public class CustomPropertiesTest extends AbstractSingleBootstrapTest {
 				   simpleGet3.contains("null"));
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = true)    //
 	public void testApplicationSetContextCustomParams() throws Exception {
 		
 		runCommand("connect " + this.restUrl + ";use-application serviceContextProperties" 
@@ -106,7 +106,7 @@ public class CustomPropertiesTest extends AbstractSingleBootstrapTest {
 		assertTrue("getter service cannot get the application attribute when using parameters", simpleGet.contains("myValue1"));
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = true)
 	public void testServiceSetContext() throws Exception {
 		
 		runCommand("connect " + this.restUrl + ";use-application serviceContextProperties" 
@@ -141,6 +141,53 @@ public class CustomPropertiesTest extends AbstractSingleBootstrapTest {
 		assertTrue("getApp should be able to get a service attribute", appGet.contains("null"));
 		assertTrue("getApp should be able to get a service attribute", instanceGetApp.contains("null"));
 	}
+
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = true)
+    public void testServiceSetContextByName() throws Exception {
+
+        String setServiceByName = runCommand("connect " + this.restUrl + ";use-application serviceContextProperties"
+                + "; invoke setter setServiceByName");
+
+        String getServiceByName = runCommand("connect " + this.restUrl + ";use-application serviceContextProperties"
+                + "; invoke setter getServiceByName");
+
+        assertTrue("command did not execute" , setServiceByName.contains("OK"));
+        assertTrue("command did not execute" , getServiceByName.contains("OK"));
+
+        assertTrue(getServiceByName.contains("myValue"));
+    }
+
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = true)
+    public void testServiceInstanceSetContext() throws Exception {
+
+        runCommand("connect " + this.restUrl + ";use-application serviceContextProperties"
+                + "; invoke -instanceid 1 setter setInstanceCustom1 ['x=myKey1' 'y=myValue1']");
+
+        runCommand("connect " + this.restUrl + ";use-application serviceContextProperties"
+                + "; invoke -instanceid 2 setter setInstanceCustom2 ['x=myKey1' 'y=myValue2']");
+
+        String getInstance1 = runCommand("connect " + this.restUrl + ";use-application serviceContextProperties"
+                + "; invoke -instanceid 1 setter getInstanceCustom1 ['x=myKey1']");
+
+        String getInstance2 = runCommand("connect " + this.restUrl + ";use-application serviceContextProperties"
+                + "; invoke -instanceid 2 setter getInstanceCustom2 ['x=myKey1']");
+
+        String getService = runCommand("connect " + this.restUrl + ";use-application serviceContextProperties"
+                + "; invoke setter getAppCustom ['x=myKey1']");
+
+        String getApp = runCommand("connect " + this.restUrl + ";use-application serviceContextProperties"
+                + "; invoke  setter getAppCustom ['x=myKey1']");
+
+        assertTrue("command did not execute" , getInstance1.contains("OK"));
+        assertTrue("command did not execute" , getInstance2.contains("OK"));
+        assertTrue("command did not execute" , getService.contains("OK"));
+        assertTrue("command did not execute" , getApp.contains("OK"));
+
+        assertTrue("getAppCustom should be return myValue1 when instanceId=1", getInstance1.contains("myValue1"));
+        assertTrue("getAppCustom should be return myValue2 when instanceId=2", getInstance2.contains("myValue2"));
+        assertTrue("getApp should be able to get a service attribute", getApp.contains("null"));
+        assertTrue("getService should be able to get a service attribute", getService.contains("null"));
+    }
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = false)
 	public void testSetCustomPojo() throws Exception {
@@ -168,13 +215,13 @@ public class CustomPropertiesTest extends AbstractSingleBootstrapTest {
 		assertTrue("getter service cannot get the double", !getDouble.contains("null"));
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = true)
 	public void testInstanceIteration() throws Exception {
 		runCommand("connect " + this.restUrl + ";use-application serviceContextProperties" 
-				+ "; invoke setter setInstance1; invoke setter setInstance2");
+				+ "; invoke -instanceid 1 setter setInstance1; invoke -instanceid 2 setter setInstance2");
 		
 		String iterateInstances = runCommand("connect " + this.restUrl + ";use-application serviceContextProperties" 
-				+ "; invoke setter iterateInstances");
+				+ "; invoke -instanceid 1 setter iterateInstances");
 		
 		assertTrue("command did not execute" , iterateInstances.contains("OK"));
 		assertTrue("iteratoring over instances", iterateInstances.contains("myValue1") && iterateInstances.contains("myValue2"));

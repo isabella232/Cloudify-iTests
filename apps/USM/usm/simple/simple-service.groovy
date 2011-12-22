@@ -60,6 +60,9 @@ service {
 		}
 	]
 
+	compute {
+		template "SMALL_LINUX_32"
+	}
 	userInterface {
 		metricGroups = [
 			metricGroup{

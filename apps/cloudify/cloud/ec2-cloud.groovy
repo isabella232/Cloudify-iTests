@@ -1,25 +1,25 @@
 
-cloud2 {
+cloud {
 	name = "ec2"
 	configuration {
 		className "com.gigaspaces.cloudify.esc.driver.provisioning.jclouds.DefaultCloudProvisioning"
 		managementMachineTemplate "SMALL_LINUX_32"
-		connectToPrivateIp false
+		connectToPrivateIp true
 	}
 
 	provider {
 		provider "aws-ec2"
 		localDirectory "tools/cli/plugins/esc/ec2/upload"
 		remoteDirectory "/home/ec2-user/gs-files"
-		cloudifyUrl "https://s3.amazonaws.com/test-repository-ec2dev/cloudify/gigaspaces-test.zip"
-		machineNamePrefix "sgtest_gs_esm_gsa_"
+		cloudifyUrl "http://s3.amazonaws.com/gigaspaces-sgtest/gigaspaces.zip"
+		machineNamePrefix "gs_esm_gsa_"
 		
 		dedicatedManagementMachines true
 		managementOnlyFiles ([])
 		
 
 		sshLoggingLevel "WARNING"
-		managementGroup "sgtest_management_machine"
+		managementGroup "SGTEST_management_machine"
 		numberOfManagementMachines 2
 		zones (["agent"])
 		reservedMemoryCapacityPerMachineInMB 1024
@@ -43,4 +43,3 @@ cloud2 {
 				}
 			])
 }
-

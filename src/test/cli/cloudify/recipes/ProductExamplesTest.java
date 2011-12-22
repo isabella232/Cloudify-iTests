@@ -14,7 +14,7 @@ public class ProductExamplesTest extends AbstractCommandTest{
 	public void installTravel() throws IOException, InterruptedException{
 		super.beforeTest();
 		String travelDirPath = examplesDirPath + "/travel";
-		String cliOutput = runCommand("connect " + restUrl + ";install-application --verbose " + travelDirPath);
+		String cliOutput = runCommand("bootstrap-localcloud;install-application --verbose " + travelDirPath);
 		assertTrue("travel app couln't be installed", cliOutput.toLowerCase().contains("application travel installed successfully"));
 	}
 	
@@ -22,7 +22,7 @@ public class ProductExamplesTest extends AbstractCommandTest{
 	public void installPetclinic() throws IOException, InterruptedException{
 		super.beforeTest();
 		String petclinicDirPath = examplesDirPath + "/petclinic";
-		String cliOutput = runCommand("connect " + restUrl + ";install-application --verbose " + petclinicDirPath);
+		String cliOutput = runCommand("bootstrap-localcloud;install-application --verbose " + petclinicDirPath);
 		assertTrue("petclinic app couln't be installed", cliOutput.toLowerCase().contains("application petclinic-mongo installed successfully"));
 	}
 }

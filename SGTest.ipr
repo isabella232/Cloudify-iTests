@@ -267,20 +267,6 @@
         <entry key="$PROJECT_DIR$">
           <value>
             <SvnBranchConfiguration>
-              <option name="branchMap">
-                <map>
-                  <entry key="svn://svn-srv/SVN/branches">
-                    <value>
-                      <list />
-                    </value>
-                  </entry>
-                  <entry key="svn://svn-srv/SVN/tags">
-                    <value>
-                      <list />
-                    </value>
-                  </entry>
-                </map>
-              </option>
               <option name="branchUrls">
                 <list>
                   <option value="svn://svn-srv/SVN/branches" />
@@ -294,20 +280,6 @@
         <entry key="$PROJECT_DIR$/apps/meta-common">
           <value>
             <SvnBranchConfiguration>
-              <option name="branchMap">
-                <map>
-                  <entry key="svn://pc-lab14/SVN/branches">
-                    <value>
-                      <list />
-                    </value>
-                  </entry>
-                  <entry key="svn://pc-lab14/SVN/tags">
-                    <value>
-                      <list />
-                    </value>
-                  </entry>
-                </map>
-              </option>
               <option name="branchUrls">
                 <list>
                   <option value="svn://pc-lab14/SVN/branches" />
@@ -360,6 +332,13 @@
       <JAVADOC />
       <SOURCES />
       <jarDirectory url="file://$PROJECT_DIR$/apps/USM/usm/simplejavaprocess" recursive="false" />
+    </library>
+    <library name="groovy-all-1.8.0">
+      <CLASSES>
+        <root url="jar://D:/opt/8.0.5/gigaspaces-cloudify-8.0.5-ga_recipes/tools/groovy/embeddable/groovy-all-1.8.0.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
     </library>
     <library name="hamcrest">
       <CLASSES>
@@ -456,15 +435,23 @@
     </library>
     <library name="XAP_LATEST">
       <CLASSES>
-        <root url="file://D:/opt/8.0.3/gigaspaces-xap-premium-8.0.3-m3/lib/required" />
-        <root url="jar://D:/opt/8.0.3/gigaspaces-xap-premium-8.0.3-m3/lib/optional/spring/org.springframework.jms-3.0.5.RELEASE.jar!/" />
-        <root url="jar://D:/opt/8.0.3/gigaspaces-xap-premium-8.0.3-m3/lib/optional/spring/com.springsource.javax.annotation-1.0.0.jar!/" />
-        <root url="jar://D:/opt/8.0.3/gigaspaces-xap-premium-8.0.3-m3/lib/optional/spring/org.springframework.jdbc-3.0.5.RELEASE.jar!/" />
-        <root url="jar://D:/opt/8.0.3/gigaspaces-xap-premium-8.0.3-m3/lib/optional/spring/com.springsource.net.sf.cglib-2.2.0.jar!/" />
+        <root url="file://D:/opt/idea/gigaspaces-cloudify-2.0.0-m5/lib/required" />
+        <root url="jar://D:/opt/idea/gigaspaces-cloudify-2.0.0-m5/lib/optional/spring/com.springsource.javax.annotation-1.0.0.jar!/" />
+        <root url="jar://D:/opt/idea/gigaspaces-cloudify-2.0.0-m5/lib/optional/spring/com.springsource.net.sf.cglib-2.2.0.jar!/" />
+        <root url="jar://D:/opt/idea/gigaspaces-cloudify-2.0.0-m5/lib/optional/spring/org.springframework.jdbc-3.0.5.RELEASE.jar!/" />
+        <root url="file://D:/opt/idea/gigaspaces-cloudify-2.0.0-m5/lib/required" />
+        <root url="jar://D:/opt/idea/gigaspaces-cloudify-2.0.0-m5/lib/optional/spring/org.springframework.jms-3.0.5.RELEASE.jar!/" />
+        <root url="jar://D:/opt/idea/gigaspaces-cloudify-2.0.0-m5/tools/cli/cli.jar!/" />
+        <root url="jar://D:/opt/idea/gigaspaces-cloudify-2.0.0-m5/lib/platform/usm/usm.jar!/" />
+        <root url="file://D:/opt/idea/gigaspaces-cloudify-2.0.0-m5/lib/platform/sigar" />
       </CLASSES>
       <JAVADOC />
-      <SOURCES />
-      <jarDirectory url="file://D:/opt/8.0.3/gigaspaces-xap-premium-8.0.3-m3/lib/required" recursive="false" />
+      <SOURCES>
+        <root url="jar://D:/opt/idea/gigaspaces-cloudify-2.0.0-m5/tools/cli/cli.jar!/OSGI-OPT/src" />
+      </SOURCES>
+      <jarDirectory url="file://D:/opt/idea/gigaspaces-cloudify-2.0.0-m5/lib/platform/sigar" recursive="false" />
+      <jarDirectory url="file://D:/opt/idea/gigaspaces-cloudify-2.0.0-m5/lib/required" recursive="false" />
+      <jarDirectory url="file://D:/opt/idea/gigaspaces-cloudify-2.0.0-m5/lib/required" recursive="false" />
     </library>
     <library name="Xen">
       <CLASSES>

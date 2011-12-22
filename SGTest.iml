@@ -39,7 +39,7 @@
       </configuration>
     </facet>
   </component>
-  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_5" inherit-compiler-output="false">
+  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_6" inherit-compiler-output="false">
     <output url="file://$MODULE_DIR$/classes" />
     <output-test url="file://$MODULE_DIR$/test-classes" />
     <exclude-output />
@@ -86,14 +86,11 @@
     <orderEntry type="library" name="selenium" level="project" />
     <orderEntry type="library" name="jsch" level="project" />
     <orderEntry type="library" name="Xen" level="project" />
-    <orderEntry type="module" module-name="remoting" />
-    <orderEntry type="module" module-name="custom-exception-mypu" />
-    <orderEntry type="module" module-name="security-common" />
     <orderEntry type="library" name="mail" level="project" />
-    <orderEntry type="library" exported="" name="ext.usm" level="project" />
     <orderEntry type="library" name="sshd" level="project" />
     <orderEntry type="library" name="pelops" level="project" />
-    <orderEntry type="library" name="cli" level="project" />
+    <orderEntry type="library" name="ext.usm" level="project" />
+    <orderEntry type="library" exported="" name="groovy-all-1.8.0" level="project" />
   </component>
 </module>
 

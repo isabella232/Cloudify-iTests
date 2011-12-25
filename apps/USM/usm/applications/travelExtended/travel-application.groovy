@@ -3,11 +3,11 @@ application {
 	name="travelExtended"
 	
 	service {
-		name = "cassandra"	
+		name = "cassandra-extend"
 	}
 	
 	service {
-		name = "tomcat"
-		dependsOn = ["cassandra"]
+		name = "tomcat-extend"
+		dependsOn = ["cassandra-extend"]
 	}
 }

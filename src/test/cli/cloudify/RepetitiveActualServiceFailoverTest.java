@@ -72,9 +72,13 @@ public class RepetitiveActualServiceFailoverTest extends AbstractLocalCloudTest 
 		}
 		
 		ProcessingUnit tomcat = admin.getProcessingUnits().waitFor(ServiceUtils.getAbsolutePUName("default", "tomcat"), 10, TimeUnit.SECONDS);
-		machineA = admin.getGridServiceContainers().getContainers()[0].getMachine();
+		boolean machineFound = admin.getGridServiceContainers().waitFor(1, 10, TimeUnit.SECONDS);
+		if (machineFound){
+			machineA = admin.getGridServiceContainers().getContainers()[0].getMachine();
+		}else{
+			AssertFail("No GSC's were found in the givan time-frame.");
+		}
 		
-			
 		final CountDownLatch removed = new CountDownLatch(1);
 		final CountDownLatch added = new CountDownLatch(2);
 		

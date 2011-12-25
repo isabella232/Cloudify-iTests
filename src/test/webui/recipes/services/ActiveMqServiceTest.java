@@ -99,7 +99,7 @@ public class ActiveMqServiceTest extends AbstractSeleniumServiceRecipeTest {
 		
 		appMap.selectApplication("default");
 		
-		ApplicationNode simple = appMap.getApplicationNode("activemq");
+		ApplicationNode simple = appMap.getApplicationNode("default.activemq");
 		
 		assertTrue(simple != null);
 		assertTrue(simple.getStatus().equals(DeploymentStatus.INTACT));	
@@ -114,7 +114,7 @@ public class ActiveMqServiceTest extends AbstractSeleniumServiceRecipeTest {
 		
 		assertTrue(puTreeGrid.getProcessingUnit("webui") != null);
 		assertTrue(puTreeGrid.getProcessingUnit("rest") != null);
-		assertTrue(puTreeGrid.getProcessingUnit("activemq") != null);
+		assertTrue(puTreeGrid.getProcessingUnit("default.activemq") != null);
 		
 	}
 }

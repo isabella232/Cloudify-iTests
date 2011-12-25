@@ -99,7 +99,7 @@ public class SolrServiceTest extends AbstractSeleniumServiceRecipeTest {
 
 		appMap.selectApplication("default");
 
-		ApplicationNode simple = appMap.getApplicationNode("solr");
+		ApplicationNode simple = appMap.getApplicationNode("default.solr");
 
 		assertTrue(simple != null);
 		assertTrue(simple.getStatus().equals(DeploymentStatus.INTACT));	
@@ -114,7 +114,7 @@ public class SolrServiceTest extends AbstractSeleniumServiceRecipeTest {
 
 		assertTrue(puTreeGrid.getProcessingUnit("webui") != null);
 		assertTrue(puTreeGrid.getProcessingUnit("rest") != null);
-		assertTrue(puTreeGrid.getProcessingUnit("solr") != null);
+		assertTrue(puTreeGrid.getProcessingUnit("default.solr") != null);
 
 	}
 

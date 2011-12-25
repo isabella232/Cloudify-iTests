@@ -97,7 +97,7 @@ public class HsqlDBServiceTest extends AbstractSeleniumServiceRecipeTest {
 
 		appMap.selectApplication("default");
 
-		ApplicationNode simple = appMap.getApplicationNode("hsqldb");
+		ApplicationNode simple = appMap.getApplicationNode("default.hsqldb");
 
 		assertTrue(simple != null);
 		assertTrue(simple.getStatus().equals(DeploymentStatus.INTACT));	
@@ -108,7 +108,7 @@ public class HsqlDBServiceTest extends AbstractSeleniumServiceRecipeTest {
 
 		assertTrue(puTreeGrid.getProcessingUnit("webui") != null);
 		assertTrue(puTreeGrid.getProcessingUnit("rest") != null);
-		assertTrue(puTreeGrid.getProcessingUnit("hsqldb") != null);
+		assertTrue(puTreeGrid.getProcessingUnit("default.hsqldb") != null);
 
 	}
 }

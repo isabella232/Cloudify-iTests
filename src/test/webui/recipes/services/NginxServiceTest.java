@@ -97,7 +97,7 @@ public class NginxServiceTest extends AbstractSeleniumServiceRecipeTest {
 		
 		appMap.selectApplication("default");
 		
-		ApplicationNode mongocfgNode = appMap.getApplicationNode("nginx");
+		ApplicationNode mongocfgNode = appMap.getApplicationNode("default.nginx");
 		
 		assertTrue(mongocfgNode != null);
 		assertTrue(mongocfgNode.getStatus().equals(DeploymentStatus.INTACT));
@@ -108,7 +108,7 @@ public class NginxServiceTest extends AbstractSeleniumServiceRecipeTest {
 
 		assertTrue(puTreeGrid.getProcessingUnit("webui") != null);
 		assertTrue(puTreeGrid.getProcessingUnit("rest") != null);
-		assertTrue(puTreeGrid.getProcessingUnit("nginx") != null);
+		assertTrue(puTreeGrid.getProcessingUnit("default.nginx") != null);
 		
 	}
 

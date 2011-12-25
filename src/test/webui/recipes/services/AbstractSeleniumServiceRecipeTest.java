@@ -5,6 +5,7 @@ import static framework.utils.LogUtils.log;
 import java.io.IOException;
 
 import org.openspaces.admin.AdminFactory;
+import org.openspaces.admin.pu.DeploymentStatus;
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -43,6 +44,7 @@ public class AbstractSeleniumServiceRecipeTest extends AbstractSeleniumRecipeTes
 			if (installService(currentRecipe, wait)) {
 				LogUtils.log("retrieving webui url");
 				ProcessingUnit webui = admin.getProcessingUnits().waitFor("webui");
+				ProcessingUnitUtils.waitForDeploymentStatus(webui, DeploymentStatus.INTACT);
 				assertTrue(webui != null);
 				assertTrue(webui.getInstances().length != 0);	
 				String url = ProcessingUnitUtils.getWebProcessingUnitURL(webui).toString();	

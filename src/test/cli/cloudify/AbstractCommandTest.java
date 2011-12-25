@@ -106,5 +106,10 @@ public abstract class AbstractCommandTest extends AbstractTest {
 	protected String runCommand(String command) throws IOException, InterruptedException {
 		return CommandTestUtils.runCommandAndWait(command);
 	}
+	
+	//Commands that run via this method ignore the process exit code.
+	protected String runBadCommand(String command) throws IOException, InterruptedException {
+		return CommandTestUtils.runBadCommandAndWait(command);
+	}
 
 }

@@ -22,7 +22,7 @@ public class BadUSMServiceDownAfterUninstallApplicationTest extends AbstractComm
 		String serviceDir = SGTestHelper.getSGTestRootDir().replace("\\", "/") + "/apps/USM/badUsmServices/simpleApplication";
 		String command = "connect " + restUrl + ";install-application --verbose " + serviceDir + ";exit";
 		try {
-			runCommand(command);
+			runBadCommand(command);
 			machineA = admin.getMachines().getMachines()[0];
 			
 			command = "connect " + restUrl + ";" + "uninstall-application simple;exit";

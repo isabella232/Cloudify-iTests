@@ -33,14 +33,13 @@ public class FailedToInstallServiceApplicationTest extends AbstractCommandTest {
 	}
 	
 	private void testBadServiceInstall(String servicePath, String serviceName) throws IOException, InterruptedException {
-		String output = runCommand("connect " + this.restUrl +
+		runBadCommand("connect " + this.restUrl +
 				";install-service --verbose " + servicePath + 
 				";disconnect;");
 	
 		ProcessingUnit processingUnit = admin.getProcessingUnits().waitFor(serviceName, Constants.PROCESSINGUNIT_TIMEOUT_SEC, TimeUnit.SECONDS);
 		assertTrue("Deployed Successfully. Test Failed", 
     		processingUnit == null || processingUnit.waitFor(0, Constants.PROCESSINGUNIT_TIMEOUT_SEC, TimeUnit.SECONDS));
-		assertTrue(output.contains("Installation of service \"simple\" failed"));
 		
 	}
 
@@ -51,14 +50,13 @@ public class FailedToInstallServiceApplicationTest extends AbstractCommandTest {
 	
 	private void testBadApplicationInstall(String usmBadServicePath,
 			String usmServiceName) throws IOException, InterruptedException {
-		String output = runCommand("connect " + this.restUrl +
+		runBadCommand("connect " + this.restUrl +
 				";install-application --verbose " + usmBadServicePath + 
 				";disconnect;");
 	
 		ProcessingUnit processingUnit = admin.getProcessingUnits().waitFor(usmServiceName, Constants.PROCESSINGUNIT_TIMEOUT_SEC, TimeUnit.SECONDS);
 		assertTrue("Deployed Successfully. Test Failed", 
     		processingUnit == null || processingUnit.waitFor(0, Constants.PROCESSINGUNIT_TIMEOUT_SEC, TimeUnit.SECONDS));
-		assertTrue("Expected command output is: Application simple could not be installed", output.contains("Application simple could not be installed"));
 	}
 
 	private String getUsmBadServicePath(String dirOrFilename) {

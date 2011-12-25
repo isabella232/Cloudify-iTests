@@ -4,10 +4,10 @@ import java.io.IOException;
 
 import org.testng.annotations.Test;
 
-import test.cli.cloudify.AbstractLocalCloudTest;
+import test.cli.cloudify.AbstractSingleBootstrapTest;
 import framework.utils.ScriptUtils;
 
-public class ProductExamplesTest extends AbstractLocalCloudTest{
+public class ProductExamplesTest extends AbstractSingleBootstrapTest{
 	private String examplesDirPath = ScriptUtils.getBuildPath() + "/examples";
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, groups = "1", enabled = true)

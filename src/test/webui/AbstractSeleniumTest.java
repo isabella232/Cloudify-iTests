@@ -129,10 +129,12 @@ public abstract class AbstractSeleniumTest extends AbstractTest {
     	try {
     		stopWebServer();
     		stopWebBrowser();
-    		restorePreviousBrowser();
     	}
     	catch (Exception e) {
     		e.printStackTrace();
+    	}
+    	finally {
+    		restorePreviousBrowser();
     	}
 
     }

@@ -8,15 +8,16 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import test.cli.cloudify.CommandTestUtils;
+
 import com.gigaspaces.cloudify.dsl.utils.ServiceUtils;
 
-import test.cli.cloudify.CommandTestUtils;
+import framework.tools.SGTestHelper;
 import framework.utils.LogUtils;
-import framework.utils.ScriptUtils;
 
 public class StockdemoAppFailOverUsingXenTest extends AbstractApplicationFailOverXenTest {
 
-	private final String stockdemoAppDirPath = ScriptUtils.getBuildPath() + "/examples/stockdemo";
+	private final String stockdemoAppDirPath = SGTestHelper.getSGTestRootDir().replace("\\", "/") + "/apps/USM/usm/applications/stockdemo";
 	private String cassandraHostIp;
 	
 	@BeforeClass

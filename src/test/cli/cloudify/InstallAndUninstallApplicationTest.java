@@ -39,12 +39,12 @@ public class InstallAndUninstallApplicationTest extends AbstractLocalCloudTest {
 
 		runCommand("connect " + this.restUrl + ";install-application --verbose " + applicationDir);
 		String absolutePUName = ServiceUtils.getAbsolutePUName("simple", "simple");
-		final ProcessingUnit processingUnit = admin.getProcessingUnits().waitFor(absolutePUName, 10, TimeUnit.SECONDS);
+		final ProcessingUnit processingUnit = admin.getProcessingUnits().waitFor(absolutePUName, 30, TimeUnit.SECONDS);
 		if (processingUnit == null) {
 			AbstractTest.AssertFail("Processing unit '" + absolutePUName + "' was not found");
 		}
 		AbstractTest.assertTrue("Instance of '" + absolutePUName + "' service was not found",
-		processingUnit.waitFor(1, 10, TimeUnit.SECONDS));
+		processingUnit.waitFor(1, 30, TimeUnit.SECONDS));
 		assertTrue(USMTestUtils.waitForPuRunningState(absolutePUName, 60, TimeUnit.SECONDS, admin));
 
 	    final GridServiceContainer gsc = processingUnit.getInstances()[0].getGridServiceContainer();

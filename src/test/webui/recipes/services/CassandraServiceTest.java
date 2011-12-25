@@ -27,9 +27,9 @@ public class CassandraServiceTest extends AbstractSeleniumServiceRecipeTest  {
 	
 	@Override
 	@BeforeMethod
-	public void bootstrapAndInstall() throws IOException, InterruptedException {
+	public void install() throws IOException, InterruptedException {
 		setCurrentRecipe("cassandra");
-		super.bootstrapAndInstall();
+		super.install();
 	}
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT)

@@ -27,9 +27,9 @@ public class ActiveMqServiceTest extends AbstractSeleniumServiceRecipeTest {
 	
 	@Override
 	@BeforeMethod
-	public void bootstrapAndInstall() throws IOException, InterruptedException {
+	public void install() throws IOException, InterruptedException {
 		setCurrentRecipe("activemq");
-		super.bootstrapAndInstall();
+		super.install();
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT)

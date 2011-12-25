@@ -27,9 +27,9 @@ public class SolrServiceTest extends AbstractSeleniumServiceRecipeTest {
 	
 	@Override
 	@BeforeMethod
-	public void bootstrapAndInstall() throws IOException, InterruptedException {
+	public void install() throws IOException, InterruptedException {
 		setCurrentRecipe("solr");
-		super.bootstrapAndInstall();
+		super.install();
 	}
 
 

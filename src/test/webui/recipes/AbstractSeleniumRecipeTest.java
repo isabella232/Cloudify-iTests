@@ -3,15 +3,26 @@ package test.webui.recipes;
 import java.io.IOException;
 
 import org.testng.annotations.AfterMethod;
+import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeMethod;
-
-import framework.utils.LogUtils;
-import framework.utils.ScriptUtils;
+import org.testng.annotations.BeforeSuite;
 
 import test.cli.cloudify.CommandTestUtils;
 import test.webui.AbstractSeleniumTest;
+import framework.utils.LogUtils;
 
 public class AbstractSeleniumRecipeTest extends AbstractSeleniumTest {
+	
+	@BeforeSuite
+	public void bootstrap() {
+		try {
+			bootstrapLocalCloud();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
 	
 	@Override
 	@BeforeMethod
@@ -25,55 +36,26 @@ public class AbstractSeleniumRecipeTest extends AbstractSeleniumTest {
 	
 	}
 	
-	public boolean bootstrapLocalCloud() throws IOException, InterruptedException {
+	@AfterSuite
+	public void teardown() {
+		try {
+			tearDownLocalCloud();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private boolean bootstrapLocalCloud() throws IOException, InterruptedException {
 		String command = "bootstrap-localcloud --verbose";
 		String output = CommandTestUtils.runCommandAndWait(command);
 		return output.contains("Local-cloud started successfully");
 	}
 	
-	public boolean tearDownLocalCloud() throws IOException, InterruptedException {
+	private boolean tearDownLocalCloud() throws IOException, InterruptedException {
 		String command = "teardown-localcloud --verbose";
 		String output = CommandTestUtils.runCommandAndWait(command);
 		return output.contains("Completed local-cloud teardown");
-	}
-	
-	public boolean installApplication(String applicationName, boolean wait) throws IOException, InterruptedException {
-		String gigaDir = ScriptUtils.getBuildPath();	
-		String pathToApplication = gigaDir + "/examples/" + applicationName;	
-		String command = "connect localhost:8100;install-application --verbose -timeout 25 " + pathToApplication;
-		if (wait) {
-			String output = CommandTestUtils.runCommandAndWait(command);
-			return output.contains("installed successfully");
-		}
-		else {
-			CommandTestUtils.runCommand(command);
-			return true;
-		}
-	}
-	
-	public boolean uninstallApplication(String applicationName, boolean wait) throws IOException, InterruptedException {	
-		String command = "connect localhost:8100;uninstall-application --verbose -timeout 25 " + applicationName;
-		if (wait) {
-			String output = CommandTestUtils.runCommandAndWait(command);
-			return output.contains("Successfully undeployed " + applicationName);
-		}
-		else {
-			CommandTestUtils.runCommand(command);
-			return true;
-		}
-	}
-	
-	public boolean installService(String serviceName, boolean wait) throws IOException, InterruptedException {
-		String gigaDir = ScriptUtils.getBuildPath();	
-		String pathToService = gigaDir + "/recipes/" + serviceName;	
-		String command = "connect localhost:8100;install-service --verbose -timeout 25 " + pathToService;
-		if (wait) {
-			String output = CommandTestUtils.runCommandAndWait(command);
-			return output.contains("successfully installed");
-		}
-		else {
-			CommandTestUtils.runCommand(command);
-			return true;
-		}
 	}
 }

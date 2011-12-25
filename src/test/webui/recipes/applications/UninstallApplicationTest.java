@@ -17,9 +17,9 @@ public class UninstallApplicationTest extends AbstractSeleniumApplicationRecipeT
 	
 	@Override
 	@BeforeMethod
-	public void bootstrapAndInstall() throws IOException, InterruptedException {
+	public void install() throws IOException, InterruptedException {
 		setCurrentApplication("travel");
-		super.bootstrapAndInstall();
+		super.install();
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2)

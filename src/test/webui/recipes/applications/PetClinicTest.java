@@ -28,9 +28,9 @@ public class PetClinicTest extends AbstractSeleniumApplicationRecipeTest {
 
 	@Override
 	@BeforeMethod
-	public void bootstrapAndInstall() throws IOException, InterruptedException {
+	public void install() throws IOException, InterruptedException {
 		setCurrentApplication("petclinic");
-		super.bootstrapAndInstall();
+		super.install();
 	}
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4)

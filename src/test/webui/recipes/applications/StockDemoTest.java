@@ -29,9 +29,9 @@ public class StockDemoTest extends AbstractSeleniumApplicationRecipeTest {
 
 	@Override
 	@BeforeMethod
-	public void bootstrapAndInstall() throws IOException, InterruptedException {
+	public void install() throws IOException, InterruptedException {
 		setCurrentApplication("stockdemo");
-		super.bootstrapAndInstall();
+		super.install();
 	}
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = false)

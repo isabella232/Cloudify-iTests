@@ -102,17 +102,6 @@ public class CommandTestUtils {
 	public static String runCommandAndWait(final String command) throws IOException, InterruptedException {
 		return runCommand(command, true, false);
 	}
-	
-	/**
-	 * runs command and expect it to fail.
-	 * @param command
-	 * @return
-	 * @throws IOException
-	 * @throws InterruptedException
-	 */
-	public static String runBadCommandAndWait(final String command) throws IOException, InterruptedException {
-		return runCommand(command, true, true);
-	}
 
 	/**
 	 * @param command

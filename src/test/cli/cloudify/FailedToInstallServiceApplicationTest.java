@@ -33,7 +33,7 @@ public class FailedToInstallServiceApplicationTest extends AbstractCommandTest {
 	}
 	
 	private void testBadServiceInstall(String servicePath, String serviceName) throws IOException, InterruptedException {
-		runBadCommand("connect " + this.restUrl +
+		CommandTestUtils.runCommandExpectedFail("connect " + this.restUrl +
 				";install-service --verbose " + servicePath + 
 				";disconnect;");
 	
@@ -50,7 +50,7 @@ public class FailedToInstallServiceApplicationTest extends AbstractCommandTest {
 	
 	private void testBadApplicationInstall(String usmBadServicePath,
 			String usmServiceName) throws IOException, InterruptedException {
-		runBadCommand("connect " + this.restUrl +
+		CommandTestUtils.runCommandExpectedFail("connect " + this.restUrl +
 				";install-application --verbose " + usmBadServicePath + 
 				";disconnect;");
 	

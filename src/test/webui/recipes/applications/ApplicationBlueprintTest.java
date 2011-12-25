@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 import org.openspaces.admin.pu.DeploymentStatus;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -48,5 +49,10 @@ public class ApplicationBlueprintTest extends AbstractSeleniumApplicationRecipeT
 		List<Connector> targets = tomcat.getTargets();
 		assertTrue(targets.size() == 1);
 		assertTrue(targets.get(0).getTarget().getName().equals(cassandra.getName()));
+	}
+	
+	@AfterMethod
+	public void resetWait() {
+		setWait(true);
 	}
 }

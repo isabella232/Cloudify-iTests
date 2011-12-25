@@ -17,7 +17,6 @@ import framework.utils.DumpUtils;
 import framework.utils.LogUtils;
 import framework.utils.ProcessingUnitUtils;
 import framework.utils.ScriptUtils;
-import framework.utils.TeardownUtils;
 
 public class AbstractSeleniumApplicationRecipeTest extends AbstractSeleniumRecipeTest {
 	
@@ -63,7 +62,6 @@ public class AbstractSeleniumApplicationRecipeTest extends AbstractSeleniumRecip
 		    }
 		    try {
 		    	uninstallApplication(currentApplication, wait);
-		        TeardownUtils.teardownAll(admin);
 		    } catch (Throwable t) {
 		        log("failed to teardown", t);
 		    }

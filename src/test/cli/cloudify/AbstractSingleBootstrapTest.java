@@ -17,14 +17,19 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 
+import test.AbstractTest;
+
 import com.gigaspaces.cloudify.dsl.internal.packaging.PackagingException;
 
 import framework.utils.DumpUtils;
 import framework.utils.LogUtils;
 
-public class AbstractSingleBootstrapTest extends AbstractCommandTest {
+
+//TODO:Change inheritance.
+public class AbstractSingleBootstrapTest extends AbstractTest {
 	
 	protected final int WAIT_FOR_TIMEOUT = 20;
+	protected String restUrl;
 	
 	@BeforeClass
 	public void beforeClass() throws FileNotFoundException, PackagingException, IOException, InterruptedException{
@@ -46,6 +51,10 @@ public class AbstractSingleBootstrapTest extends AbstractCommandTest {
 		LogUtils.log("adding locator to admin: " + nicAddress + ":4168");
 		factory.addLocator(nicAddress + ":4168");
 		return factory.createAdmin();
+	}
+	
+	protected String runCommand(String command) throws IOException, InterruptedException {
+		return CommandTestUtils.runCommandAndWait(command);
 	}
 	
 	@Override

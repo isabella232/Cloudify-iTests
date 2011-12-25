@@ -15,7 +15,7 @@ import framework.utils.AssertUtils.RepetitiveConditionProvider;
 import test.AbstractTest;
 import test.usm.USMTestUtils;
 
-public class InstallAndUninstallApplicationTest extends AbstractCommandTest {
+public class InstallAndUninstallApplicationTest extends AbstractLocalCloudTest {
 
 	private static final String SERVICE_NAME = "simple";
 

@@ -39,7 +39,7 @@ public class HttpStartDetectionTest extends AbstractCommandTest {
 		try {
 			
 			LogUtils.log("Installing tomcat on port 8081");
-			runCommand(command);
+			runBadCommand(command);
 			String tomcatAbsolutePuName = ServiceUtils.getAbsolutePUName(USM_APPLICATION_NAME, USM_SERVICE_NAME);
 			assertTrue("tomcat service processing unit does not exist", admin.getProcessingUnits().getProcessingUnit(tomcatAbsolutePuName) != null);
 			assertTrue("tomcat service should not be installed.", !admin.getProcessingUnits().getProcessingUnit(tomcatAbsolutePuName).getStatus().equals(DeploymentStatus.INTACT));

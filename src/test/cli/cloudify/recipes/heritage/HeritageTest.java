@@ -13,10 +13,10 @@ import com.gigaspaces.cloudify.dsl.Service;
 import com.gigaspaces.cloudify.dsl.internal.ServiceReader;
 import com.gigaspaces.cloudify.dsl.internal.packaging.PackagingException;
 
-import test.cli.cloudify.AbstractCommandTest;
+import test.cli.cloudify.AbstractLocalCloudTest;
 import test.cli.cloudify.CommandTestUtils;
 
-public class HeritageTest extends AbstractCommandTest {
+public class HeritageTest extends AbstractLocalCloudTest {
 
     private String tomcatParentPath = CommandTestUtils.getPath("apps/USM/usm/tomcatHttpLivenessDetectorPlugin");
     private Application app;

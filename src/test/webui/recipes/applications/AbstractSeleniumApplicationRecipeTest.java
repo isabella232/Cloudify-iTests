@@ -23,9 +23,14 @@ public class AbstractSeleniumApplicationRecipeTest extends AbstractSeleniumRecip
 	private String currentApplication;
 	public static final String MANAGEMENT = "management";
 	Machine[] machines;
+	private boolean wait = true;
 	
 	public void setCurrentApplication(String application) {
 		this.currentApplication = application;
+	}
+	
+	public void setWait(boolean wait) {
+		this.wait = wait;
 	}
 	
 	@BeforeMethod
@@ -36,7 +41,7 @@ public class AbstractSeleniumApplicationRecipeTest extends AbstractSeleniumRecip
 		if (bootstrapLocalCloud()) {
 			LogUtils.log("creating new admin from factory");
 			admin = factory.createAdmin();
-			if (installApplication(currentApplication)) {
+			if (installApplication(currentApplication, wait)) {
 				LogUtils.log("retrieving webui url");
 				ProcessingUnit webui = admin.getProcessingUnits().waitFor("webui");
 				assertTrue(webui != null);

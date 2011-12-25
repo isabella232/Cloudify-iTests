@@ -28,7 +28,7 @@ public class AbstractSeleniumRecipeTest extends AbstractSeleniumTest {
 	public boolean bootstrapLocalCloud() throws IOException, InterruptedException {
 		String command = "bootstrap-localcloud --verbose";
 		String output = CommandTestUtils.runCommandAndWait(command);
-		return output.contains("Local-cloud started succesfully");
+		return output.contains("Local-cloud started successfully");
 	}
 	
 	public boolean tearDownLocalCloud() throws IOException, InterruptedException {
@@ -37,19 +37,43 @@ public class AbstractSeleniumRecipeTest extends AbstractSeleniumTest {
 		return output.contains("Completed local-cloud teardown");
 	}
 	
-	public boolean installApplication(String applicationName) throws IOException, InterruptedException {
+	public boolean installApplication(String applicationName, boolean wait) throws IOException, InterruptedException {
 		String gigaDir = ScriptUtils.getBuildPath();	
 		String pathToApplication = gigaDir + "/examples/" + applicationName;	
 		String command = "connect localhost:8100;install-application --verbose -timeout 25 " + pathToApplication;
-		String output = CommandTestUtils.runCommandAndWait(command);
-		return output.contains("installed successfully");
-			}
+		if (wait) {
+			String output = CommandTestUtils.runCommandAndWait(command);
+			return output.contains("installed successfully");
+		}
+		else {
+			CommandTestUtils.runCommand(command);
+			return true;
+		}
+	}
 	
-	public boolean installService(String serviceName) throws IOException, InterruptedException {
+	public boolean uninstallApplication(String applicationName, boolean wait) throws IOException, InterruptedException {	
+		String command = "connect localhost:8100;uninstall-application --verbose -timeout 25 " + applicationName;
+		if (wait) {
+			String output = CommandTestUtils.runCommandAndWait(command);
+			return output.contains("Successfully undeployed " + applicationName);
+		}
+		else {
+			CommandTestUtils.runCommand(command);
+			return true;
+		}
+	}
+	
+	public boolean installService(String serviceName, boolean wait) throws IOException, InterruptedException {
 		String gigaDir = ScriptUtils.getBuildPath();	
 		String pathToService = gigaDir + "/recipes/" + serviceName;	
 		String command = "connect localhost:8100;install-service --verbose -timeout 25 " + pathToService;
-		String output = CommandTestUtils.runCommandAndWait(command);
-		return output.contains("successfully installed");
+		if (wait) {
+			String output = CommandTestUtils.runCommandAndWait(command);
+			return output.contains("successfully installed");
+		}
+		else {
+			CommandTestUtils.runCommand(command);
+			return true;
+		}
 	}
 }

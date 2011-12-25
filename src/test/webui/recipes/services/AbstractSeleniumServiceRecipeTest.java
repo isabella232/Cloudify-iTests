@@ -21,10 +21,16 @@ public class AbstractSeleniumServiceRecipeTest extends AbstractSeleniumRecipeTes
 	ProcessingUnit pu;
 	private String currentRecipe;
 	public static final String MANAGEMENT = "management";
+	private boolean wait = true;
 	
 	public void setCurrentRecipe(String recipe) {
 		this.currentRecipe = recipe;
 	}
+	
+	public void setWait(boolean wait) {
+		this.wait = wait;
+	}
+	
 	
 	@BeforeMethod
 	public void bootstrapAndInstall() throws IOException, InterruptedException {		
@@ -34,7 +40,7 @@ public class AbstractSeleniumServiceRecipeTest extends AbstractSeleniumRecipeTes
 		if (bootstrapLocalCloud()) {
 			LogUtils.log("creating new admin from factory");
 			admin = factory.createAdmin();
-			if (installService(currentRecipe)) {
+			if (installService(currentRecipe, wait)) {
 				LogUtils.log("retrieving webui url");
 				ProcessingUnit webui = admin.getProcessingUnits().waitFor("webui");
 				assertTrue(webui != null);

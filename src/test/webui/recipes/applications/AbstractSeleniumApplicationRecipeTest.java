@@ -1,13 +1,12 @@
 package test.webui.recipes.applications;
 
-import static framework.utils.LogUtils.log;
-
 import java.io.IOException;
 
 import org.openspaces.admin.AdminFactory;
 import org.openspaces.admin.machine.Machine;
 import org.openspaces.admin.pu.DeploymentStatus;
 import org.openspaces.admin.pu.ProcessingUnit;
+import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 
@@ -41,6 +40,7 @@ public class AbstractSeleniumApplicationRecipeTest extends AbstractSeleniumRecip
 		factory.addLocator("127.0.0.1:4168");
 		LogUtils.log("creating new admin from factory");
 		admin = factory.createAdmin();
+		LogUtils.log("Installing application " + currentApplication);
 		if (installApplication(currentApplication, wait)) {
 			LogUtils.log("retrieving webui url");
 			ProcessingUnit webui = admin.getProcessingUnits().waitFor("webui");
@@ -50,50 +50,91 @@ public class AbstractSeleniumApplicationRecipeTest extends AbstractSeleniumRecip
 			String url = ProcessingUnitUtils.getWebProcessingUnitURL(webui).toString();	
 			startWebBrowser(url); 
 		}
+		else {
+			Assert.fail("Failed to install application " + currentApplication);
+		}
 	}
 	
 	@AfterMethod
-	public void tearDown() throws IOException, InterruptedException {
+	public void uninstall() throws InterruptedException {
 		if (admin != null) {
-			try {
-		        DumpUtils.dumpLogs(admin);
-		    } catch (Throwable t) {
-		        log("failed to dump logs", t);
-		    }
-		    try {
-		    	uninstallApplication(currentApplication, wait);
-		    } catch (Throwable t) {
-		        log("failed to teardown", t);
-		    }
+		    LogUtils.log("Uninstalling application");
+		    uninstallApplication(currentApplication, true);
+			if (!isDevMode()) {
+				DumpUtils.dumpLogs(admin);
+			}
 			admin.close();
 			admin = null;
 		}
 		stopWebBrowser();
 	}
 	
-	public boolean installApplication(String applicationName, boolean wait) throws IOException, InterruptedException {
+	public boolean installApplication(String applicationName, boolean wait) throws InterruptedException {
 		String gigaDir = ScriptUtils.getBuildPath();	
 		String pathToApplication = gigaDir + "/examples/" + applicationName;	
 		String command = "connect localhost:8100;install-application --verbose -timeout 25 " + pathToApplication;
-		if (wait) {
-			String output = CommandTestUtils.runCommandAndWait(command);
-			return output.contains("installed successfully");
+		try {
+			if (wait) {
+				LogUtils.log("Waiting for install-application to finish...");
+				String output = CommandTestUtils.runCommandAndWait(command);
+				boolean success = output.contains("installed successfully");
+				if (success) {
+					LogUtils.log("Cli returned that application was installed succesfully");
+					return true;
+				}
+				else {
+					LogUtils.log("Cli returned that application was not installed succesfully");
+					return false;
+				}
+			}
+			else {
+				LogUtils.log("Not waiting for application to finish, assuming it will succeed");
+				CommandTestUtils.runCommand(command);
+				return true;
+			}
 		}
-		else {
-			CommandTestUtils.runCommand(command);
-			return true;
+		catch (IOException e) {
+			LogUtils.log("Failed to install application " + applicationName);
+			LogUtils.log("Caught exception: " , e);
+			return false;
+		}
+		catch (Throwable t) {
+			LogUtils.log("Failed to install application " + applicationName);
+			LogUtils.log("Caught throwable: " , t);
+			return false;
 		}
 	}
 	
-	public boolean uninstallApplication(String applicationName, boolean wait) throws IOException, InterruptedException {	
+	public boolean uninstallApplication(String applicationName, boolean wait) throws InterruptedException {	
 		String command = "connect localhost:8100;uninstall-application --verbose -timeout 25 " + applicationName;
+		try {
 		if (wait) {
+			LogUtils.log("Waiting for uninstall-application to finish...");
 			String output = CommandTestUtils.runCommandAndWait(command);
-			return output.contains("Successfully undeployed " + applicationName);
+			boolean success = output.contains("uninstalled successfully");
+			if (success) {
+				LogUtils.log("Cli returned that application was un-installed succesfully");
+				return true;
+			}
+			else {
+				LogUtils.log("Cli returned that application was not un-installed succesfully");
+				return false;
+			}
 		}
 		else {
 			CommandTestUtils.runCommand(command);
 			return true;
+		}
+		}
+		catch (IOException e) {
+			LogUtils.log("Failed to uninstall application " + applicationName);
+			LogUtils.log("Caught exception: " , e);
+			return false;
+		}
+		catch (Throwable t) {
+			LogUtils.log("Failed to uninstall application " + applicationName);
+			LogUtils.log("Caught throwable: " , t);
+			return false;
 		}
 	}
 }

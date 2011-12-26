@@ -116,22 +116,6 @@ public class TravelTest extends AbstractSeleniumApplicationRecipeTest {
 		};
 		AssertUtils.repetitiveAssertTrue(null, condition, waitingTime);
 
-		condition = new RepetitiveConditionProvider() {		
-			@Override
-			public boolean getCondition() {
-				return applicationServicesGrid.getWebModule().getCount() == 1;
-			}
-		};
-		AssertUtils.repetitiveAssertTrue(null, condition, waitingTime);
-
-		condition = new RepetitiveConditionProvider() {		
-			@Override
-			public boolean getCondition() {
-				return applicationServicesGrid.getWebModule().getIcon().equals(Icon.OK);
-			}
-		};
-		AssertUtils.repetitiveAssertTrue(null, condition, waitingTime);
-
 		TopologyTab topologyTab = mainNav.switchToTopology();
 
 		final ApplicationMap appMap = topologyTab.getApplicationMap();

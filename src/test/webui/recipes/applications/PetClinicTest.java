@@ -77,8 +77,8 @@ public class PetClinicTest extends AbstractSeleniumApplicationRecipeTest {
 
 			@Override
 			public boolean getCondition() {
-				return ((applicationServices.getWebModule().getCount() == 1)
-						&& (applicationServices.getWebModule().getIcon().equals(Icon.OK)));
+				return ((applicationServices.getWebServerModule().getCount() == 1)
+						&& (applicationServices.getWebServerModule().getIcon().equals(Icon.OK)));
 			}
 		};
 		AssertUtils.repetitiveAssertTrue(null, condition, waitingTime);

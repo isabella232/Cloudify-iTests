@@ -424,4 +424,8 @@ public abstract class AbstractSeleniumTest extends AbstractTest {
 		
 	}
 	
+	public boolean isDevMode() {
+		return !System.getenv("USERNAME").equals("ca");
+	}
+	
 }

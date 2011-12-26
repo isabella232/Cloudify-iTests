@@ -1,4 +1,4 @@
-package test.cli.cloudify.recipes.heritage;
+package test.cli.cloudify.recipes.inheritence;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,13 +16,13 @@ import com.gigaspaces.cloudify.dsl.internal.packaging.PackagingException;
 import test.cli.cloudify.AbstractLocalCloudTest;
 import test.cli.cloudify.CommandTestUtils;
 
-public class HeritageTest extends AbstractLocalCloudTest {
+public class RecipeInheritenceTest extends AbstractLocalCloudTest {
 
     private String tomcatParentPath = CommandTestUtils.getPath("apps/USM/usm/tomcatHttpLivenessDetectorPlugin");
     private Application app;
 
     @Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
-    public void simpleHeritageTest() throws PackagingException, IOException, InterruptedException {
+    public void simpleInheritenceTest() throws PackagingException, IOException, InterruptedException {
         String appChildDirPath = CommandTestUtils.getPath("apps/USM/usm/applications/travelExtended");
 
         Service tomcatParent = ServiceReader.readService(new File(tomcatParentPath));

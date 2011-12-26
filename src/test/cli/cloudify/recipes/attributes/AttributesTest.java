@@ -1,4 +1,4 @@
-package test.cli.cloudify.recipes.customProperties;
+package test.cli.cloudify.recipes.attributes;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -24,7 +24,7 @@ import com.gigaspaces.cloudify.dsl.utils.ServiceUtils;
 
 import framework.utils.LogUtils;
 
-public class CustomPropertiesTest extends AbstractSingleBootstrapTest {
+public class AttributesTest extends AbstractSingleBootstrapTest {
 	
 	private final String APPLICAION_DIR_PATH = CommandTestUtils
 									.getPath("apps/USM/usm/applications/serviceContextProperties");

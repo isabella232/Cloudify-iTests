@@ -72,7 +72,7 @@ public class RepetitiveActualServiceFailoverTest extends AbstractLocalCloudTest 
 		}
 		
 		ProcessingUnit tomcat = admin.getProcessingUnits().waitFor(ServiceUtils.getAbsolutePUName("default", "tomcat"), 10, TimeUnit.SECONDS);
-		boolean machineFound = admin.getGridServiceContainers().waitFor(1, 10, TimeUnit.SECONDS);
+		boolean machineFound = admin.getGridServiceContainers().waitFor(1, 30, TimeUnit.SECONDS);
 		if (machineFound){
 			machineA = admin.getGridServiceContainers().getContainers()[0].getMachine();
 		}else{

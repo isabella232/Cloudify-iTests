@@ -51,7 +51,7 @@ public class HeritageTest extends AbstractLocalCloudTest {
         assertTrue(ServiceUtils.isPortFree(8080));
     }
 
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = false)
     public void overrideTomcatNumInstancesTest() throws PackagingException, IOException, InterruptedException {
         String appChildDirPath = CommandTestUtils.getPath("apps/USM/usm/applications/travelExtendedTomcatNumInstancesOverride");
         installApplication(appChildDirPath);

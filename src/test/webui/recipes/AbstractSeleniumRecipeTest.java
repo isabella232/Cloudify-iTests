@@ -33,7 +33,7 @@ public class AbstractSeleniumRecipeTest extends AbstractSeleniumTest {
 	@Override
 	@AfterMethod
 	public void afterTest() {
-	
+		LogUtils.log("Test Finished : " + this.getClass());
 	}
 	
 	@AfterSuite

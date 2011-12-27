@@ -138,7 +138,7 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 		
 		//TODO:Remove this and uncomment the code below. This is a workaround
 		//that is meant to solve the pu.undeploy getting stuck issue.
-		while (this.admin.getProcessingUnits().waitFor("default.kitchensink-service", 10, TimeUnit.SECONDS) != null){
+		while ((pu = this.admin.getProcessingUnits().waitFor("default.kitchensink-service", 10, TimeUnit.SECONDS)) != null){
 			pu.undeployAndWait(10, TimeUnit.SECONDS);
 		}
 //		// undeploy

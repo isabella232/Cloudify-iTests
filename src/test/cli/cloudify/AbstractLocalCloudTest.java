@@ -41,6 +41,7 @@ import framework.utils.PortConnectionUtils;
 
 public class AbstractLocalCloudTest extends AbstractTest {
 	
+	protected final String DEFAULT_APPLICTION_NAME = "default";
 	protected final int WAIT_FOR_TIMEOUT = 20;
 	private final int HTTP_STATUS_OK = 200;
 	private final int restPort = 8100;

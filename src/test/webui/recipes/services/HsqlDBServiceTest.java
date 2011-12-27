@@ -32,7 +32,7 @@ public class HsqlDBServiceTest extends AbstractSeleniumServiceRecipeTest {
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT)
-	public void simpleRecipeTest() throws InterruptedException {
+	public void hsqlRecipeTest() throws InterruptedException {
 
 		// get new login page
 		LoginPage loginPage = getLoginPage();

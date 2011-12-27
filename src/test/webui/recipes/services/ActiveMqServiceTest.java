@@ -33,7 +33,7 @@ public class ActiveMqServiceTest extends AbstractSeleniumServiceRecipeTest {
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT)
-	public void simpleRecipeTest() throws InterruptedException {
+	public void activeMqRecipeTest() throws InterruptedException {
 		
 		// get new login page
 		LoginPage loginPage = getLoginPage();

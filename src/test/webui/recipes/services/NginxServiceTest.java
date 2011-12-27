@@ -32,7 +32,7 @@ public class NginxServiceTest extends AbstractSeleniumServiceRecipeTest {
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = false)
-	public void mongosTest() throws InterruptedException {
+	public void nginxTest() throws InterruptedException {
 		
 		// get new login page
 		LoginPage loginPage = getLoginPage();

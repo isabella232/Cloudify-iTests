@@ -28,6 +28,8 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 
+import test.AbstractTest;
+
 import com.gigaspaces.cloudify.dsl.internal.packaging.PackagingException;
 import com.gigaspaces.cloudify.shell.StringUtils;
 import com.gigaspaces.cloudify.shell.commands.CLIException;
@@ -37,11 +39,12 @@ import framework.utils.DumpUtils;
 import framework.utils.LogUtils;
 import framework.utils.PortConnectionUtils;
 
-public class AbstractLocalCloudTest extends AbstractCommandTest {
+public class AbstractLocalCloudTest extends AbstractTest {
 	
 	protected final int WAIT_FOR_TIMEOUT = 20;
 	private final int HTTP_STATUS_OK = 200;
 	private final int restPort = 8100;
+	protected String restUrl;
 	//Teardown any existing localclouds left from previous tests
 	@BeforeClass
 	public void beforeClass() throws FileNotFoundException, PackagingException, IOException, InterruptedException{
@@ -79,6 +82,10 @@ public class AbstractLocalCloudTest extends AbstractCommandTest {
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	protected String runCommand(String command) throws IOException, InterruptedException {
+		return CommandTestUtils.runCommandAndWait(command);
 	}
 	
 	@Override

@@ -202,6 +202,7 @@ public abstract class AbstractSeleniumTest extends AbstractTest {
     		Assert.fail("Test Failed because it was unable to connect to Web server");
     	}
 		selenium = new WebDriverBackedSelenium(driver, uRL);
+		seleniumBrowsers.add(selenium);
     }
     
     public void stopWebBrowser() throws InterruptedException {

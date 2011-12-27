@@ -13,15 +13,12 @@ import framework.utils.LogUtils;
 
 public class AbstractSeleniumRecipeTest extends AbstractSeleniumTest {
 	
+	public static boolean bootstraped;
+	
 	@BeforeSuite
-	public void bootstrap() {
-		try {
-			bootstrapLocalCloud();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+	public void bootstrap() throws IOException, InterruptedException {
+		assertTrue(bootstrapLocalCloud());
+		bootstraped = true;
 	}
 	
 	@Override
@@ -36,15 +33,14 @@ public class AbstractSeleniumRecipeTest extends AbstractSeleniumTest {
 		LogUtils.log("Test Finished : " + this.getClass());
 	}
 	
-	@AfterSuite
-	public void teardown() {
-		try {
-			tearDownLocalCloud();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+	@AfterSuite(alwaysRun = true)
+	public void teardown() throws IOException, InterruptedException {
+		assertTrue(tearDownLocalCloud());
+		bootstraped = false;
+	}
+	
+	public boolean isBootstraped() {
+		return bootstraped;
 	}
 	
 	private boolean bootstrapLocalCloud() throws IOException, InterruptedException {

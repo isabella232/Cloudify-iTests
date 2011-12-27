@@ -23,7 +23,7 @@ public class ApplicationBlueprintTest extends AbstractSeleniumApplicationRecipeT
 		super.install();
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
 	public void blueprintTest() throws IOException, InterruptedException {
 		
 		LoginPage loginPage = getLoginPage();

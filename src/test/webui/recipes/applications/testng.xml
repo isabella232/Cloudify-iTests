@@ -1,0 +1,11 @@
+<!DOCTYPE sutie SYSTEM "http://testng.org/testng-1.0.dtd"> 
+<suite name="Application Recipes">
+	<test name="Local Tests">
+		<packages>
+			<package name="test.webui.recipes.applications">
+				<include name="ApplicationBlueprintTest"></include>
+				<include name="TravelTest"></include>
+			</package>
+		</packages>
+	</test>
+</suite>

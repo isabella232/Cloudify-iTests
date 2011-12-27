@@ -137,8 +137,8 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 		assertEquals("Process startup log entries should only appear once in the log file", 1, numOfStartupEntries);
 		
 		//TODO:Remove this and uncomment the code below. This is a workaround
-		//that is ment to solve the pu.undeploy getting stuck issue.
-		while (this.admin.getProcessingUnits().waitFor("default.kitchensink-service", 10, TimeUnit.SECONDS).getInstances().length != 0){
+		//that is meant to solve the pu.undeploy getting stuck issue.
+		while (this.admin.getProcessingUnits().waitFor("default.kitchensink-service", 10, TimeUnit.SECONDS) != null){
 			pu.undeployAndWait(10, TimeUnit.SECONDS);
 		}
 //		// undeploy
@@ -530,7 +530,7 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 
 	private ProcessingUnit findPU() {
 		ProcessingUnit pu = this.admin.getProcessingUnits().waitFor(
-				ServiceUtils.getAbsolutePUName(DEFAULT_APPLICTION_NAME, "kitchensink-service"), 30, TimeUnit.SECONDS);
+				ServiceUtils.getAbsolutePUName("default", "kitchensink-service"), 30, TimeUnit.SECONDS);
 		assertNotNull("Could not find processing unit for installed service",
 				pu);
 		return pu;

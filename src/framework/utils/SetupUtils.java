@@ -4,8 +4,6 @@ import static framework.utils.LogUtils.log;
 import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.assertTrue;
 
-import java.io.File;
-import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.HashMap;
@@ -24,6 +22,7 @@ import org.openspaces.admin.gsc.GridServiceContainer;
 import org.openspaces.admin.gsm.GridServiceManager;
 import org.testng.Assert;
 import org.testng.AssertJUnit;
+
 import test.cli.cloudify.CommandTestUtils;
 
 /**

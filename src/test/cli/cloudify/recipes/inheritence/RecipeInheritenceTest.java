@@ -22,7 +22,7 @@ public class RecipeInheritenceTest extends AbstractLocalCloudTest {
     private Application app;
 
     @Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
-    public void simpleInheritenceTest() throws PackagingException, IOException, InterruptedException {
+    public void simpleInheritenceTest() throws IOException, PackagingException, InterruptedException {
         String appChildDirPath = CommandTestUtils.getPath("apps/USM/usm/applications/travelExtended");
 
         Service tomcatParent = ServiceReader.readService(new File(tomcatParentPath));
@@ -36,6 +36,7 @@ public class RecipeInheritenceTest extends AbstractLocalCloudTest {
         tomcatParentPort = tomcatParent.getNetwork().getPort();
 
         assertEquals("tomcat port isn't equal to the tomcat's parent port", tomcatChildPort, tomcatParentPort);
+        //uninstallService("tomcatHttpLivenessDetectorPlugin");
     }
 
     @Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
@@ -49,6 +50,7 @@ public class RecipeInheritenceTest extends AbstractLocalCloudTest {
         assertEquals("tomcat's child port was not overriden", 9876, tomcatChildPort);
         assertTrue(ServiceUtils.isPortOccupied(9876));
         assertTrue(ServiceUtils.isPortFree(8080));
+        //uninstallApplication("travelExtendedTomcatPortOverride");
     }
 
     @Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = false)
@@ -58,6 +60,7 @@ public class RecipeInheritenceTest extends AbstractLocalCloudTest {
 
         int tomcatInstances = admin.getProcessingUnits().getProcessingUnit("travelExtendedTomcatNumInstancesOverride.tomcat").getInstances().length;
         assertEquals("tomcat instances where overriden to be 3", 3, tomcatInstances);
+        //uninstallApplication("travelExtendedTomcatNumInstancesOverride");
     }
 
     @Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
@@ -73,6 +76,7 @@ public class RecipeInheritenceTest extends AbstractLocalCloudTest {
 
         sleep(5000);
         assertTrue(checkForOverrideString(cassandraInstance, pid, matcher, EXPECTED_PROCESS_PRINTOUTS));
+        //uninstallApplication("travelExtended");
     }
 
     private void installApplication(String appDirPath) throws PackagingException, IOException, InterruptedException {
@@ -94,7 +98,6 @@ public class RecipeInheritenceTest extends AbstractLocalCloudTest {
                 return true;
             }
         }
-
         return false;
     }
 }

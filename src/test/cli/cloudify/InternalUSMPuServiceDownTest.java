@@ -39,7 +39,6 @@ public class InternalUSMPuServiceDownTest extends AbstractLocalCloudTest {
 	Long tomcatPId;
 	Machine machineA;
 	WebClient client;
-	Machine[] machines;
 
 	@Override
 	@BeforeMethod
@@ -76,8 +75,6 @@ public class InternalUSMPuServiceDownTest extends AbstractLocalCloudTest {
 		GridServiceContainer container = tomcatInstance.getGridServiceContainer();
 		machineA = container.getMachine();
 		tomcatPId = (Long) customServiceDetails.getMonitors().get("Actual Process ID");
-		
-		client = new WebClient(BrowserVersion.getDefault());
 		
 		final CountDownLatch removed = new CountDownLatch(1);
 		final CountDownLatch added = new CountDownLatch(2);

@@ -52,6 +52,26 @@ public class CommandTestUtils {
 		else
 			return null;
 	}
+
+    public static String runLocalCommand(final String command, boolean wait, boolean failCommand) throws IOException, InterruptedException {
+
+        String cmdLine = command;
+        if (isWindows()) {
+            cmdLine = "cmd /c call " + cmdLine;
+        }
+
+        final String[] parts = cmdLine.split(" ");
+        final ProcessBuilder pb = new ProcessBuilder(parts);
+        pb.redirectErrorStream(true);
+
+        LogUtils.log("Executing Command line: " + cmdLine);
+        final Process process = pb.start();
+
+        if(wait)
+            return handleCliOutput(process, failCommand);
+        else
+            return null;
+    }
 	
 	private static String handleCliOutput(Process process, boolean failCommand) throws IOException, InterruptedException{
 		// Print CLI output if exists.

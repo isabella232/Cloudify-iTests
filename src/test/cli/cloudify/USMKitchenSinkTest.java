@@ -1,7 +1,6 @@
 package test.cli.cloudify;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
@@ -21,8 +20,6 @@ import org.openspaces.admin.pu.events.ProcessingUnitInstanceAddedEventListener;
 import org.openspaces.admin.pu.events.ProcessingUnitInstanceRemovedEventListener;
 import org.openspaces.pu.service.ServiceDetails;
 import org.openspaces.pu.service.ServiceMonitors;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import test.usm.USMTestUtils;
@@ -44,11 +41,6 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 
 	private static final String LOCAL_GROUP_NAME = "kitchensinktest";
 
-	@Override
-	@BeforeMethod
-	public void beforeTest() {
-		super.beforeTest();
-	}
 	
 	final private String RECIPE_DIR_PATH = CommandTestUtils
 			.getPath("apps/USM/usm/kitchensink");
@@ -536,8 +528,7 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 		return pu;
 	}
 
-	private void installService() throws FileNotFoundException,
-			PackagingException, IOException, InterruptedException {
+	private void installService() throws PackagingException, IOException, InterruptedException {
 		File serviceDir = new File(RECIPE_DIR_PATH);
 		ServiceReader.getServiceFromDirectory(serviceDir, CloudifyConstants.DEFAULT_APPLICATION_NAME).getService();
 
@@ -561,15 +552,4 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 
 	}
 
-	@Override
-	@AfterMethod
-	public void afterTest() {
-		try {
-			runCommand("teardown-localcloud");
-		} catch (IOException e) {
-			throw new IllegalStateException(e);
-		} catch (InterruptedException e) {
-			throw new IllegalStateException(e);
-		}
-	}
 }

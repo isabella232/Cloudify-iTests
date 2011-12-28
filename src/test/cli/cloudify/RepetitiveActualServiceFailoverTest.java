@@ -168,7 +168,6 @@ public class RepetitiveActualServiceFailoverTest extends AbstractLocalCloudTest 
 	}
 	
 	private Long getTomcatPId() throws UnknownHostException {
-		
 		String absolutePUName = ServiceUtils.getAbsolutePUName("default", "tomcat");
 		ProcessingUnit tomcat = admin.getProcessingUnits().getProcessingUnit(absolutePUName);
 		assertNotNull(tomcat);
@@ -180,19 +179,4 @@ public class RepetitiveActualServiceFailoverTest extends AbstractLocalCloudTest 
 		CustomServiceMonitors customServiceDetails = (CustomServiceMonitors) tomcatInstance.getStatistics().getMonitors().get("USM");
 		return (Long) customServiceDetails.getMonitors().get("Actual Process ID");
 	}
-	
-	@Override
-	@AfterMethod
-	public void afterTest() {
-		try {
-			LogUtils.log("tearing down local cloud");
-			CommandTestUtils.runCommandAndWait("teardown-localcloud");
-		} catch (IOException e) {
-			LogUtils.log("teardown-localcloud failed", e);
-		} catch (InterruptedException e) {
-			LogUtils.log("teardown-localcloud failed", e);
-		}
-		super.afterTest();	
-	}
-
 }

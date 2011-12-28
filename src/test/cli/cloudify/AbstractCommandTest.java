@@ -21,6 +21,7 @@ import framework.utils.PortConnectionUtils;
 
 import test.AbstractTest;
 
+@Deprecated
 public abstract class AbstractCommandTest extends AbstractTest {
 
 	private static final long REST_PROCESSINGUNIT_TIMEOUT_SEC = 60;

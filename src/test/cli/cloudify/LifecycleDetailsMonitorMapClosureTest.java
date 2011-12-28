@@ -26,10 +26,8 @@ public class LifecycleDetailsMonitorMapClosureTest extends AbstractLocalCloudTes
 
 	final private String RECIPE_DIR_PATH = CommandTestUtils
 	.getPath("apps/USM/usm/simple");
-	private static final String EXPECTED_DETAILS_FIELDS[] = { "1",
-		"2"};
-	private static final String EXPECTED_MONITORS_FIELDS[] = {"3",
-	"4" };
+	private static final String EXPECTED_DETAILS_FIELDS[] = { "1", "2"};
+	private static final String EXPECTED_MONITORS_FIELDS[] = {"3", "4" };
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
 	public void testDetailsAndMonitorsMap() throws FileNotFoundException, PackagingException, IOException, InterruptedException{
@@ -52,8 +50,7 @@ public class LifecycleDetailsMonitorMapClosureTest extends AbstractLocalCloudTes
 		
 	}
 	
-	private void installService() throws FileNotFoundException,
-	PackagingException, IOException, InterruptedException {
+	private void installService() throws PackagingException, IOException, InterruptedException {
 		File serviceDir = new File(RECIPE_DIR_PATH);
 		ServiceReader.getServiceFromDirectory(serviceDir, CloudifyConstants.DEFAULT_APPLICATION_NAME).getService();
 		runCommand("connect " + this.restUrl + ";install-service --verbose " + RECIPE_DIR_PATH);

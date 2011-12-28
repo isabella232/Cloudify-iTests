@@ -5,7 +5,6 @@ import java.util.concurrent.TimeUnit;
 
 import org.openspaces.admin.gsc.GridServiceContainer;
 import org.openspaces.admin.pu.ProcessingUnit;
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import test.usm.USMTestUtils;
@@ -16,7 +15,7 @@ import framework.utils.DumpUtils;
 import framework.utils.LogUtils;
 import framework.utils.AssertUtils.RepetitiveConditionProvider;
 
-public class InstallAndUninstallServiceTest extends AbstractSingleBootstrapTest {
+public class InstallAndUninstallServiceTest extends AbstractLocalCloudTest {
 
 	private static final String DEFAULT_APPLICATION_NAME = "default";
 	public static final String SERVLET_WAR_NAME = "servlet.war";
@@ -36,12 +35,7 @@ public class InstallAndUninstallServiceTest extends AbstractSingleBootstrapTest 
 	
 	public static final String MIRROR_SERVICE_FOLDER_NAME = "stockAnalyticsMirror";
 	public static final String MIRROR_SERVICE_NAME = "stockAnalyticsMirror";
-	
-	@Override
-	@BeforeMethod
-	public void beforeTest() {
-		super.beforeTest();
-	}
+
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
 	public void testServletInstall() throws IOException, InterruptedException {

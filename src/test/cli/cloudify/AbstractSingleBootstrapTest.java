@@ -25,7 +25,8 @@ import framework.utils.DumpUtils;
 import framework.utils.LogUtils;
 
 
-//TODO:Change inheritance.
+
+@Deprecated
 public class AbstractSingleBootstrapTest extends AbstractTest {
 	
 	protected final int WAIT_FOR_TIMEOUT = 20;

@@ -1,14 +1,16 @@
 package test.cli.cloudify;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
+import framework.utils.DumpUtils;
+import framework.utils.TeardownUtils;
 import junit.framework.Assert;
 
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -21,33 +23,34 @@ import com.gigaspaces.cloudify.dsl.utils.ServiceUtils;
 
 import framework.utils.LogUtils;
 
-public class CustomCommandsOnMultipleInstancesTest extends AbstractSingleBootstrapTest {
+public class CustomCommandsOnMultipleInstancesTest extends AbstractLocalCloudTest {
 	
 	private final String RECIPE_DIR_PATH = CommandTestUtils
 									.getPath("apps/USM/usm/simpleCustomCommandsMultipleInstances");
 	private int totalInstances;
-	
-	@Override
+
 	@BeforeClass
-	public void beforeClass() throws FileNotFoundException, PackagingException, IOException, InterruptedException{			
-		super.beforeClass();
+	public void beforeClass() throws PackagingException, IOException, InterruptedException{
 		installService();
 		String absolutePUName = ServiceUtils.getAbsolutePUName("default", "simpleCustomCommandsMultipleInstances");
 		ProcessingUnit pu = admin.getProcessingUnits().waitFor(absolutePUName , WAIT_FOR_TIMEOUT , TimeUnit.SECONDS);
-//		assertTrue("service was not installed", pu.waitFor(pu.getTotalNumberOfInstances(), WAIT_FOR_TIMEOUT, TimeUnit.SECONDS));
 		assertTrue("USM Service State is NOT RUNNING", USMTestUtils.waitForPuRunningState(absolutePUName, 60, TimeUnit.SECONDS, admin));
 		totalInstances = pu.getTotalNumberOfInstances();
 	}
-	
-	@Override
+
+    @Override
+    @AfterMethod
+    public void afterTest(){
+        if (admin != null) {
+            TeardownUtils.snapshot(admin);
+            DumpUtils.dumpLogs(admin);
+        }
+    }
+
 	@AfterClass
 	public void afterClass() throws IOException, InterruptedException{	
-		runCommand("connect " + this.restUrl + 
-			";uninstall-service --verbose simpleCustomCommandsMultipleInstances");
-		super.afterClass();
+		runCommand("connect " + this.restUrl +  ";uninstall-service --verbose simpleCustomCommandsMultipleInstances");
 	}
-	
-//////////////////////////////////////////////////////////////////////////////////////////////////////////	
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = true)
 	public void testPrintCommand() throws Exception {
@@ -99,8 +102,6 @@ public class CustomCommandsOnMultipleInstancesTest extends AbstractSingleBootstr
 		for(int i=1 ; i<= totalInstances ; i++)
 			checkContextCommand(i);
 	}
-	
-////////////////////////////////////////////////////////////////////////////////////////////////////////	
 	
 	private void checkPrintCommand() throws IOException, InterruptedException {
 		String invokePrintResult = runCommand("connect " + this.restUrl + ";use-application default" 
@@ -220,11 +221,9 @@ public class CustomCommandsOnMultipleInstancesTest extends AbstractSingleBootstr
 			Assert.assertFalse("should not recive any output from instance" + i ,invokeContextResult.contains("instance #" + i));
 		}
 	}
-	private void installService() throws FileNotFoundException,
-		PackagingException, IOException, InterruptedException {
+	private void installService() throws PackagingException, IOException, InterruptedException {
 		File serviceDir = new File(RECIPE_DIR_PATH);
 		ServiceReader.getServiceFromDirectory(serviceDir, CloudifyConstants.DEFAULT_APPLICATION_NAME).getService();
-		
 		runCommand("connect " + this.restUrl + ";install-service --verbose " + RECIPE_DIR_PATH);
 	}
 }

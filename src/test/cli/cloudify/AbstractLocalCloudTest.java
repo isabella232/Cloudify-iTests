@@ -81,7 +81,7 @@ public class AbstractLocalCloudTest extends AbstractTest {
         LogUtils.log("Test Configuration Started: " + this.getClass());
     }
 
-    @AfterMethod
+    @AfterMethod(alwaysRun = true)
     public void afterTest() {
 
         if (admin != null) {
@@ -91,11 +91,12 @@ public class AbstractLocalCloudTest extends AbstractTest {
         try {
             Set<String> currentPids = SetupUtils.getLocalProcesses();
             Set<String> delta = SetupUtils.getClientProcessesIDsDelta(alivePIDs, currentPids);
-            String pids = "";
-            for (String pid : delta) {
-                pids += pid + ", ";
-            }
+
             if (delta.size() > 0) {
+                String pids = "";
+                for (String pid : delta) {
+                    pids += pid + ", ";
+                }
                 LogUtils.log("WARNING There is a leak PIDS [ " + pids + "] are alive");
                 SetupUtils.killProcessesByIDs(delta);
                 LogUtils.log("INFO killing all orphan processes");
@@ -109,7 +110,7 @@ public class AbstractLocalCloudTest extends AbstractTest {
         }
     }
 
-    @AfterSuite
+    @AfterSuite(alwaysRun = true)
     public void afterSuite() {
         try {
             LogUtils.log("Tearing-down localcloud");

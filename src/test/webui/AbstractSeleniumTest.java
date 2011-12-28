@@ -8,6 +8,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.xml.stream.FactoryConfigurationError;
@@ -164,11 +165,12 @@ public abstract class AbstractSeleniumTest extends AbstractTest {
     	String browser = System.getProperty("selenium.browser");
     	LogUtils.log("Current browser is " + browser);
 		if (browser == null) {
-    		driver = new FirefoxDriver();
+			driver = new FirefoxDriver();
     	}
     	else {
     		if (browser.equals("Firefox")) {
     			driver = new FirefoxDriver();
+    			
     		}
     		else {
     			if (browser.equals("IE")) {
@@ -178,7 +180,9 @@ public abstract class AbstractSeleniumTest extends AbstractTest {
     			}
     			else {
     				System.setProperty("webdriver.chrome.driver", SGTestHelper.getSGTestRootDir() + "/src/test/webui/resources/chromedriver.exe");
-    				driver = new ChromeDriver();
+    				DesiredCapabilities desired = DesiredCapabilities.chrome();
+    				desired.setCapability("chrome.switches", Arrays.asList("--start-maximized"));
+    				driver = new ChromeDriver(desired);
     			}
     		}
     	}

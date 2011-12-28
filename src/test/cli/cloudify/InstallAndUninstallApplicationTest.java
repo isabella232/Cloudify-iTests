@@ -5,15 +5,14 @@ import java.util.concurrent.TimeUnit;
 
 import org.openspaces.admin.gsc.GridServiceContainer;
 import org.openspaces.admin.pu.ProcessingUnit;
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import test.AbstractTest;
+import test.usm.USMTestUtils;
 
 import com.gigaspaces.cloudify.dsl.utils.ServiceUtils;
 
 import framework.utils.AssertUtils.RepetitiveConditionProvider;
-
-import test.AbstractTest;
-import test.usm.USMTestUtils;
 
 public class InstallAndUninstallApplicationTest extends AbstractLocalCloudTest {
 

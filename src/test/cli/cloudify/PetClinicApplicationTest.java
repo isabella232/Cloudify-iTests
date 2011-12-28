@@ -10,7 +10,6 @@ import org.testng.annotations.Test;
 import com.gigaspaces.cloudify.dsl.utils.ServiceUtils;
 
 import framework.utils.AssertUtils;
-import framework.utils.LogUtils;
 import framework.utils.ScriptUtils;
 
 public class PetClinicApplicationTest extends AbstractLocalCloudTest {

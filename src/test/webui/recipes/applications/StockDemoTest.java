@@ -298,13 +298,13 @@ public class StockDemoTest extends AbstractSeleniumApplicationRecipeTest {
 		
 		assertTrue(puTreeGrid.getProcessingUnit("rest") != null);
 		assertTrue(puTreeGrid.getProcessingUnit("webui") != null);
-		assertTrue(puTreeGrid.getProcessingUnit("cassandra") != null);
-		assertTrue(puTreeGrid.getProcessingUnit("stockAnalyticsMirror") != null);
-		assertTrue(puTreeGrid.getProcessingUnit("stockAnalyticsSpace") != null);
-		assertTrue(puTreeGrid.getProcessingUnit("stockAnalyticsProcessor") != null);
-		assertTrue(puTreeGrid.getProcessingUnit("StockDemo") != null);
-		assertTrue(puTreeGrid.getProcessingUnit("stockAnalytics") != null);
-		assertTrue(puTreeGrid.getProcessingUnit("stockAnalyticsFeeder") != null);
+		assertTrue(puTreeGrid.getProcessingUnit("stockdemo.cassandra") != null);
+		assertTrue(puTreeGrid.getProcessingUnit("stockdemo.stockAnalyticsMirror") != null);
+		assertTrue(puTreeGrid.getProcessingUnit("stockdemo.stockAnalyticsSpace") != null);
+		assertTrue(puTreeGrid.getProcessingUnit("stockdemo.stockAnalyticsProcessor") != null);
+		assertTrue(puTreeGrid.getProcessingUnit("stockdemo.StockDemo") != null);
+		assertTrue(puTreeGrid.getProcessingUnit("stockdemo.stockAnalytics") != null);
+		assertTrue(puTreeGrid.getProcessingUnit("stockdemo.stockAnalyticsFeeder") != null);
 		
 		takeScreenShot(this.getClass(), "passed-services");
 

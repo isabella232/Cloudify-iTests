@@ -182,9 +182,9 @@ public class PetClinicTest extends AbstractSeleniumApplicationRecipeTest {
 		PuTreeGrid puTreeGrid = servicesTab.getPuTreeGrid();
 		
 		assertTrue(puTreeGrid.getProcessingUnit("tomcat") != null);
-		assertTrue(puTreeGrid.getProcessingUnit("mongod") != null);
-		assertTrue(puTreeGrid.getProcessingUnit("mongos") != null);
-		assertTrue(puTreeGrid.getProcessingUnit("mongo-cfg") != null);
+		assertTrue(puTreeGrid.getProcessingUnit("petclinic-mongo.mongod") != null);
+		assertTrue(puTreeGrid.getProcessingUnit("petclinic-mongo.mongos") != null);
+		assertTrue(puTreeGrid.getProcessingUnit("petclinic-mongo.mongo-cfg") != null);
 		
 		takeScreenShot(this.getClass(), "passed-services");
 	}

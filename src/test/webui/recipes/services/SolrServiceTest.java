@@ -106,7 +106,7 @@ public class SolrServiceTest extends AbstractSeleniumServiceRecipeTest {
 
 		HealthPanel healthPanel = topologyTab.getTopologySubPanel().switchToHealthPanel();
 
-		assertTrue(healthPanel.getMetric("Average Requests PerSecond") != null);
+		assertTrue("Average Requests PerSecond" + METRICS_ASSERTION_SUFFIX, healthPanel.getMetric("Average Requests PerSecond") != null);
 
 		ServicesTab servicesTab = mainNav.switchToServices();
 

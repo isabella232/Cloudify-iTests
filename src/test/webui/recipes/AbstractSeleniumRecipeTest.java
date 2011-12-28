@@ -14,6 +14,7 @@ import framework.utils.LogUtils;
 public class AbstractSeleniumRecipeTest extends AbstractSeleniumTest {
 	
 	public static boolean bootstraped;
+	public static String METRICS_ASSERTION_SUFFIX = " metric that is defined in the dsl is not displayed in the metrics panel";
 	
 	@BeforeSuite
 	public void bootstrap() throws IOException, InterruptedException {

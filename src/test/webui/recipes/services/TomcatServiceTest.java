@@ -105,12 +105,12 @@ public class TomcatServiceTest extends AbstractSeleniumServiceRecipeTest {
 
 		HealthPanel healthPanel = topologyTab.getTopologySubPanel().switchToHealthPanel();
 
-		assertTrue(healthPanel.getMetric("Process Cpu Usage") != null);
-		assertTrue(healthPanel.getMetric("Total Process Virtual Memory") != null);
-		assertTrue(healthPanel.getMetric("Num Of Active Threads") != null);
-		assertTrue(healthPanel.getMetric("Current Http Threads Busy") != null);
-		assertTrue(healthPanel.getMetric("Request Backlog") != null);
-		assertTrue(healthPanel.getMetric("Active Sessions") != null);
+		assertTrue("Process Cpu Usage " + METRICS_ASSERTION_SUFFIX , healthPanel.getMetric("Process Cpu Usage") != null);
+		assertTrue("Total Process Virtual Memory" + METRICS_ASSERTION_SUFFIX, healthPanel.getMetric("Total Process Virtual Memory") != null);
+		assertTrue("Num Of Active Threads" + METRICS_ASSERTION_SUFFIX , healthPanel.getMetric("Num Of Active Threads") != null);
+		assertTrue("Current Http Threads Busy" + METRICS_ASSERTION_SUFFIX, healthPanel.getMetric("Current Http Threads Busy") != null);
+		assertTrue("Request Backlog" + METRICS_ASSERTION_SUFFIX , healthPanel.getMetric("Request Backlog") != null);
+		assertTrue("Active Sessions" + METRICS_ASSERTION_SUFFIX, healthPanel.getMetric("Active Sessions") != null);
 
 		ServicesTab servicesTab = mainNav.switchToServices();
 

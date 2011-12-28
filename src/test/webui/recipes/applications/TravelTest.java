@@ -154,20 +154,20 @@ public class TravelTest extends AbstractSeleniumApplicationRecipeTest {
 
 		HealthPanel healthPanel = topologyTab.getTopologySubPanel().switchToHealthPanel();
 
-		assertTrue(healthPanel.getMetric("Process Cpu Usage") != null);
-		assertTrue(healthPanel.getMetric("Total Process Virtual Memory") != null);
-		assertTrue(healthPanel.getMetric("Compaction Manager Completed Tasks") != null);
-		assertTrue(healthPanel.getMetric("Compaction Manager Pending Tasks") != null);
-		assertTrue(healthPanel.getMetric("Commit Log Active Tasks") != null);
+		assertTrue("Process Cpu Usage" + METRICS_ASSERTION_SUFFIX , healthPanel.getMetric("Process Cpu Usage") != null);
+		assertTrue("Total Process Virtual Memory" + METRICS_ASSERTION_SUFFIX, healthPanel.getMetric("Total Process Virtual Memory") != null);
+		assertTrue("Compaction Manager Completed Tasks" + METRICS_ASSERTION_SUFFIX, healthPanel.getMetric("Compaction Manager Completed Tasks") != null);
+		assertTrue("Compaction Manager Pending Tasks" + METRICS_ASSERTION_SUFFIX, healthPanel.getMetric("Compaction Manager Pending Tasks") != null);
+		assertTrue("Commit Log Active Tasks" + METRICS_ASSERTION_SUFFIX, healthPanel.getMetric("Commit Log Active Tasks") != null);
 
 		tomcat.select();
 
-		assertTrue(healthPanel.getMetric("Process Cpu Usage") != null);
-		assertTrue(healthPanel.getMetric("Total Process Virtual Memory") != null);
-		assertTrue(healthPanel.getMetric("Num Of Active Threads") != null);
-		assertTrue(healthPanel.getMetric("Current Http Threads Busy") != null);
-		assertTrue(healthPanel.getMetric("Backlog") != null);
-		assertTrue(healthPanel.getMetric("Active Sessions") != null);
+		assertTrue("Process Cpu Usage" + METRICS_ASSERTION_SUFFIX, healthPanel.getMetric("Process Cpu Usage") != null);
+		assertTrue("Total Process Virtual Memory" + METRICS_ASSERTION_SUFFIX, healthPanel.getMetric("Total Process Virtual Memory") != null);
+		assertTrue("Num Of Active Threads" + METRICS_ASSERTION_SUFFIX, healthPanel.getMetric("Num Of Active Threads") != null);
+		assertTrue("Current Http Threads Busy" + METRICS_ASSERTION_SUFFIX, healthPanel.getMetric("Current Http Threads Busy") != null);
+		assertTrue("Backlog" + METRICS_ASSERTION_SUFFIX, healthPanel.getMetric("Backlog") != null);
+		assertTrue("Active Sessions" + METRICS_ASSERTION_SUFFIX, healthPanel.getMetric("Active Sessions") != null);
 
 		ServicesTab servicesTab = mainNav.switchToServices();
 

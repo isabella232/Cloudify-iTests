@@ -106,7 +106,7 @@ public class ActiveMqServiceTest extends AbstractSeleniumServiceRecipeTest {
 		
 		HealthPanel healthPanel = topologyTab.getTopologySubPanel().switchToHealthPanel();
 		
-		assertTrue(healthPanel.getMetric("Store Percent Usage") != null);
+		assertTrue("Store Percent Usage" + METRICS_ASSERTION_SUFFIX, healthPanel.getMetric("Store Percent Usage") != null);
 		
 		ServicesTab servicesTab = mainNav.switchToServices();
 		

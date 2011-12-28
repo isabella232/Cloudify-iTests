@@ -105,11 +105,11 @@ public class CassandraServiceTest extends AbstractSeleniumServiceRecipeTest  {
 
 		HealthPanel healthPanel = topologyTab.getTopologySubPanel().switchToHealthPanel();
 
-		assertTrue(healthPanel.getMetric("Process Cpu Usage") != null);
-		assertTrue(healthPanel.getMetric("Total Process Virtual Memory") != null);
-		assertTrue(healthPanel.getMetric("Compaction Manager Completed Tasks") != null);
-		assertTrue(healthPanel.getMetric("Compaction Manager Pending Tasks") != null);
-		assertTrue(healthPanel.getMetric("Commit Log Active Tasks") != null);
+		assertTrue("Process Cpu Usage " + METRICS_ASSERTION_SUFFIX, healthPanel.getMetric("Process Cpu Usage") != null);
+		assertTrue("Total Process Virtual Memory " + METRICS_ASSERTION_SUFFIX, healthPanel.getMetric("Total Process Virtual Memory") != null);
+		assertTrue("Compaction Manager Completed Tasks " + METRICS_ASSERTION_SUFFIX , healthPanel.getMetric("Compaction Manager Completed Tasks") != null);
+		assertTrue("Compaction Manager Pending Tasks " + METRICS_ASSERTION_SUFFIX, healthPanel.getMetric("Compaction Manager Pending Tasks") != null);
+		assertTrue("Commit Log Active Tasks" + METRICS_ASSERTION_SUFFIX , healthPanel.getMetric("Commit Log Active Tasks") != null);
 
 		ServicesTab servicesTab = mainNav.switchToServices();
 

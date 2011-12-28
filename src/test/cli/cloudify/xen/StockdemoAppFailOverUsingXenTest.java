@@ -58,14 +58,14 @@ public class StockdemoAppFailOverUsingXenTest extends AbstractApplicationFailOve
 	
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = true)
 	public void testStockdemoApplication() throws Exception {	    
 		installApp(cassandraPort1 ,cassandraHostIp, cassandraPort2 ,cassandraHostIp , stockdemoAppDirPath);
 		assertStockdemoAppInstalled(cassandraPort1 ,cassandraHostIp, cassandraPort2 ,cassandraHostIp);
 	}
 	
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
 	public void testStockdemoAppCassandraPuInstFailOver() throws Exception{
 		installApp(cassandraPort1 ,cassandraHostIp, cassandraPort2 ,cassandraHostIp , stockdemoAppDirPath);
 		assertStockdemoAppInstalled(cassandraPort1 ,cassandraHostIp, cassandraPort2 ,cassandraHostIp);
@@ -79,7 +79,7 @@ public class StockdemoAppFailOverUsingXenTest extends AbstractApplicationFailOve
 		assertPuInstanceRessurected("cassandra" , cassandraPort1 , cassandraHostIp , cassandraPuInstancesAfterInstall);
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
 	public void testStockdemoAppCassandraGSCFailOver() throws Exception{
 		installApp(cassandraPort1 ,cassandraHostIp, cassandraPort2 ,cassandraHostIp , stockdemoAppDirPath);
 		assertStockdemoAppInstalled(cassandraPort1 ,cassandraHostIp, cassandraPort2 ,cassandraHostIp);
@@ -93,7 +93,7 @@ public class StockdemoAppFailOverUsingXenTest extends AbstractApplicationFailOve
 		assertPuInstanceRessurected("cassandra" , cassandraPort1 ,cassandraHostIp , cassandraPuInstancesAfterInstall);
 	}
 
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
 	public void testStockdemoAppStockAnalyticsSpacePuInstFailOver() throws Exception{
 		installApp(cassandraPort1 ,cassandraHostIp, cassandraPort2 ,cassandraHostIp , stockdemoAppDirPath);
 		assertStockdemoAppInstalled(cassandraPort1 ,cassandraHostIp, cassandraPort2 ,cassandraHostIp);
@@ -107,7 +107,7 @@ public class StockdemoAppFailOverUsingXenTest extends AbstractApplicationFailOve
 		assertPuInstanceRessurected("stockAnalyticsSpace" , spacePuInstancesAfterInstall);
 	}
 
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
 	public void testStockdemoAppStockAnalyticsSpaceGSCFailOver() throws Exception{
 		installApp(cassandraPort1 ,cassandraHostIp, cassandraPort2 ,cassandraHostIp , stockdemoAppDirPath);
 		assertStockdemoAppInstalled(cassandraPort1 ,cassandraHostIp, cassandraPort2 ,cassandraHostIp);
@@ -121,7 +121,7 @@ public class StockdemoAppFailOverUsingXenTest extends AbstractApplicationFailOve
 		assertPuInstanceRessurected("stockAnalyticsSpace" , spacePuInstancesAfterInstall);
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = true)
 	public void testEsmRestart() throws Exception {
 		installApp(cassandraPort1 ,cassandraHostIp, cassandraPort2 ,cassandraHostIp , stockdemoAppDirPath);
 		assertStockdemoAppInstalled(cassandraPort1 ,cassandraHostIp, cassandraPort2 ,cassandraHostIp);

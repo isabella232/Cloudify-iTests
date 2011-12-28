@@ -114,7 +114,7 @@ public class ActiveMqServiceTest extends AbstractSeleniumServiceRecipeTest {
 		
 		assertTrue(puTreeGrid.getProcessingUnit("webui") != null);
 		assertTrue(puTreeGrid.getProcessingUnit("rest") != null);
-		assertTrue(puTreeGrid.getProcessingUnit("activemq") != null);
+		assertTrue(puTreeGrid.getProcessingUnit("default.activemq") != null);
 		
 	}
 }

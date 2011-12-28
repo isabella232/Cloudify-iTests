@@ -117,7 +117,7 @@ public class CassandraServiceTest extends AbstractSeleniumServiceRecipeTest  {
 
 		assertTrue(puTreeGrid.getProcessingUnit("webui") != null);
 		assertTrue(puTreeGrid.getProcessingUnit("rest") != null);
-		assertTrue(puTreeGrid.getProcessingUnit("cassandra") != null);
+		assertTrue(puTreeGrid.getProcessingUnit("default.cassandra") != null);
 
 	}
 

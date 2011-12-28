@@ -108,7 +108,7 @@ public class HsqlDBServiceTest extends AbstractSeleniumServiceRecipeTest {
 
 		assertTrue(puTreeGrid.getProcessingUnit("webui") != null);
 		assertTrue(puTreeGrid.getProcessingUnit("rest") != null);
-		assertTrue(puTreeGrid.getProcessingUnit("hsqldb") != null);
+		assertTrue(puTreeGrid.getProcessingUnit("default.hsqldb") != null);
 
 	}
 }

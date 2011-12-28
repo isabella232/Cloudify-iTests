@@ -108,7 +108,7 @@ public class NginxServiceTest extends AbstractSeleniumServiceRecipeTest {
 
 		assertTrue(puTreeGrid.getProcessingUnit("webui") != null);
 		assertTrue(puTreeGrid.getProcessingUnit("rest") != null);
-		assertTrue(puTreeGrid.getProcessingUnit("nginx") != null);
+		assertTrue(puTreeGrid.getProcessingUnit("default.nginx") != null);
 		
 	}
 

@@ -118,7 +118,7 @@ public class TomcatServiceTest extends AbstractSeleniumServiceRecipeTest {
 
 		assertTrue(puTreeGrid.getProcessingUnit("webui") != null);
 		assertTrue(puTreeGrid.getProcessingUnit("rest") != null);
-		assertTrue(puTreeGrid.getProcessingUnit("tomcat") != null);
+		assertTrue(puTreeGrid.getProcessingUnit("default.tomcat") != null);
 
 	}
 

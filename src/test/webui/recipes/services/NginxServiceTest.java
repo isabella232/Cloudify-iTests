@@ -85,6 +85,8 @@ public class NginxServiceTest extends AbstractSeleniumServiceRecipeTest {
 		
 		appMap.selectApplication(MANAGEMENT);
 		
+		takeScreenShot(this.getClass(), "topology");
+		
 		ApplicationNode restful = appMap.getApplicationNode("rest");
 		
 		assertTrue(restful != null);

@@ -86,6 +86,8 @@ public class TomcatServiceTest extends AbstractSeleniumServiceRecipeTest {
 
 		appMap.selectApplication(MANAGEMENT);
 
+		takeScreenShot(this.getClass(), "topology");
+		
 		ApplicationNode restful = appMap.getApplicationNode("rest");
 
 		assertTrue(restful != null);
@@ -105,6 +107,8 @@ public class TomcatServiceTest extends AbstractSeleniumServiceRecipeTest {
 
 		HealthPanel healthPanel = topologyTab.getTopologySubPanel().switchToHealthPanel();
 
+		takeScreenShot(this.getClass(), "topology-healthpanel");
+		
 		assertTrue("Process Cpu Usage " + METRICS_ASSERTION_SUFFIX , healthPanel.getMetric("Process Cpu Usage") != null);
 		assertTrue("Total Process Virtual Memory" + METRICS_ASSERTION_SUFFIX, healthPanel.getMetric("Total Process Virtual Memory") != null);
 		assertTrue("Num Of Active Threads" + METRICS_ASSERTION_SUFFIX , healthPanel.getMetric("Num Of Active Threads") != null);

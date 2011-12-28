@@ -87,6 +87,8 @@ public class ActiveMqServiceTest extends AbstractSeleniumServiceRecipeTest {
 		
 		appMap.selectApplication(MANAGEMENT);
 		
+		takeScreenShot(this.getClass(), "topology");
+		
 		ApplicationNode restful = appMap.getApplicationNode("rest");
 		
 		assertTrue(restful != null);
@@ -105,6 +107,8 @@ public class ActiveMqServiceTest extends AbstractSeleniumServiceRecipeTest {
 		assertTrue(simple.getStatus().equals(DeploymentStatus.INTACT));	
 		
 		HealthPanel healthPanel = topologyTab.getTopologySubPanel().switchToHealthPanel();
+		
+		takeScreenShot(this.getClass(), "topology-healthpanel");
 		
 		assertTrue("Store Percent Usage" + METRICS_ASSERTION_SUFFIX, healthPanel.getMetric("Store Percent Usage") != null);
 		

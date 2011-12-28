@@ -85,6 +85,8 @@ public class CassandraServiceTest extends AbstractSeleniumServiceRecipeTest  {
 		final ApplicationMap appMap = topologyTab.getApplicationMap();
 
 		appMap.selectApplication(MANAGEMENT);
+		
+		takeScreenShot(this.getClass(), "topology");
 
 		ApplicationNode restful = appMap.getApplicationNode("rest");
 
@@ -105,6 +107,8 @@ public class CassandraServiceTest extends AbstractSeleniumServiceRecipeTest  {
 
 		HealthPanel healthPanel = topologyTab.getTopologySubPanel().switchToHealthPanel();
 
+		takeScreenShot(this.getClass(), "topology-healthpanel");
+		
 		assertTrue("Process Cpu Usage " + METRICS_ASSERTION_SUFFIX, healthPanel.getMetric("Process Cpu Usage") != null);
 		assertTrue("Total Process Virtual Memory " + METRICS_ASSERTION_SUFFIX, healthPanel.getMetric("Total Process Virtual Memory") != null);
 		assertTrue("Compaction Manager Completed Tasks " + METRICS_ASSERTION_SUFFIX , healthPanel.getMetric("Compaction Manager Completed Tasks") != null);

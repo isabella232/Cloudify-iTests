@@ -26,7 +26,7 @@ public abstract class AbstractCommandTest extends AbstractTest {
 
 	private static final long REST_PROCESSINGUNIT_TIMEOUT_SEC = 60;
 	protected static final String DEFAULT_APPLICTION_NAME = "default";
-	protected final String restPort = "8100";
+	protected final String restPort = "8101";
 	private static final int PU_UNDEPLOY_TIMEOUT = 20000;
 	
 	protected String restUrl = null;

@@ -7,6 +7,9 @@ if [ ${BRANCH_NAME} != "trunk" ]; then
 else
 	SVN_SGTEST_REPOSITORY=svn://pc-lab14/SVN/cloudify/trunk/quality/frameworks/SGTest
 fi
+
+SVN_STOCKDEMO_REPOSITORY=svn://pc-lab14/SVN/cloudify/trunk/cloudify/recipes/src/main/resources/applications/stockdemo
+
  # set local build directory with entered build number
  BUILD_CACHE_DIR=${BUILDS_CACHE_REPOSITORY}/${BUILD_NUMBER}
 
@@ -29,6 +32,8 @@ svn export ${SVN_SGTEST_REPOSITORY}/apps/archives ${ARCHIVES} --force
 svn export ${SVN_SGTEST_REPOSITORY}/apps/cloudify ${CLOUDIFY} --force
 
 svn export ${SVN_SGTEST_REPOSITORY}/apps/USM ${USM} --force
+
+svn export ${SVN_STOCKDEMO_REPOSITORY} ${USM}/usm/applications --force
 
 cd $CURRENT_DIR
 

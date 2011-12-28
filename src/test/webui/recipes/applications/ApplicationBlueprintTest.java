@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 import org.openspaces.admin.pu.DeploymentStatus;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -23,7 +24,7 @@ public class ApplicationBlueprintTest extends AbstractSeleniumApplicationRecipeT
 		super.install();
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = false)
 	public void blueprintTest() throws IOException, InterruptedException {
 		
 		LoginPage loginPage = getLoginPage();
@@ -52,5 +53,12 @@ public class ApplicationBlueprintTest extends AbstractSeleniumApplicationRecipeT
 		List<Connector> targets = tomcat.getTargets();
 		assertTrue(targets.size() == 1);
 		assertTrue(targets.get(0).getTarget().getName().equals(cassandra.getName()));
+	}
+	
+	@Override
+	@AfterMethod
+	public void uninstall() throws InterruptedException, IOException {
+		admin.getApplications().waitFor("travel");
+		super.uninstall();
 	}
 }

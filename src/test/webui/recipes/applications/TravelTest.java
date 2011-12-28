@@ -145,10 +145,10 @@ public class TravelTest extends AbstractSeleniumApplicationRecipeTest {
 		assertTrue(tomcat.getStatus().equals(DeploymentStatus.INTACT));		
 
 		List<Connector> connectors = tomcat.getConnectors();
-		assertTrue(connectors.size() == 2);
+		assertTrue(connectors.size() == 1);
 		List<Connector> targets = tomcat.getTargets();
 		assertTrue(targets.size() == 1);
-		assertTrue(targets.get(0).getTarget().equals(cassandra));
+		assertTrue(targets.get(0).getTarget().getName().equals(cassandra.getName()));
 
 		cassandra.select();
 

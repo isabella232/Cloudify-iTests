@@ -1,10 +1,11 @@
 package test.cli.cloudify.recipes.attributes;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
+import framework.utils.DumpUtils;
+import framework.utils.TeardownUtils;
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.openspaces.core.GigaSpace;
 import org.testng.annotations.AfterClass;
@@ -12,7 +13,7 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import test.cli.cloudify.AbstractSingleBootstrapTest;
+import test.cli.cloudify.AbstractLocalCloudTest;
 import test.cli.cloudify.CommandTestUtils;
 import test.usm.USMTestUtils;
 
@@ -24,7 +25,7 @@ import com.gigaspaces.cloudify.dsl.utils.ServiceUtils;
 
 import framework.utils.LogUtils;
 
-public class AttributesTest extends AbstractSingleBootstrapTest {
+public class AttributesTest extends AbstractLocalCloudTest {
 	
 	private final String APPLICAION_DIR_PATH = CommandTestUtils
 									.getPath("apps/USM/usm/applications/serviceContextProperties");
@@ -33,10 +34,9 @@ public class AttributesTest extends AbstractSingleBootstrapTest {
 	private Service getter;
 	private Service setter;	
 	private GigaSpace gigaspace;
-	@Override
+
 	@BeforeClass
-	public void beforeClass() throws FileNotFoundException, PackagingException, IOException, InterruptedException{
-		super.beforeClass();
+	public void beforeClass() throws PackagingException, IOException, InterruptedException{
 		gigaspace = admin.getSpaces().waitFor("cloudifyManagementSpace", 20, TimeUnit.SECONDS).getGigaSpace();
 		installApplication();
 		String absolutePUNameSimple1 = ServiceUtils.getAbsolutePUName("serviceContextProperties", "getter");
@@ -54,20 +54,19 @@ public class AttributesTest extends AbstractSingleBootstrapTest {
 	}
 
 	@Override
-	@AfterClass
-	public void afterClass() throws IOException, InterruptedException{
-		
-		runCommand("connect " + this.restUrl + 
-				";uninstall-application --verbose serviceContextProperties");	
-		super.afterClass();
-	}
-	@Override
 	@AfterMethod
 	public void afterTest(){
 		gigaspace.clear(null);
-		super.afterTest();
+        if (admin != null) {
+            TeardownUtils.snapshot(admin);
+            DumpUtils.dumpLogs(admin);
+        }
 	}
-//////////////////////////////////////////////////////////////////////////////////////////////////////////	
+
+    @AfterClass
+    public void afterClass() throws IOException, InterruptedException{
+        runCommand("connect " + this.restUrl + ";uninstall-application --verbose serviceContextProperties");
+    }
 		
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = true)
 	public void testSimpleApplicationSetContext() throws Exception {
@@ -93,7 +92,7 @@ public class AttributesTest extends AbstractSingleBootstrapTest {
 				   simpleGet3.contains("null"));
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = true)    //
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = true)
 	public void testApplicationSetContextCustomParams() throws Exception {
 		
 		runCommand("connect " + this.restUrl + ";use-application serviceContextProperties" 
@@ -226,12 +225,8 @@ public class AttributesTest extends AbstractSingleBootstrapTest {
 		assertTrue("command did not execute" , iterateInstances.contains("OK"));
 		assertTrue("iteratoring over instances", iterateInstances.contains("myValue1") && iterateInstances.contains("myValue2"));
 	}
-////////////////////////////////////////////////////////////////////////////////////////////////////////	
 
-	
-	
-	private void installApplication() throws FileNotFoundException,
-		PackagingException, IOException, InterruptedException {
+	private void installApplication() throws PackagingException, IOException, InterruptedException {
 		File applicationDir = new File(APPLICAION_DIR_PATH);
 		app = ServiceReader.getApplicationFromFile(applicationDir).getApplication();
 		getter = app.getServices().get(0).getName().equals("getter") ? app.getServices().get(0) : app.getServices().get(1);

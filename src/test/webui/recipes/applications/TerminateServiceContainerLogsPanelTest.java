@@ -47,17 +47,17 @@ public class TerminateServiceContainerLogsPanelTest extends AbstractSeleniumAppl
 		
 		appMap.selectApplication("travel");
 		
-		ApplicationNode travelNode = appMap.getApplicationNode("travel.tomcat");
+		ApplicationNode travelNode = appMap.getApplicationNode("tomcat");
 		
 		travelNode.select();
 		
-		ProcessingUnit travelPu = admin.getProcessingUnits().getProcessingUnit("travel.tomcat");
+		ProcessingUnit travelPu = admin.getProcessingUnits().getProcessingUnit("tomcat");
 		
 		final GridServiceContainer travelContainer = travelPu.getInstances()[0].getGridServiceContainer();
 		
 		LogsPanel logsPanel = topology.getTopologySubPanel().switchToLogsPanel();
 		
-		PuLogsPanelService travelLogsService = logsPanel.getPuLogsPanelService("travel.tomcat");
+		PuLogsPanelService travelLogsService = logsPanel.getPuLogsPanelService("tomcat");
 		
 		Machine localHost = travelContainer.getMachine();
 		

@@ -34,14 +34,14 @@ public class ApplicationBlueprintTest extends AbstractSeleniumApplicationRecipeT
 		ApplicationMap applicationMap = topologyTab.getApplicationMap();
 		applicationMap.selectApplication("travel");
 		
-		ApplicationNode cassandra = applicationMap.getApplicationNode("travel.cassandra");
+		ApplicationNode cassandra = applicationMap.getApplicationNode("cassandra");
 
 		assertTrue(cassandra != null);
 		assertTrue(
 				cassandra.getStatus().equals(DeploymentStatus.SCHEDULED)
 				|| cassandra.getStatus().equals(DeploymentStatus.INTACT));	
 
-		ApplicationNode tomcat = applicationMap.getApplicationNode("travel.tomcat");
+		ApplicationNode tomcat = applicationMap.getApplicationNode("tomcat");
 
 		assertTrue(tomcat != null);
 		assertTrue(

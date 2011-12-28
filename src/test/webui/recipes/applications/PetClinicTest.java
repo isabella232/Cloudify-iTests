@@ -129,7 +129,7 @@ public class PetClinicTest extends AbstractSeleniumApplicationRecipeTest {
 
 			@Override
 			public boolean getCondition() {
-				ApplicationNode mongodNode = appMap.getApplicationNode("petclinic-mongo.mongod");
+				ApplicationNode mongodNode = appMap.getApplicationNode("mongod");
 				return ((mongodNode != null) && (mongodNode.getStatus().equals(DeploymentStatus.INTACT)));
 			}
 		};
@@ -139,7 +139,7 @@ public class PetClinicTest extends AbstractSeleniumApplicationRecipeTest {
 
 			@Override
 			public boolean getCondition() {
-				ApplicationNode mongosNode = appMap.getApplicationNode("petclinic-mongo.mongos");
+				ApplicationNode mongosNode = appMap.getApplicationNode("mongos");
 				return ((mongosNode != null) && (mongosNode.getStatus().equals(DeploymentStatus.INTACT)));
 			}
 		};
@@ -149,7 +149,7 @@ public class PetClinicTest extends AbstractSeleniumApplicationRecipeTest {
 
 			@Override
 			public boolean getCondition() {
-				ApplicationNode mongocfgNode = appMap.getApplicationNode("petclinic-mongo.mongo-cfg");
+				ApplicationNode mongocfgNode = appMap.getApplicationNode("mongo-cfg");
 				return ((mongocfgNode != null) && (mongocfgNode.getStatus().equals(DeploymentStatus.INTACT)));
 			}
 		};
@@ -159,32 +159,32 @@ public class PetClinicTest extends AbstractSeleniumApplicationRecipeTest {
 
 			@Override
 			public boolean getCondition() {
-				ApplicationNode tomcatNode = appMap.getApplicationNode("petclinic-mongo.tomcat");
+				ApplicationNode tomcatNode = appMap.getApplicationNode("tomcat");
 				return ((tomcatNode != null) && (tomcatNode.getStatus().equals(DeploymentStatus.INTACT)));
 			}
 		};
 		repetitiveAssertTrueWithScreenshot(null, condition, this.getClass(), "failed");
 		
 		
-		List<Connector> tomcatConnectors = appMap.getApplicationNode("petclinic-mongo.tomcat").getConnectors();
+		List<Connector> tomcatConnectors = appMap.getApplicationNode("tomcat").getConnectors();
 		assertTrue(tomcatConnectors.size() == 1);
-		assertTrue(tomcatConnectors.get(0).getTarget().getName().equals("petclinic-mongo.mongos"));
+		assertTrue(tomcatConnectors.get(0).getTarget().getName().equals("mongos"));
 
-		List<Connector> mongosConnectors = appMap.getApplicationNode("petclinic-mongo.mongos").getConnectors();
+		List<Connector> mongosConnectors = appMap.getApplicationNode("mongos").getConnectors();
 		assertTrue(mongosConnectors.size() == 2);
 		for (Connector c : mongosConnectors) {
 			String name = c.getTarget().getName();
-			assertTrue(name.equals("petclinic-mongo.mongod") ||name.equals("petclinic-mongo.mongo-cfg"));
+			assertTrue(name.equals("mongod") ||name.equals("mongo-cfg"));
 		}
 
 		ServicesTab servicesTab = mainNav.switchToServices();
 		
 		PuTreeGrid puTreeGrid = servicesTab.getPuTreeGrid();
 		
-		assertTrue(puTreeGrid.getProcessingUnit("petclinic-mongo.tomcat") != null);
-		assertTrue(puTreeGrid.getProcessingUnit("petclinic-mongo.mongod") != null);
-		assertTrue(puTreeGrid.getProcessingUnit("petclinic-mongo.mongos") != null);
-		assertTrue(puTreeGrid.getProcessingUnit("petclinic-mongo.mongo-cfg") != null);
+		assertTrue(puTreeGrid.getProcessingUnit("tomcat") != null);
+		assertTrue(puTreeGrid.getProcessingUnit("mongod") != null);
+		assertTrue(puTreeGrid.getProcessingUnit("mongos") != null);
+		assertTrue(puTreeGrid.getProcessingUnit("mongo-cfg") != null);
 		
 		takeScreenShot(this.getClass(), "passed-services");
 	}

@@ -134,12 +134,12 @@ public class TravelTest extends AbstractSeleniumApplicationRecipeTest {
 
 		appMap.selectApplication("travel");
 
-		ApplicationNode cassandra = appMap.getApplicationNode("travel.cassandra");
+		ApplicationNode cassandra = appMap.getApplicationNode("cassandra");
 
 		assertTrue(cassandra != null);
 		assertTrue(cassandra.getStatus().equals(DeploymentStatus.INTACT));	
 
-		ApplicationNode tomcat = appMap.getApplicationNode("travel.tomcat");
+		ApplicationNode tomcat = appMap.getApplicationNode("tomcat");
 
 		assertTrue(tomcat != null);
 		assertTrue(tomcat.getStatus().equals(DeploymentStatus.INTACT));		
@@ -175,8 +175,8 @@ public class TravelTest extends AbstractSeleniumApplicationRecipeTest {
 
 		assertTrue(puTreeGrid.getProcessingUnit("webui") != null);
 		assertTrue(puTreeGrid.getProcessingUnit("rest") != null);
-		assertTrue(puTreeGrid.getProcessingUnit("travel.cassandra") != null);
-		assertTrue(puTreeGrid.getProcessingUnit("travel.tomcat") != null);
+		assertTrue(puTreeGrid.getProcessingUnit("cassandra") != null);
+		assertTrue(puTreeGrid.getProcessingUnit("tomcat") != null);
 
 	}
 

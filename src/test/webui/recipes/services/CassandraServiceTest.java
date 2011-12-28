@@ -98,7 +98,7 @@ public class CassandraServiceTest extends AbstractSeleniumServiceRecipeTest  {
 
 		appMap.selectApplication("default");
 
-		ApplicationNode simple = appMap.getApplicationNode("default.cassandra");
+		ApplicationNode simple = appMap.getApplicationNode("cassandra");
 
 		assertTrue(simple != null);
 		assertTrue(simple.getStatus().equals(DeploymentStatus.INTACT));	
@@ -117,7 +117,7 @@ public class CassandraServiceTest extends AbstractSeleniumServiceRecipeTest  {
 
 		assertTrue(puTreeGrid.getProcessingUnit("webui") != null);
 		assertTrue(puTreeGrid.getProcessingUnit("rest") != null);
-		assertTrue(puTreeGrid.getProcessingUnit("default.cassandra") != null);
+		assertTrue(puTreeGrid.getProcessingUnit("cassandra") != null);
 
 	}
 

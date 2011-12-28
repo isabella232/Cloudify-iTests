@@ -34,12 +34,12 @@ public class UninstallApplicationTest extends AbstractSeleniumApplicationRecipeT
 		
 		appMap.selectApplication("travel");
 		
-		ApplicationNode cassandra = appMap.getApplicationNode("travel.cassandra");
+		ApplicationNode cassandra = appMap.getApplicationNode("cassandra");
 
 		assertTrue(cassandra != null);
 		assertTrue(cassandra.getStatus().equals(DeploymentStatus.INTACT));	
 
-		ApplicationNode tomcat = appMap.getApplicationNode("travel.tomcat");
+		ApplicationNode tomcat = appMap.getApplicationNode("tomcat");
 
 		assertTrue(tomcat != null);
 		assertTrue(tomcat.getStatus().equals(DeploymentStatus.INTACT));		
@@ -52,18 +52,18 @@ public class UninstallApplicationTest extends AbstractSeleniumApplicationRecipeT
 		
 		uninstallApplication("travel", true);
 		
-		cassandra = appMap.getApplicationNode("travel.cassandra");
+		cassandra = appMap.getApplicationNode("cassandra");
 		assertTrue(cassandra == null);
 		
-		tomcat = appMap.getApplicationNode("travel.tomcat");
+		tomcat = appMap.getApplicationNode("tomcat");
 		assertTrue(tomcat == null);
 		
 		appMap.selectApplication(AbstractSeleniumApplicationRecipeTest.MANAGEMENT);
 		
-		cassandra = appMap.getApplicationNode("travel.cassandra");
+		cassandra = appMap.getApplicationNode("cassandra");
 		assertTrue(cassandra == null);
 		
-		tomcat = appMap.getApplicationNode("travel.tomcat");
+		tomcat = appMap.getApplicationNode("tomcat");
 		assertTrue(tomcat == null);
 		
 	}

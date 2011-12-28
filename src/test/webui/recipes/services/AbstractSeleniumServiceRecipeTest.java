@@ -53,6 +53,10 @@ public class AbstractSeleniumServiceRecipeTest extends AbstractSeleniumRecipeTes
 	@AfterMethod(alwaysRun = true)
 	public void uninstall() throws IOException, InterruptedException {
 		stopWebBrowser();
+		if (isServiceInstalled(currentRecipe)) {
+			LogUtils.log("Uninstalling service");
+			assertTrue("Failed to uninstall service " + currentRecipe, uninstallService(currentRecipe, true));
+		}
 		if (admin != null) {
 			if (!isDevMode()) {
 				DumpUtils.dumpLogs(admin);
@@ -60,8 +64,6 @@ public class AbstractSeleniumServiceRecipeTest extends AbstractSeleniumRecipeTes
 			admin.close();
 			admin = null;
 		}
-		LogUtils.log("Uninstalling service");
-		assertTrue("Failed to uninstall service " + currentRecipe, uninstallService(currentRecipe, true));
 	}
 
 	public boolean installService(String serviceName, boolean wait) throws IOException, InterruptedException {
@@ -107,5 +109,11 @@ public class AbstractSeleniumServiceRecipeTest extends AbstractSeleniumRecipeTes
 			CommandTestUtils.runCommand(command);
 			return true;
 		}
+	}
+	
+	private boolean isServiceInstalled(String serviceName) {
+		ProcessingUnit pu = admin.getProcessingUnits().getProcessingUnit("default." + serviceName);
+		return (pu != null);
+		
 	}
 }

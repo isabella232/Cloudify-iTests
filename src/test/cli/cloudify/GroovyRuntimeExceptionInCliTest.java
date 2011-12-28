@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 /**
  * Test whether the CLI prints runtime exception details that occur in the groovy script.
@@ -12,14 +11,9 @@ import org.testng.annotations.Test;
  * @author adaml
  *
  */
-public class GroovyRuntimeExceptionInCliTest extends AbstractCommandTest {
+public class GroovyRuntimeExceptionInCliTest extends AbstractLocalCloudTest {
 	private static final String BAD_SERVICE_PATH = CommandTestUtils.getPath("apps/USM/badUsmServices/cassandra");
 	private static final String EXCEPTION_CAUGHT_REGEX = "Caught:.*\\s*?.*\\.groovy:[1-9]{1,}\\)";
-
-	@BeforeMethod
-	public void beforeTest() {
-		super.beforeTest();
-	}
 	
 	/**
 	 * Install a service and assert CLI exception details message. 

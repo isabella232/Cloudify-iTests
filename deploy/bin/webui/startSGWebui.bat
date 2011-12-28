@@ -25,8 +25,8 @@ xcopy %REMOTE_BUILD_DIR%\cloudify\1.5\gigaspaces-cloudify-%VERSION%-%MILESTONE%-
 @del %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER%\gigaspaces-cloudify-%VERSION%-%MILESTONE%-b%BUILD_VERSION%.zip
 
 @call set-deploy-env.bat
-@echo starting agents machines : pc-lab73 , pc-lab72
-@call %LOCAL_SGPATH%\deploy\bin\webui\start-agents.bat
+rem @echo starting agents machines : pc-lab73 , pc-lab72
+rem @call %LOCAL_SGPATH%\deploy\bin\webui\start-agents.bat
 
 @echo creating sgtest.jar...
 @call %LOCAL_SGPATH%\deploy\bin\webui\create_sgtest_jar.bat

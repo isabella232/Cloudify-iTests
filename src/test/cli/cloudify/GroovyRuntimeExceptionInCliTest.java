@@ -12,7 +12,7 @@ import org.testng.annotations.Test;
  *
  */
 public class GroovyRuntimeExceptionInCliTest extends AbstractLocalCloudTest {
-	private static final String BAD_SERVICE_PATH = CommandTestUtils.getPath("apps/USM/badUsmServices/cassandra");
+	private static final String BAD_SERVICE_PATH = CommandTestUtils.getPath("apps/USM/badUsmServices/Cassandra");
 	private static final String EXCEPTION_CAUGHT_REGEX = "Caught:.*\\s*?.*\\.groovy:[1-9]{1,}\\)";
 	
 	/**

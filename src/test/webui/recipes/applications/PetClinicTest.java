@@ -99,7 +99,7 @@ public class PetClinicTest extends AbstractSeleniumApplicationRecipeTest {
 
 		appMap.selectApplication(AbstractSeleniumServiceRecipeTest.MANAGEMENT);
 
-		takeScreenShot(this.getClass(), "management-application");
+		takeScreenShot(this.getClass(),"petClinicDemoTest", "management-application");
 
 		condition = new RepetitiveConditionProvider() {
 
@@ -109,7 +109,7 @@ public class PetClinicTest extends AbstractSeleniumApplicationRecipeTest {
 				return ((restNode != null) && (restNode.getStatus().equals(DeploymentStatus.INTACT)));
 			}
 		};
-		repetitiveAssertTrueWithScreenshot(null, condition, this.getClass(), "failed");
+		repetitiveAssertTrueWithScreenshot(null, condition, this.getClass(), "petClinicDemoTest", "failed");
 
 		condition = new RepetitiveConditionProvider() {
 
@@ -119,9 +119,9 @@ public class PetClinicTest extends AbstractSeleniumApplicationRecipeTest {
 				return ((webuiNode != null) && (webuiNode.getStatus().equals(DeploymentStatus.INTACT)));
 			}
 		};
-		repetitiveAssertTrueWithScreenshot(null, condition, this.getClass(), "failed");
+		repetitiveAssertTrueWithScreenshot(null, condition, this.getClass(), "petClinicDemoTest", "failed");
 		
-		takeScreenShot(this.getClass(), "passed-topology");
+		takeScreenShot(this.getClass(), "petClinicDemoTest","passed-topology");
 		
 		appMap.selectApplication("petclinic-mongo");
 		
@@ -133,7 +133,7 @@ public class PetClinicTest extends AbstractSeleniumApplicationRecipeTest {
 				return ((mongodNode != null) && (mongodNode.getStatus().equals(DeploymentStatus.INTACT)));
 			}
 		};
-		repetitiveAssertTrueWithScreenshot(null, condition, this.getClass(), "failed");
+		repetitiveAssertTrueWithScreenshot(null, condition, this.getClass(),"petClinicDemoTest", "failed");
 		
 		condition = new RepetitiveConditionProvider() {
 
@@ -143,7 +143,7 @@ public class PetClinicTest extends AbstractSeleniumApplicationRecipeTest {
 				return ((mongosNode != null) && (mongosNode.getStatus().equals(DeploymentStatus.INTACT)));
 			}
 		};
-		repetitiveAssertTrueWithScreenshot(null, condition, this.getClass(), "failed");
+		repetitiveAssertTrueWithScreenshot(null, condition, this.getClass(), "petClinicDemoTest","failed");
 		
 		condition = new RepetitiveConditionProvider() {
 
@@ -153,7 +153,7 @@ public class PetClinicTest extends AbstractSeleniumApplicationRecipeTest {
 				return ((mongocfgNode != null) && (mongocfgNode.getStatus().equals(DeploymentStatus.INTACT)));
 			}
 		};
-		repetitiveAssertTrueWithScreenshot(null, condition, this.getClass(), "failed");	
+		repetitiveAssertTrueWithScreenshot(null, condition, this.getClass(),"petClinicDemoTest", "failed");	
 		
 		condition = new RepetitiveConditionProvider() {
 
@@ -163,7 +163,7 @@ public class PetClinicTest extends AbstractSeleniumApplicationRecipeTest {
 				return ((tomcatNode != null) && (tomcatNode.getStatus().equals(DeploymentStatus.INTACT)));
 			}
 		};
-		repetitiveAssertTrueWithScreenshot(null, condition, this.getClass(), "failed");
+		repetitiveAssertTrueWithScreenshot(null, condition, this.getClass(), "petClinicDemoTest","failed");
 		
 		
 		List<Connector> tomcatConnectors = appMap.getApplicationNode("tomcat").getConnectors();
@@ -186,7 +186,7 @@ public class PetClinicTest extends AbstractSeleniumApplicationRecipeTest {
 		assertTrue(puTreeGrid.getProcessingUnit("petclinic-mongo.mongos") != null);
 		assertTrue(puTreeGrid.getProcessingUnit("petclinic-mongo.mongo-cfg") != null);
 		
-		takeScreenShot(this.getClass(), "passed-services");
+		takeScreenShot(this.getClass(), "petClinicDemoTest","passed-services");
 	}
 
 }

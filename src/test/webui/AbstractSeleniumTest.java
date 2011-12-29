@@ -306,7 +306,7 @@ public abstract class AbstractSeleniumTest extends AbstractTest {
 		return new DashboardTab(selenium, driver);
 	}
 
-	public void takeScreenShot(Class<?> cls, String testMethod) {
+	public void takeScreenShot(Class<?> cls, String testMethod, String picName) {
 
 		if (!isDevMode()) {
 			File scrFile = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
@@ -315,7 +315,7 @@ public abstract class AbstractSeleniumTest extends AbstractTest {
 
 			String testLogsDir = cls.getName() + "." + testMethod + "()";
 
-			String to = buildDir  + "/" + testLogsDir + "/" + testMethod + ".png";
+			String to = buildDir  + "/" + testLogsDir + "/" + picName + ".png";
 
 			try {
 				FileUtils.copyFile(scrFile, new File(to));
@@ -388,25 +388,25 @@ public abstract class AbstractSeleniumTest extends AbstractTest {
 		
 	}
 	
-	public void repetitiveAssertTrueWithScreenshot(String message, RepetitiveConditionProvider condition, Class<?> cls, String methodName) {
+	public void repetitiveAssertTrueWithScreenshot(String message, RepetitiveConditionProvider condition, Class<?> cls, String methodName, String picName) {
 		
 		try {
 			AssertUtils.repetitiveAssertTrue(null, condition, waitingTime);
 		}
 		catch (Throwable t) {
-			takeScreenShot(cls, methodName);
+			takeScreenShot(cls, methodName, picName);
 			AssertUtils.AssertFail(message);
 		}
 		
 	}
 	
-	public void assertTrueWithScreenshot(boolean condition, Class<?> cls, String methodName) {
+	public void assertTrueWithScreenshot(boolean condition, Class<?> cls, String methodName, String picName) {
 		
 		try {
 			assertTrue(condition);
 		}
 		catch (Throwable t) {
-			takeScreenShot(cls, methodName);
+			takeScreenShot(cls, methodName, picName);
 			AssertUtils.AssertFail("Test Failed");
 		}
 		

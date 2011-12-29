@@ -97,7 +97,7 @@ public class NginxServiceTest extends AbstractSeleniumServiceRecipeTest {
 		
 		appMap.selectApplication("default");
 		
-		takeScreenShot(this.getClass(), "topology");
+		takeScreenShot(this.getClass(),"activeMqRecipeTest", "topology");
 		
 		ApplicationNode mongocfgNode = appMap.getApplicationNode("nginx");
 		

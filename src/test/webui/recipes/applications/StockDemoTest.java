@@ -121,7 +121,7 @@ public class StockDemoTest extends AbstractSeleniumApplicationRecipeTest {
 
 		appMap.selectApplication(AbstractSeleniumServiceRecipeTest.MANAGEMENT);
 
-		takeScreenShot(this.getClass(), "management-application");
+		takeScreenShot(this.getClass(), "stockDemoTest", "management-application");
 
 		condition = new RepetitiveConditionProvider() {
 
@@ -131,7 +131,7 @@ public class StockDemoTest extends AbstractSeleniumApplicationRecipeTest {
 				return ((restNode != null) && (restNode.getStatus().equals(DeploymentStatus.INTACT)));
 			}
 		};
-		repetitiveAssertTrueWithScreenshot(null, condition, this.getClass(), "failed");
+		repetitiveAssertTrueWithScreenshot(null, condition, this.getClass(), "stockDemoTest","failed");
 
 		condition = new RepetitiveConditionProvider() {
 
@@ -141,9 +141,9 @@ public class StockDemoTest extends AbstractSeleniumApplicationRecipeTest {
 				return ((webuiNode != null) && (webuiNode.getStatus().equals(DeploymentStatus.INTACT)));
 			}
 		};
-		repetitiveAssertTrueWithScreenshot(null, condition, this.getClass(), "failed");
+		repetitiveAssertTrueWithScreenshot(null, condition, this.getClass(),"stockDemoTest", "failed");
 		
-		takeScreenShot(this.getClass(), "passed-dashboard");
+		takeScreenShot(this.getClass(),"stockDemoTest", "passed-dashboard");
 
 		appMap.selectApplication("stockdemo");
 
@@ -155,7 +155,7 @@ public class StockDemoTest extends AbstractSeleniumApplicationRecipeTest {
 				return ((cassandraNode != null) && (cassandraNode.getStatus().equals(DeploymentStatus.INTACT)));
 			}
 		};
-		repetitiveAssertTrueWithScreenshot(null, condition, this.getClass(), "failed");
+		repetitiveAssertTrueWithScreenshot(null, condition, this.getClass(),"stockDemoTest", "failed");
 		
 		List<Connector> cassandraConnectors = appMap.getApplicationNode("cassandra").getConnectors();
 		assertTrue(cassandraConnectors.size() == 1);
@@ -171,7 +171,7 @@ public class StockDemoTest extends AbstractSeleniumApplicationRecipeTest {
 				return ((stockAnalyticsMirrorNode != null) && (stockAnalyticsMirrorNode.getStatus().equals(DeploymentStatus.INTACT)));
 			}
 		};
-		repetitiveAssertTrueWithScreenshot(null, condition, this.getClass(), "failed");
+		repetitiveAssertTrueWithScreenshot(null, condition, this.getClass(),"stockDemoTest", "failed");
 		
 		List<Connector> stockAnalyticsMirrorConnectors = appMap.getApplicationNode("stockAnalyticsMirror").getConnectors();
 		assertTrue(stockAnalyticsMirrorConnectors.size() == 2);
@@ -193,7 +193,7 @@ public class StockDemoTest extends AbstractSeleniumApplicationRecipeTest {
 				return ((stockAnalyticsSpaceNode != null) && (stockAnalyticsSpaceNode.getStatus().equals(DeploymentStatus.INTACT)));
 			}
 		};
-		repetitiveAssertTrueWithScreenshot(null, condition, this.getClass(), "failed");
+		repetitiveAssertTrueWithScreenshot(null, condition, this.getClass(),"stockDemoTest", "failed");
 		
 		List<Connector> stockAnalyticsSpaceConnectors = appMap.getApplicationNode("stockAnalyticsSpace").getConnectors();
 		assertTrue(stockAnalyticsSpaceConnectors.size() == 4);
@@ -219,7 +219,7 @@ public class StockDemoTest extends AbstractSeleniumApplicationRecipeTest {
 				return ((stockAnalyticsProcessorNode != null) && (stockAnalyticsProcessorNode.getStatus().equals(DeploymentStatus.INTACT)));
 			}
 		};
-		repetitiveAssertTrueWithScreenshot(null, condition, this.getClass(), "failed");
+		repetitiveAssertTrueWithScreenshot(null, condition, this.getClass(),"stockDemoTest", "failed");
 		
 		
 		List<Connector> stockAnalyticsProcessorConnectors = appMap.getApplicationNode("stockAnalyticsProcessor").getConnectors();
@@ -245,7 +245,7 @@ public class StockDemoTest extends AbstractSeleniumApplicationRecipeTest {
 				return ((StockDemoNode != null) && (StockDemoNode.getStatus().equals(DeploymentStatus.INTACT)));
 			}
 		};
-		repetitiveAssertTrueWithScreenshot(null, condition, this.getClass(), "failed");
+		repetitiveAssertTrueWithScreenshot(null, condition, this.getClass(),"stockDemoTest", "failed");
 		
 		
 		List<Connector> stockDemoConnectors = appMap.getApplicationNode("StockDemo").getConnectors();
@@ -268,7 +268,7 @@ public class StockDemoTest extends AbstractSeleniumApplicationRecipeTest {
 				return ((stockAnalyticsNode != null) && (stockAnalyticsNode.getStatus().equals(DeploymentStatus.INTACT)));
 			}
 		};
-		repetitiveAssertTrueWithScreenshot(null, condition, this.getClass(), "failed");
+		repetitiveAssertTrueWithScreenshot(null, condition, this.getClass(), "stockDemoTest","failed");
 		
 		List<Connector> stockAnalyticsConnectors = appMap.getApplicationNode("stockAnalytics").getConnectors();
 		assertTrue(stockAnalyticsConnectors.size() == 1);
@@ -283,14 +283,14 @@ public class StockDemoTest extends AbstractSeleniumApplicationRecipeTest {
 				return ((stockAnalyticsFeederNode != null) && (stockAnalyticsFeederNode.getStatus().equals(DeploymentStatus.INTACT)));
 			}
 		};
-		repetitiveAssertTrueWithScreenshot(null, condition, this.getClass(), "failed");
+		repetitiveAssertTrueWithScreenshot(null, condition, this.getClass(),"stockDemoTest", "failed");
 		
 		List<Connector> stockAnalyticsFeederConnectors = appMap.getApplicationNode("stockAnalyticsFeeder").getConnectors();
 		assertTrue(stockAnalyticsFeederConnectors.size() == 1);
 		connector = cassandraConnectors.get(0);
 		assertTrue(connector.getTarget().getName().equals("stockAnalyticsProcessor"));
 		
-		takeScreenShot(this.getClass(), "passed-topology");
+		takeScreenShot(this.getClass(),"stockDemoTest", "passed-topology");
 		
 		ServicesTab servicesTab = mainNav.switchToServices();
 		
@@ -306,7 +306,7 @@ public class StockDemoTest extends AbstractSeleniumApplicationRecipeTest {
 		assertTrue(puTreeGrid.getProcessingUnit("stockdemo.stockAnalytics") != null);
 		assertTrue(puTreeGrid.getProcessingUnit("stockdemo.stockAnalyticsFeeder") != null);
 		
-		takeScreenShot(this.getClass(), "passed-services");
+		takeScreenShot(this.getClass(),"stockDemoTest", "passed-services");
 
 	}
 

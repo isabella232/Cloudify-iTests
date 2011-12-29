@@ -99,7 +99,7 @@ public class SolrServiceTest extends AbstractSeleniumServiceRecipeTest {
 
 		appMap.selectApplication("default");
 		
-		takeScreenShot(this.getClass(), "topology");
+		takeScreenShot(this.getClass(),"activeMqRecipeTest", "topology");
 
 		ApplicationNode simple = appMap.getApplicationNode("solr");
 

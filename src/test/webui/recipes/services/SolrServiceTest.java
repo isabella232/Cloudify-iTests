@@ -98,6 +98,8 @@ public class SolrServiceTest extends AbstractSeleniumServiceRecipeTest {
 		assertTrue(webui.getStatus().equals(DeploymentStatus.INTACT));
 
 		appMap.selectApplication("default");
+		
+		takeScreenShot(this.getClass(), "topology");
 
 		ApplicationNode simple = appMap.getApplicationNode("solr");
 

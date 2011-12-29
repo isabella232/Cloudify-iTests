@@ -85,8 +85,6 @@ public class NginxServiceTest extends AbstractSeleniumServiceRecipeTest {
 		
 		appMap.selectApplication(MANAGEMENT);
 		
-		takeScreenShot(this.getClass(), "topology");
-		
 		ApplicationNode restful = appMap.getApplicationNode("rest");
 		
 		assertTrue(restful != null);
@@ -98,6 +96,8 @@ public class NginxServiceTest extends AbstractSeleniumServiceRecipeTest {
 		assertTrue(webui.getStatus().equals(DeploymentStatus.INTACT));
 		
 		appMap.selectApplication("default");
+		
+		takeScreenShot(this.getClass(), "topology");
 		
 		ApplicationNode mongocfgNode = appMap.getApplicationNode("nginx");
 		

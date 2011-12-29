@@ -85,8 +85,6 @@ public class TomcatServiceTest extends AbstractSeleniumServiceRecipeTest {
 		final ApplicationMap appMap = topologyTab.getApplicationMap();
 
 		appMap.selectApplication(MANAGEMENT);
-
-		takeScreenShot(this.getClass(), "topology");
 		
 		ApplicationNode restful = appMap.getApplicationNode("rest");
 
@@ -99,6 +97,8 @@ public class TomcatServiceTest extends AbstractSeleniumServiceRecipeTest {
 		assertTrue(webui.getStatus().equals(DeploymentStatus.INTACT));
 
 		appMap.selectApplication("default");
+		
+		takeScreenShot(this.getClass(), "topology");
 
 		ApplicationNode simple = appMap.getApplicationNode("tomcat");
 

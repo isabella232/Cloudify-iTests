@@ -86,7 +86,6 @@ public class CassandraServiceTest extends AbstractSeleniumServiceRecipeTest  {
 
 		appMap.selectApplication(MANAGEMENT);
 		
-		takeScreenShot(this.getClass(), "topology");
 
 		ApplicationNode restful = appMap.getApplicationNode("rest");
 
@@ -99,6 +98,8 @@ public class CassandraServiceTest extends AbstractSeleniumServiceRecipeTest  {
 		assertTrue(webui.getStatus().equals(DeploymentStatus.INTACT));
 
 		appMap.selectApplication("default");
+
+		takeScreenShot(this.getClass(), "topology");
 
 		ApplicationNode simple = appMap.getApplicationNode("cassandra");
 

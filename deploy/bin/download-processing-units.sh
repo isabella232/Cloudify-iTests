@@ -33,7 +33,9 @@ svn export ${SVN_SGTEST_REPOSITORY}/apps/cloudify ${CLOUDIFY} --force
 
 svn export ${SVN_SGTEST_REPOSITORY}/apps/USM ${USM} --force
 
-svn export ${SVN_STOCKDEMO_REPOSITORY} ${USM}/usm/applications --force
+svn export ${SVN_STOCKDEMO_REPOSITORY} ${USM}/usm/applications/stockdemo --force
+
+svn export ${SVN_STOCKDEMO_REPOSITORY}/stockAnalyticsMirror ${USM}/usm/stockAnalyticsMirror --force
 
 cd $CURRENT_DIR
 

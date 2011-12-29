@@ -1,7 +1,9 @@
 package test.webui.recipes;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
+import org.openspaces.admin.pu.ProcessingUnit;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeMethod;
@@ -16,20 +18,20 @@ public class AbstractSeleniumRecipeTest extends AbstractSeleniumTest {
 	public static boolean bootstraped;
 	public static String METRICS_ASSERTION_SUFFIX = " metric that is defined in the dsl is not displayed in the metrics panel";
 	
-	@BeforeSuite
+	@BeforeSuite(alwaysRun = true)
 	public void bootstrap() throws IOException, InterruptedException {
 		assertTrue(bootstrapLocalCloud());
 		bootstraped = true;
 	}
 	
 	@Override
-	@BeforeMethod
+	@BeforeMethod(alwaysRun = true)
 	public void beforeTest() {
 		LogUtils.log("Test Configuration Started : " + this.getClass());
 	}
 	
 	@Override
-	@AfterMethod
+	@AfterMethod(alwaysRun = true)
 	public void afterTest() {
 		LogUtils.log("Test Finished : " + this.getClass());
 	}
@@ -38,6 +40,19 @@ public class AbstractSeleniumRecipeTest extends AbstractSeleniumTest {
 	public void teardown() throws IOException, InterruptedException {
 		assertTrue(tearDownLocalCloud());
 		bootstraped = false;
+	}
+	
+	public void undeployNonManagementServices() {
+		for (ProcessingUnit pu : admin.getProcessingUnits().getProcessingUnits()) {
+			if (!pu.getName().equals("webui") && !pu.getName().equals("rest") && !pu.getName().equals("cloudifyManagementSpace")) {
+				if (!pu.undeployAndWait(30, TimeUnit.SECONDS)) {
+					LogUtils.log("Failed to uninstall " + pu.getName());
+				}
+				else {
+					LogUtils.log("Uninstalled service: " + pu.getName());
+				}
+			}
+		}
 	}
 	
 	public boolean isBootstraped() {

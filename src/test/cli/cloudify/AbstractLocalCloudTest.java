@@ -37,7 +37,7 @@ public class AbstractLocalCloudTest extends AbstractTest {
     protected final int WAIT_FOR_TIMEOUT = 20;
     private final int HTTP_STATUS_OK = 200;
     private final int restPort = 8100;
-    public String restUrl = null;
+    protected String restUrl = null;
     protected static final String DEFAULT_APPLICTION_NAME = "default";
     private static Set<String> clientStartupPIDs = null;
     private static Set<String> localCloudPIDs = null;
@@ -233,9 +233,12 @@ public class AbstractLocalCloudTest extends AbstractTest {
     public void uninstallAllRunningServices(Admin admin) {
         DumpUtils.dumpLogs(admin);
         for (ProcessingUnit pu : admin.getProcessingUnits().getProcessingUnits()) {
-            if (!pu.getName().equals("webui") || !pu.getName().equals("rest") || !pu.getName().equals("cloudifyManagementSpace")) {
+            if (!pu.getName().equals("webui") && !pu.getName().equals("rest") && !pu.getName().equals("cloudifyManagementSpace")) {
                 if (!pu.undeployAndWait(30, TimeUnit.SECONDS)) {
                     LogUtils.log("Failed to uninstall " + pu.getName());
+                }
+                else {
+                	LogUtils.log("Uninstalled service: " + pu.getName());
                 }
             }
         }

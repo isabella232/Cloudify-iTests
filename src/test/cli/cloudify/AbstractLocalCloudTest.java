@@ -37,7 +37,7 @@ public class AbstractLocalCloudTest extends AbstractTest {
     protected final int WAIT_FOR_TIMEOUT = 20;
     private final int HTTP_STATUS_OK = 200;
     private final int restPort = 8100;
-    protected String restUrl = null;
+    protected static String restUrl = null;
     protected static final String DEFAULT_APPLICTION_NAME = "default";
     private static Set<String> clientStartupPIDs = null;
     private static Set<String> localCloudPIDs = null;
@@ -68,7 +68,7 @@ public class AbstractLocalCloudTest extends AbstractTest {
         }
         assertTrue("Could not find LUS of local cloud", admin.getLookupServices().waitFor(1, WAIT_FOR_TIMEOUT, TimeUnit.SECONDS));
         try {
-            this.restUrl = "http://" + InetAddress.getLocalHost().getHostAddress() + ":" + restPort;
+            restUrl = "http://" + InetAddress.getLocalHost().getHostAddress() + ":" + restPort;
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }

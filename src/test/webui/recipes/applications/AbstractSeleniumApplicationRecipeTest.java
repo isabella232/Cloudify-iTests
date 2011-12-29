@@ -32,7 +32,7 @@ public class AbstractSeleniumApplicationRecipeTest extends AbstractSeleniumRecip
 		this.wait = wait;
 	}
 	
-	@BeforeMethod
+	@BeforeMethod(alwaysRun = true)
 	public void install() throws IOException, InterruptedException {	
 		assertTrue("Seems like a bootstrap has not been executed, skipping test", isBootstraped());
 		AdminFactory factory = new AdminFactory();
@@ -54,14 +54,11 @@ public class AbstractSeleniumApplicationRecipeTest extends AbstractSeleniumRecip
 	@AfterMethod(alwaysRun = true)
 	public void uninstall() throws InterruptedException, IOException {
 		stopWebBrowser();
-		if (isApplicationInstalled(currentApplication)) {
-			LogUtils.log("Uninstalling application");
-			assertTrue("Failed to uninstall application " + currentApplication, uninstallApplication(currentApplication, true));
-		}
 		if (admin != null) {
 			if (!isDevMode()) {
 				DumpUtils.dumpLogs(admin);
 			}
+			undeployNonManagementServices();
 			admin.close();
 			admin = null;
 		}

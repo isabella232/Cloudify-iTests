@@ -31,7 +31,7 @@ public class AbstractSeleniumServiceRecipeTest extends AbstractSeleniumRecipeTes
 	}
 
 
-	@BeforeMethod
+	@BeforeMethod(alwaysRun = true)
 	public void install() throws IOException, InterruptedException {	
 		assertTrue(isBootstraped());
 		AdminFactory factory = new AdminFactory();
@@ -53,14 +53,11 @@ public class AbstractSeleniumServiceRecipeTest extends AbstractSeleniumRecipeTes
 	@AfterMethod(alwaysRun = true)
 	public void uninstall() throws IOException, InterruptedException {
 		stopWebBrowser();
-		if (isServiceInstalled(currentRecipe)) {
-			LogUtils.log("Uninstalling service");
-			assertTrue("Failed to uninstall service " + currentRecipe, uninstallService(currentRecipe, true));
-		}
 		if (admin != null) {
 			if (!isDevMode()) {
 				DumpUtils.dumpLogs(admin);
 			}
+			undeployNonManagementServices();
 			admin.close();
 			admin = null;
 		}

@@ -106,38 +106,19 @@ public abstract class AbstractSeleniumTest extends AbstractTest {
     /**
      * starts the web-ui browser from the batch file in gigaspaces
      * also opens a browser and connect to the server
+     * @throws Exception 
      */
-    @Override
-    @BeforeMethod
-    public void beforeTest() { 
-    	super.beforeTest();
-    	try {
-    		startWebServer();
-    		startWebBrowser(baseUrl);
-    	}
-    	catch (Exception e) {
-    		e.printStackTrace();
-    	}
+    @BeforeMethod(alwaysRun = true)
+    public void startWebServices() throws Exception { 
     }
     
     /**
      * stops the server and kills all open browsers
+     * @throws InterruptedException 
+     * @throws IOException 
      */
-    @Override
-    @AfterMethod
-    public void afterTest() {  
-    	super.afterTest();
-    	try {
-    		stopWebServer();
-    		stopWebBrowser();
-    	}
-    	catch (Exception e) {
-    		e.printStackTrace();
-    	}
-    	finally {
-    		restorePreviousBrowser();
-    	}
-
+    @AfterMethod(alwaysRun = true)
+    public void killWebServices() throws IOException, InterruptedException {  
     }
     
     public void createAdmin() {
@@ -188,6 +169,8 @@ public abstract class AbstractSeleniumTest extends AbstractTest {
     	}
     	int seconds = 0;
     	driver.get(uRL);
+		selenium = new WebDriverBackedSelenium(driver, uRL);
+		seleniumBrowsers.add(selenium);
     	Thread.sleep(3000);
     	while (seconds < 10) {
     		try {
@@ -205,8 +188,6 @@ public abstract class AbstractSeleniumTest extends AbstractTest {
     	if (seconds == 10) {
     		Assert.fail("Test Failed because it was unable to connect to Web server");
     	}
-		selenium = new WebDriverBackedSelenium(driver, uRL);
-		seleniumBrowsers.add(selenium);
     }
     
     public void stopWebBrowser() throws InterruptedException {
@@ -326,19 +307,21 @@ public abstract class AbstractSeleniumTest extends AbstractTest {
 	}
 
 	public void takeScreenShot(Class<?> cls, String testMethod) {
-		
-		File scrFile = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
 
-		String buildDir = SGTestHelper.getSGTestRootDir() + "/deploy/local-builds/build_" + System.getProperty("sgtest.buildNumber").split("_")[1] ;
-		
-		String testLogsDir = cls.getName() + "." + testMethod + "()";
-		
-		String to = buildDir  + "/" + testLogsDir + "/" + testMethod + ".png";
+		if (!isDevMode()) {
+			File scrFile = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
 
-		try {
-			FileUtils.copyFile(scrFile, new File(to));
-		} catch (IOException e) {
-			e.printStackTrace();
+			String buildDir = SGTestHelper.getSGTestRootDir() + "/deploy/local-builds/build_" + System.getProperty("sgtest.buildNumber").split("_")[1] ;
+
+			String testLogsDir = cls.getName() + "." + testMethod + "()";
+
+			String to = buildDir  + "/" + testLogsDir + "/" + testMethod + ".png";
+
+			try {
+				FileUtils.copyFile(scrFile, new File(to));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
     

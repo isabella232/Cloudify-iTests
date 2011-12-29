@@ -6,6 +6,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
+import test.webui.recipes.services.AbstractSeleniumServiceRecipeTest;
 import test.webui.resources.WebConstants;
 import framework.utils.AssertUtils;
 import framework.utils.AssertUtils.RepetitiveConditionProvider;
@@ -13,6 +14,7 @@ import framework.utils.AssertUtils.RepetitiveConditionProvider;
 public class ApplicationMap {
 	
 	private WebDriver driver;
+	private static String currentApplication;
 
 	public static final String CONN_STATUS_OK = "conn-status-ok";
 	public static final String CONN_STATUS_WARN = "conn-status-warn";
@@ -52,6 +54,7 @@ public class ApplicationMap {
 				}
 				if ((app != null) && app.isDisplayed()) {
 					app.click();
+					currentApplication = applicationName;
 					return true;
 				}
 				else {
@@ -69,7 +72,13 @@ public class ApplicationMap {
 	}
 
 	public ApplicationNode getApplicationNode(String name) {
-		ApplicationNode appNode = new ApplicationNode(name, driver);
+		ApplicationNode appNode;
+		if (!currentApplication.equals(AbstractSeleniumServiceRecipeTest.MANAGEMENT)) {
+			appNode = new ApplicationNode(currentApplication + "." + name, driver);
+		}
+		else {
+			appNode = new ApplicationNode(name,driver);
+		}
 		if (appNode.getName() != null) {
 			return appNode;
 		}

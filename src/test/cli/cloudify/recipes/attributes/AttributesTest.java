@@ -36,7 +36,8 @@ public class AttributesTest extends AbstractLocalCloudTest {
 	private GigaSpace gigaspace;
 
 	@BeforeClass
-	public void beforeClass() throws PackagingException, IOException, InterruptedException{
+	public void beforeClass() throws Exception{
+        super.beforeClass();
 		gigaspace = admin.getSpaces().waitFor("cloudifyManagementSpace", 20, TimeUnit.SECONDS).getGigaSpace();
 		installApplication();
 		String absolutePUNameSimple1 = ServiceUtils.getAbsolutePUName("serviceContextProperties", "getter");

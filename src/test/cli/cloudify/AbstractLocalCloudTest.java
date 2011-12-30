@@ -45,7 +45,7 @@ public class AbstractLocalCloudTest extends AbstractTest {
 
 
     @BeforeSuite
-    public void beforeSuite() throws IOException, InterruptedException {
+    public void beforeSuite() throws Exception {
         LogUtils.log("Tearing-down existing localclouds");
         runCommand("teardown-localcloud");
         clientStartupPIDs = SetupUtils.getLocalProcesses();
@@ -76,15 +76,20 @@ public class AbstractLocalCloudTest extends AbstractTest {
         localCloudPIDs = SetupUtils.getClientProcessesIDsDelta(clientStartupPIDs, alivePIDs);
     }
 
-    @BeforeMethod
-    public void beforeTest() {
-        LogUtils.log("Test Configuration Started: " + this.getClass());
+    @BeforeClass
+    public void beforeClass() throws Exception{
+        LogUtils.log("Test Class Configuration Started: " + this.getClass());
         try {
             this.admin = getAdminWithLocators();
         } catch (UnknownHostException e1) {
             LogUtils.log("Could not create admin " + e1);
-            e1.printStackTrace();
+            throw e1;
         }
+    }
+
+    @BeforeMethod
+    public void beforeTest() {
+        LogUtils.log("Test Configuration Started: " + this.getClass());
     }
 
     @AfterMethod(alwaysRun = true)
@@ -135,7 +140,6 @@ public class AbstractLocalCloudTest extends AbstractTest {
     }
 
     private Admin getAdminWithLocators() throws UnknownHostException {
-        admin = newAdmin();
         //Class LocalhostGridAgentBootsrapper defines the locator discovery addresses.
         String nicAddress = Constants.getHostAddress();
         //int defaultLusPort = Constants.getDiscoveryPort();

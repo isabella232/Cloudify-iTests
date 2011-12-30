@@ -29,7 +29,8 @@ public class CustomCommandsOnMultipleInstancesApplicationTest extends AbstractLo
     private int totalInstancesService2;
 
     @BeforeClass
-    public void beforeClass() throws PackagingException, IOException, InterruptedException {
+    public void beforeClass() throws Exception{
+        super.beforeClass();
         installApplication();
         String absolutePUNameSimple1 = ServiceUtils.getAbsolutePUName("simpleCustomCommandsMultipleInstances", "simpleCustomCommandsMultipleInstances-1");
         String absolutePUNameSimple2 = ServiceUtils.getAbsolutePUName("simpleCustomCommandsMultipleInstances", "simpleCustomCommandsMultipleInstances-2");

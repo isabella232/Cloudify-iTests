@@ -30,7 +30,8 @@ public class CustomCommandsOnMultipleInstancesTest extends AbstractLocalCloudTes
 	private int totalInstances;
 
 	@BeforeClass
-	public void beforeClass() throws PackagingException, IOException, InterruptedException{
+	public void beforeClass() throws Exception{
+        super.beforeClass();
 		installService();
 		String absolutePUName = ServiceUtils.getAbsolutePUName("default", "simpleCustomCommandsMultipleInstances");
 		ProcessingUnit pu = admin.getProcessingUnits().waitFor(absolutePUName , WAIT_FOR_TIMEOUT , TimeUnit.SECONDS);

@@ -79,6 +79,12 @@ public class AbstractLocalCloudTest extends AbstractTest {
     @BeforeMethod
     public void beforeTest() {
         LogUtils.log("Test Configuration Started: " + this.getClass());
+        try {
+            this.admin = getAdminWithLocators();
+        } catch (UnknownHostException e1) {
+            LogUtils.log("Could not create admin " + e1);
+            e1.printStackTrace();
+        }
     }
 
     @AfterMethod(alwaysRun = true)

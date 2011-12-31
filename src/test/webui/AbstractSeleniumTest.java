@@ -137,7 +137,9 @@ public abstract class AbstractSeleniumTest extends AbstractTest {
     
     public void stopWebServer() throws IOException, InterruptedException {
     	LogUtils.log("Killing web server...");
-    	scriptWebUI.kill();
+    	if (scriptWebUI != null) {
+    		scriptWebUI.kill();
+    	}
     	Thread.sleep(5000);
     }
     

@@ -99,7 +99,7 @@ public class CassandraServiceTest extends AbstractSeleniumServiceRecipeTest  {
 
 		appMap.selectApplication("default");
 
-		takeScreenShot(this.getClass(),"activeMqRecipeTest", "topology");
+		takeScreenShot(this.getClass(),"cassandraRecipeTest", "topology");
 
 		ApplicationNode simple = appMap.getApplicationNode("cassandra");
 
@@ -108,7 +108,7 @@ public class CassandraServiceTest extends AbstractSeleniumServiceRecipeTest  {
 
 		HealthPanel healthPanel = topologyTab.getTopologySubPanel().switchToHealthPanel();
 
-		takeScreenShot(this.getClass(),"activeMqRecipeTest", "topology-healthpanel");
+		takeScreenShot(this.getClass(),"cassandraRecipeTest", "topology-healthpanel");
 		
 		assertTrue("Process Cpu Usage " + METRICS_ASSERTION_SUFFIX, healthPanel.getMetric("Process Cpu Usage") != null);
 		assertTrue("Total Process Virtual Memory " + METRICS_ASSERTION_SUFFIX, healthPanel.getMetric("Total Process Virtual Memory") != null);

@@ -98,7 +98,7 @@ public class TomcatServiceTest extends AbstractSeleniumServiceRecipeTest {
 
 		appMap.selectApplication("default");
 		
-		takeScreenShot(this.getClass(), "activeMqRecipeTest","topology");
+		takeScreenShot(this.getClass(), "tomcatRecipeTest","topology");
 
 		ApplicationNode simple = appMap.getApplicationNode("tomcat");
 
@@ -107,7 +107,7 @@ public class TomcatServiceTest extends AbstractSeleniumServiceRecipeTest {
 
 		HealthPanel healthPanel = topologyTab.getTopologySubPanel().switchToHealthPanel();
 
-		takeScreenShot(this.getClass(),"activeMqRecipeTest", "topology-healthpanel");
+		takeScreenShot(this.getClass(),"tomcatRecipeTest", "topology-healthpanel");
 		
 		assertTrue("Process Cpu Usage " + METRICS_ASSERTION_SUFFIX , healthPanel.getMetric("Process Cpu Usage") != null);
 		assertTrue("Total Process Virtual Memory" + METRICS_ASSERTION_SUFFIX, healthPanel.getMetric("Total Process Virtual Memory") != null);

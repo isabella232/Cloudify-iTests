@@ -98,7 +98,7 @@ public class HsqlDBServiceTest extends AbstractSeleniumServiceRecipeTest {
 
 		appMap.selectApplication("default");
 
-		takeScreenShot(this.getClass(),"activeMqRecipeTest", "topology");
+		takeScreenShot(this.getClass(),"hsqlRecipeTest", "topology");
 
 		ApplicationNode simple = appMap.getApplicationNode("hsqldb");
 

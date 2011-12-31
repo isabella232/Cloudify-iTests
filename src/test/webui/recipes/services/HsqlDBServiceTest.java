@@ -100,10 +100,19 @@ public class HsqlDBServiceTest extends AbstractSeleniumServiceRecipeTest {
 
 		takeScreenShot(this.getClass(),"hsqlRecipeTest", "topology");
 
-		ApplicationNode simple = appMap.getApplicationNode("hsqldb");
+		final ApplicationNode simple = appMap.getApplicationNode("hsqldb");
 
 		assertTrue(simple != null);
-		assertTrue(simple.getStatus().equals(DeploymentStatus.INTACT));	
+		condition = new RepetitiveConditionProvider() {
+			
+			@Override
+			public boolean getCondition() {
+				return simple.getStatus().equals(DeploymentStatus.INTACT);
+			}
+		};
+		repetitiveAssertTrueWithScreenshot(
+				"hsqldb service is displayed as " + simple.getStatus() + 
+					"even though it is installed", condition, this.getClass(), "hsqlRecipeTest", "hsqldb-service");
 
 		ServicesTab servicesTab = mainNav.switchToServices();
 

@@ -101,10 +101,19 @@ public class CassandraServiceTest extends AbstractSeleniumServiceRecipeTest  {
 
 		takeScreenShot(this.getClass(),"cassandraRecipeTest", "topology");
 
-		ApplicationNode simple = appMap.getApplicationNode("cassandra");
+		final ApplicationNode simple = appMap.getApplicationNode("cassandra");
 
 		assertTrue(simple != null);
-		assertTrue(simple.getStatus().equals(DeploymentStatus.INTACT));	
+		condition = new RepetitiveConditionProvider() {
+			
+			@Override
+			public boolean getCondition() {
+				return simple.getStatus().equals(DeploymentStatus.INTACT);
+			}
+		};
+		repetitiveAssertTrueWithScreenshot(
+				"cassandra service is displayed as " + simple.getStatus() + 
+					"even though it is installed", condition, this.getClass(), "cassandraRecipeTest", "cassandra-service");
 
 		HealthPanel healthPanel = topologyTab.getTopologySubPanel().switchToHealthPanel();
 

@@ -99,10 +99,19 @@ public class NginxServiceTest extends AbstractSeleniumServiceRecipeTest {
 		
 		takeScreenShot(this.getClass(),"nginxTest", "topology");
 		
-		ApplicationNode mongocfgNode = appMap.getApplicationNode("nginx");
+		final ApplicationNode simple = appMap.getApplicationNode("nginx");
 		
-		assertTrue(mongocfgNode != null);
-		assertTrue(mongocfgNode.getStatus().equals(DeploymentStatus.INTACT));
+		assertTrue(simple != null);
+		condition = new RepetitiveConditionProvider() {
+			
+			@Override
+			public boolean getCondition() {
+				return simple.getStatus().equals(DeploymentStatus.INTACT);
+			}
+		};
+		repetitiveAssertTrueWithScreenshot(
+				"nginx service is displayed as " + simple.getStatus() + 
+					"even though it is installed", condition, this.getClass(), "nginxTest", "nginx-service");
 		
 		ServicesTab servicesTab = mainNav.switchToServices();
 

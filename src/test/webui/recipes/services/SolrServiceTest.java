@@ -101,10 +101,19 @@ public class SolrServiceTest extends AbstractSeleniumServiceRecipeTest {
 		
 		takeScreenShot(this.getClass(),"solrRecipeTest", "topology");
 
-		ApplicationNode simple = appMap.getApplicationNode("solr");
+		final ApplicationNode simple = appMap.getApplicationNode("solr");
 
 		assertTrue(simple != null);
-		assertTrue(simple.getStatus().equals(DeploymentStatus.INTACT));	
+		condition = new RepetitiveConditionProvider() {
+			
+			@Override
+			public boolean getCondition() {
+				return simple.getStatus().equals(DeploymentStatus.INTACT);
+			}
+		};
+		repetitiveAssertTrueWithScreenshot(
+				"solr service is displayed as " + simple.getStatus() + 
+					"even though it is installed", condition, this.getClass(), "solrRecipeTest", "solr-service");	
 
 		HealthPanel healthPanel = topologyTab.getTopologySubPanel().switchToHealthPanel();
 

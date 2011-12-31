@@ -100,10 +100,20 @@ public class TomcatServiceTest extends AbstractSeleniumServiceRecipeTest {
 		
 		takeScreenShot(this.getClass(), "tomcatRecipeTest","topology");
 
-		ApplicationNode simple = appMap.getApplicationNode("tomcat");
+		final ApplicationNode simple = appMap.getApplicationNode("tomcat");
 
 		assertTrue(simple != null);
-		assertTrue(simple.getStatus().equals(DeploymentStatus.INTACT));	
+		
+		condition = new RepetitiveConditionProvider() {
+			
+			@Override
+			public boolean getCondition() {
+				return simple.getStatus().equals(DeploymentStatus.INTACT);
+			}
+		};
+		repetitiveAssertTrueWithScreenshot(
+				"tomcat service is displayed as " + simple.getStatus() + 
+					"even though it is installed", condition, this.getClass(), "tomcatRecipeTest", "tomcat-service");
 
 		HealthPanel healthPanel = topologyTab.getTopologySubPanel().switchToHealthPanel();
 

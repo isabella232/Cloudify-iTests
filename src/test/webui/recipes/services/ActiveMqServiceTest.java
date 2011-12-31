@@ -102,10 +102,19 @@ public class ActiveMqServiceTest extends AbstractSeleniumServiceRecipeTest {
 
 		takeScreenShot(this.getClass(),"activeMqRecipeTest", "topology");
 		
-		ApplicationNode simple = appMap.getApplicationNode("activemq");
+		final ApplicationNode simple = appMap.getApplicationNode("activemq");
 		
 		assertTrue(simple != null);
-		assertTrue(simple.getStatus().equals(DeploymentStatus.INTACT));	
+		condition = new RepetitiveConditionProvider() {
+			
+			@Override
+			public boolean getCondition() {
+				return simple.getStatus().equals(DeploymentStatus.INTACT);
+			}
+		};
+		repetitiveAssertTrueWithScreenshot(
+				"activemq service is displayed as " + simple.getStatus() + 
+					"even though it is installed", condition, this.getClass(), "activeMqRecipeTest", "activemq-service");
 		
 		HealthPanel healthPanel = topologyTab.getTopologySubPanel().switchToHealthPanel();
 		

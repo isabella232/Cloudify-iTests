@@ -81,7 +81,7 @@ public abstract class AbstractSeleniumTest extends AbstractTest {
     protected final static String APPLICATION_CONTEXT_PROPERY = "com.gs.application";
     protected final static String DEPENDS_ON_CONTEXT_PROPERTY = "com.gs.application.dependsOn";
     protected final static String LICENSE_PATH = SGTestHelper.getBuildDir() + "/gslicense.xml";
-    protected long waitingTime = 30000;
+    protected static long waitingTime = 30000;
 
     	
     
@@ -92,6 +92,21 @@ public abstract class AbstractSeleniumTest extends AbstractTest {
     protected ProcessingUnit webSpace;
     protected GridServiceManager webUIGSM;
     ProcessingUnit gswebui;
+    
+	public static void assertTrue(String message, final boolean cond) {
+		
+		RepetitiveConditionProvider conditionProvider = new RepetitiveConditionProvider() {
+			@Override
+			public boolean getCondition() {
+				return cond;
+			}
+		};
+		AssertUtils.repetitiveAssertTrue(message, conditionProvider, waitingTime);		
+	}
+	
+	public static void assertTrue(final boolean cond) {
+		assertTrue(null, cond);
+	}
     
     private final String defaultBrowser = 
     	(System.getProperty("selenium.browser") != null) ? System.getProperty("selenium.browser"): "Firefox";

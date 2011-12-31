@@ -17,7 +17,6 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
 import org.apache.commons.io.FileUtils;
-import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoSuchElementException;
@@ -159,51 +158,56 @@ public abstract class AbstractSeleniumTest extends AbstractTest {
     }
     
     public void startWebBrowser(String uRL) throws InterruptedException {
-    	LogUtils.log("Launching browser...");
-    	String browser = System.getProperty("selenium.browser");
-    	LogUtils.log("Current browser is " + browser);
-		if (browser == null) {
-			driver = new FirefoxDriver();
-    	}
-    	else {
-    		if (browser.equals("Firefox")) {
+    	try {
+    		LogUtils.log("Launching browser...");
+    		String browser = System.getProperty("selenium.browser");
+    		LogUtils.log("Current browser is " + browser);
+    		if (browser == null) {
     			driver = new FirefoxDriver();
-    			
     		}
     		else {
-    			if (browser.equals("IE")) {
-    				DesiredCapabilities desired = DesiredCapabilities.internetExplorer();
-    				desired.setCapability(InternetExplorerDriver.INTRODUCE_FLAKINESS_BY_IGNORING_SECURITY_DOMAINS, true);
-    				driver = new InternetExplorerDriver(desired);
+    			if (browser.equals("Firefox")) {
+    				driver = new FirefoxDriver();
+
     			}
     			else {
-    				System.setProperty("webdriver.chrome.driver", SGTestHelper.getSGTestRootDir() + "/src/test/webui/resources/chromedriver.exe");
-    				DesiredCapabilities desired = DesiredCapabilities.chrome();
-    				desired.setCapability("chrome.switches", Arrays.asList("--start-maximized"));
-    				driver = new ChromeDriver(desired);
+    				if (browser.equals("IE")) {
+    					DesiredCapabilities desired = DesiredCapabilities.internetExplorer();
+    					desired.setCapability(InternetExplorerDriver.INTRODUCE_FLAKINESS_BY_IGNORING_SECURITY_DOMAINS, true);
+    					driver = new InternetExplorerDriver(desired);
+    				}
+    				else {
+    					System.setProperty("webdriver.chrome.driver", SGTestHelper.getSGTestRootDir() + "/src/test/webui/resources/chromedriver.exe");
+    					DesiredCapabilities desired = DesiredCapabilities.chrome();
+    					desired.setCapability("chrome.switches", Arrays.asList("--start-maximized"));
+    					driver = new ChromeDriver(desired);
+    				}
     			}
     		}
-    	}
-    	int seconds = 0;
-    	driver.get(uRL);
-		selenium = new WebDriverBackedSelenium(driver, uRL);
-		seleniumBrowsers.add(selenium);
-    	Thread.sleep(3000);
-    	while (seconds < 10) {
-    		try {
-    			driver.findElement(By.xpath(WebConstants.Xpath.loginButton));
-    			LogUtils.log("Web server connection established");
-    			break;
+    		int seconds = 0;
+    		driver.get(uRL);
+    		selenium = new WebDriverBackedSelenium(driver, uRL);
+    		seleniumBrowsers.add(selenium);
+    		Thread.sleep(3000);
+    		while (seconds < 10) {
+    			try {
+    				driver.findElement(By.xpath(WebConstants.Xpath.loginButton));
+    				LogUtils.log("Web server connection established");
+    				break;
+    			}
+    			catch (NoSuchElementException e) {
+    				LogUtils.log("Unable to connect to Web server, retrying...Attempt number " + (seconds + 1));
+    				driver.navigate().refresh();
+    				Thread.sleep(1000);
+    				seconds++;
+    			}
     		}
-    		catch (NoSuchElementException e) {
-    			LogUtils.log("Unable to connect to Web server, retrying...Attempt number " + (seconds + 1));
-    			driver.navigate().refresh();
-    			Thread.sleep(1000);
-    			seconds++;
+    		if (seconds == 10) {
+    			LogUtils.log("Could not establish a connection to webui server, Test will fail");
     		}
     	}
-    	if (seconds == 10) {
-    		Assert.fail("Test Failed because it was unable to connect to Web server");
+    	catch (Exception e) {
+    		LogUtils.log("Failed to launch browser, The test should fail on an NPE");
     	}
     }
     

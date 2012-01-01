@@ -6,22 +6,16 @@ import java.io.IOException;
 import junit.framework.Assert;
 
 import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import test.cli.cloudify.AbstractCommandTest;
+import test.cli.cloudify.AbstractLocalCloudTest;
 import test.cli.cloudify.CommandTestUtils;
 
 import com.gigaspaces.cloudify.dsl.internal.DSLException;
 import com.gigaspaces.cloudify.dsl.internal.ServiceReader;
 
-public class TestRecipeCommandTest extends AbstractCommandTest {
-
-	@Override
-	@BeforeMethod
-	public void beforeTest() {
-	}
-
+public class TestRecipeCommandTest extends AbstractLocalCloudTest {
+	
 	final private String SIMPLE_RECIPE_DIR_PATH = CommandTestUtils
 			.getPath("apps/USM/usm/simplejavaprocess");
 

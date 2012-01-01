@@ -444,7 +444,7 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 		}
 
 		String invoke5Result = runCommand("connect " + this.restUrl
-				+ "; invoke kitchensink-service cmd5 ['x=2' 'y=3']");
+				+ "; invoke kitchensink-service cmd5 2 3");
 
 		if ((!invoke5Result.contains("1: OK"))
 				|| (!invoke5Result

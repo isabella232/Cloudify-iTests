@@ -136,7 +136,7 @@ public class CustomCommandsOnMultipleInstancesApplicationTest extends AbstractLo
 
     private void checkParamsCommand() throws IOException, InterruptedException {
         String invokeParamsResult = runCommand("connect " + this.restUrl + ";use-application simpleCustomCommandsMultipleInstances"
-                + "; invoke simpleCustomCommandsMultipleInstances-2 params ['x=2' 'y=3']");
+                + "; invoke simpleCustomCommandsMultipleInstances-2 params 2 3");
 
         for (int i = 1; i <= totalInstancesService2; i++) {
             assertTrue("Custom command 'params' returned unexpected result from instance #" + i + ": " + invokeParamsResult

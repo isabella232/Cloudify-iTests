@@ -13,7 +13,7 @@ service {
 
 	customCommands ([
 		"print" : {println "This is the print custom command"},
-		"params" : {"this is the custom parameters command. expecting 123: "+1+x+y},
+		"params" : {x, y -> return("this is the custom parameters command. expecting 123: "+1+x+y)},
 		//TODO: uncomment as soon as the dependency bug is resolved
 		//"exception" : { throw new MyException("This is an error test")},
 		"runScript" : "add.groovy",

@@ -39,8 +39,7 @@ import com.gigaspaces.log.LogProcessType;
 
 public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 
-	private static final String LOCAL_GROUP_NAME = "kitchensinktest";
-
+	
 	
 	final private String RECIPE_DIR_PATH = CommandTestUtils
 			.getPath("apps/USM/usm/kitchensink");
@@ -50,6 +49,7 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 
 	private static final String[] EXPECTED_STARTUP_EVENT_STRINGS = {
 			"init fired Test Property number 1",
+			"init external class",
 			"preInstall fired Test Property number 2",
 			"postInstall fired Test Property number 1",
 			"preStart fired Test Property number 2", "postStart fired",

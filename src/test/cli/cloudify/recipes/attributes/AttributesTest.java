@@ -19,6 +19,7 @@ import test.usm.USMTestUtils;
 
 import com.gigaspaces.cloudify.dsl.Application;
 import com.gigaspaces.cloudify.dsl.Service;
+import com.gigaspaces.cloudify.dsl.internal.DSLException;
 import com.gigaspaces.cloudify.dsl.internal.ServiceReader;
 import com.gigaspaces.cloudify.dsl.internal.packaging.PackagingException;
 import com.gigaspaces.cloudify.dsl.utils.ServiceUtils;
@@ -227,7 +228,7 @@ public class AttributesTest extends AbstractLocalCloudTest {
 		assertTrue("iteratoring over instances", iterateInstances.contains("myValue1") && iterateInstances.contains("myValue2"));
 	}
 
-	private void installApplication() throws PackagingException, IOException, InterruptedException {
+	private void installApplication() throws PackagingException, IOException, InterruptedException, DSLException {
 		File applicationDir = new File(APPLICAION_DIR_PATH);
 		app = ServiceReader.getApplicationFromFile(applicationDir).getApplication();
 		getter = app.getServices().get(0).getName().equals("getter") ? app.getServices().get(0) : app.getServices().get(1);

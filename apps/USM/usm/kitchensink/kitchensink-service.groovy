@@ -1,10 +1,15 @@
+import framework.utils.usm.StringWrapper
+
 service {
 	name "kitchensink-service"
 	icon "icon.png"
 
 	lifecycle{
 		// DO NOT CHANGE THE PRINTOUTS - SGTEST LOOKS FOR THEM!
-		init { println "init fired ${var1}" }
+		init {
+			 println "init fired ${var1}" 
+			 println new StringWrapper("init external class")
+			}
 		preInstall{ println "preInstall fired ${var2}"}
 		postInstall{ println "postInstall fired " + var1 }
 		preStart{ println "preStart fired " + var2 }

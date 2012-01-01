@@ -84,7 +84,7 @@ public class RecipeInheritenceTest extends AbstractLocalCloudTest {
         File applicationDir = new File(appDirPath);
         app = ServiceReader.getApplicationFromFile(applicationDir).getApplication();
 
-        String output = runCommand("connect " + this.restUrl + ";install-application --verbose " + appDirPath);
+        String output = runCommand("connect " + restUrl + ";install-application --verbose " + appDirPath);
         assertTrue("couldn't install application", output.contains("installed successfully"));
     }
 

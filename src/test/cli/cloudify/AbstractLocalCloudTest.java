@@ -160,7 +160,7 @@ public class AbstractLocalCloudTest extends AbstractTest {
     }
 
     private String getFullUrl(String relativeUrl) {
-        return this.restUrl + relativeUrl;
+        return restUrl + relativeUrl;
     }
 
     private Map<String, Object> readHttpAdminMethod(
@@ -223,7 +223,7 @@ public class AbstractLocalCloudTest extends AbstractTest {
     protected void uninstallApplication(String applicationName) {
         try {
             DumpUtils.dumpLogs(admin);
-            runCommand("connect " + this.restUrl + ";uninstall-application " + applicationName);
+            runCommand("connect " + restUrl + ";uninstall-application " + applicationName);
         } catch (Exception e) {
             LogUtils.log("Failed to uninstall " + applicationName, e);
             e.printStackTrace();
@@ -233,7 +233,7 @@ public class AbstractLocalCloudTest extends AbstractTest {
     protected void uninstallService(String serviceName) {
         try {
             DumpUtils.dumpLogs(admin);
-            runCommand("connect " + this.restUrl + ";uninstall-service " + serviceName);
+            runCommand("connect " + restUrl + ";uninstall-service " + serviceName);
         } catch (Exception e) {
             LogUtils.log("Failed to uninstall " + serviceName, e);
             e.printStackTrace();

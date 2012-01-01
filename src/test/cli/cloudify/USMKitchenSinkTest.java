@@ -451,7 +451,16 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 						.contains("this is the custom parameters command. expecting 123: 123"))) {
 			AssertFail("Custom command cmd5 returned unexpected result: "
 					+ invoke1Result);
-		}		
+		}	
+		String invoke6Result = runCommand("connect " + this.restUrl
+				+ "; invoke kitchensink-service cmd6 1 2");
+
+		if ((!invoke6Result.contains("1: OK"))
+				|| (!invoke6Result.contains("Argument:1")) 
+				|| !invoke6Result.contains("Argument:2")) {
+			AssertFail("Custom command cmd6 returned unexpected result: "
+					+ invoke1Result);
+		}	
 	}
 
 	private void checkMonitors(ProcessingUnitInstance pui) {

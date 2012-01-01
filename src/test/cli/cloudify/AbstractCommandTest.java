@@ -80,6 +80,7 @@ public abstract class AbstractCommandTest extends AbstractTest {
 		.memoryCapacityPerContainer(128,MemoryUnit.MEGABYTES)
 		.addContextProperty("com.gs.application","Management")
 		.addContextProperty("web.port", restPort)
+        .addContextProperty("web.context.unique", "true")
 		.scale(new ManualCapacityScaleConfigurer().memoryCapacity(128,MemoryUnit.MEGABYTES).create())
 		.sharedMachineProvisioning("public",
 		new DiscoveredMachineProvisioningConfigurer()

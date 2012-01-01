@@ -12,6 +12,7 @@ import org.testng.annotations.Test;
 import test.cli.cloudify.AbstractCommandTest;
 import test.cli.cloudify.CommandTestUtils;
 
+import com.gigaspaces.cloudify.dsl.internal.DSLException;
 import com.gigaspaces.cloudify.dsl.internal.ServiceReader;
 
 public class TestRecipeCommandTest extends AbstractCommandTest {
@@ -26,7 +27,7 @@ public class TestRecipeCommandTest extends AbstractCommandTest {
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
 	public void testInvocationUsingDirAndFile() throws IOException,
-			InterruptedException {
+			InterruptedException, DSLException {
 
 		File serviceDir = new File(SIMPLE_RECIPE_DIR_PATH);
 		File serviceFile = new File(SIMPLE_RECIPE_DIR_PATH,

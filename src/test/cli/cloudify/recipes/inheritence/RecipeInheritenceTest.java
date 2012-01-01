@@ -10,6 +10,7 @@ import org.testng.annotations.Test;
 
 import com.gigaspaces.cloudify.dsl.Application;
 import com.gigaspaces.cloudify.dsl.Service;
+import com.gigaspaces.cloudify.dsl.internal.DSLException;
 import com.gigaspaces.cloudify.dsl.internal.ServiceReader;
 import com.gigaspaces.cloudify.dsl.internal.packaging.PackagingException;
 
@@ -22,7 +23,7 @@ public class RecipeInheritenceTest extends AbstractLocalCloudTest {
     private Application app;
 
     @Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
-    public void simpleInheritenceTest() throws IOException, PackagingException, InterruptedException {
+    public void simpleInheritenceTest() throws IOException, PackagingException, InterruptedException, DSLException {
         String appChildDirPath = CommandTestUtils.getPath("apps/USM/usm/applications/travelExtended");
 
         Service tomcatParent = ServiceReader.readService(new File(tomcatParentPath));
@@ -40,7 +41,7 @@ public class RecipeInheritenceTest extends AbstractLocalCloudTest {
     }
 
     @Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
-    public void overrideTomcatPortTest() throws PackagingException, IOException, InterruptedException {
+    public void overrideTomcatPortTest() throws PackagingException, IOException, InterruptedException, DSLException {
         String appChildDirPath = CommandTestUtils.getPath("apps/USM/usm/applications/travelExtendedTomcatPortOverride");
         installApplication(appChildDirPath);
         Service s1 = app.getServices().get(0);
@@ -54,7 +55,7 @@ public class RecipeInheritenceTest extends AbstractLocalCloudTest {
     }
 
     @Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = false)
-    public void overrideTomcatNumInstancesTest() throws PackagingException, IOException, InterruptedException {
+    public void overrideTomcatNumInstancesTest() throws PackagingException, IOException, InterruptedException, DSLException {
         String appChildDirPath = CommandTestUtils.getPath("apps/USM/usm/applications/travelExtendedTomcatNumInstancesOverride");
         installApplication(appChildDirPath);
 
@@ -64,7 +65,7 @@ public class RecipeInheritenceTest extends AbstractLocalCloudTest {
     }
 
     @Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
-    public void overrideCassandraInitFileTest() throws PackagingException, IOException, InterruptedException {
+    public void overrideCassandraInitFileTest() throws PackagingException, IOException, InterruptedException, DSLException {
         String EXPECTED_PROCESS_PRINTOUTS = "THIS IS OVERRIDED CASSANDRA_POSTSTART.GROOVY";
         String appChildDirPath = CommandTestUtils.getPath("apps/USM/usm/applications/travelExtended");
         installApplication(appChildDirPath);
@@ -79,7 +80,7 @@ public class RecipeInheritenceTest extends AbstractLocalCloudTest {
         //uninstallApplication("travelExtended");
     }
 
-    private void installApplication(String appDirPath) throws PackagingException, IOException, InterruptedException {
+    private void installApplication(String appDirPath) throws PackagingException, IOException, InterruptedException, DSLException {
         File applicationDir = new File(appDirPath);
         app = ServiceReader.getApplicationFromFile(applicationDir).getApplication();
 

@@ -2,7 +2,6 @@ package test.cli.cloudify;
 
 import static framework.utils.LogUtils.log;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -18,9 +17,6 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 
 import test.AbstractTest;
-
-import com.gigaspaces.cloudify.dsl.internal.packaging.PackagingException;
-
 import framework.utils.DumpUtils;
 import framework.utils.LogUtils;
 
@@ -33,7 +29,7 @@ public class AbstractSingleBootstrapTest extends AbstractTest {
 	protected String restUrl;
 	
 	@BeforeClass
-	public void beforeClass() throws FileNotFoundException, PackagingException, IOException, InterruptedException{
+	public void beforeClass() throws Exception{
 		AdminFactory factory = new AdminFactory();
 		factory.addLocator(InetAddress.getLocalHost().getHostAddress() + ":4168");	
 		runCommand("teardown-localcloud");

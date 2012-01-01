@@ -60,7 +60,7 @@ public class AbstractApplicationFailOverXenTest extends AbstractStartManagementX
 		assertTrue("port was not free befor installation - port number " + port1, port1Availible);
 		assertTrue("port was not free befor installation - port number " + port2, port2Availible);
 		    
-		String commandOutput = CommandTestUtils.runCommandAndWait("connect " + restUrl + ";install-application " + appDirPath);
+		String commandOutput = CommandTestUtils.runCommandAndWait("connect --verbose " + restUrl + ";install-application --verbose " + appDirPath);
 		String appName = new File(appDirPath).getName();
 		assertTrue("install-application command didn't install the application" , commandOutput.contains("Application " + appName + " installed successfully"));
 	}

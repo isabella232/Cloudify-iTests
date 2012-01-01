@@ -8,6 +8,7 @@ import org.testng.annotations.BeforeMethod;
 
 import test.AbstractTest;
 
+import com.gigaspaces.cloudify.dsl.internal.DSLException;
 import com.gigaspaces.cloudify.dsl.internal.packaging.PackagingException;
 
 import framework.utils.AdminUtils;
@@ -45,7 +46,7 @@ public class UsmAbstractTest extends AbstractTest{
 		this.processName = processName;
 	}
 	
-	public void assertZeroPUsForProcess() throws InterruptedException, IOException, PackagingException{
+	public void assertZeroPUsForProcess() throws InterruptedException, IOException, PackagingException, DSLException{
 		ProcessingUnit pu = admin.getProcessingUnits().waitFor(processName, PROCESSING_UNIT_TIMEOUT, TimeUnit.SECONDS);
 		assertEquals(null, pu);
 		
@@ -61,7 +62,7 @@ public class UsmAbstractTest extends AbstractTest{
 				!USMTestUtils.waitForPuRunningState(processName, 30, TimeUnit.SECONDS, admin));
 	}
 	
-	public void assertOnePUForProcess() throws InterruptedException, IOException, PackagingException{
+	public void assertOnePUForProcess() throws InterruptedException, IOException, PackagingException, DSLException{
 		//Verify that no process with the same name exists.
 		ProcessingUnit pu = admin.getProcessingUnits().waitFor(processName, PROCESSING_UNIT_TIMEOUT, TimeUnit.SECONDS);
 		assertEquals(null, pu);

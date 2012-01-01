@@ -19,6 +19,7 @@ import org.testng.Assert;
 
 import com.gigaspaces.cloudify.dsl.Service;
 import com.gigaspaces.cloudify.dsl.internal.CloudifyConstants;
+import com.gigaspaces.cloudify.dsl.internal.DSLException;
 import com.gigaspaces.cloudify.dsl.internal.ServiceReader;
 import com.gigaspaces.cloudify.dsl.internal.CloudifyConstants.USMState;
 import com.gigaspaces.cloudify.dsl.internal.packaging.Packager;
@@ -53,7 +54,7 @@ public class USMTestUtils {
 	}
 
     public static Service packAndDeploy(final String folderPath, final String serviceFileName, String processName) throws IOException,
-    PackagingException {
+    PackagingException, DSLException {
     	
     	System.setProperty("com.gs.home", SGTestHelper.getBuildDir());
     	
@@ -69,7 +70,7 @@ public class USMTestUtils {
     }
 
 
-    public static Service packAndDeploy(final String folderPath, Service service, String absolutePuName) throws IOException, PackagingException {
+    public static Service packAndDeploy(final String folderPath, Service service, String absolutePuName) throws IOException, PackagingException, DSLException {
     	return packAndDeploy(folderPath, null, service, absolutePuName);
     }
     
@@ -80,7 +81,7 @@ public class USMTestUtils {
 //    }
 
 	public static Service packAndDeploy(final String folderPath, final String serviceFileName, Service service, String absolutePuName) throws IOException,
-			PackagingException {
+			PackagingException, DSLException {
 		final File puZipFile = Packager.pack(new File(folderPath, serviceFileName));
 
     	final ProcessingUnitDeployment processingUnitDeployment = new ProcessingUnitDeployment(puZipFile).numberOfInstances(service.getNumInstances()).name(absolutePuName);    	
@@ -159,12 +160,13 @@ public class USMTestUtils {
      * @return the service.
      * @throws PackagingException 
      * @throws IOException 
+     * @throws DSLException 
      */
-	public static Service usmDeploy(String processName) throws IOException, PackagingException {
+	public static Service usmDeploy(String processName) throws IOException, PackagingException, DSLException {
 		return usmDeploy(processName, null);
 	}
 	
-	public static Service usmDeploy(String processName, String serviceFileName) throws IOException, PackagingException {
+	public static Service usmDeploy(String processName, String serviceFileName) throws IOException, PackagingException, DSLException {
 		final String processFolder = SGTestHelper.getSGTestRootDir() + "/apps/USM/usm/" + ServiceUtils.getFullServiceName(processName).getServiceName();
 		
 		return packAndDeploy(processFolder, serviceFileName, processName);

@@ -18,6 +18,7 @@ import org.testng.annotations.Test;
 
 import com.gigaspaces.cloudify.dsl.Service;
 import com.gigaspaces.cloudify.dsl.internal.CloudifyConstants;
+import com.gigaspaces.cloudify.dsl.internal.DSLException;
 import com.gigaspaces.cloudify.dsl.internal.packaging.PackagingException;
 
 import framework.utils.AdminUtils;
@@ -126,11 +127,11 @@ public class USMAllProcessesBasicTest extends UsmAbstractTest {
 		extendedTest(new String[] { "Completed Tasks", "Pending Tasks" });
 	}
 
-	public void basicTest() throws IOException, PackagingException {
+	public void basicTest() throws IOException, PackagingException, DSLException {
 		extendedTest(new String[] {});
 	}
 
-	void extendedTest(final String[] monitors) throws IOException, PackagingException {
+	void extendedTest(final String[] monitors) throws IOException, PackagingException, DSLException {
 		final Service service = USMTestUtils.usmDeploy(processName, this.serviceFileName);
 		final ProcessingUnit pu = admin.getProcessingUnits().waitFor(processName);
 		pu.waitFor(pu.getTotalNumberOfInstances());

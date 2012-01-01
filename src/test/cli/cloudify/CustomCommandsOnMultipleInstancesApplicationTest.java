@@ -16,6 +16,7 @@ import org.testng.annotations.Test;
 
 import test.usm.USMTestUtils;
 
+import com.gigaspaces.cloudify.dsl.internal.DSLException;
 import com.gigaspaces.cloudify.dsl.internal.ServiceReader;
 import com.gigaspaces.cloudify.dsl.internal.packaging.PackagingException;
 import com.gigaspaces.cloudify.dsl.utils.ServiceUtils;
@@ -229,7 +230,7 @@ public class CustomCommandsOnMultipleInstancesApplicationTest extends AbstractLo
         }
     }
 
-    private void installApplication() throws PackagingException, IOException, InterruptedException {
+    private void installApplication() throws PackagingException, IOException, InterruptedException, DSLException {
         File applicationDir = new File(APPLICAION_DIR_PATH);
         ServiceReader.getApplicationFromFile(applicationDir).getApplication();
         runCommand("connect " + this.restUrl + ";install-application --verbose " + APPLICAION_DIR_PATH);

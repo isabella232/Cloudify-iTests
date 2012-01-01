@@ -25,6 +25,7 @@ import org.testng.annotations.Test;
 import test.usm.USMTestUtils;
 
 import com.gigaspaces.cloudify.dsl.internal.CloudifyConstants;
+import com.gigaspaces.cloudify.dsl.internal.DSLException;
 import com.gigaspaces.cloudify.dsl.internal.ServiceReader;
 import com.gigaspaces.cloudify.dsl.internal.packaging.PackagingException;
 import com.gigaspaces.cloudify.dsl.utils.ServiceUtils;
@@ -68,7 +69,7 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
 	public void testKitchenSink() throws IOException, InterruptedException,
-			PackagingException {
+			PackagingException, DSLException {
 
 		installService();
 
@@ -528,7 +529,7 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 		return pu;
 	}
 
-	private void installService() throws PackagingException, IOException, InterruptedException {
+	private void installService() throws PackagingException, IOException, InterruptedException, DSLException {
 		File serviceDir = new File(RECIPE_DIR_PATH);
 		ServiceReader.getServiceFromDirectory(serviceDir, CloudifyConstants.DEFAULT_APPLICATION_NAME).getService();
 

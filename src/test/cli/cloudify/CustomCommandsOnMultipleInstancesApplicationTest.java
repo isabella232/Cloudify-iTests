@@ -56,7 +56,7 @@ public class CustomCommandsOnMultipleInstancesApplicationTest extends AbstractLo
 
     @AfterClass
     public void afterClass() throws IOException, InterruptedException {
-        runCommand("connect " + this.restUrl +
+        runCommand("connect " + restUrl +
                 ";uninstall-application --verbose simpleCustomCommandsMultipleInstances");
     }
 
@@ -111,7 +111,7 @@ public class CustomCommandsOnMultipleInstancesApplicationTest extends AbstractLo
     }
 
     private void checkPrintCommandOnapp() throws IOException, InterruptedException {
-        String invokePrintResult = runCommand("connect " + this.restUrl + ";use-application simpleCustomCommandsMultipleInstances"
+        String invokePrintResult = runCommand("connect " + restUrl + ";use-application simpleCustomCommandsMultipleInstances"
                 + "; invoke simpleCustomCommandsMultipleInstances-2 print");
 
         assertTrue("Custom command 'print' returned unexpected result from instance #1: " + invokePrintResult
@@ -121,7 +121,7 @@ public class CustomCommandsOnMultipleInstancesApplicationTest extends AbstractLo
     }
 
     private void checkPrintCommandOnApp(int instanceId) throws IOException, InterruptedException {
-        String invokePrintResult = runCommand("connect " + this.restUrl + ";use-application simpleCustomCommandsMultipleInstances"
+        String invokePrintResult = runCommand("connect " + restUrl + ";use-application simpleCustomCommandsMultipleInstances"
                 + "; invoke -instanceid " + instanceId + " simpleCustomCommandsMultipleInstances-2 print");
 
         assertTrue("Custom command 'print' returned unexpected result from instance #" + instanceId + ": " + invokePrintResult
@@ -135,7 +135,7 @@ public class CustomCommandsOnMultipleInstancesApplicationTest extends AbstractLo
     }
 
     private void checkParamsCommand() throws IOException, InterruptedException {
-        String invokeParamsResult = runCommand("connect " + this.restUrl + ";use-application simpleCustomCommandsMultipleInstances"
+        String invokeParamsResult = runCommand("connect " + restUrl + ";use-application simpleCustomCommandsMultipleInstances"
                 + "; invoke simpleCustomCommandsMultipleInstances-2 params 2 3");
 
         for (int i = 1; i <= totalInstancesService2; i++) {
@@ -145,7 +145,7 @@ public class CustomCommandsOnMultipleInstancesApplicationTest extends AbstractLo
     }
 
     private void checkParamsCommand(int instanceId) throws IOException, InterruptedException {
-        String invokeParamsResult = runCommand("connect " + this.restUrl + ";use-application simpleCustomCommandsMultipleInstances"
+        String invokeParamsResult = runCommand("connect " + restUrl + ";use-application simpleCustomCommandsMultipleInstances"
                 + "; invoke -instanceid " + instanceId + " simpleCustomCommandsMultipleInstances-2 params");
 
         assertTrue("Custom command 'params' returned unexpected result from instance #" + instanceId + ": " + invokeParamsResult
@@ -159,7 +159,7 @@ public class CustomCommandsOnMultipleInstancesApplicationTest extends AbstractLo
     }
 
     private void checkExceptionCommand() throws IOException, InterruptedException {
-        String invokeExceptionResult = runCommand("connect " + this.restUrl + ";use-application simpleCustomCommandsMultipleInstances"
+        String invokeExceptionResult = runCommand("connect " + restUrl + ";use-application simpleCustomCommandsMultipleInstances"
                 + "; invoke simpleCustomCommandsMultipleInstances-2 exception");
 
         for (int i = 1; i <= totalInstancesService2; i++) {
@@ -169,7 +169,7 @@ public class CustomCommandsOnMultipleInstancesApplicationTest extends AbstractLo
     }
 
     private void checkExceptionCommand(int instanceId) throws IOException, InterruptedException {
-        String invokeExceptionResult = runCommand("connect " + this.restUrl + ";use-application simpleCustomCommandsMultipleInstances"
+        String invokeExceptionResult = runCommand("connect " + restUrl + ";use-application simpleCustomCommandsMultipleInstances"
                 + "; invoke -instanceid " + instanceId + " simpleCustomCommandsMultipleInstances-2 exception");
 
         assertTrue("Custom command 'exception' returned unexpected result from instance #" + instanceId + ": " + invokeExceptionResult
@@ -183,7 +183,7 @@ public class CustomCommandsOnMultipleInstancesApplicationTest extends AbstractLo
     }
 
     private void checkRunScriptCommand() throws IOException, InterruptedException {
-        String invokeRunScriptResult = runCommand("connect " + this.restUrl + ";use-application simpleCustomCommandsMultipleInstances"
+        String invokeRunScriptResult = runCommand("connect " + restUrl + ";use-application simpleCustomCommandsMultipleInstances"
                 + "; invoke simpleCustomCommandsMultipleInstances-2 runScript");
 
         for (int i = 1; i <= totalInstancesService2; i++) {
@@ -193,7 +193,7 @@ public class CustomCommandsOnMultipleInstancesApplicationTest extends AbstractLo
     }
 
     private void checkRunScriptCommand(int instanceId) throws IOException, InterruptedException {
-        String invokeRunScriptResult = runCommand("connect " + this.restUrl + ";use-application simpleCustomCommandsMultipleInstances"
+        String invokeRunScriptResult = runCommand("connect " + restUrl + ";use-application simpleCustomCommandsMultipleInstances"
                 + "; invoke -instanceid " + instanceId + " simpleCustomCommandsMultipleInstances-2 runScript");
 
         assertTrue("Custom command 'exception' returned unexpected result from instance #" + instanceId + ": " + invokeRunScriptResult
@@ -207,7 +207,7 @@ public class CustomCommandsOnMultipleInstancesApplicationTest extends AbstractLo
     }
 
     private void checkContextCommandOnApp() throws IOException, InterruptedException {
-        String invokeContextResult = runCommand("connect " + this.restUrl + ";use-application simpleCustomCommandsMultipleInstances"
+        String invokeContextResult = runCommand("connect " + restUrl + ";use-application simpleCustomCommandsMultipleInstances"
                 + "; invoke simpleCustomCommandsMultipleInstances-2 context");
 
         for (int i = 1; i <= totalInstancesService2; i++) {
@@ -217,7 +217,7 @@ public class CustomCommandsOnMultipleInstancesApplicationTest extends AbstractLo
     }
 
     private void checkContextCommandOnApp(int instanceId) throws IOException, InterruptedException {
-        String invokeContextResult = runCommand("connect " + this.restUrl + ";use-application simpleCustomCommandsMultipleInstances"
+        String invokeContextResult = runCommand("connect " + restUrl + ";use-application simpleCustomCommandsMultipleInstances"
                 + "; invoke -instanceid " + instanceId + " simpleCustomCommandsMultipleInstances-2 context");
 
         assertTrue("Custom command 'exception' returned unexpected result from instance #" + instanceId + ": " + invokeContextResult
@@ -233,6 +233,6 @@ public class CustomCommandsOnMultipleInstancesApplicationTest extends AbstractLo
     private void installApplication() throws PackagingException, IOException, InterruptedException, DSLException {
         File applicationDir = new File(APPLICAION_DIR_PATH);
         ServiceReader.getApplicationFromFile(applicationDir).getApplication();
-        runCommand("connect " + this.restUrl + ";install-application --verbose " + APPLICAION_DIR_PATH);
+        runCommand("connect " + restUrl + ";install-application --verbose " + APPLICAION_DIR_PATH);
     }
 }

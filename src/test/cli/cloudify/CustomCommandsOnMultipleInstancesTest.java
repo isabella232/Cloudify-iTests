@@ -51,7 +51,7 @@ public class CustomCommandsOnMultipleInstancesTest extends AbstractLocalCloudTes
 
 	@AfterClass
 	public void afterClass() throws IOException, InterruptedException{	
-		runCommand("connect " + this.restUrl +  ";uninstall-service --verbose simpleCustomCommandsMultipleInstances");
+		runCommand("connect " + restUrl +  ";uninstall-service --verbose simpleCustomCommandsMultipleInstances");
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = true)
@@ -106,7 +106,7 @@ public class CustomCommandsOnMultipleInstancesTest extends AbstractLocalCloudTes
 	}
 	
 	private void checkPrintCommand() throws IOException, InterruptedException {
-		String invokePrintResult = runCommand("connect " + this.restUrl + ";use-application default" 
+		String invokePrintResult = runCommand("connect " + restUrl + ";use-application default" 
 				+ "; invoke simpleCustomCommandsMultipleInstances print");
 		
 		for(int i=1 ; i <= totalInstances ; i++){
@@ -115,7 +115,7 @@ public class CustomCommandsOnMultipleInstancesTest extends AbstractLocalCloudTes
 		}
 	}
 	private void checkPrintCommand(int instanceid) throws IOException, InterruptedException {
-		String invokePrintResult = runCommand("connect " + this.restUrl + ";use-application default" 
+		String invokePrintResult = runCommand("connect " + restUrl + ";use-application default" 
 				+ "; invoke -instanceid " + instanceid + " simpleCustomCommandsMultipleInstances print");
 		
 		assertTrue("Custom command 'print' returned unexpected result from instance #" + instanceid +": " + invokePrintResult
@@ -129,7 +129,7 @@ public class CustomCommandsOnMultipleInstancesTest extends AbstractLocalCloudTes
 	}
 	
 	private void checkParamsCommand() throws IOException, InterruptedException {
-		String invokeParamsResult = runCommand("connect " + this.restUrl + ";use-application default" +
+		String invokeParamsResult = runCommand("connect " + restUrl + ";use-application default" +
 				"; invoke simpleCustomCommandsMultipleInstances params 2 3");
 		
 		for(int i=1 ; i <= totalInstances ; i++){
@@ -139,7 +139,7 @@ public class CustomCommandsOnMultipleInstancesTest extends AbstractLocalCloudTes
 	}
 	
 	private void checkParamsCommand(int instanceid) throws IOException, InterruptedException {
-		String invokeParamsResult = runCommand("connect " + this.restUrl + ";use-application default" 
+		String invokeParamsResult = runCommand("connect " + restUrl + ";use-application default" 
 				+ "; invoke -instanceid " + instanceid + " simpleCustomCommandsMultipleInstances params");
 		
 		assertTrue("Custom command 'params' returned unexpected result from instance #" + instanceid +": " + invokeParamsResult
@@ -153,7 +153,7 @@ public class CustomCommandsOnMultipleInstancesTest extends AbstractLocalCloudTes
 	}
 	
 	private void checkExceptionCommand() throws IOException, InterruptedException {
-		String invokeExceptionResult = runCommand("connect " + this.restUrl + ";use-application default" 
+		String invokeExceptionResult = runCommand("connect " + restUrl + ";use-application default" 
 				+ "; invoke simpleCustomCommandsMultipleInstances exception");
 		
 		for(int i=1 ; i <= totalInstances ; i++){
@@ -163,7 +163,7 @@ public class CustomCommandsOnMultipleInstancesTest extends AbstractLocalCloudTes
 	}
 	
 	private void checkExceptionCommand(int instanceid) throws IOException, InterruptedException {
-		String invokeExceptionResult = runCommand("connect " + this.restUrl + ";use-application default" 
+		String invokeExceptionResult = runCommand("connect " + restUrl + ";use-application default" 
 				+ "; invoke -instanceid " + instanceid + " simpleCustomCommandsMultipleInstances exception");
 		
 		assertTrue("Custom command 'exception' returned unexpected result from instance #" + instanceid +": " + invokeExceptionResult
@@ -177,7 +177,7 @@ public class CustomCommandsOnMultipleInstancesTest extends AbstractLocalCloudTes
 	}
 	
 	private void checkRunScriptCommand() throws IOException, InterruptedException {
-		String invokeRunScriptResult = runCommand("connect " + this.restUrl + ";use-application default" 
+		String invokeRunScriptResult = runCommand("connect " + restUrl + ";use-application default" 
 				+ "; invoke simpleCustomCommandsMultipleInstances runScript");
 		
 		for(int i=1 ; i <= totalInstances ; i++){
@@ -187,7 +187,7 @@ public class CustomCommandsOnMultipleInstancesTest extends AbstractLocalCloudTes
 	}
 	
 	private void checkRunScriptCommand(int instanceid) throws IOException, InterruptedException {
-		String invokeRunScriptResult = runCommand("connect " + this.restUrl + ";use-application default" 
+		String invokeRunScriptResult = runCommand("connect " + restUrl + ";use-application default" 
 				+ "; invoke -instanceid " + instanceid + " simpleCustomCommandsMultipleInstances runScript");
 		
 		assertTrue("Custom command 'exception' returned unexpected result from instance #" + instanceid +": " + invokeRunScriptResult
@@ -201,7 +201,7 @@ public class CustomCommandsOnMultipleInstancesTest extends AbstractLocalCloudTes
 	}
 	
 	private void checkContextCommand() throws IOException, InterruptedException {
-		String invokeContextResult = runCommand("connect " + this.restUrl + ";use-application default" 
+		String invokeContextResult = runCommand("connect " + restUrl + ";use-application default" 
 				+ "; invoke simpleCustomCommandsMultipleInstances context");
 		
 		for(int i=1 ; i <= totalInstances ; i++){
@@ -211,7 +211,7 @@ public class CustomCommandsOnMultipleInstancesTest extends AbstractLocalCloudTes
 	}
 	
 	private void checkContextCommand(int instanceid) throws IOException, InterruptedException {
-		String invokeContextResult = runCommand("connect " + this.restUrl + ";use-application default" 
+		String invokeContextResult = runCommand("connect " + restUrl + ";use-application default" 
 				+ "; invoke -instanceid " + instanceid + " simpleCustomCommandsMultipleInstances context");
 		
 		assertTrue("Custom command 'context' returned unexpected result from instance #" + instanceid +": " + invokeContextResult
@@ -226,6 +226,6 @@ public class CustomCommandsOnMultipleInstancesTest extends AbstractLocalCloudTes
 	private void installService() throws PackagingException, IOException, InterruptedException, DSLException {
 		File serviceDir = new File(RECIPE_DIR_PATH);
 		ServiceReader.getServiceFromDirectory(serviceDir, CloudifyConstants.DEFAULT_APPLICATION_NAME).getService();
-		runCommand("connect " + this.restUrl + ";install-service --verbose " + RECIPE_DIR_PATH);
+		runCommand("connect " + restUrl + ";install-service --verbose " + RECIPE_DIR_PATH);
 	}
 }

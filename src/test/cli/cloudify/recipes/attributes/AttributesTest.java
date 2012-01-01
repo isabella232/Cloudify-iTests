@@ -67,22 +67,22 @@ public class AttributesTest extends AbstractLocalCloudTest {
 
     @AfterClass
     public void afterClass() throws IOException, InterruptedException{
-        runCommand("connect " + this.restUrl + ";uninstall-application --verbose serviceContextProperties");
+        runCommand("connect " + restUrl + ";uninstall-application --verbose serviceContextProperties");
     }
 		
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = true)
 	public void testSimpleApplicationSetContext() throws Exception {
 		LogUtils.log("setting an application attribute from setter service");
-		runCommand("connect " + this.restUrl + ";use-application serviceContextProperties" 
+		runCommand("connect " + restUrl + ";use-application serviceContextProperties" 
 				+ "; invoke setter setApp");
 
-		String simpleGet = runCommand("connect " + this.restUrl + ";use-application serviceContextProperties" 
+		String simpleGet = runCommand("connect " + restUrl + ";use-application serviceContextProperties" 
 				+ "; invoke getter getApp");
 		
-		String simpleGet2 = runCommand("connect " + this.restUrl + ";use-application serviceContextProperties" 
+		String simpleGet2 = runCommand("connect " + restUrl + ";use-application serviceContextProperties" 
 				+ "; invoke setter getApp");
 		
-		String simpleGet3 = runCommand("connect " + this.restUrl + ";use-application serviceContextProperties" 
+		String simpleGet3 = runCommand("connect " + restUrl + ";use-application serviceContextProperties" 
 				+ "; invoke setter getService");
 		
 		assertTrue("command did not execute" , simpleGet.contains("OK"));
@@ -97,10 +97,10 @@ public class AttributesTest extends AbstractLocalCloudTest {
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = true)
 	public void testApplicationSetContextCustomParams() throws Exception {
 		
-		runCommand("connect " + this.restUrl + ";use-application serviceContextProperties" 
+		runCommand("connect " + restUrl + ";use-application serviceContextProperties" 
 				+ "; invoke setter setAppCustom ['x=myKey1' 'y=myValue1']");
 		
-		String simpleGet = runCommand("connect " + this.restUrl + ";use-application serviceContextProperties" 
+		String simpleGet = runCommand("connect " + restUrl + ";use-application serviceContextProperties" 
 				+ "; invoke getter getAppCustom ['x=myKey1']");
 		
 		assertTrue("command did not execute" , simpleGet.contains("OK"));
@@ -110,24 +110,24 @@ public class AttributesTest extends AbstractLocalCloudTest {
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = true)
 	public void testServiceSetContext() throws Exception {
 		
-		runCommand("connect " + this.restUrl + ";use-application serviceContextProperties" 
+		runCommand("connect " + restUrl + ";use-application serviceContextProperties" 
 				+ "; invoke setter setService");
 		
-		String crossServiceGet = runCommand("connect " + this.restUrl + ";use-application serviceContextProperties" 
+		String crossServiceGet = runCommand("connect " + restUrl + ";use-application serviceContextProperties" 
 				+ "; invoke getter getService");
 		
-		String serviceGet = runCommand("connect " + this.restUrl + ";use-application serviceContextProperties" 
+		String serviceGet = runCommand("connect " + restUrl + ";use-application serviceContextProperties" 
 				+ "; invoke setter getService");
 		
-		String appGet = runCommand("connect " + this.restUrl + ";use-application serviceContextProperties" 
+		String appGet = runCommand("connect " + restUrl + ";use-application serviceContextProperties" 
 				+ "; invoke getter getApp");
 		
-		String getInstance1 = runCommand("connect " + this.restUrl + ";use-application serviceContextProperties" 
+		String getInstance1 = runCommand("connect " + restUrl + ";use-application serviceContextProperties" 
 				+ "; invoke -instanceid 1 setter getService");
-		String getInstance2 = runCommand("connect " + this.restUrl + ";use-application serviceContextProperties" 
+		String getInstance2 = runCommand("connect " + restUrl + ";use-application serviceContextProperties" 
 				+ "; invoke -instanceid 2 setter getService");
 		
-		String instanceGetApp = runCommand("connect " + this.restUrl + ";use-application serviceContextProperties" 
+		String instanceGetApp = runCommand("connect " + restUrl + ";use-application serviceContextProperties" 
 				+ "; invoke -instanceid 1 setter getApp");
 		
 		assertTrue("command did not execute" , crossServiceGet.contains("OK"));
@@ -146,10 +146,10 @@ public class AttributesTest extends AbstractLocalCloudTest {
     @Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = true)
     public void testServiceSetContextByName() throws Exception {
 
-        String setServiceByName = runCommand("connect " + this.restUrl + ";use-application serviceContextProperties"
+        String setServiceByName = runCommand("connect " + restUrl + ";use-application serviceContextProperties"
                 + "; invoke setter setServiceByName");
 
-        String getServiceByName = runCommand("connect " + this.restUrl + ";use-application serviceContextProperties"
+        String getServiceByName = runCommand("connect " + restUrl + ";use-application serviceContextProperties"
                 + "; invoke setter getServiceByName");
 
         assertTrue("command did not execute" , setServiceByName.contains("OK"));
@@ -161,22 +161,22 @@ public class AttributesTest extends AbstractLocalCloudTest {
     @Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = true)
     public void testServiceInstanceSetContext() throws Exception {
 
-        runCommand("connect " + this.restUrl + ";use-application serviceContextProperties"
+        runCommand("connect " + restUrl + ";use-application serviceContextProperties"
                 + "; invoke -instanceid 1 setter setInstanceCustom1 ['x=myKey1' 'y=myValue1']");
 
-        runCommand("connect " + this.restUrl + ";use-application serviceContextProperties"
+        runCommand("connect " + restUrl + ";use-application serviceContextProperties"
                 + "; invoke -instanceid 2 setter setInstanceCustom2 ['x=myKey1' 'y=myValue2']");
 
-        String getInstance1 = runCommand("connect " + this.restUrl + ";use-application serviceContextProperties"
+        String getInstance1 = runCommand("connect " + restUrl + ";use-application serviceContextProperties"
                 + "; invoke -instanceid 1 setter getInstanceCustom1 ['x=myKey1']");
 
-        String getInstance2 = runCommand("connect " + this.restUrl + ";use-application serviceContextProperties"
+        String getInstance2 = runCommand("connect " + restUrl + ";use-application serviceContextProperties"
                 + "; invoke -instanceid 2 setter getInstanceCustom2 ['x=myKey1']");
 
-        String getService = runCommand("connect " + this.restUrl + ";use-application serviceContextProperties"
+        String getService = runCommand("connect " + restUrl + ";use-application serviceContextProperties"
                 + "; invoke setter getAppCustom ['x=myKey1']");
 
-        String getApp = runCommand("connect " + this.restUrl + ";use-application serviceContextProperties"
+        String getApp = runCommand("connect " + restUrl + ";use-application serviceContextProperties"
                 + "; invoke  setter getAppCustom ['x=myKey1']");
 
         assertTrue("command did not execute" , getInstance1.contains("OK"));
@@ -193,10 +193,10 @@ public class AttributesTest extends AbstractLocalCloudTest {
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = false)
 	public void testSetCustomPojo() throws Exception {
 		LogUtils.log("setting a custom pojo on service level");
-		runCommand("connect " + this.restUrl + ";use-application serviceContextProperties" 
+		runCommand("connect " + restUrl + ";use-application serviceContextProperties" 
 				+ "; invoke setter setServiceCustomPojo");
 
-		String getCustomPojo = runCommand("connect " + this.restUrl + ";use-application serviceContextProperties" 
+		String getCustomPojo = runCommand("connect " + restUrl + ";use-application serviceContextProperties" 
 				+ "; invoke getter getServiceCustomPojo");
 				
 		assertTrue("command did not execute" , getCustomPojo.contains("OK"));
@@ -206,10 +206,10 @@ public class AttributesTest extends AbstractLocalCloudTest {
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = false)
 	public void testSetDouble() throws Exception {
 		LogUtils.log("setting a double on service level");
-		runCommand("connect " + this.restUrl + ";use-application serviceContextProperties" 
+		runCommand("connect " + restUrl + ";use-application serviceContextProperties" 
 				+ "; invoke setter setServiceDouble");
 
-		String getDouble = runCommand("connect " + this.restUrl + ";use-application serviceContextProperties" 
+		String getDouble = runCommand("connect " + restUrl + ";use-application serviceContextProperties" 
 				+ "; invoke getter getServiceDouble");
 				
 		assertTrue("command did not execute" , getDouble.contains("OK"));
@@ -218,10 +218,10 @@ public class AttributesTest extends AbstractLocalCloudTest {
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = true)
 	public void testInstanceIteration() throws Exception {
-		runCommand("connect " + this.restUrl + ";use-application serviceContextProperties" 
+		runCommand("connect " + restUrl + ";use-application serviceContextProperties" 
 				+ "; invoke -instanceid 1 setter setInstance1; invoke -instanceid 2 setter setInstance2");
 		
-		String iterateInstances = runCommand("connect " + this.restUrl + ";use-application serviceContextProperties" 
+		String iterateInstances = runCommand("connect " + restUrl + ";use-application serviceContextProperties" 
 				+ "; invoke -instanceid 1 setter iterateInstances");
 		
 		assertTrue("command did not execute" , iterateInstances.contains("OK"));
@@ -234,6 +234,6 @@ public class AttributesTest extends AbstractLocalCloudTest {
 		getter = app.getServices().get(0).getName().equals("getter") ? app.getServices().get(0) : app.getServices().get(1);
 		setter = app.getServices().get(0).getName().equals("setter") ? app.getServices().get(0) : app.getServices().get(1);
 		
-		runCommand("connect " + this.restUrl + ";install-application --verbose " + APPLICAION_DIR_PATH);
+		runCommand("connect " + restUrl + ";install-application --verbose " + APPLICAION_DIR_PATH);
 	}
 }

@@ -33,13 +33,13 @@ public class AdminAPIControllerConsistencyTest extends AbstractTest {
 		restPrefix = RestConsistencyTestUtil.deployRestServer(admin);
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 5, groups = "1", enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 5, groups = "1", enabled = false)
 	// actually this tests the loading of a gsm and gsc in addition to being a simple test case
 	public void simpleTest() throws IOException{
 		RestConsistencyTestUtil.runConsistencyTest(admin, restPrefix);
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 5, groups = "1", enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 5, groups = "1", enabled = false)
 	public void puManipulationTest() throws Exception{
 		
 		ProcessingUnit pu = gsm.deploy(new ProcessingUnitDeployment(DeploymentUtils.getArchive(TEST_PU + ".jar")));
@@ -65,7 +65,7 @@ public class AdminAPIControllerConsistencyTest extends AbstractTest {
 		RestConsistencyTestUtil.runConsistencyTest(admin, restPrefix);
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 5, groups = "1", enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 5, groups = "1", enabled = false)
 	public void restartGSCTest() throws Exception{
 		admin.getGridServiceContainers().getContainers()[0].restart();
 		admin.getGridServiceContainers().waitFor(1);
@@ -74,7 +74,7 @@ public class AdminAPIControllerConsistencyTest extends AbstractTest {
 		
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 5, groups = "1", enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 5, groups = "1", enabled = false)
 	public void restartGSMTest() throws Exception{
 		admin.getGridServiceManagers().getManagers()[0].restart();
 		admin.getGridServiceManagers().waitFor(1);
@@ -82,7 +82,7 @@ public class AdminAPIControllerConsistencyTest extends AbstractTest {
 	}
 		
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 5, groups = "1", enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 5, groups = "1", enabled = false)
 	public void deployESMAndRestartTest() throws Exception{
 		
 		AdminUtils.loadESM(admin.getGridServiceAgents().waitForAtLeastOne());
@@ -94,7 +94,7 @@ public class AdminAPIControllerConsistencyTest extends AbstractTest {
 		RestConsistencyTestUtil.runConsistencyTest(admin, restPrefix);
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 5, groups = "1", enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 5, groups = "1", enabled = false)
 	public void spaceManipulationTest() throws IOException{
 		
 		ProcessingUnit pu = admin.getGridServiceManagers().deploy(new SpaceDeployment("testSpace").numberOfInstances(1));

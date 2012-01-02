@@ -31,7 +31,7 @@ public class StockDemoApplicationTest extends AbstractLocalCloudTest {
 		assertPuStatusInstact("stockAnalyticsMirror");
 		
 		currentNumberOfInstances = getProcessingUnitInstanceCount(ServiceUtils.getAbsolutePUName(STOCK_DEMO_APPLICATION_NAME, "stockAnalyticsSpace"));
-		assertTrue("Expected 1 PU instances. Actual number of instances is " + currentNumberOfInstances, currentNumberOfInstances == 1);
+		assertTrue("Expected 1 PU instances. Actual number of instances is " + currentNumberOfInstances, currentNumberOfInstances == 2);
 		assertPuStatusInstact("stockAnalyticsSpace");
 		
 		currentNumberOfInstances = getProcessingUnitInstanceCount(ServiceUtils.getAbsolutePUName(STOCK_DEMO_APPLICATION_NAME, "stockAnalyticsProcessor"));

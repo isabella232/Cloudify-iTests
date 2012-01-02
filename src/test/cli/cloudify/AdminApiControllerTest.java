@@ -11,25 +11,18 @@ import java.util.regex.Pattern;
 
 import junit.framework.Assert;
 
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import framework.utils.LogUtils;
 
 
 
-public class AdminApiControllerTest extends AbstractCommandTest {
+public class AdminApiControllerTest extends AbstractLocalCloudTest {
 
 	private static final int RECURSIVE_ITERATIONS = 5;
-	
-	protected static final int PROCESSINGUNIT_TIMEOUT_SEC = 20;
 	protected static final String REST_ROOT = "/rest/admin";
 	
-	
-	@BeforeMethod
-	public void beforeTest() {
-		super.beforeTest();
-	}
+
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 5, groups = "1", enabled = true)
 	public void testController() throws IOException{

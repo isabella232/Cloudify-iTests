@@ -8,7 +8,7 @@ import org.openspaces.admin.pu.ProcessingUnitInstance;
 import org.openspaces.admin.pu.events.ProcessingUnitInstanceAddedEventListener;
 import org.testng.annotations.Test;
 
-import test.cli.cloudify.AbstractCommandTest;
+import test.cli.cloudify.AbstractLocalCloudTest;
 import test.cli.cloudify.CommandTestUtils;
 import framework.utils.AssertUtils.RepetitiveConditionProvider;
 
@@ -22,7 +22,7 @@ import framework.utils.AssertUtils.RepetitiveConditionProvider;
  * @author itaif
  *
  */
-public class SimpleDependencyTest extends AbstractCommandTest{
+public class SimpleDependencyTest extends AbstractLocalCloudTest{
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
 	public void dependencyTest() throws IOException, InterruptedException{

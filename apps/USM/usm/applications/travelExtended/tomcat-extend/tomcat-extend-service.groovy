@@ -3,10 +3,11 @@ service {
     def absolutePath = context.getResource('/' + context.name.replace(".", "/")+ ".class").getPath()
     def absolutePath1 = absolutePath.substring(0, absolutePath.lastIndexOf("!"))
     def absolutePath2 = absolutePath1.substring(0, absolutePath1.lastIndexOf("/"))
+    def absolutePath3
     if(System.getProperty("os.name").toLowerCase().startsWith("win")){
-        def absolutePath3 =  absolutePath2.substring("file:/".length(), absolutePath2.length())+"/../../examples/travel/tomcat"
+        absolutePath3 =  absolutePath2.substring("file:/".length(), absolutePath2.length())+"/../../examples/travel/tomcat"
     }else{
-        def absolutePath3 =  absolutePath2.substring("file:".length(), absolutePath2.length())+"/../../examples/travel/tomcat"
+        absolutePath3 =  absolutePath2.substring("file:".length(), absolutePath2.length())+"/../../examples/travel/tomcat"
     }
     //def absolutePath3 =  absolutePath2.substring("file:/".length(), absolutePath2.length())+"/../../recipes/tomcat"
     extend absolutePath3

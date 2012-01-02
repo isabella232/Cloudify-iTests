@@ -77,7 +77,7 @@ public class AbstractLocalCloudTest extends AbstractTest {
     }
 
     @BeforeClass
-    public void beforeClass() throws Exception{
+    public void beforeClass() throws Exception {
         LogUtils.log("Test Class Configuration Started: " + this.getClass());
         try {
             this.admin = getAdminWithLocators();
@@ -246,11 +246,17 @@ public class AbstractLocalCloudTest extends AbstractTest {
             if (!pu.getName().equals("webui") && !pu.getName().equals("rest") && !pu.getName().equals("cloudifyManagementSpace")) {
                 if (!pu.undeployAndWait(30, TimeUnit.SECONDS)) {
                     LogUtils.log("Failed to uninstall " + pu.getName());
-                }
-                else {
-                	LogUtils.log("Uninstalled service: " + pu.getName());
+                } else {
+                    LogUtils.log("Uninstalled service: " + pu.getName());
                 }
             }
         }
+    }
+
+    public void updateLocalCloudPids(long oldPid, long newPid) {
+        localCloudPIDs.remove(oldPid);
+        localCloudPIDs.add(String.valueOf(newPid));
+        alivePIDs.remove(oldPid);
+        alivePIDs.add(String.valueOf(newPid));
     }
 }

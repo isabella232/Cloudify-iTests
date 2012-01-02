@@ -140,7 +140,7 @@ public class CustomCommandsOnMultipleInstancesTest extends AbstractLocalCloudTes
 	
 	private void checkParamsCommand(int instanceid) throws IOException, InterruptedException {
 		String invokeParamsResult = runCommand("connect " + restUrl + ";use-application default" 
-				+ "; invoke -instanceid " + instanceid + " simpleCustomCommandsMultipleInstances params");
+				+ "; invoke -instanceid " + instanceid + " simpleCustomCommandsMultipleInstances params 2 3");
 		
 		assertTrue("Custom command 'params' returned unexpected result from instance #" + instanceid +": " + invokeParamsResult
 				,invokeParamsResult.contains("OK from instance #" + instanceid) && invokeParamsResult.contains("Result: this is the custom parameters command. expecting 123: 123"));

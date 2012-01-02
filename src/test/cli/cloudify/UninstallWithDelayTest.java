@@ -22,7 +22,7 @@ import framework.utils.AssertUtils.RepetitiveConditionProvider;
  * @author dank
  *
  */
-public class UninstallWithDelayTest extends AbstractCommandTest {
+public class UninstallWithDelayTest extends AbstractLocalCloudTest {
 
     private static final String APPLICATION_DIRECTORY = CommandTestUtils.getPath("apps/USM/usm/applications/simple-delay");
     private static final String SERVICE_NAME = "simple";

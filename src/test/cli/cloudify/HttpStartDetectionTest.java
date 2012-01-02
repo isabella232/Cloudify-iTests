@@ -19,7 +19,7 @@ import framework.utils.LogUtils;
  * @author adaml
  *
  */
-public class HttpStartDetectionTest extends AbstractCommandTest {
+public class HttpStartDetectionTest extends AbstractLocalCloudTest {
 	
 	private Machine machineA;
 	public static final String USM_APPLICATION_NAME = "default";
@@ -54,6 +54,7 @@ public class HttpStartDetectionTest extends AbstractCommandTest {
 	}
 	
 	private void doTest(String serviceDir) throws IOException, InterruptedException {
+        assertNotNull("Failed to find rest pu", admin.getProcessingUnits().waitFor("rest", 30 , TimeUnit.SECONDS));
 		machineA = admin.getProcessingUnits().getProcessingUnit("rest").getInstances()[0].getMachine();
 		String command = "connect " + restUrl + ";install-service --verbose " + serviceDir + ";exit";
 			

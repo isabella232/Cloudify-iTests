@@ -4,28 +4,17 @@ import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import org.openspaces.admin.pu.ProcessingUnit;
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import com.gigaspaces.cloudify.dsl.utils.ServiceUtils;
 
-public class FailedToInstallServiceApplicationTest extends AbstractCommandTest {
+public class FailedToInstallServiceApplicationTest extends AbstractLocalCloudTest {
 
-	
-	
-	//public static final String USM_SERVICE_FOLDER_NAME = "simpleService";
 	public static final String USM_SERVICE_FOLDER_NAME = "simpleService";
 	public static final String USM_SERVICE_NAME = "simple";
 	public static final String USM_APPLICATION_SERVICE_NAME = "simple";
-	
-	//public static final String USM_APPLICATION_FOLDER_NAME = "simpleApplication";
 	public static final String USM_APPLICATION_FOLDER_NAME = "simpleApplication";
-	
-	@Override
-	@BeforeMethod
-	public void beforeTest() {
-		super.beforeTest();
-	}
+
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
 	public void testBadInstallService() throws IOException, InterruptedException {

@@ -27,7 +27,7 @@ import com.gigaspaces.cloudify.dsl.utils.ServiceUtils;
 import framework.utils.LogUtils;
 
 public class AttributesTest extends AbstractLocalCloudTest {
-	
+	private final String appName = "serviceContextProperties";
 	private final String APPLICAION_DIR_PATH = CommandTestUtils
 									.getPath("apps/USM/usm/applications/serviceContextProperties");
 	
@@ -98,10 +98,10 @@ public class AttributesTest extends AbstractLocalCloudTest {
 	public void testApplicationSetContextCustomParams() throws Exception {
 		
 		runCommand("connect " + restUrl + ";use-application serviceContextProperties" 
-				+ "; invoke setter setAppCustom ['x=myKey1' 'y=myValue1']");
+				+ "; invoke setter setAppCustom myKey1 myValue1");
 		
 		String simpleGet = runCommand("connect " + restUrl + ";use-application serviceContextProperties" 
-				+ "; invoke getter getAppCustom ['x=myKey1']");
+				+ "; invoke getter getAppCustom myKey1");
 		
 		assertTrue("command did not execute" , simpleGet.contains("OK"));
 		assertTrue("getter service cannot get the application attribute when using parameters", simpleGet.contains("myValue1"));
@@ -162,22 +162,22 @@ public class AttributesTest extends AbstractLocalCloudTest {
     public void testServiceInstanceSetContext() throws Exception {
 
         runCommand("connect " + restUrl + ";use-application serviceContextProperties"
-                + "; invoke -instanceid 1 setter setInstanceCustom1 ['x=myKey1' 'y=myValue1']");
+                + "; invoke -instanceid 1 setter setInstanceCustom1 myKey1 myValue1");
 
         runCommand("connect " + restUrl + ";use-application serviceContextProperties"
-                + "; invoke -instanceid 2 setter setInstanceCustom2 ['x=myKey1' 'y=myValue2']");
+                + "; invoke -instanceid 2 setter setInstanceCustom2 myKey1 myValue2");
 
         String getInstance1 = runCommand("connect " + restUrl + ";use-application serviceContextProperties"
-                + "; invoke -instanceid 1 setter getInstanceCustom1 ['x=myKey1']");
+                + "; invoke -instanceid 1 setter getInstanceCustom1 myKey1");
 
         String getInstance2 = runCommand("connect " + restUrl + ";use-application serviceContextProperties"
-                + "; invoke -instanceid 2 setter getInstanceCustom2 ['x=myKey1']");
+                + "; invoke -instanceid 2 setter getInstanceCustom2 myKey1");
 
         String getService = runCommand("connect " + restUrl + ";use-application serviceContextProperties"
-                + "; invoke setter getAppCustom ['x=myKey1']");
+                + "; invoke setter getAppCustom myKey1");
 
         String getApp = runCommand("connect " + restUrl + ";use-application serviceContextProperties"
-                + "; invoke  setter getAppCustom ['x=myKey1']");
+                + "; invoke  setter getAppCustom myKey1");
 
         assertTrue("command did not execute" , getInstance1.contains("OK"));
         assertTrue("command did not execute" , getInstance2.contains("OK"));
@@ -190,14 +190,14 @@ public class AttributesTest extends AbstractLocalCloudTest {
         assertTrue("getService should be able to get a service attribute", getService.contains("null"));
     }
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = true)
 	public void testSetCustomPojo() throws Exception {
 		LogUtils.log("setting a custom pojo on service level");
 		runCommand("connect " + restUrl + ";use-application serviceContextProperties" 
-				+ "; invoke setter setServiceCustomPojo");
+				+ "; invoke setter setAppCustomPojo");
 
 		String getCustomPojo = runCommand("connect " + restUrl + ";use-application serviceContextProperties" 
-				+ "; invoke getter getServiceCustomPojo");
+				+ "; invoke getter getAppCustomPojo");
 				
 		assertTrue("command did not execute" , getCustomPojo.contains("OK"));
 		assertTrue("getter service cannot get the data pojo", getCustomPojo.contains("data"));
@@ -227,7 +227,81 @@ public class AttributesTest extends AbstractLocalCloudTest {
 		assertTrue("command did not execute" , iterateInstances.contains("OK"));
 		assertTrue("iteratoring over instances", iterateInstances.contains("myValue1") && iterateInstances.contains("myValue2"));
 	}
-
+	
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = true)
+	public void testRemoveThisService() throws Exception {
+		runCommand("connect " + restUrl + ";use-application serviceContextProperties" 
+				+ "; invoke setter setService; invoke setter setService2");
+		String getOutputAfterSet = runCommand("connect " + restUrl + ";use-application serviceContextProperties" 
+				+ "; invoke setter getService; invoke setter getService2");
+		assertTrue("set command did not execute" , getOutputAfterSet.contains("myValue") && getOutputAfterSet.contains("myValue2"));
+		
+		runCommand("connect " + restUrl + ";use-application serviceContextProperties" 
+				+ "; invoke setter removeService");
+		String getOutputAfterRemove = runCommand("connect " + restUrl + ";use-application serviceContextProperties" 
+				+ "; invoke setter getService ;invoke setter getService2");
+		assertTrue("get myKey command should return null after myKey was removed" , getOutputAfterRemove.contains("null"));
+		assertTrue("myKey2 should not be affected by remove myKey" , getOutputAfterRemove.contains("myValue2"));
+	}
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = true)
+	public void testRemoveInstanceByServiceName() throws Exception {
+		runCommand("connect " + restUrl + ";use-application serviceContextProperties" 
+				+ "; invoke getter setService"); 
+		String getOutputAfterSet = runCommand("connect " + restUrl + ";use-application serviceContextProperties" 
+				+ "; invoke getter getService");
+		assertTrue("set command did not execute" , getOutputAfterSet.contains("myValue"));
+		
+		runCommand("connect " + restUrl + ";use-application serviceContextProperties" 
+				+ "; invoke setter removeInstanceByServiceName");
+//		String getServiceOutputAfterRemove = runCommand("connect " + restUrl + ";use-application serviceContextProperties" 
+//				+ "; invoke getter getService");
+//		assertTrue("getServie command should return null after key was removed" , getServiceOutputAfterRemove.toLowerCase().contains("null"));
+		
+		String getInstanceOutputAfterRemove = runCommand("connect " + restUrl + ";use-application serviceContextProperties" 
+				+ "; invoke -instanceid 1 getter getInstance");
+		assertTrue("getInstance command should return null after key was removed" , getInstanceOutputAfterRemove.toLowerCase().contains("null"));
+		
+	}
+	
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = true)
+	public void testCleanInstanceAfterSetService() throws Exception {
+		runCommand("connect " + restUrl + ";use-application serviceContextProperties" 
+				+ "; invoke setter setInstance1");
+		runCommand("connect " + restUrl + ";use-application serviceContextProperties" 
+				+ "; invoke setter setInstance2");
+		String getInstanceBeforeRemove = runCommand("connect " + restUrl + ";use-application serviceContextProperties" 
+				+ "; invoke -instanceid 1 setter getInstance");
+		assertTrue("set command did not execute" , getInstanceBeforeRemove.contains("myValue1"));
+		getInstanceBeforeRemove = runCommand("connect " + restUrl + ";use-application serviceContextProperties" 
+				+ "; invoke -instanceid 2 setter getInstance");
+		assertTrue("set command did not execute" , getInstanceBeforeRemove.contains("myValue2"));
+		
+		runCommand("connect " + restUrl + ";use-application serviceContextProperties" 
+				+ "; invoke -instanceid 1 setter cleanThisInstance");
+		String getInstanceAfterRemove = runCommand("connect " + restUrl + ";use-application serviceContextProperties" 
+				+ "; invoke -instanceid 1 setter getInstance");
+		assertTrue("get command should return null after key was removed" , getInstanceAfterRemove.toLowerCase().contains("null"));
+		getInstanceAfterRemove = runCommand("connect " + restUrl + ";use-application serviceContextProperties" 
+				+ "; invoke -instanceid 2 setter getInstance");
+		assertTrue("clear on instance 1 should not affect instance 2" , getInstanceAfterRemove.contains("myValue2"));
+	}
+	
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = true)
+	public void testCleanAppAfterSetService() throws Exception {
+		runCommand("connect " + restUrl + ";use-application serviceContextProperties" 
+				+ "; invoke setter setService; invoke setter setService2");
+		String getServiceBeforeClear = runCommand("connect " + restUrl + ";use-application serviceContextProperties" 
+				+ "; invoke setter getService; invoke setter getService2");
+		assertTrue("set command did not execute" , getServiceBeforeClear.contains("myValue") && getServiceBeforeClear.contains("myValue2"));
+				
+		runCommand("connect " + restUrl + ";use-application serviceContextProperties" 
+				+ "; invoke getter cleanThisApp");
+		String getServiceAfterClear = runCommand("connect " + restUrl + ";use-application serviceContextProperties" 
+				+ "; invoke setter setService ; invoke setter setService2");
+		assertTrue("clear app should not affect service attributes" , 
+				getServiceAfterClear.contains("myValue1") && getServiceAfterClear.contains("myValue2"));
+	}
+	
 	private void installApplication() throws PackagingException, IOException, InterruptedException, DSLException {
 		File applicationDir = new File(APPLICAION_DIR_PATH);
 		app = ServiceReader.getApplicationFromFile(applicationDir).getApplication();

@@ -228,7 +228,7 @@ public class AttributesTest extends AbstractLocalCloudTest {
 		assertTrue("iteratoring over instances", iterateInstances.contains("myValue1") && iterateInstances.contains("myValue2"));
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = true )
 	public void testRemoveThisService() throws Exception {
 		runCommand("connect " + restUrl + ";use-application serviceContextProperties" 
 				+ "; invoke setter setService; invoke setter setService2");

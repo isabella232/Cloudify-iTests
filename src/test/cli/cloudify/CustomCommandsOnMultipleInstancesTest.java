@@ -75,7 +75,7 @@ public class CustomCommandsOnMultipleInstancesTest extends AbstractLocalCloudTes
 	}
 	
 	//TODO: enable test once the dependency bug in the CLI is resolved.
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = true)
 	public void testXceptionCommand() throws Exception {
 		LogUtils.log("Checking exception command on all instances");
 		checkExceptionCommand();

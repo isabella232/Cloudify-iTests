@@ -85,11 +85,17 @@ public class AbstractLocalCloudTest extends AbstractTest {
             LogUtils.log("Could not create admin " + e1);
             throw e1;
         }
+        System.out.println("Machine [" + admin.getMachines().getMachines()[0].getHostName() + "], " +
+                "TotalPhysicalMem [" + admin.getMachines().getMachines()[0].getOperatingSystem().getDetails().getTotalPhysicalMemorySizeInGB() + "GB], " +
+                "FreePhysicalMem [" + admin.getMachines().getMachines()[0].getOperatingSystem().getStatistics().getFreePhysicalMemorySizeInGB() + "GB]]");
     }
 
     @BeforeMethod
     public void beforeTest() {
         LogUtils.log("Test Configuration Started: " + this.getClass());
+        System.out.println("Machine [" + admin.getMachines().getMachines()[0].getHostName() + "], " +
+                "TotalPhysicalMem [" + admin.getMachines().getMachines()[0].getOperatingSystem().getDetails().getTotalPhysicalMemorySizeInGB() + "GB], " +
+                "FreePhysicalMem [" + admin.getMachines().getMachines()[0].getOperatingSystem().getStatistics().getFreePhysicalMemorySizeInGB() + "GB]]");
     }
 
     @AfterMethod(alwaysRun = true)

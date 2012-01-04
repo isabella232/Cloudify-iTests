@@ -140,8 +140,7 @@ public class ScriptUtils {
     }
     
     public static boolean isLinuxMachine() {
-        String lineSeparator = System.getProperty("line.separator");
-        return lineSeparator.equals("\n");
+        return !isWindows();
     }
 
     public static String getBuildPath() {

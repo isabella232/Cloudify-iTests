@@ -38,6 +38,8 @@ import com.gigaspaces.log.LogEntries;
 import com.gigaspaces.log.LogEntry;
 import com.gigaspaces.log.LogProcessType;
 
+import framework.utils.ScriptUtils;
+
 public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 
 	
@@ -324,11 +326,15 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 	}
 
 	private void killProcess(long pid) {
-		try {
-			SigarHolder.getSigar().kill(pid, "SIGTERM");
-		} catch (SigarException e) {
-			throw new IllegalStateException("Failed to kill GSC PID: " + pid, e);
-		}
+        try {
+            if (ScriptUtils.isLinuxMachine()) {
+                SigarHolder.getSigar().kill(pid, "SIGKILL");
+            } else {
+                SigarHolder.getSigar().kill(pid, "SIGTERM");
+            }
+        } catch (SigarException e) {
+            throw new IllegalStateException("Failed to kill GSC PID: " + pid, e);
+        }
 
 		sleep(1000);
 

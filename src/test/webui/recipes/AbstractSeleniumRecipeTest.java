@@ -33,6 +33,7 @@ public class AbstractSeleniumRecipeTest extends AbstractSeleniumTest {
 	@Override
 	@AfterMethod(alwaysRun = true)
 	public void afterTest() {
+		restorePreviousBrowser();
 		LogUtils.log("Test Finished : " + this.getClass());
 	}
 	

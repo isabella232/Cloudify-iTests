@@ -24,27 +24,27 @@ public class StockDemoApplicationTest extends AbstractLocalCloudTest {
 		int currentNumberOfInstances;
 		currentNumberOfInstances = getProcessingUnitInstanceCount(ServiceUtils.getAbsolutePUName(STOCK_DEMO_APPLICATION_NAME, "cassandra"));
 		assertTrue("Expected 2 PU instances. Actual number of instances is " + currentNumberOfInstances, currentNumberOfInstances == 1);
-		assertPuStatusInstact("cassandra");
+		assertPuStatusInstact("stockdemo.cassandra");
 		
 		currentNumberOfInstances = getProcessingUnitInstanceCount(ServiceUtils.getAbsolutePUName(STOCK_DEMO_APPLICATION_NAME, "stockAnalyticsMirror"));
 		assertTrue("Expected 1 PU instances. Actual number of instances is " + currentNumberOfInstances, currentNumberOfInstances == 1);
-		assertPuStatusInstact("stockAnalyticsMirror");
+		assertPuStatusInstact("stockdemo.stockAnalyticsMirror");
 		
 		currentNumberOfInstances = getProcessingUnitInstanceCount(ServiceUtils.getAbsolutePUName(STOCK_DEMO_APPLICATION_NAME, "stockAnalyticsSpace"));
 		assertTrue("Expected 1 PU instances. Actual number of instances is " + currentNumberOfInstances, currentNumberOfInstances == 2);
-		assertPuStatusInstact("stockAnalyticsSpace");
+		assertPuStatusInstact("stockdemo.stockAnalyticsSpace");
 		
 		currentNumberOfInstances = getProcessingUnitInstanceCount(ServiceUtils.getAbsolutePUName(STOCK_DEMO_APPLICATION_NAME, "stockAnalyticsProcessor"));
 		assertTrue("Expected 1 PU instances. Actual number of instances is " + currentNumberOfInstances, currentNumberOfInstances == 4);
-		assertPuStatusInstact("stockAnalyticsProcessor");
+		assertPuStatusInstact("stockdemo.stockAnalyticsProcessor");
 		
 		currentNumberOfInstances = getProcessingUnitInstanceCount(ServiceUtils.getAbsolutePUName(STOCK_DEMO_APPLICATION_NAME, "StockDemo"));
 		assertTrue("Expected 1 PU instances. Actual number of instances is " + currentNumberOfInstances, currentNumberOfInstances == 1);
-		assertPuStatusInstact("StockDemo");
+		assertPuStatusInstact("stockdemo.StockDemo");
 		
 		currentNumberOfInstances = getProcessingUnitInstanceCount(ServiceUtils.getAbsolutePUName(STOCK_DEMO_APPLICATION_NAME, "stockAnalytics"));
 		assertTrue("Expected 1 PU instances. Actual number of instances is " + currentNumberOfInstances, currentNumberOfInstances == 1);
-		assertPuStatusInstact("stockAnalytics");
+		assertPuStatusInstact("stockdemo.stockAnalytics");
 		
 		for (GridServiceContainer gsc : admin.getGridServiceContainers().getContainers()) {
 			LogUtils.scanContainerLogsFor(gsc, "[SEVERE]");

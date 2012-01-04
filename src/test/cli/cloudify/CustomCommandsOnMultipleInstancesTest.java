@@ -153,7 +153,7 @@ public class CustomCommandsOnMultipleInstancesTest extends AbstractLocalCloudTes
 	}
 	
 	private void checkExceptionCommand() throws IOException, InterruptedException {
-		String invokeExceptionResult = runCommand("connect " + restUrl + ";use-application default" 
+		String invokeExceptionResult = CommandTestUtils.runCommandExpectedFail("connect " + restUrl + ";use-application default" 
 				+ "; invoke simpleCustomCommandsMultipleInstances exception");
 		
 		for(int i=1 ; i <= totalInstances ; i++){
@@ -163,7 +163,7 @@ public class CustomCommandsOnMultipleInstancesTest extends AbstractLocalCloudTes
 	}
 	
 	private void checkExceptionCommand(int instanceid) throws IOException, InterruptedException {
-		String invokeExceptionResult = runCommand("connect " + restUrl + ";use-application default" 
+		String invokeExceptionResult = CommandTestUtils.runCommandExpectedFail("connect " + restUrl + ";use-application default" 
 				+ "; invoke -instanceid " + instanceid + " simpleCustomCommandsMultipleInstances exception");
 		
 		assertTrue("Custom command 'exception' returned unexpected result from instance #" + instanceid +": " + invokeExceptionResult

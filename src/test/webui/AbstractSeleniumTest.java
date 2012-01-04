@@ -132,7 +132,8 @@ public abstract class AbstractSeleniumTest extends AbstractTest {
      * @throws IOException 
      */
     @AfterMethod(alwaysRun = true)
-    public void killWebServices() throws IOException, InterruptedException {  
+    public void killWebServices() throws IOException, InterruptedException {
+    	restorePreviousBrowser();
     }
     
     public void createAdmin() {

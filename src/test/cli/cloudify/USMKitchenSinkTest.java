@@ -416,7 +416,7 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 					+ invoke1Result);
 		}
 
-		String invoke2Result = runCommand("connect " + this.restUrl
+		String invoke2Result = CommandTestUtils.runCommandExpectedFail("connect " + this.restUrl
 				+ "; invoke kitchensink-service cmd2");
 
 		if ((!invoke2Result.contains("1: FAILED"))

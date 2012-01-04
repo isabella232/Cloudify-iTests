@@ -27,9 +27,9 @@ import org.openspaces.admin.AdminFactory;
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.testng.annotations.*;
 
-import com.gigaspaces.cloudify.shell.StringUtils;
+import com.gigaspaces.cloudify.restclient.ErrorStatusException;
+import com.gigaspaces.cloudify.restclient.StringUtils;
 import com.gigaspaces.cloudify.shell.commands.CLIException;
-import com.gigaspaces.cloudify.shell.rest.ErrorStatusException;
 import test.AbstractTest;
 
 public class AbstractLocalCloudTest extends AbstractTest {
@@ -158,7 +158,7 @@ public class AbstractLocalCloudTest extends AbstractTest {
     //This method implementation is used in order to access the admin api
     //without having to worry about locators issue.
     protected Map<String, Object> getAdminData(final String relativeUrl)
-            throws CLIException {
+            throws CLIException, ErrorStatusException {
         final String url = getFullUrl("/admin/" + relativeUrl);
         LogUtils.log("performing http get to url: " + url);
         final HttpGet httpMethod = new HttpGet(url);
@@ -170,7 +170,7 @@ public class AbstractLocalCloudTest extends AbstractTest {
     }
 
     private Map<String, Object> readHttpAdminMethod(
-            final HttpRequestBase httpMethod) throws CLIException {
+            final HttpRequestBase httpMethod) throws CLIException, ErrorStatusException {
         InputStream instream = null;
         try {
             DefaultHttpClient httpClient = new DefaultHttpClient();
@@ -209,7 +209,8 @@ public class AbstractLocalCloudTest extends AbstractTest {
     }
 
     //returns the number of processing unit instances of the specified service
-    protected int getProcessingUnitInstanceCount(String absolutePUName) throws CLIException {
+    protected int getProcessingUnitInstanceCount(String absolutePUName) throws CLIException,
+    ErrorStatusException {
         String puNameAdminUrl = "processingUnits/Names/" + absolutePUName;
         Map<String, Object> mongoProcessingUnitAdminData = getAdminData(puNameAdminUrl);
         return (Integer) mongoProcessingUnitAdminData.get("Instances-Size");

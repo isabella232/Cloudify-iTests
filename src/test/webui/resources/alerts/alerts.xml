@@ -56,5 +56,21 @@
 		class="org.openspaces.admin.alert.config.ProvisionFailureAlertConfiguration"
 		enabled="true">
 	</alert>
+	
+		<alert
+		class="org.openspaces.admin.alert.config.ElasticMachineProvisioningAlertConfiguration"
+		enabled="false">
+	</alert>
+		
+	<alert
+		class="org.openspaces.admin.alert.config.ElasticGridServiceAgentProvisioningAlertConfiguration"
+		enabled="true">
+	</alert>
+	
+	<alert
+		class="org.openspaces.admin.alert.config.ElasticGridServiceContainerProvisioningAlertConfiguration"
+		enabled="false">
+	</alert>
+	
 </alerts>
 

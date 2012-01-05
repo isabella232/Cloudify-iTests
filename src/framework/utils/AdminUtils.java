@@ -126,7 +126,7 @@ public class AdminUtils {
 	public static GridServiceContainer loadGSC(GridServiceAgent gsa) {
 		return loadGSC(gsa, null);
 	}
-	
+		
 	
 	/** loads 1 GSC via this GSA, tagged with the list of comma separated zones */
 	public static GridServiceContainer loadGSC(GridServiceAgent gsa, String zones) {
@@ -168,6 +168,11 @@ public class AdminUtils {
     /** loads 1 GSC via this GSA, tagged with the list of comma separated system properties */
 	public static GridServiceContainer loadGSCWithSystemProperty(Machine machine, String ... systemProperties) {
 		GridServiceAgent gsa = machine.getGridServiceAgents().waitForAtLeastOne();
+        return loadGSCWithSystemProperty(gsa, systemProperties);
+	}
+	
+	/** loads 1 GSC via this GSA, tagged with the list of comma separated system properties */
+	public static GridServiceContainer loadGSCWithSystemProperty(GridServiceAgent gsa, String ... systemProperties) {
         GridServiceContainerOptions options = new GridServiceContainerOptions();
         for(String prop : systemProperties){
             options = options.vmInputArgument(prop);    
@@ -185,6 +190,11 @@ public class AdminUtils {
 	/** loads 1 GSM via this GSA */
 	public static GridServiceManager loadGSM(GridServiceAgent gsa) {
 		return gsa.startGridServiceAndWait(new GridServiceManagerOptions().useScript());
+    }
+
+	/** loads 1 GSM via this GSA */
+	public static GridServiceManager loadGSMWithDebugger(GridServiceAgent gsa, int debugPort, boolean suspend) {
+		return gsa.startGridServiceAndWait(new GridServiceManagerOptions().environmentVariable("GSM_JAVA_OPTIONS", "-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,address="+debugPort+",suspend="+(suspend?"y":"n")).useScript());
     }
 	
 	/** loads 1 secured GSM via this GSA, */
@@ -317,8 +327,15 @@ public class AdminUtils {
 	}
 	
 	public static ElasticServiceManager loadESM(GridServiceAgent gsa) {
-		return gsa.startGridServiceAndWait(new ElasticServiceManagerOptions()
-		//.vmInputArgument("-Xdebug").vmInputArgument("-Xnoagent").vmInputArgument("-Djava.compiler=NONE").vmInputArgument("-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8000")
-		);
+		return gsa.startGridServiceAndWait(new ElasticServiceManagerOptions());
 	}
+	
+	public static ElasticServiceManager loadESMWithDebugger(GridServiceAgent gsa, int debugPort, boolean suspend) {
+		return gsa.startGridServiceAndWait(
+				new ElasticServiceManagerOptions()
+				.vmInputArgument("-Xdebug")
+				.vmInputArgument("-Xnoagent")
+				.vmInputArgument("-Djava.compiler=NONE")
+				.vmInputArgument("-Xrunjdwp:transport=dt_socket,server=y,address="+debugPort+",suspend="+(suspend?"y":"n")));
+    }
 }

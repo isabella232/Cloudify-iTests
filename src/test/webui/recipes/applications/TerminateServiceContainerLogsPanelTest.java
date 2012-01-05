@@ -23,12 +23,14 @@ import test.webui.objects.topology.applicationmap.ApplicationNode;
 import test.webui.objects.topology.logspanel.LogsMachine;
 import test.webui.objects.topology.logspanel.LogsPanel;
 import test.webui.objects.topology.logspanel.PuLogsPanelService;
+import test.webui.resources.WebConstants;
 
 public class TerminateServiceContainerLogsPanelTest extends AbstractSeleniumApplicationRecipeTest {
 	
 	@Override
 	@BeforeMethod
 	public void install() throws IOException, InterruptedException {
+		setBrowser(WebConstants.CHROME);
 		setCurrentApplication("travel");
 		super.install();
 	}
@@ -51,7 +53,7 @@ public class TerminateServiceContainerLogsPanelTest extends AbstractSeleniumAppl
 		
 		travelNode.select();
 		
-		ProcessingUnit travelPu = admin.getProcessingUnits().getProcessingUnit("tomcat");
+		ProcessingUnit travelPu = admin.getProcessingUnits().getProcessingUnit("travel.tomcat");
 		
 		final GridServiceContainer travelContainer = travelPu.getInstances()[0].getGridServiceContainer();
 		
@@ -71,6 +73,8 @@ public class TerminateServiceContainerLogsPanelTest extends AbstractSeleniumAppl
 		hostAndServicesGrid.terminateGSC(travelContainer);
 		
 		mainNav.switchToTopology();
+		
+		travelNode.select();
 		
 		ProcessingUnitUtils.waitForDeploymentStatus(travelPu, DeploymentStatus.SCHEDULED);
 		ProcessingUnitUtils.waitForDeploymentStatus(travelPu, DeploymentStatus.INTACT);

@@ -54,6 +54,7 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 			"init fired Test Property number 1",
 			"init external class",
 			"preInstall fired Test Property number 2",
+			"install event fired",
 			"postInstall fired Test Property number 1",
 			"preStart fired Test Property number 2", "postStart fired",
 			"Instantiated default.kitchensink-service" };
@@ -456,7 +457,7 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 				|| (!invoke5Result
 						.contains("this is the custom parameters command. expecting 123: 123"))) {
 			AssertFail("Custom command cmd5 returned unexpected result: "
-					+ invoke1Result);
+					+ invoke5Result);
 		}	
 		String invoke6Result = runCommand("connect " + this.restUrl
 				+ "; invoke kitchensink-service cmd6 1 2");
@@ -465,7 +466,7 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 				|| (!invoke6Result.contains("Argument:1")) 
 				|| !invoke6Result.contains("Argument:2")) {
 			AssertFail("Custom command cmd6 returned unexpected result: "
-					+ invoke1Result);
+					+ invoke6Result);
 		}	
 		
 		String invoke7Result = runCommand("connect " + this.restUrl
@@ -474,7 +475,7 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 		if ((!invoke7Result.contains("1: OK"))
 				|| (!invoke7Result.contains("Single parameter test:parameter=1"))) {
 			AssertFail("Custom command cmd7 returned unexpected result: "
-					+ invoke1Result);
+					+ invoke7Result);
 		}
 	}
 

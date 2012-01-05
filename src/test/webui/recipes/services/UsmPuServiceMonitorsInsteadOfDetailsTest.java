@@ -26,7 +26,7 @@ public class UsmPuServiceMonitorsInsteadOfDetailsTest extends AbstractSeleniumSe
 		super.install();
 	}
 	
-	@Test
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT)
 	public void testServiceMonitors() throws InterruptedException {
 		
 		boolean shouldFail = false;

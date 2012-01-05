@@ -8,13 +8,21 @@ import com.gigaspaces.cloudify.dsl.utils.ServiceUtils;
 
 import framework.tools.SGTestHelper;
 import framework.utils.LogUtils;
-
+/**
+ * StockDemoApplicationTest verifies the StockDemo application is installed properly.
+ * The StockDemo application files are being created and placed in the SG apps folder
+ * automatically by the build from the SVN and there-for, the application file do not reside in the SG apps folder.
+ * This means that in-order to run the test locally, you must first reset the application path (Locally). 
+ * @author adaml
+ *
+ */
 public class StockDemoApplicationTest extends AbstractLocalCloudTest {
 	
 	private String STOCK_DEMO_APPLICATION_NAME = "stockdemo";
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
 	public void testStockdemoApplication() throws Exception {
+		//If running locally, read test description first.
 		String applicationDir = SGTestHelper.getSGTestRootDir() + "/apps/USM/usm/applications/stockdemo";
 		String command = "connect " + restUrl + ";" + "install-application " + "--verbose -timeout 25 " + applicationDir;
 		CommandTestUtils.runCommandAndWait(command);

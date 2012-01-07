@@ -59,7 +59,7 @@ public class TerminateServiceContainerLogsPanelTest extends AbstractSeleniumAppl
 		
 		LogsPanel logsPanel = topology.getTopologySubPanel().switchToLogsPanel();
 		
-		PuLogsPanelService travelLogsService = logsPanel.getPuLogsPanelService("tomcat");
+		PuLogsPanelService travelLogsService = logsPanel.getPuLogsPanelService("travel.tomcat");
 		
 		Machine localHost = travelContainer.getMachine();
 		

@@ -18,12 +18,12 @@ import javax.xml.stream.XMLStreamReader;
 
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverBackedSelenium;
+import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
@@ -50,6 +50,7 @@ import framework.tools.SGTestHelper;
 import framework.utils.AdminUtils;
 import framework.utils.AssertUtils;
 import framework.utils.AssertUtils.RepetitiveConditionProvider;
+import framework.utils.IOUtils;
 import framework.utils.LogUtils;
 import framework.utils.ProcessingUnitUtils;
 import framework.utils.ScriptUtils;
@@ -65,52 +66,42 @@ import framework.utils.ScriptUtils.RunScript;
 
 public abstract class AbstractSeleniumTest extends AbstractTest {
 	
-    protected final String scriptName = "../tools/gs-webui/"+"gs-webui";
+    private final String scriptName = "../tools/gs-webui/gs-webui";
+    private final static String baseUrlApache = "http://localhost:" + System.getenv("apache.port")  + "/gs-webui/";
+    private final static String apachelb = "../tools/apache/apache-lb-agent -apache " + '"' + System.getenv("apache.home") + '"';
+    
     protected final static String baseUrl = "http://localhost:8099/";
-    protected final static String baseUrlApache = "http://localhost:" + System.getenv("apache.port")  + "/gs-webui/";
-    protected final static String apachelb = "../tools/apache/apache-lb-agent -apache " + '"' + System.getenv("apache.home") + '"';
     protected final static String originalAlertXml = SGTestHelper.getSGTestRootDir() + "/src/test/webui/resources/alerts/alerts.xml";
     protected final static int FIREFOX = 0;
     protected final static int CHROME = 1;
-    protected final static String localHost = "pc-lab72";
-    protected final static String remoteHost = "pc-lab73";
-    protected final int MIN_REQ_WINDOW_WIDTH = 1024;
-    protected final int MIN_REQ_WINDOW_HEIGHT = 768;
+
     protected final static String SUB_TYPE_CONTEXT_PROPERTY = "com.gs.service.type";
     protected final static String APPLICATION_CONTEXT_PROPERY = "com.gs.application";
     protected final static String DEPENDS_ON_CONTEXT_PROPERTY = "com.gs.application.dependsOn";
     protected final static String LICENSE_PATH = SGTestHelper.getBuildDir() + "/gslicense.xml";
+    
     protected static long waitingTime = 30000;
 
-    	
-    
-    RunScript scriptWebUI;
-    RunScript scriptLoadBalancer;
-    protected WebDriver driver;
-    protected Selenium selenium;
-    protected ProcessingUnit webSpace;
-    protected GridServiceManager webUIGSM;
-    ProcessingUnit gswebui;
-    
-	public static void assertTrue(String message, final boolean cond) {
-		
-		RepetitiveConditionProvider conditionProvider = new RepetitiveConditionProvider() {
-			@Override
-			public boolean getCondition() {
-				return cond;
-			}
-		};
-		AssertUtils.repetitiveAssertTrue(message, conditionProvider, waitingTime);		
-	}
-	
-	public static void assertTrue(final boolean cond) {
-		assertTrue(null, cond);
-	}
+    private RunScript scriptWebUI;
+    private RunScript scriptLoadBalancer;
+    private WebDriver driver;
+    private Selenium selenium;
+    private ProcessingUnit webSpace;
+    private GridServiceManager webUIGSM;
+    private ProcessingUnit gswebui;
     
     private final String defaultBrowser = 
     	(System.getProperty("selenium.browser") != null) ? System.getProperty("selenium.browser"): "Firefox";
     
-    List<Selenium> seleniumBrowsers = new ArrayList<Selenium>();
+    private List<Selenium> seleniumBrowsers = new ArrayList<Selenium>();
+    
+    public GridServiceManager getWebuiManagingGsm() {
+    	return webUIGSM;
+    }
+    
+    public boolean isStartWebServerFromBatch() {
+    	return true;
+    }
     
     @BeforeSuite(alwaysRun = true)
     public void getDefaultBrowser() {
@@ -124,6 +115,14 @@ public abstract class AbstractSeleniumTest extends AbstractTest {
      */
     @BeforeMethod(alwaysRun = true)
     public void startWebServices() throws Exception { 
+    	if (isStartWebServerFromBatch()) {
+    		startWebServer();
+    	}
+    	else {
+   			replaceBalancerTemplate();
+    		startLoadBalancerWebServer();
+    	}
+    	startWebBrowser(baseUrl);
     }
     
     /**
@@ -132,16 +131,20 @@ public abstract class AbstractSeleniumTest extends AbstractTest {
      * @throws IOException 
      */
     @AfterMethod(alwaysRun = true)
-    public void killWebServices() throws IOException, InterruptedException {
-    	
-    }
-    
-    public void createAdmin() {
-    	super.beforeTest();
-    }
-    
-    public void closeAdmin() {
-    	super.afterTest();
+    public void killWebServices() throws IOException, InterruptedException {  
+    	try {
+    		if (isStartWebServerFromBatch()) {
+    			stopWebServer();
+    		}
+    		else {
+    			stopLoadBalancerWebServer();
+    		}
+    		stopWebBrowser();
+    	}
+    	finally {
+    		restorePreviousBrowser();
+    	}
+
     }
     
     public void startWebServer() throws Exception {	
@@ -207,8 +210,8 @@ public abstract class AbstractSeleniumTest extends AbstractTest {
     			LogUtils.log("Could not establish a connection to webui server, Test will fail");
     		}
     	}
-    	catch (Exception e) {
-    		LogUtils.log("Failed to launch browser, The test should fail on an NPE");
+    	catch (WebDriverException e) {
+    		LogUtils.log("Failed to launch browser, The test should fail on an NPE", e);
     	}
     }
     
@@ -220,7 +223,7 @@ public abstract class AbstractSeleniumTest extends AbstractTest {
     	}
     }
     
-    public void startLoadBalancerWebServer() throws Exception {
+    private void startLoadBalancerWebServer() throws Exception {
     	
        	log("launching web server");
 		log("waiting for 1 GSA");
@@ -256,7 +259,7 @@ public abstract class AbstractSeleniumTest extends AbstractTest {
 		log("web-ui clients should connect to : " + baseUrlApache);
     }
     
-    public void stopLoadBalancerWebServer() throws IOException, InterruptedException {
+    private void stopLoadBalancerWebServer() throws IOException, InterruptedException {
     	log("undeploying webui");
     	gswebui.undeploy();
     	ProcessingUnitUtils.waitForDeploymentStatus(gswebui, DeploymentStatus.UNDEPLOYED);
@@ -268,14 +271,15 @@ public abstract class AbstractSeleniumTest extends AbstractTest {
     	File gsconf = new File(System.getenv("apache.home") + "/conf/gigaspaces/gs-webui.conf");
     	gsconf.delete();
     }
+    
+    private void replaceBalancerTemplate() throws IOException {
+		String oldFile = ScriptUtils.getBuildPath() + "/tools/apache/balancer-template.vm";
+		String newFile = SGTestHelper.getSGTestRootDir() + "/src/test/webui/resources/balancer-template.vm";
+		IOUtils.replaceFile(oldFile, newFile);
+    }
 	
 	public LoginPage getLoginPage() {
-		seleniumBrowsers.add(selenium);
-		String groupsProperty = System.getProperty("com.gs.jini_lus.groups");
-        if (groupsProperty == null) {
-            groupsProperty = System.getenv("LOOKUPGROUPS");
-        }
-		return new LoginPage(selenium, driver,groupsProperty);
+		return getLoginPage(this.selenium,this.driver);
 	}
 	
 	public WebDriver getDriver() {
@@ -287,12 +291,10 @@ public abstract class AbstractSeleniumTest extends AbstractTest {
 	}
 	
 	private LoginPage getLoginPage(Selenium selenium, WebDriver driver) {
-		seleniumBrowsers.add(selenium);
-		String groupsProperty = System.getProperty("com.gs.jini_lus.groups");
-        if (groupsProperty == null) {
-            groupsProperty = System.getenv("LOOKUPGROUPS");
-        }
-		return new LoginPage(selenium, driver, groupsProperty);
+		if (admin.getGroups().length == 0) {
+			throw new IllegalStateException("Expected at least one lookupgroup");
+		}
+		return new LoginPage(selenium, driver, admin.getGroups()[0]);
 	}
 	
 	public boolean verifyAlertThrown() {
@@ -346,33 +348,6 @@ public abstract class AbstractSeleniumTest extends AbstractTest {
 			}
 		}
 	}
-    
-	/**
-	 * Restores the browser window to the specified size.
-	 * @param width The desired width in pixels.
-	 * @param height The desired height in pixels.
-	 * @since 8.0.4
-	 */
-	public void windowRestore(int width, int height) {
-		String keyPressScript = "window.resizeTo(" + width + "," + height + ");";
-		((JavascriptExecutor) driver).executeScript(keyPressScript);
-	}
-
-	/**
-	 * Restores the browser window to the size specified as the minimum required size by design.
-	 * @since 8.0.4
-	 */
-	public void windowRestoreMinimumRequirement() {
-		windowRestore(MIN_REQ_WINDOW_WIDTH, MIN_REQ_WINDOW_HEIGHT);
-	}
-
-	/**
-	 * Maximizes the browser window.
-	 * @since 8.0.4
-	 */
-	public void windowMaximize() {
-		selenium.windowMaximize();
-	}
 	
 	public void setBrowser(String browser) {
 		System.setProperty("selenium.browser", browser);
@@ -380,7 +355,7 @@ public abstract class AbstractSeleniumTest extends AbstractTest {
 	
 	public void restorePreviousBrowser() {
 		LogUtils.log("restoring browser setting to " + defaultBrowser);
-		System.setProperty("selenium.browser", defaultBrowser);
+		setBrowser(defaultBrowser);
 	}
 	
 	/**
@@ -415,9 +390,10 @@ public abstract class AbstractSeleniumTest extends AbstractTest {
 		try {
 			AssertUtils.repetitiveAssertTrue(null, condition, waitingTime);
 		}
-		catch (Throwable t) {
+		catch (AssertionError err) {
 			takeScreenShot(cls, methodName, picName);
-			AssertUtils.AssertFail(message);
+			LogUtils.log(message, err);
+			AssertUtils.AssertFail("Test Failed");
 		}
 		
 	}
@@ -427,13 +403,14 @@ public abstract class AbstractSeleniumTest extends AbstractTest {
 		try {
 			assertTrue(condition);
 		}
-		catch (Throwable t) {
+		catch (AssertionError err) {
 			takeScreenShot(cls, methodName, picName);
+			LogUtils.log("Stacktrace: ", err);
 			AssertUtils.AssertFail("Test Failed");
 		}
 		
 	}
-	
+    
 	public boolean isDevMode() {
 		return !System.getenv("USERNAME").equals("ca");
 	}

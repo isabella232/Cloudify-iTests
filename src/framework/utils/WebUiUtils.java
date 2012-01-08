@@ -29,7 +29,6 @@ import org.openqa.selenium.WebElement;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
-import com.google.common.io.Files;
 import com.thoughtworks.selenium.Selenium;
 
 /**
@@ -254,12 +253,6 @@ public class WebUiUtils {
 				}
 			}
 		}
-	}
-	
-	public static void replaceFile(String oldFile, String newFile) throws IOException {
-		File oldbalancer = new File(oldFile);
-		oldbalancer.delete();
-		Files.copy(new File(newFile), new File(oldFile));
 	}
 }
 

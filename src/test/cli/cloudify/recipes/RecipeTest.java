@@ -76,6 +76,8 @@ public class RecipeTest extends AbstractLocalCloudTest {
 		super.beforeTest();
 		String tomcatDirPath = recipesDirPath + "/tomcat";
 		runCommand("connect " + restUrl + ";install-service --verbose " + tomcatDirPath);
+		runCommand("connect " + restUrl + ";uninstall-service --verbose tomcat");
+		
 	}
 	 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, groups = "1", enabled = false)
@@ -90,6 +92,7 @@ public class RecipeTest extends AbstractLocalCloudTest {
 		super.beforeTest();
 		String jbossDirPath = recipesDirPath + "/jboss";
 		runCommand("connect " + restUrl +  ";install-service --verbose " + jbossDirPath);
+		runCommand("connect " + restUrl +  ";uninstall-service --verbose jboss-service");
 	}	
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, groups = "1", enabled = true)

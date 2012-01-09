@@ -2,6 +2,7 @@ package test.cli.cloudify;
 
 import static framework.utils.LogUtils.log;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetAddress;
@@ -13,6 +14,7 @@ import java.util.concurrent.TimeUnit;
 import framework.utils.*;
 import net.jini.discovery.Constants;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -44,8 +46,11 @@ public class AbstractLocalCloudTest extends AbstractTest {
     private static Set<String> alivePIDs = null;
 
 
+    
     @BeforeSuite
     public void beforeSuite() throws Exception {
+    	cleanUpCloudifyLocalDir();
+    	
         LogUtils.log("Tearing-down existing localclouds");
         runCommand("teardown-localcloud");
         clientStartupPIDs = SetupUtils.getLocalProcesses();
@@ -76,7 +81,27 @@ public class AbstractLocalCloudTest extends AbstractTest {
         localCloudPIDs = SetupUtils.getClientProcessesIDsDelta(clientStartupPIDs, alivePIDs);
     }
 
-    @BeforeClass
+
+
+	private void cleanUpCloudifyLocalDir() throws IOException {
+		final String userHomeProp = System.getProperty("user.home");
+    	final File userHomeDir = new File(userHomeProp, ".cloudify");
+    	LogUtils.log("Cleaning up cloudify folder under 'user.home' folder at: " + userHomeDir);
+    	
+    	if(!userHomeDir.exists()) {
+    		LogUtils.log(userHomeDir + " does not exist");
+    	} else {
+    		if(!userHomeDir.isDirectory()) {
+    			LogUtils.log(userHomeDir + " is not a directory!");
+    		} else {
+    			FileUtils.cleanDirectory(userHomeDir);
+    		}
+    	}
+	}
+
+    
+
+	@BeforeClass
     public void beforeClass() throws Exception {
         LogUtils.log("Test Class Configuration Started: " + this.getClass());
         try {

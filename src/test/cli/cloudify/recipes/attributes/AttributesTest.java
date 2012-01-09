@@ -299,7 +299,7 @@ public class AttributesTest extends AbstractLocalCloudTest {
 		String getServiceAfterClear = runCommand("connect " + restUrl + ";use-application serviceContextProperties" 
 				+ "; invoke setter setService ; invoke setter setService2");
 		assertTrue("clear app should not affect service attributes" , 
-				getServiceAfterClear.contains("myValue1") && getServiceAfterClear.contains("myValue2"));
+				getServiceAfterClear.contains("myValue") && getServiceAfterClear.contains("myValue2"));
 	}
 	
 	private void installApplication() throws PackagingException, IOException, InterruptedException, DSLException {

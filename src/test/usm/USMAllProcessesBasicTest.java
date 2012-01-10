@@ -53,7 +53,7 @@ public class USMAllProcessesBasicTest extends UsmAbstractTest {
 		gscA = AdminUtils.loadGSC(machineA); // GSC A
 	}
 
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = false)
 	public void jmxTest() throws Exception {
 		setProcessName(CloudifyConstants.DEFAULT_APPLICATION_NAME + "." + UsmAbstractTest.SIMPLE_JAVA);
 		final Service service = USMTestUtils.usmDeploy(processName, UsmAbstractTest.SIMPLE_JAVA_SERVICE_FILE_NAME);
@@ -74,7 +74,7 @@ public class USMAllProcessesBasicTest extends UsmAbstractTest {
 	 * The modified version opens port 7790. The test checks that the port opens, and then un-deploys.
 	 * @throws Exception .
 	 */
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = false)
 	public void simpleProcessModifiedTest() throws Exception {
 		setProcessName(CloudifyConstants.DEFAULT_APPLICATION_NAME + "." + UsmAbstractTest.SIMPLE_JAVA);
 		this.serviceFileName = "simplejava-modifiedservice.groovy";
@@ -113,14 +113,14 @@ public class USMAllProcessesBasicTest extends UsmAbstractTest {
 		}
 	}
 
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = false)
 	public void simpleProcessTest() throws Exception {
 		setProcessName(CloudifyConstants.DEFAULT_APPLICATION_NAME + "." + UsmAbstractTest.SIMPLE_JAVA);
 		this.serviceFileName = UsmAbstractTest.SIMPLE_JAVA_SERVICE_FILE_NAME;
 		basicTest();
 	}
 
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = false)
 	public void cassandraTest() throws Exception {
 		setProcessName(CloudifyConstants.DEFAULT_APPLICATION_NAME + "." + UsmAbstractTest.CASSANDRA);
 		this.serviceFileName = UsmAbstractTest.CASSANDRA_SERVICE_FILE_NAME;

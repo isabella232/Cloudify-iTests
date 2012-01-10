@@ -3,7 +3,6 @@ package test.webui.recipes.applications;
 import java.io.IOException;
 
 import org.openspaces.admin.AdminFactory;
-import org.openspaces.admin.application.Application;
 import org.openspaces.admin.pu.DeploymentStatus;
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.testng.annotations.AfterMethod;
@@ -107,11 +106,5 @@ public class AbstractSeleniumApplicationRecipeTest extends AbstractSeleniumRecip
 			CommandTestUtils.runCommand(command);
 			return true;
 		}
-	}
-	
-	private boolean isApplicationInstalled(String applicationName) {
-		Application app = admin.getApplications().getApplication(applicationName);
-		return (app != null);
-		
 	}
 }

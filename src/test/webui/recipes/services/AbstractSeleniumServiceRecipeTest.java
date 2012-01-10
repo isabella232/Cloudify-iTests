@@ -107,10 +107,4 @@ public class AbstractSeleniumServiceRecipeTest extends AbstractSeleniumRecipeTes
 			return true;
 		}
 	}
-	
-	private boolean isServiceInstalled(String serviceName) {
-		ProcessingUnit pu = admin.getProcessingUnits().getProcessingUnit("default." + serviceName);
-		return (pu != null);
-		
-	}
 }

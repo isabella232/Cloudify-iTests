@@ -21,12 +21,13 @@ service {
                 "getAppCustom" : {x -> return(context.attributes.thisApplication[x])},
 				"setInstance1" : {context.attributes.thisService.instances[1].myKey = "myValue1"},
 				"setInstance2" : {context.attributes.thisService.instances[2].myKey = "myValue2"},
+				"setInstanceCustom" : {x, y -> return(context.attributes.thisInstance[x] = y)},
 				"setAppCustomPojo" : { 
 					Data data = new Data(1)
 					data.data = "data"
 					context.attributes.thisApplication["myPojo"] = data},
-				"setServiceDouble" : {context.attributes.thisService["myDouble"] = new Double(2)},
 				"getInstance" : {context.attributes.thisInstance["myKey"]},
+				"getInstanceCustom" : {x -> return(context.attributes.thisInstance[x])},
 				"getApp" : {context.attributes.thisApplication.myKey},
 				"getService" : {context.attributes.thisService.myKey},
 				"getService2" : {context.attributes.thisService.myKey2},

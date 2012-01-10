@@ -17,7 +17,6 @@ service {
 			"getService" : {context.attributes.thisService["myKey"]},
 			"getServiceScript" : "get_service_context_property.groovy",
 			"getAppCustomPojo" : {context.attributes.thisApplication["myPojo"]},
-			"getServiceDouble" : {context.attributes.thisService["myDouble"]},
 			"getAppCustom" : {x-> return(context.attributes.thisApplication[x])},
 			"setService" : {context.attributes.thisService["myKey"] = "myValue"},
 			"cleanThisApp" : {context.attributes.thisApplication.clear()}

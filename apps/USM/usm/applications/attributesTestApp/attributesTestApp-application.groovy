@@ -1,6 +1,6 @@
 
 application {
-	name="serviceContextProperties"
+	name="attributesTestApp"
 	
 	service {
 		name = "getter"	

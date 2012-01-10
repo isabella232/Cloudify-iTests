@@ -1,20 +1,8 @@
 package test.webui;
 
-import static framework.utils.AdminUtils.loadGSM;
-import static framework.utils.LogUtils.log;
-
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
-
-import javax.xml.stream.FactoryConfigurationError;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
 
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.By;
@@ -28,18 +16,13 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
-import org.openspaces.admin.gsa.GridServiceAgent;
-import org.openspaces.admin.gsm.GridServiceManager;
-import org.openspaces.admin.machine.Machine;
-import org.openspaces.admin.pu.DeploymentStatus;
-import org.openspaces.admin.pu.ProcessingUnit;
-import org.openspaces.admin.pu.ProcessingUnitDeployment;
-import org.openspaces.admin.space.SpaceDeployment;
 import org.testng.annotations.AfterMethod;
+import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
 
 import test.AbstractTest;
+import test.cli.cloudify.CommandTestUtils;
 import test.webui.objects.LoginPage;
 import test.webui.objects.dashboard.DashboardTab;
 import test.webui.resources.WebConstants;
@@ -47,14 +30,9 @@ import test.webui.resources.WebConstants;
 import com.thoughtworks.selenium.Selenium;
 
 import framework.tools.SGTestHelper;
-import framework.utils.AdminUtils;
 import framework.utils.AssertUtils;
 import framework.utils.AssertUtils.RepetitiveConditionProvider;
-import framework.utils.IOUtils;
 import framework.utils.LogUtils;
-import framework.utils.ProcessingUnitUtils;
-import framework.utils.ScriptUtils;
-import framework.utils.ScriptUtils.RunScript;
 
 
 /**
@@ -66,100 +44,43 @@ import framework.utils.ScriptUtils.RunScript;
 
 public abstract class AbstractSeleniumTest extends AbstractTest {
 	
-    private final String scriptName = "../tools/gs-webui/gs-webui";
-    private final static String baseUrlApache = "http://localhost:" + System.getenv("apache.port")  + "/gs-webui/";
-    private final static String apachelb = "../tools/apache/apache-lb-agent -apache " + '"' + System.getenv("apache.home") + '"';
-    
-    protected final static String baseUrl = "http://localhost:8099/";
-    protected final static String originalAlertXml = SGTestHelper.getSGTestRootDir() + "/src/test/webui/resources/alerts/alerts.xml";
-    protected final static int FIREFOX = 0;
-    protected final static int CHROME = 1;
-
-    protected final static String SUB_TYPE_CONTEXT_PROPERTY = "com.gs.service.type";
-    protected final static String APPLICATION_CONTEXT_PROPERY = "com.gs.application";
-    protected final static String DEPENDS_ON_CONTEXT_PROPERTY = "com.gs.application.dependsOn";
-    protected final static String LICENSE_PATH = SGTestHelper.getBuildDir() + "/gslicense.xml";
+	public static boolean bootstraped;
+	
+	public static String METRICS_ASSERTION_SUFFIX = " metric that is defined in the dsl is not displayed in the metrics panel";    
     
     protected static long waitingTime = 30000;
 
-    private RunScript scriptWebUI;
-    private RunScript scriptLoadBalancer;
     private WebDriver driver;
     private Selenium selenium;
-    private ProcessingUnit webSpace;
-    private GridServiceManager webUIGSM;
-    private ProcessingUnit gswebui;
     
     private final String defaultBrowser = 
     	(System.getProperty("selenium.browser") != null) ? System.getProperty("selenium.browser"): "Firefox";
-    
-    private List<Selenium> seleniumBrowsers = new ArrayList<Selenium>();
-    
-    public GridServiceManager getWebuiManagingGsm() {
-    	return webUIGSM;
-    }
-    
-    public boolean isStartWebServerFromBatch() {
-    	return true;
-    }
-    
-    @BeforeSuite(alwaysRun = true)
-    public void getDefaultBrowser() {
-    	LogUtils.log("default browser is : " + defaultBrowser);
-    }
-    
-    /**
-     * starts the web-ui browser from the batch file in gigaspaces
-     * also opens a browser and connect to the server
-     * @throws Exception 
-     */
-    @BeforeMethod(alwaysRun = true)
-    public void startWebServices() throws Exception { 
-    	if (isStartWebServerFromBatch()) {
-    		startWebServer();
-    	}
-    	else {
-   			replaceBalancerTemplate();
-    		startLoadBalancerWebServer();
-    	}
-    	startWebBrowser(baseUrl);
-    }
-    
-    /**
-     * stops the server and kills all open browsers
-     * @throws InterruptedException 
-     * @throws IOException 
-     */
-    @AfterMethod(alwaysRun = true)
-    public void killWebServices() throws IOException, InterruptedException {  
-    	try {
-    		if (isStartWebServerFromBatch()) {
-    			stopWebServer();
-    		}
-    		else {
-    			stopLoadBalancerWebServer();
-    		}
-    		stopWebBrowser();
-    	}
-    	finally {
-    		restorePreviousBrowser();
-    	}
 
-    }
-    
-    public void startWebServer() throws Exception {	
-    	LogUtils.log("Starting webui server...");
-    	scriptWebUI = ScriptUtils.runScript(scriptName);
-    	Thread.sleep(5000);
-    }
-    
-    public void stopWebServer() throws IOException, InterruptedException {
-    	LogUtils.log("Killing web server...");
-    	if (scriptWebUI != null) {
-    		scriptWebUI.kill();
-    	}
-    	Thread.sleep(5000);
-    }
+	@BeforeSuite(alwaysRun = true)
+	public void bootstrap() throws IOException, InterruptedException {
+		LogUtils.log("default browser is : " + defaultBrowser);
+		assertTrue(bootstrapLocalCloud());
+		bootstraped = true;
+	}
+	
+	@AfterSuite(alwaysRun = true)
+	public void teardown() throws IOException, InterruptedException {
+		assertTrue(tearDownLocalCloud());
+		bootstraped = false;
+	}
+	
+	@Override
+	@BeforeMethod(alwaysRun = true)
+	public void beforeTest() {
+		LogUtils.log("Test Configuration Started : " + this.getClass());
+	}
+	
+	@Override
+	@AfterMethod(alwaysRun = true)
+	public void afterTest() {
+		restorePreviousBrowser();
+		LogUtils.log("Test Finished : " + this.getClass());
+	}   
     
     public void startWebBrowser(String uRL) throws InterruptedException {
     	try {
@@ -191,7 +112,6 @@ public abstract class AbstractSeleniumTest extends AbstractTest {
     		int seconds = 0;
     		driver.get(uRL);
     		selenium = new WebDriverBackedSelenium(driver, uRL);
-    		seleniumBrowsers.add(selenium);
     		Thread.sleep(3000);
     		while (seconds < 10) {
     			try {
@@ -215,79 +135,15 @@ public abstract class AbstractSeleniumTest extends AbstractTest {
     	}
     }
     
-    public void stopWebBrowser() throws InterruptedException {
+    public void stopWebBrowser() {
     	LogUtils.log("Killing browser...");
-    	for (Selenium selenium : seleniumBrowsers) {
+    	if (selenium != null) {
     		selenium.stop();
-    		Thread.sleep(1000);
     	}
-    }
-    
-    private void startLoadBalancerWebServer() throws Exception {
-    	
-       	log("launching web server");
-		log("waiting for 1 GSA");
-		admin.getGridServiceAgents().waitFor(1);
-		
-		GridServiceAgent[] agents = admin.getGridServiceAgents().getAgents();
-		GridServiceAgent gsaA = agents[0];
-		
-		Machine machineA = gsaA.getMachine();
-		
-		log("loading GSM");
-		webUIGSM = loadGSM(machineA);
-		
-		log("loading 2 gsc's on one machine");
-		AdminUtils.loadGSCWithSystemProperty(machineA, "-Dorg.eclipse.jetty.level=ALL");	
-		AdminUtils.loadGSCWithSystemProperty(machineA, "-Dorg.eclipse.jetty.level=ALL");
-        log("deploying the space");
-        webSpace = webUIGSM.deploy(new SpaceDeployment("webSpace").numberOfInstances(1)
-                .numberOfBackups(1).maxInstancesPerVM(1).setContextProperty("com.gs.application", "gs-webui"));
-        ProcessingUnitUtils.waitForDeploymentStatus(webSpace, DeploymentStatus.INTACT);
-    	
-    	log("launching web-ui server");
-    	String gswebuiWar = ScriptUtils.getBuildPath() + "/tools/gs-webui/gs-webui.war";
-		ProcessingUnitDeployment webuiDeployment = new ProcessingUnitDeployment(new File(gswebuiWar)).numberOfInstances(2).numberOfBackups(0)
-			.maxInstancesPerVM(1).setContextProperty("jetty.sessions.spaceUrl", "jini://*/*/webSpace").setContextProperty("com.gs.application", "gs-webui");
-		gswebui = webUIGSM.deploy(webuiDeployment);
-		ProcessingUnitUtils.waitForDeploymentStatus(gswebui, DeploymentStatus.INTACT);
-		log("starting gigaspaces apache load balancer client with command : " + apachelb);
-		scriptLoadBalancer = ScriptUtils.runScript(apachelb);
-		Thread.sleep(5000);
-		log(scriptLoadBalancer.getScriptOutput());
-		log("apache load balancer now running");
-		log("web-ui clients should connect to : " + baseUrlApache);
-    }
-    
-    private void stopLoadBalancerWebServer() throws IOException, InterruptedException {
-    	log("undeploying webui");
-    	gswebui.undeploy();
-    	ProcessingUnitUtils.waitForDeploymentStatus(gswebui, DeploymentStatus.UNDEPLOYED);
-    	log("undeploying webSpace");
-    	webSpace.undeploy();
-    	ProcessingUnitUtils.waitForDeploymentStatus(webSpace, DeploymentStatus.UNDEPLOYED);
-    	scriptLoadBalancer.kill();
-    	Thread.sleep(2000);
-    	File gsconf = new File(System.getenv("apache.home") + "/conf/gigaspaces/gs-webui.conf");
-    	gsconf.delete();
-    }
-    
-    private void replaceBalancerTemplate() throws IOException {
-		String oldFile = ScriptUtils.getBuildPath() + "/tools/apache/balancer-template.vm";
-		String newFile = SGTestHelper.getSGTestRootDir() + "/src/test/webui/resources/balancer-template.vm";
-		IOUtils.replaceFile(oldFile, newFile);
     }
 	
 	public LoginPage getLoginPage() {
 		return getLoginPage(this.selenium,this.driver);
-	}
-	
-	public WebDriver getDriver() {
-		return driver;
-	}
-	
-	public Selenium getSelenium() {
-		return selenium;
 	}
 	
 	private LoginPage getLoginPage(Selenium selenium, WebDriver driver) {
@@ -299,29 +155,6 @@ public abstract class AbstractSeleniumTest extends AbstractTest {
 	
 	public boolean verifyAlertThrown() {
 		return selenium.isElementPresent(WebConstants.Xpath.okAlert);
-	}
-	
-	/**
-	 * use AbstractSeleniumTest static browser fields
-	 * @param version
-	 * @return
-	 */
-	public LoginPage openAndSwitchToNewBrowser(int version) {
-		WebDriver drv = null;
-		switch (version) {
-		case FIREFOX : {
-			drv = new FirefoxDriver();
-			break;
-		}
-		case CHROME : {
-			drv = new ChromeDriver();
-		}
-		}
-		
-		drv.get(baseUrl);
-		Selenium selenium_temp = new WebDriverBackedSelenium(drv, baseUrl);	
-		return getLoginPage(selenium_temp, drv);
-		
 	}
 	
 	public DashboardTab refreshPage() throws InterruptedException {
@@ -358,33 +191,6 @@ public abstract class AbstractSeleniumTest extends AbstractTest {
 		setBrowser(defaultBrowser);
 	}
 	
-	/**
-	 * retrieves the license key from gigaspaces installation license key
-	 * @throws FactoryConfigurationError 
-	 * @throws XMLStreamException 
-	 * @throws IOException 
-	 */
-	public String getLicenseKey() throws XMLStreamException, FactoryConfigurationError, IOException {
-		
-		String licensekey = LICENSE_PATH.replace("lib/required/../../", "");	
-		InputStream is = new FileInputStream(new File(licensekey));
-		XMLStreamReader parser = XMLInputFactory.newInstance().createXMLStreamReader(is);
-		int element;
-		while (true) {
-			element = parser.next();
-			if (element == XMLStreamReader.START_ELEMENT) {
-				if (parser.getName().toString().equals("licensekey")) {
-					return parser.getElementText();
-				}
-			}
-			if (element == XMLStreamReader.END_DOCUMENT) {
-				break;
-			}
-		}
-		return null;
-		
-	}
-	
 	public void repetitiveAssertTrueWithScreenshot(String message, RepetitiveConditionProvider condition, Class<?> cls, String methodName, String picName) {
 		
 		try {
@@ -413,6 +219,18 @@ public abstract class AbstractSeleniumTest extends AbstractTest {
     
 	public boolean isDevMode() {
 		return !System.getenv("USERNAME").equals("ca");
+	}
+	
+	private boolean bootstrapLocalCloud() throws IOException, InterruptedException {
+		String command = "bootstrap-localcloud --verbose";
+		String output = CommandTestUtils.runCommandAndWait(command);
+		return output.contains("Local-cloud started successfully");
+	}
+	
+	private boolean tearDownLocalCloud() throws IOException, InterruptedException {
+		String command = "teardown-localcloud --verbose";
+		String output = CommandTestUtils.runCommandAndWait(command);
+		return output.contains("Completed local-cloud teardown");
 	}
 	
 }

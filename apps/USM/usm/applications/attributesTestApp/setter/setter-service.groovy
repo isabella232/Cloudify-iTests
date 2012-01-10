@@ -46,6 +46,6 @@ service {
 				"removeInstanceByServiceName" : {context.attributes.getter.instances[1].remove("myKey")},
 				"cleanThisInstance" : {context.attributes.thisInstance.clear()},
 				"cleanThisApp" : {context.attributes.thisApplication.clear()},
-				
+				"removeInstance" : {context.attributes.thisInstance.remove("myKey")},
 			])
 }

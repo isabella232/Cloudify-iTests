@@ -226,7 +226,8 @@ public class AttributesTest extends AbstractLocalCloudTest {
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = true)
 	public void testInstanceIteration() throws Exception {
 		runCommand("connect " + restUrl + ";use-application attributesTestApp" 
-				+ "; invoke -instanceid 1 setter setInstance1; invoke -instanceid 2 setter setInstance2");
+				+ "; invoke -instanceid 1 setter setInstanceCustom myKey myValue1;" +
+				"invoke -instanceid 2 setter setInstanceCustom myKey myValue2");
 		
 		String iterateInstances = runCommand("connect " + restUrl + ";use-application attributesTestApp" 
 				+ "; invoke -instanceid 1 setter iterateInstances");
@@ -251,24 +252,21 @@ public class AttributesTest extends AbstractLocalCloudTest {
 		assertTrue("myKey2 should not be affected by remove myKey" , getOutputAfterRemove.contains("myValue2"));
 	}
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = true)
-	public void testRemoveInstanceByServiceName() throws Exception {
+	public void testRemoveInstance() throws Exception {
 		runCommand("connect " + restUrl + ";use-application attributesTestApp" 
-				+ "; invoke getter setService"); 
+				+ "; invoke setter setInstance"); 
 		String getOutputAfterSet = runCommand("connect " + restUrl + ";use-application attributesTestApp" 
-				+ "; invoke getter getService");
+				+ "; invoke setter getInstance");
 		assertTrue("set command did not execute" , getOutputAfterSet.contains("myValue"));
 		
 		runCommand("connect " + restUrl + ";use-application attributesTestApp" 
-				+ "; invoke setter removeInstanceByServiceName");
-//		String getServiceOutputAfterRemove = runCommand("connect " + restUrl + ";use-application attributesTestApp" 
-//				+ "; invoke getter getService");
-//		assertTrue("getServie command should return null after key was removed" , getServiceOutputAfterRemove.toLowerCase().contains("null"));
-		
-		String getInstanceOutputAfterRemove = runCommand("connect " + restUrl + ";use-application attributesTestApp" 
-				+ "; invoke -instanceid 1 getter getInstance");
-		assertTrue("getInstance command should return null after key was removed" , getInstanceOutputAfterRemove.toLowerCase().contains("null"));
-		
+				+ "; invoke setter removeInstance");
+		String getOutputAfterRemove = runCommand("connect " + restUrl + ";use-application attributesTestApp" 
+				+ "; invoke setter getInstance");
+		assertTrue("getInstance command should return null after key was removed" , getOutputAfterRemove.toLowerCase().contains("null"));
 	}
+	
+	
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = true)
 	public void testCleanInstanceAfterSetService() throws Exception {

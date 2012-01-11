@@ -1,4 +1,4 @@
-import com.gigaspaces.cloudify.dsl.utils.ServiceUtils
+import org.cloudifysource.dsl.utils.ServiceUtils
 
 service {
     def context = Class.forName("com.j_spaces.kernel.PlatformVersion")

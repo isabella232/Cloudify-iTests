@@ -33,7 +33,7 @@ service {
 	plugins ([
 		plugin {
 			name "fileLivenessFail"
-			className "com.gigaspaces.cloudify.usm.liveness.FileLivenessDetector"
+			className "org.cloudifysource.usm.liveness.FileLivenessDetector"
 			config ([
 						"FilePath" : System.getProperty("java.io.tmpdir") + "/groovyLog2.log",
 						"TimeoutInSeconds" : 30,
@@ -42,7 +42,7 @@ service {
 		},
 		plugin {
 			name "jmx"
-			className "com.gigaspaces.cloudify.usm.jmx.JmxMonitor"
+			className "org.cloudifysource.usm.jmx.JmxMonitor"
 			config ([
 
 				"Details" : [

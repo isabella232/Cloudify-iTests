@@ -31,7 +31,7 @@ service {
 	plugins ([
 		plugin {
 			name "portLiveness"
-			className "com.gigaspaces.cloudify.usm.liveness.PortLivenessDetector"
+			className "org.cloudifysource.usm.liveness.PortLivenessDetector"
 			config ([
 						"Port" : [3668, 3667],
 						"TimeoutInSeconds" : 30,
@@ -40,7 +40,7 @@ service {
 		},
 		plugin {
 			name "jmx"
-			className "com.gigaspaces.cloudify.usm.jmx.JmxMonitor"
+			className "org.cloudifysource.usm.jmx.JmxMonitor"
 			config ([
 
 				"Counter" : [

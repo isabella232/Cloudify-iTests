@@ -1,5 +1,5 @@
-import com.gigaspaces.cloudify.dsl.context.ServiceContext
-import com.gigaspaces.cloudify.usm.USMUtils
+import org.cloudifysource.dsl.context.ServiceContext
+import org.cloudifysource.usm.USMUtils
 
 println "Classpath is: " + System.getenv().get("CLASSPATH");
 println "This is the init event"

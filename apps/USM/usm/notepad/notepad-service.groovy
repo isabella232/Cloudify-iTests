@@ -50,7 +50,7 @@ service {
 		plugin {
 			config ([port : 1234 , someval : "a:b:c"])
 			name "jmx"
-			className "com.gigaspaces.cloudify.usm.jmx.JmxMonitor"
+			className "org.cloudifysource.usm.jmx.JmxMonitor"
 		}
 	])
 

@@ -3,7 +3,7 @@ import java.util.concurrent.TimeUnit
 println "context_command"
 //if (args && args[0].toFloat() > 0) numTweets = args[0]
 
-def context = com.gigaspaces.cloudify.dsl.context.ServiceContextFactory.getServiceContext()
+def context = org.cloudifysource.dsl.context.ServiceContextFactory.getServiceContext()
 println "context is:  " + context
 def serviceName = context.serviceName;
 println "Service name is: " + serviceName

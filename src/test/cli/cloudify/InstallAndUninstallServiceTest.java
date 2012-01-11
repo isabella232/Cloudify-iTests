@@ -9,7 +9,7 @@ import org.testng.annotations.Test;
 
 import test.usm.USMTestUtils;
 
-import com.gigaspaces.cloudify.dsl.utils.ServiceUtils;
+import org.cloudifysource.dsl.utils.ServiceUtils;
 
 import framework.utils.DumpUtils;
 import framework.utils.LogUtils;

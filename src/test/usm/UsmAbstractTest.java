@@ -8,8 +8,8 @@ import org.testng.annotations.BeforeMethod;
 
 import test.AbstractTest;
 
-import com.gigaspaces.cloudify.dsl.internal.DSLException;
-import com.gigaspaces.cloudify.dsl.internal.packaging.PackagingException;
+import org.cloudifysource.dsl.internal.DSLException;
+import org.cloudifysource.dsl.internal.packaging.PackagingException;
 
 import framework.utils.AdminUtils;
 

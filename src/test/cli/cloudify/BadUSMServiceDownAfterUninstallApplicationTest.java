@@ -5,7 +5,7 @@ import java.io.IOException;
 import org.openspaces.admin.machine.Machine;
 import org.testng.annotations.Test;
 
-import com.gigaspaces.cloudify.dsl.utils.ServiceUtils;
+import org.cloudifysource.dsl.utils.ServiceUtils;
 
 import framework.utils.AssertUtils;
 import framework.utils.AssertUtils.RepetitiveConditionProvider;

@@ -22,8 +22,8 @@ import test.usm.USMTestUtils;
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.gigaspaces.cloudify.dsl.internal.packaging.PackagingException;
-import com.gigaspaces.cloudify.dsl.utils.ServiceUtils;
+import org.cloudifysource.dsl.internal.packaging.PackagingException;
+import org.cloudifysource.dsl.utils.ServiceUtils;
 
 import framework.utils.LogUtils;
 import framework.utils.ProcessingUnitUtils;

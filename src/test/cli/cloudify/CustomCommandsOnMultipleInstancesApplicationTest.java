@@ -16,10 +16,10 @@ import org.testng.annotations.Test;
 
 import test.usm.USMTestUtils;
 
-import com.gigaspaces.cloudify.dsl.internal.DSLException;
-import com.gigaspaces.cloudify.dsl.internal.ServiceReader;
-import com.gigaspaces.cloudify.dsl.internal.packaging.PackagingException;
-import com.gigaspaces.cloudify.dsl.utils.ServiceUtils;
+import org.cloudifysource.dsl.internal.DSLException;
+import org.cloudifysource.dsl.internal.ServiceReader;
+import org.cloudifysource.dsl.internal.packaging.PackagingException;
+import org.cloudifysource.dsl.utils.ServiceUtils;
 
 import framework.utils.LogUtils;
 

@@ -10,7 +10,7 @@ import org.testng.annotations.Test;
 import test.AbstractTest;
 import test.usm.USMTestUtils;
 
-import com.gigaspaces.cloudify.dsl.utils.ServiceUtils;
+import org.cloudifysource.dsl.utils.ServiceUtils;
 
 import framework.utils.AssertUtils.RepetitiveConditionProvider;
 

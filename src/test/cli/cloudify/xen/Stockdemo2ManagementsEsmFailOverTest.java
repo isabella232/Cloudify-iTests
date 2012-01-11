@@ -10,7 +10,7 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import com.gigaspaces.cloudify.dsl.internal.CloudifyConstants;
+import org.cloudifysource.dsl.internal.CloudifyConstants;
 
 import framework.tools.SGTestHelper;
 import framework.utils.LogUtils;

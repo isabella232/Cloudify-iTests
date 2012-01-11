@@ -10,9 +10,9 @@ import org.testng.annotations.Test;
 
 import test.cli.cloudify.AbstractLocalCloudTest;
 
-import com.gigaspaces.cloudify.dsl.Service;
-import com.gigaspaces.cloudify.dsl.internal.DSLException;
-import com.gigaspaces.cloudify.dsl.internal.ServiceReader;
+import org.cloudifysource.dsl.Service;
+import org.cloudifysource.dsl.internal.DSLException;
+import org.cloudifysource.dsl.internal.ServiceReader;
 
 import framework.utils.ScriptUtils;
 

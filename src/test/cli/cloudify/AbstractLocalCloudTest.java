@@ -29,9 +29,9 @@ import org.openspaces.admin.AdminFactory;
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.testng.annotations.*;
 
-import com.gigaspaces.cloudify.restclient.ErrorStatusException;
-import com.gigaspaces.cloudify.restclient.StringUtils;
-import com.gigaspaces.cloudify.shell.commands.CLIException;
+import org.cloudifysource.restclient.ErrorStatusException;
+import org.cloudifysource.restclient.StringUtils;
+import org.cloudifysource.shell.commands.CLIException;
 import test.AbstractTest;
 
 public class AbstractLocalCloudTest extends AbstractTest {

@@ -16,11 +16,11 @@ import org.testng.annotations.Test;
 
 import test.usm.USMTestUtils;
 
-import com.gigaspaces.cloudify.dsl.internal.CloudifyConstants;
-import com.gigaspaces.cloudify.dsl.internal.DSLException;
-import com.gigaspaces.cloudify.dsl.internal.ServiceReader;
-import com.gigaspaces.cloudify.dsl.internal.packaging.PackagingException;
-import com.gigaspaces.cloudify.dsl.utils.ServiceUtils;
+import org.cloudifysource.dsl.internal.CloudifyConstants;
+import org.cloudifysource.dsl.internal.DSLException;
+import org.cloudifysource.dsl.internal.ServiceReader;
+import org.cloudifysource.dsl.internal.packaging.PackagingException;
+import org.cloudifysource.dsl.utils.ServiceUtils;
 
 
 public class LifecycleDetailsMonitorMapClosureTest extends AbstractLocalCloudTest{
@@ -40,7 +40,7 @@ public class LifecycleDetailsMonitorMapClosureTest extends AbstractLocalCloudTes
 	
 	private ProcessingUnitInstance getPUInstance() {
 		ProcessingUnit pu = this.admin.getProcessingUnits().waitFor(
-				ServiceUtils.getAbsolutePUName(DEFAULT_APPLICTION_NAME, "simple"), 30, TimeUnit.SECONDS);
+				ServiceUtils.getAbsolutePUName("default", "simple"), 30, TimeUnit.SECONDS);
 		assertNotNull("Could not find processing unit for installed service",
 				pu);
 		boolean found = pu.waitFor(1, 30, TimeUnit.SECONDS);

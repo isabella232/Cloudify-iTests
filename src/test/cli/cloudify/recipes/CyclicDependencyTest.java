@@ -6,7 +6,7 @@ import org.openspaces.admin.gsc.GridServiceContainer;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import com.gigaspaces.cloudify.dsl.utils.ServiceUtils;
+import org.cloudifysource.dsl.utils.ServiceUtils;
 
 import framework.utils.LogUtils;
 

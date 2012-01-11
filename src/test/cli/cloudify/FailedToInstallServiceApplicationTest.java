@@ -6,7 +6,7 @@ import java.util.concurrent.TimeUnit;
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.testng.annotations.Test;
 
-import com.gigaspaces.cloudify.dsl.utils.ServiceUtils;
+import org.cloudifysource.dsl.utils.ServiceUtils;
 
 public class FailedToInstallServiceApplicationTest extends AbstractLocalCloudTest {
 

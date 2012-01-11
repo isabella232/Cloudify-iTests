@@ -13,10 +13,10 @@ import org.testng.annotations.Test;
 
 import test.cli.cloudify.CommandTestUtils;
 
-import com.gigaspaces.cloudify.dsl.Service;
-import com.gigaspaces.cloudify.dsl.internal.CloudifyConstants;
-import com.gigaspaces.cloudify.dsl.internal.ServiceReader;
-import com.gigaspaces.cloudify.dsl.utils.ServiceUtils;
+import org.cloudifysource.dsl.Service;
+import org.cloudifysource.dsl.internal.CloudifyConstants;
+import org.cloudifysource.dsl.internal.ServiceReader;
+import org.cloudifysource.dsl.utils.ServiceUtils;
 
 import framework.utils.LogUtils;
 import framework.utils.ScriptUtils;

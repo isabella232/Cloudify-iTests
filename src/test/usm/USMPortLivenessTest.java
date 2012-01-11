@@ -8,7 +8,7 @@ import java.util.concurrent.TimeUnit;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import com.gigaspaces.cloudify.dsl.internal.CloudifyConstants;
+import org.cloudifysource.dsl.internal.CloudifyConstants;
 
 public class USMPortLivenessTest extends UsmAbstractTest{
 

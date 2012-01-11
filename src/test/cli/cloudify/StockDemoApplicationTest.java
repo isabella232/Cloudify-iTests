@@ -4,7 +4,7 @@ import org.openspaces.admin.gsc.GridServiceContainer;
 import org.openspaces.admin.pu.DeploymentStatus;
 import org.testng.annotations.Test;
 
-import com.gigaspaces.cloudify.dsl.utils.ServiceUtils;
+import org.cloudifysource.dsl.utils.ServiceUtils;
 
 import framework.tools.SGTestHelper;
 import framework.utils.LogUtils;

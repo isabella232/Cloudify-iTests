@@ -10,7 +10,7 @@ import org.testng.annotations.Test;
 
 import test.cli.cloudify.CommandTestUtils;
 
-import com.gigaspaces.cloudify.dsl.utils.ServiceUtils;
+import org.cloudifysource.dsl.utils.ServiceUtils;
 
 import framework.tools.SGTestHelper;
 import framework.utils.LogUtils;

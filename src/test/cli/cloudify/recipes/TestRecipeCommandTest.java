@@ -11,8 +11,8 @@ import org.testng.annotations.Test;
 import test.cli.cloudify.AbstractLocalCloudTest;
 import test.cli.cloudify.CommandTestUtils;
 
-import com.gigaspaces.cloudify.dsl.internal.DSLException;
-import com.gigaspaces.cloudify.dsl.internal.ServiceReader;
+import org.cloudifysource.dsl.internal.DSLException;
+import org.cloudifysource.dsl.internal.ServiceReader;
 
 public class TestRecipeCommandTest extends AbstractLocalCloudTest {
 	
@@ -26,7 +26,7 @@ public class TestRecipeCommandTest extends AbstractLocalCloudTest {
 		File serviceDir = new File(SIMPLE_RECIPE_DIR_PATH);
 		File serviceFile = new File(SIMPLE_RECIPE_DIR_PATH,
 				"simplejava-modifiedservice.groovy");
-		com.gigaspaces.cloudify.dsl.Service service = ServiceReader
+		org.cloudifysource.dsl.Service service = ServiceReader
 				.getServiceFromFile(serviceFile, serviceDir)
 				.getService();
 		int port = (Integer) service.getPlugins().get(0).getConfig()

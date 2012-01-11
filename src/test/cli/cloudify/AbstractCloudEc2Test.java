@@ -11,7 +11,7 @@ import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 
-import com.gigaspaces.cloudify.dsl.internal.DSLException;
+import org.cloudifysource.dsl.internal.DSLException;
 import test.AbstractTest;
 import framework.tools.SGTestHelper;
 import framework.utils.LogUtils;

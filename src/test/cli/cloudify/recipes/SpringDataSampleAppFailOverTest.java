@@ -12,8 +12,8 @@
 //import test.cli.cloudify.CommandTestUtils;
 //import test.utils.LogUtils;
 //
-//import com.gigaspaces.cloudify.dsl.Service;
-//import com.gigaspaces.cloudify.dsl.internal.ServiceReader;
+//import org.cloudifysource.dsl.Service;
+//import org.cloudifysource.dsl.internal.ServiceReader;
 //
 ///**
 // * 

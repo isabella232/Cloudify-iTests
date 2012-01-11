@@ -40,7 +40,7 @@ service {
 	plugins = [
 		plugin {
 			name "jmx"
-			className "com.gigaspaces.cloudify.usm.jmx.JmxMonitor"
+			className "org.cloudifysource.usm.jmx.JmxMonitor"
 			config ([
 
 						"Details" : [

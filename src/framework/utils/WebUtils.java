@@ -4,6 +4,7 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpHead;
@@ -45,7 +46,10 @@ public class WebUtils {
         HttpClient client = new DefaultHttpClient();
         HttpHead get = new HttpHead(url.toURI());
         try {
-            client.execute(get);
+            HttpResponse response = client.execute(get);
+            if (response.getStatusLine().getStatusCode() != 200) {
+            	return false;
+            }
             return true;
         } catch (Exception e) {
             return false;

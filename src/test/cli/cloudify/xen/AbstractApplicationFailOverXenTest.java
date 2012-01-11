@@ -11,7 +11,6 @@ import org.openspaces.admin.esm.ElasticServiceManager;
 import org.openspaces.admin.esm.ElasticServiceManagers;
 import org.openspaces.admin.esm.events.ElasticServiceManagerRemovedEventListener;
 import org.openspaces.admin.pu.ProcessingUnit;
-import org.openspaces.admin.space.Space;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 
@@ -165,13 +164,13 @@ public class AbstractApplicationFailOverXenTest extends AbstractStartManagementX
 	}
 	
 	protected void assertStockdemoAppInstalled(int port1 ,String host1 ,int port2 ,String host2) throws InterruptedException {
-		Space stockAnalyticsSpace = admin.getSpaces().waitFor("stockAnalyticsSpace");
-		ProcessingUnit cassandra = admin.getProcessingUnits().waitFor("cassandra");
-		ProcessingUnit stockAnalytics = admin.getProcessingUnits().waitFor("stockAnalytics");
-		ProcessingUnit stockAnalyticsFeeder = admin.getProcessingUnits().waitFor("stockAnalyticsFeeder");
-		ProcessingUnit stockAnalyticsMirror = admin.getProcessingUnits().waitFor("stockAnalyticsMirror");
-		ProcessingUnit stockAnalyticsProcessor = admin.getProcessingUnits().waitFor("stockAnalyticsProcessor");
-		ProcessingUnit StockDemo = admin.getProcessingUnits().waitFor("StockDemo");
+		ProcessingUnit stockAnalyticsSpace = admin.getProcessingUnits().waitFor(ServiceUtils.getAbsolutePUName("stockdemo", "stockAnalyticsSpace"));
+		ProcessingUnit cassandra = admin.getProcessingUnits().waitFor(ServiceUtils.getAbsolutePUName("stockdemo","cassandra"));
+		ProcessingUnit stockAnalytics = admin.getProcessingUnits().waitFor(ServiceUtils.getAbsolutePUName("stockdemo","stockAnalytics"));
+		ProcessingUnit stockAnalyticsFeeder = admin.getProcessingUnits().waitFor(ServiceUtils.getAbsolutePUName("stockdemo","stockAnalyticsFeeder"));
+		ProcessingUnit stockAnalyticsMirror = admin.getProcessingUnits().waitFor(ServiceUtils.getAbsolutePUName("stockdemo","stockAnalyticsMirror"));
+		ProcessingUnit stockAnalyticsProcessor = admin.getProcessingUnits().waitFor(ServiceUtils.getAbsolutePUName("stockdemo","stockAnalyticsProcessor"));
+		ProcessingUnit StockDemo = admin.getProcessingUnits().waitFor(ServiceUtils.getAbsolutePUName("stockdemo","StockDemo"));
 		
 		assertNotNull("cassandra pu didn't deploy", cassandra);
 		assertNotNull("stockAnalytics pu didn't deploy", stockAnalytics);
@@ -235,17 +234,20 @@ public class AbstractApplicationFailOverXenTest extends AbstractStartManagementX
 		assertTrue("esm did not restart" , esmRestarted);
 		
 		String format1 = "Elastic properties for pu %s are being enforced";
-		String format2 = "Machines eager SLA for %s has been reached";
-		String format3 = "Eager containers SLA for %s has been reached";
+		
+		// TODO: ask gal why did he search for these strings.. I could not find them anywhere
+//		String format2 = "Machines eager SLA for %s has been reached";
+//		String format3 = "Eager containers SLA for %s has been reached";
 		
 		for(ProcessingUnit pu : admin.getProcessingUnits().getProcessingUnits()){
+			
 			String requiredText1 = String.format(format1, pu.getName());
-			String requiredText2 = String.format(format2, pu.getName());
-			String requiredText3 = String.format(format3, pu.getName());
+//			String requiredText2 = String.format(format2, pu.getName());
+//			String requiredText3 = String.format(format3, pu.getName());
 			
 			repetativeScanElasticManagerLogsFor(esm, requiredText1, DEFAULT_RECOVERY_TIME);
-			repetativeScanElasticManagerLogsFor(esm, requiredText2, DEFAULT_RECOVERY_TIME);
-			repetativeScanElasticManagerLogsFor(esm, requiredText3, DEFAULT_RECOVERY_TIME);
+//			repetativeScanElasticManagerLogsFor(esm, requiredText2, DEFAULT_RECOVERY_TIME);
+//			repetativeScanElasticManagerLogsFor(esm, requiredText3, DEFAULT_RECOVERY_TIME);
 		}
 	}
 	

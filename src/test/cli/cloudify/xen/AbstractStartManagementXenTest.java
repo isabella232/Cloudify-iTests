@@ -65,35 +65,36 @@ public class AbstractStartManagementXenTest extends AbstractXenGSMTest {
 	public void beforeTest() {
 	    super.setAcceptGSCsOnStartup(true);
 	    super.beforeTest(); 
-		try {
-            assertManagementStarted();
-        } catch (MalformedURLException e) {
-            AssertFail("Setup failed", e);
-        } catch (URISyntaxException e) {
-            AssertFail("Setup failed", e);
-        }
+	    assertManagementStarted();
 	    repetitiveAssertNumberOfGSAsAdded(1, OPERATION_TIMEOUT);
 	    repetitiveAssertNumberOfGSAsRemoved(0, OPERATION_TIMEOUT);
 	}
 
-	protected void assertManagementStarted() throws URISyntaxException, MalformedURLException {
+	protected void assertManagementStarted() {
 		// test management rest and webui services
 		for (GridServiceManager gsm : admin.getGridServiceManagers()) {
 	    	String host = gsm.getMachine().getHostAddress();
 	    
-		    final URL restAdminURI = new URI("http", null, host, 8100, null, null, null).toURL();
-		    final URL webUIURI = new URI("http", null, host, 8099, null, null, null).toURL();
-		    
-		    repetitiveAssertTrue("Failed waiting for REST/WebIU services", new RepetitiveConditionProvider() {
-	            public boolean getCondition() {
-	                try {
-                        return WebUtils.isURLAvailable(restAdminURI) &&
-                               WebUtils.isURLAvailable(webUIURI);
-                    } catch (Exception e) {
-                        return false;
-                    }
-	            }
-	        }, OPERATION_TIMEOUT);
+            try {
+                final URL restAdminURI = new URI("http", null, host, 8100, null, null, null).toURL();
+                final URL webUIURI = new URI("http", null, host, 8099, null, null, null).toURL();
+
+                repetitiveAssertTrue("Failed waiting for REST/WebIU services",
+                        new RepetitiveConditionProvider() {
+                            public boolean getCondition() {
+                                try {
+                                    return WebUtils.isURLAvailable(restAdminURI) &&
+                                           WebUtils.isURLAvailable(webUIURI);
+                                } catch (Exception e) {
+                                    return false;
+                                }
+                            }
+                        }, OPERATION_TIMEOUT);
+            } catch (MalformedURLException e) {
+                AssertFail("Setup failed", e);
+            } catch (URISyntaxException e) {
+                AssertFail("Setup failed", e);
+            }
 	    }
 	}
 	

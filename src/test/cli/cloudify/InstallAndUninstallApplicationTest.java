@@ -5,9 +5,9 @@ import java.util.concurrent.TimeUnit;
 
 import org.openspaces.admin.gsc.GridServiceContainer;
 import org.openspaces.admin.pu.ProcessingUnit;
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import test.AbstractTest;
 import test.usm.USMTestUtils;
 
 import org.cloudifysource.dsl.utils.ServiceUtils;
@@ -32,10 +32,9 @@ public class InstallAndUninstallApplicationTest extends AbstractLocalCloudTest {
 		String absolutePUName = ServiceUtils.getAbsolutePUName("simple", "simple");
 		final ProcessingUnit processingUnit = admin.getProcessingUnits().waitFor(absolutePUName, 30, TimeUnit.SECONDS);
 		if (processingUnit == null) {
-			AbstractTest.AssertFail("Processing unit '" + absolutePUName + "' was not found");
+			Assert.fail("Processing unit '" + absolutePUName + "' was not found");
 		}
-		AbstractTest.assertTrue("Instance of '" + absolutePUName + "' service was not found",
-		processingUnit.waitFor(1, 30, TimeUnit.SECONDS));
+        Assert.assertTrue(processingUnit.waitFor(1, 30, TimeUnit.SECONDS), "Instance of '" + absolutePUName + "' service was not found");
 		assertTrue(USMTestUtils.waitForPuRunningState(absolutePUName, 60, TimeUnit.SECONDS, admin));
 
 	    final GridServiceContainer gsc = processingUnit.getInstances()[0].getGridServiceContainer();

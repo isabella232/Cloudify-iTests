@@ -159,7 +159,7 @@ public class AbstractXenGSMTest extends AbstractTest {
         xenServerMasterMachineLabelPrefix = machineProvisioningConfig.getMasterMachineNameLabel();
         
         machineProvisioningConfig.setMasterMachineNameLabel(
-                machineProvisioningConfig.getMasterMachineNameLabel() + "_xap_" + PlatformVersion.BUILD_NUM);
+                machineProvisioningConfig.getMasterMachineNameLabel() + "_xap_" + PlatformVersion.getBuildNumber());
         
         machineProvisioningConfig.setDriveCapacityPerMachineInMB(XENSERVER_ROOT_DRIVE_CAPACITY);
         
@@ -197,7 +197,7 @@ public class AbstractXenGSMTest extends AbstractTest {
             
             for (String label : machineLabels) {
                 if (label.startsWith(xenServerMasterMachineLabelPrefix) &&
-                        !label.endsWith(PlatformVersion.BUILD_NUM)) {
+                        !label.endsWith(PlatformVersion.getBuildNumber())) {
                 	XenUtils.hardShutdownMachinesByLabelStartsWith(machineProvisioningConfig, label, 5*60, TimeUnit.SECONDS);
                 }
             }

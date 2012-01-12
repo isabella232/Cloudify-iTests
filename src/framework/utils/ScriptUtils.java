@@ -176,8 +176,8 @@ public class ScriptUtils {
     public static File getGigaspacesZipFile() throws IOException {
     	
     	File gigaspacesDirectory = new File ( ScriptUtils.getBuildPath());
-    	String gigaspacesFolderName = "gigaspaces-xap-premium-"+PlatformVersion.VERSION+"-"+PlatformVersion.MILESTONE;
-		String gigaspacesZipFilename = gigaspacesFolderName + "-b" + PlatformVersion.BUILD_NUM + ".zip";
+    	String gigaspacesFolderName = "gigaspaces-xap-premium-"+PlatformVersion.getVersionNumber()+"-"+PlatformVersion.getMilestone();
+		String gigaspacesZipFilename = gigaspacesFolderName + "-b" + PlatformVersion.getBuildNumber() + ".zip";
 		File gigaspacesZip = new File(new File(gigaspacesDirectory,".."), gigaspacesZipFilename);
     	if (!gigaspacesZip.exists()) {
     		File[] excludeDirectories = new File[]{new File(gigaspacesDirectory,"work"),

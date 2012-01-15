@@ -6,6 +6,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import org.apache.commons.httpclient.HttpStatus;
 import org.cloudifysource.dsl.Service;
 import org.cloudifysource.dsl.internal.DSLException;
 import org.cloudifysource.dsl.internal.DSLServiceCompilationResult;
@@ -34,7 +35,7 @@ public class IconDisplayTest extends AbstractLocalCloudTest {
 		
 		//test icon path
 		int responseCode = getResponseCode(iconPath);
-		assertTrue("Can not find the icon under: " + iconPath, responseCode == 200);
+		assertTrue("Can not find the icon under: " + iconPath, responseCode == HttpStatus.SC_OK);
 		
 	}
 	
@@ -52,7 +53,7 @@ public class IconDisplayTest extends AbstractLocalCloudTest {
 		String iconPath = getIconPath(service, "simple");
 		int responseCode = getResponseCode(iconPath);
 		
-		assertTrue("Can not find the icon under: " + iconPath, responseCode == 200);
+		assertTrue("Can not find the icon under: " + iconPath, responseCode == HttpStatus.SC_OK);
 		
 	}
 

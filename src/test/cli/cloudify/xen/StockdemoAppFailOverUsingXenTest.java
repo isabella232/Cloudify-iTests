@@ -68,8 +68,8 @@ public class StockdemoAppFailOverUsingXenTest extends AbstractApplicationFailOve
 		int cassandraPuInstancesAfterInstall = cassandra.getInstances().length;
 		LogUtils.log("destroying the pu instance holding cassandra");
 		cassandra.getInstances()[0].destroy();
-		assertPuInstanceKilled("cassandra" , cassandraPort1 , cassandraHostIp , cassandraPuInstancesAfterInstall);
-		assertPuInstanceRessurected("cassandra" , cassandraPort1 , cassandraHostIp , cassandraPuInstancesAfterInstall);
+		assertPuInstanceKilled(ServiceUtils.getAbsolutePUName("stockdemo", "cassandra") , cassandraPort1 , cassandraHostIp , cassandraPuInstancesAfterInstall);
+		assertPuInstanceRessurected(ServiceUtils.getAbsolutePUName("stockdemo", "cassandra") , cassandraPort1 , cassandraHostIp , cassandraPuInstancesAfterInstall);
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
@@ -82,8 +82,8 @@ public class StockdemoAppFailOverUsingXenTest extends AbstractApplicationFailOve
 		int cassandraPuInstancesAfterInstall = cassandra.getInstances().length;
 		LogUtils.log("restarting GSC containing cassandra");
 		cassandra.getInstances()[0].getGridServiceContainer().kill();
-		assertPuInstanceKilled("cassandra" , cassandraPort1 ,cassandraHostIp , cassandraPuInstancesAfterInstall);
-		assertPuInstanceRessurected("cassandra" , cassandraPort1 ,cassandraHostIp , cassandraPuInstancesAfterInstall);
+		assertPuInstanceKilled(ServiceUtils.getAbsolutePUName("stockdemo", "cassandra") , cassandraPort1 ,cassandraHostIp , cassandraPuInstancesAfterInstall);
+		assertPuInstanceRessurected(ServiceUtils.getAbsolutePUName("stockdemo", "cassandra") , cassandraPort1 ,cassandraHostIp , cassandraPuInstancesAfterInstall);
 	}
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)

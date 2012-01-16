@@ -7,7 +7,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpHead;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.openspaces.jee.sessions.jetty.SessionData;
@@ -44,7 +43,8 @@ public class WebUtils {
     
     public static boolean isURLAvailable(URL url) throws Exception {
         HttpClient client = new DefaultHttpClient();
-        HttpHead get = new HttpHead(url.toURI());
+        // Do not use HEAD here! The spring framework we use does not like it. 
+        HttpGet get = new HttpGet(url.toURI());
         try {
             HttpResponse response = client.execute(get);
             if (response.getStatusLine().getStatusCode() != 200) {

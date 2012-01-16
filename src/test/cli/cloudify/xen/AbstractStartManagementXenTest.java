@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.openspaces.admin.gsa.GridServiceAgent;
+import org.openspaces.admin.gsc.GridServiceContainer;
 import org.openspaces.admin.gsm.GridServiceManager;
 import org.openspaces.admin.internal.gsa.InternalGridServiceAgent;
 import org.openspaces.admin.lus.LookupService;
@@ -27,49 +28,74 @@ public class AbstractStartManagementXenTest extends AbstractXenGSMTest {
 	
     private static final String SHUTDOWN_MANAGEMENT_COMMAND = "/opt/gigaspaces/tools/cli/cloudify.sh shutdown-management --verbose";
 	private static final String SHUTDOWN_AGENT_COMMAND = "/opt/gigaspaces/tools/cli/cloudify.sh shutdown-agent --verbose";
-	
-	private boolean twoManagementMachines;
-	
+		
 	@Override
 	protected void overrideXenServerProperties(XenServerMachineProvisioningConfig machineProvisioningConfig) {
         super.overrideXenServerProperties(machineProvisioningConfig);
         machineProvisioningConfig.setFileAgentRemoteLocation("/opt/cloudify-start-management.sh");
         
-        if (twoManagementMachines) {
-            // skipping the first (as it belongs to the master machine)
-            // We are going to assume that the next first two mac addresses of the configuration
-            // will be free when we start the machines. if they aren't, hell breaks loose.
-            
-            Map<String, String> mapping = loadXenServerMappingProperties();
-            
-            String mac1 = machineProvisioningConfig.getMachineMacAddresses()[1].replaceAll(":", "");
-            String mac2 = machineProvisioningConfig.getMachineMacAddresses()[2].replaceAll(":", "");
-            
-            assertTrue("Mapping for " + mac1 + "does not exist", 
-                    mapping.containsKey(mac1));
-            assertTrue("Mapping for " + mac2 + "does not exist", 
-                    mapping.containsKey(mac2));
-            
-            String[] lookupLocators = new String[] {
-                mapping.get(mac1),
-                mapping.get(mac2)
-            };
-            
-            machineProvisioningConfig.setXapLocators(lookupLocators);
-        }
+        // skipping the first (as it belongs to the master machine)
+        // We are going to assume that the next first two mac addresses of the configuration
+        // will be free when we start the machines. if they aren't, hell breaks loose.
         
+        Map<String, String> mapping = loadXenServerMappingProperties();
+        
+        String mac1 = machineProvisioningConfig.getMachineMacAddresses()[1].replaceAll(":", "");
+        String mac2 = machineProvisioningConfig.getMachineMacAddresses()[2].replaceAll(":", "");
+        
+        assertTrue("Mapping for " + mac1 + "does not exist", 
+                mapping.containsKey(mac1));
+        assertTrue("Mapping for " + mac2 + "does not exist", 
+                mapping.containsKey(mac2));
+        
+        String[] lookupLocators = new String[] {
+            mapping.get(mac1),
+            mapping.get(mac2)
+        };
+        
+        machineProvisioningConfig.setXapLocators(lookupLocators);
     }
 	
 	@Override
 	@BeforeMethod
 	public void beforeTest() {
 	    super.setAcceptGSCsOnStartup(true);
-	    super.beforeTest(); 
-	    assertManagementStarted();
-	    repetitiveAssertNumberOfGSAsAdded(1, OPERATION_TIMEOUT);
+	    super.beforeTest();
+
+		GridServiceContainer restGsc = restGscWorkaround();
+		
+		startAdditionalManagement();
+
+		// Here we rely on the ESM to restart to rest service
+		restGsc.kill();
+		
+        assertManagementStarted();
+		repetitiveAssertNumberOfGSAsAdded(2, OPERATION_TIMEOUT);
 	    repetitiveAssertNumberOfGSAsRemoved(0, OPERATION_TIMEOUT);
 	}
 
+    // this is a hack. we need to have a handle to the GSC currently holding the rest instance so we could restart it after the second management machine starts
+    // Problem: the rest depends on the management space. in this specific case the space is defined as 'highlyAvailable' meaning it would not be instantiated until 
+    // after the second xen machine is started and a backup space is deployed on it. 
+    // Workaround: We restart the rest GSC after the second management space is deployed on the second machine.
+    // TODO: change start management implementation so that rest deployment depends on management space
+	// See also: CLOUDIFY-451
+    private GridServiceContainer restGscWorkaround() {
+
+		GridServiceContainer restGsc = null;
+		admin.getGridServiceContainers().waitFor(2, OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
+		for (GridServiceContainer container : admin.getGridServiceContainers()) {
+			if (container.getZones().containsKey("rest")) {
+				restGsc = container;
+			}
+		}
+		
+		if (restGsc == null) {
+			AssertFail("Failed finding rest GSC");
+		}
+        return restGsc;
+    }
+    
 	protected void assertManagementStarted() {
 		// test management rest and webui services
 		for (GridServiceManager gsm : admin.getGridServiceManagers()) {
@@ -98,7 +124,7 @@ public class AbstractStartManagementXenTest extends AbstractXenGSMTest {
 	    }
 	}
 	
-    protected void startAdditionalManagement() {
+    private void startAdditionalManagement() {
         final XenServerMachineProvisioningConfig agentConfig = getMachineProvisioningConfig();
         agentConfig.setFileAgentRemoteLocation("/opt/cloudify-start-additional-management.sh");     
         super.startNewVM(0, 0, agentConfig, OPERATION_TIMEOUT, TimeUnit.MILLISECONDS); 
@@ -182,10 +208,6 @@ public class AbstractStartManagementXenTest extends AbstractXenGSMTest {
 	    String host = agent.getMachine().getHostAddress();		
 		SSHUtils.runCommand(host, 1000 * 60, command, username, password);
 	}
-
-    public void setTwoManagementMachines() {
-        this.twoManagementMachines = true;
-    }
 
 }
 

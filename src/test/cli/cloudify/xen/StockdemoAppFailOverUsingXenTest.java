@@ -1,17 +1,15 @@
 package test.cli.cloudify.xen;
 
+import java.io.IOException;
+
+import org.cloudifysource.dsl.utils.ServiceUtils;
 import org.openspaces.admin.esm.ElasticServiceManager;
 import org.openspaces.admin.pu.ProcessingUnit;
-import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import test.cli.cloudify.CommandTestUtils;
-
-import org.cloudifysource.dsl.utils.ServiceUtils;
-
 import framework.tools.SGTestHelper;
 import framework.utils.LogUtils;
 
@@ -20,8 +18,9 @@ public class StockdemoAppFailOverUsingXenTest extends AbstractApplicationFailOve
 	private final String stockdemoAppDirPath = SGTestHelper.getSGTestRootDir().replace("\\", "/") + "/apps/USM/usm/applications/stockdemo";
 	private String cassandraHostIp;
 	
-	@BeforeClass
-	public void beforeClass()  {
+	@Override
+	@BeforeMethod
+	public void beforeTest()  {
 		super.beforeTest();
 		assignCassandraPorts(stockdemoAppDirPath);
 																			   
@@ -29,30 +28,24 @@ public class StockdemoAppFailOverUsingXenTest extends AbstractApplicationFailOve
 	    startAgent(0 ,"stockAnalyticsProcessor" ,"stockAnalyticsSpace","stockAnalyticsFeeder");
 	    startAgent(0 ,"stockAnalyticsProcessor" ,"stockAnalyticsSpace" ,"cassandra");
 
-	    repetitiveAssertNumberOfGSAsAdded(4, OPERATION_TIMEOUT);
+	    repetitiveAssertNumberOfGSAsAdded(5, OPERATION_TIMEOUT);
 	    repetitiveAssertNumberOfGSAsRemoved(0, OPERATION_TIMEOUT);
 	    
 	    cassandraHostIp = admin.getZones().getByName("cassandra").getGridServiceAgents().getAgents()[0].getMachine().getHostAddress();
-	}
-
-	@Override
-	@BeforeMethod
-	public void beforeTest() {
-		
 	}
 	
 	@Override
 	@AfterMethod
 	public void afterTest() {
+		
 		try {
 			CommandTestUtils.runCommandAndWait("connect " + restUrl + " ;uninstall-application stockdemo");
-		} catch (Exception e) {	}
-		
+		} catch (IOException e) {
+			AssertFail("Failed to uninstall application stockdemo", e);
+		} catch (InterruptedException e) {
+			AssertFail("Failed to uninstall application stockdemo", e);
+		}
 		assertAppUninstalled("stockdemo");
-	}
-	
-	@AfterClass
-	public void AfterClass(){		
 		super.afterTest();
 	}
 	

@@ -1,16 +1,17 @@
 package test.cli.cloudify.xen;
 
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
+import org.cloudifysource.dsl.internal.CloudifyConstants;
 import org.openspaces.admin.esm.ElasticServiceManager;
-import org.openspaces.admin.gsc.GridServiceContainer;
 import org.openspaces.admin.machine.Machine;
 import org.openspaces.cloud.xenserver.XenServerMachineProvisioningConfig;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import org.cloudifysource.dsl.internal.CloudifyConstants;
+import test.cli.cloudify.CommandTestUtils;
 
 import framework.tools.SGTestHelper;
 import framework.utils.LogUtils;
@@ -26,7 +27,6 @@ public class Stockdemo2ManagementsEsmFailOverTest extends AbstractApplicationFai
 	@BeforeMethod
 	public void beforeTest() {
 	    
-	    setTwoManagementMachines();
 		super.beforeTest();
 		
 		assignCassandraPorts(stockdemoAppDirPath);
@@ -34,15 +34,6 @@ public class Stockdemo2ManagementsEsmFailOverTest extends AbstractApplicationFai
 		xenConfigOfEsmMachine = getMachineProvisioningConfig();
 		ElasticServiceManager esm = admin.getElasticServiceManagers().waitForAtLeastOne();
 		esmMachine = esm.getMachine();
-		
-		GridServiceContainer restGsc = restGscWorkaround();
-		
-		startAdditionalManagement();
-
-		// Here we rely on the ESM to restart to rest service
-		restGsc.kill();
-		
-        assertManagementStarted();
 		
 		startAgent(0 ,"stockAnalytics" ,"stockAnalyticsMirror" ,"StockDemo" ,"cassandra");
 	    startAgent(0 ,"stockAnalyticsProcessor" ,"stockAnalyticsSpace" , "stockAnalyticsFeeder");
@@ -62,31 +53,18 @@ public class Stockdemo2ManagementsEsmFailOverTest extends AbstractApplicationFai
 		}
 	}
 
-    // this is a hack. we need to have a handle to the GSC currently holding the rest instance so we could restart it after the second management machine starts
-    // Problem: the rest depends on the management space. in this specific case the space is defined as 'highlyAvailable' meaning it would not be instantiated until 
-    // after the second xen machine is started and a backup space is deployed on it. 
-    // Workaround: We restart the rest GSC after the second management space is deployed on the second machine.
-    // TODO: change start management implementation so that rest deployment depends on management space
-    private GridServiceContainer restGscWorkaround() {
-
-		GridServiceContainer restGsc = null;
-		admin.getGridServiceContainers().waitFor(2, OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
-		for (GridServiceContainer container : admin.getGridServiceContainers()) {
-			if (container.getZones().containsKey("rest")) {
-				restGsc = container;
-			}
-		}
-		
-		if (restGsc == null) {
-			AssertFail("Failed finding rest GSC");
-		}
-        return restGsc;
-    }
-	
-	
 	@Override
 	@AfterMethod
 	public void afterTest() {
+		
+		try {
+			CommandTestUtils.runCommandAndWait("connect " + restUrl + " ;uninstall-application stockdemo");
+		} catch (IOException e) {
+			AssertFail("Failed to uninstall application stockdemo", e);
+		} catch (InterruptedException e) {
+			AssertFail("Failed to uninstall application stockdemo", e);
+		}
+		assertAppUninstalled("stockdemo");
 		super.afterTest();
 	}
 	

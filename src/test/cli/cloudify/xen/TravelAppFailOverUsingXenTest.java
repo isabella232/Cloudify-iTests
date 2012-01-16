@@ -3,21 +3,17 @@ package test.cli.cloudify.xen;
 import java.io.File;
 import java.util.ArrayList;
 
-import org.junit.Assert;
-import org.openspaces.admin.pu.ProcessingUnit;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
-
-import test.cli.cloudify.CommandTestUtils;
-
 import org.cloudifysource.dsl.Service;
 import org.cloudifysource.dsl.internal.CloudifyConstants;
 import org.cloudifysource.dsl.internal.ServiceReader;
 import org.cloudifysource.dsl.utils.ServiceUtils;
+import org.junit.Assert;
+import org.openspaces.admin.pu.ProcessingUnit;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
+import test.cli.cloudify.CommandTestUtils;
 import framework.utils.LogUtils;
 import framework.utils.ScriptUtils;
 
@@ -29,23 +25,19 @@ public class TravelAppFailOverUsingXenTest extends AbstractApplicationFailOverXe
 	private int cassandraPort;
 	private String travelHostIp;
 		
-	@BeforeClass
-	public void beforeClass() {
+	@Override
+	@BeforeMethod
+	public void beforeTest() {
 		super.beforeTest();
 		tomcatPort = tomcatPort();
 		cassandraPort = cassandraPort();
 		
 		startAgent(0 ,"tomcat","cassandra");
-	    repetitiveAssertNumberOfGSAsAdded(2, OPERATION_TIMEOUT);
+	    repetitiveAssertNumberOfGSAsAdded(3, OPERATION_TIMEOUT);
 	    repetitiveAssertNumberOfGSAsRemoved(0, OPERATION_TIMEOUT);	 
 	    travelHostIp = admin.getZones().getByName("cassandra").getGridServiceAgents().getAgents()[0].getMachine().getHostAddress();
 	}
-	@Override
-	@BeforeMethod
-	public void beforeTest(){
-		
-	}
-
+	
 	@Override
 	@AfterMethod
 	public void afterTest() {
@@ -56,11 +48,7 @@ public class TravelAppFailOverUsingXenTest extends AbstractApplicationFailOverXe
 		
 		assertAppUninstalled("travel");	
 	}
-	
-	@AfterClass
-	public void afterClass(){
-		super.afterTest();
-	}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = false)

@@ -26,7 +26,8 @@ public class BootstrapCloudEc2Test extends AbstractCloudEc2Test {
 	public void bootstrapEc2CloudTest() throws Exception {
 	    
 		for (int i = 0; i < NUM_OF_MANAGEMENT_MACHINES; i++) {
-			assertWebServiceAvailable(restAdminUrl[i]);
+			// The rest home page is a JSP page, which will fail to compile if there is no JDK installed. So use testrest instead
+			assertWebServiceAvailable(new URL( restAdminUrl[i].toString() + "/service/testrest"));
 			assertWebServiceAvailable(webUIUrl[i]);
 		}
 	    

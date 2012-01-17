@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import org.cloudifysource.dsl.internal.CloudifyConstants;
-import org.cloudifysource.dsl.utils.ServiceUtils;
 import org.openspaces.admin.esm.ElasticServiceManager;
 import org.openspaces.admin.machine.Machine;
 import org.openspaces.cloud.xenserver.XenServerMachineProvisioningConfig;
@@ -13,7 +12,6 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import test.cli.cloudify.CommandTestUtils;
-
 import framework.tools.SGTestHelper;
 import framework.utils.LogUtils;
 import framework.utils.xen.GsmTestUtils;
@@ -44,8 +42,7 @@ public class Stockdemo2ManagementsEsmFailOverTest extends AbstractApplicationFai
 	    assertTrue(agents);
 	    
 	    repetitiveAssertNumberOfGSAsRemoved(0, OPERATION_TIMEOUT);
-	    String cassandraAbsolutePUName = ServiceUtils.getAbsolutePUName("stockdemo", "cassandra");
-	    cassandraHostIp = admin.getZones().getByName(cassandraAbsolutePUName).getGridServiceAgents().getAgents()[0].getMachine().getHostAddress();
+	    cassandraHostIp = admin.getZones().getByName("cassandra").getGridServiceAgents().getAgents()[0].getMachine().getHostAddress();
 	    
 	    try {
 			installApp(cassandraPort1 ,cassandraHostIp, cassandraPort2 ,cassandraHostIp , stockdemoAppDirPath);

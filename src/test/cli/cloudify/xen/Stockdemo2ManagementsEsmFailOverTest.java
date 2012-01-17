@@ -44,7 +44,7 @@ public class Stockdemo2ManagementsEsmFailOverTest extends AbstractApplicationFai
 	    assertTrue(agents);
 	    
 	    repetitiveAssertNumberOfGSAsRemoved(0, OPERATION_TIMEOUT);
-	    String cassandraAbsolutePUName = ServiceUtils.getAbsolutePUName("stockdemo", "stockdemo.cassandra");
+	    String cassandraAbsolutePUName = ServiceUtils.getAbsolutePUName("stockdemo", "cassandra");
 	    cassandraHostIp = admin.getZones().getByName(cassandraAbsolutePUName).getGridServiceAgents().getAgents()[0].getMachine().getHostAddress();
 	    
 	    try {

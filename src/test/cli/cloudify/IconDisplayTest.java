@@ -61,7 +61,7 @@ public class IconDisplayTest extends AbstractLocalCloudTest {
 		String iconURI = service.getIcon();
 		String codeBaseUrl = getCodeBaseUrl();
 		String absolutePUName = ServiceUtils.getAbsolutePUName(applicationName, service.getName());
-		return codeBaseUrl + "/" + absolutePUName + "/ext" + "/" + iconURI;
+		return codeBaseUrl + "/" + absolutePUName + "/ext/" + iconURI;
 		
 	}
 

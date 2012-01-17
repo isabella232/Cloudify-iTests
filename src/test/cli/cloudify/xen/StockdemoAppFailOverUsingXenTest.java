@@ -96,8 +96,9 @@ public class StockdemoAppFailOverUsingXenTest extends AbstractApplicationFailOve
 		int spacePuInstancesAfterInstall = stockAnalyticsSpace.getInstances().length;
 		LogUtils.log("destroying the pu instance holding stockAnalyticsSpace");
 		stockAnalyticsSpace.getInstances()[0].destroy();
-		assertPuInstanceKilled("stockAnalyticsSpace" , spacePuInstancesAfterInstall);
-		assertPuInstanceRessurected("stockAnalyticsSpace" , spacePuInstancesAfterInstall);
+		String stockAnalyticsSpacePUName = ServiceUtils.getAbsolutePUName("stockdemo", "stockAnalyticsSpace");
+		assertPuInstanceKilled(stockAnalyticsSpacePUName , spacePuInstancesAfterInstall);
+		assertPuInstanceRessurected(stockAnalyticsSpacePUName , spacePuInstancesAfterInstall);
 	}
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
@@ -110,8 +111,9 @@ public class StockdemoAppFailOverUsingXenTest extends AbstractApplicationFailOve
 		int spacePuInstancesAfterInstall = stockAnalyticsSpace.getInstances().length;
 		LogUtils.log("restarting GSC containing stockAnalyticsFeeder");
 		stockAnalyticsSpace.getInstances()[0].getGridServiceContainer().kill();
-		assertPuInstanceKilled("stockAnalyticsSpace" , spacePuInstancesAfterInstall);
-		assertPuInstanceRessurected("stockAnalyticsSpace" , spacePuInstancesAfterInstall);
+		String stockAnalyticsSpacePUName = ServiceUtils.getAbsolutePUName("stockdemo", "stockAnalyticsSpace");
+		assertPuInstanceKilled(stockAnalyticsSpacePUName , spacePuInstancesAfterInstall);
+		assertPuInstanceRessurected(stockAnalyticsSpacePUName , spacePuInstancesAfterInstall);
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = true)

@@ -13,6 +13,6 @@
 /opt/setup-env.sh $1 $3 $4
 
 cd /opt/gigaspaces/tools/cli/
-nohup ./cloudify.sh start-agent -auto-shutdown -zone $5 > /dev/null &
+nohup ./cloudify.sh start-agent -zone $5 > /dev/null &
 
 exit 0

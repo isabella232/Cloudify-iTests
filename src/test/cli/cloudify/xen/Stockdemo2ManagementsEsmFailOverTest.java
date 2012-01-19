@@ -74,7 +74,7 @@ public class Stockdemo2ManagementsEsmFailOverTest extends AbstractApplicationFai
 	 * 
 	 * @throws Exception
 	 */
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = true, invocationCount = 1)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = true, invocationCount = 3)
 	public void testEsmMachineShutdownFailover() throws Exception {
 		try{
 			LogUtils.log("Shuting down esm's mahcine gracefuly");

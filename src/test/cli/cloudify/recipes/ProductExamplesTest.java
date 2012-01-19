@@ -63,7 +63,8 @@ public class ProductExamplesTest extends AbstractLocalCloudTest {
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, groups = "1", enabled = true)
 	public void installPetclinic() throws IOException, InterruptedException {
 
-		checkOSSupportForMongo();
+		//TODO: fix and un-comment this according to the supported Linux versions.
+		//checkOSSupportForMongo();
 		String petclinicDirPath = examplesDirPath + "/petclinic";
 		String cliOutput = runCommand("connect " + restUrl + ";install-application --verbose " + petclinicDirPath);
 		assertTrue("petclinic app couln't be installed",

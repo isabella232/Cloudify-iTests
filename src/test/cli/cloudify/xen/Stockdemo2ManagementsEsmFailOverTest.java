@@ -7,7 +7,6 @@ import org.cloudifysource.dsl.internal.CloudifyConstants;
 import org.openspaces.admin.esm.ElasticServiceManager;
 import org.openspaces.admin.machine.Machine;
 import org.openspaces.cloud.xenserver.XenServerMachineProvisioningConfig;
-import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -52,9 +51,9 @@ public class Stockdemo2ManagementsEsmFailOverTest extends AbstractApplicationFai
 		}
 	}
 
-	@Override
-	@AfterMethod
-	public void afterTest() {
+//	@Override
+//	@AfterMethod
+	public void afterTest2() {
 		
 		try {
 			String host = admin.getElasticServiceManagers().getManagers()[0].getMachine().getHostAddress();
@@ -65,6 +64,7 @@ public class Stockdemo2ManagementsEsmFailOverTest extends AbstractApplicationFai
 		} catch (InterruptedException e) {
 			AssertFail("Failed to uninstall application stockdemo", e);
 		}
+		
 		assertAppUninstalled("stockdemo");
 		super.afterTest();
 	}
@@ -74,23 +74,31 @@ public class Stockdemo2ManagementsEsmFailOverTest extends AbstractApplicationFai
 	 * 
 	 * @throws Exception
 	 */
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = true, invocationCount = 1)
 	public void testEsmMachineShutdownFailover() throws Exception {
-		LogUtils.log("Shuting down esm's mahcine gracefuly");
-		GsmTestUtils.shutdownMachine(esmMachine, xenConfigOfEsmMachine, DEFAULT_TEST_TIMEOUT);
+		try{
+			LogUtils.log("Shuting down esm's mahcine gracefuly");
+			GsmTestUtils.shutdownMachine(esmMachine, xenConfigOfEsmMachine, DEFAULT_TEST_TIMEOUT);
 		
-		assertDesiredLogic();
+			assertDesiredLogic();
+		}finally{
+			afterTest2();
+		}
 	}
 	
 	/**
 	 * GS-8637
 	 */
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = false)
 	public void testEsmMachineHardShutdownFailover() throws Exception {
-		LogUtils.log("Shuting down esm's mahcine");
-		GsmTestUtils.hardShutdownMachine(esmMachine, xenConfigOfEsmMachine, DEFAULT_TEST_TIMEOUT);
+		try{
+			LogUtils.log("Shuting down esm's mahcine");
+			GsmTestUtils.hardShutdownMachine(esmMachine, xenConfigOfEsmMachine, DEFAULT_TEST_TIMEOUT);
 		
-		assertDesiredLogic();
+			assertDesiredLogic();
+		}finally{
+			afterTest2();
+		}
 	}
 	
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////	

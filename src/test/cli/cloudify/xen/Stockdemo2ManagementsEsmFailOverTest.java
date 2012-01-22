@@ -2,9 +2,12 @@ package test.cli.cloudify.xen;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.cloudifysource.dsl.internal.CloudifyConstants;
 import org.openspaces.admin.esm.ElasticServiceManager;
+import org.openspaces.admin.internal.admin.DefaultAdmin;
 import org.openspaces.admin.machine.Machine;
 import org.openspaces.cloud.xenserver.XenServerMachineProvisioningConfig;
 import org.testng.annotations.BeforeMethod;
@@ -24,7 +27,7 @@ public class Stockdemo2ManagementsEsmFailOverTest extends AbstractApplicationFai
 	
 	@BeforeMethod
 	public void beforeTest() {
-	    
+		Logger.getLogger(DefaultAdmin.class.getName()).setLevel(Level.ALL);
 		super.beforeTest();
 		
 		assignCassandraPorts(stockdemoAppDirPath);
@@ -74,7 +77,7 @@ public class Stockdemo2ManagementsEsmFailOverTest extends AbstractApplicationFai
 	 * 
 	 * @throws Exception
 	 */
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 3 , groups="1", enabled = true, invocationCount = 3)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = true, invocationCount = 1)
 	public void testEsmMachineShutdownFailover() throws Exception {
 		try{
 			LogUtils.log("Shuting down esm's mahcine gracefuly");
@@ -89,7 +92,7 @@ public class Stockdemo2ManagementsEsmFailOverTest extends AbstractApplicationFai
 	/**
 	 * GS-8637
 	 */
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = true)
 	public void testEsmMachineHardShutdownFailover() throws Exception {
 		try{
 			LogUtils.log("Shuting down esm's mahcine");

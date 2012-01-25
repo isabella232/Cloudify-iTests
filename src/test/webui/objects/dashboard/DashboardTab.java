@@ -1,5 +1,6 @@
 package test.webui.objects.dashboard;
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 
 import test.webui.objects.MainNavigation;
@@ -39,5 +40,10 @@ public class DashboardTab extends MainNavigation {
 	
 	public StatusGrid getStatusGrid() {
 		return StatusGrid.getInstance(selenium, driver);
+	}
+	
+	public boolean isCloudify() {
+		driver.findElement(By.id("gs-about-button")).click();
+		return selenium.isTextPresent("Cloudify");
 	}
 }

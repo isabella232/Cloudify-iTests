@@ -1,46 +1,49 @@
-package test.cli.cloudify;
+package test.cli.cloudify.pu;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
+import org.cloudifysource.dsl.utils.ServiceUtils;
 import org.openspaces.admin.gsc.GridServiceContainer;
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.testng.annotations.Test;
 
+import test.cli.cloudify.AbstractLocalCloudTest;
+import test.cli.cloudify.CommandTestUtils;
+import test.cli.cloudify.Constants;
 import test.usm.USMTestUtils;
-
-import org.cloudifysource.dsl.utils.ServiceUtils;
-
 import framework.utils.DumpUtils;
 import framework.utils.LogUtils;
 import framework.utils.AssertUtils.RepetitiveConditionProvider;
 
-public class InstallAndUninstallServiceTest extends AbstractLocalCloudTest {
+public class InstallAndUninstallPUTest extends AbstractLocalCloudTest {
 
 	private static final String DEFAULT_APPLICATION_NAME = "default";
-	public static final String SERVLET_WAR_NAME = "servlet.war";
-	public static final String SERVLET_SERVICE_NAME = "servlet";
 	
-	public static final String SERVLET_FOLDER_NAME = "statelessPU";
-	public static final String SERVLET_RECIPE_SERVICE_NAME = "statelessPU";
+	private static final String STATEFUL_FOLDER_NAME = "statefulPU";
+	private static final String STATEFUL_SERVICE_NAME = "stateful";
 	
-	public static final String USM_SERVICE_FOLDER_NAME = "simple";
-	public static final String USM_SERVICE_NAME = "simple";
+	private static final String DATAGRID_FOLDER_NAME = "datagrid";
+	private static final String DATAGRID_SERVICE_NAME = "datagrid";
+	
+	private static final String USM_SERVICE_NAME = "simple";
+	
+	private static final String MIRROR_SERVICE_FOLDER_NAME = "stockAnalyticsMirror";
+	private static final String MIRROR_SERVICE_NAME = "stockAnalyticsMirror";
 
-	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
-	public void testServletInstall() throws IOException, InterruptedException {
-		testRestApiInstall(SERVLET_SERVICE_NAME, getArchiveServicePath(SERVLET_WAR_NAME));
+	public void testStatefulRecipeInstall() throws IOException, InterruptedException {
+		testRestApiInstall(STATEFUL_SERVICE_NAME, getUsmServicePath(STATEFUL_FOLDER_NAME));
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
-	public void testUSMInstall() throws IOException, InterruptedException {
-		testRestApiInstall(USM_SERVICE_NAME, getUsmServicePath(USM_SERVICE_FOLDER_NAME));
+	public void testDataGridRecipeInstall() throws IOException, InterruptedException {
+		testRestApiInstall(DATAGRID_SERVICE_NAME, getUsmServicePath(DATAGRID_FOLDER_NAME));
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
-	public void testServletRecipeInstall() throws IOException, InterruptedException {
-		testRestApiInstall(SERVLET_RECIPE_SERVICE_NAME, getUsmServicePath(SERVLET_FOLDER_NAME));
+	public void testMirrorRecipeInstall() throws IOException, InterruptedException {
+		testRestApiInstall(MIRROR_SERVICE_NAME, getUsmServicePath(MIRROR_SERVICE_FOLDER_NAME));
 	}
 	
 	void testRestApiInstall(String serviceName, String servicePath) throws IOException, InterruptedException{
@@ -89,7 +92,7 @@ public class InstallAndUninstallServiceTest extends AbstractLocalCloudTest {
 	    final GridServiceContainer gsc = processingUnit.getInstances()[0].getGridServiceContainer();
 	    
 	    LogUtils.log("Uninstalling service " + serviceName);
-	    CommandTestUtils.runCommandAndWait("connect " + restUrl + "; uninstall-service " + serviceName + "; exit;");
+	    CommandTestUtils.runCommandAndWait("connect " + this.restUrl + "; uninstall-service " + serviceName + "; exit;");
 		
 		assertGSCIsNotDiscovered(gsc);
 	}
@@ -100,10 +103,6 @@ public class InstallAndUninstallServiceTest extends AbstractLocalCloudTest {
                 return !gsc.isDiscovered();
             }
         }, OPERATION_TIMEOUT);
-	}
-	
-	private String getArchiveServicePath(String dirOrFilename) {
-		return CommandTestUtils.getPath("apps/archives/" + dirOrFilename);
 	}
 	
 	private String getUsmServicePath(String dirOrFilename) {

@@ -15,5 +15,5 @@ public class Constants {
 	protected static final String SERVICE_NAME = "servlet";
 	protected static final String REST_ADMIN_TYPE = "REST";
 	protected static final String REST_PORT = "8080";
-	protected static final int PROCESSINGUNIT_TIMEOUT_SEC = 20;
+	public static final int PROCESSINGUNIT_TIMEOUT_SEC = 20;
 }

@@ -149,7 +149,7 @@ public class PetClinicTest extends AbstractSeleniumApplicationRecipeTest {
 
 			@Override
 			public boolean getCondition() {
-				ApplicationNode mongocfgNode = appMap.getApplicationNode("mongo-cfg");
+				ApplicationNode mongocfgNode = appMap.getApplicationNode("mongoConfig");
 				return ((mongocfgNode != null) && (mongocfgNode.getStatus().equals(DeploymentStatus.INTACT)));
 			}
 		};
@@ -174,7 +174,7 @@ public class PetClinicTest extends AbstractSeleniumApplicationRecipeTest {
 		assertTrue(mongosConnectors.size() == 2);
 		for (Connector c : mongosConnectors) {
 			String name = c.getTarget().getName();
-			assertTrue(name.equals("mongod") ||name.equals("mongo-cfg"));
+			assertTrue(name.equals("mongod") ||name.equals("mongoConfig"));
 		}
 
 		ServicesTab servicesTab = mainNav.switchToServices();
@@ -184,7 +184,7 @@ public class PetClinicTest extends AbstractSeleniumApplicationRecipeTest {
 		assertTrue(puTreeGrid.getProcessingUnit("tomcat") != null);
 		assertTrue(puTreeGrid.getProcessingUnit("petclinic-mongo.mongod") != null);
 		assertTrue(puTreeGrid.getProcessingUnit("petclinic-mongo.mongos") != null);
-		assertTrue(puTreeGrid.getProcessingUnit("petclinic-mongo.mongo-cfg") != null);
+		assertTrue(puTreeGrid.getProcessingUnit("petclinic-mongo.mongoConfig") != null);
 		
 		takeScreenShot(this.getClass(), "petClinicDemoTest","passed-services");
 	}

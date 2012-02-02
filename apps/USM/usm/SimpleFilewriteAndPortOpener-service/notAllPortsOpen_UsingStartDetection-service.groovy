@@ -7,7 +7,7 @@ service {
 
 		//init "init.groovy";//{ println "This is the init event" }
 
-		preStart {ServiceUtils.isPortsFree([3668,3667])}
+		preStart {ServiceUtils.arePortsFree([3668,3667])}
 		startDetection {ServiceUtils.arePortsOccupied([3668,3667])}
 		preInstall {println "This is the preInstall event" }
 		postInstall {println "This is the postInstall event"

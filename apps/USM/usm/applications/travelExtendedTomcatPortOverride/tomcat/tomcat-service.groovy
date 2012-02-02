@@ -17,7 +17,7 @@ service {
     lifecycle{
 
         startDetection {
-            !ServiceUtils.isPortsFree([9876, 8009] )
+            !ServiceUtils.arePortsFree([9876, 8009] )
         }
     }
 

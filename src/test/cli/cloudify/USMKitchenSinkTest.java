@@ -16,6 +16,7 @@ import org.openspaces.admin.gsc.events.GridServiceContainerAddedEventListener;
 import org.openspaces.admin.gsc.events.GridServiceContainerRemovedEventListener;
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.openspaces.admin.pu.ProcessingUnitInstance;
+import org.openspaces.admin.pu.ProcessingUnitType;
 import org.openspaces.admin.pu.events.ProcessingUnitInstanceAddedEventListener;
 import org.openspaces.admin.pu.events.ProcessingUnitInstanceRemovedEventListener;
 import org.openspaces.pu.service.ServiceDetails;
@@ -29,6 +30,8 @@ import org.cloudifysource.dsl.internal.DSLException;
 import org.cloudifysource.dsl.internal.ServiceReader;
 import org.cloudifysource.dsl.internal.packaging.PackagingException;
 import org.cloudifysource.dsl.utils.ServiceUtils;
+import org.cloudifysource.restclient.ErrorStatusException;
+import org.cloudifysource.shell.commands.CLIException;
 import org.cloudifysource.usm.USMException;
 import org.cloudifysource.usm.USMUtils;
 import com.gigaspaces.internal.sigar.SigarHolder;
@@ -102,6 +105,8 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 		checkMonitors(pui);
 
 		checkCustomCommands();
+		
+		checkServiceType();
 
 		long initialActualPid = this.actualPid;
 		
@@ -151,6 +156,28 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 				"Process port is still open! Process did not shut down as expected",
 				!isPortOpen(host));
 
+	}
+	
+	// Check that the "service type" is exposed in the service map obtained by the AdminApiController.
+	private void checkServiceType(){
+		String absoluteServiceName = ServiceUtils.getAbsolutePUName("default", "kitchensink-service");
+		
+		Map<String, Object> adminData = null;
+		try {
+			adminData = getAdminData("ProcessingUnits/Names/" + absoluteServiceName);
+		} catch (ErrorStatusException e) {
+			AssertFail("Failed to get the service admin data." + e);
+		} catch (CLIException e) {
+			AssertFail("Failed to get the service admin data." + e);
+		}
+		assertTrue("Test was unable to fetch the " + absoluteServiceName + " service's admin API data.",
+				adminData != null);
+		assertTrue("Type attribute was not found in service map.",
+				adminData.containsKey("Type-Enumerator"));
+		
+		String kitchensinkServiceType = adminData.get("Type-Enumerator").toString();
+		assertTrue("The service type " + kitchensinkServiceType + " does not match the expected service type.",
+																ProcessingUnitType.UNIVERSAL.toString().equals(kitchensinkServiceType));
 	}
 
 	private static final java.util.logging.Logger logger = java.util.logging.Logger

@@ -18,11 +18,14 @@ import java.util.Properties;
 
 public class SGTestNGListener extends TestListenerAdapter {
 
+    protected String testMethodName;
+
     @Override
     public void onConfigurationSuccess(ITestResult iTestResult) {
         super.onConfigurationSuccess(iTestResult);
         String testName = iTestResult.getMethod().toString().split("\\(|\\)")[0] + "()";
         LogUtils.log("Configuration Succeeded: " + testName);
+        ZipUtils.unzipArchive(testMethodName);
         write2LogFile(iTestResult, DumpUtils.createTestFolder(testName));
     }
 
@@ -31,26 +34,25 @@ public class SGTestNGListener extends TestListenerAdapter {
         super.onConfigurationFailure(iTestResult);
         String testName = iTestResult.getMethod().toString().split("\\(|\\)")[0] + "()";
         LogUtils.log("Configuration Failed: " + testName, iTestResult.getThrowable());
+        ZipUtils.unzipArchive(testMethodName);
         write2LogFile(iTestResult, DumpUtils.createTestFolder(testName));
     }
 
     @Override
     public void onTestFailure(ITestResult iTestResult) {
         super.onTestFailure(iTestResult);
-        String testName = iTestResult.getMethod().toString().split("\\(|\\)")[0] + "()";
-        ZipUtils.unzipArchive(testName);
-        LogUtils.log("Test Failed: " + testName, iTestResult.getThrowable());
-        write2LogFile(iTestResult, DumpUtils.createTestFolder(testName));
+        testMethodName = iTestResult.getMethod().toString().split("\\(|\\)")[0] + "()";
+        LogUtils.log("Test Failed: " + testMethodName, iTestResult.getThrowable());
+        write2LogFile(iTestResult, DumpUtils.createTestFolder(testMethodName));
     }
 
     @Override
     public void onTestSuccess(ITestResult iTestResult) {
         super.onTestSuccess(iTestResult);
-        String testName = iTestResult.getMethod().toString().split("\\(|\\)")[0] + "()";
-        System.out.println("onTestSuccess " + testName);
-        ZipUtils.unzipArchive(testName);
-        LogUtils.log("Test Passed: " + testName);
-        write2LogFile(iTestResult, DumpUtils.createTestFolder(testName));
+        testMethodName = iTestResult.getMethod().toString().split("\\(|\\)")[0] + "()";
+        System.out.println("onTestSuccess " + testMethodName);
+        LogUtils.log("Test Passed: " + testMethodName);
+        write2LogFile(iTestResult, DumpUtils.createTestFolder(testMethodName));
     }
 
     @Override

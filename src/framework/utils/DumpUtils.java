@@ -70,7 +70,11 @@ public class DumpUtils {
     }
 
     public static File createTestFolder(String testName) {
-        String buildNumber = System.getProperty("sgtest.buildNumber").split("_")[1];
+        String buildNumber = System.getProperty("sgtest.buildNumber");
+        if(buildNumber == null){
+            return null;
+        }
+        buildNumber = buildNumber.split("_")[1];
 
         File buildFolder = new File(SGTestHelper.getSGTestRootDir() + "/deploy/local-builds/build_" + buildNumber);
 

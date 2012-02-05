@@ -18,8 +18,6 @@ import java.util.Properties;
 
 public class SGTestNGListener extends TestListenerAdapter {
 
-    protected File testFolder;
-
     @Override
     public void onConfigurationSuccess(ITestResult iTestResult) {
         super.onConfigurationSuccess(iTestResult);
@@ -39,8 +37,8 @@ public class SGTestNGListener extends TestListenerAdapter {
     @Override
     public void onTestFailure(ITestResult iTestResult) {
         super.onTestFailure(iTestResult);
-        ZipUtils.unzipArchive(iTestResult.getMethod().toString());
         String testName = iTestResult.getMethod().toString().split("\\(|\\)")[0] + "()";
+        ZipUtils.unzipArchive(testName);
         LogUtils.log("Test Failed: " + testName, iTestResult.getThrowable());
         write2LogFile(iTestResult, DumpUtils.createTestFolder(testName));
     }
@@ -48,8 +46,8 @@ public class SGTestNGListener extends TestListenerAdapter {
     @Override
     public void onTestSuccess(ITestResult iTestResult) {
         super.onTestSuccess(iTestResult);
-        ZipUtils.unzipArchive(iTestResult.getMethod().toString());
         String testName = iTestResult.getMethod().toString().split("\\(|\\)")[0] + "()";
+        ZipUtils.unzipArchive(testName);
         LogUtils.log("Test Passed: " + testName);
         write2LogFile(iTestResult, DumpUtils.createTestFolder(testName));
     }
@@ -58,11 +56,6 @@ public class SGTestNGListener extends TestListenerAdapter {
     public void onFinish(ITestContext testContext) {
         super.onFinish(testContext);
         sendHtmlMailReport(testContext);
-    }
-
-    private void deleteFile(ITestResult iTestResult) {
-        File testLogFile = new File(testFolder.getAbsolutePath() + "/" + iTestResult.getName() + ".log");
-        testLogFile.delete();
     }
 
     private void write2LogFile(ITestResult iTestResult, File testFolder) {

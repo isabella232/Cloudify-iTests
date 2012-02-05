@@ -24,7 +24,7 @@
 
     <!-- sgtest libraries -->
     <property name="sgtest.lib" value="${sgtest.home}/lib"/>
-    <property name="sgtest.testng" value="${sgtest.lib}/testng/testng-5.10-jdk15.jar"/>
+    <property name="sgtest.testng" value="${sgtest.lib}/testng/testng-6.3.1.jar"/>
     <property name="java16.home" value="/export/utils/java/jdk1.6.0_24-64Bit"/>
 
 	

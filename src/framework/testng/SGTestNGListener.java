@@ -47,6 +47,7 @@ public class SGTestNGListener extends TestListenerAdapter {
     public void onTestSuccess(ITestResult iTestResult) {
         super.onTestSuccess(iTestResult);
         String testName = iTestResult.getMethod().toString().split("\\(|\\)")[0] + "()";
+        System.out.println("onTestSuccess " + testName);
         ZipUtils.unzipArchive(testName);
         LogUtils.log("Test Passed: " + testName);
         write2LogFile(iTestResult, DumpUtils.createTestFolder(testName));

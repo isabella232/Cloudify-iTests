@@ -30,6 +30,7 @@ public class ZipUtils {
             return;
         for (int n = 0; n < children.length; n++) {
             File file = children[n];
+            System.out.println("unzipArchive " + file.getName());
             if (file.getName().contains(".zip")) {
                 unzipArchive(file, testFolder.getAbsoluteFile());
                 file.delete();

@@ -20,10 +20,10 @@ public class SGTestNGListener extends TestListenerAdapter {
 
     protected File testFolder;
 
-    @Override
-    public void onTestStart(ITestResult iTestResult) {
-        super.onTestStart(iTestResult);
 
+    @Override
+    public void beforeConfiguration(ITestResult iTestResult) {
+        super.beforeConfiguration(iTestResult);
         String folderName = iTestResult.getMethod().toString();
         // remove any method input parameters between parenthesis
         // we need to maintain the folder naming convention not to brake the report htmls.
@@ -35,7 +35,6 @@ public class SGTestNGListener extends TestListenerAdapter {
     @Override
     public void onConfigurationFailure(ITestResult iTestResult) {
         super.onConfigurationFailure(iTestResult);
-        testFolder = DumpUtils.createTestFolder(iTestResult.getMethod().toString());
         LogUtils.log("Test Configuration Failed: " + iTestResult.getMethod().toString(),
                 iTestResult.getThrowable());
         write2LogFile(iTestResult);
@@ -89,6 +88,8 @@ public class SGTestNGListener extends TestListenerAdapter {
     void sendHtmlMailReport(ITestContext testContext) {
         String buildNumber = System.getProperty("sgtest.buildNumber");
         String suiteName = System.getProperty("sgtest.suiteName");
+        String majorVersion = System.getProperty("sgtest.majorVersion");
+        String minorVersion = System.getProperty("sgtest.minorVersion");
         List<String> mailRecipients = null;
         if(buildNumber == null)
             return;
@@ -102,7 +103,8 @@ public class SGTestNGListener extends TestListenerAdapter {
         }
         MailReporterProperties mailProperties = new MailReporterProperties(props);
         String link = null;
-        link = "<a href=http://192.168.9.121:8087/sgtest-cloudify/" + buildNumber + "/" + suiteName + "/html>"+buildNumber+" </a>";
+        link = "<a href=http://192.168.9.121:8087/sgtest-cloudify/" + buildNumber + "/" + suiteName + "/html>"
+                +buildNumber+ " " + majorVersion +" " + minorVersion + " </a>";
         StringBuilder sb = new StringBuilder();
         sb.append("<html>").append("\n");
         sb.append("<h1>SGTtest Results </h1></br></br></br>").append("\n");
@@ -124,7 +126,8 @@ public class SGTestNGListener extends TestListenerAdapter {
         	if (suiteName.equals("CLOUDIFY")) mailRecipients = mailProperties.getCloudifyRecipients();
         	if (suiteName.equals("ESM")) mailRecipients = mailProperties.getESMRecipients();
             SimpleMail.send(mailProperties.getMailHost(), mailProperties.getUsername(), mailProperties.getPassword(),
-                    "SGTest Suite Cloudify " + testContext.getSuite().getName() + " results", sb.toString(), mailRecipients);
+                    "SGTest Suite " + testContext.getSuite().getName() + " results " + buildNumber+ " " + majorVersion
+                            +" " + minorVersion , sb.toString(), mailRecipients);
         } catch (Exception e) {
             e.printStackTrace();
         }

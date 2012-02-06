@@ -16,8 +16,7 @@ import java.util.Date;
  */
 public class HTMLReport {
 
-    private void appendReportLink(String reportPath, String newBuildreport) {
-        String suiteName = System.getProperty("sgtest.suiteName");
+    private void appendReportLink(String reportPath, String newBuildreport, String suiteName, String majorVersion, String minorVersion) {
         File report = new File(reportPath);
         StringBuilder sb = new StringBuilder();
         for (File f : report.listFiles()) {
@@ -34,7 +33,7 @@ public class HTMLReport {
                     DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
                     String link = null;
                     link = "<a href=http://192.168.9.121:8087/sgtest-cloudify/" + newBuildreport + "/" + suiteName + "/html/><font color=\"0000FF\">" +
-                    dateFormat.format(date) +" " + newBuildreport + "</font></a></br>";
+                    dateFormat.format(date) +" " + newBuildreport + " " + suiteName +" " + majorVersion +" " + minorVersion + "</font></a></br>";
                     sb.insert(startLinkIndex, link);
                     BufferedWriter out = new BufferedWriter(new FileWriter(f));
                     out.write(sb.toString());
@@ -52,8 +51,11 @@ public class HTMLReport {
     public static void main(String[] args) {
         String mainReport = args[0];
         String buildNumber = args[1];
+        String suiteName = args[1];
+        String majorVersion = args[1];
+        String minorVersion = args[1];
         HTMLReport report = new HTMLReport();
-        report.appendReportLink(mainReport, buildNumber);
+        report.appendReportLink(mainReport, buildNumber, suiteName, majorVersion, minorVersion);
 
 
     }

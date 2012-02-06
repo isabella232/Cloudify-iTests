@@ -51,9 +51,9 @@ public class HTMLReport {
     public static void main(String[] args) {
         String mainReport = args[0];
         String buildNumber = args[1];
-        String suiteName = args[1];
-        String majorVersion = args[1];
-        String minorVersion = args[1];
+        String suiteName = args[2];
+        String majorVersion = args[3];
+        String minorVersion = args[4];
         HTMLReport report = new HTMLReport();
         report.appendReportLink(mainReport, buildNumber, suiteName, majorVersion, minorVersion);
 

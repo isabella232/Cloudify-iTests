@@ -49,10 +49,6 @@ public class HTMLReport {
 
 
     public static void main(String[] args) {
-        System.out.println("args length = "+args.length);
-        for(String arg : args){
-            System.out.println(arg);
-        }
         String mainReport = args[0];
         String buildNumber = args[1];
         String suiteName = args[2];

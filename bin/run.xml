@@ -13,10 +13,10 @@
     <property name="testng.reports.dir" value="${sgtest.homedir}/deploy/local-builds/"/>
     <property name="tmp.testng.classes" value="${sgtest.homedir}/tmp"/>
 
-	
+
     <!-- classpath -->
     <path id="classpath">
-	
+
         <!-- using all jars found in homedir/lib/ext -->
         <fileset dir="${sgtest.homedir}/lib/testng">
             <include name="**/*.jar"/>
@@ -46,69 +46,69 @@
             <include name="**/*.jar"/>
         </fileset>
 
-		<!-- hiberbate jars -->
+        <!-- hiberbate jars -->
         <fileset dir="${sgtest.homedir}/lib/hibernate">
             <include name="**/*.jar"/>
         </fileset>
-    	
-    	<!-- spring jars -->
+
+        <!-- spring jars -->
         <fileset dir="${sgtest.homedir}/lib/spring">
             <include name="**/*.jar"/>
         </fileset>
 
-		<!-- Jsch jars -->
-		<fileset dir="${sgtest.homedir}/lib/jsch">
-			<include name="**/*.jar"/>
-		</fileset>
-				
-		<!-- XenServer jars -->
-		<fileset dir="${sgtest.homedir}/lib/xenserver">
-			<include name="**/*.jar"/>
-		</fileset>
+        <!-- Jsch jars -->
+        <fileset dir="${sgtest.homedir}/lib/jsch">
+            <include name="**/*.jar"/>
+        </fileset>
 
-		<!-- Selenium jars -->
-		<fileset dir="${sgtest.homedir}/lib/selenium">
-			<include name="**/*.jar"/>
-		</fileset>
+        <!-- XenServer jars -->
+        <fileset dir="${sgtest.homedir}/lib/xenserver">
+            <include name="**/*.jar"/>
+        </fileset>
 
-		<!-- usm jar -->
-    	<fileset dir="${BUILD_DIR}/lib/platform/usm">
-			<include name="**/usm.jar"/>
-		</fileset>
-		
-		<!-- cli jars -->
-		<fileset dir="${BUILD_DIR}/tools/cli">
-			<include name="**/*.jar"/>
-		</fileset>
+        <!-- Selenium jars -->
+        <fileset dir="${sgtest.homedir}/lib/selenium">
+            <include name="**/*.jar"/>
+        </fileset>
 
-		
-		<!-- simplejavaprocessjars -->
-		<fileset dir="${sgtest.homedir}/apps/USM/usm/simplejavaprocess">
-			<include name="**/*.jar"/>
-		</fileset>
+        <!-- USM jars -->
+        <fileset dir="${BUILD_DIR}/lib/platform/usm">
+            <include name="**/usm.jar"/>
+        </fileset>
 
-		<!-- sigar jars -->
-		<fileset dir="${BUILD_DIR}/lib/platform/sigar">
-        	<include name="**/*.jar"/>
-    	</fileset>
-		
-		<!-- groovy jars -->
-		<fileset dir="${BUILD_DIR}/tools/groovy/lib">
-	        	<include name="**/groovy*.jar"/>
-			<include name="**/commons-logging*.jar"/>
-			<include name="**/bsf*.jar"/>
-	    	</fileset>			
+        <!-- cli jars -->
+        <fileset dir="${BUILD_DIR}/tools/cli">
+            <include name="**/*.jar"/>
+        </fileset>
 
-		<!-- mail jars -->
-		<fileset dir="${sgtest.homedir}/lib/mail">
-        	<include name="**/*.jar"/>
-    	</fileset>
-	
-		<dirset dir="${sgtest.homedir}/config"/>
-    	
+
+        <!-- simplejavaprocessjars -->
+        <fileset dir="${sgtest.homedir}/apps/USM/usm/simplejavaprocess">
+            <include name="**/*.jar"/>
+        </fileset>
+
+        <!-- sigar jars -->
+        <fileset dir="${BUILD_DIR}/lib/platform/sigar">
+            <include name="**/*.jar"/>
+        </fileset>
+
+        <!-- groovy jars -->
+        <fileset dir="${BUILD_DIR}/tools/groovy/lib">
+            <include name="**/groovy*.jar"/>
+            <include name="**/commons-logging*.jar"/>
+            <include name="**/bsf*.jar"/>
+        </fileset>
+
+        <!-- mail jars -->
+        <fileset dir="${sgtest.homedir}/lib/mail">
+            <include name="**/*.jar"/>
+        </fileset>
+
+        <dirset dir="${sgtest.homedir}/config"/>
+
         <dirset dir="${tmp.testng.classes}/apps"/>
-		
-		<pathelement location="${sgtest.jar}"/>
+
+        <pathelement location="${sgtest.jar}"/>
 
     </path>
 
@@ -130,25 +130,30 @@
             <fileset dir="${tmp.testng.classes}/apps"/>
         </copy>
         <mkdir dir="${testng.summary.dir}"/>
-	 <taskdef resource="testngtasks" classpathref="classpath"/>
+        <taskdef resource="testngtasks" classpathref="classpath"/>
         <testng suitename="${SUITE_NAME}" testname="${SUITE_NAME}" classpathref="classpath" outputDir="${testng.summary.dir}"
                 haltOnfailure="false" useDefaultListeners="false"
-				listeners="framework.testng.SGTestNGListener, framework.testng.SGTestNGMethodInterceptor, org.uncommons.reportng.HTMLReporter">
+                listeners="framework.testng.SGTestNGListener, framework.testng.SGTestNGMethodInterceptor, org.uncommons.reportng.HTMLReporter">
             <jvmarg line="-Djava.security.policy=policy/policy.all -Djava.awt.headless=true -Xmx2048m -XX:MaxPermSize=512m"/>
             <classfileset dir="${tmp.testng.classes}" includes="${INCLUDE}" excludes="${EXCLUDE}"/>
             <sysproperty key="org.uncommons.reportng.title" value="Service Grid Tests Report - Build ${BUILD_NUMBER}"/>
-	     <sysproperty key="sgtest.buildNumber" value="${BUILD_NUMBER}"/>
-	     <sysproperty key="sgtest.suiteName" value="${SUITE_NAME}"/>
+            <sysproperty key="sgtest.buildNumber" value="${BUILD_NUMBER}"/>
+            <sysproperty key="sgtest.suiteName" value="${SUITE_NAME}"/>
+            <sysproperty key="sgtest.majorVersion" value="${MAJOR_VERSION}"/>
+            <sysproperty key="sgtest.minorVersion" value="${MINOR_VERSION}"/>
             <sysproperty key="org.openspaces.admin.internal.discovery.DiscoveryService.level" value="ALL"/>
             <sysproperty key="sgtest.buildFolder" value="${sgtest.homedir}/deploy/local-builds/${BUILD_NUMBER}"/>
             <sysproperty key="sgtest.url" value="http://192.168.9.121:8087/sgtest-cloudify/"/>
         </testng>
-       
-         <java classpath="${sgtest.homedir}/lib/gs-sgtest.jar" classname="framework.report.HTMLReport" >
+
+        <java classpath="${sgtest.homedir}/lib/gs-sgtest.jar" classname="framework.report.HTMLReport" >
             <arg value="${testng.reports.dir}" />
             <arg value="${BUILD_NUMBER}" />
-	     <jvmarg line="-Xmx2048m -XX:MaxPermSize=512m"/>
-	     <sysproperty key="sgtest.suiteName" value="${SUITE_NAME}"/>
+            <arg value="${SUITE_NAME}" />
+            <arg value="${MAJOR_VERSION}" />
+            <arg value="${MINOR_VERSION}" />
+            <jvmarg line="-Xmx2048m -XX:MaxPermSize=512m"/>
+
         </java>
     </target>
 

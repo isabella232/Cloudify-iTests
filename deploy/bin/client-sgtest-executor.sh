@@ -16,7 +16,8 @@
  INCLUDE=$6
  EXCLUDE=$7
  SUITE_NAME=$8
-
+ MAJOR_VERSION=$9
+ MINOR_VERSION=${10}
 
  # set shell.
 # TERM=xterm export TERM
@@ -35,7 +36,7 @@
  cd ${SGTEST_ROOT_BIN_DIR}
  
  #start sgtest
- ${SGTEST_ROOT_BIN_DIR}/sgtest-cmd.sh ${BUILD_NUMBER} ${INCLUDE} ${EXCLUDE} ${SUITE_NAME}
+ ${SGTEST_ROOT_BIN_DIR}/sgtest-cmd.sh ${BUILD_NUMBER} ${INCLUDE} ${EXCLUDE} ${SUITE_NAME} ${MAJOR_VERSION} ${MINOR_VERSION}
 
  RESULT=$?
 

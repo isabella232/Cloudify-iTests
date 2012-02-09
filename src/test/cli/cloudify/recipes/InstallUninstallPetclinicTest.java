@@ -5,6 +5,7 @@ import static org.testng.AssertJUnit.fail;
 import java.io.IOException;
 
 import org.openspaces.admin.machine.Machine;
+import org.testng.annotations.Test;
 
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.WebClient;
@@ -17,6 +18,7 @@ public class InstallUninstallPetclinicTest extends AbstractLocalCloudTest {
 	
 	private static int ITERATIONS = 3;
 	
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
 	public void multipleInstallUninstallTest() throws IOException, InterruptedException {
 		
 		for (int i = 0 ; i < ITERATIONS ; i++) {

@@ -52,7 +52,7 @@ public class AbstractLocalCloudTest extends AbstractTest {
     	cleanUpCloudifyLocalDir();
     	
         LogUtils.log("Tearing-down existing localclouds");
-        runCommand("teardown-localcloud");
+        runCommand("teardown-localcloud -force=true");
         clientStartupPIDs = SetupUtils.getLocalProcesses();
         try {
             LogUtils.log("Performing bootstrap");
@@ -156,7 +156,7 @@ public class AbstractLocalCloudTest extends AbstractTest {
     public void afterSuite() {
         try {
             LogUtils.log("Tearing-down localcloud");
-            runCommand("teardown-localcloud");
+            runCommand("teardown-localcloud  -force=true");
         } catch (Exception e) {
             e.printStackTrace();
         }

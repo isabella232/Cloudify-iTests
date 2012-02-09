@@ -1,11 +1,18 @@
 package test.webui.recipes.applications;
 
+import static org.testng.AssertJUnit.fail;
+
 import java.io.IOException;
 import java.util.List;
 
+import org.openspaces.admin.machine.Machine;
 import org.openspaces.admin.pu.DeploymentStatus;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import com.gargoylesoftware.htmlunit.BrowserVersion;
+import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 import test.webui.objects.LoginPage;
 import test.webui.objects.MainNavigation;
@@ -187,6 +194,25 @@ public class PetClinicTest extends AbstractSeleniumApplicationRecipeTest {
 		assertTrue(puTreeGrid.getProcessingUnit("petclinic-mongo.mongoConfig") != null);
 		
 		takeScreenShot(this.getClass(), "petClinicDemoTest","passed-services");
+		
+		assertPetclinicPageExists();
+	}
+	
+	private void assertPetclinicPageExists() {
+		
+		Machine localMachine = admin.getMachines().getMachines()[0];
+		
+		WebClient client = new WebClient(BrowserVersion.getDefault());
+		
+        HtmlPage page = null;
+        try {
+            page = client.getPage("http://" + localMachine.getHostAddress() + ":8080/petclinic-mongo");
+        } catch (IOException e) {
+            fail("Could not get a resposne from the petclinic URL " + e.getMessage());
+        }
+        assertEquals("OK", page.getWebResponse().getStatusMessage());
+		
+		
 	}
 
 }

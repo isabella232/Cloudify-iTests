@@ -142,6 +142,8 @@
             <classfileset dir="${tmp.testng.classes}" includes="${INCLUDE}" excludes="${EXCLUDE}"/>
             <sysproperty key="org.uncommons.reportng.title" value="Service Grid Tests Report - Build ${BUILD_NUMBER}"/>
 	     <sysproperty key="sgtest.buildNumber" value="${BUILD_NUMBER}"/>
+         <sysproperty key="sgtest.majorVersion" value="${MAJOR_VERSION}"/>
+         <sysproperty key="sgtest.minorVersion" value="${MINOR_VERSION}"/>
    	     <sysproperty key="selenium.browser" value="${SELENIUM_BROWSER}"/>
 	     <sysproperty key="sgtest.suiteName" value="${SUITE_NAME}"/>
             <sysproperty key="org.openspaces.admin.internal.discovery.DiscoveryService.level" value="ALL"/>
@@ -152,8 +154,10 @@
          <java classpath="${sgtest.homedir}/lib/gs-sgtest.jar" classname="framework.report.HTMLReport" >
             <arg value="${testng.reports.dir}" />
             <arg value="${BUILD_NUMBER}" />
+            <arg value="${SUITE_NAME}" />
+            <arg value="${MAJOR_VERSION}" />
+            <arg value="${MINOR_VERSION}" />
 	     <jvmarg line="-Xmx1024m -XX:MaxPermSize=512m"/>
-	     <sysproperty key="sgtest.suiteName" value="${SUITE_NAME}"/>
         </java>
     </target>
 

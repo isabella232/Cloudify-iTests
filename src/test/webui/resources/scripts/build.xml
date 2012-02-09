@@ -23,12 +23,17 @@
 
     <!-- sgtest libraries -->
     <property name="sgtest.lib" value="${sgtest.home}/lib"/>
-    <property name="sgtest.testng" value="${sgtest.lib}/testng/testng-5.10-jdk15.jar"/>
     <property name="java16.home" value="C:\Java\jdk1.6.0_26"/>
 
 	
     <!-- sgtest classpath -->
     <path id="classpath">
+    	
+        <!-- testng jars -->
+         <fileset dir="${sgtest.lib}/testng">
+             <include name="**/*.jar"/>
+         </fileset>
+    	
         <fileset dir="${gsHome.dir}/lib">
             <include name="**/*.jar"/>
             <exclude name="**/mule-os.jar"/>

@@ -48,7 +48,7 @@ public class InstallUninstallPetclinicTest extends AbstractLocalCloudTest {
 		
         HtmlPage page = null;
         try {
-            page = client.getPage("http://" + localMachine.getHostAddress() + ":8080/petclinic-mongo");
+            page = client.getPage("http://" + localMachine.getHostAddress() + ":8080/petclinic-mongo/");
         } catch (IOException e) {
             fail("Could not get a resposne from the petclinic URL " + e.getMessage());
         }

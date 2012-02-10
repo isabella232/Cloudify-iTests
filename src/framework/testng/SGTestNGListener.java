@@ -39,6 +39,13 @@ public class SGTestNGListener extends TestListenerAdapter {
     }
 
     @Override
+    public void onTestStart(ITestResult iTestResult) {
+        super.onTestFailure(iTestResult);
+        String testName = iTestResult.getMethod().toString().split("\\(|\\)")[0] + "()";
+        LogUtils.log("Test Start: " + testName);
+    }
+
+    @Override
     public void onTestFailure(ITestResult iTestResult) {
         super.onTestFailure(iTestResult);
         testMethodName = iTestResult.getMethod().toString().split("\\(|\\)")[0] + "()";

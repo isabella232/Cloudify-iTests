@@ -112,23 +112,10 @@
 
     </path>
 
-    <target name="prepare">
-        <delete dir="${tmp.testng.classes}"/>
-        <delete dir="${sgtest.homedir}/bin/apps"/>
-    </target>
-
     <!--
          Run test suite and generate test summary.
     -->
     <target name="testsummary" description="Run tests and generate test summary" depends="prepare">
-        <mkdir dir="${tmp.testng.classes}"/>
-
-        <unzip src="${sgtest.homedir}/lib/gs-sgtest.jar" dest="${tmp.testng.classes}"/>
-
-        <mkdir dir="${sgtest.homedir}/bin/apps"/>
-        <copy todir="${sgtest.homedir}/bin/apps">
-            <fileset dir="${tmp.testng.classes}/apps"/>
-        </copy>
         <mkdir dir="${testng.summary.dir}"/>
         <taskdef resource="testngtasks" classpathref="classpath"/>
         <testng suitename="${SUITE_NAME}" testname="${SUITE_NAME}" classpathref="classpath" outputDir="${testng.summary.dir}"

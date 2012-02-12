@@ -87,7 +87,7 @@ for ((id=0 ; id < ${SUITE_NUMBER} ; id++ )); do
  rm -rf ${SUITE_DEPLOY_DIR}
  mkdir ${SUITE_DEPLOY_DIR}	
 
- SUITE_JVM_PROPERTIES="-Dcom.gs.work=${SUITE_WORK_DIR}:-Dcom.gs.deploy=${SUITE_DEPLOY_DIR}:${JVM_PROPERTIES}"
+ SUITE_JVM_PROPERTIES="-Dcom.gs.work=${SUITE_WORK_DIR} -Dcom.gs.deploy=${SUITE_DEPLOY_DIR} ${JVM_PROPERTIES}"
 
  TARGET_CLIENT_MACHINE=${target_client_machines[$id]}
  TARGET_GSA_MACHINES=${target_gsa_machines[$id]}

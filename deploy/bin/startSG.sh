@@ -7,8 +7,8 @@ umask 000
 # 1 arg build-argument i.e: build_1804-01, or no args to get full list of available builds on build-server
 # 2 arg major version.
 # 3 arg minor version.
-# 4 build type (xap-premium, xap-standard, xap-community)
-# 5 arg jdk version for XAP zip
+# 4 build type (cloudify-premium, cloudify-free)
+# 5 arg jdk version for Cloudify zip
 # 6 arg jdk order version for config-java
 # 7 arg client machine
 # 8 arg gsa machines.
@@ -19,25 +19,30 @@ umask 000
 ##
 
  BUILD_NUMBER=$1
- MAJOR_VERSION=$2; export MAJOR_VERSION
- MINOR_VERSION=$3; export MINOR_VERSION
+ MAJOR_VERSION=$2
+ MINOR_VERSION=$3
  PACKAGE_NAME=$4
  JAVA_JDK=$5
  CONFIG_JAVA_ORDER=$6; export CONFIG_JAVA_ORDER
- TARGET_CLIENT_MACHINE=$7
- TARGET_GSA_MACHINES=${8}
- JVM_PROPERTIES=$9; export JVM_PROPERTIES
- SGTEST_CHECKOUT_FOLDER=${10}; export SGTEST_CHECKOUT_FOLDER
- TARGET_GSA_WAN_MACHINES=${11}
+ JVM_PROPERTIES=$7; export JVM_PROPERTIES
+ SGTEST_CHECKOUT_FOLDER=$8; export SGTEST_CHECKOUT_FOLDER
+ TARGET_GSA_WAN_MACHINES=$9
  # SGTEST_TYPE could be REGULAR, BACKWARDS
- SGTEST_TYPE=${12}; export SGTEST_TYPE
+ SGTEST_TYPE=${10}; export SGTEST_TYPE
  # SGTEST_CLIENT_TYPE could be OLD_CLIENT or NEW_CLIENT
- SGTEST_CLIENT_TYPE=${13}; export SGTEST_CLIENT_TYPE
- BRANCH_NAME=${14}; export BRANCH_NAME
- INCLUDE=${15}; export INCLUDE
- EXCLUDE=${16}; export EXCLUDE
- SUITE_NAME=${17}; export SUITE_NAME
+ SGTEST_CLIENT_TYPE=${11}; export SGTEST_CLIENT_TYPE
+ BRANCH_NAME=${12}; export BRANCH_NAME
+ INCLUDE=${13}; export INCLUDE
+ EXCLUDE=${14}; export EXCLUDE
+ SUITE_NAME=${15}; export SUITE_NAME
+ SVN_BRANCH_DIRECTORY=${16}; export SVN_BRANCH_DIRECTORY
+ SUITE_NUMBER=${17}
+ ## total number of init parameters is 25
  
+ declare -a target_client_machines=(${18} ${20} ${22} ${24});
+ declare -a target_gsa_machines=(${19} ${21} ${23} ${25});
+
+
  . set-deploy-env.sh
 
  #setup lookup group
@@ -49,7 +54,7 @@ umask 000
 	  SG_LOOKUPGROUPS=sgtest-cloudify
 	fi
  fi
- LOOKUPGROUPS="${SG_LOOKUPGROUPS}"; export LOOKUPGROUPS
+
 
  #setup functions
  . functions.sh $*
@@ -68,6 +73,24 @@ umask 000
  echo "> Downloading jars/wars"
  . download-processing-units.sh
  
+/export/utils/ant/apache-ant-1.8.1/bin/ant -f ${DEPLOY_ROOT_BIN_DIR}/../../bin/pre-run.xml prepare
+
+for ((id=0 ; id < ${SUITE_NUMBER} ; id++ )); do
+ SUITE_ID=${id}
+ LOOKUPGROUPS="${SG_LOOKUPGROUPS}"${SUITE_ID}; export LOOKUPGROUPS 
+
+ SUITE_WORK_DIR=${BUILD_DIR}/suite${SUITE_ID}_work
+ rm -rf ${SUITE_WORK_DIR}
+ mkdir ${SUITE_WORK_DIR}	
+
+ SUITE_DEPLOY_DIR=${BUILD_DIR}/suite${SUITE_ID}_deploy
+ rm -rf ${SUITE_DEPLOY_DIR}
+ mkdir ${SUITE_DEPLOY_DIR}	
+
+ SUITE_JVM_PROPERTIES="-Dcom.gs.work=${SUITE_WORK_DIR}:-Dcom.gs.deploy=${SUITE_DEPLOY_DIR}:${JVM_PROPERTIES}"
+
+ TARGET_CLIENT_MACHINE=${target_client_machines[$id]}
+ TARGET_GSA_MACHINES=${target_gsa_machines[$id]}
  #participating machines list (sorted, not duplicated).
  TARGET_MACHINES_ARRAY=()
  #set array of target machines to TARGET_MACHINES_ARRAY.
@@ -84,9 +107,10 @@ umask 000
 
 
  #delete result file
- if [ -f ${RESULT_INDICATOR_FILE} ];
+ CURRENT_RESULT_INDICATOR_FILE=${RESULT_INDICATOR_FILE}${SUITE_ID}
+ if [ -f ${CURRENT_RESULT_INDICATOR_FILE} ];
  then
- 	rm ${RESULT_INDICATOR_FILE}
+ 	rm ${CURRENT_RESULT_INDICATOR_FILE}
  fi
 
  echo ---------------------------------------
@@ -106,18 +130,27 @@ CLIENT_EXECUTOR_SCRIPT="${DEPLOY_ROOT_BIN_DIR}/client-sgtest-executor.sh"
 	SGTEST_CLIENT_BUILD_DIR=${BUILD_DIR}
  fi
 
-if [ "${SUITE_NAME}" == "Cloudify_XAP" ]
- then
- 	sleep 1
-fi
+# copy cloudify premium license ro run cloudify xap suite
+ if [ "${SUITE_NAME}" == "CLOUDIFY_XAP" ]
+  then
+       echo copy cloudify premium license ro run cloudify xap suite
+ 	cp ${BUILD_DIR}/gslicense.xml ${BUILD_DIR}/gslicense.xml.org
+       cp ${DEPLOY_ROOT_BIN_DIR}/../../bin/gslicense.xml ${BUILD_DIR}
+ fi
 
- ${PDSH} -w ssh:pc-lab[${TARGET_CLIENT_MACHINE}] "${CLIENT_EXECUTOR_SCRIPT} ${DEPLOY_ROOT_BIN_DIR} ${SGTEST_CLIENT_BUILD_DIR} ${CONFIG_JAVA_ORDER} ${LOOKUPGROUPS} ${BUILD_NUMBER} ${INCLUDE} ${EXCLUDE} ${SUITE_NAME} ${MAJOR_VERSION} ${MINOR_VERSION} &"
+ ${PDSH} -w ssh:pc-lab[${TARGET_CLIENT_MACHINE}] "${CLIENT_EXECUTOR_SCRIPT} ${DEPLOY_ROOT_BIN_DIR} ${SGTEST_CLIENT_BUILD_DIR} ${CONFIG_JAVA_ORDER} ${LOOKUPGROUPS} ${BUILD_NUMBER} ${INCLUDE} ${EXCLUDE} ${SUITE_NAME} ${MAJOR_VERSION} ${MINOR_VERSION} ${SUITE_ID} ${SUITE_NUMBER}" &
 
- while [ ! -f ${RESULT_INDICATOR_FILE} ]
+done
+#end for
+
+for ((s=0 ; s < ${SUITE_NUMBER} ; s++ )); do
+ current_file=${RESULT_INDICATOR_FILE}${s}
+ while [ ! -f ${current_file} ]
  do
  	#sleep 60 seconds and check again...
  	sleep 60
  done
+done
 
  echo ---------------------------------------
  echo "    ### end sgtest ###   "
@@ -136,6 +169,11 @@ fi
 
  # f. kill all processes after sgtest returns.
  cd ${DEPLOY_ROOT_BIN_DIR}
+for ((s=0 ; s < ${SUITE_NUMBER} ; s++ )); do
+ TARGET_CLIENT_MACHINE=${target_client_machines[$s]}
+ TARGET_GSA_MACHINES=${target_gsa_machines[$s]}
  clean_machines
+done
+
 
  exit ${EXIT_CODE}

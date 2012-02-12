@@ -18,6 +18,8 @@
  SUITE_NAME=$8
  MAJOR_VERSION=$9
  MINOR_VERSION=${10}
+ SUITE_ID=${11}
+ SUITE_NUMBER=${12}
 
  # set shell.
 # TERM=xterm export TERM
@@ -36,12 +38,12 @@
  cd ${SGTEST_ROOT_BIN_DIR}
  
  #start sgtest
- ${SGTEST_ROOT_BIN_DIR}/sgtest-cmd.sh ${BUILD_NUMBER} ${INCLUDE} ${EXCLUDE} ${SUITE_NAME} ${MAJOR_VERSION} ${MINOR_VERSION}
+ ${SGTEST_ROOT_BIN_DIR}/sgtest-cmd.sh ${BUILD_NUMBER} ${INCLUDE} ${EXCLUDE} ${SUITE_NAME} ${MAJOR_VERSION} ${MINOR_VERSION} ${SUITE_ID} ${SUITE_NUMBER}
 
  RESULT=$?
 
  #write a result file
- RESULT_INDICATOR_FILE="${DEPLOY_ROOT_BIN_DIR}/../result_indicator/sgtest_end"
+ RESULT_INDICATOR_FILE="${DEPLOY_ROOT_BIN_DIR}/../result_indicator/sgtest_end${SUITE_ID}"
 
  touch ${RESULT_INDICATOR_FILE}
  echo "result ${RESULT}" >> ${RESULT_INDICATOR_FILE}

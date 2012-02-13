@@ -115,7 +115,7 @@
     <!--
          Run test suite and generate test summary.
     -->
-    <target name="testsummary" description="Run tests and generate test summary" depends="prepare">
+    <target name="testsummary" description="Run tests and generate test summary">
         <mkdir dir="${testng.summary.dir}"/>
         <taskdef resource="testngtasks" classpathref="classpath"/>
         <testng suitename="${SUITE_NAME}" testname="${SUITE_NAME}" classpathref="classpath" outputDir="${testng.summary.dir}"

@@ -108,7 +108,7 @@ public class SGTestNGListener extends TestListenerAdapter {
         }
         MailReporterProperties mailProperties = new MailReporterProperties(props);
         String link = null;
-        link = "<a href=http://192.168.9.121:8087/sgtest-cloudify/" + buildNumber + "/" + suiteName + "/html>"
+        link = "<a href=http://192.168.9.121:8087/sgtest2.0-cloudify/" + buildNumber + "/" + suiteName + "/html>"
                 +buildNumber+ " " + majorVersion +" " + minorVersion + " </a>";
         StringBuilder sb = new StringBuilder();
         sb.append("<html>").append("\n");

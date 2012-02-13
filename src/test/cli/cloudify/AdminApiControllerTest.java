@@ -24,11 +24,6 @@ public class AdminApiControllerTest extends AbstractLocalCloudTest {
 
 	@BeforeTest
 	public void beforeMethod(){
-		try{
-			admin.getVirtualMachines().getVirtualMachines()[4].getSpaceInstances()[0].getGigaSpace().getSpace();
-		}catch (Exception e){
-			System.out.println("Admin API throw exception");
-		}
 		this.pattern = Pattern.compile(regex);
 		super.beforeTest();
 	}

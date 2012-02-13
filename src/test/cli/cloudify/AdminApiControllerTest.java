@@ -9,47 +9,56 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import junit.framework.Assert;
-
+import org.testng.Assert;
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import framework.utils.LogUtils;
 
-
-
 public class AdminApiControllerTest extends AbstractLocalCloudTest {
 
 	private static final int RECURSIVE_ITERATIONS = 5;
-	protected static final String REST_ROOT = "/rest/admin";
+	protected static final String REST_ROOT = "/admin";
+	String regex = "\\b(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|\\s\\[]*(]*+)";
+	Pattern pattern;
+
+	@BeforeTest
+	public void beforeMethod(){
+		try{
+			admin.getVirtualMachines().getVirtualMachines()[4].getSpaceInstances()[0].getGigaSpace().getSpace();
+		}catch (Exception e){
+			System.out.println("Admin API throw exception");
+		}
+		this.pattern = Pattern.compile(regex);
+		super.beforeTest();
+	}
 	
-
-
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 5, groups = "1", enabled = true)
 	public void testController() throws IOException{
 		String htmlPage = getHtmlFromURL(this.restUrl);
 		System.out.println(htmlPage);
-		htmlPage = htmlPage.replace("href=\"/rest", restUrl);
+		htmlPage = htmlPage.replace("href=\"", this.restUrl);
 		System.out.println(htmlPage);
 		List<String> urls = getUrlsFromHTML(htmlPage);
+		assertTrue("No Urls found in main index page.", urls.size() != 0);
 		recurseThroughLinks(urls, RECURSIVE_ITERATIONS);
 
 	}
 
-	private void recurseThroughLinks(List<String> urls, int rounds) throws IOException {
+	private void recurseThroughLinks(List<String> urls, int rounds){
 
 		try{
 			if (rounds > 0){
 
 				for (String url : urls){
 					String html = getHtmlFromURL(url);
-					//LogUtils.log("OK " + url);
 					List<String> links = getUrlsFromHTML(html);
 					recurseThroughLinks(links, rounds - 1);
 				}
 			}
 		}catch(Exception e){
 			LogUtils.log("FAILED " + e.getMessage());
-			Assert.fail();
+			Assert.fail("FAILED " + e.getMessage());
 		}
 	}
 
@@ -57,8 +66,6 @@ public class AdminApiControllerTest extends AbstractLocalCloudTest {
 	private List<String> getUrlsFromHTML(String htmlPage) {
 		String link;
 		List<String> links = new ArrayList<String>();
-		String regex = "\\b(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]";
-		Pattern pattern = Pattern.compile(regex);
 		Matcher matcher = pattern.matcher(htmlPage);
 		while (matcher.find()){
 			link = matcher.group();
@@ -71,7 +78,7 @@ public class AdminApiControllerTest extends AbstractLocalCloudTest {
 	}
 
 	private String getHtmlFromURL(String url) throws IOException{
-		URL urlObject = new URL(url);
+		URL urlObject = new URL(url.replaceAll(" ", "%20"));
 		BufferedReader in = new BufferedReader(new InputStreamReader(urlObject.openStream()));
 		StringBuilder sb = new StringBuilder();
 		String inputLine;

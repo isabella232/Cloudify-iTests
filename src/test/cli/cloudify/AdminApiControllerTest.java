@@ -19,13 +19,12 @@ public class AdminApiControllerTest extends AbstractLocalCloudTest {
 
 	private static final int RECURSIVE_ITERATIONS = 5;
 	protected static final String REST_ROOT = "/admin";
-	String regex = "\\b(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|\\s\\[]*(]*+)";
+	private String regex = "\\b(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|\\s\\[]*(]*+)";
 	Pattern pattern;
 
 	@BeforeTest
 	public void beforeMethod(){
 		this.pattern = Pattern.compile(regex);
-		super.beforeTest();
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 5, groups = "1", enabled = true)

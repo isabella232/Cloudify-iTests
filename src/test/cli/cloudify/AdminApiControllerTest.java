@@ -20,11 +20,13 @@ public class AdminApiControllerTest extends AbstractLocalCloudTest {
 	private static final int RECURSIVE_ITERATIONS = 5;
 	protected static final String REST_ROOT = "/admin";
 	private String regex = "\\b(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|\\s\\[]*(]*+)";
-	Pattern pattern;
+	private Pattern pattern;
+	private List<String> failedUrls; 
 
 	@BeforeTest
 	public void beforeMethod(){
 		this.pattern = Pattern.compile(regex);
+		failedUrls = new ArrayList<String>();
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 5, groups = "1", enabled = true)
@@ -36,6 +38,16 @@ public class AdminApiControllerTest extends AbstractLocalCloudTest {
 		List<String> urls = getUrlsFromHTML(htmlPage);
 		assertTrue("No Urls found in main index page.", urls.size() != 0);
 		recurseThroughLinks(urls, RECURSIVE_ITERATIONS);
+		
+		//if there were any bad urls, print them and fail test 
+		if (!(failedUrls.size() == 0)){
+			LogUtils.log("Failed Urls:");
+			for (String urlMssage : failedUrls) {
+				LogUtils.log(urlMssage);
+			}
+			Assert.fail("Some Urls failed. " +
+					"Check logs for more detailes.");
+		}
 
 	}
 
@@ -52,7 +64,7 @@ public class AdminApiControllerTest extends AbstractLocalCloudTest {
 			}
 		}catch(Exception e){
 			LogUtils.log("FAILED " + e.getMessage());
-			Assert.fail("FAILED " + e.getMessage());
+			failedUrls.add(e.getMessage());
 		}
 	}
 

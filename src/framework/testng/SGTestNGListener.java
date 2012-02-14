@@ -95,6 +95,12 @@ public class SGTestNGListener extends TestListenerAdapter {
         String suiteName = System.getProperty("sgtest.suiteName");
         String majorVersion = System.getProperty("sgtest.majorVersion");
         String minorVersion = System.getProperty("sgtest.minorVersion");
+        String sgtestVersion = "sgtest2.0-cloudify";
+        //TODO: temporary webui is working with old version of sgtest
+        if(suiteName.contains("webui")){
+            sgtestVersion = "sgtest-cloudify";
+        }
+
         List<String> mailRecipients = null;
         if(buildNumber == null)
             return;
@@ -108,7 +114,7 @@ public class SGTestNGListener extends TestListenerAdapter {
         }
         MailReporterProperties mailProperties = new MailReporterProperties(props);
         String link = null;
-        link = "<a href=http://192.168.9.121:8087/sgtest2.0-cloudify/" + buildNumber + "/" + suiteName + "/html>"
+        link = "<a href=http://192.168.9.121:8087/" + sgtestVersion + "/" + buildNumber + "/" + suiteName + "/html>"
                 +buildNumber+ " " + majorVersion +" " + minorVersion + " </a>";
         StringBuilder sb = new StringBuilder();
         sb.append("<html>").append("\n");

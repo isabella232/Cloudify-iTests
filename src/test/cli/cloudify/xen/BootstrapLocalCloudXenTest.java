@@ -84,7 +84,7 @@ public class BootstrapLocalCloudXenTest extends AbstractXenGSMTest {
 	}
 
 	private static String cliTeardownLocalcloudCommand() {
-	    return "/opt/gigaspaces/tools/cli/cloudify.sh teardown-localcloud";
+	    return "/opt/gigaspaces/tools/cli/cloudify.sh teardown-localcloud -force";
 	}
 	
 }

@@ -36,7 +36,7 @@ public class UninstallWithDelayTest extends AbstractLocalCloudTest {
 	public void testUninstallService() throws IOException, InterruptedException {
 		runCommand("connect " + this.restUrl + ";" + "install-service " + SERVICE_DIRECTORY + ";");
 		
-		String absolutePUName = ServiceUtils.getAbsolutePUName(DEFAULT_APPLICTION_NAME, SERVICE_NAME);
+		String absolutePUName = ServiceUtils.getAbsolutePUName(DEFAULT_APPLICATION_NAME, SERVICE_NAME);
 		ProcessingUnit processingUnit = admin.getProcessingUnits().waitFor(absolutePUName);
         assertTrue("Instance of '" + SERVICE_NAME + "' service was not found", processingUnit.waitFor(1, Constants.PROCESSINGUNIT_TIMEOUT_SEC,  TimeUnit.SECONDS));
 		

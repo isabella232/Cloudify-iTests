@@ -18,7 +18,7 @@ public class FailedToInstallServiceApplicationTest extends AbstractLocalCloudTes
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
 	public void testBadInstallService() throws IOException, InterruptedException {
-		testBadServiceInstall(getUsmBadServicePath(USM_SERVICE_FOLDER_NAME), ServiceUtils.getAbsolutePUName(DEFAULT_APPLICTION_NAME, USM_SERVICE_NAME));
+		testBadServiceInstall(getUsmBadServicePath(USM_SERVICE_FOLDER_NAME), ServiceUtils.getAbsolutePUName(DEFAULT_APPLICATION_NAME, USM_SERVICE_NAME));
 	}
 	
 	private void testBadServiceInstall(String servicePath, String serviceName) throws IOException, InterruptedException {

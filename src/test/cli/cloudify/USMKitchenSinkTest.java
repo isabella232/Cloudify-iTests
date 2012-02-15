@@ -416,7 +416,7 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 		}
 
 		if (index != expectedValues.length) {
-			AssertFail("A printout entry was not found. The mi  ssing entry was: "
+			AssertFail("A printout entry was not found. The missing entry was: "
 					+ expectedValues[index]);
 		}
 	}

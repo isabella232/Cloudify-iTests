@@ -21,7 +21,7 @@ public class ConfigSlurperTest extends AbstractLocalCloudTest {
         String command = "connect " + restUrl + ";install-service --verbose " + serviceDir + ";exit";
 
         runCommand(command);
-        String absolutePuName = ServiceUtils.getAbsolutePUName(DEFAULT_APPLICTION_NAME, "slurper");
+        String absolutePuName = ServiceUtils.getAbsolutePUName(DEFAULT_APPLICATION_NAME, "slurper");
         ProcessingUnit pu = admin.getProcessingUnits().waitFor(absolutePuName);
         assertTrue("USM Service state is NOT RUNNING", USMTestUtils.waitForPuRunningState(absolutePuName, 60, TimeUnit.SECONDS, admin));
         Map<String, ServiceDetails> serviceDetails = pu.getInstances()[0].getServiceDetailsByServiceId();

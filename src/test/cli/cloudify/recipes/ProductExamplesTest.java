@@ -75,7 +75,7 @@ public class ProductExamplesTest extends AbstractLocalCloudTest {
 		String petclinicDirPath = examplesDirPath + "/petclinic";
 		String cliOutput = runCommand("connect " + restUrl + ";install-application --verbose " + petclinicDirPath);
 		assertTrue("petclinic app couln't be installed",
-				cliOutput.toLowerCase().contains("application petclinic-mongo installed successfully"));
+				cliOutput.toLowerCase().contains("application petclinic installed successfully"));
 		
 		
 	}

@@ -9,7 +9,7 @@ service {
 		preInstall {println "This is the preInstall event" }
 		postInstall {println "This is the postInstall event"}
 		preStart {println "This is the preStart event" }
-
+		start "Start.groovy"
 		postStart {println "This is the postStart event" }
 
 		preStop {println "This is the preStop event" }

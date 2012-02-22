@@ -15,7 +15,9 @@ import test.webui.resources.WebConstants;
 
 import com.thoughtworks.selenium.Selenium;
 
+import framework.utils.AssertUtils;
 import framework.utils.LogUtils;
+import framework.utils.AssertUtils.RepetitiveConditionProvider;
 
 /**
  * represents the Alerts grid found in the web-ui under the Dashboard tab
@@ -36,12 +38,18 @@ public class AlertsGrid {
 	public static final String HEAP_MEMORY = "Heap Memory Utilization";
 
 	public static final String PROVISION = "Provision Failure";
-	
+
 	public static String MIRROR = "Mirror Persistence Failure";
 	
 	public static String REDOLOG_OVERFLOW = "Replication Redo log Overflow";
 	
 	public static String REDOLOG_SIZE = "Replication Redo log";
+	
+	public static String MEMBER_ALIVE = "Member Alive Indicator";
+	
+	public static String ELASTIC_GSA_ALERT = "Grid Service Agent Provisioning Alert";
+	public static String ELASTIC_GSC_ALERT = "Grid Service Container Provisioning Alert";
+	public static final String ELASTIC_MACHINE_ALERT = "Machine Provisioning Alert";
 
 	Selenium selenium;
 	WebDriver driver;
@@ -53,6 +61,24 @@ public class AlertsGrid {
 
 	public static AlertsGrid getInstance(Selenium selenium, WebDriver driver) {
 		return new AlertsGrid(selenium, driver);
+	}
+	
+	public void waitForAlerts(final AlertStatus status, final String alertType, final int numberOfResolved){
+		
+		RepetitiveConditionProvider condition = new RepetitiveConditionProvider() {
+			public boolean getCondition() {
+				int i = 0;
+				List<WebUIAlert> webuiAlerts = getParentAlertsByType(alertType);
+				for (WebUIAlert alert : webuiAlerts) {
+					if (alert.getStatus().equals(status)){
+						i++;
+					}
+				}
+				if (i == numberOfResolved) return true;
+				return false;
+			}
+		};
+		AssertUtils.repetitiveAssertTrue(null, condition, 60000);
 	}
 	
 	/**
@@ -350,9 +376,10 @@ public class AlertsGrid {
 		}
 		
 		public int getTimeStampInSecond() {
-			int hours = Integer.parseInt(this.lastUpdated.substring(11, 13)) * 3600;
-			int minutes = Integer.parseInt(this.lastUpdated.substring(14, 16)) * 60;
-			int seconds = Integer.parseInt(this.lastUpdated.substring(17, 19));
+			String time[] = this.lastUpdated.split(" ")[3].split(":");
+			int hours = Integer.parseInt(time[0]) * 3600;
+			int minutes = Integer.parseInt(time[1]) * 60;
+			int seconds = Integer.parseInt(time[2]);
 			return hours + minutes + seconds;
 		}
 		

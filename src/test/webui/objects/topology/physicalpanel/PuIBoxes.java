@@ -31,7 +31,7 @@ public class PuIBoxes {
 		List<String> puNames = null;
 		List<String> colors = null;
 
-		int seconds = 0;
+		double seconds = 0;
 		while (seconds < WebUiUtils.ajaxWaitingTime) {
 			try {
 				String id = WebConstants.ID.getHostId(name);
@@ -67,18 +67,18 @@ public class PuIBoxes {
 			catch (StaleElementReferenceException e) {
 				LogUtils.log("Failed to discover element due to statistics update, retyring...");
 				try {
-					Thread.sleep(1000);
+					Thread.sleep(100);
 				} catch (InterruptedException e1) {
 					e1.printStackTrace();
 				}
-				seconds++;
+				seconds = seconds + 0.1;
 			}
 		}
+		AssertUtils.assertTrue("Test failed because it was unable to discover the element",seconds != WebUiUtils.ajaxWaitingTime);
 
 		for (int i = 0 ; i < rects.size() ; i++) {
 			puBoxes.add(new PuIBox(Integer.parseInt(textsString.get(i)), i + 1, puNames.get(i), colors.get(i), driver));
 		}
-		AssertUtils.assertTrue("Test failed because it was unable to discover the element",seconds != WebUiUtils.ajaxWaitingTime);
 		this.puis = puBoxes;
 
 	}

@@ -75,8 +75,11 @@ public class HostsAndServicesGrid {
 	/**
 	 * terminates a certain GSC via the web-ui
 	 * @param gsc
+	 * @throws InterruptedException 
 	 */
-	public void terminateGSC(GridServiceContainer gsc) {
+	public void terminateGSC(String hostName, GridServiceContainer gsc) throws InterruptedException {
+		WebUiUtils.waitForHost(hostName, selenium);
+		selenium.click(WebConstants.Xpath.getPathToHostnameOptions(hostName));
 		String gscPid = "" + gsc.getVirtualMachine().getDetails().getPid();
 		int gscDivIndex = 2;
 		while (true) {
@@ -90,7 +93,9 @@ public class HostsAndServicesGrid {
 		selenium.click(WebConstants.Xpath.acceptAlert);
 	}
 	
-	public void restartGSC(GridServiceContainer gsc) {
+	public void restartGSC(String hostName, GridServiceContainer gsc) throws InterruptedException {
+		WebUiUtils.waitForHost(hostName, selenium);
+		selenium.click(WebConstants.Xpath.getPathToHostnameOptions(hostName));
 		String gscPid = "" + gsc.getVirtualMachine().getDetails().getPid();
 		int gscDivIndex = 2;
 		while (true) {
@@ -109,7 +114,8 @@ public class HostsAndServicesGrid {
 		return selenium.isTextPresent(processPid);
 	}
 	
-	public void clickOnHost(String hostname) {
+	public void clickOnHost(String hostname) throws InterruptedException {
+		WebUiUtils.waitForHost(hostname, selenium);
 		selenium.click(WebConstants.Xpath.getPathToHostnameOptions(hostname));
 	}
 	

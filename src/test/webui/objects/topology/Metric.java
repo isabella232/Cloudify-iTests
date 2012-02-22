@@ -3,27 +3,33 @@ package test.webui.objects.topology;
 import java.util.List;
 
 import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.remote.RemoteWebElement;
 
+import test.webui.resources.WebConstants;
 import framework.utils.AssertUtils;
 import framework.utils.AssertUtils.RepetitiveConditionProvider;
-
-import test.webui.resources.WebConstants;
+import framework.utils.LogUtils;
+import framework.utils.WebUiUtils;
 
 public class Metric {
 	
 	private WebElement metric;
-	private String type;
 	private WebDriver driver;
+	private String location;
 
 	public Metric(WebElement metric, WebDriver driver) {
 		this.driver = driver;
 		this.metric = metric;
+	}
+
+	public Metric(String location, WebDriver driver) {
+		this.driver = driver;
+		this.location = location;
 	}
 
 	public boolean isDisplayed() {
@@ -67,28 +73,19 @@ public class Metric {
 	public void swithToMetric(MetricType metricType) {
 		
 		final String name = metricType.getName();
-		String type = metricType.getType();
+		final String type = metricType.getType();
 		
+		
+		LogUtils.log("Clicking on metric button");
 		WebElement element = metric.findElement(By.tagName("button"));
 		element.click();
 		
-		WebElement nameElement = driver.findElement(By.linkText(type));
-		Actions builder = new Actions(driver);
-		builder.moveToElement(nameElement).release()
-			.build().perform();
-		
-		try {
-			Thread.sleep(5000);
-		} catch (InterruptedException e1) {
-			e1.printStackTrace();
-		}
-		
+		LogUtils.log("Waiting for " + metricType.getType() + "Option to be visible");
 		RepetitiveConditionProvider condition = new RepetitiveConditionProvider() {		
 			@Override
 			public boolean getCondition() {
 				try {
-					@SuppressWarnings("unused")
-					WebElement nameElement = driver.findElement(By.linkText(name));
+					driver.findElement(By.linkText(type));
 					return true;
 				}
 				catch (NoSuchElementException e) {
@@ -96,15 +93,46 @@ public class Metric {
 				}
 			}
 		};
-		AssertUtils.repetitiveAssertTrue("metric name is not present in the selections menu", condition, 5000);
-		driver.findElement(By.linkText(name)).click();
+		AssertUtils.repetitiveAssertTrue("could not find " + metricType.getType() + " in the metric selection menu", condition, 30000);
+	
+		try {
+			Thread.sleep(5000);
+		} catch (InterruptedException e1) {
+			e1.printStackTrace();
+		}
+		
+		final WebElement nameElement = driver.findElement(By.linkText(type));
+		
+		condition = new RepetitiveConditionProvider() {		
+			@Override
+			public boolean getCondition() {
+				try {
+					LogUtils.log("Trying to hover over " + type + "selection menu");
+					Actions builder = new Actions(driver);
+					builder.moveToElement(nameElement)
+					.build().perform();
+					try {
+						Thread.sleep(100);
+					}
+					catch (InterruptedException e) {
+						
+					}
+					WebElement nameElement = driver.findElement(By.linkText(name));
+					nameElement.click();
+					return true;
+				}
+				catch (NoSuchElementException e) {
+					return false;
+				}
+			}
+		};
+		AssertUtils.repetitiveAssertTrue(metricType.getType() + "|" + metricType.getName() + " is not present in the selections menu", condition, 30000);
 		
 	}
 	
 	public Double getBalance() {
-		JavascriptExecutor js = (JavascriptExecutor) driver;
-		String balance = (String) js.executeScript(WebConstants.JQuery.getMetricBalanceScript(type));
-		return Double.parseDouble(balance);
+		WebElement balance = metric.findElement(By.cssSelector("div[data-widget='balance-gauge']"));
+		return Double.parseDouble(balance.getAttribute("data-value"));
 	}
 	
 	/**
@@ -112,11 +140,30 @@ public class Metric {
 	 * note - if this is an instance of the metric in health panel, do not use this method
 	 * @return
 	 */
-	public int getNumberOfGraphs() {
-		WebElement highChartsTracker = metric.findElement(By.className("highcharts-tracker"));
-		List<WebElement> paths = highChartsTracker.findElements(By.tagName("path"));
-		return paths.size();
-		
+	public int getNumberOfGraphs() {		
+		double seconds = 0;
+		while (seconds < WebUiUtils.ajaxWaitingTime) {
+			try {
+				WebElement metricElement = driver.findElement(By.id(WebConstants.ID.comparisonMetricTop));
+				WebElement highChartsTracker = metricElement.findElement(By.tagName("svg")).findElement(By.className("highcharts-tracker"));
+				List<WebElement> paths = highChartsTracker.findElements(By.tagName("path"));
+				int count = 0;
+				for (WebElement element : paths) {
+					if (!element.getAttribute("d").equals("M 0 0")) count++;
+				}
+				return count;
+			}
+			catch (StaleElementReferenceException e) {
+				LogUtils.log("Failed to discover element due to statistics update, retyring...");
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e1) {
+					e1.printStackTrace();
+				}
+				seconds = seconds + 0.1;
+			}
+		}
+		return 0;
 	}
 
 

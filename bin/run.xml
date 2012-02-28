@@ -65,11 +65,6 @@
 			<include name="**/*.jar"/>
 		</fileset>
 
-       	 <!-- Wanem jars -->
-       		 <fileset dir="${sgtest.homedir}/lib/wanem">
-          		  <include name="**/*.jar"/>
-       	 </fileset>
-
 		<!-- Selenium jars -->
 		<fileset dir="${sgtest.homedir}/lib/selenium">
 			<include name="**/*.jar"/>

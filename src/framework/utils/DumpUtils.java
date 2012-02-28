@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.j_spaces.kernel.PlatformVersion;
 import org.openspaces.admin.Admin;
 import org.openspaces.admin.dump.DumpResult;
 
@@ -70,7 +71,7 @@ public class DumpUtils {
     }
 
     public static File createTestFolder(String testName) {
-        String buildNumber = System.getProperty("sgtest.buildNumber");
+        String buildNumber = PlatformVersion.getBuildNumber();
         if(buildNumber == null){
             return null;
         }

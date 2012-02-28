@@ -65,7 +65,6 @@ public class SGTestNGListener extends TestListenerAdapter {
     @Override
     public void onFinish(ITestContext testContext) {
         super.onFinish(testContext);
-        sendHtmlMailReport(testContext);
     }
 
     private void write2LogFile(ITestResult iTestResult, File testFolder) {

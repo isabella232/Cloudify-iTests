@@ -131,11 +131,7 @@ public class SGTestNGListener extends TestListenerAdapter {
         try {
         	mailRecipients = mailProperties.getRecipients();
         	if (suiteName.contains("webui")) mailRecipients = mailProperties.getWebUIRecipients();
-        	if (suiteName.equals("ServiceGrid")) mailRecipients = mailProperties.getSGRecipients();
-        	if (suiteName.equals("WAN")) mailRecipients = mailProperties.getWanRecipients();
-        	if (suiteName.equals("SECURITY")) mailRecipients = mailProperties.getSecurityRecipients();
         	if (suiteName.equals("CLOUDIFY")) mailRecipients = mailProperties.getCloudifyRecipients();
-        	if (suiteName.equals("ESM")) mailRecipients = mailProperties.getESMRecipients();
             SimpleMail.send(mailProperties.getMailHost(), mailProperties.getUsername(), mailProperties.getPassword(),
                     "SGTest Suite " + testContext.getSuite().getName() + " results " + buildNumber+ " " + majorVersion
                             +" " + minorVersion , sb.toString(), mailRecipients);

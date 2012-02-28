@@ -70,7 +70,7 @@ public class TerminateServiceContainerLogsPanelTest extends AbstractSeleniumAppl
 		ServicesTab servicesTab = mainNav.switchToServices();
 		
 		HostsAndServicesGrid hostAndServicesGrid = servicesTab.getHostAndServicesGrid();
-		hostAndServicesGrid.terminateGSC(travelContainer);
+		hostAndServicesGrid.terminateGSC(localHost.getHostName(), travelContainer);
 		
 		mainNav.switchToTopology();
 		

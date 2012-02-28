@@ -70,6 +70,22 @@
 			<include name="**/*.jar"/>
 		</fileset>
 
+        <!-- USM jars -->
+        <fileset dir="${BUILD_DIR}/lib/platform/usm">
+            <include name="**/usm.jar"/>
+        </fileset>
+
+        <!-- cli jars -->
+        <fileset dir="${BUILD_DIR}/tools/cli">
+            <include name="**/*.jar"/>
+        </fileset>
+
+
+        <!-- simplejavaprocessjars -->
+        <fileset dir="${sgtest.homedir}/apps/USM/usm/simplejavaprocess">
+            <include name="**/*.jar"/>
+        </fileset>
+
 		<!-- sigar jars -->
 		<fileset dir="${BUILD_DIR}/lib/platform/sigar">
         	<include name="**/*.jar"/>

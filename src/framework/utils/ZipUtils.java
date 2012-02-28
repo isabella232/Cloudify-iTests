@@ -14,6 +14,7 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
+import com.j_spaces.kernel.PlatformVersion;
 import org.apache.commons.io.IOUtils;
 
 import framework.tools.SGTestHelper;

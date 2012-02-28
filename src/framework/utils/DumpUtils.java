@@ -75,7 +75,6 @@ public class DumpUtils {
         if(buildNumber == null){
             return null;
         }
-        buildNumber = buildNumber.split("_")[1];
 
         File buildFolder = new File(SGTestHelper.getSGTestRootDir() + "/deploy/local-builds/build_" + buildNumber);
 

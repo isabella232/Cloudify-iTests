@@ -46,11 +46,10 @@ public class AbstractLocalCloudTest extends AbstractTest {
     private static Set<String> alivePIDs = null;
 
 
-    
     @BeforeSuite
     public void beforeSuite() throws Exception {
-    	cleanUpCloudifyLocalDir();
-    	
+        cleanUpCloudifyLocalDir();
+
         LogUtils.log("Tearing-down existing localclouds");
         runCommand("teardown-localcloud -force=true");
         clientStartupPIDs = SetupUtils.getLocalProcesses();
@@ -77,31 +76,33 @@ public class AbstractLocalCloudTest extends AbstractTest {
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }
-        alivePIDs = SetupUtils.getLocalProcesses();
-        localCloudPIDs = SetupUtils.getClientProcessesIDsDelta(clientStartupPIDs, alivePIDs);
+        try {
+            alivePIDs = SetupUtils.getLocalProcesses();
+            localCloudPIDs = SetupUtils.getClientProcessesIDsDelta(clientStartupPIDs, alivePIDs);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 
+    private void cleanUpCloudifyLocalDir() throws IOException {
+        final String userHomeProp = System.getProperty("user.home");
+        final File userHomeDir = new File(userHomeProp, ".cloudify");
+        LogUtils.log("Cleaning up cloudify folder under 'user.home' folder at: " + userHomeDir);
 
-	private void cleanUpCloudifyLocalDir() throws IOException {
-		final String userHomeProp = System.getProperty("user.home");
-    	final File userHomeDir = new File(userHomeProp, ".cloudify");
-    	LogUtils.log("Cleaning up cloudify folder under 'user.home' folder at: " + userHomeDir);
-    	
-    	if(!userHomeDir.exists()) {
-    		LogUtils.log(userHomeDir + " does not exist");
-    	} else {
-    		if(!userHomeDir.isDirectory()) {
-    			LogUtils.log(userHomeDir + " is not a directory!");
-    		} else {
-    			FileUtils.cleanDirectory(userHomeDir);
-    		}
-    	}
-	}
+        if (!userHomeDir.exists()) {
+            LogUtils.log(userHomeDir + " does not exist");
+        } else {
+            if (!userHomeDir.isDirectory()) {
+                LogUtils.log(userHomeDir + " is not a directory!");
+            } else {
+                FileUtils.cleanDirectory(userHomeDir);
+            }
+        }
+    }
 
-    
 
-	@BeforeClass
+    @BeforeClass
     public void beforeClass() throws Exception {
         LogUtils.log("Test Class Configuration Started: " + this.getClass());
         try {
@@ -235,7 +236,7 @@ public class AbstractLocalCloudTest extends AbstractTest {
 
     //returns the number of processing unit instances of the specified service
     protected int getProcessingUnitInstanceCount(String absolutePUName) throws CLIException,
-    ErrorStatusException {
+            ErrorStatusException {
         String puNameAdminUrl = "processingUnits/Names/" + absolutePUName;
         Map<String, Object> mongoProcessingUnitAdminData = getAdminData(puNameAdminUrl);
         return (Integer) mongoProcessingUnitAdminData.get("Instances-Size");

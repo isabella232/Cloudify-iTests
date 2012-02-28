@@ -1,0 +1,60 @@
+
+<project name="post-run" default="report-merger" basedir=".">
+
+    <!-- sgtest properties -->
+    <property name="sgtest.homedir" value="${basedir}/../"/>
+    <property name="sgtest.jar.name" value="gs-sgtest.jar"/>
+    <property name="sgtest.jar" value="${sgtest.homedir}lib/${sgtest.jar.name}"/>
+    <property name="testng.summary.dir" value="${sgtest.homedir}/deploy/local-builds/${BUILD_NUMBER}/${SUITE_NAME}"/>
+
+    
+<!-- classpath -->
+    <path id="classpath">
+	
+        <!-- using all jars found in homedir/lib/ext -->
+        <fileset dir="${sgtest.homedir}/lib/testng">
+            <include name="**/*.jar"/>
+        </fileset>
+
+	<!-- mail jars -->
+	<fileset dir="${sgtest.homedir}/lib/mail">
+            <include name="**/*.jar"/>
+    	</fileset>
+	
+	<!-- wiki jars -->
+       <fileset dir="${sgtest.homedir}/lib/wiki">
+          <include name="**/*.jar"/>
+       </fileset>
+
+	<!-- xstream jars -->
+       <fileset dir="${sgtest.homedir}/lib/xstream">
+         <include name="**/*.jar"/>
+       </fileset>
+
+	<pathelement location="${sgtest.jar}"/>
+
+    </path>
+
+
+    	
+   
+   <target name="report-merger">
+   	<java classname="framework.testng.report.TestsReportMerger" classpathref="classpath" fork="yes">
+     		<arg line="${SUITE_NAME}" />
+		<arg line="${testng.summary.dir}" />
+		<arg line="${testng.summary.dir}" />
+  	</java>   
+   </target>
+
+   <target name="wiki-reporter">
+   	<java classname="framework.testng.report.wiki.WikiReporter" classpathref="classpath" fork="yes">
+     		<arg line="${testng.summary.dir}" />
+		<arg line="${SUITE_TYPE}" />
+		<arg line="${BUILD_NUMBER}" />
+		<arg line="${MAJOR_VERSION}" />
+		<arg line="${MINOR_VERSION}" />
+  	</java>   
+   </target>
+
+
+</project>

@@ -157,7 +157,7 @@ done
  echo " So Long, and Thanks for All the Fish..."
  echo ---------------------------------------
 
- EXIT_CODE=`grep "result" ${RESULT_INDICATOR_FILE} | awk '{print $2}'`
+ EXIT_CODE=`grep "result" ${RESULT_INDICATOR_FILE}${s} | awk '{print $2}'`
 
  # change this to copy junit report!!!
  #copy updated excel file to output dir. add prefix of today's date to copied file name.
@@ -175,5 +175,6 @@ for ((s=0 ; s < ${SUITE_NUMBER} ; s++ )); do
  clean_machines
 done
 
+${DEPLOY_ROOT_BIN_DIR}/../../bin/generate-report-cmd.sh Regression ${BUILD_NUMBER} ${SUITE_NAME} ${MAJOR_VERSION} ${MINOR_VERSION} ${DEPLOY_ROOT_BIN_DIR}
 
  exit ${EXIT_CODE}

@@ -40,7 +40,7 @@ public class SGTestNGListener extends TestListenerAdapter {
 
     @Override
     public void onTestStart(ITestResult iTestResult) {
-        super.onTestFailure(iTestResult);
+    	super.onTestStart(iTestResult);
         String testName = iTestResult.getMethod().toString().split("\\(|\\)")[0] + "()";
         LogUtils.log("Test Start: " + testName);
     }

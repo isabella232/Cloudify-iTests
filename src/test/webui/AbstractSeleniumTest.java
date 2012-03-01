@@ -83,55 +83,64 @@ public abstract class AbstractSeleniumTest extends AbstractTest {
 	}   
     
     public void startWebBrowser(String uRL) throws InterruptedException {
-    	try {
-    		LogUtils.log("Launching browser...");
-    		String browser = System.getProperty("selenium.browser");
-    		LogUtils.log("Current browser is " + browser);
-    		if (browser == null) {
-    			driver = new FirefoxDriver();
-    		}
-    		else {
-    			if (browser.equals("Firefox")) {
+    	LogUtils.log("Launching browser...");
+    	String browser = System.getProperty("selenium.browser");
+    	LogUtils.log("Current browser is " + browser);
+    	for (int i = 0 ; i < 3 ; i++) {
+    		try {
+    			if (browser == null) {
     				driver = new FirefoxDriver();
-
     			}
     			else {
-    				if (browser.equals("IE")) {
-    					DesiredCapabilities desired = DesiredCapabilities.internetExplorer();
-    					desired.setCapability(InternetExplorerDriver.INTRODUCE_FLAKINESS_BY_IGNORING_SECURITY_DOMAINS, true);
-    					driver = new InternetExplorerDriver(desired);
+    				if (browser.equals("Firefox")) {
+    					driver = new FirefoxDriver();
+
     				}
     				else {
-    					System.setProperty("webdriver.chrome.driver", SGTestHelper.getSGTestRootDir() + "/src/test/webui/resources/chromedriver.exe");
-    					DesiredCapabilities desired = DesiredCapabilities.chrome();
-    					desired.setCapability("chrome.switches", Arrays.asList("--start-maximized"));
-    					driver = new ChromeDriver(desired);
+    					if (browser.equals("IE")) {
+    						DesiredCapabilities desired = DesiredCapabilities.internetExplorer();
+    						desired.setCapability(InternetExplorerDriver.INTRODUCE_FLAKINESS_BY_IGNORING_SECURITY_DOMAINS, true);
+    						driver = new InternetExplorerDriver(desired);
+    					}
+    					else {
+    						System.setProperty("webdriver.chrome.driver", SGTestHelper.getSGTestRootDir() + "/src/test/webui/resources/chromedriver.exe");
+    						DesiredCapabilities desired = DesiredCapabilities.chrome();
+    						desired.setCapability("chrome.switches", Arrays.asList("--start-maximized"));
+    						driver = new ChromeDriver(desired);
+    					}
     				}
     			}
+    			break;
+
     		}
-    		int seconds = 0;
-    		driver.get(uRL);
-    		selenium = new WebDriverBackedSelenium(driver, uRL);
-    		Thread.sleep(3000);
-    		while (seconds < 10) {
-    			try {
-    				driver.findElement(By.xpath(WebConstants.Xpath.loginButton));
-    				LogUtils.log("Web server connection established");
-    				break;
-    			}
-    			catch (NoSuchElementException e) {
-    				LogUtils.log("Unable to connect to Web server, retrying...Attempt number " + (seconds + 1));
-    				driver.navigate().refresh();
-    				Thread.sleep(1000);
-    				seconds++;
-    			}
-    		}
-    		if (seconds == 10) {
-    			LogUtils.log("Could not establish a connection to webui server, Test will fail");
+    		catch (WebDriverException e) {
+    			LogUtils.log("Failed to lanch browser, retyring...Attempt number " + (i + 1));
     		}
     	}
-    	catch (WebDriverException e) {
-    		LogUtils.log("Failed to launch browser, The test should fail on an NPE", e);
+    	if (driver == null) {
+    		LogUtils.log("unable to lauch browser, test will fail on NPE");
+    	}
+    	int seconds = 0;
+    	if (driver != null) {
+        	driver.get(uRL);
+        	selenium = new WebDriverBackedSelenium(driver, uRL);
+        	Thread.sleep(3000);
+        	while (seconds < 30) {
+        		try {
+        			driver.findElement(By.xpath(WebConstants.Xpath.loginButton));
+        			LogUtils.log("Web server connection established");
+        			break;
+        		}
+        		catch (NoSuchElementException e) {
+        			LogUtils.log("Unable to connect to Web server, retrying...Attempt number " + (seconds + 1));
+        			driver.navigate().refresh();
+        			Thread.sleep(1000);
+        			seconds++;
+        		}
+        	}
+        	if (seconds == 10) {
+        		LogUtils.log("Could not establish a connection to webui server, Test will fail");
+        	}
     	}
     }
     

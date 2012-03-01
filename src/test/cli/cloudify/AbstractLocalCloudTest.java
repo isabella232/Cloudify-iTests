@@ -52,7 +52,7 @@ public class AbstractLocalCloudTest extends AbstractTest {
 
         LogUtils.log("Tearing-down existing localclouds");
         try {
-        	runCommand("teardown-localcloud -force=true");
+        	runCommand("teardown-localcloud -force");
         }
         catch (AssertionError e) {
         	LogUtils.log("teardown failed because no cloud was found. proceeding with suite");
@@ -162,7 +162,7 @@ public class AbstractLocalCloudTest extends AbstractTest {
     public void afterSuite() {
         try {
             LogUtils.log("Tearing-down localcloud");
-            runCommand("teardown-localcloud  -force=true");
+            runCommand("teardown-localcloud  -force");
         } catch (Exception e) {
             e.printStackTrace();
         }

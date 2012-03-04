@@ -3,7 +3,9 @@ package test.cli.cloudify;
 import java.io.File;
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.net.MalformedURLException;
 import java.net.Socket;
+import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.Collection;
 import java.util.HashMap;
@@ -90,6 +92,8 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 		assertTrue(
 				"Process port is not open! Process did not start as expected",
 				isPortOpen(host));
+		
+
 
 		long pid = pui.getGridServiceContainer().getVirtualMachine()
 				.getDetails().getPid();
@@ -536,6 +540,15 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 		for (String detailKey : EXPECTED_DETAILS_FIELDS) {
 			assertTrue("Missing details entry: " + detailKey,
 					allDetails.containsKey(detailKey));
+		}
+		
+		final String url = (String) allDetails.get("url");
+		assertNotNull("Missing URL details", url);
+		
+		try {
+			new URL(url);
+		} catch (MalformedURLException e) {
+			AssertFail("URL: " + url + " is not a valid URL", e);
 		}
 	}
 

@@ -19,7 +19,7 @@ import framework.utils.LogUtils;
 
 public class AbstractCloudTest extends AbstractTest {
 	
-	private static final String[][] SUPPORTED_CLOUDS = {{"hp"}};
+	private static final String[][] SUPPORTED_CLOUDS = {{"openstack"},{"ec2"}};
 	
 	private CloudService service;
 	
@@ -33,7 +33,7 @@ public class AbstractCloudTest extends AbstractTest {
 		if (cloudName.equals("ec2")) {
 			service = Ec2CloudService.getService();
 		}
-		if (cloudName.equals("hp")) {
+		if (cloudName.equals("openstack")) {
 			service = HpCloudService.getService();
 
 		}
@@ -123,7 +123,7 @@ public class AbstractCloudTest extends AbstractTest {
 			if (supportedCloud.equals("ec2")) {
 				Ec2CloudService.getService().bootstrapCloud();
 			}
-			if (supportedCloud.equals("hp")) {
+			if (supportedCloud.equals("openstack")) {
 				HpCloudService.getService().bootstrapCloud();
 			}
 			if (supportedCloud.equals("terremark")) {
@@ -149,7 +149,7 @@ public class AbstractCloudTest extends AbstractTest {
 			if (supportedCloud.equals("ec2")) {
 				Ec2CloudService.getService().teardownCloud();
 			}
-			if (supportedCloud.equals("hp")) {
+			if (supportedCloud.equals("openstack")) {
 				HpCloudService.getService().teardownCloud();
 			}
 			if (supportedCloud.equals("terremark")) {

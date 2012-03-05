@@ -67,7 +67,7 @@ public class AbstractCloudEc2Test extends AbstractTest {
 		
 	    //String applicationPath = (new File(ScriptUtils.getBuildPath(), "examples/travel").toString()).replace('\\', '/');
 		String ec2TestPath = (SGTestHelper.getSGTestRootDir() + "/apps/cloudify/cloud/ec2").replace('\\', '/');
-		String sshKeyPemName = "cloud-demo.pem";
+		String sshKeyPemName = "ec2-cloud-demo.pem";
 		
 		// ec2 plugin should include recipe that includes secret key 
 		File ec2PluginDir = new File(ScriptUtils.getBuildPath() , "tools/cli/plugins/esc/ec2/");
@@ -79,11 +79,13 @@ public class AbstractCloudEc2Test extends AbstractTest {
 		final String originalDslFileContents = FileUtils.readFileToString(originalEc2DslFile);
 		Assert.assertTrue(originalDslFileContents.contains("ENTER_USER"), "Missing ENTER_USER statement in ec2-cloud.groovy");
 		Assert.assertTrue(originalDslFileContents.contains("ENTER_API_KEY"), "Missing ENTER_API_KEY statement in ec2-cloud.groovy");
+		Assert.assertTrue(originalDslFileContents.contains("ENTER_KEY_FILE"), "Missing ENTER_API_KEY statement in ec2-cloud.groovy");
+
 		
 		// first make a backup of the original file
 		FileUtils.copyFile(originalEc2DslFile, backupEc2DslFile);
 		
-		final String modifiedDslFileContents = originalDslFileContents.replace("ENTER_USER", AWS_USER).replace("ENTER_API_KEY", AWS_API_KEY);
+		final String modifiedDslFileContents = originalDslFileContents.replace("ENTER_USER", AWS_USER).replace("ENTER_API_KEY", AWS_API_KEY).replace("ENTER_KEY_FILE", "cloud-demo.pem");
 		FileUtils.write(originalEc2DslFile, modifiedDslFileContents);
 	
 		// upload dir needs to contain the sshKeyPem 

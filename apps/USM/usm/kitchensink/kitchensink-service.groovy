@@ -3,6 +3,8 @@ import framework.utils.usm.StringWrapper
 service {
 	name "kitchensink-service"
 	icon "icon.png"
+	
+	url "http://" + InetAddress.localHost.hostName + ":7777"
 
 	lifecycle{
 		// DO NOT CHANGE THE PRINTOUTS - SGTEST LOOKS FOR THEM!

@@ -179,7 +179,10 @@ public class WikiReporter {
     }
     
     private String getSuccessRate() {
-    	Double successRateDouble = ((double)summaryReport.getSuccess() / summaryReport.getTotalTestsRun()) * 100;
+    	Double successRateDouble = 0.0;
+    	if (summaryReport.getTotalTestsRun() > 0 ) { //avoid division by zero
+    		successRateDouble = ((double)summaryReport.getSuccess() / summaryReport.getTotalTestsRun()) * 100;
+    	}
 
         /* format success rate to get fraction of 2 digital number i.e : 70.00% */
         NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.getDefault() );

@@ -36,7 +36,7 @@ public class InstallUninstallPetclinicTest extends AbstractLocalCloudTest {
 	}
 	
 	private boolean uninstallPetclinic() throws IOException, InterruptedException {
-		String cliOutput = runCommand("connect " + restUrl + ";uninstall-application --verbose petclinic-mongo");
+		String cliOutput = runCommand("connect " + restUrl + ";uninstall-application --verbose petclinic");
 		return cliOutput.toLowerCase().contains("application petclinic uninstalled successfully");
 	}
 	

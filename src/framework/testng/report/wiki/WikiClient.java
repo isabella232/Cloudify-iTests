@@ -90,7 +90,7 @@ public class WikiClient
 		                 						"--space", wikiPage.getWikiSpace(),
 		                 						"--content", wikiPage.getContext(),
 		                 						"--parent", wikiPage.getParentPage()
-		                 						//"-v" /* debug */ 
+		                 						,"-v" /* debug */ 
 		                 						};
 		
 		return wikiCommand;

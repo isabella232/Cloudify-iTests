@@ -67,7 +67,7 @@ public class AbstractCloudEc2Test extends AbstractTest {
 		
 	    //String applicationPath = (new File(ScriptUtils.getBuildPath(), "examples/travel").toString()).replace('\\', '/');
 		String ec2TestPath = (SGTestHelper.getSGTestRootDir() + "/apps/cloudify/cloud/ec2").replace('\\', '/');
-		String sshKeyPemName = "ec2-cloud-demo.pem";
+		String sshKeyPemName = "cloud-demo.pem";
 		
 		// ec2 plugin should include recipe that includes secret key 
 		File ec2PluginDir = new File(ScriptUtils.getBuildPath() , "tools/cli/plugins/esc/ec2/");

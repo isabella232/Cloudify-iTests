@@ -18,6 +18,8 @@ public class TestRecipeCommandTest extends AbstractLocalCloudTest {
 	
 	final private String SIMPLE_RECIPE_DIR_PATH = CommandTestUtils
 			.getPath("apps/USM/usm/simplejavaprocess");
+	final private String GROOVY_RECIPE_DIR_PATH = CommandTestUtils
+			.getPath("apps/USM/usm/groovy");
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
 	public void testInvocationUsingDirAndFile() throws IOException,
@@ -40,6 +42,18 @@ public class TestRecipeCommandTest extends AbstractLocalCloudTest {
 		Assert.assertFalse("The command threw an exception - check the log",
 				consoleOutput.contains("Exception"));
 	}
+	
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
+	public void testTestRecipeWithContext() throws IOException,
+			InterruptedException, DSLException {
+
+		
+		runCommand("test-recipe --verbose "
+				+ GROOVY_RECIPE_DIR_PATH
+				+ " 30 ");
+		
+	}
+
 
 	@Override
 	@AfterMethod

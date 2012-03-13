@@ -106,8 +106,10 @@ public abstract class AbstractCloudService implements CloudService {
 		
 		URL[] restAdminUrls = new URL[numOfManagementMachines];
 		
+		LogUtils.log("compiling pattern " + CloudTestUtils.REST_URL_REGEX);
 		Pattern restPattern = Pattern.compile(CloudTestUtils.REST_URL_REGEX);
 		
+		LogUtils.log("matching pattern");
 		Matcher restMatcher = restPattern.matcher(output);
 		
 		// This is sort of hack.. currently we are outputing this over ssh and locally with different results

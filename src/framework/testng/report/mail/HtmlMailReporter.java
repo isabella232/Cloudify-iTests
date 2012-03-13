@@ -53,7 +53,7 @@ public class HtmlMailReporter {
         try {
         	mailRecipients = mailProperties.getRecipients();
             if (suiteName.contains("webui")) mailRecipients = mailProperties.getWebUIRecipients();
-            if (suiteName.equals("CLOUDIFY")) mailRecipients = mailProperties.getCloudifyRecipients();
+            if (suiteName.contains("CLOUDIFY")) mailRecipients = mailProperties.getCloudifyRecipients();
             
             System.out.println("sending mail to recipients: " + mailRecipients);
             

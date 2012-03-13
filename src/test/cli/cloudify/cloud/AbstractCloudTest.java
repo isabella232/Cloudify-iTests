@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import org.testng.Assert;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
@@ -19,7 +20,7 @@ import framework.utils.LogUtils;
 
 public class AbstractCloudTest extends AbstractTest {
 	
-	private static final String[][] SUPPORTED_CLOUDS = {{"ec2"}};
+	private static final String[][] SUPPORTED_CLOUDS = {{"openstack"}};
 	
 	private CloudService service;
 	
@@ -137,7 +138,7 @@ public class AbstractCloudTest extends AbstractTest {
 	}
 	
 	@Override
-	@BeforeMethod
+	@AfterMethod
 	public void afterTest() {
 		
 	}

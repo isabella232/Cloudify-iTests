@@ -11,6 +11,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import javax.jms.IllegalStateException;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -26,6 +28,7 @@ import org.codehaus.jackson.map.type.TypeFactory;
 import org.codehaus.jackson.type.JavaType;
 import org.openspaces.admin.Admin;
 import org.openspaces.admin.AdminFactory;
+import org.openspaces.admin.machine.Machine;
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterSuite;
@@ -126,15 +129,20 @@ public class AbstractLocalCloudTest extends AbstractTest {
 			LogUtils.log("Could not create admin " + e1);
 			throw e1;
 		}
+		if(!admin.getMachines().waitFor(1, 30, TimeUnit.SECONDS)) {
+			throw new IllegalStateException("Could not find any machines in Admin API! There is probably a discovery issue");
+		}
+		
+		Machine machine = admin.getMachines().getMachines()[0];
 		System.out.println("Machine ["
-				+ admin.getMachines().getMachines()[0].getHostName()
+				+ machine.getHostName()
 				+ "], "
 				+ "TotalPhysicalMem ["
-				+ admin.getMachines().getMachines()[0].getOperatingSystem().getDetails()
+				+ machine.getOperatingSystem().getDetails()
 						.getTotalPhysicalMemorySizeInGB()
 				+ "GB], "
 				+ "FreePhysicalMem ["
-				+ admin.getMachines().getMachines()[0].getOperatingSystem().getStatistics()
+				+ machine.getOperatingSystem().getStatistics()
 						.getFreePhysicalMemorySizeInGB() + "GB]]");
 	}
 

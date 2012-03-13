@@ -54,7 +54,7 @@ public class AbstractCloudTest extends AbstractTest {
 	@Override
 	@BeforeMethod
 	public void beforeTest() {
-		
+		LogUtils.log("Test Configuration Started: " + this.getClass());
 	}
 	
 	/**

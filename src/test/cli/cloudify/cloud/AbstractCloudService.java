@@ -56,7 +56,9 @@ public abstract class AbstractCloudService implements CloudService {
 		
 		injectAuthenticationDetails();
 		String output = CommandTestUtils.runCommandAndWait("bootstrap-cloud --verbose " + getCloudName());
+		LogUtils.log("Extracting rest url's from cli output");
 		restAdminUrl = extractRestAdminUrls(output, NUM_OF_MANAGEMENT_MACHINES);
+		LogUtils.log("Extracting webui url's from cli output");
 		webUIUrl = extractWebuiUrls(output, NUM_OF_MANAGEMENT_MACHINES);
 		assertBootstrapServicesAreAvailable();
 	    

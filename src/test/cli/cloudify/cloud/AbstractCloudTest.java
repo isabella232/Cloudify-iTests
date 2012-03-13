@@ -75,6 +75,7 @@ public class AbstractCloudTest extends AbstractTest {
         boolean success = false;
 		try {
         	bootstrapClouds();
+        	LogUtils.log("Bootstrapping to clouds finished");
         	success = true;
 		} 
 		catch (IOException e) {

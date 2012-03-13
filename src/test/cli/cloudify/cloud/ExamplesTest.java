@@ -8,13 +8,13 @@ import framework.utils.ScriptUtils;
 
 public class ExamplesTest extends AbstractCloudTest {
 
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false, dataProvider = "supportedClouds")
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true, dataProvider = "supportedClouds")
 	public void testTravel(String cloudName) throws IOException, InterruptedException {
 		setCloudToUse(cloudName);
 		doTest("travel");
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false, dataProvider = "supportedClouds")
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true, dataProvider = "supportedClouds")
 	public void testPetclinic(String cloudName) throws IOException, InterruptedException {
 		setCloudToUse(cloudName);
 		doTest("petclinic");

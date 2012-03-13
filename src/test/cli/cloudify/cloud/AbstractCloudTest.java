@@ -19,7 +19,7 @@ import framework.utils.LogUtils;
 
 public class AbstractCloudTest extends AbstractTest {
 	
-	private static final String[][] SUPPORTED_CLOUDS = {{"openstack"},{"ec2"}};
+	private static final String[][] SUPPORTED_CLOUDS = {{"ec2"}};
 	
 	private CloudService service;
 	
@@ -60,13 +60,13 @@ public class AbstractCloudTest extends AbstractTest {
 	/**
 	 * Before the suite starts bootstrap all clouds.
 	 */
-	@BeforeSuite(alwaysRun = true, enabled = false)
+	@BeforeSuite(alwaysRun = true, enabled = true)
 	public void bootstrapSupportedClouds() {
 		
 		String clouds = "";
 		for (int j = 0 ; j < SUPPORTED_CLOUDS.length ; j++) {
 			String supportedCloud = SUPPORTED_CLOUDS[j][0];
-			clouds = clouds + supportedCloud;
+			clouds = clouds + supportedCloud + ",";
 		}
 		
 		
@@ -99,13 +99,13 @@ public class AbstractCloudTest extends AbstractTest {
 	/**
 	 * After suite ends teardown all bootstrapped clouds.
 	 */
-	@AfterSuite(enabled = false)
+	@AfterSuite(enabled = true)
 	public void teardownSupportedClouds() {
 		
 		String clouds = "";
 		for (int j = 0 ; j < SUPPORTED_CLOUDS.length ; j++) {
 			String supportedCloud = SUPPORTED_CLOUDS[j][0];
-			clouds = clouds + supportedCloud;
+			clouds = clouds + supportedCloud + ",";
 		}
 
 		

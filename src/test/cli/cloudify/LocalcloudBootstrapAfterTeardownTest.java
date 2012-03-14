@@ -41,7 +41,7 @@ public class LocalcloudBootstrapAfterTeardownTest extends AbstractTest {
 				admin.getGridServiceAgents().waitForAtLeastOne(1, TimeUnit.MINUTES));
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = false)
 	public void test() throws Exception{
 		
 		LogUtils.log("tearing down localcloud");

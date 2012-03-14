@@ -20,7 +20,7 @@ import framework.utils.LogUtils;
 
 public class AbstractCloudTest extends AbstractTest {
 	
-	private static final String[][] SUPPORTED_CLOUDS = {{"openstack"}};
+	private static final String[][] SUPPORTED_CLOUDS = {{"openstack"} , {"ec2"}};
 	
 	private CloudService service;
 	

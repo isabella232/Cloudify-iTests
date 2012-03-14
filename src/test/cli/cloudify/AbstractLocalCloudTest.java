@@ -68,10 +68,9 @@ public class AbstractLocalCloudTest extends AbstractTest {
 		clientStartupPIDs = SetupUtils.getLocalProcesses();
 		try {
 			LogUtils.log("Performing bootstrap");
-			final boolean portOpenBeforeBootstrap = PortConnectionUtils.isPortOpen(
-					"localhost", restPort);
-			assertTrue(
-					"port " + restPort + " is open on localhost before rest deployment. will not try to deploy rest",
+			final boolean portOpenBeforeBootstrap = PortConnectionUtils.isPortOpen("localhost",
+					restPort);
+			assertTrue("port " + restPort + " is open on localhost before rest deployment. will not try to deploy rest",
 					!portOpenBeforeBootstrap);
 			runCommand("bootstrap-localcloud");
 		} catch (final Exception e) {
@@ -85,9 +84,10 @@ public class AbstractLocalCloudTest extends AbstractTest {
 			LogUtils.log("Could not create admin " + e1);
 			e1.printStackTrace();
 		}
-		assertTrue(
-				"Could not find LUS of local cloud", admin.getLookupServices().waitFor(
-						1, WAIT_FOR_TIMEOUT, TimeUnit.SECONDS));
+		assertTrue("Could not find LUS of local cloud",
+				admin.getLookupServices().waitFor(1,
+						WAIT_FOR_TIMEOUT,
+						TimeUnit.SECONDS));
 		try {
 			restUrl = "http://" + InetAddress.getLocalHost().getHostAddress() + ":" + restPort;
 		} catch (final UnknownHostException e) {
@@ -95,8 +95,8 @@ public class AbstractLocalCloudTest extends AbstractTest {
 		}
 		try {
 			alivePIDs = SetupUtils.getLocalProcesses();
-			localCloudPIDs = SetupUtils.getClientProcessesIDsDelta(
-					clientStartupPIDs, alivePIDs);
+			localCloudPIDs = SetupUtils.getClientProcessesIDsDelta(clientStartupPIDs,
+					alivePIDs);
 		} catch (final Exception e) {
 			e.printStackTrace();
 		}
@@ -123,27 +123,29 @@ public class AbstractLocalCloudTest extends AbstractTest {
 	public void beforeClass()
 			throws Exception {
 		LogUtils.log("Test Class Configuration Started: " + this.getClass());
-		try {
-			this.admin = getAdminWithLocators();
-		} catch (final UnknownHostException e1) {
-			LogUtils.log("Could not create admin " + e1);
-			throw e1;
-		}
-		if(!admin.getMachines().waitFor(1, 30, TimeUnit.SECONDS)) {
-			throw new IllegalStateException("Could not find any machines in Admin API! There is probably a discovery issue");
+		if (this.admin == null) {
+			try {
+				this.admin = getAdminWithLocators();
+			} catch (final UnknownHostException e1) {
+				LogUtils.log("Could not create admin " + e1);
+				throw e1;
+			}
 		}
 		
+		if (!admin.getMachines().waitFor(1,
+				30,
+				TimeUnit.SECONDS)) {
+			// Admin API did not find anything!
+
+			throw new IllegalStateException(
+					"Could not find any machines in Admin API! There is probably a discovery issue");
+		}
+
 		Machine machine = admin.getMachines().getMachines()[0];
-		System.out.println("Machine ["
-				+ machine.getHostName()
-				+ "], "
-				+ "TotalPhysicalMem ["
-				+ machine.getOperatingSystem().getDetails()
-						.getTotalPhysicalMemorySizeInGB()
-				+ "GB], "
-				+ "FreePhysicalMem ["
-				+ machine.getOperatingSystem().getStatistics()
-						.getFreePhysicalMemorySizeInGB() + "GB]]");
+		System.out.println("Machine [" + machine.getHostName() + "], " + "TotalPhysicalMem ["
+				+ machine.getOperatingSystem().getDetails().getTotalPhysicalMemorySizeInGB() + "GB], "
+				+ "FreePhysicalMem [" + machine.getOperatingSystem().getStatistics().getFreePhysicalMemorySizeInGB()
+				+ "GB]]");
 	}
 
 	@Override
@@ -172,8 +174,8 @@ public class AbstractLocalCloudTest extends AbstractTest {
 		}
 		try {
 			final Set<String> currentPids = SetupUtils.getLocalProcesses();
-			final Set<String> delta = SetupUtils.getClientProcessesIDsDelta(
-					alivePIDs, currentPids);
+			final Set<String> delta = SetupUtils.getClientProcessesIDsDelta(alivePIDs,
+					currentPids);
 
 			if (delta.size() > 0) {
 				String pids = "";
@@ -205,7 +207,8 @@ public class AbstractLocalCloudTest extends AbstractTest {
 		try {
 			TeardownUtils.teardownAll(admin);
 		} catch (final Throwable t) {
-			log("failed to teardown", t);
+			log("failed to teardown",
+					t);
 		}
 		admin.close();
 		admin = null;
@@ -250,8 +253,8 @@ public class AbstractLocalCloudTest extends AbstractTest {
 			final HttpEntity entity = response.getEntity();
 			if (entity == null) {
 				final ErrorStatusException e = new ErrorStatusException("comm_error");
-				LogUtils.log(
-						httpMethod.getURI() + " response entity is null", e);
+				LogUtils.log(httpMethod.getURI() + " response entity is null",
+						e);
 				throw e;
 			}
 			instream = entity.getContent();
@@ -260,12 +263,12 @@ public class AbstractLocalCloudTest extends AbstractTest {
 			final Map<String, Object> responseMap = jsonToMap(responseBody);
 			return responseMap;
 		} catch (final ClientProtocolException e) {
-			LogUtils.log(
-					httpMethod.getURI() + " Rest api error", e);
+			LogUtils.log(httpMethod.getURI() + " Rest api error",
+					e);
 			throw new ErrorStatusException("comm_error", e, e.getMessage());
 		} catch (final IOException e) {
-			LogUtils.log(
-					httpMethod.getURI() + " Rest api error", e);
+			LogUtils.log(httpMethod.getURI() + " Rest api error",
+					e);
 			throw new ErrorStatusException("comm_error", e, e.getMessage());
 		} finally {
 			if (instream != null) {
@@ -290,8 +293,8 @@ public class AbstractLocalCloudTest extends AbstractTest {
 			throws IOException {
 		final JavaType javaType = TypeFactory.type(Map.class);
 		final ObjectMapper objectMapper = new ObjectMapper();
-		return objectMapper.readValue(
-				response, javaType);
+		return objectMapper.readValue(response,
+				javaType);
 	}
 
 	protected String runCommand(final String command)
@@ -304,8 +307,8 @@ public class AbstractLocalCloudTest extends AbstractTest {
 			DumpUtils.dumpLogs(admin);
 			runCommand("connect " + restUrl + ";uninstall-application " + applicationName);
 		} catch (final Exception e) {
-			LogUtils.log(
-					"Failed to uninstall " + applicationName, e);
+			LogUtils.log("Failed to uninstall " + applicationName,
+					e);
 			e.printStackTrace();
 		}
 	}
@@ -315,8 +318,8 @@ public class AbstractLocalCloudTest extends AbstractTest {
 			DumpUtils.dumpLogs(admin);
 			runCommand("connect " + restUrl + ";uninstall-service " + serviceName);
 		} catch (final Exception e) {
-			LogUtils.log(
-					"Failed to uninstall " + serviceName, e);
+			LogUtils.log("Failed to uninstall " + serviceName,
+					e);
 			e.printStackTrace();
 		}
 	}
@@ -324,12 +327,10 @@ public class AbstractLocalCloudTest extends AbstractTest {
 	public void uninstallAllRunningServices(final Admin admin) {
 		DumpUtils.dumpLogs(admin);
 		for (final ProcessingUnit pu : admin.getProcessingUnits().getProcessingUnits()) {
-			if (!pu.getName().equals(
-					"webui") && !pu.getName().equals(
-					"rest") && !pu.getName().equals(
-					"cloudifyManagementSpace")) {
-				if (!pu.undeployAndWait(
-						30, TimeUnit.SECONDS)) {
+			if (!pu.getName().equals("webui") && !pu.getName().equals("rest")
+					&& !pu.getName().equals("cloudifyManagementSpace")) {
+				if (!pu.undeployAndWait(30,
+						TimeUnit.SECONDS)) {
 					LogUtils.log("Failed to uninstall " + pu.getName());
 				} else {
 					LogUtils.log("Uninstalled service: " + pu.getName());

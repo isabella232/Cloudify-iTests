@@ -28,7 +28,6 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 
 import test.AbstractTest;
-import framework.tools.SGTestHelper;
 import framework.utils.LogUtils;
 import framework.utils.ScriptUtils;
 
@@ -38,7 +37,6 @@ public class AbstractCloudByonTest extends AbstractTest {
 	private static final String BYON_CLOUD_PASSWORD = "tgrid";
 	private static final  String BYON_SERVER_USER= "tgrid";
 	private static final String BYON_SERVER_PASSWORD = "tgrid";
-	private static final String BYON_KEY_FILE = "cloud-demo.pem";
 	
 	protected static final String WEBUI_PORT = String.valueOf(8099); 
 	protected static final String REST_PORT = String.valueOf(8100); 
@@ -83,10 +81,6 @@ public class AbstractCloudByonTest extends AbstractTest {
     
 	private void bootstrapCloud() throws IOException, InterruptedException, DSLException {
 		
-	    //String applicationPath = (new File(ScriptUtils.getBuildPath(), "examples/travel").toString()).replace('\\', '/');
-		String byonTestPath = (SGTestHelper.getSGTestRootDir() + "/apps/cloudify/cloud/byon").replace('\\', '/');
-		String sshKeyPemName = "cloud-demo.pem";
-		
 		// byon plugin should include a recipe that includes secret key 
 		File byonPluginDir = new File(ScriptUtils.getBuildPath() , "tools/cli/plugins/esc/byon/");
 		originalByonDslFile = new File(byonPluginDir, "byon-cloud.groovy");
@@ -95,25 +89,15 @@ public class AbstractCloudByonTest extends AbstractTest {
 		
 		// Read file contents
 		final String originalDslFileContents = FileUtils.readFileToString(originalByonDslFile);
-		/*Assert.assertTrue(originalDslFileContents.contains("ENTER_CLOUD_USER"), "Missing ENTER_CLOUD_USER statement in byon-cloud.groovy");
-		Assert.assertTrue(originalDslFileContents.contains("ENTER_CLOUD_PASSWORD"), "Missing ENTER_CLOUD_PASSWORD statement in byon-cloud.groovy");
-		Assert.assertTrue(originalDslFileContents.contains("ENTER_SERVER_USER"), "Missing ENTER_SERVER_USER statement in byon-cloud.groovy");
-		Assert.assertTrue(originalDslFileContents.contains("ENTER_SERVER_PASSWORD"), "Missing ENTER_SERVER_PASSWORD statement in byon-cloud.groovy");
-		Assert.assertTrue(originalDslFileContents.contains("ENTER_KEY_FILE"), "Missing ENTER_KEY_FILE statement in byon-cloud.groovy");*/
-
 		
 		// first make a backup of the original file
 		FileUtils.copyFile(originalByonDslFile, backupByonDslFile);
 		
-		final String modifiedDslFileContents = originalDslFileContents.replace("ENTER_CLOUD_USER", BYON_CLOUD_USER).replace("ENTER_CLOUD_PASSWORD", BYON_CLOUD_PASSWORD).replace("ENTER_SERVER_USER", BYON_SERVER_USER).
-				replace("ENTER_SERVER_PASSWORD", BYON_SERVER_PASSWORD).replace("ENTER_KEY_FILE", BYON_KEY_FILE);
+		final String modifiedDslFileContents = originalDslFileContents.replace("ENTER_CLOUD_USER", BYON_CLOUD_USER).
+				replace("ENTER_CLOUD_PASSWORD", BYON_CLOUD_PASSWORD).replace("ENTER_SERVER_USER", BYON_SERVER_USER).
+				replace("ENTER_SERVER_PASSWORD", BYON_SERVER_PASSWORD);
 		FileUtils.write(originalByonDslFile, modifiedDslFileContents);
 	
-		// upload dir needs to contain the sshKeyPem 
-		targetPem = new File(ScriptUtils.getBuildPath(), "tools/cli/plugins/esc/byon/upload/" + sshKeyPemName);
-        FileUtils.copyFile(new File(byonTestPath, sshKeyPemName), targetPem);
-        assertTrue("File not found", targetPem.isFile());
-		
 		String output = CommandTestUtils.runCommandAndWait("bootstrap-cloud --verbose byon");
 
 		Pattern webUIPattern = Pattern.compile(WEBUI_URL_REGEX);
@@ -127,7 +111,13 @@ public class AbstractCloudByonTest extends AbstractTest {
 		assertTrue("Could not find remote (internal) webui url", webUIMatcher.find()); 
 		assertTrue("Could not find remote (internal) rest url", restMatcher.find());
 		
-		for (int i = 0; i < NUM_OF_MANAGEMENT_MACHINES ; i++) {
+		String rawWebUIUrl = webUIMatcher.group(1);
+		String rawRestAdminUrl = restMatcher.group(1);
+		
+		webUIUrl[0] = new URL(rawWebUIUrl);
+		restAdminUrl[0] = new URL(rawRestAdminUrl);
+		
+		/*for (int i = 0; i < NUM_OF_MANAGEMENT_MACHINES ; i++) {
 			assertTrue("Could not find actual webui url", webUIMatcher.find());
 			assertTrue("Could not find actual rest url", restMatcher.find());
 
@@ -136,7 +126,7 @@ public class AbstractCloudByonTest extends AbstractTest {
 			
 			webUIUrl[i] = new URL(rawWebUIUrl);
 			restAdminUrl[i] = new URL(rawRestAdminUrl);
-		}
+		}*/
 	}
 
 

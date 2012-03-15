@@ -45,7 +45,7 @@ public class CyclicDependencyTest extends AbstractLocalCloudTest{
     }
 
     //TODO: Ask Sagi what his intention was. 
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = false)
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
     public void diamondTest() throws IOException, InterruptedException {
 
         String path = CommandTestUtils.getPath("apps/cloudify/recipes/diamond");
@@ -57,8 +57,8 @@ public class CyclicDependencyTest extends AbstractLocalCloudTest{
 
         GridServiceContainer[] gscs = admin.getGridServiceContainers().getContainers();
         for (GridServiceContainer gsc : gscs) {
-            if (gsc.getZones().containsKey("diamond.D")) ;
-            LogUtils.scanContainerLogsFor(gsc, "D1 PreStart completed successfully");
+            if (gsc.getZones().containsKey("diamond.D"))
+            	LogUtils.scanContainerLogsFor(gsc, "D1 PreStart completed successfully");
         }
     }
 }

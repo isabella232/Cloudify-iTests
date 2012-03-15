@@ -16,7 +16,7 @@ public class TeardownMessageTest extends AbstractTest {
         LogUtils.log("Test Configuration Started: "+ this.getClass());
 	}
 		
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = false)
 	public void teardownLocalcloudOutputTest() throws Exception{
 		try{
 			CommandTestUtils.runCommandAndWait("teardown-localcloud");

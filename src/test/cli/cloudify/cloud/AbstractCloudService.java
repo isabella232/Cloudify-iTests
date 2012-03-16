@@ -10,14 +10,13 @@ import java.util.regex.Pattern;
 import org.apache.commons.io.FileUtils;
 import org.testng.Assert;
 
+import test.cli.cloudify.CloudTestUtils;
+import test.cli.cloudify.CommandTestUtils;
 import framework.utils.AssertUtils;
+import framework.utils.AssertUtils.RepetitiveConditionProvider;
 import framework.utils.LogUtils;
 import framework.utils.ScriptUtils;
 import framework.utils.WebUtils;
-import framework.utils.AssertUtils.RepetitiveConditionProvider;
-
-import test.cli.cloudify.CloudTestUtils;
-import test.cli.cloudify.CommandTestUtils;
 
 public abstract class AbstractCloudService implements CloudService {
 	
@@ -73,14 +72,9 @@ public abstract class AbstractCloudService implements CloudService {
 	}
 
 	@Override
-	public void teardownCloud() {
-		
+	public void teardownCloud() throws IOException, InterruptedException {
 		try {
 			CommandTestUtils.runCommandAndWait("teardown-cloud --verbose -force " + getCloudName());
-		} catch (IOException e) {
-			Assert.fail("teardown-cloud failed. SHUTDOWN VIRTUAL MACHINES MANUALLY !!!",e);
-		} catch (InterruptedException e) {
-			Assert.fail("teardown-cloud failed. SHUTDOWN VIRTUAL MACHINES MANUALLY !!!",e);
 		}
 		finally {
 			try {
@@ -93,12 +87,18 @@ public abstract class AbstractCloudService implements CloudService {
 
 	@Override
 	public String getRestUrl() {
-		return restAdminUrl[0].toString();
+		if (restAdminUrl[0] != null) { // this means the cloud was bootstrapped properly			
+			return restAdminUrl[0].toString();
+		}
+		return null;
 	}
 	
 	@Override 
 	public String getWebuiUrl() {
-		return webUIUrl[0].toString();
+		if (webUIUrl[0] != null) { // this means the cloud was bootstrapped properly
+			return webUIUrl[0].toString();			
+		}
+		return null;
 	}
 	
 	
@@ -111,11 +111,7 @@ public abstract class AbstractCloudService implements CloudService {
 		
 		LogUtils.log("matching pattern");
 		Matcher restMatcher = restPattern.matcher(output);
-		
-		// This is sort of hack.. currently we are outputing this over ssh and locally with different results
-		
-		AssertUtils.assertTrue("Could not find remote (internal) rest url", restMatcher.find());
-		
+				
 		for (int i = 0; i < numOfManagementMachines ; i++) {
 			AssertUtils.assertTrue("Could not find actual rest url", restMatcher.find());
 
@@ -132,14 +128,12 @@ public abstract class AbstractCloudService implements CloudService {
 		
 		URL[] webuiUrls = new URL[numberOfManagementMachines];
 		
+		LogUtils.log("compiling pattern " + CloudTestUtils.WEBUI_URL_REGEX);
 		Pattern webUIPattern = Pattern.compile(CloudTestUtils.WEBUI_URL_REGEX);
 		
+		LogUtils.log("matching pattern");
 		Matcher webUIMatcher = webUIPattern.matcher(cliOutput);
-		
-		// This is sort of hack.. currently we are outputing this over ssh and locally with different results
-		
-		AssertUtils.assertTrue("Could not find remote (internal) webui url", webUIMatcher.find()); 
-		
+				
 		for (int i = 0; i < numberOfManagementMachines ; i++) {
 			AssertUtils.assertTrue("Could not find actual webui url", webUIMatcher.find());
 

@@ -2,6 +2,8 @@ package test.cli.cloudify.cloud;
 
 import java.io.IOException;
 
+import org.cloudifysource.shell.commands.CLIException;
+
 /**
  * Every supported cloud must have a service that implements this interface in order
  * to be included in the test cycle.
@@ -22,10 +24,11 @@ public interface CloudService {
 	/**
 	 * tears down the specific cloud of all machines.
 	 * see {@link AbstractCloudService} for generic implementation.
+	 * @throws CLIException 
 	 * @throws IOException
 	 * @throws InterruptedException
 	 */
-	public void teardownCloud();
+	public void teardownCloud() throws IOException, InterruptedException;
 	
 	/**
 	 * @return the rest url cloudify shell can connect to.

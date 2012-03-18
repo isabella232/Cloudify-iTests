@@ -19,7 +19,7 @@ public class TeardownMessageTest extends AbstractTest {
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = false)
 	public void teardownLocalcloudOutputTest() throws Exception{
 		try{
-			CommandTestUtils.runCommandAndWait("teardown-localcloud");
+			CommandTestUtils.runCommandAndWait("teardown-localcloud -lookup-groups abc");
 		}catch(AssertionError e){
 			//continue
 		}

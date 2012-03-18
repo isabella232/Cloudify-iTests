@@ -23,13 +23,13 @@ public class LocalcloudBootstrapAfterTeardownTest extends AbstractTest {
 	private Set<String> localcloudPids; 
 	@Override
 	@BeforeMethod
-	public void beforeTest() {	
+	public void beforeTest() { 	
         LogUtils.log("Test Configuration Started: "+ this.getClass());
 		try {
 			Set <String> startPids = SetupUtils.getLocalProcesses();
 			admin = getAdminWithLocators();		
 			LogUtils.log("bootstrapping localcloud");
-			CommandTestUtils.runCommandAndWait("bootstrap-localcloud");
+			CommandTestUtils.runCommandAndWait("bootstrap-localcloud -lookup-groups abc");
 			restUrl = "http://" + InetAddress.getLocalHost().getHostAddress() + ":" + restPort;
 			Set <String> endPids = SetupUtils.getLocalProcesses();
 			localcloudPids = SetupUtils.getClientProcessesIDsDelta(startPids, endPids);
@@ -45,13 +45,13 @@ public class LocalcloudBootstrapAfterTeardownTest extends AbstractTest {
 	public void test() throws Exception{
 		
 		LogUtils.log("tearing down localcloud");
-		CommandTestUtils.runCommandAndWait("connect " + restUrl + ";teardown-localcloud");
+		CommandTestUtils.runCommandAndWait("connect " + restUrl + ";teardown-localcloud -lookup-groups abc");
 		Set <String> pidsAfterTeardown = SetupUtils.getLocalProcesses();
 		for(String pid : localcloudPids)
 			Assert.assertFalse("localcloud process with pid [" + pid + "] is still running after teardown", 
 					pidsAfterTeardown.contains(pid));
 		LogUtils.log("bootstrapping localcloud");
-		CommandTestUtils.runCommandAndWait("bootstrap-localcloud");
+		CommandTestUtils.runCommandAndWait("bootstrap-localcloud -lookup-groups abc");
 		Assert.assertTrue("bootstrap-localcloud failed after teardown-localcloud: agent is down", admin.getGridServiceAgents().waitFor(1, 1, TimeUnit.MINUTES));
 		Assert.assertNotNull("bootstrap-localcloud failed after teardown-localcloud: rest is down", admin.getProcessingUnits().waitFor("rest", 1, TimeUnit.MINUTES));
 		Assert.assertNotNull("bootstrap-localcloud failed after teardown-localcloud: webui is down", admin.getProcessingUnits().waitFor("webui", 1, TimeUnit.MINUTES));
@@ -62,7 +62,7 @@ public class LocalcloudBootstrapAfterTeardownTest extends AbstractTest {
 	@AfterMethod
 	public void afterTest(){
 		try {
-			CommandTestUtils.runCommandAndWait("connect " + restUrl + ";teardown-localcloud");
+			CommandTestUtils.runCommandAndWait("connect " + restUrl + ";teardown-localcloud -lookup-groups abc");
 		} catch (Exception e) {
 			e.printStackTrace();
 			Assert.assertTrue(false);

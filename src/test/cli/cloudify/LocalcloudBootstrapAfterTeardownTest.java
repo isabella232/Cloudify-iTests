@@ -36,7 +36,7 @@ public class LocalcloudBootstrapAfterTeardownTest extends AbstractTest {
 		}catch(Exception e){
 			e.printStackTrace();
 			Assert.assertTrue(false);
-		}	
+		}	  
 		Assert.assertNotNull("initial bootstrap was not sucessfull" ,
 				admin.getGridServiceAgents().waitForAtLeastOne(1, TimeUnit.MINUTES));
 	}

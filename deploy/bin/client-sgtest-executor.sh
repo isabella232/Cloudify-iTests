@@ -30,7 +30,6 @@
 
 
  # setup env variables and common functions
- cd ${DEPLOY_ROOT_BIN_DIR}
  . set-deploy-env.sh
  ${CONFIG_JAVA_SCRIPT} ${JAVA_TYPE}
 

@@ -96,6 +96,16 @@ for ((id=0 ; id < ${SUITE_NUMBER} ; id++ )); do
  #set array of target machines to TARGET_MACHINES_ARRAY.
  get_target_machines_array
 
+ # copy cloudify premium license ro run cloudify xap suite
+ if [ "${SUITE_NAME}" == "CLOUDIFY_XAP" ]
+  then
+       rm -rf ${BUILD_CACHE_DIR}/gigaspaces*.zip
+       echo copy cloudify premium license ro run cloudify xap suite
+ 	cp ${BUILD_DIR}/gslicense.xml ${BUILD_DIR}/gslicense.xml.org
+       cp ${DEPLOY_ROOT_BIN_DIR}/../../bin/gslicense.xml ${BUILD_DIR}
+       
+ fi
+
  echo "participating machines are ${TARGET_MACHINES_ARRAY[@]}"
 
  echo "a. start a remote gs-agents execution on requested machine."
@@ -130,13 +140,6 @@ CLIENT_EXECUTOR_SCRIPT="${DEPLOY_ROOT_BIN_DIR}/client-sgtest-executor.sh"
 	SGTEST_CLIENT_BUILD_DIR=${BUILD_DIR}
  fi
 
-# copy cloudify premium license ro run cloudify xap suite
- if [ "${SUITE_NAME}" == "CLOUDIFY_XAP" ]
-  then
-       echo copy cloudify premium license ro run cloudify xap suite
- 	cp ${BUILD_DIR}/gslicense.xml ${BUILD_DIR}/gslicense.xml.org
-       cp ${DEPLOY_ROOT_BIN_DIR}/../../bin/gslicense.xml ${BUILD_DIR}
- fi
 
  ${PDSH} -w ssh:pc-lab[${TARGET_CLIENT_MACHINE}] "${CLIENT_EXECUTOR_SCRIPT} ${DEPLOY_ROOT_BIN_DIR} ${SGTEST_CLIENT_BUILD_DIR} ${CONFIG_JAVA_ORDER} ${LOOKUPGROUPS} ${BUILD_NUMBER} ${INCLUDE} ${EXCLUDE} ${SUITE_NAME} ${MAJOR_VERSION} ${MINOR_VERSION} ${SUITE_ID} ${SUITE_NUMBER}" &
 

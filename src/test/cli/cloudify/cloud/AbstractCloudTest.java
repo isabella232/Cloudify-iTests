@@ -12,6 +12,8 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.DataProvider;
 
+import com.j_spaces.kernel.JSpaceUtilities;
+
 import test.AbstractTest;
 import test.cli.cloudify.CloudTestUtils;
 import test.cli.cloudify.CommandTestUtils;
@@ -31,7 +33,7 @@ public class AbstractCloudTest extends AbstractTest {
 	private static final String TERREMARK = "terremark";
 	private static final String OPENSTACK = "openstack";
 	private static final String EC2 = "ec2";
-	private static final String[][] SUPPORTED_CLOUDS = {{EC2},{OPENSTACK},{BYON}};
+	private static final String[][] SUPPORTED_CLOUDS = {{EC2}};
 	
 	private CloudService service;
 	
@@ -134,16 +136,17 @@ public class AbstractCloudTest extends AbstractTest {
 					Ec2CloudService.getService().bootstrapCloud();
 					numberOfSuccesfullyBootstrappedClouds++;
 				}
-				catch (Exception e) {
+				catch (Throwable e) {
 					LogUtils.log("caught an exception while bootstrapping ec2", e);
 				}
+				
 			}
 			if (supportedCloud.equals(OPENSTACK)) {
 				try {
 					HpCloudService.getService().bootstrapCloud();
 					numberOfSuccesfullyBootstrappedClouds++;
 				}
-				catch (Exception e) {
+				catch (Throwable e) {
 					LogUtils.log("caught an exception while bootstrapping openstack", e);
 				}
 			}
@@ -152,7 +155,7 @@ public class AbstractCloudTest extends AbstractTest {
 					TerremarkCloudService.getService().bootstrapCloud();
 					numberOfSuccesfullyBootstrappedClouds++;
 				}
-				catch (Exception e) {
+				catch (Throwable e) {
 					LogUtils.log("caught an exception while bootstrapping terremark", e);
 				}
 			}
@@ -161,7 +164,7 @@ public class AbstractCloudTest extends AbstractTest {
 					RackspaceCloudService.getService().bootstrapCloud();
 					numberOfSuccesfullyBootstrappedClouds++;
 				}
-				catch (Exception e) {
+				catch (Throwable e) {
 					LogUtils.log("caught an exception while bootstrapping rackspace", e);
 				}
 			}
@@ -170,9 +173,9 @@ public class AbstractCloudTest extends AbstractTest {
 					ByonCloudService.getService().bootstrapCloud();
 					numberOfSuccesfullyBootstrappedClouds++;
 				}
-				catch (Exception e) {
+				catch (Throwable e) {
 					LogUtils.log("caught an exception while bootstrapping byon", e);
-				}
+				}				
 			}
 		}
 		
@@ -195,60 +198,36 @@ public class AbstractCloudTest extends AbstractTest {
 				try {
 					Ec2CloudService.getService().teardownCloud();
 				}
-				catch (AssertionError e) {
+				catch (Throwable e) {
 					LogUtils.log("caught an exception while tearing down ec2", e);
-					sendTeardownCloudFailedMail(EC2, e.getMessage());
-				} catch (IOException e) {
-					LogUtils.log("caught an exception while tearing down ec2", e);
-					sendTeardownCloudFailedMail(EC2, e.getMessage());
-				} catch (InterruptedException e) {
-					LogUtils.log("caught an exception while tearing down ec2", e);
-					sendTeardownCloudFailedMail(EC2, e.getMessage());
+					sendTeardownCloudFailedMail(EC2, e);
 				}
 			}
 			if (supportedCloud.equals(OPENSTACK)) {
 				try {
 					HpCloudService.getService().teardownCloud();
 				}
-				catch (AssertionError e) {
+				catch (Throwable e) {
 					LogUtils.log("caught an exception while tearing down openstack", e);
-					sendTeardownCloudFailedMail(OPENSTACK, e.getMessage());
-				} catch (IOException e) {
-					LogUtils.log("caught an exception while tearing down openstack", e);
-					sendTeardownCloudFailedMail(OPENSTACK, e.getMessage());
-				} catch (InterruptedException e) {
-					LogUtils.log("caught an exception while tearing down openstack", e);
-					sendTeardownCloudFailedMail(OPENSTACK, e.getMessage());
+					sendTeardownCloudFailedMail(OPENSTACK, e);
 				}
 			}
 			if (supportedCloud.equals(TERREMARK)) {
 				try {
 					TerremarkCloudService.getService().teardownCloud();
 				}
-				catch (AssertionError e) {
+				catch (Throwable e) {
 					LogUtils.log("caught an exception while tearing down terremark", e);
-					sendTeardownCloudFailedMail(TERREMARK, e.getMessage());
-				} catch (IOException e) {
-					LogUtils.log("caught an exception while tearing down terremark", e);
-					sendTeardownCloudFailedMail(TERREMARK, e.getMessage());
-				} catch (InterruptedException e) {
-					LogUtils.log("caught an exception while tearing down terremark", e);
-					sendTeardownCloudFailedMail(TERREMARK, e.getMessage());
+					sendTeardownCloudFailedMail(TERREMARK, e);
 				}
 			}
 			if (supportedCloud.equals(BYON)) {
 				try {
 					ByonCloudService.getService().teardownCloud();
 				}
-				catch (AssertionError e) {
+				catch (Throwable e) {
 					LogUtils.log("caught an exception while tearing down byon", e);
-					sendTeardownCloudFailedMail(BYON, e.getMessage());
-				} catch (IOException e) {
-					LogUtils.log("caught an exception while tearing down byon", e);
-					sendTeardownCloudFailedMail(BYON, e.getMessage());
-				} catch (InterruptedException e) {
-					LogUtils.log("caught an exception while tearing down byon", e);
-					sendTeardownCloudFailedMail(BYON, e.getMessage());
+					sendTeardownCloudFailedMail(BYON, e);
 				}
 			}
 		}
@@ -262,6 +241,10 @@ public class AbstractCloudTest extends AbstractTest {
 	 * @throws InterruptedException
 	 */
 	public void installServiceAndWait(String servicePath, String serviceName) throws IOException, InterruptedException {
+		
+		if (service.getRestUrl() == null) {
+			Assert.fail("Test failed becuase the cloud was not bootstrapped properly");
+		}
 		
 		String connectCommand = "connect " + service.getRestUrl() + ";";
 		String installCommand = new StringBuilder()
@@ -285,6 +268,10 @@ public class AbstractCloudTest extends AbstractTest {
 	 */
 	public void installApplicationAndWait(String applicationPath, String applicationName) throws IOException, InterruptedException {
 		
+		if (service.getRestUrl() == null) {
+			Assert.fail("Test failed becuase the cloud was not bootstrapped properly");
+		}
+		
 		String connectCommand = "connect " + service.getRestUrl() + ";";
 		String installCommand = new StringBuilder()
 			.append("install-application ")
@@ -306,6 +293,10 @@ public class AbstractCloudTest extends AbstractTest {
 	 * @throws InterruptedException
 	 */
 	public void uninstallServiceAndWait(String serviceName) throws IOException, InterruptedException {
+		
+		if (service.getRestUrl() == null) {
+			Assert.fail("Test failed becuase the cloud was not bootstrapped properly");
+		}
 		
 		String connectCommand = "connect " + service.getRestUrl() + ";";
 		String installCommand = new StringBuilder()
@@ -329,6 +320,10 @@ public class AbstractCloudTest extends AbstractTest {
 	 */
 	public void uninstallApplicationAndWait(String applicationName) throws IOException, InterruptedException {
 		
+		if (service.getRestUrl() == null) {
+			Assert.fail("Test failed becuase the cloud was not bootstrapped properly");
+		}
+		
 		String connectCommand = "connect " + service.getRestUrl() + ";";
 		String installCommand = new StringBuilder()
 			.append("uninstall-application ")
@@ -344,7 +339,7 @@ public class AbstractCloudTest extends AbstractTest {
 		
 	}
 	
-	private void sendTeardownCloudFailedMail(String cloudName, String error) {
+	private void sendTeardownCloudFailedMail(String cloudName, Throwable error) {
 		
 		String url = null;
 		if (cloudName.equals(EC2)) {
@@ -371,11 +366,11 @@ public class AbstractCloudTest extends AbstractTest {
 		
         StringBuilder sb = new StringBuilder();
         sb.append("<html>").append("\n");
-        sb.append("A failure occurerd while trying to teardown " + cloudName + " cloud.").append("\n");
-        sb.append("This may have been caused because bootstrapping to this cloud was unsuccessul, or because of a different exception.").append("\n");
-        sb.append("here is the exception : ").append("\n");
-        sb.append(error).append("\n");
-        sb.append("in any case, please make sure the machines are terminated");
+        sb.append("<h1>A failure occurerd while trying to teardown " + cloudName + " cloud.</h1><br><br>").append("\n");
+        sb.append("<h4>This may have been caused because bootstrapping to this cloud was unsuccessul, or because of a different exception.<h4><br>").append("\n");
+        sb.append("<h4>here is the exception : <h4><br>").append("\n");
+        sb.append(JSpaceUtilities.getStackTrace(error)).append("\n");
+        sb.append("<h4>in any case, please make sure the machines are terminated<h4><br>");
         sb.append(url).append("\n");
         sb.append("</html>");
         

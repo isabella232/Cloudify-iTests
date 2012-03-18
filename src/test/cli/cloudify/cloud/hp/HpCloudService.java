@@ -19,7 +19,7 @@ public class HpCloudService extends AbstractCloudService {
 	private static final String cloudName = "openstack";
 	private static final String user = "98173213380893";
 	private static final String apiKey = "C5nobOW90bhnCmE5AQaLaJ0Ubd8UISPxGih";
-	private static final String pemFileName = "hp-cloud-demo";
+	private static final String pemFileName = "sgtest-hp";
 	
 	private static HpCloudService self = null;
 
@@ -78,7 +78,7 @@ public class HpCloudService extends AbstractCloudService {
 
 		String modifiedDslFileContents = originalDslFileContents.replace("ENTER_USER", user).replace("ENTER_API_KEY", apiKey).
 			replace("cloudify_agent_", CloudTestUtils.SGTEST_MACHINE_PREFIX + "cloudify_agent_").replace("cloudify_manager", CloudTestUtils.SGTEST_MACHINE_PREFIX + "cloudify_manager")
-				.replace("ENTER_KEY_FILE", pemFileName + ".pem").replace("ENTER_TENANT", tenant);
+				.replace("ENTER_KEY_FILE", pemFileName + ".pem").replace("ENTER_TENANT", tenant).replace("hp-cloud-demo", "sgtest");
 
 		FileUtils.write(originalCloudDslFile, modifiedDslFileContents);
 

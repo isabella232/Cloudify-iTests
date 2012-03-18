@@ -23,13 +23,11 @@ public class TerremarkCloudService extends AbstractCloudService {
 		return null;
 	}
 
-	@Override
 	public String getUser() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	@Override
 	public String getApiKey() {
 		// TODO Auto-generated method stub
 		return null;

@@ -47,17 +47,6 @@ public interface CloudService {
 	public String getCloudName();
 	
 	/**
-	 * @return the user to be used in the cloud.groovy file.
-	 */
-	public String getUser();
-	
-	/**
-	 * @return the api key to be used in the cloud.groovy file.
-	 */
-	public String getApiKey();
-	
-	
-	/**
 	 * replaces the cloud dsl file with SGTest specific details.
 	 */
 	public void injectAuthenticationDetails() throws IOException;

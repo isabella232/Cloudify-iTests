@@ -37,12 +37,10 @@ public class HpCloudService extends AbstractCloudService {
 		return cloudName;
 	}
 
-	@Override
 	public String getUser() {
 		return user;
 	}
 
-	@Override
 	public String getApiKey() {
 		return apiKey;
 	}

@@ -29,11 +29,6 @@ public abstract class AbstractCloudService implements CloudService {
 	
 	public abstract void injectAuthenticationDetails() throws IOException;
 	
-	
-	public URL getWebuiURL() {
-		return webUIUrl[0];
-	}
-	
     public URL getMachinesUrl(String url) throws Exception {
         return new URL(stripSlash(url) + "/admin/machines");
     }

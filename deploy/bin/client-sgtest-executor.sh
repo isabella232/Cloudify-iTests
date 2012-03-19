@@ -29,8 +29,6 @@
  SGTEST_ROOT_BIN_DIR=${DEPLOY_ROOT_BIN_DIR}/../../bin/
 
 
- # setup env variables and common functions
- . set-deploy-env.sh
  ${CONFIG_JAVA_SCRIPT} ${JAVA_TYPE}
 
 

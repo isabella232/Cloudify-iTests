@@ -16,6 +16,10 @@ call set-build-env.bat
 
 @echo cleaning sgtest...
 @if exist %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER% rmdir %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER% /s /q
+@echo cleaning lefover builds...
+rmdir %USER_HOME%\gigaspaces-* /s /q
+@echo killing leftover chromedriver processes
+taskkill /im chromedriver.exe -F
 
 @echo retrieving build from tarzan...
 @mkdir %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER%

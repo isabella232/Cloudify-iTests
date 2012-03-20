@@ -9,9 +9,10 @@ import java.util.ArrayList;
 
 import org.apache.karaf.util.Properties.PropertiesReader;
 import org.apache.karaf.util.Properties.PropertiesWriter;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.Test;
 
-public class RepetativeInstallAndUninstallStockDemoWithProblemAtInstallTest {
+public class RepetativeInstallAndUninstallStockDemoWithProblemAtInstallTest extends AbstractLocalCloudTest {
 
 	
 	private final int repetitions = 4;

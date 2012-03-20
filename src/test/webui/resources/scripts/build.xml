@@ -108,7 +108,16 @@
             <include name="**/*.jar"/>
         </fileset>
 
-
+		<!-- wiki jars -->
+        <fileset dir="${sgtest.lib}/wiki">
+            <include name="**/*.jar"/>
+        </fileset>
+		
+		<!-- xstream jars -->
+        <fileset dir="${sgtest.lib}/xstream">
+            <include name="**/*.jar"/>
+        </fileset>
+    	
         <!-- mail jars -->
         <fileset dir="${sgtest.lib}/mail">
             <include name="**/*.jar"/>

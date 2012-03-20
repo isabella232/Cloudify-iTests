@@ -20,6 +20,12 @@ set SGTEST_RUNTIME_FOLDER=C:\Users\ca\sgwebui-cloudify
 @if exist %SGTEST_RUNTIME_FOLDER%\bin\run.properties rmdir %SGTEST_RUNTIME_FOLDER%\bin\run.properties /s /q
 @xcopy %SGTEST_CHECKOUT_FOLDER%\src\test\webui\resources\scripts\run.properties %SGTEST_RUNTIME_FOLDER%\bin /s /i /y
 
+@if exist %SGTEST_RUNTIME_FOLDER%\bin\pre-run.xml rmdir %SGTEST_RUNTIME_FOLDER%\bin\pre-run.xml /s /q
+@xcopy %SGTEST_CHECKOUT_FOLDER%\bin\pre-run.xml %SGTEST_RUNTIME_FOLDER%\bin /s /i /y
+
+@if exist %SGTEST_RUNTIME_FOLDER%\bin\post-run.xml rmdir %SGTEST_RUNTIME_FOLDER%\bin\post-run.xml /s /q
+@xcopy %SGTEST_CHECKOUT_FOLDER%\bin\post-run.xml %SGTEST_RUNTIME_FOLDER%\bin /s /i /y
+
 @echo copying test resources to sgtest runtime folder
 
 @if exist %SGTEST_RUNTIME_FOLDER%\src\test\webui\resources rmdir %SGTEST_RUNTIME_FOLDER%\src\test\webui\resources /s /q

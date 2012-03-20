@@ -342,47 +342,55 @@ public class AbstractCloudTest extends AbstractTest {
 	
 	private void sendTeardownCloudFailedMail(String cloudName, Throwable error) {
 		
-		String url = null;
-		if (cloudName.equals(EC2)) {
-			url = CloudTestUtils.EC2_MANAGEMENT_CONSOLE_URL;
-		}
-		if (cloudName.equals(OPENSTACK)) {
-			url = CloudTestUtils.HPCLOUD_MANAGEMENT_CONSOLE_URL;
-		}
-		if (cloudName.equals(BYON)) {
-			url = "";
-		}
+		if (!isDevMode()) {
+			String url = null;
+			if (cloudName.equals(EC2)) {
+				url = CloudTestUtils.EC2_MANAGEMENT_CONSOLE_URL;
+			}
+			if (cloudName.equals(OPENSTACK)) {
+				url = CloudTestUtils.HPCLOUD_MANAGEMENT_CONSOLE_URL;
+			}
+			if (cloudName.equals(BYON)) {
+				url = "";
+			}
+			
+			Properties props = new Properties();
+			InputStream in = this.getClass().getResourceAsStream("mailreporter.properties");
+			try {
+				props.load(in);
+				in.close();
+				System.out.println("mailreporter.properties: " + props);
+			} catch (IOException e) {
+				throw new RuntimeException("failed to read mailreporter.properties file - " + e, e);
+			}
+			
+			String title = "teardown-cloud " + cloudName + " failure";
+			
+	        StringBuilder sb = new StringBuilder();
+	        sb.append("<html>").append("\n");
+	        sb.append("<h2>A failure occurerd while trying to teardown " + cloudName + " cloud.</h2><br>").append("\n");
+	        sb.append("<h4>This may have been caused because bootstrapping to this cloud was unsuccessul, or because of a different exception.<h4><br>").append("\n");
+	        sb.append("<p>here is the exception : <p><br>").append("\n");
+	        sb.append(JSpaceUtilities.getStackTrace(error)).append("\n");
+	        sb.append("<h4>in any case, please make sure the machines are terminated<h4><br>");
+	        sb.append(url).append("\n");
+	        sb.append("</html>");
+	        
+			MailReporterProperties mailProperties = new MailReporterProperties(props);
+	        try {
+				SimpleMail.send(mailProperties.getMailHost(), mailProperties.getUsername(), 
+						mailProperties.getPassword(),
+						title, sb.toString(), 
+						mailProperties.getCloudifyRecipients());
+			} catch (Exception e) {
+				LogUtils.log("Failed sending mail to recipents : " + mailProperties.getCloudifyRecipients());
+			}	
+		}		
+	}
+	
+	private boolean isDevMode() {
 		
-		Properties props = new Properties();
-		InputStream in = this.getClass().getResourceAsStream("mailreporter.properties");
-		try {
-			props.load(in);
-			in.close();
-			System.out.println("mailreporter.properties: " + props);
-		} catch (IOException e) {
-			throw new RuntimeException("failed to read mailreporter.properties file - " + e, e);
-		}
-		
-		String title = "teardown-cloud " + cloudName + " failure";
-		
-        StringBuilder sb = new StringBuilder();
-        sb.append("<html>").append("\n");
-        sb.append("<h1>A failure occurerd while trying to teardown " + cloudName + " cloud.</h1><br><br>").append("\n");
-        sb.append("<h4>This may have been caused because bootstrapping to this cloud was unsuccessul, or because of a different exception.<h4><br>").append("\n");
-        sb.append("<h4>here is the exception : <h4><br>").append("\n");
-        sb.append(JSpaceUtilities.getStackTrace(error)).append("\n");
-        sb.append("<h4>in any case, please make sure the machines are terminated<h4><br>");
-        sb.append(url).append("\n");
-        sb.append("</html>");
-        
-		MailReporterProperties mailProperties = new MailReporterProperties(props);
-        try {
-			SimpleMail.send(mailProperties.getMailHost(), mailProperties.getUsername(), 
-					mailProperties.getPassword(),
-					title, sb.toString(), 
-					mailProperties.getCloudifyRecipients());
-		} catch (Exception e) {
-			LogUtils.log("Failed sending mail to recipents : " + mailProperties.getCloudifyRecipients());
-		}
+		String user = System.getenv("USER");
+		return ((user == null) || !(user.equals("tgrid")));
 	}
 }

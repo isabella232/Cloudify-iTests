@@ -64,6 +64,10 @@ mv spring-test-security.properties ${BUILD_DIR}/config/security
 svn export ${SVN_SGTEST_REPOSITORY}/config/security/sgtest_login.properties
 mv sgtest_login.properties ${BUILD_DIR}/config/security
 
+svn export ${SVN_SGTEST_REPOSITORY}/config/gs_logging.properties
+rm -f ${BUILD_DIR}/config/gs_logging.properties
+mv gs_logging.properties ${BUILD_DIR}/config
+
 rm -rf /export/tgrid/sgtest-cloudify/lib/xenserver/
 svn --force export ${SVN_SGTEST_REPOSITORY}/lib/xenserver
 mv xenserver /export/tgrid/sgtest-cloudify/lib/

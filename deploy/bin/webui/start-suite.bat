@@ -13,5 +13,8 @@ if %SUITE_NAME% == webui-IE (
 )
  
 @echo running %selenium.browser% tests...
-@set LOOKUPGROUPS=sgwebui-cloudify
-call ant -buildfile %LOCAL_SGPATH%\bin\run.xml testsummary -DBUILD_NUMBER=%BUILD_NUMBER% -DSUITE_NAME=%SUITE_NAME% -DBUILD_DIR=%RUNTIME_BUILD_LOCATION% -DMAJOR_VERSION=%VERSION% -DMINOR_VERSION=%MILESTONE% -DSELENIUM_BROWSER=%selenium.browser%
+set SUITE_ID=0
+set LOOKUPGROUPS=sgwebui-cloudify%SUITE_ID%
+call ant -buildfile %LOCAL_SGPATH%\bin\pre-run.xml
+call ant -buildfile %LOCAL_SGPATH%\bin\run.xml testsummary -DBUILD_NUMBER=%BUILD_NUMBER% -DSUITE_NAME=%SUITE_NAME% -DBUILD_DIR=%RUNTIME_BUILD_LOCATION% -DMAJOR_VERSION=%VERSION% -DMINOR_VERSION=%MILESTONE% -DSELENIUM_BROWSER=%selenium.browser% -DSUITE_ID=%SUITE_ID% -DSUITE_NUMBER=1
+call %LOCAL_SGPATH%\deploy\bin\webui\generate-report.bat %BUILD_NUMBER% %SUITE_NAME% %VERSION% %MILESTONE%

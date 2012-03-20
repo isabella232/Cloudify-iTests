@@ -106,7 +106,17 @@
 		<!-- mail jars -->
 		<fileset dir="${sgtest.homedir}/lib/mail">
         	<include name="**/*.jar"/>
-    	</fileset>
+		</fileset>
+    	
+		 <!-- wiki jars -->
+      	 <fileset dir="${sgtest.homedir}/lib/wiki">
+          	<include name="**/*.jar"/>
+      	 </fileset>
+
+		 <!-- xstream jars -->
+      	 <fileset dir="${sgtest.homedir}/lib/xstream">
+          	<include name="**/*.jar"/>
+      	 </fileset>
 	
 		<dirset dir="${sgtest.homedir}/config"/>
     	
@@ -135,30 +145,19 @@
         </copy>
         <mkdir dir="${testng.summary.dir}"/>
 	 <taskdef resource="testngtasks" classpathref="classpath"/>
-        <testng suitename="${SUITE_NAME}" testname="${SUITE_NAME}" classpathref="classpath" outputDir="${testng.summary.dir}"
+        <testng suitename="${SUITE_NAME}${SUITE_ID}" testname="${SUITE_NAME}" classpathref="classpath" outputDir="${testng.summary.dir}"
                 haltOnfailure="false" useDefaultListeners="false"
 				listeners="framework.testng.SGTestNGListener, framework.testng.SGTestNGMethodInterceptor, org.uncommons.reportng.HTMLReporter">
             <jvmarg line="-Djava.security.policy=policy/policy.all -Djava.awt.headless=true -Xmx1024m -XX:MaxPermSize=512m"/>
             <classfileset dir="${tmp.testng.classes}" includes="${INCLUDE}" excludes="${EXCLUDE}"/>
-            <sysproperty key="org.uncommons.reportng.title" value="Service Grid Tests Report - Build ${BUILD_NUMBER}"/>
-	     <sysproperty key="sgtest.buildNumber" value="${BUILD_NUMBER}"/>
-         <sysproperty key="sgtest.majorVersion" value="${MAJOR_VERSION}"/>
-         <sysproperty key="sgtest.minorVersion" value="${MINOR_VERSION}"/>
-   	     <sysproperty key="selenium.browser" value="${SELENIUM_BROWSER}"/>
-	     <sysproperty key="sgtest.suiteName" value="${SUITE_NAME}"/>
+        	<sysproperty key="selenium.browser" value="${SELENIUM_BROWSER}"/>
+            <sysproperty key="sgtest.suiteId" value="${SUITE_ID}"/>
+       	    <sysproperty key="sgtest.numOfSuites" value="${SUITE_NUMBER}"/>		
             <sysproperty key="org.openspaces.admin.internal.discovery.DiscoveryService.level" value="ALL"/>
             <sysproperty key="sgtest.buildFolder" value="${sgtest.homedir}/deploy/local-builds/${BUILD_NUMBER}"/>
-            <sysproperty key="sgtest.url" value="http://192.168.9.121:8087/sgtest-cloudify/"/>
+            <sysproperty key="sgtest.url" value="http://192.168.9.121:8087/sgtest2.0-cloudify/"/>
+ 
         </testng>
-       
-         <java classpath="${sgtest.homedir}/lib/gs-sgtest.jar" classname="framework.report.HTMLReport" >
-            <arg value="${testng.reports.dir}" />
-            <arg value="${BUILD_NUMBER}" />
-            <arg value="${SUITE_NAME}" />
-            <arg value="${MAJOR_VERSION}" />
-            <arg value="${MINOR_VERSION}" />
-	     <jvmarg line="-Xmx1024m -XX:MaxPermSize=512m"/>
-        </java>
     </target>
 
 </project>

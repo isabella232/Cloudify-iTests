@@ -44,7 +44,10 @@ rem @call %LOCAL_SGPATH%\deploy\bin\webui\start-agents.bat
 @call %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER%\%BUILD_FOLDER%\tools\groovy\bin\groovy.bat %LOCAL_SGPATH%\src\test\webui\resources\scripts\shutdown
 
 @echo tranferring reports to tgrid
+echo %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER%
 xcopy %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER% Y:\%BUILD_NUMBER% /s /i /y
+xcopy %LOCAL_SGPATH%\deploy\local-builds\wiki-summary\*.wiki Y:\wiki-summary /s /i /y
+xcopy %LOCAL_SGPATH%\deploy\local-builds\wiki-backup\*.wiki Y:\wiki-backup /s /i /y
 
 @echo cleaning remote build folder
 @call %LOCAL_SGPATH%\src\test\webui\resources\psexec.exe \\pc-lab73 -u GSPACES\ca -p password -c -f %LOCAL_SGPATH%\src\test\webui\resources\scripts\clean-xap.bat %VERSION% %MILESTONE%

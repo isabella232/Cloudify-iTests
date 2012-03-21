@@ -145,9 +145,9 @@
         </copy>
         <mkdir dir="${testng.summary.dir}"/>
 	 <taskdef resource="testngtasks" classpathref="classpath"/>
-        <testng suitename="${SUITE_NAME}${SUITE_ID}" testname="${SUITE_NAME}" classpathref="classpath" outputDir="${testng.summary.dir}"
+        <testng suitename="${SUITE_NAME}${SUITE_ID}" testname="${SUITE_NAME}${SUITE_ID}" classpathref="classpath" outputDir="${testng.summary.dir}"
                 haltOnfailure="false" useDefaultListeners="false"
-				listeners="framework.testng.SGTestNGListener, framework.testng.SGTestNGMethodInterceptor, org.uncommons.reportng.HTMLReporter">
+    		listeners="framework.testng.SGTestNGListener, framework.testng.SGTestNgSuiteSplitter, framework.testng.report.TestNgReporterImpl">
             <jvmarg line="-Djava.security.policy=policy/policy.all -Djava.awt.headless=true -Xmx1024m -XX:MaxPermSize=512m"/>
             <classfileset dir="${tmp.testng.classes}" includes="${INCLUDE}" excludes="${EXCLUDE}"/>
         	<sysproperty key="selenium.browser" value="${SELENIUM_BROWSER}"/>

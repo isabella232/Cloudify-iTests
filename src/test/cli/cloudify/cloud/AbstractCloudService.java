@@ -37,19 +37,15 @@ public abstract class AbstractCloudService implements CloudService {
     private void overrideLicenseAndLogs() {
     	File logging = new File(SGTestHelper.getSGTestRootDir() + "/config/gs_logging.properties");
     	File license = new File(SGTestHelper.getSGTestRootDir() + "apps/cloudify/cloud/gslicense.xml");
-		for (int j = 0 ; j < AbstractCloudTest.SUPPORTED_CLOUDS.length ; j++) {
-			String supportedCloud = AbstractCloudTest.SUPPORTED_CLOUDS[j][0];
-			File uploadOverrides = new File(ScriptUtils.getBuildPath() + "/tools/cli/plugins/esc/" + supportedCloud + "/upload/cloudify-overrides/");
-			uploadOverrides.mkdir();
-			File uploadLoggsDir = new File(uploadOverrides.getAbsoluteFile() + "config/");
-			try {
-				FileUtils.copyFile(logging, uploadLoggsDir);
-				FileUtils.contentEquals(license, uploadOverrides);
-			} catch (IOException e) {
-				LogUtils.log("Failed to copy files to cloudify-overrides directory" , e);
-			}
-		}
-    	
+    	File uploadOverrides = new File(ScriptUtils.getBuildPath() + "/tools/cli/plugins/esc/" + getCloudName() + "/upload/cloudify-overrides/");
+    	uploadOverrides.mkdir();
+    	File uploadLoggsDir = new File(uploadOverrides.getAbsoluteFile() + "config/");
+    	try {
+    		FileUtils.copyFile(logging, uploadLoggsDir);
+    		FileUtils.contentEquals(license, uploadOverrides);
+    	} catch (IOException e) {
+    		LogUtils.log("Failed to copy files to cloudify-overrides directory" , e);
+    	}
     }
 	
     private static String stripSlash(String str) {

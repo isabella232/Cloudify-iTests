@@ -39,7 +39,7 @@ public abstract class AbstractCloudService implements CloudService {
     	File license = new File(SGTestHelper.getSGTestRootDir() + "/apps/cloudify/cloud/gslicense.xml");
     	File uploadOverrides = new File(ScriptUtils.getBuildPath() + "/tools/cli/plugins/esc/" + getCloudName() + "/upload/cloudify-overrides/");
     	uploadOverrides.mkdir();
-    	File uploadLoggsDir = new File(uploadOverrides.getAbsoluteFile() + "config/");
+    	File uploadLoggsDir = new File(uploadOverrides.getAbsoluteFile() + "/config/");
     	uploadLoggsDir.mkdir();
     	try {
     		FileUtils.copyFileToDirectory(logging, uploadLoggsDir);

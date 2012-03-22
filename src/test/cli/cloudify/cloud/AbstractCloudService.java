@@ -42,8 +42,8 @@ public abstract class AbstractCloudService implements CloudService {
     	File uploadLoggsDir = new File(uploadOverrides.getAbsoluteFile() + "config/");
     	uploadLoggsDir.mkdir();
     	try {
-    		FileUtils.copyFile(logging, uploadLoggsDir);
-    		FileUtils.contentEquals(license, uploadOverrides);
+    		FileUtils.copyFileToDirectory(logging, uploadLoggsDir);
+    		FileUtils.copyFileToDirectory(license, uploadOverrides);
     	} catch (IOException e) {
     		LogUtils.log("Failed to copy files to cloudify-overrides directory" , e);
     	}

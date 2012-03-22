@@ -40,6 +40,7 @@ public abstract class AbstractCloudService implements CloudService {
     	File uploadOverrides = new File(ScriptUtils.getBuildPath() + "/tools/cli/plugins/esc/" + getCloudName() + "/upload/cloudify-overrides/");
     	uploadOverrides.mkdir();
     	File uploadLoggsDir = new File(uploadOverrides.getAbsoluteFile() + "config/");
+    	uploadLoggsDir.mkdir();
     	try {
     		FileUtils.copyFile(logging, uploadLoggsDir);
     		FileUtils.contentEquals(license, uploadOverrides);

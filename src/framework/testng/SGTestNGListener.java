@@ -46,10 +46,13 @@ public class SGTestNGListener extends TestListenerAdapter {
     @Override
     public void onTestFailure(ITestResult iTestResult) {
         super.onTestFailure(iTestResult);
+		String parameters = "";
         Object[] params = iTestResult.getParameters();
-        String parameters = params[0].toString();
-        for (int i = 1 ; i < params.length ; i++) {
-        	parameters += parameters + ",";
+        if (params.length != 0) {
+        	parameters = params[0].toString();
+            for (int i = 1 ; i < params.length ; i++) {
+            	parameters += parameters + ",";
+            }
         }
         testMethodName = iTestResult.getMethod().toString().split("\\(|\\)")[0] + "(" + parameters + ")";
         LogUtils.log("Test Failed: " + testMethodName, iTestResult.getThrowable());
@@ -59,10 +62,13 @@ public class SGTestNGListener extends TestListenerAdapter {
     @Override
     public void onTestSuccess(ITestResult iTestResult) {
         super.onTestSuccess(iTestResult);
+		String parameters = "";
         Object[] params = iTestResult.getParameters();
-        String parameters = params[0].toString();
-        for (int i = 1 ; i < params.length ; i++) {
-        	parameters += parameters + ",";
+        if (params.length != 0) {
+        	parameters = params[0].toString();
+            for (int i = 1 ; i < params.length ; i++) {
+            	parameters += parameters + ",";
+            }
         }
         testMethodName = iTestResult.getMethod().toString().split("\\(|\\)")[0] + "(" + parameters + ")";
         System.out.println("onTestSuccess " + testMethodName);

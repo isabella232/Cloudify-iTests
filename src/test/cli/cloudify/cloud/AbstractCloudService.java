@@ -8,7 +8,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.io.FileUtils;
-import org.testng.Assert;
 
 import test.cli.cloudify.CloudTestUtils;
 import test.cli.cloudify.CommandTestUtils;
@@ -81,11 +80,7 @@ public abstract class AbstractCloudService implements CloudService {
 			CommandTestUtils.runCommandAndWait("teardown-cloud --verbose -force " + getCloudName());
 		}
 		finally {
-			try {
-				deleteCloudFiles(getCloudName());
-			} catch (IOException e) {
-				Assert.fail("Failed to clean up after test finished: " + e.getMessage(), e);
-			}
+			deleteCloudFiles(getCloudName());
 		}	
 	}
 

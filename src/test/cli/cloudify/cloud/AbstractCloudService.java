@@ -12,6 +12,7 @@ import org.testng.Assert;
 
 import test.cli.cloudify.CloudTestUtils;
 import test.cli.cloudify.CommandTestUtils;
+import framework.tools.SGTestHelper;
 import framework.utils.AssertUtils;
 import framework.utils.AssertUtils.RepetitiveConditionProvider;
 import framework.utils.LogUtils;
@@ -32,6 +33,24 @@ public abstract class AbstractCloudService implements CloudService {
     public URL getMachinesUrl(String url) throws Exception {
         return new URL(stripSlash(url) + "/admin/machines");
     }
+    
+    private void overrideLicenseAndLogs() {
+    	File logging = new File(SGTestHelper.getSGTestRootDir() + "/config/gs_logging.properties");
+    	File license = new File(SGTestHelper.getSGTestRootDir() + "apps/cloudify/cloud/gslicense.xml");
+		for (int j = 0 ; j < AbstractCloudTest.SUPPORTED_CLOUDS.length ; j++) {
+			String supportedCloud = AbstractCloudTest.SUPPORTED_CLOUDS[j][0];
+			File uploadOverrides = new File(ScriptUtils.getBuildPath() + "/tools/cli/plugins/esc/" + supportedCloud + "/upload/cloudify-overrides/");
+			uploadOverrides.mkdir();
+			File uploadLoggsDir = new File(uploadOverrides.getAbsoluteFile() + "config/");
+			try {
+				FileUtils.copyFile(logging, uploadLoggsDir);
+				FileUtils.contentEquals(license, uploadOverrides);
+			} catch (IOException e) {
+				LogUtils.log("Failed to copy files to cloudify-overrides directory" , e);
+			}
+		}
+    	
+    }
 	
     private static String stripSlash(String str) {
         if (str == null || !str.endsWith("/")) {
@@ -44,6 +63,7 @@ public abstract class AbstractCloudService implements CloudService {
 	@Override
 	public void bootstrapCloud() throws IOException, InterruptedException {
 		
+		overrideLicenseAndLogs();
 		injectAuthenticationDetails();
 		String output = CommandTestUtils.runCommandAndWait("bootstrap-cloud --verbose " + getCloudName());
 		LogUtils.log("Extracting rest url's from cli output");

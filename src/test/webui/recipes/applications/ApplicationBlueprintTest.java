@@ -8,6 +8,8 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import framework.utils.LogUtils;
+
 import test.webui.objects.LoginPage;
 import test.webui.objects.topology.TopologyTab;
 import test.webui.objects.topology.applicationmap.ApplicationMap;
@@ -60,7 +62,7 @@ public class ApplicationBlueprintTest extends AbstractSeleniumApplicationRecipeT
 	@Override
 	@AfterMethod
 	public void uninstall() throws InterruptedException, IOException {
-		admin.getApplications().waitFor("travel");
+		LogUtils.log("waiting for application travel");
 		super.uninstall();
 	}
 }

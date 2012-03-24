@@ -16,10 +16,6 @@ call set-build-env.bat
 
 @echo cleaning sgtest...
 @if exist %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER% rmdir %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER% /s /q
-@echo cleaning lefover builds...
-rmdir %USER_HOME%\gigaspaces-* /s /q
-@echo killing leftover chromedriver processes
-taskkill /im chromedriver.exe -F
 
 @echo retrieving build from tarzan...
 @mkdir %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER%
@@ -29,7 +25,7 @@ xcopy %REMOTE_BUILD_DIR%\cloudify\1.5\gigaspaces-cloudify-%VERSION%-%MILESTONE%-
 @del %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER%\gigaspaces-cloudify-%VERSION%-%MILESTONE%-b%BUILD_VERSION%.zip
 
 @call set-deploy-env.bat
-rem @echo starting agents machines : pc-lab73 , pc-lab72
+rem @echo starting agents machines : pc-lab72
 rem @call %LOCAL_SGPATH%\deploy\bin\webui\start-agents.bat
 
 @echo creating sgtest.jar...
@@ -40,17 +36,12 @@ rem @call %LOCAL_SGPATH%\deploy\bin\webui\start-agents.bat
 @echo Running %selenium.browser% Suite : 
 @call %LOCAL_SGPATH%\deploy\bin\webui\start-suite.bat webui-%selenium.browser%
 
-@echo shutting down agents
-@call %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER%\%BUILD_FOLDER%\tools\groovy\bin\groovy.bat %LOCAL_SGPATH%\src\test\webui\resources\scripts\shutdown
-
 @echo tranferring reports to tgrid
 echo %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER%
 xcopy %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER% Y:\%BUILD_NUMBER% /s /i /y
 xcopy %LOCAL_SGPATH%\deploy\local-builds\wiki-summary\*.wiki Y:\wiki-summary /s /i /y
 xcopy %LOCAL_SGPATH%\deploy\local-builds\wiki-backup\*.wiki Y:\wiki-backup /s /i /y
 
-@echo cleaning remote build folder
-@call %LOCAL_SGPATH%\src\test\webui\resources\psexec.exe \\pc-lab73 -u GSPACES\ca -p password -c -f %LOCAL_SGPATH%\src\test\webui\resources\scripts\clean-xap.bat %VERSION% %MILESTONE%
 @echo cleaning local build folder
 @rmdir %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER% /s /q
 @rmdir %USER_HOME%\%BUILD_FOLDER% /s /q

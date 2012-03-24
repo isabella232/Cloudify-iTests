@@ -27,6 +27,7 @@ import test.webui.objects.LoginPage;
 import test.webui.objects.dashboard.DashboardTab;
 import test.webui.resources.WebConstants;
 
+import com.j_spaces.kernel.PlatformVersion;
 import com.thoughtworks.selenium.Selenium;
 
 import framework.tools.SGTestHelper;
@@ -177,7 +178,7 @@ public abstract class AbstractSeleniumTest extends AbstractTest {
 		if (!isDevMode()) {
 			File scrFile = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
 
-			String buildDir = SGTestHelper.getSGTestRootDir() + "/deploy/local-builds/build_" + System.getProperty("sgtest.buildNumber").split("_")[1] ;
+			String buildDir = SGTestHelper.getSGTestRootDir() + "/deploy/local-builds/build_" + PlatformVersion.getBuildNumber();
 
 			String testLogsDir = cls.getName() + "." + testMethod + "()";
 

@@ -28,11 +28,11 @@ import framework.utils.LogUtils;
 
 public class AbstractCloudTest extends AbstractTest {
 	
-	private static final String RACKSPACE = "rackspace";
-	private static final String BYON = "byon";
-	private static final String TERREMARK = "terremark";
-	private static final String OPENSTACK = "openstack";
-	private static final String EC2 = "ec2";
+	public static final String RACKSPACE = "rackspace";
+	public static final String BYON = "byon";
+	public static final String TERREMARK = "terremark";
+	public static final String OPENSTACK = "openstack";
+	public static final String EC2 = "ec2";
 
 	private static final String[][] SUPPORTED_CLOUDS = {{EC2}, {OPENSTACK}};
 	

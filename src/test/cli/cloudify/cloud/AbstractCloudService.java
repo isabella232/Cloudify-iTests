@@ -33,15 +33,13 @@ public abstract class AbstractCloudService implements CloudService {
         return new URL(stripSlash(url) + "/admin/machines");
     }
     
-    private void overrideLicenseAndLogs() throws IOException {
+    private void overrideLogsFile() throws IOException {
     	File logging = new File(SGTestHelper.getSGTestRootDir() + "/config/gs_logging.properties");
-    	File license = new File(SGTestHelper.getSGTestRootDir() + "/apps/cloudify/cloud/gslicense.xml");
     	File uploadOverrides = new File(ScriptUtils.getBuildPath() + "/tools/cli/plugins/esc/" + getCloudName() + "/upload/cloudify-overrides/");
     	uploadOverrides.mkdir();
     	File uploadLoggsDir = new File(uploadOverrides.getAbsoluteFile() + "/config/");
     	uploadLoggsDir.mkdir();
     	FileUtils.copyFileToDirectory(logging, uploadLoggsDir);
-    	FileUtils.copyFileToDirectory(license, uploadOverrides);
     }
 	
     private static String stripSlash(String str) {
@@ -55,7 +53,7 @@ public abstract class AbstractCloudService implements CloudService {
 	@Override
 	public void bootstrapCloud() throws IOException, InterruptedException {
 		
-		overrideLicenseAndLogs();
+		overrideLogsFile();
 		injectAuthenticationDetails();
 		String output = CommandTestUtils.runCommandAndWait("bootstrap-cloud --verbose " + getCloudName());
 		LogUtils.log("Extracting rest url's from cli output");

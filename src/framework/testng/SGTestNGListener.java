@@ -5,12 +5,14 @@ import java.io.File;
 import java.io.FileWriter;
 
 import org.testng.ITestContext;
+import org.testng.ITestNGMethod;
 import org.testng.ITestResult;
 import org.testng.Reporter;
 import org.testng.TestListenerAdapter;
 
 import framework.utils.DumpUtils;
 import framework.utils.LogUtils;
+import framework.utils.TestNGUtils;
 import framework.utils.ZipUtils;
 
 
@@ -21,17 +23,27 @@ public class SGTestNGListener extends TestListenerAdapter {
     @Override
     public void onConfigurationSuccess(ITestResult iTestResult) {
         super.onConfigurationSuccess(iTestResult);
-        String testName = iTestResult.getMethod().toString().split("\\(|\\)")[0] + "()";
-        LogUtils.log("Configuration Succeeded: " + testName);
+        String testName = iTestResult.getTestClass().getName();
+        String configurationName = iTestResult.getMethod().toString().split("\\(|\\)")[0];
+        if (isAfter(iTestResult)) {
+        	DumpUtils.copyBeforeConfigurationsLogToTestDir(testName);
+        	testName = testMethodName;
+        }
+        LogUtils.log("Configuration Succeeded: " + configurationName);
         ZipUtils.unzipArchive(testMethodName);
         write2LogFile(iTestResult, DumpUtils.createTestFolder(testName));
     }
 
-    @Override
+	@Override
     public void onConfigurationFailure(ITestResult iTestResult) {
         super.onConfigurationFailure(iTestResult);
-        String testName = iTestResult.getMethod().toString().split("\\(|\\)")[0] + "()";
-        LogUtils.log("Configuration Failed: " + testName, iTestResult.getThrowable());
+        String testName = iTestResult.getTestClass().getName();
+        String configurationName = iTestResult.getMethod().toString().split("\\(|\\)")[0];
+        if (isAfter(iTestResult)) {
+        	DumpUtils.copyBeforeConfigurationsLogToTestDir(testName);
+        	testName = testMethodName;
+        }
+        LogUtils.log("Configuration Failed: " + configurationName, iTestResult.getThrowable());
         ZipUtils.unzipArchive(testMethodName);
         write2LogFile(iTestResult, DumpUtils.createTestFolder(testName));
     }
@@ -46,38 +58,30 @@ public class SGTestNGListener extends TestListenerAdapter {
     @Override
     public void onTestFailure(ITestResult iTestResult) {
         super.onTestFailure(iTestResult);
-		String parameters = "";
-        Object[] params = iTestResult.getParameters();
-        if (params.length != 0) {
-        	parameters = params[0].toString();
-            for (int i = 1 ; i < params.length ; i++) {
-            	parameters += parameters + ",";
-            }
-        }
+		String parameters = TestNGUtils.extractParameters(iTestResult);
         testMethodName = iTestResult.getMethod().toString().split("\\(|\\)")[0] + "(" + parameters + ")";
         LogUtils.log("Test Failed: " + testMethodName, iTestResult.getThrowable());
         write2LogFile(iTestResult, DumpUtils.createTestFolder(testMethodName));
     }
 
     @Override
+	public void onTestSkipped(ITestResult iTestResult) {
+		super.onTestSkipped(iTestResult);
+        LogUtils.log("Test Skipped: " + testMethodName, iTestResult.getThrowable());
+	}
+
+	@Override
     public void onTestSuccess(ITestResult iTestResult) {
         super.onTestSuccess(iTestResult);
-		String parameters = "";
-        Object[] params = iTestResult.getParameters();
-        if (params.length != 0) {
-        	parameters = params[0].toString();
-            for (int i = 1 ; i < params.length ; i++) {
-            	parameters += parameters + ",";
-            }
-        }
+        String parameters = TestNGUtils.extractParameters(iTestResult);
         testMethodName = iTestResult.getMethod().toString().split("\\(|\\)")[0] + "(" + parameters + ")";
-        System.out.println("onTestSuccess " + testMethodName);
         LogUtils.log("Test Passed: " + testMethodName);
         write2LogFile(iTestResult, DumpUtils.createTestFolder(testMethodName));
     }
 
     @Override
     public void onFinish(ITestContext testContext) {
+    	
         super.onFinish(testContext);
     }
 
@@ -87,7 +91,8 @@ public class SGTestNGListener extends TestListenerAdapter {
                 LogUtils.log("Can not write to file test folder is null");
                 return;
             }
-            File testLogFile = new File(testFolder.getAbsolutePath() + "/" + iTestResult.getName() + ".log");
+            String parameters = TestNGUtils.extractParameters(iTestResult);
+            File testLogFile = new File(testFolder.getAbsolutePath() + "/" + iTestResult.getName() + "(" + parameters + ").log");
             if (!testLogFile.createNewFile()) {
                 new RuntimeException("Failed to create log file [" + testLogFile + "];\n log output: " + Reporter.getOutput());
             }
@@ -101,5 +106,15 @@ public class SGTestNGListener extends TestListenerAdapter {
         } finally {
             SGTestNGReporter.reset();
         }
+    }
+    
+    private boolean isAfter(ITestResult iTestResult) {
+    	ITestNGMethod method = iTestResult.getMethod();
+    	return (
+    			method.isAfterClassConfiguration() || 
+    			method.isAfterMethodConfiguration() || 
+    			method.isAfterSuiteConfiguration() || 
+    			method.isAfterTestConfiguration()
+    	);
     }
 }

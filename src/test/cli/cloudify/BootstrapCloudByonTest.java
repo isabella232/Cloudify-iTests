@@ -37,7 +37,7 @@ public class BootstrapCloudByonTest extends AbstractCloudByonTest {
 	 * @throws Exception 
 	 * @see AbstractCloudByonTest
 	 */
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, groups = "1", enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, groups = "1", enabled = true)
 	public void bootstrapByonCloudTest() throws Exception {
 	    
 		for (int i = 0; i < NUM_OF_MANAGEMENT_MACHINES; i++) {

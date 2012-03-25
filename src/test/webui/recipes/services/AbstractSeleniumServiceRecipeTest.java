@@ -1,5 +1,6 @@
 package test.webui.recipes.services;
 
+import java.io.File;
 import java.io.IOException;
 
 import org.openspaces.admin.AdminFactory;
@@ -10,6 +11,7 @@ import org.testng.annotations.BeforeMethod;
 
 import test.cli.cloudify.CommandTestUtils;
 import test.webui.recipes.AbstractSeleniumRecipeTest;
+import framework.tools.SGTestHelper;
 import framework.utils.DumpUtils;
 import framework.utils.LogUtils;
 import framework.utils.ProcessingUnitUtils;
@@ -19,11 +21,16 @@ public class AbstractSeleniumServiceRecipeTest extends AbstractSeleniumRecipeTes
 
 	public static final String MANAGEMENT = "management";
 
-	private String currentRecipe;
 	private boolean wait = true;
+	private String pathToService;
 
 	public void setCurrentRecipe(String recipe) {
-		this.currentRecipe = recipe;
+		String gigaDir = ScriptUtils.getBuildPath();	
+		this.pathToService = gigaDir + "/recipes/" + recipe;
+	}
+	
+	public void setPathToServiceRelativeToSGTestRootDir(String relativePath) {
+		this.pathToService = new File(SGTestHelper.getSGTestRootDir(), relativePath).getAbsolutePath();
 	}
 
 	public void setWait(boolean wait) {
@@ -39,8 +46,8 @@ public class AbstractSeleniumServiceRecipeTest extends AbstractSeleniumRecipeTes
 		factory.addLocator("127.0.0.1:4168");
 		LogUtils.log("creating new admin from factory");
 		admin = factory.createAdmin();
-		LogUtils.log("Installing service " + currentRecipe);
-		assertTrue("Failed to install service " + currentRecipe, installService(currentRecipe, wait)); 
+		LogUtils.log("Installing service " + pathToService);
+		assertTrue("Failed to install service " + pathToService, installService(pathToService, wait)); 
 		LogUtils.log("retrieving webui url");
 		ProcessingUnit webui = admin.getProcessingUnits().waitFor("webui");
 		ProcessingUnitUtils.waitForDeploymentStatus(webui, DeploymentStatus.INTACT);
@@ -63,9 +70,9 @@ public class AbstractSeleniumServiceRecipeTest extends AbstractSeleniumRecipeTes
 		}
 	}
 
-	public boolean installService(String serviceName, boolean wait) throws IOException, InterruptedException {
-		String gigaDir = ScriptUtils.getBuildPath();	
-		String pathToService = gigaDir + "/recipes/" + serviceName;	
+	public static boolean installService(String pathToService, boolean wait) throws IOException, InterruptedException {
+		
+	
 		String command = "connect localhost:8100;install-service --verbose -timeout 25 " + pathToService;
 		if (wait) {
 			LogUtils.log("Waiting for install-service to finish...");

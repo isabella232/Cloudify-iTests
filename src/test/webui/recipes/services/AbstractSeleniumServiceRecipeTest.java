@@ -1,6 +1,5 @@
 package test.webui.recipes.services;
 
-import java.io.File;
 import java.io.IOException;
 
 import org.openspaces.admin.AdminFactory;
@@ -11,7 +10,6 @@ import org.testng.annotations.BeforeMethod;
 
 import test.cli.cloudify.CommandTestUtils;
 import test.webui.recipes.AbstractSeleniumRecipeTest;
-import framework.tools.SGTestHelper;
 import framework.utils.DumpUtils;
 import framework.utils.LogUtils;
 import framework.utils.ProcessingUnitUtils;
@@ -30,7 +28,7 @@ public class AbstractSeleniumServiceRecipeTest extends AbstractSeleniumRecipeTes
 	}
 	
 	public void setPathToServiceRelativeToSGTestRootDir(String relativePath) {
-		this.pathToService = new File(SGTestHelper.getSGTestRootDir(), relativePath).getAbsolutePath();
+		this.pathToService = CommandTestUtils.getPath(relativePath);
 	}
 
 	public void setWait(boolean wait) {

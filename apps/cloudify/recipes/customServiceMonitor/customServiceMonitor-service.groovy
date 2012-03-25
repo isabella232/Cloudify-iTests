@@ -4,19 +4,19 @@
  */
 service {
 	name "customServiceMonitor"
-  
-  long counter = 0;
-  
-	lifecycle{
 
-    lifecycle { start "run.groovy" }
+	long counter = 0;
+  
+    lifecycle {
+		start "run.groovy" 
 
-		monitors (["counter":{
-      println "counter=${counter}" 
-      return counter
-    }])
+		monitors ([
+			"counter" : {
+				println "counter=${counter}" 
+				return counter
+			}
+		])
 	}
-
 
 	customCommands ([
 				"add" : {x -> counter += (x as Long);},

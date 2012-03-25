@@ -34,7 +34,7 @@ public class AbstractCloudTest extends AbstractTest {
 	public static final String OPENSTACK = "openstack";
 	public static final String EC2 = "ec2";
 
-	private static final String[][] SUPPORTED_CLOUDS = {{EC2}, {OPENSTACK}};
+	private static final String[][] SUPPORTED_CLOUDS = {{EC2}, {OPENSTACK}, {BYON}};
 	
 	private CloudService service;
 	

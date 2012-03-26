@@ -43,6 +43,7 @@ public class TestsReportFileStream {
 	}
 	
 	public TestsReport readFromDirectory(String inputDirectory) {
+		inputDirectory = inputDirectory.replace("\\", "/");
 		File dir = new File(inputDirectory);
 		if (!dir.isDirectory() || !dir.exists()) {
 			throw new IllegalArgumentException("could not read from " + inputDirectory);

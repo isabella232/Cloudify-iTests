@@ -14,14 +14,12 @@ import test.cli.cloudify.cloud.AbstractCloudService;
 
 public class Ec2CloudService extends AbstractCloudService {
 
-	private static final String cloudName = "ec2";
-	private static final String user = "0VCFNJS3FXHYC7M6Y782";
-	private static final String apiKey = "fPdu7rYBF0mtdJs1nmzcdA8yA/3kbV20NgInn4NO";
-	private static final String pemFileName = "cloud-demo";
+	protected static final String cloudName = "ec2";
+	protected static final String user = "0VCFNJS3FXHYC7M6Y782";
+	protected static final String apiKey = "fPdu7rYBF0mtdJs1nmzcdA8yA/3kbV20NgInn4NO";
+	protected static final String pemFileName = "cloud-demo";
 
 	private static Ec2CloudService self = null;
-
-	private Ec2CloudService() {};
 
 	public static Ec2CloudService getService() {
 		if (self == null) {

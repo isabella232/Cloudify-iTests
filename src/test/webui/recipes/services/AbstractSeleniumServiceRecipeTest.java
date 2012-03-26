@@ -21,13 +21,16 @@ public class AbstractSeleniumServiceRecipeTest extends AbstractSeleniumRecipeTes
 
 	private boolean wait = true;
 	private String pathToService;
+	private String serviceName;
 
 	public void setCurrentRecipe(String recipe) {
+		serviceName = recipe;
 		String gigaDir = ScriptUtils.getBuildPath();	
 		this.pathToService = gigaDir + "/recipes/" + recipe;
 	}
 	
-	public void setPathToServiceRelativeToSGTestRootDir(String relativePath) {
+	public void setPathToServiceRelativeToSGTestRootDir(String recipe, String relativePath) {
+		this.serviceName = recipe;
 		this.pathToService = CommandTestUtils.getPath(relativePath);
 	}
 
@@ -57,7 +60,7 @@ public class AbstractSeleniumServiceRecipeTest extends AbstractSeleniumRecipeTes
 
 	@AfterMethod(alwaysRun = true)
 	public void uninstall() throws IOException, InterruptedException {
-		uninstallService(pathToService, wait);
+		uninstallService(serviceName, wait);
 		stopWebBrowser();
 		if (admin != null) {
 			if (!isDevMode()) {

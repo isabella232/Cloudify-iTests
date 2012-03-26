@@ -2,21 +2,18 @@ package test.cli.cloudify.cloud;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 
 import junit.framework.Assert;
 
 import org.apache.commons.io.FileUtils;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import test.cli.cloudify.CommandTestUtils;
 import test.cli.cloudify.cloud.ec2.Ec2StockDemoCloudService;
 import framework.tools.SGTestHelper;
 import framework.utils.LogUtils;
-import framework.utils.ScriptUtils;
 
 public class RepetativeInstallAndUninstallStockDemoWithProblemAtInstallEc2Test extends AbstractCloudTest {
 
@@ -24,7 +21,8 @@ public class RepetativeInstallAndUninstallStockDemoWithProblemAtInstallEc2Test e
 	private String cassandraPostStartScriptPath = null;
 	private String newPostStartScriptPath = null;
 	private AbstractCloudService service;
-	private URL deployedMachineUrl;
+	//TODO check home page is up as successful installation verification
+	//TODO check uninstall really does remove application and services from machine
 	
 	@BeforeMethod
 	public void bootstrap() throws IOException, InterruptedException {	
@@ -74,9 +72,9 @@ public class RepetativeInstallAndUninstallStockDemoWithProblemAtInstallEc2Test e
 					}				
 			}
 		}
-		System.out.println(firstInstallSuccessCounter + "/" + repetitions + " times the first installation succeedded, this should not happen");
-		System.out.println(scenarioSuccessCounter + "/" + repetitions + " times the second installation succeedded");
-		System.out.println(scenarioFailCounter + "/" + repetitions + " times the second installation failed - THIS IS WHAT WE TEST FOR");
+		LogUtils.log(firstInstallSuccessCounter + "/" + repetitions + " times the first installation succeedded, this should not happen");
+		LogUtils.log(scenarioSuccessCounter + "/" + repetitions + " times the second installation succeedded");
+		LogUtils.log(scenarioFailCounter + "/" + repetitions + " times the second installation failed - THIS IS WHAT WE TEST FOR");
 		Assert.assertTrue("second install should never fail, it failed " + scenarioFailCounter + " times", scenarioFailCounter==0);
 	}
 
@@ -109,7 +107,7 @@ public class RepetativeInstallAndUninstallStockDemoWithProblemAtInstallEc2Test e
 		try {
 			fixCassandraService(cassandraPostStartScriptPath , newPostStartScriptPath);
 		} catch (IOException e) {
-			System.out.println("FAILED FIXING CASSANDRA SERVICE!!!");
+			LogUtils.log("FAILED FIXING CASSANDRA SERVICE AFTER TEST");
 			e.printStackTrace();
 		}
 	}
@@ -129,20 +127,7 @@ public class RepetativeInstallAndUninstallStockDemoWithProblemAtInstallEc2Test e
 	}
 	
 
-	private void doTest(String applicationName) throws IOException, InterruptedException {
-		
-		String applicationPath = ScriptUtils.getBuildPath() + "/examples/" + applicationName;
-		
-		installApplicationAndWait(applicationPath, applicationName);
-		uninstallApplicationAndWait(applicationName);
-		
-	}
 	
-	private String[][] ec2Provider = {{AbstractCloudTest.EC2}};
-	@DataProvider(name = "myProvider")
-	private String[][] myProvider(){
-		return ec2Provider;
-	}
 
 	
 }

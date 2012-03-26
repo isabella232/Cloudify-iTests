@@ -47,6 +47,21 @@ public class SGTestNGListener extends TestListenerAdapter {
         ZipUtils.unzipArchive(testMethodName);
         write2LogFile(iTestResult, DumpUtils.createTestFolder(testName));
     }
+	
+	@Override
+    public void onConfigurationSkip(ITestResult iTestResult) {
+        super.onConfigurationFailure(iTestResult);
+        String testName = iTestResult.getTestClass().getName();
+        String configurationName = iTestResult.getMethod().toString().split("\\(|\\)")[0];
+        if (isAfter(iTestResult)) {
+        	DumpUtils.copyBeforeConfigurationsLogToTestDir(testName);
+        	testName = testMethodName;
+        }
+        LogUtils.log("Configuration Skipped: " + configurationName, iTestResult.getThrowable());
+        ZipUtils.unzipArchive(testMethodName);
+        write2LogFile(iTestResult, DumpUtils.createTestFolder(testName));
+    }
+
 
     @Override
     public void onTestStart(ITestResult iTestResult) {
@@ -67,7 +82,10 @@ public class SGTestNGListener extends TestListenerAdapter {
     @Override
 	public void onTestSkipped(ITestResult iTestResult) {
 		super.onTestSkipped(iTestResult);
+		String parameters = TestNGUtils.extractParameters(iTestResult);
+        testMethodName = iTestResult.getMethod().toString().split("\\(|\\)")[0] + "(" + parameters + ")";
         LogUtils.log("Test Skipped: " + testMethodName, iTestResult.getThrowable());
+        write2LogFile(iTestResult, DumpUtils.createTestFolder(testMethodName));
 	}
 
 	@Override

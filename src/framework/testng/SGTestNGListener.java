@@ -35,6 +35,9 @@ public class SGTestNGListener extends TestListenerAdapter {
         	DumpUtils.copyBeforeConfigurationsLogToTestDir(testName, suiteName);
         	testName = testMethodName;
         }
+        if (suiteName == null) { // this is in case the suite has a @BeforeSuite method. which is invoked before the onStart is.
+        	suiteName = iTestResult.getTestClass().getXmlTest().getSuite().getName().split("[0-9]+")[0];
+        }
         LogUtils.log("Configuration Succeeded: " + configurationName);
         ZipUtils.unzipArchive(testMethodName, suiteName);
         write2LogFile(iTestResult, DumpUtils.createTestFolder(testName, suiteName));
@@ -48,6 +51,9 @@ public class SGTestNGListener extends TestListenerAdapter {
         if (isAfter(iTestResult)) {
         	DumpUtils.copyBeforeConfigurationsLogToTestDir(testName, suiteName);
         	testName = testMethodName;
+        }
+        if (suiteName == null) { // this is in case the suite has a @BeforeSuite method. which is invoked before the onStart is.
+        	suiteName = iTestResult.getTestClass().getXmlTest().getSuite().getName().split("[0-9]+")[0];
         }
         LogUtils.log("Configuration Failed: " + configurationName, iTestResult.getThrowable());
         ZipUtils.unzipArchive(testMethodName, suiteName);

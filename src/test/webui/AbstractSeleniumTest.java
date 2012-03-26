@@ -175,6 +175,15 @@ public abstract class AbstractSeleniumTest extends AbstractTest {
 
 	public void takeScreenShot(Class<?> cls, String testMethod, String picName) {
 
+		String suiteName = null;
+		String browser = System.getProperty("selenium.browser");
+		if (browser.equals("Firefox")) {
+			suiteName = "webui-Firefox";
+		}
+		else {
+			suiteName = "webui-Chrome";
+		}
+		
 		if (!isDevMode()) {
 			File scrFile = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
 
@@ -182,7 +191,7 @@ public abstract class AbstractSeleniumTest extends AbstractTest {
 
 			String testLogsDir = cls.getName() + "." + testMethod + "()";
 
-			String to = buildDir  + "/" + testLogsDir + "/" + picName + ".png";
+			String to = buildDir + "/" + suiteName + "/" + testLogsDir + "/" + picName + ".png";
 
 			try {
 				FileUtils.copyFile(scrFile, new File(to));

@@ -177,7 +177,7 @@ public abstract class AbstractSeleniumTest extends AbstractTest {
 
 		String suiteName = null;
 		String browser = System.getProperty("selenium.browser");
-		if (browser.equals("Firefox")) {
+		if (browser == null || browser.equals("Firefox")) {
 			suiteName = "webui-Firefox";
 		}
 		else {

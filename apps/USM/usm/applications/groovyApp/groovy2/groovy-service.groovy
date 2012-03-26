@@ -2,11 +2,10 @@ import java.util.concurrent.TimeUnit
 
 
 service {
-	name "groovy"
+	name "groovy2"
 	icon "icon.png"
 	type "WEB_SERVER"
 	elastic true
-	numInstances 2
 	lifecycle { 
 	
 		init { println "This is the init event" }

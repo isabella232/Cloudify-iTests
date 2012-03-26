@@ -7,6 +7,7 @@ import java.util.List;
 import org.testng.ITestResult;
 
 import framework.testng.report.xml.TestLog;
+import framework.utils.TestNGUtils;
 
 /**
  * @author moran
@@ -20,17 +21,11 @@ public class LogFetcher {
 	
 	public List<TestLog> getLogs(ITestResult result) {
 		List<TestLog> logs = new ArrayList<TestLog>();
-		String parameters = "";
-        Object[] params = result.getParameters();
-        if (params.length != 0) {
-        	parameters = params[0].toString();
-            for (int i = 1 ; i < params.length ; i++) {
-            	parameters += parameters + ",";
-            }
-        }
+		String suiteName = result.getTestClass().getXmlTest().getSuite().getName();
+		String parameters = TestNGUtils.extractParameters(result);
 		String testName = result.getMethod().toString().split("\\(|\\)")[0]
 				+ "(" + parameters + ")";
-		File testDir = new File(getBuildFolder() + "/" + testName);
+		File testDir = new File(getBuildFolder() + "/" + suiteName + "/" + testName);
 		return fetchLogs(testDir, logs);
 	}
 

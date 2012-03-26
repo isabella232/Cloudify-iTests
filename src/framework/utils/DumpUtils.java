@@ -73,7 +73,7 @@ public class DumpUtils {
 		return dumpOptionsArray;
 	}
 
-	public static File createTestFolder(String testName) {
+	public static File createTestFolder(String testName, String suiteName) {
 		String buildNumber = PlatformVersion.getBuildNumber();
 		if(buildNumber == null){
 			return null;
@@ -83,9 +83,9 @@ public class DumpUtils {
 
 		if (!buildFolder.exists())
 			buildFolder.mkdir();
-		testFolder = new File(buildFolder.getAbsolutePath() + "/" + testName);
+		testFolder = new File(buildFolder.getAbsolutePath() + "/" + suiteName + "/" + testName);
 		if (!testFolder.exists())
-			testFolder.mkdir();
+			testFolder.mkdirs();
 
 		return testFolder;
 	}
@@ -102,11 +102,11 @@ public class DumpUtils {
 		ZipUtils.unzipArchive(zipFile, testFolder);
 	}
 
-	public static void copyBeforeConfigurationsLogToTestDir(String testName) {
+	public static void copyBeforeConfigurationsLogToTestDir(String testName, String suiteName) {
 
 		String buildNumber = PlatformVersion.getBuildNumber();
 		File buildFolder = new File(SGTestHelper.getSGTestRootDir() + "/deploy/local-builds/build_" + buildNumber);
-		File beforeConfigurationsLogDir = new File(buildFolder.getAbsolutePath() + "/" + testName);
+		File beforeConfigurationsLogDir = new File(buildFolder.getAbsolutePath() + "/" + suiteName + "/" + testName);
 		if (beforeConfigurationsLogDir.exists()) {
 			try {
 				FileUtils.copyDirectory(beforeConfigurationsLogDir, testFolder);

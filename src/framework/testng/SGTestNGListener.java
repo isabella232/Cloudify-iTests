@@ -23,43 +23,46 @@ public class SGTestNGListener extends TestListenerAdapter {
     @Override
     public void onConfigurationSuccess(ITestResult iTestResult) {
         super.onConfigurationSuccess(iTestResult);
+        String suiteName = iTestResult.getTestClass().getXmlTest().getSuite().getName();
         String testName = iTestResult.getTestClass().getName();
         String configurationName = iTestResult.getMethod().toString().split("\\(|\\)")[0];
         if (isAfter(iTestResult)) {
-        	DumpUtils.copyBeforeConfigurationsLogToTestDir(testName);
+        	DumpUtils.copyBeforeConfigurationsLogToTestDir(testName, suiteName);
         	testName = testMethodName;
         }
         LogUtils.log("Configuration Succeeded: " + configurationName);
         ZipUtils.unzipArchive(testMethodName);
-        write2LogFile(iTestResult, DumpUtils.createTestFolder(testName));
+        write2LogFile(iTestResult, DumpUtils.createTestFolder(testName, suiteName));
     }
 
 	@Override
     public void onConfigurationFailure(ITestResult iTestResult) {
         super.onConfigurationFailure(iTestResult);
+        String suiteName = iTestResult.getTestClass().getXmlTest().getSuite().getName();
         String testName = iTestResult.getTestClass().getName();
         String configurationName = iTestResult.getMethod().toString().split("\\(|\\)")[0];
         if (isAfter(iTestResult)) {
-        	DumpUtils.copyBeforeConfigurationsLogToTestDir(testName);
+        	DumpUtils.copyBeforeConfigurationsLogToTestDir(testName, suiteName);
         	testName = testMethodName;
         }
         LogUtils.log("Configuration Failed: " + configurationName, iTestResult.getThrowable());
         ZipUtils.unzipArchive(testMethodName);
-        write2LogFile(iTestResult, DumpUtils.createTestFolder(testName));
+        write2LogFile(iTestResult, DumpUtils.createTestFolder(testName, suiteName));
     }
 	
 	@Override
     public void onConfigurationSkip(ITestResult iTestResult) {
         super.onConfigurationFailure(iTestResult);
+        String suiteName = iTestResult.getTestClass().getXmlTest().getSuite().getName();
         String testName = iTestResult.getTestClass().getName();
         String configurationName = iTestResult.getMethod().toString().split("\\(|\\)")[0];
         if (isAfter(iTestResult)) {
-        	DumpUtils.copyBeforeConfigurationsLogToTestDir(testName);
+        	DumpUtils.copyBeforeConfigurationsLogToTestDir(testName, suiteName);
         	testName = testMethodName;
         }
         LogUtils.log("Configuration Skipped: " + configurationName, iTestResult.getThrowable());
         ZipUtils.unzipArchive(testMethodName);
-        write2LogFile(iTestResult, DumpUtils.createTestFolder(testName));
+        write2LogFile(iTestResult, DumpUtils.createTestFolder(testName, suiteName));
     }
 
 
@@ -73,28 +76,31 @@ public class SGTestNGListener extends TestListenerAdapter {
     @Override
     public void onTestFailure(ITestResult iTestResult) {
         super.onTestFailure(iTestResult);
+        String suiteName = iTestResult.getTestClass().getXmlTest().getSuite().getName();
 		String parameters = TestNGUtils.extractParameters(iTestResult);
         testMethodName = iTestResult.getMethod().toString().split("\\(|\\)")[0] + "(" + parameters + ")";
         LogUtils.log("Test Failed: " + testMethodName, iTestResult.getThrowable());
-        write2LogFile(iTestResult, DumpUtils.createTestFolder(testMethodName));
+        write2LogFile(iTestResult, DumpUtils.createTestFolder(testMethodName, suiteName));
     }
 
     @Override
 	public void onTestSkipped(ITestResult iTestResult) {
 		super.onTestSkipped(iTestResult);
+        String suiteName = iTestResult.getTestClass().getXmlTest().getSuite().getName();
 		String parameters = TestNGUtils.extractParameters(iTestResult);
         testMethodName = iTestResult.getMethod().toString().split("\\(|\\)")[0] + "(" + parameters + ")";
         LogUtils.log("Test Skipped: " + testMethodName, iTestResult.getThrowable());
-        write2LogFile(iTestResult, DumpUtils.createTestFolder(testMethodName));
+        write2LogFile(iTestResult, DumpUtils.createTestFolder(testMethodName, suiteName));
 	}
 
 	@Override
     public void onTestSuccess(ITestResult iTestResult) {
         super.onTestSuccess(iTestResult);
+        String suiteName = iTestResult.getTestClass().getXmlTest().getSuite().getName();
         String parameters = TestNGUtils.extractParameters(iTestResult);
         testMethodName = iTestResult.getMethod().toString().split("\\(|\\)")[0] + "(" + parameters + ")";
         LogUtils.log("Test Passed: " + testMethodName);
-        write2LogFile(iTestResult, DumpUtils.createTestFolder(testMethodName));
+        write2LogFile(iTestResult, DumpUtils.createTestFolder(testMethodName, suiteName));
     }
 
     @Override

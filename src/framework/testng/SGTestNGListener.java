@@ -79,7 +79,6 @@ public class SGTestNGListener extends TestListenerAdapter {
     @Override
     public void onTestFailure(ITestResult iTestResult) {
         super.onTestFailure(iTestResult);
-        String suiteName = iTestResult.getTestClass().getXmlTest().getSuite().getName();
 		String parameters = TestNGUtils.extractParameters(iTestResult);
         testMethodName = iTestResult.getMethod().toString().split("\\(|\\)")[0] + "(" + parameters + ")";
         LogUtils.log("Test Failed: " + testMethodName, iTestResult.getThrowable());
@@ -89,7 +88,6 @@ public class SGTestNGListener extends TestListenerAdapter {
     @Override
 	public void onTestSkipped(ITestResult iTestResult) {
 		super.onTestSkipped(iTestResult);
-        String suiteName = iTestResult.getTestClass().getXmlTest().getSuite().getName();
 		String parameters = TestNGUtils.extractParameters(iTestResult);
         testMethodName = iTestResult.getMethod().toString().split("\\(|\\)")[0] + "(" + parameters + ")";
         LogUtils.log("Test Skipped: " + testMethodName, iTestResult.getThrowable());
@@ -99,7 +97,6 @@ public class SGTestNGListener extends TestListenerAdapter {
 	@Override
     public void onTestSuccess(ITestResult iTestResult) {
         super.onTestSuccess(iTestResult);
-        String suiteName = iTestResult.getTestClass().getXmlTest().getSuite().getName();
         String parameters = TestNGUtils.extractParameters(iTestResult);
         testMethodName = iTestResult.getMethod().toString().split("\\(|\\)")[0] + "(" + parameters + ")";
         LogUtils.log("Test Passed: " + testMethodName);

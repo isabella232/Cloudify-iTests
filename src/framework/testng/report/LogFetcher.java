@@ -21,7 +21,7 @@ public class LogFetcher {
 	
 	public List<TestLog> getLogs(ITestResult result) {
 		List<TestLog> logs = new ArrayList<TestLog>();
-		String suiteName = result.getTestClass().getXmlTest().getSuite().getName();
+		String suiteName = result.getTestClass().getXmlTest().getSuite().getName().split("[0-9]+")[0];
 		String parameters = TestNGUtils.extractParameters(result);
 		String testName = result.getMethod().toString().split("\\(|\\)")[0]
 				+ "(" + parameters + ")";

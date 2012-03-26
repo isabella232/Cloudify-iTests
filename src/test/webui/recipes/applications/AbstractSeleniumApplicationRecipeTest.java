@@ -19,12 +19,13 @@ public class AbstractSeleniumApplicationRecipeTest extends AbstractSeleniumRecip
 	
 	public static final String MANAGEMENT = "management";
 
-	private String currentApplication;
+	private String pathToApplication;
 	private boolean wait = true;
 	
 	public void setCurrentApplication(String application) {
-		this.currentApplication = application;
-		LogUtils.log("Current Application is : " + currentApplication);
+		String gigaDir = ScriptUtils.getBuildPath();	
+		this.pathToApplication = gigaDir + "/examples/" + application;
+		LogUtils.log("Current Application is : " + application);
 	}
 	
 	public void setWait(boolean wait) {
@@ -39,8 +40,8 @@ public class AbstractSeleniumApplicationRecipeTest extends AbstractSeleniumRecip
 		factory.addLocator("127.0.0.1:4168");
 		LogUtils.log("creating new admin from factory");
 		admin = factory.createAdmin();
-		LogUtils.log("Installing application " + currentApplication);
-		assertTrue("Failed To install application " + currentApplication, installApplication(currentApplication, wait));
+		LogUtils.log("Installing application " + pathToApplication);
+		assertTrue("Failed To install application " + pathToApplication, installApplication(pathToApplication, wait));
 		LogUtils.log("retrieving webui url");
 		ProcessingUnit webui = admin.getProcessingUnits().waitFor("webui");
 		ProcessingUnitUtils.waitForDeploymentStatus(webui, DeploymentStatus.INTACT);
@@ -52,6 +53,7 @@ public class AbstractSeleniumApplicationRecipeTest extends AbstractSeleniumRecip
 	
 	@AfterMethod(alwaysRun = true)
 	public void uninstall() throws InterruptedException, IOException {
+		uninstallApplication(pathToApplication, wait);
 		stopWebBrowser();
 		if (admin != null) {
 			if (!isDevMode()) {
@@ -63,9 +65,7 @@ public class AbstractSeleniumApplicationRecipeTest extends AbstractSeleniumRecip
 		}
 	}
 	
-	public boolean installApplication(String applicationName, boolean wait) throws InterruptedException, IOException {
-		String gigaDir = ScriptUtils.getBuildPath();	
-		String pathToApplication = gigaDir + "/examples/" + applicationName;	
+	public boolean installApplication(String pathToApplication, boolean wait) throws InterruptedException, IOException {
 		String command = "connect localhost:8100;install-application --verbose -timeout 25 " + pathToApplication;
 		if (wait) {
 			LogUtils.log("Waiting for install-application to finish...");

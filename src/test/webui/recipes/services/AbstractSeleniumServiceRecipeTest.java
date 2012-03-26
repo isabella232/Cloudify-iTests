@@ -38,7 +38,7 @@ public class AbstractSeleniumServiceRecipeTest extends AbstractSeleniumRecipeTes
 
 	@BeforeMethod(alwaysRun = true)
 	public void install() throws IOException, InterruptedException {	
-		assertTrue(isBootstraped());
+		assertTrue("test failed because bootstrap was not succesfull", isBootstraped());
 		AdminFactory factory = new AdminFactory();
 		LogUtils.log("Adding locators to new admin factory");
 		factory.addLocator("127.0.0.1:4168");
@@ -57,6 +57,7 @@ public class AbstractSeleniumServiceRecipeTest extends AbstractSeleniumRecipeTes
 
 	@AfterMethod(alwaysRun = true)
 	public void uninstall() throws IOException, InterruptedException {
+		uninstallService(pathToService, wait);
 		stopWebBrowser();
 		if (admin != null) {
 			if (!isDevMode()) {
@@ -69,8 +70,6 @@ public class AbstractSeleniumServiceRecipeTest extends AbstractSeleniumRecipeTes
 	}
 
 	public static boolean installService(String pathToService, boolean wait) throws IOException, InterruptedException {
-		
-	
 		String command = "connect localhost:8100;install-service --verbose -timeout 25 " + pathToService;
 		if (wait) {
 			LogUtils.log("Waiting for install-service to finish...");

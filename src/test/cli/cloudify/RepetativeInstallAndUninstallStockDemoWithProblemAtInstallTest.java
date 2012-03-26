@@ -1,61 +1,54 @@
 package test.cli.cloudify;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 
-import org.apache.karaf.util.Properties.PropertiesReader;
-import org.apache.karaf.util.Properties.PropertiesWriter;
+import junit.framework.Assert;
+
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.Test;
 
 public class RepetativeInstallAndUninstallStockDemoWithProblemAtInstallTest extends AbstractLocalCloudTest {
 
-	
 	private final int repetitions = 4;
-	private final String applicationDir = CommandTestUtils.getPath("apps/USM/usm/applications/stockdemo");	
-	private ArrayList<String> originalProperties = new ArrayList<String>();
+	private String cassandraPostStartScriptPath = null;
+	private String newPostStartScriptPath = null;
 	
-	@Test(timeOut = 1000 * 60 * 10, groups = "1", enabled = false)
-	public void testInstallAndUninstall() throws IOException, InterruptedException {
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * repetitions, groups = "1", enabled = true)
+	public void installAndUninstallTest() throws IOException, InterruptedException {
 		
-//		saveOriginalProperties(applicationDir);
-//		corruptCassandraService(applicationDir);
-//		fixCassandraService(applicationDir);
-		
-		
-		
-		
-		
+		final String stockdemoAppPath = CommandTestUtils.getPath("apps/USM/usm/applications/stockdemo");	
+		cassandraPostStartScriptPath = stockdemoAppPath + "/cassandra/cassandra_poststart.groovy";	
+		newPostStartScriptPath = stockdemoAppPath + "/cassandra/cassandra_poststart123.groovy";
 		int scenarioSuccessCounter = 0;
 		int scenarioFailCounter = 0;
 		int firstInstallSuccessCounter = 0;
 		
-		for(int i=0 ; i < repetitions ; i++)
-			switch(doTest()){
-			case 1: firstInstallSuccessCounter++;
-			case 2: scenarioSuccessCounter++;
-			case 3: scenarioFailCounter++;
+		for(int i=0 ; i < repetitions ; i++){
+			switch(doTest(stockdemoAppPath, cassandraPostStartScriptPath ,newPostStartScriptPath)){
+			case 1: {firstInstallSuccessCounter++;break;}
+			case 2: {scenarioSuccessCounter++;break;}
+			case 3: {scenarioFailCounter++;break;}
 				
 			}
-		
+		}
 		System.out.println(firstInstallSuccessCounter + "/" + repetitions + " times the first installation succeedded, these runs are irrelavent");
 		System.out.println(scenarioSuccessCounter + "/" + repetitions + " times the second installation succeedded");
 		System.out.println(scenarioFailCounter + "/" + repetitions + " times the second installation failed - THIS IS WHAT WE TEST FOR");
+		Assert.assertTrue("second install should never fail, it failed " + scenarioFailCounter + " times", scenarioFailCounter==0);
 	}
 
-	private int doTest() throws IOException, InterruptedException {
-		corruptCassandraService(applicationDir);
-		String failOutput = CommandTestUtils.runCommand("connect " + restUrl + ";install-application --verbose -timeout 4 " + applicationDir, true, true);		
+	private int doTest(String stockdemoAppPath, String cassandraPostStartScriptPath ,String  newPostStartScriptPath) throws IOException, InterruptedException {
+		corruptCassandraService(cassandraPostStartScriptPath ,newPostStartScriptPath);
+		
+		String failOutput = CommandTestUtils.runCommand("connect " + restUrl + ";install-application --verbose -timeout 5 " + stockdemoAppPath, true, true);		
 		if(!failOutput.toLowerCase().contains("operation failed"))
 			return 1;
-		
+		fixCassandraService(cassandraPostStartScriptPath , newPostStartScriptPath);
 		runCommand("connect " + restUrl + ";uninstall-application --verbose stockdemo");
 				
-		String successOutput = CommandTestUtils.runCommand("connect " + restUrl + ";install-application --verbose " + applicationDir, true, true);
+		String successOutput = CommandTestUtils.runCommand("connect " + restUrl + ";install-application --verbose -timeout 5 " + stockdemoAppPath, true, true);
+		runCommand("connect " + restUrl + ";uninstall-application --verbose stockdemo");
 		if(successOutput.toLowerCase().contains("successfully installed"))
 			return 2;
 		else
@@ -65,51 +58,26 @@ public class RepetativeInstallAndUninstallStockDemoWithProblemAtInstallTest exte
 	@Override
 	@AfterMethod
 	public void afterTest(){
+		super.afterTest();
 		try {
-			fixCassandraService(applicationDir);
+			fixCassandraService(cassandraPostStartScriptPath , newPostStartScriptPath);
 		} catch (IOException e) {
 			System.out.println("FAILED FIXING CASSANDRA SERVICE!!!");
 			e.printStackTrace();
 		}
-		super.afterTest();
-	}
-	
-	private void fixCassandraService(String applicationDir) throws IOException {
-		
-		File cassandraProperties = new File("D:/opt/cassandra.properties");
-		FileWriter writer = new FileWriter(cassandraProperties);
-		
-		for(String property : originalProperties)
-			writer.write(property);	
-		
-		writer.close();
 	}
 
-	private void saveOriginalProperties(String applicationDir)	throws FileNotFoundException, IOException {
-		File cassandraProperties = new File("D:/opt/cassandra.properties");
-		FileReader reader = new FileReader(cassandraProperties);
-		
-		PropertiesReader pr = new PropertiesReader(reader);
-		
-		String property = null;
-		while((property = pr.readProperty())  != null)
-			originalProperties.add(property);
-		
-		pr.close();
+	private void corruptCassandraService(String cassandraPostStartScriptPath , String newPostStartScriptPath) throws IOException {
+		File cassandraPostStartScript = new File(cassandraPostStartScriptPath);
+		boolean success = cassandraPostStartScript.renameTo(new File(newPostStartScriptPath));
+		if(!success)
+			throw new IOException("Test error: failed renaming " +  cassandraPostStartScriptPath + " to " + newPostStartScriptPath);
 	}
 	
-	private void corruptCassandraService(String applicationDir) throws IOException {
-		File cassandraProperties = new File("D:/opt/cassandra.properties");
-		FileWriter writer = new FileWriter(cassandraProperties);
-		PropertiesWriter pw = new PropertiesWriter(writer);
-		
-		for(String property : originalProperties){
-			if(property.contains("script"))	
-				property = "script = bad path";
-			pw.writeln(property);	
-			
-		}
-		writer.close();				
+	private void fixCassandraService(String cassandraPostStartScriptPath , String newPostStartScriptPath) throws IOException {
+		File cassandraPostStartScript = new File(newPostStartScriptPath);
+		boolean success = cassandraPostStartScript.renameTo(new File(cassandraPostStartScriptPath));
+		if(!success)
+			throw new IOException("Test error: failed renaming " +  newPostStartScriptPath + " to " + cassandraPostStartScriptPath);
 	}
-	
 }

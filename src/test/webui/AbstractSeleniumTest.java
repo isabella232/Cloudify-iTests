@@ -240,7 +240,7 @@ public abstract class AbstractSeleniumTest extends AbstractTest {
 	private boolean tearDownLocalCloud() throws IOException, InterruptedException {
 		String command = "teardown-localcloud --verbose -force";
 		String output = CommandTestUtils.runCommandAndWait(command);
-		return output.contains("Completed local-cloud teardown");
+		return output.toLowerCase().contains("completed local-cloud teardown");
 	}
 	
 }

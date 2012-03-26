@@ -174,17 +174,18 @@ public abstract class AbstractSeleniumTest extends AbstractTest {
 	}
 
 	public void takeScreenShot(Class<?> cls, String testMethod, String picName) {
-
-		String suiteName = null;
-		String browser = System.getProperty("selenium.browser");
-		if (browser == null || browser.equals("Firefox")) {
-			suiteName = "webui-Firefox";
-		}
-		else {
-			suiteName = "webui-Chrome";
-		}
 		
 		if (!isDevMode()) {
+			
+			String suiteName = null;
+			String browser = System.getProperty("selenium.browser");
+			if (browser.equals("Firefox")) {
+				suiteName = "webui-Firefox";
+			}
+			else {
+				suiteName = "webui-Chrome";
+			}
+			
 			File scrFile = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
 
 			String buildDir = SGTestHelper.getSGTestRootDir() + "/deploy/local-builds/build_" + PlatformVersion.getBuildNumber();

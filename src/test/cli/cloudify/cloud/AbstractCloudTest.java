@@ -34,9 +34,13 @@ public class AbstractCloudTest extends AbstractTest {
 	public static final String OPENSTACK = "openstack";
 	public static final String EC2 = "ec2";
 
-	private static final String[][] SUPPORTED_CLOUDS = {{EC2}, {OPENSTACK}, {BYON}};
+	private static final String[][] SUPPORTED_CLOUDS = {{EC2}};
 	
 	private CloudService service;
+	
+	public void setService(CloudService service) {
+		this.service = service;
+	}
 	
 	/**
 	 * set the service CloudService instance to a specific cloud provider.
@@ -268,22 +272,44 @@ public class AbstractCloudTest extends AbstractTest {
 	 * @throws InterruptedException
 	 */
 	public void installApplicationAndWait(String applicationPath, String applicationName) throws IOException, InterruptedException {
+		installApplication(applicationPath , applicationName, 0 , true , false);
+	}
+	
+	/**
+	 * installs an application on a specific cloud and waits for the installation to complete.
+	 * @param applicationPath - full path to the -application.groovy file on the local file system.
+	 * @param applicationName - the name of the service.
+	 * @param wait - used for determining if to wait for command 
+	 * @param failCommand  - used for determining if the command is expected to fail 
+	 * @param timeout - time in minutes to wait for command to finish. Give non-negative value to override 30 minute default.
+	 * @throws IOException
+	 * @throws InterruptedException
+	 */
+	public void installApplication(String applicationPath, String applicationName,int timeout ,boolean wait ,boolean failCommand) throws IOException, InterruptedException {
 		
 		if (service.getRestUrl() == null) {
 			Assert.fail("Test failed becuase the cloud was not bootstrapped properly");
 		}
+		long timeoutToUse;
+		if(timeout >= 0)
+			timeoutToUse = timeout;
+		else
+			timeoutToUse = TimeUnit.MILLISECONDS.toMinutes(DEFAULT_TEST_TIMEOUT * 2);
 		
 		String connectCommand = "connect " + service.getRestUrl() + ";";
 		String installCommand = new StringBuilder()
 			.append("install-application ")
 			.append("--verbose ")
 			.append("-timeout ")
-			.append(TimeUnit.MILLISECONDS.toMinutes(DEFAULT_TEST_TIMEOUT * 2)).append(" ")
+			.append(timeoutToUse).append(" ")
 			.append((applicationPath.toString()).replace('\\', '/'))
 			.toString();
-		String output = CommandTestUtils.runCommandAndWait(connectCommand + installCommand);
+		String output = CommandTestUtils.runCommand(connectCommand + installCommand, wait, failCommand);
 		String excpectedResult = "Application " + applicationName + " installed successfully";
-		assertTrue(output.toLowerCase().contains(excpectedResult.toLowerCase()));
+		if(!failCommand)
+			assertTrue(output.toLowerCase().contains(excpectedResult.toLowerCase()));
+		else
+			assertTrue(output.toLowerCase().contains("operation failed"));
 
 	}
 	
@@ -340,7 +366,7 @@ public class AbstractCloudTest extends AbstractTest {
 		
 	}
 	
-	private void sendTeardownCloudFailedMail(String cloudName, Throwable error) {
+	protected void sendTeardownCloudFailedMail(String cloudName, Throwable error) {
 		
 		if (!isDevMode()) {
 			String url = null;

@@ -177,14 +177,7 @@ public abstract class AbstractSeleniumTest extends AbstractTest {
 		
 		if (!isDevMode()) {
 			
-			String suiteName = null;
-			String browser = System.getProperty("selenium.browser");
-			if (browser.equals("Firefox")) {
-				suiteName = "webui-Firefox";
-			}
-			else {
-				suiteName = "webui-Chrome";
-			}
+			String suiteName = "webui-" + System.getProperty("selenium.browser");
 			
 			File scrFile = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
 

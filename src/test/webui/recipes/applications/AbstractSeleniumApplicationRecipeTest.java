@@ -20,12 +20,13 @@ public class AbstractSeleniumApplicationRecipeTest extends AbstractSeleniumRecip
 	public static final String MANAGEMENT = "management";
 
 	private String pathToApplication;
+	private String applicationName;
 	private boolean wait = true;
 	
 	public void setCurrentApplication(String application) {
+		this.applicationName = application;
 		String gigaDir = ScriptUtils.getBuildPath();	
 		this.pathToApplication = gigaDir + "/examples/" + application;
-		LogUtils.log("Current Application is : " + application);
 	}
 	
 	public void setWait(boolean wait) {
@@ -41,6 +42,7 @@ public class AbstractSeleniumApplicationRecipeTest extends AbstractSeleniumRecip
 		LogUtils.log("creating new admin from factory");
 		admin = factory.createAdmin();
 		LogUtils.log("Installing application " + pathToApplication);
+		assertNotNull(pathToApplication);
 		assertTrue("Failed To install application " + pathToApplication, installApplication(pathToApplication, wait));
 		LogUtils.log("retrieving webui url");
 		ProcessingUnit webui = admin.getProcessingUnits().waitFor("webui");
@@ -53,7 +55,9 @@ public class AbstractSeleniumApplicationRecipeTest extends AbstractSeleniumRecip
 	
 	@AfterMethod(alwaysRun = true)
 	public void uninstall() throws InterruptedException, IOException {
-		uninstallApplication(pathToApplication, wait);
+		if (applicationName != null) {
+			uninstallApplication(applicationName, wait);
+		}
 		stopWebBrowser();
 		if (admin != null) {
 			if (!isDevMode()) {

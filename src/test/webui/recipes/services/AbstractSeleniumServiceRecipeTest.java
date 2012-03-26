@@ -48,6 +48,7 @@ public class AbstractSeleniumServiceRecipeTest extends AbstractSeleniumRecipeTes
 		LogUtils.log("creating new admin from factory");
 		admin = factory.createAdmin();
 		LogUtils.log("Installing service " + pathToService);
+		assertNotNull(pathToService);
 		assertTrue("Failed to install service " + pathToService, installService(pathToService, wait)); 
 		LogUtils.log("retrieving webui url");
 		ProcessingUnit webui = admin.getProcessingUnits().waitFor("webui");

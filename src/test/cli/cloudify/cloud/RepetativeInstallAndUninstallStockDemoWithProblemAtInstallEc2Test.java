@@ -2,6 +2,7 @@ package test.cli.cloudify.cloud;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 
 import junit.framework.Assert;
 
@@ -14,22 +15,25 @@ import test.cli.cloudify.CommandTestUtils;
 import test.cli.cloudify.cloud.ec2.Ec2StockDemoCloudService;
 import framework.tools.SGTestHelper;
 import framework.utils.LogUtils;
+import framework.utils.WebUtils;
 
 public class RepetativeInstallAndUninstallStockDemoWithProblemAtInstallEc2Test extends AbstractCloudTest {
 
-	private final int repetitions = 4;
+	private final int repetitions = 3;
 	private String cassandraPostStartScriptPath = null;
 	private String newPostStartScriptPath = null;
 	private AbstractCloudService service;
-	//TODO check home page is up as successful installation verification
-	//TODO check uninstall really does remove application and services from machine
+	private URL stockdemoUrl;
 	
 	@BeforeMethod
 	public void bootstrap() throws IOException, InterruptedException {	
 		service = new Ec2StockDemoCloudService();
 		service.bootstrapCloud();
 		setService(service);
+		String hostIp = service.getRestUrl().substring(0, service.getRestUrl().lastIndexOf(':'));
+		stockdemoUrl = new URL(hostIp + ":8080/stockdemo/stockdemo");
 	}
+	
 	
 	@AfterMethod(alwaysRun = true)
 	public void teardown() throws IOException {
@@ -48,8 +52,8 @@ public class RepetativeInstallAndUninstallStockDemoWithProblemAtInstallEc2Test e
 		}
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * repetitions, groups = "1", enabled = true)
-	public void installAndUninstallTest() throws IOException, InterruptedException {
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT *(1 + repetitions), groups = "1", enabled = true)
+	public void installAndUninstallTest() throws Exception {
 		
 		
 		final String stockdemoAppPath = CommandTestUtils.getPath("apps/USM/usm/applications/stockdemo");	
@@ -71,6 +75,8 @@ public class RepetativeInstallAndUninstallStockDemoWithProblemAtInstallEc2Test e
 					break;
 					}				
 			}
+			uninstallApplicationAndWait("stockdemo");
+			assertUninstallWasSuccessful();
 		}
 		LogUtils.log(firstInstallSuccessCounter + "/" + repetitions + " times the first installation succeedded, this should not happen");
 		LogUtils.log(scenarioSuccessCounter + "/" + repetitions + " times the second installation succeedded");
@@ -78,26 +84,25 @@ public class RepetativeInstallAndUninstallStockDemoWithProblemAtInstallEc2Test e
 		Assert.assertTrue("second install should never fail, it failed " + scenarioFailCounter + " times", scenarioFailCounter==0);
 	}
 
-	private int doTest(String stockdemoAppPath, String cassandraPostStartScriptPath ,String  newPostStartScriptPath) throws IOException, InterruptedException {
+	private int doTest(String stockdemoAppPath, String cassandraPostStartScriptPath ,String  newPostStartScriptPath) throws Exception {
 		corruptCassandraService(cassandraPostStartScriptPath ,newPostStartScriptPath);
 		try{
 			installApplication(stockdemoAppPath, "stockdemo", 5, true, true);		
 		}catch(AssertionError e){
-			uninstallApplicationAndWait("stockdemo");
 			return 1;
 		}
 		fixCassandraService(cassandraPostStartScriptPath , newPostStartScriptPath);
 		uninstallApplicationAndWait("stockdemo");
-		int retVal = 0;
+		assertUninstallWasSuccessful();
 		try{
 			installApplication(stockdemoAppPath, "stockdemo", 5, true, true);		
-			retVal = 2;
+			Assert.assertTrue("The applications home page isn't available, counts as not installed properly" ,
+					WebUtils.isURLAvailable(stockdemoUrl));
+			return 2;
 		}catch(AssertionError e){
-			retVal = 3;
+			return 3;
 		}
-		uninstallApplicationAndWait("stockdemo");
-		
-		return retVal;
+
 	}
 	
 	@Override
@@ -124,6 +129,25 @@ public class RepetativeInstallAndUninstallStockDemoWithProblemAtInstallEc2Test e
 		boolean success = cassandraPostStartScript.renameTo(new File(cassandraPostStartScriptPath));
 		if(!success)
 			throw new IOException("Test error: failed renaming " +  newPostStartScriptPath + " to " + cassandraPostStartScriptPath);
+	}
+	
+	private void assertUninstallWasSuccessful() throws Exception{
+		
+		URL cassandraPuAdminUrl = new URL(service.getRestUrl() + "/admin/ProcessingUnits/Names/stockdemo.cassandra");
+		URL stockAnalyticsMirrorPuAdminUrl = new URL(service.getRestUrl() + "/admin/ProcessingUnits/Names/stockdemo.stockAnalyticsMirror");
+		URL stockAnalyticsSpacePuAdminUrl = new URL(service.getRestUrl() + "/admin/ProcessingUnits/Names/stockdemo.stockAnalyticsSpace");
+		URL stockAnalyticsProcessorPuAdminUrl = new URL(service.getRestUrl() + "/admin/ProcessingUnits/Names/stockdemo.stockAnalyticsProcessor");
+		URL StockDemoPuAdminUrl = new URL(service.getRestUrl() + "/admin/ProcessingUnits/Names/stockdemo.StockDemo");
+		URL stockAnalyticsPuAdminUrl = new URL(service.getRestUrl() + "/admin/ProcessingUnits/Names/stockdemo.stockAnalytics");
+		URL stockAnalyticsFeederPuAdminUrl = new URL(service.getRestUrl() + "/admin/ProcessingUnits/Names/stockdemo.stockAnalyticsFeeder");
+		
+		assertTrue(!WebUtils.isURLAvailable(cassandraPuAdminUrl));
+		assertTrue(!WebUtils.isURLAvailable(stockAnalyticsMirrorPuAdminUrl));
+		assertTrue(!WebUtils.isURLAvailable(stockAnalyticsSpacePuAdminUrl));
+		assertTrue(!WebUtils.isURLAvailable(stockAnalyticsProcessorPuAdminUrl));
+		assertTrue(!WebUtils.isURLAvailable(StockDemoPuAdminUrl));
+		assertTrue(!WebUtils.isURLAvailable(stockAnalyticsPuAdminUrl));
+		assertTrue(!WebUtils.isURLAvailable(stockAnalyticsFeederPuAdminUrl));
 	}
 	
 

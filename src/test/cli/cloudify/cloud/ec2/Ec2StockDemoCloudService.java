@@ -31,9 +31,6 @@ public class Ec2StockDemoCloudService extends Ec2CloudService {
 		}
 		FileUtils.copyFileToDirectory(xapLicense, cloudifyOverrides);
 		
-		String cloudTestPath = (SGTestHelper.getSGTestRootDir() + "/apps/cloudify/cloud/" + cloudName).replace('\\', '/');
-		String sshKeyPemName = pemFileName + ".pem";
-
 		// cloud plugin should include recipe that includes secret key 
 		File cloudPluginDir = new File(ScriptUtils.getBuildPath() , "/tools/cli/plugins/esc/ec2/");
 		File originalCloudDslFile = new File(cloudPluginDir, cloudName + "-cloud.groovy");

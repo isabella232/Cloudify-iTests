@@ -60,7 +60,9 @@ public class AbstractSeleniumServiceRecipeTest extends AbstractSeleniumRecipeTes
 
 	@AfterMethod(alwaysRun = true)
 	public void uninstall() throws IOException, InterruptedException {
-		uninstallService(serviceName, wait);
+		if (serviceName != null) {
+			uninstallService(serviceName, wait);
+		}
 		stopWebBrowser();
 		if (admin != null) {
 			if (!isDevMode()) {

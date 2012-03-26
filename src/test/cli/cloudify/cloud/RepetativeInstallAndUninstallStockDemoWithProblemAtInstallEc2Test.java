@@ -112,7 +112,6 @@ public class RepetativeInstallAndUninstallStockDemoWithProblemAtInstallEc2Test e
 			fixCassandraService(cassandraPostStartScriptPath , newPostStartScriptPath);
 		} catch (IOException e) {
 			LogUtils.log("FAILED FIXING CASSANDRA SERVICE AFTER TEST");
-			e.printStackTrace();
 		}
 	}
 

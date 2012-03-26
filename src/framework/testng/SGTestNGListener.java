@@ -19,11 +19,16 @@ import framework.utils.ZipUtils;
 public class SGTestNGListener extends TestListenerAdapter {
 
     protected String testMethodName;
+    protected String suiteName;
+    
+    @Override
+    public void onStart(ITestContext iTestContext) {
+    	suiteName = iTestContext.getSuite().getName().split("[0-9]+")[0];
+    }
 
     @Override
     public void onConfigurationSuccess(ITestResult iTestResult) {
         super.onConfigurationSuccess(iTestResult);
-        String suiteName = iTestResult.getTestClass().getXmlTest().getSuite().getName();
         String testName = iTestResult.getTestClass().getName();
         String configurationName = iTestResult.getMethod().toString().split("\\(|\\)")[0];
         if (isAfter(iTestResult)) {
@@ -31,14 +36,13 @@ public class SGTestNGListener extends TestListenerAdapter {
         	testName = testMethodName;
         }
         LogUtils.log("Configuration Succeeded: " + configurationName);
-        ZipUtils.unzipArchive(testMethodName);
+        ZipUtils.unzipArchive(testMethodName, suiteName);
         write2LogFile(iTestResult, DumpUtils.createTestFolder(testName, suiteName));
     }
 
 	@Override
     public void onConfigurationFailure(ITestResult iTestResult) {
         super.onConfigurationFailure(iTestResult);
-        String suiteName = iTestResult.getTestClass().getXmlTest().getSuite().getName();
         String testName = iTestResult.getTestClass().getName();
         String configurationName = iTestResult.getMethod().toString().split("\\(|\\)")[0];
         if (isAfter(iTestResult)) {
@@ -46,14 +50,13 @@ public class SGTestNGListener extends TestListenerAdapter {
         	testName = testMethodName;
         }
         LogUtils.log("Configuration Failed: " + configurationName, iTestResult.getThrowable());
-        ZipUtils.unzipArchive(testMethodName);
+        ZipUtils.unzipArchive(testMethodName, suiteName);
         write2LogFile(iTestResult, DumpUtils.createTestFolder(testName, suiteName));
     }
 	
 	@Override
     public void onConfigurationSkip(ITestResult iTestResult) {
         super.onConfigurationFailure(iTestResult);
-        String suiteName = iTestResult.getTestClass().getXmlTest().getSuite().getName();
         String testName = iTestResult.getTestClass().getName();
         String configurationName = iTestResult.getMethod().toString().split("\\(|\\)")[0];
         if (isAfter(iTestResult)) {
@@ -61,7 +64,7 @@ public class SGTestNGListener extends TestListenerAdapter {
         	testName = testMethodName;
         }
         LogUtils.log("Configuration Skipped: " + configurationName, iTestResult.getThrowable());
-        ZipUtils.unzipArchive(testMethodName);
+        ZipUtils.unzipArchive(testMethodName, suiteName);
         write2LogFile(iTestResult, DumpUtils.createTestFolder(testName, suiteName));
     }
 

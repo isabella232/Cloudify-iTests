@@ -21,11 +21,11 @@ import framework.tools.SGTestHelper;
 
 public class ZipUtils {
 
-    public static void unzipArchive(String testName) {
+    public static void unzipArchive(String testName, String suiteName) {
         String buildNumber = PlatformVersion.getBuildNumber();
         File buildFolder = new File(SGTestHelper.getSGTestRootDir()+"/deploy/local-builds/build_" + buildNumber);
         File testFolder = null;
-        testFolder = new File(buildFolder +"/" +testName);
+        testFolder = new File(buildFolder +"/" + suiteName + "/" +testName);
         File[] children = testFolder.listFiles();
         if (children == null)
             return;

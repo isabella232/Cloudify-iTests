@@ -64,7 +64,7 @@ public class RepetativeInstallAndUninstallStockDemoWithProblemAtInstallEc2Test e
 		int firstInstallSuccessCounter = 0;
 		
 		for(int i=0 ; i < repetitions ; i++){
-			switch(doTest(stockdemoAppPath, cassandraPostStartScriptPath ,newPostStartScriptPath)){
+			switch(installUninstallInstall(stockdemoAppPath, cassandraPostStartScriptPath ,newPostStartScriptPath)){
 			case 1: {firstInstallSuccessCounter++;
 					break;
 					}
@@ -84,7 +84,7 @@ public class RepetativeInstallAndUninstallStockDemoWithProblemAtInstallEc2Test e
 		Assert.assertTrue("second install should never fail, it failed " + scenarioFailCounter + " times", scenarioFailCounter==0);
 	}
 
-	private int doTest(String stockdemoAppPath, String cassandraPostStartScriptPath ,String  newPostStartScriptPath) throws Exception {
+	private int installUninstallInstall(String stockdemoAppPath, String cassandraPostStartScriptPath ,String  newPostStartScriptPath) throws Exception {
 		corruptCassandraService(cassandraPostStartScriptPath ,newPostStartScriptPath);
 		try{
 			installApplication(stockdemoAppPath, "stockdemo", 5, true, true);		
@@ -108,7 +108,6 @@ public class RepetativeInstallAndUninstallStockDemoWithProblemAtInstallEc2Test e
 	@Override
 	@AfterMethod
 	public void afterTest(){
-		super.afterTest();
 		try {
 			fixCassandraService(cassandraPostStartScriptPath , newPostStartScriptPath);
 		} catch (IOException e) {

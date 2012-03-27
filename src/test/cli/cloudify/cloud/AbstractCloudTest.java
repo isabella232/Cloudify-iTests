@@ -34,7 +34,7 @@ public class AbstractCloudTest extends AbstractTest {
 	public static final String OPENSTACK = "openstack";
 	public static final String EC2 = "ec2";
 
-	private static final String[][] SUPPORTED_CLOUDS = {{EC2}};
+	private static final String[][] SUPPORTED_CLOUDS = {{EC2}, {OPENSTACK}, {BYON}};
 	
 	private CloudService service;
 	
@@ -291,7 +291,7 @@ public class AbstractCloudTest extends AbstractTest {
 			Assert.fail("Test failed becuase the cloud was not bootstrapped properly");
 		}
 		long timeoutToUse;
-		if(timeout >= 0)
+		if(timeout > 0)
 			timeoutToUse = timeout;
 		else
 			timeoutToUse = TimeUnit.MILLISECONDS.toMinutes(DEFAULT_TEST_TIMEOUT * 2);

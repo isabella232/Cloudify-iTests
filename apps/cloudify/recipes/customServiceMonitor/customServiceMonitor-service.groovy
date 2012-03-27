@@ -97,9 +97,9 @@ service {
     
     // (Optional)
     // The aggregation of all instances' timeStatistics
-    // Default value: statistics.maximum
+    // Default value: statistics.average
     // Possible values: statistics.average, statistics.minimum, statistics.maximum, statistics.percentile(n)
-    instancesStatistics statistics.maximum
+    instancesStatistics statistics.average
     
     // The instancesStatistics over which the number of instances is increased or decreased
     highThreshold 90

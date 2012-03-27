@@ -56,7 +56,7 @@ public class AbstractSeleniumApplicationRecipeTest extends AbstractSeleniumRecip
 	@AfterMethod(alwaysRun = true)
 	public void uninstall() throws InterruptedException, IOException {
 		if (applicationName != null) {
-			uninstallApplication(applicationName, wait);
+			uninstallApplication(applicationName, true);
 		}
 		stopWebBrowser();
 		if (admin != null) {

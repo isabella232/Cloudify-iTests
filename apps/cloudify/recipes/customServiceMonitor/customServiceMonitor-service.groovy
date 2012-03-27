@@ -6,13 +6,13 @@ import java.util.concurrent.atomic.AtomicLong;
 service {
   
   
-	name "customServiceMonitor"
-	
-	// web server mock
-	type "WEB_SERVER" 
-	
-	// In memory per-instance counter that is exposed as the "counter" monitor
-	AtomicLong counter = new AtomicLong(0);
+  name "customServiceMonitor"
+  
+  // web server mock
+  type "WEB_SERVER" 
+  
+  // In memory per-instance counter that is exposed as the "counter" monitor
+  AtomicLong counter = new AtomicLong(0);
   
     lifecycle {
 
@@ -27,44 +27,44 @@ service {
           return value
         }
       ])
-	}
+  }
 
   // A hook for modifying the counter from the CLI
   // cloudify "connect localhost;invoke customServiceMonitors set 4"
-	customCommands ([
-				"set" : {x -> counter.set(x as Long);}
+  customCommands ([
+        "set" : {x -> counter.set(x as Long);}
   ])
   
   userInterface {
     
     // defines a UI menu "counter" group with the "counter" metric
-		metricGroups = ([
-			metricGroup{
-				name "counter"
-				metrics ([
-					"counter"
-				])
-			}
-		]
-		)
-		
+    metricGroups = ([
+      metricGroup{
+        name "counter"
+        metrics ([
+          "counter"
+        ])
+      }
+    ]
+    )
+    
     // defines a UI line chart widget showing the "counter" metric value
-		widgetGroups = ([
-			widgetGroup{
-				name "counter"
-				widgets ([
-					barLineChart{
-						metric "counter"
-						axisYUnit Unit.REGULAR
-					}
-				])
-			}
-		]
-		)
-	}
+    widgetGroups = ([
+      widgetGroup{
+        name "counter"
+        widgets ([
+          barLineChart{
+            metric "counter"
+            axisYUnit Unit.REGULAR
+          }
+        ])
+      }
+    ]
+    )
+  }
 
-	// global flag that enables changing number of instances for this service
-	elastic true
+  // global flag that enables changing number of instances for this service
+  elastic true
 
   // the initial number of instances
   numInstances 2
@@ -73,9 +73,9 @@ service {
   minNumInstances 2
     
   // The maximum number of service instances
-  maxNumInstances 20
+  maxNumInstances 4
      
-	// Defines an automatic scaling rule based on "counter" metric value
+  // Defines an automatic scaling rule based on "counter" metric value
   autoScaling {
    
     //The time (in seconds) between two consecutive metric samples
@@ -105,7 +105,7 @@ service {
     highThreshold 90
     
     // The instancesStatistics below which the number of instances is increased or decreased
-    lowThreshold 10
+    lowThreshold 30
 
   }
 }

@@ -64,6 +64,7 @@ public class TestsReportFileStream {
 	}
 	
 	public TestsReport readFromFile(String inputDirectory, String fileName) {
+		inputDirectory = inputDirectory.replace("\\", "/");
 		File file = new File(inputDirectory, fileName);
 		FileReader fileReader = null;
 		try {

@@ -8,10 +8,10 @@ import org.cloudifysource.dsl.utils.ServiceUtils;
 import org.openspaces.admin.internal.pu.InternalProcessingUnit;
 import org.openspaces.admin.pu.DeploymentStatus;
 import org.openspaces.admin.pu.ProcessingUnitInstance;
-import org.openspaces.admin.pu.statistics.LastSampleTimeWindowStatisticsConfig;
+import org.openspaces.admin.pu.statistics.AverageInstancesStatisticsConfig;
+import org.openspaces.admin.pu.statistics.AverageTimeWindowStatisticsConfigurer;
 import org.openspaces.admin.pu.statistics.ProcessingUnitStatisticsId;
 import org.openspaces.admin.pu.statistics.ProcessingUnitStatisticsIdConfigurer;
-import org.openspaces.admin.pu.statistics.SingleInstanceStatisticsConfigurer;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -108,48 +108,45 @@ public class AutoScalingRecipeTest extends AbstractSeleniumServiceRecipeTest {
 		final InternalProcessingUnit pu = (InternalProcessingUnit) admin.getProcessingUnits().waitFor(ABSOLUTE_SERVICE_NAME,OPERATION_TIMEOUT,TimeUnit.MILLISECONDS);
 		final GridServiceContainersCounter gscCounter = new GridServiceContainersCounter(pu);
 		try {
-			pu.waitFor(1,OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
+			pu.waitFor(2,OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
 			ProcessingUnitInstance instance = pu.getInstances()[0];
 			assertNotNull(instance);
-			final ProcessingUnitStatisticsId instanceStatisticsId = 
+			final ProcessingUnitStatisticsId averageStatisticsId = 
 					new ProcessingUnitStatisticsIdConfigurer()
 					.monitor(CloudifyConstants.USM_MONITORS_SERVICE_ID)
 					.metric(COUNTER_METRIC)
-					.instancesStatistics(new SingleInstanceStatisticsConfigurer().instance(instance).create())
-					.timeWindowStatistics(new LastSampleTimeWindowStatisticsConfig())
+					.instancesStatistics(new AverageInstancesStatisticsConfig())
+					.timeWindowStatistics(new AverageTimeWindowStatisticsConfigurer().timeWindow(5, TimeUnit.SECONDS).create())
 					.create();
-			pu.addStatisticsCalculation(instanceStatisticsId);
+			pu.addStatisticsCalculation(averageStatisticsId);
 			pu.setStatisticsInterval(1, TimeUnit.SECONDS);
 			pu.startStatisticsMonitor();
 			try {
-				repetitiveAssertStatistics(pu, instanceStatisticsId, 0);
-										
+				repetitiveAssertStatistics(pu, averageStatisticsId, 0);
+				
+				//automatic scale out test
+				//set metric value of 2 instances to 100
 				setStatistics(100);
-				repetitiveAssertStatistics(pu, instanceStatisticsId, 100);
-				
-				// the threshold is 90, and the average value is 100 - which means auto scale out from 2 to 3
-				// then the average value is 50 (one instance is 100 and the other is 50) which should stop the scale out process
+
+				// the high threshold is 90, and the average value is set to 100.0 - which means auto scale out (from 2 instances to 3 instances)
+				// then the average value would be (100+100+0)/3 = 66 (two instance are 100 and the third one is still 0) which is within thresholds and should stop the scale out process
 				// the maximum #instances is 4, so we do not expect 4 GSCs added at any point.
-				final int expectedAdded = 3;
-				final int expectedRemoved = 0;
-				final RepetitiveConditionProvider condition = new RepetitiveConditionProvider() {
-					
-					@Override
-					public boolean getCondition() {
-						int added = gscCounter.getNumberOfGSCsAdded();
-						int removed = gscCounter.getNumberOfGSCsRemoved();
-						if (added != expectedAdded) {
-							LogUtils.log("Expected " + expectedAdded + " added containers, actual added containers is " + added);
-						}
-						if (removed != expectedRemoved) {
-							LogUtils.log("Expected " + expectedRemoved + " removed containers, actual removed containers is " + removed);
-						}
-						return added == expectedAdded && removed == expectedRemoved;
-					}
-				};
+				repetitiveAssertNumberOfContainersAddedAndRemoved(gscCounter,/*expectedAdded=*/3 , /*expectedRemoved=*/0);
+				repetitiveAssertStatistics(pu, averageStatisticsId, 100.0*2/3);
 				
-				repetitiveAssertTrue("Automatic scale out did not perform as expected", condition, OPERATION_TIMEOUT);
+				// set metric value of 3 instances to 1000
+				// the high threshold is 90, and the average value is set to 100.0 - which means auto scale out (from 3 instances to 4 instances)
+				// then the average value would be (1000+1000+1000+0)/4 = 660 (three instance are 1000 and the fourth one is still 0)
+				// the maximum #instances is 4, so we expect at most 4 GSCs added at any point.
+				setStatistics(1000);
+				repetitiveAssertNumberOfContainersAddedAndRemoved(gscCounter,/*expectedAdded=*/4 , /*expectedRemoved=*/0);
+				repetitiveAssertStatistics(pu, averageStatisticsId, 1000.0*3/4);
 				
+				// the low threshold is 30, and the average value is set to 0.0 - which means auto scale in (from 3 instances to 2 instances)
+				// the minimum #instances is 2, so we do not expect less than 2 GSCs added at any point.
+				setStatistics(0);
+				repetitiveAssertNumberOfContainersAddedAndRemoved(gscCounter,/*expectedAdded=*/4 , /*expectedRemoved=*/2);
+				repetitiveAssertStatistics(pu, averageStatisticsId, 0);			
 			}
 			finally {
 				pu.stopStatisticsMonitor();
@@ -158,6 +155,28 @@ public class AutoScalingRecipeTest extends AbstractSeleniumServiceRecipeTest {
 		finally {
 			gscCounter.close();		
 		}
+	}
+
+	private void repetitiveAssertNumberOfContainersAddedAndRemoved(
+			final GridServiceContainersCounter gscCounter,
+			final int expectedAdded, final int expectedRemoved) {
+		final RepetitiveConditionProvider condition = new RepetitiveConditionProvider() {
+			
+			@Override
+			public boolean getCondition() {
+				final int added = gscCounter.getNumberOfGSCsAdded();
+				final int removed = gscCounter.getNumberOfGSCsRemoved();
+				if (added != expectedAdded) {
+					LogUtils.log("Expected " + expectedAdded + " added containers, actual added containers is " + added);
+				}
+				if (removed != expectedRemoved) {
+					LogUtils.log("Expected " + expectedRemoved + " removed containers, actual removed containers is " + removed);
+				}
+				return added == expectedAdded && removed == expectedRemoved;
+			}
+		};
+		
+		repetitiveAssertTrue("Automatic scale out did not perform as expected", condition, OPERATION_TIMEOUT);
 	}
 
 	private void repetitiveAssertApplicationNodeIntact(final ApplicationNode simple) {
@@ -206,16 +225,21 @@ public class AutoScalingRecipeTest extends AbstractSeleniumServiceRecipeTest {
 				final Object counter = pu.getStatistics().getStatistics().get(statisticsId);
 				if (counter == null) {
 					LogUtils.log("Cannot get statistics " + statisticsId);
+					return false;
 				}
-				else if (!(counter instanceof Number)) {
-					LogUtils.log("Cannot get Number from statistics " + statisticsId);
-				} else {
 				
-					if (((Number)counter).doubleValue() != expectedResult.doubleValue()) {
-						LogUtils.log("Waiting for value of average(counter), to be " + expectedResult + " current value is " + counter);
-					}
+				if (!(counter instanceof Number)) {
+					LogUtils.log("Cannot get Number from statistics " + statisticsId);
+					return false;
 				}
-				return (((Number)counter).doubleValue() == expectedResult.doubleValue());
+				
+				boolean equals = ((Number)counter).doubleValue() == expectedResult.doubleValue();
+				if (!equals) {
+					LogUtils.log("Waiting for value of average(counter), to be " + expectedResult + " current value is " + counter);
+				}
+				return equals;
+			
+				
 			}
 		}, OPERATION_TIMEOUT);
 	}

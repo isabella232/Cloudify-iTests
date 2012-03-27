@@ -34,19 +34,21 @@ import framework.utils.LogUtils;
 
 public class AutoScalingRecipeTest extends AbstractSeleniumServiceRecipeTest {
 
+	private static final String SERVICE_NAME = "customServiceMonitor";
+	private static final String SERVICE_RELATIVE_PATH = "apps\\cloudify\\recipes\\" + SERVICE_NAME;
+	
 	private static final String COUNTER_METRIC = "counter";
 	private static final String APPLICATION_NAME = "default";
-	private static final String SERVICE_NAME = "customServiceMonitor";
 	private static final String ABSOLUTE_SERVICE_NAME = ServiceUtils.getAbsolutePUName(APPLICATION_NAME,SERVICE_NAME);
 
 	@Override
 	@BeforeMethod
 	public void install() throws IOException, InterruptedException {
-		super.setPathToServiceRelativeToSGTestRootDir("apps\\cloudify\\recipes\\customServiceMonitor");
+		super.setPathToServiceRelativeToSGTestRootDir(SERVICE_RELATIVE_PATH);
 		super.install();
 	}
 	
-	//@Test(timeOut = DEFAULT_TEST_TIMEOUT)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT)
 	public void customServiceMonitorsAutoScalingTest() throws InterruptedException, IOException {
 
 		// get new login page

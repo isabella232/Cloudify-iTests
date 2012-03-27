@@ -4,7 +4,7 @@
  */
 service {
 	name "customServiceMonitor"
-
+	type "WEB_SERVER" //dummy for test
 	long counter = 0;
   
     lifecycle {
@@ -23,4 +23,30 @@ service {
 				"sub" : {x -> counter -= (x as Long);},
 				"set" : {x -> counter = (x as Long);},
   ])
+  
+  userInterface {
+
+		metricGroups = ([
+			metricGroup{
+				name "counterGroup"
+				metrics ([
+					"counter"
+				])
+			}
+		]
+		)
+
+		widgetGroups = ([
+			widgetGroup{
+				name "counter"
+				widgets ([
+					barLineChart{
+						metric "counter"
+						axisYUnit Unit.REGULAR
+					}
+				])
+			}
+		]
+		)
+	}
 }

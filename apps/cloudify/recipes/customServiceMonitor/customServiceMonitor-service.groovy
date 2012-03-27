@@ -1,5 +1,4 @@
 import java.util.concurrent.atomic.AtomicLong;
-//import org.cloudifysource.dsl.autoscaling.AutoScalingStatisticsFactory as statistics;
 
 // This service is a mock for a custom service monitor
 // That SGTest can control using custom commands.

@@ -18,7 +18,7 @@ service {
     lifecycle {
 
       //sleep forever
-      start { while (true) { sleep (1000)} } //"run.groovy"
+      start "run.groovy"
 
       // expose counter as a monitor with the name "counter"
       monitors ([

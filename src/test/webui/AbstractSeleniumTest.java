@@ -3,6 +3,7 @@ package test.webui;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.By;
@@ -16,6 +17,7 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openspaces.admin.gsc.GridServiceContainer;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeMethod;
@@ -79,6 +81,18 @@ public abstract class AbstractSeleniumTest extends AbstractTest {
 	@Override
 	@AfterMethod(alwaysRun = true)
 	public void afterTest() {
+		
+		// kill any remaining gsc's from failed uninstalls
+		if (admin != null) {
+			GridServiceContainer[] containers = admin.getGridServiceContainers().getContainers();
+			if (containers != null) {
+				for (GridServiceContainer gridServiceContainer : containers) {
+					gridServiceContainer.kill();
+				}
+				admin.getGridServiceContainers().waitFor(0, DEFAULT_TEST_TIMEOUT, TimeUnit.MILLISECONDS);
+			}
+		}
+
 		restorePreviousBrowser();
 		LogUtils.log("Test Finished : " + this.getClass());
 	}   

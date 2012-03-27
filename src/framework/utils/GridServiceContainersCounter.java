@@ -8,17 +8,27 @@ import org.openspaces.admin.gsc.GridServiceContainer;
 import org.openspaces.admin.gsc.events.GridServiceContainerAddedEventListener;
 import org.openspaces.admin.gsc.events.GridServiceContainerRemovedEventListener;
 import org.openspaces.admin.internal.admin.InternalAdmin;
+import org.openspaces.admin.pu.ProcessingUnit;
+import org.openspaces.grid.gsm.containers.ContainersSlaUtils;
 
 import framework.utils.AssertUtils.RepetitiveConditionProvider;
 
 public class GridServiceContainersCounter implements GridServiceContainerAddedEventListener, GridServiceContainerRemovedEventListener {
 
-	Admin admin;
+	private final Admin admin;
 	private final AtomicInteger numberOfAddedGSCs = new AtomicInteger(0);
     private final AtomicInteger numberOfRemovedGSCs = new AtomicInteger(0);
+	private final String zone;
     
-	
-	public GridServiceContainersCounter(final Admin admin) {
+    public GridServiceContainersCounter(final ProcessingUnit pu) {
+    	this(pu.getAdmin(),ContainersSlaUtils.getContainerZone(pu));
+    }
+    public GridServiceContainersCounter(final Admin admin) {
+    	this(admin,null);
+    }
+    
+	public GridServiceContainersCounter(final Admin admin, final String zone) {
+		this.zone = zone;
 		final CountDownLatch addedLatch = new CountDownLatch(1);
 	    ((InternalAdmin)admin).scheduleNonBlockingStateChange(new Runnable() {
 	    	//TODO: Fix all openspaces eventmanagers to schedule at the correct thread, and use it also to send events when include=true. 
@@ -50,14 +60,22 @@ public class GridServiceContainersCounter implements GridServiceContainerAddedEv
     }
 
 	public void gridServiceContainerAdded(
-			GridServiceContainer gridServiceContainer) {
-		numberOfAddedGSCs.incrementAndGet();
+			GridServiceContainer container) {
+		if (isContainerMatchesZone(container)) {
+			numberOfAddedGSCs.incrementAndGet();
+		}
 		
 	}
 
 	public void gridServiceContainerRemoved(
-			GridServiceContainer gridServiceContainer) {
-		numberOfRemovedGSCs.incrementAndGet();		
+			GridServiceContainer container) {
+		if (isContainerMatchesZone(container)) {
+			numberOfRemovedGSCs.incrementAndGet();
+		}
+	}
+	
+	private boolean isContainerMatchesZone(GridServiceContainer container) {
+		return zone == null || ContainersSlaUtils.isContainerMatchesZone(container, zone);
 	}
 	
 	public void repetitiveAssertNumberOfGridServiceContainersAdded(final int expected, long timeoutMilliseconds) {

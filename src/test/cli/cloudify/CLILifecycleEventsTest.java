@@ -145,7 +145,31 @@ public class CLILifecycleEventsTest extends AbstractLocalCloudTest{
 		
 	}
 	
-	public void assertInstallationLifecycleLogs(String serviceName, int instanceNumber, String installationOutput) {
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
+	public void testServiceSetInstanceLifecycleLogs() 
+			throws IOException, InterruptedException, PackagingException, DSLException {
+		
+		String usmServicePath = getUsmServicePath("groovy");
+		Service service = ServiceReader.readService(new File(usmServicePath));
+		String serviceName = service.getName();
+		int numInstances = service.getNumInstances();
+		
+		CommandTestUtils.runCommandAndWait("connect " + this.restUrl
+				+ "; install-service " 
+				+ usmServicePath + "; exit;");
+		
+		String incrementOutput = CommandTestUtils.runCommandAndWait("connect " + this.restUrl
+				+ "; set-instances " 
+				+ serviceName + "4; exit;");
+		
+		//see that the shutdown events were invoked for each service instance.
+		for (int i = 3; i <= numInstances; i++) {
+			assertUnInstallLifecycleLogs(serviceName, i, incrementOutput);
+		}
+		
+	}
+	
+	private void assertInstallationLifecycleLogs(String serviceName, int instanceNumber, String installationOutput) {
 		for (String event : EXPECTED_STARTUP_EVENT_STRINGS) {
 			String expectedMessage = String.format(event, serviceName, "-" + Integer.toString(instanceNumber));
 			assertTrue("Missing event: " + expectedMessage, installationOutput.contains(expectedMessage));
@@ -153,7 +177,7 @@ public class CLILifecycleEventsTest extends AbstractLocalCloudTest{
 	}
 	
 	
-	public void assertUnInstallLifecycleLogs(String serviceName, int instanceNumber, String uninstallOutput) {
+	private void assertUnInstallLifecycleLogs(String serviceName, int instanceNumber, String uninstallOutput) {
 		for (String event : EXPECTED_UNINSTALL_EVENT_STRINGS) {
 			String expectedMessage = String.format(event, serviceName, "-" + Integer.toString(instanceNumber));
 			assertTrue("Missing event: " + expectedMessage, uninstallOutput.contains(expectedMessage));

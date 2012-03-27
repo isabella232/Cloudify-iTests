@@ -19,9 +19,7 @@ service {
 	}
 
 	customCommands ([
-				"add" : {x -> counter += (x as Long);},
-				"sub" : {x -> counter -= (x as Long);},
-				"set" : {x -> counter = (x as Long);},
+				"set" : {x -> counter = (x as Long);}
   ])
   
   userInterface {

@@ -405,6 +405,8 @@ public class WikiReporter {
     }
     
     private String addLink(String text, String link) {
+    	// in case a windows path is given
+    	link = link.replace("\\", "/");
         return "["+text+"|"+link+"]";
     }
     

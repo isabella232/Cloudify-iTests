@@ -70,37 +70,33 @@ service {
   numInstances 2
      
   // The minimum number of service instances
-  minNumInstances 2
+  minAllowedInstances 2
     
   // The maximum number of service instances
-  maxNumInstances 4
+  maxAllowedInstances 4
      
   // Defines an automatic scaling rule based on "counter" metric value
-  autoScaling {
+  scalingRules {
    
     //The time (in seconds) between two consecutive metric samples
-    samplingPeriodSeconds 1
+    samplingPeriodInSeconds 1
          
     // The name of the metric that is the basis for the scale rule decision
     metric "counter"
     
-    // The sliding time window (in secods) for aggregating per-instance metric samples
+    // The sliding time range (in seconds) for aggregating per-instance metric samples
     // The number of samples in the time windows equals the time window divided by the sampling period
-    timeWindowSeconds 5
+    movingTimeRangeInSeconds 5
     
     // (Optional)
-    // The algorithm for aggregating metric samples in the specified time window.
-    // Metric samples are aggregated separately per instance.
-    // Default: statistics.average
-    // Possible values: statistics.average, statistics.minimum, statistics.maximum, statistics.percentile(n)
-    timeStatistics statistics.average
-    
-    // (Optional)
-    // The aggregation of all instances' timeStatistics
-    // Default value: statistics.average
-    // Possible values: statistics.average, statistics.minimum, statistics.maximum, statistics.percentile(n)
-    instancesStatistics statistics.average
-    
+    // The algorithm for aggregating metric samples.
+    // Metric samples are aggregated separately per instance in the specified time range,
+    // and then aggregated again for all instances.
+    // Default: Statistics.average
+    // Possible values: Statistics.average, Statistics.minimum, Statistics.maximum
+    // More control can be gained by specifying timeStatistics and instanceStatistics separately
+    statistics Statistics.average
+        
     // The instancesStatistics over which the number of instances is increased or decreased
     highThreshold 90
     

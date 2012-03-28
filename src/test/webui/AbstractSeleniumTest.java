@@ -157,7 +157,7 @@ public abstract class AbstractSeleniumTest extends AbstractTest {
     }
     
     private void maximize() {
-    	driver.manage().window().setSize(new Dimension(1024, 768)); 
+    	driver.manage().window().setSize(new Dimension(1280, 1024)); 
 	}
     
     public void stopWebBrowser() {

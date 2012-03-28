@@ -3,10 +3,10 @@ package test.webui;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Dimension;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
@@ -17,7 +17,7 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
-import org.openspaces.admin.gsc.GridServiceContainer;
+import org.openspaces.admin.AdminFactory;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeMethod;
@@ -36,6 +36,7 @@ import framework.tools.SGTestHelper;
 import framework.utils.AssertUtils;
 import framework.utils.AssertUtils.RepetitiveConditionProvider;
 import framework.utils.LogUtils;
+import framework.utils.TeardownUtils;
 
 
 /**
@@ -70,6 +71,11 @@ public abstract class AbstractSeleniumTest extends AbstractTest {
 	public void teardown() throws IOException, InterruptedException {
 		assertTrue(tearDownLocalCloud());
 		bootstraped = false;
+		LogUtils.log("Killing any remainig processes...");
+		AdminFactory factory = new AdminFactory();
+		factory.addLocator("127.0.0.1:4168");
+		admin = factory.createAdmin();
+		TeardownUtils.teardownAll(admin);
 	}
 	
 	@Override
@@ -81,18 +87,6 @@ public abstract class AbstractSeleniumTest extends AbstractTest {
 	@Override
 	@AfterMethod(alwaysRun = true)
 	public void afterTest() {
-		
-		// kill any remaining gsc's from failed uninstalls
-		if (admin != null) {
-			GridServiceContainer[] containers = admin.getGridServiceContainers().getContainers();
-			if (containers != null) {
-				for (GridServiceContainer gridServiceContainer : containers) {
-					gridServiceContainer.kill();
-				}
-				admin.getGridServiceContainers().waitFor(0, DEFAULT_TEST_TIMEOUT, TimeUnit.MILLISECONDS);
-			}
-		}
-
 		restorePreviousBrowser();
 		LogUtils.log("Test Finished : " + this.getClass());
 	}   
@@ -138,6 +132,9 @@ public abstract class AbstractSeleniumTest extends AbstractTest {
     	int seconds = 0;
     	if (driver != null) {
         	driver.get(uRL);
+        	if ((browser == null) || browser.equals("Firefox")) {
+				maximize(); // this method is supported only on Firefox
+        	}
         	selenium = new WebDriverBackedSelenium(driver, uRL);
         	Thread.sleep(3000);
         	while (seconds < 30) {
@@ -158,6 +155,10 @@ public abstract class AbstractSeleniumTest extends AbstractTest {
         	}
     	}
     }
+    
+    private void maximize() {
+    	driver.manage().window().setSize(new Dimension(1024, 768)); 
+	}
     
     public void stopWebBrowser() {
     	LogUtils.log("Killing browser...");

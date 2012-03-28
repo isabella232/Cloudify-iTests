@@ -40,6 +40,7 @@ import test.AbstractTest;
 import framework.utils.DumpUtils;
 import framework.utils.LogUtils;
 import framework.utils.PortConnectionUtils;
+import framework.utils.ScriptUtils;
 import framework.utils.SetupUtils;
 import framework.utils.TeardownUtils;
 
@@ -104,7 +105,13 @@ public class AbstractLocalCloudTest extends AbstractTest {
 
 	private void cleanUpCloudifyLocalDir()
 			throws IOException {
-		final String userHomeProp = System.getProperty("user.home");
+		String userHomeProp = null;
+		if (ScriptUtils.isLinuxMachine()) {
+			userHomeProp = System.getProperty("user.home");			
+		}
+		else {
+			userHomeProp = System.getProperty("USERPROFILE"); // windows machine
+		}
 		final File userHomeDir = new File(userHomeProp, ".cloudify");
 		LogUtils.log("Cleaning up cloudify folder under 'user.home' folder at: " + userHomeDir);
 

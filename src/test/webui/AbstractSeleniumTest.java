@@ -69,13 +69,13 @@ public abstract class AbstractSeleniumTest extends AbstractTest {
 	
 	@AfterSuite(alwaysRun = true)
 	public void teardown() throws IOException, InterruptedException {
-		assertTrue(tearDownLocalCloud());
-		bootstraped = false;
-		LogUtils.log("Killing any remainig processes...");
 		AdminFactory factory = new AdminFactory();
 		factory.addLocator("127.0.0.1:4168");
 		admin = factory.createAdmin();
 		TeardownUtils.teardownAll(admin);
+		assertTrue(tearDownLocalCloud());
+		bootstraped = false;
+		LogUtils.log("Killing any remainig processes...");
 	}
 	
 	@Override

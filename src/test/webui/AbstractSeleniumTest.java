@@ -17,14 +17,11 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
-import org.openspaces.admin.AdminFactory;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterSuite;
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
 
-import test.AbstractTest;
-import test.cli.cloudify.CommandTestUtils;
+import test.cli.cloudify.AbstractLocalCloudTest;
 import test.webui.objects.LoginPage;
 import test.webui.objects.dashboard.DashboardTab;
 import test.webui.resources.WebConstants;
@@ -36,7 +33,6 @@ import framework.tools.SGTestHelper;
 import framework.utils.AssertUtils;
 import framework.utils.AssertUtils.RepetitiveConditionProvider;
 import framework.utils.LogUtils;
-import framework.utils.TeardownUtils;
 
 
 /**
@@ -46,7 +42,7 @@ import framework.utils.TeardownUtils;
  *
  */
 
-public abstract class AbstractSeleniumTest extends AbstractTest {
+public abstract class AbstractSeleniumTest extends AbstractLocalCloudTest {
 	
 	public static boolean bootstraped;
 	
@@ -60,33 +56,24 @@ public abstract class AbstractSeleniumTest extends AbstractTest {
     private final String defaultBrowser = 
     	(System.getProperty("selenium.browser") != null) ? System.getProperty("selenium.browser"): "Firefox";
 
+    @Override
 	@BeforeSuite(alwaysRun = true)
-	public void bootstrap() throws IOException, InterruptedException {
+	public void beforeSuite() throws Exception {
 		LogUtils.log("default browser is : " + defaultBrowser);
-		assertTrue(bootstrapLocalCloud());
+		super.beforeSuite();
 		bootstraped = true;
 	}
 	
 	@AfterSuite(alwaysRun = true)
 	public void teardown() throws IOException, InterruptedException {
-		AdminFactory factory = new AdminFactory();
-		factory.addLocator("127.0.0.1:4168");
-		admin = factory.createAdmin();
-		TeardownUtils.teardownAll(admin);
-		assertTrue(tearDownLocalCloud());
+		super.afterSuite();
 		bootstraped = false;
-		LogUtils.log("Killing any remainig processes...");
-	}
-	
-	@Override
-	@BeforeMethod(alwaysRun = true)
-	public void beforeTest() {
-		LogUtils.log("Test Configuration Started : " + this.getClass());
 	}
 	
 	@Override
 	@AfterMethod(alwaysRun = true)
 	public void afterTest() {
+		super.afterTest();
 		restorePreviousBrowser();
 		LogUtils.log("Test Finished : " + this.getClass());
 	}   
@@ -248,17 +235,4 @@ public abstract class AbstractSeleniumTest extends AbstractTest {
 	public boolean isDevMode() {
 		return !System.getenv("USERNAME").equals("ca");
 	}
-	
-	private boolean bootstrapLocalCloud() throws IOException, InterruptedException {
-		String command = "bootstrap-localcloud --verbose";
-		String output = CommandTestUtils.runCommandAndWait(command);
-		return output.contains("Local-cloud started successfully");
-	}
-	
-	private boolean tearDownLocalCloud() throws IOException, InterruptedException {
-		String command = "teardown-localcloud --verbose -force";
-		String output = CommandTestUtils.runCommandAndWait(command);
-		return output.toLowerCase().contains("completed local-cloud teardown");
-	}
-	
 }

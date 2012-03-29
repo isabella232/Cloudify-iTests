@@ -26,6 +26,7 @@ import com.gigaspaces.log.LogEntryMatchers;
 
 import framework.utils.AssertUtils;
 import framework.utils.AssertUtils.RepetitiveConditionProvider;
+import framework.utils.DumpUtils;
 import framework.utils.LogUtils;
 import framework.utils.TestUtils;
 
@@ -59,7 +60,13 @@ public class AbstractApplicationFailOverXenTest extends AbstractStartManagementX
 		assertTrue("port was not free befor installation - port number " + port1, port1Availible);
 		assertTrue("port was not free befor installation - port number " + port2, port2Availible);
 		    
-		String commandOutput = CommandTestUtils.runCommandAndWait("connect --verbose " + restUrl + ";install-application --verbose " + appDirPath);
+		String commandOutput = null;
+		try{
+			commandOutput = CommandTestUtils.runCommandAndWait("connect --verbose " + restUrl + ";install-application --verbose " + appDirPath);
+		} catch (Throwable t) {
+			//catch the assertion error and dump all the installation GSC logs. 
+			DumpUtils.dumpProcessingUnit(admin);
+		}
 		String appName = new File(appDirPath).getName();
 		assertTrue("install-application command didn't install the application" , commandOutput.contains("Application " + appName + " installed successfully"));
 	}

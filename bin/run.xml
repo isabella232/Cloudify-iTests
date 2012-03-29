@@ -143,6 +143,7 @@
 	     <sysproperty key="sgtest.suiteId" value="${SUITE_ID}"/>
 	     <sysproperty key="sgtest.numOfSuites" value="${SUITE_NUMBER}"/>		
             <sysproperty key="org.openspaces.admin.internal.discovery.DiscoveryService.level" value="ALL"/>
+        	<sysproperty key="java.util.logging.config.file" value="${sgtest.homedir}/config/gs_logging.properties"/>
             <sysproperty key="sgtest.buildFolder" value="${sgtest.homedir}/deploy/local-builds/${BUILD_NUMBER}"/>
             <sysproperty key="sgtest.url" value="http://192.168.9.121:8087/sgtest2.0-cloudify/"/>
         </testng>

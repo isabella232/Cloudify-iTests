@@ -26,10 +26,11 @@ import framework.utils.ScriptUtils;
 public class ByonCloudService extends AbstractCloudService {
 
 	private static final String cloudName = "byon";
-	private static final  String BYON_CLOUD_USER= "tgrid";
+	private static final String BYON_CLOUD_USER= "tgrid";
 	private static final String BYON_CLOUD_PASSWORD = "tgrid";
-	private static final  String BYON_SERVER_USER= "tgrid";
+	private static final String BYON_SERVER_USER= "tgrid";
 	private static final String BYON_SERVER_PASSWORD = "tgrid";
+	private static final String SYS_PROP_IP_LIST = "ipList";
 
 	private static ByonCloudService self = null;
 
@@ -56,11 +57,12 @@ public class ByonCloudService extends AbstractCloudService {
 		// first make a backup of the original file
 		FileUtils.copyFile(originalCloudDslFile, backupCloudDslFile);
 
+		//replace credentials and replace the ipList default 0.0.0.0 with values that are set through a system property
 		final String modifiedDslFileContents = originalDslFileContents.replace("ENTER_CLOUD_USER", BYON_CLOUD_USER).
 				replace("ENTER_CLOUD_PASSWORD", BYON_CLOUD_PASSWORD).replace("ENTER_SERVER_USER", BYON_SERVER_USER).
-				replace("ENTER_SERVER_PASSWORD", BYON_SERVER_PASSWORD);
+				replace("ENTER_SERVER_PASSWORD", BYON_SERVER_PASSWORD).
+				replace("0.0.0.0", System.getProperty(SYS_PROP_IP_LIST));
 		
-
 		FileUtils.write(originalCloudDslFile, modifiedDslFileContents);
 	}
 

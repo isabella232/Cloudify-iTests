@@ -200,6 +200,7 @@ public class AbstractLocalCloudTest extends AbstractTest {
 			LogUtils.log("WARNING Failed to kill processes");
 			e.printStackTrace();
 		}
+		LogUtils.log("Test Finished : " + this.getClass());
 	}
 
 	@AfterSuite(alwaysRun = true)

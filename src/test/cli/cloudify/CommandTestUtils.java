@@ -114,24 +114,9 @@ public class CommandTestUtils {
 		AssertUtils.assertTrue(exception.get() == null);
 		
 		if (result != 0 && !failCommand) {
-			Admin admin = getAdminWithLocators();
-			//Give the admin some time to refresh.
-			Thread.sleep(ADMIN_REFRESH_TIME_MILLIS);
-			DumpUtils.dumpProcessingUnit(admin);
-			admin.close();
 			AbstractTest.AssertFail("In RunCommand: Process did not complete successfully");
 		}
 		return consoleOutput.toString();
-	}
-	
-	private static Admin getAdminWithLocators() {
-		// Class LocalhostGridAgentBootsrapper defines the locator discovery addresses.
-		final String nicAddress = "127.0.0.1"; 
-
-		final AdminFactory factory = new AdminFactory();
-		LogUtils.log("adding locator to admin : " + nicAddress + ":4168");
-		factory.addLocator(nicAddress + ":4168");
-		return factory.createAdmin();
 	}
 
 	/**

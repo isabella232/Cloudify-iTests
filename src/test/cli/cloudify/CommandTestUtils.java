@@ -7,13 +7,9 @@ import java.io.InputStreamReader;
 import java.text.MessageFormat;
 import java.util.concurrent.atomic.AtomicReference;
 
-import org.openspaces.admin.Admin;
-import org.openspaces.admin.AdminFactory;
-
 import test.AbstractTest;
 import framework.tools.SGTestHelper;
 import framework.utils.AssertUtils;
-import framework.utils.DumpUtils;
 import framework.utils.LogUtils;
 import framework.utils.ScriptUtils;
 

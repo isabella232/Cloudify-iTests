@@ -5,12 +5,10 @@ import java.io.IOException;
 import org.openspaces.admin.AdminFactory;
 import org.openspaces.admin.pu.DeploymentStatus;
 import org.openspaces.admin.pu.ProcessingUnit;
-import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 
 import test.cli.cloudify.CommandTestUtils;
 import test.webui.recipes.AbstractSeleniumRecipeTest;
-import framework.utils.DumpUtils;
 import framework.utils.LogUtils;
 import framework.utils.ProcessingUnitUtils;
 import framework.utils.ScriptUtils;
@@ -51,22 +49,6 @@ public class AbstractSeleniumApplicationRecipeTest extends AbstractSeleniumRecip
 		assertTrue(webui.getInstances().length != 0);	
 		String url = ProcessingUnitUtils.getWebProcessingUnitURL(webui).toString();	
 		startWebBrowser(url); 
-	}
-	
-	@AfterMethod(alwaysRun = true)
-	public void uninstall() throws InterruptedException, IOException {
-		if (applicationName != null) {
-			uninstallApplication(applicationName, true);
-		}
-		stopWebBrowser();
-		if (admin != null) {
-			if (!isDevMode()) {
-				DumpUtils.dumpLogs(admin);
-			}
-			undeployNonManagementServices();
-			admin.close();
-			admin = null;
-		}
 	}
 	
 	public boolean installApplication(String pathToApplication, boolean wait) throws InterruptedException, IOException {

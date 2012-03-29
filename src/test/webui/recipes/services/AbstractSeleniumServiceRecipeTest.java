@@ -5,12 +5,10 @@ import java.io.IOException;
 import org.openspaces.admin.AdminFactory;
 import org.openspaces.admin.pu.DeploymentStatus;
 import org.openspaces.admin.pu.ProcessingUnit;
-import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 
 import test.cli.cloudify.CommandTestUtils;
 import test.webui.recipes.AbstractSeleniumRecipeTest;
-import framework.utils.DumpUtils;
 import framework.utils.LogUtils;
 import framework.utils.ProcessingUnitUtils;
 import framework.utils.ScriptUtils;
@@ -59,21 +57,6 @@ public class AbstractSeleniumServiceRecipeTest extends AbstractSeleniumRecipeTes
 		startWebBrowser(url); 
 	}
 
-	@AfterMethod(alwaysRun = true)
-	public void uninstall() throws IOException, InterruptedException {
-		if (serviceName != null) {
-			uninstallService(serviceName, true);
-		}
-		stopWebBrowser();
-		if (admin != null) {
-			if (!isDevMode()) {
-				DumpUtils.dumpLogs(admin);
-			}
-			undeployNonManagementServices();
-			admin.close();
-			admin = null;
-		}
-	}
 
 	public static boolean installService(String pathToService, boolean wait) throws IOException, InterruptedException {
 		String command = "connect localhost:8100;install-service --verbose -timeout 25 " + pathToService;

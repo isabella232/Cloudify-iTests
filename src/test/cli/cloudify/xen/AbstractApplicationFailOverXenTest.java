@@ -66,6 +66,7 @@ public class AbstractApplicationFailOverXenTest extends AbstractStartManagementX
 		} catch (Throwable t) {
 			//catch the assertion error and dump all the installation GSC logs. 
 			DumpUtils.dumpProcessingUnit(admin);
+			AssertFail(t.getMessage());
 		}
 		String appName = new File(appDirPath).getName();
 		assertTrue("install-application command didn't install the application" , commandOutput.contains("Application " + appName + " installed successfully"));

@@ -18,8 +18,6 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.testng.annotations.AfterMethod;
-import org.testng.annotations.AfterSuite;
-import org.testng.annotations.BeforeSuite;
 
 import test.cli.cloudify.AbstractLocalCloudTest;
 import test.webui.objects.LoginPage;
@@ -44,8 +42,6 @@ import framework.utils.LogUtils;
 
 public abstract class AbstractSeleniumTest extends AbstractLocalCloudTest {
 	
-	public static boolean bootstraped;
-	
 	public static String METRICS_ASSERTION_SUFFIX = " metric that is defined in the dsl is not displayed in the metrics panel";    
     
     protected static long waitingTime = 30000;
@@ -55,27 +51,10 @@ public abstract class AbstractSeleniumTest extends AbstractLocalCloudTest {
     
     private final String defaultBrowser = 
     	(System.getProperty("selenium.browser") != null) ? System.getProperty("selenium.browser"): "Firefox";
-
-    @Override
-	@BeforeSuite(alwaysRun = true)
-	public void beforeSuite() throws Exception {
-		LogUtils.log("default browser is : " + defaultBrowser);
-		super.beforeSuite();
-		bootstraped = true;
-	}
 	
-	@AfterSuite(alwaysRun = true)
-	public void teardown() throws IOException, InterruptedException {
-		super.afterSuite();
-		bootstraped = false;
-	}
-	
-	@Override
 	@AfterMethod(alwaysRun = true)
-	public void afterTest() {
-		super.afterTest();
+	public void restoreBrowser() {
 		restorePreviousBrowser();
-		LogUtils.log("Test Finished : " + this.getClass());
 	}   
     
     public void startWebBrowser(String uRL) throws InterruptedException {

@@ -2,33 +2,29 @@ package test.webui.recipes.services;
 
 import java.io.IOException;
 
-import org.openspaces.admin.AdminFactory;
 import org.openspaces.admin.pu.DeploymentStatus;
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.testng.annotations.BeforeMethod;
 
 import test.cli.cloudify.CommandTestUtils;
-import test.webui.recipes.AbstractSeleniumRecipeTest;
+import test.webui.AbstractSeleniumTest;
 import framework.utils.LogUtils;
 import framework.utils.ProcessingUnitUtils;
 import framework.utils.ScriptUtils;
 
-public class AbstractSeleniumServiceRecipeTest extends AbstractSeleniumRecipeTest {
+public class AbstractSeleniumServiceRecipeTest extends AbstractSeleniumTest {
 
 	public static final String MANAGEMENT = "management";
 
 	private boolean wait = true;
 	private String pathToService;
-	private String serviceName;
 
 	public void setCurrentRecipe(String recipe) {
-		serviceName = recipe;
 		String gigaDir = ScriptUtils.getBuildPath();	
 		this.pathToService = gigaDir + "/recipes/" + recipe;
 	}
 	
 	public void setPathToServiceRelativeToSGTestRootDir(String recipe, String relativePath) {
-		this.serviceName = recipe;
 		this.pathToService = CommandTestUtils.getPath(relativePath);
 	}
 
@@ -39,12 +35,6 @@ public class AbstractSeleniumServiceRecipeTest extends AbstractSeleniumRecipeTes
 
 	@BeforeMethod(alwaysRun = true)
 	public void install() throws IOException, InterruptedException {	
-		assertTrue("test failed because bootstrap was not succesfull", isBootstraped());
-		AdminFactory factory = new AdminFactory();
-		LogUtils.log("Adding locators to new admin factory");
-		factory.addLocator("127.0.0.1:4168");
-		LogUtils.log("creating new admin from factory");
-		admin = factory.createAdmin();
 		LogUtils.log("Installing service " + pathToService);
 		assertNotNull(pathToService);
 		assertTrue("Failed to install service " + pathToService, installService(pathToService, wait)); 

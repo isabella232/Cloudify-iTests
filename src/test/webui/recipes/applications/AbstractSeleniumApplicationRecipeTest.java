@@ -2,27 +2,24 @@ package test.webui.recipes.applications;
 
 import java.io.IOException;
 
-import org.openspaces.admin.AdminFactory;
 import org.openspaces.admin.pu.DeploymentStatus;
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.testng.annotations.BeforeMethod;
 
 import test.cli.cloudify.CommandTestUtils;
-import test.webui.recipes.AbstractSeleniumRecipeTest;
+import test.webui.AbstractSeleniumTest;
 import framework.utils.LogUtils;
 import framework.utils.ProcessingUnitUtils;
 import framework.utils.ScriptUtils;
 
-public class AbstractSeleniumApplicationRecipeTest extends AbstractSeleniumRecipeTest {
+public class AbstractSeleniumApplicationRecipeTest extends AbstractSeleniumTest {
 	
 	public static final String MANAGEMENT = "management";
 
 	private String pathToApplication;
-	private String applicationName;
 	private boolean wait = true;
 	
 	public void setCurrentApplication(String application) {
-		this.applicationName = application;
 		String gigaDir = ScriptUtils.getBuildPath();	
 		this.pathToApplication = gigaDir + "/examples/" + application;
 	}
@@ -33,12 +30,6 @@ public class AbstractSeleniumApplicationRecipeTest extends AbstractSeleniumRecip
 	
 	@BeforeMethod(alwaysRun = true)
 	public void install() throws IOException, InterruptedException {	
-		assertTrue("Seems like a bootstrap has not been executed, skipping test", isBootstraped());
-		AdminFactory factory = new AdminFactory();
-		LogUtils.log("Adding locators to new admin factory");
-		factory.addLocator("127.0.0.1:4168");
-		LogUtils.log("creating new admin from factory");
-		admin = factory.createAdmin();
 		LogUtils.log("Installing application " + pathToApplication);
 		assertNotNull(pathToApplication);
 		assertTrue("Failed To install application " + pathToApplication, installApplication(pathToApplication, wait));

@@ -54,7 +54,12 @@ public abstract class AbstractSeleniumTest extends AbstractLocalCloudTest {
 	
 	@AfterMethod(alwaysRun = true)
 	public void restoreBrowser() {
-		restorePreviousBrowser();
+		try {
+			stopWebBrowser();
+		}
+		finally {
+			restorePreviousBrowser();	
+		}
 	}   
     
     public void startWebBrowser(String uRL) throws InterruptedException {
@@ -128,8 +133,8 @@ public abstract class AbstractSeleniumTest extends AbstractLocalCloudTest {
     
     public void stopWebBrowser() {
     	LogUtils.log("Killing browser...");
-    	if (selenium != null) {
-    		selenium.stop();
+    	if (driver != null) {
+    		driver.quit();
     	}
     }
 	

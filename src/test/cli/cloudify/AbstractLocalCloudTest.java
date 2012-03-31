@@ -189,12 +189,16 @@ public class AbstractLocalCloudTest extends AbstractTest {
 				for (final String pid : delta) {
 					pids += pid + ", ";
 				}
-				LogUtils.log("WARNING There is a leak PIDS [ " + pids + "] are alive");
-				SetupUtils.killProcessesByIDs(delta);
-				LogUtils.log("INFO killing all orphan processes");
-				SetupUtils.killProcessesByIDs(localCloudPIDs);
-				LogUtils.log("INFO killing local cloud processes and boostraping again");
-				beforeSuite();
+				try {
+					LogUtils.log("WARNING There is a leak PIDS [ " + pids + "] are alive");
+					SetupUtils.killProcessesByIDs(delta);
+					LogUtils.log("INFO killing all orphan processes");
+					SetupUtils.killProcessesByIDs(localCloudPIDs);
+					LogUtils.log("INFO killing local cloud processes and boostraping again");
+				}
+				finally {
+					beforeSuite();
+				}
 			}
 		} catch (final Exception e) {
 			LogUtils.log("WARNING Failed to kill processes");

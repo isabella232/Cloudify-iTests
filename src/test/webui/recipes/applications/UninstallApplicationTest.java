@@ -22,7 +22,7 @@ public class UninstallApplicationTest extends AbstractSeleniumApplicationRecipeT
 		super.install();
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
 	public void uninstallApplicationTest() throws InterruptedException, IOException {
 		
 		// get new login page

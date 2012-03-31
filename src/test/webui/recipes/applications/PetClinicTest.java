@@ -40,7 +40,7 @@ public class PetClinicTest extends AbstractSeleniumApplicationRecipeTest {
 		super.install();
 	}
 
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = false)
 	public void petClinicDemoTest() throws Exception {
 		
 		// get new login page

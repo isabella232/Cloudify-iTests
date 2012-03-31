@@ -41,7 +41,7 @@ public class HtmlMailReporter {
         
         StringBuilder sb = new StringBuilder();
         sb.append("<html>").append("\n");
-        sb.append("<h1>SGTtest Results </h1></br></br></br>").append("\n");
+        sb.append("<h1>SGTest Cloudify Results </h1></br></br></br>").append("\n");
         sb.append("<h2>Suite Name:  " + summaryReport.getSuiteName() + " </h2></br>").append("\n");
         sb.append("<h4>Duration:  " + WikiUtils.formatDuration(summaryReport.getDuration()) + " </h4></br>").append("\n");
         sb.append("<h4 style=\"color:blue\">Total run:  " + summaryReport.getTotalTestsRun() + " </h4></br>").append("\n");

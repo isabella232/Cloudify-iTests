@@ -2,6 +2,7 @@ package test.webui.recipes.applications;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.openspaces.admin.pu.DeploymentStatus;
 import org.testng.annotations.BeforeMethod;
@@ -31,6 +32,8 @@ public class ApplicationBlueprintTest extends AbstractSeleniumApplicationRecipeT
 		TopologyTab topologyTab = loginPage.login().switchToTopology();
 		
 		ApplicationMap applicationMap = topologyTab.getApplicationMap();
+		
+		admin.getApplications().waitFor("travel", waitingTime, TimeUnit.SECONDS);
 		applicationMap.selectApplication("travel");
 		
 		ApplicationNode cassandra = applicationMap.getApplicationNode("cassandra");

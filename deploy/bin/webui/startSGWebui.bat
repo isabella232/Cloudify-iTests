@@ -44,6 +44,3 @@ xcopy %LOCAL_SGPATH%\deploy\local-builds\wiki-backup\*.wiki Y:\wiki-backup /s /i
 @rmdir %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER% /s /q
 @rmdir %USER_HOME%\%BUILD_FOLDER% /s /q
 @echo killing chromedriver server processes
-if %selenium.browser% == Chrome (
-	@taskkill /im "chromedriver.exe *32" /F
-)

@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import org.openspaces.admin.pu.DeploymentStatus;
 import org.openspaces.admin.pu.ProcessingUnit;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 
 import test.cli.cloudify.CommandTestUtils;
@@ -18,8 +19,10 @@ public class AbstractSeleniumApplicationRecipeTest extends AbstractSeleniumTest 
 
 	private String pathToApplication;
 	private boolean wait = true;
+	private String applicationName;
 	
 	public void setCurrentApplication(String application) {
+		this.applicationName = application;
 		String gigaDir = ScriptUtils.getBuildPath();	
 		this.pathToApplication = gigaDir + "/examples/" + application;
 	}
@@ -40,6 +43,16 @@ public class AbstractSeleniumApplicationRecipeTest extends AbstractSeleniumTest 
 		assertTrue(webui.getInstances().length != 0);	
 		String url = ProcessingUnitUtils.getWebProcessingUnitURL(webui).toString();	
 		startWebBrowser(url); 
+	}
+	
+	@AfterMethod
+	public void uninstall() {
+		try {
+			uninstallApplication(applicationName, true);
+		}
+		catch (AssertionError e) {
+			LogUtils.log("caught an assrtion error", e);
+		}
 	}
 	
 	public boolean installApplication(String pathToApplication, boolean wait) throws InterruptedException, IOException {
@@ -64,11 +77,18 @@ public class AbstractSeleniumApplicationRecipeTest extends AbstractSeleniumTest 
 		}
 	}
 	
-	public boolean uninstallApplication(String applicationName, boolean wait) throws InterruptedException, IOException {	
+	public boolean uninstallApplication(String applicationName, boolean wait) {	
 		String command = "connect localhost:8100;uninstall-application --verbose -timeout 25 " + applicationName;
 		if (wait) {
+			String output = null;
 			LogUtils.log("Waiting for uninstall-application to finish...");
-			String output = CommandTestUtils.runCommandAndWait(command);
+			try {
+				output = CommandTestUtils.runCommandAndWait(command);
+			}
+			catch (Exception e) {
+				LogUtils.log("caught an exception", e);
+				return false;
+			}
 			boolean success = output.contains("uninstalled successfully");
 			if (success) {
 				LogUtils.log("Cli returned that application was un-installed succesfully");
@@ -80,7 +100,14 @@ public class AbstractSeleniumApplicationRecipeTest extends AbstractSeleniumTest 
 			}
 		}
 		else {
-			CommandTestUtils.runCommand(command);
+			try {
+				CommandTestUtils.runCommand(command);
+			}
+			catch (Exception e) {
+				LogUtils.log("caught an exception", e);
+				return false;
+			}
+
 			return true;
 		}
 	}

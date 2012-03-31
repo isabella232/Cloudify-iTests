@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import org.openspaces.admin.pu.DeploymentStatus;
 import org.openspaces.admin.pu.ProcessingUnit;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 
 import test.cli.cloudify.CommandTestUtils;
@@ -18,8 +19,10 @@ public class AbstractSeleniumServiceRecipeTest extends AbstractSeleniumTest {
 
 	private boolean wait = true;
 	private String pathToService;
+	private String serviceName;
 
 	public void setCurrentRecipe(String recipe) {
+		this.serviceName = recipe;
 		String gigaDir = ScriptUtils.getBuildPath();	
 		this.pathToService = gigaDir + "/recipes/" + recipe;
 	}
@@ -46,6 +49,16 @@ public class AbstractSeleniumServiceRecipeTest extends AbstractSeleniumTest {
 		String url = ProcessingUnitUtils.getWebProcessingUnitURL(webui).toString();	
 		startWebBrowser(url); 
 	}
+	
+	@AfterMethod
+	public void uninstall() {
+		try {
+			uninstallService(serviceName, true);
+		}
+		catch (AssertionError e) {
+			LogUtils.log("caught an assertion error", e);
+		}
+	}
 
 
 	public static boolean installService(String pathToService, boolean wait) throws IOException, InterruptedException {
@@ -70,12 +83,19 @@ public class AbstractSeleniumServiceRecipeTest extends AbstractSeleniumTest {
 		}
 	}
 
-	public boolean uninstallService(String serviceName, boolean wait) throws IOException, InterruptedException {
+	public boolean uninstallService(String serviceName, boolean wait)  {
 		String command = "connect localhost:8100;uninstall-service --verbose -timeout 25 " + serviceName;
 		if (wait) {
+			String output = null;
 			LogUtils.log("Waiting for uninstall-service to finish...");
-			String output = CommandTestUtils.runCommandAndWait(command);
-			boolean success = output.contains("Successfully undeployed");
+			try {
+				output = CommandTestUtils.runCommandAndWait(command);
+			}
+			catch (Exception e ) {
+				LogUtils.log("caugh exception", e);
+				return false;
+			}
+			boolean success = output.toLowerCase().contains("Successfully undeployed".toLowerCase());
 			if (success) {
 				LogUtils.log("Cli returned that service was un-installed succesfully");
 				return true;
@@ -86,7 +106,13 @@ public class AbstractSeleniumServiceRecipeTest extends AbstractSeleniumTest {
 			}
 		}
 		else {
-			CommandTestUtils.runCommand(command);
+			try {
+				CommandTestUtils.runCommand(command);
+			}
+			catch (Exception e) {
+				LogUtils.log("caught exception", e);
+				return false;
+			}
 			return true;
 		}
 	}

@@ -18,6 +18,7 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
 
 import test.cli.cloudify.AbstractLocalCloudTest;
 import test.webui.objects.LoginPage;
@@ -52,13 +53,32 @@ public abstract class AbstractSeleniumTest extends AbstractLocalCloudTest {
     private final String defaultBrowser = 
     	(System.getProperty("selenium.browser") != null) ? System.getProperty("selenium.browser"): "Firefox";
 	
+    @Override
+    @BeforeMethod
+    public void beforeTest() {
+    	try {
+    		super.beforeTest();
+    	}
+    	catch (AssertionError e ){
+			LogUtils.log("caught an assertion error", e);
+    	}
+    	
+    }
+    	
+    @Override	
 	@AfterMethod(alwaysRun = true)
-	public void restoreBrowser() {
+	public void afterTest() {
 		try {
 			stopWebBrowser();
 		}
 		finally {
-			restorePreviousBrowser();	
+			restorePreviousBrowser();
+			try {
+				super.afterTest();
+			}
+			catch (AssertionError e) {
+				LogUtils.log("caught an assertion error", e);
+			}
 		}
 	}   
     

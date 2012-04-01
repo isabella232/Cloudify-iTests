@@ -19,7 +19,7 @@ import framework.utils.WebUtils;
 
 public class RepetativeInstallAndUninstallStockDemoWithProblemAtInstallEc2Test extends AbstractCloudTest {
 
-	private final int repetitions = 3;
+	private final int repetitions = 3 ;
 	private String cassandraPostStartScriptPath = null;
 	private String newPostStartScriptPath = null;
 	private AbstractCloudService service;

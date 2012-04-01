@@ -51,22 +51,11 @@ public abstract class AbstractSeleniumTest extends AbstractLocalCloudTest {
     
     private final String defaultBrowser = 
     	(System.getProperty("selenium.browser") != null) ? System.getProperty("selenium.browser"): "Firefox";
-    	
-    @Override	
+    		
 	@AfterMethod(alwaysRun = true)
-	public void afterTest() {
-		try {
-			stopWebBrowser();
-		}
-		finally {
-			restorePreviousBrowser();
-			try {
-				super.afterTest();
-			}
-			catch (AssertionError e) {
-				LogUtils.log("caught an assertion error", e);
-			}
-		}
+	public void killWebServices() {
+		stopWebBrowser();
+		restorePreviousBrowser();
 	}   
     
     public void startWebBrowser(String uRL) throws InterruptedException {

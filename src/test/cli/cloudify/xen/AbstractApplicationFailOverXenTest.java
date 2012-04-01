@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
+import org.openspaces.admin.application.Application;
 import org.openspaces.admin.esm.ElasticServiceManager;
 import org.openspaces.admin.esm.ElasticServiceManagers;
 import org.openspaces.admin.esm.events.ElasticServiceManagerRemovedEventListener;
@@ -148,7 +149,15 @@ public class AbstractApplicationFailOverXenTest extends AbstractStartManagementX
 			@Override
 			public boolean getCondition() {		
 				String absolutePUName = ServiceUtils.getAbsolutePUName(appName, "cassandra");
+				
 				ProcessingUnit cassandra = admin.getProcessingUnits().waitFor(absolutePUName, 1, TimeUnit.SECONDS);
+				if (cassandra != null){
+					LogUtils.log("Cassandra instance is still found by admin. StockDemo was not properly uninstalled.");
+				}
+				Application application = admin.getApplications().getApplication(appName);
+				if (application != null) {
+					LogUtils.log("Application stockdemo is not null.");
+				}
 				boolean condition = cassandra==null && admin.getApplications().getApplication(appName) == null;
 				return condition;
 			}

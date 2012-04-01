@@ -71,8 +71,8 @@ public class RepetativeInstallAndUninstallStockDemoWithProblemAtInstallEc2Test e
 		final String stockdemoAppPath = CommandTestUtils.getPath("apps/USM/usm/applications/stockdemo");	
 		cassandraPostStartScriptPath = stockdemoAppPath + "/cassandra/cassandra_poststart.groovy";	
 		newPostStartScriptPath = stockdemoAppPath + "/cassandra/cassandra_poststart123.groovy";
-		int scenarioSuccessCounter = 0;
-		int scenarioFailCounter = 0;
+		int secondInstallationSuccessCounter = 0;
+		int secondInstallationFailCounter = 0;
 		int firstInstallSuccessCounter = 0;
 		
 		for(int i=0 ; i < repetitions ; i++){
@@ -80,10 +80,10 @@ public class RepetativeInstallAndUninstallStockDemoWithProblemAtInstallEc2Test e
 			case 1: {firstInstallSuccessCounter++;
 					break;
 					}
-			case 2: {scenarioSuccessCounter++;
+			case 2: {secondInstallationSuccessCounter++;
 					break;
 					}
-			case 3: {scenarioFailCounter++;
+			case 3: {secondInstallationFailCounter++;
 					break;
 					}				
 			}
@@ -91,9 +91,9 @@ public class RepetativeInstallAndUninstallStockDemoWithProblemAtInstallEc2Test e
 			assertUninstallWasSuccessful();
 		}
 		LogUtils.log(firstInstallSuccessCounter + "/" + repetitions + " times the first installation succeedded, this should not happen");
-		LogUtils.log(scenarioSuccessCounter + "/" + repetitions + " times the second installation succeedded");
-		LogUtils.log(scenarioFailCounter + "/" + repetitions + " times the second installation failed - THIS IS WHAT WE TEST FOR");
-		Assert.assertTrue("second install should never fail, it failed " + scenarioFailCounter + " times", scenarioFailCounter==0);
+		LogUtils.log(secondInstallationSuccessCounter + "/" + repetitions + " times the second installation succeedded");
+		LogUtils.log(secondInstallationFailCounter + "/" + repetitions + " times the second installation failed - THIS IS WHAT WE TEST FOR");
+		Assert.assertTrue("second install should never fail, it failed " + secondInstallationFailCounter + " times", secondInstallationFailCounter==0);
 	}
 
 	private int installUninstallInstall(String stockdemoAppPath, String cassandraPostStartScriptPath ,String  newPostStartScriptPath) throws Exception {

@@ -16,7 +16,19 @@ import test.cli.cloudify.cloud.ec2.Ec2StockDemoCloudService;
 import framework.tools.SGTestHelper;
 import framework.utils.LogUtils;
 import framework.utils.WebUtils;
-
+/**
+ * runs on ec2<p>
+ * loops several times:<p>
+	1. try to install stockdemo on and fail<p>
+	2. uninstall<p>
+	3. try to install again <p>
+	
+	Details: the failour at step 1 is achieved by renaming cassandra's post start script.
+	before step 3 is done the script is renamed back to the original name, this is why step 3 
+	is asserted.
+ * @author gal
+ *
+ */
 public class RepetativeInstallAndUninstallStockDemoWithProblemAtInstallEc2Test extends AbstractCloudTest {
 
 	private final int repetitions = 3 ;

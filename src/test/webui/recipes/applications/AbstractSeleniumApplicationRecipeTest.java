@@ -4,7 +4,6 @@ import java.io.IOException;
 
 import org.openspaces.admin.pu.DeploymentStatus;
 import org.openspaces.admin.pu.ProcessingUnit;
-import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 
 import test.cli.cloudify.CommandTestUtils;
@@ -43,16 +42,6 @@ public class AbstractSeleniumApplicationRecipeTest extends AbstractSeleniumTest 
 		assertTrue(webui.getInstances().length != 0);	
 		String url = ProcessingUnitUtils.getWebProcessingUnitURL(webui).toString();	
 		startWebBrowser(url); 
-	}
-	
-	@AfterMethod
-	public void uninstall() {
-		try {
-			uninstallApplication(applicationName, true);
-		}
-		catch (AssertionError e) {
-			LogUtils.log("caught an assrtion error", e);
-		}
 	}
 	
 	public boolean installApplication(String pathToApplication, boolean wait) throws InterruptedException, IOException {

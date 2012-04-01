@@ -44,14 +44,16 @@ public class RepetativeInstallAndUninstallStockDemoWithProblemAtInstallTest exte
 		int firstInstallSuccessCounter = 0;
 		
 		for(int i=0 ; i < repetitions ; i++){
-			LogUtils.log("starting iteration" + i);
+			LogUtils.log("starting iteration " + i);
 			switch(installUninstallInstall(stockdemoAppPath, cassandraPostStartScriptPath ,newPostStartScriptPath)){
 			case 1: {firstInstallSuccessCounter++;break;}
 			case 2: {secondInstallationSuccessCounter++;break;}
 			case 3: {secondInstallationFailCounter++;break;}
 				
 			}
+			LogUtils.log("uninstalling stockdemo after iteration " + i);
 			runCommand("connect " + restUrl + ";uninstall-application --verbose stockdemo");
+			LogUtils.log("asserting all services are down");
 			assertUninstallWasSuccessful();
 		}
 		LogUtils.log(firstInstallSuccessCounter + "/" + repetitions + " times the first installation succeedded, these runs are irrelavent");
@@ -71,6 +73,7 @@ public class RepetativeInstallAndUninstallStockDemoWithProblemAtInstallTest exte
 		fixCassandraService(cassandraPostStartScriptPath , newPostStartScriptPath);
 		LogUtils.log("uninstalling stockdemo");
 		runCommand("connect " + restUrl + ";uninstall-application --verbose stockdemo");
+		LogUtils.log("asserting all services are down");
 		assertUninstallWasSuccessful();
 		LogUtils.log("second installation of stockdemo - this should succeed");
 		String successOutput = CommandTestUtils.runCommand("connect " + restUrl + ";install-application --verbose -timeout 5 " + stockdemoAppPath, true, true);

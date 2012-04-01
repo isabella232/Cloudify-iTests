@@ -76,6 +76,7 @@ public class RepetativeInstallAndUninstallStockDemoWithProblemAtInstallEc2Test e
 		int firstInstallSuccessCounter = 0;
 		
 		for(int i=0 ; i < repetitions ; i++){
+			LogUtils.log("starting iteration " + i);
 			switch(installUninstallInstall(stockdemoAppPath, cassandraPostStartScriptPath ,newPostStartScriptPath)){
 			case 1: {firstInstallSuccessCounter++;
 					break;
@@ -87,7 +88,9 @@ public class RepetativeInstallAndUninstallStockDemoWithProblemAtInstallEc2Test e
 					break;
 					}				
 			}
+			LogUtils.log("uninstalling stockdemo after iteration " + i);
 			uninstallApplicationAndWait("stockdemo");
+			LogUtils.log("asserting all services are down");
 			assertUninstallWasSuccessful();
 		}
 		LogUtils.log(firstInstallSuccessCounter + "/" + repetitions + " times the first installation succeedded, this should not happen");
@@ -97,17 +100,24 @@ public class RepetativeInstallAndUninstallStockDemoWithProblemAtInstallEc2Test e
 	}
 
 	private int installUninstallInstall(String stockdemoAppPath, String cassandraPostStartScriptPath ,String  newPostStartScriptPath) throws Exception {
+		LogUtils.log("corrupting cassandra service");
 		corruptCassandraService(cassandraPostStartScriptPath ,newPostStartScriptPath);
 		try{
+			LogUtils.log("first installation of stockdemo - this should fail");
 			installApplication(stockdemoAppPath, "stockdemo", 5, true, true);		
 		}catch(AssertionError e){
 			return 1;
 		}
+		LogUtils.log("fixing cassandra service");
 		fixCassandraService(cassandraPostStartScriptPath , newPostStartScriptPath);
+		LogUtils.log("uninstalling stockdemo");
 		uninstallApplicationAndWait("stockdemo");
+		LogUtils.log("asserting all services are down");
 		assertUninstallWasSuccessful();
 		try{
-			installApplication(stockdemoAppPath, "stockdemo", 5, true, true);		
+			LogUtils.log("second installation of stockdemo - this should succeed");
+			installApplication(stockdemoAppPath, "stockdemo", 5, true, true);
+			LogUtils.log("checking second installation's result");
 			Assert.assertTrue("The applications home page isn't available, counts as not installed properly" ,
 					WebUtils.isURLAvailable(stockdemoUrl));
 			return 2;

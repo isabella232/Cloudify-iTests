@@ -66,7 +66,7 @@ public class AbstractApplicationFailOverXenTest extends AbstractStartManagementX
 			commandOutput = CommandTestUtils.runCommandAndWait("connect --verbose " + restUrl + ";install-application --verbose " + appDirPath);
 		} catch (Throwable t) {
 			//catch the assertion error and dump all the installation GSC logs. 
-			DumpUtils.dumpProcessingUnit(admin);
+			DumpUtils.dumpLogs(admin);
 			AssertFail(t.getMessage());
 		}
 		String appName = new File(appDirPath).getName();
@@ -158,7 +158,7 @@ public class AbstractApplicationFailOverXenTest extends AbstractStartManagementX
 				if (application != null) {
 					LogUtils.log("Application stockdemo is not null.");
 				}
-				boolean condition = cassandra==null && admin.getApplications().getApplication(appName) == null;
+				boolean condition = cassandra==null && application == null;
 				return condition;
 			}
 		}, DEFAULT_TEST_TIMEOUT);

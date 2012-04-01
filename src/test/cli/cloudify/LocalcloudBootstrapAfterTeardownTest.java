@@ -34,7 +34,7 @@ public class LocalcloudBootstrapAfterTeardownTest extends AbstractTest {
 			Set <String> endPids = SetupUtils.getLocalProcesses();
 			localcloudPids = SetupUtils.getClientProcessesIDsDelta(startPids, endPids);
 		}catch(Exception e){
-			e.printStackTrace();
+			LogUtils.log("before test failed", e);
 			Assert.assertTrue(false);
 		}	  
 		Assert.assertNotNull("initial bootstrap was not sucessfull" ,
@@ -64,7 +64,7 @@ public class LocalcloudBootstrapAfterTeardownTest extends AbstractTest {
 		try {
 			CommandTestUtils.runCommandAndWait("connect " + restUrl + ";teardown-localcloud -lookup-groups abc");
 		} catch (Exception e) {
-			e.printStackTrace();
+			LogUtils.log("theardown-localcloud at after test failed", e);
 			Assert.assertTrue(false);
 		} 
 		super.afterTest();

@@ -158,8 +158,10 @@ public class AbstractXenGSMTest extends AbstractTest {
         // keep master vm label prefix for removing old master VMs later on
         xenServerMasterMachineLabelPrefix = machineProvisioningConfig.getMasterMachineNameLabel();
         
+        // Cloudify or XAP
+        String product = "_"+PlatformVersion.getVersion().replace(' ', '_')+"_";
         machineProvisioningConfig.setMasterMachineNameLabel(
-                machineProvisioningConfig.getMasterMachineNameLabel() + "_xap_" + PlatformVersion.getBuildNumber());
+                machineProvisioningConfig.getMasterMachineNameLabel() + product + PlatformVersion.getBuildNumber());
         
         machineProvisioningConfig.setDriveCapacityPerMachineInMB(XENSERVER_ROOT_DRIVE_CAPACITY);
         

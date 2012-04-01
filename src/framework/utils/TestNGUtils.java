@@ -14,7 +14,7 @@ public class TestNGUtils {
         if (params.length != 0) {
         	parameters = params[0].toString();
             for (int i = 1 ; i < params.length ; i++) {
-            	parameters += parameters + ",";
+            	parameters += parameters + "_";
             }
         }
         return parameters;	

@@ -12,7 +12,6 @@ import org.cloudifysource.dsl.internal.packaging.PackagingException;
 import org.cloudifysource.dsl.utils.ServiceUtils;
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.testng.Assert;
-import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -43,9 +42,7 @@ public class TravelAppFailOverUsingXenTest extends AbstractApplicationFailOverXe
 	    travelHostIp = admin.getZones().getByName(CASSANDRA_PU_NAME).getGridServiceAgents().getAgents()[0].getMachine().getHostAddress();
 	}
 	
-	@Override
-	@AfterMethod
-	public void afterTest() {
+	private void uninstallApplication() {
 		try {			
 			CommandTestUtils.runCommandAndWait("connect " + restUrl + " ;uninstall-application travel");
 		} catch (Exception e) {	
@@ -59,7 +56,8 @@ public class TravelAppFailOverUsingXenTest extends AbstractApplicationFailOverXe
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
 	public void testTravelAppEagerModeNoFailover() throws Exception{
-		installTravelApplication(tomcatPort, travelHostIp, travelAppDirPath);	
+		installTravelApplication(tomcatPort, travelHostIp, travelAppDirPath);
+		uninstallApplication();
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = false)
@@ -73,6 +71,7 @@ public class TravelAppFailOverUsingXenTest extends AbstractApplicationFailOverXe
 		tomcat.getInstances()[0].destroy();
 		assertPuInstanceKilled(TOMCAT_ABSOLUTE_PU_NAME , tomcatPort ,travelHostIp , tomcatPuInstancesAfterInstall);
 		assertPuInstanceRessurected(TOMCAT_ABSOLUTE_PU_NAME , tomcatPort ,travelHostIp, tomcatPuInstancesAfterInstall) ;
+		uninstallApplication();
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = false)
@@ -85,6 +84,7 @@ public class TravelAppFailOverUsingXenTest extends AbstractApplicationFailOverXe
 		tomcat.getInstances()[0].getGridServiceContainer().kill();
 		assertPuInstanceKilled(TOMCAT_PU_NAME , tomcatPort,travelHostIp , tomcatPuInstancesAfterInstall);
 		assertPuInstanceRessurected(TOMCAT_PU_NAME , tomcatPort,travelHostIp , tomcatPuInstancesAfterInstall);
+		uninstallApplication();
 	}
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -133,5 +133,4 @@ public class TravelAppFailOverUsingXenTest extends AbstractApplicationFailOverXe
 		
 		isTravelAppInstalled(tomcatPort, host);
 	}
-
 }

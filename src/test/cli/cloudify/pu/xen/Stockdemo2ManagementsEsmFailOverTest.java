@@ -55,10 +55,7 @@ public class Stockdemo2ManagementsEsmFailOverTest extends AbstractApplicationFai
 		}
 	}
 
-//	@Override
-//	@AfterMethod
-	public void afterTest2() {
-		
+	private void uninstallApplication() {
 		try {
 			String host = admin.getElasticServiceManagers().getManagers()[0].getMachine().getHostAddress();
 			restUrl = host + ":8100";
@@ -70,7 +67,6 @@ public class Stockdemo2ManagementsEsmFailOverTest extends AbstractApplicationFai
 		}
 		
 		assertAppUninstalled("stockdemo");
-		super.afterTest();
 	}
 	
 	/** 
@@ -80,14 +76,11 @@ public class Stockdemo2ManagementsEsmFailOverTest extends AbstractApplicationFai
 	 */
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = true, invocationCount = 1)
 	public void testEsmMachineShutdownFailover() throws Exception {
-		try{
-			LogUtils.log("Shuting down esm's mahcine gracefuly");
-			GsmTestUtils.shutdownMachine(esmMachine, xenConfigOfEsmMachine, DEFAULT_TEST_TIMEOUT);
-		
-			assertDesiredLogic();
-		}finally{
-			afterTest2();
-		}
+		LogUtils.log("Shuting down esm's mahcine gracefuly");
+		GsmTestUtils.shutdownMachine(esmMachine, xenConfigOfEsmMachine, DEFAULT_TEST_TIMEOUT);
+	
+		assertDesiredLogic();
+		uninstallApplication();
 	}
 	
 	/**
@@ -95,14 +88,11 @@ public class Stockdemo2ManagementsEsmFailOverTest extends AbstractApplicationFai
 	 */
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = true)
 	public void testEsmMachineHardShutdownFailover() throws Exception {
-		try{
-			LogUtils.log("Shuting down esm's mahcine");
-			GsmTestUtils.hardShutdownMachine(esmMachine, xenConfigOfEsmMachine, DEFAULT_TEST_TIMEOUT);
-		
-			assertDesiredLogic();
-		}finally{
-			afterTest2();
-		}
+		LogUtils.log("Shuting down esm's mahcine");
+		GsmTestUtils.hardShutdownMachine(esmMachine, xenConfigOfEsmMachine, DEFAULT_TEST_TIMEOUT);
+	
+		assertDesiredLogic();
+		uninstallApplication();
 	}
 	
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////	

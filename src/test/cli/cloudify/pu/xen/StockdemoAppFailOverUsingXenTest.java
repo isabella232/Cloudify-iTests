@@ -5,7 +5,6 @@ import java.io.IOException;
 import org.cloudifysource.dsl.utils.ServiceUtils;
 import org.openspaces.admin.esm.ElasticServiceManager;
 import org.openspaces.admin.pu.ProcessingUnit;
-import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -35,10 +34,7 @@ public class StockdemoAppFailOverUsingXenTest extends AbstractApplicationFailOve
 	    cassandraHostIp = admin.getZones().getByName("cassandra").getGridServiceAgents().getAgents()[0].getMachine().getHostAddress();
 	}
 	
-	@Override
-	@AfterMethod
-	public void afterTest() {
-		
+	private void uninstallApplication() {
 		try {
 			CommandTestUtils.runCommandAndWait("connect " + restUrl + " ;uninstall-application stockdemo");
 		} catch (IOException e) {
@@ -47,7 +43,6 @@ public class StockdemoAppFailOverUsingXenTest extends AbstractApplicationFailOve
 			AssertFail("Failed to uninstall application stockdemo", e);
 		}
 		assertAppUninstalled("stockdemo");
-		super.afterTest();
 	}
 	
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -56,6 +51,7 @@ public class StockdemoAppFailOverUsingXenTest extends AbstractApplicationFailOve
 	public void testStockdemoApplication() throws Exception {	    
 		installApp(cassandraPort1 ,cassandraHostIp, cassandraPort2 ,cassandraHostIp , stockdemoAppDirPath);
 		assertStockdemoAppInstalled(cassandraPort1 ,cassandraHostIp, cassandraPort2 ,cassandraHostIp);
+		uninstallApplication();
 	}
 	
 	
@@ -71,6 +67,7 @@ public class StockdemoAppFailOverUsingXenTest extends AbstractApplicationFailOve
 		cassandra.getInstances()[0].destroy();
 		assertPuInstanceKilled(ServiceUtils.getAbsolutePUName("stockdemo", "cassandra") , cassandraPort1 , cassandraHostIp , cassandraPuInstancesAfterInstall);
 		assertPuInstanceRessurected(ServiceUtils.getAbsolutePUName("stockdemo", "cassandra") , cassandraPort1 , cassandraHostIp , cassandraPuInstancesAfterInstall);
+		uninstallApplication();
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
@@ -85,6 +82,7 @@ public class StockdemoAppFailOverUsingXenTest extends AbstractApplicationFailOve
 		cassandra.getInstances()[0].getGridServiceContainer().kill();
 		assertPuInstanceKilled(ServiceUtils.getAbsolutePUName("stockdemo", "cassandra") , cassandraPort1 ,cassandraHostIp , cassandraPuInstancesAfterInstall);
 		assertPuInstanceRessurected(ServiceUtils.getAbsolutePUName("stockdemo", "cassandra") , cassandraPort1 ,cassandraHostIp , cassandraPuInstancesAfterInstall);
+		uninstallApplication();
 	}
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
@@ -100,6 +98,7 @@ public class StockdemoAppFailOverUsingXenTest extends AbstractApplicationFailOve
 		String stockAnalyticsSpacePUName = ServiceUtils.getAbsolutePUName("stockdemo", "stockAnalyticsSpace");
 		assertPuInstanceKilled(stockAnalyticsSpacePUName , spacePuInstancesAfterInstall);
 		assertPuInstanceRessurected(stockAnalyticsSpacePUName , spacePuInstancesAfterInstall);
+		uninstallApplication();
 	}
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
@@ -115,6 +114,7 @@ public class StockdemoAppFailOverUsingXenTest extends AbstractApplicationFailOve
 		String stockAnalyticsSpacePUName = ServiceUtils.getAbsolutePUName("stockdemo", "stockAnalyticsSpace");
 		assertPuInstanceKilled(stockAnalyticsSpacePUName , spacePuInstancesAfterInstall);
 		assertPuInstanceRessurected(stockAnalyticsSpacePUName , spacePuInstancesAfterInstall);
+		uninstallApplication();
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = true)
@@ -128,5 +128,6 @@ public class StockdemoAppFailOverUsingXenTest extends AbstractApplicationFailOve
 		
 		LogUtils.log("asserting esm is managing enviroment");
 		assertEsmIsManagingEnvBySearchingLogs(esm);
+		uninstallApplication();
 	}
 }

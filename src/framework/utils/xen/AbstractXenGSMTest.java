@@ -159,9 +159,9 @@ public class AbstractXenGSMTest extends AbstractTest {
         xenServerMasterMachineLabelPrefix = machineProvisioningConfig.getMasterMachineNameLabel();
         
         // Cloudify or XAP
-        String product = "_"+PlatformVersion.getVersion().replace(' ', '_')+"_";
+        String edition = "_"+PlatformVersion.getEdition().replace(' ', '_')+"_";
         machineProvisioningConfig.setMasterMachineNameLabel(
-                machineProvisioningConfig.getMasterMachineNameLabel() + product + PlatformVersion.getBuildNumber());
+                machineProvisioningConfig.getMasterMachineNameLabel() + edition + PlatformVersion.getBuildNumber());
         
         machineProvisioningConfig.setDriveCapacityPerMachineInMB(XENSERVER_ROOT_DRIVE_CAPACITY);
         

@@ -21,6 +21,7 @@ import java.io.IOException;
 import org.apache.commons.io.FileUtils;
 
 import test.cli.cloudify.cloud.AbstractCloudService;
+import framework.utils.LogUtils;
 import framework.utils.ScriptUtils;
 
 public class ByonCloudService extends AbstractCloudService {
@@ -56,6 +57,9 @@ public class ByonCloudService extends AbstractCloudService {
 
 		// first make a backup of the original file
 		FileUtils.copyFile(originalCloudDslFile, backupCloudDslFile);
+		
+		LogUtils.log("injecting credentials");
+		LogUtils.log("Machines are " + System.getProperty(SYS_PROP_IP_LIST));
 
 		//replace credentials and replace the ipList default 0.0.0.0 with values that are set through a system property
 		final String modifiedDslFileContents = originalDslFileContents.replace("ENTER_CLOUD_USER", BYON_CLOUD_USER).

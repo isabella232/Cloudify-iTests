@@ -14,17 +14,20 @@ set SGTEST_RUNTIME_FOLDER=C:\Users\ca\sgwebui-cloudify
 
 @echo copying run.xml and run.properties to runtime sgtest folder
 
-@if exist %SGTEST_RUNTIME_FOLDER%\bin\run.xml rmdir %SGTEST_RUNTIME_FOLDER%\bin\run.xml /s /q
+@if exist %SGTEST_RUNTIME_FOLDER%\bin\run.xml del %SGTEST_RUNTIME_FOLDER%\bin\run.xml /s /q
 @xcopy %SGTEST_CHECKOUT_FOLDER%\src\test\webui\resources\scripts\run.xml %SGTEST_RUNTIME_FOLDER%\bin /s /i /y
 
-@if exist %SGTEST_RUNTIME_FOLDER%\bin\run.properties rmdir %SGTEST_RUNTIME_FOLDER%\bin\run.properties /s /q
+@if exist %SGTEST_RUNTIME_FOLDER%\bin\run.properties del %SGTEST_RUNTIME_FOLDER%\bin\run.properties /s /q
 @xcopy %SGTEST_CHECKOUT_FOLDER%\src\test\webui\resources\scripts\run.properties %SGTEST_RUNTIME_FOLDER%\bin /s /i /y
 
-@if exist %SGTEST_RUNTIME_FOLDER%\bin\pre-run.xml rmdir %SGTEST_RUNTIME_FOLDER%\bin\pre-run.xml /s /q
+@if exist %SGTEST_RUNTIME_FOLDER%\bin\pre-run.xml del %SGTEST_RUNTIME_FOLDER%\bin\pre-run.xml /s /q
 @xcopy %SGTEST_CHECKOUT_FOLDER%\bin\pre-run.xml %SGTEST_RUNTIME_FOLDER%\bin /s /i /y
 
-@if exist %SGTEST_RUNTIME_FOLDER%\bin\post-run.xml rmdir %SGTEST_RUNTIME_FOLDER%\bin\post-run.xml /s /q
+@if exist %SGTEST_RUNTIME_FOLDER%\bin\post-run.xml del %SGTEST_RUNTIME_FOLDER%\bin\post-run.xml /s /q
 @xcopy %SGTEST_CHECKOUT_FOLDER%\bin\post-run.xml %SGTEST_RUNTIME_FOLDER%\bin /s /i /y
+
+@if exist %SGTEST_RUNTIME_FOLDER%\config\gs_logging.properties del %SGTEST_RUNTIME_FOLDER%\config\gs_logging.properties /s /q
+@xcopy %SGTEST_CHECKOUT_FOLDER%\config\gs_logging.properties %SGTEST_RUNTIME_FOLDER%\config /s /i /y
 
 @echo copying test resources to sgtest runtime folder
 

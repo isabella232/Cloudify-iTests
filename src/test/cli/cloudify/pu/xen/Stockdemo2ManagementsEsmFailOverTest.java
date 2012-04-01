@@ -1,12 +1,15 @@
 package test.cli.cloudify.pu.xen;
 
 import java.io.IOException;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.cloudifysource.dsl.internal.CloudifyConstants;
 import org.openspaces.admin.esm.ElasticServiceManager;
+import org.openspaces.admin.esm.ElasticServiceManagers;
+import org.openspaces.admin.esm.events.ElasticServiceManagerRemovedEventListener;
 import org.openspaces.admin.internal.admin.DefaultAdmin;
 import org.openspaces.admin.machine.Machine;
 import org.openspaces.cloud.xenserver.XenServerMachineProvisioningConfig;
@@ -76,8 +79,25 @@ public class Stockdemo2ManagementsEsmFailOverTest extends AbstractApplicationFai
 	 */
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = true, invocationCount = 1)
 	public void testEsmMachineShutdownFailover() throws Exception {
+		
+		final ElasticServiceManager esm = admin.getElasticServiceManagers().waitForAtLeastOne(10, TimeUnit.SECONDS);
+        final CountDownLatch latch = new CountDownLatch(1);
+        
+        ElasticServiceManagerRemovedEventListener removedEventListener = new ElasticServiceManagerRemovedEventListener() {
+
+            public void elasticServiceManagerRemoved(
+                    ElasticServiceManager elasticServiceManager) {
+                if (elasticServiceManager.equals(esm)) {
+                    latch.countDown();
+                }
+            }
+        };
+        ElasticServiceManagers managers = esm.getAdmin().getElasticServiceManagers();
+        managers.getElasticServiceManagerRemoved().add(removedEventListener);
+        
 		LogUtils.log("Shuting down esm's mahcine gracefuly");
 		GsmTestUtils.shutdownMachine(esmMachine, xenConfigOfEsmMachine, DEFAULT_TEST_TIMEOUT);
+		latch.await();
 	
 		assertDesiredLogic();
 		uninstallApplication();
@@ -88,8 +108,26 @@ public class Stockdemo2ManagementsEsmFailOverTest extends AbstractApplicationFai
 	 */
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = true)
 	public void testEsmMachineHardShutdownFailover() throws Exception {
-		LogUtils.log("Shuting down esm's mahcine");
+		
+		//TODO : how do I know that I got the right esm?
+		final ElasticServiceManager esm = admin.getElasticServiceManagers().waitForAtLeastOne(10, TimeUnit.SECONDS);
+        final CountDownLatch latch = new CountDownLatch(1);
+        
+        ElasticServiceManagerRemovedEventListener removedEventListener = new ElasticServiceManagerRemovedEventListener() {
+
+            public void elasticServiceManagerRemoved(
+                    ElasticServiceManager elasticServiceManager) {
+                if (elasticServiceManager.equals(esm)) {
+                    latch.countDown();
+                }
+            }
+        };
+        ElasticServiceManagers managers = esm.getAdmin().getElasticServiceManagers();
+        managers.getElasticServiceManagerRemoved().add(removedEventListener);
+        
+        LogUtils.log("Shuting down esm's mahcine");
 		GsmTestUtils.hardShutdownMachine(esmMachine, xenConfigOfEsmMachine, DEFAULT_TEST_TIMEOUT);
+		latch.await();
 	
 		assertDesiredLogic();
 		uninstallApplication();
@@ -125,7 +163,8 @@ public class Stockdemo2ManagementsEsmFailOverTest extends AbstractApplicationFai
 		LogUtils.log("asserting stockdemo application is still installed");
 		assertStockdemoAppInstalled(cassandraPort1 ,cassandraHostIp, cassandraPort2 ,cassandraHostIp);
 		
-		ElasticServiceManager esm = admin.getElasticServiceManagers().waitForAtLeastOne();
+		//TODO: Should I subscribe to the esm added event?
+		ElasticServiceManager esm = admin.getElasticServiceManagers().waitForAtLeastOne(10, TimeUnit.SECONDS);
 		LogUtils.log("asserting esm is managing the application");
 		assertEsmIsManagingEnvBySearchingLogs(esm);
 	}

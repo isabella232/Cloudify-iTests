@@ -32,46 +32,50 @@ public class RepetativeInstallAndUninstallStockDemoWithProblemAtInstallTest exte
 	private String newPostStartScriptPath = null;
 	private URL stockdemoUrl;
 		
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * repetitions, groups = "1", enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * repetitions, groups = "1", enabled = true)
 	public void installAndUninstallTest() throws Exception {
 		
 		stockdemoUrl = new URL("http://" + InetAddress.getLocalHost().getHostAddress() + ":8080/stockdemo/stockdemo");
 		final String stockdemoAppPath = CommandTestUtils.getPath("apps/USM/usm/applications/stockdemo");	
 		cassandraPostStartScriptPath = stockdemoAppPath + "/cassandra/cassandra_poststart.groovy";	
 		newPostStartScriptPath = stockdemoAppPath + "/cassandra/cassandra_poststart123.groovy";
-		int scenarioSuccessCounter = 0;
-		int scenarioFailCounter = 0;
+		int secondInstallationSuccessCounter = 0;
+		int secondInstallationFailCounter = 0;
 		int firstInstallSuccessCounter = 0;
 		
 		for(int i=0 ; i < repetitions ; i++){
+			LogUtils.log("starting iteration" + i);
 			switch(installUninstallInstall(stockdemoAppPath, cassandraPostStartScriptPath ,newPostStartScriptPath)){
 			case 1: {firstInstallSuccessCounter++;break;}
-			case 2: {scenarioSuccessCounter++;break;}
-			case 3: {scenarioFailCounter++;break;}
+			case 2: {secondInstallationSuccessCounter++;break;}
+			case 3: {secondInstallationFailCounter++;break;}
 				
 			}
 			runCommand("connect " + restUrl + ";uninstall-application --verbose stockdemo");
 			assertUninstallWasSuccessful();
 		}
 		LogUtils.log(firstInstallSuccessCounter + "/" + repetitions + " times the first installation succeedded, these runs are irrelavent");
-		LogUtils.log(scenarioSuccessCounter + "/" + repetitions + " times the second installation succeedded");
-		LogUtils.log(scenarioFailCounter + "/" + repetitions + " times the second installation failed - THIS IS WHAT WE TEST FOR");
-		Assert.assertTrue("second install should never fail, it failed " + scenarioFailCounter + " times", scenarioFailCounter==0);
+		LogUtils.log(secondInstallationSuccessCounter + "/" + repetitions + " times the second installation succeedded");
+		LogUtils.log(secondInstallationFailCounter + "/" + repetitions + " times the second installation failed - THIS IS WHAT WE TEST FOR");
+		Assert.assertTrue("second install should never fail, it failed " + secondInstallationFailCounter + " times", secondInstallationFailCounter==0);
 	}
 
 	private int installUninstallInstall(String stockdemoAppPath, String cassandraPostStartScriptPath ,String  newPostStartScriptPath) throws Exception {
+		LogUtils.log("corrupting cassandra service");
 		corruptCassandraService(cassandraPostStartScriptPath ,newPostStartScriptPath);
-		
-		String failOutput = CommandTestUtils.runCommand("connect " + restUrl + ";install-application --verbose -timeout 5 " + stockdemoAppPath, true, true);		
+		LogUtils.log("first installation of stockdemo - this should fail");
+		String failOutput = CommandTestUtils.runCommand("connect " + restUrl + ";install-application --verbose -timeout 3 " + stockdemoAppPath, true, true);		
 		if(!failOutput.toLowerCase().contains("operation failed"))
 			return 1;
+		LogUtils.log("fixing cassandra service");
 		fixCassandraService(cassandraPostStartScriptPath , newPostStartScriptPath);
+		LogUtils.log("uninstalling stockdemo");
 		runCommand("connect " + restUrl + ";uninstall-application --verbose stockdemo");
 		assertUninstallWasSuccessful();
-		
+		LogUtils.log("second installation of stockdemo - this should succeed");
 		String successOutput = CommandTestUtils.runCommand("connect " + restUrl + ";install-application --verbose -timeout 5 " + stockdemoAppPath, true, true);
-		runCommand("connect " + restUrl + ";uninstall-application --verbose stockdemo");
-		if(successOutput.toLowerCase().contains("successfully installed") && WebUtils.isURLAvailable(stockdemoUrl))
+		LogUtils.log("checking second installation's result");
+		if(successOutput.toLowerCase().contains("installed successfully") && WebUtils.isURLAvailable(stockdemoUrl))
 			return 2;
 		else
 			return 3;
@@ -97,6 +101,8 @@ public class RepetativeInstallAndUninstallStockDemoWithProblemAtInstallTest exte
 	
 	private void fixCassandraService(String cassandraPostStartScriptPath , String newPostStartScriptPath) throws IOException {
 		File cassandraPostStartScript = new File(newPostStartScriptPath);
+		if(!cassandraPostStartScript.exists())
+			return;
 		boolean success = cassandraPostStartScript.renameTo(new File(cassandraPostStartScriptPath));
 		if(!success)
 			throw new IOException("Test error: failed renaming " +  newPostStartScriptPath + " to " + cassandraPostStartScriptPath);

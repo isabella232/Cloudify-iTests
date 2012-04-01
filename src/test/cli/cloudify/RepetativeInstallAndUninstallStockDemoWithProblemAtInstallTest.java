@@ -15,7 +15,7 @@ import framework.utils.WebUtils;
 
 public class RepetativeInstallAndUninstallStockDemoWithProblemAtInstallTest extends AbstractLocalCloudTest {
 
-	private final int repetitions = 4;
+	private final int repetitions = 4 ;
 	private String cassandraPostStartScriptPath = null;
 	private String newPostStartScriptPath = null;
 	private URL stockdemoUrl;

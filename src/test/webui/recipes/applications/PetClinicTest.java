@@ -196,6 +196,7 @@ public class PetClinicTest extends AbstractSeleniumApplicationRecipeTest {
 		takeScreenShot(this.getClass(), "petClinicDemoTest","passed-services");
 		
 		assertPetclinicPageExists();
+		uninstallApplication("petclinic", true);
 	}
 	
 	private void assertPetclinicPageExists() {

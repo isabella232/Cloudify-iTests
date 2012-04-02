@@ -89,6 +89,7 @@ public class TerminateServiceContainerLogsPanelTest extends AbstractSeleniumAppl
 			}
 		};
 		AssertUtils.repetitiveAssertTrue("Container" + travelContainer.getAgentId() + "is still present", condition, waitingTime);
+		uninstallApplication("travel", true);
 		
 	}
 

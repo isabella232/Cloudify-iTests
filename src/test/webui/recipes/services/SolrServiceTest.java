@@ -126,6 +126,7 @@ public class SolrServiceTest extends AbstractSeleniumServiceRecipeTest {
 		assertTrue(puTreeGrid.getProcessingUnit("webui") != null);
 		assertTrue(puTreeGrid.getProcessingUnit("rest") != null);
 		assertTrue(puTreeGrid.getProcessingUnit("default.solr") != null);
+		uninstallService("solr", true);
 
 	}
 

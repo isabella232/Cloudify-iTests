@@ -78,5 +78,6 @@ public class UsmPuServiceMonitorsInsteadOfDetailsTest extends AbstractSeleniumSe
 		if (shouldFail) {
 			Assert.fail(failureMessage);
 		}
+		uninstallService("activemq", true);
 	}
 }

@@ -163,6 +163,7 @@ public class TomcatTotalRequestsTest extends AbstractSeleniumApplicationRecipeTe
 		executor.awaitTermination(10, TimeUnit.SECONDS);
 		
 		repetitiveAssertStatistics(pu, statisticsId, new Double(requestsMade.get()));
+		uninstallApplication("travel", true);
 		
 	}
 	

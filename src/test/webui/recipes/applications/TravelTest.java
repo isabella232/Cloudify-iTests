@@ -177,6 +177,7 @@ public class TravelTest extends AbstractSeleniumApplicationRecipeTest {
 		assertTrue(puTreeGrid.getProcessingUnit("rest") != null);
 		assertTrue(puTreeGrid.getProcessingUnit("travel.cassandra") != null);
 		assertTrue(puTreeGrid.getProcessingUnit("travel.tomcat") != null);
+		uninstallApplication("travel", true);
 
 	}
 

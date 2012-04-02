@@ -56,5 +56,6 @@ public class ApplicationBlueprintTest extends AbstractSeleniumApplicationRecipeT
 		List<Connector> targets = tomcat.getTargets();
 		assertTrue(targets.size() == 1);
 		assertTrue(targets.get(0).getTarget().getName().equals(cassandra.getName()));
+		uninstallApplication("travel", true);
 	}
 }

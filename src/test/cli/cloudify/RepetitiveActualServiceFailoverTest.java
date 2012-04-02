@@ -5,6 +5,7 @@ import static org.testng.AssertJUnit.fail;
 import java.io.File;
 import java.io.IOException;
 import java.net.UnknownHostException;
+import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -31,6 +32,7 @@ import framework.utils.LogUtils;
 import framework.utils.ProcessingUnitUtils;
 import framework.utils.SSHUtils;
 import framework.utils.ScriptUtils;
+import framework.utils.SetupUtils;
 
 /**
  * 1. install tomcat service
@@ -78,8 +80,8 @@ public class RepetitiveActualServiceFailoverTest extends AbstractLocalCloudTest 
 			AssertFail("No GSC's were found in the givan time-frame.");
 		}
 		
-		final CountDownLatch removed = new CountDownLatch(1);
-		final CountDownLatch added = new CountDownLatch(2);
+		final CountDownLatch removed = new CountDownLatch(3);
+		final CountDownLatch added = new CountDownLatch(4);
 		
 		LogUtils.log("adding a lifecycle listener to tomcat pu");
 		ProcessingUnitInstanceLifecycleEventListener eventListener = new ProcessingUnitInstanceLifecycleEventListener() {
@@ -110,6 +112,8 @@ public class RepetitiveActualServiceFailoverTest extends AbstractLocalCloudTest 
 			else {
 				SSHUtils.killProcess(machineA.getHostAddress(), tomcatPId.intValue());
 			}
+			Set<String> localProcesses = SetupUtils.getLocalProcesses();
+			assertTrue("Tomcat process was not terminated.", !localProcesses.contains(Long.toString(tomcatPId)));
 			LogUtils.log("Waiting for tomcat to recover");
 			RepetitiveConditionProvider condition = new RepetitiveConditionProvider() {	
 				@Override
@@ -147,8 +151,7 @@ public class RepetitiveActualServiceFailoverTest extends AbstractLocalCloudTest 
 		assertTrue("Tomcat PU instance was not decresed", removed.await(240, TimeUnit.SECONDS));
 		assertTrue("ProcessingUnitInstanceRemoved event has not been fired", removed.getCount() == 0);
 		LogUtils.log("waiting for tomcat pu instances to increase");
-		added.await();
-		assertTrue("ProcessingUnitInstanceAdded event has not been fired", added.getCount() == 0);	
+		assertTrue("Tomcat instance was not increased.", added.await(240, TimeUnit.SECONDS));
 		LogUtils.log("verifiying tomcat service in running");
 		isTomcatPageExists(client);	
 		LogUtils.log("all's well that ends well :)");

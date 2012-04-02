@@ -4,9 +4,12 @@ import static org.testng.AssertJUnit.fail;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
+import org.cloudifysource.dsl.internal.packaging.PackagingException;
+import org.cloudifysource.dsl.utils.ServiceUtils;
 import org.openspaces.admin.gsc.GridServiceContainer;
 import org.openspaces.admin.machine.Machine;
 import org.openspaces.admin.pu.DeploymentStatus;
@@ -22,13 +25,12 @@ import test.usm.USMTestUtils;
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import org.cloudifysource.dsl.internal.packaging.PackagingException;
-import org.cloudifysource.dsl.utils.ServiceUtils;
 
 import framework.utils.LogUtils;
 import framework.utils.ProcessingUnitUtils;
 import framework.utils.SSHUtils;
 import framework.utils.ScriptUtils;
+import framework.utils.SetupUtils;
 import groovy.util.ConfigObject;
 import groovy.util.ConfigSlurper;
 
@@ -76,6 +78,7 @@ public class InternalUSMPuServiceDownTest extends AbstractLocalCloudTest {
 		machineA = container.getMachine();
 		tomcatPId = (Long) customServiceDetails.getMonitors().get("Actual Process ID");
 		
+		
 		final CountDownLatch removed = new CountDownLatch(1);
 		final CountDownLatch added = new CountDownLatch(2);
 		
@@ -116,7 +119,7 @@ public class InternalUSMPuServiceDownTest extends AbstractLocalCloudTest {
 		
 		assertTrue("failed while deleting file: " + tomcatRun, tomcatRun.delete());
 		
-		LogUtils.log("killing tomcat process");
+		LogUtils.log("killing tomcat process : " + tomcatPId);
 		if (isWindows()) {	
 			int result = ScriptUtils.killWindowsProcess(tomcatPId.intValue());
 			assertTrue(result == 0);	
@@ -124,10 +127,11 @@ public class InternalUSMPuServiceDownTest extends AbstractLocalCloudTest {
 		else {
 			SSHUtils.killProcess(machineA.getHostAddress(), tomcatPId.intValue());
 		}
+		Set<String> localProcesses = SetupUtils.getLocalProcesses();
+		assertTrue("Tomcat process was not terminated.", !localProcesses.contains(Long.toString(tomcatPId)));
 		
 		LogUtils.log("waiting for tomcat pu instances to decrease");
 		assertTrue("Tomcat PU instance was not decresed", removed.await(240, TimeUnit.SECONDS));
-		assertTrue("ProcessingUnitInstanceRemoved event has not been fired", removed.getCount() == 0);
 		LogUtils.log("waiting for tomcat pu instances to increase");
 		added.await(60 * 6, TimeUnit.SECONDS);
 		assertTrue("ProcessingUnitInstanceAdded event has not been fired", added.getCount() == 0);	

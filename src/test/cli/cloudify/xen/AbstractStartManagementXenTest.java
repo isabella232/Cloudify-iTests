@@ -27,7 +27,7 @@ import framework.utils.xen.AbstractXenGSMTest;
 public class AbstractStartManagementXenTest extends AbstractXenGSMTest {
 	
     private static final String SHUTDOWN_MANAGEMENT_COMMAND = "/opt/gigaspaces/tools/cli/cloudify.sh shutdown-management --verbose";
-	private static final String SHUTDOWN_AGENT_COMMAND = "/opt/gigaspaces/tools/cli/cloudify.sh shutdown-agent --verbose";
+	private static final String SHUTDOWN_AGENT_COMMAND = "/opt/gigaspaces/tools/cli/cloudify.sh shutdown-agent --verbose -force";
 		
 	@Override
 	protected void overrideXenServerProperties(XenServerMachineProvisioningConfig machineProvisioningConfig) {

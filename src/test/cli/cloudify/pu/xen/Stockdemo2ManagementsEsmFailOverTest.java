@@ -164,7 +164,7 @@ public class Stockdemo2ManagementsEsmFailOverTest extends AbstractApplicationFai
 		assertStockdemoAppInstalled(cassandraPort1 ,cassandraHostIp, cassandraPort2 ,cassandraHostIp);
 		
 		//TODO: Should I subscribe to the esm added event?
-		ElasticServiceManager esm = admin.getElasticServiceManagers().waitForAtLeastOne(10, TimeUnit.SECONDS);
+		ElasticServiceManager esm = admin.getElasticServiceManagers().waitForAtLeastOne(10, TimeUnit.MINUTES);
 		LogUtils.log("asserting esm is managing the application");
 		assertEsmIsManagingEnvBySearchingLogs(esm);
 	}

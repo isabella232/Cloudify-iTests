@@ -114,6 +114,8 @@ public class RepetitiveActualServiceFailoverTest extends AbstractLocalCloudTest 
 			}
 			Set<String> localProcesses = SetupUtils.getLocalProcesses();
 			assertTrue("Tomcat process was not terminated.", !localProcesses.contains(Long.toString(tomcatPId)));
+			assertTrue("Port 8080 is still occupied after tomcat process terminated.", !ServiceUtils.isPortOccupied(8080));
+			
 			LogUtils.log("Waiting for tomcat to recover");
 			RepetitiveConditionProvider condition = new RepetitiveConditionProvider() {	
 				@Override

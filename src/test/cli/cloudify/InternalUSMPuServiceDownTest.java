@@ -104,7 +104,7 @@ public class InternalUSMPuServiceDownTest extends AbstractLocalCloudTest {
 		String pathToTomcat;
 		
 		LogUtils.log("deleting catalina.sh/bat from pu folder");
-		ConfigObject tomcatConfig = new ConfigSlurper().parse(new File(serviceDir, "tomcat.properties").toURL());
+		ConfigObject tomcatConfig = new ConfigSlurper().parse(new File(serviceDir, "tomcat.properties").toURI().toURL());
 		String tomcatVersion = (String) tomcatConfig.get("version");
 		String catalinaPath = "/work/processing-units/default_tomcat_1/ext/install/apache-tomcat-" + tomcatVersion + "/bin/catalina.";
 		String filePath = ScriptUtils.getBuildPath()+ catalinaPath;
@@ -129,6 +129,7 @@ public class InternalUSMPuServiceDownTest extends AbstractLocalCloudTest {
 		}
 		Set<String> localProcesses = SetupUtils.getLocalProcesses();
 		assertTrue("Tomcat process was not terminated.", !localProcesses.contains(Long.toString(tomcatPId)));
+		assertTrue("Port 8080 is still occupied after tomcat process terminated.", !ServiceUtils.isPortOccupied(8080));
 		
 		LogUtils.log("waiting for tomcat pu instances to decrease");
 		assertTrue("Tomcat PU instance was not decresed", removed.await(240, TimeUnit.SECONDS));

@@ -31,6 +31,7 @@ public class Stockdemo2ManagementsEsmFailOverTest extends AbstractApplicationFai
 	
 	@BeforeMethod
 	public void beforeTest() {
+		setEdition("CLOUDIFY_XAP");
 		Logger.getLogger(DefaultAdmin.class.getName()).setLevel(Level.ALL);
 		super.beforeTest();
 		
@@ -165,7 +166,8 @@ public class Stockdemo2ManagementsEsmFailOverTest extends AbstractApplicationFai
 		
 		//TODO: Should I subscribe to the esm added event?
 		ElasticServiceManager esm = admin.getElasticServiceManagers().waitForAtLeastOne(10, TimeUnit.MINUTES);
-		LogUtils.log("asserting esm is managing the application");
+		LogUtils.log("asserting esm is managing the application"); 
 		assertEsmIsManagingEnvBySearchingLogs(esm);
 	}
+	
 }

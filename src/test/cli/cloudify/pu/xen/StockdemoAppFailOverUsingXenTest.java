@@ -21,6 +21,7 @@ public class StockdemoAppFailOverUsingXenTest extends AbstractApplicationFailOve
 	@Override
 	@BeforeMethod
 	public void beforeTest()  {
+		setEdition("CLOUDIFY_XAP");
 		super.beforeTest();
 		assignCassandraPorts(stockdemoAppDirPath);
 																			   

@@ -65,7 +65,12 @@ public class AbstractXenGSMTest extends AbstractTest {
     private GridServiceAgentsCounter gsaCounter;
 	private boolean acceptGSCsOnStartup = false;
 	private int lookupPort = 4166;
+	private String edition = PlatformVersion.getEdition();
     
+	protected void setEdition(String edition) {
+		this.edition = edition;
+	}
+	
 	protected void setZone(String zone) {
 		this.zone= zone;
 	}
@@ -159,15 +164,18 @@ public class AbstractXenGSMTest extends AbstractTest {
         xenServerMasterMachineLabelPrefix = machineProvisioningConfig.getMasterMachineNameLabel();
         
         // Cloudify or XAP
-        String edition = "_"+PlatformVersion.getEdition().replace(' ', '_')+"_";
-        machineProvisioningConfig.setMasterMachineNameLabel(
-                machineProvisioningConfig.getMasterMachineNameLabel() + edition + PlatformVersion.getBuildNumber());
+        machineProvisioningConfig.setMasterMachineNameLabel(getXenServerMasterMachineNameLabel());
         
         machineProvisioningConfig.setDriveCapacityPerMachineInMB(XENSERVER_ROOT_DRIVE_CAPACITY);
         
         overrideXenServerProperties(machineProvisioningConfig);
         
     }
+
+	private String getXenServerMasterMachineNameLabel() {
+		final String xenServerMasterMachineNameLabel = xenServerMasterMachineLabelPrefix + "_"+this.edition.replace(' ', '_')+"_" + PlatformVersion.getBuildNumber();
+		return xenServerMasterMachineNameLabel;
+	}
     
     protected Map<String, String> loadXenServerMappingProperties() {
         File root = null;
@@ -199,7 +207,7 @@ public class AbstractXenGSMTest extends AbstractTest {
             
             for (String label : machineLabels) {
                 if (label.startsWith(xenServerMasterMachineLabelPrefix) &&
-                        !label.endsWith(PlatformVersion.getBuildNumber())) {
+                    !label.equals(getXenServerMasterMachineNameLabel())) {
                 	XenUtils.hardShutdownMachinesByLabelStartsWith(machineProvisioningConfig, label, 5*60, TimeUnit.SECONDS);
                 }
             }

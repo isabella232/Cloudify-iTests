@@ -130,6 +130,7 @@ public class InternalUSMPuServiceDownTest extends AbstractLocalCloudTest {
 		Set<String> localProcesses = SetupUtils.getLocalProcesses();
 		assertTrue("Tomcat process was not terminated.", !localProcesses.contains(Long.toString(tomcatPId)));
 		assertTrue("Port 8080 is still occupied after tomcat process terminated.", !ServiceUtils.isPortOccupied(8080));
+		assertTrue("Port 8009 is still occupied after tomcat process terminated.", !ServiceUtils.isPortOccupied(8009));
 		
 		LogUtils.log("waiting for tomcat pu instances to decrease");
 		assertTrue("Tomcat PU instance was not decresed", removed.await(240, TimeUnit.SECONDS));

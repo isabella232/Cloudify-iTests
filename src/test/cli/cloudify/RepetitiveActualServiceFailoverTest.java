@@ -80,8 +80,8 @@ public class RepetitiveActualServiceFailoverTest extends AbstractLocalCloudTest 
 			AssertFail("No GSC's were found in the givan time-frame.");
 		}
 		
-		final CountDownLatch removed = new CountDownLatch(3);
-		final CountDownLatch added = new CountDownLatch(4);
+		final CountDownLatch removed = new CountDownLatch(1);
+		final CountDownLatch added = new CountDownLatch(2);
 		
 		LogUtils.log("adding a lifecycle listener to tomcat pu");
 		ProcessingUnitInstanceLifecycleEventListener eventListener = new ProcessingUnitInstanceLifecycleEventListener() {

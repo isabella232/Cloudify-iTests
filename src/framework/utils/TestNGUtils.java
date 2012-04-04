@@ -6,9 +6,8 @@ public class TestNGUtils {
 	
 	public static String constructTestMethodName(ITestResult iTestResult) {
 		String parameters = extractParameters(iTestResult);
-		int totalInvocationCount = iTestResult.getMethod().getInvocationCount();
 		int currentInvocationCount = iTestResult.getMethod().getCurrentInvocationCount();
-		return iTestResult.getMethod().toString().split("\\(|\\)")[0] + "(" + parameters + ")" + "[" + currentInvocationCount + "-" + totalInvocationCount + "]";
+		return iTestResult.getMethod().toString().split("\\(|\\)")[0] + "(" + parameters + ")" + currentInvocationCount;
 		
 	}
 	

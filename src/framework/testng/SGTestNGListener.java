@@ -78,7 +78,7 @@ public class SGTestNGListener extends TestListenerAdapter {
     @Override
     public void onTestStart(ITestResult iTestResult) {
     	super.onTestStart(iTestResult);
-        String testName = iTestResult.getMethod().toString().split("\\(|\\)")[0] + iTestResult.getMethod().getCurrentInvocationCount() + "()";
+        String testName = TestNGUtils.constructTestMethodName(iTestResult);
         LogUtils.log("Test Start: " + testName);
     }
 

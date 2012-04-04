@@ -22,9 +22,7 @@ public class LogFetcher {
 	public List<TestLog> getLogs(ITestResult result) {
 		List<TestLog> logs = new ArrayList<TestLog>();
 		String suiteName = result.getTestClass().getXmlTest().getSuite().getName().split("[0-9]+")[0];
-		String parameters = TestNGUtils.extractParameters(result);
-		String testName = result.getMethod().toString().split("\\(|\\)")[0]
-				+ "(" + parameters + ")";
+		String testName = TestNGUtils.constructTestMethodName(result);
 		File testDir = new File(getBuildFolder() + "/" + suiteName + "/" + testName);
 		return fetchLogs(testDir, logs);
 	}

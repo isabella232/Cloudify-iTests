@@ -78,15 +78,14 @@ public class SGTestNGListener extends TestListenerAdapter {
     @Override
     public void onTestStart(ITestResult iTestResult) {
     	super.onTestStart(iTestResult);
-        String testName = iTestResult.getMethod().toString().split("\\(|\\)")[0] + "()";
+        String testName = iTestResult.getMethod().toString().split("\\(|\\)")[0] + iTestResult.getMethod().getCurrentInvocationCount() + "()";
         LogUtils.log("Test Start: " + testName);
     }
 
     @Override
     public void onTestFailure(ITestResult iTestResult) {
         super.onTestFailure(iTestResult);
-		String parameters = TestNGUtils.extractParameters(iTestResult);
-        testMethodName = iTestResult.getMethod().toString().split("\\(|\\)")[0] + "(" + parameters + ")";
+        testMethodName = TestNGUtils.constructTestMethodName(iTestResult);
         LogUtils.log("Test Failed: " + testMethodName, iTestResult.getThrowable());
         write2LogFile(iTestResult, DumpUtils.createTestFolder(testMethodName, suiteName));
     }
@@ -94,17 +93,15 @@ public class SGTestNGListener extends TestListenerAdapter {
     @Override
 	public void onTestSkipped(ITestResult iTestResult) {
 		super.onTestSkipped(iTestResult);
-		String parameters = TestNGUtils.extractParameters(iTestResult);
-        testMethodName = iTestResult.getMethod().toString().split("\\(|\\)")[0] + "(" + parameters + ")";
-        LogUtils.log("Test Skipped: " + testMethodName, iTestResult.getThrowable());
+		testMethodName = TestNGUtils.constructTestMethodName(iTestResult);
+		LogUtils.log("Test Skipped: " + testMethodName, iTestResult.getThrowable());
         write2LogFile(iTestResult, DumpUtils.createTestFolder(testMethodName, suiteName));
 	}
 
 	@Override
     public void onTestSuccess(ITestResult iTestResult) {
         super.onTestSuccess(iTestResult);
-        String parameters = TestNGUtils.extractParameters(iTestResult);
-        testMethodName = iTestResult.getMethod().toString().split("\\(|\\)")[0] + "(" + parameters + ")";
+        testMethodName = TestNGUtils.constructTestMethodName(iTestResult);
         LogUtils.log("Test Passed: " + testMethodName);
         write2LogFile(iTestResult, DumpUtils.createTestFolder(testMethodName, suiteName));
     }

@@ -15,7 +15,7 @@ import org.cloudifysource.dsl.utils.ServiceUtils;
 
 public class ConfigSlurperTest extends AbstractLocalCloudTest {
 
-    @Test(invocationCount = 2)
+    @Test
     public void test() throws IOException, InterruptedException {
         final String serviceDir = CommandTestUtils.getPath("apps/USM/usm/slurper");
         String command = "connect " + restUrl + ";install-service --verbose " + serviceDir + ";exit";

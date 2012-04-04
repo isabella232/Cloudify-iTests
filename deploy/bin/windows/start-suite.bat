@@ -4,6 +4,7 @@ set EXCLUDE=%3
 
 @cd %LOCAL_SGPATH%\bin
 
+set selenium.browser=dummy
 if %SUITE_NAME% == webui-Firefox (
 	set selenium.browser=Firefox
 )

@@ -16,7 +16,7 @@ public class ExamplesTest extends AbstractCloudTest {
 		doTest("travel");
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true, dataProvider = "supportedClouds")
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false, dataProvider = "supportedClouds")
 	public void testPetclinic(String cloudName) throws IOException, InterruptedException {
 		LogUtils.log("installing application petclinic on " + cloudName);
 		setCloudToUse(cloudName);
@@ -28,8 +28,12 @@ public class ExamplesTest extends AbstractCloudTest {
 		
 		String applicationPath = ScriptUtils.getBuildPath() + "/examples/" + applicationName;
 		
-		installApplicationAndWait(applicationPath, applicationName);
-		uninstallApplicationAndWait(applicationName);
+		try {
+			installApplicationAndWait(applicationPath, applicationName);
+		}
+		finally {
+			uninstallApplicationAndWait(applicationName);
+		}
 		
 	}
 }

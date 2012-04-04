@@ -4,11 +4,18 @@ import static org.testng.AssertJUnit.fail;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.ConnectException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLConnection;
 import java.net.UnknownHostException;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.http.HttpStatus;
+import org.cloudifysource.dsl.internal.packaging.PackagingException;
+import org.cloudifysource.dsl.utils.ServiceUtils;
 import org.openspaces.admin.machine.Machine;
 import org.openspaces.admin.pu.DeploymentStatus;
 import org.openspaces.admin.pu.ProcessingUnit;
@@ -23,8 +30,6 @@ import test.usm.USMTestUtils;
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import org.cloudifysource.dsl.internal.packaging.PackagingException;
-import org.cloudifysource.dsl.utils.ServiceUtils;
 
 import framework.utils.AssertUtils;
 import framework.utils.AssertUtils.RepetitiveConditionProvider;
@@ -50,6 +55,7 @@ public class RepetitiveActualServiceFailoverTest extends AbstractLocalCloudTest 
 	Long tomcatPId;
 	Machine machineA;
 	WebClient client;
+	private final String TOMCAT_URL = "http://127.0.0.1:8080";
 	
 	@Override
 	@BeforeMethod
@@ -114,9 +120,9 @@ public class RepetitiveActualServiceFailoverTest extends AbstractLocalCloudTest 
 			}
 			Set<String> localProcesses = SetupUtils.getLocalProcesses();
 			assertTrue("Tomcat process was not terminated.", !localProcesses.contains(Long.toString(tomcatPId)));
-			assertTrue("Port 8080 is still occupied after tomcat process terminated.", !ServiceUtils.isPortOccupied(8080));
-			assertTrue("Port 8009 is still occupied after tomcat process terminated.", !ServiceUtils.isPortOccupied(8009));
 			
+			int responseCode = getResponseCode(TOMCAT_URL);
+			assertTrue("Tomcat service is still running. Request returned response code: " + responseCode, HttpStatus.SC_NOT_FOUND == responseCode);
 			LogUtils.log("Waiting for tomcat to recover");
 			RepetitiveConditionProvider condition = new RepetitiveConditionProvider() {	
 				@Override
@@ -183,5 +189,22 @@ public class RepetitiveActualServiceFailoverTest extends AbstractLocalCloudTest 
 		assertTrue("USM Service State is not RUNNING", USMTestUtils.waitForPuRunningState(absolutePUName, 60, TimeUnit.SECONDS, admin));
 		CustomServiceMonitors customServiceDetails = (CustomServiceMonitors) tomcatInstance.getStatistics().getMonitors().get("USM");
 		return (Long) customServiceDetails.getMonitors().get("Actual Process ID");
+	}
+	
+	
+	//if service is down, this method will return a 404 not found exception.
+	private int getResponseCode(String urlString) throws IOException{
+		URL url = new URL ( urlString );
+		URLConnection connection = url.openConnection();
+		try {
+			connection.connect();
+		}catch (ConnectException e){
+			LogUtils.log("The connection to " + urlString + " has failed.");
+			return HttpStatus.SC_NOT_FOUND;
+		}
+		HttpURLConnection httpConnection = (HttpURLConnection) connection;
+		int code = httpConnection.getResponseCode();
+		return code;
+
 	}
 }

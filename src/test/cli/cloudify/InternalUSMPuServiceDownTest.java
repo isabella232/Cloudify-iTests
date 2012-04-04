@@ -4,10 +4,15 @@ import static org.testng.AssertJUnit.fail;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.ConnectException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.http.HttpStatus;
 import org.cloudifysource.dsl.internal.packaging.PackagingException;
 import org.cloudifysource.dsl.utils.ServiceUtils;
 import org.openspaces.admin.gsc.GridServiceContainer;
@@ -41,6 +46,7 @@ public class InternalUSMPuServiceDownTest extends AbstractLocalCloudTest {
 	Long tomcatPId;
 	Machine machineA;
 	WebClient client;
+	private final String TOMCAT_URL = "http://127.0.0.1:8080";
 
 	@Override
 	@BeforeMethod
@@ -129,8 +135,8 @@ public class InternalUSMPuServiceDownTest extends AbstractLocalCloudTest {
 		}
 		Set<String> localProcesses = SetupUtils.getLocalProcesses();
 		assertTrue("Tomcat process was not terminated.", !localProcesses.contains(Long.toString(tomcatPId)));
-		assertTrue("Port 8080 is still occupied after tomcat process terminated.", !ServiceUtils.isPortOccupied(8080));
-		assertTrue("Port 8009 is still occupied after tomcat process terminated.", !ServiceUtils.isPortOccupied(8009));
+		int responseCode = getResponseCode(TOMCAT_URL);
+		assertTrue("Tomcat service is still running. Request returned response code: " + responseCode, HttpStatus.SC_NOT_FOUND == responseCode);
 		
 		LogUtils.log("waiting for tomcat pu instances to decrease");
 		assertTrue("Tomcat PU instance was not decresed", removed.await(240, TimeUnit.SECONDS));
@@ -156,5 +162,21 @@ public class InternalUSMPuServiceDownTest extends AbstractLocalCloudTest {
         }
         assertEquals("OK", page.getWebResponse().getStatusMessage());
 		
+	}
+	
+	//if service is down, this method will return a 404 not found exception.
+	private int getResponseCode(String urlString) throws IOException{
+		URL url = new URL ( urlString );
+		URLConnection connection = url.openConnection();
+		try {
+			connection.connect();
+		}catch (ConnectException e){
+			LogUtils.log("The connection to " + urlString + " has failed.");
+			return HttpStatus.SC_NOT_FOUND;
+		}
+		HttpURLConnection httpConnection = (HttpURLConnection) connection;
+		int code = httpConnection.getResponseCode();
+		return code;
+
 	}
 }

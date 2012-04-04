@@ -5,12 +5,14 @@ set MILESTONE=%2
 set BUILD_NUMBER=%3
 set BUILD_VERSION=%4
 set SGTEST_CHECKOUT_FOLDER=%5
-set selenium.browser=%6
-set SGTEST_RUNTIME_FOLDER=C:\Users\ca\sgwebui-cloudify
+set SUITE_NAME=%6
+set INCLUDE=%7
+set EXCLUDE=%8
+set SGTEST_RUNTIME_FOLDER=C:\Users\ca\sgtest-cloudify
 
 @echo copying execution script to runtime sgtest folder
-@if exist %SGTEST_RUNTIME_FOLDER%\deploy\bin\webui rmdir %SGTEST_RUNTIME_FOLDER%\deploy\bin\webui /s /q
-@xcopy %SGTEST_CHECKOUT_FOLDER%\deploy\bin\webui %SGTEST_RUNTIME_FOLDER%\deploy\bin\webui /s /i /y
+@if exist %SGTEST_RUNTIME_FOLDER%\deploy\bin\windows rmdir %SGTEST_RUNTIME_FOLDER%\deploy\bin\windows /s /q
+@xcopy %SGTEST_CHECKOUT_FOLDER%\deploy\bin\windows %SGTEST_RUNTIME_FOLDER%\deploy\bin\windows /s /i /y
 
 @echo copying run.xml and run.properties to runtime sgtest folder
 
@@ -39,6 +41,6 @@ set SGTEST_RUNTIME_FOLDER=C:\Users\ca\sgwebui-cloudify
 @xcopy %SGTEST_CHECKOUT_FOLDER%\config %SGTEST_RUNTIME_FOLDER%\config /s /i /y
 
 
-cd webui
+cd windows
 @echo starting sgtest execution
-@call startSGWebui.bat %VERSION% %MILESTONE% %BUILD_NUMBER% %BUILD_VERSION% %SGTEST_CHECKOUT_FOLDER% %selenium.browser%
+@call startSG.bat %VERSION% %MILESTONE% %BUILD_NUMBER% %BUILD_VERSION% %SGTEST_CHECKOUT_FOLDER% %SUITE_NAME% %INCLUDE% %EXCLUDE%

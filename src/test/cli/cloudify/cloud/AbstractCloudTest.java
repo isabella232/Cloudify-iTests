@@ -34,7 +34,8 @@ public class AbstractCloudTest extends AbstractTest {
 	public static final String OPENSTACK = "openstack";
 	public static final String EC2 = "ec2";
 
-	private static final String[][] SUPPORTED_CLOUDS = {{OPENSTACK}, {EC2}};
+	private static String[][] SUPPORTED_CLOUDS = null;
+	private static final String SUPPORTED_CLOUDS_PROP = "supported-clouds";
 	
 	private CloudService service;
 	
@@ -83,6 +84,8 @@ public class AbstractCloudTest extends AbstractTest {
 	 */
 	@BeforeSuite(alwaysRun = true, enabled = true)
 	public void bootstrapSupportedClouds() {
+
+		SUPPORTED_CLOUDS = toTwoDimentionalArray(System.getProperty(SUPPORTED_CLOUDS_PROP));
 		
 		String clouds = "";
 		for (int j = 0 ; j < SUPPORTED_CLOUDS.length ; j++) {
@@ -107,9 +110,9 @@ public class AbstractCloudTest extends AbstractTest {
         	}
         }
 		
-		LogUtils.log("succefully bootstrapped to clouds : " + clouds);
+		LogUtils.log("finished bootstrapped to clouds : " + clouds);
 	}
-	
+
 	/**
 	 * After suite ends teardown all bootstrapped clouds.
 	 */
@@ -418,5 +421,16 @@ public class AbstractCloudTest extends AbstractTest {
 		
 		String user = System.getenv("USER");
 		return ((user == null) || !(user.equals("tgrid")));
+	}
+	
+	private String[][] toTwoDimentionalArray(String property) {
+		
+		String[] clouds = property.split(",");
+		String[][] result = new String[clouds.length][1];
+		for (int i = 0 ; i < clouds.length ; i++) {
+			result[i][0] = clouds[i];
+		}
+		
+		return result;
 	}
 }

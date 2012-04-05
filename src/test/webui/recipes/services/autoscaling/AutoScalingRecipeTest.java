@@ -207,6 +207,7 @@ public class AutoScalingRecipeTest extends AbstractSeleniumServiceRecipeTest {
 				admin.getAlertManager().getAlertTriggered().remove(listener);
 			}
 		}
+		super.uninstallService(ABSOLUTE_SERVICE_NAME);
 	}
 
 	private void initAlerts() {

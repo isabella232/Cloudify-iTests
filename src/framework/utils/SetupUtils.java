@@ -4,6 +4,7 @@ import static framework.utils.LogUtils.log;
 import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.assertTrue;
 
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.HashMap;
@@ -266,7 +267,7 @@ public class SetupUtils {
         return result;
     }
 
-    public static Set<String> getLocalProcesses() {
+    public static Set<String> getLocalProcesses() throws IOException, InterruptedException {
         Set<String> result = new HashSet<String>();
 
         if (!isWindows()) {
@@ -282,22 +283,20 @@ public class SetupUtils {
                 result.add(pid);
             }
         } else {
-            try {
-                String s = CommandTestUtils.runLocalCommand("jps", true, false);
-                Pattern p = Pattern.compile("\\d+ Jps");
-                Matcher m = p.matcher(s);
-                if(m.find()) {
-                    s = s.replace(m.group(), "");
-                }
-                
-                p = Pattern.compile("\\d+");
-                m = p.matcher(s);
-                while (m.find()) {
-                    result.add(m.group());
-                }
-            } catch (Exception e) {
-                log("WARNING Failed to run jps");
-                e.printStackTrace();
+            String s = CommandTestUtils.runLocalCommand("jps", true, false);
+            Pattern p = Pattern.compile("\\d+ Jps");
+            Matcher m = p.matcher(s);
+            if(m.find()) {
+                s = s.replace(m.group(), "");
+            }
+            
+            p = Pattern.compile("\\d+");
+            m = p.matcher(s);
+            while (m.find()) {
+            	String pid = m.group();
+            	if (pid != null && pid.length() > 0) {
+            		result.add(m.group());
+            	}
             }
         }
         return result;

@@ -75,11 +75,12 @@ service {
   // The maximum number of service instances
   maxAllowedInstances 4
 
-  // The time (in seconds) that scaling rules are disabled after scale out (instances added)
-  scaleOutCooldownInSeconds 0
-  
-  // The time (in seconds) that scaling rules are disabled after scale in (instances removed)
-  scaleInCooldownInSeconds 0
+  // The time (in seconds) that scaling rules are disabled after scale in (instances removed) 
+  // and scale out (instances added)
+  //
+  // This has the same effect as setting scaleInCooldownInSeconds and scaleOutCooldownInSeconds separately.
+  //
+  scaleCooldownInSeconds 0
        
   // Defines an automatic scaling rule based on "counter" metric value
   scalingRules {
@@ -101,6 +102,14 @@ service {
     // Default: Statistics.averageOfAverages
     // Possible values: Statistics.maximumOfAverages, Statistics.minimumOfAverages, Statistics.averageOfAverages, Statistics.percentileOfAverages(90)
     //                  Statistics.maximumOfMaximums, Statistics.minimumOfMinimums
+    //
+    // This has the same effect as setting instancesStatistics and timeStatistics separately. 
+    // For example: 
+    // statistics Statistics.maximumOfAverages
+    // is the same as:
+    // timeStatistics Statistics.average
+    // instancesStatistics Statistics.maximum
+    //
     statistics Statistics.averageOfAverages
         
     // The instancesStatistics over which the number of instances is increased or decreased

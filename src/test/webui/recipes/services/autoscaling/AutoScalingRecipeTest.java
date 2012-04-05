@@ -170,7 +170,8 @@ public class AutoScalingRecipeTest extends AbstractSeleniumServiceRecipeTest {
 				// the high threshold is 90, and the average value is set to 100.0 - which means auto scale out (from 2 instances to 3 instances)
 				// then the average value would be (100+100+0)/3 = 66 (two instance are 100 and the third one is still 0) which is within thresholds and should stop the scale out process
 				// the maximum #instances is 4, so we do not expect 4 GSCs added at any point.
-				repetitiveAssertNumberOfContainersAddedAndRemoved(gscCounter,/*expectedAdded=*/3 , /*expectedRemoved=*/0);
+				gscCounter.repetitiveAssertNumberOfGridServiceContainersAdded(3, OPERATION_TIMEOUT);
+				gscCounter.repetitiveAssertNumberOfGridServiceContainersRemoved(0, OPERATION_TIMEOUT);
 				repetitiveAssertStatistics(pu, averageStatisticsId, 100.0*2/3);
 				Assert.assertEquals(numberOfRaisedAlerts.get(),0);
 				Assert.assertEquals(numberOfResolvedAlerts.get(),0);
@@ -180,7 +181,8 @@ public class AutoScalingRecipeTest extends AbstractSeleniumServiceRecipeTest {
 				// then the average value would be (1000+1000+1000+0)/4 = 660 (three instance are 1000 and the fourth one is still 0)
 				// the maximum #instances is 4, so we expect at most 4 GSCs added at any point.
 				setStatistics(1000);
-				repetitiveAssertNumberOfContainersAddedAndRemoved(gscCounter,/*expectedAdded=*/4 , /*expectedRemoved=*/0);
+				gscCounter.repetitiveAssertNumberOfGridServiceContainersAdded(4, OPERATION_TIMEOUT);
+				gscCounter.repetitiveAssertNumberOfGridServiceContainersRemoved(0, OPERATION_TIMEOUT);
 				repetitiveAssertStatistics(pu, averageStatisticsId, 1000.0*3/4);
 				Assert.assertTrue(raisedLatch.await(OPERATION_TIMEOUT, TimeUnit.MILLISECONDS));
 				Assert.assertEquals(numberOfRaisedAlerts.get(),1);
@@ -189,7 +191,8 @@ public class AutoScalingRecipeTest extends AbstractSeleniumServiceRecipeTest {
 				// the low threshold is 30, and the average value is set to 0.0 - which means auto scale in (from 3 instances to 2 instances)
 				// the minimum #instances is 2, so we do not expect less than 2 GSCs added at any point.
 				setStatistics(0);
-				repetitiveAssertNumberOfContainersAddedAndRemoved(gscCounter,/*expectedAdded=*/4 , /*expectedRemoved=*/2);
+				gscCounter.repetitiveAssertNumberOfGridServiceContainersAdded(4, OPERATION_TIMEOUT);
+				gscCounter.repetitiveAssertNumberOfGridServiceContainersRemoved(2, OPERATION_TIMEOUT);
 				repetitiveAssertStatistics(pu, averageStatisticsId, 0);
 				Assert.assertTrue(resolvedLatch.await(OPERATION_TIMEOUT, TimeUnit.MILLISECONDS));
 				Assert.assertEquals(numberOfRaisedAlerts.get(),1);
@@ -214,28 +217,6 @@ public class AutoScalingRecipeTest extends AbstractSeleniumServiceRecipeTest {
 		final AlertManager alertManager = admin.getAlertManager();
 		alertManager.setConfig(new ElasticAutoScalingAlertConfiguration());
 		admin.getAlertManager().enableAlert(ElasticAutoScalingAlertConfiguration.class);
-	}
-
-	private void repetitiveAssertNumberOfContainersAddedAndRemoved(
-			final GridServiceContainersCounter gscCounter,
-			final int expectedAdded, final int expectedRemoved) {
-		final RepetitiveConditionProvider condition = new RepetitiveConditionProvider() {
-			
-			@Override
-			public boolean getCondition() {
-				final int added = gscCounter.getNumberOfGSCsAdded();
-				final int removed = gscCounter.getNumberOfGSCsRemoved();
-				if (added != expectedAdded) {
-					LogUtils.log("Expected " + expectedAdded + " added containers, actual added containers is " + added);
-				}
-				if (removed != expectedRemoved) {
-					LogUtils.log("Expected " + expectedRemoved + " removed containers, actual removed containers is " + removed);
-				}
-				return added == expectedAdded && removed == expectedRemoved;
-			}
-		};
-		
-		repetitiveAssertTrue("Automatic scale out did not perform as expected", condition, OPERATION_TIMEOUT);
 	}
 
 	private void repetitiveAssertApplicationNodeIntact(final ApplicationNode simple) {

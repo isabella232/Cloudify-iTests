@@ -201,8 +201,7 @@ public class AbstractLocalCloudTest extends AbstractTest {
 				}
 			}
 		} catch (final Exception e) {
-			LogUtils.log("WARNING Failed to kill processes");
-			e.printStackTrace();
+			LogUtils.log("WARNING Failed to kill processes",e);
 		}
 		LogUtils.log("Test Finished : " + this.getClass());
 	}

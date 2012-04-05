@@ -141,7 +141,7 @@
             <jvmarg line="-Djava.security.policy=policy/policy.all -Djava.awt.headless=true -Xmx2048m -XX:MaxPermSize=512m"/>
             <classfileset dir="${tmp.testng.classes}" includes="${INCLUDE}" excludes="${EXCLUDE}"/>
 	     <sysproperty key="sgtest.suiteId" value="${SUITE_ID}"/>
-        	<sysproperty key="Dcom.gigaspaces.client.router.disableNewRouter" value="true"/>
+        	<sysproperty key="com.gigaspaces.client.router.disableNewRouter" value="true"/>
 	     <sysproperty key="sgtest.numOfSuites" value="${SUITE_NUMBER}"/>
         	<sysproperty key="ipList" value="${BYON_MACHINES}"/>
         	<sysproperty key="supported-clouds" value="${SUPPORTED_CLOUDS}"/>

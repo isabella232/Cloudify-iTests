@@ -22,6 +22,7 @@ import org.openspaces.admin.pu.statistics.AverageInstancesStatisticsConfig;
 import org.openspaces.admin.pu.statistics.AverageTimeWindowStatisticsConfigurer;
 import org.openspaces.admin.pu.statistics.ProcessingUnitStatisticsId;
 import org.openspaces.admin.pu.statistics.ProcessingUnitStatisticsIdConfigurer;
+import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -159,6 +160,8 @@ public class AutoScalingRecipeTest extends AbstractSeleniumServiceRecipeTest {
 			pu.startStatisticsMonitor();
 			try {
 				repetitiveAssertStatistics(pu, averageStatisticsId, 0);
+				Assert.assertEquals(numberOfRaisedAlerts.get(),0);
+				Assert.assertEquals(numberOfResolvedAlerts.get(),0);
 				
 				//automatic scale out test
 				//set metric value of 2 instances to 100
@@ -169,6 +172,8 @@ public class AutoScalingRecipeTest extends AbstractSeleniumServiceRecipeTest {
 				// the maximum #instances is 4, so we do not expect 4 GSCs added at any point.
 				repetitiveAssertNumberOfContainersAddedAndRemoved(gscCounter,/*expectedAdded=*/3 , /*expectedRemoved=*/0);
 				repetitiveAssertStatistics(pu, averageStatisticsId, 100.0*2/3);
+				Assert.assertEquals(numberOfRaisedAlerts.get(),0);
+				Assert.assertEquals(numberOfResolvedAlerts.get(),0);
 				
 				// set metric value of 3 instances to 1000
 				// the high threshold is 90, and the average value is set to 100.0 - which means auto scale out (from 3 instances to 4 instances)
@@ -177,12 +182,18 @@ public class AutoScalingRecipeTest extends AbstractSeleniumServiceRecipeTest {
 				setStatistics(1000);
 				repetitiveAssertNumberOfContainersAddedAndRemoved(gscCounter,/*expectedAdded=*/4 , /*expectedRemoved=*/0);
 				repetitiveAssertStatistics(pu, averageStatisticsId, 1000.0*3/4);
+				Assert.assertTrue(raisedLatch.await(OPERATION_TIMEOUT, TimeUnit.MILLISECONDS));
+				Assert.assertEquals(numberOfRaisedAlerts.get(),1);
+				Assert.assertEquals(numberOfResolvedAlerts.get(),0);
 				
 				// the low threshold is 30, and the average value is set to 0.0 - which means auto scale in (from 3 instances to 2 instances)
 				// the minimum #instances is 2, so we do not expect less than 2 GSCs added at any point.
 				setStatistics(0);
 				repetitiveAssertNumberOfContainersAddedAndRemoved(gscCounter,/*expectedAdded=*/4 , /*expectedRemoved=*/2);
-				repetitiveAssertStatistics(pu, averageStatisticsId, 0);			
+				repetitiveAssertStatistics(pu, averageStatisticsId, 0);
+				Assert.assertTrue(resolvedLatch.await(OPERATION_TIMEOUT, TimeUnit.MILLISECONDS));
+				Assert.assertEquals(numberOfRaisedAlerts.get(),1);
+				Assert.assertEquals(numberOfResolvedAlerts.get(),1);
 			}
 			finally {
 				pu.stopStatisticsMonitor();

@@ -1,10 +1,20 @@
 package test.webui.recipes.services.autoscaling;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.cloudifysource.dsl.internal.CloudifyConstants;
 import org.cloudifysource.dsl.utils.ServiceUtils;
+import org.openspaces.admin.alert.Alert;
+import org.openspaces.admin.alert.AlertManager;
+import org.openspaces.admin.alert.AlertStatus;
+import org.openspaces.admin.alert.alerts.ElasticAutoScalingAlert;
+import org.openspaces.admin.alert.config.ElasticAutoScalingAlertConfiguration;
+import org.openspaces.admin.alert.events.AlertTriggeredEventListener;
 import org.openspaces.admin.internal.pu.InternalProcessingUnit;
 import org.openspaces.admin.pu.DeploymentStatus;
 import org.openspaces.admin.pu.ProcessingUnitInstance;
@@ -42,6 +52,7 @@ public class AutoScalingRecipeTest extends AbstractSeleniumServiceRecipeTest {
 	private static final String COUNTER_METRIC = "counter";
 	private static final String APPLICATION_NAME = "default";
 	private static final String ABSOLUTE_SERVICE_NAME = ServiceUtils.getAbsolutePUName(APPLICATION_NAME,SERVICE_NAME);
+	private final List<Alert> adminAlerts = new ArrayList<Alert>();
 	
 	@Override
 	@BeforeMethod
@@ -106,7 +117,32 @@ public class AutoScalingRecipeTest extends AbstractSeleniumServiceRecipeTest {
 		assertNotNull("counter " + METRICS_ASSERTION_SUFFIX , healthPanel.getMetric(COUNTER_METRIC));
 		
 		final InternalProcessingUnit pu = (InternalProcessingUnit) admin.getProcessingUnits().waitFor(ABSOLUTE_SERVICE_NAME,OPERATION_TIMEOUT,TimeUnit.MILLISECONDS);
+		initAlerts();
 		final GridServiceContainersCounter gscCounter = new GridServiceContainersCounter(pu);
+		final AtomicInteger numberOfRaisedAlerts = new AtomicInteger(0);
+        final AtomicInteger numberOfResolvedAlerts = new AtomicInteger(0);
+	    final CountDownLatch raisedLatch = new CountDownLatch(1);
+	    final CountDownLatch resolvedLatch = new CountDownLatch(1);
+	    
+	    AlertTriggeredEventListener listener = new AlertTriggeredEventListener() {
+			
+			@Override
+			public void alertTriggered(Alert alert) {
+				if (alert instanceof ElasticAutoScalingAlert) {
+					if (alert.getStatus().equals(AlertStatus.RAISED)) {
+						numberOfRaisedAlerts.incrementAndGet();
+						raisedLatch.countDown();
+					}
+					else if(alert.getStatus().equals(AlertStatus.RESOLVED)) {
+						numberOfResolvedAlerts.incrementAndGet();
+						resolvedLatch.countDown();
+					}
+					adminAlerts.add(alert);
+				}
+			}
+		};
+		
+		admin.getAlertManager().getAlertTriggered().add(listener, false);
 		try {
 			pu.waitFor(2,OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
 			ProcessingUnitInstance instance = pu.getInstances()[0];
@@ -153,8 +189,19 @@ public class AutoScalingRecipeTest extends AbstractSeleniumServiceRecipeTest {
 			}
 		}
 		finally {
-			gscCounter.close();		
+			if (gscCounter != null) {
+				gscCounter.close();
+			}
+			if (listener != null) {
+				admin.getAlertManager().getAlertTriggered().remove(listener);
+			}
 		}
+	}
+
+	private void initAlerts() {
+		final AlertManager alertManager = admin.getAlertManager();
+		alertManager.setConfig(new ElasticAutoScalingAlertConfiguration());
+		admin.getAlertManager().enableAlert(ElasticAutoScalingAlertConfiguration.class);
 	}
 
 	private void repetitiveAssertNumberOfContainersAddedAndRemoved(

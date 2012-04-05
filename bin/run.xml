@@ -143,6 +143,7 @@
 	     <sysproperty key="sgtest.suiteId" value="${SUITE_ID}"/>
 	     <sysproperty key="sgtest.numOfSuites" value="${SUITE_NUMBER}"/>
         	<sysproperty key="ipList" value="${BYON_MACHINES}"/>
+        	<sysproperty key="supported-clouds" value="${SUPPORTED_CLOUDS}"/>
         	<sysproperty key="com.gs.logging.level.config" value="true"/>
         	<sysproperty key="org.apache.commons.logging.Log" value="org.apache.commons.logging.impl.Jdk14Logger"/>
         	<sysproperty key="java.util.logging.config.file" value="${sgtest.homedir}/config/sgtest_logging.properties"/>

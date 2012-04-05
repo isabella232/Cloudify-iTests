@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
 
 import com.google.common.io.Files;
 
@@ -34,7 +35,7 @@ public class IOUtils {
 		replaceTextInFile(FileName, toPass);
 	}
 	
-	public static void replaceTextInFile(String FileName, HashMap<String, String> map) throws IOException {
+	public static void replaceTextInFile(String FileName, Map<String, String> map) throws IOException {
 		File file = new File(FileName);
         BufferedReader reader = new BufferedReader(new FileReader(file));
         String line = "", oldtext = "";

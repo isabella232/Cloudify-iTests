@@ -25,7 +25,13 @@ import static framework.utils.ToStringUtils.puInstanceToString;
 public class TeardownUtils {
 
     public static void teardownAll(Admin admin) {
-        snapshot(admin);
+    	
+    	if (admin == null) {
+        	log("> no snapshot. admin is null");
+        	return;
+        }
+    	
+    	snapshot(admin);
 
         // kill all ESMs first
         for (GridServiceAgent gsa : admin.getGridServiceAgents()) {

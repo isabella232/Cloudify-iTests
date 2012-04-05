@@ -89,13 +89,13 @@ service {
     movingTimeRangeInSeconds 5
     
     // (Optional)
-    // The algorithm for aggregating metric samples.
+    // The algorithms for aggregating metric samples by instances and by time.
     // Metric samples are aggregated separately per instance in the specified time range,
     // and then aggregated again for all instances.
-    // Default: Statistics.average
-    // Possible values: Statistics.average, Statistics.minimum, Statistics.maximum
-    // More control can be gained by specifying timeStatistics and instanceStatistics separately
-    statistics Statistics.average
+    // Default: Statistics.averageOfAverages
+    // Possible values: Statistics.maximumOfAverages, Statistics.minimumOfAverages, Statistics.averageOfAverages, Statistics.percentileOfAverages(90)
+    //                  Statistics.maximumOfMaximums, Statistics.minimumOfMinimums
+    statistics Statistics.averageOfAverages
         
     // The instancesStatistics over which the number of instances is increased or decreased
     highThreshold 90

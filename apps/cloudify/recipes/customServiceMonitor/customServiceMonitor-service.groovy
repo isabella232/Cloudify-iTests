@@ -91,8 +91,10 @@ service {
     // The name of the metric that is the basis for the scale rule decision
     metric "counter"
     
+    // (Optional)
     // The sliding time range (in seconds) for aggregating per-instance metric samples
     // The number of samples in the time windows equals the time window divided by the sampling period
+    // Default: 300
     movingTimeRangeInSeconds 5
     
     // (Optional)

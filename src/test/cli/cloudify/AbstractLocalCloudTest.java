@@ -179,29 +179,31 @@ public class AbstractLocalCloudTest extends AbstractTest {
 			TeardownUtils.snapshot(admin);
 			uninstallAllRunningServices(admin);
 		}
-		try {
-			final Set<String> currentPids = SetupUtils.getLocalProcesses();
-			final Set<String> delta = SetupUtils.getClientProcessesIDsDelta(alivePIDs,
-					currentPids);
-
-			if (delta.size() > 0) {
-				String pids = "";
-				for (final String pid : delta) {
-					pids += pid + ", ";
+		if (alivePIDs != null) {
+			try {
+				final Set<String> currentPids = SetupUtils.getLocalProcesses();
+				final Set<String> delta = SetupUtils.getClientProcessesIDsDelta(alivePIDs,
+						currentPids);
+	
+				if (delta.size() > 0) {
+					String pids = "";
+					for (final String pid : delta) {
+						pids += pid + ", ";
+					}
+					try {
+						LogUtils.log("WARNING There is a leak PIDS [ " + pids + "] are alive");
+						SetupUtils.killProcessesByIDs(delta);
+						LogUtils.log("INFO killing all orphan processes");
+						SetupUtils.killProcessesByIDs(localCloudPIDs);
+						LogUtils.log("INFO killing local cloud processes and boostraping again");
+					}
+					finally {
+						beforeSuite();
+					}
 				}
-				try {
-					LogUtils.log("WARNING There is a leak PIDS [ " + pids + "] are alive");
-					SetupUtils.killProcessesByIDs(delta);
-					LogUtils.log("INFO killing all orphan processes");
-					SetupUtils.killProcessesByIDs(localCloudPIDs);
-					LogUtils.log("INFO killing local cloud processes and boostraping again");
-				}
-				finally {
-					beforeSuite();
-				}
+			} catch (final Exception e) {
+				LogUtils.log("WARNING Failed to kill processes",e);
 			}
-		} catch (final Exception e) {
-			LogUtils.log("WARNING Failed to kill processes",e);
 		}
 		LogUtils.log("Test Finished : " + this.getClass());
 	}

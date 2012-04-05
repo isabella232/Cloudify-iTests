@@ -115,10 +115,16 @@ service {
     statistics Statistics.averageOfAverages
         
     // The instancesStatistics over which the number of instances is increased or decreased
-    highThreshold 90
+    highThreshold {
+      value 90
+      instancesIncrease 1
+    }
     
     // The instancesStatistics below which the number of instances is increased or decreased
-    lowThreshold 30
+    lowThreshold {
+      value 30
+      instancesDecrease 1
+    }
 
   }
 }

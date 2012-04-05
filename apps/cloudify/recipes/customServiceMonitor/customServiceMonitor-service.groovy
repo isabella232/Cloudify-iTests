@@ -74,7 +74,13 @@ service {
     
   // The maximum number of service instances
   maxAllowedInstances 4
-     
+
+  // The time (in seconds) that scaling rules are disabled after scale out (instances added)
+  scaleOutCooldownInSeconds 0
+  
+  // The time (in seconds) that scaling rules are disabled after scale in (instances removed)
+  scaleInCooldownInSeconds 0
+       
   // Defines an automatic scaling rule based on "counter" metric value
   scalingRules {
    

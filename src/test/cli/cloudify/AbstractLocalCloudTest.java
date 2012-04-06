@@ -73,7 +73,7 @@ public class AbstractLocalCloudTest extends AbstractTest {
 					restPort);
 			assertTrue("port " + restPort + " is open on localhost before rest deployment. will not try to deploy rest",
 					!portOpenBeforeBootstrap);
-			runCommand("bootstrap-localcloud --verbose");
+			runCommand("bootstrap-localcloud --verbose -timeout 15");
 		} catch (final Exception e) {
 			LogUtils.log("Booststrap Failed." + e);
 			e.printStackTrace();

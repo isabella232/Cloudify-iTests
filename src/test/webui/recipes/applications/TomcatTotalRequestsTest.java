@@ -58,7 +58,7 @@ public class TomcatTotalRequestsTest extends AbstractSeleniumApplicationRecipeTe
 		applicationUrl = "http://" + InetAddress.getLocalHost().getHostAddress() + ":8080";
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT , enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT , enabled = true)
 	public void customServiceMonitorsAutoScalingTest() throws Exception {
 		
 		// get new login page

@@ -145,7 +145,7 @@ public class AutoScalingRecipeTest extends AbstractSeleniumServiceRecipeTest {
 		
 		admin.getAlertManager().getAlertTriggered().add(listener, false);
 		try {
-			pu.waitFor(2,OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
+			repetitiveAssertNumberOfInstances(pu, 2);
 			ProcessingUnitInstance instance = pu.getInstances()[0];
 			assertNotNull(instance);
 			final ProcessingUnitStatisticsId averageStatisticsId = 
@@ -165,12 +165,12 @@ public class AutoScalingRecipeTest extends AbstractSeleniumServiceRecipeTest {
 				
 				//automatic scale out test
 				//set metric value of 2 instances to 100
-				setStatistics(pu,100);
+				setStatistics(pu, 2, 100);
 
 				// the high threshold is 90, and the average value is set to 100.0 - which means auto scale out (from 2 instances to 3 instances)
 				// then the average value would be (100+100+0)/3 = 66 (two instance are 100 and the third one is still 0) which is within thresholds and should stop the scale out process
 				// the maximum #instances is 4, so we do not expect 4 GSCs added at any point.
-				pu.waitFor(3,OPERATION_TIMEOUT,TimeUnit.MILLISECONDS);
+				repetitiveAssertNumberOfInstances(pu, 3);
 				repetitiveAssertStatistics(pu, averageStatisticsId, 100.0*2/3);
 				gscCounter.repetitiveAssertNumberOfGridServiceContainersAdded(3, OPERATION_TIMEOUT);
 				gscCounter.repetitiveAssertNumberOfGridServiceContainersRemoved(0, OPERATION_TIMEOUT);
@@ -178,12 +178,12 @@ public class AutoScalingRecipeTest extends AbstractSeleniumServiceRecipeTest {
 				Assert.assertEquals(numberOfResolvedAlerts.get(),0);
 				
 				// set metric value of 3 instances to 1000
-				setStatistics(pu, 1000);
+				setStatistics(pu, 3, 1000);
 				
 				// the high threshold is 90, and the average value is set to 100.0 - which means auto scale out (from 3 instances to 4 instances)
 				// then the average value would be (1000+1000+1000+0)/4 = 660 (three instance are 1000 and the fourth one is still 0)
 				// the maximum #instances is 4, so we expect at most 4 GSCs added at any point.
-				pu.waitFor(4,OPERATION_TIMEOUT,TimeUnit.MILLISECONDS);
+				repetitiveAssertNumberOfInstances(pu, 4);
 				repetitiveAssertStatistics(pu, averageStatisticsId, 1000.0*3/4);
 				gscCounter.repetitiveAssertNumberOfGridServiceContainersAdded(4, OPERATION_TIMEOUT);
 				gscCounter.repetitiveAssertNumberOfGridServiceContainersRemoved(0, OPERATION_TIMEOUT);
@@ -193,7 +193,7 @@ public class AutoScalingRecipeTest extends AbstractSeleniumServiceRecipeTest {
 				
 				// the low threshold is 30, and the average value is set to 0.0 - which means auto scale in (from 3 instances to 2 instances)
 				// the minimum #instances is 2, so we do not expect less than 2 GSCs added at any point.
-				setStatistics(pu, 0);
+				setStatistics(pu, 4, 0);
 				repetitiveAssertStatistics(pu, averageStatisticsId, 0);
 				gscCounter.repetitiveAssertNumberOfGridServiceContainersAdded(4, OPERATION_TIMEOUT);
 				gscCounter.repetitiveAssertNumberOfGridServiceContainersRemoved(2, OPERATION_TIMEOUT);
@@ -287,13 +287,18 @@ public class AutoScalingRecipeTest extends AbstractSeleniumServiceRecipeTest {
 		}, OPERATION_TIMEOUT);
 	}
 	
-	public void setStatistics(InternalProcessingUnit pu, long value) throws IOException, InterruptedException {
-		for (ProcessingUnitInstance instance : pu.getInstances()) {
+	public void setStatistics(final InternalProcessingUnit pu, final int expectedNumberOfInstances, long value) throws IOException, InterruptedException {
+		
+		ProcessingUnitInstance[] instances = repetitiveAssertNumberOfInstances(pu, expectedNumberOfInstances);
+		
+		for (ProcessingUnitInstance instance : instances) {
 			String command = "connect localhost;invoke -instanceid " + instance.getInstanceId() + " --verbose " + SERVICE_NAME + " set " + value;
 			String output = CommandTestUtils.runCommandAndWait(command);
 			LogUtils.log(output);
 		}
 	}
+
+	
 
 
 }

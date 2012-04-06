@@ -128,14 +128,6 @@ public class TomcatTotalRequestsTest extends AbstractSeleniumApplicationRecipeTe
 		repetitiveAssertTrueWithScreenshot(
 				"customServiceMonitor service is displayed as " + simple.getStatus() + 
 					"even though it is installed", condition, this.getClass(), "customServiceMonitorsAutoScalingTest", SERVICE_NAME);
-
-		// the assert fails for some reason, even though the WebUi shows this monitor
-		
-//		HealthPanel healthPanel = topologyTab.getTopologySubPanel().switchToHealthPanel();
-//
-//		takeScreenShot(this.getClass(),"customServiceMonitorsAutoScalingTest", "topology-healthpanel");
-//		
-//		assertNotNull("counter " + METRICS_ASSERTION_SUFFIX , healthPanel.getMetric(COUNTER_METRIC));
 		
 		Assert.assertTrue(WebUtils.isURLAvailable(new URL(applicationUrl)));
 		

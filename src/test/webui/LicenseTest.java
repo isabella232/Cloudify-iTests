@@ -8,7 +8,7 @@ import test.webui.objects.dashboard.DashboardTab;
 public class LicenseTest extends AbstractSeleniumTest {
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT)
-	public void testXapLicense() throws InterruptedException {
+	public void testCloudifyLicense() throws InterruptedException {
 		
 		LoginPage loginPage = getLoginPage();
 		

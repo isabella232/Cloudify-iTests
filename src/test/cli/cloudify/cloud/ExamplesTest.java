@@ -2,7 +2,10 @@ package test.cli.cloudify.cloud;
 
 import java.io.IOException;
 
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.Test;
+
+import test.cli.cloudify.CommandTestUtils;
 
 import framework.utils.LogUtils;
 import framework.utils.ScriptUtils;
@@ -31,13 +34,17 @@ public class ExamplesTest extends AbstractCloudTest {
 	private void doTest(String applicationName) throws IOException, InterruptedException {
 		
 		String applicationPath = ScriptUtils.getBuildPath() + "/examples/" + applicationName;
+		installApplicationAndWait(applicationPath, applicationName);
 		
-		try {
-			installApplicationAndWait(applicationPath, applicationName);
-		}
-		finally {
-			uninstallApplicationAndWait(applicationName);
-		}
+	}
+	
+	@AfterMethod
+	public void cleanup() throws IOException, InterruptedException {
 		
+		String command = "connect " + getService().getRestUrl() + ";list-application";
+		String output = CommandTestUtils.runCommandAndWait(command);
+		if (output.contains(appName)) {
+			uninstallApplicationAndWait(appName);			
+		}
 	}
 }

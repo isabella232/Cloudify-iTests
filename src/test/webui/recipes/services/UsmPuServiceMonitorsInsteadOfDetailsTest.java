@@ -27,7 +27,7 @@ public class UsmPuServiceMonitorsInsteadOfDetailsTest extends AbstractSeleniumSe
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT)
-	public void testServiceMonitors() throws InterruptedException {
+	public void testServiceMonitors() throws InterruptedException, IOException {
 		
 		boolean shouldFail = false;
 		String failureMessage = "";

@@ -36,7 +36,7 @@ public class TerminateServiceContainerLogsPanelTest extends AbstractSeleniumAppl
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2 , enabled = false)
-	public void terminateContainerTest() throws InterruptedException {
+	public void terminateContainerTest() throws InterruptedException, IOException {
 		
 		// get new login page
 		LoginPage loginPage = getLoginPage();

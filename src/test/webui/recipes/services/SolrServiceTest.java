@@ -34,7 +34,7 @@ public class SolrServiceTest extends AbstractSeleniumServiceRecipeTest {
 
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT)
-	public void solrRecipeTest() throws InterruptedException {
+	public void solrRecipeTest() throws InterruptedException, IOException {
 
 		// get new login page
 		LoginPage loginPage = getLoginPage();

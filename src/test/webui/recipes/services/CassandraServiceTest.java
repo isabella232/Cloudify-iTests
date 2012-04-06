@@ -33,7 +33,7 @@ public class CassandraServiceTest extends AbstractSeleniumServiceRecipeTest  {
 	}
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT)
-	public void cassandraRecipeTest() throws InterruptedException {
+	public void cassandraRecipeTest() throws InterruptedException, IOException {
 
 		// get new login page
 		LoginPage loginPage = getLoginPage();

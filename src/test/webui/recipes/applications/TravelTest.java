@@ -36,7 +36,7 @@ public class TravelTest extends AbstractSeleniumApplicationRecipeTest {
 	}
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
-	public void travelApplicationTest() throws InterruptedException {
+	public void travelApplicationTest() throws InterruptedException, IOException {
 
 		// get new login page
 		LoginPage loginPage = getLoginPage();

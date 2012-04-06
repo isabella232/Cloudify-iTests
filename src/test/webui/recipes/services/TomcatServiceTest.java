@@ -33,7 +33,7 @@ public class TomcatServiceTest extends AbstractSeleniumServiceRecipeTest {
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = false)
-	public void tomcatRecipeTest() throws InterruptedException {
+	public void tomcatRecipeTest() throws InterruptedException, IOException {
 
 		// get new login page
 		LoginPage loginPage = getLoginPage();

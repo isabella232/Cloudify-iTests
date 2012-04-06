@@ -113,6 +113,16 @@
         <fileset dir="${sgtest.lib}/mail">
             <include name="**/*.jar"/>
         </fileset>
+    	
+		<!-- wiki jars -->
+        <fileset dir="${sgtest.lib}/wiki">
+            <include name="**/*.jar"/>
+        </fileset>
+		
+		<!-- xstream jars -->
+        <fileset dir="${sgtest.lib}/xstream">
+            <include name="**/*.jar"/>
+        </fileset>
 
         <!-- groovy jars -->
         <fileset dir="${gsHome.dir}/tools/groovy/lib">

@@ -1,5 +1,14 @@
-<suite name="Template" verbose="1" >
-<listeners>
-    <listener class-name="framework.testng.SGTestNGListener" />
-</listeners>
+<suite name="Template0" verbose="1">
+	<listeners>
+		<listener class-name="framework.testng.SGTestNGListener" />
+		<listener class-name="framework.testng.SGTestNgSuiteSplitter" />
+		<!-- <listener class-name="org.uncommons.reportng.JUnitXMLReporter" /> -->
+		<listener class-name="framework.testng.report.TestNgReporterImpl" />
+	</listeners>
+	<test name="Regression0">
+		<classes>
+			<class name="test.cli.cloudify.cloud.SampleTest1"></class>
+			<class name="test.cli.cloudify.cloud.SampleTest2"></class>
+		</classes>
+	</test>
 </suite>

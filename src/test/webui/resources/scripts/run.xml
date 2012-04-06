@@ -77,7 +77,7 @@
 
 		<!-- DSL jars -->
     		<fileset dir="${BUILD_DIR}/lib/platform/usm">
-			<include name="**/dsl.jar"/>
+			<include name="**/usm.jar"/>
 		</fileset>
 		
 		<!-- cli jars -->

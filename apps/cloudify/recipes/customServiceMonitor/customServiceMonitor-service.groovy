@@ -32,7 +32,7 @@ service {
   // A hook for modifying the counter from the CLI
   // cloudify "connect localhost;invoke customServiceMonitors set 4"
   customCommands ([
-        "set" : {x -> counter.set(x as Long);}
+        "set" : {x -> counter.set(x as Long); return counter.get();}
   ])
   
   userInterface {

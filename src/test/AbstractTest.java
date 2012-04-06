@@ -5,6 +5,8 @@ import static framework.utils.LogUtils.log;
 import java.io.File;
 
 import org.openspaces.admin.Admin;
+import org.openspaces.admin.pu.ProcessingUnit;
+import org.openspaces.admin.pu.ProcessingUnitInstance;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 
@@ -96,6 +98,10 @@ public abstract class AbstractTest {
 
 	public static void assertEquals(Object expected, Object actual) {
 		AssertUtils.assertEquals(expected, actual);
+	}
+	
+	public static ProcessingUnitInstance[] repetitiveAssertNumberOfInstances(ProcessingUnit pu, int expectedNumberOfInstances) {
+		return AssertUtils.repetitiveAssertNumberOfInstances(pu,expectedNumberOfInstances);
 	}
 	
 	

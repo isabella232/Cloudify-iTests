@@ -2,6 +2,11 @@ package framework.utils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
+
+import org.openspaces.admin.pu.ProcessingUnit;
+import org.openspaces.admin.pu.ProcessingUnitInstance;
 
 import junit.framework.AssertionFailedError;
 
@@ -227,5 +232,27 @@ public class AssertUtils {
 					}
 				}, 
 				timeoutMilliseconds);
+	}
+	
+	public static ProcessingUnitInstance[] repetitiveAssertNumberOfInstances(
+			final ProcessingUnit pu, final int expectedNumberOfInstances) {
+		
+		final AtomicReference<ProcessingUnitInstance[]> instances = new AtomicReference<ProcessingUnitInstance[]>();
+		repetitiveAssertTrue("Failed waiting for " + expectedNumberOfInstances +" " + pu.getName() + " instances.", 
+			new RepetitiveConditionProvider() {
+			
+			@Override
+			public boolean getCondition() {
+				instances.set(pu.getInstances());
+				final int numberOfInstances = instances.get().length;
+				if (numberOfInstances != expectedNumberOfInstances) {
+					LogUtils.log(
+							"Waiting for " + expectedNumberOfInstances + " " + pu.getName() + " instances. "+
+							"Actual " + numberOfInstances + " instances.");
+				}
+				return numberOfInstances == expectedNumberOfInstances;
+			}
+		}, TimeUnit.MILLISECONDS.convert(5, TimeUnit.MINUTES));
+		return instances.get();
 	}
 }

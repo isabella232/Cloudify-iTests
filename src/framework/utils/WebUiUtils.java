@@ -26,6 +26,9 @@ import org.openqa.selenium.ElementNotVisibleException;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.support.ui.Wait;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -41,6 +44,21 @@ public class WebUiUtils {
 	
 	public static String xmlPath = "test/webui/resources/test-param.xml";
 	public static int ajaxWaitingTime = 5;
+	
+	public static WebElement waitForElement(WebDriver driver, By by, int timeout) {
+		Wait<WebDriver> wait = new WebDriverWait(driver, timeout);
+		return wait.until(visibilityOfElementLocated(by));    
+	}
+	
+	private static ExpectedCondition<WebElement> visibilityOfElementLocated(final By by) {
+		return new ExpectedCondition<WebElement>() {
+			public WebElement apply(WebDriver driver) {
+				WebElement element = driver.findElement(by);
+				return element.isDisplayed() ? element : null;
+			}
+		};
+	}
+
 	
 	public static String retrieveAttribute(By by, String attribute,WebDriver driver) throws ElementNotVisibleException {
 		double seconds = 0;

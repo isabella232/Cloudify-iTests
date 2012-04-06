@@ -44,4 +44,4 @@ xcopy %LOCAL_SGPATH%\deploy\local-builds\wiki-backup\*.wiki Y:\wiki-backup /s /i
 
 @echo cleaning local build folder
 @rmdir %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER% /s /q
-@rmdir %USER_HOME%\%BUILD_FOLDER% /s /q
+call %LOCAL_SGPATH%\deploy\bin\windows\delete_local_build.bat %VERSION% %MILESTONE% %USER_HOME%

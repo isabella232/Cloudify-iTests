@@ -14,13 +14,10 @@ set SGTEST_RUNTIME_FOLDER=C:\Users\ca\sgtest-cloudify
 @if exist %SGTEST_RUNTIME_FOLDER%\deploy\bin\windows rmdir %SGTEST_RUNTIME_FOLDER%\deploy\bin\windows /s /q
 @xcopy %SGTEST_CHECKOUT_FOLDER%\deploy\bin\windows %SGTEST_RUNTIME_FOLDER%\deploy\bin\windows /s /i /y
 
-@echo copying run.xml and run.properties to runtime sgtest folder
+@echo copying run.xml to runtime sgtest folder
 
-@if exist %SGTEST_RUNTIME_FOLDER%\bin\run.xml del %SGTEST_RUNTIME_FOLDER%\bin\run.xml /s /q
-@xcopy %SGTEST_CHECKOUT_FOLDER%\src\test\webui\resources\scripts\run.xml %SGTEST_RUNTIME_FOLDER%\bin /s /i /y
-
-@if exist %SGTEST_RUNTIME_FOLDER%\bin\run.properties del %SGTEST_RUNTIME_FOLDER%\bin\run.properties /s /q
-@xcopy %SGTEST_CHECKOUT_FOLDER%\src\test\webui\resources\scripts\run.properties %SGTEST_RUNTIME_FOLDER%\bin /s /i /y
+@if exist %SGTEST_RUNTIME_FOLDER%\bin\run-win.xml del %SGTEST_RUNTIME_FOLDER%\bin\run-win.xml /s /q
+@xcopy %SGTEST_CHECKOUT_FOLDER%\run-win.xml %SGTEST_RUNTIME_FOLDER%\bin /s /i /y
 
 @if exist %SGTEST_RUNTIME_FOLDER%\bin\pre-run.xml del %SGTEST_RUNTIME_FOLDER%\bin\pre-run.xml /s /q
 @xcopy %SGTEST_CHECKOUT_FOLDER%\bin\pre-run.xml %SGTEST_RUNTIME_FOLDER%\bin /s /i /y

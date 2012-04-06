@@ -1,4 +1,4 @@
-package test.webui.objects.dashboard;
+package test.webui.objects.dashboard.alerts;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +25,7 @@ import framework.utils.AssertUtils.RepetitiveConditionProvider;
  * @author elip
  *
  */
-public class AlertsGrid {
+public class AlertsPanel {
 	
 	public static final String REPLICATION = "Replication Channel Disconnected";
 	
@@ -54,13 +54,13 @@ public class AlertsGrid {
 	Selenium selenium;
 	WebDriver driver;
 
-	public AlertsGrid(Selenium selenium, WebDriver driver) {
+	public AlertsPanel(Selenium selenium, WebDriver driver) {
 		this.selenium = selenium;
 		this.driver = driver;
 	}
 
-	public static AlertsGrid getInstance(Selenium selenium, WebDriver driver) {
-		return new AlertsGrid(selenium, driver);
+	public static AlertsPanel getInstance(Selenium selenium, WebDriver driver) {
+		return new AlertsPanel(selenium, driver);
 	}
 	
 	public void waitForAlerts(final AlertStatus status, final String alertType, final int numberOfResolved){
@@ -78,7 +78,7 @@ public class AlertsGrid {
 				return false;
 			}
 		};
-		AssertUtils.repetitiveAssertTrue(null, condition, 60000);
+		AssertUtils.repetitiveAssertTrue("Could not find " + numberOfResolved + " alerts of type " + alertType + " in status " + status, condition, 60000);
 	}
 	
 	/**

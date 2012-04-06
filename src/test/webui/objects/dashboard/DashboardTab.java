@@ -26,13 +26,6 @@ public class DashboardTab extends MainNavigation {
 		this.driver = driver;
 	}
 		
-	/**
-	 * retrieve the Alerts grid from the Dashboard tab
-	 * @return the Alerts Grid singelton
-	 */
-	public AlertsGrid getAlertsGrid() {
-		return AlertsGrid.getInstance(selenium, driver);
-	}
 	
 	public ServicesGrid getServicesGrid() {
 		return ServicesGrid.getInstance(selenium, driver);
@@ -45,5 +38,9 @@ public class DashboardTab extends MainNavigation {
 	public boolean isCloudify() {
 		driver.findElement(By.id("gs-about-button")).click();
 		return selenium.isTextPresent("Cloudify");
+	}
+	
+	public DashboardSubPanel getDashboardSubPanel() {
+		return new DashboardSubPanel(selenium,driver);
 	}
 }

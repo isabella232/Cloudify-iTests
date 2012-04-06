@@ -114,6 +114,9 @@ public final class WebConstants {
 		public static final String comparisonMetricBottom = "comparisonMetricPanelBottom";
 		
 		public static final String morePopup = "gs-popup-grid-instances";
+		public static final String dashboardeventsPanelToggle = "gs-tab-item-dashboard-events-toggler-button";
+		public static final String dashboardAlertsPanelToggle = "gs-tab-item-alerts-toggler-button";
+
 		
 		public static String getActionToolBoxId(String name) {
 			return "node-tool-ACTIONS-" + name;
@@ -457,7 +460,16 @@ public final class WebConstants {
 		public static final String barLineChartContainer = "highcharts-container";
 		public static final String balanceGauge = "gs-cursor-pointer";
 		
+		public static final String timelineEventContainer = "simileAjax-bubble-contentContainer";
+		public static final String timelineEventIcon = "timeline-event-icon";
+		public static final String timelineEventTitle = "timeline-event-bubble-title";
+		public static final String timelineEventBody = "timeline-event-bubble-body";
+		public static final String timelineEventTime = "timeline-event-bubble-time";
+		public static final String timelineEventTimeStamp = "";
+		public static final String timelineEventStatus = "";
+		
 		public static final String win32OS = "gs-os-icon-Win32";
+		public static final String eventPopupCloseButton = "simileAjax-bubble-close";
 		
 		public static final String getHostClassName(String name) {
 			return "gs-physical-grid-row-" + name;

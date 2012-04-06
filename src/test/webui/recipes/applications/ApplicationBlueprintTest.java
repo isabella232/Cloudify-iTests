@@ -38,18 +38,10 @@ public class ApplicationBlueprintTest extends AbstractSeleniumApplicationRecipeT
 		ApplicationNode cassandra = applicationMap.getApplicationNode("cassandra");
 
 		assertTrue(cassandra != null);
-//		DeploymentStatus cassandraStatus = cassandra.getStatus();
-//		assertTrue("cassandra status is" + cassandraStatus, 
-//				cassandraStatus.equals(DeploymentStatus.SCHEDULED)
-//				|| cassandraStatus.equals(DeploymentStatus.INTACT));	
 
 		ApplicationNode tomcat = applicationMap.getApplicationNode("tomcat");
 
-		assertTrue(tomcat != null);
-//		DeploymentStatus tomcatStatus = tomcat.getStatus();
-//		assertTrue("tomcat status is " + tomcatStatus,
-//				tomcatStatus.equals(DeploymentStatus.SCHEDULED)
-//				|| tomcatStatus.equals(DeploymentStatus.INTACT));		
+		assertTrue(tomcat != null);	
 
 		List<Connector> connectors = tomcat.getConnectors();
 		assertTrue(connectors.size() == 1);

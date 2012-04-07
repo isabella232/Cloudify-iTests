@@ -1,6 +1,6 @@
 set SUITE_NAME=%1
-set INCLUDE=%2
-set EXCLUDE=%3
+set INCLUDE=%~2
+set EXCLUDE=%~3
 
 @cd %LOCAL_SGPATH%\bin
 

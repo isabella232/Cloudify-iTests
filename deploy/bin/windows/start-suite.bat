@@ -1,6 +1,8 @@
 set SUITE_NAME=%1
-set INCLUDE=%~2
-set EXCLUDE=%~3
+set TEMP_INCLUDE=%2
+set TEMP_EXCLUDE=%3
+set INCLUDE=%TEMP_INCLUDE:_=,%
+set EXCLUDE=%TEMP_EXCLUDE:_=,%
 
 @cd %LOCAL_SGPATH%\bin
 

@@ -7,6 +7,8 @@
 	<echo message="SUITE_NAME=${SUITE_NAME}"></echo>
 	<echo message="BUILD_DIR=${BUILD_DIR}"></echo>
 	<echo message="BUILD_NUMBER=${BUILD_NUMBER}"></echo>
+	<echo message="INCLUDE=${INCLUDE}"></echo>
+	<echo message="EXCLUDE=${EXCLUDE}"></echo>
 
     <!-- sgtest properties -->
     <property name="sgtest.homedir" value="${basedir}/../"/>
@@ -75,7 +77,7 @@
 			<include name="**/*.jar"/>
 		</fileset>
 
-		<!-- DSL jars -->
+		<!-- UMS jars -->
     		<fileset dir="${BUILD_DIR}/lib/platform/usm">
 			<include name="**/usm.jar"/>
 		</fileset>
@@ -126,23 +128,10 @@
 
     </path>
 
-    <target name="prepare">
-        <delete dir="${tmp.testng.classes}"/>
-        <delete dir="${sgtest.homedir}/bin/apps"/>
-    </target>
-
     <!--
          Run test suite and generate test summary.
     -->
-    <target name="testsummary" description="Run tests and generate test summary" depends="prepare">
-        <mkdir dir="${tmp.testng.classes}"/>
-
-        <unzip src="${sgtest.homedir}/lib/gs-sgtest.jar" dest="${tmp.testng.classes}"/>
-
-        <mkdir dir="${sgtest.homedir}/bin/apps"/>
-        <copy todir="${sgtest.homedir}/bin/apps">
-            <fileset dir="${tmp.testng.classes}/apps"/>
-        </copy>
+    <target name="testsummary" description="Run tests and generate test summary">
         <mkdir dir="${testng.summary.dir}"/>
 	 <taskdef resource="testngtasks" classpathref="classpath"/>
         <testng suitename="${SUITE_NAME}${SUITE_ID}" testname="${SUITE_NAME}${SUITE_ID}" classpathref="classpath" outputDir="${testng.summary.dir}"

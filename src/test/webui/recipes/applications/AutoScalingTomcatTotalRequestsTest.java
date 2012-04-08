@@ -48,6 +48,8 @@ public class AutoScalingTomcatTotalRequestsTest extends AbstractSeleniumApplicat
 	private static final String SERVICE_NAME = "tomcat";
 	private static final String ABSOLUTE_SERVICE_NAME = ServiceUtils.getAbsolutePUName(APPLICATION_NAME,SERVICE_NAME);
 	private static final int NUMBER_OF_HTTP_GET_THREADS = 10;
+	private static final int THROUGHPUT_PER_THREAD = 1;
+	private static final int TOTAL_THROUGHPUT = NUMBER_OF_HTTP_GET_THREADS * THROUGHPUT_PER_THREAD;
 	private ScheduledExecutorService executor;
 	private String applicationUrl;
 	private AtomicInteger requestsMade = new AtomicInteger(0);
@@ -155,12 +157,12 @@ public class AutoScalingTomcatTotalRequestsTest extends AbstractSeleniumApplicat
 		pu.setStatisticsInterval(1, TimeUnit.SECONDS);
 		pu.startStatisticsMonitor();
 		
+		repetitiveAssertNumberOfInstances(pu, 1);
 		for(int i = 0 ; i < NUMBER_OF_HTTP_GET_THREADS ; i++){
-			executor.scheduleWithFixedDelay(new HttpRequest(new URL(applicationUrl)), 0, 1, TimeUnit.SECONDS);
-		
+			executor.scheduleWithFixedDelay(new HttpRequest(new URL(applicationUrl)), 0, THROUGHPUT_PER_THREAD, TimeUnit.SECONDS);
 		}
-		repetitiveAssertStatistics(pu, statisticsId, (double)NUMBER_OF_HTTP_GET_THREADS);
-				
+		repetitiveAssertStatistics(pu, statisticsId, (double)THROUGHPUT_PER_THREAD * NUMBER_OF_HTTP_GET_THREADS);
+		repetitiveAssertNumberOfInstances(pu, 2);
 		executor.shutdownNow();
 		Assert.assertTrue(executor.awaitTermination(30, TimeUnit.SECONDS));
 		uninstallApplication("travel", true);

@@ -70,10 +70,10 @@ public class ByonCloudService extends AbstractCloudService {
 		propsToReplace.put("ENTER_CLOUD_PASSWORD", BYON_CLOUD_PASSWORD);
 		propsToReplace.put("ENTER_SERVER_USER", BYON_SERVER_USER);
 		propsToReplace.put("ENTER_SERVER_PASSWORD", BYON_SERVER_PASSWORD);
-		propsToReplace.put("cloudify_agent_", this.machinePrefix + "cloudify_agent_");
+		propsToReplace.put("cloudify_agent_", this.machinePrefix + "cloudify_agent");
 		propsToReplace.put("cloudify_manager", this.machinePrefix + "cloudify_manager");
 		propsToReplace.put("0.0.0.0", ipList);
-		propsToReplace.put("numberOfManagementMachines", Integer.toString(numberOfManagementMachines));
+		propsToReplace.put("numberOfManagementMachines 1", "numberOfManagementMachines "  + numberOfManagementMachines);
 		
 		IOUtils.replaceTextInFile(originalCloudDslFile.getAbsolutePath(), propsToReplace);
 		

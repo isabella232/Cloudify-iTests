@@ -38,10 +38,10 @@ public class Ec2CloudService extends AbstractCloudService {
 		Map<String, String> propsToReplace = new HashMap<String,String>();
 		propsToReplace.put("ENTER_USER", user);
 		propsToReplace.put("ENTER_API_KEY", apiKey);
-		propsToReplace.put("cloudify_agent_", this.machinePrefix + "cloudify_agent_");
+		propsToReplace.put("cloudify_agent_", this.machinePrefix + "cloudify_agent");
 		propsToReplace.put("cloudify_manager", this.machinePrefix + "cloudify_manager");
 		propsToReplace.put("ENTER_KEY_FILE", pemFileName + ".pem");
-		propsToReplace.put("numberOfManagementMachines", Integer.toString(numberOfManagementMachines));
+		propsToReplace.put("numberOfManagementMachines 1", "numberOfManagementMachines "  + numberOfManagementMachines);
 		
 		IOUtils.replaceTextInFile(originalCloudDslFile.getAbsolutePath(), propsToReplace);
 

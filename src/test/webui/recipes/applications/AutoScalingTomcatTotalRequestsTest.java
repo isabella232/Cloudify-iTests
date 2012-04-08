@@ -44,7 +44,7 @@ import framework.utils.WebUtils;
 public class AutoScalingTomcatTotalRequestsTest extends AbstractSeleniumApplicationRecipeTest {
 
 	private static final String COUNTER_METRIC = "Total Requests Count";
-	private static final String APPLICATION_NAME = "travel";
+	private static final String APPLICATION_NAME = "petclinic-simple-scalingRules";
 	private static final String SERVICE_NAME = "tomcat";
 	private static final String ABSOLUTE_SERVICE_NAME = ServiceUtils.getAbsolutePUName(APPLICATION_NAME,SERVICE_NAME);
 	private static final int NUMBER_OF_HTTP_GET_THREADS = 10;
@@ -161,7 +161,7 @@ public class AutoScalingTomcatTotalRequestsTest extends AbstractSeleniumApplicat
 		for(int i = 0 ; i < NUMBER_OF_HTTP_GET_THREADS ; i++){
 			executor.scheduleWithFixedDelay(new HttpRequest(new URL(applicationUrl)), 0, THROUGHPUT_PER_THREAD, TimeUnit.SECONDS);
 		}
-		repetitiveAssertStatistics(pu, statisticsId, (double)THROUGHPUT_PER_THREAD * NUMBER_OF_HTTP_GET_THREADS);
+		repetitiveAssertStatistics(pu, statisticsId, (double)TOTAL_THROUGHPUT);
 		repetitiveAssertNumberOfInstances(pu, 2);
 		executor.shutdownNow();
 		Assert.assertTrue(executor.awaitTermination(30, TimeUnit.SECONDS));
@@ -173,8 +173,7 @@ public class AutoScalingTomcatTotalRequestsTest extends AbstractSeleniumApplicat
 	public class HttpRequest implements Runnable{
 		
 		private URL url;
-		
-		
+				
 		public HttpRequest(URL url){
 			this.url = url;
 		}
@@ -190,7 +189,6 @@ public class AutoScalingTomcatTotalRequestsTest extends AbstractSeleniumApplicat
 					LogUtils.log("an HttpRequest thread failed", t);
 				}
 				throw new RuntimeException(t); // this thread will never be scheduled again
-				//barrier.reset();
 			}finally{
 				client.getConnectionManager().shutdown();
 			}

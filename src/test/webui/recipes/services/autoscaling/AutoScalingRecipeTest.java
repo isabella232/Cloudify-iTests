@@ -213,7 +213,7 @@ public class AutoScalingRecipeTest extends AbstractSeleniumServiceRecipeTest {
 				admin.getAlertManager().getAlertTriggered().remove(listener);
 			}
 		}
-		super.uninstallService(ABSOLUTE_SERVICE_NAME);
+		super.uninstallService(SERVICE_NAME);
 	}
 
 	private void initAlerts() {
@@ -297,8 +297,4 @@ public class AutoScalingRecipeTest extends AbstractSeleniumServiceRecipeTest {
 			LogUtils.log(output);
 		}
 	}
-
-	
-
-
 }

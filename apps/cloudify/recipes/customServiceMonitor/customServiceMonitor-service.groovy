@@ -63,6 +63,41 @@ service {
     )
   }
 
+  serviceStatistics ([
+    
+    serviceStatistics {
+      
+      name "averageCounter"
+    
+      // The name of the metric that is the basis for the scale rule decision
+      metric "counter"
+      
+      // (Optional)
+      // The sliding time range (in seconds) for aggregating per-instance metric samples
+      // The number of samples in the time windows equals the time window divided by the sampling period
+      // Default: 300
+      movingTimeRangeInSeconds 5
+      
+      // (Optional)
+      // The algorithms for aggregating metric samples by instances and by time.
+      // Metric samples are aggregated separately per instance in the specified time range,
+      // and then aggregated again for all instances.
+      // Default: Statistics.averageOfAverages
+      // Possible values: Statistics.maximumOfAverages, Statistics.minimumOfAverages, Statistics.averageOfAverages, Statistics.percentileOfAverages(90)
+      //                  Statistics.maximumOfMaximums, Statistics.minimumOfMinimums
+      //
+      // This has the same effect as setting instancesStatistics and timeStatistics separately. 
+      // For example: 
+      // statistics Statistics.maximumOfAverages
+      // is the same as:
+      // timeStatistics Statistics.average
+      // instancesStatistics Statistics.maximum
+      //
+      statistics Statistics.averageOfAverages
+      
+    }
+  ])
+  
   // global flag that enables changing number of instances for this service
   elastic true
 
@@ -70,9 +105,11 @@ service {
   numInstances 2
      
   // The minimum number of service instances
+  // Used together with scaling rules
   minAllowedInstances 2
     
   // The maximum number of service instances
+  // Used together with scaling rules
   maxAllowedInstances 4
 
   // The time (in seconds) that scaling rules are disabled after scale in (instances removed) 
@@ -80,51 +117,34 @@ service {
   //
   // This has the same effect as setting scaleInCooldownInSeconds and scaleOutCooldownInSeconds separately.
   //
+  // Used together with scaling rules
   scaleCooldownInSeconds 0
-       
-  // Defines an automatic scaling rule based on "counter" metric value
-  scalingRules {
+ 
    
-    //The time (in seconds) between two consecutive metric samples
-    samplingPeriodInSeconds 1
-         
-    // The name of the metric that is the basis for the scale rule decision
-    metric "counter"
-    
-    // (Optional)
-    // The sliding time range (in seconds) for aggregating per-instance metric samples
-    // The number of samples in the time windows equals the time window divided by the sampling period
-    // Default: 300
-    movingTimeRangeInSeconds 5
-    
-    // (Optional)
-    // The algorithms for aggregating metric samples by instances and by time.
-    // Metric samples are aggregated separately per instance in the specified time range,
-    // and then aggregated again for all instances.
-    // Default: Statistics.averageOfAverages
-    // Possible values: Statistics.maximumOfAverages, Statistics.minimumOfAverages, Statistics.averageOfAverages, Statistics.percentileOfAverages(90)
-    //                  Statistics.maximumOfMaximums, Statistics.minimumOfMinimums
-    //
-    // This has the same effect as setting instancesStatistics and timeStatistics separately. 
-    // For example: 
-    // statistics Statistics.maximumOfAverages
-    // is the same as:
-    // timeStatistics Statistics.average
-    // instancesStatistics Statistics.maximum
-    //
-    statistics Statistics.averageOfAverages
+  // The time (in seconds) between two consecutive metric samples
+  // Used together with scaling rules
+   samplingPeriodInSeconds 1
         
-    // The instancesStatistics over which the number of instances is increased or decreased
-    highThreshold {
-      value 90
-      instancesIncrease 1
+  // Defines an automatic scaling rule based on "counter" metric value
+  scalingRules ([
+    scalingRule {
+      statistics "averageCounter"
+          
+      // The instancesStatistics over which the number of instances is increased or decreased
+      highThreshold {
+        value 90
+        instancesIncrease 1
+      }
+      
+    },
+    scalingRule {
+      statistics "averageCounter"
+      
+      // The instancesStatistics below which the number of instances is increased or decreased
+      lowThreshold {
+        value 30
+        instancesDecrease 2
+      }
     }
-    
-    // The instancesStatistics below which the number of instances is increased or decreased
-    lowThreshold {
-      value 30
-      instancesDecrease 1
-    }
-
-  }
+   ])
 }

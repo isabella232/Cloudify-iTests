@@ -18,9 +18,9 @@ import org.cloudifysource.dsl.utils.ServiceUtils;
 import org.openspaces.admin.internal.pu.InternalProcessingUnit;
 import org.openspaces.admin.pu.DeploymentStatus;
 import org.openspaces.admin.pu.statistics.AverageInstancesStatisticsConfig;
-import org.openspaces.admin.pu.statistics.AverageTimeWindowStatisticsConfigurer;
 import org.openspaces.admin.pu.statistics.ProcessingUnitStatisticsId;
 import org.openspaces.admin.pu.statistics.ProcessingUnitStatisticsIdConfigurer;
+import org.openspaces.admin.pu.statistics.ThroughputTimeWindowStatisticsConfigurer;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -38,12 +38,11 @@ import test.webui.objects.topology.applicationmap.ApplicationNode;
 import framework.utils.AssertUtils;
 import framework.utils.AssertUtils.RepetitiveConditionProvider;
 import framework.utils.LogUtils;
-import framework.utils.ThreadBarrier;
 import framework.utils.WebUtils;
 
 public class TomcatTotalRequestsTest extends AbstractSeleniumApplicationRecipeTest {
 
-	private static final String COUNTER_METRIC = "Requests Count";
+	private static final String COUNTER_METRIC = "Total Requests Count";
 	private static final String APPLICATION_NAME = "travel";
 	private static final String SERVICE_NAME = "tomcat";
 	private static final String ABSOLUTE_SERVICE_NAME = ServiceUtils.getAbsolutePUName(APPLICATION_NAME,SERVICE_NAME);
@@ -137,36 +136,35 @@ public class TomcatTotalRequestsTest extends AbstractSeleniumApplicationRecipeTe
 				.monitor(CloudifyConstants.USM_MONITORS_SERVICE_ID)
 				.metric(COUNTER_METRIC)
 				.instancesStatistics(new AverageInstancesStatisticsConfig())
-				.timeWindowStatistics(new AverageTimeWindowStatisticsConfigurer().timeWindow(30, TimeUnit.SECONDS).create())
+				.timeWindowStatistics(new ThroughputTimeWindowStatisticsConfigurer().timeWindow(30, TimeUnit.SECONDS).create())
 				.create();
+		 
 		pu.addStatisticsCalculation(statisticsId);
 		pu.setStatisticsInterval(1, TimeUnit.SECONDS);
 		pu.startStatisticsMonitor();
 		
 		int threadNum = 10;
-		ThreadBarrier barrier = new ThreadBarrier(1 + threadNum);
 		ScheduledExecutorService executor= Executors.newScheduledThreadPool(threadNum);
-		for(int i=0 ; i<threadNum ; i++)
-			executor.scheduleWithFixedDelay(new HttpRequest(new URL(applicationUrl), barrier), 0, 1, TimeUnit.SECONDS);
+		for(int i=0 ; i<threadNum ; i++){
+			executor.scheduleWithFixedDelay(new HttpRequest(new URL(applicationUrl)), 0, 1, TimeUnit.SECONDS);
 		
-		barrier.inspect();
-		Thread.sleep(1000 * 20);
-		executor.shutdown();
-		executor.awaitTermination(10, TimeUnit.SECONDS);
-		
-		repetitiveAssertStatistics(pu, statisticsId, new Double(requestsMade.get()));
+		}
+		repetitiveAssertStatistics(pu, statisticsId, (double)threadNum);
+				
+		executor.shutdownNow();
+		Assert.assertTrue(executor.awaitTermination(30, TimeUnit.SECONDS));
 		uninstallApplication("travel", true);
-		
 	}
+	
+	
 	
 	public class HttpRequest implements Runnable{
 		
 		private URL url;
-		private ThreadBarrier barrier;
 		
-		public HttpRequest(URL url, ThreadBarrier barrier){
+		
+		public HttpRequest(URL url){
 			this.url = url;
-			this.barrier = barrier;
 		}
 		@Override
 		public void run() {
@@ -175,9 +173,12 @@ public class TomcatTotalRequestsTest extends AbstractSeleniumApplicationRecipeTe
 				HttpGet get = new HttpGet(url.toURI());				
 				client.execute(get);
 				requestsMade.incrementAndGet();
-			} catch (Exception e) {
-				e.printStackTrace();
-				barrier.reset();
+			} catch (Throwable t) {
+				if (!(t instanceof InterruptedException)) {
+					LogUtils.log("an HttpRequest thread failed", t);
+				}
+				throw new RuntimeException(t); // this thread will never be scheduled again
+				//barrier.reset();
 			}finally{
 				client.getConnectionManager().shutdown();
 			}

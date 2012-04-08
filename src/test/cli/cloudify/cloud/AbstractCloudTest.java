@@ -2,6 +2,8 @@ package test.cli.cloudify.cloud;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
@@ -12,36 +14,37 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.DataProvider;
 
-import com.j_spaces.kernel.JSpaceUtilities;
-
 import test.AbstractTest;
-import test.cli.cloudify.CloudTestUtils;
 import test.cli.cloudify.CommandTestUtils;
+import test.cli.cloudify.cloud.byon.ByonCloudService;
 import test.cli.cloudify.cloud.ec2.Ec2CloudService;
 import test.cli.cloudify.cloud.hp.HpCloudService;
-import test.cli.cloudify.cloud.rackspace.RackspaceCloudService;
-import test.cli.cloudify.cloud.terremark.TerremarkCloudService;
-import test.cli.cloudify.cloud.byon.ByonCloudService;
+
+import com.j_spaces.kernel.JSpaceUtilities;
+
 import framework.report.MailReporterProperties;
 import framework.tools.SimpleMail;
 import framework.utils.LogUtils;
 
 public class AbstractCloudTest extends AbstractTest {
 	
-	public static final String RACKSPACE = "rackspace";
-	public static final String BYON = "byon";
-	public static final String TERREMARK = "terremark";
-	public static final String OPENSTACK = "openstack";
-	public static final String EC2 = "ec2";
+	private Map<String, CloudService> services = new HashMap<String, CloudService>();
 
 	private static String[][] SUPPORTED_CLOUDS = null;
 	private static final String SUPPORTED_CLOUDS_PROP = "supported-clouds";
+
+	private static final String BYON = "byon";
+
+	private static final String OPENSTACK = "openstack";
+
+	private static final String EC2 = "ec2";
 	
 	private CloudService service;
 	
-	public void setService(CloudService service) {
-		this.service = service;
+	public void putService(CloudService service) {
+		services.put(service.getCloudName(), service);
 	}
+	
 	
 	/**
 	 * set the service CloudService instance to a specific cloud provider.
@@ -49,19 +52,11 @@ public class AbstractCloudTest extends AbstractTest {
 	 * @param cloudName
 	 */
 	public void setCloudToUse(String cloudName) {
-		
-		if (cloudName.equals(EC2)) {
-			service = Ec2CloudService.getService();
-		}
-		if (cloudName.equals(OPENSTACK)) {
-			service = HpCloudService.getService();
-		}
-		if (cloudName.equals(TERREMARK)) {
-			service = TerremarkCloudService.getService();
-		}
-		if (cloudName.equals(BYON)) {
-			service = ByonCloudService.getService();
-		}
+		service = services.get(cloudName);
+	}
+	
+	public void setService(CloudService service) {
+		this.service = service;
 	}
 	
 	public CloudService getService() {
@@ -73,29 +68,18 @@ public class AbstractCloudTest extends AbstractTest {
 		return SUPPORTED_CLOUDS;
 	}
 	
-	@Override
-	@BeforeMethod
-	public void beforeTest() {
-		LogUtils.log("Test Configuration Started: " + this.getClass());
-	}
-	
 	/**
 	 * Before the suite starts bootstrap all clouds.
+	 * @throws SecurityException 
+	 * @throws NoSuchMethodException 
 	 */
 	@BeforeSuite(alwaysRun = true, enabled = true)
-	public void bootstrapSupportedClouds() {
-
+	public void bootstrapSupportedClouds() throws NoSuchMethodException, SecurityException {
+		
+		String clouds = System.getProperty(SUPPORTED_CLOUDS_PROP);
 		SUPPORTED_CLOUDS = toTwoDimentionalArray(System.getProperty(SUPPORTED_CLOUDS_PROP));
-		
-		String clouds = "";
-		for (int j = 0 ; j < SUPPORTED_CLOUDS.length ; j++) {
-			String supportedCloud = SUPPORTED_CLOUDS[j][0];
-			clouds = clouds + supportedCloud + ",";
-		}
-		
-		
+		setupCloudManagmentMethods();
 		LogUtils.log("bootstrapping to clouds : " + clouds);
-		
         boolean success = false;
 		try {
         	success = bootstrapClouds();
@@ -109,8 +93,13 @@ public class AbstractCloudTest extends AbstractTest {
         		Assert.fail("bootstrap-cloud failed.");
         	}
         }
-		
 		LogUtils.log("finished bootstrapped to clouds : " + clouds);
+	}
+
+	private void setupCloudManagmentMethods() throws NoSuchMethodException, SecurityException {
+		services.put(BYON, new ByonCloudService());
+		services.put(OPENSTACK, new HpCloudService());
+		services.put(EC2, new Ec2CloudService());
 	}
 
 	/**
@@ -119,12 +108,7 @@ public class AbstractCloudTest extends AbstractTest {
 	@AfterSuite(enabled = true)
 	public void teardownSupportedClouds() {
 		
-		String clouds = "";
-		for (int j = 0 ; j < SUPPORTED_CLOUDS.length ; j++) {
-			String supportedCloud = SUPPORTED_CLOUDS[j][0];
-			clouds = clouds + supportedCloud + ",";
-		}
-
+		String clouds = System.getProperty(SUPPORTED_CLOUDS_PROP);
 		
 		LogUtils.log("tearing down clouds : " + clouds);
 		
@@ -137,56 +121,17 @@ public class AbstractCloudTest extends AbstractTest {
 		
 		int numberOfSuccesfullyBootstrappedClouds = 0;
 		
-		for (int j = 0 ; j < SUPPORTED_CLOUDS.length ; j++) {
+		for (int j = 0 ; j < SUPPORTED_CLOUDS.length ; j++){
 			String supportedCloud = SUPPORTED_CLOUDS[j][0];
-			if (supportedCloud.equals(EC2)) {
-				try {
-					Ec2CloudService.getService().bootstrapCloud();
-					numberOfSuccesfullyBootstrappedClouds++;
-				}
-				catch (Throwable e) {
-					LogUtils.log("caught an exception while bootstrapping ec2", e);
-				}
-				
+			try {
+				services.get(supportedCloud).bootstrapCloud();
+				numberOfSuccesfullyBootstrappedClouds++;
 			}
-			if (supportedCloud.equals(OPENSTACK)) {
-				try {
-					HpCloudService.getService().bootstrapCloud();
-					numberOfSuccesfullyBootstrappedClouds++;
-				}
-				catch (Throwable e) {
-					LogUtils.log("caught an exception while bootstrapping openstack", e);
-				}
-			}
-			if (supportedCloud.equals(TERREMARK)) {
-				try {
-					TerremarkCloudService.getService().bootstrapCloud();
-					numberOfSuccesfullyBootstrappedClouds++;
-				}
-				catch (Throwable e) {
-					LogUtils.log("caught an exception while bootstrapping terremark", e);
-				}
-			}
-			if (supportedCloud.equals(RACKSPACE)) {
-				try {
-					RackspaceCloudService.getService().bootstrapCloud();
-					numberOfSuccesfullyBootstrappedClouds++;
-				}
-				catch (Throwable e) {
-					LogUtils.log("caught an exception while bootstrapping rackspace", e);
-				}
-			}
-			if (supportedCloud.equals(BYON)) {
-				try {
-					ByonCloudService.getService().bootstrapCloud();
-					numberOfSuccesfullyBootstrappedClouds++;
-				}
-				catch (Throwable e) {
-					LogUtils.log("caught an exception while bootstrapping byon", e);
-				}				
+			catch (Throwable e) {
+				LogUtils.log("caught an exception while bootstrapping " + supportedCloud, e);
 			}
 		}
-		
+
 		if (numberOfSuccesfullyBootstrappedClouds > 0) return true;
 		return false;	
 	}
@@ -194,49 +139,24 @@ public class AbstractCloudTest extends AbstractTest {
 	@Override
 	@AfterMethod
 	public void afterTest() {
-		
+	}
+	
+	@Override
+	@BeforeMethod
+	public void beforeTest() {
 	}
 
 	
 	private void teardownClouds() {
 		
-		for (int j = 0 ; j < SUPPORTED_CLOUDS.length ; j++) {
+		for (int j = 0 ; j < SUPPORTED_CLOUDS.length ; j++){
 			String supportedCloud = SUPPORTED_CLOUDS[j][0];
-			if (supportedCloud.equals(EC2)) {
-				try {
-					Ec2CloudService.getService().teardownCloud();
-				}
-				catch (Throwable e) {
-					LogUtils.log("caught an exception while tearing down ec2", e);
-					sendTeardownCloudFailedMail(EC2, e);
-				}
+			try{
+				services.get(supportedCloud).teardownCloud();
 			}
-			if (supportedCloud.equals(OPENSTACK)) {
-				try {
-					HpCloudService.getService().teardownCloud();
-				}
-				catch (Throwable e) {
-					LogUtils.log("caught an exception while tearing down openstack", e);
-					sendTeardownCloudFailedMail(OPENSTACK, e);
-				}
-			}
-			if (supportedCloud.equals(TERREMARK)) {
-				try {
-					TerremarkCloudService.getService().teardownCloud();
-				}
-				catch (Throwable e) {
-					LogUtils.log("caught an exception while tearing down terremark", e);
-					sendTeardownCloudFailedMail(TERREMARK, e);
-				}
-			}
-			if (supportedCloud.equals(BYON)) {
-				try {
-					ByonCloudService.getService().teardownCloud();
-				}
-				catch (Throwable e) {
-					LogUtils.log("caught an exception while tearing down byon", e);
-					sendTeardownCloudFailedMail(BYON, e);
-				}
+			catch (Throwable e) {
+				LogUtils.log("caught an exception while bootstrapping " + supportedCloud, e);
+				sendTeardownCloudFailedMail(supportedCloud, e);
 			}
 		}
 	}
@@ -372,17 +292,7 @@ public class AbstractCloudTest extends AbstractTest {
 	protected void sendTeardownCloudFailedMail(String cloudName, Throwable error) {
 		
 		if (!isDevMode()) {
-			String url = null;
-			if (cloudName.equals(EC2)) {
-				url = CloudTestUtils.EC2_MANAGEMENT_CONSOLE_URL;
-			}
-			if (cloudName.equals(OPENSTACK)) {
-				url = CloudTestUtils.HPCLOUD_MANAGEMENT_CONSOLE_URL;
-			}
-			if (cloudName.equals(BYON)) {
-				url = "";
-			}
-			
+			String url = "";		
 			Properties props = new Properties();
 			InputStream in = this.getClass().getResourceAsStream("mailreporter.properties");
 			try {

@@ -11,10 +11,12 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import test.cli.cloudify.CloudTestUtils;
 import test.cli.cloudify.CommandTestUtils;
-import test.cli.cloudify.cloud.ec2.Ec2StockDemoCloudService;
+import test.cli.cloudify.cloud.ec2.Ec2CloudService;
 import framework.tools.SGTestHelper;
 import framework.utils.LogUtils;
+import framework.utils.ScriptUtils;
 import framework.utils.WebUtils;
 /**
  * runs on ec2<p>
@@ -34,12 +36,28 @@ public class RepetativeInstallAndUninstallStockDemoWithProblemAtInstallEc2Test e
 	private final int repetitions = 3 ;
 	private String cassandraPostStartScriptPath = null;
 	private String newPostStartScriptPath = null;
-	private AbstractCloudService service;
+	private Ec2CloudService service;
 	private URL stockdemoUrl;
 	
 	@BeforeMethod
 	public void bootstrap() throws IOException, InterruptedException {	
-		service = new Ec2StockDemoCloudService();
+		
+		File cloudPluginDir = new File(ScriptUtils.getBuildPath() + "/tools/cli/plugins/esc/ec2");
+		File bootstapManagementInSGTest = new File(SGTestHelper.getSGTestRootDir() + "/apps/cloudify/cloud/ec2/bootstrap-management.sh");
+		File bootstapManagementInBuild = new File(cloudPluginDir.getAbsolutePath() + "/upload/bootstrap-management.sh");
+		bootstapManagementInBuild.delete();
+		FileUtils.copyFile(bootstapManagementInSGTest, bootstapManagementInBuild);
+		
+		File xapLicense = new File(SGTestHelper.getSGTestRootDir() + "/apps/cloudify/cloud/gslicense.xml");
+		File cloudifyOverrides = new File(cloudPluginDir.getAbsolutePath() + "/upload/cloudify-overrides");
+		if (!cloudifyOverrides.exists()) {
+			cloudifyOverrides.mkdir();
+		}
+		FileUtils.copyFileToDirectory(xapLicense, cloudifyOverrides);
+		
+		
+		service = new Ec2CloudService();
+		service.setMachinePrefix(this.getClass().getName() + CloudTestUtils.SGTEST_MACHINE_PREFIX);
 		service.bootstrapCloud();
 		setService(service);
 		String hostIp = service.getRestUrl().substring(0, service.getRestUrl().lastIndexOf(':'));
@@ -54,13 +72,7 @@ public class RepetativeInstallAndUninstallStockDemoWithProblemAtInstallEc2Test e
 		}
 		catch (Throwable e) {
 			LogUtils.log("caught an exception while tearing down ec2", e);
-			sendTeardownCloudFailedMail(EC2, e);
-		}
-		File backupEc2Dir = new File(SGTestHelper.getBuildDir() + "/tools/cli/plugins/esc/ec2.backup");
-		File currentEc2Dir = new File(SGTestHelper.getBuildDir() + "/tools/cli/plugins/esc/ec2");
-		if (backupEc2Dir.exists()){
-			FileUtils.deleteDirectory(currentEc2Dir);
-			FileUtils.moveDirectory(backupEc2Dir, currentEc2Dir);
+			sendTeardownCloudFailedMail("ec2", e);
 		}
 	}
 	

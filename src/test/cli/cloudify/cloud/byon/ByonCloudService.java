@@ -17,11 +17,13 @@ package test.cli.cloudify.cloud.byon;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 
 import test.cli.cloudify.cloud.AbstractCloudService;
-import framework.utils.LogUtils;
+import framework.utils.IOUtils;
 import framework.utils.ScriptUtils;
 
 public class ByonCloudService extends AbstractCloudService {
@@ -31,18 +33,26 @@ public class ByonCloudService extends AbstractCloudService {
 	private static final String BYON_CLOUD_PASSWORD = "tgrid";
 	private static final String BYON_SERVER_USER= "tgrid";
 	private static final String BYON_SERVER_PASSWORD = "tgrid";
-	private static final String SYS_PROP_IP_LIST = "ipList";
+	
+	private String ipList = System.getProperty("ipList");
 
-	private static ByonCloudService self = null;
-
-	private ByonCloudService() {};
-
-	public static ByonCloudService getService() {
-		if (self == null) {
-			self = new ByonCloudService();
-		}
-		return self;	
+	public ByonCloudService(){
+		
 	}
+	
+	public ByonCloudService(Map<String,String> additionalPropsToReplace) {
+		this.additionalPropsToReplace = additionalPropsToReplace;
+	}
+	
+	public void setIpList(String ipList) {
+		this.ipList = ipList;
+	}
+	
+	public String getIpList(String ipList) {
+		return ipList;
+	}
+
+
 
 	@Override
 	public void injectAuthenticationDetails() throws IOException {
@@ -52,22 +62,19 @@ public class ByonCloudService extends AbstractCloudService {
 		File originalCloudDslFile = new File(cloudPluginDir, cloudName + "-cloud.groovy");
 		File backupCloudDslFile = new File(cloudPluginDir, cloudName + "-cloud.backup");
 
-		// Read file contents
-		final String originalDslFileContents = FileUtils.readFileToString(originalCloudDslFile);
-
 		// first make a backup of the original file
 		FileUtils.copyFile(originalCloudDslFile, backupCloudDslFile);
 		
-		LogUtils.log("injecting credentials");
-		LogUtils.log("Machines are " + System.getProperty(SYS_PROP_IP_LIST));
-
-		//replace credentials and replace the ipList default 0.0.0.0 with values that are set through a system property
-		final String modifiedDslFileContents = originalDslFileContents.replace("ENTER_CLOUD_USER", BYON_CLOUD_USER).
-				replace("ENTER_CLOUD_PASSWORD", BYON_CLOUD_PASSWORD).replace("ENTER_SERVER_USER", BYON_SERVER_USER).
-				replace("ENTER_SERVER_PASSWORD", BYON_SERVER_PASSWORD).
-				replace("0.0.0.0", System.getProperty(SYS_PROP_IP_LIST));
+		Map<String, String> propsToReplace = new HashMap<String,String>();
+		propsToReplace.put("ENTER_CLOUD_USER", BYON_CLOUD_USER);
+		propsToReplace.put("ENTER_CLOUD_PASSWORD", BYON_CLOUD_PASSWORD);
+		propsToReplace.put("ENTER_SERVER_USER", BYON_SERVER_USER);
+		propsToReplace.put("ENTER_SERVER_PASSWORD", BYON_SERVER_PASSWORD);
+		propsToReplace.put("0.0.0.0", ipList);
+		propsToReplace.put("numberOfManagementMachines", Integer.toString(numberOfManagementMachines));
 		
-		FileUtils.write(originalCloudDslFile, modifiedDslFileContents);
+		IOUtils.replaceTextInFile(originalCloudDslFile.getAbsolutePath(), propsToReplace);
+		
 	}
 
 	@Override

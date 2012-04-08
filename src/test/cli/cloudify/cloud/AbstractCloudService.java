@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -14,17 +15,55 @@ import test.cli.cloudify.CommandTestUtils;
 import framework.tools.SGTestHelper;
 import framework.utils.AssertUtils;
 import framework.utils.AssertUtils.RepetitiveConditionProvider;
+import framework.utils.IOUtils;
 import framework.utils.LogUtils;
 import framework.utils.ScriptUtils;
 import framework.utils.WebUtils;
 
 public abstract class AbstractCloudService implements CloudService {
 	
-	public static final int NUM_OF_MANAGEMENT_MACHINES = 1;
+	protected int numberOfManagementMachines = 1;
+
+	protected URL[] restAdminUrls = new URL[numberOfManagementMachines];
 	
-    protected URL[] restAdminUrl = new URL[NUM_OF_MANAGEMENT_MACHINES];
-    protected URL[] webUIUrl = new URL[NUM_OF_MANAGEMENT_MACHINES];
+	protected URL[] webUIUrls = new URL[numberOfManagementMachines];
+
+	protected String machinePrefix = CloudTestUtils.SGTEST_MACHINE_PREFIX;
+    protected Map<String,String> additionalPropsToReplace;
+
+    public URL[] getRestAdminUrls() {
+		return restAdminUrls;
+	}
+
+	public URL[] getWebUIUrls() {
+		return webUIUrls;
+	}
+    
+	public int getNumberOfManagementMachines() {
+		return numberOfManagementMachines;
+	}
+
+	public void setNumberOfManagementMachines(int numberOfManagementMachines) {
+		this.numberOfManagementMachines = numberOfManagementMachines;
+	}
+
+	public Map<String, String> getAdditionalPropsToReplace() {
+		return additionalPropsToReplace;
+	}
+
+	public void setAdditionalPropsToReplace(
+			Map<String, String> additionalPropsToReplace) {
+		this.additionalPropsToReplace = additionalPropsToReplace;
+	}
+    
+	public void setMachinePrefix(String machinePrefix) {
+		this.machinePrefix = machinePrefix;
+	}
 	
+	public String getMachinePrefix(String machinePrefix) {
+		return machinePrefix;
+	}
+    
 	public abstract String getCloudName();
 	
 	public abstract void injectAuthenticationDetails() throws IOException;
@@ -33,48 +72,42 @@ public abstract class AbstractCloudService implements CloudService {
         return new URL(stripSlash(url) + "/admin/machines");
     }
     
-    private void overrideLogsFile() throws IOException {
-    	File logging = new File(SGTestHelper.getSGTestRootDir() + "/config/gs_logging.properties");
-    	File uploadOverrides = new File(ScriptUtils.getBuildPath() + "/tools/cli/plugins/esc/" + getCloudName() + "/upload/cloudify-overrides/");
-    	uploadOverrides.mkdir();
-    	File uploadLoggsDir = new File(uploadOverrides.getAbsoluteFile() + "/config/");
-    	uploadLoggsDir.mkdir();
-    	FileUtils.copyFileToDirectory(logging, uploadLoggsDir);
-    }
-	
-    private static String stripSlash(String str) {
-        if (str == null || !str.endsWith("/")) {
-            return str;
-        }
-        return str.substring(0, str.length()-1);
-    }
- 
-    
 	@Override
 	public void bootstrapCloud() throws IOException, InterruptedException {
 		
-		overrideLogsFile();
-		injectAuthenticationDetails();
-		String output = CommandTestUtils.runCommandAndWait("bootstrap-cloud --verbose " + getCloudName());
-		LogUtils.log("Extracting rest url's from cli output");
-		restAdminUrl = extractRestAdminUrls(output, NUM_OF_MANAGEMENT_MACHINES);
-		LogUtils.log("Extracting webui url's from cli output");
-		webUIUrl = extractWebuiUrls(output, NUM_OF_MANAGEMENT_MACHINES);
-		assertBootstrapServicesAreAvailable();
-	    
-	    URL machinesURL;
 		try {
-			machinesURL = getMachinesUrl(restAdminUrl[0].toString());
-		    AssertUtils.assertEquals("Expecting " + NUM_OF_MANAGEMENT_MACHINES + " machines", 
-		    		NUM_OF_MANAGEMENT_MACHINES, CloudTestUtils.getNumberOfMachines(machinesURL));
-		} catch (Exception e) {
-			LogUtils.log("caught exception while geting number of management machines", e);
+			overrideLogsFile();
+			injectAuthenticationDetails();
+			if (additionalPropsToReplace != null) {
+				String pathToCloudGroovy = ScriptUtils.getBuildPath() + "/tools/cli/plugins/esc/" + getCloudName() + "-cloud.groovy";
+				IOUtils.replaceTextInFile(pathToCloudGroovy, additionalPropsToReplace);
+			}
+			String output = CommandTestUtils.runCommandAndWait("bootstrap-cloud --verbose " + getCloudName());
+			LogUtils.log("Extracting rest url's from cli output");
+			restAdminUrls = extractRestAdminUrls(output, numberOfManagementMachines);
+			LogUtils.log("Extracting webui url's from cli output");
+			webUIUrls = extractWebuiUrls(output, numberOfManagementMachines);
+			assertBootstrapServicesAreAvailable();
+
+			URL machinesURL;
+			try {
+				machinesURL = getMachinesUrl(restAdminUrls[0].toString());
+				AssertUtils.assertEquals("Expecting " + numberOfManagementMachines + " machines", 
+						numberOfManagementMachines, CloudTestUtils.getNumberOfMachines(machinesURL));
+			} catch (Exception e) {
+				LogUtils.log("caught exception while geting number of management machines", e);
+			}
+		}
+		finally {
+			// restore to original state to allow for other tests to execute different bootstrap
+			deleteCloudFiles(getCloudName());
 		}
 	}
 
 	@Override
 	public void teardownCloud() throws IOException, InterruptedException {
 		try {
+			injectAuthenticationDetails();
 			CommandTestUtils.runCommandAndWait("teardown-cloud --verbose -force " + getCloudName());
 		}
 		finally {
@@ -84,16 +117,16 @@ public abstract class AbstractCloudService implements CloudService {
 
 	@Override
 	public String getRestUrl() {
-		if (restAdminUrl[0] != null) { // this means the cloud was bootstrapped properly			
-			return restAdminUrl[0].toString();
+		if (restAdminUrls[0] != null) { // this means the cloud was bootstrapped properly			
+			return restAdminUrls[0].toString();
 		}
 		return null;
 	}
 	
 	@Override 
 	public String getWebuiUrl() {
-		if (webUIUrl[0] != null) { // this means the cloud was bootstrapped properly
-			return webUIUrl[0].toString();			
+		if (webUIUrls[0] != null) { // this means the cloud was bootstrapped properly
+			return webUIUrls[0].toString();			
 		}
 		return null;
 	}
@@ -140,7 +173,9 @@ public abstract class AbstractCloudService implements CloudService {
 		File originalCloudDslFile = new File(cloudPluginDir, cloudName + "-cloud.groovy");
 		File backupCloudDslFile = new File(cloudPluginDir, cloudName + "-cloud.backup");
 		File targetPemFolder = new File(ScriptUtils.getBuildPath(), "tools/cli/plugins/esc/" + cloudName + "/upload/");
+		File cloudifyOverrides = new File(cloudPluginDir.getAbsolutePath() + "/upload/cloudify-overrides");
 		
+		// delete pem files from upload dir
 		for (File file : targetPemFolder.listFiles()) {
 			if (file.getName().contains(".pem")) {
 				FileUtils.deleteQuietly(file);
@@ -148,19 +183,23 @@ public abstract class AbstractCloudService implements CloudService {
 			}
 		}
 		
+		// delete cloudify-overrides if exists
+		if (cloudifyOverrides.exists()) {
+			FileUtils.deleteDirectory(cloudifyOverrides);
+		}
+		
+		// make backup file the only file
 		FileUtils.copyFile(backupCloudDslFile, originalCloudDslFile);
 		FileUtils.deleteQuietly(backupCloudDslFile);
-		
-
 	}
 
 	
 	private void assertBootstrapServicesAreAvailable() throws MalformedURLException {
 		
-		for (int i = 0; i < restAdminUrl.length; i++) {
+		for (int i = 0; i < restAdminUrls.length; i++) {
 			// The rest home page is a JSP page, which will fail to compile if there is no JDK installed. So use testrest instead
-			assertWebServiceAvailable(new URL( restAdminUrl[i].toString() + "/service/testrest"));
-			assertWebServiceAvailable(webUIUrl[i]);
+			assertWebServiceAvailable(new URL( restAdminUrls[i].toString() + "/service/testrest"));
+			assertWebServiceAvailable(webUIUrls[i]);
 		}
 
 		
@@ -178,5 +217,21 @@ public abstract class AbstractCloudService implements CloudService {
         }, CloudTestUtils.OPERATION_TIMEOUT);	    
 	}
 
+    
+    private void overrideLogsFile() throws IOException {
+    	File logging = new File(SGTestHelper.getSGTestRootDir() + "/config/gs_logging.properties");
+    	File uploadOverrides = new File(ScriptUtils.getBuildPath() + "/tools/cli/plugins/esc/" + getCloudName() + "/upload/cloudify-overrides/");
+    	uploadOverrides.mkdir();
+    	File uploadLoggsDir = new File(uploadOverrides.getAbsoluteFile() + "/config/");
+    	uploadLoggsDir.mkdir();
+    	FileUtils.copyFileToDirectory(logging, uploadLoggsDir);
+    }
+	
+    private static String stripSlash(String str) {
+        if (str == null || !str.endsWith("/")) {
+            return str;
+        }
+        return str.substring(0, str.length()-1);
+    }
 
 }

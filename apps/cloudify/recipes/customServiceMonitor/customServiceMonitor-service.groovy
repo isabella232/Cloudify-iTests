@@ -128,7 +128,16 @@ service {
   // Defines an automatic scaling rule based on "counter" metric value
   scalingRules ([
     scalingRule {
-      statistics "averageCounter"
+
+      serviceStatistics {
+        
+        metric "counter"
+        
+        movingTimeRangeInSeconds 5
+        
+        statistics Statistics.averageOfAverages
+      }
+
           
       // The instancesStatistics over which the number of instances is increased or decreased
       highThreshold {
@@ -138,7 +147,8 @@ service {
       
     },
     scalingRule {
-      statistics "averageCounter"
+    
+      serviceStatistics "averageCounter"
       
       // The instancesStatistics below which the number of instances is increased or decreased
       lowThreshold {

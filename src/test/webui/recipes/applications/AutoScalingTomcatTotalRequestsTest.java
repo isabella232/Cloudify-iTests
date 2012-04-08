@@ -21,6 +21,7 @@ import org.openspaces.admin.pu.statistics.AverageInstancesStatisticsConfig;
 import org.openspaces.admin.pu.statistics.ProcessingUnitStatisticsId;
 import org.openspaces.admin.pu.statistics.ProcessingUnitStatisticsIdConfigurer;
 import org.openspaces.admin.pu.statistics.ThroughputTimeWindowStatisticsConfigurer;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -46,6 +47,8 @@ public class AutoScalingTomcatTotalRequestsTest extends AbstractSeleniumApplicat
 	private static final String APPLICATION_NAME = "travel";
 	private static final String SERVICE_NAME = "tomcat";
 	private static final String ABSOLUTE_SERVICE_NAME = ServiceUtils.getAbsolutePUName(APPLICATION_NAME,SERVICE_NAME);
+	private static final int NUMBER_OF_HTTP_GET_THREADS = 10;
+	private ScheduledExecutorService executor;
 	private String applicationUrl;
 	private AtomicInteger requestsMade = new AtomicInteger(0);
 	
@@ -55,6 +58,15 @@ public class AutoScalingTomcatTotalRequestsTest extends AbstractSeleniumApplicat
 		super.setCurrentApplication(APPLICATION_NAME);
 		super.install();
 		applicationUrl = "http://" + InetAddress.getLocalHost().getHostAddress() + ":8080";
+		this.executor= Executors.newScheduledThreadPool(NUMBER_OF_HTTP_GET_THREADS);
+	}
+	
+	@AfterMethod(alwaysRun = true)
+	public void shutdownExecutor() {
+		if (this.executor != null) {
+			this.executor.shutdownNow();
+			this.executor = null;
+		}
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT , enabled = true)
@@ -111,7 +123,7 @@ public class AutoScalingTomcatTotalRequestsTest extends AbstractSeleniumApplicat
 
 		appMap.selectApplication(APPLICATION_NAME);
 		
-		takeScreenShot(this.getClass(), "customServiceMonitorsAutoScalingTest","topology");
+		takeScreenShot(this.getClass(), "AutoScalingTomcatTotalRequestsTest","topology");
 
 		final ApplicationNode simple = appMap.getApplicationNode(SERVICE_NAME);
 
@@ -126,7 +138,7 @@ public class AutoScalingTomcatTotalRequestsTest extends AbstractSeleniumApplicat
 		};
 		repetitiveAssertTrueWithScreenshot(
 				"customServiceMonitor service is displayed as " + simple.getStatus() + 
-					"even though it is installed", condition, this.getClass(), "customServiceMonitorsAutoScalingTest", SERVICE_NAME);
+					"even though it is installed", condition, this.getClass(), "AutoScalingTomcatTotalRequestsTest", SERVICE_NAME);
 		
 		Assert.assertTrue(WebUtils.isURLAvailable(new URL(applicationUrl)));
 		
@@ -143,13 +155,11 @@ public class AutoScalingTomcatTotalRequestsTest extends AbstractSeleniumApplicat
 		pu.setStatisticsInterval(1, TimeUnit.SECONDS);
 		pu.startStatisticsMonitor();
 		
-		int threadNum = 10;
-		ScheduledExecutorService executor= Executors.newScheduledThreadPool(threadNum);
-		for(int i=0 ; i<threadNum ; i++){
+		for(int i = 0 ; i < NUMBER_OF_HTTP_GET_THREADS ; i++){
 			executor.scheduleWithFixedDelay(new HttpRequest(new URL(applicationUrl)), 0, 1, TimeUnit.SECONDS);
 		
 		}
-		repetitiveAssertStatistics(pu, statisticsId, (double)threadNum);
+		repetitiveAssertStatistics(pu, statisticsId, (double)NUMBER_OF_HTTP_GET_THREADS);
 				
 		executor.shutdownNow();
 		Assert.assertTrue(executor.awaitTermination(30, TimeUnit.SECONDS));

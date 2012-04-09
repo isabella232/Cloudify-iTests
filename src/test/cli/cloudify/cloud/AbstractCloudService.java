@@ -60,7 +60,7 @@ public abstract class AbstractCloudService implements CloudService {
 		this.machinePrefix = machinePrefix;
 	}
 	
-	public String getMachinePrefix(String machinePrefix) {
+	public String getMachinePrefix() {
 		return machinePrefix;
 	}
     

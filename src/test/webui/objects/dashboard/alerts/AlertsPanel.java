@@ -48,9 +48,13 @@ public class AlertsPanel {
 	public static String MEMBER_ALIVE = "Member Alive Indicator";
 	
 	public static String ELASTIC_GSA_ALERT = "Grid Service Agent Provisioning Alert";
+	
 	public static String ELASTIC_GSC_ALERT = "Grid Service Container Provisioning Alert";
+	
 	public static final String ELASTIC_MACHINE_ALERT = "Machine Provisioning Alert";
 
+	public static String AUTOMATIC_SCALING = "Automatic Scaling Alert";
+	
 	Selenium selenium;
 	WebDriver driver;
 
@@ -63,7 +67,7 @@ public class AlertsPanel {
 		return new AlertsPanel(selenium, driver);
 	}
 	
-	public void waitForAlerts(final AlertStatus status, final String alertType, final int numberOfResolved){
+	public void waitForAlerts(final AlertStatus status, final String alertType, final int numberOfAlerts){
 		
 		RepetitiveConditionProvider condition = new RepetitiveConditionProvider() {
 			public boolean getCondition() {
@@ -74,11 +78,11 @@ public class AlertsPanel {
 						i++;
 					}
 				}
-				if (i == numberOfResolved) return true;
+				if (i == numberOfAlerts) return true;
 				return false;
 			}
 		};
-		AssertUtils.repetitiveAssertTrue("Could not find " + numberOfResolved + " alerts of type " + alertType + " in status " + status, condition, 60000);
+		AssertUtils.repetitiveAssertTrue("Could not find " + numberOfAlerts + " alerts of type " + alertType + " in status " + status, condition, 60000);
 	}
 	
 	/**

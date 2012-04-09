@@ -383,4 +383,11 @@ public class SSHUtils {
 				"cd " + path + ";./groovy " + groovyFilePath, username , password);
 	}
     
+    public static void validateSSHUp(String  host, String username, String password) throws JSchException{
+    	JSch jsch = new JSch();
+    	Session session = jsch.getSession(username , host, 22);
+        UserInfo ui = new MyUserInfo(password);
+        session.setUserInfo(ui);
+        session.connect();
+    }
 }

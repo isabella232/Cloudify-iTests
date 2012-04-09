@@ -213,6 +213,39 @@ public class AssertUtils {
 
                         return "";
 }
+	public static void repetitive(IRepetitiveRunnable repeatedAssert, int timeout)
+    {
+        for(int delay = 0; delay < timeout; delay += 5)
+        {
+            try
+            {
+                repeatedAssert.run();
+                return;
+            }
+            catch(Throwable e) //catch any exception and error
+            {
+                try
+                {
+                    Thread.sleep(5);
+                }
+                catch (InterruptedException e1)
+                {
+                }
+            }
+        }
+        try
+        {
+            repeatedAssert.run();
+        }
+        catch (AssertionError e)
+        {
+            throw e;
+        }
+        catch (Exception e)
+        {
+        	AssertFail(e.getMessage(), e);
+        }
+    }
 
 
 

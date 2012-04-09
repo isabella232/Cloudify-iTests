@@ -41,7 +41,7 @@ public class ExamplesTest extends AbstractCloudTest {
 	@AfterMethod
 	public void cleanup() throws IOException, InterruptedException {
 		
-		String command = "connect " + getService().getRestUrl() + ";list-application";
+		String command = "connect " + getService().getRestUrl() + ";list-applications";
 		String output = CommandTestUtils.runCommandAndWait(command);
 		if (output.contains(appName)) {
 			uninstallApplicationAndWait(appName);			

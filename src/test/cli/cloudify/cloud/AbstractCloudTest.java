@@ -32,13 +32,9 @@ public class AbstractCloudTest extends AbstractTest {
 
 	private static String[][] SUPPORTED_CLOUDS = null;
 	private static final String SUPPORTED_CLOUDS_PROP = "supported-clouds";
-
 	private static final String BYON = "byon";
-
 	private static final String OPENSTACK = "openstack";
-
 	private static final String EC2 = "ec2";
-	
 	private CloudService service;
 	
 	public void putService(CloudService service) {
@@ -50,9 +46,15 @@ public class AbstractCloudTest extends AbstractTest {
 	 * set the service CloudService instance to a specific cloud provider.
 	 * all install/uninstall commands will be executed on the specified cloud.
 	 * @param cloudName
+	 * @throws InterruptedException 
+	 * @throws IOException 
 	 */
-	public void setCloudToUse(String cloudName) {
+	public void setCloudToUse(String cloudName) throws IOException, InterruptedException {
 		service = services.get(cloudName);
+		if (!service.isBootstrapped()) {
+			LogUtils.log("service is not bootstrapped, bootstrapping service");
+			service.bootstrapCloud();
+		}
 	}
 	
 	public void setService(CloudService service) {

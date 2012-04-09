@@ -23,13 +23,12 @@ import framework.utils.WebUtils;
 public abstract class AbstractCloudService implements CloudService {
 	
 	protected int numberOfManagementMachines = 1;
-
 	protected URL[] restAdminUrls = new URL[numberOfManagementMachines];
-	
 	protected URL[] webUIUrls = new URL[numberOfManagementMachines];
-
 	protected String machinePrefix = CloudTestUtils.SGTEST_MACHINE_PREFIX;
     protected Map<String,String> additionalPropsToReplace;
+    protected boolean bootstrapped = false;
+    
 
     public URL[] getRestAdminUrls() {
 		return restAdminUrls;
@@ -66,6 +65,20 @@ public abstract class AbstractCloudService implements CloudService {
     
 	public abstract String getCloudName();
 	
+	/**
+	 * @return the bootstrapped
+	 */
+	public boolean isBootstrapped() {
+		return bootstrapped;
+	}
+
+	/**
+	 * @param bootstrapped the bootstrapped to set
+	 */
+	public void setBootstrapped(boolean bootstrapped) {
+		this.bootstrapped = bootstrapped;
+	}
+
 	public abstract void injectAuthenticationDetails() throws IOException;
 	
     public URL getMachinesUrl(String url) throws Exception {
@@ -88,7 +101,9 @@ public abstract class AbstractCloudService implements CloudService {
 			LogUtils.log("Extracting webui url's from cli output");
 			webUIUrls = extractWebuiUrls(output, numberOfManagementMachines);
 			assertBootstrapServicesAreAvailable();
-
+			setBootstrapped(true);
+			
+			
 			URL machinesURL;
 			try {
 				machinesURL = getMachinesUrl(restAdminUrls[0].toString());
@@ -109,6 +124,7 @@ public abstract class AbstractCloudService implements CloudService {
 		try {
 			injectAuthenticationDetails();
 			CommandTestUtils.runCommandAndWait("teardown-cloud --verbose -force " + getCloudName());
+			setBootstrapped(false);
 		}
 		finally {
 			deleteCloudFiles(getCloudName());

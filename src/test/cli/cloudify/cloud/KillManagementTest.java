@@ -12,7 +12,6 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.Assert;
-import org.openspaces.admin.AdminFactory;
 import org.openspaces.admin.gsm.GridServiceManager;
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.testng.annotations.AfterMethod;
@@ -20,8 +19,9 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import test.cli.cloudify.cloud.byon.ByonCloudService;
-import framework.tools.SGTestHelper;
+import framework.utils.AdminUtils;
 import framework.utils.AssertUtils;
+import framework.utils.IOUtils;
 import framework.utils.IRepetitiveRunnable;
 import framework.utils.LogUtils;
 import framework.utils.ProcessingUnitUtils;
@@ -41,10 +41,11 @@ public class KillManagementTest extends AbstractCloudTest{
 
 	@BeforeMethod
 	public void before() throws IOException, InterruptedException{
-		AdminFactory adminFactory = new AdminFactory();
-		admin = adminFactory.addGroup("gigaspaces-Cloudify-2.1.0-m4").createAdmin();
+		admin = AdminUtils.createAdmin();
 		
 		
+		replaceByonLookupGroup();
+		service.teardownCloud();
 		service = new ByonCloudService();
 		//TODO: this is only for dev mode testing
 		//service.setIpList("192.168.9.59,192.168.9.60,192.168.9.61,192.168.9.104");
@@ -104,7 +105,7 @@ public class KillManagementTest extends AbstractCloudTest{
 		ping.get();
 	}
 
-	//TODO: add support for windows machines
+	//TODO: add support for windows machines (BYON doesn't support windows right now)
 	//TODO: get the remote folder from the groovy file
 	private void startManagement(String machine1) {
 		SSHUtils.runCommand(machine1, DEFAULT_TEST_TIMEOUT, "/tmp/gs-files/gigaspaces/tools/cli/cloudify.sh start-management", USERNAME, PASSWORD);
@@ -141,15 +142,37 @@ public class KillManagementTest extends AbstractCloudTest{
 			LogUtils.log("caught an exception while tearing down " + service.getCloudName(), e);
 			sendTeardownCloudFailedMail(cloudName, e);
 		}
-		File backupByonDir = new File(SGTestHelper.getBuildDir() + "/tools/cli/plugins/esc/byon.backup");
-		File currentByonDir = new File(SGTestHelper.getBuildDir() + "/tools/cli/plugins/esc/byon");
-		if (backupByonDir.exists()){
-			FileUtils.deleteDirectory(currentByonDir);
-			FileUtils.moveDirectory(backupByonDir, currentByonDir);
-		}
+		putService(new ByonCloudService());
+		unReplaceByonLookupGroup();
+
 
 	}
 
+	private static void replaceByonLookupGroup() throws IOException {
+		File byonUploadDir = new File(ScriptUtils.getBuildPath() , "tools/cli/plugins/esc/byon/upload");
+		File originalStartManagementFile = new File(byonUploadDir, "bootstrap-management.sh");
+		File backupStartManagementFile = new File(byonUploadDir, "bootstrap-management.backup");
+
+		// first make a backup of the original file
+		FileUtils.copyFile(originalStartManagementFile, backupStartManagementFile);
+		
+		String toReplace = "setenv.sh\"\\s\\s\\s";
+		String toAdd = "sed -i \"1i export LOOKUPGROUPS="+ AdminUtils.getTestGroups() +"\" setenv.sh || error_exit \\$? \"Failed updating setenv.sh\"\n";
+		IOUtils.replaceTextInFile(originalStartManagementFile.getAbsolutePath(), toReplace, "setenv.sh\"" + "\r\n" + toAdd + "\r\n");
+		
+	}
+
+	
+	
+	private void unReplaceByonLookupGroup() throws IOException {
+		File byonUploadDir = new File(ScriptUtils.getBuildPath() , "tools/cli/plugins/esc/byon/upload");
+		File originalStartManagementFile = new File(byonUploadDir, "bootstrap-management.sh");
+		File backupStartManagementFile = new File(byonUploadDir, "bootstrap-management.backup");
+
+		// first make a backup of the original file
+		FileUtils.copyFile(backupStartManagementFile, originalStartManagementFile);
+		backupStartManagementFile.delete();
+	}
 
 }
 

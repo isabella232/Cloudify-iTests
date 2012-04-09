@@ -51,4 +51,6 @@ public interface CloudService {
 	 */
 	public void injectAuthenticationDetails() throws IOException;
 	
+	public boolean isBootstrapped();
+	
 }

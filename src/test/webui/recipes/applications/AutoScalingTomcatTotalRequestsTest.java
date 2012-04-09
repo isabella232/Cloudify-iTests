@@ -44,7 +44,8 @@ import framework.utils.WebUtils;
 public class AutoScalingTomcatTotalRequestsTest extends AbstractSeleniumApplicationRecipeTest {
 
 	private static final String COUNTER_METRIC = "Total Requests Count";
-	private static final String APPLICATION_NAME = "petclinic-simple-scalingRules";
+	private static final String APPLICATION_NAME = "petclinic";
+	private static final String APPLICATION_FOLDER_NAME = "petclinic-simple-scalingRules";
 	private static final String SERVICE_NAME = "tomcat";
 	private static final String ABSOLUTE_SERVICE_NAME = ServiceUtils.getAbsolutePUName(APPLICATION_NAME,SERVICE_NAME);
 	private static final int NUMBER_OF_HTTP_GET_THREADS = 10;
@@ -57,9 +58,9 @@ public class AutoScalingTomcatTotalRequestsTest extends AbstractSeleniumApplicat
 	@Override
 	@BeforeMethod
 	public void install() throws IOException, InterruptedException {
-		super.setCurrentApplication(APPLICATION_NAME);
+		super.setCurrentApplication(APPLICATION_FOLDER_NAME);
 		super.install();
-		applicationUrl = "http://" + InetAddress.getLocalHost().getHostAddress() + ":8080";
+		applicationUrl = "http://" + InetAddress.getLocalHost().getHostAddress() + ":8080/petclinic-mongo/";
 		this.executor= Executors.newScheduledThreadPool(NUMBER_OF_HTTP_GET_THREADS);
 	}
 	
@@ -150,7 +151,7 @@ public class AutoScalingTomcatTotalRequestsTest extends AbstractSeleniumApplicat
 				.monitor(CloudifyConstants.USM_MONITORS_SERVICE_ID)
 				.metric(COUNTER_METRIC)
 				.instancesStatistics(new AverageInstancesStatisticsConfig())
-				.timeWindowStatistics(new ThroughputTimeWindowStatisticsConfigurer().timeWindow(30, TimeUnit.SECONDS).create())
+				.timeWindowStatistics(new ThroughputTimeWindowStatisticsConfigurer().timeWindow(20, TimeUnit.SECONDS).create())
 				.create();
 		 
 		pu.addStatisticsCalculation(statisticsId);
@@ -165,7 +166,9 @@ public class AutoScalingTomcatTotalRequestsTest extends AbstractSeleniumApplicat
 		repetitiveAssertNumberOfInstances(pu, 2);
 		executor.shutdownNow();
 		Assert.assertTrue(executor.awaitTermination(30, TimeUnit.SECONDS));
-		uninstallApplication("travel", true);
+		
+		repetitiveAssertNumberOfInstances(pu, 1);
+		uninstallApplication(APPLICATION_NAME, true);		
 	}
 	
 	

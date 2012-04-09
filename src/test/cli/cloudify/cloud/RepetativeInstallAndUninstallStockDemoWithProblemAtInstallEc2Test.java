@@ -61,7 +61,7 @@ public class RepetativeInstallAndUninstallStockDemoWithProblemAtInstallEc2Test e
 		service.bootstrapCloud();
 		setService(service);
 		String hostIp = service.getRestUrl().substring(0, service.getRestUrl().lastIndexOf(':'));
-		stockdemoUrl = new URL(hostIp + ":8080/stockdemo/stockdemo");
+		stockdemoUrl = new URL(hostIp + ":8080/stockdemo.StockDemo/");
 	}
 	
 	

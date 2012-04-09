@@ -38,7 +38,7 @@ public class RepetativeInstallAndUninstallStockDemoWithProblemAtInstallTest exte
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * repetitions, groups = "1", enabled = true)
 	public void installAndUninstallTest() throws Exception {
 		
-		stockdemoUrl = new URL("http://" + InetAddress.getLocalHost().getHostAddress() + ":8080/stockdemo/stockdemo");
+		stockdemoUrl = new URL("http://" + InetAddress.getLocalHost().getHostAddress() + ":8080/stockdemo.StockDemo/");
 		final String stockdemoAppPath = CommandTestUtils.getPath("apps/USM/usm/applications/stockdemo");	
 		cassandraPostStartScriptPath = stockdemoAppPath + "/cassandra/cassandra_poststart.groovy";	
 		newPostStartScriptPath = stockdemoAppPath + "/cassandra/cassandra_poststart123.groovy";
@@ -68,7 +68,7 @@ public class RepetativeInstallAndUninstallStockDemoWithProblemAtInstallTest exte
 		LogUtils.log("corrupting cassandra service");
 		corruptCassandraService(cassandraPostStartScriptPath ,newPostStartScriptPath);
 		LogUtils.log("first installation of stockdemo - this should fail");
-		String failOutput = CommandTestUtils.runCommand("connect " + restUrl + ";install-application --verbose -timeout 3 " + stockdemoAppPath, true, true);		
+		String failOutput = CommandTestUtils.runCommand("connect " + restUrl + ";install-application --verbose -timeout 2 " + stockdemoAppPath, true, true);		
 		if(!failOutput.toLowerCase().contains("operation failed"))
 			return 1;
 		LogUtils.log("fixing cassandra service");

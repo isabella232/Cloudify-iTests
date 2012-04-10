@@ -50,7 +50,12 @@ public class AbstractCloudTest extends AbstractTest {
 	 * @throws IOException 
 	 */
 	public void setCloudToUse(String cloudName) throws IOException, InterruptedException {
+		LogUtils.log("List of available services are :" + services.keySet());
+		LogUtils.log("Retrieving service for cloud " + cloudName);
 		service = services.get(cloudName);
+		if (service == null) {
+			Assert.fail("service for " + cloudName + " is null");
+		}
 		if (!service.isBootstrapped()) {
 			LogUtils.log("service is not bootstrapped, bootstrapping service");
 			service.bootstrapCloud();
@@ -99,8 +104,11 @@ public class AbstractCloudTest extends AbstractTest {
 	}
 
 	private void setupCloudManagmentMethods() throws NoSuchMethodException, SecurityException {
+		LogUtils.log("Adding byon to services");
 		services.put(BYON, new ByonCloudService());
+		LogUtils.log("Adding openstack to services");
 		services.put(OPENSTACK, new HpCloudService());
+		LogUtils.log("Adding ec2 to services");
 		services.put(EC2, new Ec2CloudService());
 	}
 

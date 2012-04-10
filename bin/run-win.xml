@@ -144,7 +144,7 @@
        	    <sysproperty key="sgtest.numOfSuites" value="${SUITE_NUMBER}"/>	
         	<sysproperty key="com.gs.logging.level.config" value="true"/>
         	<sysproperty key="org.apache.commons.logging.Log" value="org.apache.commons.logging.impl.Jdk14Logger"/>
-        	<sysproperty key="java.util.logging.config.file" value="${sgtest.homedir}/config/gs_logging.properties"/>
+        	<sysproperty key="java.util.logging.config.file" value="${sgtest.homedir}/config/sgtest_logging.properties"/>
             <sysproperty key="sgtest.buildFolder" value="${sgtest.homedir}/deploy/local-builds/${BUILD_NUMBER}"/>
             <sysproperty key="sgtest.url" value="http://192.168.9.121:8087/sgtest2.0-cloudify/"/>
  

@@ -8,13 +8,14 @@ import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.http.HttpStatus;
 import org.cloudifysource.dsl.internal.packaging.PackagingException;
 import org.cloudifysource.dsl.utils.ServiceUtils;
+import org.cloudifysource.usm.USMException;
+import org.cloudifysource.usm.shutdown.DefaultProcessKiller;
 import org.openspaces.admin.gsc.GridServiceContainer;
 import org.openspaces.admin.machine.Machine;
 import org.openspaces.admin.pu.DeploymentStatus;
@@ -33,9 +34,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 import framework.utils.LogUtils;
 import framework.utils.ProcessingUnitUtils;
-import framework.utils.SSHUtils;
 import framework.utils.ScriptUtils;
-import framework.utils.SetupUtils;
 import groovy.util.ConfigObject;
 import groovy.util.ConfigSlurper;
 
@@ -126,15 +125,13 @@ public class InternalUSMPuServiceDownTest extends AbstractLocalCloudTest {
 		assertTrue("failed while deleting file: " + tomcatRun, tomcatRun.delete());
 		
 		LogUtils.log("killing tomcat process : " + tomcatPId);
-		if (isWindows()) {	
-			int result = ScriptUtils.killWindowsProcess(tomcatPId.intValue());
-			assertTrue(result == 0);	
+		DefaultProcessKiller dpk = new DefaultProcessKiller();
+		try {
+			dpk.killProcess(tomcatPId);
+		} catch (USMException e) {
+			AssertFail("failed to kill tomcat process with pid: " + tomcatPId);
 		}
-		else {
-			SSHUtils.killProcess(machineA.getHostAddress(), tomcatPId.intValue());
-		}
-		Set<String> localProcesses = SetupUtils.getLocalProcesses();
-		assertTrue("Tomcat process was not terminated.", !localProcesses.contains(Long.toString(tomcatPId)));
+		
 		int responseCode = getResponseCode(TOMCAT_URL);
 		assertTrue("Tomcat service is still running. Request returned response code: " + responseCode, HttpStatus.SC_NOT_FOUND == responseCode);
 		

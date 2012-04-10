@@ -16,6 +16,8 @@ import java.util.concurrent.TimeUnit;
 import org.apache.http.HttpStatus;
 import org.cloudifysource.dsl.internal.packaging.PackagingException;
 import org.cloudifysource.dsl.utils.ServiceUtils;
+import org.cloudifysource.usm.USMException;
+import org.cloudifysource.usm.shutdown.DefaultProcessKiller;
 import org.openspaces.admin.machine.Machine;
 import org.openspaces.admin.pu.DeploymentStatus;
 import org.openspaces.admin.pu.ProcessingUnit;
@@ -148,14 +150,13 @@ public class RepetitiveActualServiceFailoverTest extends AbstractLocalCloudTest 
 		assertTrue(tomcatRun.delete());
 		LogUtils.log("killing tomcat process");
 		tomcatPId = getTomcatPId();
-		if (ScriptUtils.isWindows()) {	
-			int result = ScriptUtils.killWindowsProcess(tomcatPId.intValue());
-			assertTrue(result == 0);	
+		DefaultProcessKiller dpk = new DefaultProcessKiller();
+		try {
+			dpk.killProcess(tomcatPId);
+		} catch (USMException e) {
+			AssertFail("failed to kill tomcat process with pid: " + tomcatPId);
 		}
-		else {
-			SSHUtils.killProcess(machineA.getHostAddress(), tomcatPId.intValue());
-		}
-		
+
 		LogUtils.log("waiting for tomcat pu instances to decrease");
 		assertTrue("Tomcat PU instance was not decresed", removed.await(240, TimeUnit.SECONDS));
 		assertTrue("ProcessingUnitInstanceRemoved event has not been fired", removed.getCount() == 0);

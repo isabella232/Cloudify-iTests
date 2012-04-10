@@ -22,7 +22,7 @@ public class ExamplesTest extends AbstractCloudTest {
 		doTest("travel");
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true, dataProvider = "supportedClouds")
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true, dataProvider = "supportedCloudsWithoutByon")
 	public void testPetclinic(String cloudName) throws IOException, InterruptedException {
 		appName = "petclinic";
 		LogUtils.log("installing application petclinic on " + cloudName);

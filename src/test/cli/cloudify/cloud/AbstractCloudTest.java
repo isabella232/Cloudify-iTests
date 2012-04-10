@@ -32,7 +32,7 @@ public class AbstractCloudTest extends AbstractTest {
 
 	private static String[][] SUPPORTED_CLOUDS = null;
 	private static final String SUPPORTED_CLOUDS_PROP = "supported-clouds";
-	private static final String BYON = "BYON";
+	private static final String BYON = "byon";
 	private static final String OPENSTACK = "openstack";
 	private static final String EC2 = "ec2";
 	private CloudService service;
@@ -73,6 +73,22 @@ public class AbstractCloudTest extends AbstractTest {
 	@DataProvider(name = "supportedClouds")
 	public String[][] supportedClouds() {
 		return SUPPORTED_CLOUDS;
+	}
+	
+	@DataProvider(name = "supportedCloudsWithoutByon")
+	public String[][] supportedCloudsWithoutByon() {
+		String property = System.getProperty(SUPPORTED_CLOUDS_PROP);
+		String[] clouds = property.split(",");
+		String[][] result = new String[clouds.length - 1][1];
+		for (int i = 0 ; i < clouds.length ; i++) {
+			if (!clouds[i].equals(BYON)) {
+				result[i][0] = clouds[i];
+			}
+		}
+		
+		return result;
+
+		
 	}
 	
 	/**

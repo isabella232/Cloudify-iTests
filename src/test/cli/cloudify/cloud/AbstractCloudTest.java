@@ -32,7 +32,7 @@ public class AbstractCloudTest extends AbstractTest {
 
 	private static String[][] SUPPORTED_CLOUDS = null;
 	private static final String SUPPORTED_CLOUDS_PROP = "supported-clouds";
-	private static final String BYON = "byon";
+	private static final String BYON = "BYON";
 	private static final String OPENSTACK = "openstack";
 	private static final String EC2 = "ec2";
 	private CloudService service;

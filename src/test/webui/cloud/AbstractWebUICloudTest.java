@@ -29,7 +29,7 @@ public class AbstractWebUICloudTest extends AbstractCloudTest {
 	public void launchWebui() throws InterruptedException {
 		
 		CloudService service = getService();
-		String webuiURL = service.getWebuiUrl();
+		String webuiURL = getService().getWebuiUrls()[0];
 		startWebBrowser(webuiURL);
 		
 	}

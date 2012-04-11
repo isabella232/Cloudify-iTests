@@ -28,7 +28,7 @@ import framework.utils.LogUtils;
 
 public class AbstractCloudTest extends AbstractTest {
 	
-	private Map<String, CloudService> services = new HashMap<String, CloudService>();
+	private static final Map<String, CloudService> defaultServices = new HashMap<String, CloudService>();
 
 	private static String[][] SUPPORTED_CLOUDS = null;
 	private static final String SUPPORTED_CLOUDS_PROP = "supported-clouds";
@@ -37,8 +37,12 @@ public class AbstractCloudTest extends AbstractTest {
 	private static final String EC2 = "ec2";
 	private CloudService service;
 	
+	public AbstractCloudTest() {
+		LogUtils.log("Instansiated " + AbstractCloudTest.class.getName());
+	}
+	
 	public void putService(CloudService service) {
-		services.put(service.getCloudName(), service);
+		defaultServices.put(service.getCloudName(), service);
 	}
 	
 	
@@ -50,9 +54,9 @@ public class AbstractCloudTest extends AbstractTest {
 	 * @throws IOException 
 	 */
 	public void setCloudToUse(String cloudName) throws IOException, InterruptedException {
-		LogUtils.log("List of available services are :" + services.keySet());
+		LogUtils.log("List of available services are :" + defaultServices.keySet());
 		LogUtils.log("Retrieving service for cloud " + cloudName);
-		service = services.get(cloudName);
+		service = defaultServices.get(cloudName);
 		if (service == null) {
 			Assert.fail("service for " + cloudName + " is null");
 		}
@@ -121,11 +125,11 @@ public class AbstractCloudTest extends AbstractTest {
 
 	private void setupCloudManagmentMethods() throws NoSuchMethodException, SecurityException {
 		LogUtils.log("Adding byon to services");
-		services.put(BYON, new ByonCloudService());
+		defaultServices.put(BYON, new ByonCloudService());
 		LogUtils.log("Adding openstack to services");
-		services.put(OPENSTACK, new HpCloudService());
+		defaultServices.put(OPENSTACK, new HpCloudService());
 		LogUtils.log("Adding ec2 to services");
-		services.put(EC2, new Ec2CloudService());
+		defaultServices.put(EC2, new Ec2CloudService());
 	}
 
 	/**
@@ -150,7 +154,10 @@ public class AbstractCloudTest extends AbstractTest {
 		for (int j = 0 ; j < SUPPORTED_CLOUDS.length ; j++){
 			String supportedCloud = SUPPORTED_CLOUDS[j][0];
 			try {
-				services.get(supportedCloud).bootstrapCloud();
+				if (j == 1) {
+					Assert.fail();
+				}
+				defaultServices.get(supportedCloud).bootstrapCloud();
 				numberOfSuccesfullyBootstrappedClouds++;
 			}
 			catch (Throwable e) {
@@ -178,7 +185,7 @@ public class AbstractCloudTest extends AbstractTest {
 		for (int j = 0 ; j < SUPPORTED_CLOUDS.length ; j++){
 			String supportedCloud = SUPPORTED_CLOUDS[j][0];
 			try{
-				services.get(supportedCloud).teardownCloud();
+				defaultServices.get(supportedCloud).teardownCloud();
 			}
 			catch (Throwable e) {
 				LogUtils.log("caught an exception while bootstrapping " + supportedCloud, e);
@@ -196,11 +203,13 @@ public class AbstractCloudTest extends AbstractTest {
 	 */
 	public void installServiceAndWait(String servicePath, String serviceName) throws IOException, InterruptedException {
 		
-		if (service.getRestUrl() == null) {
+		if (service.getRestUrls() == null) {
 			Assert.fail("Test failed becuase the cloud was not bootstrapped properly");
 		}
 		
-		String connectCommand = "connect " + service.getRestUrl() + ";";
+		String restUrl = service.getRestUrls()[0];
+		
+		String connectCommand = "connect " + restUrl + ";";
 		String installCommand = new StringBuilder()
 			.append("install-service ")
 			.append("--verbose ")
@@ -236,16 +245,19 @@ public class AbstractCloudTest extends AbstractTest {
 	 */
 	public void installApplication(String applicationPath, String applicationName,int timeout ,boolean wait ,boolean failCommand) throws IOException, InterruptedException {
 		
-		if (service.getRestUrl() == null) {
+		if (service.getRestUrls() == null) {
 			Assert.fail("Test failed becuase the cloud was not bootstrapped properly");
 		}
+		
+		String restUrl = service.getRestUrls()[0];
+		
 		long timeoutToUse;
 		if(timeout > 0)
 			timeoutToUse = timeout;
 		else
 			timeoutToUse = TimeUnit.MILLISECONDS.toMinutes(DEFAULT_TEST_TIMEOUT * 2);
 		
-		String connectCommand = "connect " + service.getRestUrl() + ";";
+		String connectCommand = "connect " + restUrl + ";";
 		String installCommand = new StringBuilder()
 			.append("install-application ")
 			.append("--verbose ")
@@ -270,11 +282,13 @@ public class AbstractCloudTest extends AbstractTest {
 	 */
 	public void uninstallServiceAndWait(String serviceName) throws IOException, InterruptedException {
 		
-		if (service.getRestUrl() == null) {
+		if (service.getRestUrls() == null) {
 			Assert.fail("Test failed becuase the cloud was not bootstrapped properly");
 		}
 		
-		String connectCommand = "connect " + service.getRestUrl() + ";";
+		String restUrl = service.getRestUrls()[0];
+		
+		String connectCommand = "connect " + restUrl + ";";
 		String installCommand = new StringBuilder()
 			.append("uninstall-service ")
 			.append("--verbose ")
@@ -296,11 +310,13 @@ public class AbstractCloudTest extends AbstractTest {
 	 */
 	public void uninstallApplicationAndWait(String applicationName) throws IOException, InterruptedException {
 		
-		if (service.getRestUrl() == null) {
+		if (service.getRestUrls() == null) {
 			Assert.fail("Test failed becuase the cloud was not bootstrapped properly");
 		}
 		
-		String connectCommand = "connect " + service.getRestUrl() + ";";
+		String restUrl = service.getRestUrls()[0];
+		
+		String connectCommand = "connect " + restUrl + ";";
 		String installCommand = new StringBuilder()
 			.append("uninstall-application ")
 			.append("--verbose ")

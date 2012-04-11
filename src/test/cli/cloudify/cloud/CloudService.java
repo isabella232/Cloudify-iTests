@@ -33,13 +33,13 @@ public interface CloudService {
 	/**
 	 * @return the rest url cloudify shell can connect to.
 	 */
-	public String getRestUrl();
+	public String[] getRestUrls();
 	
 	/**
 	 * 
 	 * @return the webui url browsers can connect to.
 	 */
-	public String getWebuiUrl();
+	public String[] getWebuiUrls();
 	
 	/**
 	 * @return the cloud provider name as specified in the jclouds documentation.

@@ -29,15 +29,6 @@ public abstract class AbstractCloudService implements CloudService {
     protected Map<String,String> additionalPropsToReplace;
     protected boolean bootstrapped = false;
     
-
-    public URL[] getRestAdminUrls() {
-		return restAdminUrls;
-	}
-
-	public URL[] getWebUIUrls() {
-		return webUIUrls;
-	}
-    
 	public int getNumberOfManagementMachines() {
 		return numberOfManagementMachines;
 	}
@@ -55,13 +46,14 @@ public abstract class AbstractCloudService implements CloudService {
 		this.additionalPropsToReplace = additionalPropsToReplace;
 	}
     
+	public String getMachinePrefix() {
+		return machinePrefix;
+	}
+	
 	public void setMachinePrefix(String machinePrefix) {
 		this.machinePrefix = machinePrefix;
 	}
 	
-	public String getMachinePrefix() {
-		return machinePrefix;
-	}
     
 	public abstract String getCloudName();
 	
@@ -106,9 +98,11 @@ public abstract class AbstractCloudService implements CloudService {
 			
 			URL machinesURL;
 			try {
-				machinesURL = getMachinesUrl(restAdminUrls[0].toString());
-				AssertUtils.assertEquals("Expecting " + numberOfManagementMachines + " machines", 
-						numberOfManagementMachines, CloudTestUtils.getNumberOfMachines(machinesURL));
+				for (int i = 0 ; i < numberOfManagementMachines ; i++) {
+					machinesURL = getMachinesUrl(restAdminUrls[i].toString());
+					AssertUtils.assertEquals("Expecting " + numberOfManagementMachines + " machines", 
+							numberOfManagementMachines, CloudTestUtils.getNumberOfMachines(machinesURL));
+				}
 			} catch (Exception e) {
 				LogUtils.log("caught exception while geting number of management machines", e);
 			}
@@ -130,24 +124,33 @@ public abstract class AbstractCloudService implements CloudService {
 			deleteCloudFiles(getCloudName());
 		}	
 	}
-
-	@Override
-	public String getRestUrl() {
-		if (restAdminUrls[0] != null) { // this means the cloud was bootstrapped properly			
-			return restAdminUrls[0].toString();
-		}
-		return null;
-	}
 	
 	@Override 
-	public String getWebuiUrl() {
-		if (webUIUrls[0] != null) { // this means the cloud was bootstrapped properly
-			return webUIUrls[0].toString();			
+	public String[] getWebuiUrls() {
+		if (webUIUrls.length == 0) {
+			return null;
 		}
-		return null;
+		String[] result = new String[webUIUrls.length];
+		for (int i = 0 ; i < webUIUrls.length ; i++) {
+			result[i] = webUIUrls[i].toString();
+		}
+		return result;
 	}
 	
 	
+	@Override
+	public String[] getRestUrls() {
+		
+		if (restAdminUrls.length == 0) {
+			return null;
+		}
+		String[] result = new String[restAdminUrls.length];
+		for (int i = 0 ; i < restAdminUrls.length ; i++) {
+			result[i] = restAdminUrls[i].toString();
+		}
+		return result;
+	}
+
 	private URL[] extractRestAdminUrls(String output, int numberOfManagementMachines) throws MalformedURLException {
 		
 		URL[] restAdminUrls = new URL[numberOfManagementMachines];

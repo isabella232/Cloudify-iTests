@@ -9,7 +9,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.UnknownHostException;
-import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -37,9 +36,7 @@ import framework.utils.AssertUtils;
 import framework.utils.AssertUtils.RepetitiveConditionProvider;
 import framework.utils.LogUtils;
 import framework.utils.ProcessingUnitUtils;
-import framework.utils.SSHUtils;
 import framework.utils.ScriptUtils;
-import framework.utils.SetupUtils;
 
 /**
  * 1. install tomcat service
@@ -111,17 +108,14 @@ public class RepetitiveActualServiceFailoverTest extends AbstractLocalCloudTest 
 		tomcat.addLifecycleListener(eventListener);
 		
 		for (int i = 0 ; i < 2 ; i++) {
-			LogUtils.log("Killing tomcat process");
 			tomcatPId = getTomcatPId();
-			if (ScriptUtils.isWindows()) {	
-				int result = ScriptUtils.killWindowsProcess(tomcatPId.intValue());
-				assertTrue(result == 0);	
+			LogUtils.log("Killing tomcat process with pid " + tomcatPId + ". " + i + "iteration.");
+			DefaultProcessKiller dpk = new DefaultProcessKiller();
+			try {
+				dpk.killProcess(tomcatPId);
+			} catch (USMException e) {
+				AssertFail("failed to kill tomcat process with pid: " + tomcatPId);
 			}
-			else {
-				SSHUtils.killProcess(machineA.getHostAddress(), tomcatPId.intValue());
-			}
-			Set<String> localProcesses = SetupUtils.getLocalProcesses();
-			assertTrue("Tomcat process was not terminated.", !localProcesses.contains(Long.toString(tomcatPId)));
 			
 			int responseCode = getResponseCode(TOMCAT_URL);
 			assertTrue("Tomcat service is still running. Request returned response code: " + responseCode, HttpStatus.SC_NOT_FOUND == responseCode);
@@ -148,8 +142,8 @@ public class RepetitiveActualServiceFailoverTest extends AbstractLocalCloudTest 
 		}
 		File tomcatRun = new File(pathToTomcat);
 		assertTrue(tomcatRun.delete());
-		LogUtils.log("killing tomcat process");
 		tomcatPId = getTomcatPId();
+		LogUtils.log("killing tomcat process with pid " + tomcatPId);
 		DefaultProcessKiller dpk = new DefaultProcessKiller();
 		try {
 			dpk.killProcess(tomcatPId);

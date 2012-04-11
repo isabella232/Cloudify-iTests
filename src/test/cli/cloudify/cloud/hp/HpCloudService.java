@@ -86,6 +86,7 @@ public class HpCloudService extends AbstractCloudService {
 		propsToReplace.put("ENTER_TENANT", tenant);
 		propsToReplace.put("hp-cloud-demo", "sgtest");
 		propsToReplace.put("numberOfManagementMachines 1", "numberOfManagementMachines "  + numberOfManagementMachines);
+		propsToReplace.put("\"openstack.wireLog\": \"false\"", "\"openstack.wireLog\": \"true\"");
 		
 		IOUtils.replaceTextInFile(originalCloudDslFile.getAbsolutePath(), propsToReplace);
 

@@ -88,7 +88,7 @@ public class HpCloudService extends AbstractCloudService {
 		propsToReplace.put("numberOfManagementMachines 1", "numberOfManagementMachines "  + numberOfManagementMachines);
 		propsToReplace.put("\"openstack.wireLog\": \"false\"", "\"openstack.wireLog\": \"true\"");
 		
-		IOUtils.replaceTextInFile(originalCloudDslFile.getAbsolutePath(), propsToReplace);
+		IOUtils.replaceTextInFile(originalCloudDslFile, propsToReplace);
 
 		// upload dir needs to contain the sshKeyPem 
 		File targetPem = new File(ScriptUtils.getBuildPath(), "tools/cli/plugins/esc/" + cloudName + "/upload/" + sshKeyPemName);

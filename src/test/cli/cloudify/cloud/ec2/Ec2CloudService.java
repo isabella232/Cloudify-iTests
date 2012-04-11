@@ -43,7 +43,7 @@ public class Ec2CloudService extends AbstractCloudService {
 		propsToReplace.put("ENTER_KEY_FILE", pemFileName + ".pem");
 		propsToReplace.put("numberOfManagementMachines 1", "numberOfManagementMachines "  + numberOfManagementMachines);
 		
-		IOUtils.replaceTextInFile(originalCloudDslFile.getAbsolutePath(), propsToReplace);
+		IOUtils.replaceTextInFile(originalCloudDslFile, propsToReplace);
 
 		// upload dir needs to contain the sshKeyPem 
 		File targetPem = new File(ScriptUtils.getBuildPath(), "tools/cli/plugins/esc/" + cloudName + "/upload/" + sshKeyPemName);

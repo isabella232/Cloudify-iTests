@@ -2,7 +2,9 @@ package test.cli.cloudify.cloud;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
@@ -87,14 +89,18 @@ public class AbstractCloudTest extends AbstractTest {
 	public String[][] supportedCloudsWithoutByon() {
 		String property = System.getProperty(SUPPORTED_CLOUDS_PROP);
 		String[] clouds = property.split(",");
-		String[][] result = new String[clouds.length - 1][1];
+		List<String> result = new ArrayList<String>();
 		for (int i = 0 ; i < clouds.length ; i++) {
 			if (!clouds[i].equals(BYON)) {
-				result[i][0] = clouds[i];
+				result.add(clouds[i]);
 			}
 		}
+		String[][] resultFinal = new String[result.size()][1];
+		for (int i = 0 ; i < result.size() ; i++) {
+			resultFinal[i][0] = result.get(i);
+		}
 		
-		return result;
+		return resultFinal;
 
 		
 	}

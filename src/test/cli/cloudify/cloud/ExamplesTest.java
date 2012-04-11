@@ -20,26 +20,30 @@ public class ExamplesTest extends AbstractCloudTest {
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true, dataProvider = "supportedClouds")
 	public void testTravel(String cloudName) throws IOException, InterruptedException {
-		appName = "travel";
-		LogUtils.log("installing application travel on " + cloudName);
-		setCloudToUse(cloudName);
-		doTest("travel");
+		doTest(cloudName, "travel");
 	}
-	
+
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true, dataProvider = "supportedCloudsWithoutByon")
 	public void testPetclinic(String cloudName) throws IOException, InterruptedException {
-		appName = "petclinic";
-		LogUtils.log("installing application petclinic on " + cloudName);
-		setCloudToUse(cloudName);
-		doTest("petclinic");
+		doTest(cloudName, "petclinic");
 	}
 	
-
-	private void doTest(String applicationName) throws IOException, InterruptedException {
-		
-		String applicationPath = ScriptUtils.getBuildPath() + "/examples/" + applicationName;
-		installApplicationAndWait(applicationPath, applicationName);
-		
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true, dataProvider = "supportedClouds")
+	public void testPetclinicSimple(String cloudName) throws IOException, InterruptedException {
+		doTest(cloudName, "petclinic-simple");
+	}
+	
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true, dataProvider = "supportedClouds")
+	public void testPetclinicSimpleScalingRules(String cloudName) throws IOException, InterruptedException {
+		doTest(cloudName, "petclinic-simple-scalingRules");
+	}
+	
+	private void doTest(String cloudName, String applicationName) throws IOException, InterruptedException {
+		this.appName = applicationName;
+		LogUtils.log("installing application travel on " + cloudName);
+		setCloudToUse(cloudName);
+		String applicationPath = ScriptUtils.getBuildPath() + "/examples/" + appName;
+		installApplicationAndWait(applicationPath, appName);	
 	}
 	
 	@AfterMethod

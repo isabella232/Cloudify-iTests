@@ -38,6 +38,7 @@ public class KillManagementTest extends AbstractCloudTest{
 	final private static String PASSWORD= "tgrid";
 	private volatile boolean run = true;
 	private ExecutorService threadPool;
+	private String restUrl;
 
 	@BeforeMethod
 	public void before() throws IOException, InterruptedException{
@@ -53,7 +54,12 @@ public class KillManagementTest extends AbstractCloudTest{
 		service.setMachinePrefix(this.getClass().getName());
 		service.bootstrapCloud();
 		setService(service);
-		String hostIp = service.getRestUrl().substring(0, service.getRestUrl().lastIndexOf(':'));
+		if (service.getRestUrls() == null) {
+			Assert.fail("Test failed becuase the cloud was not bootstrapped properly");
+		}
+		
+		restUrl = service.getRestUrls()[0];
+		String hostIp = restUrl.substring(0, restUrl.lastIndexOf(':'));
 		petClinicUrl = new URL(hostIp + ":8080/petclinic-mongo/");
 		threadPool = Executors.newFixedThreadPool(1);
 

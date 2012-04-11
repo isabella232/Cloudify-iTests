@@ -38,6 +38,7 @@ public class RepetativeInstallAndUninstallStockDemoWithProblemAtInstallEc2Test e
 	private String newPostStartScriptPath = null;
 	private Ec2CloudService service;
 	private URL stockdemoUrl;
+	private String restUrl;
 	
 	@BeforeMethod
 	public void bootstrap() throws IOException, InterruptedException {	
@@ -60,7 +61,12 @@ public class RepetativeInstallAndUninstallStockDemoWithProblemAtInstallEc2Test e
 		service.setMachinePrefix(this.getClass().getName() + CloudTestUtils.SGTEST_MACHINE_PREFIX);
 		service.bootstrapCloud();
 		setService(service);
-		String hostIp = service.getRestUrl().substring(0, service.getRestUrl().lastIndexOf(':'));
+		if (service.getRestUrls() == null) {
+			Assert.fail("Test failed becuase the cloud was not bootstrapped properly");
+		}
+		
+		restUrl = service.getRestUrls()[0];
+		String hostIp = restUrl.substring(0, restUrl.lastIndexOf(':'));
 		stockdemoUrl = new URL(hostIp + ":8080/stockdemo.StockDemo/");
 	}
 	
@@ -165,13 +171,13 @@ public class RepetativeInstallAndUninstallStockDemoWithProblemAtInstallEc2Test e
 	
 	private void assertUninstallWasSuccessful() throws Exception{
 		
-		URL cassandraPuAdminUrl = new URL(service.getRestUrl() + "/admin/ProcessingUnits/Names/stockdemo.cassandra");
-		URL stockAnalyticsMirrorPuAdminUrl = new URL(service.getRestUrl() + "/admin/ProcessingUnits/Names/stockdemo.stockAnalyticsMirror");
-		URL stockAnalyticsSpacePuAdminUrl = new URL(service.getRestUrl() + "/admin/ProcessingUnits/Names/stockdemo.stockAnalyticsSpace");
-		URL stockAnalyticsProcessorPuAdminUrl = new URL(service.getRestUrl() + "/admin/ProcessingUnits/Names/stockdemo.stockAnalyticsProcessor");
-		URL StockDemoPuAdminUrl = new URL(service.getRestUrl() + "/admin/ProcessingUnits/Names/stockdemo.StockDemo");
-		URL stockAnalyticsPuAdminUrl = new URL(service.getRestUrl() + "/admin/ProcessingUnits/Names/stockdemo.stockAnalytics");
-		URL stockAnalyticsFeederPuAdminUrl = new URL(service.getRestUrl() + "/admin/ProcessingUnits/Names/stockdemo.stockAnalyticsFeeder");
+		URL cassandraPuAdminUrl = new URL(restUrl + "/admin/ProcessingUnits/Names/stockdemo.cassandra");
+		URL stockAnalyticsMirrorPuAdminUrl = new URL(restUrl + "/admin/ProcessingUnits/Names/stockdemo.stockAnalyticsMirror");
+		URL stockAnalyticsSpacePuAdminUrl = new URL(restUrl + "/admin/ProcessingUnits/Names/stockdemo.stockAnalyticsSpace");
+		URL stockAnalyticsProcessorPuAdminUrl = new URL(restUrl + "/admin/ProcessingUnits/Names/stockdemo.stockAnalyticsProcessor");
+		URL StockDemoPuAdminUrl = new URL(restUrl + "/admin/ProcessingUnits/Names/stockdemo.StockDemo");
+		URL stockAnalyticsPuAdminUrl = new URL(restUrl + "/admin/ProcessingUnits/Names/stockdemo.stockAnalytics");
+		URL stockAnalyticsFeederPuAdminUrl = new URL(restUrl + "/admin/ProcessingUnits/Names/stockdemo.stockAnalyticsFeeder");
 		
 		assertTrue(!WebUtils.isURLAvailable(cassandraPuAdminUrl));
 		assertTrue(!WebUtils.isURLAvailable(stockAnalyticsMirrorPuAdminUrl));

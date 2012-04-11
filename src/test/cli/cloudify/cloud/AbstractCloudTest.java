@@ -45,6 +45,10 @@ public class AbstractCloudTest extends AbstractTest {
 		defaultServices.put(service.getCloudName(), service);
 	}
 	
+	public CloudService getDefaultService(String cloudName) {
+		return defaultServices.get(cloudName);
+	}
+	
 	
 	/**
 	 * set the service CloudService instance to a specific cloud provider.
@@ -154,9 +158,6 @@ public class AbstractCloudTest extends AbstractTest {
 		for (int j = 0 ; j < SUPPORTED_CLOUDS.length ; j++){
 			String supportedCloud = SUPPORTED_CLOUDS[j][0];
 			try {
-				if (j == 1) {
-					Assert.fail();
-				}
 				defaultServices.get(supportedCloud).bootstrapCloud();
 				numberOfSuccesfullyBootstrappedClouds++;
 			}

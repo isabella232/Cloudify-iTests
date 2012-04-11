@@ -24,12 +24,12 @@ public class ExamplesTest extends AbstractCloudTest {
 		doTest(cloudName, "petclinic", "petclinic");
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true, dataProvider = "supportedClouds")
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false, dataProvider = "supportedClouds")
 	public void testPetclinicSimple(String cloudName) throws IOException, InterruptedException {
 		doTest(cloudName, "petclinic-simple", "petclinic");
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true, dataProvider = "supportedClouds")
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false, dataProvider = "supportedClouds")
 	public void testPetclinicSimpleScalingRules(String cloudName) throws IOException, InterruptedException {
 		doTest(cloudName, "petclinic-simple-scalingRules", "petclinic");
 	}

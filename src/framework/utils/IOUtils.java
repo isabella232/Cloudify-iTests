@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.io.FileUtils;
+
 import com.google.common.io.Files;
 
 /**
@@ -51,10 +53,16 @@ public class IOUtils {
        
         FileWriter writer = new FileWriter(FileName);
         writer.write(newtext);writer.close();
-		
-		
 	}
 	
-	
-
+	public static void replaceTextInFile(File file, Map<String,String> map) throws IOException {
+		String originalFileContents = FileUtils.readFileToString(file);
+		String modified = originalFileContents;
+		for (String s : map.keySet()) {
+			modified = modified.replace(s, map.get(s));
+		}
+		FileUtils.write(file, modified);
+	}
 }
+
+

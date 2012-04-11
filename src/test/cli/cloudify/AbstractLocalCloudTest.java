@@ -220,10 +220,10 @@ public class AbstractLocalCloudTest extends AbstractTest {
 		try {
 			TeardownUtils.teardownAll(admin);
 		} catch (final Throwable t) {
-			log("failed to teardown",
-					t);
+			log("failed to teardown",t);
 		}
-		admin.close();
+        if(admin != null)
+		    admin.close();
 		admin = null;
 	}
 

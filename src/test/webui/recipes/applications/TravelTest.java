@@ -29,7 +29,7 @@ import framework.utils.AssertUtils.RepetitiveConditionProvider;
 public class TravelTest extends AbstractSeleniumApplicationRecipeTest {
 
 	@Override
-	@BeforeMethod(enabled = false)
+	@BeforeMethod(enabled = true)
 	public void install() throws IOException, InterruptedException {
 		setCurrentApplication("travel");
 		super.install();

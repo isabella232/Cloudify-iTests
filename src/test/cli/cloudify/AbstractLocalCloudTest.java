@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.rmi.RemoteException;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -42,6 +43,7 @@ import framework.utils.LogUtils;
 import framework.utils.PortConnectionUtils;
 import framework.utils.ScriptUtils;
 import framework.utils.SetupUtils;
+import framework.utils.SigarUtils;
 import framework.utils.TeardownUtils;
 
 public class AbstractLocalCloudTest extends AbstractTest {
@@ -51,9 +53,8 @@ public class AbstractLocalCloudTest extends AbstractTest {
 	private final int restPort = 8100;
 	protected static String restUrl = null;
 	protected static final String DEFAULT_APPLICATION_NAME = "default";
-	private static Set<String> clientStartupPIDs = null;
 	private static Set<String> localCloudPIDs = null;
-	private static Set<String> alivePIDs = null;
+	private static Set<String> aliveAgentPIDs = null;
 
 	@BeforeSuite
 	public void beforeSuite()
@@ -66,7 +67,6 @@ public class AbstractLocalCloudTest extends AbstractTest {
 		} catch (final AssertionError e) {
 			LogUtils.log("teardown failed because no cloud was found. proceeding with suite");
 		}
-		clientStartupPIDs = SetupUtils.getLocalProcesses();
 		try {
 			LogUtils.log("Performing bootstrap");
 			final boolean portOpenBeforeBootstrap = PortConnectionUtils.isPortOpen("localhost",
@@ -95,9 +95,7 @@ public class AbstractLocalCloudTest extends AbstractTest {
 			e.printStackTrace();
 		}
 		try {
-			alivePIDs = SetupUtils.getLocalProcesses();
-			localCloudPIDs = SetupUtils.getClientProcessesIDsDelta(clientStartupPIDs,
-					alivePIDs);
+			localCloudPIDs = SigarUtils.getAgentChildProcesses(this.admin);
 		} catch (final Exception e) {
 			e.printStackTrace();
 		}
@@ -138,7 +136,7 @@ public class AbstractLocalCloudTest extends AbstractTest {
 				throw e1;
 			}
 		}
-		
+
 		if (!admin.getMachines().waitFor(1,
 				30,
 				TimeUnit.SECONDS)) {
@@ -164,11 +162,11 @@ public class AbstractLocalCloudTest extends AbstractTest {
 				+ "], "
 				+ "TotalPhysicalMem ["
 				+ admin.getMachines().getMachines()[0].getOperatingSystem().getDetails()
-						.getTotalPhysicalMemorySizeInGB()
+				.getTotalPhysicalMemorySizeInGB()
 				+ "GB], "
 				+ "FreePhysicalMem ["
 				+ admin.getMachines().getMachines()[0].getOperatingSystem().getStatistics()
-						.getFreePhysicalMemorySizeInGB() + "GB]]");
+				.getFreePhysicalMemorySizeInGB() + "GB]]");
 	}
 
 	@Override
@@ -179,31 +177,41 @@ public class AbstractLocalCloudTest extends AbstractTest {
 			TeardownUtils.snapshot(admin);
 			uninstallAllRunningServices(admin);
 		}
-		if (alivePIDs != null) {
+
+		try {
+			aliveAgentPIDs = SigarUtils.getAgentChildProcesses(admin);
+		} catch (RemoteException e) {
+			LogUtils.log("Failed to get agent's child processes.");
+			e.printStackTrace();
+		}
+
+
+		if (aliveAgentPIDs != null) {
 			try {
-				final Set<String> currentPids = SetupUtils.getLocalProcesses();
-				final Set<String> delta = SetupUtils.getClientProcessesIDsDelta(alivePIDs,
-						currentPids);
-	
+				final Set<String> delta = SetupUtils.getClientProcessesIDsDelta(localCloudPIDs, 
+						aliveAgentPIDs);
+
 				if (delta.size() > 0) {
 					String pids = "";
 					for (final String pid : delta) {
 						pids += pid + ", ";
 					}
+					LogUtils.log("WARNING There is a leak PIDS [ " + pids + "] are alive");
+					LogUtils.log("INFO killing all orphan processes");
+					SetupUtils.killProcessesByIDs(delta);
+					LogUtils.log("INFO killing local cloud processes and boostraping again");
+					SetupUtils.killProcessesByIDs(localCloudPIDs);
 					try {
-						LogUtils.log("WARNING There is a leak PIDS [ " + pids + "] are alive");
-						SetupUtils.killProcessesByIDs(delta);
-						LogUtils.log("INFO killing all orphan processes");
-						SetupUtils.killProcessesByIDs(localCloudPIDs);
-						LogUtils.log("INFO killing local cloud processes and boostraping again");
-					}
-					finally {
 						beforeSuite();
+					} catch (Exception e1) {
+						LogUtils.log("BeforeSuite failed!");
+						e1.printStackTrace();
 					}
+					AssertFail("There is a process leak. PIDS [ " + pids + "] are alive");
 				}
 			} catch (final Throwable e) {
-				LogUtils.log("WARNING Failed to kill processes",e);
-			}
+				LogUtils.log("WARNING Failed to kill processes", e);
+			} 
 		}
 		LogUtils.log("Test Finished : " + this.getClass());
 	}
@@ -222,8 +230,8 @@ public class AbstractLocalCloudTest extends AbstractTest {
 		} catch (final Throwable t) {
 			log("failed to teardown",t);
 		}
-        if(admin != null)
-		    admin.close();
+		if(admin != null)
+			admin.close();
 		admin = null;
 	}
 
@@ -350,12 +358,5 @@ public class AbstractLocalCloudTest extends AbstractTest {
 				}
 			}
 		}
-	}
-
-	public void updateLocalCloudPids(final long oldPid, final long newPid) {
-		localCloudPIDs.remove(oldPid);
-		localCloudPIDs.add(String.valueOf(newPid));
-		alivePIDs.remove(oldPid);
-		alivePIDs.add(String.valueOf(newPid));
 	}
 }

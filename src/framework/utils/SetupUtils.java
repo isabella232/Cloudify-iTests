@@ -16,6 +16,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.cloudifysource.usm.shutdown.DefaultProcessKiller;
 import org.openspaces.admin.Admin;
 import org.openspaces.admin.esm.ElasticServiceManager;
 import org.openspaces.admin.gsa.GridServiceAgent;
@@ -355,31 +356,15 @@ public class SetupUtils {
 
     public static void killProcessesByIDs(Set<String> processesIDs) {
 
-        if (!isWindows()) {
-            try {
-                String command = "kill -9 ";
-                for (String pid : processesIDs) {
-                    command += pid + " ";
-                }
-                log("running '" + command + "' on " + InetAddress.getLocalHost().getHostName());
-                SSHUtils.runCommand(InetAddress.getLocalHost().getHostName(), SSH_TIMEOUT, command, USERNAME, PASSWORD);
-                Thread.sleep(5000);
-            } catch (Exception e) {
-                // ignore
-            }
-        }else{
-            String command = "taskkill ";
-            for (String pid : processesIDs) {
-                command += "/PID " + pid + " ";
-            }
-            command += "/T /F";
-            try {
-                log("running '" + command + "' on " + InetAddress.getLocalHost().getHostName());
-                CommandTestUtils.runLocalCommand(command, true, false);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+    	DefaultProcessKiller dpk = new DefaultProcessKiller();
+    	for (String pid : processesIDs) {
+			long processID = Long.valueOf(pid);
+			try{
+				dpk.killProcess(processID);
+			}catch (Exception e){
+				e.printStackTrace();
+			}
+		}
     }
 
     private static boolean isWindows() {

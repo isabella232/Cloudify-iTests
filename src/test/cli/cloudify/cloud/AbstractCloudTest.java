@@ -134,11 +134,8 @@ public class AbstractCloudTest extends AbstractTest {
 	}
 
 	private void setupCloudManagmentMethods() throws NoSuchMethodException, SecurityException {
-		LogUtils.log("Adding byon to services");
 		defaultServices.put(BYON, new ByonCloudService());
-		LogUtils.log("Adding openstack to services");
 		defaultServices.put(OPENSTACK, new HpCloudService());
-		LogUtils.log("Adding ec2 to services");
 		defaultServices.put(EC2, new Ec2CloudService());
 	}
 

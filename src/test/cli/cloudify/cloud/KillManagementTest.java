@@ -12,13 +12,16 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.Assert;
+import org.openspaces.admin.AdminFactory;
 import org.openspaces.admin.gsm.GridServiceManager;
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import sun.swing.BakedArrayList;
 import test.cli.cloudify.cloud.byon.ByonCloudService;
+import framework.tools.SGTestHelper;
 import framework.utils.AdminUtils;
 import framework.utils.AssertUtils;
 import framework.utils.IOUtils;
@@ -30,33 +33,58 @@ import framework.utils.ScriptUtils;
 import framework.utils.WebUtils;
 
 public class KillManagementTest extends AbstractCloudTest{
+	
 	private URL petClinicUrl;
 	private ByonCloudService service;
 	private String cloudName = "byon";
 	private int numOManagementMachines = 2;
 	final private static String USERNAME = "tgrid";
-	final private static String PASSWORD= "tgrid";
+	final private static String PASSWORD = "tgrid";
+	private static final String LOOKUPGROUP = "byon_group";
 	private volatile boolean run = true;
 	private ExecutorService threadPool;
 	private String restUrl;
-
+	private File byonUploadDir = new File(ScriptUtils.getBuildPath() , "tools/cli/plugins/esc/byon/upload");
+	private File backupStartManagementFile = new File(byonUploadDir, "bootstrap-management.backup");
+	private File originialBootstrapManagement = new File(ScriptUtils.getBuildPath() + "/tools/cli/plugins/esc/byon/upload/bootstrap-management.sh");
+	
 	@BeforeMethod
-	public void before() throws IOException, InterruptedException{
-		admin = AdminUtils.createAdmin();
+	public void before() throws IOException, InterruptedException {
 		
+		// get the default service
+		service = (ByonCloudService) getDefaultService(cloudName);
+		if (service.isBootstrapped()) {
+			service.teardownCloud(); // tear down the existing byon cloud since we need a new bootstrap			
+		}
 		
-		replaceByonLookupGroup();
-		service.teardownCloud();
 		service = new ByonCloudService();
-		//TODO: this is only for dev mode testing
-		//service.setIpList("192.168.9.59,192.168.9.60,192.168.9.61,192.168.9.104");
-		service.setNumberOfManagementMachines(2);
+		service.setNumberOfManagementMachines(numOManagementMachines);
 		service.setMachinePrefix(this.getClass().getName());
+		
+		// replace the default bootstap-management.sh with a multicast version one
+		// first make a backup of the original file
+		FileUtils.copyFile(originialBootstrapManagement, backupStartManagementFile);
+	
+		// copy multicast bootstrap to upload dir as bootstrap-management.sh
+		File bootstrapManagementWithMulticast = new File(SGTestHelper.getSGTestRootDir() + "/apps/cloudify/cloud/byon/bootstrap-management-with-multicast.sh");
+		
+		FileUtils.deleteQuietly(originialBootstrapManagement);
+		FileUtils.copyFile(bootstrapManagementWithMulticast, new File(byonUploadDir, "bootstrap-management.sh"));
+		
+		replaceByonLookupGroup(LOOKUPGROUP);
+		
 		service.bootstrapCloud();
-		setService(service);
+		
 		if (service.getRestUrls() == null) {
 			Assert.fail("Test failed becuase the cloud was not bootstrapped properly");
 		}
+
+		setService(service);
+		
+		LogUtils.log("creating admin");
+		AdminFactory factory = new AdminFactory();
+		factory.addGroup(LOOKUPGROUP);
+		admin = factory.createAdmin();
 		
 		restUrl = service.getRestUrls()[0];
 		String hostIp = restUrl.substring(0, restUrl.lastIndexOf(':'));
@@ -65,7 +93,7 @@ public class KillManagementTest extends AbstractCloudTest{
 
 	}
 
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
 	public void testPetclinic() throws Exception {
 		LogUtils.log("installing application petclinic on " + cloudName);
 		installApplicationAndWait(ScriptUtils.getBuildPath() + "/examples/petclinic", "petclinic");
@@ -134,10 +162,6 @@ public class KillManagementTest extends AbstractCloudTest{
 				"sudo shutdown now -r", USERNAME, PASSWORD);
 	}
 
-
-
-
-
 	@AfterMethod(alwaysRun = true)
 	public void teardown() throws IOException {
 		threadPool.shutdownNow();
@@ -149,35 +173,26 @@ public class KillManagementTest extends AbstractCloudTest{
 			sendTeardownCloudFailedMail(cloudName, e);
 		}
 		putService(new ByonCloudService());
-		unReplaceByonLookupGroup();
+		restoreOriginalBootstrapManagementFile();
 
 
 	}
 
-	private static void replaceByonLookupGroup() throws IOException {
-		File byonUploadDir = new File(ScriptUtils.getBuildPath() , "tools/cli/plugins/esc/byon/upload");
+	private void replaceByonLookupGroup(String group) throws IOException {
 		File originalStartManagementFile = new File(byonUploadDir, "bootstrap-management.sh");
-		File backupStartManagementFile = new File(byonUploadDir, "bootstrap-management.backup");
-
-		// first make a backup of the original file
-		FileUtils.copyFile(originalStartManagementFile, backupStartManagementFile);
 		
 		String toReplace = "setenv.sh\"\\s\\s\\s";
-		String toAdd = "sed -i \"1i export LOOKUPGROUPS="+ AdminUtils.getTestGroups() +"\" setenv.sh || error_exit \\$? \"Failed updating setenv.sh\"\n";
+		String toAdd = "sed -i \"1i export LOOKUPGROUPS="+ group +"\" setenv.sh || error_exit \\$? \"Failed updating setenv.sh\"\n";
 		IOUtils.replaceTextInFile(originalStartManagementFile.getAbsolutePath(), toReplace, "setenv.sh\"" + "\r\n" + toAdd + "\r\n");
 		
 	}
 
 	
 	
-	private void unReplaceByonLookupGroup() throws IOException {
-		File byonUploadDir = new File(ScriptUtils.getBuildPath() , "tools/cli/plugins/esc/byon/upload");
-		File originalStartManagementFile = new File(byonUploadDir, "bootstrap-management.sh");
-		File backupStartManagementFile = new File(byonUploadDir, "bootstrap-management.backup");
-
-		// first make a backup of the original file
-		FileUtils.copyFile(backupStartManagementFile, originalStartManagementFile);
-		backupStartManagementFile.delete();
+	private void restoreOriginalBootstrapManagementFile() throws IOException {
+		originialBootstrapManagement.delete();
+		FileUtils.copyFile(backupStartManagementFile, originialBootstrapManagement);
+		
 	}
 
 }

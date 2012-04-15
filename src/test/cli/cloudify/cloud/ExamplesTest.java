@@ -24,7 +24,7 @@ public class ExamplesTest extends AbstractCloudTest {
 		doTest(cloudName, "petclinic", "petclinic");
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false, dataProvider = "supportedClouds")
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true, dataProvider = "supportedClouds")
 	public void testPetclinicSimple(String cloudName) throws IOException, InterruptedException {
 		doTest(cloudName, "petclinic-simple", "petclinic");
 	}

@@ -130,7 +130,7 @@ public class PetClinicTest extends AbstractSeleniumApplicationRecipeTest {
 		
 		takeScreenShot(this.getClass(), "petClinicDemoTest","passed-topology");
 		
-		appMap.selectApplication("petclinic-mongo");
+		appMap.selectApplication("petclinic");
 		
 		condition = new RepetitiveConditionProvider() {
 

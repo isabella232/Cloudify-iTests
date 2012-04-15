@@ -78,7 +78,7 @@ public class PetClinicTest extends AbstractSeleniumApplicationRecipeTest {
 		};
 		AssertUtils.repetitiveAssertTrue(null, condition, waitingTime);
 		
-		appMenuPanel.selectApplication("petclinic-mongo");
+		appMenuPanel.selectApplication("petclinic");
 		
 		condition = new RepetitiveConditionProvider() {
 

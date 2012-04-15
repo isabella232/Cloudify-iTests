@@ -67,10 +67,9 @@ public class TerminateServiceContainerLogsPanelTest extends AbstractSeleniumAppl
 		
 		assertTrue(logsLocalHost.containsGridServiceContainer(travelContainer));
 		
-		ServicesTab servicesTab = mainNav.switchToServices();
+		int gscAgentId = travelContainer.getAgentId();
 		
-		HostsAndServicesGrid hostAndServicesGrid = servicesTab.getHostAndServicesGrid();
-		hostAndServicesGrid.terminateGSC(localHost.getHostName(), travelContainer);
+		travelContainer.kill();
 		
 		mainNav.switchToTopology();
 		
@@ -88,7 +87,8 @@ public class TerminateServiceContainerLogsPanelTest extends AbstractSeleniumAppl
 				return (!logsLocalHost.containsGridServiceContainer(travelContainer));
 			}
 		};
-		AssertUtils.repetitiveAssertTrue("Container" + travelContainer.getAgentId() + "is still present", condition, waitingTime);
+		
+		AssertUtils.repetitiveAssertTrue("Container" + gscAgentId + "is still present", condition, waitingTime);
 		uninstallApplication("travel", true);
 		
 	}

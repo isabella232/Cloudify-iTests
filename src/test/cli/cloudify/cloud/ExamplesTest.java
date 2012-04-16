@@ -14,22 +14,22 @@ public class ExamplesTest extends AbstractCloudTest {
 		LogUtils.log("Instansiated " + ExamplesTest.class.getName());
 	}
 
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true, dataProvider = "supportedClouds")
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 3, enabled = true, dataProvider = "supportedClouds")
 	public void testTravel(String cloudName) throws IOException, InterruptedException {
 		doTest(cloudName, "travel", "travel");
 	}
 
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true, dataProvider = "supportedCloudsWithoutByon")
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 3, enabled = true, dataProvider = "supportedCloudsWithoutByon")
 	public void testPetclinic(String cloudName) throws IOException, InterruptedException {
 		doTest(cloudName, "petclinic", "petclinic");
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true, dataProvider = "supportedClouds")
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 3, enabled = true, dataProvider = "supportedClouds")
 	public void testPetclinicSimple(String cloudName) throws IOException, InterruptedException {
 		doTest(cloudName, "petclinic-simple", "petclinic");
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false, dataProvider = "supportedClouds")
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 3, enabled = false, dataProvider = "supportedClouds")
 	public void testPetclinicSimpleScalingRules(String cloudName) throws IOException, InterruptedException {
 		doTest(cloudName, "petclinic-simple-scalingRules", "petclinic");
 	}

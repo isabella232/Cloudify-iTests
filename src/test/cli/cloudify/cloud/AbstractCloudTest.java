@@ -116,21 +116,10 @@ public class AbstractCloudTest extends AbstractTest {
 		String clouds = System.getProperty(SUPPORTED_CLOUDS_PROP);
 		SUPPORTED_CLOUDS = toTwoDimentionalArray(System.getProperty(SUPPORTED_CLOUDS_PROP));
 		setupCloudManagmentMethods();
-		LogUtils.log("bootstrapping to clouds : " + clouds);
-        boolean success = false;
-		try {
-        	success = bootstrapClouds();
-        	if (success) {
-        		LogUtils.log("Bootstrapping to clouds finished");
-        	}
-		} 
-		finally {
-        	if (!success) {
-        		teardownClouds();
-        		Assert.fail("bootstrap-cloud failed.");
-        	}
-        }
-		LogUtils.log("finished bootstrapped to clouds : " + clouds);
+		
+		LogUtils.log("trying to teardown any existing clouds...");
+		teardownClouds(false);
+		
 	}
 
 	private void setupCloudManagmentMethods() throws NoSuchMethodException, SecurityException {
@@ -149,7 +138,7 @@ public class AbstractCloudTest extends AbstractTest {
 		
 		LogUtils.log("tearing down clouds : " + clouds);
 		
-		teardownClouds();	
+		teardownClouds(true);	
 		
 		LogUtils.log("finished tearing down clouds : " + clouds);
 	}
@@ -184,7 +173,7 @@ public class AbstractCloudTest extends AbstractTest {
 	}
 
 	
-	private void teardownClouds() {
+	private void teardownClouds(boolean sendMail) {
 		
 		for (int j = 0 ; j < SUPPORTED_CLOUDS.length ; j++){
 			String supportedCloud = SUPPORTED_CLOUDS[j][0];
@@ -192,8 +181,10 @@ public class AbstractCloudTest extends AbstractTest {
 				defaultServices.get(supportedCloud).teardownCloud();
 			}
 			catch (Throwable e) {
-				LogUtils.log("caught an exception while bootstrapping " + supportedCloud, e);
-				sendTeardownCloudFailedMail(supportedCloud, e);
+				LogUtils.log("caught an exception while tearing down " + supportedCloud, e);
+				if (sendMail) {
+					sendTeardownCloudFailedMail(supportedCloud, e);
+				}
 			}
 		}
 	}

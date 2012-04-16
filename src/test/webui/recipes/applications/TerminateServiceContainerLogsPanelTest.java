@@ -9,14 +9,8 @@ import org.openspaces.admin.pu.ProcessingUnit;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import framework.utils.AssertUtils;
-import framework.utils.AssertUtils.RepetitiveConditionProvider;
-import framework.utils.ProcessingUnitUtils;
-
 import test.webui.objects.LoginPage;
 import test.webui.objects.MainNavigation;
-import test.webui.objects.services.HostsAndServicesGrid;
-import test.webui.objects.services.ServicesTab;
 import test.webui.objects.topology.TopologyTab;
 import test.webui.objects.topology.applicationmap.ApplicationMap;
 import test.webui.objects.topology.applicationmap.ApplicationNode;
@@ -24,6 +18,9 @@ import test.webui.objects.topology.logspanel.LogsMachine;
 import test.webui.objects.topology.logspanel.LogsPanel;
 import test.webui.objects.topology.logspanel.PuLogsPanelService;
 import test.webui.resources.WebConstants;
+import framework.utils.AssertUtils;
+import framework.utils.AssertUtils.RepetitiveConditionProvider;
+import framework.utils.ProcessingUnitUtils;
 
 public class TerminateServiceContainerLogsPanelTest extends AbstractSeleniumApplicationRecipeTest {
 	

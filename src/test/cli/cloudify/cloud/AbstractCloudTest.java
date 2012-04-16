@@ -60,8 +60,6 @@ public class AbstractCloudTest extends AbstractTest {
 	 * @throws IOException 
 	 */
 	public void setCloudToUse(String cloudName) throws IOException, InterruptedException {
-		LogUtils.log("List of available services are :" + defaultServices.keySet());
-		LogUtils.log("Retrieving service for cloud " + cloudName);
 		service = defaultServices.get(cloudName);
 		if (service == null) {
 			Assert.fail("service for " + cloudName + " is null");

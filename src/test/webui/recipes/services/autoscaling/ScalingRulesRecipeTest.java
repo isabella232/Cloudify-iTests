@@ -45,7 +45,7 @@ import framework.utils.AssertUtils.RepetitiveConditionProvider;
 import framework.utils.GridServiceContainersCounter;
 import framework.utils.LogUtils;
 
-public class AutoScalingRecipeTest extends AbstractSeleniumServiceRecipeTest {
+public class ScalingRulesRecipeTest extends AbstractSeleniumServiceRecipeTest {
 
 	private static final String SERVICE_NAME = "customServiceMonitor";
 	private static final String SERVICE_RELATIVE_PATH = "apps\\cloudify\\recipes\\" + SERVICE_NAME;

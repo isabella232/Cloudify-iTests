@@ -41,7 +41,7 @@ import framework.utils.AssertUtils.RepetitiveConditionProvider;
 import framework.utils.LogUtils;
 import framework.utils.WebUtils;
 
-public class AutoScalingTomcatTotalRequestsTest extends AbstractSeleniumApplicationRecipeTest {
+public class ScalingRulesTomcatTotalRequestsTest extends AbstractSeleniumApplicationRecipeTest {
 
 	private static final String COUNTER_METRIC = "Total Requests Count";
 	private static final String APPLICATION_NAME = "petclinic";

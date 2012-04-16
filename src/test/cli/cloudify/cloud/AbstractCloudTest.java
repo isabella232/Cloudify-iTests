@@ -111,7 +111,6 @@ public class AbstractCloudTest extends AbstractTest {
 	@BeforeSuite(alwaysRun = true, enabled = true)
 	public void bootstrapSupportedClouds() throws NoSuchMethodException, SecurityException {
 		
-		String clouds = System.getProperty(SUPPORTED_CLOUDS_PROP);
 		SUPPORTED_CLOUDS = toTwoDimentionalArray(System.getProperty(SUPPORTED_CLOUDS_PROP));
 		setupCloudManagmentMethods();
 		

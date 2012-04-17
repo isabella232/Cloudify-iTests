@@ -35,6 +35,27 @@ public class RecipeTest extends AbstractLocalCloudTest {
 	@Override
 	@AfterMethod
 	public void afterTest() {}
+
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, groups = "1", enabled = true)
+    public void testMongod() throws IOException, InterruptedException{
+        String mongodDirPath = recipesDirPath + "/mongodb/mongod";
+        String output = runCommand("test-recipe " + mongodDirPath + " " + RecipeTestUtil.DEFAULT_RECIPE_TEST_TIMEOUT + " mongod-service.groovy");
+        assertTrue("test-recipe failed and runCommand didn't throw an Exception as it should !!", output.contains("Recipe test completed"));
+    }
+
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, groups = "1", enabled = true)
+    public void testMongos() throws IOException, InterruptedException{
+        String mongosDirPath = recipesDirPath + "/mongodb/mongos";
+        String output = runCommand("test-recipe " + mongosDirPath + " " + RecipeTestUtil.DEFAULT_RECIPE_TEST_TIMEOUT + " mongos-service.groovy");
+        assertTrue("test-recipe failed and runCommand didn't throw an Exception as it should !!", output.contains("Recipe test completed"));
+    }
+
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, groups = "1", enabled = true)
+    public void testMongoCfg() throws IOException, InterruptedException{
+        String mongoCfgDirPath = recipesDirPath + "/mongodb/mongo-cfg";
+        String output = runCommand("test-recipe " + mongoCfgDirPath + " " + RecipeTestUtil.DEFAULT_RECIPE_TEST_TIMEOUT + " mongo-cfg-service.groovy");
+        assertTrue("test-recipe failed and runCommand didn't throw an Exception as it should !!", output.contains("Recipe test completed"));
+    }
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, groups = "1", enabled = true)
 	public void testSolr() throws IOException, InterruptedException{

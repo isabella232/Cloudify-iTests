@@ -43,7 +43,7 @@ public class ExamplesTest extends AbstractCloudTest {
 		}
 		finally {
 			if ((getService() != null) && (getService().getRestUrls() != null)) {
-				String command = "connect " + getService().getRestUrls()[0] + ";list-applications";
+				String command = "connect " + getRestUrl() + ";list-applications";
 				String output = CommandTestUtils.runCommandAndWait(command);
 				if (output.contains(applicationName)) {
 					uninstallApplicationAndWait(applicationName);			

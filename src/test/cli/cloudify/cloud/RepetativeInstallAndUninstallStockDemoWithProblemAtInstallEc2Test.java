@@ -33,22 +33,30 @@ import framework.utils.WebUtils;
  */
 public class RepetativeInstallAndUninstallStockDemoWithProblemAtInstallEc2Test extends AbstractCloudTest {
 
+	private static final String STOCKDEMO_APP_NAME = "stockdemo";
 	private final int repetitions = 3 ;
 	private String cassandraPostStartScriptPath = null;
 	private String newPostStartScriptPath = null;
 	private Ec2CloudService service;
 	private URL stockdemoUrl;
 	private String restUrl;
+	private final String stockdemoAppPath = CommandTestUtils.getPath("apps/USM/usm/applications/stockdemo");
+	
+	private File cloudPluginDir = new File(ScriptUtils.getBuildPath() + "/tools/cli/plugins/esc/ec2");
+	private File bootstapManagementInSGTest = new File(SGTestHelper.getSGTestRootDir() + "/apps/cloudify/cloud/ec2/bootstrap-management.sh");
+	private File bootstapManagementInBuild = new File(cloudPluginDir.getAbsolutePath() + "/upload/bootstrap-management.sh");
+	private File bootstrapManagementBackup = new File(cloudPluginDir.getAbsolutePath() + "/upload/bootstrap-management.backup");
+
+
 	
 	@BeforeMethod
 	public void bootstrap() throws IOException, InterruptedException {	
 		
-		File cloudPluginDir = new File(ScriptUtils.getBuildPath() + "/tools/cli/plugins/esc/ec2");
-		File bootstapManagementInSGTest = new File(SGTestHelper.getSGTestRootDir() + "/apps/cloudify/cloud/ec2/bootstrap-management.sh");
-		File bootstapManagementInBuild = new File(cloudPluginDir.getAbsolutePath() + "/upload/bootstrap-management.sh");
-		bootstapManagementInBuild.delete();
+		LogUtils.log("replacing original bootstrap-management file with a one that installs open jdk");
+		FileUtils.copyFile(bootstapManagementInBuild, bootstrapManagementBackup);
 		FileUtils.copyFile(bootstapManagementInSGTest, bootstapManagementInBuild);
 		
+		LogUtils.log("put cloudify-xap license in upload dir, needed to run stockdemo app");
 		File xapLicense = new File(SGTestHelper.getSGTestRootDir() + "/apps/cloudify/cloud/gslicense.xml");
 		File cloudifyOverrides = new File(cloudPluginDir.getAbsolutePath() + "/upload/cloudify-overrides");
 		if (!cloudifyOverrides.exists()) {
@@ -60,12 +68,8 @@ public class RepetativeInstallAndUninstallStockDemoWithProblemAtInstallEc2Test e
 		service = new Ec2CloudService();
 		service.setMachinePrefix(this.getClass().getName() + CloudTestUtils.SGTEST_MACHINE_PREFIX);
 		service.bootstrapCloud();
-		setService(service);
-		if (service.getRestUrls() == null) {
-			Assert.fail("Test failed becuase the cloud was not bootstrapped properly");
-		}
-		
-		restUrl = service.getRestUrls()[0];
+		super.setService(service);
+		restUrl = super.getRestUrl();
 		String hostIp = restUrl.substring(0, restUrl.lastIndexOf(':'));
 		stockdemoUrl = new URL(hostIp + ":8080/stockdemo.StockDemo/");
 	}
@@ -74,19 +78,26 @@ public class RepetativeInstallAndUninstallStockDemoWithProblemAtInstallEc2Test e
 	@AfterMethod(alwaysRun = true)
 	public void teardown() throws IOException {
 		try {
+			String command = "connect " + super.getRestUrl() + ";list-applications";
+			String output = CommandTestUtils.runCommandAndWait(command);
+			if (output.contains(STOCKDEMO_APP_NAME)) {
+				uninstallApplicationAndWait(STOCKDEMO_APP_NAME);			
+			}
 			service.teardownCloud();
 		}
 		catch (Throwable e) {
 			LogUtils.log("caught an exception while tearing down ec2", e);
 			sendTeardownCloudFailedMail("ec2", e);
 		}
+		LogUtils.log("restoring original bootstrap-management file");
+		FileUtils.copyFile(bootstrapManagementBackup, bootstapManagementInBuild);
+		FileUtils.deleteQuietly(bootstrapManagementBackup);
+		
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT *(1 + repetitions), groups = "1", enabled = true)
 	public void installAndUninstallTest() throws Exception {
 		
-		
-		final String stockdemoAppPath = CommandTestUtils.getPath("apps/USM/usm/applications/stockdemo");	
 		cassandraPostStartScriptPath = stockdemoAppPath + "/cassandra/cassandra_poststart.groovy";	
 		newPostStartScriptPath = stockdemoAppPath + "/cassandra/cassandra_poststart123.groovy";
 		int secondInstallationSuccessCounter = 0;

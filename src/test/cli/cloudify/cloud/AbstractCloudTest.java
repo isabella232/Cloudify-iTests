@@ -127,7 +127,7 @@ public class AbstractCloudTest extends AbstractTest {
 	/**
 	 * After suite ends teardown all bootstrapped clouds.
 	 */
-	@AfterSuite(enabled = false)
+	@AfterSuite(enabled = true)
 	public void teardownSupportedClouds() {
 		
 		String clouds = System.getProperty(SUPPORTED_CLOUDS_PROP);

@@ -113,7 +113,6 @@ public class AbstractCloudTest extends AbstractTest {
 		
 		SUPPORTED_CLOUDS = toTwoDimentionalArray(System.getProperty(SUPPORTED_CLOUDS_PROP));
 		setupCloudManagmentMethods();
-		
 		LogUtils.log("trying to teardown any existing clouds...");
 		teardownClouds(false);
 		
@@ -128,7 +127,7 @@ public class AbstractCloudTest extends AbstractTest {
 	/**
 	 * After suite ends teardown all bootstrapped clouds.
 	 */
-	@AfterSuite(enabled = true)
+	@AfterSuite(enabled = false)
 	public void teardownSupportedClouds() {
 		
 		String clouds = System.getProperty(SUPPORTED_CLOUDS_PROP);
@@ -138,6 +137,7 @@ public class AbstractCloudTest extends AbstractTest {
 		teardownClouds(true);	
 		
 		LogUtils.log("finished tearing down clouds : " + clouds);
+		
 	}
 	
 	private boolean bootstrapClouds() {
@@ -195,11 +195,7 @@ public class AbstractCloudTest extends AbstractTest {
 	 */
 	public void installServiceAndWait(String servicePath, String serviceName) throws IOException, InterruptedException {
 		
-		if (service.getRestUrls() == null) {
-			Assert.fail("Test failed becuase the cloud was not bootstrapped properly");
-		}
-		
-		String restUrl = service.getRestUrls()[0];
+		String restUrl = getRestUrl();
 		
 		String connectCommand = "connect " + restUrl + ";";
 		String installCommand = new StringBuilder()
@@ -237,11 +233,7 @@ public class AbstractCloudTest extends AbstractTest {
 	 */
 	public void installApplication(String applicationPath, String applicationName,int timeout ,boolean wait ,boolean failCommand) throws IOException, InterruptedException {
 		
-		if (service.getRestUrls() == null) {
-			Assert.fail("Test failed becuase the cloud was not bootstrapped properly");
-		}
-		
-		String restUrl = service.getRestUrls()[0];
+		String restUrl = getRestUrl();
 		
 		long timeoutToUse;
 		if(timeout > 0)
@@ -265,6 +257,16 @@ public class AbstractCloudTest extends AbstractTest {
 			assertTrue(output.toLowerCase().contains("operation failed"));
 
 	}
+
+	protected String getRestUrl() {
+		if (service.getRestUrls() == null) {
+			Assert.fail("Test failed becuase the cloud was not bootstrapped properly");
+		}
+		
+		String restUrl = service.getRestUrls()[0];
+		return restUrl;
+		
+	}
 	
 	/**
 	 * uninstalls a service from a specific cloud and waits for the uninstallation to complete.
@@ -274,11 +276,7 @@ public class AbstractCloudTest extends AbstractTest {
 	 */
 	public void uninstallServiceAndWait(String serviceName) throws IOException, InterruptedException {
 		
-		if (service.getRestUrls() == null) {
-			Assert.fail("Test failed becuase the cloud was not bootstrapped properly");
-		}
-		
-		String restUrl = service.getRestUrls()[0];
+		String restUrl = getRestUrl();
 		
 		String connectCommand = "connect " + restUrl + ";";
 		String installCommand = new StringBuilder()
@@ -302,11 +300,7 @@ public class AbstractCloudTest extends AbstractTest {
 	 */
 	public void uninstallApplicationAndWait(String applicationName) throws IOException, InterruptedException {
 		
-		if (service.getRestUrls() == null) {
-			Assert.fail("Test failed becuase the cloud was not bootstrapped properly");
-		}
-		
-		String restUrl = service.getRestUrls()[0];
+		String restUrl = getRestUrl();
 		
 		String connectCommand = "connect " + restUrl + ";";
 		String installCommand = new StringBuilder()

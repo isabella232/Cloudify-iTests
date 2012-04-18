@@ -162,10 +162,10 @@ public class TravelTest extends AbstractSeleniumApplicationRecipeTest {
 
 		tomcat.select();
 
-		assertTrue("Current Http Threads count" + METRICS_ASSERTION_SUFFIX, healthPanel.getMetric("Current Http Threads count") != null);
-		assertTrue("Current Http Threads Busy" + METRICS_ASSERTION_SUFFIX, healthPanel.getMetric("Current Http Threads Busy") != null);
-		assertTrue("Backlog" + METRICS_ASSERTION_SUFFIX, healthPanel.getMetric("Request Backlog") != null);
-		assertTrue("Active Sessions" + METRICS_ASSERTION_SUFFIX, healthPanel.getMetric("Active Sessions") != null);
+		assertTrue("metric 0 is not displayed for tomcat recipe", healthPanel.getMetric(0) != null);
+		assertTrue("metric 1 is not displayed for tomcat recipe", healthPanel.getMetric(1) != null);
+		assertTrue("metric 2 is not displayed for tomcat recipe", healthPanel.getMetric(2) != null);
+		assertTrue("metric 3 is not displayed for tomcat recipe", healthPanel.getMetric(3) != null);
 
 		ServicesTab servicesTab = mainNav.switchToServices();
 

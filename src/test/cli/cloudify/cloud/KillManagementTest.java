@@ -46,7 +46,7 @@ public class KillManagementTest extends AbstractCloudTest{
 	private File backupStartManagementFile = new File(byonUploadDir, "bootstrap-management.backup");
 	private File originialBootstrapManagement = new File(ScriptUtils.getBuildPath() + "/tools/cli/plugins/esc/byon/upload/bootstrap-management.sh");
 	
-	@BeforeMethod(enabled = false)
+	@BeforeMethod(enabled = true)
 	public void before() throws IOException, InterruptedException {
 		
 		// get the default service
@@ -91,7 +91,7 @@ public class KillManagementTest extends AbstractCloudTest{
 
 	}
 
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
 	public void testPetclinic() throws Exception {
 		LogUtils.log("installing application petclinic on " + cloudName);
 		installApplicationAndWait(ScriptUtils.getBuildPath() + "/examples/petclinic", "petclinic");

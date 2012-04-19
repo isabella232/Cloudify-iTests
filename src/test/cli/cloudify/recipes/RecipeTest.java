@@ -17,7 +17,7 @@ import org.cloudifysource.dsl.internal.ServiceReader;
 import framework.utils.ScriptUtils;
 
 public class RecipeTest extends AbstractLocalCloudTest {
-	private String recipesDirPath = ScriptUtils.getBuildPath() + "/recipes";
+	private String recipesDirPath = ScriptUtils.getBuildPath() + "/recipes/services";
 	public static volatile boolean portReleasedBeforTimeout;
 	protected static volatile boolean portTakenBeforTimeout;
 

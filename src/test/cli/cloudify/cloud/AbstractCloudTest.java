@@ -33,10 +33,10 @@ public class AbstractCloudTest extends AbstractTest {
 	private static final Map<String, CloudService> defaultServices = new HashMap<String, CloudService>();
 
 	private static String[][] SUPPORTED_CLOUDS = null;
-	private static final String SUPPORTED_CLOUDS_PROP = "supported-clouds";
-	private static final String BYON = "byon";
-	private static final String OPENSTACK = "openstack";
-	private static final String EC2 = "ec2";
+	protected static final String SUPPORTED_CLOUDS_PROP = "supported-clouds";
+	protected static final String BYON = "byon";
+	protected static final String OPENSTACK = "openstack";
+	protected static final String EC2 = "ec2";
 	private CloudService service;
 	
 	public AbstractCloudTest() {

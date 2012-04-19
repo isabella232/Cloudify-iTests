@@ -26,7 +26,7 @@ public class ExamplesTest extends AbstractCloudTest {
 	
 	//petclinic-simple is covered by {@link ScalingRulesCloudTest}
 	
-	private void doTest(String cloudName, String applicationFolderName, String applicationName) throws IOException, InterruptedException {
+	protected void doTest(String cloudName, String applicationFolderName, String applicationName) throws IOException, InterruptedException {
 		LogUtils.log("installing application " + applicationName + " on " + cloudName);
 		setCloudToUse(cloudName);
 		String applicationPath = ScriptUtils.getBuildPath() + "/recipes/apps/" + applicationFolderName;

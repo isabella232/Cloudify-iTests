@@ -26,7 +26,7 @@ public class TravelAppFailOverUsingXenTest extends AbstractApplicationFailOverXe
 	private static final String TOMCAT_ABSOLUTE_PU_NAME = ServiceUtils.getAbsolutePUName(TRAVEL_APPLICATION_NAME,TOMCAT_PU_NAME);
 	private static final String CASSANDRA_PU_NAME = "cassandra";
 	private static final String CASSANDRA_ABSOLUTE_PU_NAME = ServiceUtils.getAbsolutePUName(TRAVEL_APPLICATION_NAME, CASSANDRA_PU_NAME);
-	private final String travelAppDirPath = ScriptUtils.getBuildPath() + "/examples/travel";
+	private final String travelAppDirPath = ScriptUtils.getBuildPath() + "/recipes/apps/travel";
 	private int tomcatPort;
 	private String travelHostIp;
 		

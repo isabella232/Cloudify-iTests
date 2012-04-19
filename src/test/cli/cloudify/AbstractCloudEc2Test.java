@@ -65,7 +65,7 @@ public class AbstractCloudEc2Test extends AbstractTest {
     
 	private void bootstrapCloud() throws IOException, InterruptedException, DSLException {
 		
-	    //String applicationPath = (new File(ScriptUtils.getBuildPath(), "examples/travel").toString()).replace('\\', '/');
+	    //String applicationPath = (new File(ScriptUtils.getBuildPath(), "recipes/apps/travel").toString()).replace('\\', '/');
 		String ec2TestPath = (SGTestHelper.getSGTestRootDir() + "/apps/cloudify/cloud/ec2").replace('\\', '/');
 		String sshKeyPemName = "cloud-demo.pem";
 		

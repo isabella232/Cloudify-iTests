@@ -58,7 +58,7 @@ public class InternalUSMPuServiceDownTest extends AbstractLocalCloudTest {
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, groups = "1", enabled = true)
 	public void tomcatServiceDownAndCorruptedTest() throws IOException, InterruptedException, PackagingException {
 		
-		String serviceDir = ScriptUtils.getBuildPath() + "/recipes/tomcat";
+		String serviceDir = ScriptUtils.getBuildPath() + "/recipes/services/tomcat";
 		String command = "connect " + this.restUrl + ";" + "install-service " + "--verbose -timeout 10 " + serviceDir;
 		try {
 			LogUtils.log("installing tomcat service using Cli");

@@ -6,9 +6,9 @@ service {
     //def absolutePath3 =  absolutePath2.substring("file:/".length(), absolutePath2.length())+"/../../examples/travel/cassandra"
     def absolutePath3
     if(System.getProperty("os.name").toLowerCase().startsWith("win")){
-        absolutePath3 =  absolutePath2.substring("file:/".length(), absolutePath2.length())+"/../../recipes/cassandra"
+        absolutePath3 =  absolutePath2.substring("file:/".length(), absolutePath2.length())+"/../../recipes/services/cassandra"
     }else{
-        absolutePath3 =  absolutePath2.substring("file:".length(), absolutePath2.length())+"/../../recipes/cassandra"
+        absolutePath3 =  absolutePath2.substring("file:".length(), absolutePath2.length())+"/../../recipes/services/cassandra"
     }
     extend absolutePath3
     name "cassandra"

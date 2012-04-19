@@ -31,7 +31,7 @@ public class InstallUninstallPetclinicTest extends AbstractLocalCloudTest {
 	}
 	
 	private boolean installPetclinic() throws IOException, InterruptedException {
-		String petclinicPath = ScriptUtils.getBuildPath() + "/examples/petclinic";
+		String petclinicPath = ScriptUtils.getBuildPath() + "/recipes/apps/petclinic";
 		String cliOutput = runCommand("connect " + restUrl + ";install-application --verbose " + petclinicPath);
 		return cliOutput.toLowerCase().contains("application petclinic installed successfully");
 	}

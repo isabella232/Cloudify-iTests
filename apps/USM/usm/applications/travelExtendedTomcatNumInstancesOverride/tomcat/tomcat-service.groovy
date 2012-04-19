@@ -6,9 +6,9 @@ service {
     //def absolutePath3 =  absolutePath2.substring("file:/".length(), absolutePath2.length())+"/../../examples/travel/tomcat"
     def absolutePath3
     if(System.getProperty("os.name").toLowerCase().startsWith("win")){
-        absolutePath3 =  absolutePath2.substring("file:/".length(), absolutePath2.length())+"/../../recipes/tomcat"
+        absolutePath3 =  absolutePath2.substring("file:/".length(), absolutePath2.length())+"/../../recipes/services/tomcat"
     }else{
-        absolutePath3 =  absolutePath2.substring("file:".length(), absolutePath2.length())+"/../../recipes/tomcat"
+        absolutePath3 =  absolutePath2.substring("file:".length(), absolutePath2.length())+"/../../recipes/services/tomcat"
     }
     extend absolutePath3
     numInstances 3

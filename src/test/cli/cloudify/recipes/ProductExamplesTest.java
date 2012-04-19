@@ -20,7 +20,7 @@ import framework.utils.ScriptUtils;
 
 public class ProductExamplesTest extends AbstractLocalCloudTest {
 
-	private String examplesDirPath = ScriptUtils.getBuildPath() + "/examples";
+	private String examplesDirPath = ScriptUtils.getBuildPath() + "/recipes/apps";
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, groups = "1", enabled = true)
 	public void installTravel() throws IOException, InterruptedException {

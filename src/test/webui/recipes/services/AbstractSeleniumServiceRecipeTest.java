@@ -23,7 +23,7 @@ public class AbstractSeleniumServiceRecipeTest extends AbstractSeleniumTest {
 	public void setCurrentRecipe(String recipe) {
 		this.serviceName = recipe;
 		String gigaDir = ScriptUtils.getBuildPath();	
-		this.pathToService = gigaDir + "/recipes/" + recipe;
+		this.pathToService = gigaDir + "/recipes/services/" + recipe;
 	}
 	
 	public void setPathToServiceRelativeToSGTestRootDir(String recipe, String relativePath) {

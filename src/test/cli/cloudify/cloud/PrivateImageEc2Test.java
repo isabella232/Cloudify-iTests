@@ -13,11 +13,9 @@ import framework.utils.LogUtils;
 
 public class PrivateImageEc2Test extends ExamplesTest {
 	private Ec2CloudService service;
-	private Ec2CloudService oldService;
 
 	@BeforeMethod
 	public void bootstrap() throws IOException, InterruptedException {	
-		oldService = (Ec2CloudService) getDefaultService(EC2);
 		service = new Ec2CloudService();
 		service.setAdditionalPropsToReplace(new HashMap<String, String>());
 		service.getAdditionalPropsToReplace().put("imageId \"us-east-1/ami-76f0061f\"", "imageId \"us-east-1/ami-93b068fa\"");
@@ -38,7 +36,6 @@ public class PrivateImageEc2Test extends ExamplesTest {
 			sendTeardownCloudFailedMail("ec2", e);
 		}
 		LogUtils.log("restoring original bootstrap-management file");
-		setService(oldService);
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, groups = "1", enabled = true)

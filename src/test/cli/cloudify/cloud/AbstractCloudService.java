@@ -84,7 +84,7 @@ public abstract class AbstractCloudService implements CloudService {
 			overrideLogsFile();
 			injectAuthenticationDetails();
 			if (additionalPropsToReplace != null) {
-				String pathToCloudGroovy = ScriptUtils.getBuildPath() + "/tools/cli/plugins/esc/" + getCloudName() + "-cloud.groovy";
+				String pathToCloudGroovy = ScriptUtils.getBuildPath() + "/tools/cli/plugins/esc/" + getCloudName() + "/" + getCloudName() + "-cloud.groovy";
 				IOUtils.replaceTextInFile(pathToCloudGroovy, additionalPropsToReplace);
 			}
 			String output = CommandTestUtils.runCommandAndWait("bootstrap-cloud --verbose " + getCloudName());

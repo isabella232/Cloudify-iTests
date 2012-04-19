@@ -94,7 +94,7 @@ public class KillManagementTest extends AbstractCloudTest{
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
 	public void testPetclinic() throws Exception {
 		LogUtils.log("installing application petclinic on " + cloudName);
-		installApplicationAndWait(ScriptUtils.getBuildPath() + "/examples/petclinic", "petclinic");
+		installApplicationAndWait(ScriptUtils.getBuildPath() + "/recipes/apps/petclinic", "petclinic");
 
 		Future<Void> ping = threadPool.submit(new Callable<Void>(){
 			@Override

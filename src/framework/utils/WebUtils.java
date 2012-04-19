@@ -4,6 +4,7 @@ import java.lang.reflect.Method;
 import java.net.InetAddress;
 import java.net.URL;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -11,6 +12,8 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.openspaces.jee.sessions.jetty.SessionData;
+
+import framework.utils.AssertUtils.RepetitiveConditionProvider;
 
 public class WebUtils {
 
@@ -42,7 +45,35 @@ public class WebUtils {
 		return result;
 	}
 
-	public static boolean isURLAvailable(URL url) throws Exception {
+
+	public static void repetitiveAssertWebUrlAvailable(final String applicationUrl, long timeout, TimeUnit timeUnit) {
+		AssertUtils.repetitiveAssertTrue("Cannot access " + applicationUrl, new RepetitiveConditionProvider() {
+			
+			@Override
+			public boolean getCondition() {
+				try {
+					final HttpClient client = new DefaultHttpClient();
+					try {
+						final HttpGet get = new HttpGet(new URL(applicationUrl).toURI());
+						
+							final HttpResponse response = client.execute(get);
+							if (response.getStatusLine().getStatusCode() != 200) {
+								LogUtils.log("Failed to access " + applicationUrl + " response:"+ response.getStatusLine().getReasonPhrase() + " status code:" + response.getStatusLine().getStatusCode());
+							}
+							return true;
+						
+					} finally {
+						client.getConnectionManager().shutdown();
+					}
+				} catch (final Exception e) {
+					LogUtils.log("Failed to access " + applicationUrl ,e);
+					return false;
+				}
+			}
+		}, timeUnit.toMillis(timeout));
+	}
+
+	public static boolean isURLAvailable(URL url) throws Exception{
 		HttpClient client = new DefaultHttpClient();
 		// Do not use HEAD here! The spring framework we use does not like it. 
 		HttpGet get = new HttpGet(url.toURI());

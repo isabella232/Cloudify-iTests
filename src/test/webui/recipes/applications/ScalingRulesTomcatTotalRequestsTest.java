@@ -143,7 +143,7 @@ public class ScalingRulesTomcatTotalRequestsTest extends AbstractSeleniumApplica
 				"customServiceMonitor service is displayed as " + simple.getStatus() + 
 					"even though it is installed", condition, this.getClass(), "AutoScalingTomcatTotalRequestsTest", SERVICE_NAME);
 		
-		Assert.assertTrue(WebUtils.isURLAvailable(new URL(applicationUrl)));
+		WebUtils.repetitiveAssertWebUrlAvailable(applicationUrl, OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
 		
 		final InternalProcessingUnit pu = (InternalProcessingUnit) admin.getProcessingUnits().waitFor(ABSOLUTE_SERVICE_NAME,OPERATION_TIMEOUT,TimeUnit.MILLISECONDS);
 		final ProcessingUnitStatisticsId statisticsId = 
@@ -170,8 +170,6 @@ public class ScalingRulesTomcatTotalRequestsTest extends AbstractSeleniumApplica
 		repetitiveAssertNumberOfInstances(pu, 1);
 		uninstallApplication(APPLICATION_NAME, true);		
 	}
-	
-	
 	
 	public class HttpRequest implements Runnable{
 		

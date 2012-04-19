@@ -109,7 +109,7 @@ public class AbstractCloudTest extends AbstractTest {
 	 * @throws NoSuchMethodException 
 	 */
 	@BeforeSuite(alwaysRun = true, enabled = true)
-	public void bootstrapSupportedClouds() throws NoSuchMethodException, SecurityException {
+	public void setupDefaultServices() throws NoSuchMethodException, SecurityException {
 		
 		SUPPORTED_CLOUDS = toTwoDimentionalArray(System.getProperty(SUPPORTED_CLOUDS_PROP));
 		setupCloudManagmentMethods();
@@ -138,25 +138,6 @@ public class AbstractCloudTest extends AbstractTest {
 		
 		LogUtils.log("finished tearing down clouds : " + clouds);
 		
-	}
-	
-	private boolean bootstrapClouds() {
-		
-		int numberOfSuccesfullyBootstrappedClouds = 0;
-		
-		for (int j = 0 ; j < SUPPORTED_CLOUDS.length ; j++){
-			String supportedCloud = SUPPORTED_CLOUDS[j][0];
-			try {
-				defaultServices.get(supportedCloud).bootstrapCloud();
-				numberOfSuccesfullyBootstrappedClouds++;
-			}
-			catch (Throwable e) {
-				LogUtils.log("caught an exception while bootstrapping " + supportedCloud, e);
-			}
-		}
-
-		if (numberOfSuccesfullyBootstrappedClouds > 0) return true;
-		return false;	
 	}
 	
 	@Override

@@ -29,7 +29,7 @@ import framework.tools.SimpleMail;
 import framework.utils.LogUtils;
 
 public class AbstractCloudTest extends AbstractTest {
-	
+
 	private static final Map<String, CloudService> defaultServices = new HashMap<String, CloudService>();
 
 	private static String[][] SUPPORTED_CLOUDS = null;
@@ -38,20 +38,20 @@ public class AbstractCloudTest extends AbstractTest {
 	protected static final String OPENSTACK = "openstack";
 	protected static final String EC2 = "ec2";
 	private CloudService service;
-	
+
 	public AbstractCloudTest() {
 		LogUtils.log("Instansiated " + AbstractCloudTest.class.getName());
 	}
-	
+
 	public void putService(CloudService service) {
 		defaultServices.put(service.getCloudName(), service);
 	}
-	
+
 	public CloudService getDefaultService(String cloudName) {
 		return defaultServices.get(cloudName);
 	}
-	
-	
+
+
 	/**
 	 * set the service CloudService instance to a specific cloud provider.
 	 * all install/uninstall commands will be executed on the specified cloud.
@@ -69,20 +69,20 @@ public class AbstractCloudTest extends AbstractTest {
 			service.bootstrapCloud();
 		}
 	}
-	
+
 	public void setService(CloudService service) {
 		this.service = service;
 	}
-	
+
 	public CloudService getService() {
 		return service;
 	}
-	
+
 	@DataProvider(name = "supportedClouds")
 	public String[][] supportedClouds() {
 		return SUPPORTED_CLOUDS;
 	}
-	
+
 	@DataProvider(name = "supportedCloudsWithoutByon")
 	public String[][] supportedCloudsWithoutByon() {
 		String property = System.getProperty(SUPPORTED_CLOUDS_PROP);
@@ -97,12 +97,12 @@ public class AbstractCloudTest extends AbstractTest {
 		for (int i = 0 ; i < result.size() ; i++) {
 			resultFinal[i][0] = result.get(i);
 		}
-		
+
 		return resultFinal;
 
-		
+
 	}
-	
+
 	/**
 	 * Before the suite starts bootstrap all clouds.
 	 * @throws SecurityException 
@@ -110,12 +110,14 @@ public class AbstractCloudTest extends AbstractTest {
 	 */
 	@BeforeSuite(alwaysRun = true, enabled = true)
 	public void setupDefaultServices() throws NoSuchMethodException, SecurityException {
+
+		if(!isDevMode()){
 		
-		SUPPORTED_CLOUDS = toTwoDimentionalArray(System.getProperty(SUPPORTED_CLOUDS_PROP));
-		setupCloudManagmentMethods();
-		LogUtils.log("trying to teardown any existing clouds...");
-		teardownClouds(false);
-		
+			SUPPORTED_CLOUDS = toTwoDimentionalArray(System.getProperty(SUPPORTED_CLOUDS_PROP));
+			setupCloudManagmentMethods();
+			LogUtils.log("trying to teardown any existing clouds...");
+			teardownClouds(false);
+		}
 	}
 
 	private void setupCloudManagmentMethods() throws NoSuchMethodException, SecurityException {
@@ -129,30 +131,29 @@ public class AbstractCloudTest extends AbstractTest {
 	 */
 	@AfterSuite(enabled = true)
 	public void teardownSupportedClouds() {
+
+		if(!isDevMode()){
 		
-		String clouds = System.getProperty(SUPPORTED_CLOUDS_PROP);
-		
-		LogUtils.log("tearing down clouds : " + clouds);
-		
-		teardownClouds(true);	
-		
-		LogUtils.log("finished tearing down clouds : " + clouds);
-		
+			String clouds = System.getProperty(SUPPORTED_CLOUDS_PROP);
+			LogUtils.log("tearing down clouds : " + clouds);
+			teardownClouds(true);	
+			LogUtils.log("finished tearing down clouds : " + clouds);
+		}
 	}
-	
+
 	@Override
 	@AfterMethod
 	public void afterTest() {
 	}
-	
+
 	@Override
 	@BeforeMethod
 	public void beforeTest() {
 	}
 
-	
+
 	private void teardownClouds(boolean sendMail) {
-		
+
 		for (int j = 0 ; j < SUPPORTED_CLOUDS.length ; j++){
 			String supportedCloud = SUPPORTED_CLOUDS[j][0];
 			try{
@@ -166,7 +167,7 @@ public class AbstractCloudTest extends AbstractTest {
 			}
 		}
 	}
-	
+
 	/**
 	 * installs a service on a specific cloud and waits for the installation to complete.
 	 * @param servicePath - full path to the -service.groovy file on the local file system.
@@ -175,22 +176,22 @@ public class AbstractCloudTest extends AbstractTest {
 	 * @throws InterruptedException
 	 */
 	public void installServiceAndWait(String servicePath, String serviceName) throws IOException, InterruptedException {
-		
+
 		String restUrl = getRestUrl();
-		
+
 		String connectCommand = "connect " + restUrl + ";";
 		String installCommand = new StringBuilder()
-			.append("install-service ")
-			.append("--verbose ")
-			.append("-timeout ")
-			.append(TimeUnit.MILLISECONDS.toMinutes(DEFAULT_TEST_TIMEOUT * 2)).append(" ")
-			.append((servicePath.toString()).replace('\\', '/'))
-			.toString();
+		.append("install-service ")
+		.append("--verbose ")
+		.append("-timeout ")
+		.append(TimeUnit.MILLISECONDS.toMinutes(DEFAULT_TEST_TIMEOUT * 2)).append(" ")
+		.append((servicePath.toString()).replace('\\', '/'))
+		.toString();
 		String output = CommandTestUtils.runCommandAndWait(connectCommand + installCommand);
 		String excpectedResult = serviceName + " service installed successfully";
 		assertTrue(output.toLowerCase().contains(excpectedResult.toLowerCase()));
 	}
-	
+
 	/**
 	 * installs an application on a specific cloud and waits for the installation to complete.
 	 * @param applicationPath - full path to the -application.groovy file on the local file system.
@@ -201,7 +202,7 @@ public class AbstractCloudTest extends AbstractTest {
 	public void installApplicationAndWait(String applicationPath, String applicationName) throws IOException, InterruptedException {
 		installApplication(applicationPath , applicationName, 0 , true , false);
 	}
-	
+
 	/**
 	 * installs an application on a specific cloud and waits for the installation to complete.
 	 * @param applicationPath - full path to the -application.groovy file on the local file system.
@@ -213,23 +214,23 @@ public class AbstractCloudTest extends AbstractTest {
 	 * @throws InterruptedException
 	 */
 	public void installApplication(String applicationPath, String applicationName,int timeout ,boolean wait ,boolean failCommand) throws IOException, InterruptedException {
-		
+
 		String restUrl = getRestUrl();
-		
+
 		long timeoutToUse;
 		if(timeout > 0)
 			timeoutToUse = timeout;
 		else
 			timeoutToUse = TimeUnit.MILLISECONDS.toMinutes(DEFAULT_TEST_TIMEOUT * 2);
-		
+
 		String connectCommand = "connect " + restUrl + ";";
 		String installCommand = new StringBuilder()
-			.append("install-application ")
-			.append("--verbose ")
-			.append("-timeout ")
-			.append(timeoutToUse).append(" ")
-			.append((applicationPath.toString()).replace('\\', '/'))
-			.toString();
+		.append("install-application ")
+		.append("--verbose ")
+		.append("-timeout ")
+		.append(timeoutToUse).append(" ")
+		.append((applicationPath.toString()).replace('\\', '/'))
+		.toString();
 		String output = CommandTestUtils.runCommand(connectCommand + installCommand, wait, failCommand);
 		String excpectedResult = "Application " + applicationName + " installed successfully";
 		if(!failCommand)
@@ -243,12 +244,12 @@ public class AbstractCloudTest extends AbstractTest {
 		if (service.getRestUrls() == null) {
 			Assert.fail("Test failed becuase the cloud was not bootstrapped properly");
 		}
-		
+
 		String restUrl = service.getRestUrls()[0];
 		return restUrl;
-		
+
 	}
-	
+
 	/**
 	 * uninstalls a service from a specific cloud and waits for the uninstallation to complete.
 	 * @param serviceName - the name of the service.
@@ -256,23 +257,23 @@ public class AbstractCloudTest extends AbstractTest {
 	 * @throws InterruptedException
 	 */
 	public void uninstallServiceAndWait(String serviceName) throws IOException, InterruptedException {
-		
+
 		String restUrl = getRestUrl();
-		
+
 		String connectCommand = "connect " + restUrl + ";";
 		String installCommand = new StringBuilder()
-			.append("uninstall-service ")
-			.append("--verbose ")
-			.append("-timeout ")
-			.append(TimeUnit.MILLISECONDS.toMinutes(DEFAULT_TEST_TIMEOUT * 2)).append(" ")
-			.append(serviceName)
-			.toString();
+		.append("uninstall-service ")
+		.append("--verbose ")
+		.append("-timeout ")
+		.append(TimeUnit.MILLISECONDS.toMinutes(DEFAULT_TEST_TIMEOUT * 2)).append(" ")
+		.append(serviceName)
+		.toString();
 		String output = CommandTestUtils.runCommandAndWait(connectCommand + installCommand);
 		String excpectedResult = serviceName + " service uninstalled successfully";
 		assertTrue(output.toLowerCase().contains(excpectedResult.toLowerCase()));
 
 	}
-	
+
 	/**
 	 * uninstalls an application from a specific cloud and waits for the uninstallation to complete.
 	 * @param applicationName - the name of the application.
@@ -280,26 +281,26 @@ public class AbstractCloudTest extends AbstractTest {
 	 * @throws InterruptedException
 	 */
 	public void uninstallApplicationAndWait(String applicationName) throws IOException, InterruptedException {
-		
+
 		String restUrl = getRestUrl();
-		
+
 		String connectCommand = "connect " + restUrl + ";";
 		String installCommand = new StringBuilder()
-			.append("uninstall-application ")
-			.append("--verbose ")
-			.append("-timeout ")
-			.append(TimeUnit.MILLISECONDS.toMinutes(DEFAULT_TEST_TIMEOUT * 2)).append(" ")
-			.append(applicationName)
-			.toString();
+		.append("uninstall-application ")
+		.append("--verbose ")
+		.append("-timeout ")
+		.append(TimeUnit.MILLISECONDS.toMinutes(DEFAULT_TEST_TIMEOUT * 2)).append(" ")
+		.append(applicationName)
+		.toString();
 		String output = CommandTestUtils.runCommandAndWait(connectCommand + installCommand);
 		String excpectedResult = "Application " + applicationName + " uninstalled successfully";
 		assertTrue(output.toLowerCase().contains(excpectedResult.toLowerCase()));
 
-		
+
 	}
-	
+
 	protected void sendTeardownCloudFailedMail(String cloudName, Throwable error) {
-		
+
 		if (!isDevMode()) {
 			String url = "";		
 			Properties props = new Properties();
@@ -311,21 +312,21 @@ public class AbstractCloudTest extends AbstractTest {
 			} catch (IOException e) {
 				throw new RuntimeException("failed to read mailreporter.properties file - " + e, e);
 			}
-			
+
 			String title = "teardown-cloud " + cloudName + " failure";
-			
-	        StringBuilder sb = new StringBuilder();
-	        sb.append("<html>").append("\n");
-	        sb.append("<h2>A failure occurerd while trying to teardown " + cloudName + " cloud.</h2><br>").append("\n");
-	        sb.append("<h4>This may have been caused because bootstrapping to this cloud was unsuccessul, or because of a different exception.<h4><br>").append("\n");
-	        sb.append("<p>here is the exception : <p><br>").append("\n");
-	        sb.append(JSpaceUtilities.getStackTrace(error)).append("\n");
-	        sb.append("<h4>in any case, please make sure the machines are terminated<h4><br>");
-	        sb.append(url).append("\n");
-	        sb.append("</html>");
-	        
+
+			StringBuilder sb = new StringBuilder();
+			sb.append("<html>").append("\n");
+			sb.append("<h2>A failure occurerd while trying to teardown " + cloudName + " cloud.</h2><br>").append("\n");
+			sb.append("<h4>This may have been caused because bootstrapping to this cloud was unsuccessul, or because of a different exception.<h4><br>").append("\n");
+			sb.append("<p>here is the exception : <p><br>").append("\n");
+			sb.append(JSpaceUtilities.getStackTrace(error)).append("\n");
+			sb.append("<h4>in any case, please make sure the machines are terminated<h4><br>");
+			sb.append(url).append("\n");
+			sb.append("</html>");
+
 			MailReporterProperties mailProperties = new MailReporterProperties(props);
-	        try {
+			try {
 				SimpleMail.send(mailProperties.getMailHost(), mailProperties.getUsername(), 
 						mailProperties.getPassword(),
 						title, sb.toString(), 
@@ -335,21 +336,21 @@ public class AbstractCloudTest extends AbstractTest {
 			}	
 		}		
 	}
-	
+
 	private boolean isDevMode() {
-		
+
 		String user = System.getenv("USER");
 		return ((user == null) || !(user.equals("tgrid")));
 	}
-	
+
 	private String[][] toTwoDimentionalArray(String property) {
-		
+
 		String[] clouds = property.split(",");
 		String[][] result = new String[clouds.length][1];
 		for (int i = 0 ; i < clouds.length ; i++) {
 			result[i][0] = clouds[i];
 		}
-		
+
 		return result;
 	}
 }

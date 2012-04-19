@@ -37,7 +37,7 @@ public class ExamplesTest extends AbstractCloudTest {
 	private void doTest(String cloudName, String applicationFolderName, String applicationName) throws IOException, InterruptedException {
 		LogUtils.log("installing application " + applicationName + " on " + cloudName);
 		setCloudToUse(cloudName);
-		String applicationPath = ScriptUtils.getBuildPath() + "/examples/" + applicationFolderName;
+		String applicationPath = ScriptUtils.getBuildPath() + "/recipes/apps/" + applicationFolderName;
 		try {
 			installApplicationAndWait(applicationPath, applicationName);
 		}

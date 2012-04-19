@@ -43,7 +43,7 @@ public class BootstrapCloudEc2Test extends AbstractCloudEc2Test {
 	        .append("--verbose ")
 	        .append("-timeout ")
 	        .append(TimeUnit.MILLISECONDS.toMinutes(DEFAULT_TEST_TIMEOUT * 2)).append(" ")
-	        .append((new File(ScriptUtils.getBuildPath(), "examples/travel").toString()).replace('\\', '/'))
+	        .append((new File(ScriptUtils.getBuildPath(), "recipes/apps/travel").toString()).replace('\\', '/'))
 	        .toString();
 	    
 	    String output = CommandTestUtils.runCommandAndWait(connectCommand + installCommand);

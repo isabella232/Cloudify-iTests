@@ -67,14 +67,13 @@ public class ScalingRulesCloudTest extends AbstractCloudTest {
 	}
 	
 	//need to enable once it passes more than once
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 3, enabled = false, dataProvider = "supportedClouds")
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 3, enabled = true, dataProvider = "supportedClouds")
 	public void testPetclinicSimpleScalingRules(String cloudName) throws Exception {		
 		
 		LogUtils.log("installing application " + APPLICATION_NAME + " on " + cloudName);
 		setCloudToUse(cloudName);
-		String applicationPath = ScriptUtils.getBuildPath() + "/examples/" + APPLICATION_FOLDERNAME;
+		String applicationPath = ScriptUtils.getBuildPath() + "/recipes/apps/" + APPLICATION_FOLDERNAME;
 		installApplicationAndWait(applicationPath, APPLICATION_NAME);
-		
 		
 		repititiveAssertNumberOfInstances(ABSOLUTE_SERVICE_NAME, 1);
 	
@@ -87,9 +86,8 @@ public class ScalingRulesCloudTest extends AbstractCloudTest {
 		stopThreads();
 		repititiveAssertNumberOfInstances(ABSOLUTE_SERVICE_NAME, 1);
 		
-		/*
-		 Try to start a new machine and then cancel it.
-		 startThreads();
+		// Try to start a new machine and then cancel it.
+		startThreads();
 		executor.schedule(new Runnable() {
 			
 			@Override
@@ -99,7 +97,6 @@ public class ScalingRulesCloudTest extends AbstractCloudTest {
 			}
 		}, 60, TimeUnit.SECONDS);
 		repetitiveNumberOfInstancesHolds(ABSOLUTE_SERVICE_NAME, 1, 500, TimeUnit.SECONDS);
-		*/
 	}
 
 	private void repetitiveNumberOfInstancesHolds(String absoluteServiceName, int expectedNumberOfInstances, long duration, TimeUnit timeunit) {
@@ -188,20 +185,20 @@ public class ScalingRulesCloudTest extends AbstractCloudTest {
 			List<String> publicIpAddresses = null;
 			try {
 				publicIpAddresses = getPublicIpAddressesPerProcessingUnitInstance(absoluteServiceName);
-				for (String publicIpAddress : publicIpAddresses) {
-					String petclinicHomePage = "http://"+publicIpAddress + ":"+TOMCAT_PORT + "/petclinic-mongo";
-					final URL petclinicHomePageUrl = new URL(petclinicHomePage);
-					final HttpGet get = new HttpGet(petclinicHomePageUrl.toURI());
+				String publicIpAddress = publicIpAddresses.get(0);
+				String petclinicHomePage = "http://"+publicIpAddress + ":"+TOMCAT_PORT + "/petclinic-mongo";
+				final URL petclinicHomePageUrl = new URL(petclinicHomePage);
+				final HttpGet get = new HttpGet(petclinicHomePageUrl.toURI());
 
-					final HttpResponse response = client.execute(get);
-					try {
-						Assert.assertEquals(response.getStatusLine().getStatusCode(), 200);
-					}
-					finally {
-						EntityUtils.consume(response.getEntity());
-						LogUtils.log("PING " + absoluteServiceName + " " + publicIpAddress + " success.");
-					}
+				final HttpResponse response = client.execute(get);
+				try {
+					Assert.assertEquals(response.getStatusLine().getStatusCode(), 200);
 				}
+				finally {
+					EntityUtils.consume(response.getEntity());
+					LogUtils.log("PING " + absoluteServiceName + " " + publicIpAddress + " success.");
+				}
+
 			}
 			catch (Throwable t) {
 				LogUtils.log("Failed to PING petclinic website",t);

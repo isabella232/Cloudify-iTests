@@ -45,7 +45,7 @@ public class ScalingRulesTomcatTotalRequestsTest extends AbstractSeleniumApplica
 
 	private static final String COUNTER_METRIC = "Total Requests Count";
 	private static final String APPLICATION_NAME = "petclinic";
-	private static final String APPLICATION_FOLDER_NAME = "petclinic-simple-scalingRules";
+	private static final String APPLICATION_FOLDER_NAME = "petclinic-simple";
 	private static final String SERVICE_NAME = "tomcat";
 	private static final String ABSOLUTE_SERVICE_NAME = ServiceUtils.getAbsolutePUName(APPLICATION_NAME,SERVICE_NAME);
 	private static final int NUMBER_OF_HTTP_GET_THREADS = 10;

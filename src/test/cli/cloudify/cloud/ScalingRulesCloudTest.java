@@ -38,7 +38,7 @@ import framework.utils.WebUtils;
  */
 public class ScalingRulesCloudTest extends AbstractCloudTest {
 
-	private static final String APPLICATION_FOLDERNAME = "petclinic-simple-scalingRules";
+	private static final String APPLICATION_FOLDERNAME = "petclinic-simple";
 	private static final String APPLICATION_NAME = "petclinic";
 	private static final String TOMCAT_SERVICE_NAME = "tomcat";
 	private static final String ABSOLUTE_SERVICE_NAME = ServiceUtils.getAbsolutePUName(APPLICATION_NAME, TOMCAT_SERVICE_NAME);

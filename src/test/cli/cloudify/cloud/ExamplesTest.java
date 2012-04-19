@@ -24,15 +24,7 @@ public class ExamplesTest extends AbstractCloudTest {
 		doTest(cloudName, "petclinic", "petclinic");
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 3, enabled = true, dataProvider = "supportedClouds")
-	public void testPetclinicSimple(String cloudName) throws IOException, InterruptedException {
-		doTest(cloudName, "petclinic-simple", "petclinic");
-	}
-	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 3, enabled = false, dataProvider = "supportedClouds")
-	public void testPetclinicSimpleScalingRules(String cloudName) throws IOException, InterruptedException {
-		doTest(cloudName, "petclinic-simple-scalingRules", "petclinic");
-	}
+	//petclinic-simple is covered by {@link ScalingRulesCloudTest}
 	
 	private void doTest(String cloudName, String applicationFolderName, String applicationName) throws IOException, InterruptedException {
 		LogUtils.log("installing application " + applicationName + " on " + cloudName);

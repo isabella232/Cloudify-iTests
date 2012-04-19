@@ -11,6 +11,9 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.io.FileUtils;
+import org.cloudifysource.dsl.cloud.Cloud;
+import org.cloudifysource.dsl.internal.DSLException;
+import org.cloudifysource.dsl.internal.ServiceReader;
 import org.junit.Assert;
 import org.openspaces.admin.AdminFactory;
 import org.openspaces.admin.gsm.GridServiceManager;
@@ -138,9 +141,10 @@ public class KillManagementTest extends AbstractCloudTest{
 	}
 
 	//TODO: add support for windows machines (BYON doesn't support windows right now)
-	//TODO: get the remote folder from the groovy file
-	private void startManagement(String machine1) {
-		SSHUtils.runCommand(machine1, DEFAULT_TEST_TIMEOUT, "/tmp/gs-files/gigaspaces/tools/cli/cloudify.sh start-management", USERNAME, PASSWORD);
+	private void startManagement(String machine1) throws IOException, DSLException {
+		Cloud readCloud = ServiceReader.readCloud(new File(ScriptUtils.getBuildPath() + "/tools/cli/plugins/esc/byon/byon-cloud.groovy"));
+		SSHUtils.runCommand(machine1, DEFAULT_TEST_TIMEOUT, readCloud.getProvider().getRemoteDirectory()
+				+ "/gigaspaces/tools/cli/cloudify.sh start-management", USERNAME, PASSWORD);
 		
 	}
 
@@ -162,7 +166,9 @@ public class KillManagementTest extends AbstractCloudTest{
 
 	@AfterMethod(alwaysRun = true)
 	public void teardown() throws IOException {
-		threadPool.shutdownNow();
+		if (threadPool != null) {
+			threadPool.shutdownNow();
+		}
 		try {
 			service.teardownCloud();
 		}

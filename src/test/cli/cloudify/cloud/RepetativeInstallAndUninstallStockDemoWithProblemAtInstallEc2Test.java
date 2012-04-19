@@ -168,10 +168,8 @@ public class RepetativeInstallAndUninstallStockDemoWithProblemAtInstallEc2Test e
 
 	private void corruptCassandraService(String cassandraPostStartScriptPath , String newPostStartScriptPath) throws IOException {
 		File cassandraPostStartScript = new File(cassandraPostStartScriptPath);
-		boolean success = cassandraPostStartScript.renameTo(new File(newPostStartScriptPath));
-		if(!success)
-			throw new IOException("Test error: failed renaming " +  cassandraPostStartScriptPath + " to " + newPostStartScriptPath);
-		}
+		FileUtils.moveFile(cassandraPostStartScript, new File(newPostStartScriptPath));
+	}
 	
 	private void fixCassandraService(String cassandraPostStartScriptPath , String newPostStartScriptPath) throws IOException {
 		File cassandraPostStartScript = new File(newPostStartScriptPath);

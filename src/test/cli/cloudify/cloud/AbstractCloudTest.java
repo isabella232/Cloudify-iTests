@@ -21,6 +21,7 @@ import test.cli.cloudify.CommandTestUtils;
 import test.cli.cloudify.cloud.services.CloudService;
 import test.cli.cloudify.cloud.services.byon.ByonCloudService;
 import test.cli.cloudify.cloud.services.ec2.Ec2CloudService;
+import test.cli.cloudify.cloud.services.ec2.Ec2WinCloudService;
 import test.cli.cloudify.cloud.services.hp.HpCloudService;
 
 import com.j_spaces.kernel.JSpaceUtilities;
@@ -38,6 +39,9 @@ public class AbstractCloudTest extends AbstractTest {
 	protected static final String BYON = "byon";
 	protected static final String OPENSTACK = "openstack";
 	protected static final String EC2 = "ec2";
+
+	private static final String EC2_WIN = "ec2-win";
+	
 	private CloudService service;
 
 	public AbstractCloudTest() {
@@ -125,6 +129,7 @@ public class AbstractCloudTest extends AbstractTest {
 		defaultServices.put(BYON, new ByonCloudService());
 		defaultServices.put(OPENSTACK, new HpCloudService());
 		defaultServices.put(EC2, new Ec2CloudService());
+		defaultServices.put(EC2_WIN, new Ec2WinCloudService());
 	}
 
 	/**

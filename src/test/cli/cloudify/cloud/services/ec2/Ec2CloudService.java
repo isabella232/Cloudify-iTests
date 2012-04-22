@@ -23,13 +23,13 @@ public class Ec2CloudService extends AbstractCloudService {
 	@Override
 	public void injectAuthenticationDetails() throws IOException {
 
-		String cloudTestPath = (SGTestHelper.getSGTestRootDir() + "/apps/cloudify/cloud/" + cloudName).replace('\\', '/');
+		String cloudTestPath = (SGTestHelper.getSGTestRootDir() + "/apps/cloudify/cloud/" + getCloudName()).replace('\\', '/');
 		String sshKeyPemName = pemFileName + ".pem";
 
 		// cloud plugin should include recipe that includes secret key 
-		File cloudPluginDir = new File(ScriptUtils.getBuildPath() , "tools/cli/plugins/esc/" + cloudName + "/");
-		File originalCloudDslFile = new File(cloudPluginDir, cloudName + "-cloud.groovy");
-		File backupCloudDslFile = new File(cloudPluginDir, cloudName + "-cloud.backup");
+		File cloudPluginDir = new File(ScriptUtils.getBuildPath() , "tools/cli/plugins/esc/" + getCloudName() + "/");
+		File originalCloudDslFile = new File(cloudPluginDir, getCloudName() + "-cloud.groovy");
+		File backupCloudDslFile = new File(cloudPluginDir, getCloudName() + "-cloud.backup");
 
 		
 		// first make a backup of the original file
@@ -40,13 +40,13 @@ public class Ec2CloudService extends AbstractCloudService {
 		propsToReplace.put("ENTER_API_KEY", apiKey);
 		propsToReplace.put("cloudify_agent_", this.machinePrefix + "cloudify_agent");
 		propsToReplace.put("cloudify_manager", this.machinePrefix + "cloudify_manager");
-		propsToReplace.put("ENTER_KEY_FILE", pemFileName + ".pem");
+		propsToReplace.put("ENTER_KEY_FILE", getPemFileName() + ".pem");
 		propsToReplace.put("numberOfManagementMachines 1", "numberOfManagementMachines "  + numberOfManagementMachines);
 		
 		IOUtils.replaceTextInFile(originalCloudDslFile, propsToReplace);
 
 		// upload dir needs to contain the sshKeyPem 
-		File targetPem = new File(ScriptUtils.getBuildPath(), "tools/cli/plugins/esc/" + cloudName + "/upload/" + sshKeyPemName);
+		File targetPem = new File(ScriptUtils.getBuildPath(), "tools/cli/plugins/esc/" + getCloudName() + "/upload/" + getPemFileName());
 		FileUtils.copyFile(new File(cloudTestPath, sshKeyPemName), targetPem);
 		AssertUtils.assertTrue("File not found", targetPem.isFile());
 	}
@@ -81,6 +81,6 @@ public class Ec2CloudService extends AbstractCloudService {
 	}
 	
 	public String getPemFileName() {
-		return "ec2-cloud-demo";
+		return pemFileName;
 	}
 }

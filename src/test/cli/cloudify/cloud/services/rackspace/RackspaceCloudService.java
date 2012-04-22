@@ -1,8 +1,8 @@
-package test.cli.cloudify.cloud.rackspace;
+package test.cli.cloudify.cloud.services.rackspace;
 
 import java.io.IOException;
 
-import test.cli.cloudify.cloud.AbstractCloudService;
+import test.cli.cloudify.cloud.services.AbstractCloudService;
 
 public class RackspaceCloudService extends AbstractCloudService {
 	

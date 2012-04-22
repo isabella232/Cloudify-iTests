@@ -1,8 +1,8 @@
-package test.cli.cloudify.cloud.terremark;
+package test.cli.cloudify.cloud.services.terremark;
 
 import java.io.IOException;
 
-import test.cli.cloudify.cloud.AbstractCloudService;
+import test.cli.cloudify.cloud.services.AbstractCloudService;
 
 public class TerremarkCloudService extends AbstractCloudService {
 

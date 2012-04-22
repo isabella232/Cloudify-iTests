@@ -8,7 +8,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import test.cli.cloudify.CloudTestUtils;
-import test.cli.cloudify.cloud.ec2.Ec2CloudService;
+import test.cli.cloudify.cloud.services.ec2.Ec2CloudService;
 import framework.utils.LogUtils;
 
 public class PrivateImageEc2Test extends ExamplesTest {

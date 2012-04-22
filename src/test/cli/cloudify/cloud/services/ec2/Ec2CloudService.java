@@ -1,4 +1,4 @@
-package test.cli.cloudify.cloud.hp;
+package test.cli.cloudify.cloud.services.ec2;
 
 import java.io.File;
 import java.io.IOException;
@@ -7,65 +7,22 @@ import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 
-import test.cli.cloudify.cloud.AbstractCloudService;
+import test.cli.cloudify.cloud.services.AbstractCloudService;
 import framework.tools.SGTestHelper;
 import framework.utils.AssertUtils;
 import framework.utils.IOUtils;
 import framework.utils.ScriptUtils;
 
-public class HpCloudService extends AbstractCloudService {
+public class Ec2CloudService extends AbstractCloudService {
+
+	private String cloudName = "ec2";
+	private String user = "0VCFNJS3FXHYC7M6Y782";
+	private String apiKey = "fPdu7rYBF0mtdJs1nmzcdA8yA/3kbV20NgInn4NO";
+	private String pemFileName = "cloud-demo";
 	
-	private String tenant = "24912589714038";
-	private String cloudName = "openstack";
-	private String user = "98173213380893";
-	private String apiKey = "C5nobOW90bhnCmE5AQaLaJ0Ubd8UISPxGih";
-	private String pemFileName = "sgtest-hp";
-
-	public String getTenant() {
-		return tenant;
-	}
-
-	public void setTenant(String tenant) {
-		this.tenant = tenant;
-	}
-
-	public String getCloudName() {
-		return cloudName;
-	}
-
-	public void setCloudName(String cloudName) {
-		this.cloudName = cloudName;
-	}
-
-	public String getUser() {
-		return user;
-	}
-
-	public void setUser(String user) {
-		this.user = user;
-	}
-
-	public String getApiKey() {
-		return apiKey;
-	}
-
-	public void setApiKey(String apiKey) {
-		this.apiKey = apiKey;
-	}
-
-	public String getPemFileName() {
-		return pemFileName;
-	}
-
-	public void setPemFileName(String pemFileName) {
-		this.pemFileName = pemFileName;
-	}
-
-
-
 	@Override
 	public void injectAuthenticationDetails() throws IOException {
-		
+
 		String cloudTestPath = (SGTestHelper.getSGTestRootDir() + "/apps/cloudify/cloud/" + cloudName).replace('\\', '/');
 		String sshKeyPemName = pemFileName + ".pem";
 
@@ -74,6 +31,7 @@ public class HpCloudService extends AbstractCloudService {
 		File originalCloudDslFile = new File(cloudPluginDir, cloudName + "-cloud.groovy");
 		File backupCloudDslFile = new File(cloudPluginDir, cloudName + "-cloud.backup");
 
+		
 		// first make a backup of the original file
 		FileUtils.copyFile(originalCloudDslFile, backupCloudDslFile);
 		
@@ -83,10 +41,7 @@ public class HpCloudService extends AbstractCloudService {
 		propsToReplace.put("cloudify_agent_", this.machinePrefix + "cloudify_agent");
 		propsToReplace.put("cloudify_manager", this.machinePrefix + "cloudify_manager");
 		propsToReplace.put("ENTER_KEY_FILE", pemFileName + ".pem");
-		propsToReplace.put("ENTER_TENANT", tenant);
-		propsToReplace.put("hp-cloud-demo", "sgtest");
 		propsToReplace.put("numberOfManagementMachines 1", "numberOfManagementMachines "  + numberOfManagementMachines);
-		propsToReplace.put("\"openstack.wireLog\": \"false\"", "\"openstack.wireLog\": \"true\"");
 		
 		IOUtils.replaceTextInFile(originalCloudDslFile, propsToReplace);
 
@@ -94,7 +49,38 @@ public class HpCloudService extends AbstractCloudService {
 		File targetPem = new File(ScriptUtils.getBuildPath(), "tools/cli/plugins/esc/" + cloudName + "/upload/" + sshKeyPemName);
 		FileUtils.copyFile(new File(cloudTestPath, sshKeyPemName), targetPem);
 		AssertUtils.assertTrue("File not found", targetPem.isFile());
+	}
 
-		
+	public void setCloudName(String cloudName) {
+		this.cloudName = cloudName;
+	}
+	
+	@Override
+	public String getCloudName() {
+		return cloudName;
+	}
+	
+	public void setUser(String user) {
+		this.user = user;
+	}
+
+	public String getUser() {
+		return user;
+	}
+	
+	public void setApiKey(String apiKey) {
+		this.apiKey = apiKey;
+	}
+
+	public String getApiKey() {
+		return apiKey;
+	}
+
+	public void setPemFileName(String pemFileName) {
+		this.pemFileName = pemFileName;
+	}
+	
+	public String getPemFileName() {
+		return "ec2-cloud-demo";
 	}
 }

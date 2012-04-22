@@ -13,7 +13,7 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 ******************************************************************************/
-package test.cli.cloudify.cloud.byon;
+package test.cli.cloudify.cloud.services.byon;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,7 +22,7 @@ import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 
-import test.cli.cloudify.cloud.AbstractCloudService;
+import test.cli.cloudify.cloud.services.AbstractCloudService;
 import framework.utils.IOUtils;
 import framework.utils.ScriptUtils;
 

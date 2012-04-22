@@ -18,9 +18,10 @@ import org.testng.annotations.DataProvider;
 
 import test.AbstractTest;
 import test.cli.cloudify.CommandTestUtils;
-import test.cli.cloudify.cloud.byon.ByonCloudService;
-import test.cli.cloudify.cloud.ec2.Ec2CloudService;
-import test.cli.cloudify.cloud.hp.HpCloudService;
+import test.cli.cloudify.cloud.services.CloudService;
+import test.cli.cloudify.cloud.services.byon.ByonCloudService;
+import test.cli.cloudify.cloud.services.ec2.Ec2CloudService;
+import test.cli.cloudify.cloud.services.hp.HpCloudService;
 
 import com.j_spaces.kernel.JSpaceUtilities;
 

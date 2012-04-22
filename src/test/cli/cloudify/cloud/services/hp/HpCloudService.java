@@ -93,8 +93,6 @@ public class HpCloudService extends AbstractCloudService {
 		// upload dir needs to contain the sshKeyPem 
 		File targetPem = new File(ScriptUtils.getBuildPath(), "tools/cli/plugins/esc/" + cloudName + "/upload/" + sshKeyPemName);
 		FileUtils.copyFile(new File(cloudTestPath, sshKeyPemName), targetPem);
-		AssertUtils.assertTrue("File not found", targetPem.isFile());
-
-		
+		AssertUtils.assertTrue("File not found", targetPem.isFile());		
 	}
 }

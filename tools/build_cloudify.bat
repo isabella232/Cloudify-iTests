@@ -10,5 +10,7 @@ copy /y %CLOUDIFYHOME%\cli\target\cli.jar ..\..\SGTest\tools\gigaspaces\tools\cl
 copy /y %CLOUDIFYHOME%\restful\target\rest.war ..\..\SGTest\tools\gigaspaces\tools\rest\rest.war
 copy /y %CLOUDIFYHOME%\esc\target\esc.jar ..\..\SGTest\tools\gigaspaces\lib\platform\esm\esc.jar
 copy /y %CLOUDIFYHOME%\esc-commands\target\esc-commands.jar ..\..\SGTest\tools\gigaspaces\tools\cli\plugins\esc\esc-commands.jar
+rmdir /s /q ..\..\SGTest\tools\gigaspaces\examples\petclinic-simple
+xcopy /s /e /q %CLOUDIFYHOME%\recipes\target\classes\recipes\apps\petclinic-simple\* ..\..\SGTest\tools\gigaspaces\examples\petclinic-simple\
 endlocal
 pause

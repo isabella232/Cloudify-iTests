@@ -15,7 +15,7 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 import com.thoughtworks.selenium.Selenium;
 
 import test.cli.cloudify.cloud.AbstractCloudTest;
-import test.cli.cloudify.cloud.CloudService;
+import test.cli.cloudify.cloud.services.CloudService;
 import test.webui.objects.LoginPage;
 import test.webui.resources.WebConstants;
 import framework.tools.SGTestHelper;

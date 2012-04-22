@@ -82,6 +82,11 @@ public class ScalingRulesCorruptedTest extends AbstractSeleniumServiceRecipeTest
 		
 	}
 	
+	/**
+	 * Disabled becuase of CLOUDIFY-737
+	 * @throws IOException
+	 * @throws InterruptedException
+	 */
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = false)
 	public void testIncreaseIsNegetive() throws IOException, InterruptedException {
 		

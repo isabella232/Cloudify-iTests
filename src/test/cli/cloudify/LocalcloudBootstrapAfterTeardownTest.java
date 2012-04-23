@@ -5,6 +5,7 @@ import java.net.UnknownHostException;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import org.cloudifysource.dsl.internal.CloudifyConstants;
 import org.junit.Assert;
 import org.openspaces.admin.Admin;
 import org.openspaces.admin.AdminFactory;
@@ -77,8 +78,8 @@ public class LocalcloudBootstrapAfterTeardownTest extends AbstractTest {
 
 		// int defaultLusPort = Constants.getDiscoveryPort();
 		final AdminFactory factory = new AdminFactory();
-		LogUtils.log("adding locator to admin : " + nicAddress + ":4168");
-		factory.addLocator(nicAddress + ":4168");
+		LogUtils.log("adding locator to admin : " + nicAddress + ":" + CloudifyConstants.DEFAULT_LOCALCLOUD_LUS_PORT);
+		factory.addLocator(nicAddress + ":" + CloudifyConstants.DEFAULT_LOCALCLOUD_LUS_PORT);
 		return factory.createAdmin();
 	}
 }

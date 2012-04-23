@@ -9,6 +9,7 @@ import java.util.concurrent.TimeUnit;
 
 import net.jini.discovery.Constants;
 
+import org.cloudifysource.dsl.internal.CloudifyConstants;
 import org.openspaces.admin.Admin;
 import org.openspaces.admin.AdminFactory;
 import org.testng.annotations.AfterClass;
@@ -31,7 +32,7 @@ public class AbstractSingleBootstrapTest extends AbstractTest {
 	@BeforeClass
 	public void beforeClass() throws Exception{
 		AdminFactory factory = new AdminFactory();
-		factory.addLocator(InetAddress.getLocalHost().getHostAddress() + ":4168");	
+		factory.addLocator(InetAddress.getLocalHost().getHostAddress() + ":" + CloudifyConstants.DEFAULT_LOCALCLOUD_LUS_PORT);	
 		runCommand("teardown-localcloud");
 		runCommand("bootstrap-localcloud");
 		this.admin = getAdminWithLocators();
@@ -45,8 +46,8 @@ public class AbstractSingleBootstrapTest extends AbstractTest {
 		String nicAddress = Constants.getHostAddress();
 		//int defaultLusPort = Constants.getDiscoveryPort();
 		AdminFactory factory = new AdminFactory();
-		LogUtils.log("adding locator to admin: " + nicAddress + ":4168");
-		factory.addLocator(nicAddress + ":4168");
+		LogUtils.log("adding locator to admin: " + nicAddress + ":" + CloudifyConstants.DEFAULT_LOCALCLOUD_LUS_PORT);
+		factory.addLocator(nicAddress + ":" + CloudifyConstants.DEFAULT_LOCALCLOUD_LUS_PORT);
 		return factory.createAdmin();
 	}
 	

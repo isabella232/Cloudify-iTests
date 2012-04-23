@@ -20,6 +20,7 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.cloudifysource.dsl.internal.CloudifyConstants;
 import org.cloudifysource.restclient.ErrorStatusException;
 import org.cloudifysource.restclient.StringUtils;
 import org.cloudifysource.shell.commands.CLIException;
@@ -234,8 +235,8 @@ public class AbstractLocalCloudTest extends AbstractTest {
 
 		// int defaultLusPort = Constants.getDiscoveryPort();
 		final AdminFactory factory = new AdminFactory();
-		LogUtils.log("adding locator to admin : " + nicAddress + ":4168");
-		factory.addLocator(nicAddress + ":4168");
+		LogUtils.log("adding locator to admin : " + nicAddress + ":" + CloudifyConstants.DEFAULT_LOCALCLOUD_LUS_PORT);
+		factory.addLocator(nicAddress + ":" + CloudifyConstants.DEFAULT_LOCALCLOUD_LUS_PORT);
 		return factory.createAdmin();
 	}
 

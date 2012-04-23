@@ -18,6 +18,7 @@ import java.util.concurrent.TimeoutException;
 
 import junit.framework.Assert;
 
+import org.cloudifysource.dsl.internal.CloudifyConstants;
 import org.openspaces.admin.Admin;
 import org.openspaces.admin.AdminException;
 import org.openspaces.admin.AdminFactory;
@@ -64,7 +65,7 @@ public class AbstractXenGSMTest extends AbstractTest {
 	private GridServiceContainersCounter gscCounter;
     private GridServiceAgentsCounter gsaCounter;
 	private boolean acceptGSCsOnStartup = false;
-	private int lookupPort = 4166;
+	private int lookupPort = CloudifyConstants.DEFAULT_LUS_PORT;
 	private String edition = PlatformVersion.getEdition();
     
 	protected void setEdition(String edition) {

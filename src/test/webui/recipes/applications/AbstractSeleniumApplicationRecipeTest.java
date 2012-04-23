@@ -23,7 +23,7 @@ public class AbstractSeleniumApplicationRecipeTest extends AbstractSeleniumTest 
 	public void setCurrentApplication(String application) {
 		this.applicationName = application;
 		String gigaDir = ScriptUtils.getBuildPath();	
-		this.pathToApplication = gigaDir + "/examples/" + application;
+		this.pathToApplication = gigaDir + "/recipes/apps/" + application;
 	}
 	
 	public void setWait(boolean wait) {

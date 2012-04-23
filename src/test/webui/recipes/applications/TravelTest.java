@@ -154,12 +154,6 @@ public class TravelTest extends AbstractSeleniumApplicationRecipeTest {
 
 		HealthPanel healthPanel = topologyTab.getTopologySubPanel().switchToHealthPanel();
 
-		assertTrue("Process Cpu Usage" + METRICS_ASSERTION_SUFFIX , healthPanel.getMetric("Process Cpu Usage") != null);
-		assertTrue("Total Process Virtual Memory" + METRICS_ASSERTION_SUFFIX, healthPanel.getMetric("Total Process Virtual Memory") != null);
-		assertTrue("Compaction Manager Completed Tasks" + METRICS_ASSERTION_SUFFIX, healthPanel.getMetric("Compaction Manager Completed Tasks") != null);
-		assertTrue("Compaction Manager Pending Tasks" + METRICS_ASSERTION_SUFFIX, healthPanel.getMetric("Compaction Manager Pending Tasks") != null);
-		assertTrue("Commit Log Active Tasks" + METRICS_ASSERTION_SUFFIX, healthPanel.getMetric("Commit Log Active Tasks") != null);
-
 		tomcat.select();
 
 		assertTrue("metric 0 is not displayed for tomcat recipe", healthPanel.getMetric(0) != null);

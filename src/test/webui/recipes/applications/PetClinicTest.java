@@ -172,16 +172,23 @@ public class PetClinicTest extends AbstractSeleniumApplicationRecipeTest {
 		};
 		repetitiveAssertTrueWithScreenshot(null, condition, this.getClass(), "petClinicDemoTest","failed");
 		
+		ApplicationNode applicationNodeTomcat = appMap.getApplicationNode("tomcat");
+		List<Connector> tomcatConnectors = applicationNodeTomcat.getConnectors();
 		
-		List<Connector> tomcatConnectors = appMap.getApplicationNode("tomcat").getConnectors();
+		ApplicationNode applicationNodeMongos = appMap.getApplicationNode("mongos");
+		List<Connector> mongosConnectors = applicationNodeMongos.getConnectors();
+		
+		ApplicationNode applicationNodeMongod = appMap.getApplicationNode("mongod");
+		
+		ApplicationNode applicationNodeMongoConfig = appMap.getApplicationNode("mongoConfig");
+		
 		assertTrue(tomcatConnectors.size() == 1);
-		assertTrue(tomcatConnectors.get(0).getTarget().getName().equals("mongos"));
-
-		List<Connector> mongosConnectors = appMap.getApplicationNode("mongos").getConnectors();
+		assertTrue(tomcatConnectors.get(0).getTarget().getName().equals(applicationNodeMongos.getName()));
+		
 		assertTrue(mongosConnectors.size() == 2);
 		for (Connector c : mongosConnectors) {
 			String name = c.getTarget().getName();
-			assertTrue(name.equals("mongod") ||name.equals("mongoConfig"));
+			assertTrue(name.equals(applicationNodeMongod.getName()) ||name.equals(applicationNodeMongoConfig.getName()));
 		}
 
 		ServicesTab servicesTab = mainNav.switchToServices();

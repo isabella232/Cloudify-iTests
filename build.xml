@@ -9,6 +9,7 @@
 
 <project name="sgtest-builder" basedir="." default="sgtest_zip_1.6">
 
+    <import file="sgtest_build.xml"/>
     <property name="sgtest.home" value="${basedir}"/>
     <property name="src" value="src"/>
     <property name="classes" value="classes"/>
@@ -23,17 +24,17 @@
 
     <!-- sgtest libraries -->
     <property name="sgtest.lib" value="${sgtest.home}/lib"/>
-    <property name="java16.home" value="C:\Java\jdk1.6.0_26"/>
+    <property name="java16.home" value="/export/utils/java/jdk1.6.0_24-64Bit"/>
 
 	
     <!-- sgtest classpath -->
     <path id="classpath">
-    	
+
         <!-- testng jars -->
-         <fileset dir="${sgtest.lib}/testng">
-             <include name="**/*.jar"/>
-         </fileset>
-    	
+        <fileset dir="${sgtest.lib}/testng">
+            <include name="**/*.jar"/>
+        </fileset>
+
         <fileset dir="${gsHome.dir}/lib">
             <include name="**/*.jar"/>
             <exclude name="**/mule-os.jar"/>
@@ -108,6 +109,12 @@
             <include name="**/*.jar"/>
         </fileset>
 
+
+        <!-- mail jars -->
+        <fileset dir="${sgtest.lib}/mail">
+            <include name="**/*.jar"/>
+        </fileset>
+		
 		<!-- wiki jars -->
         <fileset dir="${sgtest.lib}/wiki">
             <include name="**/*.jar"/>
@@ -115,11 +122,6 @@
 		
 		<!-- xstream jars -->
         <fileset dir="${sgtest.lib}/xstream">
-            <include name="**/*.jar"/>
-        </fileset>
-    	
-        <!-- mail jars -->
-        <fileset dir="${sgtest.lib}/mail">
             <include name="**/*.jar"/>
         </fileset>
 
@@ -155,8 +157,8 @@
 
     <target name="compile" depends="prepare, build-projects">
         <!-- Compile the java code from ${src} into ${classes} -->
-        <javac classpathref="classpath" srcdir="${src}" includes="**/*" destdir="${classes}" debug="on"
-               executable="${java16.home}\bin\javac" taskname="javac1.6" fork="false" memorymaximumsize="512m" verbose="true">
+        <javac classpathref="classpath" srcdir="${src}" includes="**/*" excludes="**/BasicApplicationContextTest" destdir="${classes}" debug="on"
+               executable="${java16.home}\bin\javac" taskname="javac1.6" fork="true">
         </javac>
     	
     </target>
@@ -182,7 +184,6 @@
    ======================== -->
 
     <target name="jar1_6" depends="compile">
-    	<make-dos2unix workingDir = "${sgtest.home}/apps/**/*.sh"/>
         <jar jarfile="${sgtest.output.dir}/${sgtest.jar.name}">
             <manifest>
                 <attribute name="Build-Version" value="${sgtest.version}"/>

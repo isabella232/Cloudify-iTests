@@ -8,10 +8,12 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import test.cli.cloudify.CloudTestUtils;
+import test.cli.cloudify.CommandTestUtils;
 import test.cli.cloudify.cloud.services.ec2.Ec2CloudService;
 import framework.utils.LogUtils;
+import framework.utils.ScriptUtils;
 
-public class PrivateImageEc2Test extends ExamplesTest {
+public class PrivateImageEc2Test extends AbstractCloudTest {
 	private Ec2CloudService service;
 
 	@BeforeMethod
@@ -43,6 +45,22 @@ public class PrivateImageEc2Test extends ExamplesTest {
 		doTest(EC2, "petclinic", "petclinic");
 	}
 
+	protected void doTest(String cloudName, String applicationFolderName, String applicationName) throws IOException, InterruptedException {
+		LogUtils.log("installing application " + applicationName + " on " + cloudName);
+		String applicationPath = ScriptUtils.getBuildPath() + "/recipes/apps/" + applicationFolderName;
+		try {
+			installApplicationAndWait(applicationPath, applicationName);
+		}
+		finally {
+			if ((getService() != null) && (getService().getRestUrls() != null)) {
+				String command = "connect " + getRestUrl() + ";list-applications";
+				String output = CommandTestUtils.runCommandAndWait(command);
+				if (output.contains(applicationName)) {
+					uninstallApplicationAndWait(applicationName);			
+				}
+			}
+		}
+	}
 	
 	
 }

@@ -85,11 +85,24 @@ public class AbstractCloudTest extends AbstractTest {
 
 	@DataProvider(name = "supportedClouds")
 	public String[][] supportedClouds() {
+		if (SUPPORTED_CLOUDS == null) {
+			String property = System.getProperty(SUPPORTED_CLOUDS_PROP);
+			String[] clouds = property.split(",");
+
+			String[][] resultFinal = new String[clouds.length][1];
+			for (int i = 0 ; i < clouds.length ; i++) {
+				resultFinal[i][0] = clouds[i];
+			}
+
+			return resultFinal;
+		}
+		
 		return SUPPORTED_CLOUDS;
 	}
 
 	@DataProvider(name = "supportedCloudsWithoutByon")
 	public String[][] supportedCloudsWithoutByon() {
+ 
 		String property = System.getProperty(SUPPORTED_CLOUDS_PROP);
 		String[] clouds = property.split(",");
 		List<String> result = new ArrayList<String>();
@@ -104,7 +117,6 @@ public class AbstractCloudTest extends AbstractTest {
 		}
 
 		return resultFinal;
-
 
 	}
 

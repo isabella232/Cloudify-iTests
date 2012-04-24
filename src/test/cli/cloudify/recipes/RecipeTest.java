@@ -53,7 +53,7 @@ public class RecipeTest extends AbstractLocalCloudTest {
     @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, groups = "1", enabled = true)
     public void testMongoCfg() throws IOException, InterruptedException{
         String mongoCfgDirPath = recipesDirPath + "/mongodb/mongoConfig";
-        String output = runCommand("test-recipe " + mongoCfgDirPath + " " + RecipeTestUtil.DEFAULT_RECIPE_TEST_TIMEOUT + " mongo-cfg-service.groovy");
+        String output = runCommand("test-recipe " + mongoCfgDirPath + " " + RecipeTestUtil.DEFAULT_RECIPE_TEST_TIMEOUT + " mongoConfig-service.groovy");
         assertTrue("test-recipe failed and runCommand didn't throw an Exception as it should !!", output.contains("Recipe test completed"));
     }
 	

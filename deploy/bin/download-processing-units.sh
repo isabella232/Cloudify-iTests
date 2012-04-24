@@ -8,7 +8,7 @@ else
 	SVN_SGTEST_REPOSITORY=svn://pc-lab14/SVN/cloudify/trunk/quality/frameworks/SGTest
 fi
 
-SVN_STOCKDEMO_REPOSITORY=svn://pc-lab14/SVN/cloudify/trunk/cloudify/recipes/src/main/resources/applications/stockdemo
+SVN_STOCKDEMO_REPOSITORY=svn://pc-lab14/SVN/cloudify/trunk/cloudify/recipes/src/main/resources/recipes/apps/stockdemo
 
  # set local build directory with entered build number
  BUILD_CACHE_DIR=${BUILDS_CACHE_REPOSITORY}/${BUILD_NUMBER}
@@ -30,6 +30,7 @@ rm -rf *
 svn export ${SVN_SGTEST_REPOSITORY}/apps/archives ${ARCHIVES} --force
 
 svn export ${SVN_SGTEST_REPOSITORY}/apps/cloudify ${CLOUDIFY} --force
+dos2unix ${DEPLOY_ROOT_BIN_DIR}/../../apps/cloudify/*.*
 
 svn export ${SVN_SGTEST_REPOSITORY}/apps/USM ${USM} --force
 

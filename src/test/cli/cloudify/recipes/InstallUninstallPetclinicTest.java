@@ -19,7 +19,7 @@ public class InstallUninstallPetclinicTest extends AbstractLocalCloudTest {
 	private static int ITERATIONS = 3;
 	
 	//timeout is set to 20 minutes instead of the default 15, this test takes a long time (downloads etc.).
-	@Test(timeOut = 20 * 60 * 1000, groups = "1", enabled = true)
+	@Test(timeOut = 35 * 60 * 1000, groups = "1", enabled = true)
 	public void multipleInstallUninstallTest() throws IOException, InterruptedException {
 		
 		for (int i = 0 ; i < ITERATIONS ; i++) {

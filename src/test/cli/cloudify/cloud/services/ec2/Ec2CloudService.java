@@ -46,7 +46,7 @@ public class Ec2CloudService extends AbstractCloudService {
 		IOUtils.replaceTextInFile(originalCloudDslFile, propsToReplace);
 
 		// upload dir needs to contain the sshKeyPem 
-		File targetPem = new File(ScriptUtils.getBuildPath(), "tools/cli/plugins/esc/" + getCloudName() + "/upload/" + getPemFileName());
+		File targetPem = new File(ScriptUtils.getBuildPath(), "tools/cli/plugins/esc/" + getCloudName() + "/upload/" + getPemFileName()+".pem");
 		FileUtils.copyFile(new File(cloudTestPath, sshKeyPemName), targetPem);
 		AssertUtils.assertTrue("File not found", targetPem.isFile());
 	}

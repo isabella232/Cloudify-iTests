@@ -16,7 +16,7 @@ public class RackspaceCloudService extends AbstractCloudService {
 	
 	private String cloudName = "rsopenstack";
 	private String user = "gsrackspace";
-	private String apiKey = "d6f73846a8234dbf6d16cf4a0acf2ad9";
+	private String apiKey = "1ee2495897b53409f4643926f1968c0c";
 	private String tenant = "658142";
 
 	public String getCloudName() {

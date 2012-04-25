@@ -111,7 +111,7 @@ public class InternalUSMPuServiceDownTest extends AbstractLocalCloudTest {
 		LogUtils.log("deleting catalina.sh/bat from pu folder");
 		ConfigObject tomcatConfig = new ConfigSlurper().parse(new File(serviceDir, "tomcat.properties").toURI().toURL());
 		String tomcatVersion = (String) tomcatConfig.get("version");
-		String catalinaPath = "/work/processing-units/default_tomcat_1/ext/install/apache-tomcat-" + tomcatVersion + "/bin/catalina.";
+		String catalinaPath = "/work/processing-units/default_tomcat_1/install/apache-tomcat-" + tomcatVersion + "/bin/catalina.";
 		String filePath = ScriptUtils.getBuildPath()+ catalinaPath;
 		if (isWindows()) {
 			pathToTomcat = filePath + "bat";

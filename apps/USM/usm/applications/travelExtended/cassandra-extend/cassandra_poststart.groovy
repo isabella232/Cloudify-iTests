@@ -3,7 +3,7 @@ import groovy.util.ConfigSlurper
 println( "THIS IS OVERRIDED CASSANDRA_POSTSTART.GROOVY")
 config = new ConfigSlurper().parse(new File("cassandra.properties").toURL())
 
-script = "${config.home}/bin/cassandra-cli"
+script = "${config.unzipFolder}/bin/cassandra-cli"
 new AntBuilder().sequential {
 	exec(executable:script, osfamily:"unix") {
 		arg value:"-host"

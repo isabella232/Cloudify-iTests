@@ -21,6 +21,7 @@ public class PrivateImageEc2Test extends AbstractCloudTest {
 		service = new Ec2CloudService();
 		service.setAdditionalPropsToReplace(new HashMap<String, String>());
 		service.getAdditionalPropsToReplace().put("imageId \"us-east-1/ami-76f0061f\"", "imageId \"us-east-1/ami-93b068fa\"");
+		service.getAdditionalPropsToReplace().put("connectToPrivateIp true", "connectToPrivateIp true\n\t\tremoteUsername \"ec2-user\"\n");
 		service.setMachinePrefix(this.getClass().getName() + CloudTestUtils.SGTEST_MACHINE_PREFIX);
 		service.bootstrapCloud();
 		super.setService(service);

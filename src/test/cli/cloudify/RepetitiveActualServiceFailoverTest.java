@@ -132,7 +132,9 @@ public class RepetitiveActualServiceFailoverTest extends AbstractLocalCloudTest 
 		LogUtils.log("Killing tomcat process and corrupting its install folder");
 		String pathToTomcat;
 		LogUtils.log("deleting catalina.sh/bat from pu folder");
-		String catalinaPath = "/work/processing-units/default_tomcat_1/ext/install/apache-tomcat-7.0.23/bin/catalina.";
+		// TODO - this test will fail when we upgrade tomcat!
+		// It is better to write a simple scanner that looks for catalina.* under /ext
+		String catalinaPath = "/work/processing-units/default_tomcat_1/ext/apache-tomcat-7.0.23/bin/catalina.";
 		String filePath = ScriptUtils.getBuildPath()+ catalinaPath;
 		if (ScriptUtils.isWindows()) {
 			pathToTomcat = filePath + "bat";

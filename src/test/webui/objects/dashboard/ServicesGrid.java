@@ -78,7 +78,7 @@ public class ServicesGrid {
 				}
 			};
 			
-			AssertUtils.repetitiveAssertTrue("Application is not present in the applications menu panel", condition,5000);
+			AssertUtils.repetitiveAssertTrue("Application is not present in the applications menu panel", condition,10000);
 			selenium.click(WebConstants.Xpath.getPathToApplicationSelectionButton(applicationName));
 		}
 		

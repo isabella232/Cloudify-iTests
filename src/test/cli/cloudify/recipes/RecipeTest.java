@@ -85,7 +85,7 @@ public class RecipeTest extends AbstractLocalCloudTest {
 		assertTrue("test-recipe failed and runCommand didn't throw an Exception as it should !!", output.contains("Recipe test completed"));
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, groups = "1", enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, groups = "1", enabled = false)
 	public void testTomcat() throws IOException, InterruptedException{
 		String tomcatDirPath = recipesDirPath + "/tomcat";
 		String output = runCommand("test-recipe " + tomcatDirPath + " " + RecipeTestUtil.DEFAULT_RECIPE_TEST_TIMEOUT + " tomcat-service.groovy");
@@ -116,7 +116,7 @@ public class RecipeTest extends AbstractLocalCloudTest {
 		runCommand("connect " + restUrl +  ";uninstall-service --verbose jboss-service");
 	}	
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, groups = "1", enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, groups = "1", enabled = false)
 	public void testCassandraByPort() throws IOException, InterruptedException, DSLException{
 		String cassandraDirPath = recipesDirPath + "/cassandra";
 		String CassandraServiceGroovyPath = cassandraDirPath + "/" + "cassandra-service.groovy";

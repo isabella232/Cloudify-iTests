@@ -145,7 +145,7 @@ public class RepetativeInstallAndUninstallStockDemoWithProblemAtInstallEc2Test e
 		assertUninstallWasSuccessful();
 		try{
 			LogUtils.log("second installation of stockdemo - this should succeed");
-			installApplication(stockdemoAppPath, "stockdemo", 5, true, true);
+			installApplication(stockdemoAppPath, "stockdemo", 20, true, true);
 			LogUtils.log("checking second installation's result");
 			Assert.assertTrue("The applications home page isn't available, counts as not installed properly" ,
 					WebUtils.isURLAvailable(stockdemoUrl));

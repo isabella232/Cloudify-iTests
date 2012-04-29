@@ -65,8 +65,8 @@ public class RackspaceCloudService extends AbstractCloudService {
 		FileUtils.copyFile(originalCloudDslFile, backupCloudDslFile);
 		
 		Map<String, String> propsToReplace = new HashMap<String,String>();
-		propsToReplace.put("ENTER_USER", user);
-		propsToReplace.put("ENTER_API_KEY", apiKey);
+		propsToReplace.put("USER_NAME", user);
+		propsToReplace.put("API_KEY", apiKey);
 		propsToReplace.put("cloudify_agent_", this.machinePrefix + "cloudify_agent");
 		propsToReplace.put("cloudify_manager", this.machinePrefix + "cloudify_manager");
 		propsToReplace.put("ENTER_TENANT", tenant);

@@ -48,6 +48,7 @@ public class KillManagementTest extends AbstractCloudTest{
 	private File backupStartManagementFile = new File(byonUploadDir, "bootstrap-management.backup");
 	private File originialBootstrapManagement = new File(ScriptUtils.getBuildPath() + "/tools/cli/plugins/esc/byon/upload/bootstrap-management.sh");
 	private final static String LINE_SEPARATOR = System.getProperty("line.separator");
+	private final static String MANAGEMENT_MACHINE_IP = "192.168.9.115";
 	
 	
 	@BeforeMethod(enabled = true)
@@ -71,7 +72,7 @@ public class KillManagementTest extends AbstractCloudTest{
 		replaceByonLookupGroup(LOOKUPGROUP);
 		enableMulticast();
 		
-		dos2Unix();
+		dos2Unix(MANAGEMENT_MACHINE_IP);
 		
 		service.bootstrapCloud();
 		
@@ -93,7 +94,7 @@ public class KillManagementTest extends AbstractCloudTest{
 
 	}
 
-	private void dos2Unix() {
+	private void dos2Unix(String hostAddress) {
 		SSHUtils.runCommand("192.168.9.115", 5000, "dos2unix /tmp/gs-files/bootstrap-management.sh", "tgrid", "tgrid");
 		
 	}
@@ -181,8 +182,8 @@ public class KillManagementTest extends AbstractCloudTest{
 			sendTeardownCloudFailedMail(cloudName, e);
 		}
 		putService(new ByonCloudService());
-//		restoreOriginalBootstrapManagementFile();
-//		disableMulticast();
+		restoreOriginalBootstrapManagementFile();
+		disableMulticast();
 
 
 	}

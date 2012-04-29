@@ -47,12 +47,15 @@ public class KillManagementTest extends AbstractCloudTest{
 	private File byonUploadDir = new File(ScriptUtils.getBuildPath() , "tools/cli/plugins/esc/byon/upload");
 	private File backupStartManagementFile = new File(byonUploadDir, "bootstrap-management.backup");
 	private File originialBootstrapManagement = new File(ScriptUtils.getBuildPath() + "/tools/cli/plugins/esc/byon/upload/bootstrap-management.sh");
+	private final static String LINE_SEPARATOR = System.getProperty("line.separator");
+	
 	
 	@BeforeMethod(enabled = true)
 	public void before() throws IOException, InterruptedException {
 		
 		// get the default service
 		service = (ByonCloudService) getDefaultService(cloudName);
+		
 		if ((service != null) && service.isBootstrapped()) {
 			service.teardownCloud(); // tear down the existing byon cloud since we need a new bootstrap			
 		}
@@ -91,7 +94,7 @@ public class KillManagementTest extends AbstractCloudTest{
 	}
 
 	private void dos2Unix() {
-		SSHUtils.runCommand("192.168.9.116", 5000, "dos2unix /tmp/gs-files/bootstrap-management.sh", "tgrid", "tgrid");
+		SSHUtils.runCommand("192.168.9.115", 5000, "dos2unix /tmp/gs-files/bootstrap-management.sh", "tgrid", "tgrid");
 		
 	}
 
@@ -203,8 +206,8 @@ public class KillManagementTest extends AbstractCloudTest{
 		File originalStartManagementFile = new File(byonUploadDir, "bootstrap-management.sh");
 		
 		String toReplace = "setenv.sh\"\\s\\s\\s";
-		String toAdd = "sed -i \"1i export LOOKUPGROUPS="+ group +"\" setenv.sh || error_exit \\$? \"Failed updating setenv.sh\"\n";
-		IOUtils.replaceTextInFile(originalStartManagementFile.getAbsolutePath(), toReplace, "setenv.sh\"" + "\r\n" + toAdd + "\r\n");
+		String toAdd = "sed -i \"1i export LOOKUPGROUPS="+ group +"\" setenv.sh || error_exit \\$? \"Failed updating setenv.sh\"" + LINE_SEPARATOR;
+		IOUtils.replaceTextInFile(originalStartManagementFile.getAbsolutePath(), toReplace, "setenv.sh\"" + LINE_SEPARATOR + toAdd + LINE_SEPARATOR);
 		
 	}
 

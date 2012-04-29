@@ -36,6 +36,15 @@ xcopy %REMOTE_BUILD_DIR%\cloudify\1.5\gigaspaces-cloudify-%VERSION%-%MILESTONE%-
 @echo Running %selenium.browser% Suite : 
 @call %LOCAL_SGPATH%\deploy\bin\windows\start-suite.bat %SUITE_NAME% %INCLUDE% %EXCLUDE%
 
+if %selenium.browser% == Chrome (
+	taskkill /im chromedriver.exe /F
+	taskkill /im chrome.exe /F
+)
+
+if %selenium.browser% == Firefox (
+	taskkill /im firefox.exe /F
+)
+
 @echo tranferring reports to tgrid
 echo %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER%
 xcopy %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER% Y:\%BUILD_NUMBER% /s /i /y

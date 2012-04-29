@@ -66,7 +66,6 @@ public class ScalingRulesCloudTest extends AbstractCloudTest {
 		super.afterTest();
 	}
 	
-	//need to enable once it passes more than once
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 3, enabled = true, dataProvider = "supportedCloudsWithoutByon")
 	public void testPetclinicSimpleScalingRules(String cloudName) throws Exception {		
 		

@@ -34,7 +34,7 @@ import framework.utils.WebUtils;
 public class RepetativeInstallAndUninstallStockDemoWithProblemAtInstallEc2Test extends AbstractCloudTest {
 
 	private static final String STOCKDEMO_APP_NAME = "stockdemo";
-	private final int repetitions = 3 ;
+	private final int repetitions = 1;
 	private String cassandraPostStartScriptPath = null;
 	private String newPostStartScriptPath = null;
 	private Ec2CloudService service;
@@ -95,7 +95,7 @@ public class RepetativeInstallAndUninstallStockDemoWithProblemAtInstallEc2Test e
 		
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT *(1 + repetitions), groups = "1", enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 6, groups = "1", enabled = true)
 	public void installAndUninstallTest() throws Exception {
 		
 		cassandraPostStartScriptPath = stockdemoAppPath + "/cassandra/cassandra_poststart.groovy";	
@@ -145,7 +145,7 @@ public class RepetativeInstallAndUninstallStockDemoWithProblemAtInstallEc2Test e
 		assertUninstallWasSuccessful();
 		try{
 			LogUtils.log("second installation of stockdemo - this should succeed");
-			installApplication(stockdemoAppPath, "stockdemo", 30, true, true);
+			installApplication(stockdemoAppPath, "stockdemo", 45, true, true);
 			LogUtils.log("checking second installation's result");
 			Assert.assertTrue("The applications home page isn't available, counts as not installed properly" ,
 					WebUtils.isURLAvailable(stockdemoUrl));

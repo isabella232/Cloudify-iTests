@@ -111,7 +111,7 @@ public class AbstractLocalCloudTest extends AbstractTest {
 			userHomeProp = System.getProperty("user.home");			
 		}
 		else {
-			userHomeProp = System.getProperty("user.dir") + "/../"; // windows machine
+			userHomeProp = System.getProperty("user.dir") + "/../../"; // windows machine
 		}
 		final File userHomeDir = new File(userHomeProp, ".cloudify");
 		LogUtils.log("Cleaning up cloudify folder under 'user.home' folder at: " + userHomeDir);

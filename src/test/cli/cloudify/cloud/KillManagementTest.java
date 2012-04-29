@@ -23,7 +23,6 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import test.cli.cloudify.cloud.services.byon.ByonCloudService;
-import framework.tools.SGTestHelper;
 import framework.utils.AssertUtils;
 import framework.utils.IOUtils;
 import framework.utils.IRepetitiveRunnable;
@@ -65,14 +64,9 @@ public class KillManagementTest extends AbstractCloudTest{
 		// replace the default bootstap-management.sh with a multicast version one
 		// first make a backup of the original file
 		FileUtils.copyFile(originialBootstrapManagement, backupStartManagementFile);
-	
-		// copy multicast bootstrap to upload dir as bootstrap-management.sh
-		File bootstrapManagementWithMulticast = new File(SGTestHelper.getSGTestRootDir() + "/apps/cloudify/cloud/byon/bootstrap-management-with-multicast.sh");
-		
-		FileUtils.deleteQuietly(originialBootstrapManagement);
-		FileUtils.copyFile(bootstrapManagementWithMulticast, new File(byonUploadDir, "bootstrap-management.sh"));
-		
+			
 		replaceByonLookupGroup(LOOKUPGROUP);
+		enableMulticast();
 		
 		service.bootstrapCloud();
 		
@@ -178,8 +172,24 @@ public class KillManagementTest extends AbstractCloudTest{
 		}
 		putService(new ByonCloudService());
 		restoreOriginalBootstrapManagementFile();
+		disableMulticast();
 
 
+	}
+	
+	private void enableMulticast() throws IOException {
+		File originalStartManagementFile = new File(byonUploadDir, "bootstrap-management.sh");
+		String toReplace = "export EXT_JAVA_OPTIONS=\"-Dcom.gs.multicast.enabled=false\"";
+		String toAdd = "export EXT_JAVA_OPTIONS=\"-Dcom.gs.multicast.enabled=true\"";
+		IOUtils.replaceTextInFile(originalStartManagementFile.getAbsolutePath(), toReplace, toAdd);
+
+	}
+	
+	private void disableMulticast() throws IOException {
+		File originalStartManagementFile = new File(byonUploadDir, "bootstrap-management.sh");
+		String toAdd = "export EXT_JAVA_OPTIONS=\"-Dcom.gs.multicast.enabled=false\"";
+		String toReplace = "export EXT_JAVA_OPTIONS=\"-Dcom.gs.multicast.enabled=true\"";
+		IOUtils.replaceTextInFile(originalStartManagementFile.getAbsolutePath(), toReplace, toAdd);		
 	}
 
 	private void replaceByonLookupGroup(String group) throws IOException {

@@ -53,7 +53,7 @@ public class KillManagementTest extends AbstractCloudTest{
 		
 		// get the default service
 		service = (ByonCloudService) getDefaultService(cloudName);
-		if (service.isBootstrapped()) {
+		if ((service != null) && service.isBootstrapped()) {
 			service.teardownCloud(); // tear down the existing byon cloud since we need a new bootstrap			
 		}
 		
@@ -67,6 +67,8 @@ public class KillManagementTest extends AbstractCloudTest{
 			
 		replaceByonLookupGroup(LOOKUPGROUP);
 		enableMulticast();
+		
+		dos2Unix();
 		
 		service.bootstrapCloud();
 		
@@ -86,6 +88,11 @@ public class KillManagementTest extends AbstractCloudTest{
 		petClinicUrl = new URL(hostIp + ":8080/petclinic-mongo/");
 		threadPool = Executors.newFixedThreadPool(1);
 
+	}
+
+	private void dos2Unix() {
+		SSHUtils.runCommand("192.168.9.116", 5000, "dos2unix /tmp/gs-files/bootstrap-management.sh", "tgrid", "tgrid");
+		
 	}
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
@@ -171,8 +178,8 @@ public class KillManagementTest extends AbstractCloudTest{
 			sendTeardownCloudFailedMail(cloudName, e);
 		}
 		putService(new ByonCloudService());
-		restoreOriginalBootstrapManagementFile();
-		disableMulticast();
+//		restoreOriginalBootstrapManagementFile();
+//		disableMulticast();
 
 
 	}

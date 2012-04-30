@@ -24,8 +24,8 @@ import framework.utils.WebUtils;
 public abstract class AbstractCloudService implements CloudService {
 	
 	protected int numberOfManagementMachines = 1;
-	protected URL[] restAdminUrls = new URL[numberOfManagementMachines];
-	protected URL[] webUIUrls = new URL[numberOfManagementMachines];
+	protected URL[] restAdminUrls;
+	protected URL[] webUIUrls;
 	protected String machinePrefix = CloudTestUtils.SGTEST_MACHINE_PREFIX;
     protected Map<String,String> additionalPropsToReplace;
     protected boolean bootstrapped = false;
@@ -131,17 +131,21 @@ public abstract class AbstractCloudService implements CloudService {
 			}
 		}
 		finally {
-			if (!teardownSuccesfull) {
-				CommandTestUtils.runCommandAndWait("teardown-cloud --verbose -force " + getCloudName());				
+			try {
+				if (!teardownSuccesfull) {
+					CommandTestUtils.runCommandAndWait("teardown-cloud --verbose -force " + getCloudName());				
+				}
 			}
-			setBootstrapped(false);
-			deleteCloudFiles(getCloudName());
+			finally {				
+				setBootstrapped(false);
+				deleteCloudFiles(getCloudName());
+			}
 		}	
 	}
 	
 	@Override 
 	public String[] getWebuiUrls() {
-		if (webUIUrls.length == 0) {
+		if (webUIUrls == null) {
 			return null;
 		}
 		String[] result = new String[webUIUrls.length];
@@ -155,7 +159,7 @@ public abstract class AbstractCloudService implements CloudService {
 	@Override
 	public String[] getRestUrls() {
 		
-		if (restAdminUrls.length == 0) {
+		if (restAdminUrls == null) {
 			return null;
 		}
 		String[] result = new String[restAdminUrls.length];

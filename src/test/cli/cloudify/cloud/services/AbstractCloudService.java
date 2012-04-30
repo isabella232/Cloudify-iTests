@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Date;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -115,13 +116,22 @@ public abstract class AbstractCloudService implements CloudService {
 
 	@Override
 	public void teardownCloud() throws IOException, InterruptedException {
+		
+		boolean teardownSuccesfull = false;
+		
 		try {
 			injectAuthenticationDetails();
-			CommandTestUtils.runCommandAndWait("teardown-cloud --verbose -force " + getCloudName());
-			setBootstrapped(false);
+			String teardownOutput = CommandTestUtils.runCommandAndWait("teardown-cloud --verbose " + getCloudName());
+			if (teardownOutput.toLowerCase().contains("success")) {
+				teardownSuccesfull = true;				
+			}
 		}
 		finally {
+			setBootstrapped(false);
 			deleteCloudFiles(getCloudName());
+			if (!teardownSuccesfull) {
+				CommandTestUtils.runCommandAndWait("teardown-cloud --verbose -force " + getCloudName());
+			}
 		}	
 	}
 	
@@ -209,7 +219,8 @@ public abstract class AbstractCloudService implements CloudService {
 		
 		// make backup file the only file
 		FileUtils.copyFile(backupCloudDslFile, originalCloudDslFile);
-		FileUtils.deleteQuietly(backupCloudDslFile);
+		String currentDate = new Date().toString().replace(" ", "_");
+		FileUtils.moveFile(backupCloudDslFile, new File(cloudPluginDir.getAbsolutePath() + "/" + cloudName +  currentDate + "-cloud.groovy"));
 	}
 
 	

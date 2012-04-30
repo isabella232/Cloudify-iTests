@@ -131,11 +131,11 @@ public abstract class AbstractCloudService implements CloudService {
 			}
 		}
 		finally {
-			setBootstrapped(false);
-			deleteCloudFiles(getCloudName());
 			if (!teardownSuccesfull) {
 				CommandTestUtils.runCommandAndWait("teardown-cloud --verbose -force " + getCloudName());				
 			}
+			setBootstrapped(false);
+			deleteCloudFiles(getCloudName());
 		}	
 	}
 	

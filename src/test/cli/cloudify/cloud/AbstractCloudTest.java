@@ -131,10 +131,10 @@ public class AbstractCloudTest extends AbstractTest {
 	@BeforeSuite(alwaysRun = true, enabled = true)
 	public void setupDefaultServices() throws NoSuchMethodException, SecurityException {
 
+		setupCloudManagmentMethods();
 		if(!isDevMode()){
 		
 			SUPPORTED_CLOUDS = toTwoDimentionalArray(System.getProperty(SUPPORTED_CLOUDS_PROP));
-			setupCloudManagmentMethods();
 			LogUtils.log("trying to teardown any existing clouds...");
 			teardownClouds(false);
 		}

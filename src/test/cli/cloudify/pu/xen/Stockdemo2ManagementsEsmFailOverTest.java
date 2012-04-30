@@ -12,6 +12,7 @@ import org.openspaces.admin.esm.ElasticServiceManagers;
 import org.openspaces.admin.esm.events.ElasticServiceManagerRemovedEventListener;
 import org.openspaces.admin.internal.admin.DefaultAdmin;
 import org.openspaces.admin.machine.Machine;
+import org.openspaces.admin.pu.ProcessingUnit;
 import org.openspaces.cloud.xenserver.XenServerMachineProvisioningConfig;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -141,12 +142,15 @@ public class Stockdemo2ManagementsEsmFailOverTest extends AbstractApplicationFai
 		boolean gsmUp = admin.getGridServiceManagers().waitFor(1, DEFAULT_RECOVERY_TIME, TimeUnit.MILLISECONDS);
 		boolean lusUp = admin.getLookupServices().waitFor(1, DEFAULT_RECOVERY_TIME, TimeUnit.MILLISECONDS);
 		boolean gsaUp = admin.getGridServiceAgents().waitFor(4, DEFAULT_RECOVERY_TIME, TimeUnit.MILLISECONDS);
-		boolean restUp = admin.getProcessingUnits().waitFor("rest", DEFAULT_RECOVERY_TIME, TimeUnit.MILLISECONDS)
-												   .waitFor(1, DEFAULT_TEST_TIMEOUT/5, TimeUnit.MILLISECONDS);
-		boolean webuiUp = admin.getProcessingUnits().waitFor("webui", DEFAULT_RECOVERY_TIME, TimeUnit.MILLISECONDS)
-													.waitFor(1, DEFAULT_TEST_TIMEOUT/5, TimeUnit.MILLISECONDS);
-		boolean managementSpaceUp = admin.getProcessingUnits().waitFor(CloudifyConstants.MANAGEMENT_SPACE_NAME, DEFAULT_RECOVERY_TIME, TimeUnit.MILLISECONDS)
-													.waitFor(1, DEFAULT_TEST_TIMEOUT/5, TimeUnit.MILLISECONDS);
+		ProcessingUnit rest = admin.getProcessingUnits().waitFor("rest", DEFAULT_RECOVERY_TIME, TimeUnit.MILLISECONDS);
+		assertNotNull(rest);
+		boolean restUp = rest.waitFor(1, DEFAULT_TEST_TIMEOUT/5, TimeUnit.MILLISECONDS);
+		ProcessingUnit webui = admin.getProcessingUnits().waitFor("webui", DEFAULT_RECOVERY_TIME, TimeUnit.MILLISECONDS);
+		assertNotNull(webui);
+		boolean webuiUp = webui.waitFor(1, DEFAULT_TEST_TIMEOUT/5, TimeUnit.MILLISECONDS);
+		ProcessingUnit managementSpace = admin.getProcessingUnits().waitFor(CloudifyConstants.MANAGEMENT_SPACE_NAME, DEFAULT_RECOVERY_TIME, TimeUnit.MILLISECONDS);
+		assertNotNull(managementSpace);
+		boolean managementSpaceUp = managementSpace.waitFor(1, DEFAULT_TEST_TIMEOUT/5, TimeUnit.MILLISECONDS);
 		
 		assertTrue("esm did not restart" , esmRestarted);
 		assertTrue("gsm did not restart" , gsmUp);

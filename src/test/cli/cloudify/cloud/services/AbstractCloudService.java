@@ -227,13 +227,13 @@ public abstract class AbstractCloudService implements CloudService {
 		}
 		
 		// make backup file the only file
-		FileUtils.copyFile(backupCloudDslFile, originalCloudDslFile);
-		String currentDate = new Date().toString().replace(" ", "_");
+		String currentDate = new Date().toString().replace(" ", "_").replace(":", "_");
 		if (!tempDslFolder.exists()) {
 			tempDslFolder.mkdir();
 		}
-		FileUtils.moveFile(originalCloudDslFile, new File(tempDslFolder + "/" + cloudName +  currentDate + "-cloud.groovy"));
+		FileUtils.moveFile(originalCloudDslFile, new File(tempDslFolder.getAbsolutePath() + File.separator + cloudName +  currentDate + "-cloud.groovy"));
 		FileUtils.copyFile(backupCloudDslFile, originalCloudDslFile);
+		FileUtils.deleteQuietly(backupCloudDslFile);
 	}
 
 	

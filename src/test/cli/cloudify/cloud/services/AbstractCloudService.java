@@ -207,6 +207,7 @@ public abstract class AbstractCloudService implements CloudService {
 		File backupCloudDslFile = new File(cloudPluginDir, cloudName + "-cloud.backup");
 		File targetPemFolder = new File(ScriptUtils.getBuildPath(), "tools/cli/plugins/esc/" + cloudName + "/upload/");
 		File cloudifyOverrides = new File(cloudPluginDir.getAbsolutePath() + "/upload/cloudify-overrides");
+		File tempDslFolder = new File(cloudPluginDir.getAbsolutePath() + "/tmp");
 		
 		// delete pem files from upload dir
 		for (File file : targetPemFolder.listFiles()) {
@@ -224,7 +225,10 @@ public abstract class AbstractCloudService implements CloudService {
 		// make backup file the only file
 		FileUtils.copyFile(backupCloudDslFile, originalCloudDslFile);
 		String currentDate = new Date().toString().replace(" ", "_");
-		FileUtils.moveFile(backupCloudDslFile, new File(cloudPluginDir.getAbsolutePath() + "/" + cloudName +  currentDate + "-cloud.groovy"));
+		if (!tempDslFolder.exists()) {
+			tempDslFolder.mkdir();
+		}
+		FileUtils.moveFile(backupCloudDslFile, new File(tempDslFolder + "/" + cloudName +  currentDate + "-cloud.groovy"));
 	}
 
 	

@@ -67,8 +67,8 @@ public class RackspaceCloudService extends AbstractCloudService {
 		Map<String, String> propsToReplace = new HashMap<String,String>();
 		propsToReplace.put("USER_NAME", user);
 		propsToReplace.put("API_KEY", apiKey);
-		propsToReplace.put("cloudify_agent_", this.machinePrefix + "cloudify_agent");
-		propsToReplace.put("cloudify_manager", this.machinePrefix + "cloudify_manager");
+		propsToReplace.put("machineNamePrefix " + "\"agent\"", this.machinePrefix + "cloudify_agent");
+		propsToReplace.put("managementGroup " + "\"management\"", this.machinePrefix + "cloudify_manager");
 		propsToReplace.put("ENTER_TENANT", tenant);
 		propsToReplace.put("numberOfManagementMachines 1", "numberOfManagementMachines "  + numberOfManagementMachines);
 		propsToReplace.put("\"openstack.wireLog\": \"false\"", "\"openstack.wireLog\": \"true\"");

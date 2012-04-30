@@ -228,7 +228,8 @@ public abstract class AbstractCloudService implements CloudService {
 		if (!tempDslFolder.exists()) {
 			tempDslFolder.mkdir();
 		}
-		FileUtils.moveFile(backupCloudDslFile, new File(tempDslFolder + "/" + cloudName +  currentDate + "-cloud.groovy"));
+		FileUtils.moveFile(originalCloudDslFile, new File(tempDslFolder + "/" + cloudName +  currentDate + "-cloud.groovy"));
+		FileUtils.copyFile(backupCloudDslFile, originalCloudDslFile);
 	}
 
 	

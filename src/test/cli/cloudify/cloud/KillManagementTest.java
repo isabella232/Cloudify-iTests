@@ -23,8 +23,8 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import test.cli.cloudify.cloud.services.byon.ByonCloudService;
+import framework.tools.SGTestHelper;
 import framework.utils.AssertUtils;
-import framework.utils.IOUtils;
 import framework.utils.IRepetitiveRunnable;
 import framework.utils.LogUtils;
 import framework.utils.ProcessingUnitUtils;
@@ -47,9 +47,7 @@ public class KillManagementTest extends AbstractCloudTest{
 	private File byonUploadDir = new File(ScriptUtils.getBuildPath() , "tools/cli/plugins/esc/byon/upload");
 	private File backupStartManagementFile = new File(byonUploadDir, "bootstrap-management.backup");
 	private File originialBootstrapManagement = new File(ScriptUtils.getBuildPath() + "/tools/cli/plugins/esc/byon/upload/bootstrap-management.sh");
-	private final static String LINE_SEPARATOR = System.getProperty("line.separator");
-	private final static String MANAGEMENT_MACHINE_IP = "192.168.9.115";
-	
+	private File bootstrapManagementWithMulticast = new File(SGTestHelper.getSGTestRootDir() + "/apps/cloudify/cloud/byon/bootstrap-management-with-multicast.sh");
 	
 	@BeforeMethod(enabled = true)
 	public void before() throws IOException, InterruptedException {
@@ -68,11 +66,10 @@ public class KillManagementTest extends AbstractCloudTest{
 		// replace the default bootstap-management.sh with a multicast version one
 		// first make a backup of the original file
 		FileUtils.copyFile(originialBootstrapManagement, backupStartManagementFile);
-			
-		replaceByonLookupGroup(LOOKUPGROUP);
-		enableMulticast();
+		FileUtils.copyFileToDirectory(bootstrapManagementWithMulticast, byonUploadDir);
+		originialBootstrapManagement.delete();
+		FileUtils.copyFile(bootstrapManagementWithMulticast, originialBootstrapManagement);
 		
-		dos2Unix(MANAGEMENT_MACHINE_IP);
 		
 		service.bootstrapCloud();
 		
@@ -92,11 +89,6 @@ public class KillManagementTest extends AbstractCloudTest{
 		petClinicUrl = new URL(hostIp + ":8080/petclinic-mongo/");
 		threadPool = Executors.newFixedThreadPool(1);
 
-	}
-
-	private void dos2Unix(String hostAddress) {
-		SSHUtils.runCommand("192.168.9.115", 5000, "dos2unix /tmp/gs-files/bootstrap-management.sh", "tgrid", "tgrid");
-		
 	}
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
@@ -183,41 +175,15 @@ public class KillManagementTest extends AbstractCloudTest{
 		}
 		putService(new ByonCloudService());
 		restoreOriginalBootstrapManagementFile();
-		disableMulticast();
-
-
 	}
-	
-	private void enableMulticast() throws IOException {
-		File originalStartManagementFile = new File(byonUploadDir, "bootstrap-management.sh");
-		String toReplace = "export EXT_JAVA_OPTIONS=\"-Dcom.gs.multicast.enabled=false\"";
-		String toAdd = "export EXT_JAVA_OPTIONS=\"-Dcom.gs.multicast.enabled=true\"";
-		IOUtils.replaceTextInFile(originalStartManagementFile.getAbsolutePath(), toReplace, toAdd);
-
-	}
-	
-	private void disableMulticast() throws IOException {
-		File originalStartManagementFile = new File(byonUploadDir, "bootstrap-management.sh");
-		String toAdd = "export EXT_JAVA_OPTIONS=\"-Dcom.gs.multicast.enabled=false\"";
-		String toReplace = "export EXT_JAVA_OPTIONS=\"-Dcom.gs.multicast.enabled=true\"";
-		IOUtils.replaceTextInFile(originalStartManagementFile.getAbsolutePath(), toReplace, toAdd);		
-	}
-
-	private void replaceByonLookupGroup(String group) throws IOException {
-		File originalStartManagementFile = new File(byonUploadDir, "bootstrap-management.sh");
-		
-		String toReplace = "setenv.sh\"\\s\\s\\s";
-		String toAdd = "sed -i \"1i export LOOKUPGROUPS="+ group +"\" setenv.sh || error_exit \\$? \"Failed updating setenv.sh\"" + LINE_SEPARATOR;
-		IOUtils.replaceTextInFile(originalStartManagementFile.getAbsolutePath(), toReplace, "setenv.sh\"" + LINE_SEPARATOR + toAdd + LINE_SEPARATOR);
-		
-	}
-
-	
 	
 	private void restoreOriginalBootstrapManagementFile() throws IOException {
-		originialBootstrapManagement.delete();
 		FileUtils.copyFile(backupStartManagementFile, originialBootstrapManagement);
-		
+		backupStartManagementFile.delete();
+		File bootstrapWithMulticastOnBuild = new File(byonUploadDir.getAbsolutePath() + "/bootstrap-management-with-multicast.sh");
+		if (bootstrapWithMulticastOnBuild.exists()) {
+			bootstrapWithMulticastOnBuild.delete();
+		}
 	}
 
 }

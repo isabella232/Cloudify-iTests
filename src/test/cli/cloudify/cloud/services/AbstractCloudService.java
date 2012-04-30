@@ -121,16 +121,20 @@ public abstract class AbstractCloudService implements CloudService {
 		
 		try {
 			injectAuthenticationDetails();
-			String teardownOutput = CommandTestUtils.runCommandAndWait("teardown-cloud --verbose " + getCloudName());
-			if (teardownOutput.toLowerCase().contains("success")) {
-				teardownSuccesfull = true;				
+			String[] restUrls = getRestUrls();
+			if (restUrls != null) {
+				String connect = "connect " + restUrls[0];
+				String teardownOutput = CommandTestUtils.runCommandAndWait(connect + ";"  + "teardown-cloud --verbose " + getCloudName());
+				if (teardownOutput.toLowerCase().contains("success")) {
+					teardownSuccesfull = true;				
+				}
 			}
 		}
 		finally {
 			setBootstrapped(false);
 			deleteCloudFiles(getCloudName());
 			if (!teardownSuccesfull) {
-				CommandTestUtils.runCommandAndWait("teardown-cloud --verbose -force " + getCloudName());
+				CommandTestUtils.runCommandAndWait("teardown-cloud --verbose -force " + getCloudName());				
 			}
 		}	
 	}

@@ -4,6 +4,7 @@ import java.net.URL;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import framework.utils.LogUtils;
 import framework.utils.WebUtils;
 
 
@@ -25,6 +26,7 @@ public class CloudTestUtils {
 
 	public static int getNumberOfMachines(URL machinesRestAdminUrl) throws Exception {
 		String json = WebUtils.getURLContent(machinesRestAdminUrl);
+		LogUtils.log("-- getNumberOfMachines received json text: " + json);
 		Matcher matcher = Pattern.compile("\"Size\":\"([0-9]+)\"").matcher(json);
 		if (matcher.find()) {
 			String rawSize = matcher.group(1);

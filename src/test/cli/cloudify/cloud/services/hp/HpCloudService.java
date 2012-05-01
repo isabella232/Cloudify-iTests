@@ -84,6 +84,7 @@ public class HpCloudService extends AbstractCloudService {
 		propsToReplace.put("cloudify_manager", this.machinePrefix + "cloudify_manager");
 		propsToReplace.put("ENTER_KEY_FILE", pemFileName + ".pem");
 		propsToReplace.put("ENTER_TENANT", tenant);
+        propsToReplace.put("ENTER_KEY_PAIR_NAME", getPemFileName());
 		propsToReplace.put("hp-cloud-demo", "sgtest");
 		propsToReplace.put("numberOfManagementMachines 1", "numberOfManagementMachines "  + numberOfManagementMachines);
 		propsToReplace.put("\"openstack.wireLog\": \"false\"", "\"openstack.wireLog\": \"true\"");

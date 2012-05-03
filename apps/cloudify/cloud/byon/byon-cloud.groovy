@@ -17,7 +17,7 @@ cloud {
 		// The cloud-driver implementation class.
 		className "org.cloudifysource.esc.driver.provisioning.byon.ByonProvisioningDriver"
 		// Optional. The template name for the management machines. Defaults to the first template in the templates section below.
-		managementMachineTemplate "MGMT_LINUX"
+		managementMachineTemplate "TEMPLATE_3"
 		// Optional. Indicates whether internal cluster communications should use the machine private IP. Defaults to true.
 		connectToPrivateIp true
 		//Indicates whether communications with the management servers should use the machine private IP.
@@ -41,7 +41,7 @@ cloud {
 		// Mandatory. The HTTP/S URL where cloudify can be downloaded from by newly started machines.
 		cloudifyUrl "cloudify.zip"
 		// Mandatory. The prefix for new machines started for servies.
-		machineNamePrefix "cloudify_agent_"
+		machineNamePrefix "nir_cloudify_agent_"
 		// Optional. Defaults to true. Specifies whether cloudify should try to deploy services on the management machine.
 		// Do not change this unless you know EXACTLY what you are doing.
 		dedicatedManagementMachines true
@@ -50,7 +50,7 @@ cloud {
 		// Optional. Logging level for the intenal cloud provider logger. Defaults to INFO.
 		sshLoggingLevel "INFO"
 		// Mandatory. Name of the new machine/s started as cloudify management machines. 
-		managementGroup "cloudify_manager"
+		managementGroup "nir_cloudify_manager"
 		// Mandatory. Number of management machines to start on bootstrap-cloud. In production, should be 2. Can be 1 for dev.
 		numberOfManagementMachines 1
 		zones (["agent"])
@@ -89,6 +89,7 @@ cloud {
 					])
 				},
 				TEMPLATE_2 : template{
+				machineMemoryMB 1600
 				// Mandatory for BYON.
 					custom ([
 						"nodesList" : ([
@@ -100,6 +101,7 @@ cloud {
 					])
 				},
 				TEMPLATE_3 : template{
+				machineMemoryMB 1600
 				// Mandatory for BYON.
 					custom ([
 						"nodesList" : ([

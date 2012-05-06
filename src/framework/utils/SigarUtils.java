@@ -20,6 +20,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import org.hyperic.sigar.ProcState;
 import org.hyperic.sigar.Sigar;
 import org.hyperic.sigar.SigarException;
 import org.openspaces.admin.Admin;
@@ -78,6 +79,19 @@ public class SigarUtils {
 	private static long getAgentPid(Admin admin) throws RemoteException{
 		GridServiceAgent gsa = admin.getGridServiceAgents().waitForAtLeastOne(10, TimeUnit.SECONDS);
 		return ((DefaultGridServiceAgent) gsa).getJVMDetails().getPid();
+	}
+	
+	public static String getProcessName(String pid){
+		final Sigar sigar = SigarHolder.getSigar();
+		 ProcState procState;
+		try {
+			procState = sigar.getProcState(pid);
+			String processName = procState.getName();
+			return processName;
+		} catch (SigarException e) {
+			LogUtils.log("Process Name could not be obtained.", e);
+		}
+		return "";
 	}
 }
 

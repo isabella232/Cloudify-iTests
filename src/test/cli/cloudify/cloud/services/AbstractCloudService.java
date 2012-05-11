@@ -119,13 +119,13 @@ public abstract class AbstractCloudService implements CloudService {
 			injectAuthenticationDetails();
 			String[] restUrls = getRestUrls();
             String url = null;
-            try {
-                url = restUrls[0] +"/service/dump/?fileSizeLimit=50000000";
-                DumpUtils.dump(new URL(url));
-            } catch (Exception e) {
-                LogUtils.log("Failed to create dump for this url - " + url, e);
-            }
 			if (restUrls != null) {
+                try {
+                    url = restUrls[0] +"/service/dump/?fileSizeLimit=50000000";
+                    DumpUtils.dump(new URL(url));
+                } catch (Exception e) {
+                    LogUtils.log("Failed to create dump for this url - " + url, e);
+                }
 				String connect = "connect " + restUrls[0];
 				String teardownOutput = CommandTestUtils.runCommandAndWait(connect + ";"  + "teardown-cloud --verbose " + getCloudName());
 				if (teardownOutput.toLowerCase().contains("success")) {

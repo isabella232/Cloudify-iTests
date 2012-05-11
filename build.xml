@@ -44,11 +44,6 @@
         <!--<pathelement path="${sgtest.junit}"/>-->
         <pathelement path="${sgtest.testng}"/>
 
-    	<!-- commons jars -->
-        <fileset dir="${sgtest.lib}/commons">
-            <include name="**/*.jar"/>
-        </fileset>
-
         <!-- selenium jars -->
         <fileset dir="${sgtest.lib}/selenium">
             <include name="**/*.jar"/>
@@ -127,6 +122,11 @@
 
         <!-- jackson jars -->
         <fileset dir="${sgtest.lib}/jackson">
+            <include name="**/*.jar"/>
+        </fileset>
+
+        <!-- commons jars -->
+        <fileset dir="${sgtest.lib}/commons">
             <include name="**/*.jar"/>
         </fileset>
 

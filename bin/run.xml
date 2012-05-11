@@ -113,9 +113,15 @@
             <include name="**/*.jar"/>
         </fileset>
 
+        <!-- jackson jars -->
+        <fileset dir="${sgtest.homedir}/lib/jackson">
+            <include name="**/*.jar"/>
+        </fileset>
 
-	
-		<dirset dir="${sgtest.homedir}/config"/>
+
+
+
+        <dirset dir="${sgtest.homedir}/config"/>
 		
 		<dirset dir="${tmp.testng.classes}/apps">
 			

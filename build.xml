@@ -125,6 +125,11 @@
             <include name="**/*.jar"/>
         </fileset>
 
+        <!-- jackson jars -->
+        <fileset dir="${sgtest.lib}/jackson">
+            <include name="**/*.jar"/>
+        </fileset>
+
         <!-- groovy jars -->
         <fileset dir="${gsHome.dir}/tools/groovy/lib">
             <include name="**/groovy*.jar"/>

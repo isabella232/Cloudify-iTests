@@ -30,14 +30,36 @@
     <!-- sgtest classpath -->
     <path id="classpath">
 
+        <!-- commons jars -->
+        <fileset dir="${sgtest.lib}/commons">
+            <include name="**/*.jar"/>
+        </fileset>
+
         <!-- testng jars -->
         <fileset dir="${sgtest.lib}/testng">
             <include name="**/*.jar"/>
         </fileset>
 
-        <fileset dir="${gsHome.dir}/lib">
+        <!--<fileset dir="${gsHome.dir}/lib">-->
+            <!--<include name="**/*.jar"/>-->
+            <!--<exclude name="**/mule-os.jar"/>-->
+        <!--</fileset>-->
+
+        <fileset dir="${gsHome.dir}/lib/required">
             <include name="**/*.jar"/>
-            <exclude name="**/mule-os.jar"/>
+        </fileset>
+
+        <fileset dir="${gsHome.dir}/lib/platform/usm">
+            <include name="**/*.jar"/>
+        </fileset>
+
+        <fileset dir="${gsHome.dir}/lib/platform/sigar">
+            <include name="**/*.jar"/>
+        </fileset>
+
+        <!-- CLI jars -->
+        <fileset dir="${gsHome.dir}/tools/cli">
+            <include name="**/*.jar"/>
         </fileset>
 
         <pathelement path="${sgtest.lib}"/>
@@ -94,11 +116,6 @@
             <include name="**/*.jar"/>
         </fileset>
 
-        <!-- CLI jars -->
-        <fileset dir="${gsHome.dir}/tools/cli">
-            <include name="**/*.jar"/>
-        </fileset>
-
         <!-- simplejavaprocessjars -->
         <fileset dir="${sgtest.lib}/../apps/USM/usm/simplejavaprocess">
             <include name="**/*.jar"/>
@@ -122,11 +139,6 @@
 
         <!-- jackson jars -->
         <fileset dir="${sgtest.lib}/jackson">
-            <include name="**/*.jar"/>
-        </fileset>
-
-        <!-- commons jars -->
-        <fileset dir="${sgtest.lib}/commons">
             <include name="**/*.jar"/>
         </fileset>
 

@@ -9,17 +9,13 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import framework.utils.*;
 import org.apache.commons.io.FileUtils;
 
 import test.cli.cloudify.CloudTestUtils;
 import test.cli.cloudify.CommandTestUtils;
 import framework.tools.SGTestHelper;
-import framework.utils.AssertUtils;
 import framework.utils.AssertUtils.RepetitiveConditionProvider;
-import framework.utils.IOUtils;
-import framework.utils.LogUtils;
-import framework.utils.ScriptUtils;
-import framework.utils.WebUtils;
 
 public abstract class AbstractCloudService implements CloudService {
 	
@@ -122,6 +118,13 @@ public abstract class AbstractCloudService implements CloudService {
 		try {
 			injectAuthenticationDetails();
 			String[] restUrls = getRestUrls();
+            String url = null;
+            try {
+                url = restUrls[0] +"/service/dump/?fileSizeLimit=50000000";
+                DumpUtils.dump(new URL(url));
+            } catch (Exception e) {
+                LogUtils.log("Failed to create dump for this url - " + url, e);
+            }
 			if (restUrls != null) {
 				String connect = "connect " + restUrls[0];
 				String teardownOutput = CommandTestUtils.runCommandAndWait(connect + ";"  + "teardown-cloud --verbose " + getCloudName());

@@ -2,6 +2,7 @@ package test.cli.cloudify.cloud;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -9,6 +10,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
+import framework.utils.DumpUtils;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterSuite;
@@ -281,6 +283,13 @@ public class AbstractCloudTest extends AbstractTest {
 	public void uninstallServiceAndWait(String serviceName) throws IOException, InterruptedException {
 
 		String restUrl = getRestUrl();
+        String url = null;
+        try {
+            url = restUrl +"/service/dump/?fileSizeLimit=50000000";
+            DumpUtils.dump(new URL(url));
+        } catch (Exception e) {
+            LogUtils.log("Failed to create dump for this url - " + url, e);
+        }
 
 		String connectCommand = "connect " + restUrl + ";";
 		String installCommand = new StringBuilder()
@@ -305,8 +314,14 @@ public class AbstractCloudTest extends AbstractTest {
 	public void uninstallApplicationAndWait(String applicationName) throws IOException, InterruptedException {
 
 		String restUrl = getRestUrl();
-
-		String connectCommand = "connect " + restUrl + ";";
+        String url = null;
+        try {
+            url = restUrl +"/service/dump/?fileSizeLimit=50000000";
+            DumpUtils.dump(new URL(url));
+        } catch (Exception e) {
+            LogUtils.log("Failed to create dump for this url - " + url, e);
+        }
+        String connectCommand = "connect " + restUrl + ";";
 		String installCommand = new StringBuilder()
 		.append("uninstall-application ")
 		.append("--verbose ")

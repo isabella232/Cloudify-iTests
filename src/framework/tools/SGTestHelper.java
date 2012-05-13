@@ -18,7 +18,30 @@ public class SGTestHelper {
     {
         return claz.getProtectionDomain().getCodeSource().getLocation().toString().substring(5);
     }
-
+    
+    public static boolean isDevMode() {
+		boolean isDevMode;
+    	if (ScriptUtils.isWindows()) {
+			isDevMode = !System.getenv("USERNAME").equals("ca");
+		}
+    	else {
+    		isDevMode = !System.getProperty("user.name").equals("tgrid");
+    	}
+    	return isDevMode;
+	}
+    
+    public static String getSGTestSrcDir() {
+    	String sgtestSrcDir;
+    	if (isDevMode()) {
+    		sgtestSrcDir = getSGTestRootDir()+"/src";
+    	}
+    	else {
+    		sgtestSrcDir = getSGTestRootDir()+"/tmp";
+    	}
+    	return sgtestSrcDir;
+    	
+    }
+    
     /** @return SGTest root directory */
     public static String getSGTestRootDir()
     {
@@ -26,7 +49,7 @@ public class SGTestHelper {
         String sgTestJarPath = getClassLocation( SGTestHelper.class );
         String sgTestRootDir = new File(sgTestJarPath).getParent();
         tmp = sgTestRootDir.toLowerCase();
-        if(!tmp.endsWith("sgtest"))
+        if(!tmp.endsWith("sgtest") && !tmp.endsWith("sgtest-xap") && !tmp.endsWith("sgtest-cloudify"))
              sgTestRootDir = new File(sgTestJarPath).getParentFile().getParent();
         return sgTestRootDir;
     }

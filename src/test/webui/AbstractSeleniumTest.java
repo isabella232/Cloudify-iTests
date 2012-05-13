@@ -213,6 +213,6 @@ public abstract class AbstractSeleniumTest extends AbstractLocalCloudTest {
 	}
     
 	public boolean isDevMode() {
-		return !System.getenv("USERNAME").equals("ca");
+		return SGTestHelper.isDevMode();
 	}
 }

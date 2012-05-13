@@ -30,6 +30,7 @@ import test.cli.cloudify.cloud.services.rackspace.RackspaceCloudService;
 import com.j_spaces.kernel.JSpaceUtilities;
 
 import framework.report.MailReporterProperties;
+import framework.tools.SGTestHelper;
 import framework.tools.SimpleMail;
 import framework.utils.LogUtils;
 
@@ -375,9 +376,7 @@ public class AbstractCloudTest extends AbstractTest {
 	}
 
 	private boolean isDevMode() {
-
-		String user = System.getenv("USER");
-		return ((user == null) || !(user.equals("tgrid")));
+		return SGTestHelper.isDevMode();
 	}
 
 	private String[][] toTwoDimentionalArray(String property) {

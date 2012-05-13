@@ -1,6 +1,7 @@
 
 service {
 	numInstances 2
+	maxAllowedInstances 2
 	name "simpleCustomCommandsMultipleInstances-2"
 
 	

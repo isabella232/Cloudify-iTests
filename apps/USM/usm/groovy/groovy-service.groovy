@@ -7,7 +7,7 @@ service {
 	type "WEB_SERVER"
 	elastic true
 	numInstances 2
-	//maxAllowedInstances 2
+	maxAllowedInstances 2
 	lifecycle { 
 	
 		init { println "This is the init event" }

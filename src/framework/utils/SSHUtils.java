@@ -344,7 +344,7 @@ public class SSHUtils {
                 final SSHExec task = new SSHExec();
                 task.setOutput(output);
                 // ssh related parameters
-                task.setFailonerror(false);
+                task.setFailonerror(true); // throw exception if exit code is not 0
                 task.setCommand(command);
                 task.setHost(ipAddress);
                 task.setTrust(true);

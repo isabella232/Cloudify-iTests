@@ -23,8 +23,7 @@ public class ContextInvocationTest extends AbstractLocalCloudTest {
 		final String servicePath = getUsmServicePath(serviceName);
 
 		LogUtils.log("Installing service " + serviceName);
-		CommandTestUtils.runCommandAndWait("connect " + restUrl + ";install-service --verbose " + servicePath
-				+ ";set-instances groovy 2");
+		CommandTestUtils.runCommandAndWait("connect " + restUrl + ";install-service --verbose " + servicePath);
 
 		final String absolutePUName = ServiceUtils.getAbsolutePUName(DEFAULT_APPLICATION_NAME, serviceName);
 

@@ -1,6 +1,7 @@
 import test.data.Data
 service {
 	numInstances 2
+	maxAllowedInstances 2
 	name "getter"
 	icon "icon.png"
 	type "WEB"

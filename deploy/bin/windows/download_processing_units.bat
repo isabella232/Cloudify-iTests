@@ -12,3 +12,9 @@ del %LOCAL_SGPATH%\lib\selenium\selenium-java-*.jar
 
 @echo copying selenium jar latest to lib in local sgtest folder...
 xcopy %SGTEST_CHECKOUT_FOLDER%\lib\selenium\selenium-java-*.jar %LOCAL_SGPATH%\lib\selenium
+
+@echo deleting current xen server jar from local sgtest folder...
+rmdir %LOCAL_SGPATH%\lib\xenserver /s /q
+
+@echo copying xen server jar latest to lib in local sgtest folder...
+xcopy %SGTEST_CHECKOUT_FOLDER%\lib\xenserver %LOCAL_SGPATH%\lib\xenserver /s /i /y

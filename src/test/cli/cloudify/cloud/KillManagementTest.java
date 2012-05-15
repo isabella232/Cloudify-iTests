@@ -140,7 +140,10 @@ public class KillManagementTest extends AbstractCloudTest{
 	//TODO: add support for windows machines (BYON doesn't support windows right now)
 	private void startManagement(String machine1) throws IOException, DSLException {
 		Cloud readCloud = ServiceReader.readCloud(new File(ScriptUtils.getBuildPath() + "/tools/cli/plugins/esc/byon/byon-cloud.groovy"));
-		SSHUtils.runCommand(machine1, DEFAULT_TEST_TIMEOUT, readCloud.getProvider().getRemoteDirectory()
+		SSHUtils.runCommand(machine1, DEFAULT_TEST_TIMEOUT, 
+				readCloud.getTemplates().get(
+						readCloud.getConfiguration().getManagementMachineTemplate()
+						).getRemoteDirectory()
 				+ "/gigaspaces/tools/cli/cloudify.sh start-management", USERNAME, PASSWORD);
 		
 	}

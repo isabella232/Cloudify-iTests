@@ -118,6 +118,11 @@
             <include name="**/*.jar"/>
         </fileset>
 
+        <!-- jgit jars -->
+        <fileset dir="${sgtest.homedir}/lib/jgit">
+            <include name="**/*.jar"/>
+        </fileset>
+
 
 
 

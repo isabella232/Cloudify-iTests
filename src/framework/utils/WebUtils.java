@@ -99,21 +99,31 @@ public class WebUtils {
 	}
 
 	/**
-	 * @param url
+	 * 
 	 * @return the content of the given url or an empty if not found
-	 * @throws URISyntaxException 
-	 * @throws IOException 
-	 * @throws ClientProtocolException 
-	 * @throws Exception
+	 * Use #getURLContent(URL) or repetitiveAssertWebUrlAvailable(URL) instead
 	 */
-	public static String getURLContent(URL url) throws URISyntaxException, ClientProtocolException, IOException  {
+	@Deprecated
+	public static String getURLContentSwallowExceptions(URL url) throws Exception {
 		HttpClient client = new DefaultHttpClient();
 		HttpGet get = new HttpGet(url.toURI());
 		try {
 			return client.execute(get, new BasicResponseHandler());
+		} catch (Exception e) {
+			return "";
 		} finally {
 			client.getConnectionManager().shutdown();
 		}        
 	}
 
+	public static String getURLContent(URL url) throws ClientProtocolException, IOException, URISyntaxException {
+		HttpClient client = new DefaultHttpClient();
+		HttpGet get = new HttpGet(url.toURI());
+		try {
+			return client.execute(get, new BasicResponseHandler());
+		} 
+		finally {
+			client.getConnectionManager().shutdown();
+		}        
+	}
 }

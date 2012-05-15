@@ -68,7 +68,7 @@ public class MultipleMachineTemplatesTest extends AbstractCloudTest{
 		service = new ByonCloudService();
 		service.setMachinePrefix(this.getClass().getName());
 
-		backupAndReplaceOriginalFile(originialBootstrapManagement,SGTestHelper.getSGTestRootDir() + "\\apps\\cloudify\\cloud\\byon\\bootstrap-management-with-multicast-and-byon-java-home.sh");
+		backupAndReplaceOriginalFile(originialBootstrapManagement,SGTestHelper.getSGTestRootDir() + "\\apps\\cloudify\\cloud\\byon\\bootstrap-management-multicast-and-byon-java-home.sh");
 		Map<String,String> replaceMap = new HashMap<String,String>();
 		
 		readCloud = ServiceReader.readCloud(originialCloudConf);

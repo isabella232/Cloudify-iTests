@@ -91,7 +91,7 @@ public class BootstrapCloudByonTest extends AbstractCloudByonTest {
 	}
 	
     private static int getNumberOfMachines(URL machinesRestAdminUrl) throws Exception {
-        String json = WebUtils.getURLContent(machinesRestAdminUrl);
+        String json = WebUtils.getURLContentSwallowExceptions(machinesRestAdminUrl);
         Matcher matcher = Pattern.compile("\"Size\":\"([0-9]+)\"").matcher(json);
         if (matcher.find()) {
             String rawSize = matcher.group(1);

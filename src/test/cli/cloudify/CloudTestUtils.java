@@ -25,7 +25,7 @@ public class CloudTestUtils {
 	public final static long OPERATION_TIMEOUT = 5 * 60 * 1000;	
 
 	public static int getNumberOfMachines(URL machinesRestAdminUrl) throws Exception {
-		String json = WebUtils.getURLContent(machinesRestAdminUrl);
+		String json = WebUtils.getURLContentSwallowExceptions(machinesRestAdminUrl);
 		LogUtils.log("-- getNumberOfMachines received json text: " + json);
 		Matcher matcher = Pattern.compile("\"Size\":\"([0-9]+)\"").matcher(json);
 		if (matcher.find()) {

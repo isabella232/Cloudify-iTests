@@ -184,6 +184,7 @@ public class ScalingRulesCloudTest extends AbstractCloudTest {
 			List<String> publicIpAddresses = null;
 			try {
 				publicIpAddresses = getPublicIpAddressesPerProcessingUnitInstance(absoluteServiceName);
+				assertTrue("Could not retrieve public ip addresses of " + absoluteServiceName, !publicIpAddresses.isEmpty());
 				String publicIpAddress = publicIpAddresses.get(0);
 				String petclinicHomePage = "http://"+publicIpAddress + ":"+TOMCAT_PORT + "/petclinic-mongo";
 				final URL petclinicHomePageUrl = new URL(petclinicHomePage);
@@ -230,7 +231,7 @@ public class ScalingRulesCloudTest extends AbstractCloudTest {
 		final String attrName = "Cloud Public IP";
 		for (String instanceUrl : getInstancesUrls(absoluteServiceName)) {
 			URL publicIpUrl = new URL(instanceUrl +"/ServiceDetailsByServiceId/USM/Attributes/"+attrName.replace(" ","%20"));
-			String publicIpResponse = WebUtils.getURLContent(publicIpUrl);
+			String publicIpResponse = WebUtils.getURLContentSwallowExceptions(publicIpUrl);
 			if (publicIpResponse.length() > 0) {
 				Map<String, Object> publicIpMap = jsonToMap(publicIpResponse);
 				String publicIp = (String) publicIpMap.get(attrName);
@@ -245,7 +246,7 @@ public class ScalingRulesCloudTest extends AbstractCloudTest {
 			throws Exception, MalformedURLException, IOException {
 		
 		String restUrl = super.getRestUrl();
-		final String instancesResponse = WebUtils.getURLContent(new URL(restUrl+"/admin/ProcessingUnits/Names/"+absoluteServiceName+"/Instances/"));
+		final String instancesResponse = WebUtils.getURLContentSwallowExceptions(new URL(restUrl+"/admin/ProcessingUnits/Names/"+absoluteServiceName+"/Instances/"));
 		final Map<String, Object> instances = jsonToMap(instancesResponse);
 		@SuppressWarnings("unchecked")
 		ArrayList<String> instanceUrls = new ArrayList<String>((List<String>)instances.get("Instances-Elements"));

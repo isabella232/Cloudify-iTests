@@ -1,12 +1,15 @@
 package framework.utils;
 
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.InetAddress;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.BasicResponseHandler;
@@ -98,15 +101,16 @@ public class WebUtils {
 	/**
 	 * @param url
 	 * @return the content of the given url or an empty if not found
+	 * @throws URISyntaxException 
+	 * @throws IOException 
+	 * @throws ClientProtocolException 
 	 * @throws Exception
 	 */
-	public static String getURLContent(URL url) throws Exception {
+	public static String getURLContent(URL url) throws URISyntaxException, ClientProtocolException, IOException  {
 		HttpClient client = new DefaultHttpClient();
 		HttpGet get = new HttpGet(url.toURI());
 		try {
 			return client.execute(get, new BasicResponseHandler());
-		} catch (Exception e) {
-			return "";
 		} finally {
 			client.getConnectionManager().shutdown();
 		}        

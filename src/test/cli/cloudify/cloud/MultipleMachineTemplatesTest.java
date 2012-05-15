@@ -44,8 +44,8 @@ public class MultipleMachineTemplatesTest extends AbstractCloudTest{
 	private File byonCloudConfDir = new File(ScriptUtils.getBuildPath() , "tools/cli/plugins/esc/byon");
 	private File backupCloudConfFile = new File(byonCloudConfDir, "byon-cloud.groovy.backup");
 	private File originialCloudConf = new File(byonCloudConfDir, "byon-cloud.groovy");
-	private File petClinicDir = new File(ScriptUtils.getBuildPath() , "recipes/apps/petclinic");
 	private File mongodbDir = new File(ScriptUtils.getBuildPath() , "recipes/services/mongodb");
+	private File tomcatDir = new File(ScriptUtils.getBuildPath() , "recipes/services");
 	private Cloud readCloud;
 	private static final String TEMPLATE_1_IPs = "192.168.9.115,192.168.9.116";
 	private static final String TEMPLATE_2_IPs = "192.168.9.120,192.168.9.125";
@@ -123,7 +123,7 @@ public class MultipleMachineTemplatesTest extends AbstractCloudTest{
 		
 		File parentDir = mongodbDir;
 		if(serviceName.equalsIgnoreCase("tomcat"))
-			parentDir = petClinicDir;
+			parentDir = tomcatDir;
 		
 		File originalService = new File(parentDir, serviceName + "/" + serviceName + "-service.groovy");
 		FileUtils.copyFile(originalService, new File(originalService.getAbsolutePath() + ".backup"));
@@ -320,7 +320,7 @@ public class MultipleMachineTemplatesTest extends AbstractCloudTest{
 		
 		File parentDir = mongodbDir;
 		if(serviceName.equalsIgnoreCase("tomcat"))
-			parentDir = petClinicDir;
+			parentDir = tomcatDir;
 		
 		File originalService = new File(parentDir, serviceName + "/" + serviceName + "-service.groovy");
 		originalService.delete();

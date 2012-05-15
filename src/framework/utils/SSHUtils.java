@@ -12,9 +12,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.tools.ant.taskdefs.optional.ssh.SSHExec;
+import org.openspaces.admin.Admin;
 import org.openspaces.grid.gsm.machines.plugins.ElasticMachineProvisioningException;
 import org.testng.Assert;
 
+import com.gigaspaces.internal.utils.StringUtils;
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.JSch;
@@ -98,7 +100,7 @@ public class SSHUtils {
                 }
                 return sb.toString();}
             catch (Exception e) {
-               Assert.fail();
+               Assert.fail("Failed to get ssh command output", e);
             }
             return "";
         }
@@ -377,9 +379,12 @@ public class SSHUtils {
         return fileData.toString();
     }
     
-    public static String runGroovyFile(String host, long timeoutMilliseconds, String username, String password, String groovyFilePath){
-		String path = ScriptUtils.getBuildPath() + "tools/groovy/bin" ;
+    public static String runGroovyFile(String host, long timeoutMilliseconds, String username, String password, String groovyFilePath,Admin admin){
+		String path = ScriptUtils.getBuildPath() + "/tools/groovy/bin" ;
+		
 		return SSHUtils.runCommand(host, timeoutMilliseconds, 
+				"export LOOKUPGROUPS='"+ StringUtils.arrayToCommaDelimitedString(admin.getGroups())+"';"+
+				"export LOOKUPLOCATORS='"+ StringUtils.arrayToCommaDelimitedString(admin.getLocators())+"';"+
 				"cd " + path + ";./groovy " + groovyFilePath, username , password);
 	}
     

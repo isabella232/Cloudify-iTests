@@ -11,8 +11,23 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.zip.ZipFile;
 
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.io.FileUtils;
+import org.cloudifysource.dsl.internal.CloudifyConstants;
+import org.cloudifysource.dsl.internal.DSLException;
+import org.cloudifysource.dsl.internal.ServiceReader;
+import org.cloudifysource.dsl.internal.packaging.PackagingException;
+import org.cloudifysource.dsl.utils.ServiceUtils;
+import org.cloudifysource.restclient.ErrorStatusException;
+import org.cloudifysource.restclient.GSRestClient;
+import org.cloudifysource.restclient.RestException;
+import org.cloudifysource.shell.commands.CLIException;
+import org.cloudifysource.usm.USMException;
+import org.cloudifysource.usm.USMUtils;
 import org.hyperic.sigar.SigarException;
+import org.junit.Assert;
 import org.openspaces.admin.gsc.GridServiceContainer;
 import org.openspaces.admin.gsc.events.GridServiceContainerAddedEventListener;
 import org.openspaces.admin.gsc.events.GridServiceContainerRemovedEventListener;
@@ -27,15 +42,6 @@ import org.testng.annotations.Test;
 
 import test.usm.USMTestUtils;
 
-import org.cloudifysource.dsl.internal.CloudifyConstants;
-import org.cloudifysource.dsl.internal.DSLException;
-import org.cloudifysource.dsl.internal.ServiceReader;
-import org.cloudifysource.dsl.internal.packaging.PackagingException;
-import org.cloudifysource.dsl.utils.ServiceUtils;
-import org.cloudifysource.restclient.ErrorStatusException;
-import org.cloudifysource.shell.commands.CLIException;
-import org.cloudifysource.usm.USMException;
-import org.cloudifysource.usm.USMUtils;
 import com.gigaspaces.internal.sigar.SigarHolder;
 import com.gigaspaces.log.AllLogEntryMatcher;
 import com.gigaspaces.log.ContinuousLogEntryMatcher;
@@ -43,6 +49,7 @@ import com.gigaspaces.log.LogEntries;
 import com.gigaspaces.log.LogEntry;
 import com.gigaspaces.log.LogProcessType;
 
+import framework.utils.LogUtils;
 import framework.utils.ScriptUtils;
 
 public class USMKitchenSinkTest extends AbstractLocalCloudTest {
@@ -66,6 +73,8 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 	private static final String[] EXPECTED_SHUTDOWN_EVENT_STRINGS = {
 			"preStop fired", "String_with_Spaces", "postStop fired",
 			"shutdown fired" };
+	private static final String[] DUMP_URLS = {"/service/dump/processing-units/",
+												"/service/dump/machine/127.0.0.1/"};
 
 	private static final String[] EXPECTED_DETAILS_FIELDS = {"stam", "SomeKey" };
 
@@ -77,10 +86,10 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
 	public void testKitchenSink() throws IOException, InterruptedException,
-			PackagingException, DSLException {
+			PackagingException, DSLException, RestException {
 
 		installService();
-
+		
 		ProcessingUnit pu = findPU();
 
 		ProcessingUnitInstance pui = findPUI(pu);
@@ -111,6 +120,8 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 		checkCustomCommands();
 		
 		checkServiceType();
+		
+		checkPUDump();
 
 		long initialActualPid = this.actualPid;
 		
@@ -162,6 +173,24 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 
 	}
 	
+	private void checkPUDump() throws IOException, RestException {
+		for (String dumpURI : DUMP_URLS) {
+			
+			GSRestClient rc = new GSRestClient("", "", new URL(this.restUrl));
+			String encodedResult = (String) rc.get(dumpURI);
+			LogUtils.log("Machine dump downloaded successfully");
+			byte[] result = Base64.decodeBase64(encodedResult);
+			File dumpFile = File.createTempFile("dump", ".zip");
+			FileUtils.writeByteArrayToFile(dumpFile, result);
+			
+			ZipFile zip = new  ZipFile(dumpFile);
+			Assert.assertTrue("The dump zip file doesn't contain any entries. " + dumpURI, zip.size() != 0);
+			System.out.println(zip.size());
+			
+		}
+		
+	}
+
 	// Check that the "service type" is exposed in the service map obtained by the AdminApiController.
 	private void checkServiceType(){
 		String absoluteServiceName = ServiceUtils.getAbsolutePUName("default", "kitchensink-service");

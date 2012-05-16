@@ -84,7 +84,7 @@ cloud {
 						"nodesList" : ([
 										([
 											"id" : "byon-mgmt{0}",
-											"ip" : "1.1.1.1"
+											"host-list" : "1.1.1.1"
 										])
 						])
 					])
@@ -96,7 +96,7 @@ cloud {
 						"nodesList" : ([
 										([
 											"id" : "byon-small{0}",
-											"ip" : "2.2.2.2"
+											"host-list" : "2.2.2.2"
 										])
 						])
 					])
@@ -108,7 +108,7 @@ cloud {
 						"nodesList" : ([
 										([
 											"id" : "byon-big{0}",
-											"ip" : "3.3.3.3"
+											"host-list" : "3.3.3.3"
 										])
 						])
 					])

@@ -179,14 +179,13 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 			GSRestClient rc = new GSRestClient("", "", new URL(this.restUrl));
 			String encodedResult = (String) rc.get(dumpURI);
 			LogUtils.log("Machine dump downloaded successfully");
+			
 			byte[] result = Base64.decodeBase64(encodedResult);
 			File dumpFile = File.createTempFile("dump", ".zip");
 			FileUtils.writeByteArrayToFile(dumpFile, result);
 			
 			ZipFile zip = new  ZipFile(dumpFile);
 			Assert.assertTrue("The dump zip file doesn't contain any entries. " + dumpURI, zip.size() != 0);
-			System.out.println(zip.size());
-			
 		}
 		
 	}

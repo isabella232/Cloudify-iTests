@@ -185,7 +185,7 @@ public class RepetitiveActualServiceFailoverTest extends AbstractLocalCloudTest 
 		ProcessingUnitInstance tomcatInstance = tomcat.getInstances()[0];
 		assertTrue("USM Service State is not RUNNING", USMTestUtils.waitForPuRunningState(absolutePUName, 60, TimeUnit.SECONDS, admin));
 		CustomServiceMonitors customServiceDetails = (CustomServiceMonitors) tomcatInstance.getStatistics().getMonitors().get("USM");
-		return (Long) customServiceDetails.getMonitors().get("Actual Process ID");
+		return (Long) customServiceDetails.getMonitors().get("USM_Actual Process ID");
 	}
 	
 	

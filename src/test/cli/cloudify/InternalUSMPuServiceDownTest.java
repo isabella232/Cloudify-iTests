@@ -81,7 +81,7 @@ public class InternalUSMPuServiceDownTest extends AbstractLocalCloudTest {
 		CustomServiceMonitors customServiceDetails = (CustomServiceMonitors) tomcatInstance.getStatistics().getMonitors().get("USM");
 		GridServiceContainer container = tomcatInstance.getGridServiceContainer();
 		machineA = container.getMachine();
-		tomcatPId = (Long) customServiceDetails.getMonitors().get("Actual Process ID");
+		tomcatPId = (Long) customServiceDetails.getMonitors().get("USM_Actual Process ID");
 		
 		
 		final CountDownLatch removed = new CountDownLatch(1);

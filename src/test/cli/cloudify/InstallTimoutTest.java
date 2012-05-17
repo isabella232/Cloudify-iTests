@@ -36,6 +36,8 @@ public class InstallTimoutTest extends AbstractLocalCloudTest{
 		
 		assertTrue("Timeout parameter ignored", totalInstallationTime > 60000);
 		assertTrue("Service installation did not throw a Timeout exception.", commandOutput.contains("Service installation timed out"));
+		uninstallService("simpleTimeout");
+		
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
@@ -56,6 +58,7 @@ public class InstallTimoutTest extends AbstractLocalCloudTest{
 		
 		assertTrue("Timeout parameter ignored", totalInstallationTime > 60000);
 		assertTrue("Application installation did not throw a Timeout exception.", commandOutput.contains("Application installation timed out"));
+		uninstallApplication("simpleTimeout");
 	}
 	
 	private String getUsmApplicationPath(String dirOrFilename) {

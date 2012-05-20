@@ -7,7 +7,7 @@ application {
 	}
 	
 	service {
-		name = "tomcat-extend"
+		name = "tomcat"
 		dependsOn = ["cassandra-extend"]
 	}
 }

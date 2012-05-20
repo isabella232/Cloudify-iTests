@@ -54,7 +54,7 @@ public class AttributesTest extends AbstractLocalCloudTest {
 	}
 
 	@Override
-	@AfterMethod
+	@AfterMethod(alwaysRun=true)
 	public void afterTest(){
 		gigaspace.clear(null);
         if (admin != null) {

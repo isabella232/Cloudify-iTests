@@ -1,6 +1,7 @@
 package test.cli.cloudify.github;
 
 import framework.tools.SGTestHelper;
+import framework.utils.GitUtils;
 import framework.utils.LogUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.DirectoryFileFilter;
@@ -25,7 +26,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 
-public class GitBuildTest extends AbstractLocalCloudTest{
+public class GitCloudifyBuildTest extends AbstractLocalCloudTest{
     private File gitDir = null;
 
     @Test(timeOut = 100000000, groups = "1", enabled = true)
@@ -33,14 +34,8 @@ public class GitBuildTest extends AbstractLocalCloudTest{
         String commandOutput = null;
         String url = "https://github.com/CloudifySource/cloudify.git";
         gitDir = new File(SGTestHelper.getBuildDir() + "/git/");
-        FileRepositoryBuilder builder = new FileRepositoryBuilder();
-        Repository repository = builder.setGitDir(gitDir).readEnvironment().findGitDir().build();
 
-        Git git = new Git(repository);
-        CloneCommand clone = git.cloneRepository();
-        clone.setDirectory(gitDir).setURI(url);
-        clone.call();
-
+        GitUtils.pull(url, gitDir);
         String cloudifyFolder = SGTestHelper.getBuildDir() + "/git/cloudify/";
 
         LogUtils.log("building Cloudify...");

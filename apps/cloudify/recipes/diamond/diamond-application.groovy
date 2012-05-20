@@ -4,8 +4,7 @@ application {
 	
 	service {
 		name = "A"
-		dependsOn = ["B"]
-		dependsOn = ["C"]
+		dependsOn = ["B", "C"]
 	}
 	
 	service {

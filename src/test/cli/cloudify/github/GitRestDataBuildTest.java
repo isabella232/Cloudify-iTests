@@ -16,24 +16,24 @@ import java.io.IOException;
 
 
 
-public class GitRestDataBuildTest extends AbstractLocalCloudTest {
+public class GitRestDataBuildTest extends AbstractLocalCloudTest{
     private File gitDir = null;
 
     @Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
     public void test() throws IOException, InterruptedException {
         String commandOutput = null;
         String url = "https://github.com/OpenSpaces/RESTData.git";
-        gitDir = new File(SGTestHelper.getBuildDir() + "/git/");
+        gitDir = new File(SGTestHelper.getBuildDir() + "/RESTData/");
         GitUtils.pull(url, gitDir);
 
-        String restDataFolder = SGTestHelper.getBuildDir() + "/git/";
+        String restDataFolder = SGTestHelper.getBuildDir() + "/RESTData/";
 
         LogUtils.log("building Rest Data...");
-        commandOutput = CommandTestUtils.runLocalCommand("mvn -f " + restDataFolder + "pom.xml package -Dmaven.test.skip", true, false);
+        commandOutput = CommandTestUtils.runLocalCommand("mvn -X -f " + restDataFolder + "pom.xml package -Dmaven.test.skip", true, false);
         Assert.assertFalse(commandOutput.contains("BUILD FAILED"));
     }
 
-    @AfterMethod
+    @AfterMethod(alwaysRun = true)
     public void afterTest() {
         try {
             FileUtils.forceDelete(gitDir);

@@ -25,14 +25,14 @@ import java.util.zip.ZipInputStream;
 public class GitCloudifyBuildTest extends AbstractLocalCloudTest{
     private File gitDir = null;
 
-    @Test(timeOut = 100000000, groups = "1", enabled = true)
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
     public void test() throws IOException, InterruptedException {
         String commandOutput = null;
         String url = "https://github.com/CloudifySource/cloudify.git";
-        gitDir = new File(SGTestHelper.getBuildDir() + "/git/");
+        gitDir = new File(SGTestHelper.getBuildDir() + "/cloudify/");
 
         GitUtils.pull(url, gitDir);
-        String cloudifyFolder = SGTestHelper.getBuildDir() + "/git/cloudify/";
+        String cloudifyFolder = SGTestHelper.getBuildDir() + "/cloudify/cloudify/";
 
         LogUtils.log("building Cloudify...");
         commandOutput = CommandTestUtils.runLocalCommand("ant -f " + cloudifyFolder + "build.xml cloudify.zip", true, false);
@@ -72,7 +72,7 @@ public class GitCloudifyBuildTest extends AbstractLocalCloudTest{
 
     }
 
-    @AfterMethod
+    @AfterMethod(alwaysRun = true)
     public void afterTest() {
         try {
             FileUtils.forceDelete(gitDir);

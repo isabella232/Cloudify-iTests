@@ -73,8 +73,6 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 	private static final String[] EXPECTED_SHUTDOWN_EVENT_STRINGS = {
 			"preStop fired", "String_with_Spaces", "postStop fired",
 			"shutdown fired" };
-	private static final String[] DUMP_URLS = {"/service/dump/processing-units/",
-												"/service/dump/machine/127.0.0.1/"};
 
 	private static final String[] EXPECTED_DETAILS_FIELDS = {"stam", "SomeKey" };
 
@@ -90,6 +88,7 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 
 		installService();
 		
+		
 		ProcessingUnit pu = findPU();
 
 		ProcessingUnitInstance pui = findPUI(pu);
@@ -102,8 +101,6 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 				"Process port is not open! Process did not start as expected",
 				isPortOpen(host));
 		
-
-
 		long pid = pui.getGridServiceContainer().getVirtualMachine()
 				.getDetails().getPid();
 
@@ -174,7 +171,12 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 	}
 	
 	private void checkPUDump() throws IOException, RestException {
-		for (String dumpURI : DUMP_URLS) {
+		
+		String[] dumpUrls = {"/service/dump/processing-units/", 
+							"/service/dump/machine/" 
+							+ admin.getMachines().getMachines()[0].getHostAddress() + "/"};
+		
+		for (String dumpURI : dumpUrls) {
 			
 			GSRestClient rc = new GSRestClient("", "", new URL(this.restUrl));
 			String encodedResult = (String) rc.get(dumpURI);

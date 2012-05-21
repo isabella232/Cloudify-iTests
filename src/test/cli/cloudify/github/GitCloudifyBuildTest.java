@@ -35,7 +35,7 @@ public class GitCloudifyBuildTest extends AbstractLocalCloudTest{
         String cloudifyFolder = SGTestHelper.getBuildDir() + "/git/cloudify/";
 
         LogUtils.log("building Cloudify...");
-        commandOutput = CommandTestUtils.runLocalCommand("ant -buildfile=" + cloudifyFolder + "build.xml cloudify.zip", true, false);
+        commandOutput = CommandTestUtils.runLocalCommand("ant -f " + cloudifyFolder + "build.xml cloudify.zip", true, false);
         Assert.assertFalse(commandOutput.contains("BUILD FAILED"));
 
         Collection<File> files = FileUtils.listFiles(

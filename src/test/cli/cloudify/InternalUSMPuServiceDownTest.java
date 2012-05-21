@@ -55,7 +55,7 @@ public class InternalUSMPuServiceDownTest extends AbstractLocalCloudTest {
 	}
 	
 	@SuppressWarnings("deprecation")
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, groups = "1", enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, groups = "1", enabled = false)
 	public void tomcatServiceDownAndCorruptedTest() throws IOException, InterruptedException, PackagingException {
 		
 		String serviceDir = ScriptUtils.getBuildPath() + "/recipes/services/tomcat";

@@ -149,14 +149,7 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 		final int numOfStartupEntries = calculateNumberOfRecurrencesInGSCLog(pui, pid, matcher, EXPECTED_PROCESS_PRINTOUTS[0]);
 		assertEquals("Process startup log entries should only appear once in the log file", 1, numOfStartupEntries);
 		
-		//TODO:Remove this and uncomment the code below. This is a workaround
-		//that is meant to solve the pu.undeploy getting stuck issue.
-		while ((pu = this.admin.getProcessingUnits().waitFor("default.kitchensink-service", 10, TimeUnit.SECONDS)) != null){
-			pu.undeployAndWait(10, TimeUnit.SECONDS);
-		}
-//		// undeploy
-//		pu.undeploy();
-
+		uninstallService("kitchensink-service");
 		
 		// test shutdown events
 		matcher = new ContinuousLogEntryMatcher(
@@ -178,6 +171,7 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 		
 		for (String dumpURI : dumpUrls) {
 			
+			LogUtils.log("Generating dump for: " + dumpURI);
 			GSRestClient rc = new GSRestClient("", "", new URL(this.restUrl));
 			String encodedResult = (String) rc.get(dumpURI);
 			LogUtils.log("Machine dump downloaded successfully");

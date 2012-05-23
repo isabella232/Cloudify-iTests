@@ -110,7 +110,7 @@ public class AbstractXenGSMTest extends AbstractTest {
     @Override
     @BeforeMethod
     public void beforeTest() {
-                
+        try {
         loadXenServerProperties();
         
         assertCleanVMSetup();
@@ -140,6 +140,17 @@ public class AbstractXenGSMTest extends AbstractTest {
 			}
 		}
 	    assertEquals(1, gsaCounter.getNumberOfGSAsAdded());
+        }
+        catch (NoSuchMethodError e) {
+	        // prints classpath information in case of NoSuchMethodError which indicates a runtime problem not detected during complation.
+			try {
+	        	LogUtils.log("Classpath:"+ TestUtils.getClasspathString());
+	        }
+	        catch (Throwable t) {
+	        	LogUtils.log("Failed to print classpath",t);
+	        }
+	        throw e;
+		}
     }
     
     protected void loadXenServerProperties() {
@@ -229,15 +240,6 @@ public class AbstractXenGSMTest extends AbstractTest {
             AssertFail("Failed setting clean setup", e);
         } catch (TimeoutException e) {
         	AssertFail("Failed setting clean setup", e);
-		} catch (NoSuchMethodError e) {
-	        // prints classpath information in case of NoSuchMethodError which indicates a runtime problem not detected during complation.
-			try {
-	        	LogUtils.log("Classpath:"+ TestUtils.getClasspathString());
-	        }
-	        catch (Throwable t) {
-	        	LogUtils.log("Failed to print classpath",t);
-	        }
-	        throw e;
 		}
         
     }

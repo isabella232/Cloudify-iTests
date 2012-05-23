@@ -108,6 +108,7 @@
 	<classpathentry kind="lib" path="lib/selenium/xalan-2.7.1.jar"/>
 	<classpathentry kind="lib" path="lib/selenium/xercesImpl-2.9.1.jar"/>
 	<classpathentry kind="lib" path="lib/selenium/xml-apis-1.3.04.jar"/>
+	<classpathentry kind="var" path="CLOUDIFY_LATEST"/>
 	<classpathentry kind="lib" path="lib/wiki/activation-1.0.2.jar"/>
 	<classpathentry kind="lib" path="lib/wiki/axis-1.3.jar"/>
 	<classpathentry kind="lib" path="lib/wiki/axis-ant-1.3.jar"/>
@@ -124,68 +125,6 @@
 	<classpathentry kind="lib" path="lib/xstream/xstream-1.4.2.jar"/>
 	<classpathentry kind="lib" path="lib/selenium/selenium-java-2.21.0.jar" sourcepath="lib/selenium/selenium-java-2.21.0-srcs.jar"/>
 	<classpathentry kind="lib" path="lib/jgit/org.eclipse.jgit-1.3.0.201202151440-r.jar"/>
-	<classpathentry kind="lib" path="lib/jclouds/guice-3.0.jar"/>
-	<classpathentry kind="lib" path="lib/jclouds/guice-assistedinject-3.0.jar"/>
-	<classpathentry kind="lib" path="lib/jclouds/esc-2.1.0.jar"/>
-	<classpathentry kind="lib" path="lib/jclouds/aws-common-1.4.0.jar"/>
-	<classpathentry kind="lib" path="lib/jclouds/aws-ec2-1.4.0.jar"/>
-	<classpathentry kind="lib" path="lib/jclouds/jclouds-allcompute-1.4.0.jar"/>
-	<classpathentry kind="lib" path="lib/jclouds/jclouds-compute-1.4.0.jar"/>
-	<classpathentry kind="lib" path="lib/jclouds/jclouds-core-1.4.0.jar"/>
-	<classpathentry kind="lib" path="lib/jclouds/jclouds-scriptbuilder-1.4.0.jar"/>
-	<classpathentry kind="lib" path="lib/jclouds/ant-launcher-1.8.3.jar"/>
-	<classpathentry kind="lib" path="lib/jclouds/bcprov-jdk16-1.46.jar"/>
-	<classpathentry kind="lib" path="lib/jclouds/bluelock-vcloud-zone01-1.4.0.jar"/>
-	<classpathentry kind="lib" path="lib/jclouds/byon-1.4.0.jar"/>
-	<classpathentry kind="lib" path="lib/jclouds/cloudservers-1.4.0.jar"/>
-	<classpathentry kind="lib" path="lib/jclouds/cloudservers-uk-1.4.0.jar"/>
-	<classpathentry kind="lib" path="lib/jclouds/cloudservers-us-1.4.0.jar"/>
-	<classpathentry kind="lib" path="lib/jclouds/cloudsigma-1.4.0.jar"/>
-	<classpathentry kind="lib" path="lib/jclouds/cloudsigma-lvs-1.4.0.jar"/>
-	<classpathentry kind="lib" path="lib/jclouds/cloudsigma-zrh-1.4.0.jar"/>
-	<classpathentry kind="lib" path="lib/jclouds/cloudstack-1.4.0.jar"/>
-	<classpathentry kind="lib" path="lib/jclouds/deltacloud-1.4.0.jar"/>
-	<classpathentry kind="lib" path="lib/jclouds/ec2-1.4.0.jar"/>
-	<classpathentry kind="lib" path="lib/jclouds/elastichosts-lon-b-1.4.0.jar"/>
-	<classpathentry kind="lib" path="lib/jclouds/elastichosts-lon-p-1.4.0.jar"/>
-	<classpathentry kind="lib" path="lib/jclouds/elastichosts-sat-p-1.4.0.jar"/>
-	<classpathentry kind="lib" path="lib/jclouds/elasticstack-1.4.0.jar"/>
-	<classpathentry kind="lib" path="lib/jclouds/eucalyptus-1.4.0.jar"/>
-	<classpathentry kind="lib" path="lib/jclouds/eucalyptus-partnercloud-ec2-1.4.0.jar"/>
-	<classpathentry kind="lib" path="lib/jclouds/go2cloud-jhb1-1.4.0.jar"/>
-	<classpathentry kind="lib" path="lib/jclouds/gogrid-1.4.0.jar"/>
-	<classpathentry kind="lib" path="lib/jclouds/greenhousedata-element-vcloud-1.4.0.jar"/>
-	<classpathentry kind="lib" path="lib/jclouds/gson-2.1.jar"/>
-	<classpathentry kind="lib" path="lib/jclouds/javax.inject-1.jar"/>
-	<classpathentry kind="lib" path="lib/jclouds/java-xmlbuilder-0.3.jar"/>
-	<classpathentry kind="lib" path="lib/jclouds/jcifs-1.3.17.jar"/>
-	<classpathentry kind="lib" path="lib/jclouds/jclouds-bouncycastle-1.4.0.jar"/>
-	<classpathentry kind="lib" path="lib/jclouds/jersey-apache-client-1.11.jar"/>
-	<classpathentry kind="lib" path="lib/jclouds/jersey-client-1.11.jar"/>
-	<classpathentry kind="lib" path="lib/jclouds/jersey-core-1.11.jar"/>
-	<classpathentry kind="lib" path="lib/jclouds/jsr250-api-1.0.jar"/>
-	<classpathentry kind="lib" path="lib/jclouds/jsr305-1.3.9.jar"/>
-	<classpathentry kind="lib" path="lib/jclouds/maven-scm-api-1.4.jar"/>
-	<classpathentry kind="lib" path="lib/jclouds/maven-scm-provider-svn-commons-1.4.jar"/>
-	<classpathentry kind="lib" path="lib/jclouds/maven-scm-provider-svnexe-1.4.jar"/>
-	<classpathentry kind="lib" path="lib/jclouds/ninefold-compute-1.4.0.jar"/>
-	<classpathentry kind="lib" path="lib/jclouds/nova-1.4.0.jar"/>
-	<classpathentry kind="lib" path="lib/jclouds/oauth-20100527.jar"/>
-	<classpathentry kind="lib" path="lib/jclouds/openhosting-east1-1.4.0.jar"/>
-	<classpathentry kind="lib" path="lib/jclouds/openstack-common-1.4.0.jar"/>
-	<classpathentry kind="lib" path="lib/jclouds/plexus-utils-1.5.6.jar"/>
-	<classpathentry kind="lib" path="lib/jclouds/regexp-1.3.jar"/>
-	<classpathentry kind="lib" path="lib/jclouds/rimuhosting-1.4.0.jar"/>
-	<classpathentry kind="lib" path="lib/jclouds/rocoto-6.1.jar"/>
-	<classpathentry kind="lib" path="lib/jclouds/serverlove-z1-man-1.4.0.jar"/>
-	<classpathentry kind="lib" path="lib/jclouds/skalicloud-sdg-my-1.4.0.jar"/>
-	<classpathentry kind="lib" path="lib/jclouds/slicehost-1.4.0.jar"/>
-	<classpathentry kind="lib" path="lib/jclouds/softlayer-1.4.0.jar"/>
-	<classpathentry kind="lib" path="lib/jclouds/stratogen-vcloud-mycloud-1.4.0.jar"/>
-	<classpathentry kind="lib" path="lib/jclouds/trmk-common-1.4.0.jar"/>
-	<classpathentry kind="lib" path="lib/jclouds/trmk-ecloud-1.4.0.jar"/>
-	<classpathentry kind="lib" path="lib/jclouds/trmk-vcloudexpress-1.4.0.jar"/>
-	<classpathentry kind="lib" path="lib/jclouds/vcloud-1.4.0.jar"/>
 	<classpathentry kind="lib" path="lib/testng/testng-6.5.1.jar"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>

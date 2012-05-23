@@ -48,6 +48,7 @@ import framework.utils.GridServiceContainersCounter;
 import framework.utils.LogUtils;
 import framework.utils.ScriptUtils;
 import framework.utils.TeardownUtils;
+import framework.utils.TestUtils;
 
 
 public class AbstractXenGSMTest extends AbstractTest {
@@ -228,6 +229,15 @@ public class AbstractXenGSMTest extends AbstractTest {
             AssertFail("Failed setting clean setup", e);
         } catch (TimeoutException e) {
         	AssertFail("Failed setting clean setup", e);
+		} catch (NoSuchMethodError e) {
+	        // prints classpath information in case of NoSuchMethodError which indicates a runtime problem not detected during complation.
+			try {
+	        	LogUtils.log("Classpath:"+ TestUtils.getClasspathString());
+	        }
+	        catch (Throwable t) {
+	        	LogUtils.log("Failed to print classpath",t);
+	        }
+	        throw e;
 		}
         
     }

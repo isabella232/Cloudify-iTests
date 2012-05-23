@@ -6,6 +6,8 @@ package framework.utils;
 import static framework.utils.AdminUtils.loadGSCs;
 import static framework.utils.AdminUtils.loadGSM;
 
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
@@ -82,4 +84,18 @@ public class TestUtils {
 	    }
 	    repeatedAssert.run();
 	}
+	
+	 public static String getClasspathString() {
+	     StringBuffer classpath = new StringBuffer();
+	     ClassLoader applicationClassLoader = this.getClass().getClassLoader();
+	     if (applicationClassLoader == null) {
+	         applicationClassLoader = ClassLoader.getSystemClassLoader();
+	     }
+	     URL[] urls = ((URLClassLoader)applicationClassLoader).getURLs();
+	      for(int i=0; i < urls.length; i++) {
+	          classpath.append(urls[i].getFile()).append("\r\n");
+	      }    
+	     
+	      return classpath.toString();
+	  }
 }

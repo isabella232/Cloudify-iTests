@@ -82,7 +82,7 @@ public class HpCloudService extends AbstractCloudService {
 		propsToReplace.put("ENTER_API_KEY", apiKey);
 		propsToReplace.put("cloudify_agent_", this.machinePrefix + "cloudify_agent");
 		propsToReplace.put("cloudify_manager", this.machinePrefix + "cloudify_manager");
-		propsToReplace.put("ENTER_KEY_FILE", SGTestHelper.getBuildDir() + "/tools/cli/plugins/esc/" + cloudName +  "/upload/" + pemFileName + ".pem");
+		propsToReplace.put("ENTER_KEY_FILE", pemFileName + ".pem");
 		propsToReplace.put("ENTER_TENANT", tenant);
         propsToReplace.put("ENTER_KEY_PAIR_NAME", "sgtest");
 		propsToReplace.put("numberOfManagementMachines 1", "numberOfManagementMachines "  + numberOfManagementMachines);

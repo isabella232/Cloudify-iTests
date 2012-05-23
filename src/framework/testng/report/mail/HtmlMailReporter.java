@@ -48,6 +48,7 @@ public class HtmlMailReporter {
         sb.append("<h4 style=\"color:red\">Failed Tests:  " + summaryReport.getFailed() + " </h4></br>").append("\n");
         sb.append("<h4 style=\"color:green\">Passed Tests:  " + summaryReport.getSuccess() + " </h4></br>").append("\n");
         sb.append("<h4 style=\"color:orange\">Skipped:  " + summaryReport.getSkipped() + " </h4></br>").append("\n");
+        sb.append("<h4 style=\"color:coral\">Suspected:  " + summaryReport.getSuspected() + " </h4></br>").append("\n");
         sb.append("<h4>Full Suite Report:  " + link + " </h4></br>").append("\n");
         sb.append("</html>");
         try {

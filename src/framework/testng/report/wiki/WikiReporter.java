@@ -86,11 +86,11 @@ public class WikiReporter {
     	String fileName = "sgtest-results.xml";
 
     	//args
-    	String inputDirectory = args[0];
-    	String suiteType = args[1];
-    	String buildVersion = args[2];
-    	String majorVersion = args[3];
-    	String minorVersion = args[4];
+    	String inputDirectory = "D:/project/head/quality/frameworks/cloudify/SGTest/test-output";
+    	String suiteType = "eee";
+    	String buildVersion = "1111";
+    	String majorVersion = "22";
+    	String minorVersion = "33";
     	
     	Properties extProperties = new Properties();
     	extProperties.put("fileName", fileName);
@@ -157,16 +157,16 @@ public class WikiReporter {
         String buildVersion = extProperties.getProperty("buildVersion");
         String buildStatus = summaryReport.getFailed() == 0 ? "(/)" : "(x)";
         String regressionPageLink = "[" + buildVersion + "|" + wikiProperties.getWikiSpace() + ":" + buildPageTitle + "]";
-		String summaryHistory = "| " + buildStatus + "|" + regressionPageLink + " | " + summaryReport.getTotalTestsRun() + " | "
-				+ summaryReport.getSuccess() + " | " + summaryReport.getFailed() + "|" + summaryReport.getSkipped()
-				+ " | " + getSuccessRate() + "%  | " + getDate() + "|";
+		String summaryHistory = " | " + buildStatus + "|" + regressionPageLink + " | " + summaryReport.getTotalTestsRun() + " | "
+				+ summaryReport.getSuccess() + " | " + summaryReport.getFailed() + " | " + summaryReport.getSkipped() +
+        " | " + summaryReport.getSuspected() + " | " + getSuccessRate() + "%  | " + getDate() + " | ";
 
         /* append to history file */
         WikiUtils.writeToFile(summaryHistory, summaryHistoryFile, true /* append */);
 
         StringBuilder sb = new StringBuilder();
         sb.append("h1. Regression Results: \n");
-        sb.append("|| Status || Build || Tests || Success || Failures || Skipped || Success Rate || Date ||\n");
+        sb.append("|| Status || Build || Tests || Success || Failures || Skipped || Suspected ||Success Rate || Date ||\n");
 
         /* read summary wiki-history from history file and reverse the order with the newest build summary */
         List<String> historySummaryList = WikiUtils.getFileLines(summaryHistoryFile);
@@ -281,10 +281,10 @@ public class WikiReporter {
      * append Suite Summary content
      */
     private void appendSuiteSummaryContent(StringBuilder sb) {
-        sb.append("|| Tests || Success || Failures || Skipped || Success Rate || Duration ||\n");
-		sb.append("| " + summaryReport.getTotalTestsRun() + " | " + markupNumericColor(summaryReport.getSuccess(), "green")
-                + " | " + markupNumericColor(summaryReport.getFailed(), "red") + " | " + summaryReport.getSkipped() + " | " + getSuccessRate()
-                + "% | " + formatDuration(summaryReport.getDuration()) + " |\n");
+        sb.append("|| Tests || Success || Failures || Skipped || Suspected ||Success Rate || Duration ||\n");
+		sb.append(" | " + summaryReport.getTotalTestsRun() + " | " + markupNumericColor(summaryReport.getSuccess(), "green")
+                + " | " + markupNumericColor((summaryReport.getFailed()), "red") + " | " + summaryReport.getSkipped() + " | "
+                + markupNumericColor(summaryReport.getSuspected(),"coral" )+" | " + getSuccessRate()+ "% | " + formatDuration(summaryReport.getDuration()) + " |\n");
     }
 
     /**
@@ -356,6 +356,7 @@ public class WikiReporter {
     	appendAllFailedTabsContent(sb);
     	appendAllPassedTabsContent(sb);
     	appendAllSkippedTabsContent(sb);
+        appendAllSuspectedTabsContent(sb);
     }
 
 	private void appendPieCharts(StringBuilder sb) {
@@ -371,6 +372,9 @@ public class WikiReporter {
     	if (summaryReport.getFailed() > 0) {
     		statistics.put("Failed", summaryReport.getFailed());
     	}
+        if (summaryReport.getSuspected() > 0) {
+            statistics.put("Suspected", summaryReport.getSuspected());
+        }
     	if (summaryReport.getSkipped() > 0) {
     		statistics.put("Skipped", summaryReport.getSkipped());
     	}
@@ -382,6 +386,8 @@ public class WikiReporter {
         suiteStatusPieChart.assignColor("Success", "#009900");
         suiteStatusPieChart.assignColor("Failed", "#FF0000");
         suiteStatusPieChart.assignColor("Skipped", "#FFCF79");
+        suiteStatusPieChart.assignColor("Suspected", "#FF7F50");
+
         return suiteStatusPieChart;
     }
     
@@ -502,6 +508,20 @@ public class WikiReporter {
     	appendCloseTab(sb);
 	}
 
+    private void appendAllSuspectedTabsContent(StringBuilder sb) {
+        boolean isDefault = false;
+        appendNewTab(sb, "Suspected Tests ("+summaryReport.getSuspected()+")", isDefault);
+        sb.append("{table}");
+        Map<String, List<TestReport>> tests = groupTestsByClass("suspected");
+        for (Entry<String, List<TestReport>> entry : tests.entrySet()) {
+            String className = entry.getKey();
+            List<TestReport> testReportOfClass = entry.getValue();
+            appendTestReportInfo(sb, className, testReportOfClass);
+        }
+        sb.append("{table}");
+        appendCloseTab(sb);
+    }
+
     /**
      * @param filterBy "success", "failed", "skipped"
      */
@@ -511,7 +531,8 @@ public class WikiReporter {
         for (TestReport testReport : testsReport.getReports()) {
         	boolean acceptFilter = (filterBy.equals("success") && testReport.isSuccess())
 					|| (filterBy.equals("failed") && testReport.isFailed())
-					|| (filterBy.equals("skipped")  && testReport.isSkipped());
+					|| (filterBy.equals("skipped")  && testReport.isSkipped())
+                    || (filterBy.equals("suspected")  && testReport.isSuspected());
         	
 			if (acceptFilter) {
         		String className = testReport.getTestngTestClassName();

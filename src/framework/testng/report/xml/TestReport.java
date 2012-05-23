@@ -16,6 +16,9 @@ public class TestReport implements Comparable<TestReport>{
 
     @XStreamAlias("failed")
     private boolean failed;
+
+    @XStreamAlias("suspected")
+    private boolean suspected;
     
     @XStreamAlias("skipped")
     private boolean skipped;
@@ -63,6 +66,14 @@ public class TestReport implements Comparable<TestReport>{
 
     public void setFailed(boolean failed) {
         this.failed = failed;
+    }
+
+    public boolean isSuspected() {
+        return suspected;
+    }
+
+    public void setSuspected(boolean suspected) {
+        this.suspected = suspected;
     }
     
     public boolean isSkipped() {
@@ -115,11 +126,12 @@ public class TestReport implements Comparable<TestReport>{
 
     @Override
     public String toString() {
-        return "[TestReport: " + name + ", isSuccess: " + isSuccess() + ", isFailed: " + isFailed() + ", isSkipped: " + isSkipped() + " ]";
+        return "[TestReport: " + name + ", isSuccess: " + isSuccess() + ", isFailed: " + isFailed() + ", isSuspected: "
+                + isSuspected() + ", isSkipped: " + isSkipped() + " ]";
     }
 
     public boolean isSuccess() {
-        return !isFailed() && !isSkipped();
+        return !isFailed() && !isSkipped() && !isSuspected();
     }
 
     public String getTestngTestMethodName() {

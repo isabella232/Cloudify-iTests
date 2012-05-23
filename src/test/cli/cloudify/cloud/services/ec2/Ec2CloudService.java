@@ -40,7 +40,7 @@ public class Ec2CloudService extends AbstractCloudService {
 		propsToReplace.put("ENTER_API_KEY", apiKey);
 		propsToReplace.put("cloudify_agent_", this.machinePrefix + "cloudify_agent");
 		propsToReplace.put("cloudify_manager", this.machinePrefix + "cloudify_manager");
-		propsToReplace.put("ENTER_KEY_FILE", getPemFileName() + ".pem");
+		propsToReplace.put("ENTER_KEY_FILE", SGTestHelper.getBuildDir() + "/tools/cli/plugins/esc/" + cloudName +  "/upload/" +  getPemFileName() + ".pem");
         propsToReplace.put("ENTER_KEY_PAIR_NAME", getPemFileName());
 		propsToReplace.put("numberOfManagementMachines 1", "numberOfManagementMachines "  + numberOfManagementMachines);
 		

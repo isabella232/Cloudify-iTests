@@ -23,6 +23,7 @@ import framework.utils.AssertUtils.RepetitiveConditionProvider;
 public abstract class AbstractTest {
 	public final static long DEFAULT_TEST_TIMEOUT = 15 * 60 * 1000;
 	public final static long OPERATION_TIMEOUT = 5 * 60 * 1000;
+    public final static String SUSPECTED = "SUSPECTED";
     protected Admin admin;
 
     @BeforeMethod

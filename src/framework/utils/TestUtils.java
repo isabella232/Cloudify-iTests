@@ -87,11 +87,9 @@ public class TestUtils {
 	
 	 public static String getClasspathString() {
 	     StringBuffer classpath = new StringBuffer();
-	     ClassLoader applicationClassLoader = this.getClass().getClassLoader();
-	     if (applicationClassLoader == null) {
-	         applicationClassLoader = ClassLoader.getSystemClassLoader();
-	     }
-	     URL[] urls = ((URLClassLoader)applicationClassLoader).getURLs();
+	     ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+	     
+	     URL[] urls = ((URLClassLoader)classLoader).getURLs();
 	      for(int i=0; i < urls.length; i++) {
 	          classpath.append(urls[i].getFile()).append("\r\n");
 	      }    

@@ -86,11 +86,11 @@ public class WikiReporter {
     	String fileName = "sgtest-results.xml";
 
     	//args
-    	String inputDirectory = "D:/project/head/quality/frameworks/cloudify/SGTest/test-output";
-    	String suiteType = "eee";
-    	String buildVersion = "1111";
-    	String majorVersion = "22";
-    	String minorVersion = "33";
+    	String inputDirectory = args[0];
+    	String suiteType = args[1];
+    	String buildVersion = args[2];
+    	String majorVersion = args[3];
+    	String minorVersion = args[4];
     	
     	Properties extProperties = new Properties();
     	extProperties.put("fileName", fileName);

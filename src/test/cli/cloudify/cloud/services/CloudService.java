@@ -53,4 +53,8 @@ public interface CloudService {
 	
 	public boolean isBootstrapped();
 	
+	public String getUser();
+	
+	public String getApiKey();
+	
 }

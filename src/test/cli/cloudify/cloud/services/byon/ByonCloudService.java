@@ -81,4 +81,14 @@ public class ByonCloudService extends AbstractCloudService {
 		return cloudName;
 	}
 
+	@Override
+	public String getUser() {
+		return BYON_CLOUD_USER;
+	}
+
+	@Override
+	public String getApiKey() {
+		return BYON_CLOUD_PASSWORD;
+	}
+
 }

@@ -279,5 +279,8 @@ public abstract class AbstractCloudService implements CloudService {
         }
         return str.substring(0, str.length()-1);
     }
-
+    
+	public abstract String getUser();
+	
+	public abstract String getApiKey();
 }

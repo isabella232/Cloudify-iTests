@@ -123,6 +123,11 @@
             <include name="**/*.jar"/>
         </fileset>
 
+        <!-- jclouds jars -->
+        <fileset dir="${sgtest.homedir}/lib/jclouds">
+            <include name="**/*.jar"/>
+        </fileset>
+
 
 
 

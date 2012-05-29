@@ -171,11 +171,10 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 		String[] dumpUrls = {"/service/dump/processing-units/", 
 							"/service/dump/machine/" 
 							+ admin.getMachines().getMachines()[0].getHostAddress() + "/"};
-		
+		//Test dump processingUnit and machine according to ip
+		GSRestClient rc = new GSRestClient("", "", new URL(this.restUrl));
 		for (String dumpURI : dumpUrls) {
 			
-			LogUtils.log("Generating dump for: " + dumpURI);
-			GSRestClient rc = new GSRestClient("", "", new URL(this.restUrl));
 			String encodedResult = (String) rc.get(dumpURI);
 			LogUtils.log("Machine dump downloaded successfully");
 			
@@ -186,6 +185,21 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 			ZipFile zip = new  ZipFile(dumpFile);
 			Assert.assertTrue("The dump zip file doesn't contain any entries. " + dumpURI, zip.size() != 0);
 		}
+		
+		//Test dump for a ll machines
+		String machinesDumpUri = "/service/dump/machines/";
+		Map<String, Object> resultsMap = (Map) rc.get(machinesDumpUri);
+		LogUtils.log("Machines dump downloaded successfully");
+		
+		for (String key : resultsMap.keySet()) {
+			byte[] result = Base64.decodeBase64(resultsMap.get(key).toString());
+			File dumpFile = File.createTempFile("dumpMachines", ".zip");
+			FileUtils.writeByteArrayToFile(dumpFile, result);
+			ZipFile zip = new  ZipFile(dumpFile);
+			Assert.assertTrue("The dump zip file doesn't contain any entries. " + machinesDumpUri, zip.size() != 0);
+			
+		}
+        
 		
 	}
 

@@ -65,6 +65,7 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 	private static final String[] EXPECTED_STARTUP_EVENT_STRINGS = {
 			"init fired Test Property number 1",
 			"init external class",
+			"init Helper Field",
 			"preInstall fired Test Property number 2",
 			"install event fired",
 			"postInstall fired Test Property number 1",
@@ -149,7 +150,9 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 		final int numOfStartupEntries = calculateNumberOfRecurrencesInGSCLog(pui, pid, matcher, EXPECTED_PROCESS_PRINTOUTS[0]);
 		assertEquals("Process startup log entries should only appear once in the log file", 1, numOfStartupEntries);
 		
-		uninstallService("kitchensink-service");
+		final boolean uninstallResult = pu.undeployAndWait(OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
+		assertTrue("Undeploy failed", uninstallResult);
+
 		
 		// test shutdown events
 		matcher = new ContinuousLogEntryMatcher(

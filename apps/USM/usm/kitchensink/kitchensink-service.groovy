@@ -1,4 +1,5 @@
 import framework.utils.usm.StringWrapper
+import Helper
 
 service {
 	name "kitchensink-service"
@@ -11,6 +12,7 @@ service {
 		init {
 			 println "init fired ${var1}" 
 			 println new StringWrapper("init external class")
+			 println "init " + new Helper().someField;
 			}
 		preInstall{ println "preInstall fired ${var2}"}
 		install{println "install event fired"}

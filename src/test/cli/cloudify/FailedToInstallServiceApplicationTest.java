@@ -14,18 +14,11 @@ public class FailedToInstallServiceApplicationTest extends AbstractLocalCloudTes
 	public static final String USM_SERVICE_NAME = "simple";
 	public static final String USM_APPLICATION_SERVICE_NAME = "simple";
 	public static final String USM_APPLICATION_FOLDER_NAME = "simpleApplication";
-	public static final String USM_PARSING_SERVICE = "simpleParsing";
+
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
 	public void testBadInstallService() throws IOException, InterruptedException {
 		testBadServiceInstall(getUsmBadServicePath(USM_SERVICE_FOLDER_NAME), ServiceUtils.getAbsolutePUName(DEFAULT_APPLICATION_NAME, USM_SERVICE_NAME));
-	}
-	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
-	public void testBadInstallServiceParsingDuplication() throws IOException, InterruptedException {
-		String output = testBadServiceInstall(getUsmBadServicePath(USM_PARSING_SERVICE),
-						ServiceUtils.getAbsolutePUName(DEFAULT_APPLICATION_NAME, USM_SERVICE_NAME));
-		assertTrue("property duplication was not found.	", output.contains("Property duplication was found"));
 	}
 	
 	private String testBadServiceInstall(String servicePath, String serviceName) throws IOException, InterruptedException {

@@ -22,9 +22,6 @@ cloud {
 		connectToPrivateIp true
 		//Indicates whether communications with the management servers should use the machine private IP.
 		bootstrapManagementOnPublicIp false
-		// Optional. Cloud-generic credentials. Can be overridden by specific credentials on each node, in the templates section.
-		remoteUsername "tgrid"
-		remotePassword "tgrid"
 	}
 
 	/*************
@@ -74,6 +71,9 @@ cloud {
 				machineMemoryMB 1600
 				// Mandatory. Files from the local directory will be copied to this directory on the remote machine.
 				remoteDirectory "/tmp/gs-files"
+				// Optional. template-generic credentials. Can be overridden by specific credentials on each node, in the nodesList section.
+				username "tgrid"
+				password "tgrid"
 				// Mandatory for BYON.
 					custom ([
 						// Mandatory for BYON. The nodesList custom property lists the nodes that compose this cloud-like environment.
@@ -120,8 +120,11 @@ cloud {
 	 */
 	 // Optional. Sets whether to delete the remoteDirectory created by the cloud driver, when shutting down.
 	custom ([
-		"cleanGsFilesOnShutdown": "false",
-		"itemsToClean": ""
+		"cleanGsFilesOnShutdown": "true",
+		"itemsToClean": ([
+			"/tmp/gs-files/gigaspaces/work",
+			"/tmp/gs-files/gigaspaces.zip"
+		])
 	])
 
 }

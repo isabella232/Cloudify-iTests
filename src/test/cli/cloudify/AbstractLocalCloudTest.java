@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -56,28 +57,38 @@ public class AbstractLocalCloudTest extends AbstractTest {
 	private static Set<String> localCloudPIDs = null;
 	private static Set<String> alivePIDs = null;
 
+	protected boolean isDevEnv = false;
+
 	@BeforeSuite
 	public void beforeSuite()
 			throws Exception {
-		cleanUpCloudifyLocalDir();
+		if (isDevEnv) {
+			LogUtils.log("Local cloud test running in dev mode, will use existing localcloud");
+			clientStartupPIDs = new HashSet<String>();
+		} else {
+			cleanUpCloudifyLocalDir();
 
-		LogUtils.log("Tearing-down existing localclouds");
-		try {
-			runCommand("teardown-localcloud -force");
-		} catch (final AssertionError e) {
-			LogUtils.log("teardown failed because no cloud was found. proceeding with suite");
-		}
-		clientStartupPIDs = SetupUtils.getLocalProcesses();
-		try {
-			LogUtils.log("Performing bootstrap");
-			final boolean portOpenBeforeBootstrap = PortConnectionUtils.isPortOpen("localhost",
-					restPort);
-			assertTrue("port " + restPort + " is open on localhost before rest deployment. will not try to deploy rest",
-					!portOpenBeforeBootstrap);
-			runCommand("bootstrap-localcloud --verbose -timeout 15");
-		} catch (final Exception e) {
-			LogUtils.log("Booststrap Failed." + e);
-			e.printStackTrace();
+			LogUtils.log("Tearing-down existing localclouds");
+			try {
+				runCommand("teardown-localcloud -force");
+			} catch (final AssertionError e) {
+				LogUtils.log("teardown failed because no cloud was found. proceeding with suite");
+			}
+
+			clientStartupPIDs = SetupUtils.getLocalProcesses();
+
+			try {
+				LogUtils.log("Performing bootstrap");
+				final boolean portOpenBeforeBootstrap = PortConnectionUtils.isPortOpen("localhost",
+						restPort);
+				assertTrue("port " + restPort
+						+ " is open on localhost before rest deployment. will not try to deploy rest",
+						!portOpenBeforeBootstrap);
+				runCommand("bootstrap-localcloud --verbose -timeout 15");
+			} catch (final Exception e) {
+				LogUtils.log("Booststrap Failed." + e);
+				e.printStackTrace();
+			}
 		}
 
 		try {
@@ -108,7 +119,7 @@ public class AbstractLocalCloudTest extends AbstractTest {
 			throws IOException {
 		String userHomeProp = null;
 		if (ScriptUtils.isLinuxMachine()) {
-			userHomeProp = System.getProperty("user.home");			
+			userHomeProp = System.getProperty("user.home");
 		}
 		else {
 			// TODO eli - fix this hack. not very nice and generic
@@ -140,7 +151,7 @@ public class AbstractLocalCloudTest extends AbstractTest {
 				throw e1;
 			}
 		}
-		
+
 		if (!admin.getMachines().waitFor(1,
 				30,
 				TimeUnit.SECONDS)) {
@@ -186,7 +197,7 @@ public class AbstractLocalCloudTest extends AbstractTest {
 				final Set<String> currentPids = SetupUtils.getLocalProcesses();
 				final Set<String> delta = SetupUtils.getClientProcessesIDsDelta(alivePIDs,
 						currentPids);
-	
+
 				if (delta.size() > 0) {
 					String pids = "";
 					for (final String pid : delta) {
@@ -198,13 +209,12 @@ public class AbstractLocalCloudTest extends AbstractTest {
 						LogUtils.log("INFO killing all orphan processes");
 						SetupUtils.killProcessesByIDs(localCloudPIDs);
 						LogUtils.log("INFO killing local cloud processes and boostraping again");
-					}
-					finally {
+					} finally {
 						beforeSuite();
 					}
 				}
 			} catch (final Throwable e) {
-				LogUtils.log("WARNING Failed to kill processes",e);
+				LogUtils.log("WARNING Failed to kill processes", e);
 			}
 		}
 		LogUtils.log("Test Finished : " + this.getClass());
@@ -212,21 +222,25 @@ public class AbstractLocalCloudTest extends AbstractTest {
 
 	@AfterSuite(alwaysRun = true)
 	public void afterSuite() {
-		try {
-			LogUtils.log("Tearing-down localcloud");
-			runCommand("teardown-localcloud  -force");
-		} catch (final Exception e) {
-			e.printStackTrace();
-		}
+		if (isDevEnv) {
+			LogUtils.log("Running in dev mode - cloud will not be torn down");
+		} else {
+			try {
+				LogUtils.log("Tearing-down localcloud");
+				runCommand("teardown-localcloud  -force");
+			} catch (final Exception e) {
+				e.printStackTrace();
+			}
 
-		try {
-			TeardownUtils.teardownAll(admin);
-		} catch (final Throwable t) {
-			log("failed to teardown",t);
+			try {
+				TeardownUtils.teardownAll(admin);
+			} catch (final Throwable t) {
+				log("failed to teardown", t);
+			}
+			if (admin != null)
+				admin.close();
+			admin = null;
 		}
-        if(admin != null)
-		    admin.close();
-		admin = null;
 	}
 
 	private Admin getAdminWithLocators()

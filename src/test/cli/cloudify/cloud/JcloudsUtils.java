@@ -14,9 +14,7 @@ import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.domain.Location;
 
-import test.cli.cloudify.CloudTestUtils;
 import test.cli.cloudify.cloud.services.CloudService;
-import test.cli.cloudify.cloud.services.rackspace.RackspaceCloudService;
 
 import com.google.common.base.Predicate;
 
@@ -159,6 +157,10 @@ public class JcloudsUtils {
 		return hardwares;
 	}
 	
+	public static ComputeServiceContext getContext() {
+		return context;
+	}
+
 	/**
 	 * returns the locations of all running nodes.
 	 */
@@ -216,39 +218,6 @@ public class JcloudsUtils {
 	 */
 	public static void closeContext(){
 		context.close();
-	}
-	
-public static void main(String[] args) throws RunNodesException{
-		
-		RackspaceCloudService service = new RackspaceCloudService();
-		service.setMachinePrefix("Nirb_" + CloudTestUtils.SGTEST_MACHINE_PREFIX);
-		createContext(service);
-		
-		createServer("nirb");
-		
-//		Set<? extends ComputeMetadata> nodes = getAllNodes();
-//		for(ComputeMetadata n : nodes){
-//			System.out.println(n.getName() + " = " + n.getId());
-//		}
-		
-//		Set<? extends ComputeMetadata> images = getImages();
-//		for(ComputeMetadata i : images){
-//			System.out.println(i.getName() + " = " + i.getId());
-//		}
-		
-		System.out.println();
-		Set<? extends NodeMetadata> nodes1 = getAllRunningNodes();
-		for(NodeMetadata n : nodes1){
-			System.out.println(n.getName() + " = " + n.getId() + " " + n.getImageId() + " hardware: " + n.getHardware().toString() + " loc: " + n.getLocation().toString());
-		}
-		System.out.println();
-		Set<? extends NodeMetadata> nodes2 = getServersByName("nirb");
-		for(NodeMetadata n : nodes2){
-			System.out.println(n.getName() + " = " + n.getId());
-//			shutdownServer(n.getId());
-		}		
-		closeContext();
-		
 	}
 	
 }

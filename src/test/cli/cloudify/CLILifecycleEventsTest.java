@@ -160,7 +160,7 @@ public class CLILifecycleEventsTest extends AbstractLocalCloudTest{
 		
 		String incrementOutput = CommandTestUtils.runCommandAndWait("connect " + this.restUrl
 				+ "; set-instances " 
-				+ serviceName + "4; exit;");
+				+ serviceName + " 4; exit;");
 		
 		//see that the shutdown events were invoked for each service instance.
 		for (int i = 3; i <= numInstances; i++) {

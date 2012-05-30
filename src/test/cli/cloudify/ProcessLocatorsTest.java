@@ -26,12 +26,6 @@ import framework.utils.LogUtils;
 public class ProcessLocatorsTest extends AbstractLocalCloudTest {
 
 	public ProcessLocatorsTest() {
-		final String val = System.getenv("DEV_ENV");
-		if(val != null) {
-			if(val.equalsIgnoreCase("true")) {
-				this.isDevEnv = true;		
-			}
-		}
 		
 	}
 

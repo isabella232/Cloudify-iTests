@@ -1,8 +1,11 @@
 package test.cli.cloudify.cloud;
 
 import java.util.HashSet;
+import java.util.Properties;
 import java.util.Set;
 
+import org.cloudifysource.esc.jclouds.WindowsServerEC2ReviseParsedImage;
+import org.jclouds.aws.ec2.compute.strategy.AWSEC2ReviseParsedImage;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.RunNodesException;
@@ -17,6 +20,8 @@ import org.jclouds.domain.Location;
 import test.cli.cloudify.cloud.services.CloudService;
 
 import com.google.common.base.Predicate;
+import com.google.inject.AbstractModule;
+import com.google.inject.Module;
 
 import framework.utils.LogUtils;
 
@@ -46,6 +51,28 @@ public class JcloudsUtils {
 		
 		if(cloudName.equalsIgnoreCase("ec2"))
 			context = new ComputeServiceContextFactory().createContext("aws-ec2", service.getUser(), service.getApiKey());
+		if(cloudName.equalsIgnoreCase("ec2-win")){
+			
+			Properties props = new Properties();
+			props.put("jclouds.ec2.ami-query", "");
+			props.put("jclouds.ec2.cc-ami-query", "");
+			
+			final Set<Module> wiring = new HashSet<Module>();
+			wiring.add(new AbstractModule() {
+
+				@Override
+				protected void configure() {
+					bind(
+							AWSEC2ReviseParsedImage.class).to(
+							WindowsServerEC2ReviseParsedImage.class);
+				}
+
+			});
+						
+			context = new ComputeServiceContextFactory()
+				.createContext("aws-ec2", service.getUser(), service.getApiKey(), wiring, props);		
+		}
+
 		else if(cloudName.equalsIgnoreCase("rsopenstack"))
 			context = new ComputeServiceContextFactory().createContext("cloudservers-us", service.getUser(), service.getApiKey());
 		else
@@ -217,7 +244,8 @@ public class JcloudsUtils {
 	 * closes the context. Should be called last to free resources.
 	 */
 	public static void closeContext(){
-		context.close();
+		if(context != null)
+			context.close();
 	}
 	
 }

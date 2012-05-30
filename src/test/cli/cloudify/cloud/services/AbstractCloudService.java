@@ -22,7 +22,7 @@ public abstract class AbstractCloudService implements CloudService {
 	protected int numberOfManagementMachines = 1;
 	protected URL[] restAdminUrls;
 	protected URL[] webUIUrls;
-	protected String machinePrefix = CloudTestUtils.SGTEST_MACHINE_PREFIX;
+	protected String machinePrefix = CloudTestUtils.SGTEST_MACHINE_PREFIX + System.getProperty("user.name") + "_";
     protected Map<String,String> additionalPropsToReplace;
     protected boolean bootstrapped = false;
     

@@ -1,8 +1,5 @@
-import org.cloudifysource.dsl.context.ServiceContext
-import org.cloudifysource.dsl.context.ServiceContextFactory
 
 
-ServiceContext context = ServiceContextFactory.getServiceContext()
-
+new File("marker.txt").write("MARKER")
 
 sleep(Long.MAX_VALUE)

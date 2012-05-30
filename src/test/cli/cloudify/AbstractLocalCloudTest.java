@@ -59,10 +59,25 @@ public class AbstractLocalCloudTest extends AbstractTest {
 
 	protected boolean isDevEnv = false;
 
+	protected boolean checkIsDevEnv(){
+		if(this.isDevEnv) {
+			return true;
+		}
+		
+		final String val = System.getenv("DEV_ENV");
+		if(val != null) {
+			if(val.equalsIgnoreCase("true")) {
+				return true;
+			}
+		}
+		
+		return false;
+	
+	}
 	@BeforeSuite
 	public void beforeSuite()
 			throws Exception {
-		if (isDevEnv) {
+		if (checkIsDevEnv()) {
 			LogUtils.log("Local cloud test running in dev mode, will use existing localcloud");
 			clientStartupPIDs = new HashSet<String>();
 		} else {
@@ -222,7 +237,7 @@ public class AbstractLocalCloudTest extends AbstractTest {
 
 	@AfterSuite(alwaysRun = true)
 	public void afterSuite() {
-		if (isDevEnv) {
+		if (checkIsDevEnv()) {
 			LogUtils.log("Running in dev mode - cloud will not be torn down");
 		} else {
 			try {

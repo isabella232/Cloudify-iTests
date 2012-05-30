@@ -37,7 +37,7 @@ cloud {
 		// Mandatory. The HTTP/S URL where cloudify can be downloaded from by newly started machines.
 		cloudifyUrl "cloudify.zip"
 		// Mandatory. The prefix for new machines started for servies.
-		machineNamePrefix "nir_cloudify_agent_"
+		machineNamePrefix "cloudify_agent_"
 		// Optional. Defaults to true. Specifies whether cloudify should try to deploy services on the management machine.
 		// Do not change this unless you know EXACTLY what you are doing.
 		dedicatedManagementMachines true
@@ -46,7 +46,7 @@ cloud {
 		// Optional. Logging level for the intenal cloud provider logger. Defaults to INFO.
 		sshLoggingLevel "INFO"
 		// Mandatory. Name of the new machine/s started as cloudify management machines. 
-		managementGroup "nir_cloudify_manager"
+		managementGroup "cloudify_manager"
 		// Mandatory. Number of management machines to start on bootstrap-cloud. In production, should be 2. Can be 1 for dev.
 		numberOfManagementMachines 1
 		zones (["agent"])
@@ -91,6 +91,9 @@ cloud {
 				},
 				TEMPLATE_2 : template{
 				machineMemoryMB 1600
+				remoteDirectory "/tmp/gs-files"
+				username "tgrid"
+				password "tgrid"
 				// Mandatory for BYON.
 					custom ([
 						"nodesList" : ([
@@ -103,6 +106,9 @@ cloud {
 				},
 				TEMPLATE_3 : template{
 				machineMemoryMB 1600
+				remoteDirectory "/tmp/gs-files"
+				username "tgrid"
+				password "tgrid"
 				// Mandatory for BYON.
 					custom ([
 						"nodesList" : ([

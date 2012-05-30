@@ -42,7 +42,7 @@ public class BootstrapFailureEc2Test extends AbstractCloudTest{
 		
 		ec2UploadDir = new File(ScriptUtils.getBuildPath() , "tools/cli/plugins/esc/ec2/upload");
 		originialBootstrapManagement = new File(ec2UploadDir, "bootstrap-management.sh");
-		backupAndReplaceOriginalFile(originialBootstrapManagement,SGTestHelper.getSGTestRootDir() + "\\apps\\cloudify\\cloud\\ec2\\bad-bootstrap-management.sh");
+		backupAndReplaceOriginalFile(originialBootstrapManagement,SGTestHelper.getSGTestRootDir() + "/apps/cloudify/cloud/ec2/bad-bootstrap-management.sh");
 		
 		curTestTime = System.currentTimeMillis();
 		service = new Ec2CloudService();

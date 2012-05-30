@@ -28,6 +28,8 @@ import org.cloudifysource.shell.commands.CLIException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.type.TypeFactory;
 import org.codehaus.jackson.type.JavaType;
+import org.hyperic.sigar.Sigar;
+import org.hyperic.sigar.SigarException;
 import org.openspaces.admin.Admin;
 import org.openspaces.admin.AdminFactory;
 import org.openspaces.admin.machine.Machine;
@@ -37,6 +39,8 @@ import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
+
+import com.gigaspaces.internal.sigar.SigarHolder;
 
 import test.AbstractTest;
 import framework.utils.DumpUtils;
@@ -59,21 +63,22 @@ public class AbstractLocalCloudTest extends AbstractTest {
 
 	protected boolean isDevEnv = false;
 
-	protected boolean checkIsDevEnv(){
-		if(this.isDevEnv) {
+	protected boolean checkIsDevEnv() {
+		if (this.isDevEnv) {
 			return true;
 		}
-		
+
 		final String val = System.getenv("DEV_ENV");
-		if(val != null) {
-			if(val.equalsIgnoreCase("true")) {
+		if (val != null) {
+			if (val.equalsIgnoreCase("true")) {
 				return true;
 			}
 		}
-		
+
 		return false;
-	
+
 	}
+
 	@BeforeSuite
 	public void beforeSuite()
 			throws Exception {
@@ -220,12 +225,27 @@ public class AbstractLocalCloudTest extends AbstractTest {
 					}
 					try {
 						LogUtils.log("WARNING There is a leak PIDS [ " + pids + "] are alive");
-						SetupUtils.killProcessesByIDs(delta);
-						LogUtils.log("INFO killing all orphan processes");
-						SetupUtils.killProcessesByIDs(localCloudPIDs);
-						LogUtils.log("INFO killing local cloud processes and boostraping again");
+						Sigar sigar = SigarHolder.getSigar();
+						for (String pid : delta) {
+							try {
+								LogUtils.log("PID: " + pid + ": " + sigar.getProcExe(pid).getName());
+							} catch (SigarException e) {
+								LogUtils.log("Failed to get process info for pid: " + pid);
+							}
+
+						}
+
+						if (!checkIsDevEnv()) {
+							SetupUtils.killProcessesByIDs(delta);
+							LogUtils.log("INFO killing all orphan processes");
+							SetupUtils.killProcessesByIDs(localCloudPIDs);
+							LogUtils.log("INFO killing local cloud processes and boostraping again");
+						}
+
 					} finally {
-						beforeSuite();
+						if (!checkIsDevEnv()) {
+							beforeSuite();
+						}
 					}
 				}
 			} catch (final Throwable e) {

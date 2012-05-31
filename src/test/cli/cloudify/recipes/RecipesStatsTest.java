@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.cloudifysource.dsl.Service;
+import org.cloudifysource.dsl.internal.CloudifyConstants;
 import org.cloudifysource.dsl.internal.ServiceReader;
 import org.cloudifysource.dsl.internal.packaging.PackagingException;
 import org.cloudifysource.dsl.utils.ServiceUtils;
@@ -96,13 +97,14 @@ public class RecipesStatsTest extends AbstractLocalCloudTest {
 			// analyze the PU's statistics using the first instance (the same stats settings apply for
 			// all instances)
 			ProcessingUnitInstanceStatistics stats = puInstance.getStatistics();
-			Set<String> monitorNames = stats.getMonitors().get("USM").getMonitors().keySet();
+			Set<String> puMonitorsNames = stats.getMonitors().get("USM").getMonitors().keySet();
+			Set<String> defaultMonitorsNames = getDefaultProcessMonitors();
 			
 			//iterate the metrics configured in the service file and verify they are supported by the PU
 			Iterator<String> metricsIterator = metrics.iterator();
 			while (metricsIterator.hasNext()) {
 				String metric = metricsIterator.next();
-				if (!monitorNames.contains(metric)) {
+				if (!puMonitorsNames.contains(metric) && !defaultMonitorsNames.contains(metric)) {
 					missingMonitors.add(metric);
 				}
 			}
@@ -111,7 +113,33 @@ public class RecipesStatsTest extends AbstractLocalCloudTest {
 			LogUtils.log("Uninstalling service " + serviceName);
 			CommandTestUtils.runCommandAndWait("connect " + restUrl + "; uninstall-service " + serviceName + "; exit;");
 		}
-
+	}
+	
+	/**
+	 * Gets a list of built-in USM process monitors.
+	 * This is not the best implementation, but for now it'll do...
+	 * @return a list of built-in USM process monitors
+	 */
+	private Set<String> getDefaultProcessMonitors() {
+		Set<String> defaultMonitors = new HashSet<String>();
+		defaultMonitors.add(CloudifyConstants.USM_METRIC_PROCESS_CPU_USAGE);
+		defaultMonitors.add(CloudifyConstants.USM_METRIC_PROCESS_CPU_TIME);
+		defaultMonitors.add(CloudifyConstants.USM_METRIC_PROCESS_CPU_KERNEL_TIME);
+		defaultMonitors.add(CloudifyConstants.USM_METRIC_PROCESS_TOTAL_CPU_TIME);
+		defaultMonitors.add(CloudifyConstants.USM_METRIC_PROCESS_GROUP_ID);
+		defaultMonitors.add(CloudifyConstants.USM_METRIC_PROCESS_USER_ID);
+		defaultMonitors.add(CloudifyConstants.USM_METRIC_PROCESS_TOTAL_PAGE_FAULTS);
+		defaultMonitors.add(CloudifyConstants.USM_METRIC_PROCESS_TOTAL_RESIDENTAL_MEMORY);
+		defaultMonitors.add(CloudifyConstants.USM_METRIC_PROCESS_TOTAL_SHARED_MEMORY);
+		defaultMonitors.add(CloudifyConstants.USM_METRIC_PROCESS_CPU_TOTAL_VIRTUAL_MEMORY);
+		defaultMonitors.add(CloudifyConstants.USM_METRIC_PROCESS_KERNEL_SCHEDULING_PRIORITY);
+		defaultMonitors.add(CloudifyConstants.USM_METRIC_PROCESS_ACTIVE_THREADS);
+		defaultMonitors.add(CloudifyConstants.USM_METRIC_AVAILABLE_PROCESSORS);
+		defaultMonitors.add(CloudifyConstants.USM_METRIC_COMMITTED_VIRTUAL_MEM_SIZE);
+		defaultMonitors.add(CloudifyConstants.USM_METRIC_THREAD_COUNT);
+		defaultMonitors.add(CloudifyConstants.USM_METRIC_PEAK_THREAD_COUNT);
+		
+		return defaultMonitors;
 	}
 
 	/**

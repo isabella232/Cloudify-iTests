@@ -54,7 +54,7 @@ public abstract class AbstractTest {
     }
 
     @AfterMethod
-    public void afterTest() {
+    public void afterTest() throws Exception{
     	if (admin != null) {
 	    	try {
 	            DumpUtils.dumpLogs(admin);

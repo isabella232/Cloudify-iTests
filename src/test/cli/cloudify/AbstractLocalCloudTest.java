@@ -101,6 +101,7 @@ public class AbstractLocalCloudTest extends AbstractTest {
 			clientStartupPIDs = new HashSet<String>();
 		} else {
 			cleanUpCloudifyLocalDir();
+			scanForLeakedProcesses(false);
 
 			LogUtils.log("Tearing-down existing localclouds");
 			try {
@@ -240,7 +241,7 @@ public class AbstractLocalCloudTest extends AbstractTest {
 			"org.apache.catalina.startup.Bootstrap",
 			"org.apache.cassandra.thrift.CassandraDaemon"));
 
-	private void scanForLeakedProcesses()
+	private void scanForLeakedProcesses(final boolean failOnLeak)
 			throws SigarException {
 		final Map<Long, ProcessDetails> processTable = createProcessTable();
 
@@ -267,7 +268,7 @@ public class AbstractLocalCloudTest extends AbstractTest {
 
 		}
 
-		if (failed) {
+		if (failed && failOnLeak) {
 			LogUtils.log("Leaked process scan found and killed at least one process. Restarting the local cloud");
 			try {
 				beforeSuite();
@@ -324,7 +325,7 @@ public class AbstractLocalCloudTest extends AbstractTest {
 		}
 
 		try {
-			scanForLeakedProcesses();
+			scanForLeakedProcesses(true);
 		} catch (SigarException e) {
 			LogUtils.log("WARNING! Failed to scan for leaked processes using sigar!", e);
 		}

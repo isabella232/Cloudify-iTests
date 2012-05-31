@@ -42,7 +42,7 @@ public abstract class AbstractCommandTest extends AbstractTest {
 
 	@Override
 	@AfterMethod
-	public void afterTest()  {
+	public void afterTest() throws Exception {
 		if (admin != null) {
 			// gracefully undeploy all PUs
 			long end = System.currentTimeMillis() + PU_UNDEPLOY_TIMEOUT* admin.getProcessingUnits().getSize();

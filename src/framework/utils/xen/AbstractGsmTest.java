@@ -112,7 +112,7 @@ public class AbstractGsmTest extends AbstractTest {
     
     @Override
     @AfterMethod
-    public void afterTest() {        
+    public void afterTest() throws Exception {
         gscCounter.close();
         gsaCounter.close();
        	super.afterTest();

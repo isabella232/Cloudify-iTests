@@ -88,7 +88,7 @@ public class RepetativeInstallAndUninstallStockDemoWithProblemAtInstallTest exte
 	
 	@Override
 	@AfterMethod
-	public void afterTest(){
+	public void afterTest() throws Exception {
 		super.afterTest();
 		try {
 			fixCassandraService(cassandraPostStartScriptPath , newPostStartScriptPath);

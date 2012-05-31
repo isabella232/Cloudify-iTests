@@ -73,7 +73,7 @@ public class GitCloudifyBuildTest extends AbstractLocalCloudTest{
     }
 
     @AfterMethod(alwaysRun = true)
-    public void afterTest() {
+    public void afterTest() throws Exception {
         try {
             FileUtils.forceDelete(gitDir);
         } catch (IOException e) {

@@ -61,7 +61,7 @@ public class LocalcloudBootstrapAfterTeardownTest extends AbstractTest {
 	
 	@Override
 	@AfterMethod
-	public void afterTest(){
+	public void afterTest() throws Exception {
 		try {
 			CommandTestUtils.runCommandAndWait("connect " + restUrl + ";teardown-localcloud -lookup-groups abc");
 		} catch (Exception e) {

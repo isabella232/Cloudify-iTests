@@ -35,6 +35,7 @@ import org.hyperic.sigar.ProcExe;
 import org.hyperic.sigar.ProcState;
 import org.hyperic.sigar.Sigar;
 import org.hyperic.sigar.SigarException;
+import org.hyperic.sigar.SigarPermissionDeniedException;
 import org.openspaces.admin.Admin;
 import org.openspaces.admin.AdminFactory;
 import org.openspaces.admin.machine.Machine;
@@ -300,6 +301,9 @@ public class AbstractLocalCloudTest extends AbstractTest {
 
 				details.pid = pid;
 				processDetailsByPid.put(pid, details);
+
+			} catch (SigarPermissionDeniedException e) {
+				// ignore
 			} catch (SigarException e) {
 				// this often happens for security reasons, as procs from other users will fail on this.
 				LogUtils.log("Failed to read process details for pid: " + pid + ". Error was: " + e.getMessage());
@@ -311,7 +315,8 @@ public class AbstractLocalCloudTest extends AbstractTest {
 
 	@Override
 	@AfterMethod(alwaysRun = true)
-	public void afterTest() throws Exception {
+	public void afterTest()
+			throws Exception {
 
 		if (admin != null) {
 			TeardownUtils.snapshot(admin);

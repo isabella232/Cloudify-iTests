@@ -155,6 +155,12 @@ public class JcloudsUtils {
 	public static void shutdownServer(String serverId){
 		context.getComputeService().destroyNode(serverId);
 	}
+	public static void stopServer(String serverId){
+		context.getComputeService().suspendNode(serverId);
+	}
+	public static void startServer(String serverId){
+		context.getComputeService().resumeNode(serverId);
+	}
 	
 	/**
 	 * returns TemplateBuilder - can be used to define templates.

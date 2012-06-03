@@ -16,8 +16,10 @@ public class CloudTestUtils {
 	public static final String REST_PORT = String.valueOf(8100); 
 
 	public static final String IP_REGEX= "\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}"; 
-	public static final String WEBUI_URL_REGEX= "Webui service is available at: (http://" + IP_REGEX + ":" + WEBUI_PORT +")";
-	public static final String REST_URL_REGEX= "Rest service is available at: (http://" + IP_REGEX + ":" + REST_PORT + ")";
+	//public static final String WEBUI_URL_REGEX= "Webui service is available at: (http://" + IP_REGEX + ":" + WEBUI_PORT +")";
+	//public static final String REST_URL_REGEX= "Rest service is available at: (http://" + IP_REGEX + ":" + REST_PORT + ")";
+	public static final String WEBUI_URL_REGEX= "Webui service is available at: (http://(.*):" + WEBUI_PORT +")";
+	public static final String REST_URL_REGEX= "Rest service is available at: (http://(.*):" + REST_PORT + ")";
 	
 	public static final String EC2_MANAGEMENT_CONSOLE_URL = "https://console.aws.amazon.com";
 	public static final String HPCLOUD_MANAGEMENT_CONSOLE_URL = "https://manage.hpcloud.com";

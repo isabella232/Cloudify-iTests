@@ -6,7 +6,14 @@ service {
 	lifecycle {
 		start (["Win.*":"run.bat", "Linux":"run.sh"])
 		locator {
-			return ServiceUtils.ProcessUtils.getPidsWithMainClass("simplejavaprocess.jar")
+			def winPids = ServiceUtils.ProcessUtils.getPidsWithMainClass("simplejavaprocess.jar")
+			def linuxPids = ServiceUtils.ProcessUtils.getPidsWithName("nc")
+			
+			List<Long> merge = []
+			merge.addAll(winPids)
+			merge.addAll(linuxPids)
+			
+			return merge
 		}
 
 		startDetection {

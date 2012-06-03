@@ -257,23 +257,29 @@ public class AbstractLocalCloudTest extends AbstractTest {
 					if (suspectJavaProcessNames.contains(arg)) {
 						LogUtils.log("Found a leaking java process (" + arg + "): " + procDetails);
 						failed = true;
-						SetupUtils.killProcessesByIDs(new HashSet<String>(Arrays.asList("" + pid)));
+						if (!checkIsDevEnv()) {
+							SetupUtils.killProcessesByIDs(new HashSet<String>(Arrays.asList("" + pid)));
+						}
 					}
 				}
 			} else if (suspectProcessNames.contains(procDetails.baseName)) {
 				LogUtils.log("Found a leaking process: " + procDetails);
 				failed = true;
-				SetupUtils.killProcessesByIDs(new HashSet<String>(Arrays.asList("" + pid)));
+				if (!checkIsDevEnv()) {
+					SetupUtils.killProcessesByIDs(new HashSet<String>(Arrays.asList("" + pid)));
+				}
 			}
 
 		}
 
 		if (failed && failOnLeak) {
-			LogUtils.log("Leaked process scan found and killed at least one process. Restarting the local cloud");
-			try {
-				beforeSuite();
-			} catch (Exception e) {
-				LogUtils.log("Failed to restart local cloud", e);
+			if (!checkIsDevEnv()) {
+				LogUtils.log("Leaked process scan found and killed at least one process. Restarting the local cloud");
+				try {
+					beforeSuite();
+				} catch (Exception e) {
+					LogUtils.log("Failed to restart local cloud", e);
+				}
 			}
 			AssertFail("At least one leaked process was found and removed!");
 
@@ -324,50 +330,52 @@ public class AbstractLocalCloudTest extends AbstractTest {
 			uninstallAllRunningServices(admin);
 		}
 
+		// Adding a small sleep delay, so process tables will be correctly cleaned up.
+		Thread.sleep(2000);
 		try {
 			scanForLeakedProcesses(true);
 		} catch (SigarException e) {
 			LogUtils.log("WARNING! Failed to scan for leaked processes using sigar!", e);
 		}
 
-		if (alivePIDs != null) {
-
-			final Set<String> currentPids = SetupUtils.getLocalProcesses();
-			final Set<String> delta = SetupUtils.getClientProcessesIDsDelta(alivePIDs,
-					currentPids);
-
-			if (delta.size() > 0) {
-				String pids = "";
-				for (final String pid : delta) {
-					pids += pid + ", ";
-				}
-				try {
-					LogUtils.log("WARNING There is a leak PIDS [ " + pids + "] are alive");
-					Sigar sigar = SigarHolder.getSigar();
-					for (String pid : delta) {
-						try {
-							LogUtils.log("PID: " + pid + ": " + sigar.getProcExe(pid).getName());
-						} catch (SigarException e) {
-							LogUtils.log("Failed to get process info for pid: " + pid);
-						}
-
-					}
-
-					if (!checkIsDevEnv()) {
-						SetupUtils.killProcessesByIDs(delta);
-						LogUtils.log("INFO killing all orphan processes");
-						SetupUtils.killProcessesByIDs(localCloudPIDs);
-						LogUtils.log("INFO killing local cloud processes and boostraping again");
-					}
-
-				} finally {
-					if (!checkIsDevEnv()) {
-						beforeSuite();
-					}
-				}
-			}
-
-		}
+		// if (alivePIDs != null) {
+		//
+		// final Set<String> currentPids = SetupUtils.getLocalProcesses();
+		// final Set<String> delta = SetupUtils.getClientProcessesIDsDelta(alivePIDs,
+		// currentPids);
+		//
+		// if (delta.size() > 0) {
+		// String pids = "";
+		// for (final String pid : delta) {
+		// pids += pid + ", ";
+		// }
+		// try {
+		// LogUtils.log("WARNING There is a leak PIDS [ " + pids + "] are alive");
+		// Sigar sigar = SigarHolder.getSigar();
+		// for (String pid : delta) {
+		// try {
+		// LogUtils.log("PID: " + pid + ": " + sigar.getProcExe(pid).getName());
+		// } catch (SigarException e) {
+		// LogUtils.log("Failed to get process info for pid: " + pid);
+		// }
+		//
+		// }
+		//
+		// if (!checkIsDevEnv()) {
+		// SetupUtils.killProcessesByIDs(delta);
+		// LogUtils.log("INFO killing all orphan processes");
+		// SetupUtils.killProcessesByIDs(localCloudPIDs);
+		// LogUtils.log("INFO killing local cloud processes and boostraping again");
+		// }
+		//
+		// } finally {
+		// if (!checkIsDevEnv()) {
+		// beforeSuite();
+		// }
+		// }
+		// }
+		//
+		// }
 		LogUtils.log("Test Finished : " + this.getClass());
 	}
 

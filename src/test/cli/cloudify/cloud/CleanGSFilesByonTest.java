@@ -91,7 +91,7 @@ public class CleanGSFilesByonTest extends AbstractCloudTest {
 		assertTrue("ipList system property is empty", StringUtils.isNotBlank(machinesList));
 		StringTokenizer tokenizer = new StringTokenizer(machinesList, ",");
 		while (tokenizer.hasMoreTokens()) {
-			factory.addLocator(tokenizer.nextToken() + ":" + CloudifyConstants.DEFAULT_LUS_PORT);
+			factory.addLocator(tokenizer.nextToken().trim() + ":" + CloudifyConstants.DEFAULT_LUS_PORT);
 		}
 		
 		admin = factory.createAdmin();

@@ -238,7 +238,7 @@ public class AbstractLocalCloudTest extends AbstractTest {
 
 	}
 
-	private static final Set<String> suspectProcessNames = new HashSet<String>(Arrays.asList("mongod", "mongod", "mongos", "nc"));
+	private static final Set<String> suspectProcessNames = new HashSet<String>(Arrays.asList("mongo", "mongod", "mongos", "nc"));
 	private static final Set<String> suspectJavaProcessNames = new HashSet<String>(Arrays.asList(
 			"org.codehaus.groovy.tools.GroovyStarter", // groovy script executable
 			"simplejavaprocess.jar",

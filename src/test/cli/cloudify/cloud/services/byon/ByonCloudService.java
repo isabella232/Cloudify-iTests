@@ -64,8 +64,8 @@ public class ByonCloudService extends AbstractCloudService {
 		FileUtils.copyFile(originalCloudDslFile, backupCloudDslFile);
 		
 		Map<String, String> propsToReplace = new HashMap<String,String>();
-		propsToReplace.put("ENTER_CLOUD_USER", BYON_CLOUD_USER);
-		propsToReplace.put("ENTER_CLOUD_PASSWORD", BYON_CLOUD_PASSWORD);
+		propsToReplace.put("ENTER_USER", BYON_CLOUD_USER);
+		propsToReplace.put("ENTER_PASSWORD", BYON_CLOUD_PASSWORD);
 		propsToReplace.put("cloudify_agent_", this.machinePrefix + "cloudify_agent");
 		propsToReplace.put("cloudify_manager", this.machinePrefix + "cloudify_manager");
 		if(ipList != null)

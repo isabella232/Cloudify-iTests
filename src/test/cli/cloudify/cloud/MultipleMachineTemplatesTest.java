@@ -47,9 +47,10 @@ public class MultipleMachineTemplatesTest extends AbstractCloudTest{
 	private File mongodbDir = new File(ScriptUtils.getBuildPath() , "recipes/services/mongodb");
 	private File tomcatDir = new File(ScriptUtils.getBuildPath() , "recipes/services");
 	private Cloud readCloud;
-	private static final String TEMPLATE_1_IPs = "192.168.9.115,192.168.9.116";
-	private static final String TEMPLATE_2_IPs = "192.168.9.120,192.168.9.125";
-	private static final String TEMPLATE_3_IPs = "192.168.9.126";
+	private boolean teardownFlag = false;
+	protected String TEMPLATE_1_IPs = "192.168.9.115,192.168.9.116";
+	protected String TEMPLATE_2_IPs = "192.168.9.120,192.168.9.125";
+	protected String TEMPLATE_3_IPs = "192.168.9.126";
 	private static final String DEFAULT_MACHINE_TEMPLATE = "SMALL_LINUX";
 	private static final int MONGOD_DEFAULT_INSTANCES_NUM = 2;
 	private static final int MONGOD_INSTANCES_NUM = 1;
@@ -253,6 +254,9 @@ public class MultipleMachineTemplatesTest extends AbstractCloudTest{
 	 */
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true, priority = 3)
 	public void testPetclinicTeardownByon(){
+		
+		teardownFlag = true;
+		
 		try {
 			service.teardownCloud();
 		}
@@ -291,7 +295,7 @@ public class MultipleMachineTemplatesTest extends AbstractCloudTest{
 	}
 
 	@AfterClass(alwaysRun = true)
-	public void teardown() throws IOException {
+	public void teardown() throws IOException, InterruptedException {
 
 		putService(new ByonCloudService());
 		restoreOriginalBootstrapManagementFile();
@@ -300,6 +304,9 @@ public class MultipleMachineTemplatesTest extends AbstractCloudTest{
 		restoreOriginalServiceFile("mongod");
 		restoreOriginalServiceFile("tomcat");
 		restoreOriginalServiceFile("mongoConfig");
+		
+		if(!teardownFlag)
+			service.teardownCloud();
 	}
 
 

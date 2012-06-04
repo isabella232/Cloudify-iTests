@@ -206,6 +206,10 @@ public class AbstractLocalCloudTest extends AbstractTest {
 	@BeforeMethod
 	public void beforeTest() {
 		LogUtils.log("Test Configuration Started: " + this.getClass());
+		final boolean foundMachine = admin.getMachines().waitFor(1, 5, TimeUnit.MINUTES);
+		if(!foundMachine) {
+			AssertFail("Could not find a machine in the Admin API! Seomthing is wrong with the setup of this test");
+		}
 		System.out.println("Machine ["
 				+ admin.getMachines().getMachines()[0].getHostName()
 				+ "], "

@@ -286,7 +286,7 @@ public class AbstractCloudTest extends AbstractTest {
 		String restUrl = getRestUrl();
         String url = null;
         try {
-            url = restUrl +"/service/dump/?fileSizeLimit=50000000";
+            url = restUrl +"/service/dump/machines/?fileSizeLimit=50000000";
             DumpUtils.dump(new URL(url));
         } catch (Exception e) {
             LogUtils.log("Failed to create dump for this url - " + url, e);
@@ -317,7 +317,7 @@ public class AbstractCloudTest extends AbstractTest {
 		String restUrl = getRestUrl();
         String url = null;
         try {
-            url = restUrl +"/service/dump/?fileSizeLimit=50000000";
+            url = restUrl +"/service/dump/machines/?fileSizeLimit=50000000";
             DumpUtils.dump(new URL(url));
         } catch (Exception e) {
             LogUtils.log("Failed to create dump for this url - " + url, e);

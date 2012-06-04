@@ -154,9 +154,9 @@ public class SetupUtils {
             }
         }
 
-        if (gsaStartupPIDs != null) {
-            setupCleanEnvironment(admin);
-        }
+//        if (gsaStartupPIDs != null) {
+//            setupCleanEnvironment(admin);
+//        }
     }
 
     private static void setupCleanEnvironment(Admin admin) {

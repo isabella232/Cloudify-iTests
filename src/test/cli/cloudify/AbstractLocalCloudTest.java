@@ -64,9 +64,9 @@ public class AbstractLocalCloudTest extends AbstractTest {
 	private final int restPort = 8100;
 	protected static String restUrl = null;
 	protected static final String DEFAULT_APPLICATION_NAME = "default";
-	private static Set<String> clientStartupPIDs = null;
-	private static Set<String> localCloudPIDs = null;
-	private static Set<String> alivePIDs = null;
+//	private static Set<String> clientStartupPIDs = null;
+//	private static Set<String> localCloudPIDs = null;
+//	private static Set<String> alivePIDs = null;
 
 	protected boolean isDevEnv = false;
 
@@ -98,7 +98,7 @@ public class AbstractLocalCloudTest extends AbstractTest {
 			throws Exception {
 		if (checkIsDevEnv()) {
 			LogUtils.log("Local cloud test running in dev mode, will use existing localcloud");
-			clientStartupPIDs = new HashSet<String>();
+//			clientStartupPIDs = new HashSet<String>();
 		} else {
 			cleanUpCloudifyLocalDir();
 			scanForLeakedProcesses(false);
@@ -110,7 +110,7 @@ public class AbstractLocalCloudTest extends AbstractTest {
 				LogUtils.log("teardown failed because no cloud was found. proceeding with suite");
 			}
 
-			clientStartupPIDs = SetupUtils.getLocalProcesses();
+//			clientStartupPIDs = SetupUtils.getLocalProcesses();
 
 			try {
 				LogUtils.log("Performing bootstrap");
@@ -141,13 +141,13 @@ public class AbstractLocalCloudTest extends AbstractTest {
 		} catch (final UnknownHostException e) {
 			e.printStackTrace();
 		}
-		try {
-			alivePIDs = SetupUtils.getLocalProcesses();
-			localCloudPIDs = SetupUtils.getClientProcessesIDsDelta(clientStartupPIDs,
-					alivePIDs);
-		} catch (final Exception e) {
-			e.printStackTrace();
-		}
+//		try {
+//			alivePIDs = SetupUtils.getLocalProcesses();
+//			localCloudPIDs = SetupUtils.getClientProcessesIDsDelta(clientStartupPIDs,
+//					alivePIDs);
+//		} catch (final Exception e) {
+//			e.printStackTrace();
+//		}
 	}
 
 	private void cleanUpCloudifyLocalDir()
@@ -527,10 +527,10 @@ public class AbstractLocalCloudTest extends AbstractTest {
 		}
 	}
 
-	public void updateLocalCloudPids(final long oldPid, final long newPid) {
-		localCloudPIDs.remove(oldPid);
-		localCloudPIDs.add(String.valueOf(newPid));
-		alivePIDs.remove(oldPid);
-		alivePIDs.add(String.valueOf(newPid));
-	}
+//	public void updateLocalCloudPids(final long oldPid, final long newPid) {
+//		localCloudPIDs.remove(oldPid);
+//		localCloudPIDs.add(String.valueOf(newPid));
+//		alivePIDs.remove(oldPid);
+//		alivePIDs.add(String.valueOf(newPid));
+//	}
 }

@@ -128,7 +128,7 @@ public class ScalingRulesCloudTest extends AbstractCloudTest {
 		
 		repetitiveAssertTrue("Expected " + expectedNumberOfInstances + " "+ absoluteServiceName +" instance(s)", 
 				numberOfInstancesRepetitiveCondition(absoluteServiceName, expectedNumberOfInstances), 
-				expectedNumberOfInstances * OPERATION_TIMEOUT);
+				expectedNumberOfInstances * OPERATION_TIMEOUT * 3);
 	}
 
 	private RepetitiveConditionProvider numberOfInstancesRepetitiveCondition(

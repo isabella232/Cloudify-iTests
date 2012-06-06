@@ -180,7 +180,7 @@ public class AbstractApplicationFailOverXenTest extends AbstractStartManagementX
 		ProcessingUnit stockAnalyticsFeeder = admin.getProcessingUnits().waitFor(ServiceUtils.getAbsolutePUName("stockdemo","stockAnalyticsFeeder"));
 		ProcessingUnit stockAnalyticsMirror = admin.getProcessingUnits().waitFor(ServiceUtils.getAbsolutePUName("stockdemo","stockAnalyticsMirror"));
 		ProcessingUnit stockAnalyticsProcessor = admin.getProcessingUnits().waitFor(ServiceUtils.getAbsolutePUName("stockdemo","stockAnalyticsProcessor"));
-		ProcessingUnit StockDemo = admin.getProcessingUnits().waitFor(ServiceUtils.getAbsolutePUName("stockdemo","StockDemo"));
+		ProcessingUnit stockDemo = admin.getProcessingUnits().waitFor(ServiceUtils.getAbsolutePUName("stockdemo","StockDemo"));
 		
 		assertNotNull("cassandra pu didn't deploy", cassandra);
 		assertNotNull("stockAnalytics pu didn't deploy", stockAnalytics);
@@ -188,7 +188,7 @@ public class AbstractApplicationFailOverXenTest extends AbstractStartManagementX
 		assertNotNull("stockAnalyticsMirror pu didn't deploy", stockAnalyticsMirror);
 		assertNotNull("stockAnalyticsSpace pu didn't deploy", stockAnalyticsSpace);
 		assertNotNull("stockAnalyticsProcessor pu didn't deploy", stockAnalyticsProcessor);
-		assertNotNull("StockDemo pu didn't deploy", StockDemo);
+		assertNotNull("StockDemo pu didn't deploy", stockDemo);
 		
 		cassandra.waitFor(cassandra.getTotalNumberOfInstances());
 		stockAnalytics.waitFor(stockAnalytics.getTotalNumberOfInstances());
@@ -196,25 +196,31 @@ public class AbstractApplicationFailOverXenTest extends AbstractStartManagementX
 		stockAnalyticsMirror.waitFor(stockAnalyticsMirror.getTotalNumberOfInstances());
 		stockAnalyticsSpace.waitFor(stockAnalyticsSpace.getTotalNumberOfInstances());
 		stockAnalyticsProcessor.waitFor(stockAnalyticsProcessor.getTotalNumberOfInstances());
-		StockDemo.waitFor(StockDemo.getTotalNumberOfInstances());
+		stockDemo.waitFor(stockDemo.getTotalNumberOfInstances());
 		
 		Thread.sleep(1000 * 20); // sleep to give redundent instances time to start
 		
-		boolean cassandraDeployed = cassandra.getInstances().length == cassandra.getTotalNumberOfInstances();
-		boolean stockAnalyticsDeployed = stockAnalytics.getInstances().length == stockAnalytics.getTotalNumberOfInstances();
-		boolean stockAnalyticsFeederDeployed = stockAnalyticsFeeder.getInstances().length == stockAnalyticsFeeder.getTotalNumberOfInstances();
-		boolean stockAnalyticsMirrorDeployed = stockAnalyticsMirror.getInstances().length == stockAnalyticsMirror.getTotalNumberOfInstances();
-		boolean stockAnalyticsSpaceDeployed = stockAnalyticsSpace.getInstances().length == stockAnalyticsSpace.getTotalNumberOfInstances();
-		boolean stockAnalyticsProcessorDeployed = stockAnalyticsProcessor.getInstances().length == stockAnalyticsProcessor.getTotalNumberOfInstances();
-		boolean StockDemoDeployed = StockDemo.getInstances().length == StockDemo.getTotalNumberOfInstances();
-		
-		assertTrue("cassandra pu didn't deploy all of it's instances", cassandraDeployed);
-		assertTrue("stockAnalytics pu didn't deploy all of it's instances", stockAnalyticsDeployed);
-		assertTrue("stockAnalyticsFeeder pu didn't deploy all of it's instances", stockAnalyticsFeederDeployed);
-		assertTrue("stockAnalyticsMirror pu didn't deploy all of it's instances", stockAnalyticsMirrorDeployed);
-		assertTrue("stockAnalyticsSpace pu didn't deploy all of it's instances", stockAnalyticsSpaceDeployed);
-		assertTrue("stockAnalyticsProcessor pu didn't deploy all of it's instances", stockAnalyticsProcessorDeployed);
-		assertTrue("StockDemo pu didn't deploy all of it's instances", StockDemoDeployed);
+		assertEquals("cassandra pu didn't deploy all of it's instances. Expecting " 
+							+ cassandra.getTotalNumberOfInstances() + ", got " + cassandra.getInstances().length, 
+							cassandra.getInstances().length, cassandra.getTotalNumberOfInstances());
+		assertEquals("stockAnalytics pu didn't deploy all of it's instances. Expecting "
+							+ stockAnalytics.getTotalNumberOfInstances() + ", got " + stockAnalytics.getInstances().length
+							, stockAnalytics.getInstances().length, stockAnalytics.getTotalNumberOfInstances());
+		assertEquals("stockAnalyticsFeeder pu didn't deploy all of it's instances. Expecting " 
+							+ stockAnalyticsFeeder.getTotalNumberOfInstances() + ", got " + stockAnalyticsFeeder.getInstances().length
+							, stockAnalyticsFeeder.getTotalNumberOfInstances(), stockAnalyticsFeeder.getInstances().length);
+		assertEquals("stockAnalyticsMirror pu didn't deploy all of it's instances. Expecting " 
+							+ stockAnalyticsMirror.getTotalNumberOfInstances() + ", got " + stockAnalyticsMirror.getInstances().length
+							, stockAnalyticsMirror.getTotalNumberOfInstances(),  stockAnalyticsMirror.getInstances().length);
+		assertEquals("stockAnalyticsSpace pu didn't deploy all of it's instances. Expecting " 
+				+ stockAnalyticsSpace.getTotalNumberOfInstances() + ", got " + stockAnalyticsSpace.getInstances().length
+				, stockAnalyticsSpace.getTotalNumberOfInstances(),  stockAnalyticsSpace.getInstances().length);
+		assertEquals("stockAnalyticsProcessor pu didn't deploy all of it's instances. Expecting " 
+				+ stockAnalyticsProcessor.getTotalNumberOfInstances() + ", got " + stockAnalyticsProcessor.getInstances().length
+				, stockAnalyticsProcessor.getTotalNumberOfInstances(),  stockAnalyticsProcessor.getInstances().length);
+		assertEquals("stockDemo pu didn't deploy all of it's instances. Expecting " 
+				+ stockDemo.getTotalNumberOfInstances() + ", got " + stockDemo.getInstances().length
+				, stockDemo.getTotalNumberOfInstances(),  stockDemo.getInstances().length);
 		
 		if(port1 > 0  && port2 > 0){
 			LogUtils.log("asserting needed ports for application are taken");

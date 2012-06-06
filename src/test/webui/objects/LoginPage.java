@@ -1,13 +1,17 @@
 package test.webui.objects;
 
+import net.jini.core.discovery.LookupLocator;
+
 import org.junit.Assert;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 import test.webui.resources.WebConstants;
 
+import com.gigaspaces.internal.utils.StringUtils;
 import com.thoughtworks.selenium.Selenium;
 
 import framework.utils.LogUtils;
@@ -22,7 +26,10 @@ public class LoginPage {
 	Selenium selenium;
 	WebDriver driver;
 	
-	String username, password, jiniGroup, locators;
+	private String username;
+	private String password;
+	private String jiniGroup;
+	private LookupLocator[] locators;
 	
 	WebElement logginButton;
 	
@@ -44,6 +51,13 @@ public class LoginPage {
 		this.selenium = selenium;
 		this.jiniGroup = lookupGroups;
 	}
+
+	public LoginPage(Selenium selenium, WebDriver driver,
+			LookupLocator[] locators) {
+		this.driver = driver;
+		this.selenium = selenium;
+		this.locators = locators;
+	}
 	
 	/**
 	 * constructs an instance for a certain user
@@ -57,23 +71,36 @@ public class LoginPage {
 		this.username = username;
 		this.password = password;
 	}
-	
+
 	/**
 	 * writes the user parameters in the text edits of the ui
 	 */
 	public void inputUsernameAndPassword() {
-		selenium.click(WebConstants.Xpath.annonymusCheckbox);
-		selenium.type(WebConstants.ID.usernameLogginInput, username);
-		selenium.type(WebConstants.ID.passwordLogginInput, password);
+		WebElement annon = driver.findElement(By.xpath(WebConstants.Xpath.annonymusCheckbox));
+		annon.click();
+		WebElement usernameEl = driver.findElement(By.id(WebConstants.ID.usernameLogginInput));
+		usernameEl.sendKeys(username);
+		WebElement passwordEl = driver.findElement(By.id(WebConstants.ID.passwordLogginInput));
+		passwordEl.sendKeys(password);
 	}
 	
 	/**
 	 * write discovery parameters in the text edits of the ui
 	 */
 	public void inputDiscovery() {
-		selenium.click(WebConstants.Xpath.discoveryLegend);
-		selenium.type(WebConstants.ID.jiniGroupInput, jiniGroup);
-		selenium.type(WebConstants.ID.locatorsInput, locators);
+		if (jiniGroup != null) {
+			WebElement group = driver.findElement(By.id(WebConstants.ID.jiniGroupInput));
+			group.sendKeys(jiniGroup);
+		}
+		if (locators != null) {
+			String[] locatorsString = new String[locators.length];
+			for (int i = 0 ; i < locators.length ; i++) {
+				locatorsString[i]=locators[i].getHost()+":"+locators[i].getPort();
+			}
+			WebElement locator = driver.findElement(By.id(WebConstants.ID.locatorsInput));
+			
+			locator.sendKeys(StringUtils.arrayToCommaDelimitedString(locatorsString));
+		}
 	}
 	
 	/**
@@ -82,10 +109,10 @@ public class LoginPage {
 	 * @throws InterruptedException 
 	 */
 	public MainNavigation login() throws InterruptedException {
-		Thread.sleep(1000);
 		inputDiscovery();
 		selenium.click(WebConstants.Xpath.loginButton);
-		Thread.sleep(1000);
+		JavascriptExecutor js = (JavascriptExecutor) driver;
+		js.executeScript("return this.GigaSpaces.Util.Flags.isUnderTest=true");
 		return new MainNavigation(selenium, driver);
 	}
 	

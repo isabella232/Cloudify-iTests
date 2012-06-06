@@ -8,19 +8,21 @@ import test.webui.resources.WebConstants;
 import com.thoughtworks.selenium.Selenium;
 
 import framework.utils.AssertUtils;
-import framework.utils.WebUiUtils;
 import framework.utils.AssertUtils.RepetitiveConditionProvider;
+import framework.utils.WebUIAjaxHelper;
 
 public class ServicesGrid {
 	
-	Selenium selenium;
-	WebDriver driver;
+	private Selenium selenium;
+	private WebDriver driver;
 	
-	InfrastructureServicesGrid resourceGrid;
-	ApplicationServicesGrid modulesGrid;
-	DataReplicationGrid highAvGrid;
-	EDSGrid edsGrid;
-	ApplicationsMenuPanel appPanel;
+	private InfrastructureServicesGrid resourceGrid;
+	private ApplicationServicesGrid modulesGrid;
+	private DataReplicationGrid highAvGrid;
+	private EDSGrid edsGrid;
+	private ApplicationsMenuPanel appPanel;
+	
+	private WebUIAjaxHelper helper = new WebUIAjaxHelper();
 
 	public InfrastructureServicesGrid getInfrastructureGrid() {
 		return resourceGrid;
@@ -50,6 +52,8 @@ public class ServicesGrid {
 		this.modulesGrid = new ApplicationServicesGrid();
 		this.resourceGrid = new InfrastructureServicesGrid();
 		this.appPanel = new ApplicationsMenuPanel();
+		helper.setDriver(driver);
+		helper.setSelenium(selenium);
 	}
 
 	public static ServicesGrid getInstance(Selenium selenium, WebDriver driver) {
@@ -78,7 +82,7 @@ public class ServicesGrid {
 				}
 			};
 			
-			AssertUtils.repetitiveAssertTrue("Application is not present in the applications menu panel", condition,10000);
+			AssertUtils.repetitiveAssertTrue("Application is not present in the applications menu panel", condition,5000);
 			selenium.click(WebConstants.Xpath.getPathToApplicationSelectionButton(applicationName));
 		}
 		
@@ -129,7 +133,7 @@ public class ServicesGrid {
 		public class Hosts {
 			
 			public Icon getIcon() {
-				String style = WebUiUtils.retrieveAttribute(By.xpath(WebConstants.Xpath.pathToHosts + WebConstants.Xpath.pathToIconInResourceGrid), "class",driver);
+				String style = helper.retrieveAttribute(By.xpath(WebConstants.Xpath.pathToHosts + WebConstants.Xpath.pathToIconInResourceGrid), "class",driver);
 				return ServicesGrid.this.getIcon(style);
 			}
 			
@@ -142,7 +146,7 @@ public class ServicesGrid {
 		public class GSAInst {
 			
 			public Icon getIcon() {
-				String style = WebUiUtils.retrieveAttribute(By.xpath(WebConstants.Xpath.pathToGSA + WebConstants.Xpath.pathToIconInResourceGrid), "class",driver);
+				String style = helper.retrieveAttribute(By.xpath(WebConstants.Xpath.pathToGSA + WebConstants.Xpath.pathToIconInResourceGrid), "class",driver);
 				return ServicesGrid.this.getIcon(style);
 					
 			}
@@ -155,7 +159,7 @@ public class ServicesGrid {
 		public class ESMInst {
 			
 			public Icon getIcon() {
-				String style = WebUiUtils.retrieveAttribute(By.xpath(WebConstants.Xpath.pathToESM + WebConstants.Xpath.pathToIconInResourceGrid), "class",driver);
+				String style = helper.retrieveAttribute(By.xpath(WebConstants.Xpath.pathToESM + WebConstants.Xpath.pathToIconInResourceGrid), "class",driver);
 				return ServicesGrid.this.getIcon(style);
 					
 			}
@@ -168,7 +172,7 @@ public class ServicesGrid {
 		public class GSMInst {
 			
 			public Icon getIcon() {
-				String style = WebUiUtils.retrieveAttribute(By.xpath(WebConstants.Xpath.pathToGSM + WebConstants.Xpath.pathToIconInResourceGrid), "class",driver);
+				String style = helper.retrieveAttribute(By.xpath(WebConstants.Xpath.pathToGSM + WebConstants.Xpath.pathToIconInResourceGrid), "class",driver);
 				return ServicesGrid.this.getIcon(style);
 					
 			}
@@ -180,7 +184,7 @@ public class ServicesGrid {
 		public class GSCInst {
 			
 			public Icon getIcon() {
-				String style = WebUiUtils.retrieveAttribute(By.xpath(WebConstants.Xpath.pathToGSC + WebConstants.Xpath.pathToIconInResourceGrid), "class",driver);
+				String style = helper.retrieveAttribute(By.xpath(WebConstants.Xpath.pathToGSC + WebConstants.Xpath.pathToIconInResourceGrid), "class",driver);
 				return ServicesGrid.this.getIcon(style);
 					
 			}
@@ -193,7 +197,7 @@ public class ServicesGrid {
 		public class LUSInst {
 			
 			public Icon getIcon() {
-				String style = WebUiUtils.retrieveAttribute(By.xpath(WebConstants.Xpath.pathToLUS + WebConstants.Xpath.pathToIconInResourceGrid), "class",driver);
+				String style = helper.retrieveAttribute(By.xpath(WebConstants.Xpath.pathToLUS + WebConstants.Xpath.pathToIconInResourceGrid), "class",driver);
 				return ServicesGrid.this.getIcon(style);
 					
 			}
@@ -258,7 +262,7 @@ public class ServicesGrid {
 			
 			public Icon getIcon() {
 				if (selenium.isElementPresent(WebConstants.ID.moduleWeb)) {
-					String style = WebUiUtils.retrieveAttribute(By.xpath(WebConstants.Xpath.pathToWebModule + WebConstants.Xpath.pathToIconInModulesGrid), "class",driver);
+					String style = helper.retrieveAttribute(By.xpath(WebConstants.Xpath.pathToWebModule + WebConstants.Xpath.pathToIconInModulesGrid), "class",driver);
 					return ServicesGrid.this.getIcon(style);
 				}
 				else return null;
@@ -278,7 +282,7 @@ public class ServicesGrid {
 			
 			public Icon getIcon() {
 				if (selenium.isElementPresent(WebConstants.ID.moduleStateful)) {
-					String style = WebUiUtils.retrieveAttribute(By.xpath(WebConstants.Xpath.pathToStatefullModule + WebConstants.Xpath.pathToIconInModulesGrid), "class",driver);
+					String style = helper.retrieveAttribute(By.xpath(WebConstants.Xpath.pathToStatefullModule + WebConstants.Xpath.pathToIconInModulesGrid), "class",driver);
 					return ServicesGrid.this.getIcon(style);
 				}
 				else return null;
@@ -297,7 +301,7 @@ public class ServicesGrid {
 			
 			public Icon getIcon() {
 				if (selenium.isElementPresent(WebConstants.ID.moduleStateless)) {
-					String style = WebUiUtils.retrieveAttribute(By.xpath(WebConstants.Xpath.pathToStatelessModule + WebConstants.Xpath.pathToIconInModulesGrid), "class",driver);
+					String style = helper.retrieveAttribute(By.xpath(WebConstants.Xpath.pathToStatelessModule + WebConstants.Xpath.pathToIconInModulesGrid), "class",driver);
 					return ServicesGrid.this.getIcon(style);
 				}
 				else return null;
@@ -317,7 +321,7 @@ public class ServicesGrid {
 		
 			public Icon getIcon() {
 				if (selenium.isElementPresent(WebConstants.ID.moduleMirror)) {
-					String style = WebUiUtils.retrieveAttribute(By.xpath(WebConstants.Xpath.pathToMirrorModule + WebConstants.Xpath.pathToIconInModulesGrid), "class",driver);
+					String style = helper.retrieveAttribute(By.xpath(WebConstants.Xpath.pathToMirrorModule + WebConstants.Xpath.pathToIconInModulesGrid), "class",driver);
 					return ServicesGrid.this.getIcon(style);
 				}
 				else return null;
@@ -337,7 +341,7 @@ public class ServicesGrid {
 			
 			public Icon getIcon() {
 				if (selenium.isElementPresent(WebConstants.ID.moduleLoadBalancer)) {
-					String style = WebUiUtils.retrieveAttribute(By.xpath(WebConstants.Xpath.pathToLoadBalancerModule + WebConstants.Xpath.pathToIconInModulesGrid), "class",driver);
+					String style = helper.retrieveAttribute(By.xpath(WebConstants.Xpath.pathToLoadBalancerModule + WebConstants.Xpath.pathToIconInModulesGrid), "class",driver);
 					return ServicesGrid.this.getIcon(style);
 				}
 				else return null;
@@ -357,7 +361,7 @@ public class ServicesGrid {
 			
 			public Icon getIcon() {
 				if (selenium.isElementPresent(WebConstants.ID.moduleAppServer)) {
-					String style = WebUiUtils.retrieveAttribute(By.xpath(WebConstants.Xpath.pathToAppServerModule + WebConstants.Xpath.pathToIconInModulesGrid), "class",driver);
+					String style = helper.retrieveAttribute(By.xpath(WebConstants.Xpath.pathToAppServerModule + WebConstants.Xpath.pathToIconInModulesGrid), "class",driver);
 					return ServicesGrid.this.getIcon(style);
 				}
 				else return null;
@@ -377,7 +381,7 @@ public class ServicesGrid {
 			
 			public Icon getIcon() {
 				if (selenium.isElementPresent(WebConstants.ID.moduleWebServer)) {
-					String style = WebUiUtils.retrieveAttribute(By.xpath(WebConstants.Xpath.pathToWebServerModule + WebConstants.Xpath.pathToIconInModulesGrid), "class",driver);
+					String style = helper.retrieveAttribute(By.xpath(WebConstants.Xpath.pathToWebServerModule + WebConstants.Xpath.pathToIconInModulesGrid), "class",driver);
 					return ServicesGrid.this.getIcon(style);
 				}
 				else return null;
@@ -397,7 +401,7 @@ public class ServicesGrid {
 			
 			public Icon getIcon() {
 				if (selenium.isElementPresent(WebConstants.ID.moduleSecurityServer)) {
-					String style = WebUiUtils.retrieveAttribute(By.xpath(WebConstants.Xpath.pathToSecurityServerModule + WebConstants.Xpath.pathToIconInModulesGrid), "class",driver);
+					String style = helper.retrieveAttribute(By.xpath(WebConstants.Xpath.pathToSecurityServerModule + WebConstants.Xpath.pathToIconInModulesGrid), "class",driver);
 					return ServicesGrid.this.getIcon(style);
 				}
 				else return null;
@@ -417,7 +421,7 @@ public class ServicesGrid {
 			
 			public Icon getIcon() {
 				if (selenium.isElementPresent(WebConstants.ID.moduleEsbServer)) {
-					String style = WebUiUtils.retrieveAttribute(By.xpath(WebConstants.Xpath.pathToEsbServerModule + WebConstants.Xpath.pathToIconInModulesGrid), "class",driver);
+					String style = helper.retrieveAttribute(By.xpath(WebConstants.Xpath.pathToEsbServerModule + WebConstants.Xpath.pathToIconInModulesGrid), "class",driver);
 					return ServicesGrid.this.getIcon(style);
 				}
 				else return null;
@@ -437,7 +441,7 @@ public class ServicesGrid {
 			
 			public Icon getIcon() {
 				if (selenium.isElementPresent(WebConstants.ID.moduleMessageBus)) {
-					String style = WebUiUtils.retrieveAttribute(By.xpath(WebConstants.Xpath.pathToMessageBusModule + WebConstants.Xpath.pathToIconInModulesGrid), "class",driver);
+					String style = helper.retrieveAttribute(By.xpath(WebConstants.Xpath.pathToMessageBusModule + WebConstants.Xpath.pathToIconInModulesGrid), "class",driver);
 					return ServicesGrid.this.getIcon(style);
 				}
 				else return null;
@@ -457,7 +461,7 @@ public class ServicesGrid {
 			
 			public Icon getIcon() {
 				if (selenium.isElementPresent(WebConstants.ID.moduleDatabase)) {
-					String style = WebUiUtils.retrieveAttribute(By.xpath(WebConstants.Xpath.pathToDatabaseModule + WebConstants.Xpath.pathToIconInModulesGrid), "class",driver);
+					String style = helper.retrieveAttribute(By.xpath(WebConstants.Xpath.pathToDatabaseModule + WebConstants.Xpath.pathToIconInModulesGrid), "class",driver);
 					return ServicesGrid.this.getIcon(style);
 				}
 				else return null;
@@ -477,7 +481,7 @@ public class ServicesGrid {
 			
 			public Icon getIcon() {
 				if (selenium.isElementPresent(WebConstants.ID.moduleNoSqlDb)) {
-					String style = WebUiUtils.retrieveAttribute(By.xpath(WebConstants.Xpath.pathToNoSqlDbModule + WebConstants.Xpath.pathToIconInModulesGrid), "class",driver);
+					String style = helper.retrieveAttribute(By.xpath(WebConstants.Xpath.pathToNoSqlDbModule + WebConstants.Xpath.pathToIconInModulesGrid), "class",driver);
 					return ServicesGrid.this.getIcon(style);
 				}
 				else return null;
@@ -507,7 +511,7 @@ public class ServicesGrid {
 		public class BytesPerSecond {
 			
 			public Icon getIcon() {
-				String style = WebUiUtils.retrieveAttribute(By.xpath(WebConstants.Xpath.pathTohaBytesPerSecond + WebConstants.Xpath.pathToIconInHighAvGrid), "class",driver);
+				String style = helper.retrieveAttribute(By.xpath(WebConstants.Xpath.pathTohaBytesPerSecond + WebConstants.Xpath.pathToIconInHighAvGrid), "class",driver);
 				return ServicesGrid.this.getIcon(style);
 				
 			}
@@ -521,7 +525,7 @@ public class ServicesGrid {
 		public class PacketsPerSecond {
 			
 			public Icon getIcon() {
-				String style = WebUiUtils.retrieveAttribute(By.xpath(WebConstants.Xpath.pathTohaPacketsPerSecond + WebConstants.Xpath.pathToIconInHighAvGrid), "class",driver);
+				String style = helper.retrieveAttribute(By.xpath(WebConstants.Xpath.pathTohaPacketsPerSecond + WebConstants.Xpath.pathToIconInHighAvGrid), "class",driver);
 				return ServicesGrid.this.getIcon(style);
 				
 			}
@@ -538,7 +542,7 @@ public class ServicesGrid {
 		public class PacketsPerSecond {
 			
 			public Icon getIcon() {
-				String style = WebUiUtils.retrieveAttribute(By.xpath(WebConstants.Xpath.pathToEDSPacketsPerSecond + WebConstants.Xpath.pathToIconInEDSGrid), "class",driver);
+				String style = helper.retrieveAttribute(By.xpath(WebConstants.Xpath.pathToEDSPacketsPerSecond + WebConstants.Xpath.pathToIconInEDSGrid), "class",driver);
 				return ServicesGrid.this.getIcon(style);
 				
 			}
@@ -553,7 +557,7 @@ public class ServicesGrid {
 		public class BytesPerSecond {
 			
 			public Icon getIcon() {
-				String style = WebUiUtils.retrieveAttribute(By.xpath(WebConstants.Xpath.pathToEDSBytesPerSecond + WebConstants.Xpath.pathToIconInEDSGrid), "class",driver);
+				String style = helper.retrieveAttribute(By.xpath(WebConstants.Xpath.pathToEDSBytesPerSecond + WebConstants.Xpath.pathToIconInEDSGrid), "class",driver);
 				return ServicesGrid.this.getIcon(style);
 				
 			}
@@ -567,7 +571,7 @@ public class ServicesGrid {
 		public class OpPerSecond {
 			
 			public Icon getIcon() {
-				String style = WebUiUtils.retrieveAttribute(By.xpath(WebConstants.Xpath.pathToEDSOpPerSecond + WebConstants.Xpath.pathToIconInEDSGrid), "class",driver);
+				String style = helper.retrieveAttribute(By.xpath(WebConstants.Xpath.pathToEDSOpPerSecond + WebConstants.Xpath.pathToIconInEDSGrid), "class",driver);
 				return ServicesGrid.this.getIcon(style);
 				
 			}

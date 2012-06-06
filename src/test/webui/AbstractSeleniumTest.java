@@ -139,10 +139,16 @@ public abstract class AbstractSeleniumTest extends AbstractLocalCloudTest {
 	}
 	
 	private LoginPage getLoginPage(Selenium selenium, WebDriver driver) {
-		if (admin.getGroups().length == 0) {
-			throw new IllegalStateException("Expected at least one lookupgroup");
+		if (admin.getLocators().length > 0) {
+			return new LoginPage(selenium, driver, admin.getLocators());	
 		}
-		return new LoginPage(selenium, driver, admin.getGroups()[0]);
+		
+		if (admin.getGroups().length > 0 ) {
+			return new LoginPage(selenium, driver, admin.getGroups()[0]);
+		}
+		
+		throw new IllegalStateException("Expected at least one lookupgroup or lookuplocator");
+		
 	}
 	
 	public boolean verifyAlertThrown() {

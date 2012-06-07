@@ -2,6 +2,7 @@ package test.cli.cloudify.cloud;
 
 import java.io.IOException;
 
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.Test;
 
 import com.sun.jersey.api.client.Client;
@@ -13,6 +14,8 @@ import framework.utils.LogUtils;
 import framework.utils.ScriptUtils;
 
 public class ExamplesTest extends AbstractCloudTest {
+
+	private String applicationName;
 
 	public ExamplesTest() {
 		LogUtils.log("Instansiated " + ExamplesTest.class.getName());
@@ -29,12 +32,14 @@ public class ExamplesTest extends AbstractCloudTest {
 			throws IOException, InterruptedException {
 		doTest(cloudName, "petclinic", "petclinic");
 	}
+	
 
 	// petclinic-simple is covered by {@link ScalingRulesCloudTest}
 
 	protected void doTest(String cloudName, String applicationFolderName, String applicationName) throws IOException, InterruptedException {
 		LogUtils.log("installing application " + applicationName + " on " + cloudName);
 		setCloudToUse(cloudName);
+		this.applicationName = applicationName;
 		String applicationPath = ScriptUtils.getBuildPath() + "/recipes/apps/" + applicationFolderName;
 		try {
 			installApplicationAndWait(applicationPath, applicationName);
@@ -62,6 +67,26 @@ public class ExamplesTest extends AbstractCloudTest {
 				if (output.contains(applicationName)) {
 					uninstallApplicationAndWait(applicationName);			
 				}
+			}
+		}
+	}
+	
+	@AfterMethod
+	public void afterTest() {
+		if ((getService() != null) && (getService().getRestUrls() != null)) {
+			String command = "connect " + getRestUrl() + ";list-applications";
+			String output;
+			try {
+				output = CommandTestUtils.runCommandAndWait(command);
+				if (output.contains(applicationName)) {
+					uninstallApplicationAndWait(this.applicationName);			
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+				AssertFail(e.getMessage());
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+				AssertFail(e.getMessage());
 			}
 		}
 	}

@@ -16,6 +16,7 @@ import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.domain.Location;
+import org.jclouds.ec2.compute.options.EC2TemplateOptions;
 
 import test.cli.cloudify.cloud.services.CloudService;
 
@@ -49,9 +50,10 @@ public class JcloudsUtils {
 		
 		cloudName = service.getCloudName();
 		
+		LogUtils.log("creating context for " + cloudName);
 		if(cloudName.equalsIgnoreCase("ec2"))
 			context = new ComputeServiceContextFactory().createContext("aws-ec2", service.getUser(), service.getApiKey());
-		if(cloudName.equalsIgnoreCase("ec2-win")){
+		else if(cloudName.equalsIgnoreCase("ec2-win")){
 			
 			Properties props = new Properties();
 			props.put("jclouds.ec2.ami-query", "");
@@ -76,7 +78,7 @@ public class JcloudsUtils {
 		else if(cloudName.equalsIgnoreCase("rsopenstack"))
 			context = new ComputeServiceContextFactory().createContext("cloudservers-us", service.getUser(), service.getApiKey());
 		else
-			LogUtils.log("Failed to create context: invalid cloud name.");
+			LogUtils.log("Failed to create context: invalid cloud name: " + cloudName);
 	}
 	
 	/**
@@ -116,8 +118,14 @@ public class JcloudsUtils {
 		
 		Template template = null;
 		
-		if(cloudName.equalsIgnoreCase("ec2"))
+		if(cloudName.equalsIgnoreCase("ec2")){
 			template = getTemplateBuilder().imageId("us-east-1/ami-76f0061f").minRam(1600).hardwareId("m1.small").locationId("us-east-1").build();
+			template.getOptions().as(EC2TemplateOptions.class).keyPair("cloud-demo").securityGroups("default");
+		}
+		else if(cloudName.equalsIgnoreCase("ec2-win")){
+			template = getTemplateBuilder().imageId("us-east-1/ami-a6b81ccf").minRam(1600).hardwareId("m1.large").locationId("us-east-1c").build();
+			template.getOptions().as(EC2TemplateOptions.class).keyPair("cloud-demo").securityGroups("default");
+		}
 		else if(cloudName.equalsIgnoreCase("rsopenstack"))
 			template = getTemplateBuilder().imageId("118").minRam(1600).hardwareId("4").build();
 
@@ -125,7 +133,7 @@ public class JcloudsUtils {
 	}
 	
 	/**
-	 * Runs {@code count} nodes with the passed name and according to thr template.
+	 * Runs {@code count} nodes with the passed name and according to their template.
 	 * @param serverName
 	 * @param count
 	 * @param template
@@ -135,6 +143,7 @@ public class JcloudsUtils {
 		
 		Set<? extends NodeMetadata> nodes;
 		
+		LogUtils.log("creating nodes..");
 		if(template == null)
 			nodes = context.getComputeService().createNodesInGroup(serverName, count);
 		else
@@ -253,5 +262,4 @@ public class JcloudsUtils {
 		if(context != null)
 			context.close();
 	}
-	
 }

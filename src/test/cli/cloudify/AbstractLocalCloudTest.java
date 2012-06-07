@@ -521,7 +521,7 @@ public class AbstractLocalCloudTest extends AbstractTest {
 		for (final ProcessingUnit pu : admin.getProcessingUnits().getProcessingUnits()) {
 			if (!pu.getName().equals("webui") && !pu.getName().equals("rest")
 					&& !pu.getName().equals("cloudifyManagementSpace")) {
-				if (!pu.undeployAndWait(30,
+				if (!pu.undeployAndWait(60,
 						TimeUnit.SECONDS)) {
 					LogUtils.log("Failed to uninstall " + pu.getName());
 				} else {

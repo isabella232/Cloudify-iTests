@@ -21,13 +21,13 @@ public class ExamplesTest extends AbstractCloudTest {
 		LogUtils.log("Instansiated " + ExamplesTest.class.getName());
 	}
 
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 3, enabled = true, dataProvider = "supportedClouds")
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true, dataProvider = "supportedClouds")
 	public void testTravel(String cloudName)
 			throws IOException, InterruptedException {
 		doTest(cloudName, "travel", "travel");
 	}
 
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 3, enabled = true, dataProvider = "supportedCloudsWithoutByon")
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true, dataProvider = "supportedCloudsWithoutByon")
 	public void testPetclinic(String cloudName)
 			throws IOException, InterruptedException {
 		doTest(cloudName, "petclinic", "petclinic");

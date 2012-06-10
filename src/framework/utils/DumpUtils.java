@@ -5,18 +5,14 @@ import java.io.IOException;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.*;
-
-import com.j_spaces.kernel.PlatformVersion;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.BasicResponseHandler;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.type.TypeFactory;
+import org.cloudifysource.restclient.GSRestClient;
 import org.openspaces.admin.Admin;
 import org.openspaces.admin.dump.DumpResult;
 
@@ -25,6 +21,7 @@ import com.gigaspaces.internal.dump.log.LogDumpProcessor;
 import com.gigaspaces.internal.dump.pu.ProcessingUnitsDumpProcessor;
 import com.gigaspaces.internal.dump.summary.SummaryDumpProcessor;
 import com.gigaspaces.internal.dump.thread.ThreadDumpProcessor;
+import com.j_spaces.kernel.PlatformVersion;
 
 import framework.tools.SGTestHelper;
 
@@ -68,39 +65,22 @@ public class DumpUtils {
         }
     }
 
-    public static void dump(URL url) throws Exception {
-        HttpClient client = new DefaultHttpClient();
-        HttpGet get = new HttpGet(url.toURI());
-        try {
 
-            String dumpOutput = client.execute(get, new BasicResponseHandler());
-            List<String> dumpByteArray = new ArrayList<String>();
-            Map<String, String> mapJson = new ObjectMapper().readValue(
-                    dumpOutput, TypeFactory.mapType(HashMap.class, String.class, String.class));
-            //dump of specific machine
-            if (mapJson.containsKey("response")) {
-                dumpByteArray.add(mapJson.get("response"));
-            } else {
-                for (String key : mapJson.keySet()) {
-                    if (!key.equals("status")) {
-                        dumpByteArray.add(mapJson.get(key));
-                    }
-                }
-            }
-            DateFormat date1 = new SimpleDateFormat("dd-MM-yyyy");
-            DateFormat hour = new SimpleDateFormat("HH-mm-ss-SSS");
-            for (String dumpByte : dumpByteArray) {
-                Date date = new Date();
-                zipFile = new File(getTestFolder().getAbsolutePath() + "/" + date1.format(date) + "_" + hour.format(date) + "_dump.zip");
-                byte[] decodedBytes = Base64.decodeBase64(dumpByte);
-                FileUtils.writeByteArrayToFile(zipFile, decodedBytes);
-                LogUtils.log("> Logs: " + zipFile.getAbsolutePath() + "\n");
-            }
-        } catch (Exception e) {
-            LogUtils.log("Dump Failed", e);
-        } finally {
-            client.getConnectionManager().shutdown();
-        }
+    public static void dumpMachines(String restUrl) throws Exception {
+    	String machinesDumpUri = "/service/dump/machines/";
+    	GSRestClient rc = new GSRestClient("", "", new URL(restUrl));
+    	DateFormat date1 = new SimpleDateFormat("dd-MM-yyyy");
+    	DateFormat hour = new SimpleDateFormat("HH-mm-ss-SSS");
+    	Map<String, Object> resultsMap = (Map) rc.get(machinesDumpUri);
+    	LogUtils.log("Machines dump downloaded successfully");
+
+    	for (String key : resultsMap.keySet()) {
+    		Date date = new Date();
+    		byte[] result = Base64.decodeBase64(resultsMap.get(key).toString());
+    		zipFile = new File(getTestFolder().getAbsolutePath() + "/" + date1.format(date) + "_" + hour.format(date) + "_ip:" + key.toString() + "_dump.zip");
+    		FileUtils.writeByteArrayToFile(zipFile, result);
+    		LogUtils.log("> Logs: " + zipFile.getAbsolutePath() + "\n");
+    	}
     }
 
     private static String[] getAllDumpOptions() {
@@ -166,6 +146,13 @@ public class DumpUtils {
     }
 
     public static void main(String[] args) throws IOException {
+    	try {
+			dumpMachines("http://15.185.169.193:8100");
+			System.out.println("sdf");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
         DateFormat date1 = new SimpleDateFormat("dd-MM-yyyy");
         DateFormat hour = new SimpleDateFormat("HH-mm-ss-SSS");
         Date date = new Date();

@@ -122,7 +122,7 @@ public abstract class AbstractCloudService implements CloudService {
 			if (restUrls != null) {
                 try {
                     url = restUrls[0] +"/service/dump/machines/?fileSizeLimit=50000000";
-                    DumpUtils.dump(new URL(url));
+                    DumpUtils.dumpMachines(restUrls[0]);
                 } catch (Exception e) {
                     LogUtils.log("Failed to create dump for this url - " + url, e);
                 }

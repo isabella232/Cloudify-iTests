@@ -2,7 +2,6 @@ package test.cli.cloudify.cloud;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -10,7 +9,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
-import framework.utils.DumpUtils;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterSuite;
@@ -32,6 +30,7 @@ import com.j_spaces.kernel.JSpaceUtilities;
 import framework.report.MailReporterProperties;
 import framework.tools.SGTestHelper;
 import framework.tools.SimpleMail;
+import framework.utils.DumpUtils;
 import framework.utils.LogUtils;
 
 public class AbstractCloudTest extends AbstractTest {
@@ -287,7 +286,7 @@ public class AbstractCloudTest extends AbstractTest {
         String url = null;
         try {
             url = restUrl +"/service/dump/machines/?fileSizeLimit=50000000";
-            DumpUtils.dump(new URL(url));
+            DumpUtils.dumpMachines(restUrl);
         } catch (Exception e) {
             LogUtils.log("Failed to create dump for this url - " + url, e);
         }
@@ -318,7 +317,7 @@ public class AbstractCloudTest extends AbstractTest {
         String url = null;
         try {
             url = restUrl +"/service/dump/machines/?fileSizeLimit=50000000";
-            DumpUtils.dump(new URL(url));
+            DumpUtils.dumpMachines(restUrl);
         } catch (Exception e) {
             LogUtils.log("Failed to create dump for this url - " + url, e);
         }

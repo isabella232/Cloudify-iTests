@@ -4,13 +4,14 @@ package test.cli.cloudify.cloud;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.io.FileUtils;
 import org.cloudifysource.dsl.cloud.Cloud;
 import org.cloudifysource.dsl.internal.DSLException;
 import org.cloudifysource.dsl.internal.ServiceReader;
@@ -36,48 +37,46 @@ public class KillManagementTest extends AbstractCloudTest{
 	
 	private URL petClinicUrl;
 	private ByonCloudService service;
-	private String cloudName = "byon";
 	private int numOManagementMachines = 2;
 	final private static String USERNAME = "tgrid";
 	final private static String PASSWORD = "tgrid";
-	private static final String LOOKUPGROUP = "byon_group";
+	private static final String TEST_UNIQUE_NAME = "KillManagementTest";
+	private static final String LOOKUPGROUP = "byon_kill_mgmt";
+	private static final String UPLOAD_FOLDER = "upload";
+	private static final String CLOUD_NAME = "byon";
+	
 	private volatile boolean run = true;
 	private ExecutorService threadPool;
 	private String restUrl;
-	private File byonUploadDir = new File(ScriptUtils.getBuildPath() , "tools/cli/plugins/esc/byon/upload");
-	private File backupStartManagementFile = new File(byonUploadDir, "bootstrap-management.backup");
-	private File originialBootstrapManagement = new File(ScriptUtils.getBuildPath() + "/tools/cli/plugins/esc/byon/upload/bootstrap-management.sh");
-	private File bootstrapManagementWithMulticast = new File(SGTestHelper.getSGTestRootDir() + "/apps/cloudify/cloud/byon/bootstrap-management-with-multicast.sh");
+	
+	
+	//private File backupStartManagementFile = new File(byonUploadDir, "bootstrap-management.backup");
+
 	
 	@BeforeMethod(enabled = true)
 	public void before() throws IOException, InterruptedException {
 		
-		// get the default service
-		service = (ByonCloudService) getDefaultService(cloudName);
-		
+		// get the cached service
+		setCloudService(CLOUD_NAME, TEST_UNIQUE_NAME, false);
 		if ((service != null) && service.isBootstrapped()) {
 			service.teardownCloud(); // tear down the existing byon cloud since we need a new bootstrap			
 		}
 		
-		service = new ByonCloudService();
 		service.setNumberOfManagementMachines(numOManagementMachines);
 		service.setMachinePrefix(this.getClass().getName());
-		
+
 		// replace the default bootstap-management.sh with a multicast version one
-		// first make a backup of the original file
-		FileUtils.copyFile(originialBootstrapManagement, backupStartManagementFile);
-		FileUtils.copyFileToDirectory(bootstrapManagementWithMulticast, byonUploadDir);
-		originialBootstrapManagement.delete();
-		FileUtils.copyFile(bootstrapManagementWithMulticast, originialBootstrapManagement);
-		
+		File standardBootstrapManagement = new File(service.getPathToCloudFolder() + "/" + UPLOAD_FOLDER, "bootstrap-management.sh");
+		File bootstrapManagementWithMulticast = new File(SGTestHelper.getSGTestRootDir() + "/apps/cloudify/cloud/byon/bootstrap-management-with-multicast.sh");
+		Map<File, File> filesToReplace = new HashMap<File, File>();
+		filesToReplace.put(standardBootstrapManagement, bootstrapManagementWithMulticast);
+		service.setFilesToReplace(filesToReplace);
 		
 		service.bootstrapCloud();
 		
 		if (service.getRestUrls() == null) {
 			Assert.fail("Test failed becuase the cloud was not bootstrapped properly");
 		}
-
-		setService(service);
 		
 		LogUtils.log("creating admin");
 		AdminFactory factory = new AdminFactory();
@@ -93,8 +92,9 @@ public class KillManagementTest extends AbstractCloudTest{
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
 	public void testPetclinic() throws Exception {
-		LogUtils.log("installing application petclinic on " + cloudName);
-		installApplicationAndWait(ScriptUtils.getBuildPath() + "/recipes/apps/petclinic", "petclinic");
+		LogUtils.log("installing application petclinic on " + CLOUD_NAME);
+		//installApplicationAndWait(ScriptUtils.getBuildPath() + "/recipes/apps/petclinic", "petclinic");
+		installApplicationAndWait(ScriptUtils.getBuildPath() + "/recipes/apps/petclinic-simple", "petclinic");
 
 		Future<Void> ping = threadPool.submit(new Callable<Void>(){
 			@Override
@@ -174,20 +174,25 @@ public class KillManagementTest extends AbstractCloudTest{
 		}
 		catch (Throwable e) {
 			LogUtils.log("caught an exception while tearing down " + service.getCloudName(), e);
-			sendTeardownCloudFailedMail(cloudName, e);
+			sendTeardownCloudFailedMail(CLOUD_NAME, e);
 		}
-		putService(new ByonCloudService());
-		restoreOriginalBootstrapManagementFile();
+		LogUtils.log("deleting test folder");
 	}
 	
-	private void restoreOriginalBootstrapManagementFile() throws IOException {
-		FileUtils.copyFile(backupStartManagementFile, originialBootstrapManagement);
+	/*private void restoreOriginalBootstrapManagementFile() throws IOException {
+		//delete the test's folder
+		try{
+			FileUtils.deleteDirectory(testCloudFolder);
+		} catch (Exception e) {
+			LogUtils.log("caught an exception while deleting test folder " + testCloudFolder.getAbsolutePath(), e);
+		}
+		/*FileUtils.copyFile(backupStartManagementFile, originialBootstrapManagement);
 		backupStartManagementFile.delete();
 		File bootstrapWithMulticastOnBuild = new File(byonUploadDir.getAbsolutePath() + "/bootstrap-management-with-multicast.sh");
 		if (bootstrapWithMulticastOnBuild.exists()) {
 			bootstrapWithMulticastOnBuild.delete();
-		}
-	}
+		}*/
+	//}
 
 }
 

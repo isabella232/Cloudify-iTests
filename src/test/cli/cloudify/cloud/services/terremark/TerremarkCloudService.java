@@ -6,13 +6,16 @@ import test.cli.cloudify.cloud.services.AbstractCloudService;
 
 public class TerremarkCloudService extends AbstractCloudService {
 
+	private static final String TERREMARK = "terremark";
 	private static TerremarkCloudService self = null;
 
-	private TerremarkCloudService() {};
+	private TerremarkCloudService(String uniqueName) {
+		super(uniqueName, TERREMARK);
+	};
 
-	public static TerremarkCloudService getService() {
+	public static TerremarkCloudService getService(String uniqueName) {
 		if (self == null) {
-			self = new TerremarkCloudService();
+			self = new TerremarkCloudService(uniqueName);
 		}
 		return self;	
 	}
@@ -35,7 +38,7 @@ public class TerremarkCloudService extends AbstractCloudService {
 
 
 	@Override
-	public void injectAuthenticationDetails() throws IOException {
+	public void injectServiceAuthenticationDetails() throws IOException {
 		// TODO Auto-generated method stub
 		
 	}

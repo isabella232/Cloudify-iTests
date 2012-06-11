@@ -3,9 +3,7 @@ package test.cli.cloudify.cloud;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
@@ -19,11 +17,7 @@ import org.testng.annotations.DataProvider;
 import test.AbstractTest;
 import test.cli.cloudify.CommandTestUtils;
 import test.cli.cloudify.cloud.services.CloudService;
-import test.cli.cloudify.cloud.services.byon.ByonCloudService;
-import test.cli.cloudify.cloud.services.ec2.Ec2CloudService;
-import test.cli.cloudify.cloud.services.ec2.Ec2WinCloudService;
-import test.cli.cloudify.cloud.services.hp.HpCloudService;
-import test.cli.cloudify.cloud.services.rackspace.RackspaceCloudService;
+import test.cli.cloudify.cloud.services.CloudServiceManager;
 
 import com.j_spaces.kernel.JSpaceUtilities;
 
@@ -35,58 +29,63 @@ import framework.utils.LogUtils;
 
 public class AbstractCloudTest extends AbstractTest {
 
-	private static final Map<String, CloudService> defaultServices = new HashMap<String, CloudService>();
-
 	private static String[][] SUPPORTED_CLOUDS = null;
 	protected static final String SUPPORTED_CLOUDS_PROP = "supported-clouds";
 	protected static final String BYON = "byon";
 	protected static final String OPENSTACK = "openstack";
 	protected static final String EC2 = "ec2";
-
 	private static final String EC2_WIN = "ec2-win";
-
 	private static final String RACKSPACE = "rsopenstack";
 	
-	private CloudService service;
+	private CloudService cloudService;
+	private CloudServiceManager cloudServiceManager = CloudServiceManager.getInstance();
 
 	public AbstractCloudTest() {
 		LogUtils.log("Instansiated " + AbstractCloudTest.class.getName());
 	}
-
-	public void putService(CloudService service) {
-		defaultServices.put(service.getCloudName(), service);
+	
+	/*public void setService(CloudService service) {
+		this.service = service;
+		cacheService(service);
+	}
+	
+	private void cacheService(CloudService service) {
+		if (allCloudServices.get(service.getCloudName()) == null) {
+			allCloudServices.put(service.getCloudName(), new HashMap<String, CloudService>());
+		}
+		allCloudServices.get(service.getCloudName()).put(service.getUniqueName(), service);
 	}
 
-	public CloudService getDefaultService(String cloudName) {
-		return defaultServices.get(cloudName);
-	}
-
+	public CloudService getCachedService(String cloudName, String serviceUniqueName) {
+		CloudService service = null;
+		if (allCloudServices.get(cloudName) != null) {
+			service = allCloudServices.get(cloudName).get(serviceUniqueName);
+		}
+		
+		return service;
+	}*/
 
 	/**
 	 * set the service CloudService instance to a specific cloud provider.
 	 * all install/uninstall commands will be executed on the specified cloud.
-	 * @param cloudName
+	 * @param cloudName The name of the requested service
+	 * @return CloudService The cached or created could service
 	 * @throws InterruptedException 
 	 * @throws IOException 
 	 */
-	public void setCloudToUse(String cloudName) throws IOException, InterruptedException {
-		service = defaultServices.get(cloudName);
+	public void setCloudService(String cloudName, String serviceUniqueName, boolean bootstrapService) throws IOException, InterruptedException {
+		cloudService = cloudServiceManager.getCloudService(cloudName, serviceUniqueName);
+		/*service = getCachedService(cloudName, serviceUniqueName);
 		if (service == null) {
-			Assert.fail("service for " + cloudName + " is null");
-		}
-		if (!service.isBootstrapped()) {
+			setService(createCloudService(cloudName, serviceUniqueName));
+		}*/
+		
+		if (!cloudService.isBootstrapped() && bootstrapService) {
 			LogUtils.log("service is not bootstrapped, bootstrapping service");
-			service.bootstrapCloud();
+			cloudService.bootstrapCloud();
 		}
 	}
 
-	public void setService(CloudService service) {
-		this.service = service;
-	}
-
-	public CloudService getService() {
-		return service;
-	}
 
 	@DataProvider(name = "supportedClouds")
 	public String[][] supportedClouds() {
@@ -133,21 +132,23 @@ public class AbstractCloudTest extends AbstractTest {
 	@BeforeSuite(alwaysRun = true, enabled = true)
 	public void setupDefaultServices() throws NoSuchMethodException, SecurityException {
 
-		setupCloudManagmentMethods();
+		//setupCloudManagmentMethods();
 		if(!isDevMode()){
 		
 			SUPPORTED_CLOUDS = toTwoDimentionalArray(System.getProperty(SUPPORTED_CLOUDS_PROP));
 			LogUtils.log("trying to teardown any existing clouds...");
 			teardownClouds(false);
+		} else {
+			setupCloudManagmentMethods();
 		}
 	}
 
 	private void setupCloudManagmentMethods() throws NoSuchMethodException, SecurityException {
-		defaultServices.put(BYON, new ByonCloudService());
+		/*defaultServices.put(BYON, new ByonCloudService());
 		defaultServices.put(OPENSTACK, new HpCloudService());
 		defaultServices.put(EC2, new Ec2CloudService());
 		defaultServices.put(EC2_WIN, new Ec2WinCloudService());
-		defaultServices.put(RACKSPACE, new RackspaceCloudService());
+		defaultServices.put(RACKSPACE, new RackspaceCloudService());*/
 	}
 
 	/**
@@ -178,15 +179,16 @@ public class AbstractCloudTest extends AbstractTest {
 
 	private void teardownClouds(boolean sendMail) {
 
-		for (int j = 0 ; j < SUPPORTED_CLOUDS.length ; j++){
-			String supportedCloud = SUPPORTED_CLOUDS[j][0];
+		for (CloudService cloudService : cloudServiceManager.getAllCloudServices()){
 			try{
-				defaultServices.get(supportedCloud).teardownCloud();
+				if (cloudService != null) {
+					cloudService.teardownCloud();
+				}
 			}
 			catch (Throwable e) {
-				LogUtils.log("caught an exception while tearing down " + supportedCloud, e);
+				LogUtils.log("caught an exception while tearing down " + cloudService.getCloudName(), e);
 				if (sendMail) {
-					sendTeardownCloudFailedMail(supportedCloud, e);
+					sendTeardownCloudFailedMail(cloudService.getCloudName(), e);
 				}
 			}
 		}
@@ -265,11 +267,11 @@ public class AbstractCloudTest extends AbstractTest {
 	}
 
 	protected String getRestUrl() {
-		if (service.getRestUrls() == null) {
+		if (cloudService.getRestUrls() == null) {
 			Assert.fail("Test failed becuase the cloud was not bootstrapped properly");
 		}
 
-		String restUrl = service.getRestUrls()[0];
+		String restUrl = cloudService.getRestUrls()[0];
 		return restUrl;
 
 	}
@@ -387,5 +389,9 @@ public class AbstractCloudTest extends AbstractTest {
 		}
 
 		return result;
+	}
+	
+	public CloudService getService() {
+		return cloudService;
 	}
 }

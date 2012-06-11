@@ -1,30 +1,23 @@
 package test.cli.cloudify.cloud.services.rackspace;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.io.FileUtils;
-
 import test.cli.cloudify.cloud.services.AbstractCloudService;
-import framework.tools.SGTestHelper;
 import framework.utils.IOUtils;
-import framework.utils.ScriptUtils;
 
 public class RackspaceCloudService extends AbstractCloudService {
 	
-	private String cloudName = "rsopenstack";
+	private static final String CLOUD_NAME = "rsopenstack";
 	private String user = "gsrackspace";
 	private String apiKey = "1ee2495897b53409f4643926f1968c0c";
 	private String tenant = "658142";
 
-	public String getCloudName() {
-		return cloudName;
-	}
+	public RackspaceCloudService(String uniqueName) {
+		super(uniqueName, CLOUD_NAME);
+	
 
-	public void setCloudName(String cloudName) {
-		this.cloudName = cloudName;
 	}
 
 	public String getUser() {
@@ -52,17 +45,16 @@ public class RackspaceCloudService extends AbstractCloudService {
 	}
 
 	@Override
-	public void injectAuthenticationDetails() throws IOException {
+	public void injectServiceAuthenticationDetails() throws IOException {
 	
-		String cloudTestPath = (SGTestHelper.getSGTestRootDir() + "/apps/cloudify/cloud/" + cloudName).replace('\\', '/');
 
 		// cloud plugin should include recipe that includes secret key 
-		File cloudPluginDir = new File(ScriptUtils.getBuildPath() , "tools/cli/plugins/esc/" + cloudName + "/");
-		File originalCloudDslFile = new File(cloudPluginDir, cloudName + "-cloud.groovy");
-		File backupCloudDslFile = new File(cloudPluginDir, cloudName + "-cloud.backup");
+		/*File cloudPluginDir = new File(ScriptUtils.getBuildPath() , "tools/cli/plugins/esc/" + getCloudName() + "/");
+		File originalCloudDslFile = new File(cloudPluginDir, getCloudName() + "-cloud.groovy");
+		File backupCloudDslFile = new File(cloudPluginDir, getCloudName() + "-cloud.backup");
 
 		// first make a backup of the original file
-		FileUtils.copyFile(originalCloudDslFile, backupCloudDslFile);
+		FileUtils.copyFile(originalCloudDslFile, backupCloudDslFile);*/
 		
 		Map<String, String> propsToReplace = new HashMap<String,String>();
 		propsToReplace.put("USER_NAME", user);
@@ -73,7 +65,7 @@ public class RackspaceCloudService extends AbstractCloudService {
 		propsToReplace.put("numberOfManagementMachines 1", "numberOfManagementMachines "  + numberOfManagementMachines);
 		propsToReplace.put("\"openstack.wireLog\": \"false\"", "\"openstack.wireLog\": \"true\"");
 		
-		IOUtils.replaceTextInFile(originalCloudDslFile, propsToReplace);
+		IOUtils.replaceTextInFile(getPathToCloudGroovy(), propsToReplace);
 	}
 	
 	

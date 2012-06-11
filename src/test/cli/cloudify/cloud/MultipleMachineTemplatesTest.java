@@ -52,6 +52,7 @@ public class MultipleMachineTemplatesTest extends AbstractCloudTest{
 	protected String TEMPLATE_2_IPs = "192.168.9.120,192.168.9.125";
 	protected String TEMPLATE_3_IPs = "192.168.9.126";
 	private static final String DEFAULT_MACHINE_TEMPLATE = "SMALL_LINUX";
+	private static final String CLOUD_SERVICE_UNIQUE_NAME = "MultipleMachineTemplatesTest";
 	private static final int MONGOD_DEFAULT_INSTANCES_NUM = 2;
 	private static final int MONGOD_INSTANCES_NUM = 1;
 	public final static long MY_OPERATION_TIMEOUT = 1 * 60 * 1000;
@@ -59,14 +60,11 @@ public class MultipleMachineTemplatesTest extends AbstractCloudTest{
 	@BeforeClass(enabled = true)
 	public void before() throws IOException, InterruptedException, DSLException {
 		
-		// get the default service
-		service = (ByonCloudService) getDefaultService(cloudName);
-		
+		setCloudService(cloudName, CLOUD_SERVICE_UNIQUE_NAME, false);
 		if ((service != null) && service.isBootstrapped()) {
 			service.teardownCloud(); // tear down the existing byon cloud since we need a new bootstrap			
 		}
 		
-		service = new ByonCloudService();
 		service.setMachinePrefix(this.getClass().getName());
 
 		backupAndReplaceOriginalFile(originialBootstrapManagement,SGTestHelper.getSGTestRootDir() + "/apps/cloudify/cloud/byon/bootstrap-management-multicast-and-byon-java-home.sh");
@@ -83,6 +81,7 @@ public class MultipleMachineTemplatesTest extends AbstractCloudTest{
 
 		IOUtils.replaceTextInFile(newCloudConfFile.getAbsolutePath(), replaceMap);
 
+		//TODO : this is dangerous, need to fix
 		backupAndReplaceMachineTemplateInService("mongos", "TEMPLATE_1");
 		backupAndReplaceMachineTemplateInService("mongod", "TEMPLATE_2");
 		backupAndReplaceMachineTemplateInService("mongoConfig", "TEMPLATE_1");
@@ -94,8 +93,6 @@ public class MultipleMachineTemplatesTest extends AbstractCloudTest{
 		if (service.getRestUrls() == null) {
 			Assert.fail("Test failed becuase the cloud was not bootstrapped properly");
 		}
-
-		setService(service);
 
 		LogUtils.log("creating admin");
 		AdminFactory factory = new AdminFactory();
@@ -173,7 +170,7 @@ public class MultipleMachineTemplatesTest extends AbstractCloudTest{
 	/**
 	 * tests the uninstall operation - uninstalls and checks that each application service is down.
 	 */
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true, priority = 2)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false, priority = 2)
 	public void testPetclinicUninstall(){
 
 		try {
@@ -252,7 +249,7 @@ public class MultipleMachineTemplatesTest extends AbstractCloudTest{
 	/**
 	 * tests the teardown operation - tearsdown the byon cloud and checks that each management service is down.
 	 */
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true, priority = 3)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false, priority = 3)
 	public void testPetclinicTeardownByon(){
 		
 		teardownFlag = true;
@@ -296,10 +293,10 @@ public class MultipleMachineTemplatesTest extends AbstractCloudTest{
 
 	@AfterClass(alwaysRun = true)
 	public void teardown() throws IOException, InterruptedException {
-
-		putService(new ByonCloudService());
+		
+		/*setService(new ByonCloudService(CLOUD_SERVICE_UNIQUE_NAME));
 		restoreOriginalBootstrapManagementFile();
-		restoreOriginalByonCloudFile();
+		restoreOriginalByonCloudFile();*/
 		restoreOriginalServiceFile("mongos");
 		restoreOriginalServiceFile("mongod");
 		restoreOriginalServiceFile("tomcat");
@@ -309,9 +306,7 @@ public class MultipleMachineTemplatesTest extends AbstractCloudTest{
 			service.teardownCloud();
 	}
 
-
-
-	private void restoreOriginalBootstrapManagementFile() throws IOException {
+/*	private void restoreOriginalBootstrapManagementFile() throws IOException {
 		originialBootstrapManagement.delete();
 		FileUtils.moveFile(backupStartManagementFile, originialBootstrapManagement);
 
@@ -321,7 +316,7 @@ public class MultipleMachineTemplatesTest extends AbstractCloudTest{
 		originialCloudConf.delete();
 		FileUtils.moveFile(backupCloudConfFile, originialCloudConf);
 
-	}
+	}*/
 	
 	private void restoreOriginalServiceFile(String serviceName) throws IOException {
 		
@@ -335,6 +330,3 @@ public class MultipleMachineTemplatesTest extends AbstractCloudTest{
 	}
 
 }
-
-
-

@@ -34,6 +34,7 @@ import framework.utils.WebUtils;
 public class RepetativeInstallAndUninstallStockDemoWithProblemAtInstallEc2Test extends AbstractCloudTest {
 
 	private static final String STOCKDEMO_APP_NAME = "stockdemo";
+	private static final String CLOUD_SERVICE_UNIQUE_NAME = "RepetativeInstallAndUninstallStockDemoWithProblemAtInstallEc2Test";
 	private final int repetitions = 1;
 	private String cassandraPostStartScriptPath = null;
 	private String newPostStartScriptPath = null;
@@ -64,11 +65,9 @@ public class RepetativeInstallAndUninstallStockDemoWithProblemAtInstallEc2Test e
 		}
 		FileUtils.copyFileToDirectory(xapLicense, cloudifyOverrides);
 		
-		
-		service = new Ec2CloudService();
+		setCloudService("EC2", CLOUD_SERVICE_UNIQUE_NAME, false);
 		service.setMachinePrefix(this.getClass().getName() + CloudTestUtils.SGTEST_MACHINE_PREFIX);
 		service.bootstrapCloud();
-		super.setService(service);
 		restUrl = super.getRestUrl();
 		String hostIp = restUrl.substring(0, restUrl.lastIndexOf(':'));
 		stockdemoUrl = new URL(hostIp + ":8080/stockdemo.StockDemo/");

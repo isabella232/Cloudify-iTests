@@ -2,6 +2,8 @@ package test.cli.cloudify.cloud;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
@@ -19,7 +21,6 @@ import framework.tools.SGTestHelper;
 import framework.utils.AssertUtils;
 import framework.utils.AssertUtils.RepetitiveConditionProvider;
 import framework.utils.LogUtils;
-import framework.utils.ScriptUtils;
 
 /**
  * This test makes a bootstrap on ec2 fail by changing the JAVA_HOME path to a bad one in the bootstrap-management.sh file.
@@ -30,6 +31,7 @@ import framework.utils.ScriptUtils;
  */
 public class BootstrapFailureEc2Test extends AbstractCloudTest{
 
+	private static final String CLOUD_SERVICE_UNIQUE_NAME = "BootstrapFailureEc2Test";
 	private Ec2CloudService service;
 	private NodeMetadata managementMachine;
 	private long curTestTime;
@@ -40,12 +42,17 @@ public class BootstrapFailureEc2Test extends AbstractCloudTest{
 	@BeforeMethod
 	public void init() throws IOException, InterruptedException {	
 		
-		ec2UploadDir = new File(ScriptUtils.getBuildPath() , "tools/cli/plugins/esc/ec2/upload");
-		originialBootstrapManagement = new File(ec2UploadDir, "bootstrap-management.sh");
-		backupAndReplaceOriginalFile(originialBootstrapManagement,SGTestHelper.getSGTestRootDir() + "/apps/cloudify/cloud/ec2/bad-bootstrap-management.sh");
+		setCloudService("EC2", CLOUD_SERVICE_UNIQUE_NAME, false);
+		service = (Ec2CloudService)getService();
+		// replace the default bootstap-management.sh with a bad version one
+		//ec2UploadDir = new File(ScriptUtils.getBuildPath() , "tools/cli/plugins/esc/ec2/upload");
+		File standardBootstrapManagement = new File(service.getPathToCloudFolder() + "/upload", "bootstrap-management.sh");
+		File bootstrapManagementWithMulticast = new File(SGTestHelper.getSGTestRootDir() + "/apps/cloudify/cloud/ec2/bad-bootstrap-management.sh");
+		Map<File, File> filesToReplace = new HashMap<File, File>();
+		filesToReplace.put(standardBootstrapManagement, bootstrapManagementWithMulticast);
+		service.setFilesToReplace(filesToReplace);
 		
 		curTestTime = System.currentTimeMillis();
-		service = new Ec2CloudService();
 		service.setMachinePrefix(this.getClass().getName() + "_" + CloudTestUtils.SGTEST_MACHINE_PREFIX + curTestTime + "_");	
 	}
 	
@@ -57,7 +64,7 @@ public class BootstrapFailureEc2Test extends AbstractCloudTest{
 		try {
 			service.bootstrapCloud();
 		} catch (AssertionError ae) {
-			super.setService(service);
+			//super.setService(service);
 		}
 	
 		JcloudsUtils.createContext(service);

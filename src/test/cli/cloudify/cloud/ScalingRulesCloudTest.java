@@ -38,6 +38,7 @@ import framework.utils.WebUtils;
  */
 public class ScalingRulesCloudTest extends AbstractCloudTest {
 
+	private static final String CLOUD_SERVICE_UNIQUE_NAME = "ScalingRulesCloudTest";
 	private static final String APPLICATION_FOLDERNAME = "petclinic-simple";
 	private static final String APPLICATION_NAME = "petclinic";
 	private static final String TOMCAT_SERVICE_NAME = "tomcat";
@@ -70,7 +71,7 @@ public class ScalingRulesCloudTest extends AbstractCloudTest {
 	public void testPetclinicSimpleScalingRules(String cloudName) throws Exception {		
 		
 		LogUtils.log("installing application " + APPLICATION_NAME + " on " + cloudName);
-		setCloudToUse(cloudName);
+		setCloudService(cloudName, CLOUD_SERVICE_UNIQUE_NAME, true);
 		String applicationPath = ScriptUtils.getBuildPath() + "/recipes/apps/" + APPLICATION_FOLDERNAME;
 		installApplicationAndWait(applicationPath, APPLICATION_NAME);
 		

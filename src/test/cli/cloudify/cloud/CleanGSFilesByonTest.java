@@ -31,13 +31,15 @@ import org.apache.commons.vfs2.VFS;
 import org.apache.commons.vfs2.provider.sftp.SftpFileSystemConfigBuilder;
 import org.cloudifysource.dsl.cloud.FileTransferModes;
 import org.cloudifysource.dsl.internal.CloudifyConstants;
+import org.cloudifysource.esc.util.Utils;
 import org.openspaces.admin.AdminFactory;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import test.cli.cloudify.CloudTestUtils;
-import test.cli.cloudify.cloud.services.byon.ByonCloudService;
+import test.cli.cloudify.CommandTestUtils;
+import test.cli.cloudify.cloud.services.CloudService;
 import framework.utils.LogUtils;
 
 public class CleanGSFilesByonTest extends AbstractCloudTest {
@@ -46,30 +48,48 @@ public class CleanGSFilesByonTest extends AbstractCloudTest {
 	private static final String DEFAULT_PASSWORD = "tgrid";
 	private static final String TEST_MACHINES_LIST = "ipList";
 	private static final String ITEMS_NOT_DELETED_MSG = "The GS files and folders were not deleted on teardown.";
+	//TODO : TEST_CLOUD_UNI...
+	private static final String TEST_UNIQUE_NAME = "CleanGSFilesByonTest";
+	private static final String CLOUD_NAME = "byon";
 	// timeout for SFTP connection
 	private static final Integer SFTP_DISCONNECT_DETECTION_TIMEOUT_MILLIS = Integer.valueOf(10 * 1000);
 	
-	private ByonCloudService service;
 	private Set<String> hosts = null;
 
 	@BeforeMethod
-	public void bootstrap() throws IOException, InterruptedException {	
-		service = new ByonCloudService();
+	public void bootstrap() throws IOException, InterruptedException {
+		setCloudService(CLOUD_NAME, TEST_UNIQUE_NAME, false);
+		CloudService service = getService();
+		if ((service != null) && service.isBootstrapped()) {
+			service.teardownCloud(); // tear down the existing byon cloud since we need a new bootstrap			
+		}
 		service.setMachinePrefix(this.getClass().getName() + CloudTestUtils.SGTEST_MACHINE_PREFIX);
 		service.bootstrapCloud();
 	}
 	
 	@AfterMethod(alwaysRun = true)
 	public void teardown() throws IOException {
+		boolean needToTeardown = false;
 		try {
-			service.teardownCloud();
-			//TODO : verify the files were deleted
+			String[] restUrls = getService().getRestUrls();
+			for (String url : restUrls) {
+				String connectCommand = "connect " + url + ";";
+				String output = CommandTestUtils.runCommandExpectedFail(connectCommand);
+				if (output.toLowerCase().contains("connected successfully".toLowerCase())) {
+					//one of the servers is up, need to tear down
+					needToTeardown = true;
+					break;
+				}
+			}
+			
+			if (needToTeardown) {
+				getService().teardownCloud();
+			}
 		}
 		catch (Throwable e) {
 			LogUtils.log("caught an exception while tearing down byon", e);
 			sendTeardownCloudFailedMail("byon", e);
 		}
-		LogUtils.log("restoring original bootstrap-management file");
 	}
 	
 	/**
@@ -96,11 +116,16 @@ public class CleanGSFilesByonTest extends AbstractCloudTest {
 		
 		admin = factory.createAdmin();
 		hosts = admin.getMachines().getHostsByAddress().keySet();
-		service.teardownCloud();
+		getService().teardownCloud();
 		for (String address : hosts) {
 			//using the default credentials to access our lab machines
-			assertTrue(ITEMS_NOT_DELETED_MSG, !fileSystemObjectsExist(address, DEFAULT_USER, DEFAULT_PASSWORD, null /*key file*/,
-					itemsToClean, FileTransferModes.SCP, false));
+			try{
+				Utils.validateConnection(address, CloudifyConstants.SSH_PORT);
+				assertTrue(ITEMS_NOT_DELETED_MSG, !fileSystemObjectsExist(address, DEFAULT_USER, DEFAULT_PASSWORD, null /*key file*/,
+						itemsToClean, FileTransferModes.SCP, false));
+			} catch (Exception e) {
+				//nothing to do - if the server can't be reached there is no need to verify deletion.
+			}
 		}
 	}
 	

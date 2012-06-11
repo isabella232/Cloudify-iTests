@@ -57,4 +57,10 @@ public interface CloudService {
 	
 	public String getApiKey();
 	
+	public String getUniqueName();
+	
+	public String getServiceFolder();
+	
+	public void setMachinePrefix(String machinePrefix);
+	
 }

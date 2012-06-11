@@ -1,26 +1,25 @@
 package test.cli.cloudify.cloud.services.hp;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.io.FileUtils;
-
 import test.cli.cloudify.cloud.services.AbstractCloudService;
-import framework.tools.SGTestHelper;
-import framework.utils.AssertUtils;
 import framework.utils.IOUtils;
-import framework.utils.ScriptUtils;
 
 public class HpCloudService extends AbstractCloudService {
 	
+	private static final String CLOUD_NAME = "openstack";
 	private String tenant = "24912589714038";
-	private String cloudName = "openstack";
+	private String cloudName = CLOUD_NAME;
 	private String user = "98173213380893";
 	private String apiKey = "C5nobOW90bhnCmE5AQaLaJ0Ubd8UISPxGih";
 	private String pemFileName = "sgtest-hp";
 
+	public HpCloudService(String uniqueName) {
+		super(uniqueName, CLOUD_NAME);
+	}
+	
 	public String getTenant() {
 		return tenant;
 	}
@@ -64,9 +63,9 @@ public class HpCloudService extends AbstractCloudService {
 
 
 	@Override
-	public void injectAuthenticationDetails() throws IOException {
+	public void injectServiceAuthenticationDetails() throws IOException {
 		
-		String cloudTestPath = (SGTestHelper.getSGTestRootDir() + "/apps/cloudify/cloud/" + cloudName).replace('\\', '/');
+		/*String cloudTestPath = (SGTestHelper.getSGTestRootDir() + "/apps/cloudify/cloud/" + cloudName).replace('\\', '/');
 		String sshKeyPemName = pemFileName + ".pem";
 
 		// cloud plugin should include recipe that includes secret key 
@@ -75,7 +74,7 @@ public class HpCloudService extends AbstractCloudService {
 		File backupCloudDslFile = new File(cloudPluginDir, cloudName + "-cloud.backup");
 
 		// first make a backup of the original file
-		FileUtils.copyFile(originalCloudDslFile, backupCloudDslFile);
+		FileUtils.copyFile(originalCloudDslFile, backupCloudDslFile);*/
 		
 		Map<String, String> propsToReplace = new HashMap<String,String>();
 		propsToReplace.put("ENTER_USER", user);
@@ -88,11 +87,11 @@ public class HpCloudService extends AbstractCloudService {
 		propsToReplace.put("numberOfManagementMachines 1", "numberOfManagementMachines "  + numberOfManagementMachines);
 		propsToReplace.put("\"openstack.wireLog\": \"false\"", "\"openstack.wireLog\": \"true\"");
 		
-		IOUtils.replaceTextInFile(originalCloudDslFile, propsToReplace);
+		IOUtils.replaceTextInFile(getPathToCloudGroovy(), propsToReplace);
 
-		// upload dir needs to contain the sshKeyPem 
+/*		// upload dir needs to contain the sshKeyPem 
 		File targetPem = new File(ScriptUtils.getBuildPath(), "tools/cli/plugins/esc/" + cloudName + "/upload/" + sshKeyPemName);
 		FileUtils.copyFile(new File(cloudTestPath, sshKeyPemName), targetPem);
-		AssertUtils.assertTrue("File not found", targetPem.isFile());		
+		AssertUtils.assertTrue("File not found", targetPem.isFile());*/		
 	}
 }

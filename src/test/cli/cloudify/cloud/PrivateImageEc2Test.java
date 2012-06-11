@@ -15,16 +15,17 @@ import framework.utils.ScriptUtils;
 
 public class PrivateImageEc2Test extends AbstractCloudTest {
 	private Ec2CloudService service;
+	private static final String CLOUD_SERVICE_UNIQUE_NAME = "PrivateImageEc2Test";
 
 	@BeforeMethod
 	public void bootstrap() throws IOException, InterruptedException {	
-		service = new Ec2CloudService();
+		service = new Ec2CloudService(CLOUD_SERVICE_UNIQUE_NAME);
 		service.setAdditionalPropsToReplace(new HashMap<String, String>());
 		service.getAdditionalPropsToReplace().put("imageId \"us-east-1/ami-76f0061f\"", "imageId \"us-east-1/ami-93b068fa\"");
 		service.getAdditionalPropsToReplace().put("connectToPrivateIp true", "connectToPrivateIp true\n\t\tremoteUsername \"ec2-user\"\n");
 		service.setMachinePrefix(this.getClass().getName() + CloudTestUtils.SGTEST_MACHINE_PREFIX);
 		service.bootstrapCloud();
-		super.setService(service);
+		//super.setService(service);
 		super.getRestUrl();
 	}
 	

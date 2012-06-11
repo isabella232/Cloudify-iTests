@@ -15,8 +15,10 @@ import framework.utils.ScriptUtils;
 
 public class ExamplesTest extends AbstractCloudTest {
 
+	private static final String CLOUD_SERVICE_UNIQUE_NAME = "ExamplesTest";
 	private String applicationName;
 
+	
 	public ExamplesTest() {
 		LogUtils.log("Instansiated " + ExamplesTest.class.getName());
 	}
@@ -38,7 +40,7 @@ public class ExamplesTest extends AbstractCloudTest {
 
 	protected void doTest(String cloudName, String applicationFolderName, String applicationName) throws IOException, InterruptedException {
 		LogUtils.log("installing application " + applicationName + " on " + cloudName);
-		setCloudToUse(cloudName);
+		setCloudService(cloudName, CLOUD_SERVICE_UNIQUE_NAME, true);
 		this.applicationName = applicationName;
 		String applicationPath = ScriptUtils.getBuildPath() + "/recipes/apps/" + applicationFolderName;
 		try {

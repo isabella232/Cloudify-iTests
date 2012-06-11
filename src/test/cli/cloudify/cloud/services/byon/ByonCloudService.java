@@ -15,30 +15,27 @@
 ******************************************************************************/
 package test.cli.cloudify.cloud.services.byon;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.io.FileUtils;
-
 import test.cli.cloudify.cloud.services.AbstractCloudService;
 import framework.utils.IOUtils;
-import framework.utils.ScriptUtils;
 
 public class ByonCloudService extends AbstractCloudService {
 
-	private static final String cloudName = "byon";
+	private static final String BYON_CLOUD_NAME = "byon";
 	private static final String BYON_CLOUD_USER= "tgrid";
 	private static final String BYON_CLOUD_PASSWORD = "tgrid";
 	
 	private String ipList = System.getProperty("ipList");
 
-	public ByonCloudService(){
-		
+	public ByonCloudService(String uniqueName) {
+		super(uniqueName, BYON_CLOUD_NAME);
 	}
 	
-	public ByonCloudService(Map<String,String> additionalPropsToReplace) {
+	public ByonCloudService(String uniqueName, Map<String,String> additionalPropsToReplace) {
+		super(uniqueName, BYON_CLOUD_NAME);
 		this.additionalPropsToReplace = additionalPropsToReplace;
 	}
 	
@@ -50,19 +47,9 @@ public class ByonCloudService extends AbstractCloudService {
 		return ipList;
 	}
 
-
-
 	@Override
-	public void injectAuthenticationDetails() throws IOException {
-
-		// cloud plugin should include recipe that includes secret key 
-		File cloudPluginDir = new File(ScriptUtils.getBuildPath() , "tools/cli/plugins/esc/" + cloudName + "/");
-		File originalCloudDslFile = new File(cloudPluginDir, cloudName + "-cloud.groovy");
-		File backupCloudDslFile = new File(cloudPluginDir, cloudName + "-cloud.backup");
-
-		// first make a backup of the original file
-		FileUtils.copyFile(originalCloudDslFile, backupCloudDslFile);
-		
+	public void injectServiceAuthenticationDetails() throws IOException {
+	
 		Map<String, String> propsToReplace = new HashMap<String,String>();
 		propsToReplace.put("ENTER_USER", BYON_CLOUD_USER);
 		propsToReplace.put("ENTER_PASSWORD", BYON_CLOUD_PASSWORD);
@@ -72,13 +59,8 @@ public class ByonCloudService extends AbstractCloudService {
 			propsToReplace.put("0.0.0.0", ipList);
 		propsToReplace.put("numberOfManagementMachines 1", "numberOfManagementMachines "  + numberOfManagementMachines);
 		
-		IOUtils.replaceTextInFile(originalCloudDslFile, propsToReplace);
+		IOUtils.replaceTextInFile(getPathToCloudGroovy(), propsToReplace);
 		
-	}
-
-	@Override
-	public String getCloudName() {
-		return cloudName;
 	}
 
 	@Override

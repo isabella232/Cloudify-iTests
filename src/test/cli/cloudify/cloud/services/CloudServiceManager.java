@@ -26,7 +26,6 @@ import test.cli.cloudify.cloud.services.ec2.Ec2CloudService;
 import test.cli.cloudify.cloud.services.ec2.Ec2WinCloudService;
 import test.cli.cloudify.cloud.services.hp.HpCloudService;
 import test.cli.cloudify.cloud.services.rackspace.RackspaceCloudService;
-import test.cli.cloudify.cloud.services.terremark.TerremarkCloudService;
 
 public class CloudServiceManager {
 
@@ -86,19 +85,20 @@ public class CloudServiceManager {
 	private CloudService createCloudService(String cloudName, String serviceUniqueName) {
 		CloudService cloudService = null;
 
-		if ("BYON".equalsIgnoreCase(cloudName)) {
+		if ("byon".equalsIgnoreCase(cloudName)) {
 			cloudService = new ByonCloudService(serviceUniqueName);
-		} else if ("EC2".equalsIgnoreCase(cloudName)) {
+		} else if ("ec2".equalsIgnoreCase(cloudName)) {
 			cloudService = new Ec2CloudService(serviceUniqueName);
-		} else if ("EC2_Win".equalsIgnoreCase(cloudName)) {
+		} else if ("ec2_Win".equalsIgnoreCase(cloudName)) {
 			cloudService = new Ec2WinCloudService(serviceUniqueName);
-		} else if ("HP".equalsIgnoreCase(cloudName)) {
+		} else if ("openstack".equalsIgnoreCase(cloudName)) {
 			cloudService = new HpCloudService(serviceUniqueName);
-		} else if ("Rackspace".equalsIgnoreCase(cloudName)) {
+		} else if ("rsopenstack".equalsIgnoreCase(cloudName)) {
 			cloudService = new RackspaceCloudService(serviceUniqueName);
-		} else if ("Terremark".equalsIgnoreCase(cloudName)) {
-			cloudService = TerremarkCloudService.getService(serviceUniqueName);
 		}
+//		else if ("terremark".equalsIgnoreCase(cloudName)) {
+//			cloudService = TerremarkCloudService.getService(serviceUniqueName);
+//		}
 		return cloudService;
 	}
 }

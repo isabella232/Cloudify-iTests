@@ -64,6 +64,7 @@ public class Stockdemo2ManagementsEsmFailOverTest extends AbstractApplicationFai
 		try {
 			String host = admin.getElasticServiceManagers().getManagers()[0].getMachine().getHostAddress();
 			restUrl = host + ":8100";
+			Thread.sleep(10000);
 			CommandTestUtils.runCommandAndWait("connect " + restUrl + " ;uninstall-application stockdemo");
 		} catch (IOException e) {
 			AssertFail("Failed to uninstall application stockdemo", e);

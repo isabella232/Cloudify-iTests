@@ -52,6 +52,7 @@ public class StockdemoAppFailOverUsingXenTest extends AbstractApplicationFailOve
 	public void testStockdemoApplication() throws Exception {	    
 		installApp(cassandraPort1 ,cassandraHostIp, cassandraPort2 ,cassandraHostIp , stockdemoAppDirPath);
 		assertStockdemoAppInstalled(cassandraPort1 ,cassandraHostIp, cassandraPort2 ,cassandraHostIp);
+		Thread.sleep(10000);
 		uninstallApplication();
 	}
 	
@@ -68,6 +69,7 @@ public class StockdemoAppFailOverUsingXenTest extends AbstractApplicationFailOve
 		cassandra.getInstances()[0].destroy();
 		assertPuInstanceKilled(ServiceUtils.getAbsolutePUName("stockdemo", "cassandra") , cassandraPort1 , cassandraHostIp , cassandraPuInstancesAfterInstall);
 		assertPuInstanceRessurected(ServiceUtils.getAbsolutePUName("stockdemo", "cassandra") , cassandraPort1 , cassandraHostIp , cassandraPuInstancesAfterInstall);
+		Thread.sleep(10000);
 		uninstallApplication();
 	}
 	
@@ -83,6 +85,7 @@ public class StockdemoAppFailOverUsingXenTest extends AbstractApplicationFailOve
 		cassandra.getInstances()[0].getGridServiceContainer().kill();
 		assertPuInstanceKilled(ServiceUtils.getAbsolutePUName("stockdemo", "cassandra") , cassandraPort1 ,cassandraHostIp , cassandraPuInstancesAfterInstall);
 		assertPuInstanceRessurected(ServiceUtils.getAbsolutePUName("stockdemo", "cassandra") , cassandraPort1 ,cassandraHostIp , cassandraPuInstancesAfterInstall);
+		Thread.sleep(10000);
 		uninstallApplication();
 	}
 
@@ -99,6 +102,7 @@ public class StockdemoAppFailOverUsingXenTest extends AbstractApplicationFailOve
 		String stockAnalyticsSpacePUName = ServiceUtils.getAbsolutePUName("stockdemo", "stockAnalyticsSpace");
 		assertPuInstanceKilled(stockAnalyticsSpacePUName , spacePuInstancesAfterInstall);
 		assertPuInstanceRessurected(stockAnalyticsSpacePUName , spacePuInstancesAfterInstall);
+		Thread.sleep(10000);
 		uninstallApplication();
 	}
 
@@ -115,6 +119,7 @@ public class StockdemoAppFailOverUsingXenTest extends AbstractApplicationFailOve
 		String stockAnalyticsSpacePUName = ServiceUtils.getAbsolutePUName("stockdemo", "stockAnalyticsSpace");
 		assertPuInstanceKilled(stockAnalyticsSpacePUName , spacePuInstancesAfterInstall);
 		assertPuInstanceRessurected(stockAnalyticsSpacePUName , spacePuInstancesAfterInstall);
+		Thread.sleep(10000);
 		uninstallApplication();
 	}
 	
@@ -129,6 +134,7 @@ public class StockdemoAppFailOverUsingXenTest extends AbstractApplicationFailOve
 		
 		LogUtils.log("asserting esm is managing enviroment");
 		assertEsmIsManagingEnvBySearchingLogs(esm);
+		Thread.sleep(10000);
 		uninstallApplication();
 	}
 }

@@ -61,6 +61,7 @@ public class MultipleMachineTemplatesTest extends AbstractCloudTest{
 	public void before() throws IOException, InterruptedException, DSLException {
 		
 		setCloudService(cloudName, CLOUD_SERVICE_UNIQUE_NAME, false);
+		service = (ByonCloudService)getService();
 		if ((service != null) && service.isBootstrapped()) {
 			service.teardownCloud(); // tear down the existing byon cloud since we need a new bootstrap			
 		}

@@ -19,7 +19,8 @@ public class PrivateImageEc2Test extends AbstractCloudTest {
 
 	@BeforeMethod
 	public void bootstrap() throws IOException, InterruptedException {	
-		service = new Ec2CloudService(CLOUD_SERVICE_UNIQUE_NAME);
+		setCloudService("EC2", CLOUD_SERVICE_UNIQUE_NAME, false);
+		service = (Ec2CloudService)getService();
 		service.setAdditionalPropsToReplace(new HashMap<String, String>());
 		service.getAdditionalPropsToReplace().put("imageId \"us-east-1/ami-76f0061f\"", "imageId \"us-east-1/ami-93b068fa\"");
 		service.getAdditionalPropsToReplace().put("connectToPrivateIp true", "connectToPrivateIp true\n\t\tremoteUsername \"ec2-user\"\n");

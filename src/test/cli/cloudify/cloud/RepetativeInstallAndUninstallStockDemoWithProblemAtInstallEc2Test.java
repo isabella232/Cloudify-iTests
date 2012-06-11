@@ -66,6 +66,7 @@ public class RepetativeInstallAndUninstallStockDemoWithProblemAtInstallEc2Test e
 		FileUtils.copyFileToDirectory(xapLicense, cloudifyOverrides);
 		
 		setCloudService("EC2", CLOUD_SERVICE_UNIQUE_NAME, false);
+		service = (Ec2CloudService)getService();
 		service.setMachinePrefix(this.getClass().getName() + CloudTestUtils.SGTEST_MACHINE_PREFIX);
 		service.bootstrapCloud();
 		restUrl = super.getRestUrl();

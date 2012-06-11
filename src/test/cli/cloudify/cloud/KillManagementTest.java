@@ -58,6 +58,7 @@ public class KillManagementTest extends AbstractCloudTest{
 		
 		// get the cached service
 		setCloudService(CLOUD_NAME, TEST_UNIQUE_NAME, false);
+		service = (ByonCloudService)getService();
 		if ((service != null) && service.isBootstrapped()) {
 			service.teardownCloud(); // tear down the existing byon cloud since we need a new bootstrap			
 		}

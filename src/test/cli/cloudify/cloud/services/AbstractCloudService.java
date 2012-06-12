@@ -123,7 +123,7 @@ public abstract class AbstractCloudService implements CloudService {
 	 */
 	protected File createServiceFolders() throws IOException {
 		File originalCloudFolder = new File(ScriptUtils.getBuildPath() + RELATIVE_ESC_PATH + getCloudName());
-		  File serviceCloudFolder = new File(originalCloudFolder.getParent(), getCloudName() + "_" + getUniqueName());
+		File serviceCloudFolder = new File(originalCloudFolder.getParent(), getCloudName() + "_" + getUniqueName());
 		
 		try {
 			if (serviceCloudFolder.isDirectory()) {

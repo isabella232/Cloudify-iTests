@@ -34,6 +34,7 @@ public class BootstrapFailureEc2Test extends AbstractCloudTest{
 	private NodeMetadata managementMachine;
 	private long curTestTime;
 	private static final long TIME_TO_TERMINATE_IN_MILLS = 60000;
+	private String machineName = this.getClass().getName() + "_" + CloudTestUtils.SGTEST_MACHINE_PREFIX + System.currentTimeMillis() + "_";
 
 	@BeforeMethod
 	public void init() throws IOException, InterruptedException {	
@@ -42,20 +43,20 @@ public class BootstrapFailureEc2Test extends AbstractCloudTest{
 		service = (Ec2CloudService)getService();
 		// replace the default bootstap-management.sh with a bad version one
 		//ec2UploadDir = new File(ScriptUtils.getBuildPath() , "tools/cli/plugins/esc/ec2/upload");
-		File standardBootstrapManagement = new File(service.getPathToCloudFolder() + "/upload", "bootstrap-management.sh");
-		File bootstrapManagementWithMulticast = new File(SGTestHelper.getSGTestRootDir() + "/apps/cloudify/cloud/ec2/bad-bootstrap-management.sh");
-		Map<File, File> filesToReplace = new HashMap<File, File>();
-		filesToReplace.put(standardBootstrapManagement, bootstrapManagementWithMulticast);
-		service.setFilesToReplace(filesToReplace);
 		
-		curTestTime = System.currentTimeMillis();
-		service.setMachinePrefix(this.getClass().getName() + "_" + CloudTestUtils.SGTEST_MACHINE_PREFIX + curTestTime + "_");	
+		service.setMachinePrefix(machineName);	
 	}
 	
 	
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
 	public void installTest() throws IOException, InterruptedException {
+		
+		File standardBootstrapManagement = new File(service.getPathToCloudFolder() + "/upload", "bootstrap-management.sh");
+		File badBootstrapManagement = new File(SGTestHelper.getSGTestRootDir() + "/apps/cloudify/cloud/ec2/bad-bootstrap-management.sh");
+		Map<File, File> filesToReplace = new HashMap<File, File>();
+		filesToReplace.put(standardBootstrapManagement, badBootstrapManagement);
+		service.addFilesToReplace(filesToReplace);
 		
 		try {
 			service.bootstrapCloud();
@@ -71,7 +72,7 @@ public class BootstrapFailureEc2Test extends AbstractCloudTest{
 		RepetitiveConditionProvider condition = new RepetitiveConditionProvider() {
 			@Override
 			public boolean getCondition() {
-				Set<? extends NodeMetadata> machines = JcloudsUtils.getServersByName(Long.toString(curTestTime));
+				Set<? extends NodeMetadata> machines = JcloudsUtils.getServersByName(machineName);
 				managementMachine = machines.iterator().next();
 				return (managementMachine.getState() == NodeState.TERMINATED);
 			}

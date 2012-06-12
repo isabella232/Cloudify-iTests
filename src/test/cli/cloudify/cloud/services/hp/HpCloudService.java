@@ -58,17 +58,6 @@ public class HpCloudService extends AbstractCloudService {
 	@Override
 	public void injectServiceAuthenticationDetails() throws IOException {
 		
-		/*String cloudTestPath = (SGTestHelper.getSGTestRootDir() + "/apps/cloudify/cloud/" + cloudName).replace('\\', '/');
-		String sshKeyPemName = pemFileName + ".pem";
-
-		// cloud plugin should include recipe that includes secret key 
-		File cloudPluginDir = new File(ScriptUtils.getBuildPath() , "tools/cli/plugins/esc/" + cloudName + "/");
-		File originalCloudDslFile = new File(cloudPluginDir, cloudName + "-cloud.groovy");
-		File backupCloudDslFile = new File(cloudPluginDir, cloudName + "-cloud.backup");
-
-		// first make a backup of the original file
-		FileUtils.copyFile(originalCloudDslFile, backupCloudDslFile);*/
-		
 		Map<String, String> propsToReplace = new HashMap<String,String>();
 		propsToReplace.put("ENTER_USER", user);
 		propsToReplace.put("ENTER_API_KEY", apiKey);
@@ -82,14 +71,9 @@ public class HpCloudService extends AbstractCloudService {
 		
 		IOUtils.replaceTextInFile(getPathToCloudGroovy(), propsToReplace);
 
-/*		// upload dir needs to contain the sshKeyPem 
-		File targetPem = new File(ScriptUtils.getBuildPath(), "tools/cli/plugins/esc/" + cloudName + "/upload/" + sshKeyPemName);
-		FileUtils.copyFile(new File(cloudTestPath, sshKeyPemName), targetPem);
-		AssertUtils.assertTrue("File not found", targetPem.isFile());*/		
-		
 		// add a pem file
 		String sshKeyPemName = pemFileName + ".pem";
-		File FileToCopy = new File(SGTestHelper.getSGTestRootDir() + "/apps/cloudify/cloud/" + cloudName + "/" + sshKeyPemName);
+		File FileToCopy = new File(SGTestHelper.getSGTestRootDir() + "/apps/cloudify/cloud/" + getCloudName() + "/" + sshKeyPemName);
 		File targetLocation = new File(getPathToCloudFolder() + "/upload/" + sshKeyPemName);
 		Map<File, File> filesToReplace = new HashMap<File, File>();
 		filesToReplace.put(targetLocation, FileToCopy);

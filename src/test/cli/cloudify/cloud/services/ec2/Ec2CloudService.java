@@ -1,10 +1,12 @@
 package test.cli.cloudify.cloud.services.ec2;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 import test.cli.cloudify.cloud.services.AbstractCloudService;
+import framework.tools.SGTestHelper;
 import framework.utils.IOUtils;
 
 public class Ec2CloudService extends AbstractCloudService {
@@ -31,8 +33,14 @@ public class Ec2CloudService extends AbstractCloudService {
 		propsToReplace.put("numberOfManagementMachines 1", "numberOfManagementMachines "  + numberOfManagementMachines);
 		
 		IOUtils.replaceTextInFile(getPathToCloudGroovy(), propsToReplace);
-
-	
+		
+		// add a pem file
+		String sshKeyPemName = pemFileName + ".pem";
+		File FileToCopy = new File(SGTestHelper.getSGTestRootDir() + "/apps/cloudify/cloud/" + getCloudName() + "/" + sshKeyPemName);
+		File targetLocation = new File(getPathToCloudFolder() + "/upload/" + sshKeyPemName);
+		Map<File, File> filesToReplace = new HashMap<File, File>();
+		filesToReplace.put(targetLocation, FileToCopy);
+		setFilesToReplace(filesToReplace);
 	}
 	
 	public void setUser(String user) {

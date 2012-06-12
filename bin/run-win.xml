@@ -3,12 +3,6 @@
 
     <!-- import user properties -->
     <loadproperties srcfile="run.properties"/>
-	
-	<echo message="SUITE_NAME=${SUITE_NAME}"></echo>
-	<echo message="BUILD_DIR=${BUILD_DIR}"></echo>
-	<echo message="BUILD_NUMBER=${BUILD_NUMBER}"></echo>
-	<echo message="INCLUDE=${INCLUDE}"></echo>
-	<echo message="EXCLUDE=${EXCLUDE}"></echo>
 
     <!-- sgtest properties -->
     <property name="sgtest.homedir" value="${basedir}/../"/>
@@ -16,7 +10,6 @@
     <property name="sgtest.jar" value="${sgtest.homedir}lib/${sgtest.jar.name}"/>
     <property name="testng.tmp.reports.dir" value="${sgtest.homedir}/tmp-reports"/>
     <property name="testng.summary.dir" value="${sgtest.homedir}/deploy/local-builds/${BUILD_NUMBER}/${SUITE_NAME}"/>
-    <property name="testng.reports.dir" value="${sgtest.homedir}/deploy/local-builds/"/>
     <property name="tmp.testng.classes" value="${sgtest.homedir}/tmp"/>
 
 	
@@ -119,7 +112,23 @@
       	 <fileset dir="${sgtest.homedir}/lib/xstream">
           	<include name="**/*.jar"/>
       	 </fileset>
-	
+      	 
+      	<!-- jackson jars -->
+        <fileset dir="${sgtest.homedir}/lib/jackson">
+            <include name="**/*.jar"/>
+        </fileset>
+
+        <!-- jgit jars -->
+        <fileset dir="${sgtest.homedir}/lib/jgit">
+            <include name="**/*.jar"/>
+        </fileset>
+
+        <!-- jclouds jars -->
+        <fileset dir="${sgtest.homedir}/lib/jclouds">
+            <include name="**/*.jar"/>
+        </fileset>
+
+
 		<dirset dir="${sgtest.homedir}/config"/>
     	
         <dirset dir="${tmp.testng.classes}/apps"/>

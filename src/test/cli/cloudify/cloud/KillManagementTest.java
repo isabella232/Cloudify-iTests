@@ -71,7 +71,7 @@ public class KillManagementTest extends AbstractCloudTest{
 		File bootstrapManagementWithMulticast = new File(SGTestHelper.getSGTestRootDir() + "/apps/cloudify/cloud/byon/bootstrap-management-with-multicast.sh");
 		Map<File, File> filesToReplace = new HashMap<File, File>();
 		filesToReplace.put(standardBootstrapManagement, bootstrapManagementWithMulticast);
-		service.setFilesToReplace(filesToReplace);
+		service.addFilesToReplace(filesToReplace);
 		
 		service.bootstrapCloud();
 		

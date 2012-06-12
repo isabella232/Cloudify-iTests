@@ -40,7 +40,7 @@ public class Ec2CloudService extends AbstractCloudService {
 		File targetLocation = new File(getPathToCloudFolder() + "/upload/" + sshKeyPemName);
 		Map<File, File> filesToReplace = new HashMap<File, File>();
 		filesToReplace.put(targetLocation, FileToCopy);
-		setFilesToReplace(filesToReplace);
+		addFilesToReplace(filesToReplace);
 	}
 	
 	public void setUser(String user) {

@@ -77,6 +77,6 @@ public class HpCloudService extends AbstractCloudService {
 		File targetLocation = new File(getPathToCloudFolder() + "/upload/" + sshKeyPemName);
 		Map<File, File> filesToReplace = new HashMap<File, File>();
 		filesToReplace.put(targetLocation, FileToCopy);
-		setFilesToReplace(filesToReplace);
+		addFilesToReplace(filesToReplace);
 	}
 }

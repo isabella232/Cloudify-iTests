@@ -43,6 +43,7 @@ public abstract class AbstractCloudService implements CloudService {
     	this.serviceUniqueName = serviceUniqueName;
     	this.cloudName = cloudName;
     	serviceFolder = cloudName + "_" + serviceUniqueName;
+    	filesToReplace = new HashMap<File, File>();
     }
     
 	public String getServiceFolder() {
@@ -66,9 +67,9 @@ public abstract class AbstractCloudService implements CloudService {
 		this.additionalPropsToReplace = additionalPropsToReplace;
 	}
 	
-	public void setFilesToReplace(
-			Map<File, File> filesToReplace) {
-		this.filesToReplace = filesToReplace;
+	public void addFilesToReplace(
+			Map<File, File> moreFilesToReplace) {
+		this.filesToReplace.putAll(moreFilesToReplace);
 	}
     
 	public String getMachinePrefix() {
@@ -142,11 +143,9 @@ public abstract class AbstractCloudService implements CloudService {
 	
 	/**
 	 * Deletes the temporary folder created earlier for the current service.
-	 * @param cloudName The name of the cloud (e.g. ec2, byon)
-	 * @param testUniqueName The unique name of the test, used to the folder naming
 	 * @throws IOException Indicates the folder could not be deleted
 	 */
-	protected void deleteServiceFolders(final String cloudName, final String testUniqueName) throws IOException {
+	protected void deleteServiceFolders() throws IOException {
 		File serviceCloudFolder = new File(ScriptUtils.getBuildPath() + RELATIVE_ESC_PATH + getServiceFolder());
 		try{
 			FileUtils.deleteDirectory(serviceCloudFolder);
@@ -222,7 +221,7 @@ public abstract class AbstractCloudService implements CloudService {
 		boolean teardownSuccesfull = false;
 		
 		try {
-			injectAuthenticationDetails();
+			//injectAuthenticationDetails();
 			String[] restUrls = getRestUrls();
             String url = null;
 			if (restUrls != null) {
@@ -248,7 +247,7 @@ public abstract class AbstractCloudService implements CloudService {
 			finally {				
 				setBootstrapped(false);
 				try{
-					deleteServiceFolders(getCloudName(), getUniqueName());
+					deleteServiceFolders();
 				} catch (IOException e) {
 					LogUtils.log("Failed to delete the service's custom folder", e);
 				}

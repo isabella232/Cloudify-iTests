@@ -6,8 +6,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.io.FileUtils;
-import org.jclouds.compute.RunNodesException;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
 import org.testng.Assert;
@@ -35,8 +33,6 @@ public class BootstrapFailureEc2Test extends AbstractCloudTest{
 	private Ec2CloudService service;
 	private NodeMetadata managementMachine;
 	private long curTestTime;
-	private File originialBootstrapManagement;
-	private File ec2UploadDir;
 	private static final long TIME_TO_TERMINATE_IN_MILLS = 60000;
 
 	@BeforeMethod
@@ -59,7 +55,7 @@ public class BootstrapFailureEc2Test extends AbstractCloudTest{
 	
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
-	public void installTest() throws IOException, InterruptedException, RunNodesException{
+	public void installTest() throws IOException, InterruptedException {
 		
 		try {
 			service.bootstrapCloud();
@@ -85,7 +81,7 @@ public class BootstrapFailureEc2Test extends AbstractCloudTest{
 	}
 
 	@AfterMethod(alwaysRun = true)
-	public void teardown() throws IOException {
+	public void teardown() {
 		JcloudsUtils.closeContext();
 		
 		try {
@@ -95,31 +91,6 @@ public class BootstrapFailureEc2Test extends AbstractCloudTest{
 			LogUtils.log("caught an exception while tearing down ec2", e);
 			sendTeardownCloudFailedMail("ec2", e);
 		}
-		
-		restoreOriginalBootstrapManagementFile();
-	}
-	
-	private File backupAndReplaceOriginalFile(File originalFile, String replacementFilePath) throws IOException {
-		// replace the default originalFile with a different one
-		// first make a backup of the original file
-		File backupFile = new File(originalFile.getAbsolutePath() + ".backup");
-		FileUtils.copyFile(originalFile, backupFile);
-
-		// copy replacement file to upload dir as the original file's name
-		File replacementFile = new File(replacementFilePath);
-
-		FileUtils.deleteQuietly(originalFile);
-		File newOriginalFile = new File(originalFile.getParent(), originalFile.getName());
-		FileUtils.copyFile(replacementFile, newOriginalFile);
-		
-		return newOriginalFile;
-	}
-	
-	private void restoreOriginalBootstrapManagementFile() throws IOException {
-		originialBootstrapManagement.delete();
-		File backupStartManagementFile = new File(ec2UploadDir, "bootstrap-management.sh.backup");
-		FileUtils.moveFile(backupStartManagementFile, originialBootstrapManagement);
-
 	}
 	
 }

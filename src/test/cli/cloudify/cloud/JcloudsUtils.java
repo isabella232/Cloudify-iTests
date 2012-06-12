@@ -245,6 +245,9 @@ public class JcloudsUtils {
 			
 			public boolean apply(final ComputeMetadata input) {
 				final NodeMetadata node = (NodeMetadata) input;
+				if (node.getName() == null){
+					return false;
+				}
 				return (node.getName().indexOf(serverName) >= 0);
 			}
 			

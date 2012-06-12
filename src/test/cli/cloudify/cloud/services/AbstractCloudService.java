@@ -187,6 +187,7 @@ public abstract class AbstractCloudService implements CloudService {
 					FileUtils.copyFile(fileToReplace.getValue(), fileToReplace.getKey());
 				}
 			}
+			printCloudConfigFile();
 			String output = CommandTestUtils.runCommandAndWait("bootstrap-cloud --verbose " + getCloudName() + "_" + getUniqueName());
 			LogUtils.log("Extracting rest url's from cli output");
 			restAdminUrls = extractRestAdminUrls(output, numberOfManagementMachines);
@@ -213,6 +214,17 @@ public abstract class AbstractCloudService implements CloudService {
 		} catch (Exception e) {
 			deleteCloudFiles(getCloudName());
 		}
+	}
+
+	private void printCloudConfigFile() throws IOException {
+		String pathToCloudGroovy = getPathToCloudGroovy();
+		File cloudConfigFile = new File(pathToCloudGroovy);
+		if (cloudConfigFile.exists()){
+			LogUtils.log("Failed to print the clou configuration file content");
+			return;
+		}
+		String cloudConfigFileAsString = FileUtils.readFileToString(cloudConfigFile);
+		LogUtils.log(cloudConfigFileAsString);
 	}
 
 	@Override

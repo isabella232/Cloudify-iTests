@@ -1,10 +1,12 @@
 package test.cli.cloudify.cloud.services.hp;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 import test.cli.cloudify.cloud.services.AbstractCloudService;
+import framework.tools.SGTestHelper;
 import framework.utils.IOUtils;
 
 public class HpCloudService extends AbstractCloudService {
@@ -84,5 +86,13 @@ public class HpCloudService extends AbstractCloudService {
 		File targetPem = new File(ScriptUtils.getBuildPath(), "tools/cli/plugins/esc/" + cloudName + "/upload/" + sshKeyPemName);
 		FileUtils.copyFile(new File(cloudTestPath, sshKeyPemName), targetPem);
 		AssertUtils.assertTrue("File not found", targetPem.isFile());*/		
+		
+		// add a pem file
+		String sshKeyPemName = pemFileName + ".pem";
+		File FileToCopy = new File(SGTestHelper.getSGTestRootDir() + "/apps/cloudify/cloud/" + cloudName + "/" + sshKeyPemName);
+		File targetLocation = new File(getPathToCloudFolder() + "/upload/" + sshKeyPemName);
+		Map<File, File> filesToReplace = new HashMap<File, File>();
+		filesToReplace.put(targetLocation, FileToCopy);
+		setFilesToReplace(filesToReplace);
 	}
 }

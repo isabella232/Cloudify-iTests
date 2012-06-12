@@ -25,7 +25,8 @@ import framework.utils.WebUtils;
 
 public abstract class AbstractCloudService implements CloudService {
 	
-	private static final String RELATIVE_ESC_PATH = "/tools/cli/plugins/esc/";
+	protected static final String RELATIVE_ESC_PATH = "/tools/cli/plugins/esc/";
+	protected static final String UPLOAD_FOLDER = "upload";
 	
 	private String cloudName;
 	protected int numberOfManagementMachines = 1;
@@ -41,7 +42,7 @@ public abstract class AbstractCloudService implements CloudService {
     public AbstractCloudService(String serviceUniqueName, String cloudName) {
     	this.serviceUniqueName = serviceUniqueName;
     	this.cloudName = cloudName;
-    	serviceFolder = getCloudName() + "_" + serviceUniqueName;
+    	serviceFolder = cloudName + "_" + serviceUniqueName;
     }
     
 	public String getServiceFolder() {
@@ -108,7 +109,7 @@ public abstract class AbstractCloudService implements CloudService {
 		injectServiceAuthenticationDetails();
 		//update localDirectory
 		Map<String, String> propsToReplace = new HashMap<String,String>();
-		propsToReplace.put("localDirectory \"tools/cli/plugins/esc/byon/upload\"", "localDirectory \"" + RELATIVE_ESC_PATH + getServiceFolder() + "/upload\"");
+		propsToReplace.put("localDirectory \"tools/cli/plugins/esc/" + cloudName + "/upload\"", "localDirectory \"" + RELATIVE_ESC_PATH + getServiceFolder() + "/upload\"");
 		
 		IOUtils.replaceTextInFile(getPathToCloudGroovy(), propsToReplace);
 	}
@@ -180,7 +181,9 @@ public abstract class AbstractCloudService implements CloudService {
 				//replace files
 				for (Entry<File, File> fileToReplace : filesToReplace.entrySet()) {
 					//delete the old file
-					(fileToReplace.getKey()).delete();
+					if (fileToReplace.getKey().exists()){
+						(fileToReplace.getKey()).delete();	
+					}
 					//copy the new file and use the name of the old file
 					FileUtils.copyFile(fileToReplace.getValue(), fileToReplace.getKey());
 				}

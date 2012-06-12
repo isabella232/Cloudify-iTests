@@ -11,7 +11,6 @@ public class HpCloudService extends AbstractCloudService {
 	
 	private static final String CLOUD_NAME = "openstack";
 	private String tenant = "24912589714038";
-	private String cloudName = CLOUD_NAME;
 	private String user = "98173213380893";
 	private String apiKey = "C5nobOW90bhnCmE5AQaLaJ0Ubd8UISPxGih";
 	private String pemFileName = "sgtest-hp";
@@ -27,15 +26,7 @@ public class HpCloudService extends AbstractCloudService {
 	public void setTenant(String tenant) {
 		this.tenant = tenant;
 	}
-
-	public String getCloudName() {
-		return cloudName;
-	}
-
-	public void setCloudName(String cloudName) {
-		this.cloudName = cloudName;
-	}
-
+	
 	public String getUser() {
 		return user;
 	}

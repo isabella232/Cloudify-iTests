@@ -65,7 +65,7 @@ public class BootstrapFailureEc2Test extends AbstractCloudTest{
 		}
 	
 		JcloudsUtils.createContext(service);
-		Set<? extends NodeMetadata> machines = JcloudsUtils.getServersByName(Long.toString(curTestTime));
+		Set<? extends NodeMetadata> machines = JcloudsUtils.getServersByName(machineName);
 		Assert.assertTrue(machines != null);
 		managementMachine = machines.iterator().next();
 				

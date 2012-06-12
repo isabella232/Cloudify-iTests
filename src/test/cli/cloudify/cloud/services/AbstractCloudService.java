@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
@@ -105,6 +106,11 @@ public abstract class AbstractCloudService implements CloudService {
 	public void injectAuthenticationDetails() throws IOException {
 		createServiceFolders();
 		injectServiceAuthenticationDetails();
+		//update localDirectory
+		Map<String, String> propsToReplace = new HashMap<String,String>();
+		propsToReplace.put("localDirectory \"tools/cli/plugins/esc/byon/upload\"", "localDirectory \"" + RELATIVE_ESC_PATH + getServiceFolder() + "/upload\"");
+		
+		IOUtils.replaceTextInFile(getPathToCloudGroovy(), propsToReplace);
 	}
 	
 	/**

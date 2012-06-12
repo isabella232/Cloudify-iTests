@@ -28,11 +28,13 @@ public class NamesAsIPsByonTest extends AbstractCloudTest{
 	private ByonCloudService byonService;
 	private static final String CLOUD_NAME = "byon";
 	private static final String TEST_UNIQUE_NAME = "NamesAsIPsByonTest";
-	private String namesList = "pc-lab107,pc-lab108,pc-lab109";
+	private String namesList = "pc-lab95,pc-lab96,pc-lab100";
 	public final static long MY_OPERATION_TIMEOUT = 1 * 60 * 1000;
 	
 	@BeforeClass(enabled = true)
 	public void before() throws RunNodesException, IOException, InterruptedException {
+		
+		System.setProperty("ipList", namesList);
 		
 		// get the cached service
 		setCloudService(CLOUD_NAME, TEST_UNIQUE_NAME, false);
@@ -49,6 +51,10 @@ public class NamesAsIPsByonTest extends AbstractCloudTest{
 		Map<File, File> filesToReplace = new HashMap<File, File>();
 		filesToReplace.put(standardBootstrapManagement, bootstrapManagementWithMulticast);
 		byonService.addFilesToReplace(filesToReplace);
+		
+		/*Map<String, String> propsToReplace = new HashMap<String,String>();
+		propsToReplace.put("0.0.0.0", namesList);
+		IOUtils.replaceTextInFile(byonService.getPathToCloudGroovy(), propsToReplace);*/
 		
 		byonService.bootstrapCloud();
 		

@@ -44,7 +44,7 @@ public class MultipleMachineTemplatesTest extends AbstractCloudTest{
 	private boolean teardownFlag = false;
 	private String cloudName = "byon";
 	private File mongodbDir = new File(ScriptUtils.getBuildPath() , "recipes/services/mongodb");
-	private File tomcatDir = new File(ScriptUtils.getBuildPath() , "recipes/services");
+	private File tomcatDir = new File(ScriptUtils.getBuildPath() , "recipes/services/tomcat");
 	private ByonCloudService service;
 	
 	protected String TEMPLATE_1_IPs = "192.168.9.115,192.168.9.116";

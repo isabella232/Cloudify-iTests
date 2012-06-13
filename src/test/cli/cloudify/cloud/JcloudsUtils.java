@@ -5,6 +5,7 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.cloudifysource.esc.jclouds.WindowsServerEC2ReviseParsedImage;
+import org.codehaus.plexus.util.StringUtils;
 import org.jclouds.aws.ec2.compute.strategy.AWSEC2ReviseParsedImage;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
@@ -244,11 +245,12 @@ public class JcloudsUtils {
 		Set<? extends NodeMetadata> matchingNodes = getServers(new Predicate<ComputeMetadata>() {
 			
 			public boolean apply(final ComputeMetadata input) {
+				boolean nameFound = false;
 				final NodeMetadata node = (NodeMetadata) input;
-				if (node.getName() == null){
-					return false;
+				if (StringUtils.isNotBlank(node.getName())) {
+					nameFound = (node.getName().indexOf(serverName) >= 0);
 				}
-				return (node.getName().indexOf(serverName) >= 0);
+				return nameFound;
 			}
 			
 		});

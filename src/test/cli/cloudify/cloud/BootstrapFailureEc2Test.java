@@ -32,18 +32,15 @@ public class BootstrapFailureEc2Test extends AbstractCloudTest{
 	private static final String CLOUD_SERVICE_UNIQUE_NAME = "BootstrapFailureEc2Test";
 	private Ec2CloudService service;
 	private NodeMetadata managementMachine;
-	private long curTestTime;
 	private static final long TIME_TO_TERMINATE_IN_MILLS = 60000;
 	private String machineName = this.getClass().getName() + "_" + CloudTestUtils.SGTEST_MACHINE_PREFIX + System.currentTimeMillis() + "_";
+	private boolean managementMachineTerminated = false;
 
 	@BeforeMethod
 	public void init() throws IOException, InterruptedException {	
 		
 		setCloudService("EC2", CLOUD_SERVICE_UNIQUE_NAME, false);
 		service = (Ec2CloudService)getService();
-		// replace the default bootstap-management.sh with a bad version one
-		//ec2UploadDir = new File(ScriptUtils.getBuildPath() , "tools/cli/plugins/esc/ec2/upload");
-		
 		service.setMachinePrefix(machineName);	
 	}
 	
@@ -52,6 +49,7 @@ public class BootstrapFailureEc2Test extends AbstractCloudTest{
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
 	public void installTest() throws IOException, InterruptedException {
 		
+		//replace the bootstrap-management with a bad version, to fail the bootstrap.
 		File standardBootstrapManagement = new File(service.getPathToCloudFolder() + "/upload", "bootstrap-management.sh");
 		File badBootstrapManagement = new File(SGTestHelper.getSGTestRootDir() + "/apps/cloudify/cloud/ec2/bad-bootstrap-management.sh");
 		Map<File, File> filesToReplace = new HashMap<File, File>();
@@ -61,7 +59,7 @@ public class BootstrapFailureEc2Test extends AbstractCloudTest{
 		try {
 			service.bootstrapCloud();
 		} catch (AssertionError ae) {
-			//super.setService(service);
+			System.out.println(ae.getMessage());
 		}
 	
 		JcloudsUtils.createContext(service);
@@ -74,7 +72,10 @@ public class BootstrapFailureEc2Test extends AbstractCloudTest{
 			public boolean getCondition() {
 				Set<? extends NodeMetadata> machines = JcloudsUtils.getServersByName(machineName);
 				managementMachine = machines.iterator().next();
-				return (managementMachine.getState() == NodeState.TERMINATED);
+				if (managementMachine.getState() == NodeState.TERMINATED) {
+					managementMachineTerminated = true;
+				}
+				return managementMachineTerminated;
 			}
 		};
 		
@@ -86,7 +87,9 @@ public class BootstrapFailureEc2Test extends AbstractCloudTest{
 		JcloudsUtils.closeContext();
 		
 		try {
-			service.teardownCloud();			
+			if (!managementMachineTerminated) {
+				service.teardownCloud();				
+			}
 		}
 		catch (Throwable e) {
 			LogUtils.log("caught an exception while tearing down ec2", e);

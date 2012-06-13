@@ -12,6 +12,11 @@
 #	$MACHINE_ZONES - This is required if this is not a management machine
 # 	$WORKING_HOME_DIRECTORY - This is where the files were copied to (cloudify installation, etc..)
 #	$CLOUDIFY_LINK - If this url is found, it will be downloaded to $WORKING_HOME_DIRECTORY/gigaspaces.zip
+#	$CLOUDIFY_OVERRIDES_LINK - If this url is found, it will be downloaded and unzipped into the same location as cloudify
+#	$CLOUD_FILE - Location of the cloud configuration file. Only available in bootstrap of management machines.
+#	$NO_WEB_SERVICES - If set to 'true', indicates that the rest and web-ui services should not be deployed in this machine.
+#	$CLOUDIFY_CLOUD_IMAGE_ID - If set, indicates the image ID for this machine.
+#	$CLOUDIFY_CLOUD_HARDWARE_ID - If set, indicates the hardware ID for this machine.
 #############################################################################
 
 # args:
@@ -37,7 +42,7 @@ function error_exit_on_level {
 	fi
 }
 
-
+#export EXT_JAVA_OPTIONS="-Dcom.gs.multicast.enabled=false"
 #export JAVA_HOME=/export/utils/java/jdk1.6.0_17-64Bit
 if [ -z "$JAVA_HOME" ]; then
 	echo -- SETTING JAVA_HOME TO /export/utils/java/jdk1.6.0_17-64Bit
@@ -87,7 +92,8 @@ cd $WORKING_HOME_DIRECTORY/gigaspaces/bin || error_exit $? "Failed changing dire
 
 sed -i "1i export NIC_ADDR=$MACHINE_IP_ADDRESS" setenv.sh || error_exit $? "Failed updating setenv.sh"
 #sed -i "1i export LOOKUPLOCATORS=$LUS_IP_ADDRESS" setenv.sh || error_exit $? "Failed updating setenv.sh"
-#sed -i "1i export LOOKUPGROUPS=TEST_GROUP" setenv.sh || error_exit $? "Failed updating setenv.sh"
+sed -i "1i export CLOUDIFY_CLOUD_IMAGE_ID=$CLOUDIFY_CLOUD_IMAGE_ID" setenv.sh || error_exit $? "Failed updating setenv.sh"
+sed -i "1i export CLOUDIFY_CLOUD_HARDWARE_ID=$CLOUDIFY_CLOUD_HARDWARE_ID" setenv.sh || error_exit $? "Failed updating setenv.sh"
 sed -i "1i export LOOKUPGROUPS=byon_group" setenv.sh || error_exit $? "Failed updating setenv.sh"
 
 cd $WORKING_HOME_DIRECTORY/gigaspaces/tools/cli || error_exit $? "Failed changing directory to cli directory"
@@ -96,14 +102,30 @@ chmod +x /tmp/gs-files/gigaspaces/bin/*.sh
 chmod +x /tmp/gs-files/gigaspaces/tools/cli/*.sh
 
 # START AGENT ALONE OR WITH MANAGEMENT
+if [ -f nohup.out ]; then
+  rm nohup.out
+fi
+
+if [ -f nohup.out ]; then
+   error_exit 1 "Failed to remove nohup.out Probably used by another process"
+fi
+
 if [ "$GSA_MODE" = "agent" ]; then
-	nohup ./cloudify.sh start-agent -timeout 30 --verbose -zone $MACHINE_ZONES -auto-shutdown || error_exit $? "Failed starting agent"
+	ERRMSG="Failed starting agent"
+	nohup ./cloudify.sh start-agent -timeout 30 --verbose -zone $MACHINE_ZONES -auto-shutdown
 else
+	ERRMSG="Failed starting management services"
 	if [ "$NO_WEB_SERVICES" = "true" ]; then
-		nohup ./cloudify.sh start-management -no-web-services -no-management-space -timeout 30 --verbose -auto-shutdown -cloud-file $CLOUD_FILE || error_exit $? "Failed starting management services"
+		nohup ./cloudify.sh start-management -no-web-services -no-management-space -timeout 30 --verbose -auto-shutdown -cloud-file $CLOUD_FILE
 	else
-		nohup ./cloudify.sh start-management -timeout 30 --verbose -auto-shutdown -cloud-file $CLOUD_FILE || error_exit $? "Failed starting management services"
+		nohup ./cloudify.sh start-management -timeout 30 --verbose -auto-shutdown -cloud-file $CLOUD_FILE
 	fi
 fi	
 
+RETVAL=$?
+echo cat nohup.out
+cat nohup.out
+if [ $RETVAL -ne 0 ]; then
+  error_exit $RETVAL $ERRMSG
+fi
 exit 0

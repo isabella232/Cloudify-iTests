@@ -2,9 +2,10 @@ package test.cli.cloudify.cloud;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.io.FileUtils;
 import org.jclouds.compute.RunNodesException;
 import org.openspaces.admin.AdminFactory;
 import org.testng.Assert;
@@ -29,39 +30,40 @@ import framework.utils.ScriptUtils;
  */
 public class RepetativeInstallAndUninstallOnByon extends AbstractCloudTest{
 
-	private File byonCloudConfDir = new File(ScriptUtils.getBuildPath() , "tools/cli/plugins/esc/byon");
-	private File byonUploadDir = new File(byonCloudConfDir , "upload");
-	private File originialBootstrapManagement = new File(byonUploadDir, "bootstrap-management.sh");
-	private File backupStartManagementFile = new File(byonUploadDir, "bootstrap-management.sh.backup");
 	private ByonCloudService byonService;
-	private String cloudName = BYON;
+	private static final String CLOUD_NAME = BYON;
 	private final static int REPETITIONS = 3;
-	private static final String LOOKUPGROUP = "byon_group";
 	private static final String CLOUD_SERVICE_UNIQUE_NAME = "RepetativeInstallAndUninstallOnByon";
 	
 	@BeforeClass(enabled = true)
 	public void before() throws RunNodesException, IOException, InterruptedException{
 		
-		backupAndReplaceOriginalFile(originialBootstrapManagement,SGTestHelper.getSGTestRootDir() + "/apps/cloudify/cloud/byon/bootstrap-management-multicast-and-byon-java-home.sh");
-
-		LogUtils.log("creating admin");
-		AdminFactory factory = new AdminFactory();
-		factory.addGroup(LOOKUPGROUP);
-		admin = factory.createAdmin();
-		
-		setCloudService(cloudName, CLOUD_SERVICE_UNIQUE_NAME, false);
+		// get the cached service
+		setCloudService(CLOUD_NAME, CLOUD_SERVICE_UNIQUE_NAME, false);
 		byonService = (ByonCloudService)getService();
 		if ((byonService != null) && byonService.isBootstrapped()) {
 			byonService.teardownCloud(); // tear down the existing byon cloud since we need a new bootstrap			
 		}
 		
+		// replace the default bootstrap-management.sh with a custom version one
+		File standardBootstrapManagement = new File(byonService.getPathToCloudFolder() + "/upload", "bootstrap-management.sh");
+		File bootstrapManagementWithMulticast = new File(SGTestHelper.getSGTestRootDir() + "/apps/cloudify/cloud/byon/bootstrap-management-" + byonService.getServiceFolder() + ".sh");
+		Map<File, File> filesToReplace = new HashMap<File, File>();
+		filesToReplace.put(standardBootstrapManagement, bootstrapManagementWithMulticast);
+		byonService.addFilesToReplace(filesToReplace);
+
+		LogUtils.log("creating admin");
+		AdminFactory factory = new AdminFactory();
+		factory.addGroup(CLOUD_SERVICE_UNIQUE_NAME);
+		admin = factory.createAdmin();
+		
 		LogUtils.log("bootstrapping byon cloud");
 		byonService.setMachinePrefix(this.getClass().getName());
-		byonService.bootstrapCloud();		
+		byonService.bootstrapCloud();
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
-	public void testPetclinic() throws Exception{
+	public void testPetclinic() throws Exception {
 			
 		for(int i=0; i < REPETITIONS; i++){
 			LogUtils.log("petclinic install number " + (i+1));
@@ -79,30 +81,15 @@ public class RepetativeInstallAndUninstallOnByon extends AbstractCloudTest{
 	
 	@AfterClass(alwaysRun = true)
 	public void teardown() throws IOException, InterruptedException {
-		
-		//restore bootstrap management file
-		originialBootstrapManagement.delete();
-		FileUtils.moveFile(backupStartManagementFile, originialBootstrapManagement);
+
+		if (admin != null) {
+			admin.close();
+			admin = null;
+		}
 		
 		LogUtils.log("tearing down byon cloud");
 		byonService.teardownCloud();
 		
-	}
-	
-	private File backupAndReplaceOriginalFile(File originalFile, String replacementFilePath) throws IOException {
-		// replace the default originalFile with a different one
-		// first make a backup of the original file
-		File backupFile = new File(originalFile.getAbsolutePath() + ".backup");
-		FileUtils.copyFile(originalFile, backupFile);
-
-		// copy replacement file to upload dir as the original file's name
-		File replacementFile = new File(replacementFilePath);
-
-		FileUtils.deleteQuietly(originalFile);
-		File newOriginalFile = new File(originalFile.getParent(), originalFile.getName());
-		FileUtils.copyFile(replacementFile, newOriginalFile);
-		
-		return newOriginalFile;
 	}
 }
 	

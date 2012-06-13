@@ -219,7 +219,7 @@ public abstract class AbstractCloudService implements CloudService {
 	private void printCloudConfigFile() throws IOException {
 		String pathToCloudGroovy = getPathToCloudGroovy();
 		File cloudConfigFile = new File(pathToCloudGroovy);
-		if (cloudConfigFile.exists()){
+		if (!cloudConfigFile.exists()){
 			LogUtils.log("Failed to print the clou configuration file content");
 			return;
 		}

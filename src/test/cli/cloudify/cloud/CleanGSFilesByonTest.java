@@ -102,20 +102,21 @@ public class CleanGSFilesByonTest extends AbstractCloudTest {
 		List<String> itemsToClean = new ArrayList<String>();
 		itemsToClean.add("/tmp/gs-files/gigaspaces/work");
 		itemsToClean.add("/tmp/gs-files/gigaspaces.zip");
-		
-		LogUtils.log("creating admin");
-		AdminFactory factory = new AdminFactory();
-		//TODO what should this be?
-		//factory.addGroup(LOOKUPGROUP);
-		String machinesList = System.getProperty(TEST_MACHINES_LIST);
-		assertTrue("ipList system property is empty", StringUtils.isNotBlank(machinesList));
-		StringTokenizer tokenizer = new StringTokenizer(machinesList, ",");
-		while (tokenizer.hasMoreTokens()) {
-			factory.addLocator(tokenizer.nextToken().trim() + ":" + CloudifyConstants.DEFAULT_LUS_PORT);
+
+		try {
+			LogUtils.log("creating admin to get active machines");
+			AdminFactory factory = new AdminFactory();
+			String machinesList = System.getProperty(TEST_MACHINES_LIST);
+			assertTrue("ipList system property is empty", StringUtils.isNotBlank(machinesList));
+			StringTokenizer tokenizer = new StringTokenizer(machinesList, ",");
+			while (tokenizer.hasMoreTokens()) {
+				factory.addLocator(tokenizer.nextToken().trim() + ":" + CloudifyConstants.DEFAULT_LUS_PORT);
+			}
+			admin = factory.createAdmin();
+			hosts = admin.getMachines().getHostsByAddress().keySet();
+		} finally {
+			admin.close();
 		}
-		
-		admin = factory.createAdmin();
-		hosts = admin.getMachines().getHostsByAddress().keySet();
 		getService().teardownCloud();
 		for (String address : hosts) {
 			//using the default credentials to access our lab machines

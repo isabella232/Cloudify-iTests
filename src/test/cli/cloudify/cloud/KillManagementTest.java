@@ -41,17 +41,12 @@ public class KillManagementTest extends AbstractCloudTest{
 	final private static String USERNAME = "tgrid";
 	final private static String PASSWORD = "tgrid";
 	private static final String TEST_UNIQUE_NAME = "KillManagementTest";
-	private static final String LOOKUPGROUP = "byon_kill_mgmt";
 	private static final String UPLOAD_FOLDER = "upload";
 	private static final String CLOUD_NAME = "byon";
 	
 	private volatile boolean run = true;
 	private ExecutorService threadPool;
 	private String restUrl;
-	
-	
-	//private File backupStartManagementFile = new File(byonUploadDir, "bootstrap-management.backup");
-
 	
 	@BeforeMethod(enabled = true)
 	public void before() throws IOException, InterruptedException {
@@ -68,9 +63,9 @@ public class KillManagementTest extends AbstractCloudTest{
 
 		// replace the default bootstap-management.sh with a multicast version one
 		File standardBootstrapManagement = new File(service.getPathToCloudFolder() + "/" + UPLOAD_FOLDER, "bootstrap-management.sh");
-		File bootstrapManagementWithMulticast = new File(SGTestHelper.getSGTestRootDir() + "/apps/cloudify/cloud/byon/bootstrap-management-with-multicast.sh");
+		File customBootstrapManagement = new File(SGTestHelper.getSGTestRootDir() + "/apps/cloudify/cloud/byon/bootstrap-management-" + service.getServiceFolder() + ".sh");
 		Map<File, File> filesToReplace = new HashMap<File, File>();
-		filesToReplace.put(standardBootstrapManagement, bootstrapManagementWithMulticast);
+		filesToReplace.put(standardBootstrapManagement, customBootstrapManagement);
 		service.addFilesToReplace(filesToReplace);
 		
 		service.bootstrapCloud();
@@ -81,7 +76,7 @@ public class KillManagementTest extends AbstractCloudTest{
 		
 		LogUtils.log("creating admin");
 		AdminFactory factory = new AdminFactory();
-		factory.addGroup(LOOKUPGROUP);
+		factory.addGroup(TEST_UNIQUE_NAME);
 		admin = factory.createAdmin();
 		
 		restUrl = service.getRestUrls()[0];
@@ -170,6 +165,12 @@ public class KillManagementTest extends AbstractCloudTest{
 		if (threadPool != null) {
 			threadPool.shutdownNow();
 		}
+
+		if (admin != null) {
+			admin.close();
+			admin = null;
+		}
+		
 		try {
 			service.teardownCloud();
 		}
@@ -179,21 +180,6 @@ public class KillManagementTest extends AbstractCloudTest{
 		}
 		LogUtils.log("deleting test folder");
 	}
-	
-	/*private void restoreOriginalBootstrapManagementFile() throws IOException {
-		//delete the test's folder
-		try{
-			FileUtils.deleteDirectory(testCloudFolder);
-		} catch (Exception e) {
-			LogUtils.log("caught an exception while deleting test folder " + testCloudFolder.getAbsolutePath(), e);
-		}
-		/*FileUtils.copyFile(backupStartManagementFile, originialBootstrapManagement);
-		backupStartManagementFile.delete();
-		File bootstrapWithMulticastOnBuild = new File(byonUploadDir.getAbsolutePath() + "/bootstrap-management-with-multicast.sh");
-		if (bootstrapWithMulticastOnBuild.exists()) {
-			bootstrapWithMulticastOnBuild.delete();
-		}*/
-	//}
 
 }
 

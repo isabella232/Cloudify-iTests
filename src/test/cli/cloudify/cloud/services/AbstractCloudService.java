@@ -110,7 +110,7 @@ public abstract class AbstractCloudService implements CloudService {
 		injectServiceAuthenticationDetails();
 		//update localDirectory
 		Map<String, String> propsToReplace = new HashMap<String,String>();
-		propsToReplace.put("localDirectory \"tools/cli/plugins/esc/" + cloudName + "/upload\"", "localDirectory \"" + RELATIVE_ESC_PATH + getServiceFolder() + "/upload\"");
+		propsToReplace.put("localDirectory \"tools/cli/plugins/esc/" + cloudName + "/upload\"", "localDirectory \"" + "tools/cli/plugins/esc/" + getServiceFolder() + "/upload\"");
 		
 		IOUtils.replaceTextInFile(getPathToCloudGroovy(), propsToReplace);
 	}

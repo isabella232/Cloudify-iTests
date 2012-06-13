@@ -5,14 +5,16 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.io.FileUtils;
 import org.jclouds.compute.RunNodesException;
+import org.openspaces.admin.AdminFactory;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import test.cli.cloudify.cloud.services.byon.ByonCloudService;
 import framework.tools.SGTestHelper;
+import framework.utils.AssertUtils;
+import framework.utils.LogUtils;
 import framework.utils.ScriptUtils;
 
 
@@ -47,21 +49,17 @@ public class NamesAsIPsByonTest extends AbstractCloudTest{
 
 		// replace the default bootstap-management.sh with a multicast version one
 		File standardBootstrapManagement = new File(byonService.getPathToCloudFolder() + "/upload", "bootstrap-management.sh");
-		File bootstrapManagementWithMulticast = new File(SGTestHelper.getSGTestRootDir() + "/apps/cloudify/cloud/byon/bootstrap-management-multicast-and-byon-java-home.sh");
+		File customBootstrapManagement = new File(SGTestHelper.getSGTestRootDir() + "/apps/cloudify/cloud/byon/bootstrap-management-" + byonService.getServiceFolder() + ".sh");
 		Map<File, File> filesToReplace = new HashMap<File, File>();
-		filesToReplace.put(standardBootstrapManagement, bootstrapManagementWithMulticast);
+		filesToReplace.put(standardBootstrapManagement, customBootstrapManagement);
 		byonService.addFilesToReplace(filesToReplace);
-		
-		/*Map<String, String> propsToReplace = new HashMap<String,String>();
-		propsToReplace.put("0.0.0.0", namesList);
-		IOUtils.replaceTextInFile(byonService.getPathToCloudGroovy(), propsToReplace);*/
 		
 		byonService.bootstrapCloud();
 		
-		/*LogUtils.log("creating admin");
+		LogUtils.log("creating admin");
 		AdminFactory factory = new AdminFactory();
-		factory.addGroup(LOOKUPGROUP);
-		admin = factory.createAdmin();*/
+		factory.addGroup(TEST_UNIQUE_NAME);
+		admin = factory.createAdmin();
 		
 		//AssertUtils.assertTrue("webui is not up - bootstrap failed", admin.getProcessingUnits().getProcessingUnit("webui") != null);
 	}
@@ -69,31 +67,20 @@ public class NamesAsIPsByonTest extends AbstractCloudTest{
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
 	public void testPetclinic() throws IOException, InterruptedException{
 		
-		//setCloudService(cloudName, CLOUD_SERVICE_UNIQUE_NAME, false);
-		//byonService = (ByonCloudService)getService();
-		/*if ((byonService != null) && byonService.isBootstrapped()) {
-			byonService.teardownCloud(); // tear down the existing byon cloud since we need a new bootstrap			
-		}
-		
-		byonService.setMachinePrefix(this.getClass().getName());
-		byonService.bootstrapCloud();*/
-				
 		installApplicationAndWait(ScriptUtils.getBuildPath() + "/recipes/apps/petclinic-simple", "petclinic");
 		
-		/*AssertUtils.assertTrue("petclinic.mongod is not up - install failed", admin.getProcessingUnits().getProcessingUnit("petclinic.mongod") != null);		
-		AssertUtils.assertTrue("petclinic.tomcat is not up - install failed", admin.getProcessingUnits().getProcessingUnit("petclinic.tomcat") != null);*/
+		//TODO : edit this, so if it fails it won't be on NPE!
+		AssertUtils.assertTrue("petclinic.mongod is not up - install failed", admin.getProcessingUnits().getProcessingUnit("petclinic.mongod") != null);		
+		AssertUtils.assertTrue("petclinic.tomcat is not up - install failed", admin.getProcessingUnits().getProcessingUnit("petclinic.tomcat") != null);
 	}
 	
 	@AfterClass(alwaysRun = true)
 	public void teardown() throws IOException, InterruptedException {
 		
-		//restore byon-cloud.groovy
-		/*originialByonDslFile.delete();
-		FileUtils.moveFile(backupByonDslFile, originialByonDslFile);
-		
-		//restore bootstrap management file
-		originialBootstrapManagement.delete();
-		FileUtils.moveFile(backupStartManagementFile, originialBootstrapManagement);*/
+		if (admin != null) {
+			admin.close();
+			admin = null;
+		}
 		
 		try{
 			uninstallApplicationAndWait("petclinic");
@@ -104,21 +91,6 @@ public class NamesAsIPsByonTest extends AbstractCloudTest{
 		}
 			
 	}
-	
-	private File backupAndReplaceOriginalFile(File originalFile, String replacementFilePath) throws IOException {
-		// replace the default originalFile with a different one
-		// first make a backup of the original file
-		File backupFile = new File(originalFile.getAbsolutePath() + ".backup");
-		FileUtils.copyFile(originalFile, backupFile);
 
-		// copy replacement file to upload dir as the original file's name
-		File replacementFile = new File(replacementFilePath);
-
-		FileUtils.deleteQuietly(originalFile);
-		File newOriginalFile = new File(originalFile.getParent(), originalFile.getName());
-		FileUtils.copyFile(replacementFile, newOriginalFile);
-		
-		return newOriginalFile;
-	}
 }
 	

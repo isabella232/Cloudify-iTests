@@ -44,7 +44,8 @@ public class MultipleMachineTemplatesTest extends AbstractCloudTest{
 	private boolean teardownFlag = false;
 	private String cloudName = "byon";
 	private File mongodbDir = new File(ScriptUtils.getBuildPath() , "recipes/services/mongodb");
-	private File tomcatDir = new File(ScriptUtils.getBuildPath() , "recipes/services/tomcat");
+	private File tomcatDir = new File(ScriptUtils.getBuildPath() , "recipes/services");
+	private File newCloudGroovyFile = new File(ScriptUtils.getBuildPath() + "/tools/cli/plugins/esc/byon/", "byon-cloud.new");
 	private ByonCloudService service;
 	
 	protected String TEMPLATE_1_IPs = "192.168.9.115,192.168.9.116";
@@ -66,8 +67,7 @@ public class MultipleMachineTemplatesTest extends AbstractCloudTest{
 		
 		//use SGTest's special byon groovy (with templates) instead of the original one, but don't override the original file - use byon-new-cloud.groovy instead
 		File multiTemplatesGroovy = new File(SGTestHelper.getSGTestRootDir() + "/apps/cloudify/cloud/byon/byon-cloud.groovy");
-		File newCloudGroovy = new File(ScriptUtils.getBuildPath() + "/tools/cli/plugins/esc/byon/", "byon-cloud.new");
-		copyFile(multiTemplatesGroovy, newCloudGroovy);
+		copyFile(multiTemplatesGroovy, newCloudGroovyFile);
 
 		//read the original file to get the download URL from it
 		File originialCloudGroovy = new File(ScriptUtils.getBuildPath() + "/tools/cli/plugins/esc/byon/", "byon-cloud.groovy");
@@ -81,14 +81,14 @@ public class MultipleMachineTemplatesTest extends AbstractCloudTest{
 		replaceMap.put("2.2.2.2", TEMPLATE_2_IPs);
 		replaceMap.put("3.3.3.3", TEMPLATE_3_IPs);
 		replaceMap.put("localDirectory \"tools/cli/plugins/esc/byon/upload\"", "localDirectory \"tools/cli/plugins/esc/" + service.getServiceFolder() + "/upload\"");
-		IOUtils.replaceTextInFile(newCloudGroovy.getAbsolutePath(), replaceMap);
+		IOUtils.replaceTextInFile(newCloudGroovyFile.getAbsolutePath(), replaceMap);
 		
 		// replace the default bootstrap-management and cloud groovy with the customized versions
 		File standardBootstrapManagement = new File(service.getPathToCloudFolder() + "/upload", "bootstrap-management.sh");
 		File bootstrapManagementCustomized = new File(SGTestHelper.getSGTestRootDir() + "/apps/cloudify/cloud/byon/bootstrap-management-" + service.getServiceFolder() + ".sh");
 		File fileToBeReplaced = new File(service.getPathToCloudFolder(), "byon-cloud.groovy");
 		Map<File, File> filesToReplace = new HashMap<File, File>();
-		filesToReplace.put(fileToBeReplaced, newCloudGroovy);
+		filesToReplace.put(fileToBeReplaced, newCloudGroovyFile);
 		filesToReplace.put(standardBootstrapManagement, bootstrapManagementCustomized);
 		service.addFilesToReplace(filesToReplace);
 
@@ -160,7 +160,7 @@ public class MultipleMachineTemplatesTest extends AbstractCloudTest{
 		
 		hostAddressToCompare = admin.getProcessingUnits().getProcessingUnit("rest")
 				.getInstances()[0].getMachine().getHostAddress();
-		Assert.assertTrue(Arrays.asList(template3IPsArray).contains(hostAddressToCompare));		
+		Assert.assertTrue(Arrays.asList(template3IPsArray).contains(hostAddressToCompare));
 		
 	}
 	
@@ -300,6 +300,10 @@ public class MultipleMachineTemplatesTest extends AbstractCloudTest{
 		restoreOriginalServiceFile("mongod");
 		restoreOriginalServiceFile("tomcat");
 		restoreOriginalServiceFile("mongoConfig");
+		
+		if (newCloudGroovyFile.exists()) {
+			newCloudGroovyFile.delete();
+		}
 		
 		LogUtils.log("tearing down byon cloud");
 		if(!teardownFlag)

@@ -220,7 +220,7 @@ public abstract class AbstractCloudService implements CloudService {
 		String pathToCloudGroovy = getPathToCloudGroovy();
 		File cloudConfigFile = new File(pathToCloudGroovy);
 		if (!cloudConfigFile.exists()){
-			LogUtils.log("Failed to print the clou configuration file content");
+			LogUtils.log("Failed to print the cloud configuration file content");
 			return;
 		}
 		String cloudConfigFileAsString = FileUtils.readFileToString(cloudConfigFile);

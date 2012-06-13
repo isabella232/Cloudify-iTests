@@ -65,7 +65,6 @@ public class DumpUtils {
         }
     }
 
-
     public static void dumpMachines(String restUrl) throws Exception {
     	String machinesDumpUri = "/service/dump/machines/";
     	GSRestClient rc = new GSRestClient("", "", new URL(restUrl));
@@ -77,7 +76,7 @@ public class DumpUtils {
     	for (String key : resultsMap.keySet()) {
     		Date date = new Date();
     		byte[] result = Base64.decodeBase64(resultsMap.get(key).toString());
-    		zipFile = new File(getTestFolder().getAbsolutePath() + "/" + date1.format(date) + "_" + hour.format(date) + "_ip:" + key.toString() + "_dump.zip");
+    		zipFile = new File(getTestFolder().getAbsolutePath() + "/" + date1.format(date) + "_" + hour.format(date) + "_ip" + key.toString() + "_dump.zip");
     		FileUtils.writeByteArrayToFile(zipFile, result);
     		LogUtils.log("> Logs: " + zipFile.getAbsolutePath() + "\n");
     	}
@@ -145,19 +144,19 @@ public class DumpUtils {
         }
     }
 
-    public static void main(String[] args) throws IOException {
-    	try {
-			dumpMachines("http://15.185.169.193:8100");
-			System.out.println("sdf");
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-        DateFormat date1 = new SimpleDateFormat("dd-MM-yyyy");
-        DateFormat hour = new SimpleDateFormat("HH-mm-ss-SSS");
-        Date date = new Date();
-        zipFile = new File(getTestFolder().getAbsolutePath() + "/" + date1.format(date) + "_" + hour.format(date) + "_dump.zip");
-        zipFile.createNewFile();
-
-    }
+//    public static void main(String[] args) throws IOException {
+//    	try {
+//			dumpMachines("http://15.185.169.193:8100");
+//			System.out.println("sdf");
+//		} catch (Exception e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//        DateFormat date1 = new SimpleDateFormat("dd-MM-yyyy");
+//        DateFormat hour = new SimpleDateFormat("HH-mm-ss-SSS");
+//        Date date = new Date();
+//        zipFile = new File(getTestFolder().getAbsolutePath() + "/" + date1.format(date) + "_" + hour.format(date) + "_dump.zip");
+//        zipFile.createNewFile();
+//
+//    }
 }

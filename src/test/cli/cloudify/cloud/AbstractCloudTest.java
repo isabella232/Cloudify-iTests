@@ -259,10 +259,12 @@ public class AbstractCloudTest extends AbstractTest {
 		.toString();
 		String output = CommandTestUtils.runCommand(connectCommand + installCommand, wait, failCommand);
 		String excpectedResult = "Application " + applicationName + " installed successfully";
-		if(!failCommand)
-			assertTrue(output.toLowerCase().contains(excpectedResult.toLowerCase()));
+		if(!failCommand){
+			assertTrue("command output does not contain the string " + excpectedResult + "in output " 
+								+ output, output.toLowerCase().contains(excpectedResult.toLowerCase()));
+		}
 		else
-			assertTrue(output.toLowerCase().contains("operation failed"));
+			assertTrue("Command was ecpected to fail but succeded", output.toLowerCase().contains("operation failed"));
 
 	}
 

@@ -339,30 +339,38 @@ public class SSHUtils {
     }
     
     public static String runCommand(String ipAddress, long timeoutMilliseconds, String command,
-            String username, String password) {
-        try {
-            final File output = File.createTempFile("sshCommand", ".txt");
-            try {
-                final SSHExec task = new SSHExec();
-                task.setOutput(output);
-                // ssh related parameters
-                task.setFailonerror(true); // throw exception if exit code is not 0
-                task.setCommand(command);
-                task.setHost(ipAddress);
-                task.setTrust(true);
-                task.setUsername(username);
-                task.setPassword(password);
-                task.setTimeout(timeoutMilliseconds);
-                task.execute();
-                String response = readFileAsString(output);
-                return response;
-            } finally {
-                output.delete();
-            }
-        } catch(Exception e) {
-            Assert.fail("Failed running ssh command: '" + command + "' on " + ipAddress +": " + e.getMessage(), e);
-        }
-        return null;
+    		String username, String password) {
+    	File output = null;
+    	try {
+    		output = File.createTempFile("sshCommand", ".txt");
+    		try {
+    			final SSHExec task = new SSHExec();
+    			task.setOutput(output);
+    			// ssh related parameters
+    			task.setFailonerror(true); // throw exception if exit code is not 0
+    			task.setCommand(command);
+    			task.setHost(ipAddress);
+    			task.setTrust(true);
+    			task.setUsername(username);
+    			task.setPassword(password);
+    			task.setTimeout(timeoutMilliseconds);
+    			task.execute();
+    			String response = readFileAsString(output);
+    			return response;
+    		} catch(Exception e) {
+    			String failResponse = readFileAsString(output);
+    			Assert.fail("Failed running ssh command: '" + command + "' on " + ipAddress +": " + e.getMessage() + 
+    					". SSH output was: " + failResponse, e);
+    		}
+    	}catch (IOException e){
+    		Assert.fail("Failed creating temp file.", e);
+    	}
+    	finally {
+    		if (output != null){
+    			output.delete();
+    		}
+    	}
+    	return null;
     }
     
     private static String readFileAsString(File file) throws IOException {

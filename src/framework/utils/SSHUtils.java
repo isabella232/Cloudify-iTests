@@ -360,7 +360,7 @@ public class SSHUtils {
                 output.delete();
             }
         } catch(Exception e) {
-            Assert.fail("Failed running ssh command: '" + command + "' on " + ipAddress);
+            Assert.fail("Failed running ssh command: '" + command + "' on " + ipAddress +": " + e.getMessage(), e);
         }
         return null;
     }

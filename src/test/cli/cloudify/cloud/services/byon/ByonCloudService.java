@@ -53,8 +53,8 @@ public class ByonCloudService extends AbstractCloudService {
 		Map<String, String> propsToReplace = new HashMap<String,String>();
 		propsToReplace.put("ENTER_USER", BYON_CLOUD_USER);
 		propsToReplace.put("ENTER_PASSWORD", BYON_CLOUD_PASSWORD);
-		propsToReplace.put("cloudify_agent_", this.machinePrefix + "cloudify_agent");
-		propsToReplace.put("cloudify_manager", this.machinePrefix + "cloudify_manager");
+		propsToReplace.put("cloudify_agent_", this.machinePrefix + "cloudify-agent");
+		propsToReplace.put("cloudify_manager", this.machinePrefix + "cloudify-manager");
 		if(ipList != null)
 			propsToReplace.put("0.0.0.0", ipList);
 		propsToReplace.put("numberOfManagementMachines 1", "numberOfManagementMachines "  + numberOfManagementMachines);

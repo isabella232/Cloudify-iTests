@@ -61,8 +61,8 @@ public class HpCloudService extends AbstractCloudService {
 		Map<String, String> propsToReplace = new HashMap<String,String>();
 		propsToReplace.put("ENTER_USER", user);
 		propsToReplace.put("ENTER_API_KEY", apiKey);
-		propsToReplace.put("cloudify_agent_", this.machinePrefix + "cloudify_agent");
-		propsToReplace.put("cloudify_manager", this.machinePrefix + "cloudify_manager");
+		propsToReplace.put("cloudify_agent_", this.machinePrefix + "cloudify-agent");
+		propsToReplace.put("cloudify_manager", this.machinePrefix + "cloudify-manager");
 		propsToReplace.put("ENTER_KEY_FILE", pemFileName + ".pem");
 		propsToReplace.put("ENTER_TENANT", tenant);
         propsToReplace.put("ENTER_KEY_PAIR_NAME", "sgtest");

@@ -26,6 +26,7 @@ import framework.tools.SGTestHelper;
 import framework.tools.SimpleMail;
 import framework.utils.DumpUtils;
 import framework.utils.LogUtils;
+import framework.utils.ScriptUtils;
 
 public class AbstractCloudTest extends AbstractTest {
 
@@ -338,6 +339,31 @@ public class AbstractCloudTest extends AbstractTest {
 		assertTrue(output.toLowerCase().contains(excpectedResult.toLowerCase()));
 
 
+	}
+	
+	/**
+	 * This method is ment for the simple tests. all it does is install the application, and the immediately uninstalls it. 
+	 * @param cloudName - the cloud on which to install
+	 * @param applicationFolderName - the folder in which the application resides
+	 * @param applicationName - the name of the application as defined in (*-application.groovy)
+	 * @throws IOException
+	 * @throws InterruptedException
+	 */
+	public void doSanityTest(String cloudName, String applicationFolderName, String applicationName) throws IOException, InterruptedException {
+		LogUtils.log("installing application " + applicationName + " on " + cloudName);
+		String applicationPath = ScriptUtils.getBuildPath() + "/recipes/apps/" + applicationFolderName;
+		try {
+			installApplicationAndWait(applicationPath, applicationName);
+		}
+		finally {
+			if ((getService() != null) && (getService().getRestUrls() != null)) {
+				String command = "connect " + getRestUrl() + ";list-applications";
+				String output = CommandTestUtils.runCommandAndWait(command);
+				if (output.contains(applicationName)) {
+					uninstallApplicationAndWait(applicationName);			
+				}
+			}
+		}
 	}
 
 	protected void sendTeardownCloudFailedMail(String cloudName, Throwable error) {

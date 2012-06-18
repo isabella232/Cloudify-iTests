@@ -29,24 +29,41 @@
     <!-- sgtest classpath -->
     <path id="classpath">
     	
-        <!-- testng jars -->
-         <fileset dir="${sgtest.lib}/testng">
-             <include name="**/*.jar"/>
-         </fileset>
-    	
-        <fileset dir="${gsHome.dir}/lib">
+        <!-- commons jars -->
+        <fileset dir="${sgtest.lib}/commons">
             <include name="**/*.jar"/>
-            <exclude name="**/mule-os.jar"/>
+        </fileset>
+
+        <!-- testng jars -->
+        <fileset dir="${sgtest.lib}/testng">
+            <include name="**/*.jar"/>
+        </fileset>
+
+        <!--<fileset dir="${gsHome.dir}/lib">-->
+            <!--<include name="**/*.jar"/>-->
+            <!--<exclude name="**/mule-os.jar"/>-->
+        <!--</fileset>-->
+
+        <fileset dir="${gsHome.dir}/lib/required">
+            <include name="**/*.jar"/>
+        </fileset>
+
+        <fileset dir="${gsHome.dir}/lib/platform/usm">
+            <include name="**/*.jar"/>
+        </fileset>
+
+        <fileset dir="${gsHome.dir}/lib/platform/sigar">
+            <include name="**/*.jar"/>
+        </fileset>
+
+        <!-- CLI jars -->
+        <fileset dir="${gsHome.dir}/tools/cli">
+            <include name="**/*.jar"/>
         </fileset>
 
         <pathelement path="${sgtest.lib}"/>
         <!--<pathelement path="${sgtest.junit}"/>-->
         <pathelement path="${sgtest.testng}"/>
-
-    	<!-- commons jars -->
-        <fileset dir="${sgtest.lib}/commons">
-            <include name="**/*.jar"/>
-        </fileset>
 
         <!-- selenium jars -->
         <fileset dir="${sgtest.lib}/selenium">
@@ -98,11 +115,6 @@
             <include name="**/*.jar"/>
         </fileset>
 
-        <!-- CLI jars -->
-        <fileset dir="${gsHome.dir}/tools/cli">
-            <include name="**/*.jar"/>
-        </fileset>
-
         <!-- simplejavaprocessjars -->
         <fileset dir="${sgtest.lib}/../apps/USM/usm/simplejavaprocess">
             <include name="**/*.jar"/>
@@ -113,7 +125,7 @@
         <fileset dir="${sgtest.lib}/mail">
             <include name="**/*.jar"/>
         </fileset>
-    	
+		
 		<!-- wiki jars -->
         <fileset dir="${sgtest.lib}/wiki">
             <include name="**/*.jar"/>
@@ -123,7 +135,7 @@
         <fileset dir="${sgtest.lib}/xstream">
             <include name="**/*.jar"/>
         </fileset>
-        
+
         <!-- jackson jars -->
         <fileset dir="${sgtest.lib}/jackson">
             <include name="**/*.jar"/>
@@ -138,7 +150,6 @@
         <fileset dir="${sgtest.lib}/jclouds">
             <include name="**/*.jar"/>
         </fileset>
-        
 
         <!-- groovy jars -->
         <fileset dir="${gsHome.dir}/tools/groovy/lib">
@@ -147,6 +158,7 @@
             <include name="**/commons-cli*.jar"/>
             <include name="**/bsf*.jar"/>
         </fileset>
+
 
     </path>
 

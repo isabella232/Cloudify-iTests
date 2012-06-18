@@ -109,7 +109,6 @@ public class LoginPage {
 	 * @throws InterruptedException 
 	 */
 	public MainNavigation login() throws InterruptedException {
-		inputDiscovery();
 		selenium.click(WebConstants.Xpath.loginButton);
 		JavascriptExecutor js = (JavascriptExecutor) driver;
 		js.executeScript("return this.GigaSpaces.Util.Flags.isUnderTest=true");

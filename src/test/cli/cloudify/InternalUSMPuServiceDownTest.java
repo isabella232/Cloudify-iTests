@@ -90,8 +90,8 @@ public class InternalUSMPuServiceDownTest extends AbstractLocalCloudTest {
 			
 			removeLifecycleListenersFromTomcatPu();
 		}
-		
 	}
+	
 	private void removeLifecycleListenersFromTomcatPu() {
 		ProcessingUnit tomcatPu = getTomcatPu();
 		tomcatPu.removeLifecycleListener(this.eventListener);
@@ -110,7 +110,6 @@ public class InternalUSMPuServiceDownTest extends AbstractLocalCloudTest {
 		return tomcatPId;
 	}
 	
-
 	private void waitForServiceRecovery(final CountDownLatch removed,
 			final CountDownLatch added) throws InterruptedException {
 		LogUtils.log("waiting for tomcat pu instances to decrease");
@@ -121,8 +120,6 @@ public class InternalUSMPuServiceDownTest extends AbstractLocalCloudTest {
 		LogUtils.log("verifiying tomcat service in running");
 		assertTomcatPageExists();	
 		LogUtils.log("all's well that ends well :)");
-		
-
 	}
 
 	private void addLifecycleListenersToTomcatPu(final CountDownLatch removed,
@@ -171,6 +168,7 @@ public class InternalUSMPuServiceDownTest extends AbstractLocalCloudTest {
 	}
 
 	private void killTomcatProcess() throws IOException {
+		LogUtils.log("Retrieving tomcat process pid from admin");
 		Long tomcatPId = getTomcatPId();
 		LogUtils.log("killing tomcat process : " + tomcatPId);
 		DefaultProcessKiller dpk = new DefaultProcessKiller();
@@ -194,7 +192,7 @@ public class InternalUSMPuServiceDownTest extends AbstractLocalCloudTest {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		LogUtils.log("Retrieving tomcat process pid from admin");
+
 		ProcessingUnit tomcat = getTomcatPu();
 		assertTrue("USM Service state is not RUNNING", USMTestUtils.waitForPuRunningState("default.tomcat", 100, TimeUnit.SECONDS, admin));
 		ProcessingUnitUtils.waitForDeploymentStatus(tomcat, DeploymentStatus.INTACT);

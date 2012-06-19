@@ -47,7 +47,7 @@ public class InternalUSMPuServiceDownTest extends AbstractLocalCloudTest {
 	private static final int SINGLE_FAILOVER = 1;
 	WebClient client;
 	private final String TOMCAT_URL = "http://127.0.0.1:8080";
-	private final String serviceDir = ScriptUtils.getBuildPath() + "/recipes/services/tomcat";
+	private final String tomcatServiceDir = ScriptUtils.getBuildPath() + "/recipes/services/tomcat";
 	private ProcessingUnitInstanceLifecycleEventListener eventListener;
 
 	@Override
@@ -80,7 +80,7 @@ public class InternalUSMPuServiceDownTest extends AbstractLocalCloudTest {
 			removed = new CountDownLatch(1);
 			added = new CountDownLatch(2);
 			
-			addLifecycleListnersToTomcatPu(removed, added);
+			addLifecycleListenersToTomcatPu(removed, added);
 			
 			deleteCatalinaExec();
 			
@@ -127,7 +127,7 @@ public class InternalUSMPuServiceDownTest extends AbstractLocalCloudTest {
 
 	}
 
-	private void addLifecycleListnersToTomcatPu(final CountDownLatch removed,
+	private void addLifecycleListenersToTomcatPu(final CountDownLatch removed,
 			final CountDownLatch added) {
 		LogUtils.log("adding a lifecycle listener to tomcat pu");
 		ProcessingUnitInstanceLifecycleEventListener eventListener = new ProcessingUnitInstanceLifecycleEventListener() {
@@ -156,7 +156,7 @@ public class InternalUSMPuServiceDownTest extends AbstractLocalCloudTest {
 		String pathToTomcat;
 		
 		LogUtils.log("deleting catalina.sh/bat from pu folder");
-		ConfigObject tomcatConfig = new ConfigSlurper().parse(new File(this.serviceDir, "tomcat-service.properties").toURI().toURL());
+		ConfigObject tomcatConfig = new ConfigSlurper().parse(new File(this.tomcatServiceDir, "tomcat-service.properties").toURI().toURL());
 		String tomcatVersion = (String) tomcatConfig.get("version");
 		String catalinaPath = "/work/processing-units/default_tomcat_1/ext/apache-tomcat-" + tomcatVersion + "/bin/catalina.";
 		String filePath = ScriptUtils.getBuildPath()+ catalinaPath;
@@ -186,7 +186,7 @@ public class InternalUSMPuServiceDownTest extends AbstractLocalCloudTest {
 	}
 
 	private void installTomcat() throws UnknownHostException {
-		String command = "connect " + this.restUrl + ";" + "install-service " + "--verbose -timeout 10 " + this.serviceDir;
+		String command = "connect " + this.restUrl + ";" + "install-service " + "--verbose -timeout 10 " + this.tomcatServiceDir;
 		try {
 			LogUtils.log("installing tomcat service using Cli");
 			CommandTestUtils.runCommandAndWait(command);

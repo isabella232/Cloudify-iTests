@@ -43,6 +43,8 @@ import groovy.util.ConfigSlurper;
 public class InternalUSMPuServiceDownTest extends AbstractLocalCloudTest {
 	
 
+	private static final int TWO_FAILOVERS = 2;
+	private static final int SINGLE_FAILOVER = 1;
 	WebClient client;
 	private final String TOMCAT_URL = "http://127.0.0.1:8080";
 	private String serviceDir = ScriptUtils.getBuildPath() + "/recipes/services/tomcat";
@@ -55,36 +57,25 @@ public class InternalUSMPuServiceDownTest extends AbstractLocalCloudTest {
 		client = new WebClient(BrowserVersion.getDefault());
 	}
 	
-	@SuppressWarnings("deprecation")
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, groups = "1", enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
 	public void tomcatServiceDownAndCorruptedTest() throws IOException, InterruptedException {
-		
-		installTomcat();
-		
-		final CountDownLatch removed = new CountDownLatch(1);
-		final CountDownLatch added = new CountDownLatch(2);
-		
-		addLifecycleListnersToTomcatPu(removed, added);
-		
-		deleteCatalinaExec(serviceDir);
-		
-		Long tomcatPId = getTomcatPId();
-		
-		killTomcatProcess(tomcatPId);
-		
-		waitForServiceRecovery(removed, added);
+		doTest(SINGLE_FAILOVER);
 	}
-
-	@SuppressWarnings("deprecation")
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, groups = "1", enabled = true)
+	
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
 	public void tomcatServiceDownAndCorruptedTwiceTest() throws IOException, InterruptedException {
+		doTest(TWO_FAILOVERS);
+	}
+	
+	public void doTest(int numRepetitions) throws IOException, InterruptedException {
 		
 		installTomcat();
 		
 		CountDownLatch removed;
 		CountDownLatch added;
 		
-		for (int i = 0; i < 2; i++) {
+		for (int i = 0; i < numRepetitions; i++) {
+			
 			LogUtils.log("Starting the " + (i + 1) + " consequtive hard failover.");
 			removed = new CountDownLatch(1);
 			added = new CountDownLatch(2);

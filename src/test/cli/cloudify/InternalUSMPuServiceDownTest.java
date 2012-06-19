@@ -84,9 +84,7 @@ public class InternalUSMPuServiceDownTest extends AbstractLocalCloudTest {
 			
 			deleteCatalinaExec();
 			
-			Long tomcatPId = getTomcatPId();
-			
-			killTomcatProcess(tomcatPId);
+			killTomcatProcess();
 			
 			waitForServiceRecovery(removed, added);
 			
@@ -121,7 +119,7 @@ public class InternalUSMPuServiceDownTest extends AbstractLocalCloudTest {
 		added.await(60 * 6, TimeUnit.SECONDS);
 		assertTrue("ProcessingUnitInstanceAdded event has not been fired", added.getCount() == 0);	
 		LogUtils.log("verifiying tomcat service in running");
-		assertTomcatPageExists(client);	
+		assertTomcatPageExists();	
 		LogUtils.log("all's well that ends well :)");
 		
 
@@ -172,7 +170,8 @@ public class InternalUSMPuServiceDownTest extends AbstractLocalCloudTest {
 		assertTrue("failed while deleting file: " + tomcatRun, tomcatRun.delete());
 	}
 
-	private void killTomcatProcess(long tomcatPId) throws IOException {
+	private void killTomcatProcess() throws IOException {
+		Long tomcatPId = getTomcatPId();
 		LogUtils.log("killing tomcat process : " + tomcatPId);
 		DefaultProcessKiller dpk = new DefaultProcessKiller();
 		try {
@@ -213,14 +212,14 @@ public class InternalUSMPuServiceDownTest extends AbstractLocalCloudTest {
 		return (System.getenv("windir") != null);
 	}
 	
-	private void assertTomcatPageExists(WebClient client) {
+	private void assertTomcatPageExists() {
 		ProcessingUnitInstance tomcatInstance = getTomcatInstance();
 		GridServiceContainer container = tomcatInstance.getGridServiceContainer();		
 		Machine tomcatMachine = container.getMachine();
 		
         HtmlPage page = null;
         try {
-            page = client.getPage("http://" + tomcatMachine.getHostAddress() + ":8080");
+            page = this.client.getPage("http://" + tomcatMachine.getHostAddress() + ":8080");
         } catch (IOException e) {
             fail(e.getMessage());
         }

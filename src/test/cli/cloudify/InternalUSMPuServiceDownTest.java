@@ -47,14 +47,14 @@ public class InternalUSMPuServiceDownTest extends AbstractLocalCloudTest {
 	private static final int SINGLE_FAILOVER = 1;
 	WebClient client;
 	private final String TOMCAT_URL = "http://127.0.0.1:8080";
-	private String serviceDir = ScriptUtils.getBuildPath() + "/recipes/services/tomcat";
+	private final String serviceDir = ScriptUtils.getBuildPath() + "/recipes/services/tomcat";
 	private ProcessingUnitInstanceLifecycleEventListener eventListener;
 
 	@Override
 	@BeforeMethod
 	public void beforeTest() {
 		super.beforeTest();	
-		client = new WebClient(BrowserVersion.getDefault());
+		this.client = new WebClient(BrowserVersion.getDefault());
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
@@ -82,7 +82,7 @@ public class InternalUSMPuServiceDownTest extends AbstractLocalCloudTest {
 			
 			addLifecycleListnersToTomcatPu(removed, added);
 			
-			deleteCatalinaExec(serviceDir);
+			deleteCatalinaExec();
 			
 			Long tomcatPId = getTomcatPId();
 			
@@ -90,11 +90,11 @@ public class InternalUSMPuServiceDownTest extends AbstractLocalCloudTest {
 			
 			waitForServiceRecovery(removed, added);
 			
-			removeLifecycleListnersFromTomcatPu();
+			removeLifecycleListenersFromTomcatPu();
 		}
 		
 	}
-	private void removeLifecycleListnersFromTomcatPu() {
+	private void removeLifecycleListenersFromTomcatPu() {
 		ProcessingUnit tomcatPu = getTomcatPu();
 		tomcatPu.removeLifecycleListener(this.eventListener);
 	}
@@ -151,12 +151,12 @@ public class InternalUSMPuServiceDownTest extends AbstractLocalCloudTest {
 		this.eventListener = eventListener;
 	}
 
-	private void deleteCatalinaExec(String serviceDir)
+	private void deleteCatalinaExec()
 			throws MalformedURLException {
 		String pathToTomcat;
 		
 		LogUtils.log("deleting catalina.sh/bat from pu folder");
-		ConfigObject tomcatConfig = new ConfigSlurper().parse(new File(serviceDir, "tomcat-service.properties").toURI().toURL());
+		ConfigObject tomcatConfig = new ConfigSlurper().parse(new File(this.serviceDir, "tomcat-service.properties").toURI().toURL());
 		String tomcatVersion = (String) tomcatConfig.get("version");
 		String catalinaPath = "/work/processing-units/default_tomcat_1/ext/apache-tomcat-" + tomcatVersion + "/bin/catalina.";
 		String filePath = ScriptUtils.getBuildPath()+ catalinaPath;

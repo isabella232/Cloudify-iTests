@@ -5,7 +5,10 @@ service {
 	
 	lifecycle {
 
-
+		startDetection {
+			Thread.sleep(5000)
+			return true
+		}
 		preInstall {println "This is the preInstall event" }
 		postInstall {println "This is the postInstall event"}
 		preStart {println "This is the preStart event" }

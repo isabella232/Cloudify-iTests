@@ -32,11 +32,12 @@ public class NamesAsIPsByonTest extends AbstractCloudTest{
 	private static final String TEST_UNIQUE_NAME = "NamesAsIPsByonTest";
 	private String namesList = "pc-lab95,pc-lab96,pc-lab100";
 	public final static long MY_OPERATION_TIMEOUT = 1 * 60 * 1000;
+	public static final String IP_LIST_PROPERTY = "ipList";
 	
 	@BeforeClass(enabled = true)
 	public void before() throws RunNodesException, IOException, InterruptedException {
 		
-		System.setProperty("ipList", namesList);
+		System.setProperty(IP_LIST_PROPERTY, namesList);
 		
 		// get the cached service
 		setCloudService(CLOUD_NAME, TEST_UNIQUE_NAME, false);
@@ -87,7 +88,8 @@ public class NamesAsIPsByonTest extends AbstractCloudTest{
 		} catch(Exception e) {
 			//TODO : log
 		} finally {
-			byonService.teardownCloud();	
+			System.clearProperty(IP_LIST_PROPERTY);
+			byonService.teardownCloud();
 		}
 			
 	}

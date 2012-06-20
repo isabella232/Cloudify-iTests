@@ -30,4 +30,12 @@ if [ ! -z "$3" ]; then
   sed -i "1i export LOOKUPGROUPS=$3" setenv.sh
 fi
 
+echo Enabling TCP Keep Alive
+echo 1  > /proc/sys/net/ipv4/tcp_keepalive_time
+echo 1 > /proc/sys/net/ipv4/tcp_keepalive_intvl
+echo 5  > /proc/sys/net/ipv4/tcp_keepalive_probes
+echo 3000 > /proc/sys/net/core/netdev_max_backlog
+echo 3000 > /proc/sys/net/core/somaxconn
+
+
 exit 0

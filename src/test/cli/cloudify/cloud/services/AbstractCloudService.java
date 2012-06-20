@@ -11,6 +11,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.io.FileUtils;
+import org.cloudifysource.dsl.cloud.Cloud;
+import org.cloudifysource.dsl.internal.DSLException;
+import org.cloudifysource.dsl.internal.ServiceReader;
 
 import test.cli.cloudify.CloudTestUtils;
 import test.cli.cloudify.CommandTestUtils;
@@ -27,6 +30,8 @@ public abstract class AbstractCloudService implements CloudService {
 	
 	protected static final String RELATIVE_ESC_PATH = "/tools/cli/plugins/esc/";
 	protected static final String UPLOAD_FOLDER = "upload";
+	protected static final String DEFAULT_URL_PREFIX = "repository.cloudifysource.org/org/cloudifysource";
+	protected static final String NEW_URL_PREFIX = "http://tarzan/builds/GigaSpacesBuilds/cloudify";
 	
 	private String cloudName;
 	protected int numberOfManagementMachines = 1;
@@ -115,6 +120,27 @@ public abstract class AbstractCloudService implements CloudService {
 		IOUtils.replaceTextInFile(getPathToCloudGroovy(), propsToReplace);
 	}
 	
+	private void replaceCloudifyURL() throws DSLException, IOException {
+		Cloud cloud = ServiceReader.readCloud(new File(getPathToCloudGroovy()));
+		String defaultURL = cloud.getProvider().getCloudifyUrl();
+		String newCloudifyURL = "";
+		int prefixIndex = defaultURL.indexOf(DEFAULT_URL_PREFIX);
+		if (prefixIndex > 0) {
+			String lastParts = defaultURL.substring(prefixIndex + DEFAULT_URL_PREFIX.length());
+			String versionNumber = lastParts.substring(1, lastParts.lastIndexOf("/"));
+			String fileName = lastParts.substring(lastParts.lastIndexOf("/")+1);
+			String buildNumber = fileName.substring(fileName.lastIndexOf("-b")+2, fileName.indexOf(".zip"));
+			newCloudifyURL = NEW_URL_PREFIX + "/" + versionNumber + "/build_" + buildNumber + "/cloudify/1.5/" + fileName;
+		} else {
+			LogUtils.log("The groovy file doesn't contain a cloudifyUrl entry starting with \"" + DEFAULT_URL_PREFIX + "\"");
+			throw new DSLException("The groovy file doesn't contain a cloudifyUrl entry starting with \"" + DEFAULT_URL_PREFIX + "\"");
+		}
+		
+		Map<String, String> propsToReplace = new HashMap<String,String>();
+		propsToReplace.put(defaultURL, newCloudifyURL);
+		IOUtils.replaceTextInFile(getPathToCloudGroovy(), propsToReplace);
+	}
+	
 	/**
 	 * Create a new folder for the configuration files of the current service.
 	 * @param cloudName The name of the cloud (e.g. ec2, byon)
@@ -173,6 +199,7 @@ public abstract class AbstractCloudService implements CloudService {
 		try {
 			overrideLogsFile();
 			injectAuthenticationDetails();
+			replaceCloudifyURL();
 			if (additionalPropsToReplace != null) {
 				IOUtils.replaceTextInFile(getPathToCloudGroovy(), additionalPropsToReplace);
 			}

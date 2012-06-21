@@ -199,7 +199,9 @@ public abstract class AbstractCloudService implements CloudService {
 		try {
 			overrideLogsFile();
 			injectAuthenticationDetails();
-			replaceCloudifyURL();
+			if (this.cloudName.equalsIgnoreCase("byon")){
+				replaceCloudifyURL();
+			}
 			if (additionalPropsToReplace != null) {
 				IOUtils.replaceTextInFile(getPathToCloudGroovy(), additionalPropsToReplace);
 			}

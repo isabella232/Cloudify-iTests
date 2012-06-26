@@ -12,6 +12,7 @@ service {
 	}
 	customCommands ([
 	            "setApp" : {context.attributes.thisApplication.myKey = "myValue"},
+				"setGlobal" : {context.attributes.thisGlobal.myKey = "myGValue"},
 				"setAppScript" : "set_application_context_property.groovy",
 				"setInstance" : {context.attributes.thisInstance.myKey = "myValue"},
 				"setInstanceScript" : "set_instance_context_property.groovy",
@@ -19,6 +20,7 @@ service {
 				"setService2" : {context.attributes.thisService.myKey2 = "myValue2"},
 				"setServiceScript" : "set_service_context_property.groovy",
 				"setAppCustom" : {x, y -> return(context.attributes.thisApplication[x] = y)},
+				"setGlobalCustom" : {x, y -> return(context.attributes.thisGlobal[x] = y)},
                 "getAppCustom" : {x -> return(context.attributes.thisApplication[x])},
 				"setInstance1" : {context.attributes.thisService.instances[1].myKey = "myValue1"},
 				"setInstance2" : {context.attributes.thisService.instances[2].myKey = "myValue2"},

@@ -28,8 +28,10 @@ import framework.utils.LogUtils;
 
 public class AttributesTest extends AbstractLocalCloudTest {
 
-	private final String APPLICAION_DIR_PATH = CommandTestUtils
+	private final String MAIN_APPLICAION_DIR_PATH = CommandTestUtils
 									.getPath("apps/USM/usm/applications/attributesTestApp");
+	private final String SECONDARY_APPLICAION_DIR_PATH = CommandTestUtils
+			.getPath("apps/USM/usm/applications/attributesTestApp2");
 	
 	private Application app;	
 	private GigaSpace gigaspace;
@@ -307,16 +309,49 @@ public class AttributesTest extends AbstractLocalCloudTest {
 				getServiceAfterClear.contains("myValue") && getServiceAfterClear.contains("myValue2"));
 	}
 	
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = true)
+	public void testSimpleSetGlobalAttributesOneApp() throws Exception {
+		runCommand("connect " + restUrl + ";use-application attributesTestApp" 
+				+ "; invoke setter setGlobal myGValue");
+		
+		String simpleGet = runCommand("connect " + restUrl + ";use-application attributesTestApp" 
+				+ "; invoke getter getGlobal myKey");
+		
+		assertTrue("command did not execute" , simpleGet.contains("OK"));
+		assertTrue("getter service cannot get the global attribute when using parameters", simpleGet.contains("myGValue"));
+	}
 	
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = true)
+	public void testGlobalSetAttributeCustomParamsTwoApps() throws Exception {
+		LogUtils.log("setting an global attribute from setter service");
+		runCommand("connect " + restUrl + ";use-application attributesTestApp" 
+				+ "; invoke setter setGlobalCustom myGlobalKey myGlobalValue");
+
+		String simpleGet = runCommand("connect " + restUrl + ";use-application attributesTestApp" 
+				+ "; invoke getter getGlobalCustom myGlobalKey");
+	
+		//install a different app
+		runCommand("connect " + restUrl + ";install-application " + SECONDARY_APPLICAION_DIR_PATH + ";" );
+		
+		//Get the attribute from a different application
+		String simpleGet2 = runCommand("connect " + restUrl + ";use-application attributesTestApp2" 
+				+ "; invoke getter getGlobalCustom myGlobalKey");
+		
+		assertTrue("command did not execute" , simpleGet.contains("OK"));
+		assertTrue("command did not execute" , simpleGet2.contains("OK"));
+		assertTrue("getter service cannot get the application attribute", simpleGet.contains("myGlobalValue"));
+		assertTrue("setter service cannot get the application attribute", simpleGet2.contains("myGlobalValue"));
+		runCommand("connect " + this.restUrl + ";uninstall-application attributesTestApp2" );
+	}
 	
 	private void installApplication() throws PackagingException, IOException, InterruptedException, DSLException {
 		Service getter;
 		Service setter;
-		File applicationDir = new File(APPLICAION_DIR_PATH);
+		File applicationDir = new File(MAIN_APPLICAION_DIR_PATH);
 		app = ServiceReader.getApplicationFromFile(applicationDir).getApplication();
 		getter = app.getServices().get(0).getName().equals("getter") ? app.getServices().get(0) : app.getServices().get(1);
 		setter = app.getServices().get(0).getName().equals("setter") ? app.getServices().get(0) : app.getServices().get(1);
 		
-		runCommand("connect " + restUrl + ";install-application --verbose " + APPLICAION_DIR_PATH);
+		runCommand("connect " + restUrl + ";install-application --verbose " + MAIN_APPLICAION_DIR_PATH);
 	}
 }

@@ -17,13 +17,13 @@ import test.cli.cloudify.cloud.services.CloudService;
 import framework.utils.LogUtils;
 import framework.utils.ScriptUtils;
 
-public abstract class ExamplesTest extends NewAbstractCloudTest {
+public abstract class AbstractExamplesTest extends NewAbstractCloudTest {
 
-	private static final String CLOUD_SERVICE_UNIQUE_NAME = "ExamplesTest";
+	
 	private String applicationName;
 
-	public ExamplesTest() {
-		LogUtils.log("Instansiated " + ExamplesTest.class.getName());
+	public AbstractExamplesTest() {
+		LogUtils.log("Instansiated " + AbstractExamplesTest.class.getName());
 	}
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
@@ -80,7 +80,7 @@ public abstract class ExamplesTest extends NewAbstractCloudTest {
 	}
 
 	@AfterMethod
-	public void afterTest() {
+	public void afterTestLeakScan() {
 		if ((getService() != null) && (getService().getRestUrls() != null)) {
 			String command = "connect " + getRestUrl() + ";list-applications";
 			String output;

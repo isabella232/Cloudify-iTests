@@ -16,10 +16,10 @@
 
 package test.cli.cloudify.cloud.ec2;
 
-import test.cli.cloudify.cloud.ExamplesTest;
+import test.cli.cloudify.cloud.AbstractExamplesTest;
 
 
-public class Ec2ExamplesTest extends ExamplesTest {
+public class Ec2ExamplesTest extends AbstractExamplesTest {
 
 	@Override
 	protected String getCloudName() {

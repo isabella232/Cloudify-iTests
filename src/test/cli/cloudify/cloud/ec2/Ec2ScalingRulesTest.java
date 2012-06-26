@@ -14,16 +14,16 @@
  * limitations under the License.
  *******************************************************************************/
 
-package test.cli.cloudify.cloud.hp;
+package test.cli.cloudify.cloud.ec2;
 
-import test.cli.cloudify.cloud.AbstractExamplesTest;
+import test.cli.cloudify.cloud.AbstractScalingRulesCloudTest;
 
 
-public class HPExamplesTest extends AbstractExamplesTest {
+public class Ec2ScalingRulesTest extends AbstractScalingRulesCloudTest{
 
 	@Override
 	protected String getCloudName() {
-		return "hp";
+		return "ec2";
 	}
 
 }

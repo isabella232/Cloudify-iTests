@@ -16,10 +16,10 @@
 
 package test.cli.cloudify.cloud.rackspace;
 
-import test.cli.cloudify.cloud.ExamplesTest;
+import test.cli.cloudify.cloud.AbstractExamplesTest;
 
 
-public class RackspaceExamplesTest extends ExamplesTest {
+public class RackspaceExamplesTest extends AbstractExamplesTest {
 
 	@Override
 	protected String getCloudName() {

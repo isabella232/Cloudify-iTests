@@ -16,10 +16,10 @@
 
 package test.cli.cloudify.cloud.hp;
 
-import test.cli.cloudify.cloud.AbstractExamplesTest;
+import test.cli.cloudify.cloud.AbstractScalingRulesCloudTest;
 
 
-public class HPExamplesTest extends AbstractExamplesTest {
+public class HPScalingRulesTest extends AbstractScalingRulesCloudTest{
 
 	@Override
 	protected String getCloudName() {

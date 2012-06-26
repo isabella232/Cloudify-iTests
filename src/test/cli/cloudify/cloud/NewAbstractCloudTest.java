@@ -55,7 +55,7 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 	protected abstract boolean isReusableCloud();
 
 	@AfterMethod(alwaysRun = true)
-	public void afterTest() {
+	public void afterTestLeakScan() {
 		final boolean leakedAgentScanResult = this.cloud.afterTest();
 
 		if (this.lastTestResult == ITestResult.SUCCESS) {

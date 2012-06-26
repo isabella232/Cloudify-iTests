@@ -25,6 +25,8 @@ import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import test.cli.cloudify.cloud.services.CloudService;
+
 import framework.utils.AssertUtils;
 import framework.utils.AssertUtils.RepetitiveConditionProvider;
 import framework.utils.LogUtils;
@@ -36,7 +38,7 @@ import framework.utils.WebUtils;
  *  @author itaif
  *  @since 2.1.0
  */
-public class ScalingRulesCloudTest extends AbstractCloudTest {
+public abstract class AbstractScalingRulesCloudTest extends NewAbstractCloudTest {
 
 	private static final String CLOUD_SERVICE_UNIQUE_NAME = "ScalingRulesCloudTest";
 	private static final String APPLICATION_FOLDERNAME = "petclinic-simple";
@@ -51,27 +53,25 @@ public class ScalingRulesCloudTest extends AbstractCloudTest {
 	private final List<HttpRequest> threads = new ArrayList<HttpRequest>();
 	
 	@BeforeTest
-	@Override
-	public void beforeTest() {
-		super.beforeTest();
+	
+	public void beforeTest() {	
 		executor= Executors.newScheduledThreadPool(NUMBER_OF_HTTP_GET_THREADS);
 	}
 	
 	@AfterTest
-	@Override
 	public void afterTest() {
 		if (executor != null) {
 			executor.shutdownNow();
 		}
 		
-		super.afterTest();
+		super.afterTestLeakScan();
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 3, enabled = true, dataProvider = "supportedCloudsWithoutByon")
-	public void testPetclinicSimpleScalingRules(String cloudName) throws Exception {		
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 3, enabled = true)
+	public void testPetclinicSimpleScalingRules() throws Exception {		
 		
-		LogUtils.log("installing application " + APPLICATION_NAME + " on " + cloudName);
-		setCloudService(cloudName, CLOUD_SERVICE_UNIQUE_NAME, true);
+		LogUtils.log("installing application " + APPLICATION_NAME);
+
 		String applicationPath = ScriptUtils.getBuildPath() + "/recipes/apps/" + APPLICATION_FOLDERNAME;
 		installApplicationAndWait(applicationPath, APPLICATION_NAME);
 		
@@ -258,5 +258,16 @@ public class ScalingRulesCloudTest extends AbstractCloudTest {
 		}
 		
 		return instanceUrls;
+	}
+
+
+	@Override
+	protected boolean isReusableCloud() {
+		return false;
+	}
+
+	@Override
+	protected void customizeCloud(CloudService cloud) {
+		
 	}
 }

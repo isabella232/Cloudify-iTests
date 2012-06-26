@@ -1,4 +1,4 @@
-package test.cli.cloudify.cloud;
+package test.cli.cloudify.cloud.byon;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,6 +11,7 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import test.cli.cloudify.cloud.AbstractCloudTest;
 import test.cli.cloudify.cloud.services.byon.ByonCloudService;
 import framework.tools.SGTestHelper;
 import framework.utils.AssertUtils;

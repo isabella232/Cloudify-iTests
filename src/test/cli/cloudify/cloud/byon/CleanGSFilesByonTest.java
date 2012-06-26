@@ -13,7 +13,7 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 ******************************************************************************/
-package test.cli.cloudify.cloud;
+package test.cli.cloudify.cloud.byon;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -39,6 +39,7 @@ import org.testng.annotations.Test;
 
 import test.cli.cloudify.CloudTestUtils;
 import test.cli.cloudify.CommandTestUtils;
+import test.cli.cloudify.cloud.AbstractCloudTest;
 import test.cli.cloudify.cloud.services.CloudService;
 import framework.utils.LogUtils;
 

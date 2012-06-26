@@ -1,4 +1,4 @@
-package test.cli.cloudify.cloud;
+package test.cli.cloudify.cloud.ec2;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,6 +14,8 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import test.cli.cloudify.CloudTestUtils;
+import test.cli.cloudify.cloud.AbstractCloudTest;
+import test.cli.cloudify.cloud.JcloudsUtils;
 import test.cli.cloudify.cloud.services.ec2.Ec2CloudService;
 import framework.tools.SGTestHelper;
 import framework.utils.AssertUtils;

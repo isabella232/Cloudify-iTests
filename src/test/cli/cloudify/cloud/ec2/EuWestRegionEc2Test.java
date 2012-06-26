@@ -1,4 +1,4 @@
-package test.cli.cloudify.cloud;
+package test.cli.cloudify.cloud.ec2;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -10,6 +10,7 @@ import org.testng.annotations.Test;
 import framework.utils.LogUtils;
 
 import test.cli.cloudify.CloudTestUtils;
+import test.cli.cloudify.cloud.AbstractCloudTest;
 import test.cli.cloudify.cloud.services.ec2.Ec2CloudService;
 
 public class EuWestRegionEc2Test extends AbstractCloudTest {

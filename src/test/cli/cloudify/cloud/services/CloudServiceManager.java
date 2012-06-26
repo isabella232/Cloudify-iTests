@@ -91,9 +91,9 @@ public class CloudServiceManager {
 			cloudService = new Ec2CloudService(serviceUniqueName);
 		} else if ("ec2_Win".equalsIgnoreCase(cloudName)) {
 			cloudService = new Ec2WinCloudService(serviceUniqueName);
-		} else if ("openstack".equalsIgnoreCase(cloudName)) {
+		} else if ("hp".equalsIgnoreCase(cloudName)) {
 			cloudService = new HpCloudService(serviceUniqueName);
-		} else if ("rsopenstack".equalsIgnoreCase(cloudName)) {
+		} else if ("rackspace".equalsIgnoreCase(cloudName)) {
 			cloudService = new RackspaceCloudService(serviceUniqueName);
 		}
 //		else if ("terremark".equalsIgnoreCase(cloudName)) {

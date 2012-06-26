@@ -13,10 +13,11 @@ import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
 
 import test.cli.cloudify.CommandTestUtils;
+import test.cli.cloudify.cloud.services.CloudService;
 import framework.utils.LogUtils;
 import framework.utils.ScriptUtils;
 
-public class ExamplesTest extends AbstractCloudTest {
+public abstract class ExamplesTest extends NewAbstractCloudTest {
 
 	private static final String CLOUD_SERVICE_UNIQUE_NAME = "ExamplesTest";
 	private String applicationName;
@@ -25,29 +26,28 @@ public class ExamplesTest extends AbstractCloudTest {
 		LogUtils.log("Instansiated " + ExamplesTest.class.getName());
 	}
 
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true, dataProvider = "supportedClouds")
-	public void testTravel(String cloudName)
-			throws IOException, InterruptedException {
-		doTest(cloudName, "travel", "travel");
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
+	public void testTravel()
+			throws Exception {
+		doTest("travel", "travel");
 	}
 
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true, dataProvider = "supportedCloudsWithoutByon")
-	public void testPetclinic(String cloudName)
-			throws IOException, InterruptedException {
-		doTest(cloudName, "petclinic", "petclinic");
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
+	public void testPetclinic()
+			throws Exception {
+		doTest("petclinic", "petclinic");
 	}
 
 	// petclinic-simple is covered by {@link ScalingRulesCloudTest}
 
-	protected void doTest(String cloudName, String applicationFolderName, String applicationName)
-			throws IOException, InterruptedException {
-		LogUtils.log("installing application " + applicationName + " on " + cloudName);
-		setCloudService(cloudName, CLOUD_SERVICE_UNIQUE_NAME, true);
+	protected void doTest(String applicationFolderName, String applicationName)
+			throws Exception {
+		LogUtils.log("installing application " + applicationName + " on " + getCloudName());
 		this.applicationName = applicationName;
 		String applicationPath = ScriptUtils.getBuildPath() + "/recipes/apps/" + applicationFolderName;
 		try {
 			installApplicationAndWait(applicationPath, applicationName);
-			if (applicationName.equals("travel") && cloudName.equals("ec2")) {
+			if (applicationName.equals("travel") && getCloudName().equals("ec2")) {
 				// verify image and hardware ID only for travel on EC2
 				Client client = Client.create(new DefaultClientConfig());
 				final WebResource service = client.resource(this.getRestUrl());
@@ -97,5 +97,16 @@ public class ExamplesTest extends AbstractCloudTest {
 				AssertFail(e.getMessage());
 			}
 		}
+	}
+
+	
+	@Override
+	protected boolean isReusableCloud() {
+		return false;
+	}
+
+	@Override
+	protected void customizeCloud(CloudService cloud) {
+		
 	}
 }

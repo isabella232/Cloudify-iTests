@@ -1,4 +1,4 @@
-package test.cli.cloudify.cloud;
+package test.cli.cloudify.cloud.byon;
 
 import java.io.IOException;
 
@@ -6,6 +6,7 @@ import org.cloudifysource.dsl.internal.DSLException;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+
 
 
 

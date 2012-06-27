@@ -315,7 +315,7 @@ public class AttributesTest extends AbstractLocalCloudTest {
 				+ "; invoke setter setGlobal myGValue");
 		
 		String simpleGet = runCommand("connect " + restUrl + ";use-application attributesTestApp" 
-				+ "; invoke getter getGlobal myKey");
+				+ "; invoke getter getGlobal");
 		
 		assertTrue("command did not execute" , simpleGet.contains("OK"));
 		assertTrue("getter service cannot get the global attribute when using parameters", simpleGet.contains("myGValue"));

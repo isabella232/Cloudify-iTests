@@ -11,6 +11,6 @@ service {
 		start (["Win.*":"run.bat", "Linux":"run.sh"])
 	}
 	customCommands ([
-			"getGlobalCustom" : {x-> return(context.attributes.thisGlobal[x])}
+			"getGlobalCustom" : {x-> return(context.attributes.global[x])}
 		])
 }

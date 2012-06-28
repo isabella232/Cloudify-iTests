@@ -122,33 +122,66 @@ public class Ec2CloudService extends AbstractCloudService {
 	}
 
 	private List<ComputeMetadata> checkForLeakedNodesWithPrefix(String... prefixes) {
-		LogUtils.log("Checking for leaked nodes with prefix: " + Arrays.toString(prefixes));
-		final Set<? extends ComputeMetadata> aloNodes = this.context.getComputeService().listNodes();
+		List<ComputeMetadata> leakedNodes = null;
 
-		final List<ComputeMetadata> leakedNodes = new LinkedList<ComputeMetadata>();
+		
+		
 
-		for (final ComputeMetadata computeMetadata : aloNodes) {
-			final String name = computeMetadata.getName();
-			final NodeState state = ((NodeMetadata) computeMetadata).getState();
-			switch (state) {
-			case TERMINATED:
-				// ignore
-				break;
-			case ERROR:
-			case PENDING:
-			case RUNNING:
-			case UNRECOGNIZED:
-			case SUSPENDED:
-			default:
-				for (String prefix : prefixes) {
-					if (name != null) {
-						if (name.startsWith(prefix)) {
-							leakedNodes.add(computeMetadata);
+		while (true) {
+			leakedNodes = new LinkedList<ComputeMetadata>();
+			LogUtils.log("Checking for leaked nodes with prefix: " + Arrays.toString(prefixes));
+			final Set<? extends ComputeMetadata> allNodes = this.context.getComputeService().listNodes();
+			
+			boolean foundPendingNodes = false;
+			for (final ComputeMetadata computeMetadata : allNodes) {
+				final String name = computeMetadata.getName();
+				final NodeState state = ((NodeMetadata) computeMetadata).getState();
+				switch (state) {
+				case TERMINATED:
+					// ignore - node is shut down
+					break;
+				case PENDING:
+				case ERROR:
+				case RUNNING:
+				case UNRECOGNIZED:
+				case SUSPENDED:
+				default:
+					if (name == null || name.length() == 0) {						
+						LogUtils.log("WARNING! Found a non-terminated node with an empty name. " 
+								+ "The test can't tell if this is a leaked node or not! Node details: "
+								+ computeMetadata);						
+					} else {
+						for (String prefix : prefixes) {
+							if (name.startsWith(prefix)) {
+								if(state.equals(NodeState.PENDING)) {
+									// node is transitioning from one state to another - might be shutting down, might be starting up!
+									// Must try again later.
+									foundPendingNodes = true;
+									LogUtils.log("While scanning for leaked nodes, found a node in state PENDING. Leak scan will be retried. Node in state pending was: "
+											+ computeMetadata);
+								} else {
+									LogUtils.log("ERROR: Found a leaking node: " + computeMetadata);
+									leakedNodes.add(computeMetadata);
+								}
+							}
 						}
+
 					}
+
+					break;
+				}
+			}
+
+			if (!foundPendingNodes) {
+				break; // no need to re-run the scan
+			} else {
+				try {
+					LogUtils.log("Sleeping for several seconds to give pending nodes time to reach their new state");
+					Thread.sleep(10000);
+				} catch (InterruptedException e) {
+					// ignore.
 				}
 
-				break;
 			}
 		}
 

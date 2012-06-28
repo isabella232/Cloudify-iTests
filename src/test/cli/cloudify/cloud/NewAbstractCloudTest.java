@@ -26,6 +26,7 @@ import framework.tools.SGTestHelper;
 import framework.tools.SimpleMail;
 import framework.utils.DumpUtils;
 import framework.utils.LogUtils;
+import framework.utils.ScriptUtils;
 
 public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 
@@ -64,7 +65,7 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 				// The test passed, but machines leaked, so the configuration should fail.
 				AssertFail("Test: " + lastTestName + " ended successfully, but leaked nodes were found!");
 			}
-			
+
 		} else {
 			LogUtils.log("Test: " + lastTestName + " failed, and some leaked nodes were found too");
 		}
@@ -151,6 +152,7 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 		// "It will be torn down when the test suite ends.");
 		// return;
 		// }
+				
 		final String cloudName = this.getCloudName();
 
 		if (this.cloud == null) {
@@ -386,6 +388,33 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 
 	public CloudService getService() {
 		return cloud;
+	}
+
+	/**
+	 * This method is ment for the simple tests. all it does is install the application, and the immediately uninstalls
+	 * it.
+	 * 
+	 * @param cloudName - the cloud on which to install
+	 * @param applicationFolderName - the folder in which the application resides
+	 * @param applicationName - the name of the application as defined in (*-application.groovy)
+	 * @throws IOException
+	 * @throws InterruptedException
+	 */
+	public void doSanityTest(String applicationFolderName, String applicationName)
+			throws IOException, InterruptedException {
+		LogUtils.log("installing application " + applicationName + " on " + cloudName);
+		String applicationPath = ScriptUtils.getBuildPath() + "/recipes/apps/" + applicationFolderName;
+		try {
+			installApplicationAndWait(applicationPath, applicationName);
+		} finally {
+			if ((getService() != null) && (getService().getRestUrls() != null)) {
+				String command = "connect " + getRestUrl() + ";list-applications";
+				String output = CommandTestUtils.runCommandAndWait(command);
+				if (output.contains(applicationName)) {
+					uninstallApplicationAndWait(applicationName);
+				}
+			}
+		}
 	}
 
 }

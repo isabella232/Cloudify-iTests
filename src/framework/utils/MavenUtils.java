@@ -6,7 +6,7 @@ import java.io.File;
 
 import org.openspaces.admin.machine.Machine;
 
-import test.AbstractTest;
+import test.AbstractTestSupport;
 
 /**
  * Utility class for maven operations
@@ -32,7 +32,7 @@ public class MavenUtils {
 	public static boolean installMavenRep(Machine machine) {
 
 		String mavenHome = getBuildPath() + "/tools/maven";
-		String scriptOutPut = SSHUtils.runCommand(machine.getHostAddress(), AbstractTest.DEFAULT_TEST_TIMEOUT * 2, 
+		String scriptOutPut = SSHUtils.runCommand(machine.getHostAddress(), AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, 
 				"cd " + mavenHome + ";" + "./installmavenrep.sh", MavenUtils.username, MavenUtils.password);
 		if (scriptOutPut == null) return false;
 		return true;
@@ -57,7 +57,7 @@ public class MavenUtils {
 	 * @param machine
 	 */
 	public static void deleteMavenRep(Machine machine) {
-		SSHUtils.runCommand(machine.getHostAddress(), AbstractTest.DEFAULT_TEST_TIMEOUT * 2, 
+		SSHUtils.runCommand(machine.getHostAddress(), AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, 
 				"cd ~;cd .m2;rm -rf *", MavenUtils.username, MavenUtils.password);
 	}
 
@@ -68,7 +68,7 @@ public class MavenUtils {
 	 */
 	public static void deleteApp(Machine machine) {
 		String buildPath = ScriptUtils.getBuildPath();
-		SSHUtils.runCommand(machine.getHostAddress(), AbstractTest.DEFAULT_TEST_TIMEOUT * 2, 
+		SSHUtils.runCommand(machine.getHostAddress(), AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, 
 				"cd " + buildPath + "/..;rm -rf my-app", MavenUtils.username, MavenUtils.password);
 
 	}

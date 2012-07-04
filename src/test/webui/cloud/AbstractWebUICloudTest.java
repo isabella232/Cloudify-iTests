@@ -12,12 +12,13 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
-import com.thoughtworks.selenium.Selenium;
-
 import test.cli.cloudify.cloud.AbstractCloudTest;
 import test.cli.cloudify.cloud.services.CloudService;
-import test.webui.objects.LoginPage;
-import test.webui.resources.WebConstants;
+
+import com.gigaspaces.webuitf.LoginPage;
+import com.gigaspaces.webuitf.WebConstants;
+import com.thoughtworks.selenium.Selenium;
+
 import framework.tools.SGTestHelper;
 import framework.utils.LogUtils;
 

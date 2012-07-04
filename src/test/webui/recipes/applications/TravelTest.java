@@ -7,22 +7,24 @@ import org.openspaces.admin.pu.DeploymentStatus;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import test.webui.objects.LoginPage;
-import test.webui.objects.MainNavigation;
-import test.webui.objects.dashboard.DashboardTab;
-import test.webui.objects.dashboard.ServicesGrid;
-import test.webui.objects.dashboard.ServicesGrid.ApplicationServicesGrid;
-import test.webui.objects.dashboard.ServicesGrid.ApplicationsMenuPanel;
-import test.webui.objects.dashboard.ServicesGrid.Icon;
-import test.webui.objects.dashboard.ServicesGrid.InfrastructureServicesGrid;
-import test.webui.objects.services.PuTreeGrid;
-import test.webui.objects.services.ServicesTab;
-import test.webui.objects.topology.TopologyTab;
-import test.webui.objects.topology.applicationmap.ApplicationMap;
-import test.webui.objects.topology.applicationmap.ApplicationNode;
-import test.webui.objects.topology.applicationmap.Connector;
-import test.webui.objects.topology.healthpanel.HealthPanel;
 import test.webui.recipes.services.AbstractSeleniumServiceRecipeTest;
+
+import com.gigaspaces.webuitf.LoginPage;
+import com.gigaspaces.webuitf.MainNavigation;
+import com.gigaspaces.webuitf.dashboard.DashboardTab;
+import com.gigaspaces.webuitf.dashboard.ServicesGrid;
+import com.gigaspaces.webuitf.dashboard.ServicesGrid.ApplicationServicesGrid;
+import com.gigaspaces.webuitf.dashboard.ServicesGrid.ApplicationsMenuPanel;
+import com.gigaspaces.webuitf.dashboard.ServicesGrid.Icon;
+import com.gigaspaces.webuitf.dashboard.ServicesGrid.InfrastructureServicesGrid;
+import com.gigaspaces.webuitf.services.PuTreeGrid;
+import com.gigaspaces.webuitf.services.ServicesTab;
+import com.gigaspaces.webuitf.topology.TopologyTab;
+import com.gigaspaces.webuitf.topology.applicationmap.ApplicationMap;
+import com.gigaspaces.webuitf.topology.applicationmap.ApplicationNode;
+import com.gigaspaces.webuitf.topology.applicationmap.Connector;
+import com.gigaspaces.webuitf.topology.healthpanel.HealthPanel;
+
 import framework.utils.AssertUtils;
 import framework.utils.AssertUtils.RepetitiveConditionProvider;
 

@@ -6,15 +6,15 @@ import org.junit.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import test.webui.objects.LoginPage;
-import test.webui.objects.MainNavigation;
-import test.webui.objects.topology.Metric;
-import test.webui.objects.topology.MetricType;
-import test.webui.objects.topology.TopologyTab;
-import test.webui.objects.topology.applicationmap.ApplicationMap;
-import test.webui.objects.topology.applicationmap.ApplicationNode;
-import test.webui.objects.topology.healthpanel.HealthPanel;
-import test.webui.resources.WebConstants;
+import com.gigaspaces.webuitf.LoginPage;
+import com.gigaspaces.webuitf.MainNavigation;
+import com.gigaspaces.webuitf.WebConstants;
+import com.gigaspaces.webuitf.topology.Metric;
+import com.gigaspaces.webuitf.topology.MetricType;
+import com.gigaspaces.webuitf.topology.TopologyTab;
+import com.gigaspaces.webuitf.topology.applicationmap.ApplicationMap;
+import com.gigaspaces.webuitf.topology.applicationmap.ApplicationNode;
+import com.gigaspaces.webuitf.topology.healthpanel.HealthPanel;
 
 public class UsmPuServiceMonitorsInsteadOfDetailsTest extends AbstractSeleniumServiceRecipeTest {
 	
@@ -52,7 +52,7 @@ public class UsmPuServiceMonitorsInsteadOfDetailsTest extends AbstractSeleniumSe
 		Metric storePercentUsage = healthPanel.getMetric("Store Percent Usage");
 		
 		try { 
-			storePercentUsage.swithToMetric(new MetricType("Misc.", "Child Process ID"));
+			storePercentUsage.swithToMetric(new MetricType("Misc.", "Child Process ID", null));
 			shouldFail = true;
 			failureMessage += "Child Process ID should not be a part of the metric selection menu\n";
 		}
@@ -60,7 +60,7 @@ public class UsmPuServiceMonitorsInsteadOfDetailsTest extends AbstractSeleniumSe
 			
 		}
 		try { 
-			storePercentUsage.swithToMetric(new MetricType("Misc.", "Actual Process ID"));
+			storePercentUsage.swithToMetric(new MetricType("Misc.", "Actual Process ID", null));
 			shouldFail = true;
 			failureMessage += "Actual Process ID should not be a part of the metric selection menu\n";
 		}
@@ -68,7 +68,7 @@ public class UsmPuServiceMonitorsInsteadOfDetailsTest extends AbstractSeleniumSe
 			
 		}
 		try { 
-			storePercentUsage.swithToMetric(new MetricType("Misc.", "USM_State"));
+			storePercentUsage.swithToMetric(new MetricType("Misc.", "USM_State", null));
 			shouldFail = true;
 			failureMessage += "USM_State should not be a part of the metric selection menu\n";
 		}

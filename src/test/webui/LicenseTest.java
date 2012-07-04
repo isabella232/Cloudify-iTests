@@ -5,10 +5,10 @@ import org.openspaces.admin.pu.ProcessingUnit;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import framework.utils.ProcessingUnitUtils;
+import com.gigaspaces.webuitf.LoginPage;
+import com.gigaspaces.webuitf.dashboard.DashboardTab;
 
-import test.webui.objects.LoginPage;
-import test.webui.objects.dashboard.DashboardTab;
+import framework.utils.ProcessingUnitUtils;
 
 public class LicenseTest extends AbstractSeleniumTest {
 	
@@ -30,7 +30,7 @@ public class LicenseTest extends AbstractSeleniumTest {
 		
 		DashboardTab dashboard = loginPage.login().switchToDashboard();
 		
-		assertTrue(dashboard.isCloudify());
+		assertTrue(!dashboard.isXap());
 	}
 
 }

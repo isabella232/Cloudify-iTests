@@ -15,15 +15,16 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import test.cli.cloudify.CommandTestUtils;
+import test.webui.recipes.services.AbstractSeleniumServiceRecipeTest;
+
+import com.gigaspaces.webuitf.LoginPage;
+import com.gigaspaces.webuitf.MainNavigation;
+import com.gigaspaces.webuitf.dashboard.DashboardTab;
+import com.gigaspaces.webuitf.dashboard.alerts.AlertsPanel;
+
 import framework.utils.IOUtils;
 import framework.utils.LogUtils;
-
-import test.cli.cloudify.CommandTestUtils;
-import test.webui.objects.LoginPage;
-import test.webui.objects.MainNavigation;
-import test.webui.objects.dashboard.DashboardTab;
-import test.webui.objects.dashboard.alerts.AlertsPanel;
-import test.webui.recipes.services.AbstractSeleniumServiceRecipeTest;
 
 public class ScalingRulesCorruptedTest extends AbstractSeleniumServiceRecipeTest {
 
@@ -78,7 +79,7 @@ public class ScalingRulesCorruptedTest extends AbstractSeleniumServiceRecipeTest
 		
 		setStatistics(pu, 2, 100);
 		
-		alertsPanel.waitForAlerts(AlertStatus.RAISED, AlertsPanel.AUTOMATIC_SCALING, 1);
+		alertsPanel.waitForAlerts(AlertStatus.RAISED, "Automatic Scaling Alert", 1);
 		
 	}
 	
@@ -110,7 +111,7 @@ public class ScalingRulesCorruptedTest extends AbstractSeleniumServiceRecipeTest
 		
 		setStatistics(pu, 2, 100);
 		
-		alertsPanel.waitForAlerts(AlertStatus.RAISED, AlertsPanel.AUTOMATIC_SCALING, 1);
+		alertsPanel.waitForAlerts(AlertStatus.RAISED, "Automatic Scaling Alert", 1);
 		
 	}
 

@@ -9,15 +9,16 @@ import org.openspaces.admin.pu.ProcessingUnit;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import test.webui.objects.LoginPage;
-import test.webui.objects.MainNavigation;
-import test.webui.objects.topology.TopologyTab;
-import test.webui.objects.topology.applicationmap.ApplicationMap;
-import test.webui.objects.topology.applicationmap.ApplicationNode;
-import test.webui.objects.topology.logspanel.LogsMachine;
-import test.webui.objects.topology.logspanel.LogsPanel;
-import test.webui.objects.topology.logspanel.PuLogsPanelService;
-import test.webui.resources.WebConstants;
+import com.gigaspaces.webuitf.LoginPage;
+import com.gigaspaces.webuitf.MainNavigation;
+import com.gigaspaces.webuitf.WebConstants;
+import com.gigaspaces.webuitf.topology.TopologyTab;
+import com.gigaspaces.webuitf.topology.applicationmap.ApplicationMap;
+import com.gigaspaces.webuitf.topology.applicationmap.ApplicationNode;
+import com.gigaspaces.webuitf.topology.logspanel.LogsMachine;
+import com.gigaspaces.webuitf.topology.logspanel.LogsPanel;
+import com.gigaspaces.webuitf.topology.logspanel.PuLogsPanelService;
+
 import framework.utils.AssertUtils;
 import framework.utils.AssertUtils.RepetitiveConditionProvider;
 import framework.utils.ProcessingUnitUtils;
@@ -60,7 +61,7 @@ public class TerminateServiceContainerLogsPanelTest extends AbstractSeleniumAppl
 		
 		Machine localHost = travelContainer.getMachine();
 		
-		final LogsMachine logsLocalHost = travelLogsService.getMachine(localHost.getHostName());
+		final LogsMachine logsLocalHost = travelLogsService.getMachine(localHost,travelPu);
 		
 		assertTrue(logsLocalHost.containsGridServiceContainer(travelContainer));
 		

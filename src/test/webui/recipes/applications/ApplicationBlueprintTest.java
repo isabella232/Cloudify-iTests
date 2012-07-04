@@ -7,11 +7,11 @@ import java.util.concurrent.TimeUnit;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import test.webui.objects.LoginPage;
-import test.webui.objects.topology.TopologyTab;
-import test.webui.objects.topology.applicationmap.ApplicationMap;
-import test.webui.objects.topology.applicationmap.ApplicationNode;
-import test.webui.objects.topology.applicationmap.Connector;
+import com.gigaspaces.webuitf.LoginPage;
+import com.gigaspaces.webuitf.topology.TopologyTab;
+import com.gigaspaces.webuitf.topology.applicationmap.ApplicationMap;
+import com.gigaspaces.webuitf.topology.applicationmap.ApplicationNode;
+import com.gigaspaces.webuitf.topology.applicationmap.Connector;
 
 public class ApplicationBlueprintTest extends AbstractSeleniumApplicationRecipeTest {
 	

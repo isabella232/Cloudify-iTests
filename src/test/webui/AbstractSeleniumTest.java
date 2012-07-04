@@ -20,10 +20,10 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 import org.testng.annotations.AfterMethod;
 
 import test.cli.cloudify.AbstractLocalCloudTest;
-import test.webui.objects.LoginPage;
-import test.webui.objects.dashboard.DashboardTab;
-import test.webui.resources.WebConstants;
 
+import com.gigaspaces.webuitf.LoginPage;
+import com.gigaspaces.webuitf.WebConstants;
+import com.gigaspaces.webuitf.dashboard.DashboardTab;
 import com.j_spaces.kernel.PlatformVersion;
 import com.thoughtworks.selenium.Selenium;
 
@@ -123,6 +123,10 @@ public abstract class AbstractSeleniumTest extends AbstractLocalCloudTest {
     	}
     }
     
+	public LoginPage getLoginPage() {
+		return new LoginPage(selenium, driver);
+	}
+    
     private void maximize() {
     	driver.manage().window().setSize(new Dimension(1280, 1024)); 
 	}
@@ -132,24 +136,7 @@ public abstract class AbstractSeleniumTest extends AbstractLocalCloudTest {
     	if (driver != null) {
     		driver.quit();
     	}
-    }
-	
-	public LoginPage getLoginPage() {
-		return getLoginPage(this.selenium,this.driver);
-	}
-	
-	private LoginPage getLoginPage(Selenium selenium, WebDriver driver) {
-		if (admin.getLocators().length > 0) {
-			return new LoginPage(selenium, driver, admin.getLocators());	
-		}
-		
-		if (admin.getGroups().length > 0 ) {
-			return new LoginPage(selenium, driver, admin.getGroups()[0]);
-		}
-		
-		throw new IllegalStateException("Expected at least one lookupgroup or lookuplocator");
-		
-	}
+    }	
 	
 	public boolean verifyAlertThrown() {
 		return selenium.isElementPresent(WebConstants.Xpath.okAlert);

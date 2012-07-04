@@ -69,6 +69,11 @@
 		<fileset dir="${sgtest.homedir}/lib/selenium">
 			<include name="**/*.jar"/>
 		</fileset>
+    	
+		<!-- Webui jars -->
+		<fileset dir="${sgtest.homedir}/lib/webui">
+			<include name="**/*.jar"/>
+		</fileset>
 
 		<!-- UMS jars -->
     		<fileset dir="${BUILD_DIR}/lib/platform/usm">

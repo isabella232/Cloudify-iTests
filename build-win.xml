@@ -69,6 +69,11 @@
         <fileset dir="${sgtest.lib}/selenium">
             <include name="**/*.jar"/>
         </fileset>
+    	
+    	<!-- Webui jars -->
+    		<fileset dir="${sgtest.lib}/webui">
+    			<include name="**/*.jar"/>
+    	</fileset>
 
         <!-- hamcrest jars -->
         <fileset dir="${sgtest.lib}/hamcrest">

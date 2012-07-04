@@ -187,5 +187,6 @@
 	<classpathentry kind="lib" path="lib/jclouds/vcloud-1.4.0.jar"/>
 	<classpathentry kind="lib" path="lib/testng/testng-6.5.1.jar"/>
 	<classpathentry kind="lib" path="lib/selenium/guava-11.0.2.jar"/>
+	<classpathentry kind="lib" path="lib/webui/webuitf.jar"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>

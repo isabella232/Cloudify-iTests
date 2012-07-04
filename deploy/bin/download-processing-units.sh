@@ -74,6 +74,14 @@ svn export ${SVN_SGTEST_REPOSITORY}/config/sgtest_logging.properties
 rm -f ${BUILD_DIR}/config/sgtest_logging.properties
 cp sgtest_logging.properties /export/tgrid/sgtest2.0-cloudify/config
 
-rm -rf /export/tgrid/sgtest-cloudify/lib/xenserver/
+rm -rf /export/tgrid/sgtest2.0-cloudify/lib/xenserver/
 svn --force export ${SVN_SGTEST_REPOSITORY}/lib/xenserver
 mv xenserver /export/tgrid/sgtest2.0-cloudify/lib/
+
+rm -rf /export/tgrid/sgtest2.0-cloudify/lib/selenium/
+svn --force export ${SVN_SGTEST_REPOSITORY}/lib/selenium
+mv selenium /export/tgrid/sgtest2.0-cloudify/lib/
+
+rm -rf /export/tgrid/sgtest2.0-cloudify/lib/webui/
+svn --force export ${SVN_SGTEST_REPOSITORY}/lib/webui
+mv webui /export/tgrid/sgtest2.0-cloudify/lib/

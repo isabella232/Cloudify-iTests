@@ -50,7 +50,9 @@ service {
 				"cmd4" : "context_command.groovy",
 				"cmd5" : {x, y -> return ("this is the custom parameters command. expecting 123: "+1+x+y)},
 				"cmd6" : "someScript.groovy",
-				"cmd7" : {x -> "Single parameter test:parameter=" + x}
+				"cmd7" : {x -> "Single parameter test:parameter=" + x},
+				"cmd8" : "errorScript.groovy"
+				
 			])
 
 

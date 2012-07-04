@@ -549,6 +549,18 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 			AssertFail("Custom command cmd7 returned unexpected result: "
 					+ invoke7Result);
 		}
+		
+		String invoke8Result = CommandTestUtils.runCommandExpectedFail("connect " + this.restUrl
+				+ "; invoke kitchensink-service cmd8");
+
+		if ((!invoke8Result.contains("1: FAILED"))
+				|| (!invoke8Result
+						.contains("This is the cmd8 custom command - This is an error test"))) {
+			AssertFail("Custom command cmd8 returned unexpected result: "
+					+ invoke2Result);
+		}
+
+
 	}
 
 	private void checkMonitors(ProcessingUnitInstance pui) {

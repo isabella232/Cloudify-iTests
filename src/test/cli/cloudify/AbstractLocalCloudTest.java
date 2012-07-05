@@ -63,6 +63,7 @@ public class AbstractLocalCloudTest extends AbstractTest {
 	private final int HTTP_STATUS_OK = 200;
 	private final int restPort = 8100;
 	protected static String restUrl = null;
+	protected static final String MANAGEMENT_APPLICATION_NAME = "management";
 	protected static final String DEFAULT_APPLICATION_NAME = "default";
 //	private static Set<String> clientStartupPIDs = null;
 //	private static Set<String> localCloudPIDs = null;

@@ -10,7 +10,7 @@ import com.gigaspaces.webuitf.dashboard.DashboardTab;
 
 import framework.utils.ProcessingUnitUtils;
 
-public class LicenseTest extends AbstractSeleniumTest {
+public class LicenseTest extends AbstractWebUITest {
 	
 	@BeforeMethod
 	public void startBrowser() throws InterruptedException {	

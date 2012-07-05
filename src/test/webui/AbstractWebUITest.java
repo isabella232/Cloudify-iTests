@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.Arrays;
 
 import org.apache.commons.io.FileUtils;
+import org.cloudifysource.dsl.utils.ServiceUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.NoSuchElementException;
@@ -40,8 +41,14 @@ import framework.utils.LogUtils;
  *
  */
 
-public abstract class AbstractSeleniumTest extends AbstractLocalCloudTest {
+public abstract class AbstractWebUITest extends AbstractLocalCloudTest {
 	
+	protected static final String DEFAULT_ACTIVEMQ_FULL_SERVICE_NAME = ServiceUtils.getAbsolutePUName(DEFAULT_APPLICATION_NAME, "activemq");
+	protected static final String DEFAULT_CASSANDRA_FULL_SERVICE_NAME = ServiceUtils.getAbsolutePUName(DEFAULT_APPLICATION_NAME, "cassandra");
+	protected static final String DEFAULT_HSQLDB_FULL_SERVICE_NAME = ServiceUtils.getAbsolutePUName(DEFAULT_APPLICATION_NAME, "hsqldb");
+	protected static final String DEFAULT_SOLR_FULL_SERVICE_NAME = ServiceUtils.getAbsolutePUName(DEFAULT_APPLICATION_NAME, "solr");
+	protected static final String DEFAULT_TOMCAT_SERVICE_FULL_NAME = ServiceUtils.getAbsolutePUName(DEFAULT_APPLICATION_NAME, "tomcat");
+
 	public static String METRICS_ASSERTION_SUFFIX = " metric that is defined in the dsl is not displayed in the metrics panel";    
     
     protected static long waitingTime = 30000;

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import org.cloudifysource.dsl.utils.ServiceUtils;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -15,10 +16,14 @@ import com.gigaspaces.webuitf.topology.applicationmap.Connector;
 
 public class ApplicationBlueprintTest extends AbstractSeleniumApplicationRecipeTest {
 	
+	private static final String TRAVEL_APPLICATION_NAME = "travel";
+	private static final String CASSANDRA_SERVICE_FULL_NAME = ServiceUtils.getAbsolutePUName(TRAVEL_APPLICATION_NAME, "cassandra");
+	private static final String TOMCAT_SERVICE_FULL_NAME = ServiceUtils.getAbsolutePUName(TRAVEL_APPLICATION_NAME, "tomcat");
+	
 	@Override
 	@BeforeMethod
 	public void install() throws IOException, InterruptedException {
-		setCurrentApplication("travel");
+		setCurrentApplication(TRAVEL_APPLICATION_NAME);
 		setWait(false);
 		super.install();
 	}
@@ -32,14 +37,14 @@ public class ApplicationBlueprintTest extends AbstractSeleniumApplicationRecipeT
 		
 		ApplicationMap applicationMap = topologyTab.getApplicationMap();
 		
-		admin.getApplications().waitFor("travel", waitingTime, TimeUnit.SECONDS);
-		applicationMap.selectApplication("travel");
+		admin.getApplications().waitFor(TRAVEL_APPLICATION_NAME, waitingTime, TimeUnit.SECONDS);
+		applicationMap.selectApplication(TRAVEL_APPLICATION_NAME);
 		
-		ApplicationNode cassandra = applicationMap.getApplicationNode("cassandra");
+		ApplicationNode cassandra = applicationMap.getApplicationNode(CASSANDRA_SERVICE_FULL_NAME);
 
 		assertTrue(cassandra != null);
 
-		ApplicationNode tomcat = applicationMap.getApplicationNode("tomcat");
+		ApplicationNode tomcat = applicationMap.getApplicationNode(TOMCAT_SERVICE_FULL_NAME);
 
 		assertTrue(tomcat != null);	
 
@@ -48,6 +53,6 @@ public class ApplicationBlueprintTest extends AbstractSeleniumApplicationRecipeT
 		List<Connector> targets = tomcat.getTargets();
 		assertTrue(targets.size() == 1);
 		assertTrue(targets.get(0).getTarget().getName().equals(cassandra.getName()));
-		uninstallApplication("travel", true);
+		uninstallApplication(TRAVEL_APPLICATION_NAME, true);
 	}
 }

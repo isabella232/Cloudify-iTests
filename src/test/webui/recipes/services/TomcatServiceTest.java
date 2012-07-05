@@ -25,7 +25,7 @@ import framework.utils.AssertUtils;
 import framework.utils.AssertUtils.RepetitiveConditionProvider;
 
 public class TomcatServiceTest extends AbstractSeleniumServiceRecipeTest {
-
+	
 	@Override
 	@BeforeMethod
 	public void install() throws IOException, InterruptedException {
@@ -59,7 +59,7 @@ public class TomcatServiceTest extends AbstractSeleniumServiceRecipeTest {
 
 		ApplicationsMenuPanel appMenu = servicesGrid.getApplicationsMenuPanel();
 
-		appMenu.selectApplication(MANAGEMENT);
+		appMenu.selectApplication(MANAGEMENT_APPLICATION_NAME);
 
 		final ApplicationServicesGrid applicationServicesGrid = servicesGrid.getApplicationServicesGrid();
 
@@ -71,7 +71,7 @@ public class TomcatServiceTest extends AbstractSeleniumServiceRecipeTest {
 		};
 		AssertUtils.repetitiveAssertTrue(null, condition, waitingTime);
 
-		appMenu.selectApplication("default");
+		appMenu.selectApplication(DEFAULT_APPLICATION_NAME);
 
 		condition = new RepetitiveConditionProvider() {		
 			@Override
@@ -85,7 +85,7 @@ public class TomcatServiceTest extends AbstractSeleniumServiceRecipeTest {
 
 		final ApplicationMap appMap = topologyTab.getApplicationMap();
 
-		appMap.selectApplication(MANAGEMENT);
+		appMap.selectApplication(MANAGEMENT_APPLICATION_NAME);
 		
 		ApplicationNode restful = appMap.getApplicationNode("rest");
 
@@ -97,7 +97,19 @@ public class TomcatServiceTest extends AbstractSeleniumServiceRecipeTest {
 		assertTrue(webui != null);
 		assertTrue(webui.getStatus().equals(DeploymentStatus.INTACT));
 
-		appMap.selectApplication("default");
+		appMap.selectApplication(DEFAULT_APPLICATION_NAME);
+				
+		condition = new RepetitiveConditionProvider() {
+			
+			@Override
+			public boolean getCondition() {
+				ApplicationNode simple = appMap.getApplicationNode(DEFAULT_TOMCAT_SERVICE_FULL_NAME);
+				return simple != null;
+			}
+		};
+		AssertUtils.repetitiveAssertTrue("could not find tomcat application node after 10 seconds", condition, 10 * 1000);
+		
+		final ApplicationNode tomcatNode = appMap.getApplicationNode(DEFAULT_TOMCAT_SERVICE_FULL_NAME);
 		
 		takeScreenShot(this.getClass(), "tomcatRecipeTest","topology");
 		
@@ -105,17 +117,11 @@ public class TomcatServiceTest extends AbstractSeleniumServiceRecipeTest {
 			
 			@Override
 			public boolean getCondition() {
-				ApplicationNode simple = appMap.getApplicationNode("tomcat");
-				if (simple != null) {
-					return simple.getStatus().equals(DeploymentStatus.INTACT);
-				}
-				else {
-					return false;
-				}
+				return tomcatNode.getStatus().equals(DeploymentStatus.INTACT);
 			}
 		};
 		repetitiveAssertTrueWithScreenshot(
-				"tomcat service is displayed as " + appMap.getApplicationNode("tomcat").getStatus() + 
+				"tomcat service is displayed as " + appMap.getApplicationNode(DEFAULT_TOMCAT_SERVICE_FULL_NAME).getStatus() + 
 					"even though it is installed", condition, this.getClass(), "tomcatRecipeTest", "tomcat-service");
 
 		HealthPanel healthPanel = topologyTab.getTopologySubPanel().switchToHealthPanel();
@@ -135,7 +141,7 @@ public class TomcatServiceTest extends AbstractSeleniumServiceRecipeTest {
 
 		assertTrue(puTreeGrid.getProcessingUnit("webui") != null);
 		assertTrue(puTreeGrid.getProcessingUnit("rest") != null);
-		assertTrue(puTreeGrid.getProcessingUnit("default.tomcat") != null);
+		assertTrue(puTreeGrid.getProcessingUnit(DEFAULT_TOMCAT_SERVICE_FULL_NAME) != null);
 		uninstallService("tomcat", true);
 
 	}

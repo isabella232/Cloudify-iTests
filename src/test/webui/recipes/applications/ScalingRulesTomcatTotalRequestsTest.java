@@ -99,7 +99,7 @@ public class ScalingRulesTomcatTotalRequestsTest extends AbstractSeleniumApplica
 
 		ApplicationsMenuPanel appMenu = servicesGrid.getApplicationsMenuPanel();
 
-		appMenu.selectApplication(MANAGEMENT);
+		appMenu.selectApplication(MANAGEMENT_APPLICATION_NAME);
 
 		final ApplicationServicesGrid applicationServicesGrid = servicesGrid.getApplicationServicesGrid();
 
@@ -129,7 +129,7 @@ public class ScalingRulesTomcatTotalRequestsTest extends AbstractSeleniumApplica
 		
 		takeScreenShot(this.getClass(), "AutoScalingTomcatTotalRequestsTest","topology");
 
-		final ApplicationNode simple = appMap.getApplicationNode(SERVICE_NAME);
+		final ApplicationNode simple = appMap.getApplicationNode(ABSOLUTE_SERVICE_NAME);
 
 		assertTrue(simple != null);
 		

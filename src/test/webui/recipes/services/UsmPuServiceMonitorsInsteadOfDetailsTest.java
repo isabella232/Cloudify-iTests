@@ -18,6 +18,8 @@ import com.gigaspaces.webuitf.topology.healthpanel.HealthPanel;
 
 public class UsmPuServiceMonitorsInsteadOfDetailsTest extends AbstractSeleniumServiceRecipeTest {
 	
+	private static final String ACTIVEMQ_FULL_SERVICE_NAME = DEFAULT_APPLICATION_NAME + ".activemq";
+	
 	@Override
 	@BeforeMethod
 	public void install() throws IOException, InterruptedException {
@@ -41,9 +43,9 @@ public class UsmPuServiceMonitorsInsteadOfDetailsTest extends AbstractSeleniumSe
 		
 		ApplicationMap appMap = topologyTab.getApplicationMap();
 			
-		appMap.selectApplication("default");
+		appMap.selectApplication(DEFAULT_APPLICATION_NAME);
 		
-		ApplicationNode activemq = appMap.getApplicationNode("activemq");
+		ApplicationNode activemq = appMap.getApplicationNode(ACTIVEMQ_FULL_SERVICE_NAME);
 		
 		HealthPanel healthPanel = topologyTab.getTopologySubPanel().switchToHealthPanel();
 		

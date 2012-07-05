@@ -53,8 +53,7 @@ public class ScalingRulesRecipeTest extends AbstractSeleniumServiceRecipeTest {
 	private static final String SERVICE_RELATIVE_PATH = "apps\\cloudify\\recipes\\" + SERVICE_NAME;
 	
 	private static final String COUNTER_METRIC = "counter";
-	private static final String APPLICATION_NAME = "default";
-	private static final String ABSOLUTE_SERVICE_NAME = ServiceUtils.getAbsolutePUName(APPLICATION_NAME,SERVICE_NAME);
+	private static final String ABSOLUTE_SERVICE_NAME = ServiceUtils.getAbsolutePUName(DEFAULT_APPLICATION_NAME,SERVICE_NAME);
 	private final List<Alert> adminAlerts = new ArrayList<Alert>();
 	
 	@Override
@@ -90,12 +89,12 @@ public class ScalingRulesRecipeTest extends AbstractSeleniumServiceRecipeTest {
 
 		ApplicationsMenuPanel appMenu = servicesGrid.getApplicationsMenuPanel();
 
-		appMenu.selectApplication(MANAGEMENT);
+		appMenu.selectApplication(MANAGEMENT_APPLICATION_NAME);
 
 		final ApplicationServicesGrid applicationServicesGrid = servicesGrid.getApplicationServicesGrid();
 		repetitiveAssertTwoWebModules(applicationServicesGrid);
 				
-		appMenu.selectApplication(APPLICATION_NAME);
+		appMenu.selectApplication(DEFAULT_APPLICATION_NAME);
 
 		repetitiveAssertOneWebServerModule(applicationServicesGrid);
 				
@@ -103,7 +102,7 @@ public class ScalingRulesRecipeTest extends AbstractSeleniumServiceRecipeTest {
 
 		final ApplicationMap appMap = topologyTab.getApplicationMap();
 
-		appMap.selectApplication(APPLICATION_NAME);
+		appMap.selectApplication(DEFAULT_APPLICATION_NAME);
 		
 		takeScreenShot(this.getClass(), "customServiceMonitorsAutoScalingTest","topology");
 

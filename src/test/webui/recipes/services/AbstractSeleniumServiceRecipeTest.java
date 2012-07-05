@@ -7,15 +7,13 @@ import org.openspaces.admin.pu.ProcessingUnit;
 import org.testng.annotations.BeforeMethod;
 
 import test.cli.cloudify.CommandTestUtils;
-import test.webui.AbstractSeleniumTest;
+import test.webui.AbstractWebUITest;
 import framework.utils.LogUtils;
 import framework.utils.ProcessingUnitUtils;
 import framework.utils.ScriptUtils;
 
-public class AbstractSeleniumServiceRecipeTest extends AbstractSeleniumTest {
-
-	public static final String MANAGEMENT = "management";
-
+public class AbstractSeleniumServiceRecipeTest extends AbstractWebUITest {
+	
 	private boolean wait = true;
 	private String pathToService;
 	private String serviceName;

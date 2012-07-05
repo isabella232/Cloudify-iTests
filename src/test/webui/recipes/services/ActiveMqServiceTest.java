@@ -26,6 +26,7 @@ import framework.utils.AssertUtils.RepetitiveConditionProvider;
 
 public class ActiveMqServiceTest extends AbstractSeleniumServiceRecipeTest {
 	
+	
 	@Override
 	@BeforeMethod
 	public void install() throws IOException, InterruptedException {
@@ -60,7 +61,7 @@ public class ActiveMqServiceTest extends AbstractSeleniumServiceRecipeTest {
 		
 		ApplicationsMenuPanel appMenu = servicesGrid.getApplicationsMenuPanel();
 		
-		appMenu.selectApplication(MANAGEMENT);
+		appMenu.selectApplication(MANAGEMENT_APPLICATION_NAME);
 		
 		final ApplicationServicesGrid applicationServicesGrid = servicesGrid.getApplicationServicesGrid();
 		
@@ -86,7 +87,7 @@ public class ActiveMqServiceTest extends AbstractSeleniumServiceRecipeTest {
 		
 		final ApplicationMap appMap = topologyTab.getApplicationMap();
 		
-		appMap.selectApplication(MANAGEMENT);
+		appMap.selectApplication(MANAGEMENT_APPLICATION_NAME);
 		
 		
 		ApplicationNode restful = appMap.getApplicationNode("rest");
@@ -99,11 +100,11 @@ public class ActiveMqServiceTest extends AbstractSeleniumServiceRecipeTest {
 		assertTrue(webui != null);
 		assertTrue(webui.getStatus().equals(DeploymentStatus.INTACT));
 		
-		appMap.selectApplication("default");
+		appMap.selectApplication(DEFAULT_APPLICATION_NAME);
 
 		takeScreenShot(this.getClass(),"activeMqRecipeTest", "topology");
 		
-		final ApplicationNode simple = appMap.getApplicationNode("activemq");
+		final ApplicationNode simple = appMap.getApplicationNode(DEFAULT_ACTIVEMQ_FULL_SERVICE_NAME);
 		
 		assertTrue(simple != null);
 		condition = new RepetitiveConditionProvider() {
@@ -129,7 +130,7 @@ public class ActiveMqServiceTest extends AbstractSeleniumServiceRecipeTest {
 		
 		assertTrue(puTreeGrid.getProcessingUnit("webui") != null);
 		assertTrue(puTreeGrid.getProcessingUnit("rest") != null);
-		assertTrue(puTreeGrid.getProcessingUnit("default.activemq") != null);
+		assertTrue(puTreeGrid.getProcessingUnit(DEFAULT_ACTIVEMQ_FULL_SERVICE_NAME) != null);
 		uninstallService("activemq", true);
 		
 	}

@@ -25,7 +25,7 @@ import framework.utils.AssertUtils;
 import framework.utils.AssertUtils.RepetitiveConditionProvider;
 
 public class CassandraServiceTest extends AbstractSeleniumServiceRecipeTest  {
-	
+		
 	@Override
 	@BeforeMethod
 	public void install() throws IOException, InterruptedException {
@@ -59,7 +59,7 @@ public class CassandraServiceTest extends AbstractSeleniumServiceRecipeTest  {
 
 		ApplicationsMenuPanel appMenu = servicesGrid.getApplicationsMenuPanel();
 
-		appMenu.selectApplication(MANAGEMENT);
+		appMenu.selectApplication(MANAGEMENT_APPLICATION_NAME);
 
 		final ApplicationServicesGrid applicationServicesGrid = servicesGrid.getApplicationServicesGrid();
 
@@ -71,7 +71,7 @@ public class CassandraServiceTest extends AbstractSeleniumServiceRecipeTest  {
 		};
 		AssertUtils.repetitiveAssertTrue(null, condition, waitingTime);
 
-		appMenu.selectApplication("default");
+		appMenu.selectApplication(DEFAULT_APPLICATION_NAME);
 
 		condition = new RepetitiveConditionProvider() {		
 			@Override
@@ -85,7 +85,7 @@ public class CassandraServiceTest extends AbstractSeleniumServiceRecipeTest  {
 
 		final ApplicationMap appMap = topologyTab.getApplicationMap();
 
-		appMap.selectApplication(MANAGEMENT);
+		appMap.selectApplication(MANAGEMENT_APPLICATION_NAME);
 		
 
 		ApplicationNode restful = appMap.getApplicationNode("rest");
@@ -98,11 +98,11 @@ public class CassandraServiceTest extends AbstractSeleniumServiceRecipeTest  {
 		assertTrue(webui != null);
 		assertTrue(webui.getStatus().equals(DeploymentStatus.INTACT));
 
-		appMap.selectApplication("default");
+		appMap.selectApplication(DEFAULT_APPLICATION_NAME);
 
 		takeScreenShot(this.getClass(),"cassandraRecipeTest", "topology");
 
-		final ApplicationNode simple = appMap.getApplicationNode("cassandra");
+		final ApplicationNode simple = appMap.getApplicationNode(DEFAULT_CASSANDRA_FULL_SERVICE_NAME);
 
 		assertTrue(simple != null);
 		condition = new RepetitiveConditionProvider() {
@@ -132,7 +132,7 @@ public class CassandraServiceTest extends AbstractSeleniumServiceRecipeTest  {
 
 		assertTrue(puTreeGrid.getProcessingUnit("webui") != null);
 		assertTrue(puTreeGrid.getProcessingUnit("rest") != null);
-		assertTrue(puTreeGrid.getProcessingUnit("default.cassandra") != null);
+		assertTrue(puTreeGrid.getProcessingUnit(DEFAULT_CASSANDRA_FULL_SERVICE_NAME) != null);
 		uninstallService("cassandra", true);
 
 	}

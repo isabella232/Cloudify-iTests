@@ -32,8 +32,6 @@ public class ScalingRulesCorruptedTest extends AbstractSeleniumServiceRecipeTest
 	
 	private static final String SERVICE_RELATIVE_PATH = "apps/cloudify/recipes/" + SERVICE_NAME;
 	
-	private final static String APPLICATION_NAME = "default";
-
 	private File customServiceMonitorOriginalDSLFile;
 
 	private File customServiceMonitorBackupDSLFile;
@@ -73,7 +71,7 @@ public class ScalingRulesCorruptedTest extends AbstractSeleniumServiceRecipeTest
 		
 		AlertsPanel alertsPanel = dashboardTab.getDashboardSubPanel().switchToAlertsPanel();
 		
-		final InternalProcessingUnit pu = (InternalProcessingUnit) admin.getProcessingUnits().waitFor(APPLICATION_NAME + "." + SERVICE_NAME,OPERATION_TIMEOUT,TimeUnit.MILLISECONDS);
+		final InternalProcessingUnit pu = (InternalProcessingUnit) admin.getProcessingUnits().waitFor(DEFAULT_APPLICATION_NAME + "." + SERVICE_NAME,OPERATION_TIMEOUT,TimeUnit.MILLISECONDS);
 		
 		repetitiveAssertNumberOfInstances(pu, 2);
 		
@@ -105,7 +103,7 @@ public class ScalingRulesCorruptedTest extends AbstractSeleniumServiceRecipeTest
 		
 		AlertsPanel alertsPanel = dashboardTab.getDashboardSubPanel().switchToAlertsPanel();
 		
-		final InternalProcessingUnit pu = (InternalProcessingUnit) admin.getProcessingUnits().waitFor(APPLICATION_NAME + "." + SERVICE_NAME,OPERATION_TIMEOUT,TimeUnit.MILLISECONDS);
+		final InternalProcessingUnit pu = (InternalProcessingUnit) admin.getProcessingUnits().waitFor(DEFAULT_APPLICATION_NAME + "." + SERVICE_NAME,OPERATION_TIMEOUT,TimeUnit.MILLISECONDS);
 		
 		repetitiveAssertNumberOfInstances(pu, 2);
 		

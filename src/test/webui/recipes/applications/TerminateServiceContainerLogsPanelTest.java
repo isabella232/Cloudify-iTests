@@ -2,6 +2,7 @@ package test.webui.recipes.applications;
 
 import java.io.IOException;
 
+import org.cloudifysource.dsl.utils.ServiceUtils;
 import org.openspaces.admin.gsc.GridServiceContainer;
 import org.openspaces.admin.machine.Machine;
 import org.openspaces.admin.pu.DeploymentStatus;
@@ -25,11 +26,15 @@ import framework.utils.ProcessingUnitUtils;
 
 public class TerminateServiceContainerLogsPanelTest extends AbstractSeleniumApplicationRecipeTest {
 	
+	private static final String TRAVEL_APPLICATION_NAME = "travel";
+	private static final String TOMCAT_SERVICE_FULL_NAME = ServiceUtils.getAbsolutePUName(TRAVEL_APPLICATION_NAME, "tomcat");
+
+	
 	@Override
 	@BeforeMethod
 	public void install() throws IOException, InterruptedException {
 		setBrowser(WebConstants.CHROME);
-		setCurrentApplication("travel");
+		setCurrentApplication(TRAVEL_APPLICATION_NAME);
 		super.install();
 	}
 	
@@ -45,19 +50,19 @@ public class TerminateServiceContainerLogsPanelTest extends AbstractSeleniumAppl
 		
 		ApplicationMap appMap = topology.getApplicationMap();
 		
-		appMap.selectApplication("travel");
+		appMap.selectApplication(TRAVEL_APPLICATION_NAME);
 		
-		ApplicationNode travelNode = appMap.getApplicationNode("tomcat");
+		ApplicationNode travelNode = appMap.getApplicationNode(TOMCAT_SERVICE_FULL_NAME);
 		
 		travelNode.select();
 		
-		ProcessingUnit travelPu = admin.getProcessingUnits().getProcessingUnit("travel.tomcat");
+		ProcessingUnit travelPu = admin.getProcessingUnits().getProcessingUnit(TOMCAT_SERVICE_FULL_NAME);
 		
 		final GridServiceContainer travelContainer = travelPu.getInstances()[0].getGridServiceContainer();
 		
 		LogsPanel logsPanel = topology.getTopologySubPanel().switchToLogsPanel();
 		
-		PuLogsPanelService travelLogsService = logsPanel.getPuLogsPanelService("travel.tomcat");
+		PuLogsPanelService travelLogsService = logsPanel.getPuLogsPanelService(TOMCAT_SERVICE_FULL_NAME);
 		
 		Machine localHost = travelContainer.getMachine();
 		
@@ -87,7 +92,7 @@ public class TerminateServiceContainerLogsPanelTest extends AbstractSeleniumAppl
 		};
 		
 		AssertUtils.repetitiveAssertTrue("Container" + gscAgentId + "is still present", condition, waitingTime);
-		uninstallApplication("travel", true);
+		uninstallApplication(TRAVEL_APPLICATION_NAME, true);
 		
 	}
 

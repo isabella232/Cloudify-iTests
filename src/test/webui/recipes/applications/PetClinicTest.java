@@ -5,6 +5,7 @@ import static org.testng.AssertJUnit.fail;
 import java.io.IOException;
 import java.util.List;
 
+import org.cloudifysource.dsl.utils.ServiceUtils;
 import org.openspaces.admin.machine.Machine;
 import org.openspaces.admin.pu.DeploymentStatus;
 import org.testng.annotations.BeforeMethod;
@@ -33,11 +34,17 @@ import framework.utils.AssertUtils;
 import framework.utils.AssertUtils.RepetitiveConditionProvider;
 
 public class PetClinicTest extends AbstractSeleniumApplicationRecipeTest {
+	
+	private static final String PETCLINIC_APPLICATION_NAME = "petclinic";
+	private static final String MONGOD_FULL_SERVICE_NAME = ServiceUtils.getAbsolutePUName(PETCLINIC_APPLICATION_NAME, "mongod");
+	private static final String MONGOS_FULL_SERVICE_NAME = ServiceUtils.getAbsolutePUName(PETCLINIC_APPLICATION_NAME, "mongos");
+	private static final String MONGOCFG_FULL_SERVICE_NAME = ServiceUtils.getAbsolutePUName(PETCLINIC_APPLICATION_NAME, "mongoConfig");
+	private static final String TOMCAT_FULL_SERVICE_NAME = ServiceUtils.getAbsolutePUName(PETCLINIC_APPLICATION_NAME, "tomcat");
 
 	@Override
 	@BeforeMethod
 	public void install() throws IOException, InterruptedException {
-		setCurrentApplication("petclinic");
+		setCurrentApplication(PETCLINIC_APPLICATION_NAME);
 		super.install();
 	}
 
@@ -65,7 +72,7 @@ public class PetClinicTest extends AbstractSeleniumApplicationRecipeTest {
 
 		ApplicationsMenuPanel appMenuPanel = dashboardTab.getServicesGrid().getApplicationsMenuPanel();
 
-		appMenuPanel.selectApplication(AbstractSeleniumServiceRecipeTest.MANAGEMENT);
+		appMenuPanel.selectApplication(MANAGEMENT_APPLICATION_NAME);
 
 		final ApplicationServicesGrid applicationServices = dashboardTab.getServicesGrid().getApplicationServicesGrid();
 
@@ -79,7 +86,7 @@ public class PetClinicTest extends AbstractSeleniumApplicationRecipeTest {
 		};
 		AssertUtils.repetitiveAssertTrue(null, condition, waitingTime);
 		
-		appMenuPanel.selectApplication("petclinic");
+		appMenuPanel.selectApplication(PETCLINIC_APPLICATION_NAME);
 		
 		condition = new RepetitiveConditionProvider() {
 
@@ -105,7 +112,7 @@ public class PetClinicTest extends AbstractSeleniumApplicationRecipeTest {
 
 		final ApplicationMap appMap = topologyTab.getApplicationMap();
 
-		appMap.selectApplication(AbstractSeleniumServiceRecipeTest.MANAGEMENT);
+		appMap.selectApplication(MANAGEMENT_APPLICATION_NAME);
 
 		takeScreenShot(this.getClass(),"petClinicDemoTest", "management-application");
 
@@ -131,13 +138,13 @@ public class PetClinicTest extends AbstractSeleniumApplicationRecipeTest {
 		
 		takeScreenShot(this.getClass(), "petClinicDemoTest","passed-topology");
 		
-		appMap.selectApplication("petclinic");
+		appMap.selectApplication(PETCLINIC_APPLICATION_NAME);
 		
 		condition = new RepetitiveConditionProvider() {
 
 			@Override
 			public boolean getCondition() {
-				ApplicationNode mongodNode = appMap.getApplicationNode("mongod");
+				ApplicationNode mongodNode = appMap.getApplicationNode(MONGOD_FULL_SERVICE_NAME);
 				return ((mongodNode != null) && (mongodNode.getStatus().equals(DeploymentStatus.INTACT)));
 			}
 		};
@@ -147,7 +154,7 @@ public class PetClinicTest extends AbstractSeleniumApplicationRecipeTest {
 
 			@Override
 			public boolean getCondition() {
-				ApplicationNode mongosNode = appMap.getApplicationNode("mongos");
+				ApplicationNode mongosNode = appMap.getApplicationNode(MONGOS_FULL_SERVICE_NAME);
 				return ((mongosNode != null) && (mongosNode.getStatus().equals(DeploymentStatus.INTACT)));
 			}
 		};
@@ -157,7 +164,7 @@ public class PetClinicTest extends AbstractSeleniumApplicationRecipeTest {
 
 			@Override
 			public boolean getCondition() {
-				ApplicationNode mongocfgNode = appMap.getApplicationNode("mongoConfig");
+				ApplicationNode mongocfgNode = appMap.getApplicationNode(MONGOCFG_FULL_SERVICE_NAME);
 				return ((mongocfgNode != null) && (mongocfgNode.getStatus().equals(DeploymentStatus.INTACT)));
 			}
 		};
@@ -167,21 +174,21 @@ public class PetClinicTest extends AbstractSeleniumApplicationRecipeTest {
 
 			@Override
 			public boolean getCondition() {
-				ApplicationNode tomcatNode = appMap.getApplicationNode("tomcat");
+				ApplicationNode tomcatNode = appMap.getApplicationNode(TOMCAT_FULL_SERVICE_NAME);
 				return ((tomcatNode != null) && (tomcatNode.getStatus().equals(DeploymentStatus.INTACT)));
 			}
 		};
 		repetitiveAssertTrueWithScreenshot(null, condition, this.getClass(), "petClinicDemoTest","failed");
 		
-		ApplicationNode applicationNodeTomcat = appMap.getApplicationNode("tomcat");
+		ApplicationNode applicationNodeTomcat = appMap.getApplicationNode(TOMCAT_FULL_SERVICE_NAME);
 		List<Connector> tomcatConnectors = applicationNodeTomcat.getConnectors();
 		
-		ApplicationNode applicationNodeMongos = appMap.getApplicationNode("mongos");
+		ApplicationNode applicationNodeMongos = appMap.getApplicationNode(MONGOS_FULL_SERVICE_NAME);
 		List<Connector> mongosConnectors = applicationNodeMongos.getConnectors();
 		
-		ApplicationNode applicationNodeMongod = appMap.getApplicationNode("mongod");
+		ApplicationNode applicationNodeMongod = appMap.getApplicationNode(MONGOD_FULL_SERVICE_NAME);
 		
-		ApplicationNode applicationNodeMongoConfig = appMap.getApplicationNode("mongoConfig");
+		ApplicationNode applicationNodeMongoConfig = appMap.getApplicationNode(MONGOCFG_FULL_SERVICE_NAME);
 		
 		assertTrue(tomcatConnectors.size() == 1);
 		assertTrue(tomcatConnectors.get(0).getTarget().getName().equals(applicationNodeMongos.getName()));
@@ -196,15 +203,15 @@ public class PetClinicTest extends AbstractSeleniumApplicationRecipeTest {
 		
 		PuTreeGrid puTreeGrid = servicesTab.getPuTreeGrid();
 		
-		assertTrue(puTreeGrid.getProcessingUnit("tomcat") != null);
-		assertTrue(puTreeGrid.getProcessingUnit("petclinic-mongo.mongod") != null);
-		assertTrue(puTreeGrid.getProcessingUnit("petclinic-mongo.mongos") != null);
-		assertTrue(puTreeGrid.getProcessingUnit("petclinic-mongo.mongoConfig") != null);
+		assertTrue(puTreeGrid.getProcessingUnit(TOMCAT_FULL_SERVICE_NAME) != null);
+		assertTrue(puTreeGrid.getProcessingUnit(MONGOD_FULL_SERVICE_NAME) != null);
+		assertTrue(puTreeGrid.getProcessingUnit(MONGOS_FULL_SERVICE_NAME) != null);
+		assertTrue(puTreeGrid.getProcessingUnit(MONGOCFG_FULL_SERVICE_NAME) != null);
 		
 		takeScreenShot(this.getClass(), "petClinicDemoTest","passed-services");
 		
 		assertPetclinicPageExists();
-		uninstallApplication("petclinic", true);
+		uninstallApplication(PETCLINIC_APPLICATION_NAME, true);
 	}
 	
 	private void assertPetclinicPageExists() {

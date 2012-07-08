@@ -3,17 +3,15 @@ package test.cli.cloudify.cloud;
 import java.io.IOException;
 
 import org.cloudifysource.dsl.internal.CloudifyConstants;
-
 import org.testng.annotations.AfterMethod;
-
 import org.testng.annotations.Test;
+
+import test.cli.cloudify.CommandTestUtils;
 
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
 
-import test.cli.cloudify.CommandTestUtils;
-import test.cli.cloudify.cloud.services.CloudService;
 import framework.utils.LogUtils;
 import framework.utils.ScriptUtils;
 
@@ -106,7 +104,7 @@ public abstract class AbstractExamplesTest extends NewAbstractCloudTest {
 	}
 
 	@Override
-	protected void customizeCloud(CloudService cloud) {
+	protected void customizeCloud() {
 		
 	}
 }

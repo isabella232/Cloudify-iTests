@@ -116,7 +116,10 @@ public class CleanGSFilesByonTest extends AbstractCloudTest {
 			admin = factory.createAdmin();
 			hosts = admin.getMachines().getHostsByAddress().keySet();
 		} finally {
-			admin.close();
+			if (admin != null) {
+				admin.close();
+				admin = null;
+			}
 		}
 		getService().teardownCloud();
 		for (String address : hosts) {

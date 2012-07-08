@@ -30,9 +30,9 @@ import framework.utils.ScriptUtils;
 
 public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 
-	private CloudService cloud;
+	protected CloudService cloud;
 
-	// initialized in boostrap
+	// initialized in bootstrap
 	private String cloudName;
 	private String uniqueName;
 
@@ -65,13 +65,18 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 				// The test passed, but machines leaked, so the configuration should fail.
 				AssertFail("Test: " + lastTestName + " ended successfully, but leaked nodes were found!");
 			}
-
 		} else {
 			LogUtils.log("Test: " + lastTestName + " failed, and some leaked nodes were found too");
 		}
 	}
 
-	protected abstract void customizeCloud(final CloudService cloud);
+	protected abstract void customizeCloud() throws Exception;
+	
+	protected void afterBootstrap() throws Exception {}
+	
+	protected void beforeTeardown() throws Exception {}
+	
+	protected void afterTeardown() throws Exception {}
 
 	private class TestNameListener implements ITestListener {
 
@@ -129,17 +134,31 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 					+ "Requires reusable clouds, which are not supported yet");
 		}
 
-		// bootstrap the cloud
 		uniqueName = this.getClass().getSimpleName();
 
 		this.cloud = CloudServiceManager.getInstance().getCloudService(cloudName, uniqueName);
 
-		customizeCloud(this.cloud);
+		// customize cloud settings before bootstrap
+		try {
+			customizeCloud();
+		} catch (Exception e) {
+			AssertFail("Customizing of cloud (" + cloudName + ", " + uniqueName
+					+ ") failed with the following error: " + e.getMessage(), e);
+		}
 
+		// bootstrap the cloud
 		try {
 			this.cloud.bootstrapCloud();
 		} catch (final Exception e) {
 			AssertFail("Bootstrapping of cloud (" + cloudName + ", " + uniqueName
+					+ ") failed with the following error: " + e.getMessage(), e);
+		}
+		
+		// run optional post-bootstrap steps (e.g. create admin)
+		try {
+			afterBootstrap();
+		} catch (final Exception e) {
+			AssertFail("AfterBootstrap method of cloud (" + cloudName + ", " + uniqueName
 					+ ") failed with the following error: " + e.getMessage(), e);
 		}
 
@@ -155,6 +174,15 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 				
 		final String cloudName = this.getCloudName();
 
+		// run optional pre-teardown steps (e.g. clean objects)
+		try {
+			beforeTeardown();
+		} catch (final Exception e) {
+			AssertFail("BeforeTeardown method of cloud (" + cloudName + ", " + uniqueName
+					+ ") failed with the following error: " + e.getMessage(), e);
+		}
+		
+		// perform teardown
 		if (this.cloud == null) {
 			LogUtils.log("No teardown was executed as the cloud instance for this class was not created");
 		} else {
@@ -249,6 +277,7 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 		final String output = CommandTestUtils.runCommand(connectCommand + installCommand, wait, failCommand);
 		final String excpectedResult = "Application " + applicationName + " installed successfully";
 		if (!failCommand) {
+			System.out.println("output:" + output);
 			assertTrue(output.toLowerCase().contains(excpectedResult.toLowerCase()));
 		} else {
 			assertTrue(output.toLowerCase().contains("operation failed"));
@@ -416,5 +445,7 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 			}
 		}
 	}
+	
+	
 
 }

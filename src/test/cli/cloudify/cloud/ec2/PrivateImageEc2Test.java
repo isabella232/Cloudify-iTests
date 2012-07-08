@@ -8,7 +8,6 @@ import org.testng.annotations.Test;
 import test.cli.cloudify.CloudTestUtils;
 import test.cli.cloudify.CommandTestUtils;
 import test.cli.cloudify.cloud.NewAbstractCloudTest;
-import test.cli.cloudify.cloud.services.CloudService;
 import test.cli.cloudify.cloud.services.ec2.Ec2CloudService;
 import framework.utils.LogUtils;
 import framework.utils.ScriptUtils;
@@ -53,7 +52,7 @@ public class PrivateImageEc2Test extends NewAbstractCloudTest {
 	}
 
 	@Override
-	protected void customizeCloud(final CloudService cloud) {
+	protected void customizeCloud() {
 
 		final Ec2CloudService ec2Service = (Ec2CloudService) cloud;
 

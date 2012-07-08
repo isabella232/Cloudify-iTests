@@ -25,8 +25,6 @@ import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import test.cli.cloudify.cloud.services.CloudService;
-
 import framework.utils.AssertUtils;
 import framework.utils.AssertUtils.RepetitiveConditionProvider;
 import framework.utils.LogUtils;
@@ -267,7 +265,7 @@ public abstract class AbstractScalingRulesCloudTest extends NewAbstractCloudTest
 	}
 
 	@Override
-	protected void customizeCloud(CloudService cloud) {
+	protected void customizeCloud() {
 		
 	}
 }

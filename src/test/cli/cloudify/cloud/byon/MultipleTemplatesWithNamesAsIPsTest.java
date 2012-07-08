@@ -3,7 +3,6 @@ package test.cli.cloudify.cloud.byon;
 import java.io.IOException;
 
 import org.cloudifysource.dsl.internal.DSLException;
-import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -28,7 +27,6 @@ public class MultipleTemplatesWithNamesAsIPsTest extends MultipleMachineTemplate
 		TEMPLATE_1_IPs = "pc-lab95,pc-lab96";
 		TEMPLATE_2_IPs = "192.168.9.120,192.168.9.125";
 		TEMPLATE_3_IPs = "pc-lab106";
-		super.before();
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true, priority = 1)
@@ -47,10 +45,6 @@ public class MultipleTemplatesWithNamesAsIPsTest extends MultipleMachineTemplate
 	public void testPetclinicTeardownByon(){
 		super.testPetclinicTeardownByon();
 	}
-	
-	@AfterClass(alwaysRun = true)
-	public void teardown() throws IOException, InterruptedException {
-		super.teardown();
-	}
+
 }
 	

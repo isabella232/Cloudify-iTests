@@ -7,7 +7,6 @@ import org.testng.annotations.Test;
 
 import test.cli.cloudify.CloudTestUtils;
 import test.cli.cloudify.cloud.NewAbstractCloudTest;
-import test.cli.cloudify.cloud.services.CloudService;
 import test.cli.cloudify.cloud.services.ec2.Ec2CloudService;
 
 public class EuWestRegionEc2Test extends NewAbstractCloudTest {
@@ -31,7 +30,7 @@ public class EuWestRegionEc2Test extends NewAbstractCloudTest {
 	}
 
 	@Override
-	protected void customizeCloud(final CloudService cloud) {
+	protected void customizeCloud() {
 		service = (Ec2CloudService) getService();
 		service.setPemFileName("sgtest-eu");
 		service.setAdditionalPropsToReplace(new HashMap<String, String>());

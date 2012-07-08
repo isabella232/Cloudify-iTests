@@ -83,8 +83,7 @@ public class KillManagementTest extends NewAbstractCloudTest{
 			threadPool = Executors.newFixedThreadPool(1);
 			
 			LogUtils.log("installing application petclinic on " + CLOUD_NAME);
-			//installApplicationAndWait(ScriptUtils.getBuildPath() + "/recipes/apps/petclinic", "petclinic");
-			installApplicationAndWait(ScriptUtils.getBuildPath() + "/recipes/apps/petclinic-simple", "petclinic");
+			installApplicationAndWait(ScriptUtils.getBuildPath() + "/recipes/apps/petclinic", "petclinic");
 
 			Future<Void> ping = threadPool.submit(new Callable<Void>(){
 				@Override

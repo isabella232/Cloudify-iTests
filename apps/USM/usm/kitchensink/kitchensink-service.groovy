@@ -117,5 +117,7 @@ service {
 	customProperties ([
 				"TailerInterval": "1"
 			])
+	
+	userInterface load("ui.groovy")
 
 }

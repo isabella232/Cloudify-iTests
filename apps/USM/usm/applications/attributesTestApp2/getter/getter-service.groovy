@@ -4,7 +4,7 @@ service {
 	maxAllowedInstances 1
 	name "getter"
 	icon "icon.png"
-	type "WEB"
+	type "UNDEFINED"
 	
 	lifecycle {
 		

@@ -1,7 +1,7 @@
 service {
 	name "simple"
 	icon "icon.png"
-	type "WEB_SERVER"
+	type "UNDEFINED"
 	
 	lifecycle {
 

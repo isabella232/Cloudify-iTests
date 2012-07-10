@@ -2,7 +2,7 @@ service {
     
 	name "first"
 	icon "icon.png"
-	type "WEB"
+	type "UNDEFINED"
 	
 	lifecycle {
 

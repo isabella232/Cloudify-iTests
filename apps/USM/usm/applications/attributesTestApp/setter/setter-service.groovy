@@ -4,7 +4,7 @@ service {
 	maxAllowedInstances 2
 	name "setter"
 	icon "icon.png"
-	type "WEB"
+	type "UNDEFINED"
 	
 	lifecycle {
 		

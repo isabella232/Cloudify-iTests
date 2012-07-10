@@ -4,7 +4,8 @@ import java.util.concurrent.TimeUnit
 service {
 	name "groovy"
 	icon "icon.png"
-	type "WEB_SERVER"
+	type "UNDEFINED"
+	
 	elastic true
 	numInstances 1
 	maxAllowedInstances 1

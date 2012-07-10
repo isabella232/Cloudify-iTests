@@ -3,7 +3,7 @@ import test.cli.cloudify.MyException;
 service {
 	numInstances 1
 	name "simpleCustomCommandsMultipleInstances"
-
+	type "UNDEFINED"
 	
 	lifecycle {	
 		start (["Win.*":"run.bat", "Linux":"run.sh"])

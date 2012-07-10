@@ -4,7 +4,7 @@ service {
     
 	name "simple"
 	icon "icon.png"
-	type "WEB"
+	type "UNDEFINED"
 	
 	lifecycle {
 

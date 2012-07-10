@@ -4,6 +4,7 @@ import Helper
 service {
 	name "kitchensink-service"
 	icon "icon.png"
+	type "UNDEFINED"
 	
 	url "http://" + InetAddress.localHost.hostName + ":7777"
 

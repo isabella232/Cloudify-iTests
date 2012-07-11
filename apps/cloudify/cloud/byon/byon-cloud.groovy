@@ -33,14 +33,14 @@ cloud {
 		
 		// Mandatory. The HTTP/S URL where cloudify can be downloaded from by newly started machines.
 		cloudifyUrl "cloudify.zip"
-		// Mandatory. The prefix for new machines started for servies.
+		// Mandatory. The prefix for new machines started for services.
 		machineNamePrefix "cloudify_agent_"
 		// Optional. Defaults to true. Specifies whether cloudify should try to deploy services on the management machine.
 		// Do not change this unless you know EXACTLY what you are doing.
 		dedicatedManagementMachines true
 		managementOnlyFiles ([])
 		
-		// Optional. Logging level for the intenal cloud provider logger. Defaults to INFO.
+		// Optional. Logging level for the internal cloud provider logger. Defaults to INFO.
 		sshLoggingLevel "INFO"
 		// Mandatory. Name of the new machine/s started as cloudify management machines. 
 		managementGroup "cloudify_manager"

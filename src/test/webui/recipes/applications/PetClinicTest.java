@@ -11,7 +11,7 @@ import org.openspaces.admin.pu.DeploymentStatus;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import test.webui.recipes.services.AbstractSeleniumServiceRecipeTest;
+
 
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.WebClient;

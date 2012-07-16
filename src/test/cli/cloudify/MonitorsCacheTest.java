@@ -72,6 +72,8 @@ public class MonitorsCacheTest extends AbstractLocalCloudTest {
 		try {
 			int successCount = 0;
 
+			final long start = System.currentTimeMillis();
+					
 			Set<Long> values = new HashSet<Long>(); 
 			for (int i = 0; i < 10; ++i) {
 				final long valueFromAdmin1 = getDateMonitorFromAdmin(this.admin);
@@ -86,8 +88,16 @@ public class MonitorsCacheTest extends AbstractLocalCloudTest {
 				Thread.sleep(1000);
 			}
 			
-			Assert.assertTrue(successCount >= 8, "Expected service monitor values from admin instances to be the same at least 8 times out of 10, got: " + successCount); 
-			Assert.assertTrue(values.size() > 1, "Expected to get at least two different timestamp values, got: " + values.size());
+			final long end = System.currentTimeMillis();
+			final long intervalMillis = (end - start);
+			final long intervalSeconds = intervalMillis / 1000;
+			
+			final long expectedNumberOfValues = (intervalSeconds / 5) - 1;
+			
+			Assert.assertTrue(values.size() >= expectedNumberOfValues, "Expected to get at least " + expectedNumberOfValues + " two different timestamp values, got: " + values.size());
+			
+			Assert.assertTrue(successCount >= 4, "Expected service monitor values from admin instances to be the same at least 4 times out of 10, got: " + successCount); 
+			
 					
 
 		} finally {

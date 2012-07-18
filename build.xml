@@ -57,6 +57,10 @@
             <include name="**/*.jar"/>
         </fileset>
 
+        <fileset dir="${gsHome.dir}/lib/platform/ant">
+            <include name="**/*.jar"/>
+        </fileset>
+        
         <!-- CLI jars -->
         <fileset dir="${gsHome.dir}/tools/cli">
             <include name="**/*.jar"/>

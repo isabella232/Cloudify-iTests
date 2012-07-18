@@ -27,6 +27,8 @@
 	<classpathentry kind="var" path="CLOUDIFY_LATEST/lib/platform/jetty/jetty-io-8.1.2.v20120308.jar"/>
 	<classpathentry kind="var" path="CLOUDIFY_LATEST/lib/platform/jetty/jetty-continuation-8.1.2.v20120308.jar"/>
 	<classpathentry kind="var" path="CLOUDIFY_LATEST/lib/required/com.springsource.org.aopalliance-1.0.0.jar"/>
+	<classpathentry kind="var" path="CLOUDIFY_LATEST/lib/platform/ant/ant-1.8.4.jar"/>
+	<classpathentry kind="var" path="CLOUDIFY_LATEST/lib/platform/ant/ant-launcher-1.8.4.jar"/>
 	<classpathentry kind="lib" path="lib/commons/commons-httpclient-3.1.jar"/>
 	<classpathentry kind="lib" path="lib/commons/commons-lang-2.4.jar"/>
 	<classpathentry kind="lib" path="lib/commons/commons-collections-3.2.1.jar"/>
@@ -59,8 +61,7 @@
 	<classpathentry kind="lib" path="apps/USM/usm/simplejavaprocess/simplejavaprocess.jar"/>
 	<classpathentry kind="lib" path="lib/sshd/mina-core-2.0.1.jar"/>
 	<classpathentry kind="lib" path="lib/sshd/sshd-core-0.5.0.jar"/>
-	<classpathentry kind="lib" path="lib/xenserver/lib/ant-1.8.2.jar"/>
-	<classpathentry kind="lib" path="lib/xenserver/lib/ant-jsch-1.8.2.jar"/>
+	<classpathentry kind="lib" path="lib/xenserver/lib/ant-jsch-1.8.4.jar"/>
 	<classpathentry kind="var" path="CLOUDIFY_LATEST/lib/platform/sigar/sigar.jar"/>
 	<classpathentry kind="lib" path="lib/mail/mail.jar"/>
 	<classpathentry kind="var" path="CLOUDIFY_LATEST/lib/platform/usm/usm.jar"/>
@@ -132,7 +133,6 @@
 	<classpathentry kind="lib" path="lib/jclouds/jclouds-compute-1.4.0.jar" sourcepath="D:/Documents and Settings/nirb/.m2/repository/org/jclouds/jclouds-compute/1.4.0/jclouds-compute-1.4.0-sources.jar"/>
 	<classpathentry kind="lib" path="lib/jclouds/jclouds-core-1.4.0.jar"/>
 	<classpathentry kind="lib" path="lib/jclouds/jclouds-scriptbuilder-1.4.0.jar"/>
-	<classpathentry kind="lib" path="lib/jclouds/ant-launcher-1.8.3.jar"/>
 	<classpathentry kind="lib" path="lib/jclouds/bcprov-jdk16-1.46.jar"/>
 	<classpathentry kind="lib" path="lib/jclouds/bluelock-vcloud-zone01-1.4.0.jar"/>
 	<classpathentry kind="lib" path="lib/jclouds/byon-1.4.0.jar"/>

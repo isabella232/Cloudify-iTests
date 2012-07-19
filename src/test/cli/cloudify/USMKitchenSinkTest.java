@@ -66,11 +66,12 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 			"init fired Test Property number 1",
 			"init external class",
 			"init Helper Field",
+			"Instantiated default.kitchensink-service",
 			"preInstall fired Test Property number 2",
 			"install event fired",
 			"postInstall fired Test Property number 1",
-			"preStart fired Test Property number 2", "postStart fired",
-			"Instantiated default.kitchensink-service" };
+			"preStart fired Test Property number 2", "postStart fired"
+			 };
 	private static final String[] EXPECTED_SHUTDOWN_EVENT_STRINGS = {
 			"preStop fired", "String_with_Spaces", "postStop fired",
 			"shutdown fired" };

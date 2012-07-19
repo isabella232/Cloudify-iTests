@@ -29,7 +29,6 @@ import framework.utils.ScriptUtils;
  */
 public class RepetativeInstallAndUninstallOnByon extends NewAbstractCloudTest {
 
-	private ByonCloudService byonService;
 	private final static int REPETITIONS = 3;
 	private static final String TEST_UNIQUE_NAME = "RepetativeInstallAndUninstallOnByon";
 
@@ -38,6 +37,7 @@ public class RepetativeInstallAndUninstallOnByon extends NewAbstractCloudTest {
 	@Override
 	protected void customizeCloud() throws Exception {
 		// replace the default bootstrap-management.sh with a custom version one
+		ByonCloudService byonService = (ByonCloudService) cloud;
 		File standardBootstrapManagement = new File(byonService.getPathToCloudFolder() + "/upload",
 				"bootstrap-management.sh");
 		File bootstrapManagementWithMulticast = new File(SGTestHelper.getSGTestRootDir()

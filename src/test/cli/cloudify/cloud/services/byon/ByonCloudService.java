@@ -19,6 +19,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
+
 import test.cli.cloudify.cloud.services.AbstractCloudService;
 import framework.utils.IOUtils;
 
@@ -28,7 +30,7 @@ public class ByonCloudService extends AbstractCloudService {
 	private static final String BYON_CLOUD_USER= "tgrid";
 	private static final String BYON_CLOUD_PASSWORD = "tgrid";
 	
-	private String ipList = System.getProperty("ipList");
+	private String ipList;
 
 	public ByonCloudService(String uniqueName) {
 		super(uniqueName, BYON_CLOUD_NAME);
@@ -55,12 +57,15 @@ public class ByonCloudService extends AbstractCloudService {
 		propsToReplace.put("ENTER_PASSWORD", BYON_CLOUD_PASSWORD);
 		propsToReplace.put("cloudify_agent_", this.machinePrefix + "cloudify-agent");
 		propsToReplace.put("cloudify_manager", this.machinePrefix + "cloudify-manager");
-		if(ipList != null)
+		if (ipList == null) {
+			 ipList = System.getProperty("ipList");
+		}
+		if (StringUtils.isNotBlank(ipList)) {
 			propsToReplace.put("0.0.0.0", ipList);
+		}
+		
 		propsToReplace.put("numberOfManagementMachines 1", "numberOfManagementMachines "  + numberOfManagementMachines);
-		
 		IOUtils.replaceTextInFile(getPathToCloudGroovy(), propsToReplace);
-		
 	}
 
 	@Override

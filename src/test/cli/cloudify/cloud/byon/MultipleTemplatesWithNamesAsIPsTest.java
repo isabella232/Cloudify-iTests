@@ -1,9 +1,5 @@
 package test.cli.cloudify.cloud.byon;
 
-import java.io.IOException;
-
-import org.cloudifysource.dsl.internal.DSLException;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 
@@ -22,11 +18,13 @@ import org.testng.annotations.Test;
  */
 public class MultipleTemplatesWithNamesAsIPsTest extends MultipleMachineTemplatesTest{
 
-	@BeforeClass(enabled = true)
-	public void before() throws IOException, InterruptedException, DSLException {
-		TEMPLATE_1_IPs = "pc-lab95,pc-lab96";
-		TEMPLATE_2_IPs = "192.168.9.120,192.168.9.125";
-		TEMPLATE_3_IPs = "pc-lab106";
+	protected static String TEMPLATE_1_IPs = "pc-lab95,pc-lab96";
+	protected static String TEMPLATE_2_IPs = "192.168.9.120,192.168.9.125";
+	protected static String TEMPLATE_3_IPs = "pc-lab106";
+	
+	@Override
+	protected void customizeCloud() throws Exception {
+		super.customizeCloud();		
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true, priority = 1)
@@ -41,10 +39,10 @@ public class MultipleTemplatesWithNamesAsIPsTest extends MultipleMachineTemplate
 		super.testPetclinicUninstall();
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true, priority = 3)
+	/*@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true, priority = 3)
 	public void testPetclinicTeardownByon(){
 		super.testPetclinicTeardownByon();
-	}
+	}*/
 
 }
 	

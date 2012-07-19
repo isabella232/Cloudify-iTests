@@ -50,8 +50,6 @@ public class MultipleMachineTemplatesTest extends NewAbstractCloudTest {
 	private File newCloudGroovyFile = new File(ScriptUtils.getBuildPath() + "/tools/cli/plugins/esc/byon/",
 			"byon-cloud.new");
 
-	private ByonCloudService byonService;
-
 	protected Admin admin = null;
 
 	@Override
@@ -61,7 +59,7 @@ public class MultipleMachineTemplatesTest extends NewAbstractCloudTest {
 		// replace values here and eventually copy "byon-cloud.new" over
 		// "byon_MultipleMachineTemplatesTest\byon-cloud.groovy".
 
-		byonService = (ByonCloudService) cloud;
+		ByonCloudService byonService = (ByonCloudService) cloud;
 		// use SGTest's special byon groovy (with templates) instead of the original one,
 		// but don't override the original file - use byon-new-cloud.groovy instead
 		File multiTemplatesGroovy = new File(SGTestHelper.getSGTestRootDir()
@@ -166,7 +164,6 @@ public class MultipleMachineTemplatesTest extends NewAbstractCloudTest {
 			uninstallApplicationAndWait("petclinic");
 		} catch (Throwable e) {
 			LogUtils.log("caught an exception while uninstalling petclinic", e);
-			sendTeardownCloudFailedMail(cloudName, e);
 		}
 
 		AssertUtils.repetitiveAssertTrue("petclinic.mongod is not down", new RepetitiveConditionProvider() {
@@ -235,49 +232,6 @@ public class MultipleMachineTemplatesTest extends NewAbstractCloudTest {
 
 	}
 
-	/**
-	 * tests the teardown operation - tearsdown the byon cloud and checks that each management service is
-	 * down.
-	 */
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false, priority = 3)
-	public void testPetclinicTeardownByon() {
-
-		try {
-			byonService.teardownCloud();
-		} catch (Throwable e) {
-			LogUtils.log("caught an exception while tearing down " + byonService.getCloudName(), e);
-			sendTeardownCloudFailedMail(cloudName, e);
-		}
-
-		AssertUtils.repetitiveAssertTrue("rest is not down", new RepetitiveConditionProvider() {
-			public boolean getCondition() {
-				try {
-					return (admin.getProcessingUnits().getProcessingUnit("rest") == null);
-				} catch (Exception e) {
-					return false;
-				}
-			}
-		}, MY_OPERATION_TIMEOUT);
-		AssertUtils.repetitiveAssertTrue("webui is not down", new RepetitiveConditionProvider() {
-			public boolean getCondition() {
-				try {
-					return (admin.getProcessingUnits().getProcessingUnit("webui") == null);
-				} catch (Exception e) {
-					return false;
-				}
-			}
-		}, MY_OPERATION_TIMEOUT);
-		AssertUtils.repetitiveAssertTrue("cloudifyManagementSpace is down", new RepetitiveConditionProvider() {
-			public boolean getCondition() {
-				try {
-					return (admin.getProcessingUnits().getProcessingUnit("cloudifyManagementSpace") == null);
-				} catch (Exception e) {
-					return false;
-				}
-			}
-		}, MY_OPERATION_TIMEOUT);
-	}
-
 	@Override
 	protected void beforeTeardown() throws Exception {
 		if (admin != null) {
@@ -288,14 +242,45 @@ public class MultipleMachineTemplatesTest extends NewAbstractCloudTest {
 	
 	@Override
 	protected void afterTeardown() throws Exception {
-		// clean
-		restoreOriginalServiceFile("mongos");
-		restoreOriginalServiceFile("mongod");
-		restoreOriginalServiceFile("tomcat");
-		restoreOriginalServiceFile("mongoConfig");
+		
+		try {
+			AssertUtils.repetitiveAssertTrue("rest is not down", new RepetitiveConditionProvider() {
+				public boolean getCondition() {
+					try {
+						return (admin.getProcessingUnits().getProcessingUnit("rest") == null);
+					} catch (Exception e) {
+						return false;
+					}
+				}
+			}, MY_OPERATION_TIMEOUT);
+			AssertUtils.repetitiveAssertTrue("webui is not down", new RepetitiveConditionProvider() {
+				public boolean getCondition() {
+					try {
+						return (admin.getProcessingUnits().getProcessingUnit("webui") == null);
+					} catch (Exception e) {
+						return false;
+					}
+				}
+			}, MY_OPERATION_TIMEOUT);
+			AssertUtils.repetitiveAssertTrue("cloudifyManagementSpace is down", new RepetitiveConditionProvider() {
+				public boolean getCondition() {
+					try {
+						return (admin.getProcessingUnits().getProcessingUnit("cloudifyManagementSpace") == null);
+					} catch (Exception e) {
+						return false;
+					}
+				}
+			}, MY_OPERATION_TIMEOUT);
+		} finally {
+			// clean
+			restoreOriginalServiceFile("mongos");
+			restoreOriginalServiceFile("mongod");
+			restoreOriginalServiceFile("tomcat");
+			restoreOriginalServiceFile("mongoConfig");
 
-		if (newCloudGroovyFile.exists()) {
-			newCloudGroovyFile.delete();
+			if (newCloudGroovyFile.exists()) {
+				newCloudGroovyFile.delete();
+			}
 		}
 	}
 

@@ -16,7 +16,7 @@ service {
 			 println "init " + new Helper().someField;
 			}
 		preInstall{ println "preInstall fired ${var2}"}
-		install{println "install event fired"}
+		install "install.groovy"
 		postInstall{ println "postInstall fired " + var1 }
 		preStart{ println "preStart fired " + var2 }
 		start ([ "Linux": "run.sh -dieOnParentDeath false -port 7777" ,

@@ -29,7 +29,7 @@ service {
 		
 		monitors {
 			def time = System.currentTimeMillis()
-			println "Monitors executed. Time is: " + time
+
 			return [
 				"time" : time]
 		}

@@ -158,6 +158,9 @@ public class RepetitiveActualServiceFailoverTest extends AbstractLocalCloudTest 
 		assertTrue("ProcessingUnitInstanceRemoved event has not been fired", removed.getCount() == 0);
 		LogUtils.log("waiting for tomcat pu instances to increase");
 		assertTrue("Tomcat instance was not increased.", added.await(240, TimeUnit.SECONDS));
+		LogUtils.log("waiting for USM service to reach RUNNING state");
+		assertTrue("Processing unit instance did not reach running state in the defined time frame.",
+				USMTestUtils.waitForPuRunningState(ServiceUtils.getAbsolutePUName("default", "tomcat"), 60, TimeUnit.SECONDS, admin));
 		LogUtils.log("verifiying tomcat service in running");
 		isTomcatPageExists(client);	
 		LogUtils.log("all's well that ends well :)");

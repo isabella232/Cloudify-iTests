@@ -111,12 +111,15 @@ public class InternalUSMPuServiceDownTest extends AbstractLocalCloudTest {
 	}
 	
 	private void waitForServiceRecovery(final CountDownLatch removed,
-			final CountDownLatch added) throws InterruptedException {
+			final CountDownLatch added) throws InterruptedException, UnknownHostException {
 		LogUtils.log("waiting for tomcat pu instances to decrease");
 		assertTrue("Tomcat PU instance was not decresed", removed.await(240, TimeUnit.SECONDS));
 		LogUtils.log("waiting for tomcat pu instances to increase");
 		added.await(60 * 6, TimeUnit.SECONDS);
 		assertTrue("ProcessingUnitInstanceAdded event has not been fired", added.getCount() == 0);	
+		LogUtils.log("waiting for USM service to reach RUNNING state");
+		assertTrue("Processing unit instance did not reach running state in the defined time frame.",
+				USMTestUtils.waitForPuRunningState(ServiceUtils.getAbsolutePUName("default", "tomcat"), 60, TimeUnit.SECONDS, admin));
 		LogUtils.log("verifiying tomcat service in running");
 		assertTomcatPageExists();	
 		LogUtils.log("all's well that ends well :)");

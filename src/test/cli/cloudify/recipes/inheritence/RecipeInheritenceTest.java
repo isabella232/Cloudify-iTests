@@ -2,9 +2,12 @@ package test.cli.cloudify.recipes.inheritence;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 import org.cloudifysource.dsl.utils.ServiceUtils;
 import com.gigaspaces.log.*;
+
+import org.openspaces.admin.pu.ProcessingUnit;
 import org.openspaces.admin.pu.ProcessingUnitInstance;
 import org.testng.annotations.Test;
 
@@ -70,7 +73,13 @@ public class RecipeInheritenceTest extends AbstractLocalCloudTest {
         String appChildDirPath = CommandTestUtils.getPath("apps/USM/usm/applications/travelExtended");
         installApplication(appChildDirPath);
 
-        ProcessingUnitInstance cassandraInstance = admin.getProcessingUnits().getProcessingUnit("travelExtended.cassandra-extend").getInstances()[0];
+        ProcessingUnit processingUnit = admin.getProcessingUnits().getProcessingUnit("travelExtended.cassandra-extend");
+        assertNotNull("Processsing unit not found", processingUnit);        
+		
+        boolean found = processingUnit.waitFor(1, 5, TimeUnit.MINUTES);
+        assertTrue("PU Instance not found", found);
+        ProcessingUnitInstance cassandraInstance = processingUnit.getInstances()[0];
+        
         long pid = cassandraInstance.getGridServiceContainer().getVirtualMachine().getDetails().getPid();
 
         ContinuousLogEntryMatcher matcher = new ContinuousLogEntryMatcher(new AllLogEntryMatcher(), new AllLogEntryMatcher());

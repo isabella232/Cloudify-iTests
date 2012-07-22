@@ -65,9 +65,9 @@ public class AbstractLocalCloudTest extends AbstractTest {
 	protected static String restUrl = null;
 	protected static final String MANAGEMENT_APPLICATION_NAME = "management";
 	protected static final String DEFAULT_APPLICATION_NAME = "default";
-//	private static Set<String> clientStartupPIDs = null;
-//	private static Set<String> localCloudPIDs = null;
-//	private static Set<String> alivePIDs = null;
+	// private static Set<String> clientStartupPIDs = null;
+	// private static Set<String> localCloudPIDs = null;
+	// private static Set<String> alivePIDs = null;
 
 	protected boolean isDevEnv = false;
 
@@ -95,11 +95,10 @@ public class AbstractLocalCloudTest extends AbstractTest {
 	}
 
 	@BeforeSuite
-	public void beforeSuite()
-			throws Exception {
+	public void beforeSuite() throws Exception {
 		if (checkIsDevEnv()) {
 			LogUtils.log("Local cloud test running in dev mode, will use existing localcloud");
-//			clientStartupPIDs = new HashSet<String>();
+			// clientStartupPIDs = new HashSet<String>();
 		} else {
 			cleanUpCloudifyLocalDir();
 			scanForLeakedProcesses(false);
@@ -111,12 +110,11 @@ public class AbstractLocalCloudTest extends AbstractTest {
 				LogUtils.log("teardown failed because no cloud was found. proceeding with suite");
 			}
 
-//			clientStartupPIDs = SetupUtils.getLocalProcesses();
+			// clientStartupPIDs = SetupUtils.getLocalProcesses();
 
 			try {
 				LogUtils.log("Performing bootstrap");
-				final boolean portOpenBeforeBootstrap = PortConnectionUtils.isPortOpen("localhost",
-						restPort);
+				final boolean portOpenBeforeBootstrap = PortConnectionUtils.isPortOpen("localhost", restPort);
 				assertTrue("port " + restPort
 						+ " is open on localhost before rest deployment. will not try to deploy rest",
 						!portOpenBeforeBootstrap);
@@ -134,25 +132,22 @@ public class AbstractLocalCloudTest extends AbstractTest {
 			e1.printStackTrace();
 		}
 		assertTrue("Could not find LUS of local cloud",
-				admin.getLookupServices().waitFor(1,
-						WAIT_FOR_TIMEOUT,
-						TimeUnit.SECONDS));
+				admin.getLookupServices().waitFor(1, WAIT_FOR_TIMEOUT, TimeUnit.SECONDS));
 		try {
 			restUrl = "http://" + InetAddress.getLocalHost().getHostAddress() + ":" + restPort;
 		} catch (final UnknownHostException e) {
 			e.printStackTrace();
 		}
-//		try {
-//			alivePIDs = SetupUtils.getLocalProcesses();
-//			localCloudPIDs = SetupUtils.getClientProcessesIDsDelta(clientStartupPIDs,
-//					alivePIDs);
-//		} catch (final Exception e) {
-//			e.printStackTrace();
-//		}
+		// try {
+		// alivePIDs = SetupUtils.getLocalProcesses();
+		// localCloudPIDs = SetupUtils.getClientProcessesIDsDelta(clientStartupPIDs,
+		// alivePIDs);
+		// } catch (final Exception e) {
+		// e.printStackTrace();
+		// }
 	}
 
-	private void cleanUpCloudifyLocalDir()
-			throws IOException {
+	private void cleanUpCloudifyLocalDir() throws IOException {
 		String userHomeProp = null;
 		if (ScriptUtils.isLinuxMachine()) {
 			userHomeProp = System.getProperty("user.home");
@@ -175,8 +170,7 @@ public class AbstractLocalCloudTest extends AbstractTest {
 	}
 
 	@BeforeClass
-	public void beforeClass()
-			throws Exception {
+	public void beforeClass() throws Exception {
 		LogUtils.log("Test Class Configuration Started: " + this.getClass());
 		if (this.admin == null) {
 			try {
@@ -187,9 +181,7 @@ public class AbstractLocalCloudTest extends AbstractTest {
 			}
 		}
 
-		if (!admin.getMachines().waitFor(1,
-				30,
-				TimeUnit.SECONDS)) {
+		if (!admin.getMachines().waitFor(1, 30, TimeUnit.SECONDS)) {
 			// Admin API did not find anything!
 
 			throw new IllegalStateException(
@@ -206,21 +198,26 @@ public class AbstractLocalCloudTest extends AbstractTest {
 	@Override
 	@BeforeMethod
 	public void beforeTest() {
-		LogUtils.log("Test Configuration Started: " + this.getClass());
-		final boolean foundMachine = admin.getMachines().waitFor(1, 5, TimeUnit.MINUTES);
-		if(!foundMachine) {
-			AssertFail("Could not find a machine in the Admin API! Seomthing is wrong with the setup of this test");
+		try {
+			LogUtils.log("Test Configuration Started: " + this.getClass());
+			final boolean foundMachine = admin.getMachines().waitFor(1, 5, TimeUnit.MINUTES);
+			if (!foundMachine) {
+				AssertFail("Could not find a machine in the Admin API! Seomthing is wrong with the setup of this test");
+			}
+			System.out.println("Machine ["
+					+ admin.getMachines().getMachines()[0].getHostName()
+					+ "], "
+					+ "TotalPhysicalMem ["
+					+ admin.getMachines().getMachines()[0].getOperatingSystem().getDetails()
+							.getTotalPhysicalMemorySizeInGB()
+					+ "GB], "
+					+ "FreePhysicalMem ["
+					+ admin.getMachines().getMachines()[0].getOperatingSystem().getStatistics()
+							.getFreePhysicalMemorySizeInGB() + "GB]]");
+		} catch (Throwable t) {
+			LogUtils.log("Test Configuration Failed in @BeforeMethod: " + this.getClass(), t);
 		}
-		System.out.println("Machine ["
-				+ admin.getMachines().getMachines()[0].getHostName()
-				+ "], "
-				+ "TotalPhysicalMem ["
-				+ admin.getMachines().getMachines()[0].getOperatingSystem().getDetails()
-						.getTotalPhysicalMemorySizeInGB()
-				+ "GB], "
-				+ "FreePhysicalMem ["
-				+ admin.getMachines().getMachines()[0].getOperatingSystem().getStatistics()
-						.getFreePhysicalMemorySizeInGB() + "GB]]");
+
 	}
 
 	private static class ProcessDetails {
@@ -239,15 +236,14 @@ public class AbstractLocalCloudTest extends AbstractTest {
 
 	}
 
-	private static final Set<String> suspectProcessNames = new HashSet<String>(Arrays.asList("mongo", "mongod", "mongos", "nc"));
+	private static final Set<String> suspectProcessNames = new HashSet<String>(Arrays.asList("mongo", "mongod",
+			"mongos", "nc"));
 	private static final Set<String> suspectJavaProcessNames = new HashSet<String>(Arrays.asList(
 			"org.codehaus.groovy.tools.GroovyStarter", // groovy script executable
-			"simplejavaprocess.jar",
-			"org.apache.catalina.startup.Bootstrap",
+			"simplejavaprocess.jar", "org.apache.catalina.startup.Bootstrap",
 			"org.apache.cassandra.thrift.CassandraDaemon"));
 
-	private void scanForLeakedProcesses(final boolean failOnLeak)
-			throws SigarException {
+	private void scanForLeakedProcesses(final boolean failOnLeak) throws SigarException {
 		final Map<Long, ProcessDetails> processTable = createProcessTable();
 
 		boolean failed = false;
@@ -292,9 +288,7 @@ public class AbstractLocalCloudTest extends AbstractTest {
 
 	}
 
-	private Map<Long, ProcessDetails> createProcessTable()
-			throws SigarException
-	{
+	private Map<Long, ProcessDetails> createProcessTable() throws SigarException {
 		final Sigar sigar = SigarHolder.getSigar();
 		final long[] allpids = sigar.getProcList();
 
@@ -327,60 +321,63 @@ public class AbstractLocalCloudTest extends AbstractTest {
 
 	@Override
 	@AfterMethod(alwaysRun = true)
-	public void afterTest()
-			throws Exception {
-
-		if (admin != null) {
-			TeardownUtils.snapshot(admin);
-			uninstallAllRunningServices(admin);
-		}
-
-		// Adding a small sleep delay, so process tables will be correctly cleaned up.
-		Thread.sleep(2000);
+	public void afterTest() throws Exception {
 		try {
-			scanForLeakedProcesses(true);
-		} catch (SigarException e) {
-			LogUtils.log("WARNING! Failed to scan for leaked processes using sigar!", e);
+			if (admin != null) {
+				TeardownUtils.snapshot(admin);
+				uninstallAllRunningServices(admin);
+			}
+
+			// Adding a small sleep delay, so process tables will be correctly cleaned up.
+			Thread.sleep(2000);
+			try {
+				scanForLeakedProcesses(true);
+			} catch (SigarException e) {
+				LogUtils.log("WARNING! Failed to scan for leaked processes using sigar!", e);
+			}
+
+			// if (alivePIDs != null) {
+			//
+			// final Set<String> currentPids = SetupUtils.getLocalProcesses();
+			// final Set<String> delta = SetupUtils.getClientProcessesIDsDelta(alivePIDs,
+			// currentPids);
+			//
+			// if (delta.size() > 0) {
+			// String pids = "";
+			// for (final String pid : delta) {
+			// pids += pid + ", ";
+			// }
+			// try {
+			// LogUtils.log("WARNING There is a leak PIDS [ " + pids + "] are alive");
+			// Sigar sigar = SigarHolder.getSigar();
+			// for (String pid : delta) {
+			// try {
+			// LogUtils.log("PID: " + pid + ": " + sigar.getProcExe(pid).getName());
+			// } catch (SigarException e) {
+			// LogUtils.log("Failed to get process info for pid: " + pid);
+			// }
+			//
+			// }
+			//
+			// if (!checkIsDevEnv()) {
+			// SetupUtils.killProcessesByIDs(delta);
+			// LogUtils.log("INFO killing all orphan processes");
+			// SetupUtils.killProcessesByIDs(localCloudPIDs);
+			// LogUtils.log("INFO killing local cloud processes and boostraping again");
+			// }
+			//
+			// } finally {
+			// if (!checkIsDevEnv()) {
+			// beforeSuite();
+			// }
+			// }
+			// }
+			//
+			// }
+		} catch (Throwable t) {
+			LogUtils.log("Test Configuration Failed in @AfterMethod: " + this.getClass(), t);
 		}
 
-		// if (alivePIDs != null) {
-		//
-		// final Set<String> currentPids = SetupUtils.getLocalProcesses();
-		// final Set<String> delta = SetupUtils.getClientProcessesIDsDelta(alivePIDs,
-		// currentPids);
-		//
-		// if (delta.size() > 0) {
-		// String pids = "";
-		// for (final String pid : delta) {
-		// pids += pid + ", ";
-		// }
-		// try {
-		// LogUtils.log("WARNING There is a leak PIDS [ " + pids + "] are alive");
-		// Sigar sigar = SigarHolder.getSigar();
-		// for (String pid : delta) {
-		// try {
-		// LogUtils.log("PID: " + pid + ": " + sigar.getProcExe(pid).getName());
-		// } catch (SigarException e) {
-		// LogUtils.log("Failed to get process info for pid: " + pid);
-		// }
-		//
-		// }
-		//
-		// if (!checkIsDevEnv()) {
-		// SetupUtils.killProcessesByIDs(delta);
-		// LogUtils.log("INFO killing all orphan processes");
-		// SetupUtils.killProcessesByIDs(localCloudPIDs);
-		// LogUtils.log("INFO killing local cloud processes and boostraping again");
-		// }
-		//
-		// } finally {
-		// if (!checkIsDevEnv()) {
-		// beforeSuite();
-		// }
-		// }
-		// }
-		//
-		// }
 		LogUtils.log("Test Finished : " + this.getClass());
 	}
 
@@ -407,8 +404,7 @@ public class AbstractLocalCloudTest extends AbstractTest {
 		}
 	}
 
-	private Admin getAdminWithLocators()
-			throws UnknownHostException {
+	private Admin getAdminWithLocators() throws UnknownHostException {
 		// Class LocalhostGridAgentBootsrapper defines the locator discovery addresses.
 		final String nicAddress = "127.0.0.1"; // Constants.getHostAddress();
 
@@ -421,8 +417,7 @@ public class AbstractLocalCloudTest extends AbstractTest {
 
 	// This method implementation is used in order to access the admin api
 	// without having to worry about locators issue.
-	protected Map<String, Object> getAdminData(final String relativeUrl)
-			throws CLIException, ErrorStatusException {
+	protected Map<String, Object> getAdminData(final String relativeUrl) throws CLIException, ErrorStatusException {
 		final String url = getFullUrl("/admin/" + relativeUrl);
 		LogUtils.log("performing http get to url: " + url);
 		final HttpGet httpMethod = new HttpGet(url);
@@ -433,8 +428,8 @@ public class AbstractLocalCloudTest extends AbstractTest {
 		return restUrl + relativeUrl;
 	}
 
-	private Map<String, Object> readHttpAdminMethod(final HttpRequestBase httpMethod)
-			throws CLIException, ErrorStatusException {
+	private Map<String, Object> readHttpAdminMethod(final HttpRequestBase httpMethod) throws CLIException,
+			ErrorStatusException {
 		InputStream instream = null;
 		try {
 			final DefaultHttpClient httpClient = new DefaultHttpClient();
@@ -446,8 +441,7 @@ public class AbstractLocalCloudTest extends AbstractTest {
 			final HttpEntity entity = response.getEntity();
 			if (entity == null) {
 				final ErrorStatusException e = new ErrorStatusException("comm_error");
-				LogUtils.log(httpMethod.getURI() + " response entity is null",
-						e);
+				LogUtils.log(httpMethod.getURI() + " response entity is null", e);
 				throw e;
 			}
 			instream = entity.getContent();
@@ -456,12 +450,10 @@ public class AbstractLocalCloudTest extends AbstractTest {
 			final Map<String, Object> responseMap = jsonToMap(responseBody);
 			return responseMap;
 		} catch (final ClientProtocolException e) {
-			LogUtils.log(httpMethod.getURI() + " Rest api error",
-					e);
+			LogUtils.log(httpMethod.getURI() + " Rest api error", e);
 			throw new ErrorStatusException("comm_error", e, e.getMessage());
 		} catch (final IOException e) {
-			LogUtils.log(httpMethod.getURI() + " Rest api error",
-					e);
+			LogUtils.log(httpMethod.getURI() + " Rest api error", e);
 			throw new ErrorStatusException("comm_error", e, e.getMessage());
 		} finally {
 			if (instream != null) {
@@ -475,23 +467,20 @@ public class AbstractLocalCloudTest extends AbstractTest {
 	}
 
 	// returns the number of processing unit instances of the specified service
-	protected int getProcessingUnitInstanceCount(final String absolutePUName)
-			throws CLIException, ErrorStatusException {
+	protected int getProcessingUnitInstanceCount(final String absolutePUName) throws CLIException,
+			ErrorStatusException {
 		final String puNameAdminUrl = "processingUnits/Names/" + absolutePUName;
 		final Map<String, Object> mongoProcessingUnitAdminData = getAdminData(puNameAdminUrl);
 		return (Integer) mongoProcessingUnitAdminData.get("Instances-Size");
 	}
 
-	private static Map<String, Object> jsonToMap(final String response)
-			throws IOException {
+	private static Map<String, Object> jsonToMap(final String response) throws IOException {
 		final JavaType javaType = TypeFactory.type(Map.class);
 		final ObjectMapper objectMapper = new ObjectMapper();
-		return objectMapper.readValue(response,
-				javaType);
+		return objectMapper.readValue(response, javaType);
 	}
 
-	protected String runCommand(final String command)
-			throws IOException, InterruptedException {
+	protected String runCommand(final String command) throws IOException, InterruptedException {
 		return CommandTestUtils.runCommandAndWait(command);
 	}
 
@@ -500,8 +489,7 @@ public class AbstractLocalCloudTest extends AbstractTest {
 			DumpUtils.dumpLogs(admin);
 			runCommand("connect " + restUrl + ";uninstall-application " + applicationName);
 		} catch (final Exception e) {
-			LogUtils.log("Failed to uninstall " + applicationName,
-					e);
+			LogUtils.log("Failed to uninstall " + applicationName, e);
 			e.printStackTrace();
 		}
 	}
@@ -511,8 +499,7 @@ public class AbstractLocalCloudTest extends AbstractTest {
 			DumpUtils.dumpLogs(admin);
 			runCommand("connect " + restUrl + ";uninstall-service " + serviceName);
 		} catch (final Exception e) {
-			LogUtils.log("Failed to uninstall " + serviceName,
-					e);
+			LogUtils.log("Failed to uninstall " + serviceName, e);
 			e.printStackTrace();
 		}
 	}
@@ -522,8 +509,7 @@ public class AbstractLocalCloudTest extends AbstractTest {
 		for (final ProcessingUnit pu : admin.getProcessingUnits().getProcessingUnits()) {
 			if (!pu.getName().equals("webui") && !pu.getName().equals("rest")
 					&& !pu.getName().equals("cloudifyManagementSpace")) {
-				if (!pu.undeployAndWait(60,
-						TimeUnit.SECONDS)) {
+				if (!pu.undeployAndWait(60, TimeUnit.SECONDS)) {
 					LogUtils.log("Failed to uninstall " + pu.getName());
 				} else {
 					LogUtils.log("Uninstalled service: " + pu.getName());
@@ -532,10 +518,10 @@ public class AbstractLocalCloudTest extends AbstractTest {
 		}
 	}
 
-//	public void updateLocalCloudPids(final long oldPid, final long newPid) {
-//		localCloudPIDs.remove(oldPid);
-//		localCloudPIDs.add(String.valueOf(newPid));
-//		alivePIDs.remove(oldPid);
-//		alivePIDs.add(String.valueOf(newPid));
-//	}
+	// public void updateLocalCloudPids(final long oldPid, final long newPid) {
+	// localCloudPIDs.remove(oldPid);
+	// localCloudPIDs.add(String.valueOf(newPid));
+	// alivePIDs.remove(oldPid);
+	// alivePIDs.add(String.valueOf(newPid));
+	// }
 }

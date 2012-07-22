@@ -37,6 +37,7 @@ public class StartDetectionTest extends AbstractLocalCloudTest {
 	private final String applicationName = "default";
 	private final String absolutePUName = ServiceUtils.getAbsolutePUName(applicationName, serviceName);
 	private final String serviceDir = CommandTestUtils.getPath("/apps/USM/usm/SimpleDetection");
+	private final String serviceFailDir = CommandTestUtils.getPath("/apps/USM/usm/SimpleDetectionFail");
 	private File startDetectionFile = new File(serviceDir, "startDetection.groovy");
 	private String installCommand;
 	private String unInstallCommand;
@@ -54,8 +55,6 @@ public class StartDetectionTest extends AbstractLocalCloudTest {
 		
 		initFields();
 		
-		LogUtils.log("setting detection exit code to 0");
-		replaceTextInFile(this.startDetectionFile, "EXIT_CODE", Integer.toString(0));
 		LogUtils.log("Installing simpleDetection with detection exit Code 0");
 		CommandTestUtils.runCommandAndWait(installCommand);
 
@@ -64,15 +63,13 @@ public class StartDetectionTest extends AbstractLocalCloudTest {
 		assertTrue("Expected processing unit instance number should be 1", simplePu.waitFor(1, Constants.PROCESSINGUNIT_TIMEOUT_SEC, TimeUnit.SECONDS));
 		CommandTestUtils.runCommandAndWait(unInstallCommand);
 		
-		LogUtils.log("setting detection exit code to 1");
-		replaceTextInFile(this.startDetectionFile, Integer.toString(0), Integer.toString(1));
 		LogUtils.log("Installing simpleDetection with detection exit Code 1");
-		CommandTestUtils.runCommandExpectedFail(installCommand);
+		CommandTestUtils.runCommandExpectedFail("connect " + restUrl + ";install-service --verbose -timeout 1 " + serviceFailDir + ";exit");
 		
 		assertTrue("service processing unit does not exist", admin.getProcessingUnits().getProcessingUnit(absolutePUName) != null);
 		assertTrue("service should not be installed.", !admin.getProcessingUnits().getProcessingUnit(absolutePUName).getStatus().equals(DeploymentStatus.INTACT));
 		simplePu = admin.getProcessingUnits().waitFor(absolutePUName, Constants.PROCESSINGUNIT_TIMEOUT_SEC, TimeUnit.SECONDS);
-		assertTrue("Expected processing unit instances of the service to be 0", !simplePu.waitFor(1, Constants.PROCESSINGUNIT_TIMEOUT_SEC, TimeUnit.SECONDS));
+		assertTrue("Expected processing unit instances of the service to be 1", simplePu.waitFor(1, Constants.PROCESSINGUNIT_TIMEOUT_SEC, TimeUnit.SECONDS));
 		assertTrue("Service " + absolutePUName + " State is RUNNING.", 
 				!USMTestUtils.waitForPuRunningState(absolutePUName, 60, TimeUnit.SECONDS, admin));
 		CommandTestUtils.runCommandAndWait(unInstallCommand);

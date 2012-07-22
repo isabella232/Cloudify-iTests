@@ -44,7 +44,7 @@ public class TailCommandTest extends AbstractLocalCloudTest {
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
 	public void testTailByServiceInstanceId() throws IOException, InterruptedException {
 		String runCommand = runCommand("connect " + this.restUrl + 
-				";tail -instanceId 1 simple 30; " + "exit");
+				";tail --verbose -instanceId 1 simple 30; " + "exit");
 		assertTrue(runCommand.contains(EXPECTED_SYSTEM_OUT_LOG_ENTRY));
 		assertTrue(runCommand.contains(EXPECTED_SYSTEM_ERR_LOG_ENTRY));
 	}
@@ -52,7 +52,7 @@ public class TailCommandTest extends AbstractLocalCloudTest {
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
 	public void testTailByServiceInstanceHostAddress() throws IOException, InterruptedException {
 		String runCommand = runCommand("connect " + this.restUrl + 
-				";tail -hostAddress 127.0.0.1 simple 30; " + "exit");
+				";tail --verbose -hostAddress 127.0.0.1 simple 30; " + "exit");
 		assertTrue(runCommand.contains(EXPECTED_SYSTEM_OUT_LOG_ENTRY));
 		assertTrue(runCommand.contains(EXPECTED_SYSTEM_ERR_LOG_ENTRY));
 	}

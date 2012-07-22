@@ -1,1 +1,1 @@
-System.exit(EXIT_CODE);
+System.exit(0);

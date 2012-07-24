@@ -15,8 +15,10 @@
 ******************************************************************************/
 package test.cli.cloudify;
 
+import java.io.File;
 import java.io.IOException;
 
+import org.apache.commons.io.FileUtils;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -55,6 +57,26 @@ public class TailCommandTest extends AbstractLocalCloudTest {
 				";tail --verbose -hostAddress 127.0.0.1 simple 30; " + "exit");
 		assertTrue(runCommand.contains(EXPECTED_SYSTEM_OUT_LOG_ENTRY));
 		assertTrue(runCommand.contains(EXPECTED_SYSTEM_ERR_LOG_ENTRY));
+	}
+	
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
+	public void testTailByServiceName() throws IOException, InterruptedException {
+		String runCommand = runCommand("connect " + this.restUrl + 
+				";tail --verbose simple 30; " + "exit");
+		assertTrue(runCommand.contains(EXPECTED_SYSTEM_OUT_LOG_ENTRY));
+		assertTrue(runCommand.contains(EXPECTED_SYSTEM_ERR_LOG_ENTRY));
+	}
+	
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
+	public void testSaveTailToFile() throws IOException, InterruptedException {
+		File tempDirectory = FileUtils.getTempDirectory();
+		File file = new File(tempDirectory, "tempLogFile.txt");
+		String command = "connect " + this.restUrl + 
+				";tail --verbose -file " + file.getAbsolutePath().replace('\\', '/') + " simple 30; " + "exit";
+		runCommand(command);
+		String fileoutput = FileUtils.readFileToString(file);
+		assertTrue(fileoutput.contains(EXPECTED_SYSTEM_OUT_LOG_ENTRY));
+		assertTrue(fileoutput.contains(EXPECTED_SYSTEM_ERR_LOG_ENTRY));
 	}
 	
     @Override

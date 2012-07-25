@@ -122,11 +122,7 @@ public class Ec2CloudService extends AbstractCloudService {
 	}
 
 	private List<ComputeMetadata> checkForLeakedNodesWithPrefix(String... prefixes) {
-		List<ComputeMetadata> leakedNodes = null;
-
-		
-		
-
+		List<ComputeMetadata> leakedNodes = null;		
 		while (true) {
 			leakedNodes = new LinkedList<ComputeMetadata>();
 			LogUtils.log("Checking for leaked nodes with prefix: " + Arrays.toString(prefixes));

@@ -14,8 +14,7 @@ public class EuWestRegionEc2Test extends NewAbstractCloudTest {
 	private Ec2CloudService service;
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
-	public void testEuWestRegion()
-			throws IOException, InterruptedException {
+	public void testEuWestRegion() throws IOException, InterruptedException {
 		doSanityTest("travel", "travel");
 	}
 
@@ -34,8 +33,7 @@ public class EuWestRegionEc2Test extends NewAbstractCloudTest {
 		service = (Ec2CloudService) getService();
 		service.setPemFileName("sgtest-eu");
 		service.setAdditionalPropsToReplace(new HashMap<String, String>());
-		service.getAdditionalPropsToReplace().put("imageId \"us-east-1/ami-76f0061f\"",
-				"imageId \"eu-west-1/ami-24506250\"");
+		service.getAdditionalPropsToReplace().put("imageId \"us-east-1/ami-76f0061f\"", "imageId \"eu-west-1/ami-24506250\"");
 		service.getAdditionalPropsToReplace().put("locationId \"us-east-1\"", "locationId \"eu-west-1\"");
 		service.setMachinePrefix(this.getClass().getName() + CloudTestUtils.SGTEST_MACHINE_PREFIX);
 	}

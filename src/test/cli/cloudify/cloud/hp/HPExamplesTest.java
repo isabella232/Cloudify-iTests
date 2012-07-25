@@ -16,14 +16,47 @@
 
 package test.cli.cloudify.cloud.hp;
 
+import org.testng.ITestContext;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
+
 import test.cli.cloudify.cloud.AbstractExamplesTest;
 
 
 public class HPExamplesTest extends AbstractExamplesTest {
 
+	@BeforeClass(alwaysRun = true)
+	protected void bootstrap(final ITestContext testContext) {
+		super.bootstrap(testContext);
+	}
+	
+	@AfterClass(alwaysRun = true)
+	protected void teardown() {
+		super.teardown();
+	}
+	
 	@Override
 	protected String getCloudName() {
 		return "hp";
+	}
+	
+	@AfterMethod
+	public void cleanUp() {
+		super.uninstallApplicationIfFound();
+		super.scanNodesLeak();
+	}
+	
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
+	public void testTravel() throws Exception {
+		super.testTravel();
+	}
+	
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
+	public void testPetclinic()
+			throws Exception {
+		super.testPetclinic();
 	}
 
 }

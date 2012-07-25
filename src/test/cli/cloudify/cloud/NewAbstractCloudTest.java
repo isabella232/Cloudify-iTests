@@ -36,6 +36,91 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 	private String lastTestName;
 	private int lastTestResult;// see ITestResult
 
+	protected abstract void customizeCloud() throws Exception;
+	
+	protected void afterBootstrap() throws Exception {} 
+	
+	protected void beforeTeardown() throws Exception {}
+	
+	protected void afterTeardown() throws Exception {}
+	
+	
+	protected void bootstrap(final ITestContext testContext) {
+		bootstrap(testContext, null);
+	}
+	
+	protected void bootstrap(final ITestContext iTestContext, CloudService service) {
+		final TestRunner runner = (TestRunner) iTestContext;
+		runner.addTestListener(new TestNameListener());
+		cloudName = this.getCloudName();
+		if (this.isReusableCloud()) {
+			throw new UnsupportedOperationException(this.getClass().getName() + "Requires reusable clouds, which are not supported yet");
+		}
+
+		uniqueName = this.getClass().getSimpleName();
+
+		if (service == null) { // use the default cloud service if non is specified
+			this.cloud = CloudServiceManager.getInstance().getCloudService(cloudName, uniqueName);
+		}
+		else {
+			this.cloud = service; // use the custom service to execute bootstrap and teardown commands
+		}
+
+		try {
+			customizeCloud(); // customize cloud settings before bootstrap
+		} 
+		catch (Exception e) {
+			AssertFail("Customizing of cloud (" + cloudName + ", " + uniqueName + ") failed with the following error: " + e.getMessage(), e);
+		}
+
+		try {
+			this.cloud.bootstrapCloud(); // bootstrap the cloud
+		} 
+		catch (final Exception e) {
+			AssertFail("Bootstrapping of cloud (" + cloudName + ", " + uniqueName + ") failed with the following error: " + e.getMessage(), e);
+		}
+		
+		try {
+			afterBootstrap(); // run optional post-bootstrap steps (e.g. create admin)
+
+		} catch (final Exception e) {
+			AssertFail("AfterBootstrap method of cloud (" + cloudName + ", " + uniqueName + ") failed with the following error: " + e.getMessage(), e);
+		}
+	}
+
+	protected void teardown() {
+				
+		final String cloudName = this.getCloudName();
+
+		// run optional pre-teardown steps (e.g. clean objects)
+		try {
+			beforeTeardown();
+		} 
+		catch (final Exception e) {
+			AssertFail("BeforeTeardown method of cloud (" + cloudName + ", " + uniqueName + ") failed with the following error: " + e.getMessage(), e);
+		}
+		
+		// perform teardown
+		if (this.cloud == null) {
+			LogUtils.log("No teardown was executed as the cloud instance for this class was not created");
+		} 
+		else {
+			try {
+				if (this.cloud.isBootstrapped()) {
+					this.cloud.teardownCloud();
+				} 
+				else {
+					LogUtils.log("The cloud was not bootstrapped, so no teardown required.");
+					this.cloud.afterTeardown();
+				}
+			} 
+			catch (final Exception e) {
+				LogUtils.log("Tear-down of cloud (" + cloudName + ", " + uniqueName + ") failed with the following error: " + e.getMessage(), e);
+				sendTeardownCloudFailedMail(cloudName, e);
+			}
+		}
+	}
+	
 	/******
 	 * Returns the name of the cloud, as used in the bootstrap-cloud command.
 	 * 
@@ -52,151 +137,35 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 	 */
 	protected abstract boolean isReusableCloud();
 
-	public void scanNodesLeak() {
-		final boolean leakedAgentScanResult = this.cloud.afterTest();
-
-		if (this.lastTestResult == ITestResult.SUCCESS) {
-			// test passed - check for leaked VMs
-			if (!leakedAgentScanResult) {
-				// The test passed, but machines leaked, so the configuration should fail.
-				AssertFail("Test: " + lastTestName + " ended successfully, but leaked nodes were found!");
-			}
-		} else {
-			LogUtils.log("Test: " + lastTestName + " failed, and some leaked nodes were found too");
-		}
-	}
-
-	protected abstract void customizeCloud() throws Exception;
 	
-	protected void afterBootstrap() throws Exception {}
-	
-	protected void beforeTeardown() throws Exception {}
-	
-	protected void afterTeardown() throws Exception {}
-
-	private class TestNameListener implements ITestListener {
-
-		@Override
-		public void onFinish(final ITestContext arg0) {
-
-		}
-
-		@Override
-		public void onStart(final ITestContext arg0) {
-
-		}
-
-		@Override
-		public void onTestFailedButWithinSuccessPercentage(final ITestResult arg0) {
-
-		}
-
-		@Override
-		public void onTestFailure(final ITestResult arg0) {
-			lastTestName = arg0.getName();
-			lastTestResult = ITestResult.FAILURE;
-		}
-
-		@Override
-		public void onTestSkipped(final ITestResult arg0) {
-			lastTestName = arg0.getName();
-			lastTestResult = ITestResult.SKIP;
-
-		}
-
-		@Override
-		public void onTestStart(final ITestResult arg0) {
-		}
-
-		@Override
-		public void onTestSuccess(final ITestResult arg0) {
-			lastTestName = arg0.getName();
-			lastTestResult = ITestResult.SUCCESS;
-		}
-
-	}
-
-	protected void bootstrap(final ITestContext testContext) {
-		final TestRunner runner = (TestRunner) testContext;
-		runner.addTestListener(new TestNameListener());
-
-		// testContext.add
-
-		cloudName = this.getCloudName();
-
-		if (this.isReusableCloud()) {
-			throw new UnsupportedOperationException(this.getClass().getName()
-					+ "Requires reusable clouds, which are not supported yet");
-		}
-
-		uniqueName = this.getClass().getSimpleName();
-
-		this.cloud = CloudServiceManager.getInstance().getCloudService(cloudName, uniqueName);
-
-		// customize cloud settings before bootstrap
+	/**
+	 * This method is meant for the simple tests. all it does is install the application, and the immediately uninstalls
+	 * it.
+	 * 
+	 * @param cloudName - the cloud on which to install
+	 * @param applicationFolderName - the folder in which the application resides
+	 * @param applicationName - the name of the application as defined in (*-application.groovy)
+	 * @throws IOException
+	 * @throws InterruptedException
+	 */
+	public void doSanityTest(String applicationFolderName, String applicationName) throws IOException, InterruptedException {
+		LogUtils.log("installing application " + applicationName + " on " + cloudName);
+		String applicationPath = ScriptUtils.getBuildPath() + "/recipes/apps/" + applicationFolderName;
 		try {
-			customizeCloud();
-		} catch (Exception e) {
-			AssertFail("Customizing of cloud (" + cloudName + ", " + uniqueName
-					+ ") failed with the following error: " + e.getMessage(), e);
-		}
-
-		// bootstrap the cloud
-		try {
-			this.cloud.bootstrapCloud();
-		} catch (final Exception e) {
-			AssertFail("Bootstrapping of cloud (" + cloudName + ", " + uniqueName
-					+ ") failed with the following error: " + e.getMessage(), e);
-		}
-		
-		// run optional post-bootstrap steps (e.g. create admin)
-		try {
-			afterBootstrap();
-		} catch (final Exception e) {
-			AssertFail("AfterBootstrap method of cloud (" + cloudName + ", " + uniqueName
-					+ ") failed with the following error: " + e.getMessage(), e);
-		}
-
-	}
-
-	protected void teardown() {
-		// if (isReusableCloud()) {
-		// LogUtils.log("Cloud: " + getCloudName() + " will not be torn down yet as it is marked as reusable. " +
-		// "It will be torn down when the test suite ends.");
-		// return;
-		// }
-				
-		final String cloudName = this.getCloudName();
-
-		// run optional pre-teardown steps (e.g. clean objects)
-		try {
-			beforeTeardown();
-		} catch (final Exception e) {
-			AssertFail("BeforeTeardown method of cloud (" + cloudName + ", " + uniqueName
-					+ ") failed with the following error: " + e.getMessage(), e);
-		}
-		
-		// perform teardown
-		if (this.cloud == null) {
-			LogUtils.log("No teardown was executed as the cloud instance for this class was not created");
-		} else {
-			try {
-				if (this.cloud.isBootstrapped()) {
-					this.cloud.teardownCloud();
-				} else {
-					LogUtils.log("The cloud was not bootstrapped, so no teardown required.");
-					this.cloud.afterTeardown();
+			installApplicationAndWait(applicationPath, applicationName);
+		} 
+		finally {
+			if ((getService() != null) && (getService().getRestUrls() != null)) {
+				String command = "connect " + getRestUrl() + ";list-applications";
+				String output = CommandTestUtils.runCommandAndWait(command);
+				if (output.contains(applicationName)) {
+					uninstallApplicationAndWait(applicationName);
 				}
-			} catch (final Exception e) {
-				LogUtils.log("Tear-down of cloud (" + cloudName + ", " + uniqueName
-						+ ") failed with the following error: " + e.getMessage(), e);
-				// email to notify about the failed teardown
-				sendTeardownCloudFailedMail(cloudName, e);
 			}
 		}
-
 	}
-
+	
+	
 	/**
 	 * installs a service on a specific cloud and waits for the installation to complete.
 	 * 
@@ -280,17 +249,7 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 		}
 
 	}
-
-	protected String getRestUrl() {
-		if (cloud.getRestUrls() == null) {
-			Assert.fail("Test requested the REST URLs for the cloud, but they were not set. This may indeicate that the cloud was not bootstrapped properly");
-		}
-
-		final String restUrl = cloud.getRestUrls()[0];
-		return restUrl;
-
-	}
-
+	
 	/**
 	 * uninstalls a service from a specific cloud and waits for the uninstallation to complete.
 	 * 
@@ -321,6 +280,32 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 		final String output = CommandTestUtils.runCommandAndWait(connectCommand + installCommand);
 		final String excpectedResult = serviceName + " service uninstalled successfully";
 		assertTrue(output.toLowerCase().contains(excpectedResult.toLowerCase()));
+
+	}
+
+
+	public void scanNodesLeak() {
+		final boolean leakedAgentScanResult = this.cloud.afterTest();
+
+		if (this.lastTestResult == ITestResult.SUCCESS) {
+			// test passed - check for leaked VMs
+			if (!leakedAgentScanResult) {
+				// The test passed, but machines leaked, so the configuration should fail.
+				AssertFail("Test: " + lastTestName + " ended successfully, but leaked nodes were found!");
+			}
+		} 
+		else {
+			LogUtils.log("Test: " + lastTestName + " failed, and some leaked nodes were found too");
+		}
+	}
+
+	protected String getRestUrl() {
+		if (cloud.getRestUrls() == null) {
+			Assert.fail("Test requested the REST URLs for the cloud, but they were not set. This may indeicate that the cloud was not bootstrapped properly");
+		}
+
+		final String restUrl = cloud.getRestUrls()[0];
+		return restUrl;
 
 	}
 
@@ -400,48 +385,51 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 		return SGTestHelper.isDevMode();
 	}
 
-	private String[][] toTwoDimentionalArray(final String property) {
-
-		final String[] clouds = property.split(",");
-		final String[][] result = new String[clouds.length][1];
-		for (int i = 0; i < clouds.length; i++) {
-			result[i][0] = clouds[i];
-		}
-
-		return result;
-	}
-
 	public CloudService getService() {
 		return cloud;
 	}
 
-	/**
-	 * This method is ment for the simple tests. all it does is install the application, and the immediately uninstalls
-	 * it.
-	 * 
-	 * @param cloudName - the cloud on which to install
-	 * @param applicationFolderName - the folder in which the application resides
-	 * @param applicationName - the name of the application as defined in (*-application.groovy)
-	 * @throws IOException
-	 * @throws InterruptedException
-	 */
-	public void doSanityTest(String applicationFolderName, String applicationName)
-			throws IOException, InterruptedException {
-		LogUtils.log("installing application " + applicationName + " on " + cloudName);
-		String applicationPath = ScriptUtils.getBuildPath() + "/recipes/apps/" + applicationFolderName;
-		try {
-			installApplicationAndWait(applicationPath, applicationName);
-		} finally {
-			if ((getService() != null) && (getService().getRestUrls() != null)) {
-				String command = "connect " + getRestUrl() + ";list-applications";
-				String output = CommandTestUtils.runCommandAndWait(command);
-				if (output.contains(applicationName)) {
-					uninstallApplicationAndWait(applicationName);
-				}
-			}
-		}
-	}
-	
-	
 
+	
+	private class TestNameListener implements ITestListener {
+
+		@Override
+		public void onFinish(final ITestContext arg0) {
+
+		}
+
+		@Override
+		public void onStart(final ITestContext arg0) {
+
+		}
+
+		@Override
+		public void onTestFailedButWithinSuccessPercentage(final ITestResult arg0) {
+
+		}
+
+		@Override
+		public void onTestFailure(final ITestResult arg0) {
+			lastTestName = arg0.getName();
+			lastTestResult = ITestResult.FAILURE;
+		}
+
+		@Override
+		public void onTestSkipped(final ITestResult arg0) {
+			lastTestName = arg0.getName();
+			lastTestResult = ITestResult.SKIP;
+
+		}
+
+		@Override
+		public void onTestStart(final ITestResult arg0) {
+		}
+
+		@Override
+		public void onTestSuccess(final ITestResult arg0) {
+			lastTestName = arg0.getName();
+			lastTestResult = ITestResult.SUCCESS;
+		}
+
+	}
 }

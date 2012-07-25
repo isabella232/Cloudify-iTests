@@ -27,9 +27,16 @@ public class NamesAsIPsByonTest extends NewAbstractCloudTest{
 	private static final String TEST_UNIQUE_NAME = "NamesAsIPsByonTest";
 	private static final String IP_LIST_PROPERTY = "ipList";
 	
-	private String namesList = "pc-lab95,pc-lab96,pc-lab100";
+	private String namesList = "pc-lab27,pc-lab28,pc-lab23";
 	
 	private Admin admin;
+	
+	/*
+	@Override
+	protected void bootstrap(final ITestContext testContext) {
+		System.setProperty(IP_LIST_PROPERTY, namesList);
+		super.bootstrap(testContext);
+	}*/
 	
 	@Override
 	protected void customizeCloud() throws Exception {

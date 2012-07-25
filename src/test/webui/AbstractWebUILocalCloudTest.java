@@ -2,6 +2,8 @@ package test.webui;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Arrays;
 
 import org.apache.commons.io.FileUtils;
@@ -18,7 +20,10 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openspaces.admin.pu.DeploymentStatus;
+import org.openspaces.admin.pu.ProcessingUnit;
 import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
 
 import test.cli.cloudify.AbstractLocalCloudTest;
 
@@ -26,10 +31,12 @@ import com.gigaspaces.webuitf.LoginPage;
 import com.gigaspaces.webuitf.WebConstants;
 import com.gigaspaces.webuitf.dashboard.DashboardTab;
 import com.j_spaces.kernel.PlatformVersion;
+import com.j_spaces.kernel.SystemProperties;
 import com.thoughtworks.selenium.Selenium;
 
 import framework.tools.SGTestHelper;
 import framework.utils.AssertUtils;
+import framework.utils.ProcessingUnitUtils;
 import framework.utils.AssertUtils.RepetitiveConditionProvider;
 import framework.utils.LogUtils;
 
@@ -65,7 +72,26 @@ public abstract class AbstractWebUILocalCloudTest extends AbstractLocalCloudTest
 		restorePreviousBrowser();
 	}   
     
-    public void startWebBrowser(String uRL) throws InterruptedException {
+	@BeforeMethod
+	public void setLocators() throws UnknownHostException {
+		InetAddress localHost = InetAddress.getLocalHost();
+		String hostAddress = localHost.getHostAddress();
+		String locatorUrl = hostAddress + ":" + String.valueOf( 4172 ); 
+		System.setProperty( SystemProperties.JINI_LUS_LOCATORS, locatorUrl );
+	}
+	
+	@BeforeMethod
+	protected void startBrowser() throws InterruptedException {	
+		ProcessingUnit webui = admin.getProcessingUnits().waitFor("webui");
+		ProcessingUnitUtils.waitForDeploymentStatus(webui, DeploymentStatus.INTACT);
+		assertTrue(webui != null);
+		assertTrue(webui.getInstances().length != 0);	
+		String url = ProcessingUnitUtils.getWebProcessingUnitURL(webui).toString();	
+		startWebBrowser(url); 
+		
+	}
+	
+    private void startWebBrowser(String uRL) throws InterruptedException {
     	LogUtils.log("Launching browser...");
     	String browser = System.getProperty("selenium.browser");
     	LogUtils.log("Current browser is " + browser);

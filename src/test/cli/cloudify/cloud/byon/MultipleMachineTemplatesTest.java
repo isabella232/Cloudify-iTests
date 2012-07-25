@@ -11,6 +11,7 @@ import org.cloudifysource.dsl.cloud.Cloud;
 import org.cloudifysource.dsl.internal.ServiceReader;
 import org.openspaces.admin.Admin;
 import org.openspaces.admin.AdminFactory;
+import org.openspaces.admin.pu.ProcessingUnit;
 import org.testng.Assert;
 import org.testng.ITestContext;
 import org.testng.annotations.AfterClass;
@@ -129,6 +130,7 @@ public class MultipleMachineTemplatesTest extends NewAbstractCloudTest {
 		AdminFactory factory = new AdminFactory();
 		factory.addGroup(TEST_UNIQUE_NAME);
 		admin = factory.createAdmin();
+		LogUtils.log("admin created");
 	}
 
 	/**
@@ -145,32 +147,24 @@ public class MultipleMachineTemplatesTest extends NewAbstractCloudTest {
 		String template1IPsArray[] = TEMPLATE_1_IPs.split(",");
 		String template2IPsArray[] = TEMPLATE_2_IPs.split(",");
 		String template3IPsArray[] = TEMPLATE_3_IPs.split(",");
-
-		// TODO : edit this, so if it fails it won't be on NPE!
-		String hostAddressToCompare = admin.getProcessingUnits().getProcessingUnit("petclinic.mongod").getInstances()[0]
-				.getMachine().getHostAddress();
-		Assert.assertTrue(Arrays.asList(template2IPsArray).contains(hostAddressToCompare));
-
-		hostAddressToCompare = admin.getProcessingUnits().getProcessingUnit("petclinic.mongos").getInstances()[0]
-				.getMachine().getHostAddress();
-		Assert.assertTrue(Arrays.asList(template1IPsArray).contains(hostAddressToCompare));
-
-		hostAddressToCompare = admin.getProcessingUnits().getProcessingUnit("petclinic.mongoConfig").getInstances()[0]
-				.getMachine().getHostAddress();
-		Assert.assertTrue(Arrays.asList(template1IPsArray).contains(hostAddressToCompare));
-
-		hostAddressToCompare = admin.getProcessingUnits().getProcessingUnit("petclinic.tomcat").getInstances()[0]
-				.getMachine().getHostAddress();
-		Assert.assertTrue(Arrays.asList(template2IPsArray).contains(hostAddressToCompare));
-
-		hostAddressToCompare = admin.getProcessingUnits().getProcessingUnit("webui").getInstances()[0].getMachine()
-				.getHostAddress();
-		Assert.assertTrue(Arrays.asList(template3IPsArray).contains(hostAddressToCompare));
-
-		hostAddressToCompare = admin.getProcessingUnits().getProcessingUnit("rest").getInstances()[0].getMachine()
-				.getHostAddress();
-		Assert.assertTrue(Arrays.asList(template3IPsArray).contains(hostAddressToCompare));
-
+		
+		Assert.assertTrue(Arrays.asList(template2IPsArray).contains(getPuHostAddress("petclinic.mongod")));
+		Assert.assertTrue(Arrays.asList(template1IPsArray).contains(getPuHostAddress("petclinic.mongos")));
+		Assert.assertTrue(Arrays.asList(template1IPsArray).contains(getPuHostAddress("mongoConfig")));
+		Assert.assertTrue(Arrays.asList(template2IPsArray).contains(getPuHostAddress("petclinic.tomcat")));
+		Assert.assertTrue(Arrays.asList(template3IPsArray).contains(getPuHostAddress("webui")));
+		Assert.assertTrue(Arrays.asList(template3IPsArray).contains(getPuHostAddress("rest")));
+	}
+	
+	/**
+	 * Gets the address of the machine on which the given processing unit is deployed. 
+	 * @param puName The name of the processing unit to look for
+	 * @return The address of the machine on which the processing unit is deployed.
+	 */
+	private String getPuHostAddress(final String puName) {
+		ProcessingUnit pu = admin.getProcessingUnits().getProcessingUnit(puName);
+		Assert.assertNotNull(pu.getInstances()[0], puName + " processing unit is not found");
+		return pu.getInstances()[0].getMachine().getHostAddress();		
 	}
 
 	/**

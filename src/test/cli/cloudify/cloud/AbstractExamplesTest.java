@@ -14,7 +14,6 @@ import framework.utils.LogUtils;
 import framework.utils.ScriptUtils;
 
 public abstract class AbstractExamplesTest extends NewAbstractCloudTest {
-
 	
 	private String applicationName;
 
@@ -22,13 +21,11 @@ public abstract class AbstractExamplesTest extends NewAbstractCloudTest {
 		LogUtils.log("Instansiated " + AbstractExamplesTest.class.getName());
 	}
 
-	protected void testTravel()
-			throws Exception {
+	protected void testTravel() throws Exception {
 		doTest("travel", "travel");
 	}
 
-	protected void testPetclinic()
-			throws Exception {
+	protected void testPetclinic() throws Exception {
 		doTest("petclinic", "petclinic");
 	}
 
@@ -45,24 +42,18 @@ public abstract class AbstractExamplesTest extends NewAbstractCloudTest {
 				// verify image and hardware ID only for travel on EC2
 				Client client = Client.create(new DefaultClientConfig());
 				final WebResource service = client.resource(this.getRestUrl());
-				String hardwareIDResult =
-						service.path(
-								"/admin/ProcessingUnits/Names/travel.tomcat/Instances/0/Statistics/Monitors/USM/Details/Attributes/"
+				String hardwareIDResult = service.path( "/admin/ProcessingUnits/Names/travel.tomcat/Instances/0/Statistics/Monitors/USM/Details/Attributes/"
 										+ CloudifyConstants.USM_DETAILS_HARDWARE_ID).get(String.class);
 				assertTrue("error reading hardware id", !hardwareIDResult.contains("error"));
-				assertTrue("Could not find expected hardware ID: m1.small in response",
-						hardwareIDResult.contains("m1.small"));
+				assertTrue("Could not find expected hardware ID: m1.small in response", hardwareIDResult.contains("m1.small"));
 
-				String imageIDResult =
-						service.path(
-								"/admin/ProcessingUnits/Names/travel.tomcat/Instances/0/Statistics/Monitors/USM/Details/Attributes/" + CloudifyConstants.USM_DETAILS_IMAGE_ID)
-								.get(String.class);
+				String imageIDResult = service.path("/admin/ProcessingUnits/Names/travel.tomcat/Instances/0/Statistics/Monitors/USM/Details/Attributes/" 
+										+ CloudifyConstants.USM_DETAILS_IMAGE_ID).get(String.class);
 				assertTrue("error reading image id", !imageIDResult.toLowerCase().contains("error"));
 
 			}
-			// http://localhost:8100
-
-		} finally {
+		} 
+		finally {
 			if ((getService() != null) && (getService().getRestUrls() != null)) {
 				String command = "connect " + getRestUrl() + ";list-applications";
 				String output = CommandTestUtils.runCommandAndWait(command);
@@ -83,10 +74,10 @@ public abstract class AbstractExamplesTest extends NewAbstractCloudTest {
 					uninstallApplicationAndWait(this.applicationName);
 				}
 			} catch (IOException e) {
-				e.printStackTrace();
+				LogUtils.log(e.getMessage(), e);
 				AssertFail(e.getMessage());
 			} catch (InterruptedException e) {
-				e.printStackTrace();
+				LogUtils.log(e.getMessage(), e);
 				AssertFail(e.getMessage());
 			}
 		}

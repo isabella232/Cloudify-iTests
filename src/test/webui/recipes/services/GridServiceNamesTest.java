@@ -38,11 +38,17 @@ public class GridServiceNamesTest extends AbstractWebUILocalCloudTest {
 
 	private final String SERVICE_NAME = "rest";
 	
-	final String EXPECTED_GSA_SERVICES_NAME = "Agents";
-	final String EXPECTED_GSM_SERVICES_NAME = "Deployers";
-	final String EXPECTED_GSC_SERVICES_NAME = "USMs";
-	final String EXPECTED_ESM_SERVICES_NAME = "Orchestrators";
-	final String EXPECTED_LUS_SERVICES_NAME = "Discovery Services";	
+	private final static String EXPECTED_GSA_SERVICES_NAME = "Agents";
+	private final static String EXPECTED_GSM_SERVICES_NAME = "Deployers";
+	private final static String EXPECTED_GSC_SERVICES_NAME = "USMs";
+	private final static String EXPECTED_ESM_SERVICES_NAME = "Orchestrators";
+	private final static String EXPECTED_LUS_SERVICES_NAME = "Discovery Services";	
+	
+	private final static String GSA_SERVICE_NAME = "agent";
+	private final static String GSM_SERVICE_NAME = "deployer";
+	private final static String GSC_SERVICE_NAME = "usm";	
+	private final static String ESM_SERVICE_NAME = "orchestrator";
+	private final static String LUS_SERVICE_NAME = "discovery service";
 	
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT)
@@ -131,16 +137,17 @@ public class GridServiceNamesTest extends AbstractWebUILocalCloudTest {
 		HostsAndServicesGrid hostAndServicesGrid = servicesTab.getHostAndServicesGrid();
 		String hostAddress = machine.getHostAddress();
 		hostAndServicesGrid.clickOnHost( hostAddress );
+
 		//gsa
-		int countNumberAgents = hostAndServicesGrid.countNumberOf( "agent" );
+		int countNumberAgents = hostAndServicesGrid.countNumberOf( GSA_SERVICE_NAME );
 		//gsm
-		int countNumberDeployers = hostAndServicesGrid.countNumberOf( "deployer" );
+		int countNumberDeployers = hostAndServicesGrid.countNumberOf( GSM_SERVICE_NAME );
 		//gsc
-		int countNumberUsm = hostAndServicesGrid.countNumberOf( "usm" );
+		int countNumberUsm = hostAndServicesGrid.countNumberOf( GSC_SERVICE_NAME );
 		//lus
-		int countNumberDiscoveryServices = hostAndServicesGrid.countNumberOf( "discovery service" );
+		int countNumberDiscoveryServices = hostAndServicesGrid.countNumberOf( LUS_SERVICE_NAME );
 		//esm
-		int countNumberOrchestrators = hostAndServicesGrid.countNumberOf( "orchestrator" );		
+		int countNumberOrchestrators = hostAndServicesGrid.countNumberOf( ESM_SERVICE_NAME );		
 
 		final int expectedServicesNumber = 1;
 		assertEquals( "Expected number of Agents(GSA) must be [" + expectedServicesNumber + "]", 

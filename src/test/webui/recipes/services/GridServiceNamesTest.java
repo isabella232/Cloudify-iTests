@@ -17,6 +17,10 @@ import com.gigaspaces.webuitf.dashboard.DashboardTab;
 import com.gigaspaces.webuitf.dashboard.ServicesGrid.Icon;
 import com.gigaspaces.webuitf.dashboard.ServicesGrid.InfrastructureServicesGrid;
 import com.gigaspaces.webuitf.dashboard.ServicesGrid.InfrastructureServicesGrid.ESMInst;
+import com.gigaspaces.webuitf.dashboard.ServicesGrid.InfrastructureServicesGrid.GSAInst;
+import com.gigaspaces.webuitf.dashboard.ServicesGrid.InfrastructureServicesGrid.GSCInst;
+import com.gigaspaces.webuitf.dashboard.ServicesGrid.InfrastructureServicesGrid.GSMInst;
+import com.gigaspaces.webuitf.dashboard.ServicesGrid.InfrastructureServicesGrid.LUSInst;
 import com.gigaspaces.webuitf.services.HostsAndServicesGrid;
 import com.gigaspaces.webuitf.services.ServicesTab;
 import com.gigaspaces.webuitf.topology.TopologyTab;
@@ -33,6 +37,12 @@ public class GridServiceNamesTest extends AbstractWebUILocalCloudTest {
 		
 
 	private final String SERVICE_NAME = "rest";
+	
+	final String EXPECTED_GSA_SERVICES_NAME = "Agents";
+	final String EXPECTED_GSM_SERVICES_NAME = "Deployers";
+	final String EXPECTED_GSC_SERVICES_NAME = "USMs";
+	final String EXPECTED_ESM_SERVICES_NAME = "Orchestrators";
+	final String EXPECTED_LUS_SERVICES_NAME = "Discovery Services";	
 	
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT)
@@ -62,6 +72,32 @@ public class GridServiceNamesTest extends AbstractWebUILocalCloudTest {
 		};
 		
 		AssertUtils.repetitiveAssertTrue("No esm in showing in the dashboard", condition, waitingTime);
+
+		
+		//check grid services name in Dashboard
+		
+		GSAInst gsaInst = infrastructureServicesGrid.getGSAInst();
+		GSCInst gscInst = infrastructureServicesGrid.getGSCInst();
+		GSMInst gsmInst = infrastructureServicesGrid.getGSMInst();
+		LUSInst lusInst = infrastructureServicesGrid.getLUSInst();
+		ESMInst esmInst = infrastructureServicesGrid.getESMInst();
+		
+		String gsaServiceName = gsaInst.getName();
+		String gscServiceName = gscInst.getName();
+		String gsmServiceName = gsmInst.getName();
+		String lusServiceName = lusInst.getName();
+		String esmServiceName = esmInst.getName();
+		
+		AssertUtils.assertEquals( "GSA Grid service name must be [" + EXPECTED_GSA_SERVICES_NAME + "]", 
+				EXPECTED_GSA_SERVICES_NAME, gsaServiceName );
+		AssertUtils.assertEquals( "GSM Grid service name must be [" + EXPECTED_GSM_SERVICES_NAME + "]", 
+				EXPECTED_GSM_SERVICES_NAME, gsmServiceName );
+		AssertUtils.assertEquals( "GSC Grid service name must be [" + EXPECTED_GSC_SERVICES_NAME + "]", 
+				EXPECTED_GSC_SERVICES_NAME, gscServiceName );
+		AssertUtils.assertEquals( "LUS Grid service name must be [" + EXPECTED_LUS_SERVICES_NAME + "]", 
+				EXPECTED_LUS_SERVICES_NAME, lusServiceName );
+		AssertUtils.assertEquals( "ESM Grid service name must be [" + EXPECTED_ESM_SERVICES_NAME + "]", 
+				EXPECTED_ESM_SERVICES_NAME, esmServiceName );
 		
 		//end of grid service name testing in Dashboard  
 		/////////////////////////////////////////
@@ -106,9 +142,16 @@ public class GridServiceNamesTest extends AbstractWebUILocalCloudTest {
 		//esm
 		int countNumberOrchestrators = hostAndServicesGrid.countNumberOf( "orchestrator" );		
 
-//		assertTrue(puTreeGrid.getProcessingUnit("webui") != null);
-//		assertTrue(puTreeGrid.getProcessingUnit("rest") != null);
-//		assertTrue(puTreeGrid.getProcessingUnit(DEFAULT_HSQLDB_FULL_SERVICE_NAME) != null);
-
+		final int expectedServicesNumber = 1;
+		assertEquals( "Expected number of Agents(GSA) must be [" + expectedServicesNumber + "]", 
+				expectedServicesNumber, countNumberAgents );
+		assertEquals( "Expected number of Deployers(GSM) must be [" + expectedServicesNumber + "]", 
+				expectedServicesNumber, countNumberDeployers );
+		assertEquals( "Expected number of USM(GSC) must be [" + expectedServicesNumber + "]", 
+				expectedServicesNumber, countNumberUsm );
+		assertEquals( "Expected number of Discovery Service (LUS) must be [" + expectedServicesNumber + "]", 
+				expectedServicesNumber, countNumberDiscoveryServices );
+		assertEquals( "Expected number of Orchestrators(ESM) must be [" + expectedServicesNumber + "]", 
+				expectedServicesNumber, countNumberOrchestrators );
 	}
 }

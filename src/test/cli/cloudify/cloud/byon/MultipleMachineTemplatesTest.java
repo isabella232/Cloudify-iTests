@@ -12,6 +12,10 @@ import org.cloudifysource.dsl.internal.ServiceReader;
 import org.openspaces.admin.Admin;
 import org.openspaces.admin.AdminFactory;
 import org.testng.Assert;
+import org.testng.ITestContext;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import test.cli.cloudify.cloud.NewAbstractCloudTest;
@@ -51,6 +55,21 @@ public class MultipleMachineTemplatesTest extends NewAbstractCloudTest {
 			"byon-cloud.new");
 
 	protected Admin admin = null;
+	
+	@BeforeClass(alwaysRun = true)
+	protected void bootstrap(final ITestContext testContext) {
+		super.bootstrap(testContext);
+	}
+	
+	@AfterClass(alwaysRun = true)
+	protected void teardown() {
+		super.teardown();
+	}
+	
+	@AfterMethod
+	public void cleanUp() {
+		super.scanNodesLeak();
+	}
 
 	@Override
 	protected void customizeCloud() throws Exception {

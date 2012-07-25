@@ -20,6 +20,10 @@ import org.openspaces.admin.Admin;
 import org.openspaces.admin.AdminFactory;
 import org.openspaces.admin.gsm.GridServiceManager;
 import org.openspaces.admin.pu.ProcessingUnit;
+import org.testng.ITestContext;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import test.cli.cloudify.cloud.NewAbstractCloudTest;
@@ -49,6 +53,20 @@ public class KillManagementTest extends NewAbstractCloudTest{
 	private ExecutorService threadPool;
 	private String restUrl;
 	
+	@BeforeClass(alwaysRun = true)
+	protected void bootstrap(final ITestContext testContext) {
+		super.bootstrap(testContext);
+	}
+	
+	@AfterClass(alwaysRun = true)
+	protected void teardown() {
+		super.teardown();
+	}
+	
+	@AfterMethod
+	public void cleanUp() {
+		super.scanNodesLeak();
+	}
 	
 	@Override
 	protected void customizeCloud() throws Exception {
@@ -83,7 +101,8 @@ public class KillManagementTest extends NewAbstractCloudTest{
 			threadPool = Executors.newFixedThreadPool(1);
 			
 			LogUtils.log("installing application petclinic on " + CLOUD_NAME);
-			installApplicationAndWait(ScriptUtils.getBuildPath() + "/recipes/apps/petclinic", "petclinic");
+			//installApplicationAndWait(ScriptUtils.getBuildPath() + "/recipes/apps/petclinic", "petclinic");
+			installApplicationAndWait(ScriptUtils.getBuildPath() + "/recipes/apps/petclinic-simple", "petclinic");
 
 			Future<Void> ping = threadPool.submit(new Callable<Void>(){
 				@Override

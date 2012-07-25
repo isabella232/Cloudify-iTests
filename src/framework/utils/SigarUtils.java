@@ -99,7 +99,8 @@ public class SigarUtils {
 		return "";
 	}
 
-	public static void killProcess(long pid) throws SigarException {
+	public static void killProcess(long pid)
+			throws SigarException {
 		try {
 			if (ScriptUtils.isLinuxMachine()) {
 				SigarHolder.getSigar().kill(pid, "SIGKILL");
@@ -107,18 +108,22 @@ public class SigarUtils {
 				SigarHolder.getSigar().kill(pid, "SIGTERM");
 			}
 		} catch (SigarException e) {
-			throw new IllegalStateException("Failed to kill GSC PID: " + pid, e);
+			throw new IllegalStateException("Failed to kill PID: " + pid, e);
 		}
 
-		try {
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {
-			// ignore
-		}
+		for (int i = 0; i < 3; ++i) {
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				// ignore
+			}
 
-		if (isProcessAlive(pid)) {
-			throw new IllegalStateException("Failed to kill GSC PID: " + pid);
+			if (!isProcessAlive(pid)) {
+				return;
+			}
 		}
+		
+		throw new IllegalStateException("Failed to kill PID: " + pid);
 	}
 
 	/*********

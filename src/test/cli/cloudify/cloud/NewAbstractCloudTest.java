@@ -10,9 +10,6 @@ import org.testng.ITestContext;
 import org.testng.ITestListener;
 import org.testng.ITestResult;
 import org.testng.TestRunner;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeClass;
 
 import test.AbstractTestSupport;
 import test.cli.cloudify.CommandTestUtils;
@@ -55,8 +52,7 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 	 */
 	protected abstract boolean isReusableCloud();
 
-	@AfterMethod(alwaysRun = true)
-	public void afterTestLeakScan() {
+	public void scanNodesLeak() {
 		final boolean leakedAgentScanResult = this.cloud.afterTest();
 
 		if (this.lastTestResult == ITestResult.SUCCESS) {
@@ -120,7 +116,6 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 
 	}
 
-	@BeforeClass(alwaysRun = true)
 	protected void bootstrap(final ITestContext testContext) {
 		final TestRunner runner = (TestRunner) testContext;
 		runner.addTestListener(new TestNameListener());
@@ -164,7 +159,6 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 
 	}
 
-	@AfterClass(alwaysRun = true)
 	protected void teardown() {
 		// if (isReusableCloud()) {
 		// LogUtils.log("Cloud: " + getCloudName() + " will not be torn down yet as it is marked as reusable. " +

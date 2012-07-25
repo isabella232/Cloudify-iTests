@@ -3,8 +3,6 @@ package test.cli.cloudify.cloud;
 import java.io.IOException;
 
 import org.cloudifysource.dsl.internal.CloudifyConstants;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.Test;
 
 import test.cli.cloudify.CommandTestUtils;
 
@@ -24,14 +22,12 @@ public abstract class AbstractExamplesTest extends NewAbstractCloudTest {
 		LogUtils.log("Instansiated " + AbstractExamplesTest.class.getName());
 	}
 
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
-	public void testTravel()
+	protected void testTravel()
 			throws Exception {
 		doTest("travel", "travel");
 	}
 
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
-	public void testPetclinic()
+	protected void testPetclinic()
 			throws Exception {
 		doTest("petclinic", "petclinic");
 	}
@@ -77,8 +73,7 @@ public abstract class AbstractExamplesTest extends NewAbstractCloudTest {
 		}
 	}
 
-	@AfterMethod
-	public void afterTestLeakScan() {
+	public void uninstallApplicationIfFound() {
 		if ((getService() != null) && (getService().getRestUrls() != null)) {
 			String command = "connect " + getRestUrl() + ";list-applications";
 			String output;

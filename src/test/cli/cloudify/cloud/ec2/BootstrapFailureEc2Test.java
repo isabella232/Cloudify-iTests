@@ -9,7 +9,9 @@ import java.util.Set;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
 import org.testng.Assert;
+import org.testng.ITestContext;
 import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -36,28 +38,27 @@ public class BootstrapFailureEc2Test extends NewAbstractCloudTest {
 	private String machineName = this.getClass().getName() + "_" + CloudTestUtils.SGTEST_MACHINE_PREFIX + System.currentTimeMillis() + "_";
 	private boolean managementMachineTerminated = false;
 
-	@BeforeMethod
-	public void init() throws IOException, InterruptedException {	
+	@BeforeClass
+	public void bootstrap(ITestContext iTestContext) {	
 		service = new Ec2CloudService(this.getClass().getName());
 		service.setMachinePrefix(machineName);	
-	}
-
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
-	public void failedBootstrapTest() throws IOException, InterruptedException {
-
 		//replace the bootstrap-management with a bad version, to fail the bootstrap.
 		File standardBootstrapManagement = new File(service.getPathToCloudFolder() + "/upload", "bootstrap-management.sh");
 		File badBootstrapManagement = new File(SGTestHelper.getSGTestRootDir() + "/apps/cloudify/cloud/ec2/bad-bootstrap-management.sh");
 		Map<File, File> filesToReplace = new HashMap<File, File>();
 		filesToReplace.put(standardBootstrapManagement, badBootstrapManagement);
 		service.addFilesToReplace(filesToReplace);
-
 		try {
-			service.bootstrapCloud();
+			super.bootstrap(iTestContext, service);
 		} catch (AssertionError ae) {
 			System.out.println(ae.getMessage());
 		}
+		
+	}
 
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
+	public void failedBootstrapTest() throws IOException, InterruptedException {
+		
 		JcloudsUtils.createContext(service);
 		Set<? extends NodeMetadata> machines = JcloudsUtils.getServersByName(machineName);
 		Assert.assertTrue(machines != null);
@@ -99,7 +100,5 @@ public class BootstrapFailureEc2Test extends NewAbstractCloudTest {
 	@Override
 	protected void customizeCloud() throws Exception {
 		// TODO Auto-generated method stub
-
 	}
-
 }

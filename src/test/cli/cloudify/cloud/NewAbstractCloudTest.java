@@ -196,6 +196,8 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 			} catch (final Exception e) {
 				LogUtils.log("Tear-down of cloud (" + cloudName + ", " + uniqueName
 						+ ") failed with the following error: " + e.getMessage(), e);
+				// email to notify about the failed teardown
+				sendTeardownCloudFailedMail(cloudName, e);
 			}
 		}
 

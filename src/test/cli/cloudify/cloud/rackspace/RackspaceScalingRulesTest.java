@@ -16,14 +16,46 @@
 
 package test.cli.cloudify.cloud.rackspace;
 
+import org.testng.ITestContext;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+
 import test.cli.cloudify.cloud.AbstractScalingRulesCloudTest;
 
 
-public class RackspaceScalingRulesTest extends AbstractScalingRulesCloudTest{
+public class RackspaceScalingRulesTest extends AbstractScalingRulesCloudTest {
 
 	@Override
 	protected String getCloudName() {
 		return "rackspace";
 	}
-
+	
+	@BeforeClass
+	public void bootstrap(ITestContext iTestContext) {
+		super.bootstrap(iTestContext);
+	}
+	
+	@BeforeMethod
+	public void beforeTest() {
+		super.beforeTest();
+	}
+	
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
+	public void testPetclinicScalingRules() throws Exception {
+		super.testPetclinicSimpleScalingRules();
+	}
+	
+	@AfterMethod(alwaysRun = true)
+	public void afterTest() {
+		super.afterTest();
+	}
+	
+	@AfterClass(alwaysRun = true)
+	public void cleanUp() {
+		super.teardown();
+		super.scanNodesLeak();
+	}
 }

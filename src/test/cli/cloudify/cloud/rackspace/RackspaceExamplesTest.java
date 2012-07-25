@@ -16,14 +16,58 @@
 
 package test.cli.cloudify.cloud.rackspace;
 
+import org.testng.ITestContext;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
+
 import test.cli.cloudify.cloud.AbstractExamplesTest;
 
-
+/**
+ * This class runs two test on Rackspace cloud.
+ * 
+ * 1. bootstrap to cloud
+ * 2. run travel
+ * 3. uninstall travel.
+ * 4. run petclinic
+ * 5. uninstall petclinic
+ * 6. teardown cloud
+ * 7. scan for any leaked machines
+ * 
+ * @author elip
+ *
+ */
 public class RackspaceExamplesTest extends AbstractExamplesTest {
+	
+	@BeforeClass(alwaysRun = true)
+	protected void bootstrap(final ITestContext testContext) {
+		super.bootstrap(testContext);
+	}
+	
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
+	public void testTravel() throws Exception { 
+		super.testTravel();
+	}
+	
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
+	public void testPetclinic() throws Exception {
+		super.testPetclinic();
+	}
 
+	@AfterMethod(alwaysRun = true)
+	public void cleanUp() {
+		super.uninstallApplicationIfFound();
+		super.scanNodesLeak();
+	}
+
+	@AfterClass(alwaysRun = true)
+	protected void teardown() {
+		super.teardown();
+	}
+	
 	@Override
 	protected String getCloudName() {
 		return "rackspace";
 	}
-
 }

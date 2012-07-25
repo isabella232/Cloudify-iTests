@@ -41,7 +41,7 @@ import framework.utils.LogUtils;
  *
  */
 
-public abstract class AbstractWebUITest extends AbstractLocalCloudTest {
+public abstract class AbstractWebUILocalCloudTest extends AbstractLocalCloudTest {
 	
 	protected static final String DEFAULT_ACTIVEMQ_FULL_SERVICE_NAME = ServiceUtils.getAbsolutePUName(DEFAULT_APPLICATION_NAME, "activemq");
 	protected static final String DEFAULT_CASSANDRA_FULL_SERVICE_NAME = ServiceUtils.getAbsolutePUName(DEFAULT_APPLICATION_NAME, "cassandra");

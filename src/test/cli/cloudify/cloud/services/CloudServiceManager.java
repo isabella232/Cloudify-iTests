@@ -96,9 +96,7 @@ public class CloudServiceManager {
 		} else if ("rackspace".equalsIgnoreCase(cloudName)) {
 			cloudService = new RackspaceCloudService(serviceUniqueName);
 		}
-//		else if ("terremark".equalsIgnoreCase(cloudName)) {
-//			cloudService = TerremarkCloudService.getService(serviceUniqueName);
-//		}
+
 		return cloudService;
 	}
 }

@@ -38,8 +38,7 @@ public abstract class AbstractCloudService implements CloudService {
 	protected URL[] restAdminUrls;
 	protected URL[] webUIUrls;
 	protected String serviceUniqueName;
-	protected String machinePrefix = CloudTestUtils.SGTEST_MACHINE_PREFIX.replace('_', '-')
-			+ System.getProperty("user.name") + "-";
+	protected String machinePrefix = CloudTestUtils.SGTEST_MACHINE_PREFIX.replace('_', '-') + System.getProperty("user.name") + "-";
 	protected Map<String, String> additionalPropsToReplace;
 	protected Map<File, File> filesToReplace;
 	protected boolean bootstrapped = false;
@@ -110,23 +109,18 @@ public abstract class AbstractCloudService implements CloudService {
 		this.bootstrapped = bootstrapped;
 	}
 
-	public abstract void injectServiceAuthenticationDetails()
-			throws IOException;
+	public abstract void injectServiceAuthenticationDetails() throws IOException;
 
-	public void injectAuthenticationDetails()
-			throws IOException {
+	public void injectAuthenticationDetails() throws IOException {
 		createServiceFolders();
 		injectServiceAuthenticationDetails();
 		// update localDirectory
 		Map<String, String> propsToReplace = new HashMap<String, String>();
-		propsToReplace.put("localDirectory \"tools/cli/plugins/esc/" + cloudName + "/upload\"", "localDirectory \""
-				+ "tools/cli/plugins/esc/" + getServiceFolder() + "/upload\"");
-
+		propsToReplace.put("localDirectory \"tools/cli/plugins/esc/" + cloudName + "/upload\"", "localDirectory \""	+ "tools/cli/plugins/esc/" + getServiceFolder() + "/upload\"");
 		IOUtils.replaceTextInFile(getPathToCloudGroovy(), propsToReplace);
 	}
 
-	private void replaceCloudifyURL()
-			throws DSLException, IOException {
+	private void replaceCloudifyURL() throws DSLException, IOException {
 		Cloud cloud = ServiceReader.readCloud(new File(getPathToCloudGroovy()));
 		String defaultURL = cloud.getProvider().getCloudifyUrl();
 		String newCloudifyURL = "";
@@ -136,13 +130,11 @@ public abstract class AbstractCloudService implements CloudService {
 			String versionNumber = lastParts.substring(1, lastParts.lastIndexOf("/"));
 			String fileName = lastParts.substring(lastParts.lastIndexOf("/") + 1);
 			String buildNumber = fileName.substring(fileName.lastIndexOf("-b") + 2, fileName.indexOf(".zip"));
-			newCloudifyURL =
-					NEW_URL_PREFIX + "/" + versionNumber + "/build_" + buildNumber + "/cloudify/1.5/" + fileName;
-		} else {
-			LogUtils.log("The groovy file doesn't contain a cloudifyUrl entry starting with \"" + DEFAULT_URL_PREFIX
-					+ "\"");
-			throw new DSLException("The groovy file doesn't contain a cloudifyUrl entry starting with \""
-					+ DEFAULT_URL_PREFIX + "\"");
+			newCloudifyURL = NEW_URL_PREFIX + "/" + versionNumber + "/build_" + buildNumber + "/cloudify/1.5/" + fileName;
+		} 
+		else {
+			LogUtils.log("The groovy file doesn't contain a cloudifyUrl entry starting with \"" + DEFAULT_URL_PREFIX + "\"");
+			throw new DSLException("The groovy file doesn't contain a cloudifyUrl entry starting with \"" + DEFAULT_URL_PREFIX + "\"");
 		}
 
 		Map<String, String> propsToReplace = new HashMap<String, String>();
@@ -158,10 +150,9 @@ public abstract class AbstractCloudService implements CloudService {
 	 * @return The created folder
 	 * @throws IOException Indicates the folder could not be created
 	 */
-	protected File createServiceFolders()
-			throws IOException {
+	protected File createServiceFolders() throws IOException {
 		File originalCloudFolder = new File(ScriptUtils.getBuildPath() + RELATIVE_ESC_PATH + getCloudName());
-		File serviceCloudFolder = new File(originalCloudFolder.getParent(), getCloudName() + "_" + getUniqueName());
+		File serviceCloudFolder = new File(originalCloudFolder.getParent(), serviceFolder);
 
 		try {
 			if (serviceCloudFolder.isDirectory()) {
@@ -171,7 +162,8 @@ public abstract class AbstractCloudService implements CloudService {
 			// create a new folder for the test to work on (if it's not created already) with the content of the
 			// original folder
 			FileUtils.copyDirectory(originalCloudFolder, serviceCloudFolder);
-		} catch (IOException e) {
+		} 
+		catch (IOException e) {
 			LogUtils.log("caught an exception while creating service folder " + serviceCloudFolder.getAbsolutePath(), e);
 			throw e;
 		}
@@ -209,10 +201,7 @@ public abstract class AbstractCloudService implements CloudService {
 	}
 
 	@Override
-	public void bootstrapCloud()
-			throws IOException, InterruptedException
-	{
-
+	public void bootstrapCloud() throws IOException, InterruptedException {
 		try {
 			overrideLogsFile();
 			injectAuthenticationDetails();
@@ -240,9 +229,7 @@ public abstract class AbstractCloudService implements CloudService {
 
 			beforeBootstrap();
 
-			String output =
-					CommandTestUtils.runCommandAndWait("bootstrap-cloud --verbose " + getCloudName() + "_"
-							+ getUniqueName());
+			String output = CommandTestUtils.runCommandAndWait("bootstrap-cloud --verbose " + getCloudName() + "_" + getUniqueName());
 			LogUtils.log("Extracting rest url's from cli output");
 			restAdminUrls = extractRestAdminUrls(output, numberOfManagementMachines);
 			LogUtils.log("Extracting webui url's from cli output");
@@ -256,9 +243,6 @@ public abstract class AbstractCloudService implements CloudService {
 				machinesURL = getMachinesUrl(restAdminUrls[i].toString());
 				LogUtils.log("Expecting " + numberOfManagementMachines + " machines");
 				LogUtils.log("Found " + CloudTestUtils.getNumberOfMachines(machinesURL) + " machines");
-
-				// AssertUtils.assertEquals("Expecting " + numberOfManagementMachines + " machines",
-				// numberOfManagementMachines, CloudTestUtils.getNumberOfMachines(machinesURL));
 			}
 
 		} catch (Exception e) {
@@ -286,13 +270,9 @@ public abstract class AbstractCloudService implements CloudService {
 	}
 
 	@Override
-	public void teardownCloud()
-			throws IOException, InterruptedException {
-
-		boolean teardownSuccesfull = false;
+	public void teardownCloud() throws IOException, InterruptedException {
 
 		try {
-			// injectAuthenticationDetails();
 			String[] restUrls = getRestUrls();
 			String url = null;
 			if (restUrls != null) {
@@ -303,32 +283,17 @@ public abstract class AbstractCloudService implements CloudService {
 					LogUtils.log("Failed to create dump for this url - " + url, e);
 				}
 				String connect = "connect " + restUrls[0];
-				String teardownOutput =
-						CommandTestUtils.runCommandAndWait(connect + ";" + "teardown-cloud --verbose " + getCloudName()
-								+ "_" + getUniqueName());
-				if (teardownOutput.toLowerCase().contains("success")) {
-					teardownSuccesfull = true;
-				}
+				CommandTestUtils.runCommandAndWait(connect + ";" + "teardown-cloud --verbose " + getCloudName() + "_" + getUniqueName());
 			}
-		} finally {
+		} 
+		finally {
 			setBootstrapped(false);
 			try {				
 				afterTeardown();
-			} finally {
+			} 
+			finally {
 				deleteServiceFolders();
-
 			}
-			// try {
-			// if (!teardownSuccesfull) {
-			// CommandTestUtils.runCommandAndWait("teardown-cloud --verbose -force " + getCloudName() + "_"
-			// + getUniqueName());
-			// }
-			// } finally {
-			// try {
-			// } catch (IOException e) {
-			// LogUtils.log("Failed to delete the service's custom folder", e);
-			// }
-			// }
 		}
 	}
 

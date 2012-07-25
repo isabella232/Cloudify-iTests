@@ -21,9 +21,6 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.type.TypeFactory;
 import org.codehaus.jackson.type.JavaType;
 import org.testng.Assert;
-import org.testng.annotations.AfterTest;
-import org.testng.annotations.BeforeTest;
-import org.testng.annotations.Test;
 
 import framework.utils.AssertUtils;
 import framework.utils.AssertUtils.RepetitiveConditionProvider;
@@ -50,22 +47,18 @@ public abstract class AbstractScalingRulesCloudTest extends NewAbstractCloudTest
 	private ScheduledExecutorService executor;
 	private final List<HttpRequest> threads = new ArrayList<HttpRequest>();
 	
-	@BeforeTest
-	
 	public void beforeTest() {	
 		executor= Executors.newScheduledThreadPool(NUMBER_OF_HTTP_GET_THREADS);
 	}
 	
-	@AfterTest
 	public void afterTest() {
 		if (executor != null) {
 			executor.shutdownNow();
 		}
 		
-		super.afterTestLeakScan();
+		super.scanNodesLeak();
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 3, enabled = true)
 	public void testPetclinicSimpleScalingRules() throws Exception {		
 		
 		LogUtils.log("installing application " + APPLICATION_NAME);

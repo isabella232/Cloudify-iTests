@@ -558,10 +558,18 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 				|| (!invoke8Result
 						.contains("This is the cmd8 custom command - This is an error test"))) {
 			AssertFail("Custom command cmd8 returned unexpected result: "
-					+ invoke2Result);
+					+ invoke8Result);
 		}
 
 
+		String invoke9Result = CommandTestUtils.runCommandExpectedFail("connect " + this.restUrl
+				+ "; invoke kitchensink-service cmd9");
+
+		if ((!invoke9Result.contains("1: OK"))
+			|| (!invoke9Result.contains("Result: null"))) {
+			AssertFail("Custom command cmd9 returned unexpected result: "
+					+ invoke9Result);
+		}
 	}
 
 	private void checkMonitors(ProcessingUnitInstance pui) {

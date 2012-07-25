@@ -58,7 +58,9 @@ public class AttributesTest extends AbstractLocalCloudTest {
 	@Override
 	@AfterMethod(alwaysRun=true)
 	public void afterTest(){
-		gigaspace.clear(null);
+		if (gigaspace != null) {
+			gigaspace.clear(null);
+		}
         if (admin != null) {
             TeardownUtils.snapshot(admin);
             DumpUtils.dumpLogs(admin);

@@ -30,24 +30,24 @@ public class CLILifecycleEventsTest extends AbstractLocalCloudTest{
 	
 	private static final String[] EXPECTED_STARTUP_EVENT_STRINGS = {
 		"%s%s INIT invoked",
-		"%s%s INIT completed",
+		"%s%s INIT completed, duration: ",
 		"%s%s PRE_INSTALL invoked",
-		"%s%s PRE_INSTALL completed",
+		"%s%s PRE_INSTALL completed, duration: ",
 		"%s%s POST_INSTALL invoked",
-		"%s%s POST_INSTALL completed",
+		"%s%s POST_INSTALL completed, duration: ",
 		"%s%s PRE_START invoked",
-		"%s%s PRE_START completed",
+		"%s%s PRE_START completed, duration: ",
 		"%s%s START invoked",
 		"%s%s POST_START invoked",
-		"%s%s POST_START completed"};
+		"%s%s POST_START completed, duration: "};
 	
 	private static final String[] EXPECTED_UNINSTALL_EVENT_STRINGS = {
 		"%s%s PRE_STOP invoked",
-		"%s%s PRE_STOP completed",
+		"%s%s PRE_STOP completed, duration: ",
 		"%s%s POST_STOP invoked",
-		"%s%s POST_STOP completed",
+		"%s%s POST_STOP completed, duration: ",
 		"%s%s SHUTDOWN invoked",
-		"%s%s SHUTDOWN completed"};
+		"%s%s SHUTDOWN completed, duration: "};
 	
 	
 	//install a service with 2 instances. 
@@ -74,7 +74,7 @@ public class CLILifecycleEventsTest extends AbstractLocalCloudTest{
 	//install an application with 2 services
 	//one has 2 instances and the other has 1.
 	//tests polling for multi-service installation.
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
 	public void testApplicationInstallLifecycleLogs() 
 			throws IOException, DSLException, InterruptedException {
 		
@@ -96,7 +96,7 @@ public class CLILifecycleEventsTest extends AbstractLocalCloudTest{
 	}
 	
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
 	public void testApplicationUnInstallLifecycleLogs() 
 			throws IOException, InterruptedException, DSLException {
 		String usmServicePath = getUsmApplicationPath("groovyApp/");
@@ -121,7 +121,7 @@ public class CLILifecycleEventsTest extends AbstractLocalCloudTest{
 		}
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
 	public void testServiceUnInstallLifecycleLogs() 
 			throws IOException, InterruptedException, PackagingException, DSLException {
 		
@@ -145,7 +145,7 @@ public class CLILifecycleEventsTest extends AbstractLocalCloudTest{
 		
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
 	public void testServiceSetInstanceLifecycleLogs() 
 			throws IOException, InterruptedException, PackagingException, DSLException {
 		

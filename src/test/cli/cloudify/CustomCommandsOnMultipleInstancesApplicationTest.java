@@ -231,6 +231,17 @@ public class CustomCommandsOnMultipleInstancesApplicationTest extends AbstractLo
     }
 
     private void installApplication() throws PackagingException, IOException, InterruptedException, DSLException {
+    	
+		File file1 = new File("C:\\Users\\ca\\sgtest-cloudify\\apps\\USM\\usm\\applications\\simpleCustomCommandsMultipleInstances\\simpleCustomCommandsMultipleInstances-2\\simpleCustomCommandsMultipleInstances-2-service.groovy");
+		File file2 = new File("C:\\Users\\ca\\sgtest-cloudify\\apps\\USM\\usm\\applications\\simpleCustomCommandsMultipleInstances\\simpleCustomCommandsMultipleInstances-2\\simpleCustomCommandsMultipleInstances-2-service.groovy");
+		if (file1.exists()) {
+			LogUtils.log("before using service reader to read application the file : " + file1.getAbsolutePath() + " existed");
+		}
+		
+		if (file1.exists()) {
+			LogUtils.log("before using service reader to read application the file : " + file2.getAbsolutePath() + " existed");
+		}
+    	
         File applicationDir = new File(APPLICAION_DIR_PATH);
         ServiceReader.getApplicationFromFile(applicationDir).getApplication();
         runCommand("connect " + restUrl + ";install-application --verbose " + APPLICAION_DIR_PATH);

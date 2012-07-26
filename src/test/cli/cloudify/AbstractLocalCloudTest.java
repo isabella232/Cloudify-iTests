@@ -96,6 +96,18 @@ public class AbstractLocalCloudTest extends AbstractTest {
 
 	@BeforeSuite
 	public void beforeSuite() throws Exception {
+		
+		
+		File file1 = new File("C:\\Users\\ca\\sgtest-cloudify\\apps\\USM\\usm\\applications\\simpleCustomCommandsMultipleInstances\\simpleCustomCommandsMultipleInstances-2\\simpleCustomCommandsMultipleInstances-2-service.groovy");
+		File file2 = new File("C:\\Users\\ca\\sgtest-cloudify\\apps\\USM\\usm\\applications\\simpleCustomCommandsMultipleInstances\\simpleCustomCommandsMultipleInstances-2\\simpleCustomCommandsMultipleInstances-2-service.groovy");
+		if (file1.exists()) {
+			LogUtils.log("before the suite start file : " + file1.getAbsolutePath() + " existed");
+		}
+		
+		if (file1.exists()) {
+			LogUtils.log("before the suite start file : " + file2.getAbsolutePath() + " existed");
+		}
+
 		if (checkIsDevEnv()) {
 			LogUtils.log("Local cloud test running in dev mode, will use existing localcloud");
 			// clientStartupPIDs = new HashSet<String>();

@@ -242,8 +242,11 @@ public class USMTestUtils {
 		ProcessingUnit processingUnit = admin.getProcessingUnits().waitFor(absoluteServiceName, 60, TimeUnit.SECONDS);
 		int state = 0;
 		boolean instance = processingUnit.waitFor(1,60, TimeUnit.SECONDS);
-		if(instance){
-			ProcessingUnitInstance processingUnitInstance = processingUnit.getInstances()[0];
+		//This is a workaround for when an  instance is found and still
+		//an array indexOutOfBounds is thrown when trying to access the instance.
+		ProcessingUnitInstance[] instances = processingUnit.getInstances();
+		if(instance && instances.length != 0){
+			ProcessingUnitInstance processingUnitInstance = instances[0];
 			ProcessingUnitInstanceStatistics statistics = processingUnitInstance.getStatistics();
 			ServiceMonitors serviceMonitors = statistics.getMonitors().get(CloudifyConstants.USM_MONITORS_SERVICE_ID);
 			state = (Integer)serviceMonitors.getMonitors().get(CloudifyConstants.USM_MONITORS_STATE_ID);

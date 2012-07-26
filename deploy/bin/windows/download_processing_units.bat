@@ -6,6 +6,8 @@ if exist %LOCAL_SGPATH%\apps rmdir %LOCAL_SGPATH%\apps /s /q
 
 @echo copying new apps to local sgtest folder...
 xcopy %SGTEST_CHECKOUT_FOLDER%\apps %LOCAL_SGPATH%\apps /s /i /y
+xcopy %SGTEST_CHECKOUT_FOLDER%\apps\USM\usm\applications\simpleCustomCommandsMultipleInstances\simpleCustomCommandsMultipleInstances-1\simpleCustomCommandsMultipleInstances-1-service.groovy %LOCAL_SGPATH%\apps\USM\usm\applications\simpleCustomCommandsMultipleInstances\simpleCustomCommandsMultipleInstances-1
+xcopy %SGTEST_CHECKOUT_FOLDER%\apps\USM\usm\applications\simpleCustomCommandsMultipleInstances\simpleCustomCommandsMultipleInstances-2\simpleCustomCommandsMultipleInstances-2-service.groovy %LOCAL_SGPATH%\apps\USM\usm\applications\simpleCustomCommandsMultipleInstances\simpleCustomCommandsMultipleInstances-2
 
 @echo deleting current selenium jar from local sgtest folder...
 del %LOCAL_SGPATH%\lib\selenium\selenium-java-*.jar

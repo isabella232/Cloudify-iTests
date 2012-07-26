@@ -64,7 +64,7 @@ public class HttpStartDetectionTest extends AbstractLocalCloudTest {
 			assertTrue("tomcat service processing unit does not exist", admin.getProcessingUnits().getProcessingUnit(tomcatAbsolutePuName) != null);
 			assertTrue("tomcat service should not be installed.", !admin.getProcessingUnits().getProcessingUnit(tomcatAbsolutePuName).getStatus().equals(DeploymentStatus.INTACT));
 			ProcessingUnit tomcatPu = admin.getProcessingUnits().waitFor(tomcatAbsolutePuName, Constants.PROCESSINGUNIT_TIMEOUT_SEC, TimeUnit.SECONDS);
-			assertTrue("Expected processing unit instances of tomcat service is not 0", !tomcatPu.waitFor(1, Constants.PROCESSINGUNIT_TIMEOUT_SEC, TimeUnit.SECONDS));
+			assertTrue("Expected processing unit instances of tomcat service is not 0", !USMTestUtils.isUSMServiceRunning(tomcatAbsolutePuName, admin));
 			assertTrue("Service " + tomcatAbsolutePuName + " State is RUNNING.", 
 					!USMTestUtils.waitForPuRunningState(tomcatAbsolutePuName, 60, TimeUnit.SECONDS, admin));
 		

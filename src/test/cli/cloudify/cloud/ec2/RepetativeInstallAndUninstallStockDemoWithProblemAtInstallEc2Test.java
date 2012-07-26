@@ -80,7 +80,7 @@ public class RepetativeInstallAndUninstallStockDemoWithProblemAtInstallEc2Test e
 		}
 	}
 
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 6, groups = "1", enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 6, groups = "1", enabled = false)
 	public void installAndUninstallTest() throws Exception {
 
 		cassandraPostStartScriptPath = stockdemoAppPath + "/cassandra/cassandra_poststart.groovy";	

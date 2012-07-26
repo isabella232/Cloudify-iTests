@@ -17,10 +17,6 @@ public class PrivateImageEc2Test extends NewAbstractCloudTest {
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, groups = "1", enabled = true)
 	public void installTest()
 			throws Exception {
-		if(true) {
-			throw new Exception("waaa");
-					
-		}
 		doTest("petclinic", "petclinic");
 	}
 

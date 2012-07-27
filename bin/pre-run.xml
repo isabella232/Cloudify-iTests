@@ -14,13 +14,13 @@
    
     <target name="prepare">
         <delete dir="${tmp.testng.classes}"/>
-        <delete dir="${sgtest.homedir}/bin/apps"/>
         <mkdir dir="${tmp.testng.classes}"/>
 
-        <unzip src="${sgtest.homedir}/lib/gs-sgtest.jar" dest="${tmp.testng.classes}"/>
+        <unzip src="${sgtest.homedir}/lib/gs-sgtest.jar" dest="${tmp.testng.classes}"/>		
 
-        <mkdir dir="${sgtest.homedir}/bin/apps"/>
-        <copy todir="${sgtest.homedir}/bin/apps">
+        <delete dir="${sgtest.homedir}/apps"/>
+        <mkdir dir="${sgtest.homedir}/apps"/>
+        <copy todir="${sgtest.homedir}/apps">
             <fileset dir="${tmp.testng.classes}/apps"/>
         </copy>
     </target>

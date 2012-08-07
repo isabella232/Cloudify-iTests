@@ -110,6 +110,16 @@ public class ScriptUtils {
             return sb.toString();
         }
         
+        public RunScript(String args, boolean relativeToGigaspacesBinDir) {
+            this.args = args.split(" ");
+            if (relativeToGigaspacesBinDir) {
+                scriptFilename = this.args[0];
+                scriptFilename += getScriptSuffix();
+                binPath = getBuildBinPath();
+                this.args[0] = binPath + "/" + scriptFilename;            	            	
+            }
+        }
+        
         public void kill() throws IOException, InterruptedException {
             String scriptOutput = sb.toString();
             
@@ -374,4 +384,32 @@ public class ScriptUtils {
 		return (System.getenv("windir") != null);
 	}
     
+    @SuppressWarnings("deprecation")
+    public static String runScriptRelativeToGigaspacesBinDir(String args, long timeout) throws Exception {
+        RunScript runScript = new RunScript(args, true);
+        Thread script = new Thread(runScript);
+        script.start();
+        Thread.sleep(timeout);
+        script.stop();
+
+        runScript.kill();
+        return runScript.getScriptOutput();
+    }
+    
+    public static String runScriptWithAbsolutePath(String args, long timeout) throws Exception {
+        RunScript runScript = new RunScript(args, false);
+        Thread script = new Thread(runScript);
+        script.start();
+        script.join(timeout);
+        runScript.kill();
+        return runScript.getScriptOutput();
+    }
+    
+    public static RunScript runScriptRelativeToGigaspacesBinDir(String args) throws Exception {
+    	RunScript runScript = new RunScript(args, true);
+        Thread script = new Thread(runScript);
+        script.start();
+        return runScript;
+    }
+
 }

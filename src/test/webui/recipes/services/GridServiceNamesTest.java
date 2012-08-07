@@ -136,7 +136,8 @@ public class GridServiceNamesTest extends AbstractWebUILocalCloudTest {
 
 		HostsAndServicesGrid hostAndServicesGrid = servicesTab.getHostAndServicesGrid();
 		String hostAddress = machine.getHostAddress();
-		hostAndServicesGrid.clickOnHost( hostAddress );
+		String hostName = machine.getHostName();
+		hostAndServicesGrid.clickOnHost( hostAddress, hostName );
 
 		//gsa
 		int countNumberAgents = hostAndServicesGrid.countNumberOf( GSA_SERVICE_NAME );
@@ -150,12 +151,14 @@ public class GridServiceNamesTest extends AbstractWebUILocalCloudTest {
 		int countNumberOrchestrators = hostAndServicesGrid.countNumberOf( ESM_SERVICE_NAME );		
 
 		final int expectedServicesNumber = 1;
+		final int expectedUsmNumber = 3;
+		
 		assertEquals( "Expected number of Agents(GSA) must be [" + expectedServicesNumber + "]", 
 				expectedServicesNumber, countNumberAgents );
 		assertEquals( "Expected number of Deployers(GSM) must be [" + expectedServicesNumber + "]", 
 				expectedServicesNumber, countNumberDeployers );
-		assertEquals( "Expected number of USM(GSC) must be [" + expectedServicesNumber + "]", 
-				expectedServicesNumber, countNumberUsm );
+		assertEquals( "Expected number of USM(GSC) must be [" + expectedUsmNumber + "]", 
+				expectedUsmNumber, countNumberUsm );
 		assertEquals( "Expected number of Discovery Service (LUS) must be [" + expectedServicesNumber + "]", 
 				expectedServicesNumber, countNumberDiscoveryServices );
 		assertEquals( "Expected number of Orchestrators(ESM) must be [" + expectedServicesNumber + "]", 

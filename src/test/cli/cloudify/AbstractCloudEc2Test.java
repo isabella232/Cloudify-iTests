@@ -67,7 +67,7 @@ public class AbstractCloudEc2Test extends AbstractTest {
 		
 	    //String applicationPath = (new File(ScriptUtils.getBuildPath(), "recipes/apps/travel").toString()).replace('\\', '/');
 		String ec2TestPath = (SGTestHelper.getSGTestRootDir() + "/apps/cloudify/cloud/ec2").replace('\\', '/');
-		String sshKeyPemName = "cloud-demo.pem";
+		String sshKeyPemName = "ec2-sgtest.pem";
 		
 		// ec2 plugin should include recipe that includes secret key 
 		File ec2PluginDir = new File(ScriptUtils.getBuildPath() , "tools/cli/plugins/esc/ec2/");
@@ -85,7 +85,7 @@ public class AbstractCloudEc2Test extends AbstractTest {
 		// first make a backup of the original file
 		FileUtils.copyFile(originalEc2DslFile, backupEc2DslFile);
 		
-		final String modifiedDslFileContents = originalDslFileContents.replace("ENTER_USER", AWS_USER).replace("ENTER_API_KEY", AWS_API_KEY).replace("ENTER_KEY_FILE", "cloud-demo.pem");
+		final String modifiedDslFileContents = originalDslFileContents.replace("ENTER_USER", AWS_USER).replace("ENTER_API_KEY", AWS_API_KEY).replace("ENTER_KEY_FILE", "ec2-sgtest.pem");
 		FileUtils.write(originalEc2DslFile, modifiedDslFileContents);
 	
 		// upload dir needs to contain the sshKeyPem 

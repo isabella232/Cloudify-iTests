@@ -32,9 +32,9 @@ import framework.utils.LogUtils;
 public class Ec2CloudService extends AbstractCloudService {
 
 	private static final String EC2_CLOUD_NAME = "ec2";
-	private String user = "0VCFNJS3FXHYC7M6Y782";
-	private String apiKey = "fPdu7rYBF0mtdJs1nmzcdA8yA/3kbV20NgInn4NO";
-	private String pemFileName = "cloud-demo";
+	private String user = "AKIAI4OVPQZZQT53O6SQ";
+	private String apiKey = "xI/BDTPh0LE9PcC0aHhn5GEUh+/hjOiRcKwCNVP5";
+	private String pemFileName = "ec2-sgtest";
 	private ComputeServiceContext context;
 
 	public Ec2CloudService(final String uniqueName) {

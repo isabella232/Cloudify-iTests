@@ -96,7 +96,8 @@ public class TailCommandTest extends AbstractLocalCloudTest {
 		assertTrue("expected log entries were not found in log tail", fileoutput.contains(EXPECTED_SYSTEM_ERR_LOG_ENTRY));
 		assertTrue("The tail limit was breached but a message was not printed", fileoutput.contains(TAIL_IS_LIMITED_TO_NO_MORE_THAN_1000_LINES));
 		String[] lines = fileoutput.split(System.getProperty("line.separator"));
-		assertTrue("The tail threshold of 1000 lines was not inforced", lines.length == 1005);
+		assertTrue("The tail threshold of 1000 lines was not inforced. Number of lines tailed was " + lines.length,
+				lines.length >= 1000 && lines.length <= 1010);
 	}
 	
     @Override

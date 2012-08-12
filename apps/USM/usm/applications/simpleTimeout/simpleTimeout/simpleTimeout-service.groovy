@@ -14,7 +14,7 @@ service {
 
 		start (["Win.*":"run.bat", "Linux":"run.sh"])
 
-		postStart {Thread.sleep(65000)}
+		postStart {Thread.sleep(75000)}
 
 		preStop {println "This is the preStop event" }
 		postStop {println "This is the postStop event" }

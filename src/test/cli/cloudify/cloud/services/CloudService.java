@@ -67,7 +67,7 @@ public interface CloudService {
 	public void setMachinePrefix(String machinePrefix);
 
 
-	public void beforeBootstrap();
+	public void beforeBootstrap() throws Exception;
 	/********
 	 * True if teardown cleanup did not find any leaked nodes, false if there was a leak.
 	 * @return .

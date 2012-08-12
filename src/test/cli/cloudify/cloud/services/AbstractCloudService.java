@@ -222,12 +222,14 @@ public abstract class AbstractCloudService implements CloudService {
 					FileUtils.copyFile(fileToReplace.getValue(), fileToReplace.getKey());
 				}
 			}
+			
+			beforeBootstrap();
+			
 			printCloudConfigFile();
 
 			// Load updated configuration file into POJO
 			this.cloudConfiguration = ServiceReader.readCloud(new File(getPathToCloudGroovy()));
 
-			beforeBootstrap();
 
 			String output = CommandTestUtils.runCommandAndWait("bootstrap-cloud --verbose " + getCloudName() + "_" + getUniqueName());
 			LogUtils.log("Extracting rest url's from cli output");
@@ -252,7 +254,7 @@ public abstract class AbstractCloudService implements CloudService {
 	}
 
 	@Override
-	public void beforeBootstrap() {
+	public void beforeBootstrap() throws Exception {
 
 	}
 

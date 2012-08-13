@@ -28,7 +28,7 @@ public class GroovyRuntimeExceptionInCliTest extends AbstractLocalCloudTest {
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
 	public void testGroovyRuntimeExceptionHandling() throws IOException, InterruptedException {
 		String commandOutput = CommandTestUtils.runCommandExpectedFail("connect " + this.restUrl 
-															+ ";install-service -timeout 3 " + SERVICE_WITH_RUNTIME_EXCEPTION 
+															+ ";install-service --verbose -timeout 3 " + SERVICE_WITH_RUNTIME_EXCEPTION 
 															+ ";exit");
 
 		assertRegexFound(commandOutput, RUNTIME_EXCEPTION_CAUGHT_REGEX, Pattern.MULTILINE+Pattern.DOTALL);
@@ -43,7 +43,7 @@ public class GroovyRuntimeExceptionInCliTest extends AbstractLocalCloudTest {
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
 	public void testGroovyCompilationExceptionHandling() throws IOException, InterruptedException {
 		String commandOutput = CommandTestUtils.runCommandExpectedFail("connect " + this.restUrl 
-															+ ";install-service -timeout 3 " + SERVICE_WITH_COMPILATION_EXCEPTION 
+															+ ";install-service --verbose -timeout 3 " + SERVICE_WITH_COMPILATION_EXCEPTION 
 															+ ";exit");
 
 		assertRegexFound(commandOutput, COMPILATION_EXCEPTION_CAUGHT_REGEX, Pattern.MULTILINE);

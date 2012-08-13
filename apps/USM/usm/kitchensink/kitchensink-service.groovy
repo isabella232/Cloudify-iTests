@@ -7,13 +7,14 @@ service {
 	type "UNDEFINED"
 	
 	url "http://" + InetAddress.localHost.hostName + ":7777"
-
+	def applicationName = context.applicationName
 	lifecycle{
 		// DO NOT CHANGE THE PRINTOUTS - SGTEST LOOKS FOR THEM!
 		init {
 			 println "init fired ${var1}" 
 			 println new StringWrapper("init external class")
 			 println "init " + new Helper().someField;
+			 println "application name is: " + applicationName;
 			}
 		preInstall{ println "preInstall fired ${var2}"}
 		install "install.groovy"

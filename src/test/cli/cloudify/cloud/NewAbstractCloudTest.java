@@ -188,8 +188,9 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 				.append(servicePath.toString().replace('\\', '/'))
 				.toString();
 		final String output = CommandTestUtils.runCommandAndWait(connectCommand + installCommand);
-		final String excpectedResult = "Service \"" + serviceName + "\" installed successfully";
-		assertTrue(output.toLowerCase().contains(excpectedResult.toLowerCase()));
+		final String excpectedResult = "Service \"" + serviceName + "\" successfully installed";
+		assertTrue("output " + output + " Does not contain " + excpectedResult,
+				output.toLowerCase().contains(excpectedResult.toLowerCase()));
 	}
 
 	/**

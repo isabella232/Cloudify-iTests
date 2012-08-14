@@ -3,6 +3,9 @@ package test.cli.cloudify.cloud.ec2;
 import java.io.IOException;
 import java.util.HashMap;
 
+import org.testng.ITestContext;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import test.cli.cloudify.CloudTestUtils;
@@ -46,6 +49,16 @@ public class PrivateImageEc2Test extends NewAbstractCloudTest {
 	protected boolean isReusableCloud() {
 		return false;
 	}
+	
+	@BeforeClass(alwaysRun = true)
+	protected void bootstrap(final ITestContext testContext) {
+		super.bootstrap(testContext);
+	}
+	
+	@AfterClass(alwaysRun = true)
+	protected void teardown() {
+		super.teardown();
+	}
 
 	@Override
 	protected void customizeCloud() {
@@ -55,8 +68,8 @@ public class PrivateImageEc2Test extends NewAbstractCloudTest {
 		ec2Service.setAdditionalPropsToReplace(new HashMap<String, String>());
 		ec2Service.getAdditionalPropsToReplace().put("imageId \"us-east-1/ami-76f0061f\"",
 				"imageId \"us-east-1/ami-93b068fa\"");
-		ec2Service.getAdditionalPropsToReplace().put("connectToPrivateIp true",
-				"connectToPrivateIp true\n\t\tremoteUsername \"ec2-user\"\n");
+		ec2Service.getAdditionalPropsToReplace().put("keyFile \"ec2-sgtest.pem\"",
+				"keyFile \"ec2-sgtest.pem\"\n\t\t\t\t\tusername \"ec2-user\"\n");
 		ec2Service.setMachinePrefix(this.getClass().getName() + CloudTestUtils.SGTEST_MACHINE_PREFIX);
 
 	};

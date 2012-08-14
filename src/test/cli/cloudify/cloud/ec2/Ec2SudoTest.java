@@ -18,6 +18,10 @@ package test.cli.cloudify.cloud.ec2;
 
 import java.io.IOException;
 
+import org.testng.ITestContext;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import test.cli.cloudify.CommandTestUtils;
@@ -26,6 +30,7 @@ import test.cli.cloudify.cloud.AbstractExamplesTest;
 
 public class Ec2SudoTest extends AbstractExamplesTest {
 
+	final private String serviceName = "groovySudo";
 	final private String RECIPE_DIR_PATH = CommandTestUtils
 			.getPath("apps/USM/usm/groovySudo");
 	@Override
@@ -40,8 +45,25 @@ public class Ec2SudoTest extends AbstractExamplesTest {
 				+ "; invoke groovy sudo");
 		assertTrue("Could not find expected output ('OK') in custom command response", invokeResult.contains("OK"));
 		assertTrue("Could not find expected output ('marker.txt') in custom command response", invokeResult.contains("market.txt"));
-		
-		
-		
+	}
+	
+	@BeforeClass(alwaysRun = true)
+	protected void bootstrap(final ITestContext testContext) {
+		super.bootstrap(testContext);
+	}
+	
+	@AfterClass(alwaysRun = true)
+	protected void teardown() {
+		super.teardown();
+	}
+	
+	@AfterMethod
+	public void cleanUp() {
+		try {
+			super.uninstallApplicationAndWait(serviceName);
+		} catch (Exception e) {
+			AssertFail("Failed to uninstall application " + serviceName + "in the aftertest method", e);
+		}
+		super.scanNodesLeak();
 	}
 }

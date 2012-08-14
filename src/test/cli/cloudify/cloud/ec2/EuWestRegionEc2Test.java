@@ -3,6 +3,9 @@ package test.cli.cloudify.cloud.ec2;
 import java.io.IOException;
 import java.util.HashMap;
 
+import org.testng.ITestContext;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import test.cli.cloudify.CloudTestUtils;
@@ -27,6 +30,16 @@ public class EuWestRegionEc2Test extends NewAbstractCloudTest {
 	protected boolean isReusableCloud() {
 		return false;
 	}
+	
+	@BeforeClass(alwaysRun = true)
+	protected void bootstrap(final ITestContext testContext) {
+		super.bootstrap(testContext);
+	}
+	
+	@AfterClass(alwaysRun = true)
+	protected void teardown() {
+		super.teardown();
+	}
 
 	@Override
 	protected void customizeCloud() {
@@ -36,6 +49,6 @@ public class EuWestRegionEc2Test extends NewAbstractCloudTest {
 		service.getAdditionalPropsToReplace().put("imageId \"us-east-1/ami-76f0061f\"", "imageId \"eu-west-1/ami-24506250\"");
 		service.getAdditionalPropsToReplace().put("locationId \"us-east-1\"", "locationId \"eu-west-1\"");
 		service.setMachinePrefix(this.getClass().getName() + CloudTestUtils.SGTEST_MACHINE_PREFIX);
-	}
+	} 
 
 }

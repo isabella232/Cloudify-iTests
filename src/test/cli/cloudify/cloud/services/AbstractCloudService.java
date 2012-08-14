@@ -205,12 +205,6 @@ public abstract class AbstractCloudService implements CloudService {
 		try {
 			overrideLogsFile();
 			injectAuthenticationDetails();
-			if (this.cloudName.equalsIgnoreCase("byon")){
-				replaceCloudifyURL();
-			}
-			if (additionalPropsToReplace != null) {
-				IOUtils.replaceTextInFile(getPathToCloudGroovy(), additionalPropsToReplace);
-			}
 			if (filesToReplace != null) {
 				// replace files
 				for (Entry<File, File> fileToReplace : filesToReplace.entrySet()) {
@@ -222,13 +216,20 @@ public abstract class AbstractCloudService implements CloudService {
 					FileUtils.copyFile(fileToReplace.getValue(), fileToReplace.getKey());
 				}
 			}
+			if (this.cloudName.equalsIgnoreCase("byon")){
+				replaceCloudifyURL();
+			}
+			if (additionalPropsToReplace != null) {
+				IOUtils.replaceTextInFile(getPathToCloudGroovy(), additionalPropsToReplace);
+			}
+			
+			// Load updated configuration file into POJO
+			this.cloudConfiguration = ServiceReader.readCloud(new File(getPathToCloudGroovy()));
 			
 			beforeBootstrap();
 			
 			printCloudConfigFile();
 
-			// Load updated configuration file into POJO
-			this.cloudConfiguration = ServiceReader.readCloud(new File(getPathToCloudGroovy()));
 
 
 			String output = CommandTestUtils.runCommandAndWait("bootstrap-cloud --verbose " + getCloudName() + "_" + getUniqueName());
@@ -254,8 +255,8 @@ public abstract class AbstractCloudService implements CloudService {
 	}
 
 	@Override
-	public void beforeBootstrap() throws Exception {
 
+	public void beforeBootstrap() throws Exception {
 	}
 
 	private void printCloudConfigFile()

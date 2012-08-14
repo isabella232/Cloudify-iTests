@@ -39,7 +39,7 @@ public abstract class AbstractScalingRulesCloudTest extends NewAbstractCloudTest
 	private static final String APPLICATION_FOLDERNAME = "petclinic-simple";
 	private static final String APPLICATION_NAME = "petclinic";
 	private static final String TOMCAT_SERVICE_NAME = "tomcat";
-	private static final String ABSOLUTE_SERVICE_NAME = ServiceUtils.getAbsolutePUName(APPLICATION_NAME, TOMCAT_SERVICE_NAME);
+	private static final String ABSOLUTE_SERVICE_NAME = ServiceUtils.getAbsolutePUName(getApplicationName(), TOMCAT_SERVICE_NAME);
 	private static final int NUMBER_OF_HTTP_GET_THREADS = 10;
 	private static final int THROUGHPUT_PER_THREAD = 1;
 	private static final int TOMCAT_PORT = 8080;
@@ -61,10 +61,10 @@ public abstract class AbstractScalingRulesCloudTest extends NewAbstractCloudTest
 	
 	public void testPetclinicSimpleScalingRules() throws Exception {		
 		
-		LogUtils.log("installing application " + APPLICATION_NAME);
+		LogUtils.log("installing application " + getApplicationName());
 
 		String applicationPath = ScriptUtils.getBuildPath() + "/recipes/apps/" + APPLICATION_FOLDERNAME;
-		installApplicationAndWait(applicationPath, APPLICATION_NAME);
+		installApplicationAndWait(applicationPath, getApplicationName());
 		
 		repititiveAssertNumberOfInstances(ABSOLUTE_SERVICE_NAME, 1);
 	
@@ -260,5 +260,9 @@ public abstract class AbstractScalingRulesCloudTest extends NewAbstractCloudTest
 	@Override
 	protected void customizeCloud() {
 		
+	}
+
+	protected static String getApplicationName() {
+		return APPLICATION_NAME;
 	}
 }

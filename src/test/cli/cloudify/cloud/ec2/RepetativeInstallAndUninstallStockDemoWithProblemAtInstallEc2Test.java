@@ -10,6 +10,7 @@ import junit.framework.Assert;
 import org.apache.commons.io.FileUtils;
 import org.testng.ITestContext;
 import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -36,6 +37,7 @@ import framework.utils.WebUtils;
  */
 public class RepetativeInstallAndUninstallStockDemoWithProblemAtInstallEc2Test extends NewAbstractCloudTest {
 
+	private static final String APPLICATION_NAME = "stockdemo";
 	private final int repetitions = 1;
 	private String cassandraPostStartScriptPath = null;
 	private String newPostStartScriptPath = null;
@@ -102,7 +104,7 @@ public class RepetativeInstallAndUninstallStockDemoWithProblemAtInstallEc2Test e
 			}				
 			}
 			LogUtils.log("uninstalling stockdemo after iteration " + i);
-			uninstallApplicationAndWait("stockdemo");
+			uninstallApplicationAndWait(APPLICATION_NAME);
 			LogUtils.log("asserting all services are down");
 			assertUninstallWasSuccessful();
 		}
@@ -117,19 +119,19 @@ public class RepetativeInstallAndUninstallStockDemoWithProblemAtInstallEc2Test e
 		corruptCassandraService(cassandraPostStartScriptPath ,newPostStartScriptPath);
 		try {
 			LogUtils.log("first installation of stockdemo - this should fail");
-			installApplication(stockdemoAppPath, "stockdemo", 5, true, true);		
+			installApplication(stockdemoAppPath, APPLICATION_NAME, 5, true, true);		
 		} catch(AssertionError e){
 			return 1;
 		}
 		LogUtils.log("fixing cassandra service");
 		fixCassandraService(cassandraPostStartScriptPath , newPostStartScriptPath);
 		LogUtils.log("uninstalling stockdemo");
-		uninstallApplicationAndWait("stockdemo");
+		uninstallApplicationAndWait(APPLICATION_NAME);
 		LogUtils.log("asserting all services are down");
 		assertUninstallWasSuccessful();
 		try {
 			LogUtils.log("second installation of stockdemo - this should succeed");
-			installApplication(stockdemoAppPath, "stockdemo", 45, true, false);
+			installApplication(stockdemoAppPath, APPLICATION_NAME, 45, true, false);
 			LogUtils.log("checking second installation's result");
 			Assert.assertTrue("The applications home page isn't available, counts as not installed properly" , WebUtils.isURLAvailable(stockdemoUrl));
 			return 2;
@@ -174,6 +176,17 @@ public class RepetativeInstallAndUninstallStockDemoWithProblemAtInstallEc2Test e
 	@AfterClass
 	public void teardown() {
 		super.teardown();
+	}
+	
+	@AfterMethod
+	public void cleanUp() throws IOException, InterruptedException {
+		if ((getService() != null) && (getService().getRestUrls() != null)) {
+			String command = "connect " + getRestUrl() + ";list-applications";
+			String output = CommandTestUtils.runCommandAndWait(command);
+			if (output.contains(APPLICATION_NAME)) {
+				uninstallApplicationAndWait(APPLICATION_NAME);
+			}
+		}
 		super.scanNodesLeak();
 	}
 

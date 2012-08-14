@@ -30,7 +30,7 @@ import test.cli.cloudify.cloud.AbstractExamplesTest;
 
 public class Ec2SudoTest extends AbstractExamplesTest {
 
-	final private String serviceName = "groovySudo";
+	final private String serviceName = "groovy";
 	final private String RECIPE_DIR_PATH = CommandTestUtils
 			.getPath("apps/USM/usm/groovySudo");
 	@Override
@@ -60,9 +60,9 @@ public class Ec2SudoTest extends AbstractExamplesTest {
 	@AfterMethod
 	public void cleanUp() {
 		try {
-			super.uninstallApplicationAndWait(serviceName);
+			super.uninstallServiceAndWait(serviceName);
 		} catch (Exception e) {
-			AssertFail("Failed to uninstall application " + serviceName + "in the aftertest method", e);
+			AssertFail("Failed to uninstall application " + serviceName + " in the aftertest method", e);
 		}
 		super.scanNodesLeak();
 	}

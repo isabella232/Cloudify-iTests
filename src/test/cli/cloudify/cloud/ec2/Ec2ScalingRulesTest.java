@@ -61,12 +61,8 @@ public class Ec2ScalingRulesTest extends AbstractScalingRulesCloudTest{
 	
 	@AfterMethod
 	public void cleanUp() {
-		try {
-			super.uninstallApplicationAndWait(getApplicationName());
-		} catch (Exception e) {
-			AssertFail("Failed to uninstall application " + getApplicationName() + "in the aftertest method", e);
-		}
-		super.scanNodesLeak();
+		//The afterTest Checks for leaks
+		super.afterTest();
 	}
 
 }

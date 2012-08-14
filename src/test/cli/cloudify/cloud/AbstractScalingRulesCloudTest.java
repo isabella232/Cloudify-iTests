@@ -43,65 +43,68 @@ public abstract class AbstractScalingRulesCloudTest extends NewAbstractCloudTest
 	private static final int NUMBER_OF_HTTP_GET_THREADS = 10;
 	private static final int THROUGHPUT_PER_THREAD = 1;
 	private static final int TOMCAT_PORT = 8080;
-	
+
 	private ScheduledExecutorService executor;
 	private final List<HttpRequest> threads = new ArrayList<HttpRequest>();
-	
+
 	public void beforeTest() {	
 		executor= Executors.newScheduledThreadPool(NUMBER_OF_HTTP_GET_THREADS);
 	}
-	
+
 	public void afterTest() {
 		if (executor != null) {
 			executor.shutdownNow();
 		}
-		
+
 		super.scanNodesLeak();
 	}
-	
-	public void testPetclinicSimpleScalingRules() throws Exception {		
-		
-		LogUtils.log("installing application " + getApplicationName());
 
-		String applicationPath = ScriptUtils.getBuildPath() + "/recipes/apps/" + APPLICATION_FOLDERNAME;
-		installApplicationAndWait(applicationPath, getApplicationName());
-		
-		repititiveAssertNumberOfInstances(ABSOLUTE_SERVICE_NAME, 1);
-	
-		
-		// increase web traffic, wait for scale out
-		startThreads();
-		repititiveAssertNumberOfInstances(ABSOLUTE_SERVICE_NAME, 2);
-		
-		// stop web traffic, wait for scale in
-		stopThreads();
-		repititiveAssertNumberOfInstances(ABSOLUTE_SERVICE_NAME, 1);
-		
-		// Try to start a new machine and then cancel it.
-		startThreads();
-		executor.schedule(new Runnable() {
-			
-			@Override
-			public void run() {
-				stopThreads();
-				
-			}
-		}, 60, TimeUnit.SECONDS);
-		repetitiveNumberOfInstancesHolds(ABSOLUTE_SERVICE_NAME, 1, 500, TimeUnit.SECONDS);
-	}
+	public void testPetclinicSimpleScalingRules() throws Exception {		
+		try {
+			LogUtils.log("installing application " + getApplicationName());
+
+			String applicationPath = ScriptUtils.getBuildPath() + "/recipes/apps/" + APPLICATION_FOLDERNAME;
+			installApplicationAndWait(applicationPath, getApplicationName());
+
+			repititiveAssertNumberOfInstances(ABSOLUTE_SERVICE_NAME, 1);
+
+
+			// increase web traffic, wait for scale out
+			startThreads();
+			repititiveAssertNumberOfInstances(ABSOLUTE_SERVICE_NAME, 2);
+
+			// stop web traffic, wait for scale in
+			stopThreads();
+			repititiveAssertNumberOfInstances(ABSOLUTE_SERVICE_NAME, 1);
+
+			// Try to start a new machine and then cancel it.
+			startThreads();
+			executor.schedule(new Runnable() {
+
+				@Override
+				public void run() {
+					stopThreads();
+
+				}
+			}, 60, TimeUnit.SECONDS);
+			repetitiveNumberOfInstancesHolds(ABSOLUTE_SERVICE_NAME, 1, 500, TimeUnit.SECONDS);
+		} finally {
+			uninstallApplicationAndWait(getApplicationName());
+		}
+	} 
 
 	private void repetitiveNumberOfInstancesHolds(String absoluteServiceName, int expectedNumberOfInstances, long duration, TimeUnit timeunit) {
 		AssertUtils.repetitiveAssertConditionHolds("Expected " + expectedNumberOfInstances + " "+ absoluteServiceName +" instance(s)", 
 				numberOfInstancesRepetitiveCondition(absoluteServiceName, expectedNumberOfInstances), 
 				timeunit.toMillis(duration), 1000);
-		
+
 	}
 
 	private void stopThreads() {
 		Iterator<HttpRequest> iterator = threads.iterator();
 		while(iterator.hasNext()) {
-		 	iterator.next().close();
-		 	iterator.remove();
+			iterator.next().close();
+			iterator.remove();
 		}
 	}
 
@@ -112,12 +115,12 @@ public abstract class AbstractScalingRulesCloudTest extends NewAbstractCloudTest
 			executor.scheduleWithFixedDelay(thread, 0, THROUGHPUT_PER_THREAD, TimeUnit.SECONDS);
 		}
 	}
-	
+
 	/**
 	 * Wait until petclinic has the specified number of instances
 	 */
 	private void repititiveAssertNumberOfInstances(final String absoluteServiceName, final int expectedNumberOfInstances) {
-		
+
 		repetitiveAssertTrue("Expected " + expectedNumberOfInstances + " "+ absoluteServiceName +" instance(s)", 
 				numberOfInstancesRepetitiveCondition(absoluteServiceName, expectedNumberOfInstances), 
 				expectedNumberOfInstances * OPERATION_TIMEOUT * 3);
@@ -127,7 +130,7 @@ public abstract class AbstractScalingRulesCloudTest extends NewAbstractCloudTest
 			final String absoluteServiceName,
 			final int expectedNumberOfInstances) {
 		return new RepetitiveConditionProvider() {
-			
+
 			@Override
 			public boolean getCondition() {
 				List<String> publicIpAddresses = null;
@@ -142,7 +145,7 @@ public abstract class AbstractScalingRulesCloudTest extends NewAbstractCloudTest
 					LogUtils.log("Expecting " + expectedNumberOfInstances + " " + absoluteServiceName + " instance(s). Instead found " + publicIpAddresses);
 				}
 				return condition;
-				
+
 			}
 		};
 	}
@@ -151,23 +154,23 @@ public abstract class AbstractScalingRulesCloudTest extends NewAbstractCloudTest
 	 * Bombards each tomcat instance with a web request
 	 */
 	public class HttpRequest implements Runnable{
-		
+
 		private final String absoluteServiceName;
 		private final HttpClient client;
 		private boolean closed = false;
-		
+
 		public HttpRequest(String absoluteServiceName){
 			this.absoluteServiceName = absoluteServiceName;
 			this.client = new DefaultHttpClient();;
 		}
-		
+
 		public synchronized void close() {
 			if (!closed) {
 				closed = true;
 				client.getConnectionManager().shutdown();
 			}
 		}
-		
+
 		@Override
 		public synchronized void run() {
 			if (closed) {
@@ -198,10 +201,10 @@ public abstract class AbstractScalingRulesCloudTest extends NewAbstractCloudTest
 			}
 		}
 	}
-	
-	
+
+
 	private static final ObjectMapper PROJECT_MAPPER = new ObjectMapper();
-	
+
 	/**
 	 * Converts a json String to a Map<String, Object>.
 	 * 
@@ -215,11 +218,11 @@ public abstract class AbstractScalingRulesCloudTest extends NewAbstractCloudTest
 		final JavaType javaType = TypeFactory.type(Map.class);
 		return PROJECT_MAPPER.readValue(response, javaType);
 	}
-	
+
 	protected List<String> getPublicIpAddressesPerProcessingUnitInstance(String absoluteServiceName) throws Exception {
-		
+
 		List<String> publicIpAddresses = new ArrayList<String>();
-		 
+
 		final String attrName = "Cloud Public IP";
 		for (String instanceUrl : getInstancesUrls(absoluteServiceName)) {
 			URL publicIpUrl = new URL(instanceUrl +"/ServiceDetailsByServiceId/USM/Attributes/"+attrName.replace(" ","%20"));
@@ -230,24 +233,24 @@ public abstract class AbstractScalingRulesCloudTest extends NewAbstractCloudTest
 				publicIpAddresses.add(publicIp);
 			}
 		}
-		
+
 		return publicIpAddresses;
 	}
 
 	private List<String> getInstancesUrls(String absoluteServiceName)
 			throws Exception, MalformedURLException, IOException {
-		
+
 		String restUrl = super.getRestUrl();
 		final String instancesResponse = WebUtils.getURLContent(new URL(restUrl+"/admin/ProcessingUnits/Names/"+absoluteServiceName+"/Instances/"));
 		final Map<String, Object> instances = jsonToMap(instancesResponse);
 		@SuppressWarnings("unchecked")
 		ArrayList<String> instanceUrls = new ArrayList<String>((List<String>)instances.get("Instances-Elements"));
-		
+
 		//fix for CLOUDIFY-721
 		for (int i =0 ; i < instanceUrls.size() ; i++) {
 			instanceUrls.set(i,  instanceUrls.get(i).replace("/Instances/Instances", "/Instances"));
 		}
-		
+
 		return instanceUrls;
 	}
 
@@ -259,7 +262,7 @@ public abstract class AbstractScalingRulesCloudTest extends NewAbstractCloudTest
 
 	@Override
 	protected void customizeCloud() {
-		
+
 	}
 
 	protected static String getApplicationName() {

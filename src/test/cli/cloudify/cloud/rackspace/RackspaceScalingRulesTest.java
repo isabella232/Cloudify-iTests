@@ -50,12 +50,12 @@ public class RackspaceScalingRulesTest extends AbstractScalingRulesCloudTest {
 	
 	@AfterMethod(alwaysRun = true)
 	public void afterTest() {
+		//The afterTest Checks for leaks
 		super.afterTest();
 	}
 	
 	@AfterClass(alwaysRun = true)
 	public void cleanUp() {
 		super.teardown();
-		super.scanNodesLeak();
 	}
 }

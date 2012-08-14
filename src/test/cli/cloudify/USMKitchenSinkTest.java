@@ -66,12 +66,12 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 			"init fired Test Property number 1",
 			"init external class",
 			"init Helper Field",
+			"application name is: default",
 			"Instantiated default.kitchensink-service",
 			"preInstall fired Test Property number 2",
 			"install event fired",
 			"postInstall fired Test Property number 1",
-			"preStart fired Test Property number 2", "postStart fired",
-			"application name is: default"
+			"preStart fired Test Property number 2", "postStart fired"
 			 };
 	private static final String[] EXPECTED_SHUTDOWN_EVENT_STRINGS = {
 			"preStop fired", "String_with_Spaces", "postStop fired",
@@ -625,6 +625,9 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 				.logEntries(LogProcessType.GSC, pid, matcher);
 		for (LogEntry logEntry : entries) {
 			String text = logEntry.getText();
+			if (text.contains("application name is")){
+				System.out.println("Stop");
+			}
 			if (text.contains(EXPECTED_STARTUP_EVENT_STRINGS[startupEventIndex])) {
 				++startupEventIndex;
 				if (startupEventIndex == EXPECTED_STARTUP_EVENT_STRINGS.length) {

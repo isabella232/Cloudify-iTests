@@ -95,7 +95,7 @@ public class USMSimpleOverrideServiceSettingsTest extends UsmAbstractTest {
 		
 		try {
 			//Sould throw an exception.
-			Packager.pack(DSLReader.findDefaultDSLFile(DSLReader.SERVICE_DSL_FILE_NAME_SUFFIX, folderPath), service);
+			Packager.pack(DSLReader.findDefaultDSLFile(DSLReader.SERVICE_DSL_FILE_NAME_SUFFIX, folderPath), service, null);
 			Assert.fail("Failed overriding max jar property");
 		} catch (PackagingException e) {
 			assertTrue("Unexpected exception", e.getMessage().contains("it must be smaller than: 1 KB"));

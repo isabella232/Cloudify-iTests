@@ -46,7 +46,7 @@ public class USMTestUtils {
 	public static File usmCreateJar(String processFolder) {
 		System.setProperty("com.gs.home", SGTestHelper.getBuildDir());
 		try {
-			return Packager.pack(new File(SGTestHelper.getSGTestRootDir() , processFolder));
+			return Packager.pack( new File(SGTestHelper.getSGTestRootDir() , processFolder), new File[0]);
 		} catch (Exception e) {
 			Assert.fail("failed to create usm jar file",e);
 			return null;
@@ -82,7 +82,7 @@ public class USMTestUtils {
 
 	public static Service packAndDeploy(final String folderPath, final String serviceFileName, Service service, String absolutePuName) throws IOException,
 			PackagingException, DSLException {
-		final File puZipFile = Packager.pack(new File(folderPath, serviceFileName));
+		final File puZipFile = Packager.pack(new File(folderPath, serviceFileName), new File[0]);
 
     	final ProcessingUnitDeployment processingUnitDeployment = new ProcessingUnitDeployment(puZipFile).numberOfInstances(service.getNumInstances()).name(absolutePuName);    	
     	deploy(processingUnitDeployment, puZipFile, serviceFileName);

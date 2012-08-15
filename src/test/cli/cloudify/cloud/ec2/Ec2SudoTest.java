@@ -44,7 +44,7 @@ public class Ec2SudoTest extends AbstractExamplesTest {
 		String invokeResult = CommandTestUtils.runCommandAndWait("connect " + getRestUrl()
 				+ "; invoke groovy sudo");
 		assertTrue("Could not find expected output ('OK') in custom command response", invokeResult.contains("OK"));
-		assertTrue("Could not find expected output ('marker.txt') in custom command response", invokeResult.contains("market.txt"));
+		assertTrue("Could not find expected output ('marker.txt') in custom command response", invokeResult.contains("marker.txt"));
 	}
 	
 	@BeforeClass(alwaysRun = true)

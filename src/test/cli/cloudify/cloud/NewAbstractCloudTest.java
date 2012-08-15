@@ -27,6 +27,8 @@ import framework.utils.ScriptUtils;
 
 public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 
+	private static final int TEN_SECONDS_IN_MILLIS = 10000;
+
 	protected CloudService cloud;
 
 	// initialized in bootstrap
@@ -286,6 +288,13 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 
 
 	public void scanNodesLeak() {
+		//We will give a short timeout to give the ESM 
+		//time to recognize that he needs to shutdown the machine.
+		try {
+			Thread.sleep(TEN_SECONDS_IN_MILLIS);
+		} catch (InterruptedException e) {
+			AssertFail("Failed waiting for esm to recognize instance count decrease.", e);
+		}
 		final boolean leakedAgentScanResult = this.cloud.afterTest();
 
 		if (this.lastTestResult == ITestResult.SUCCESS) {

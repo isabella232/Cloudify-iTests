@@ -57,6 +57,7 @@ public class ByonCloudService extends AbstractCloudService {
 		propsToReplace.put("ENTER_PASSWORD", BYON_CLOUD_PASSWORD);
 		propsToReplace.put("cloudify_agent_", this.machinePrefix + "cloudify-agent");
 		propsToReplace.put("cloudify_manager", this.machinePrefix + "cloudify-manager");
+		propsToReplace.put("// cloudifyUrl", "   cloudifyUrl");
 		if (ipList == null) {
 			 ipList = System.getProperty("ipList");
 		}

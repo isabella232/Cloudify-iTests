@@ -28,6 +28,8 @@ import org.openspaces.admin.internal.InternalAdminFactory;
 import org.openspaces.admin.lus.LookupService;
 import org.openspaces.admin.machine.Machine;
 import org.openspaces.admin.pu.elastic.config.DiscoveredMachineProvisioningConfig;
+import org.openspaces.admin.zone.config.ExactZonesConfig;
+import org.openspaces.admin.zone.config.ExactZonesConfigurer;
 import org.openspaces.cloud.xenserver.XenServerException;
 import org.openspaces.cloud.xenserver.XenServerMachineProvisioningConfig;
 import org.openspaces.cloud.xenserver.XenUtils;
@@ -300,7 +302,7 @@ public class AbstractXenGSMTest extends AbstractTest {
 		machineProvisioningConfig.setXapGroups(new String[]{group});
 		machineProvisioningConfig.setLookupServicePort(lookupPort);
 		try {
-            GridServiceAgent gsa = XenUtils.startFirstVirtualMachine(machineProvisioningConfig, 15 * 60, TimeUnit.SECONDS);
+            GridServiceAgent gsa = XenUtils.startFirstVirtualMachine(machineProvisioningConfig, new ExactZonesConfig(), 15 * 60, TimeUnit.SECONDS);
 
             // we replace the admin with a single threaded admin needed for test
             String[] locators = machineProvisioningConfig.getXapLocators();
@@ -419,7 +421,8 @@ public class AbstractXenGSMTest extends AbstractTest {
         }
         
         try {
-            newGsa = XenUtils.startMachine(newMachineProvisioningConfig, admin, duration, unit);
+        	ExactZonesConfig zones = new ExactZonesConfigurer().addZones(newMachineProvisioningConfig.getGridServiceAgentZones().getZones()).create();
+            newGsa = XenUtils.startMachine(newMachineProvisioningConfig, admin, zones, duration, unit);
         } catch (ElasticMachineProvisioningException e) {
             AssertFail("Failed starting new VM",e);
         } catch (InterruptedException e) {

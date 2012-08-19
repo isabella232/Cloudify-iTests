@@ -133,7 +133,7 @@ public class AbstractStartManagementXenTest extends AbstractXenGSMTest {
 	protected void startAgent(int extraMemoryCapacityInMB, String... zones) {
 		final XenServerMachineProvisioningConfig agentConfig = getMachineProvisioningConfig();
 	    agentConfig.setFileAgentRemoteLocation("/opt/cloudify-start-agent.sh");
-	    agentConfig.setGridServiceAgentZones(zones);
+	    agentConfig.setGridServiceAgentZones(new ExactZonesConfigurer().addZones(zones).create());
 	    int memoryCapacityInMB = agentConfig.getMemoryCapacityPerMachineInMB() + extraMemoryCapacityInMB;
 	    super.startNewVM(0, memoryCapacityInMB, agentConfig, OPERATION_TIMEOUT, TimeUnit.MILLISECONDS); 
 	}

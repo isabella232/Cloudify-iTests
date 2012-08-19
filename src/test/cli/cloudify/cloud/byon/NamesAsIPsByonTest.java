@@ -7,6 +7,9 @@ import java.util.Map;
 
 import org.openspaces.admin.Admin;
 import org.openspaces.admin.AdminFactory;
+import org.testng.ITestContext;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import test.cli.cloudify.cloud.NewAbstractCloudTest;
@@ -30,6 +33,11 @@ public class NamesAsIPsByonTest extends NewAbstractCloudTest{
 	private String namesList = "pc-lab95,pc-lab96,pc-lab100";
 	
 	private Admin admin;
+	
+	@BeforeClass(alwaysRun = true)
+	protected void bootstrap(final ITestContext testContext) {
+		super.bootstrap(testContext);
+	}
 	
 	@Override
 	protected void customizeCloud() throws Exception {
@@ -89,6 +97,11 @@ public class NamesAsIPsByonTest extends NewAbstractCloudTest{
 	@Override
 	protected boolean isReusableCloud() {
 		return false;
+	}
+	
+	@AfterClass(alwaysRun = true)
+	protected void teardown() {
+		super.teardown();
 	}
 
 }

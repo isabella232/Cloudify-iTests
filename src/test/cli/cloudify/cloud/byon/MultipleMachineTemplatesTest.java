@@ -138,7 +138,7 @@ public class MultipleMachineTemplatesTest extends NewAbstractCloudTest {
 	 * 
 	 * @throws Exception
 	 */
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true, priority = 1)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false, priority = 1)
 	public void testPetclinic() throws Exception {
 
 		LogUtils.log("installing application petclinic on " + cloudName);

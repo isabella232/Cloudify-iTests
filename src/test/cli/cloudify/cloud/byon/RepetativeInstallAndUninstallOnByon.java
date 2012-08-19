@@ -75,7 +75,7 @@ public class RepetativeInstallAndUninstallOnByon extends NewAbstractCloudTest {
 		admin = factory.createAdmin();
 	}
 
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
 	public void testPetclinic() throws Exception {
 
 		for (int i = 0; i < REPETITIONS; i++) {

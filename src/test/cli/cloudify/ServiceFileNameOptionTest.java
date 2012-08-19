@@ -33,7 +33,7 @@ public class ServiceFileNameOptionTest extends AbstractLocalCloudTest {
 
 			IOUtils.replaceTextInFile(simpleServiceNewDSLFile.getAbsolutePath(), SERVICE_NAME, SERVICE_NAME_REPLACE);
 
-			String command = "connect localhost; install-service -service-file-name " + simpleServiceNewDSLFile.getName() + " " + simpleServiceOriginalDSLPath;
+			String command = "connect localhost; install-service --verbose -service-file-name " + simpleServiceNewDSLFile.getName() + " " + simpleServiceOriginalDSLPath;
 			CommandTestUtils.runCommandAndWait(command);
 			
 			ProcessingUnit simpleService = admin.getProcessingUnits().getProcessingUnit(APPLICATION_NAME + "." + SERVICE_NAME_REPLACE);

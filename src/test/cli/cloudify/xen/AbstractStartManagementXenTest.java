@@ -15,6 +15,7 @@ import org.openspaces.admin.gsc.GridServiceContainer;
 import org.openspaces.admin.gsm.GridServiceManager;
 import org.openspaces.admin.internal.gsa.InternalGridServiceAgent;
 import org.openspaces.admin.lus.LookupService;
+import org.openspaces.admin.zone.config.ExactZonesConfigurer;
 import org.openspaces.cloud.xenserver.XenServerMachineProvisioningConfig;
 import org.testng.annotations.BeforeMethod;
 

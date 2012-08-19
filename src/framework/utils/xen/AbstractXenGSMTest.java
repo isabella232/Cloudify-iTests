@@ -104,7 +104,7 @@ public class AbstractXenGSMTest extends AbstractTest {
 		}
 		XenServerMachineProvisioningConfig config = new XenServerMachineProvisioningConfig(new HashMap<String,String>(machineProvisioningConfig.getProperties()));
 		config.setReservedMemoryCapacityPerMachineInMB(RESERVED_MEMORY_PER_MACHINE_MEGABYTES);
-		config.setGridServiceAgentZones(machineZones);
+		config.setGridServiceAgentZones(new ExactZonesConfigurer().addZones(machineZones).create());
 		config.setGridServiceAgentZoneMandatory(true);
 		return config;
 	}

@@ -27,7 +27,7 @@ import org.openspaces.admin.space.Space;
 import org.openspaces.cloud.xenserver.XenServerMachineProvisioningConfig;
 import org.openspaces.cloud.xenserver.XenUtils;
 import org.openspaces.core.GigaSpace;
-import org.openspaces.grid.gsm.capacity.ClusterCapacityRequirements;
+import org.openspaces.grid.gsm.capacity.CapacityRequirementsPerAgent;
 import org.openspaces.grid.gsm.capacity.DriveCapacityRequirement;
 import org.openspaces.grid.gsm.capacity.MachineCapacityRequirements;
 import org.openspaces.grid.gsm.rebalancing.RebalancingUtils;
@@ -39,9 +39,9 @@ import com.j_spaces.core.client.ReadModifiers;
 
 import framework.utils.AdminUtils;
 import framework.utils.AssertUtils;
+import framework.utils.AssertUtils.RepetitiveConditionProvider;
 import framework.utils.LogUtils;
 import framework.utils.TeardownUtils;
-import framework.utils.AssertUtils.RepetitiveConditionProvider;
 
 public class GsmTestUtils {
 
@@ -277,8 +277,8 @@ public class GsmTestUtils {
         return rebalancedMachines;
     }
 
-	private static ClusterCapacityRequirements getClusterCapacity(Machine[] machines) {
-		ClusterCapacityRequirements clusterCapacityRequirements = new ClusterCapacityRequirements();
+	private static CapacityRequirementsPerAgent getClusterCapacity(Machine[] machines) {
+		CapacityRequirementsPerAgent clusterCapacityRequirements = new CapacityRequirementsPerAgent();
         for (final Machine machine : machines) {
         	if (machine.getGridServiceAgent() != null /* machine not going down*/) { 
             clusterCapacityRequirements = clusterCapacityRequirements.add(

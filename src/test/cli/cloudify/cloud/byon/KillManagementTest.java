@@ -39,6 +39,7 @@ import framework.utils.WebUtils;
 
 public class KillManagementTest extends NewAbstractCloudTest{
 	
+	private static final String MANAGEMENT_PORT = "4170";
 	private URL petClinicUrl;
 	//private ByonCloudService service;
 	private int numOManagementMachines = 2;
@@ -89,14 +90,17 @@ public class KillManagementTest extends NewAbstractCloudTest{
 	public void testPetclinic() throws Exception {
 
 		try {
-			//create admin object with a unique group
-			LogUtils.log("creating admin");
-			AdminFactory factory = new AdminFactory();
-			factory.addGroup(TEST_UNIQUE_NAME);
-			admin = factory.createAdmin();
 			
 			restUrl = cloud.getRestUrls()[0];
 			String hostIp = restUrl.substring(0, restUrl.lastIndexOf(':'));
+			
+			//create admin object with a unique group
+			LogUtils.log("creating admin");
+			AdminFactory factory = new AdminFactory();
+			String ipNoHttp = hostIp.substring(7);
+			factory.addLocators(ipNoHttp + ":" + MANAGEMENT_PORT);
+			admin = factory.createAdmin();
+			
 			petClinicUrl = new URL(hostIp + ":8080/petclinic-mongo/");
 			threadPool = Executors.newFixedThreadPool(1);
 			

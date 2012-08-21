@@ -51,21 +51,17 @@ public class OpenstackClient {
 
 	public static final String MACHINE_STATUS_ACTIVE = "ACTIVE";
 	private static final int HTTP_NOT_FOUND = 404;
-	private static final int INTERNAL_SERVER_ERROR = 500;
+	
 	private static final int SERVER_POLLING_INTERVAL_MILLIS = 10 * 1000; // 10 seconds
-	private static final int DEFAULT_SHUTDOWN_TIMEOUT_MILLIS = 5 * 60 * 1000; // 5 minutes
-	private static final int DEFAULT_TIMEOUT_AFTER_CLOUD_INTERNAL_ERROR = 30 * 1000; // 30 seconds
+	
 	private static final String OPENSTACK_OPENSTACK_IDENTITY_ENDPOINT = "openstack.identity.endpoint";
-	private static final String OPENSTACK_WIRE_LOG = "openstack.wireLog";
+	
 	private static final String OPENSTACK_KEY_PAIR = "openstack.keyPair";
 	private static final String OPENSTACK_SECURITYGROUP = "openstack.securityGroup";
 	private static final String OPENSTACK_OPENSTACK_ENDPOINT = "openstack.endpoint";
 	private static final String OPENSTACK_TENANT = "openstack.tenant";
-	private static final String STARTING_THROTTLING = "The cloud reported an Internal Server Error (status 500)."
-			+ " Requests for new machines will be suspended for "
-			+ DEFAULT_TIMEOUT_AFTER_CLOUD_INTERNAL_ERROR / 1000 + " seconds";
-	private static final String RUNNING_THROTTLING = "Requests for new machines are currently suspended";
-
+	
+	
 	private final XPath xpath = XPathFactory.newInstance().newXPath();
 
 	private final Client client;
@@ -90,7 +86,6 @@ public class OpenstackClient {
 		dbf = DocumentBuilderFactory.newInstance();
 		dbf.setNamespaceAware(false);
 
-		
 		final ClientConfig config = new DefaultClientConfig();
 		this.client = Client.create(config);
 
@@ -99,7 +94,7 @@ public class OpenstackClient {
 	public void close() {
 		this.client.destroy();
 	}
-	
+
 	private DocumentBuilder createDocumentBuilder() {
 		synchronized (xmlFactoryMutex) {
 			// Document builder is not guaranteed to be thread sage
@@ -199,6 +194,54 @@ public class OpenstackClient {
 		}
 
 		return nodes;
+	}
+
+	public void listFlavors(final String token)
+			throws OpenstackException {
+		String response = null;
+
+		response =
+				service.path(this.pathPrefix + "flavors").header("X-Auth-Token", token)
+						.accept(MediaType.APPLICATION_XML).get(String.class);
+		System.out.println(response);
+
+	}
+
+	public void listImages(final String token)
+			throws OpenstackException {
+		String response = null;
+		try {
+			response =
+					service.path(this.pathPrefix + "images").header("X-Auth-Token", token)
+							.accept(MediaType.APPLICATION_XML).get(String.class);
+			System.out.println(response);
+
+			// final NodeList idNodes = (NodeList) xpath.evaluate("/servers/server/@id", xmlDoc,
+			// XPathConstants.NODESET);
+			// final int howmany = idNodes.getLength();
+			// final List<String> ids = new ArrayList<String>(howmany);
+			// for (int i = 0; i < howmany; i++) {
+			// ids.add(idNodes.item(i).getTextContent());
+			//
+			// }
+			// return ids;
+
+		} catch (final UniformInterfaceException e) {
+			final String responseEntity = e.getResponse().getEntity(String.class);
+			throw new OpenstackException(e + " Response entity: " + responseEntity, e);
+
+			// } catch (final SAXException e) {
+			// throw new OpenstackException("Failed to parse XML Response from server. Response was: " + response
+			// + ", Error was: " + e.getMessage(), e);
+			// // } catch (final XPathException e) {
+			// // throw new OpenstackException("Failed to parse XML Response from server. Response was: " + response
+			// // + ", Error was: " + e.getMessage(), e);
+			// } catch (final IOException e) {
+			// throw new OpenstackException("Failed to send request to server. Response was: " + response
+			// + ", Error was: " + e.getMessage(), e);
+			//
+			// }
+		}
 	}
 
 	private List<String> listServerIds(final String token)

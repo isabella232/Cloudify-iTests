@@ -110,15 +110,18 @@ public abstract class AbstractCloudService implements CloudService {
 	}
 
 	public abstract void injectServiceAuthenticationDetails() throws IOException;
+	protected void injectCloudDriverClass() throws IOException {}
 
 	public void injectAuthenticationDetails() throws IOException {
 		createServiceFolders();
 		injectServiceAuthenticationDetails();
+		injectCloudDriverClass();
 		// update localDirectory
 		Map<String, String> propsToReplace = new HashMap<String, String>();
 		propsToReplace.put("localDirectory \"tools/cli/plugins/esc/" + cloudName + "/upload\"", "localDirectory \""	+ "tools/cli/plugins/esc/" + getServiceFolder() + "/upload\"");
 		IOUtils.replaceTextInFile(getPathToCloudGroovy(), propsToReplace);
 	}
+
 
 	private void replaceCloudifyURL() throws DSLException, IOException {
 		Cloud cloud = ServiceReader.readCloud(new File(getPathToCloudGroovy()));

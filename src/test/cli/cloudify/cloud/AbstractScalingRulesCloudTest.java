@@ -39,7 +39,7 @@ public abstract class AbstractScalingRulesCloudTest extends NewAbstractCloudTest
 	private static final String APPLICATION_FOLDERNAME = "petclinic-simple";
 	private static final String APPLICATION_NAME = "petclinic";
 	private static final String TOMCAT_SERVICE_NAME = "tomcat";
-	private static final String ABSOLUTE_SERVICE_NAME = ServiceUtils.getAbsolutePUName(getApplicationName(), TOMCAT_SERVICE_NAME);
+	
 	private static final int NUMBER_OF_HTTP_GET_THREADS = 10;
 	private static final int THROUGHPUT_PER_THREAD = 1;
 	private static final int TOMCAT_PORT = 8080;
@@ -63,19 +63,19 @@ public abstract class AbstractScalingRulesCloudTest extends NewAbstractCloudTest
 		try {
 			LogUtils.log("installing application " + getApplicationName());
 
-			String applicationPath = ScriptUtils.getBuildPath() + "/recipes/apps/" + APPLICATION_FOLDERNAME;
+			final String applicationPath = getApplicationPath();
 			installApplicationAndWait(applicationPath, getApplicationName());
 
-			repititiveAssertNumberOfInstances(ABSOLUTE_SERVICE_NAME, 1);
+			repititiveAssertNumberOfInstances(getAbsoluteServiceName(), 1);
 
 
 			// increase web traffic, wait for scale out
 			startThreads();
-			repititiveAssertNumberOfInstances(ABSOLUTE_SERVICE_NAME, 2);
+			repititiveAssertNumberOfInstances(getAbsoluteServiceName(), 2);
 
 			// stop web traffic, wait for scale in
 			stopThreads();
-			repititiveAssertNumberOfInstances(ABSOLUTE_SERVICE_NAME, 1);
+			repititiveAssertNumberOfInstances(getAbsoluteServiceName(), 1);
 
 			// Try to start a new machine and then cancel it.
 			startThreads();
@@ -87,10 +87,14 @@ public abstract class AbstractScalingRulesCloudTest extends NewAbstractCloudTest
 
 				}
 			}, 60, TimeUnit.SECONDS);
-			repetitiveNumberOfInstancesHolds(ABSOLUTE_SERVICE_NAME, 1, 500, TimeUnit.SECONDS);
+			repetitiveNumberOfInstancesHolds(getAbsoluteServiceName(), 1, 500, TimeUnit.SECONDS);
 		} finally {
 			uninstallApplicationAndWait(getApplicationName());
 		}
+	}
+
+	protected String getApplicationPath() {
+		return ScriptUtils.getBuildPath() + "/recipes/apps/" + APPLICATION_FOLDERNAME;
 	} 
 
 	private void repetitiveNumberOfInstancesHolds(String absoluteServiceName, int expectedNumberOfInstances, long duration, TimeUnit timeunit) {
@@ -110,7 +114,7 @@ public abstract class AbstractScalingRulesCloudTest extends NewAbstractCloudTest
 
 	private void startThreads() {
 		for(int i = 0 ; i < NUMBER_OF_HTTP_GET_THREADS ; i++){
-			final HttpRequest thread = new HttpRequest(ABSOLUTE_SERVICE_NAME);
+			final HttpRequest thread = new HttpRequest(getAbsoluteServiceName());
 			threads.add(thread);
 			executor.scheduleWithFixedDelay(thread, 0, THROUGHPUT_PER_THREAD, TimeUnit.SECONDS);
 		}
@@ -265,7 +269,11 @@ public abstract class AbstractScalingRulesCloudTest extends NewAbstractCloudTest
 
 	}
 
-	protected static String getApplicationName() {
+	protected String getApplicationName() {
 		return APPLICATION_NAME;
+	}
+	
+	private String getAbsoluteServiceName() {
+		return ServiceUtils.getAbsolutePUName(getApplicationName(), TOMCAT_SERVICE_NAME);
 	}
 }

@@ -23,6 +23,7 @@ import java.util.Set;
 
 import test.cli.cloudify.cloud.services.byon.ByonCloudService;
 import test.cli.cloudify.cloud.services.ec2.Ec2CloudService;
+import test.cli.cloudify.cloud.services.ec2.Ec2LocationAwareCloudService;
 import test.cli.cloudify.cloud.services.ec2.Ec2WinCloudService;
 import test.cli.cloudify.cloud.services.hp.HpCloudService;
 import test.cli.cloudify.cloud.services.rackspace.RackspaceCloudService;
@@ -89,6 +90,8 @@ public class CloudServiceManager {
 			cloudService = new ByonCloudService(serviceUniqueName);
 		} else if ("ec2".equalsIgnoreCase(cloudName)) {
 			cloudService = new Ec2CloudService(serviceUniqueName);
+		} else if ("ec2-location-aware".equalsIgnoreCase(cloudName)) {
+			cloudService = new Ec2LocationAwareCloudService(serviceUniqueName);
 		} else if ("ec2_Win".equalsIgnoreCase(cloudName)) {
 			cloudService = new Ec2WinCloudService(serviceUniqueName);
 		} else if ("hp".equalsIgnoreCase(cloudName)) {

@@ -6,6 +6,10 @@ package framework.utils;
 import static framework.utils.AdminUtils.loadGSCs;
 import static framework.utils.AdminUtils.loadGSM;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
@@ -96,4 +100,13 @@ public class TestUtils {
 	     
 	      return classpath.toString();
 	  }
+	 
+	 public static void writeTextFile(File file, String text) throws IOException {
+			PrintWriter out = new PrintWriter(new FileWriter(file));
+			try {
+					out.println(text);
+			} finally {
+				out.close();
+			}
+		}
 }

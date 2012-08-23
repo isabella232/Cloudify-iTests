@@ -18,6 +18,7 @@ package test.cli.cloudify.cloud.ec2;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.io.FileUtils;
 import org.testng.Assert;
@@ -30,6 +31,7 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import test.cli.cloudify.cloud.AbstractScalingRulesCloudTest;
+import framework.utils.LogUtils;
 import framework.utils.TestUtils;
 
 
@@ -40,14 +42,45 @@ public class Ec2LocationAwareScalingRulesTest extends AbstractScalingRulesCloudT
 
 	@Override
 	protected String getCloudName() {
-		return "ec2" + LOCATION_AWARE_POSTFIX;
+		return "ec2";// + LOCATION_AWARE_POSTFIX;
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 3, enabled = false)
-	public void testPetclinicSimpleScalingRules() throws Exception {
-		super.testPetclinicSimpleScalingRules();
-	}
-	
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 3, enabled = true)
+	@Override
+	public void testPetclinicSimpleScalingRules() throws Exception {		
+		try {
+			LogUtils.log("installing application " + getApplicationName());
+
+			final String applicationPath = getApplicationPath();
+			installApplicationAndWait(applicationPath, getApplicationName());
+
+			repititiveAssertNumberOfInstances(getAbsoluteServiceName(), 2);
+
+
+			// increase web traffic, wait for scale out
+			startThreads();
+			repititiveAssertNumberOfInstances(getAbsoluteServiceName(), 3);
+
+			// stop web traffic, wait for scale in
+			stopThreads();
+			repititiveAssertNumberOfInstances(getAbsoluteServiceName(), 2);
+
+			// Try to start a new machine and then cancel it.
+			startThreads();
+			executor.schedule(new Runnable() {
+
+				@Override
+				public void run() {
+					stopThreads();
+
+				}
+			}, 60, TimeUnit.SECONDS);
+			repetitiveNumberOfInstancesHolds(getAbsoluteServiceName(), 2, 500, TimeUnit.SECONDS);
+		} finally {
+			uninstallApplicationAndWait(getApplicationName());
+		}
+	}	
+		
 	@BeforeClass(alwaysRun = true)
 	protected void bootstrap(final ITestContext testContext) {
 		super.bootstrap(testContext);
@@ -64,12 +97,21 @@ public class Ec2LocationAwareScalingRulesTest extends AbstractScalingRulesCloudT
 		super.beforeTest();	
 	}
 
+	
+	
 	private void cloneApplicaitonRecipeAndInjectLocationAware() {
 		
 		try {
 			FileUtils.copyDirectory(new File(super.getApplicationPath()), new File(this.getApplicationPath()));
 			final File newServiceFile = new File(this.getApplicationPath(),"tomcat/tomcat-service.groovy");
-			TestUtils.writeTextFile(newServiceFile,"service {" +NEWLINE +"\textend \"../../../services/tomcat\""+NEWLINE+"\tlocationAware true "+NEWLINE+"}");
+			TestUtils.writeTextFile(newServiceFile,
+					"service {" +NEWLINE +
+						"\textend \"../../../services/tomcat\""+NEWLINE+
+						"\tlocationAware true"+NEWLINE+
+						"\tnumInstances 2"+NEWLINE+        //initial total number of instances 2
+						"\tminAllowedInstances 1"+NEWLINE+ //min 1 per zone
+						"\tmaxAllowedInstances 2"+NEWLINE+ //max 2 per zone
+					"}");
 		} catch (final IOException e) {
 			Assert.fail("Failed to create " + this.getApplicationPath(),e);
 		}

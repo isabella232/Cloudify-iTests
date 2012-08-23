@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -20,7 +22,11 @@ import org.cloudifysource.dsl.utils.ServiceUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.type.TypeFactory;
 import org.codehaus.jackson.type.JavaType;
+import org.openspaces.admin.zone.config.ExactZonesConfigurer;
+import org.openspaces.admin.zone.config.ZonesConfig;
 import org.testng.Assert;
+
+import com.gigaspaces.internal.utils.StringUtils;
 
 import framework.utils.AssertUtils;
 import framework.utils.AssertUtils.RepetitiveConditionProvider;
@@ -44,7 +50,7 @@ public abstract class AbstractScalingRulesCloudTest extends NewAbstractCloudTest
 	private static final int THROUGHPUT_PER_THREAD = 1;
 	private static final int TOMCAT_PORT = 8080;
 
-	private ScheduledExecutorService executor;
+	protected ScheduledExecutorService executor;
 	private final List<HttpRequest> threads = new ArrayList<HttpRequest>();
 
 	public void beforeTest() {	
@@ -97,14 +103,14 @@ public abstract class AbstractScalingRulesCloudTest extends NewAbstractCloudTest
 		return ScriptUtils.getBuildPath() + "/recipes/apps/" + APPLICATION_FOLDERNAME;
 	} 
 
-	private void repetitiveNumberOfInstancesHolds(String absoluteServiceName, int expectedNumberOfInstances, long duration, TimeUnit timeunit) {
+	protected void repetitiveNumberOfInstancesHolds(String absoluteServiceName, int expectedNumberOfInstances, long duration, TimeUnit timeunit) {
 		AssertUtils.repetitiveAssertConditionHolds("Expected " + expectedNumberOfInstances + " "+ absoluteServiceName +" instance(s)", 
 				numberOfInstancesRepetitiveCondition(absoluteServiceName, expectedNumberOfInstances), 
 				timeunit.toMillis(duration), 1000);
 
 	}
 
-	private void stopThreads() {
+	protected void stopThreads() {
 		Iterator<HttpRequest> iterator = threads.iterator();
 		while(iterator.hasNext()) {
 			iterator.next().close();
@@ -112,7 +118,7 @@ public abstract class AbstractScalingRulesCloudTest extends NewAbstractCloudTest
 		}
 	}
 
-	private void startThreads() {
+	protected void startThreads() {
 		for(int i = 0 ; i < NUMBER_OF_HTTP_GET_THREADS ; i++){
 			final HttpRequest thread = new HttpRequest(getAbsoluteServiceName());
 			threads.add(thread);
@@ -123,7 +129,7 @@ public abstract class AbstractScalingRulesCloudTest extends NewAbstractCloudTest
 	/**
 	 * Wait until petclinic has the specified number of instances
 	 */
-	private void repititiveAssertNumberOfInstances(final String absoluteServiceName, final int expectedNumberOfInstances) {
+	protected void repititiveAssertNumberOfInstances(final String absoluteServiceName, final int expectedNumberOfInstances) {
 
 		repetitiveAssertTrue("Expected " + expectedNumberOfInstances + " "+ absoluteServiceName +" instance(s)", 
 				numberOfInstancesRepetitiveCondition(absoluteServiceName, expectedNumberOfInstances), 
@@ -137,16 +143,16 @@ public abstract class AbstractScalingRulesCloudTest extends NewAbstractCloudTest
 
 			@Override
 			public boolean getCondition() {
-				List<String> publicIpAddresses = null;
+				List<InstanceDetails> instancesDetails = null;
 				try {
-					publicIpAddresses = getPublicIpAddressesPerProcessingUnitInstance(absoluteServiceName);
+					instancesDetails = getInstancesDetails(absoluteServiceName);
 				}
 				catch (Exception e) {
 					Assert.fail("Error while polling number of ip addresses", e);
 				}
-				boolean condition = publicIpAddresses.size() == expectedNumberOfInstances;
+				boolean condition = instancesDetails.size() == expectedNumberOfInstances;
 				if (!condition) {
-					LogUtils.log("Expecting " + expectedNumberOfInstances + " " + absoluteServiceName + " instance(s). Instead found " + publicIpAddresses);
+					LogUtils.log("Expecting " + expectedNumberOfInstances + " " + absoluteServiceName + " instance(s). Instead found " + instancesDetails);
 				}
 				return condition;
 
@@ -180,13 +186,21 @@ public abstract class AbstractScalingRulesCloudTest extends NewAbstractCloudTest
 			if (closed) {
 				return;
 			}
-			List<String> publicIpAddresses = null;
+			List<InstanceDetails> instancesDetails = null;
 			try {
-				publicIpAddresses = getPublicIpAddressesPerProcessingUnitInstance(absoluteServiceName);
-				assertTrue("Could not retrieve public ip addresses of " + absoluteServiceName, !publicIpAddresses.isEmpty());
-				String publicIpAddress = publicIpAddresses.get(0);
-				String petclinicHomePage = "http://"+publicIpAddress + ":"+TOMCAT_PORT + "/petclinic-mongo";
-				final URL petclinicHomePageUrl = new URL(petclinicHomePage);
+				instancesDetails = getInstancesDetails(absoluteServiceName);
+				assertTrue("Could not retrieve public ip addresses of " + absoluteServiceName, !instancesDetails.isEmpty());
+				// choose the instance with the lowest zone
+				Collections.sort(instancesDetails, new Comparator<InstanceDetails>(){
+
+					@Override
+					public int compare(InstanceDetails o1, InstanceDetails o2) {
+						String zones1ToString = o1.getAgentZones().toString();
+						String zones2ToString = o2.getAgentZones().toString();
+						return zones1ToString.compareTo(zones2ToString);
+					}});
+				URL publicIpAddress = instancesDetails.get(0).getPublicIp();
+				final URL petclinicHomePageUrl = new URL(publicIpAddress.getProtocol(),publicIpAddress.getHost(),TOMCAT_PORT,"/petclinic-mongo");
 				final HttpGet get = new HttpGet(petclinicHomePageUrl.toURI());
 
 				final HttpResponse response = client.execute(get);
@@ -240,6 +254,68 @@ public abstract class AbstractScalingRulesCloudTest extends NewAbstractCloudTest
 
 		return publicIpAddresses;
 	}
+	
+	class InstanceDetails {
+		private final URL publicIp;
+		private final ZonesConfig agentZones;
+		
+		public InstanceDetails(URL publicIp, ZonesConfig agentZones) {
+			this.agentZones = agentZones;
+			this.publicIp = publicIp;
+		}
+
+		public URL getPublicIp() {
+			return publicIp;
+		}
+
+		public ZonesConfig getAgentZones() {
+			return agentZones;
+		}
+
+		@Override
+		public String toString() {
+			return "InstanceDetails [publicIp=" + publicIp + ", agentZones="
+					+ agentZones + "]";
+		}
+		
+		
+	}
+	
+	protected List<InstanceDetails> getInstancesDetails(String absoluteServiceName) throws Exception {
+		
+		List<InstanceDetails> instancesDetails = new ArrayList<InstanceDetails>();
+
+		final String publicIpAttrName = "Cloud Public IP";
+		final String zonesAttrName = "zones";
+		for (String instanceUrl : getInstancesUrls(absoluteServiceName)) {
+			
+			URL publicIpUrl = new URL(instanceUrl +"/ServiceDetailsByServiceId/USM/Attributes/"+publicIpAttrName.replace(" ","%20"));
+			String publicIpResponse = WebUtils.getURLContent(publicIpUrl);
+			URL publicIp = null;
+			if (publicIpResponse.length() > 0) {
+				Map<String, Object> publicIpMap = jsonToMap(publicIpResponse);
+				publicIp = new URL("http://"+ ((String)publicIpMap.get(publicIpAttrName)));
+			}
+			
+			URL agentZonesUrl = new URL(instanceUrl +"/GridServiceContainer/GridServiceAgent/ExactZones/Properties/"+zonesAttrName);
+			String agentZonesResponse = WebUtils.getURLContent(agentZonesUrl);
+			ZonesConfig agentZones = null;
+			if (agentZonesResponse.length() > 0) {
+				Map<String, Object> agentZoneMap = jsonToMap(agentZonesResponse);
+				agentZones = 
+						new ExactZonesConfigurer()
+						.addZones(
+								StringUtils.commaDelimitedListToStringArray(
+										(String) agentZoneMap.get(zonesAttrName)))
+						.create();
+			}
+			if (publicIp != null && agentZones != null) {
+				instancesDetails.add(new InstanceDetails(publicIp,agentZones));
+			}
+		}
+
+		return instancesDetails;
+	}
 
 	private List<String> getInstancesUrls(String absoluteServiceName)
 			throws Exception, MalformedURLException, IOException {
@@ -273,7 +349,7 @@ public abstract class AbstractScalingRulesCloudTest extends NewAbstractCloudTest
 		return APPLICATION_NAME;
 	}
 	
-	private String getAbsoluteServiceName() {
+	protected String getAbsoluteServiceName() {
 		return ServiceUtils.getAbsolutePUName(getApplicationName(), TOMCAT_SERVICE_NAME);
 	}
 }

@@ -48,6 +48,7 @@ import com.gigaspaces.log.ContinuousLogEntryMatcher;
 import com.gigaspaces.log.LogEntries;
 import com.gigaspaces.log.LogEntry;
 import com.gigaspaces.log.LogProcessType;
+import com.j_spaces.kernel.PlatformVersion;
 
 import framework.utils.LogUtils;
 import framework.utils.ScriptUtils;
@@ -174,7 +175,7 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 							"/service/dump/machine/" 
 							+ admin.getMachines().getMachines()[0].getHostAddress() + "/"};
 		//Test dump processingUnit and machine according to ip
-		GSRestClient rc = new GSRestClient("", "", new URL(this.restUrl));
+		GSRestClient rc = new GSRestClient("", "", new URL(this.restUrl), PlatformVersion.getVersionNumber());
 		for (String dumpURI : dumpUrls) {
 			
 			String encodedResult = (String) rc.get(dumpURI);

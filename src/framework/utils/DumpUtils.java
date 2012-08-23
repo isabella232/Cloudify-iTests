@@ -67,7 +67,7 @@ public class DumpUtils {
 
     public static void dumpMachines(String restUrl) throws Exception {
     	String machinesDumpUri = "/service/dump/machines/";
-    	GSRestClient rc = new GSRestClient("", "", new URL(restUrl));
+    	GSRestClient rc = new GSRestClient("", "", new URL(restUrl), PlatformVersion.getVersionNumber());
     	DateFormat date1 = new SimpleDateFormat("dd-MM-yyyy");
     	DateFormat hour = new SimpleDateFormat("HH-mm-ss-SSS");
     	Map<String, Object> resultsMap = (Map) rc.get(machinesDumpUri);

@@ -7,8 +7,11 @@ import java.net.MalformedURLException;
 import java.net.Socket;
 import java.net.URL;
 import java.net.UnknownHostException;
+import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.zip.ZipFile;
@@ -31,11 +34,16 @@ import org.junit.Assert;
 import org.openspaces.admin.gsc.GridServiceContainer;
 import org.openspaces.admin.gsc.events.GridServiceContainerAddedEventListener;
 import org.openspaces.admin.gsc.events.GridServiceContainerRemovedEventListener;
+import org.openspaces.admin.internal.esm.DefaultElasticServiceManager;
+import org.openspaces.admin.internal.gsa.DefaultGridServiceAgent;
+import org.openspaces.admin.internal.gsm.DefaultGridServiceManager;
+import org.openspaces.admin.internal.lus.DefaultLookupService;
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.openspaces.admin.pu.ProcessingUnitInstance;
 import org.openspaces.admin.pu.ProcessingUnitType;
 import org.openspaces.admin.pu.events.ProcessingUnitInstanceAddedEventListener;
 import org.openspaces.admin.pu.events.ProcessingUnitInstanceRemovedEventListener;
+import org.openspaces.admin.zone.Zone;
 import org.openspaces.pu.service.ServiceDetails;
 import org.openspaces.pu.service.ServiceMonitors;
 import org.testng.annotations.Test;
@@ -92,7 +100,6 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 
 		installService();
 		
-		
 		ProcessingUnit pu = findPU();
 
 		ProcessingUnitInstance pui = findPUI(pu);
@@ -112,6 +119,10 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 				new AllLogEntryMatcher(), new AllLogEntryMatcher());
 
 		// run tests
+		checkManagementComponentPidsAreEqual();
+		
+		validateManagementZones();
+		
 		checkForStartupPrintouts(pui, pid, matcher);
 
 		checkDetails(pui);
@@ -169,6 +180,38 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 
 	}
 	
+	private void checkManagementComponentPidsAreEqual() throws RemoteException {
+		DefaultGridServiceManager gsm = (DefaultGridServiceManager) admin.getGridServiceManagers().waitForAtLeastOne(5000, TimeUnit.MILLISECONDS);
+		DefaultGridServiceAgent gsa = (DefaultGridServiceAgent) admin.getGridServiceAgents().waitForAtLeastOne(5000, TimeUnit.MILLISECONDS);
+		DefaultLookupService lus = (DefaultLookupService) admin.getLookupServices().getLookupServices()[0];
+		DefaultElasticServiceManager esm = (DefaultElasticServiceManager) admin.getElasticServiceManagers().waitForAtLeastOne(5000, TimeUnit.MILLISECONDS);
+		
+		long gsmPid = gsm.getJVMDetails().getPid();
+		long gsaPid = gsa.getJVMDetails().getPid();
+		long lusPid = lus.getJVMDetails().getPid();
+		long esmPid = esm.getJVMDetails().getPid();
+		
+		LogUtils.log("Comparing management component pids");
+		assertTrue("gsm and gsa did not start on the same process", gsmPid == gsaPid);
+		assertTrue("gsm and lus did not start on the same process", gsmPid == lusPid);
+		assertTrue("gsm and esm did not start on the same process", gsmPid == esmPid);
+	}
+
+	private void validateManagementZones() {
+		//since the gsm starts in the same process as gsa,lus and esm, they share the same zone property
+		// and thus it is enough to check only the GSM zones.
+		DefaultGridServiceManager gsm = (DefaultGridServiceManager) admin.getGridServiceManagers().waitForAtLeastOne(5000, TimeUnit.MILLISECONDS);
+		
+		List<String> gsmZones = new ArrayList<String>();
+		for (Zone zone : gsm.getZones().values()) {
+			gsmZones.add(zone.getName());
+		}
+		
+		LogUtils.log("Checking management component zones");
+		assertTrue("gsm zones does not contain management", gsmZones.contains("management"));
+		assertTrue("gsm zones does not contain localcloud", gsmZones.contains("localcloud"));
+	}
+
 	private void checkPUDump() throws IOException, RestException {
 		
 		String[] dumpUrls = {"/service/dump/processing-units/", 

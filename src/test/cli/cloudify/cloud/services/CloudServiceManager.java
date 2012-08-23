@@ -62,7 +62,11 @@ public class CloudServiceManager {
 			servicesByNamesMap.put(uniqueName, createCloudService(cloudName, uniqueName));	
 		}
 		
-		return servicesByNamesMap.get(uniqueName);
+		CloudService cloud = servicesByNamesMap.get(uniqueName);
+		if (cloud == null) {
+			throw new IllegalArgumentException("Could not create cloud: cloudName="+cloudName + " uniqueName="+uniqueName);
+		}
+		return cloud;
 	}
 	
 	/**

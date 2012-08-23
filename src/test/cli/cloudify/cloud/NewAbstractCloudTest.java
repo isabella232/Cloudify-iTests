@@ -288,6 +288,10 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 
 
 	public void scanNodesLeak() {
+		if (cloud == null) {
+			LogUtils.log("Test: " + lastTestName + " skipping scanNodesLeak since cloud is null");
+			return;
+		}
 		//We will give a short timeout to give the ESM 
 		//time to recognize that he needs to shutdown the machine.
 		try {

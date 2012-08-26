@@ -45,7 +45,7 @@ public class Ec2LocationAwareScalingRulesTest extends AbstractScalingRulesCloudT
 		return "ec2";// + LOCATION_AWARE_POSTFIX;
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 3, enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 3, enabled = false)
 	@Override
 	public void testPetclinicSimpleScalingRules() throws Exception {		
 		try {

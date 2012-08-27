@@ -53,6 +53,7 @@
 		<arg line="${BUILD_NUMBER}" />
 		<arg line="${MAJOR_VERSION}" />
 		<arg line="${MINOR_VERSION}" />
+        <arg line="${BUILD_LOG_URL}" />
   	</java>   
    </target>
 

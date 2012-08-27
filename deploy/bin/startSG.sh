@@ -43,6 +43,7 @@ umask 000
  declare -a target_gsa_machines=(${19} ${21} ${23} ${25});
  BYON_MACHINES=${26}
  SUPPORTED_CLOUDS=${27}
+ BUILD_LOG_URL=${28};export BUILD_LOG_URL
 
 
  . set-deploy-env.sh
@@ -180,6 +181,6 @@ for ((s=0 ; s < ${SUITE_NUMBER} ; s++ )); do
  clean_machines
 done
 
-${DEPLOY_ROOT_BIN_DIR}/../../bin/generate-report-cmd.sh Regression ${BUILD_NUMBER} ${SUITE_NAME} ${MAJOR_VERSION} ${MINOR_VERSION} ${DEPLOY_ROOT_BIN_DIR}
+${DEPLOY_ROOT_BIN_DIR}/../../bin/generate-report-cmd.sh Regression ${BUILD_NUMBER} ${SUITE_NAME} ${MAJOR_VERSION} ${MINOR_VERSION} ${DEPLOY_ROOT_BIN_DIR} ${BUILD_LOG_URL}
 
  exit ${EXIT_CODE}

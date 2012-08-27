@@ -91,6 +91,7 @@ public class WikiReporter {
     	String buildVersion = args[2];
     	String majorVersion = args[3];
     	String minorVersion = args[4];
+        String buildLogUrl = args[5];
     	
     	Properties extProperties = new Properties();
     	extProperties.put("fileName", fileName);
@@ -99,6 +100,7 @@ public class WikiReporter {
     	extProperties.put("buildVersion", buildVersion);
     	extProperties.put("majorVersion", majorVersion);
     	extProperties.put("minorVersion", minorVersion);
+        extProperties.put("buildLogUrl", buildLogUrl);
     	
     	
     	TestsReportFileStream fileStream = new TestsReportFileStream();

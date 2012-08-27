@@ -19,6 +19,7 @@ public class HtmlMailReporter {
         String buildNumber = extProperties.getProperty("buildVersion");
         String majorVersion = extProperties.getProperty("majorVersion");
         String minorVersion = extProperties.getProperty("minorVersion");
+        String buildLogUrl = extProperties.getProperty("buildLogUrl");
         String suiteName = summaryReport.getSuiteName();
 
         List<String> mailRecipients = null;
@@ -44,6 +45,7 @@ public class HtmlMailReporter {
         sb.append("<h1>SGTest Cloudify Results </h1></br></br></br>").append("\n");
         sb.append("<h2>Suite Name:  " + summaryReport.getSuiteName() + " </h2></br>").append("\n");
         sb.append("<h4>Duration:  " + WikiUtils.formatDuration(summaryReport.getDuration()) + " </h4></br>").append("\n");
+        sb.append("<h4>Full build log:  " + buildLogUrl + " </h4></br>").append("\n");
         sb.append("<h4 style=\"color:blue\">Total run:  " + summaryReport.getTotalTestsRun() + " </h4></br>").append("\n");
         sb.append("<h4 style=\"color:red\">Failed Tests:  " + summaryReport.getFailed() + " </h4></br>").append("\n");
         sb.append("<h4 style=\"color:green\">Passed Tests:  " + summaryReport.getSuccess() + " </h4></br>").append("\n");

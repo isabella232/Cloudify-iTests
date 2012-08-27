@@ -57,7 +57,7 @@ cloud {
 					imageId "OpenLogic__OpenLogic-CentOS-62-20120531-en-us-30GB.vhd"
 					machineMemoryMB 1600
 					hardwareId "Small"
-					localDirectory "tools/cli/plugins/esc/azure/upload"
+					localDirectory "upload"
 					
 					username "sgtest"
 					password "1408Rokk"
@@ -92,7 +92,7 @@ cloud {
 					imageId "OpenLogic__OpenLogic-CentOS-62-20120531-en-us-30GB.vhd"
 					machineMemoryMB 1600
 					hardwareId "Small"
-					localDirectory "tools/cli/plugins/esc/azure/upload"
+					localDirectory "upload"
 					
 					username "sgtest"
 					password "1408Rokk"

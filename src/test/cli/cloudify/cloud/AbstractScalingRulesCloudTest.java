@@ -41,7 +41,6 @@ import framework.utils.WebUtils;
  */
 public abstract class AbstractScalingRulesCloudTest extends NewAbstractCloudTest {
 
-	private static final String CLOUD_SERVICE_UNIQUE_NAME = "ScalingRulesCloudTest";
 	private static final String APPLICATION_FOLDERNAME = "petclinic-simple";
 	private static final String APPLICATION_NAME = "petclinic";
 	private static final String TOMCAT_SERVICE_NAME = "tomcat";
@@ -54,7 +53,7 @@ public abstract class AbstractScalingRulesCloudTest extends NewAbstractCloudTest
 	private final List<HttpRequest> threads = new ArrayList<HttpRequest>();
 
 	public void beforeTest() {	
-		executor= Executors.newScheduledThreadPool(NUMBER_OF_HTTP_GET_THREADS);
+		executor = Executors.newScheduledThreadPool(NUMBER_OF_HTTP_GET_THREADS);
 	}
 
 	public void afterTest() {
@@ -72,16 +71,16 @@ public abstract class AbstractScalingRulesCloudTest extends NewAbstractCloudTest
 			final String applicationPath = getApplicationPath();
 			installApplicationAndWait(applicationPath, getApplicationName());
 
-			repititiveAssertNumberOfInstances(getAbsoluteServiceName(), 1);
+			repititiveAssertNumberOfInstances(getAbsoluteServiceName(), 2);
 
 
 			// increase web traffic, wait for scale out
 			startThreads();
-			repititiveAssertNumberOfInstances(getAbsoluteServiceName(), 2);
+			repititiveAssertNumberOfInstances(getAbsoluteServiceName(), 3);
 
 			// stop web traffic, wait for scale in
 			stopThreads();
-			repititiveAssertNumberOfInstances(getAbsoluteServiceName(), 1);
+			repititiveAssertNumberOfInstances(getAbsoluteServiceName(), 2);
 
 			// Try to start a new machine and then cancel it.
 			startThreads();
@@ -93,7 +92,7 @@ public abstract class AbstractScalingRulesCloudTest extends NewAbstractCloudTest
 
 				}
 			}, 60, TimeUnit.SECONDS);
-			repetitiveNumberOfInstancesHolds(getAbsoluteServiceName(), 1, 500, TimeUnit.SECONDS);
+			repetitiveNumberOfInstancesHolds(getAbsoluteServiceName(), 2, 500, TimeUnit.SECONDS);
 		} finally {
 			uninstallApplicationAndWait(getApplicationName());
 		}
@@ -258,10 +257,12 @@ public abstract class AbstractScalingRulesCloudTest extends NewAbstractCloudTest
 	class InstanceDetails {
 		private final URL publicIp;
 		private final ZonesConfig agentZones;
+		private final String UID;
 		
-		public InstanceDetails(URL publicIp, ZonesConfig agentZones) {
+		public InstanceDetails(URL publicIp, ZonesConfig agentZones, String uid) {
 			this.agentZones = agentZones;
 			this.publicIp = publicIp;
+			this.UID = uid;
 		}
 
 		public URL getPublicIp() {
@@ -310,11 +311,15 @@ public abstract class AbstractScalingRulesCloudTest extends NewAbstractCloudTest
 						.create();
 			}
 			if (publicIp != null && agentZones != null) {
-				instancesDetails.add(new InstanceDetails(publicIp,agentZones));
+				instancesDetails.add(new InstanceDetails(publicIp,agentZones, getInstanceUID(agentZones)));
 			}
 		}
 
 		return instancesDetails;
+	}
+
+	private String getInstanceUID(ZonesConfig agentZones) {
+		return "currently not supported";
 	}
 
 	private List<String> getInstancesUrls(String absoluteServiceName)

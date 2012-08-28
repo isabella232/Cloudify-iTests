@@ -27,7 +27,7 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeTest;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import test.cli.cloudify.cloud.AbstractScalingRulesCloudTest;
@@ -42,28 +42,42 @@ public class Ec2LocationAwareScalingRulesTest extends AbstractScalingRulesCloudT
 
 	@Override
 	protected String getCloudName() {
-		return "ec2";// + LOCATION_AWARE_POSTFIX;
+		return "ec2" + LOCATION_AWARE_POSTFIX;
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 3, enabled = false)
-	@Override
-	public void testPetclinicSimpleScalingRules() throws Exception {		
+	// bootstrap with the appropriate credentials and cloud driver class
+	@BeforeClass(alwaysRun = true)
+	protected void bootstrap(final ITestContext testContext) {
+		super.bootstrap(testContext);
+	}
+	
+	// create application to be tested under the build folder
+	// create the executor service
+	@BeforeMethod
+	public void beforeTest() {	
+		cloneApplicaitonRecipeAndInjectLocationAware();
+		super.beforeTest();	
+	}
+	
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 3, enabled = true)
+	public void testPetclinicSimpleScalingRules() throws Exception {	
+		
 		try {
 			LogUtils.log("installing application " + getApplicationName());
 
 			final String applicationPath = getApplicationPath();
 			installApplicationAndWait(applicationPath, getApplicationName());
 
-			repititiveAssertNumberOfInstances(getAbsoluteServiceName(), 2);
+			repititiveAssertNumberOfInstances(getAbsoluteServiceName(), 1);
 
 
 			// increase web traffic, wait for scale out
 			startThreads();
-			repititiveAssertNumberOfInstances(getAbsoluteServiceName(), 3);
+			repititiveAssertNumberOfInstances(getAbsoluteServiceName(), 2);
 
 			// stop web traffic, wait for scale in
 			stopThreads();
-			repititiveAssertNumberOfInstances(getAbsoluteServiceName(), 2);
+			repititiveAssertNumberOfInstances(getAbsoluteServiceName(), 1);
 
 			// Try to start a new machine and then cancel it.
 			startThreads();
@@ -74,30 +88,25 @@ public class Ec2LocationAwareScalingRulesTest extends AbstractScalingRulesCloudT
 					stopThreads();
 
 				}
-			}, 60, TimeUnit.SECONDS);
-			repetitiveNumberOfInstancesHolds(getAbsoluteServiceName(), 2, 500, TimeUnit.SECONDS);
+			}, 30, TimeUnit.SECONDS);
+			repetitiveNumberOfInstancesHolds(getAbsoluteServiceName(), 1, 500, TimeUnit.SECONDS);
 		} finally {
 			uninstallApplicationAndWait(getApplicationName());
 		}
-	}	
-		
-	@BeforeClass(alwaysRun = true)
-	protected void bootstrap(final ITestContext testContext) {
-		super.bootstrap(testContext);
 	}
 	
+	// shutdown executor service
+	// scan for leaking nodes
+	@AfterMethod
+	public void cleanUp() {
+ 		super.afterTest();
+	}
+	
+	// teardown the cloud
 	@AfterClass(alwaysRun = true)
 	protected void teardown() {
 		super.teardown();
 	}
-	
-	@BeforeTest
-	public void beforeTest() {	
-		cloneApplicaitonRecipeAndInjectLocationAware();
-		super.beforeTest();	
-	}
-
-	
 	
 	private void cloneApplicaitonRecipeAndInjectLocationAware() {
 		
@@ -108,25 +117,15 @@ public class Ec2LocationAwareScalingRulesTest extends AbstractScalingRulesCloudT
 					"service {" +NEWLINE +
 						"\textend \"../../../services/tomcat\""+NEWLINE+
 						"\tlocationAware true"+NEWLINE+
-						"\tnumInstances 2"+NEWLINE+        //initial total number of instances 2
-						"\tminAllowedInstances 1"+NEWLINE+ //min 1 per zone
-						"\tmaxAllowedInstances 2"+NEWLINE+ //max 2 per zone
+						"\tnumInstances 1"+NEWLINE+        // initial total number of instances 2
+						"\tminAllowedInstances 1"+NEWLINE+ // per zone 1
+						"\tmaxAllowedInstances 2"+NEWLINE+ // per zone 2
 					"}");
 		} catch (final IOException e) {
 			Assert.fail("Failed to create " + this.getApplicationPath(),e);
 		}
 	}
-	
-	@AfterTest
-	public void afterTest() {
-		super.afterTest();
-	}
-	
-	@AfterMethod
-	public void cleanUp() {
-		//The afterTest Checks for leaks
-		super.afterTest();
-	}
+
 
 	@Override
 	protected String getApplicationPath() {

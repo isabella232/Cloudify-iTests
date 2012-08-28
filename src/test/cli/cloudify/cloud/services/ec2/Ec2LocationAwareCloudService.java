@@ -1,12 +1,17 @@
 package test.cli.cloudify.cloud.services.ec2;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.io.FileUtils;
 import org.cloudifysource.esc.driver.provisioning.jclouds.DefaultProvisioningDriver;
 
+import framework.tools.SGTestHelper;
+import framework.utils.DeploymentUtils;
 import framework.utils.IOUtils;
+import framework.utils.ScriptUtils;
 
 /**
  * Uses a different cloud driver that injects a different EC2 Availability Zone for different start() commands
@@ -27,9 +32,33 @@ public class Ec2LocationAwareCloudService extends Ec2CloudService {
 
 	@Override
 	protected void injectCloudDriverClass() throws IOException {
+		
+		// copy custom location aware driver to cloudify-overrides
+		File locationAwareDriver = DeploymentUtils.getArchive("location-aware-driver-2.2.0.jar");
+		File uploadOverrides =
+				new File(getPathToCloudFolder() + "/upload/cloudify-overrides/");
+		if (!uploadOverrides.exists()) {
+			uploadOverrides.mkdir();
+		}
+		File uploadEsmDir = new File(uploadOverrides.getAbsoluteFile() + "/lib/platform/esm");
+		File localEsmFolder = new File(SGTestHelper.getBuildDir() + "/lib/platform/esm");
+		
+		FileUtils.copyFileToDirectory(locationAwareDriver, uploadEsmDir, true);
+		FileUtils.copyFileToDirectory(locationAwareDriver, localEsmFolder, false);
+		
+		// copy openspaces jar from workspace if exists
+		if (SGTestHelper.isDevMode()) {
+			File opnespacesWorkspaceJar = new File(SGTestHelper.getSGTestRootDir() + "/../openspaces/lib/required/gs-openspaces.jar");
+			File openspacesUploadPath = new File(uploadOverrides.getAbsolutePath() + "/lib/required");
+			if (opnespacesWorkspaceJar.exists()) {
+				FileUtils.copyFileToDirectory(opnespacesWorkspaceJar, openspacesUploadPath, true);
+			}
+		}
+		
+		
 		final Map<String, String> propsToReplace = new HashMap<String, String>();
 		final String oldCloudDriverClazz = DefaultProvisioningDriver.class.getName();
-		final String newCloudDriverClazz = "test.LocationAwareDriver";
+		final String newCloudDriverClazz = "org.cloudifysource.test.LocationAwareDriver";
 		propsToReplace.put(toClassName(oldCloudDriverClazz),toClassName(newCloudDriverClazz));
 		IOUtils.replaceTextInFile(getPathToCloudGroovy(), propsToReplace);
 	}
@@ -37,4 +66,5 @@ public class Ec2LocationAwareCloudService extends Ec2CloudService {
 	public String toClassName(String className) {
 		return "className \""+className+"\"";
 	}
+	
 }

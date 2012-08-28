@@ -110,6 +110,7 @@ public abstract class AbstractCloudService implements CloudService {
 	}
 
 	public abstract void injectServiceAuthenticationDetails() throws IOException;
+	
 	protected void injectCloudDriverClass() throws IOException {}
 
 	public void injectAuthenticationDetails() throws IOException {

@@ -50,7 +50,7 @@ public class RepetativeInstallAndUninstallOnByon extends NewAbstractCloudTest {
 	
 	@AfterMethod
 	public void cleanUp() {
-		super.scanNodesLeak();
+		super.scanAgentNodesLeak();
 	}
 
 	@Override

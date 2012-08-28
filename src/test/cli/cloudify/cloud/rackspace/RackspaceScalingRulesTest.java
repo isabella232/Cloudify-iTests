@@ -39,8 +39,8 @@ public class RackspaceScalingRulesTest extends AbstractScalingRulesCloudTest {
 	}
 	
 	@BeforeMethod
-	public void beforeTest() {
-		super.beforeTest();
+	public void startExecutorService() {
+		super.startExecutorService();
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
@@ -49,9 +49,9 @@ public class RackspaceScalingRulesTest extends AbstractScalingRulesCloudTest {
 	}
 	
 	@AfterMethod(alwaysRun = true)
-	public void afterTest() {
+	public void shutdownExecutorAndScanForLeakedAgentNodes() {
 		//The afterTest Checks for leaks
-		super.afterTest();
+		super.shutdownExecutorAndScanForLeakedAgentNodes();
 	}
 	
 	@AfterClass(alwaysRun = true)

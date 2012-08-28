@@ -40,19 +40,19 @@ public class HPScalingRulesTest extends AbstractScalingRulesCloudTest{
 	}
 	
 	@BeforeTest
-	public void beforeTest() {	
-		super.beforeTest();
+	public void startExecutorService() {	
+		super.startExecutorService();
 	}
 	
 	@AfterTest
-	public void afterTest() {
-		super.afterTest();
+	public void shutdownExecutorAndScanForLeakedAgentNodes() {
+		super.shutdownExecutorAndScanForLeakedAgentNodes();
 	}
 	
 	@AfterMethod
 	public void cleanUp() {
 		//The afterTest Checks for leaks
-		super.afterTest();
+		super.shutdownExecutorAndScanForLeakedAgentNodes();
 	}
 	
 	@Override

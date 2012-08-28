@@ -46,7 +46,7 @@ public class EuWestRegionEc2Test extends NewAbstractCloudTest {
 	public void cleanUp() {
 		//The test itself will make sure to remove 
 		//any application before terminating
-		super.scanNodesLeak();
+		super.scanAgentNodesLeak();
 	}
 
 	@Override

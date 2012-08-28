@@ -64,6 +64,6 @@ public class Ec2SudoTest extends AbstractExamplesTest {
 		} catch (Exception e) {
 			AssertFail("Failed to uninstall application " + serviceName + " in the aftertest method", e);
 		}
-		super.scanNodesLeak();
+		super.scanAgentNodesLeak();
 	}
 }

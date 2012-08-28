@@ -69,7 +69,7 @@ public class MultipleMachineTemplatesTest extends NewAbstractCloudTest {
 	
 	@AfterMethod
 	public void cleanUp() {
-		super.scanNodesLeak();
+		super.scanAgentNodesLeak();
 	}
 
 	@Override

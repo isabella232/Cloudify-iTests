@@ -45,7 +45,7 @@ public class Ec2ExamplesTest extends AbstractExamplesTest {
 	@AfterMethod
 	public void cleanUp() {
 		super.uninstallApplicationIfFound();
-		super.scanNodesLeak();
+		super.scanAgentNodesLeak();
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)

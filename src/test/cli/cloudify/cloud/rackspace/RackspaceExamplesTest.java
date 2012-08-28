@@ -58,7 +58,7 @@ public class RackspaceExamplesTest extends AbstractExamplesTest {
 	@AfterMethod(alwaysRun = true)
 	public void cleanUp() {
 		super.uninstallApplicationIfFound();
-		super.scanNodesLeak();
+		super.scanAgentNodesLeak();
 	}
 
 	@AfterClass(alwaysRun = true)

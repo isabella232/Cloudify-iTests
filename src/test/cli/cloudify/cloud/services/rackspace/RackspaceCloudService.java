@@ -109,7 +109,7 @@ public class RackspaceCloudService extends AbstractCloudService {
 	}
 
 	@Override
-	public boolean afterTest() {
+	public boolean scanLeakedAgentNodes() {
 		String token = rackspaceClient.createAuthenticationToken();
 
 		final String agentPrefix = this.cloudConfiguration.getProvider().getMachineNamePrefix();
@@ -118,7 +118,7 @@ public class RackspaceCloudService extends AbstractCloudService {
 
 	}
 	@Override
-	public boolean afterTeardown() {
+	public boolean scanLeakedAgentAndManagementNodes() {
 		if(rackspaceClient == null) {
 			LogUtils.log("Openstack client was not initialized, so no test was performed after teardown");
 			return true;

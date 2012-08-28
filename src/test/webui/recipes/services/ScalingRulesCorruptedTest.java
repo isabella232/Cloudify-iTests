@@ -1,4 +1,4 @@
-package test.webui.recipes.services.autoscaling;
+package test.webui.recipes.services;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,7 +16,6 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import test.cli.cloudify.CommandTestUtils;
-import test.webui.recipes.services.AbstractSeleniumServiceRecipeTest;
 
 import com.gigaspaces.webuitf.LoginPage;
 import com.gigaspaces.webuitf.MainNavigation;

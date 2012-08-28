@@ -11,9 +11,9 @@ import framework.utils.ScriptUtils;
 
 public class AbstractSeleniumServiceRecipeTest extends AbstractWebUILocalCloudTest {
 	
-	private boolean wait = true;
-	private String pathToService;
-	private String serviceName;
+	protected boolean wait = true;
+	protected String pathToService;
+	protected String serviceName;
 
 	public void setCurrentRecipe(String recipe) {
 		this.serviceName = recipe;

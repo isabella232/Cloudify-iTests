@@ -1,7 +1,6 @@
-package test.webui.recipes.applications;
+package test.cli.cloudify;
 
 import java.io.IOException;
-import java.net.InetAddress;
 import java.net.URL;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -16,7 +15,6 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.cloudifysource.dsl.internal.CloudifyConstants;
 import org.cloudifysource.dsl.utils.ServiceUtils;
 import org.openspaces.admin.internal.pu.InternalProcessingUnit;
-import org.openspaces.admin.pu.DeploymentStatus;
 import org.openspaces.admin.pu.statistics.AverageInstancesStatisticsConfig;
 import org.openspaces.admin.pu.statistics.ProcessingUnitStatisticsId;
 import org.openspaces.admin.pu.statistics.ProcessingUnitStatisticsIdConfigurer;
@@ -25,24 +23,12 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import com.gigaspaces.webuitf.LoginPage;
-import com.gigaspaces.webuitf.MainNavigation;
-import com.gigaspaces.webuitf.dashboard.DashboardTab;
-import com.gigaspaces.webuitf.dashboard.ServicesGrid;
-import com.gigaspaces.webuitf.dashboard.ServicesGrid.ApplicationServicesGrid;
-import com.gigaspaces.webuitf.dashboard.ServicesGrid.ApplicationsMenuPanel;
-import com.gigaspaces.webuitf.dashboard.ServicesGrid.Icon;
-import com.gigaspaces.webuitf.dashboard.ServicesGrid.InfrastructureServicesGrid;
-import com.gigaspaces.webuitf.topology.TopologyTab;
-import com.gigaspaces.webuitf.topology.applicationmap.ApplicationMap;
-import com.gigaspaces.webuitf.topology.applicationmap.ApplicationNode;
-
-import framework.utils.AssertUtils;
+import framework.tools.SGTestHelper;
 import framework.utils.AssertUtils.RepetitiveConditionProvider;
 import framework.utils.LogUtils;
 import framework.utils.WebUtils;
 
-public class ScalingRulesTomcatTotalRequestsTest extends AbstractSeleniumApplicationRecipeTest {
+public class ScalingRulesTomcatTotalRequestsTest extends AbstractLocalCloudTest {
 
 	private static final String COUNTER_METRIC = "Total Requests Count";
 	private static final String APPLICATION_NAME = "petclinic";
@@ -56,12 +42,10 @@ public class ScalingRulesTomcatTotalRequestsTest extends AbstractSeleniumApplica
 	private String applicationUrl;
 	private AtomicInteger requestsMade = new AtomicInteger(0);
 	
-	@Override
 	@BeforeMethod
-	public void install() throws IOException, InterruptedException {
-		super.setCurrentApplication(APPLICATION_FOLDER_NAME);
-		super.install();
-		applicationUrl = "http://" + InetAddress.getLocalHost().getHostAddress() + ":8080/petclinic-mongo/";
+	public void before() throws IOException, InterruptedException {
+		String applicationDir = SGTestHelper.getSGTestRootDir() + "/recipes/apps/" + APPLICATION_FOLDER_NAME;
+		runCommand("connect " + restUrl + ";install-service --verbose " + applicationDir);
 		this.executor= Executors.newScheduledThreadPool(NUMBER_OF_HTTP_GET_THREADS);
 	}
 	
@@ -74,78 +58,8 @@ public class ScalingRulesTomcatTotalRequestsTest extends AbstractSeleniumApplica
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT , enabled = true)
-	public void customServiceMonitorsAutoScalingTest() throws Exception {
-		
-		// get new login page
-		LoginPage loginPage = getLoginPage();
-
-		MainNavigation mainNav = loginPage.login();
-
-		DashboardTab dashboardTab = mainNav.switchToDashboard();
-		
-		final InfrastructureServicesGrid infrastructureServicesGrid = dashboardTab.getServicesGrid().getInfrastructureGrid();
-		
-		RepetitiveConditionProvider condition = new RepetitiveConditionProvider() {
-			
-			@Override
-			public boolean getCondition() {
-				return ((infrastructureServicesGrid.getESMInst().getCount() == 1) 
-						&& (infrastructureServicesGrid.getESMInst().getIcon().equals(Icon.OK)));
-			}
-		};
-		AssertUtils.repetitiveAssertTrue("No esm in showing in the dashboard", condition, waitingTime);
-
-		ServicesGrid servicesGrid = dashboardTab.getServicesGrid();
-
-		ApplicationsMenuPanel appMenu = servicesGrid.getApplicationsMenuPanel();
-
-		appMenu.selectApplication(MANAGEMENT_APPLICATION_NAME);
-
-		final ApplicationServicesGrid applicationServicesGrid = servicesGrid.getApplicationServicesGrid();
-
-		condition = new RepetitiveConditionProvider() {		
-			@Override
-			public boolean getCondition() {
-				return applicationServicesGrid.getWebModule().getCount() == 2;
-			}
-		};
-		AssertUtils.repetitiveAssertTrue(null, condition, waitingTime);
-
-		appMenu.selectApplication(APPLICATION_NAME);
-
-		condition = new RepetitiveConditionProvider() {		
-			@Override
-			public boolean getCondition() {
-				return applicationServicesGrid.getWebServerModule().getCount() == 1;
-			}
-		};
-		AssertUtils.repetitiveAssertTrue(null, condition, waitingTime);
-
-		TopologyTab topologyTab = mainNav.switchToTopology();
-
-		final ApplicationMap appMap = topologyTab.getApplicationMap();
-
-		appMap.selectApplication(APPLICATION_NAME);
-		
-		takeScreenShot(this.getClass(), "AutoScalingTomcatTotalRequestsTest","topology");
-
-		final ApplicationNode simple = appMap.getApplicationNode(ABSOLUTE_SERVICE_NAME);
-
-		assertTrue(simple != null);
-		
-		condition = new RepetitiveConditionProvider() {
-			
-			@Override
-			public boolean getCondition() {
-				return simple.getStatus().equals(DeploymentStatus.INTACT);
-			}
-		};
-		repetitiveAssertTrueWithScreenshot(
-				"customServiceMonitor service is displayed as " + simple.getStatus() + 
-					"even though it is installed", condition, this.getClass(), "AutoScalingTomcatTotalRequestsTest", SERVICE_NAME);
-		
-		WebUtils.repetitiveAssertWebUrlAvailable(applicationUrl, OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
-		
+	public void tomcatAutoScalingTest() throws Exception {
+	
 		final InternalProcessingUnit pu = (InternalProcessingUnit) admin.getProcessingUnits().waitFor(ABSOLUTE_SERVICE_NAME,OPERATION_TIMEOUT,TimeUnit.MILLISECONDS);
 		final ProcessingUnitStatisticsId statisticsId = 
 				new ProcessingUnitStatisticsIdConfigurer()
@@ -169,7 +83,6 @@ public class ScalingRulesTomcatTotalRequestsTest extends AbstractSeleniumApplica
 		Assert.assertTrue(executor.awaitTermination(30, TimeUnit.SECONDS));
 		
 		repetitiveAssertNumberOfInstances(pu, 1);
-		uninstallApplication(APPLICATION_NAME, true);		
 	}
 	
 	public class HttpRequest implements Runnable{

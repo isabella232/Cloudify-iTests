@@ -11,9 +11,9 @@ import framework.utils.ScriptUtils;
 
 public class AbstractSeleniumApplicationRecipeTest extends AbstractWebUILocalCloudTest {
 	
-	private String pathToApplication;
-	private boolean wait = true;
-	private String applicationName;
+	protected String pathToApplication;
+	protected boolean wait = true;
+	protected String applicationName;
 	
 	public void setCurrentApplication(String application) {
 		this.applicationName = application;

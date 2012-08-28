@@ -1,4 +1,4 @@
-package test.webui.recipes.services.autoscaling;
+package test.cli.cloudify;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -16,7 +16,6 @@ import org.openspaces.admin.alert.alerts.ElasticAutoScalingAlert;
 import org.openspaces.admin.alert.config.ElasticAutoScalingAlertConfiguration;
 import org.openspaces.admin.alert.events.AlertTriggeredEventListener;
 import org.openspaces.admin.internal.pu.InternalProcessingUnit;
-import org.openspaces.admin.pu.DeploymentStatus;
 import org.openspaces.admin.pu.ProcessingUnitInstance;
 import org.openspaces.admin.pu.statistics.AverageInstancesStatisticsConfig;
 import org.openspaces.admin.pu.statistics.AverageTimeWindowStatisticsConfigurer;
@@ -26,97 +25,29 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import test.cli.cloudify.CommandTestUtils;
-import test.webui.recipes.services.AbstractSeleniumServiceRecipeTest;
-
-import com.gigaspaces.webuitf.LoginPage;
-import com.gigaspaces.webuitf.MainNavigation;
-import com.gigaspaces.webuitf.dashboard.DashboardTab;
-import com.gigaspaces.webuitf.dashboard.ServicesGrid;
-import com.gigaspaces.webuitf.dashboard.ServicesGrid.ApplicationServicesGrid;
-import com.gigaspaces.webuitf.dashboard.ServicesGrid.ApplicationsMenuPanel;
-import com.gigaspaces.webuitf.dashboard.ServicesGrid.Icon;
-import com.gigaspaces.webuitf.dashboard.ServicesGrid.InfrastructureServicesGrid;
-import com.gigaspaces.webuitf.topology.TopologyTab;
-import com.gigaspaces.webuitf.topology.applicationmap.ApplicationMap;
-import com.gigaspaces.webuitf.topology.applicationmap.ApplicationNode;
-import com.gigaspaces.webuitf.topology.healthpanel.HealthPanel;
-
-import framework.utils.AssertUtils;
+import framework.tools.SGTestHelper;
 import framework.utils.AssertUtils.RepetitiveConditionProvider;
 import framework.utils.GridServiceContainersCounter;
 import framework.utils.LogUtils;
 
-public class ScalingRulesRecipeTest extends AbstractSeleniumServiceRecipeTest {
+public class ScalingRulesRecipeTest extends AbstractLocalCloudTest {
 
 	private static final String SERVICE_NAME = "customServiceMonitor";
-	private static final String SERVICE_RELATIVE_PATH = "apps\\cloudify\\recipes\\" + SERVICE_NAME;
+	private static final String SERVICE_RELATIVE_PATH = "/apps/cloudify/recipes/" + SERVICE_NAME;
 	
 	private static final String COUNTER_METRIC = "counter";
 	private static final String ABSOLUTE_SERVICE_NAME = ServiceUtils.getAbsolutePUName(DEFAULT_APPLICATION_NAME,SERVICE_NAME);
 	private final List<Alert> adminAlerts = new ArrayList<Alert>();
 	
-	@Override
 	@BeforeMethod
-	public void install() throws IOException, InterruptedException {
-		super.setPathToServiceRelativeToSGTestRootDir(SERVICE_NAME, SERVICE_RELATIVE_PATH);
-		super.install();
+	public void before() throws IOException, InterruptedException {
+		
+		String serviceDir = SGTestHelper.getSGTestRootDir() + SERVICE_RELATIVE_PATH;
+		runCommand("connect " + restUrl + ";install-service --verbose " + serviceDir);
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT)
 	public void customServiceMonitorsAutoScalingTest() throws InterruptedException, IOException {
-
-		// get new login page
-		LoginPage loginPage = getLoginPage();
-
-		MainNavigation mainNav = loginPage.login();
-
-		DashboardTab dashboardTab = mainNav.switchToDashboard();
-		
-		final InfrastructureServicesGrid infrastructureServicesGrid = dashboardTab.getServicesGrid().getInfrastructureGrid();
-		{
-		RepetitiveConditionProvider condition = new RepetitiveConditionProvider() {
-			
-			@Override
-			public boolean getCondition() {
-				return ((infrastructureServicesGrid.getESMInst().getCount() == 1) 
-						&& (infrastructureServicesGrid.getESMInst().getIcon().equals(Icon.OK)));
-			}
-		};
-		AssertUtils.repetitiveAssertTrue("No esm in showing in the dashboard", condition, waitingTime);
-		}
-		ServicesGrid servicesGrid = dashboardTab.getServicesGrid();
-
-		ApplicationsMenuPanel appMenu = servicesGrid.getApplicationsMenuPanel();
-
-		appMenu.selectApplication(MANAGEMENT_APPLICATION_NAME);
-
-		final ApplicationServicesGrid applicationServicesGrid = servicesGrid.getApplicationServicesGrid();
-		repetitiveAssertTwoWebModules(applicationServicesGrid);
-				
-		appMenu.selectApplication(DEFAULT_APPLICATION_NAME);
-
-		repetitiveAssertOneWebServerModule(applicationServicesGrid);
-				
-		TopologyTab topologyTab = mainNav.switchToTopology();
-
-		final ApplicationMap appMap = topologyTab.getApplicationMap();
-
-		appMap.selectApplication(DEFAULT_APPLICATION_NAME);
-		
-		takeScreenShot(this.getClass(), "customServiceMonitorsAutoScalingTest","topology");
-
-		final ApplicationNode simple = appMap.getApplicationNode(SERVICE_NAME);
-
-		assertTrue(simple != null);
-		
-		repetitiveAssertApplicationNodeIntact(simple);
-		
-		HealthPanel healthPanel = topologyTab.getTopologySubPanel().switchToHealthPanel();
-
-		takeScreenShot(this.getClass(),"customServiceMonitorsAutoScalingTest", "topology-healthpanel");
-		
-		assertNotNull("counter " + METRICS_ASSERTION_SUFFIX , healthPanel.getMetric(COUNTER_METRIC));
 		
 		final InternalProcessingUnit pu = (InternalProcessingUnit) admin.getProcessingUnits().waitFor(ABSOLUTE_SERVICE_NAME,OPERATION_TIMEOUT,TimeUnit.MILLISECONDS);
 		initAlerts();
@@ -221,41 +152,6 @@ public class ScalingRulesRecipeTest extends AbstractSeleniumServiceRecipeTest {
 		final AlertManager alertManager = admin.getAlertManager();
 		alertManager.setConfig(new ElasticAutoScalingAlertConfiguration());
 		admin.getAlertManager().enableAlert(ElasticAutoScalingAlertConfiguration.class);
-	}
-
-	private void repetitiveAssertApplicationNodeIntact(final ApplicationNode simple) {
-		final RepetitiveConditionProvider condition = new RepetitiveConditionProvider() {
-		
-			@Override
-			public boolean getCondition() {
-				return simple.getStatus().equals(DeploymentStatus.INTACT);
-			}
-		};
-		repetitiveAssertTrueWithScreenshot(
-				"customServiceMonitor service is displayed as " + simple.getStatus() + 
-					"even though it is installed", condition, this.getClass(), "customServiceMonitorsAutoScalingTest", SERVICE_NAME);
-	}
-
-	private void repetitiveAssertTwoWebModules(
-			final ApplicationServicesGrid applicationServicesGrid) {
-		final RepetitiveConditionProvider condition = new RepetitiveConditionProvider() {		
-			@Override
-			public boolean getCondition() {
-				return applicationServicesGrid.getWebModule().getCount() == 2;
-			}
-		};
-		AssertUtils.repetitiveAssertTrue(null, condition, waitingTime);
-	}
-
-	private void repetitiveAssertOneWebServerModule(
-			final ApplicationServicesGrid applicationServicesGrid) {
-		final RepetitiveConditionProvider condition = new RepetitiveConditionProvider() {		
-			@Override
-			public boolean getCondition() {
-				return applicationServicesGrid.getWebServerModule().getCount() == 1;
-			}
-		};
-		AssertUtils.repetitiveAssertTrue(null, condition, waitingTime);
 	}
 
 	private void repetitiveAssertStatistics(final InternalProcessingUnit pu,

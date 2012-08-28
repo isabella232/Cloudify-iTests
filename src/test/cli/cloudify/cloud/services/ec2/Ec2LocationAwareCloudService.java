@@ -29,6 +29,7 @@ public class Ec2LocationAwareCloudService extends Ec2CloudService {
 	public Ec2LocationAwareCloudService(String uniqueName) {
 		super(uniqueName);
 	}
+	
 
 	@Override
 	protected void injectCloudDriverClass() throws IOException {
@@ -50,8 +51,14 @@ public class Ec2LocationAwareCloudService extends Ec2CloudService {
 		if (SGTestHelper.isDevMode()) {
 			File opnespacesWorkspaceJar = new File(SGTestHelper.getSGTestRootDir() + "/../openspaces/lib/required/gs-openspaces.jar");
 			File openspacesUploadPath = new File(uploadOverrides.getAbsolutePath() + "/lib/required");
+			File openspacesLocalPath = new File(ScriptUtils.getBuildPath() + "/lib/required/");
+			File gsOpnespacesLocalJar = new File(openspacesLocalPath, "gs-openspaces.jar");
 			if (opnespacesWorkspaceJar.exists()) {
 				FileUtils.copyFileToDirectory(opnespacesWorkspaceJar, openspacesUploadPath, true);
+				if (gsOpnespacesLocalJar.exists()) {
+					FileUtils.deleteQuietly(openspacesLocalPath);
+				}
+				FileUtils.copyFileToDirectory(opnespacesWorkspaceJar, openspacesLocalPath, false);
 			}
 		}
 		

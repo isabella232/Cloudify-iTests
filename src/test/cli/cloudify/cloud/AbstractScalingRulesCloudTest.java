@@ -22,6 +22,8 @@ import org.cloudifysource.dsl.utils.ServiceUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.type.TypeFactory;
 import org.codehaus.jackson.type.JavaType;
+import org.openspaces.admin.zone.config.AnyZonesConfig;
+import org.openspaces.admin.zone.config.ExactZonesConfig;
 import org.openspaces.admin.zone.config.ExactZonesConfigurer;
 import org.openspaces.admin.zone.config.ZonesConfig;
 import org.testng.Assert;
@@ -52,17 +54,18 @@ public abstract class AbstractScalingRulesCloudTest extends NewAbstractCloudTest
 	protected ScheduledExecutorService executor;
 	private final List<HttpRequest> threads = new ArrayList<HttpRequest>();
 
-	public void beforeTest() {	
+	public void startExecutorService() {	
 		executor = Executors.newScheduledThreadPool(NUMBER_OF_HTTP_GET_THREADS);
 	}
 
-	public void afterTest() {
+	public void shutdownExecutorAndScanForLeakedAgentNodes() {
 		if (executor != null) {
 			executor.shutdownNow();
 		}
 
-		super.scanNodesLeak();
+		super.scanAgentNodesLeak();
 	}
+	
 
 	public void testPetclinicSimpleScalingRules() throws Exception {		
 		try {
@@ -71,16 +74,16 @@ public abstract class AbstractScalingRulesCloudTest extends NewAbstractCloudTest
 			final String applicationPath = getApplicationPath();
 			installApplicationAndWait(applicationPath, getApplicationName());
 
-			repititiveAssertNumberOfInstances(getAbsoluteServiceName(), 2);
+			repititiveAssertNumberOfInstances(getAbsoluteServiceName(), new AnyZonesConfig(), 2);
 
 
 			// increase web traffic, wait for scale out
 			startThreads();
-			repititiveAssertNumberOfInstances(getAbsoluteServiceName(), 3);
+			repititiveAssertNumberOfInstances(getAbsoluteServiceName(), new AnyZonesConfig(), 3);
 
 			// stop web traffic, wait for scale in
 			stopThreads();
-			repititiveAssertNumberOfInstances(getAbsoluteServiceName(), 2);
+			repititiveAssertNumberOfInstances(getAbsoluteServiceName(), new AnyZonesConfig(),  2);
 
 			// Try to start a new machine and then cancel it.
 			startThreads();
@@ -92,7 +95,7 @@ public abstract class AbstractScalingRulesCloudTest extends NewAbstractCloudTest
 
 				}
 			}, 60, TimeUnit.SECONDS);
-			repetitiveNumberOfInstancesHolds(getAbsoluteServiceName(), 2, 500, TimeUnit.SECONDS);
+			repetitiveNumberOfInstancesHolds(getAbsoluteServiceName(), new AnyZonesConfig(), 2, 500, TimeUnit.SECONDS);
 		} finally {
 			uninstallApplicationAndWait(getApplicationName());
 		}
@@ -102,9 +105,9 @@ public abstract class AbstractScalingRulesCloudTest extends NewAbstractCloudTest
 		return ScriptUtils.getBuildPath() + "/recipes/apps/" + APPLICATION_FOLDERNAME;
 	} 
 
-	protected void repetitiveNumberOfInstancesHolds(String absoluteServiceName, int expectedNumberOfInstances, long duration, TimeUnit timeunit) {
+	protected void repetitiveNumberOfInstancesHolds(String absoluteServiceName, ZonesConfig zones, int expectedNumberOfInstances, long duration, TimeUnit timeunit) {
 		AssertUtils.repetitiveAssertConditionHolds("Expected " + expectedNumberOfInstances + " "+ absoluteServiceName +" instance(s)", 
-				numberOfInstancesRepetitiveCondition(absoluteServiceName, expectedNumberOfInstances), 
+				numberOfInstancesRepetitiveCondition(absoluteServiceName, zones, expectedNumberOfInstances), 
 				timeunit.toMillis(duration), 1000);
 
 	}
@@ -124,19 +127,28 @@ public abstract class AbstractScalingRulesCloudTest extends NewAbstractCloudTest
 			executor.scheduleWithFixedDelay(thread, 0, THROUGHPUT_PER_THREAD, TimeUnit.SECONDS);
 		}
 	}
+	
+	protected void startThreads(ZonesConfig zones) {
+		for(int i = 0 ; i < NUMBER_OF_HTTP_GET_THREADS ; i++){
+			final HttpRequest thread = new HttpRequest(getAbsoluteServiceName());
+			thread.setZones(zones);
+			threads.add(thread);
+			executor.scheduleWithFixedDelay(thread, 0, THROUGHPUT_PER_THREAD, TimeUnit.SECONDS);
+		}
+	}
 
 	/**
 	 * Wait until petclinic has the specified number of instances
 	 */
-	protected void repititiveAssertNumberOfInstances(final String absoluteServiceName, final int expectedNumberOfInstances) {
+	protected void repititiveAssertNumberOfInstances(final String absoluteServiceName, ZonesConfig zones, final int expectedNumberOfInstances) {
 
-		repetitiveAssertTrue("Expected " + expectedNumberOfInstances + " "+ absoluteServiceName +" instance(s)", 
-				numberOfInstancesRepetitiveCondition(absoluteServiceName, expectedNumberOfInstances), 
+		repetitiveAssertTrue("Failed finding " + expectedNumberOfInstances + " for " + absoluteServiceName + " in zones " + zones.getZones() + " . waited " + expectedNumberOfInstances * OPERATION_TIMEOUT * 3, 
+				numberOfInstancesRepetitiveCondition(absoluteServiceName, zones, expectedNumberOfInstances), 
 				expectedNumberOfInstances * OPERATION_TIMEOUT * 3);
 	}
 
 	private RepetitiveConditionProvider numberOfInstancesRepetitiveCondition(
-			final String absoluteServiceName,
+			final String absoluteServiceName, final ZonesConfig zones,
 			final int expectedNumberOfInstances) {
 		return new RepetitiveConditionProvider() {
 
@@ -144,14 +156,14 @@ public abstract class AbstractScalingRulesCloudTest extends NewAbstractCloudTest
 			public boolean getCondition() {
 				List<InstanceDetails> instancesDetails = null;
 				try {
-					instancesDetails = getInstancesDetails(absoluteServiceName);
+					instancesDetails = getInstancesDetails(absoluteServiceName, zones);
 				}
 				catch (Exception e) {
 					Assert.fail("Error while polling number of ip addresses", e);
 				}
 				boolean condition = instancesDetails.size() == expectedNumberOfInstances;
 				if (!condition) {
-					LogUtils.log("Expecting " + expectedNumberOfInstances + " " + absoluteServiceName + " instance(s). Instead found " + instancesDetails);
+					LogUtils.log("Expecting " + expectedNumberOfInstances + " " + absoluteServiceName + " instance(s) in zones " + zones.getZones() + ". Instead found " + instancesDetails);
 				}
 				return condition;
 
@@ -167,6 +179,7 @@ public abstract class AbstractScalingRulesCloudTest extends NewAbstractCloudTest
 		private final String absoluteServiceName;
 		private final HttpClient client;
 		private boolean closed = false;
+		private ZonesConfig zones = new AnyZonesConfig(); // to get all instances if no zone specified
 
 		public HttpRequest(String absoluteServiceName){
 			this.absoluteServiceName = absoluteServiceName;
@@ -179,6 +192,10 @@ public abstract class AbstractScalingRulesCloudTest extends NewAbstractCloudTest
 				client.getConnectionManager().shutdown();
 			}
 		}
+		
+		public void setZones(ZonesConfig zones) {
+			this.zones = zones;
+		}
 
 		@Override
 		public synchronized void run() {
@@ -187,7 +204,7 @@ public abstract class AbstractScalingRulesCloudTest extends NewAbstractCloudTest
 			}
 			List<InstanceDetails> instancesDetails = null;
 			try {
-				instancesDetails = getInstancesDetails(absoluteServiceName);
+				instancesDetails = getInstancesDetails(absoluteServiceName, zones);
 				assertTrue("Could not retrieve public ip addresses of " + absoluteServiceName, !instancesDetails.isEmpty());
 				// choose the instance with the lowest zone
 				Collections.sort(instancesDetails, new Comparator<InstanceDetails>(){
@@ -254,15 +271,13 @@ public abstract class AbstractScalingRulesCloudTest extends NewAbstractCloudTest
 		return publicIpAddresses;
 	}
 	
-	class InstanceDetails {
+	public class InstanceDetails {
 		private final URL publicIp;
 		private final ZonesConfig agentZones;
-		private final String UID;
 		
-		public InstanceDetails(URL publicIp, ZonesConfig agentZones, String uid) {
+		public InstanceDetails(URL publicIp, ZonesConfig agentZones) {
 			this.agentZones = agentZones;
 			this.publicIp = publicIp;
-			this.UID = uid;
 		}
 
 		public URL getPublicIp() {
@@ -282,7 +297,7 @@ public abstract class AbstractScalingRulesCloudTest extends NewAbstractCloudTest
 		
 	}
 	
-	protected List<InstanceDetails> getInstancesDetails(String absoluteServiceName) throws Exception {
+	protected List<InstanceDetails> getInstancesDetails(String absoluteServiceName, ZonesConfig zones) throws Exception {
 		
 		List<InstanceDetails> instancesDetails = new ArrayList<InstanceDetails>();
 
@@ -300,27 +315,27 @@ public abstract class AbstractScalingRulesCloudTest extends NewAbstractCloudTest
 			
 			URL agentZonesUrl = new URL(instanceUrl +"/GridServiceContainer/GridServiceAgent/ExactZones/Properties/"+zonesAttrName);
 			String agentZonesResponse = WebUtils.getURLContent(agentZonesUrl);
-			ZonesConfig agentZones = null;
+			ExactZonesConfig agentZones = null;
+			String[] instanceZones = null;
 			if (agentZonesResponse.length() > 0) {
 				Map<String, Object> agentZoneMap = jsonToMap(agentZonesResponse);
+				instanceZones = StringUtils.commaDelimitedListToStringArray(
+						(String) agentZoneMap.get(zonesAttrName));
 				agentZones = 
 						new ExactZonesConfigurer()
 						.addZones(
-								StringUtils.commaDelimitedListToStringArray(
-										(String) agentZoneMap.get(zonesAttrName)))
+								instanceZones)
 						.create();
 			}
-			if (publicIp != null && agentZones != null) {
-				instancesDetails.add(new InstanceDetails(publicIp,agentZones, getInstanceUID(agentZones)));
+			if (publicIp != null && agentZones != null && agentZones.isStasfies(zones)) {
+				instancesDetails.add(new InstanceDetails(publicIp,agentZones));
 			}
 		}
 
 		return instancesDetails;
 	}
-
-	private String getInstanceUID(ZonesConfig agentZones) {
-		return "currently not supported";
-	}
+	
+	
 
 	private List<String> getInstancesUrls(String absoluteServiceName)
 			throws Exception, MalformedURLException, IOException {

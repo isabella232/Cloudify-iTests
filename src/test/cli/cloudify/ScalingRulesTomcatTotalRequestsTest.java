@@ -26,7 +26,6 @@ import org.testng.annotations.Test;
 import framework.tools.SGTestHelper;
 import framework.utils.AssertUtils.RepetitiveConditionProvider;
 import framework.utils.LogUtils;
-import framework.utils.WebUtils;
 
 public class ScalingRulesTomcatTotalRequestsTest extends AbstractLocalCloudTest {
 

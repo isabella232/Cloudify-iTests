@@ -41,7 +41,7 @@ import framework.utils.LogUtils;
 import framework.utils.TestUtils;
 
 
-public class Ec2LocationAwareScalingRulesTest extends AbstractScalingRulesCloudTest{
+public class Ec2LocationScaleOutCacneleationTest extends AbstractScalingRulesCloudTest{
 
 	private static final String LOCATION_AWARE_POSTFIX = "-location-aware";
 	private static final String NEWLINE = System.getProperty("line.separator");
@@ -80,14 +80,6 @@ public class Ec2LocationAwareScalingRulesTest extends AbstractScalingRulesCloudT
 
 			Set<ExactZonesConfig> puExactZones = getProcessingUnitExactZones(getAbsoluteServiceName());
 			ExactZonesConfig zonesToPerformAutoScaling = puExactZones.iterator().next(); // just take the first zone
-			
-//			// increase web traffic for the instance of the specific zone, wait for scale out
-//			startThreads(zonesToPerformAutoScaling);
-//			repititiveAssertNumberOfInstances(getAbsoluteServiceName(),zonesToPerformAutoScaling, 2);
-//
-//			// stop web traffic, wait for scale in
-//			stopThreads();
-//			repititiveAssertNumberOfInstances(getAbsoluteServiceName(), zonesToPerformAutoScaling, 1);
 
 			// Try to start a new machine and then cancel it.
 			LogUtils.log("starting threads");

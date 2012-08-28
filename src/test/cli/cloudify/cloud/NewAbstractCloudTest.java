@@ -113,7 +113,7 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 				} 
 				else {
 					LogUtils.log("The cloud was not bootstrapped, so no teardown required.");
-					this.cloud.afterTeardown();
+					this.cloud.scanLeakedAgentAndManagementNodes();
 				}
 			} 
 			catch (final Exception e) {
@@ -287,19 +287,45 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 	}
 
 
-	public void scanNodesLeak() {
+	public void scanAgentNodesLeak() {
 		if (cloud == null) {
 			LogUtils.log("Test: " + lastTestName + " skipping scanNodesLeak since cloud is null");
 			return;
 		}
-		//We will give a short timeout to give the ESM 
-		//time to recognize that he needs to shutdown the machine.
+		// We will give a short timeout to give the ESM 
+		// time to recognize that he needs to shutdown the machine.
 		try {
 			Thread.sleep(TEN_SECONDS_IN_MILLIS);
 		} catch (InterruptedException e) {
 			AssertFail("Failed waiting for esm to recognize instance count decrease.", e);
 		}
-		final boolean leakedAgentScanResult = this.cloud.afterTest();
+		final boolean leakedAgentScanResult = this.cloud.scanLeakedAgentNodes();
+
+		if (this.lastTestResult == ITestResult.SUCCESS) {
+			// test passed - check for leaked VMs
+			if (!leakedAgentScanResult) {
+				// The test passed, but machines leaked, so the configuration should fail.
+				AssertFail("Test: " + lastTestName + " ended successfully, but leaked nodes were found!");
+			}
+		} 
+		else {
+			LogUtils.log("Test: " + lastTestName + " failed, and some leaked nodes were found too");
+		}
+	}
+	
+	public void scanAgentAndManagementNodesLeak() {
+		if (cloud == null) {
+			LogUtils.log("Test: " + lastTestName + " skipping scanNodesLeak since cloud is null");
+			return;
+		}
+		// We will give a short timeout to give the ESM 
+		// time to recognize that he needs to shutdown the machine.
+		try {
+			Thread.sleep(TEN_SECONDS_IN_MILLIS);
+		} catch (InterruptedException e) {
+			AssertFail("Failed waiting for esm to recognize instance count decrease.", e);
+		}
+		final boolean leakedAgentScanResult = this.cloud.scanLeakedAgentAndManagementNodes();
 
 		if (this.lastTestResult == ITestResult.SUCCESS) {
 			// test passed - check for leaked VMs

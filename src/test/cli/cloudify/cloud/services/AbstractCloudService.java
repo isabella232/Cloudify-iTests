@@ -296,7 +296,7 @@ public abstract class AbstractCloudService implements CloudService {
 		finally {
 			setBootstrapped(false);
 			try {				
-				afterTeardown();
+				scanLeakedAgentAndManagementNodes();
 			} 
 			finally {
 				deleteServiceFolders();
@@ -305,7 +305,7 @@ public abstract class AbstractCloudService implements CloudService {
 	}
 
 	@Override
-	public boolean afterTeardown() {
+	public boolean scanLeakedAgentAndManagementNodes() {
 		return true;
 	}
 
@@ -444,7 +444,7 @@ public abstract class AbstractCloudService implements CloudService {
 	}
 	
 	@Override
-	public boolean afterTest() {
+	public boolean scanLeakedAgentNodes() {
 		return true;
 	}
 }

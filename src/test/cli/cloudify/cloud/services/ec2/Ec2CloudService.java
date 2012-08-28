@@ -103,7 +103,7 @@ public class Ec2CloudService extends AbstractCloudService {
 	}
 
 	@Override
-	public boolean afterTeardown() {
+	public boolean scanLeakedAgentAndManagementNodes() {
 
 		if (this.context == null) {
 			return true;
@@ -251,7 +251,7 @@ public class Ec2CloudService extends AbstractCloudService {
 	}
 
 	@Override
-	public boolean afterTest() {
+	public boolean scanLeakedAgentNodes() {
 		final String agentPrefix = this.cloudConfiguration.getProvider().getMachineNamePrefix();
 
 		final List<ComputeMetadata> leakedNodes = checkForLeakedNodesWithPrefix(agentPrefix);

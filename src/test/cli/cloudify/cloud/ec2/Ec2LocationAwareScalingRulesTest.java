@@ -68,16 +68,16 @@ public class Ec2LocationAwareScalingRulesTest extends AbstractScalingRulesCloudT
 			final String applicationPath = getApplicationPath();
 			installApplicationAndWait(applicationPath, getApplicationName());
 
-			repititiveAssertNumberOfInstances(getAbsoluteServiceName(), 1);
+			repititiveAssertNumberOfInstances(getAbsoluteServiceName(), 2);
 
 
 			// increase web traffic, wait for scale out
 			startThreads();
-			repititiveAssertNumberOfInstances(getAbsoluteServiceName(), 2);
+			repititiveAssertNumberOfInstances(getAbsoluteServiceName(), 3);
 
 			// stop web traffic, wait for scale in
 			stopThreads();
-			repititiveAssertNumberOfInstances(getAbsoluteServiceName(), 1);
+			repititiveAssertNumberOfInstances(getAbsoluteServiceName(), 2);
 
 			// Try to start a new machine and then cancel it.
 			startThreads();
@@ -89,7 +89,7 @@ public class Ec2LocationAwareScalingRulesTest extends AbstractScalingRulesCloudT
 
 				}
 			}, 30, TimeUnit.SECONDS);
-			repetitiveNumberOfInstancesHolds(getAbsoluteServiceName(), 1, 500, TimeUnit.SECONDS);
+			repetitiveNumberOfInstancesHolds(getAbsoluteServiceName(), 2, 500, TimeUnit.SECONDS);
 		} finally {
 			uninstallApplicationAndWait(getApplicationName());
 		}
@@ -117,9 +117,9 @@ public class Ec2LocationAwareScalingRulesTest extends AbstractScalingRulesCloudT
 					"service {" +NEWLINE +
 						"\textend \"../../../services/tomcat\""+NEWLINE+
 						"\tlocationAware true"+NEWLINE+
-						"\tnumInstances 1"+NEWLINE+        // initial total number of instances 2
+						"\tnumInstances 2"+NEWLINE+        // initial total number of instances 2
 						"\tminAllowedInstances 1"+NEWLINE+ // per zone 1
-						"\tmaxAllowedInstances 2"+NEWLINE+ // per zone 2
+						"\tmaxAllowedInstances 3"+NEWLINE+ // per zone 2
 					"}");
 		} catch (final IOException e) {
 			Assert.fail("Failed to create " + this.getApplicationPath(),e);

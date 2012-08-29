@@ -74,17 +74,20 @@ public abstract class AbstractScalingRulesCloudTest extends NewAbstractCloudTest
 			final String applicationPath = getApplicationPath();
 			installApplicationAndWait(applicationPath, getApplicationName());
 
-			repititiveAssertNumberOfInstances(getAbsoluteServiceName(), new AnyZonesConfig(), 2);
+			repititiveAssertNumberOfInstances(getAbsoluteServiceName(), new AnyZonesConfig(), 1);
 
 
 			// increase web traffic, wait for scale out
+			LogUtils.log("starting threads");
 			startThreads();
-			repititiveAssertNumberOfInstances(getAbsoluteServiceName(), new AnyZonesConfig(), 3);
+			repititiveAssertNumberOfInstances(getAbsoluteServiceName(), new AnyZonesConfig(), 2);
 
+			LogUtils.log("stopping threads");
 			// stop web traffic, wait for scale in
 			stopThreads();
-			repititiveAssertNumberOfInstances(getAbsoluteServiceName(), new AnyZonesConfig(),  2);
+			repititiveAssertNumberOfInstances(getAbsoluteServiceName(), new AnyZonesConfig(),  1);
 
+			LogUtils.log("starting threads");
 			// Try to start a new machine and then cancel it.
 			startThreads();
 			executor.schedule(new Runnable() {
@@ -95,7 +98,7 @@ public abstract class AbstractScalingRulesCloudTest extends NewAbstractCloudTest
 
 				}
 			}, 60, TimeUnit.SECONDS);
-			repetitiveNumberOfInstancesHolds(getAbsoluteServiceName(), new AnyZonesConfig(), 2, 500, TimeUnit.SECONDS);
+			repetitiveNumberOfInstancesHolds(getAbsoluteServiceName(), new AnyZonesConfig(), 1, 500, TimeUnit.SECONDS);
 		} finally {
 			uninstallApplicationAndWait(getApplicationName());
 		}

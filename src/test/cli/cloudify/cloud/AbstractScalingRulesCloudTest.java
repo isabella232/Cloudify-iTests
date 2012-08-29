@@ -166,7 +166,7 @@ public abstract class AbstractScalingRulesCloudTest extends NewAbstractCloudTest
 				}
 				boolean condition = instancesDetails.size() == expectedNumberOfInstances;
 				if (!condition) {
-					LogUtils.log("Expecting " + expectedNumberOfInstances + " " + absoluteServiceName + " instance(s) in zones " + zones.getZones() + ". Instead found " + instancesDetails);
+					LogUtils.log("Expecting " + expectedNumberOfInstances + " " + absoluteServiceName + " instance(s) that satisfies zones " + zones.getZones() + ". Instead found " + instancesDetails);
 				}
 				return condition;
 
@@ -276,9 +276,9 @@ public abstract class AbstractScalingRulesCloudTest extends NewAbstractCloudTest
 	
 	public class InstanceDetails {
 		private final URL publicIp;
-		private final ZonesConfig agentZones;
+		private final ExactZonesConfig agentZones;
 		
-		public InstanceDetails(URL publicIp, ZonesConfig agentZones) {
+		public InstanceDetails(URL publicIp, ExactZonesConfig agentZones) {
 			this.agentZones = agentZones;
 			this.publicIp = publicIp;
 		}
@@ -287,7 +287,7 @@ public abstract class AbstractScalingRulesCloudTest extends NewAbstractCloudTest
 			return publicIp;
 		}
 
-		public ZonesConfig getAgentZones() {
+		public ExactZonesConfig getAgentZones() {
 			return agentZones;
 		}
 

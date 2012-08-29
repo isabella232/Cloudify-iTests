@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.io.FileUtils;
 import org.openspaces.admin.zone.config.AnyZonesConfig;
@@ -23,7 +24,7 @@ import test.cli.cloudify.cloud.AbstractScalingRulesCloudTest;
 import framework.utils.LogUtils;
 import framework.utils.TestUtils;
 
-public class Ec2LocationAwareScaleOutScaleInTest extends AbstractScalingRulesCloudTest {
+public class Ec2LocationAwareScalingRulesTest extends AbstractScalingRulesCloudTest {
 	
 	private static final String LOCATION_AWARE_POSTFIX = "-location-aware";
 	private static final String NEWLINE = System.getProperty("line.separator");
@@ -46,9 +47,9 @@ public class Ec2LocationAwareScaleOutScaleInTest extends AbstractScalingRulesClo
 		cloneApplicaitonRecipeAndInjectLocationAware();
 		super.startExecutorService();	
 	}
-	
+		
 	@Override
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 3, enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
 	public void testPetclinicSimpleScalingRules() throws Exception {	
 		
 		try {
@@ -79,6 +80,50 @@ public class Ec2LocationAwareScaleOutScaleInTest extends AbstractScalingRulesClo
 		}
 	}
 	
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
+	public void testScaleOutCancelation() throws Exception {	
+		
+		try {
+			LogUtils.log("installing application " + getApplicationName());
+
+			final String applicationPath = getApplicationPath();
+			installApplicationAndWait(applicationPath, getApplicationName());
+			
+			// check that there are two global instances with zone 'petclinic.tomcat'
+			repititiveAssertNumberOfInstances(getAbsoluteServiceName(),new AtLeastOneZoneConfigurer().addZone(getAbsoluteServiceName()).create(), 1);
+
+			Set<ExactZonesConfig> puExactZones = getProcessingUnitExactZones(getAbsoluteServiceName());
+			ExactZonesConfig zonesToPerformAutoScaling = puExactZones.iterator().next(); // just take the first zone
+
+			// Try to start a new machine and then cancel it.
+			LogUtils.log("starting threads");
+			startThreads(zonesToPerformAutoScaling);
+			LogUtils.log("after start threads");
+			executor.schedule(new Runnable() {
+
+				@Override
+				public void run() {
+					LogUtils.log("before stop threads");
+					stopThreads();
+					LogUtils.log("after threads stop");
+
+				}
+			}, 30, TimeUnit.SECONDS);
+			
+			try {
+				repetitiveNumberOfInstancesHolds(getAbsoluteServiceName(),zonesToPerformAutoScaling, 1, 500, TimeUnit.SECONDS);
+			} catch (AssertionError e) {
+				LogUtils.log("Test Failed : number of instances for zone " + zonesToPerformAutoScaling + " wasnt 1 as expected");
+				Assert.fail();
+			}
+		} finally {
+			LogUtils.log("test finished. currently in finally cause, before stopping threads");
+			stopThreads();
+			LogUtils.log("test finished. currently in finally cause, after stopping threads");
+			uninstallApplicationAndWait(getApplicationName());
+		}
+	}
+	
 	private Set<ExactZonesConfig> getProcessingUnitExactZones(
 			String absoluteServiceName) throws Exception {
 		List<InstanceDetails> detailss = getInstancesDetails(absoluteServiceName, new AnyZonesConfig());
@@ -90,6 +135,7 @@ public class Ec2LocationAwareScaleOutScaleInTest extends AbstractScalingRulesClo
 		
 		return zones;
 	}
+	
 
 	// shutdown executor service
 	// scan for leaking nodes

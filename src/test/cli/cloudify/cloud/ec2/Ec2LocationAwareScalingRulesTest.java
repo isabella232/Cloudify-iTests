@@ -9,6 +9,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.io.FileUtils;
 import org.openspaces.admin.zone.config.AnyZonesConfig;
+import org.openspaces.admin.zone.config.AtLeastOneZoneConfig;
 import org.openspaces.admin.zone.config.AtLeastOneZoneConfigurer;
 import org.openspaces.admin.zone.config.ExactZonesConfig;
 import org.testng.Assert;
@@ -58,18 +59,19 @@ public class Ec2LocationAwareScalingRulesTest extends AbstractScalingRulesCloudT
 			installApplicationAndWait(applicationPath, getApplicationName());
 			
 			// check that there are two global instances with zone 'petclinic.tomcat'
-			repititiveAssertNumberOfInstances(getAbsoluteServiceName(),new AtLeastOneZoneConfigurer().addZone(getAbsoluteServiceName()).create(), 2);
+			AtLeastOneZoneConfig zones = new AtLeastOneZoneConfigurer().addZone(getAbsoluteServiceName()).create();
+			repititiveAssertNumberOfInstances(getAbsoluteServiceName(),zones, 2, OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
 
 			Set<ExactZonesConfig> puExactZones = getProcessingUnitExactZones(getAbsoluteServiceName());
 			ExactZonesConfig zonesToPerformAutoScaling = puExactZones.iterator().next(); // just take the first zone
 			
 			// increase web traffic for the instance of the specific zone, wait for scale out
 			startThreads(zonesToPerformAutoScaling);
-			repititiveAssertNumberOfInstances(getAbsoluteServiceName(),zonesToPerformAutoScaling, 2);
+			repititiveAssertNumberOfInstances(getAbsoluteServiceName(),zonesToPerformAutoScaling, 2, OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
 
 			// stop web traffic, wait for scale in
 			stopThreads();
-			repititiveAssertNumberOfInstances(getAbsoluteServiceName(), zonesToPerformAutoScaling, 1);
+			repititiveAssertNumberOfInstances(getAbsoluteServiceName(), zonesToPerformAutoScaling, 1, OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
 
 		} finally {
 			LogUtils.log("test finished. currently in finally cause, before stopping threads");
@@ -89,7 +91,8 @@ public class Ec2LocationAwareScalingRulesTest extends AbstractScalingRulesCloudT
 			installApplicationAndWait(applicationPath, getApplicationName());
 			
 			// check that there are two global instances with zone 'petclinic.tomcat'
-			repititiveAssertNumberOfInstances(getAbsoluteServiceName(),new AtLeastOneZoneConfigurer().addZone(getAbsoluteServiceName()).create(), 2);
+			AtLeastOneZoneConfig zones = new AtLeastOneZoneConfigurer().addZone(getAbsoluteServiceName()).create();
+			repititiveAssertNumberOfInstances(getAbsoluteServiceName(),zones, 2, OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
 
 			Set<ExactZonesConfig> puExactZones = getProcessingUnitExactZones(getAbsoluteServiceName());
 			ExactZonesConfig zonesToPerformAutoScaling = puExactZones.iterator().next(); // just take the first zone

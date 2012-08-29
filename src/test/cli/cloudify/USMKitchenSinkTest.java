@@ -38,6 +38,7 @@ import org.openspaces.admin.internal.esm.DefaultElasticServiceManager;
 import org.openspaces.admin.internal.gsa.DefaultGridServiceAgent;
 import org.openspaces.admin.internal.gsm.DefaultGridServiceManager;
 import org.openspaces.admin.internal.lus.DefaultLookupService;
+import org.openspaces.admin.internal.pu.DefaultProcessingUnitInstance;
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.openspaces.admin.pu.ProcessingUnitInstance;
 import org.openspaces.admin.pu.ProcessingUnitType;
@@ -121,6 +122,8 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 		// run tests
 		checkManagementComponentPidsAreEqual();
 		
+		checkManagementServicesPidsAreEqual();
+		
 		validateManagementZones();
 		
 		checkForStartupPrintouts(pui, pid, matcher);
@@ -180,6 +183,20 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 
 	}
 	
+	private void checkManagementServicesPidsAreEqual() throws RemoteException {
+		DefaultProcessingUnitInstance rest = (DefaultProcessingUnitInstance) admin.getProcessingUnits().getProcessingUnit("rest").getInstances()[0];
+		DefaultProcessingUnitInstance space = (DefaultProcessingUnitInstance) admin.getProcessingUnits().getProcessingUnit("cloudifyManagementSpace").getInstances()[0];
+		DefaultProcessingUnitInstance webui = (DefaultProcessingUnitInstance) admin.getProcessingUnits().getProcessingUnit("webui").getInstances()[0];
+		
+		long restPid = rest.getJVMDetails().getPid();
+		long spacePid = space.getJVMDetails().getPid();
+		long webuiPid = webui.getJVMDetails().getPid();
+		
+		LogUtils.log("Comparing management component pids");
+		assertTrue("rest and managementSpace did not start on the same process", restPid == spacePid);
+		assertTrue("rest and webui did not start on the same process", restPid == webuiPid);
+	}
+
 	private void checkManagementComponentPidsAreEqual() throws RemoteException {
 		DefaultGridServiceManager gsm = (DefaultGridServiceManager) admin.getGridServiceManagers().waitForAtLeastOne(5000, TimeUnit.MILLISECONDS);
 		DefaultGridServiceAgent gsa = (DefaultGridServiceAgent) admin.getGridServiceAgents().waitForAtLeastOne(5000, TimeUnit.MILLISECONDS);

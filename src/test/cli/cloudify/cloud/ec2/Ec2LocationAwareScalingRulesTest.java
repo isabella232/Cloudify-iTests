@@ -11,7 +11,6 @@ import org.apache.commons.io.FileUtils;
 import org.openspaces.admin.zone.config.AnyZonesConfig;
 import org.openspaces.admin.zone.config.AtLeastOneZoneConfigurer;
 import org.openspaces.admin.zone.config.ExactZonesConfig;
-import org.openspaces.admin.zone.config.ExactZonesConfigurer;
 import org.testng.Assert;
 import org.testng.ITestContext;
 import org.testng.annotations.AfterClass;
@@ -59,7 +58,7 @@ public class Ec2LocationAwareScalingRulesTest extends AbstractScalingRulesCloudT
 			installApplicationAndWait(applicationPath, getApplicationName());
 			
 			// check that there are two global instances with zone 'petclinic.tomcat'
-			repititiveAssertNumberOfInstances(getAbsoluteServiceName(),new AtLeastOneZoneConfigurer().addZone(getAbsoluteServiceName()).create(), 1);
+			repititiveAssertNumberOfInstances(getAbsoluteServiceName(),new AtLeastOneZoneConfigurer().addZone(getAbsoluteServiceName()).create(), 2);
 
 			Set<ExactZonesConfig> puExactZones = getProcessingUnitExactZones(getAbsoluteServiceName());
 			ExactZonesConfig zonesToPerformAutoScaling = puExactZones.iterator().next(); // just take the first zone
@@ -90,7 +89,7 @@ public class Ec2LocationAwareScalingRulesTest extends AbstractScalingRulesCloudT
 			installApplicationAndWait(applicationPath, getApplicationName());
 			
 			// check that there are two global instances with zone 'petclinic.tomcat'
-			repititiveAssertNumberOfInstances(getAbsoluteServiceName(),new AtLeastOneZoneConfigurer().addZone(getAbsoluteServiceName()).create(), 1);
+			repititiveAssertNumberOfInstances(getAbsoluteServiceName(),new AtLeastOneZoneConfigurer().addZone(getAbsoluteServiceName()).create(), 2);
 
 			Set<ExactZonesConfig> puExactZones = getProcessingUnitExactZones(getAbsoluteServiceName());
 			ExactZonesConfig zonesToPerformAutoScaling = puExactZones.iterator().next(); // just take the first zone
@@ -130,7 +129,7 @@ public class Ec2LocationAwareScalingRulesTest extends AbstractScalingRulesCloudT
 		
 		Set<ExactZonesConfig> zones = new HashSet<ExactZonesConfig>();
 		for (InstanceDetails details : detailss) {
-			zones.add(new ExactZonesConfigurer().addZones(details.getAgentZones().getZones()).create());
+			zones.add(details.getAgentZones());
 		}
 		
 		return zones;

@@ -59,7 +59,7 @@ import framework.utils.TeardownUtils;
 
 public class AbstractLocalCloudTest extends AbstractTest {
 
-	protected final int WAIT_FOR_TIMEOUT = 20;
+	protected final int WAIT_FOR_TIMEOUT = 60;
 	private final int HTTP_STATUS_OK = 200;
 	private final int restPort = 8100;
 	protected static String restUrl = null;

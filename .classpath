@@ -8,7 +8,6 @@
 	<classpathentry kind="var" path="CLOUDIFY_LATEST/lib/required/gs-openspaces.jar" sourcepath="/CLOUDIFY_LATEST/lib/optional/openspaces/gs-openspaces-src.zip"/>
 	<classpathentry kind="var" path="CLOUDIFY_LATEST/lib/required/commons-logging.jar"/>
 	<classpathentry kind="var" path="CLOUDIFY_LATEST/lib/optional/spring/com.springsource.net.sf.cglib-2.2.0.jar"/>
-	<classpathentry kind="var" path="CLOUDIFY_LATEST/lib/optional/spring/com.springsource.javax.annotation-1.0.0.jar"/>
 	<classpathentry kind="var" path="CLOUDIFY_LATEST/lib/required/org.springframework.asm-3.1.1.RELEASE.jar"/>
 	<classpathentry kind="var" path="CLOUDIFY_LATEST/lib/required/org.springframework.aspects-3.1.1.RELEASE.jar"/>
 	<classpathentry kind="var" path="CLOUDIFY_LATEST/lib/required/org.springframework.beans-3.1.1.RELEASE.jar"/>

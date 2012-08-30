@@ -1,8 +1,6 @@
-import com.j_spaces.kernel.Environment;
-
 service {
 	
-	def tomcatRecipeDir = Environment.getHomeDirectory() + "../recipes/services/tomcat"
+	def tomcatRecipeDir = "../../../recipes/services/tomcat"
 
 	extend "${tomcatRecipeDir}"
 	compute {

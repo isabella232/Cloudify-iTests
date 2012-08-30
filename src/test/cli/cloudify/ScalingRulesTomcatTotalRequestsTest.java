@@ -19,6 +19,7 @@ import org.openspaces.admin.pu.statistics.AverageInstancesStatisticsConfig;
 import org.openspaces.admin.pu.statistics.ProcessingUnitStatisticsId;
 import org.openspaces.admin.pu.statistics.ProcessingUnitStatisticsIdConfigurer;
 import org.openspaces.admin.pu.statistics.ThroughputTimeWindowStatisticsConfigurer;
+import org.openspaces.admin.zone.config.AnyZonesConfig;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -67,6 +68,7 @@ public class ScalingRulesTomcatTotalRequestsTest extends AbstractLocalCloudTest 
 			.metric(COUNTER_METRIC)
 			.instancesStatistics(new AverageInstancesStatisticsConfig())
 			.timeWindowStatistics(new ThroughputTimeWindowStatisticsConfigurer().timeWindow(20, TimeUnit.SECONDS).create())
+			.agentZones(new AnyZonesConfig())
 			.create();
 
 			pu.addStatisticsCalculation(statisticsId);

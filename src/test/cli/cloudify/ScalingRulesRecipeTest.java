@@ -21,6 +21,7 @@ import org.openspaces.admin.pu.statistics.AverageInstancesStatisticsConfig;
 import org.openspaces.admin.pu.statistics.AverageTimeWindowStatisticsConfigurer;
 import org.openspaces.admin.pu.statistics.ProcessingUnitStatisticsId;
 import org.openspaces.admin.pu.statistics.ProcessingUnitStatisticsIdConfigurer;
+import org.openspaces.admin.zone.config.AnyZonesConfig;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -86,6 +87,7 @@ public class ScalingRulesRecipeTest extends AbstractLocalCloudTest {
 					.metric(COUNTER_METRIC)
 					.instancesStatistics(new AverageInstancesStatisticsConfig())
 					.timeWindowStatistics(new AverageTimeWindowStatisticsConfigurer().timeWindow(5, TimeUnit.SECONDS).create())
+					.agentZones(new AnyZonesConfig())
 					.create();
 			pu.addStatisticsCalculation(averageStatisticsId);
 			pu.setStatisticsInterval(1, TimeUnit.SECONDS);

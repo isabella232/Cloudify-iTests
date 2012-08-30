@@ -40,6 +40,7 @@ public class PetClinicTest extends AbstractSeleniumApplicationRecipeTest {
 	private static final String MONGOS_FULL_SERVICE_NAME = ServiceUtils.getAbsolutePUName(PETCLINIC_APPLICATION_NAME, "mongos");
 	private static final String MONGOCFG_FULL_SERVICE_NAME = ServiceUtils.getAbsolutePUName(PETCLINIC_APPLICATION_NAME, "mongoConfig");
 	private static final String TOMCAT_FULL_SERVICE_NAME = ServiceUtils.getAbsolutePUName(PETCLINIC_APPLICATION_NAME, "tomcat");
+	private static final String APACHELB_FULL_SERVICE_NAME = ServiceUtils.getAbsolutePUName(PETCLINIC_APPLICATION_NAME, "apacheLB");
 
 	@Override
 	@BeforeMethod
@@ -180,6 +181,16 @@ public class PetClinicTest extends AbstractSeleniumApplicationRecipeTest {
 		};
 		repetitiveAssertTrueWithScreenshot(null, condition, this.getClass(), "petClinicDemoTest","failed");
 		
+		condition = new RepetitiveConditionProvider() {
+			
+			@Override
+			public boolean getCondition() {
+				ApplicationNode apachelbNode = appMap.getApplicationNode(APACHELB_FULL_SERVICE_NAME);
+				return ((apachelbNode != null) && (apachelbNode.getStatus().equals(DeploymentStatus.INTACT)));
+			}
+		};
+		repetitiveAssertTrueWithScreenshot(null, condition, this.getClass(), "petClinicDemoTest","failed");
+		
 		ApplicationNode applicationNodeTomcat = appMap.getApplicationNode(TOMCAT_FULL_SERVICE_NAME);
 		List<Connector> tomcatConnectors = applicationNodeTomcat.getConnectors();
 		
@@ -207,6 +218,7 @@ public class PetClinicTest extends AbstractSeleniumApplicationRecipeTest {
 		assertTrue(puTreeGrid.getProcessingUnit(MONGOD_FULL_SERVICE_NAME) != null);
 		assertTrue(puTreeGrid.getProcessingUnit(MONGOS_FULL_SERVICE_NAME) != null);
 		assertTrue(puTreeGrid.getProcessingUnit(MONGOCFG_FULL_SERVICE_NAME) != null);
+		assertTrue(puTreeGrid.getProcessingUnit(APACHELB_FULL_SERVICE_NAME) != null);
 		
 		takeScreenShot(this.getClass(), "petClinicDemoTest","passed-services");
 		
@@ -222,7 +234,7 @@ public class PetClinicTest extends AbstractSeleniumApplicationRecipeTest {
 		
         HtmlPage page = null;
         try {
-            page = client.getPage("http://" + localMachine.getHostAddress() + ":8080/petclinic-mongo");
+            page = client.getPage("http://" + localMachine.getHostAddress() + ":8090");
         } catch (IOException e) {
             fail("Could not get a resposne from the petclinic URL " + e.getMessage());
         }

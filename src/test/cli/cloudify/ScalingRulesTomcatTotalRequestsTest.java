@@ -40,14 +40,14 @@ public class ScalingRulesTomcatTotalRequestsTest extends AbstractLocalCloudTest 
 	private ScheduledExecutorService executor;
 	private String applicationUrl;
 	private AtomicInteger requestsMade = new AtomicInteger(0);
-	
+
 	@BeforeMethod
 	public void before() throws IOException, InterruptedException {
 		String applicationDir = SGTestHelper.getSGTestRootDir() + "/recipes/apps/" + APPLICATION_FOLDER_NAME;
 		runCommand("connect " + restUrl + ";install-service --verbose " + applicationDir);
 		this.executor= Executors.newScheduledThreadPool(NUMBER_OF_HTTP_GET_THREADS);
 	}
-	
+
 	@AfterMethod(alwaysRun = true)
 	public void shutdownExecutor() {
 		if (this.executor != null) {
@@ -55,39 +55,43 @@ public class ScalingRulesTomcatTotalRequestsTest extends AbstractLocalCloudTest 
 			this.executor = null;
 		}
 	}
-	
+
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT , enabled = true)
 	public void tomcatAutoScalingTest() throws Exception {
-	
-		final InternalProcessingUnit pu = (InternalProcessingUnit) admin.getProcessingUnits().waitFor(ABSOLUTE_SERVICE_NAME,OPERATION_TIMEOUT,TimeUnit.MILLISECONDS);
-		final ProcessingUnitStatisticsId statisticsId = 
-				new ProcessingUnitStatisticsIdConfigurer()
-				.monitor(CloudifyConstants.USM_MONITORS_SERVICE_ID)
-				.metric(COUNTER_METRIC)
-				.instancesStatistics(new AverageInstancesStatisticsConfig())
-				.timeWindowStatistics(new ThroughputTimeWindowStatisticsConfigurer().timeWindow(20, TimeUnit.SECONDS).create())
-				.create();
-		 
-		pu.addStatisticsCalculation(statisticsId);
-		pu.setStatisticsInterval(1, TimeUnit.SECONDS);
-		pu.startStatisticsMonitor();
-		
-		repetitiveAssertNumberOfInstances(pu, 1);
-		for(int i = 0 ; i < NUMBER_OF_HTTP_GET_THREADS ; i++){
-			executor.scheduleWithFixedDelay(new HttpRequest(new URL(applicationUrl)), 0, THROUGHPUT_PER_THREAD, TimeUnit.SECONDS);
+
+		try {
+			final InternalProcessingUnit pu = (InternalProcessingUnit) admin.getProcessingUnits().waitFor(ABSOLUTE_SERVICE_NAME,OPERATION_TIMEOUT,TimeUnit.MILLISECONDS);
+			final ProcessingUnitStatisticsId statisticsId = 
+					new ProcessingUnitStatisticsIdConfigurer()
+			.monitor(CloudifyConstants.USM_MONITORS_SERVICE_ID)
+			.metric(COUNTER_METRIC)
+			.instancesStatistics(new AverageInstancesStatisticsConfig())
+			.timeWindowStatistics(new ThroughputTimeWindowStatisticsConfigurer().timeWindow(20, TimeUnit.SECONDS).create())
+			.create();
+
+			pu.addStatisticsCalculation(statisticsId);
+			pu.setStatisticsInterval(1, TimeUnit.SECONDS);
+			pu.startStatisticsMonitor();
+
+			repetitiveAssertNumberOfInstances(pu, 1);
+			for(int i = 0 ; i < NUMBER_OF_HTTP_GET_THREADS ; i++){
+				executor.scheduleWithFixedDelay(new HttpRequest(new URL(applicationUrl)), 0, THROUGHPUT_PER_THREAD, TimeUnit.SECONDS);
+			}
+			repetitiveAssertStatistics(pu, statisticsId, (double)TOTAL_THROUGHPUT);
+			repetitiveAssertNumberOfInstances(pu, 2);
+			executor.shutdownNow();
+			Assert.assertTrue(executor.awaitTermination(30, TimeUnit.SECONDS));
+
+			repetitiveAssertNumberOfInstances(pu, 1);
+		} finally {
+			uninstallApplication(APPLICATION_NAME);
 		}
-		repetitiveAssertStatistics(pu, statisticsId, (double)TOTAL_THROUGHPUT);
-		repetitiveAssertNumberOfInstances(pu, 2);
-		executor.shutdownNow();
-		Assert.assertTrue(executor.awaitTermination(30, TimeUnit.SECONDS));
-		
-		repetitiveAssertNumberOfInstances(pu, 1);
 	}
-	
+
 	public class HttpRequest implements Runnable{
-		
+
 		private URL url;
-				
+
 		public HttpRequest(URL url){
 			this.url = url;
 		}
@@ -106,19 +110,19 @@ public class ScalingRulesTomcatTotalRequestsTest extends AbstractLocalCloudTest 
 			}finally{
 				client.getConnectionManager().shutdown();
 			}
-			
+
 		}
-		
+
 	}
 
 	private void repetitiveAssertStatistics(final InternalProcessingUnit pu,
 			final ProcessingUnitStatisticsId statisticsId,
 			final Double expectedResult) {
 		repetitiveAssertTrue("Failed waiting for counter to be "+ expectedResult, new RepetitiveConditionProvider() {
-			
+
 			@Override
 			public boolean getCondition() {
-				
+
 				final Object counter = pu.getStatistics().getStatistics().get(statisticsId);
 				if (counter == null) {
 					LogUtils.log("Cannot get statistics " + statisticsId);
@@ -126,7 +130,7 @@ public class ScalingRulesTomcatTotalRequestsTest extends AbstractLocalCloudTest 
 				else if (!(counter instanceof Double)) {
 					LogUtils.log("Cannot get Double from statistics " + statisticsId);
 				} else {
-				
+
 					if (((Double)counter) != expectedResult) {
 						LogUtils.log("Waiting for value of average(counter), to be " + expectedResult + " current value is " + counter);
 					}

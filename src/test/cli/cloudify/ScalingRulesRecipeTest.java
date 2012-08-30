@@ -134,6 +134,7 @@ public class ScalingRulesRecipeTest extends AbstractLocalCloudTest {
 				Assert.assertEquals(numberOfResolvedAlerts.get(),1);
 			}
 			finally {
+				uninstallService(SERVICE_NAME);
 				pu.stopStatisticsMonitor();
 			}
 		}
@@ -145,7 +146,6 @@ public class ScalingRulesRecipeTest extends AbstractLocalCloudTest {
 				admin.getAlertManager().getAlertTriggered().remove(listener);
 			}
 		}
-		super.uninstallService(SERVICE_NAME);
 	}
 
 	private void initAlerts() {

@@ -118,7 +118,7 @@ service {
   // This has the same effect as setting scaleInCooldownInSeconds and scaleOutCooldownInSeconds separately.
   //
   // Used together with scaling rules
-  scaleCooldownInSeconds 0
+  scaleCooldownInSeconds 30
  
    
   // The time (in seconds) between two consecutive metric samples

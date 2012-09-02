@@ -175,7 +175,7 @@ public class AbstractLocalCloudTest extends AbstractTest {
 
 		if (!admin.getMachines().waitFor(1, 30, TimeUnit.SECONDS)) {
 			// Admin API did not find anything!
-
+			DumpUtils.dumpThreads(admin);
 			throw new IllegalStateException(
 					"Could not find any machines in Admin API! There is probably a discovery issue");
 		}

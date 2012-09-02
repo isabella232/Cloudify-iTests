@@ -63,10 +63,7 @@ public class AbstractLocalCloudTest extends AbstractTest {
 	protected static String restUrl = null;
 	protected static final String MANAGEMENT_APPLICATION_NAME = "management";
 	protected static final String DEFAULT_APPLICATION_NAME = "default";
-	// private static Set<String> clientStartupPIDs = null;
-	// private static Set<String> localCloudPIDs = null;
-	// private static Set<String> alivePIDs = null;
-
+	
 	protected boolean isDevEnv = false;
 
 	protected boolean checkIsDevEnv() {
@@ -94,10 +91,15 @@ public class AbstractLocalCloudTest extends AbstractTest {
 
 	@BeforeSuite
 	public void beforeSuite() throws Exception {
-				
+
+		if (admin != null) {
+			//called by leaked
+			admin.close();
+			admin = null;
+		}
+
 		if (checkIsDevEnv()) {
 			LogUtils.log("Local cloud test running in dev mode, will use existing localcloud");
-			// clientStartupPIDs = new HashSet<String>();
 		} else {
 			cleanUpCloudifyLocalDir();
 			scanForLeakedProcesses(false);
@@ -106,10 +108,8 @@ public class AbstractLocalCloudTest extends AbstractTest {
 			try {
 				runCommand("teardown-localcloud -force");
 			} catch (final AssertionError e) {
-				LogUtils.log("teardown failed because no cloud was found. proceeding with suite");
+				LogUtils.log("teardown failed because no cloud was found. proceeding with suite", e);
 			}
-
-			// clientStartupPIDs = SetupUtils.getLocalProcesses();
 
 			try {
 				LogUtils.log("Performing bootstrap");
@@ -119,7 +119,7 @@ public class AbstractLocalCloudTest extends AbstractTest {
 						!portOpenBeforeBootstrap);
 				runCommand("bootstrap-localcloud --verbose -timeout 15");
 			} catch (final Exception e) {
-				LogUtils.log("Booststrap Failed." + e);
+				LogUtils.log("Booststrap Failed." + e, e);
 				e.printStackTrace();
 			}
 		}
@@ -127,7 +127,7 @@ public class AbstractLocalCloudTest extends AbstractTest {
 		try {
 			this.admin = getAdminWithLocators();
 		} catch (final UnknownHostException e1) {
-			LogUtils.log("Could not create admin " + e1);
+			LogUtils.log("Could not create admin " + e1, e1);
 			e1.printStackTrace();
 		}
 		assertTrue("Could not find LUS of local cloud",
@@ -137,13 +137,6 @@ public class AbstractLocalCloudTest extends AbstractTest {
 		} catch (final UnknownHostException e) {
 			e.printStackTrace();
 		}
-		// try {
-		// alivePIDs = SetupUtils.getLocalProcesses();
-		// localCloudPIDs = SetupUtils.getClientProcessesIDsDelta(clientStartupPIDs,
-		// alivePIDs);
-		// } catch (final Exception e) {
-		// e.printStackTrace();
-		// }
 	}
 
 	private void cleanUpCloudifyLocalDir() throws IOException {
@@ -335,44 +328,6 @@ public class AbstractLocalCloudTest extends AbstractTest {
 				LogUtils.log("WARNING! Failed to scan for leaked processes using sigar!", e);
 			}
 
-			// if (alivePIDs != null) {
-			//
-			// final Set<String> currentPids = SetupUtils.getLocalProcesses();
-			// final Set<String> delta = SetupUtils.getClientProcessesIDsDelta(alivePIDs,
-			// currentPids);
-			//
-			// if (delta.size() > 0) {
-			// String pids = "";
-			// for (final String pid : delta) {
-			// pids += pid + ", ";
-			// }
-			// try {
-			// LogUtils.log("WARNING There is a leak PIDS [ " + pids + "] are alive");
-			// Sigar sigar = SigarHolder.getSigar();
-			// for (String pid : delta) {
-			// try {
-			// LogUtils.log("PID: " + pid + ": " + sigar.getProcExe(pid).getName());
-			// } catch (SigarException e) {
-			// LogUtils.log("Failed to get process info for pid: " + pid);
-			// }
-			//
-			// }
-			//
-			// if (!checkIsDevEnv()) {
-			// SetupUtils.killProcessesByIDs(delta);
-			// LogUtils.log("INFO killing all orphan processes");
-			// SetupUtils.killProcessesByIDs(localCloudPIDs);
-			// LogUtils.log("INFO killing local cloud processes and boostraping again");
-			// }
-			//
-			// } finally {
-			// if (!checkIsDevEnv()) {
-			// beforeSuite();
-			// }
-			// }
-			// }
-			//
-			// }
 		} catch (Throwable t) {
 			LogUtils.log("Test Configuration Failed in @AfterMethod: " + this.getClass(), t);
 		}
@@ -389,7 +344,7 @@ public class AbstractLocalCloudTest extends AbstractTest {
 				LogUtils.log("Tearing-down localcloud");
 				runCommand("teardown-localcloud  -force");
 			} catch (final Exception e) {
-				e.printStackTrace();
+				log("Exception during teardown",e);
 			}
 
 			try {
@@ -404,10 +359,8 @@ public class AbstractLocalCloudTest extends AbstractTest {
 	}
 
 	private Admin getAdminWithLocators() throws UnknownHostException {
-		// Class LocalhostGridAgentBootsrapper defines the locator discovery addresses.
 		final String nicAddress = "127.0.0.1"; // Constants.getHostAddress();
 
-		// int defaultLusPort = Constants.getDiscoveryPort();
 		final AdminFactory factory = new AdminFactory();
 		LogUtils.log("adding locator to admin : " + nicAddress + ":" + CloudifyConstants.DEFAULT_LOCALCLOUD_LUS_PORT);
 		factory.addLocator(nicAddress + ":" + CloudifyConstants.DEFAULT_LOCALCLOUD_LUS_PORT);
@@ -516,11 +469,4 @@ public class AbstractLocalCloudTest extends AbstractTest {
 			}
 		}
 	}
-
-	// public void updateLocalCloudPids(final long oldPid, final long newPid) {
-	// localCloudPIDs.remove(oldPid);
-	// localCloudPIDs.add(String.valueOf(newPid));
-	// alivePIDs.remove(oldPid);
-	// alivePIDs.add(String.valueOf(newPid));
-	// }
 }

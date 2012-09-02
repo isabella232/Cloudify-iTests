@@ -45,7 +45,7 @@ public class ScalingRulesTomcatTotalRequestsTest extends AbstractLocalCloudTest 
 	@BeforeMethod
 	public void before() throws IOException, InterruptedException {
 		String applicationDir = SGTestHelper.getSGTestRootDir() + "/recipes/apps/" + APPLICATION_FOLDER_NAME;
-		runCommand("connect " + restUrl + ";install-service --verbose " + applicationDir);
+		runCommand("connect " + restUrl + ";install-application --verbose " + applicationDir);
 		this.executor= Executors.newScheduledThreadPool(NUMBER_OF_HTTP_GET_THREADS);
 	}
 

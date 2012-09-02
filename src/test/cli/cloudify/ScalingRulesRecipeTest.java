@@ -43,7 +43,7 @@ public class ScalingRulesRecipeTest extends AbstractLocalCloudTest {
 	@BeforeMethod
 	public void before() throws IOException, InterruptedException {
 		
-		String serviceDir = SGTestHelper.getSGTestRootDir() + SERVICE_RELATIVE_PATH;
+		String serviceDir = SGTestHelper.getSGTestRootDir().replace("\\", "/") + SERVICE_RELATIVE_PATH;
 		runCommand("connect " + restUrl + ";install-service --verbose " + serviceDir);
 	}
 	
@@ -134,10 +134,11 @@ public class ScalingRulesRecipeTest extends AbstractLocalCloudTest {
 				Assert.assertTrue(resolvedLatch.await(OPERATION_TIMEOUT, TimeUnit.MILLISECONDS));
 				Assert.assertEquals(numberOfRaisedAlerts.get(),1);
 				Assert.assertEquals(numberOfResolvedAlerts.get(),1);
+				
 			}
 			finally {
-				uninstallService(SERVICE_NAME);
 				pu.stopStatisticsMonitor();
+				uninstallService(SERVICE_NAME);
 			}
 		}
 		finally {

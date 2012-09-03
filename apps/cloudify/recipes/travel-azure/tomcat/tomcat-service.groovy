@@ -1,8 +1,6 @@
 service {
-	
-	def tomcatRecipeDir = "../../../recipes/services/tomcat"
 
-	extend "${tomcatRecipeDir}"
+	extend "../../../services/tomcat"
 	compute {
 		template "TOMCAT"
 	}

@@ -19,9 +19,8 @@ public class CommandTestUtils {
 	private static final int ADMIN_REFRESH_TIME_MILLIS = 15000;
 
 	/**
-	 * Runs over all the commands and outputs the result log.
-	 * @param command - The actual commands delimited by ';'.
-	 * @param commandNam - used for determining the log file name.
+	 * Runs the specified cloudify commands and outputs the result log.
+	 * @param command - The actual cloudify commands delimited by ';'.
 	 * @param wait - used for determining if to wait for command 
 	 * @param failCommand  - used for determining if the command is expected to fail
 	 * @return String - log output or null if wait is false
@@ -29,53 +28,94 @@ public class CommandTestUtils {
 	 * @throws InterruptedException 
 	 */
 	public static String runCommand(final String command, boolean wait, boolean failCommand) throws IOException, InterruptedException {
-		
+		return runLocalCommand( getCloudifyCommand(command), wait, failCommand);
+	}
+
+	/**
+	 * Runs the specified cloudify commands and outputs the result log.
+	 * @param command - The actual cloudify commands delimited by ';'.
+	 * @return the cloudify output, and the exitcode 
+	 * @throws IOException
+	 * @throws InterruptedException 
+	 */
+	public static ProcessResult runCloudifyCommandAndWait(final String cloudifyCommand) throws IOException, InterruptedException {
+		final Process process = startProcess(getCloudifyCommand(cloudifyCommand));
+	    return handleCliOutput(process);
+	}
+
+
+	private static String getCloudifyCommand(String command) {
 		final String commandExtention = getCommandExtention();
-		
 		final String cloudifyPath = ScriptUtils.getBuildPath()+
 				MessageFormat.format("{0}tools{0}cli{0}cloudify.{1} ", File.separatorChar, commandExtention);
-
-				String cmdLine = cloudifyPath + command;
-		if (isWindows()) {
-			// need to use the call command to intercept the cloudify batch file return code.
-			cmdLine = "cmd /c call " + cmdLine;
-		}
-		
-		final String[] parts = cmdLine.split(" ");
-		final ProcessBuilder pb = new ProcessBuilder(parts);
-		pb.redirectErrorStream(true);
-
-		LogUtils.log("Executing Command line: " + cmdLine);
-		//logger.info("Command Environment: " + pb.environment());
-		final Process process = pb.start();
-
-		if(wait)
-			return handleCliOutput(process, failCommand);
-		else
-			return null;
+		return cloudifyPath + command;
 	}
+
 
     public static String runLocalCommand(final String command, boolean wait, boolean failCommand) throws IOException, InterruptedException {
 
-        String cmdLine = command;
-        if (isWindows()) {
-            cmdLine = "cmd /c call " + cmdLine;
-        }
-
-        final String[] parts = cmdLine.split(" ");
-        final ProcessBuilder pb = new ProcessBuilder(parts);
-        pb.redirectErrorStream(true);
-
-        LogUtils.log("Executing Command line: " + cmdLine);
-        final Process process = pb.start();
+        final Process process = startProcess(command);
 
         if(wait)
             return handleCliOutput(process, failCommand);
         else
             return null;
     }
+    
+    private static Process startProcess(String command)
+    		throws IOException {
+    	
+    	String cmdLine = command;
+    	if (isWindows()) {
+    		// need to use the call command to intercept the cloudify batch file return code.
+    		cmdLine = "cmd /c call " + cmdLine;
+    	}
+    	
+    	final String[] parts = cmdLine.split(" ");
+    	final ProcessBuilder pb = new ProcessBuilder(parts);
+    	pb.redirectErrorStream(true);
+    	
+    	LogUtils.log("Executing Command line: " + cmdLine);
+    	
+    	final Process process = pb.start();
+    	return process;
+    }
 	
+    static class ProcessResult {
+    	
+    	private final String output;
+    	private final int exitcode;
+    	
+    	public ProcessResult(String output, int exitcode) {
+			this.output = output;
+			this.exitcode = exitcode;
+		}
+    	
+		@Override
+		public String toString() {
+			return "ProcessResult [output=" + getOutput() + ", exitcode=" + getExitcode()
+					+ "]";
+		}
+
+		public String getOutput() {
+			return output;
+		}
+
+		public int getExitcode() {
+			return exitcode;
+		}
+    }
+    
 	private static String handleCliOutput(Process process, boolean failCommand) throws IOException, InterruptedException{
+		ProcessResult result = handleCliOutput(process);
+		
+		if (result.getExitcode() != 0 && !failCommand) {
+			AbstractTest.AssertFail("In RunCommand: Process did not complete successfully. " + result);
+		}
+		return result.output;
+	}
+
+	private static ProcessResult handleCliOutput(Process process) throws InterruptedException {
 		// Print CLI output if exists.
 		final BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));
 		final StringBuilder consoleOutput = new StringBuilder("");
@@ -103,18 +143,17 @@ public class CommandTestUtils {
 		
 		thread.start();
 		
-		int result = process.waitFor();
+		int exitcode = process.waitFor();
 		
 		thread.join(5000);
 		
-		AssertUtils.assertTrue(exception.get() == null);
-		
-		if (result != 0 && !failCommand) {
-			AbstractTest.AssertFail("In RunCommand: Process did not complete successfully");
+		if (exception.get() != null) {
+			AssertUtils.AssertFail("Failed to get process output. output="+consoleOutput,exception.get());
 		}
-		return consoleOutput.toString();
+		String stdout = consoleOutput.toString();
+		return new ProcessResult(stdout, exitcode);
 	}
-
+	
 	/**
 	 * @param command
 	 * @return

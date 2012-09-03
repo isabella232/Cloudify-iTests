@@ -27,10 +27,9 @@ public class RecipeInheritenceTest extends AbstractLocalCloudTest {
 
     @Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
     public void simpleInheritenceTest() throws IOException, PackagingException, InterruptedException, DSLException {
-        String appChildDirPath = CommandTestUtils.getPath("apps/USM/usm/applications/travelExtended");
 
         Service tomcatParent = ServiceReader.readService(new File(tomcatParentPath));
-        installApplication(appChildDirPath);
+        installApplication("travelExtended");
         Service s1 = app.getServices().get(0);
         Service s2 = app.getServices().get(1);
         Service tomcat = s1.getName().equals("tomcat-extend") ? s1 : s2;
@@ -45,8 +44,7 @@ public class RecipeInheritenceTest extends AbstractLocalCloudTest {
 
     @Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
     public void overrideTomcatPortTest() throws PackagingException, IOException, InterruptedException, DSLException {
-        String appChildDirPath = CommandTestUtils.getPath("apps/USM/usm/applications/travelExtendedTomcatPortOverride");
-        installApplication(appChildDirPath);
+        installApplication("travelExtendedTomcatPortOverride");
         Service s1 = app.getServices().get(0);
         Service s2 = app.getServices().get(1);
         Service tomcat = s1.getName().equals("tomcat") ? s1 : s2;
@@ -59,8 +57,7 @@ public class RecipeInheritenceTest extends AbstractLocalCloudTest {
 
     @Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = false)
     public void overrideTomcatNumInstancesTest() throws PackagingException, IOException, InterruptedException, DSLException {
-        String appChildDirPath = CommandTestUtils.getPath("apps/USM/usm/applications/travelExtendedTomcatNumInstancesOverride");
-        installApplication(appChildDirPath);
+        installApplication("travelExtendedTomcatNumInstancesOverride");
 
         int tomcatInstances = admin.getProcessingUnits().getProcessingUnit("travelExtendedTomcatNumInstancesOverride.tomcat").getInstances().length;
         assertEquals("tomcat instances where overriden to be 3", 3, tomcatInstances);
@@ -70,8 +67,7 @@ public class RecipeInheritenceTest extends AbstractLocalCloudTest {
     @Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
     public void overrideCassandraInitFileTest() throws PackagingException, IOException, InterruptedException, DSLException {
         String EXPECTED_PROCESS_PRINTOUTS = "THIS IS OVERRIDED CASSANDRA_POSTSTART.GROOVY";
-        String appChildDirPath = CommandTestUtils.getPath("apps/USM/usm/applications/travelExtended");
-        installApplication(appChildDirPath);
+        installApplication("travelExtended");
 
         ProcessingUnit processingUnit = admin.getProcessingUnits().getProcessingUnit("travelExtended.cassandra-extend");
         assertNotNull("Processsing unit not found", processingUnit);        
@@ -87,14 +83,6 @@ public class RecipeInheritenceTest extends AbstractLocalCloudTest {
         sleep(5000);
         assertTrue(checkForOverrideString(cassandraInstance, pid, matcher, EXPECTED_PROCESS_PRINTOUTS));
         //uninstallApplication("travelExtended");
-    }
-
-    private void installApplication(String appDirPath) throws PackagingException, IOException, InterruptedException, DSLException {
-        File applicationDir = new File(appDirPath);
-        app = ServiceReader.getApplicationFromFile(applicationDir).getApplication();
-
-        String output = runCommand("connect " + restUrl + ";install-application --verbose " + appDirPath);
-        assertTrue("couldn't install application", output.contains("installed successfully"));
     }
 
     private boolean checkForOverrideString(ProcessingUnitInstance pui,

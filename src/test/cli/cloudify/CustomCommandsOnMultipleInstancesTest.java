@@ -1,108 +1,102 @@
 package test.cli.cloudify;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
-import framework.utils.DumpUtils;
-import framework.utils.TeardownUtils;
 import junit.framework.Assert;
 
+import org.cloudifysource.dsl.utils.ServiceUtils;
 import org.openspaces.admin.pu.ProcessingUnit;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import test.usm.USMTestUtils;
-
-import org.cloudifysource.dsl.internal.CloudifyConstants;
-import org.cloudifysource.dsl.internal.DSLException;
-import org.cloudifysource.dsl.internal.ServiceReader;
-import org.cloudifysource.dsl.internal.packaging.PackagingException;
-import org.cloudifysource.dsl.utils.ServiceUtils;
-
 import framework.utils.LogUtils;
 
 public class CustomCommandsOnMultipleInstancesTest extends AbstractLocalCloudTest {
 	
-	private final String RECIPE_DIR_PATH = CommandTestUtils
-									.getPath("apps/USM/usm/simpleCustomCommandsMultipleInstances");
+	private static final String SERVICE_NAME = "simpleCustomCommandsMultipleInstances";
+	
 	private int totalInstances;
 
-	@BeforeClass
-	public void beforeClass() throws Exception{
-        super.beforeClass();
-		installService();
-		String absolutePUName = ServiceUtils.getAbsolutePUName("default", "simpleCustomCommandsMultipleInstances");
-		ProcessingUnit pu = admin.getProcessingUnits().waitFor(absolutePUName , WAIT_FOR_TIMEOUT , TimeUnit.SECONDS);
-		assertTrue("USM Service State is NOT RUNNING", USMTestUtils.waitForPuRunningState(absolutePUName, 60, TimeUnit.SECONDS, admin));
+	private void installService() {
+		installService(SERVICE_NAME);
+        
+		final String absolutePUName = ServiceUtils.getAbsolutePUName(DEFAULT_APPLICATION_NAME, SERVICE_NAME);
+		final ProcessingUnit pu = admin.getProcessingUnits().waitFor(absolutePUName , WAIT_FOR_TIMEOUT_SECONDS , TimeUnit.SECONDS);
+		assertTrue("USM Service State is NOT RUNNING", USMTestUtils.waitForPuRunningState(absolutePUName, WAIT_FOR_TIMEOUT_SECONDS, TimeUnit.SECONDS, admin));
 		totalInstances = pu.getTotalNumberOfInstances();
 	}
 
-    @Override
-    @AfterMethod
-    public void afterTest(){
-        if (admin != null) {
-            TeardownUtils.snapshot(admin);
-            DumpUtils.dumpLogs(admin);
-        }
-    }
+    
 
-	@AfterClass
-	public void afterClass() throws IOException, InterruptedException{	
-		runCommand("connect " + restUrl +  ";uninstall-service --verbose simpleCustomCommandsMultipleInstances");
+	private void uninstallService() {
+		super.uninstallService(SERVICE_NAME);
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = true)
 	public void testPrintCommand() throws Exception {
+		installService();
 		LogUtils.log("Checking print command on all instances");
 		checkPrintCommand();
 		
 		LogUtils.log("Starting to check print command by instance id");
-		for(int i=1 ; i<= totalInstances ; i++)
+		for(int i=1 ; i<= totalInstances ; i++) {
 			checkPrintCommand(i);
+		}
+		uninstallService();
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = true)
 	public void testParamsCommand() throws Exception {
+		installService();
 		LogUtils.log("Checking params command on all instances");
 		checkParamsCommand();
 		
 		LogUtils.log("Starting to check params command by instance id");
-		for(int i=1 ; i<= totalInstances ; i++)
-			checkParamsCommand(i);		
+		for(int i=1 ; i<= totalInstances ; i++) {
+			checkParamsCommand(i);
+		}
+		uninstallService();
 	}
 	
 	//TODO: enable test once the dependency bug in the CLI is resolved.
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = true)
 	public void testXceptionCommand() throws Exception {
+		installService();
 		LogUtils.log("Checking exception command on all instances");
 		checkExceptionCommand();
 		
 		LogUtils.log("Starting to check exception command by instance id");
-		for(int i=1 ; i<= totalInstances ; i++)
+		for(int i=1 ; i<= totalInstances ; i++) {
 			checkExceptionCommand(i);
+		}
+		uninstallService();
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = true)
 	public void testRunScriptCommand() throws Exception {
+		installService();
 		LogUtils.log("Checking runScript command on all instances");
 		checkRunScriptCommand();
 		
 		LogUtils.log("Starting to check runScript command by instance id");
-		for(int i=1 ; i<= totalInstances ; i++)
+		for(int i=1 ; i<= totalInstances ; i++) {
 			checkRunScriptCommand(i);
+		}
+		uninstallService();
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = true)
 	public void testContextCommand() throws Exception {
+		installService();
 		LogUtils.log("Checking context command on all instances");
 		checkContextCommand();
 		
 		LogUtils.log("Starting to check context command by instance id");
-		for(int i=1 ; i<= totalInstances ; i++)
+		for(int i=1 ; i<= totalInstances ; i++) {
 			checkContextCommand(i);
+		}
+		uninstallService();
 	}
 	
 	private void checkPrintCommand() throws IOException, InterruptedException {
@@ -223,9 +217,6 @@ public class CustomCommandsOnMultipleInstancesTest extends AbstractLocalCloudTes
 			Assert.assertFalse("should not recive any output from instance" + i ,invokeContextResult.contains("instance #" + i));
 		}
 	}
-	private void installService() throws PackagingException, IOException, InterruptedException, DSLException {
-		File serviceDir = new File(RECIPE_DIR_PATH);
-		ServiceReader.getServiceFromDirectory(serviceDir, CloudifyConstants.DEFAULT_APPLICATION_NAME).getService();
-		runCommand("connect " + restUrl + ";install-service --verbose " + RECIPE_DIR_PATH);
-	}
+
+	
 }

@@ -94,10 +94,10 @@ public class AssertUtils {
 		AssertFail(msg, null);
 	}
 	
-	public static void AssertFail(String msg, Exception e) {
+	public static void AssertFail(String msg, Throwable t) {
 		if (!skipException()) {
-			if (e != null) {
-				org.testng.Assert.fail(msg, e);
+			if (t != null) {
+				org.testng.Assert.fail(msg, t);
 			} else {
 				org.testng.Assert.fail(msg);
 			}

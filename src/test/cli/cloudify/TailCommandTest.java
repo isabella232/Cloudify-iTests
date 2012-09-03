@@ -19,60 +19,61 @@ import java.io.File;
 import java.io.IOException;
 
 import org.apache.commons.io.FileUtils;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 public class TailCommandTest extends AbstractLocalCloudTest {
 	
 	
+	private static final String SERVICE_FOLDER_NAME = "simpleTail";
+	private static final String SERVICE_NAME = "simple";
 	private static final String TAIL_IS_LIMITED_TO_NO_MORE_THAN_1000_LINES = "tail is limited to no more than 1000 lines.";
 	private static final String EXPECTED_SYSTEM_ERR_LOG_ENTRY = "system.err: Still alive...";
 	private static final String EXPECTED_SYSTEM_OUT_LOG_ENTRY = "system.out: Still alive...";
-	private final String simpleServicePath = CommandTestUtils.getPath("apps/USM/usm/simpleTail");
-
-	@BeforeClass
-	public void beforeClass() throws Exception {
-		super.beforeClass();
-		try {
-			runCommand("connect " + this.restUrl + ";install-service " + simpleServicePath);
-		} catch (IOException e) {
-			e.printStackTrace();
-			AssertFail(e.getMessage());
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-			AssertFail(e.getMessage());
-		}
-	}
+    
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
 	public void testTailByServiceInstanceId() throws IOException, InterruptedException {
+		installService();
 		String runCommand = runCommand("connect " + this.restUrl + 
 				";tail --verbose -instanceId 1 simple 30; " + "exit");
 		assertTrue("expected log entries were not found in log tail", runCommand.contains(EXPECTED_SYSTEM_OUT_LOG_ENTRY));
 		assertTrue("expected log entries were not found in log tail", runCommand.contains(EXPECTED_SYSTEM_ERR_LOG_ENTRY));
 		assertTrue("The tail limit was not breached", !runCommand.contains(TAIL_IS_LIMITED_TO_NO_MORE_THAN_1000_LINES));
+		uninstallService();
+	}
+
+	private void uninstallService() {
+		uninstallService(SERVICE_NAME);
+	}
+
+	private void installService() {
+		installService(SERVICE_FOLDER_NAME);
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
 	public void testTailByServiceInstanceHostAddress() throws IOException, InterruptedException {
+		installService();
 		String runCommand = runCommand("connect " + this.restUrl + 
 				";tail --verbose -hostAddress 127.0.0.1 simple 30; " + "exit");
 		assertTrue("expected log entries were not found in log tail", runCommand.contains(EXPECTED_SYSTEM_OUT_LOG_ENTRY));
 		assertTrue("expected log entries were not found in log tail", runCommand.contains(EXPECTED_SYSTEM_ERR_LOG_ENTRY));
 		assertTrue("The tail limit was not breached", !runCommand.contains(TAIL_IS_LIMITED_TO_NO_MORE_THAN_1000_LINES));
+		uninstallService();
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
 	public void testTailByServiceName() throws IOException, InterruptedException {
+		installService();
 		String runCommand = runCommand("connect " + this.restUrl + 
 				";tail --verbose simple 30; " + "exit");
 		assertTrue("expected log entries were not found in log tail", runCommand.contains(EXPECTED_SYSTEM_OUT_LOG_ENTRY));
 		assertTrue("expected log entries were not found in log tail", runCommand.contains(EXPECTED_SYSTEM_ERR_LOG_ENTRY));
 		assertTrue("The tail limit was not breached", !runCommand.contains(TAIL_IS_LIMITED_TO_NO_MORE_THAN_1000_LINES));
+		uninstallService();
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
 	public void testSaveTailToFile() throws IOException, InterruptedException {
+		installService();
 		File tempDirectory = FileUtils.getTempDirectory();
 		File file = new File(tempDirectory, "tempLogFile.txt");
 		String command = "connect " + this.restUrl + 
@@ -82,10 +83,12 @@ public class TailCommandTest extends AbstractLocalCloudTest {
 		assertTrue("expected log entries were not found in log tail", fileoutput.contains(EXPECTED_SYSTEM_OUT_LOG_ENTRY));
 		assertTrue("expected log entries were not found in log tail", fileoutput.contains(EXPECTED_SYSTEM_ERR_LOG_ENTRY));
 		assertTrue("The tail limit was not breached", !fileoutput.contains(TAIL_IS_LIMITED_TO_NO_MORE_THAN_1000_LINES));
+		uninstallService();
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
 	public void testTailOfOverThousandLines() throws IOException, InterruptedException {
+		installService();
 		File tempDirectory = FileUtils.getTempDirectory();
 		File file = new File(tempDirectory, "tempLogFile.txt");
 		String command = "connect " + this.restUrl + 
@@ -98,11 +101,7 @@ public class TailCommandTest extends AbstractLocalCloudTest {
 		String[] lines = fileoutput.split(System.getProperty("line.separator"));
 		assertTrue("The tail threshold of 1000 lines was not inforced. Number of lines tailed was " + lines.length,
 				lines.length >= 1000 && lines.length <= 1010);
+		uninstallService();
 	}
-	
-    @Override
-    @AfterMethod
-    public void afterTest() {
-    }
 }
 

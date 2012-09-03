@@ -227,7 +227,7 @@ public class USMTestUtils {
 		Assert.fail("pid " + pid1 + " doesnt exist");
 	}
 	
-	public static boolean waitForPuRunningState(String absolutePuName, long timeout, TimeUnit timeunit,Admin admin) throws UnknownHostException{
+	public static boolean waitForPuRunningState(String absolutePuName, long timeout, TimeUnit timeunit,Admin admin) {
 		long end = System.currentTimeMillis() + timeunit.toMillis(timeout);
 		while (System.currentTimeMillis() < end) {
 			if (isUSMServiceRunning(absolutePuName, admin)){
@@ -238,7 +238,7 @@ public class USMTestUtils {
 		return false;
 	}
 	
-	public static USMState getUSMServiceState(String absoluteServiceName, Admin admin) throws UnknownHostException{
+	public static USMState getUSMServiceState(String absoluteServiceName, Admin admin) {
 		ProcessingUnit processingUnit = admin.getProcessingUnits().waitFor(absoluteServiceName, 60, TimeUnit.SECONDS);
 		int state = 0;
 		boolean instance = processingUnit.waitFor(1,60, TimeUnit.SECONDS);
@@ -259,7 +259,7 @@ public class USMTestUtils {
 		return getUSMServiceState(absolutePUName, admin);
 	}
 	
-	public static boolean isUSMServiceRunning(String absoluteServiceName, Admin admin) throws UnknownHostException{
+	public static boolean isUSMServiceRunning(String absoluteServiceName, Admin admin) {
 		USMState serviceState = getUSMServiceState(absoluteServiceName, admin);
 		return serviceState.equals(USMState.RUNNING);
 	}

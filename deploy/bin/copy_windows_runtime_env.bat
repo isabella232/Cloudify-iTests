@@ -8,6 +8,11 @@ set SGTEST_CHECKOUT_FOLDER=%5
 set SUITE_NAME=%6
 set INCLUDE=%7
 set EXCLUDE=%8
+set BUILD_LOG_URL=%9
+
+shift
+set BRANCH_NAME=%9
+
 set SGTEST_RUNTIME_FOLDER=C:\Users\ca\sgtest-cloudify
 
 @echo copying execution script to runtime sgtest folder
@@ -40,4 +45,4 @@ set SGTEST_RUNTIME_FOLDER=C:\Users\ca\sgtest-cloudify
 
 cd windows
 @echo starting sgtest execution
-@call startSG.bat %VERSION% %MILESTONE% %BUILD_NUMBER% %BUILD_VERSION% %SGTEST_CHECKOUT_FOLDER% %SUITE_NAME% %INCLUDE% %EXCLUDE%
+@call startSG.bat %VERSION% %MILESTONE% %BUILD_NUMBER% %BUILD_VERSION% %SGTEST_CHECKOUT_FOLDER% %SUITE_NAME% %INCLUDE% %EXCLUDE% %BUILD_LOG_URL% %BRANCH_NAME%

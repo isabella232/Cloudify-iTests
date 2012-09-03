@@ -16,6 +16,17 @@
     <property name="resources" value="${src}/resources"/>
     <property name="cli.dir" value="${src}/test/cli"/>
     <property name="cli.resources" value="${cli.dir}/resources"/>
+	<property name="webuitf" value="${basedir}/apps/webuitf"/>
+		
+	<property environment="env."/>
+	
+	<condition property="mvn.executable" value="mvn.bat">
+            <os family="windows" />
+    </condition>
+
+    <condition property="mvn.executable" value="mvn">
+            <os family="unix" />
+    </condition>
 
     <!-- sgtest output -->
     <property name="sgtest.output.dir" value="${sgtest.home}/output"/>
@@ -189,6 +200,14 @@
     	    <exclude name="**/test/webui/resources/**/*.groovy"/>
     	  </fileset>
     	</copy>
+    	
+    	<exec executable="${env.M2_HOME}\bin\${mvn.executable}" dir="${webuitf}">
+    		<arg value="package"/>
+    	</exec>	
+    	<copy file="${webuitf}/target/webuitf.jar" todir="${sgtest.lib}/webui" overwrite="true"/>
+    	<copy file="${webuitf}/target/webuitf-sources.jar" todir="${sgtest.lib}/webui" overwrite="true"/>
+    	<delete dir="${webuitf}"/>
+    	
     </target> 
 
     <target name="compile" depends="prepare, build-projects">

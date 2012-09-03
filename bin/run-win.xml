@@ -71,7 +71,7 @@
 		</fileset>
     	
 		<!-- Webui jars -->
-		<fileset dir="${sgtest.homedir}/lib/webui">
+		<fileset dir="${sgtest.homedir}/tmp">
 			<include name="**/*.jar"/>
 		</fileset>
 

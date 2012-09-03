@@ -82,6 +82,6 @@ rm -rf /export/tgrid/sgtest2.0-cloudify/lib/selenium/
 svn --force export ${SVN_SGTEST_REPOSITORY}/lib/selenium
 mv selenium /export/tgrid/sgtest2.0-cloudify/lib/
 
-rm -rf /export/tgrid/sgtest2.0-cloudify/lib/webui/
-svn --force export ${SVN_SGTEST_REPOSITORY}/lib/webui
-mv webui /export/tgrid/sgtest2.0-cloudify/lib/
+#rm -rf /export/tgrid/sgtest2.0-cloudify/lib/webui/
+#svn --force export ${SVN_SGTEST_REPOSITORY}/lib/webui
+#mv webui /export/tgrid/sgtest2.0-cloudify/lib/

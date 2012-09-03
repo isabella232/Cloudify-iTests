@@ -16,6 +16,8 @@
 
 package test.cli.cloudify.cloud.hp;
 
+import java.util.HashMap;
+
 import org.testng.ITestContext;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
@@ -23,6 +25,8 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import test.cli.cloudify.cloud.AbstractExamplesTest;
+import test.cli.cloudify.cloud.services.ec2.Ec2CloudService;
+import test.cli.cloudify.cloud.services.hp.HpCloudService;
 
 
 public class HPExamplesTest extends AbstractExamplesTest {
@@ -57,6 +61,16 @@ public class HPExamplesTest extends AbstractExamplesTest {
 	public void testPetclinic()
 			throws Exception {
 		super.testPetclinic();
+	}
+	
+	@Override
+	protected void customizeCloud() {
+
+		final HpCloudService hpService = (HpCloudService) cloud;
+
+		hpService.setAdditionalPropsToReplace(new HashMap<String, String>());
+		hpService.getAdditionalPropsToReplace().put("imageId \"221\"",
+				"imageId \"221\"" + System.getProperty("line.separator") + "\t\t\t\t\tprivileged true");
 	}
 
 }

@@ -16,6 +16,8 @@
 
 package test.cli.cloudify.cloud.rackspace;
 
+import java.util.HashMap;
+
 import org.testng.ITestContext;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
@@ -23,6 +25,8 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import test.cli.cloudify.cloud.AbstractExamplesTest;
+import test.cli.cloudify.cloud.services.hp.HpCloudService;
+import test.cli.cloudify.cloud.services.rackspace.RackspaceCloudService;
 
 /**
  * This class runs two test on Rackspace cloud.
@@ -69,5 +73,15 @@ public class RackspaceExamplesTest extends AbstractExamplesTest {
 	@Override
 	protected String getCloudName() {
 		return "rackspace";
+	}
+	
+	@Override
+	protected void customizeCloud() {
+
+		final RackspaceCloudService rcService = (RackspaceCloudService) cloud;
+
+		rcService.setAdditionalPropsToReplace(new HashMap<String, String>());
+		rcService.getAdditionalPropsToReplace().put("imageId \"118\"",
+				"imageId \"118\"" + System.getProperty("line.separator") + "\t\t\t\t\tprivileged true");
 	}
 }

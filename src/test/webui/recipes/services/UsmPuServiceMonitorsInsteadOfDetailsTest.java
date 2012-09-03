@@ -43,7 +43,7 @@ public class UsmPuServiceMonitorsInsteadOfDetailsTest extends AbstractSeleniumSe
 		
 		ApplicationMap appMap = topologyTab.getApplicationMap();
 			
-		appMap.selectApplication(DEFAULT_APPLICATION_NAME);
+		topologyTab.selectApplication(DEFAULT_APPLICATION_NAME);
 		
 		ApplicationNode activemq = appMap.getApplicationNode(ACTIVEMQ_FULL_SERVICE_NAME);
 		

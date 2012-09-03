@@ -38,7 +38,7 @@ public class ApplicationBlueprintTest extends AbstractSeleniumApplicationRecipeT
 		ApplicationMap applicationMap = topologyTab.getApplicationMap();
 		
 		admin.getApplications().waitFor(TRAVEL_APPLICATION_NAME, waitingTime, TimeUnit.SECONDS);
-		applicationMap.selectApplication(TRAVEL_APPLICATION_NAME);
+		topologyTab.selectApplication(TRAVEL_APPLICATION_NAME);
 		
 		ApplicationNode cassandra = applicationMap.getApplicationNode(CASSANDRA_SERVICE_FULL_NAME);
 

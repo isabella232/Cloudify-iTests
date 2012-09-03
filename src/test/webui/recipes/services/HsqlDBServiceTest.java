@@ -84,7 +84,7 @@ public class HsqlDBServiceTest extends AbstractSeleniumServiceRecipeTest {
 
 		final ApplicationMap appMap = topologyTab.getApplicationMap();
 
-		appMap.selectApplication(MANAGEMENT_APPLICATION_NAME);
+		topologyTab.selectApplication(MANAGEMENT_APPLICATION_NAME);
 		
 
 		ApplicationNode restful = appMap.getApplicationNode("rest");
@@ -97,7 +97,7 @@ public class HsqlDBServiceTest extends AbstractSeleniumServiceRecipeTest {
 		assertTrue(webui != null);
 		assertTrue(webui.getStatus().equals(DeploymentStatus.INTACT));
 
-		appMap.selectApplication(DEFAULT_APPLICATION_NAME);
+		topologyTab.selectApplication(DEFAULT_APPLICATION_NAME);
 
 		takeScreenShot(this.getClass(),"hsqlRecipeTest", "topology");
 

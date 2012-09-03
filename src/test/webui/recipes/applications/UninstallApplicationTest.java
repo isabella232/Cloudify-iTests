@@ -37,7 +37,7 @@ public class UninstallApplicationTest extends AbstractSeleniumApplicationRecipeT
 		
 		final ApplicationMap appMap = topologyTab.getApplicationMap();
 		
-		appMap.selectApplication(TRAVEL_APPLICATION_NAME);
+		topologyTab.selectApplication(TRAVEL_APPLICATION_NAME);
 		
 		ApplicationNode cassandra = appMap.getApplicationNode(CASSANDRA_SERVICE_FULL_NAME);
 
@@ -63,7 +63,7 @@ public class UninstallApplicationTest extends AbstractSeleniumApplicationRecipeT
 		tomcat = appMap.getApplicationNode(TOMCAT_SERVICE_FULL_NAME);
 		assertTrue("tomcat node is still displayed even though the application was uninstalled", tomcat == null);
 		
-		appMap.selectApplication(MANAGEMENT_APPLICATION_NAME);
+		topologyTab.selectApplication(MANAGEMENT_APPLICATION_NAME);
 		
 		cassandra = appMap.getApplicationNode(CASSANDRA_SERVICE_FULL_NAME);
 		assertTrue("cassandra node is disaplyed in the management application even though the application was uninstalled", cassandra == null);

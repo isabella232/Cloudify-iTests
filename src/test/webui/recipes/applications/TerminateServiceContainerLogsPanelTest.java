@@ -50,7 +50,7 @@ public class TerminateServiceContainerLogsPanelTest extends AbstractSeleniumAppl
 		
 		ApplicationMap appMap = topology.getApplicationMap();
 		
-		appMap.selectApplication(TRAVEL_APPLICATION_NAME);
+		topology.selectApplication(TRAVEL_APPLICATION_NAME);
 		
 		ApplicationNode travelNode = appMap.getApplicationNode(TOMCAT_SERVICE_FULL_NAME);
 		

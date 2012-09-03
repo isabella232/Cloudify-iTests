@@ -87,7 +87,7 @@ public class ActiveMqServiceTest extends AbstractSeleniumServiceRecipeTest {
 		
 		final ApplicationMap appMap = topologyTab.getApplicationMap();
 		
-		appMap.selectApplication(MANAGEMENT_APPLICATION_NAME);
+		topologyTab.selectApplication(MANAGEMENT_APPLICATION_NAME);
 		
 		
 		ApplicationNode restful = appMap.getApplicationNode("rest");
@@ -100,7 +100,7 @@ public class ActiveMqServiceTest extends AbstractSeleniumServiceRecipeTest {
 		assertTrue(webui != null);
 		assertTrue(webui.getStatus().equals(DeploymentStatus.INTACT));
 		
-		appMap.selectApplication(DEFAULT_APPLICATION_NAME);
+		topologyTab.selectApplication(DEFAULT_APPLICATION_NAME);
 
 		takeScreenShot(this.getClass(),"activeMqRecipeTest", "topology");
 		

@@ -128,7 +128,7 @@ public class TravelTest extends AbstractSeleniumApplicationRecipeTest {
 
 		final ApplicationMap appMap = topologyTab.getApplicationMap();
 
-		appMap.selectApplication(MANAGEMENT_APPLICATION_NAME);
+		topologyTab.selectApplication(MANAGEMENT_APPLICATION_NAME);
 
 		ApplicationNode restful = appMap.getApplicationNode("rest");
 
@@ -140,7 +140,7 @@ public class TravelTest extends AbstractSeleniumApplicationRecipeTest {
 		assertTrue(webui != null);
 		assertTrue(webui.getStatus().equals(DeploymentStatus.INTACT));
 
-		appMap.selectApplication(TRAVEL_APPLICATION_NAME);
+		topologyTab.selectApplication(TRAVEL_APPLICATION_NAME);
 
 		ApplicationNode cassandra = appMap.getApplicationNode(CASSANDRA_SERVICE_FULL_NAME);
 

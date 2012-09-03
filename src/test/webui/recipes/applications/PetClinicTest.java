@@ -113,7 +113,7 @@ public class PetClinicTest extends AbstractSeleniumApplicationRecipeTest {
 
 		final ApplicationMap appMap = topologyTab.getApplicationMap();
 
-		appMap.selectApplication(MANAGEMENT_APPLICATION_NAME);
+		topologyTab.selectApplication(MANAGEMENT_APPLICATION_NAME);
 
 		takeScreenShot(this.getClass(),"petClinicDemoTest", "management-application");
 
@@ -139,7 +139,7 @@ public class PetClinicTest extends AbstractSeleniumApplicationRecipeTest {
 		
 		takeScreenShot(this.getClass(), "petClinicDemoTest","passed-topology");
 		
-		appMap.selectApplication(PETCLINIC_APPLICATION_NAME);
+		topologyTab.selectApplication(PETCLINIC_APPLICATION_NAME);
 		
 		condition = new RepetitiveConditionProvider() {
 

@@ -123,7 +123,7 @@ public class GridServiceNamesTest extends AbstractWebUILocalCloudTest {
 		ProcessingUnitInstance processingUnitInstance = instances[ 0 ];
 		Machine machine = processingUnitInstance.getMachine();
 		
-		appMap.selectApplication(MANAGEMENT_APPLICATION_NAME);
+		topologyTab.selectApplication(MANAGEMENT_APPLICATION_NAME);
 		LogsPanel logsPanel = topologyTab.getTopologySubPanel().switchToLogsPanel();
 		PuLogsPanelService puLogsPanelService = logsPanel.getPuLogsPanelService( SERVICE_NAME );
 		LogsMachine machineTreeNode = puLogsPanelService.getMachine( machine, processingUnit );

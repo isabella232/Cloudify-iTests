@@ -281,7 +281,7 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 				.append(serviceName)
 				.toString();
 		final String output = CommandTestUtils.runCommandAndWait(connectCommand + installCommand);
-		final String excpectedResult = serviceName + " service uninstalled successfully";
+		final String excpectedResult = "Service \"" + serviceName + "\" uninstalled successfully";
 		assertTrue(output.toLowerCase().contains(excpectedResult.toLowerCase()));
 
 	}

@@ -16,7 +16,6 @@ import org.openspaces.admin.pu.ProcessingUnitInstance;
 import org.openspaces.admin.pu.ProcessingUnitInstanceStatistics;
 import org.openspaces.ui.MetricGroup;
 import org.openspaces.ui.UserInterface;
-import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -41,11 +40,7 @@ public class RecipesStatsTest extends AbstractLocalCloudTest {
 	public void beforeTest() {
 		portReleasedBeforTimeout = false;
 		portTakenBeforTimeout = false;
-	}
-
-	@Override
-	@AfterMethod
-	public void afterTest() {
+		super.beforeTest();
 	}
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, groups = "1", enabled = false)

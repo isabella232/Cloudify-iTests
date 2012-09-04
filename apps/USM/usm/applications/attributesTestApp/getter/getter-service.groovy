@@ -23,7 +23,7 @@ service {
 			"getGlobalCustom" : {x-> return(context.attributes.global[x])},
 			"cleanService" : {context.attributes.thisService.clear()},
 			"setService" : {context.attributes.thisService["myKey"] = "myValue"},
-			"cleanThisApp" : {context.attributes.thisApplication.clear()}
+			"cleanThisApp" : {context.attributes.thisApplication.clear()},
 			"cleanGlobal" : {context.attributes.global.clear()}
 		])
 }

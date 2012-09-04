@@ -158,13 +158,15 @@ public class AbstractCloudTest extends AbstractTest {
 	@AfterSuite(enabled = true)
 	public void teardownSupportedClouds() {
 
-		if(!isDevMode()){
-		
-			String clouds = System.getProperty(SUPPORTED_CLOUDS_PROP);
-			LogUtils.log("tearing down clouds : " + clouds);
-			teardownClouds(true);	
-			LogUtils.log("finished tearing down clouds : " + clouds);
-		}
+		LogUtils.log("teardownSupportedClouds was called in the old test framework - it should not have been called at all!!!");
+		return;
+//		if(!isDevMode()){
+//		
+//			String clouds = System.getProperty(SUPPORTED_CLOUDS_PROP);
+//			LogUtils.log("tearing down clouds : " + clouds);
+//			teardownClouds(true);	
+//			LogUtils.log("finished tearing down clouds : " + clouds);
+//		}
 	}
 
 	@Override
@@ -183,6 +185,7 @@ public class AbstractCloudTest extends AbstractTest {
 		for (CloudService cloudService : cloudServiceManager.getAllCloudServices()){
 			try{
 				if (cloudService != null) {
+					LogUtils.log("Found a cloud service: " + cloudService.getCloudName() + ". Shutting it down");
 					cloudService.teardownCloud();
 				}
 			}

@@ -68,7 +68,7 @@ public class AbstractLocalCloudTest extends AbstractTest {
 	protected final int WAIT_FOR_TIMEOUT_SECONDS = 60;
 	private final int HTTP_STATUS_OK = 200;
 	private final int restPort = 8100;
-	protected String restUrl = null;
+	protected static String restUrl = null;
 	protected static final String MANAGEMENT_APPLICATION_NAME = "management";
 	protected static final String DEFAULT_APPLICATION_NAME = CloudifyConstants.DEFAULT_APPLICATION_NAME;
 	

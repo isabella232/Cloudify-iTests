@@ -29,7 +29,7 @@ public class RecipeInheritenceTest extends AbstractLocalCloudTest {
     public void simpleInheritenceTest() throws IOException, PackagingException, InterruptedException, DSLException {
 
         Service tomcatParent = ServiceReader.readService(new File(tomcatParentPath));
-        installApplication("travelExtended");
+        app = installApplication("travelExtended");
         Service s1 = app.getServices().get(0);
         Service s2 = app.getServices().get(1);
         Service tomcat = s1.getName().equals("tomcat-extend") ? s1 : s2;
@@ -44,7 +44,7 @@ public class RecipeInheritenceTest extends AbstractLocalCloudTest {
 
     @Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
     public void overrideTomcatPortTest() throws PackagingException, IOException, InterruptedException, DSLException {
-        installApplication("travelExtendedTomcatPortOverride");
+    	app =  installApplication("travelExtendedTomcatPortOverride");
         Service s1 = app.getServices().get(0);
         Service s2 = app.getServices().get(1);
         Service tomcat = s1.getName().equals("tomcat") ? s1 : s2;
@@ -57,7 +57,7 @@ public class RecipeInheritenceTest extends AbstractLocalCloudTest {
 
     @Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = false)
     public void overrideTomcatNumInstancesTest() throws PackagingException, IOException, InterruptedException, DSLException {
-        installApplication("travelExtendedTomcatNumInstancesOverride");
+       app=  installApplication("travelExtendedTomcatNumInstancesOverride");
 
         int tomcatInstances = admin.getProcessingUnits().getProcessingUnit("travelExtendedTomcatNumInstancesOverride.tomcat").getInstances().length;
         assertEquals("tomcat instances where overriden to be 3", 3, tomcatInstances);
@@ -67,7 +67,7 @@ public class RecipeInheritenceTest extends AbstractLocalCloudTest {
     @Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
     public void overrideCassandraInitFileTest() throws PackagingException, IOException, InterruptedException, DSLException {
         String EXPECTED_PROCESS_PRINTOUTS = "THIS IS OVERRIDED CASSANDRA_POSTSTART.GROOVY";
-        installApplication("travelExtended");
+        app = installApplication("travelExtended");
 
         ProcessingUnit processingUnit = admin.getProcessingUnits().getProcessingUnit("travelExtended.cassandra-extend");
         assertNotNull("Processsing unit not found", processingUnit);        

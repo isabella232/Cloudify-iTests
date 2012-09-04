@@ -132,7 +132,7 @@ public class AbstractLocalCloudTest extends AbstractTest {
 			admin = null;
 		}
 		
-		this.restUrl = "http://"+getLocalHostIpAddress()+":"+restPort;
+		restUrl = "http://"+getLocalHostIpAddress()+":"+restPort;
 		
 		if (checkIsDevEnv()) {
 			LogUtils.log("Local cloud test running in dev mode, will use existing localcloud");

@@ -24,5 +24,6 @@ service {
 			"cleanService" : {context.attributes.thisService.clear()},
 			"setService" : {context.attributes.thisService["myKey"] = "myValue"},
 			"cleanThisApp" : {context.attributes.thisApplication.clear()}
+			"cleanGlobal" : {context.attributes.global.clear()}
 		])
 }

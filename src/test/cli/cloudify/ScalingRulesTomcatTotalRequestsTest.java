@@ -1,6 +1,7 @@
 package test.cli.cloudify;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.URL;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -48,6 +49,7 @@ public class ScalingRulesTomcatTotalRequestsTest extends AbstractLocalCloudTest 
 		String applicationDir = ScriptUtils.getBuildPath() + "/recipes/apps/" + APPLICATION_FOLDER_NAME;
 		runCommand("connect " + restUrl + ";install-application --verbose " + applicationDir);
 		this.executor= Executors.newScheduledThreadPool(NUMBER_OF_HTTP_GET_THREADS);
+		applicationUrl = "http://" + InetAddress.getLocalHost().getHostAddress() + ":8080/petclinic-mongo/";
 	}
 
 	@AfterMethod(alwaysRun = true)

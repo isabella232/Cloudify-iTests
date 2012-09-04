@@ -21,7 +21,7 @@ service {
 			"getAppCustomPojo" : {context.attributes.thisApplication["myPojo"]},
 			"getAppCustom" : {x-> return(context.attributes.thisApplication[x])},
 			"getGlobalCustom" : {x-> return(context.attributes.global[x])},
-			"cleanService" : {context.attributes.thisService.clean},
+			"cleanService" : {context.attributes.thisService.clear()},
 			"setService" : {context.attributes.thisService["myKey"] = "myValue"},
 			"cleanThisApp" : {context.attributes.thisApplication.clear()}
 		])

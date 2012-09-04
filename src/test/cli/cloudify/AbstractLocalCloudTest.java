@@ -22,6 +22,7 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.cloudifysource.dsl.Application;
 import org.cloudifysource.dsl.internal.CloudifyConstants;
 import org.cloudifysource.dsl.internal.DSLException;
 import org.cloudifysource.dsl.internal.ServiceReader;
@@ -488,13 +489,14 @@ public class AbstractLocalCloudTest extends AbstractTest {
 		}
 	}
 
-	protected void installApplication(String applicationName) {    	
+	protected Application installApplication(String applicationName) {    	
 		
 		final String applicationDir = CommandTestUtils.getPath("apps/USM/usm/applications/"+ applicationName);
 		
 		try {
-			ServiceReader.getApplicationFromFile(new File(applicationDir)).getApplication();
+			Application app = ServiceReader.getApplicationFromFile(new File(applicationDir)).getApplication();
 			runCommand("connect " + restUrl + ";install-application --verbose " + applicationDir);
+			return app;
         } catch (IOException e) {
         	Assert.fail("Failed to install applicaiton",e);
         } catch (DSLException e) {
@@ -502,6 +504,8 @@ public class AbstractLocalCloudTest extends AbstractTest {
         catch (InterruptedException e) {
         	Assert.fail("Failed to install applicaiton",e);
 		}
+		
+		return null;
     }
     
     protected void installService(String serviceName) {

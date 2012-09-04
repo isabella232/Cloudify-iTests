@@ -237,6 +237,7 @@
             <fileset dir="${src}" includes="**/resources/**"/>
             <fileset dir="${src}" includes="**/mailreporter.properties"/>
             <fileset dir="${src}" includes="**/wikireporter.properties"/>
+        	<fileset dir="${sgtest.lib}/webui" includes="**/*.jar"/>
             <fileset dir="${sgtest.home}" includes="apps/**"/>
         </jar>
     </target>

@@ -61,7 +61,7 @@ public class AttributesTest extends AbstractLocalCloudTest {
 		runCommand("connect " + restUrl + ";use-application "+ MAIN_APPLICATION_NAME + "; invoke setter cleanThisApp");
 		runCommand("connect " + restUrl + ";use-application "+ MAIN_APPLICATION_NAME + "; invoke getter cleanGlobal");
 		
-		assertEquals("wrong number of objects in space", 1, gigaspace.count(null));
+		assertEquals("wrong number of objects in space", 1, gigaspace.count(null)); //CloudConfigurationHolder
 		runCommand("connect " + restUrl + ";use-application " + MAIN_APPLICATION_NAME 
 				+ "; invoke -instanceid 1 setter setInstanceCustom myKey1 myValue1");
 		

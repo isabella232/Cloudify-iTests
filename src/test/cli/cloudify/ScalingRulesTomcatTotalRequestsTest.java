@@ -27,6 +27,7 @@ import org.testng.annotations.Test;
 import framework.tools.SGTestHelper;
 import framework.utils.AssertUtils.RepetitiveConditionProvider;
 import framework.utils.LogUtils;
+import framework.utils.ScriptUtils;
 
 public class ScalingRulesTomcatTotalRequestsTest extends AbstractLocalCloudTest {
 
@@ -44,7 +45,7 @@ public class ScalingRulesTomcatTotalRequestsTest extends AbstractLocalCloudTest 
 
 	@BeforeMethod
 	public void before() throws IOException, InterruptedException {
-		String applicationDir = SGTestHelper.getSGTestRootDir() + "/recipes/apps/" + APPLICATION_FOLDER_NAME;
+		String applicationDir = ScriptUtils.getBuildPath() + "/recipes/apps/" + APPLICATION_FOLDER_NAME;
 		runCommand("connect " + restUrl + ";install-application --verbose " + applicationDir);
 		this.executor= Executors.newScheduledThreadPool(NUMBER_OF_HTTP_GET_THREADS);
 	}

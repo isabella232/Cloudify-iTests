@@ -48,7 +48,7 @@ public class ScalingRulesTomcatTotalRequestsTest extends AbstractLocalCloudTest 
 		String applicationDir = ScriptUtils.getBuildPath() + "/recipes/apps/" + APPLICATION_FOLDER_NAME;
 		runCommand("connect " + restUrl + ";install-application --verbose " + applicationDir);
 		this.executor= Executors.newScheduledThreadPool(NUMBER_OF_HTTP_GET_THREADS);
-		applicationUrl = "http://" + InetAddress.getLocalHost().getHostAddress() + ":8080/petclinic-mongo/";
+		applicationUrl = "http://" + InetAddress.getLocalHost().getHostAddress() + ":8080/petclinic/";
 	}
 
 	@AfterMethod(alwaysRun = true)

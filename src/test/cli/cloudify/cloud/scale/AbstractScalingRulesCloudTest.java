@@ -1,4 +1,4 @@
-package test.cli.cloudify.cloud;
+package test.cli.cloudify.cloud.scale;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -27,6 +27,8 @@ import org.openspaces.admin.zone.config.ExactZonesConfig;
 import org.openspaces.admin.zone.config.ExactZonesConfigurer;
 import org.openspaces.admin.zone.config.ZonesConfig;
 import org.testng.Assert;
+
+import test.cli.cloudify.cloud.NewAbstractCloudTest;
 
 import com.gigaspaces.internal.utils.StringUtils;
 
@@ -224,7 +226,7 @@ public abstract class AbstractScalingRulesCloudTest extends NewAbstractCloudTest
 						return zones1ToString.compareTo(zones2ToString);
 					}});
 				URL publicIpAddress = instancesDetails.get(0).getPublicIp();
-				final URL petclinicHomePageUrl = new URL(publicIpAddress.getProtocol(),publicIpAddress.getHost(),TOMCAT_PORT,"/petclinic-mongo");
+				final URL petclinicHomePageUrl = new URL(publicIpAddress.getProtocol(),publicIpAddress.getHost(),TOMCAT_PORT,"/petclinic");
 				final HttpGet get = new HttpGet(petclinicHomePageUrl.toURI());
 
 				final HttpResponse response = client.execute(get);

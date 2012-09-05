@@ -101,7 +101,7 @@ public class KillManagementTest extends NewAbstractCloudTest{
 			factory.addLocators(ipNoHttp + ":" + MANAGEMENT_PORT);
 			admin = factory.createAdmin();
 			
-			petClinicUrl = new URL(hostIp + ":8080/petclinic-mongo/");
+			petClinicUrl = new URL(hostIp + ":8080/petclinic/");
 			threadPool = Executors.newFixedThreadPool(1);
 			
 			LogUtils.log("installing application petclinic on " + CLOUD_NAME);

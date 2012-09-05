@@ -14,7 +14,7 @@
  * limitations under the License.
  *******************************************************************************/
 
-package test.cli.cloudify.cloud.hp;
+package test.cli.cloudify.cloud.scale;
 
 import org.testng.ITestContext;
 import org.testng.annotations.AfterClass;
@@ -23,8 +23,6 @@ import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
-
-import test.cli.cloudify.cloud.AbstractScalingRulesCloudTest;
 
 
 public class HPScalingRulesTest extends AbstractScalingRulesCloudTest{

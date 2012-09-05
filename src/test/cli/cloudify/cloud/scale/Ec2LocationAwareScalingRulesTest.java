@@ -1,4 +1,4 @@
-package test.cli.cloudify.cloud.ec2;
+package test.cli.cloudify.cloud.scale;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,7 +20,6 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import test.cli.cloudify.cloud.AbstractScalingRulesCloudTest;
 import framework.utils.LogUtils;
 import framework.utils.TestUtils;
 

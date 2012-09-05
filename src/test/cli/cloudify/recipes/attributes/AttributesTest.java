@@ -1,5 +1,6 @@
 package test.cli.cloudify.recipes.attributes;
 
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import org.cloudifysource.dsl.utils.ServiceUtils;
@@ -29,6 +30,7 @@ public class AttributesTest extends AbstractLocalCloudTest {
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = true)
 	public void testSimpleApplicationSetAttribute() throws Exception {
 		installApplication();
+		cleanAttributes();
 		LogUtils.log("setting an application attribute from setter service");
 		runCommand("connect " + restUrl + ";use-application attributesTestApp" 
 				+ "; invoke setter setApp");
@@ -51,15 +53,19 @@ public class AttributesTest extends AbstractLocalCloudTest {
 				   simpleGet3.contains("null"));
 		uninstallApplication();
 	}
-	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = true)
-	public void testOverrideInstanceAttribute() throws Exception {
-		installApplication();
+
+	private void cleanAttributes() throws IOException, InterruptedException {
 		runCommand("connect " + restUrl + ";use-application "+ MAIN_APPLICATION_NAME + "; invoke getter cleanService");
 		runCommand("connect " + restUrl + ";use-application "+ MAIN_APPLICATION_NAME + "; invoke setter cleanThisInstance");
 		runCommand("connect " + restUrl + ";use-application "+ MAIN_APPLICATION_NAME + "; invoke setter cleanService");
 		runCommand("connect " + restUrl + ";use-application "+ MAIN_APPLICATION_NAME + "; invoke setter cleanThisApp");
 		runCommand("connect " + restUrl + ";use-application "+ MAIN_APPLICATION_NAME + "; invoke getter cleanGlobal");
+	}
+	
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = true)
+	public void testOverrideInstanceAttribute() throws Exception {
+		installApplication();
+		cleanAttributes();
 		
 		assertEquals("wrong number of objects in space", 1, gigaspace.count(null)); //CloudConfigurationHolder
 		runCommand("connect " + restUrl + ";use-application " + MAIN_APPLICATION_NAME 

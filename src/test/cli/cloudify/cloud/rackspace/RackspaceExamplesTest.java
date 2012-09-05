@@ -25,7 +25,6 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import test.cli.cloudify.cloud.AbstractExamplesTest;
-import test.cli.cloudify.cloud.services.hp.HpCloudService;
 import test.cli.cloudify.cloud.services.rackspace.RackspaceCloudService;
 
 /**

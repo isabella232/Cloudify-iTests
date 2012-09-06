@@ -167,7 +167,7 @@ public class KillManagementTest extends NewAbstractCloudTest{
 				readCloud.getTemplates().get(
 						readCloud.getConfiguration().getManagementMachineTemplate()
 						).getRemoteDirectory()
-				+ "/gigaspaces/tools/cli/cloudify.sh start-management", USERNAME, PASSWORD);
+				+ "/upload/gigaspaces/tools/cli/cloudify.sh start-management", USERNAME, PASSWORD);
 		
 	}
 

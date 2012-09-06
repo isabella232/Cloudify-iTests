@@ -62,7 +62,7 @@ public class InternalUSMPuServiceDownTest extends AbstractLocalCloudTest {
 		doTest(SINGLE_FAILOVER);
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = SUSPECTED, enabled = true)
 	public void tomcatServiceDownAndCorruptedTwiceTest() throws IOException, InterruptedException {
 		doTest(TWO_FAILOVERS);
 	}

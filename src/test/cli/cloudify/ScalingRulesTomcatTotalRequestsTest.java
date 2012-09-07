@@ -88,6 +88,7 @@ public class ScalingRulesTomcatTotalRequestsTest extends AbstractLocalCloudTest 
 
 			repetitiveAssertNumberOfInstances(pu, 1);
 		} finally {
+			shutdownExecutor();
 			uninstallApplication(APPLICATION_NAME);
 		}
 	}
@@ -103,7 +104,8 @@ public class ScalingRulesTomcatTotalRequestsTest extends AbstractLocalCloudTest 
 		public void run() {
 			HttpClient client = new DefaultHttpClient();
 			try {
-				HttpGet get = new HttpGet(url.toURI());				
+				HttpGet get = new HttpGet(url.toURI());
+				LogUtils.log("[" + Thread.currentThread().getName() + "]" + " - executing GET on " + url.toURI());
 				client.execute(get);
 				requestsMade.incrementAndGet();
 			} catch (Throwable t) {

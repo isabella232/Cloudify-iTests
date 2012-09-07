@@ -10,7 +10,7 @@ import framework.utils.WebUtils;
 
 public class CloudTestUtils {
 
-	public static final String SGTEST_MACHINE_PREFIX = "sgtest_";
+	public static final String SGTEST_MACHINE_PREFIX = "sgtest_"+System.getProperty("SUITE_ID")+"_";
 
 	public static final String WEBUI_PORT = String.valueOf(8099); 
 	public static final String REST_PORT = String.valueOf(8100); 

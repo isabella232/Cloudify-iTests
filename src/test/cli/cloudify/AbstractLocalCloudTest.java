@@ -138,6 +138,14 @@ public class AbstractLocalCloudTest extends AbstractTest {
 			LogUtils.log("Local cloud test running in dev mode, will use existing localcloud");
 		}
 		else {
+			String suiteWorkdir = System.getProperty("suite.work.dir");
+		    if(suiteWorkdir != null){
+		    	System.setProperty("com.gs.work", suiteWorkdir);
+		    }
+		    String suiteDeploydir = System.getProperty("suite.deploy.dir");
+		    if(suiteDeploydir != null){
+				System.setProperty("com.gs.deploy", suiteDeploydir);
+		    }
 			for (int i = 0 ; i < BOOTSTRAP_RETRIES_BEFOREMETHOD ; i ++) {
 				
 				try {

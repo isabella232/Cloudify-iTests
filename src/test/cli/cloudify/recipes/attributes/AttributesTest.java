@@ -54,11 +54,7 @@ public class AttributesTest extends AbstractLocalCloudTest {
 	}
 
 	private void cleanAttributes() throws IOException, InterruptedException {
-		runCommand("connect " + restUrl + ";use-application "+ MAIN_APPLICATION_NAME + "; invoke getter cleanService");
-		runCommand("connect " + restUrl + ";use-application "+ MAIN_APPLICATION_NAME + "; invoke setter cleanThisInstance");
-		runCommand("connect " + restUrl + ";use-application "+ MAIN_APPLICATION_NAME + "; invoke setter cleanService");
-		runCommand("connect " + restUrl + ";use-application "+ MAIN_APPLICATION_NAME + "; invoke setter cleanThisApp");
-		runCommand("connect " + restUrl + ";use-application "+ MAIN_APPLICATION_NAME + "; invoke getter cleanGlobal");
+		gigaspace.clear(null);
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = true)

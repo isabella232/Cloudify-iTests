@@ -92,8 +92,8 @@ sed -i "1i export LOOKUPGROUPS=RepetativeInstallAndUninstallOnByon" setenv.sh ||
 
 cd $WORKING_HOME_DIRECTORY/gigaspaces/tools/cli || error_exit $? "Failed changing directory to cli directory"
 
-chmod +x /tmp/gs-files/gigaspaces/bin/*.sh
-chmod +x /tmp/gs-files/gigaspaces/tools/cli/*.sh
+chmod +x /tmp/gs-files/upload/gigaspaces/bin/*.sh
+chmod +x /tmp/gs-files/upload/gigaspaces/tools/cli/*.sh
 
 # START AGENT ALONE OR WITH MANAGEMENT
 if [ -f nohup.out ]; then

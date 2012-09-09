@@ -16,8 +16,6 @@
 
 package test.cli.cloudify.cloud.hp;
 
-import java.util.HashMap;
-
 import org.testng.ITestContext;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
@@ -25,7 +23,6 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import test.cli.cloudify.cloud.AbstractExamplesTest;
-import test.cli.cloudify.cloud.services.hp.HpCloudService;
 
 
 public class HPExamplesTest extends AbstractExamplesTest {
@@ -51,7 +48,7 @@ public class HPExamplesTest extends AbstractExamplesTest {
 		super.scanAgentNodesLeak();
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = false)
 	public void testTravel() throws Exception {
 		super.testTravel();
 	}
@@ -65,11 +62,13 @@ public class HPExamplesTest extends AbstractExamplesTest {
 	@Override
 	protected void customizeCloud() {
 
-		final HpCloudService hpService = (HpCloudService) cloud;
-
-		hpService.setAdditionalPropsToReplace(new HashMap<String, String>());
-		hpService.getAdditionalPropsToReplace().put("imageId \"221\"",
-				"imageId \"221\"" + System.getProperty("line.separator") + "\t\t\t\t\tprivileged true");
+		//removed this since privileged true should be in the dsl file
+		
+//		final HpCloudService hpService = (HpCloudService) cloud;
+//
+//		hpService.setAdditionalPropsToReplace(new HashMap<String, String>());
+//		hpService.getAdditionalPropsToReplace().put("imageId \"221\"",
+//				"imageId \"221\"" + System.getProperty("line.separator") + "\t\t\t\t\tprivileged true");
 	}
 
 }

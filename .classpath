@@ -3,21 +3,21 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="config"/>
-	<classpathentry kind="var" path="CLOUDIFY_LATEST/lib/required/org.springframework.aop-3.1.1.RELEASE.jar"/>
+	<classpathentry kind="var" path="CLOUDIFY_LATEST/lib/required/org.springframework.aop-3.1.2.RELEASE.jar"/>
 	<classpathentry kind="var" path="CLOUDIFY_LATEST/lib/required/gs-runtime.jar" sourcepath="/GIGASPACES_PATH"/>
 	<classpathentry kind="var" path="CLOUDIFY_LATEST/lib/required/gs-openspaces.jar" sourcepath="/CLOUDIFY_LATEST/lib/optional/openspaces/gs-openspaces-src.zip"/>
 	<classpathentry kind="var" path="CLOUDIFY_LATEST/lib/required/commons-logging.jar"/>
 	<classpathentry kind="var" path="CLOUDIFY_LATEST/lib/optional/spring/com.springsource.net.sf.cglib-2.2.0.jar"/>
-	<classpathentry kind="var" path="CLOUDIFY_LATEST/lib/required/org.springframework.asm-3.1.1.RELEASE.jar"/>
-	<classpathentry kind="var" path="CLOUDIFY_LATEST/lib/required/org.springframework.aspects-3.1.1.RELEASE.jar"/>
-	<classpathentry kind="var" path="CLOUDIFY_LATEST/lib/required/org.springframework.beans-3.1.1.RELEASE.jar"/>
-	<classpathentry kind="var" path="CLOUDIFY_LATEST/lib/required/org.springframework.context-3.1.1.RELEASE.jar"/>
+	<classpathentry kind="var" path="CLOUDIFY_LATEST/lib/required/org.springframework.asm-3.1.2.RELEASE.jar"/>
+	<classpathentry kind="var" path="CLOUDIFY_LATEST/lib/required/org.springframework.aspects-3.1.2.RELEASE.jar"/>
+	<classpathentry kind="var" path="CLOUDIFY_LATEST/lib/required/org.springframework.beans-3.1.2.RELEASE.jar"/>
+	<classpathentry kind="var" path="CLOUDIFY_LATEST/lib/required/org.springframework.context-3.1.2.RELEASE.jar"/>
 	<classpathentry kind="var" path="CLOUDIFY_LATEST/lib/required/dsl.jar"/>
-	<classpathentry kind="var" path="CLOUDIFY_LATEST/lib/required/org.springframework.context.support-3.1.1.RELEASE.jar"/>
-	<classpathentry kind="var" path="CLOUDIFY_LATEST/lib/required/org.springframework.core-3.1.1.RELEASE.jar"/>
-	<classpathentry kind="var" path="CLOUDIFY_LATEST/lib/required/org.springframework.expression-3.1.1.RELEASE.jar"/>
-	<classpathentry kind="var" path="CLOUDIFY_LATEST/lib/required/org.springframework.transaction-3.1.1.RELEASE.jar"/>
-	<classpathentry kind="var" path="CLOUDIFY_LATEST/lib/optional/spring/org.springframework.jms-3.1.1.RELEASE.jar"/>
+	<classpathentry kind="var" path="CLOUDIFY_LATEST/lib/required/org.springframework.context.support-3.1.2.RELEASE.jar"/>
+	<classpathentry kind="var" path="CLOUDIFY_LATEST/lib/required/org.springframework.core-3.1.2.RELEASE.jar"/>
+	<classpathentry kind="var" path="CLOUDIFY_LATEST/lib/required/org.springframework.expression-3.1.2.RELEASE.jar"/>
+	<classpathentry kind="var" path="CLOUDIFY_LATEST/lib/required/org.springframework.transaction-3.1.2.RELEASE.jar"/>
+	<classpathentry kind="var" path="CLOUDIFY_LATEST/lib/optional/spring/org.springframework.jms-3.1.2.RELEASE.jar"/>
 	<classpathentry kind="var" path="CLOUDIFY_LATEST/lib/platform/jdbc/hsqldb.jar"/>
 	<classpathentry kind="var" path="CLOUDIFY_LATEST/lib/platform/jetty/jetty-server-8.1.2.v20120308.jar"/>
 	<classpathentry kind="var" path="CLOUDIFY_LATEST/lib/platform/jetty/jetty-util-8.1.2.v20120308.jar"/>
@@ -28,6 +28,7 @@
 	<classpathentry kind="var" path="CLOUDIFY_LATEST/lib/required/com.springsource.org.aopalliance-1.0.0.jar"/>
 	<classpathentry kind="var" path="CLOUDIFY_LATEST/lib/platform/ant/ant-1.8.3.jar"/>
 	<classpathentry kind="var" path="CLOUDIFY_LATEST/lib/platform/ant/ant-launcher-1.8.3.jar"/>
+	<classpathentry kind="var" path="CLOUDIFY_LATEST/lib/platform/esm/esc-2.2.0.jar"/>
 	<classpathentry kind="lib" path="lib/commons/commons-httpclient-3.1.jar"/>
 	<classpathentry kind="lib" path="lib/commons/commons-lang-2.4.jar"/>
 	<classpathentry kind="lib" path="lib/commons/commons-collections-3.2.1.jar"/>

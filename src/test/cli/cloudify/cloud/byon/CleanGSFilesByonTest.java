@@ -38,15 +38,12 @@ import org.testng.ITestContext;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import test.cli.cloudify.cloud.NewAbstractCloudTest;
 import framework.utils.LogUtils;
-import framework.utils.SSHUtils;
 
-public class CleanGSFilesByonTest extends NewAbstractCloudTest {
+public class CleanGSFilesByonTest extends AbstractByonCloudTest {
 	
 	private static final String DEFAULT_USER = "tgrid";
 	private static final String DEFAULT_PASSWORD = "tgrid";
-	private static final String TEST_MACHINES_LIST = "ipList";
 	private static final String ITEMS_NOT_DELETED_MSG = "The GS files and folders were not deleted on teardown.";
 	
 	// timeout for SFTP connection
@@ -57,18 +54,9 @@ public class CleanGSFilesByonTest extends NewAbstractCloudTest {
 	
 	@BeforeClass
 	public void bootstrap(ITestContext context) {
-		cleanGSFilesOnAllHosts();
+		super.killAllJavaOnAllHosts();
+		super.cleanGSFilesOnAllHosts();
 		super.bootstrap(context);
-	}
-	
-	private void cleanGSFilesOnAllHosts() {
-		
-		String command = "rm -rf /tmp/gs-files";
-		String[] hosts = System.getProperty(TEST_MACHINES_LIST, "pc-lab95,pc-lab96,pc-lab105,pc-lab106,pc-lab100,pc-lab115").split(",");
-		for (String host : hosts) {
-			SSHUtils.runCommand(host, OPERATION_TIMEOUT, command, "tgrid", "tgrid");
-		}
-		
 	}
 
 	/**
@@ -88,7 +76,7 @@ public class CleanGSFilesByonTest extends NewAbstractCloudTest {
 		try {
 			LogUtils.log("creating admin to get active machines");
 			AdminFactory factory = new AdminFactory();
-			String machinesList = System.getProperty(TEST_MACHINES_LIST, "pc-lab95,pc-lab96,pc-lab105,pc-lab106,pc-lab100");
+			String machinesList = getService().getIpList();
 			assertTrue("ipList system property is empty", StringUtils.isNotBlank(machinesList));
 			StringTokenizer tokenizer = new StringTokenizer(machinesList, ",");
 			while (tokenizer.hasMoreTokens()) {
@@ -195,20 +183,6 @@ public class CleanGSFilesByonTest extends NewAbstractCloudTest {
 		}
 		
 		return objectsExist;
-	}
-
-	@Override
-	protected void customizeCloud() throws Exception {
-	}
-
-	@Override
-	protected String getCloudName() {
-		return "byon";
-	}
-
-	@Override
-	protected boolean isReusableCloud() {
-		return false;
 	}
 
 }

@@ -16,7 +16,7 @@ import org.testng.annotations.Test;
  * 
  * <p>Note: this test uses 5 fixed machines - 192.168.9.115,192.168.9.116,192.168.9.120,192.168.9.125,192.168.9.126.
  */
-public class MultipleTemplatesWithNamesAsIPsTest extends MultipleMachineTemplatesTest{
+public class MultipleTemplatesWithNamesAsIPsTest extends MultipleMachineTemplatesTest {
 
 	protected static String TEMPLATE_1_IPs = "pc-lab95,pc-lab96";
 	protected static String TEMPLATE_2_IPs = "192.168.9.120,192.168.9.125";

@@ -37,7 +37,7 @@ import framework.utils.ScriptUtils;
  * Note: this test uses 5 fixed machines -
  * 192.168.9.115,192.168.9.116,192.168.9.120,192.168.9.125,192.168.9.126.
  */
-public class MultipleMachineTemplatesTest extends NewAbstractCloudTest {
+public class MultipleMachineTemplatesTest extends AbstractByonCloudTest {
 
 	protected static String TEMPLATE_1_IPs = "192.168.9.115,192.168.9.116";
 	protected static String TEMPLATE_2_IPs = "192.168.9.120,192.168.9.125";
@@ -60,36 +60,9 @@ public class MultipleMachineTemplatesTest extends NewAbstractCloudTest {
 	
 	@BeforeClass(alwaysRun = true)
 	protected void bootstrap(final ITestContext testContext) {
-		killAllJavaOnAllHosts();
-		cleanGSFilesOnAllHosts();
+		super.killAllJavaOnAllHosts();
+		super.cleanGSFilesOnAllHosts();
 		super.bootstrap(testContext);
-	}
-	
-	private void cleanGSFilesOnAllHosts() {
-		
-		String command = "rm -rf /tmp/gs-files";
-		String[] hosts = System.getProperty("ipList", "pc-lab95,pc-lab96,pc-lab105,pc-lab106,pc-lab100,pc-lab115").split(",");
-		for (String host : hosts) {
-			try {
-				LogUtils.log(SSHUtils.runCommand(host, OPERATION_TIMEOUT, command, "tgrid", "tgrid"));
-			} catch (AssertionError e) {
-				LogUtils.log("Failed to clean gs-files on host " + host + " .Reason --> " + e.getMessage());
-			}
-		}
-		
-	}
-	
-	private void killAllJavaOnAllHosts() {
-		
-		String command = "killall -9 java";
-		String[] hosts = System.getProperty("ipList", "pc-lab95,pc-lab96,pc-lab105,pc-lab106,pc-lab100,pc-lab115").split(",");
-		for (String host : hosts) {
-			try {
-				LogUtils.log(SSHUtils.runCommand(host, OPERATION_TIMEOUT, command, "tgrid", "tgrid"));
-			} catch (AssertionError e) {
-				LogUtils.log("Failed to clean gs-files on host " + host + " .Reason --> " + e.getMessage());
-			}
-		}
 	}
 	
 	/**
@@ -327,16 +300,6 @@ public class MultipleMachineTemplatesTest extends NewAbstractCloudTest {
 		}
 	}
 
-	@Override
-	protected String getCloudName() {
-		return "byon";
-	}
-
-	@Override
-	protected boolean isReusableCloud() {
-		return false;
-	}
-
 	private void backupAndReplaceMachineTemplateInService(String serviceName, String newTemplate) throws IOException {
 
 		File parentDir = mongodbDir;
@@ -344,7 +307,7 @@ public class MultipleMachineTemplatesTest extends NewAbstractCloudTest {
 			parentDir = tomcatParentDir;
 		}
 		if (serviceName.equalsIgnoreCase("apacheLB")) {
-			parentDir = tomcatParentDir; // 
+			parentDir = tomcatParentDir; // same parent directory as tomcat
 		}
 
 		File originalService = new File(parentDir, serviceName + "/" + serviceName + "-service.groovy");

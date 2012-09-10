@@ -31,7 +31,7 @@ import framework.utils.ScriptUtils;
  * 4. uninstall petclinic-simple and assert successful uninstall.
  * 
  */
-public class RepetativeInstallAndUninstallOnByon extends NewAbstractCloudTest {
+public class RepetativeInstallAndUninstallOnByon extends AbstractByonCloudTest {
 
 	private final static int REPETITIONS = 3;
 	private static final String TEST_UNIQUE_NAME = "RepetativeInstallAndUninstallOnByon";
@@ -40,6 +40,8 @@ public class RepetativeInstallAndUninstallOnByon extends NewAbstractCloudTest {
 	
 	@BeforeClass(alwaysRun = true)
 	protected void bootstrap(final ITestContext testContext) {
+		super.killAllJavaOnAllHosts();
+		super.cleanGSFilesOnAllHosts();
 		super.bootstrap(testContext);
 	}
 	
@@ -105,15 +107,5 @@ public class RepetativeInstallAndUninstallOnByon extends NewAbstractCloudTest {
 			admin.close();
 			admin = null;
 		}
-	}
-
-	@Override
-	protected String getCloudName() {
-		return "byon";
-	}
-
-	@Override
-	protected boolean isReusableCloud() {
-		return false;
 	}
 }

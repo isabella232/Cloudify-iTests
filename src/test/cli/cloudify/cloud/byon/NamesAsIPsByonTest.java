@@ -25,10 +25,9 @@ import framework.utils.ScriptUtils;
  * <p>It checks whether the bootstrap and instal have succeeded.
  * <p>Note: this test uses 3 fixed machines - 192.168.9.115, 192.168.9.116, 192.168.9.120.
  */
-public class NamesAsIPsByonTest extends NewAbstractCloudTest{
+public class NamesAsIPsByonTest extends AbstractByonCloudTest {
 
 	private static final String TEST_UNIQUE_NAME = "NamesAsIPsByonTest";
-	private static final String IP_LIST_PROPERTY = "ipList";
 
 	private String namesList = "pc-lab95,pc-lab96,pc-lab100";
 	
@@ -36,6 +35,8 @@ public class NamesAsIPsByonTest extends NewAbstractCloudTest{
 	
 	@BeforeClass(alwaysRun = true)
 	protected void bootstrap(final ITestContext testContext) {
+		super.killAllJavaOnAllHosts();
+		super.cleanGSFilesOnAllHosts();
 		super.bootstrap(testContext);
 	}
 	
@@ -57,7 +58,7 @@ public class NamesAsIPsByonTest extends NewAbstractCloudTest{
 	@Override
 	protected void customizeCloud() throws Exception {
 		
-		System.setProperty(IP_LIST_PROPERTY, namesList);
+		System.setProperty(ByonCloudService.IP_LIST_PROPERTY, namesList);
 		ByonCloudService byonService = (ByonCloudService) cloud;
 		byonService.setMachinePrefix(this.getClass().getName());
 
@@ -90,17 +91,7 @@ public class NamesAsIPsByonTest extends NewAbstractCloudTest{
 		} catch(Exception e) {
 			LogUtils.log("Failed to uninstall application petclinic", e);
 		} finally {
-			System.clearProperty(IP_LIST_PROPERTY);
+			System.clearProperty(ByonCloudService.IP_LIST_PROPERTY);
 		}
-	}
-	
-	@Override
-	protected String getCloudName() {
-		return "byon";
-	}
-
-	@Override
-	protected boolean isReusableCloud() {
-		return false;
 	}
 }

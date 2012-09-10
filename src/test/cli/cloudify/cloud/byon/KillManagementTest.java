@@ -35,7 +35,7 @@ import framework.utils.SSHUtils;
 import framework.utils.ScriptUtils;
 import framework.utils.WebUtils;
 
-public class KillManagementTest extends NewAbstractCloudTest{
+public class KillManagementTest extends AbstractByonCloudTest {
 	
 	private static final String MANAGEMENT_PORT = "4170";
 	private URL petClinicUrl;
@@ -51,6 +51,8 @@ public class KillManagementTest extends NewAbstractCloudTest{
 	
 	@BeforeClass(alwaysRun = true)
 	protected void bootstrap(final ITestContext testContext) {
+		super.killAllJavaOnAllHosts();
+		super.cleanGSFilesOnAllHosts();
 		super.bootstrap(testContext);
 	}
 	

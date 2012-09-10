@@ -30,7 +30,10 @@ public class ByonCloudService extends AbstractCloudService {
 	private static final String BYON_CLOUD_USER= "tgrid";
 	private static final String BYON_CLOUD_PASSWORD = "tgrid";
 	
+	public static final String IP_LIST_PROPERTY = "ipList";
+	
 	private String ipList;
+	private String[] machines;
 
 	public ByonCloudService(String uniqueName) {
 		super(uniqueName, BYON_CLOUD_NAME);
@@ -45,8 +48,12 @@ public class ByonCloudService extends AbstractCloudService {
 		this.ipList = ipList;
 	}
 	
-	public String getIpList(String ipList) {
+	public String getIpList() {
 		return ipList;
+	}
+	
+	public String[] getMachines() {
+		return machines;
 	}
 
 	@Override
@@ -59,7 +66,8 @@ public class ByonCloudService extends AbstractCloudService {
 		propsToReplace.put("cloudify_manager", this.machinePrefix + "cloudify-manager");
 		propsToReplace.put("// cloudifyUrl", "   cloudifyUrl");
 		if (ipList == null) {
-			 ipList = System.getProperty("ipList", "pc-lab95,pc-lab96,pc-lab105,pc-lab106,pc-lab100");
+			 ipList = System.getProperty(IP_LIST_PROPERTY);
+			 this.machines = ipList.split(",");
 		}
 		if (StringUtils.isNotBlank(ipList)) {
 			propsToReplace.put("0.0.0.0", ipList);

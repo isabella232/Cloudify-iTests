@@ -16,14 +16,13 @@ import framework.utils.LogUtils;
 
 public class RackspaceCloudService extends AbstractCloudService {
 
-	private static final String CLOUD_NAME = "rsopenstack";
 	private String user = "gsrackspace";
 	private String apiKey = "1ee2495897b53409f4643926f1968c0c";
 	private String tenant = "658142";
 	private RackspaceClient rackspaceClient;
 
 	public RackspaceCloudService(String uniqueName) {
-		super(uniqueName, CLOUD_NAME);
+		super(uniqueName, "rsopenstack");
 
 	}
 
@@ -54,14 +53,6 @@ public class RackspaceCloudService extends AbstractCloudService {
 	@Override
 	public void injectServiceAuthenticationDetails()
 			throws IOException {
-
-		// cloud plugin should include recipe that includes secret key
-		/*
-		 * File cloudPluginDir = new File(ScriptUtils.getBuildPath() , "tools/cli/plugins/esc/" + getCloudName() + "/");
-		 * File originalCloudDslFile = new File(cloudPluginDir, getCloudName() + "-cloud.groovy"); File
-		 * backupCloudDslFile = new File(cloudPluginDir, getCloudName() + "-cloud.backup"); // first make a backup of
-		 * the original file FileUtils.copyFile(originalCloudDslFile, backupCloudDslFile);
-		 */
 
 		Map<String, String> propsToReplace = new HashMap<String, String>();
 		propsToReplace.put("USER_NAME", user);

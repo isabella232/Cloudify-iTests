@@ -1,6 +1,8 @@
 package test.cli.cloudify.cloud.services;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.Map;
 
 import org.cloudifysource.shell.commands.CLIException;
 
@@ -19,8 +21,7 @@ public interface CloudService {
 	 * @throws InterruptedException
 	 * @throws Exception
 	 */
-	public void bootstrapCloud()
-			throws IOException, InterruptedException;
+	public void bootstrapCloud() throws Exception;
 
 	/**
 	 * tears down the specific cloud of all machines. see {@link AbstractCloudService} for generic implementation.
@@ -51,8 +52,7 @@ public interface CloudService {
 	/**
 	 * replaces the cloud dsl file with SGTest specific details.
 	 */
-	public void injectAuthenticationDetails()
-			throws IOException;
+	public void injectAuthenticationDetails() throws IOException;
 
 	public boolean isBootstrapped();
 
@@ -65,7 +65,10 @@ public interface CloudService {
 	public String getServiceFolder();
 
 	public void setMachinePrefix(String machinePrefix);
-
+	
+	public void setNumberOfManagementMachines(int numberOfManagementMachines);
+	
+	public String getMachinePrefix();
 
 	public void beforeBootstrap() throws Exception;
 	
@@ -76,5 +79,9 @@ public interface CloudService {
 	public boolean scanLeakedAgentAndManagementNodes();
 
 	public boolean scanLeakedAgentNodes();
+	
+	public void addFilesToReplace(Map<File, File> filesToReplace);
+	
+	public String getPathToCloudFolder();
 
 }

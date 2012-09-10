@@ -17,7 +17,6 @@ import framework.utils.LogUtils;
 
 public class HpCloudService extends AbstractCloudService {
 
-	private static final String CLOUD_NAME = "openstack";
 	private String tenant = "24912589714038";
 	private String user = "98173213380893";
 	private String apiKey = "C5nobOW90bhnCmE5AQaLaJ0Ubd8UISPxGih";
@@ -25,7 +24,7 @@ public class HpCloudService extends AbstractCloudService {
 	private OpenstackClient openstackClient;
 
 	public HpCloudService(final String uniqueName) {
-		super(uniqueName, CLOUD_NAME);
+		super(uniqueName, "openstack");
 	}
 
 	public String getTenant() {

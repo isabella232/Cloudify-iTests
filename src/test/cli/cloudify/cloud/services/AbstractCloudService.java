@@ -15,6 +15,8 @@ import org.cloudifysource.dsl.cloud.Cloud;
 import org.cloudifysource.dsl.internal.DSLException;
 import org.cloudifysource.dsl.internal.ServiceReader;
 
+import com.j_spaces.kernel.PlatformVersion;
+
 import test.cli.cloudify.CloudTestUtils;
 import test.cli.cloudify.CommandTestUtils;
 import framework.tools.SGTestHelper;
@@ -85,6 +87,7 @@ public abstract class AbstractCloudService implements CloudService {
 	public void setMachinePrefix(String machinePrefix) {
 		this.machinePrefix = machinePrefix;
 	}
+	
 
 	public void setCloudName(String cloudName) {
 		this.cloudName = cloudName;
@@ -124,23 +127,14 @@ public abstract class AbstractCloudService implements CloudService {
 	}
 
 
-	private void replaceCloudifyURL() throws DSLException, IOException {
+	private void replaceCloudifyURL() throws DSLException, IOException {		
 		Cloud cloud = ServiceReader.readCloud(new File(getPathToCloudGroovy()));
 		String defaultURL = cloud.getProvider().getCloudifyUrl();
-		String newCloudifyURL = "";
-		int prefixIndex = defaultURL.indexOf(DEFAULT_URL_PREFIX);
-		if (prefixIndex > 0) {
-			String lastParts = defaultURL.substring(prefixIndex + DEFAULT_URL_PREFIX.length());
-			String versionNumber = lastParts.substring(1, lastParts.lastIndexOf("/"));
-			String fileName = lastParts.substring(lastParts.lastIndexOf("/") + 1);
-			String buildNumber = fileName.substring(fileName.lastIndexOf("-b") + 2, fileName.indexOf(".zip"));
-			newCloudifyURL = NEW_URL_PREFIX + "/" + versionNumber + "/build_" + buildNumber + "/cloudify/1.5/" + fileName;
-		} 
-		else {
-			LogUtils.log("The groovy file doesn't contain a cloudifyUrl entry starting with \"" + DEFAULT_URL_PREFIX + "\"");
-			throw new DSLException("The groovy file doesn't contain a cloudifyUrl entry starting with \"" + DEFAULT_URL_PREFIX + "\"");
-		}
+		String buildNumber = PlatformVersion.getBuildNumber();
+		String version = PlatformVersion.getVersion();
+		String milestone = PlatformVersion.getMilestone();
 
+		String newCloudifyURL = NEW_URL_PREFIX + "/" + version + "/build_" + buildNumber + "/cloudify/1.5/gigaspaces-cloudify-" + version + "-" + milestone + "-b" + buildNumber + ".zip";
 		Map<String, String> propsToReplace = new HashMap<String, String>();
 		propsToReplace.put(defaultURL, newCloudifyURL);
 		IOUtils.replaceTextInFile(getPathToCloudGroovy(), propsToReplace);
@@ -205,8 +199,7 @@ public abstract class AbstractCloudService implements CloudService {
 	}
 
 	@Override
-	public void bootstrapCloud() throws IOException, InterruptedException {
-		try {
+	public void bootstrapCloud() throws Exception {
 			overrideLogsFile();
 			injectAuthenticationDetails();
 			if (filesToReplace != null) {
@@ -234,8 +227,6 @@ public abstract class AbstractCloudService implements CloudService {
 			
 			printCloudConfigFile();
 
-
-
 			String output = CommandTestUtils.runCommandAndWait("bootstrap-cloud --verbose " + getCloudName() + "_" + getUniqueName());
 			LogUtils.log("Extracting rest url's from cli output");
 			restAdminUrls = extractRestAdminUrls(output, numberOfManagementMachines);
@@ -252,19 +243,14 @@ public abstract class AbstractCloudService implements CloudService {
 				LogUtils.log("Found " + CloudTestUtils.getNumberOfMachines(machinesURL) + " machines");
 			}
 
-		} catch (Exception e) {
-			deleteCloudFiles(getCloudName());
-			throw new IOException(e);
 		}
-	}
 
 	@Override
-
 	public void beforeBootstrap() throws Exception {
+		
 	}
 
-	private void printCloudConfigFile()
-			throws IOException {
+	private void printCloudConfigFile() throws IOException {
 		String pathToCloudGroovy = getPathToCloudGroovy();
 		File cloudConfigFile = new File(pathToCloudGroovy);
 		if (!cloudConfigFile.exists()) {
@@ -369,26 +355,6 @@ public abstract class AbstractCloudService implements CloudService {
 		}
 
 		return webuiUrls;
-	}
-
-	private void deleteCloudFiles(String cloudName)
-			throws IOException {
-
-		/*
-		 * File cloudPluginDir = new File(ScriptUtils.getBuildPath() , "tools/cli/plugins/esc/" + cloudName + "/"); File
-		 * originalCloudDslFile = new File(cloudPluginDir, cloudName + "-cloud.groovy"); File backupCloudDslFile = new
-		 * File(cloudPluginDir, cloudName + "-cloud.backup"); File targetPemFolder = new
-		 * File(ScriptUtils.getBuildPath(), "tools/cli/plugins/esc/" + cloudName + "/upload/"); File cloudifyOverrides =
-		 * new File(cloudPluginDir.getAbsolutePath() + "/upload/cloudify-overrides"); File tempDslFolder = new
-		 * File(cloudPluginDir.getAbsolutePath() + "/tmp"); // delete pem files from upload dir for (File file :
-		 * targetPemFolder.listFiles()) { if (file.getName().contains(".pem")) { FileUtils.deleteQuietly(file); break; }
-		 * } // delete cloudify-overrides if exists if (cloudifyOverrides.exists()) {
-		 * FileUtils.deleteDirectory(cloudifyOverrides); } // make backup file the only file String currentDate = new
-		 * Date().toString().replace(" ", "_").replace(":", "_"); if (!tempDslFolder.exists()) { tempDslFolder.mkdir();
-		 * } FileUtils.moveFile(originalCloudDslFile, new File(tempDslFolder.getAbsolutePath() + File.separator +
-		 * cloudName + currentDate + "-cloud.groovy")); FileUtils.copyFile(backupCloudDslFile, originalCloudDslFile);
-		 * FileUtils.deleteQuietly(backupCloudDslFile);
-		 */
 	}
 
 	private void assertBootstrapServicesAreAvailable()

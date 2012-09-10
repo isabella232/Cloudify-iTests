@@ -1,6 +1,7 @@
 package test.cli.cloudify.cloud;
 
 import java.io.IOException;
+import java.net.URL;
 
 import org.cloudifysource.dsl.internal.CloudifyConstants;
 
@@ -10,8 +11,10 @@ import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
 
+import framework.utils.AssertUtils;
 import framework.utils.LogUtils;
 import framework.utils.ScriptUtils;
+import framework.utils.WebUtils;
 
 public abstract class AbstractExamplesTest extends NewAbstractCloudTest {
 	
@@ -51,6 +54,31 @@ public abstract class AbstractExamplesTest extends NewAbstractCloudTest {
 										+ CloudifyConstants.USM_DETAILS_IMAGE_ID).get(String.class);
 				assertTrue("error reading image id", !imageIDResult.toLowerCase().contains("error"));
 
+			}
+			
+			if (applicationName.equals("petclinic")){
+				
+				String[] services = {"mongod", "mongoConfig", "mongos", "tomcat", "apacheLB"};
+				
+				Client client = Client.create(new DefaultClientConfig());
+				final WebResource service = client.resource(this.getRestUrl());
+				
+				String command = "connect " + getRestUrl() + ";use-application petclinic;list-services";
+				String output = CommandTestUtils.runCommandAndWait(command);
+				
+				for(String singleService : services){
+					AssertUtils.assertTrue("the service " + singleService + " is not running", output.contains(singleService));					
+				}
+				
+				String restApacheService = service.path("/admin/ProcessingUnits/Names/petclinic.apacheLB/ProcessingUnitInstances/0/ServiceDetailsByServiceId/USM/Attributes/Cloud%20Public%20IP").get(String.class);
+				int urlStartIndex = restApacheService.indexOf(":") + 2;
+				int urlEndIndex = restApacheService.indexOf("\"", urlStartIndex);
+				
+				String apacheServiceHostURL = restApacheService.substring(urlStartIndex, urlEndIndex);
+				String apachePort = "8090";
+				
+				assertPageExists("http://" + apacheServiceHostURL + ":" + apachePort + "/");
+				
 			}
 		} 
 		finally {
@@ -92,5 +120,14 @@ public abstract class AbstractExamplesTest extends NewAbstractCloudTest {
 	@Override
 	protected void customizeCloud() {
 		
+	}
+	
+	protected void assertPageExists(String url) {
+
+		try {
+			WebUtils.isURLAvailable(new URL(url));
+		} catch (Exception e) {
+			AssertUtils.AssertFail(e.getMessage());
+		}
 	}
 }

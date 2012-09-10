@@ -28,6 +28,7 @@ import framework.utils.DumpUtils;
 import framework.utils.LogUtils;
 import framework.utils.ScriptUtils;
 
+@Deprecated
 public class AbstractCloudTest extends AbstractTest {
 
 	private static String[][] SUPPORTED_CLOUDS = null;

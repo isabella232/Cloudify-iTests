@@ -27,22 +27,17 @@ public class MultipleTemplatesWithNamesAsIPsTest extends MultipleMachineTemplate
 		super.customizeCloud();		
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false, priority = 1)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true, priority = 1)
 	public void testPetclinic() throws Exception {
 		TEMPLATE_1_IPs = "192.168.9.115,192.168.9.116";
 		TEMPLATE_3_IPs = "192.168.9.126";
 		super.testPetclinic();
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false, priority = 2)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true, priority = 2)
 	public void testPetclinicUninstall(){
 		super.testPetclinicUninstall();
 	}
 	
-	/*@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true, priority = 3)
-	public void testPetclinicTeardownByon(){
-		super.testPetclinicTeardownByon();
-	}*/
-
 }
 	

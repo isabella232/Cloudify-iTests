@@ -71,10 +71,9 @@ public class AbstractCloudTest extends AbstractTest {
 	 * all install/uninstall commands will be executed on the specified cloud.
 	 * @param cloudName The name of the requested service
 	 * @return CloudService The cached or created could service
-	 * @throws InterruptedException 
-	 * @throws IOException 
+	 * @throws Exception 
 	 */
-	public void setCloudService(String cloudName, String serviceUniqueName, boolean bootstrapService) throws IOException, InterruptedException {
+	public void setCloudService(String cloudName, String serviceUniqueName, boolean bootstrapService) throws Exception {
 		cloudService = cloudServiceManager.getCloudService(cloudName, serviceUniqueName);
 		/*service = getCachedService(cloudName, serviceUniqueName);
 		if (service == null) {

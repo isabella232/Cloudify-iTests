@@ -26,6 +26,7 @@ import framework.utils.AssertUtils;
 import framework.utils.AssertUtils.RepetitiveConditionProvider;
 import framework.utils.IOUtils;
 import framework.utils.LogUtils;
+import framework.utils.SSHUtils;
 import framework.utils.ScriptUtils;
 
 /**
@@ -40,7 +41,7 @@ public class MultipleMachineTemplatesTest extends NewAbstractCloudTest {
 
 	protected static String TEMPLATE_1_IPs = "192.168.9.115,192.168.9.116";
 	protected static String TEMPLATE_2_IPs = "192.168.9.120,192.168.9.125";
-	protected static String TEMPLATE_3_IPs = "192.168.9.126";
+	protected static String TEMPLATE_3_IPs = "192.168.9.126,192.168.9.135";
 
 	private static final int MONGOD_DEFAULT_INSTANCES_NUM = 2;
 	private static final int MONGOD_INSTANCES_NUM = 1;
@@ -51,7 +52,7 @@ public class MultipleMachineTemplatesTest extends NewAbstractCloudTest {
 
 	private String cloudName = "byon";
 	private File mongodbDir = new File(ScriptUtils.getBuildPath(), "recipes/services/mongodb");
-	private File tomcatDir = new File(ScriptUtils.getBuildPath(), "recipes/services");
+	private File tomcatParentDir = new File(ScriptUtils.getBuildPath(), "recipes/services");
 	private File newCloudGroovyFile = new File(ScriptUtils.getBuildPath() + "/tools/cli/plugins/esc/byon/",
 			"byon-cloud.new");
 
@@ -59,18 +60,71 @@ public class MultipleMachineTemplatesTest extends NewAbstractCloudTest {
 	
 	@BeforeClass(alwaysRun = true)
 	protected void bootstrap(final ITestContext testContext) {
+		killAllJavaOnAllHosts();
+		cleanGSFilesOnAllHosts();
 		super.bootstrap(testContext);
 	}
 	
+	private void cleanGSFilesOnAllHosts() {
+		
+		String command = "rm -rf /tmp/gs-files";
+		String[] hosts = System.getProperty("ipList", "pc-lab95,pc-lab96,pc-lab105,pc-lab106,pc-lab100,pc-lab115").split(",");
+		for (String host : hosts) {
+			try {
+				LogUtils.log(SSHUtils.runCommand(host, OPERATION_TIMEOUT, command, "tgrid", "tgrid"));
+			} catch (AssertionError e) {
+				LogUtils.log("Failed to clean gs-files on host " + host + " .Reason --> " + e.getMessage());
+			}
+		}
+		
+	}
+	
+	private void killAllJavaOnAllHosts() {
+		
+		String command = "killall -9 java";
+		String[] hosts = System.getProperty("ipList", "pc-lab95,pc-lab96,pc-lab105,pc-lab106,pc-lab100,pc-lab115").split(",");
+		for (String host : hosts) {
+			try {
+				LogUtils.log(SSHUtils.runCommand(host, OPERATION_TIMEOUT, command, "tgrid", "tgrid"));
+			} catch (AssertionError e) {
+				LogUtils.log("Failed to clean gs-files on host " + host + " .Reason --> " + e.getMessage());
+			}
+		}
+	}
+	
+	/**
+	 * check that each service was assigned to the correct template, according to byon-cloud.groovy.
+	 * 
+	 * @throws Exception
+	 */
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true, priority = 1)
+	public void testPetclinic() throws Exception {
+
+		LogUtils.log("installing application petclinic on " + cloudName);
+		installApplicationAndWait(ScriptUtils.getBuildPath() + "/recipes/apps/petclinic", "petclinic");
+
+		String template1IPsArray[] = TEMPLATE_1_IPs.split(",");
+		String template2IPsArray[] = TEMPLATE_2_IPs.split(",");
+		String template3IPsArray[] = TEMPLATE_3_IPs.split(",");
+		
+		Assert.assertTrue(Arrays.asList(template2IPsArray).contains(getPuHostAddress("petclinic.mongod")));
+		Assert.assertTrue(Arrays.asList(template1IPsArray).contains(getPuHostAddress("petclinic.mongos")));
+		Assert.assertTrue(Arrays.asList(template1IPsArray).contains(getPuHostAddress("mongoConfig")));
+		Assert.assertTrue(Arrays.asList(template2IPsArray).contains(getPuHostAddress("petclinic.tomcat")));
+		Assert.assertTrue(Arrays.asList(template3IPsArray).contains(getPuHostAddress("webui")));
+		Assert.assertTrue(Arrays.asList(template3IPsArray).contains(getPuHostAddress("rest")));
+	}
+
+	@AfterMethod
+	public void cleanUp() {
+		super.scanAgentNodesLeak();
+	}
+
 	@AfterClass(alwaysRun = true)
 	protected void teardown() {
 		super.teardown();
 	}
 	
-	@AfterMethod
-	public void cleanUp() {
-		super.scanAgentNodesLeak();
-	}
 
 	@Override
 	protected void customizeCloud() throws Exception {
@@ -79,7 +133,6 @@ public class MultipleMachineTemplatesTest extends NewAbstractCloudTest {
 		// replace values here and eventually copy "byon-cloud.new" over
 		// "byon_MultipleMachineTemplatesTest\byon-cloud.groovy".
 
-		ByonCloudService byonService = (ByonCloudService) cloud;
 		// use SGTest's special byon groovy (with templates) instead of the original one,
 		// but don't override the original file - use byon-new-cloud.groovy instead
 		File multiTemplatesGroovy = new File(SGTestHelper.getSGTestRootDir()
@@ -98,26 +151,26 @@ public class MultipleMachineTemplatesTest extends NewAbstractCloudTest {
 		replaceMap.put("1.1.1.1", TEMPLATE_1_IPs);
 		replaceMap.put("2.2.2.2", TEMPLATE_2_IPs);
 		replaceMap.put("3.3.3.3", TEMPLATE_3_IPs);
-		replaceMap.put("localDirectory \"tools/cli/plugins/esc/byon/upload\"",
-				"localDirectory \"tools/cli/plugins/esc/" + byonService.getServiceFolder() + "/upload\"");
 		IOUtils.replaceTextInFile(newCloudGroovyFile.getAbsolutePath(), replaceMap);
 
 		// replace the default bootstrap-management and cloud groovy with the customized versions
-		File standardBootstrapManagement = new File(byonService.getPathToCloudFolder() + "/upload",
+		File standardBootstrapManagement = new File(getService().getPathToCloudFolder() + "/upload",
 				"bootstrap-management.sh");
 		File bootstrapManagementCustomized = new File(SGTestHelper.getSGTestRootDir()
-				+ "/apps/cloudify/cloud/byon/bootstrap-management-" + byonService.getServiceFolder() + ".sh");
-		File fileToBeReplaced = new File(byonService.getPathToCloudFolder(), "byon-cloud.groovy");
+				+ "/apps/cloudify/cloud/byon/bootstrap-management-" + getService().getServiceFolder() + ".sh");
+		File fileToBeReplaced = new File(getService().getPathToCloudFolder(), "byon-cloud.groovy");
 		Map<File, File> filesToReplace = new HashMap<File, File>();
 		filesToReplace.put(fileToBeReplaced, newCloudGroovyFile);
 		filesToReplace.put(standardBootstrapManagement, bootstrapManagementCustomized);
-		byonService.addFilesToReplace(filesToReplace);
+		getService().addFilesToReplace(filesToReplace);
 
 		// TODO : this is dangerous, need to fix
 		backupAndReplaceMachineTemplateInService("mongos", "TEMPLATE_1");
 		backupAndReplaceMachineTemplateInService("mongod", "TEMPLATE_2");
 		backupAndReplaceMachineTemplateInService("mongoConfig", "TEMPLATE_1");
 		backupAndReplaceMachineTemplateInService("tomcat", "TEMPLATE_2");
+		backupAndReplaceMachineTemplateInService("apacheLB", "TEMPLATE_3");
+
 		IOUtils.replaceTextInFile(mongodbDir.getAbsolutePath() + "/mongod/mongod-service.groovy", "numInstances "
 				+ MONGOD_DEFAULT_INSTANCES_NUM, "numInstances " + MONGOD_INSTANCES_NUM);
 
@@ -131,29 +184,6 @@ public class MultipleMachineTemplatesTest extends NewAbstractCloudTest {
 		factory.addGroup(TEST_UNIQUE_NAME);
 		admin = factory.createAdmin();
 		LogUtils.log("admin created");
-	}
-
-	/**
-	 * check that each service was assigned to the correct template, according to byon-cloud.groovy.
-	 * 
-	 * @throws Exception
-	 */
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false, priority = 1)
-	public void testPetclinic() throws Exception {
-
-		LogUtils.log("installing application petclinic on " + cloudName);
-		installApplicationAndWait(ScriptUtils.getBuildPath() + "/recipes/apps/petclinic", "petclinic");
-
-		String template1IPsArray[] = TEMPLATE_1_IPs.split(",");
-		String template2IPsArray[] = TEMPLATE_2_IPs.split(",");
-		String template3IPsArray[] = TEMPLATE_3_IPs.split(",");
-		
-		Assert.assertTrue(Arrays.asList(template2IPsArray).contains(getPuHostAddress("petclinic.mongod")));
-		Assert.assertTrue(Arrays.asList(template1IPsArray).contains(getPuHostAddress("petclinic.mongos")));
-		Assert.assertTrue(Arrays.asList(template1IPsArray).contains(getPuHostAddress("mongoConfig")));
-		Assert.assertTrue(Arrays.asList(template2IPsArray).contains(getPuHostAddress("petclinic.tomcat")));
-		Assert.assertTrue(Arrays.asList(template3IPsArray).contains(getPuHostAddress("webui")));
-		Assert.assertTrue(Arrays.asList(template3IPsArray).contains(getPuHostAddress("rest")));
 	}
 	
 	/**
@@ -310,8 +340,12 @@ public class MultipleMachineTemplatesTest extends NewAbstractCloudTest {
 	private void backupAndReplaceMachineTemplateInService(String serviceName, String newTemplate) throws IOException {
 
 		File parentDir = mongodbDir;
-		if (serviceName.equalsIgnoreCase("tomcat"))
-			parentDir = tomcatDir;
+		if (serviceName.equalsIgnoreCase("tomcat")) {
+			parentDir = tomcatParentDir;
+		}
+		if (serviceName.equalsIgnoreCase("apacheLB")) {
+			parentDir = tomcatParentDir; // 
+		}
 
 		File originalService = new File(parentDir, serviceName + "/" + serviceName + "-service.groovy");
 		FileUtils.copyFile(originalService, new File(originalService.getAbsolutePath() + ".backup"));
@@ -331,7 +365,7 @@ public class MultipleMachineTemplatesTest extends NewAbstractCloudTest {
 
 		File parentDir = mongodbDir;
 		if (serviceName.equalsIgnoreCase("tomcat"))
-			parentDir = tomcatDir;
+			parentDir = tomcatParentDir;
 
 		File originalService = new File(parentDir, serviceName + "/" + serviceName + "-service.groovy");
 		originalService.delete();

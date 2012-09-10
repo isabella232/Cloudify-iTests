@@ -59,7 +59,7 @@ public class ByonCloudService extends AbstractCloudService {
 		propsToReplace.put("cloudify_manager", this.machinePrefix + "cloudify-manager");
 		propsToReplace.put("// cloudifyUrl", "   cloudifyUrl");
 		if (ipList == null) {
-			 ipList = System.getProperty("ipList");
+			 ipList = System.getProperty("ipList", "pc-lab95,pc-lab96,pc-lab105,pc-lab106,pc-lab100");
 		}
 		if (StringUtils.isNotBlank(ipList)) {
 			propsToReplace.put("0.0.0.0", ipList);

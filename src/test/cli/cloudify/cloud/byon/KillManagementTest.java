@@ -1,6 +1,5 @@
 package test.cli.cloudify.cloud.byon;
 
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -22,7 +21,6 @@ import org.openspaces.admin.gsm.GridServiceManager;
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.testng.ITestContext;
 import org.testng.annotations.AfterClass;
-import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -41,13 +39,10 @@ public class KillManagementTest extends NewAbstractCloudTest{
 	
 	private static final String MANAGEMENT_PORT = "4170";
 	private URL petClinicUrl;
-	//private ByonCloudService service;
 	private int numOManagementMachines = 2;
 	final private static String USERNAME = "tgrid";
 	final private static String PASSWORD = "tgrid";
-	private static final String TEST_UNIQUE_NAME = "KillManagementTest";
 	private static final String UPLOAD_FOLDER = "upload";
-	private static final String CLOUD_NAME = "byon";
 	private Admin admin;
 	
 	private volatile boolean run = true;
@@ -59,34 +54,7 @@ public class KillManagementTest extends NewAbstractCloudTest{
 		super.bootstrap(testContext);
 	}
 	
-	@AfterClass(alwaysRun = true)
-	protected void teardown() {
-		super.teardown();
-	}
-	
-	@AfterMethod
-	public void cleanUp() {
-		super.scanAgentNodesLeak();
-	}
-	
-	@Override
-	protected void customizeCloud() throws Exception {
-
-		ByonCloudService byonService = (ByonCloudService) cloud;
-		
-		byonService.setNumberOfManagementMachines(numOManagementMachines);
-		byonService.setMachinePrefix(this.getClass().getName());
-
-		// replace the default bootstap-management.sh with a multicast version one
-		File standardBootstrapManagement = new File(byonService.getPathToCloudFolder() + "/" + UPLOAD_FOLDER, "bootstrap-management.sh");
-		File customBootstrapManagement = new File(SGTestHelper.getSGTestRootDir() + "/apps/cloudify/cloud/byon/bootstrap-management-" + byonService.getServiceFolder() + ".sh");
-		Map<File, File> filesToReplace = new HashMap<File, File>();
-		filesToReplace.put(standardBootstrapManagement, customBootstrapManagement);
-		byonService.addFilesToReplace(filesToReplace);
-	}
-
-
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
 	public void testPetclinic() throws Exception {
 
 		try {
@@ -104,8 +72,7 @@ public class KillManagementTest extends NewAbstractCloudTest{
 			petClinicUrl = new URL(hostIp + ":8080/petclinic/");
 			threadPool = Executors.newFixedThreadPool(1);
 			
-			LogUtils.log("installing application petclinic on " + CLOUD_NAME);
-			//installApplicationAndWait(ScriptUtils.getBuildPath() + "/recipes/apps/petclinic", "petclinic");
+			LogUtils.log("installing application petclinic on byon");
 			installApplicationAndWait(ScriptUtils.getBuildPath() + "/recipes/apps/petclinic-simple", "petclinic");
 
 			Future<Void> ping = threadPool.submit(new Callable<Void>(){
@@ -156,8 +123,25 @@ public class KillManagementTest extends NewAbstractCloudTest{
 				admin.close();
 				admin = null;
 			}
-		}
+		}	
+	}
+	
+	@AfterClass(alwaysRun = true)
+	protected void teardown() {
+		super.teardown();
+	}
+	
+	@Override
+	protected void customizeCloud() throws Exception {
 		
+		getService().setNumberOfManagementMachines(numOManagementMachines);
+		
+		// replace the default bootstap-management.sh with a multicast version one
+		File standardBootstrapManagement = new File(getService().getPathToCloudFolder() + "/" + UPLOAD_FOLDER, "bootstrap-management.sh");
+		File customBootstrapManagement = new File(SGTestHelper.getSGTestRootDir() + "/apps/cloudify/cloud/byon/bootstrap-management-" + getService().getServiceFolder() + ".sh");
+		Map<File, File> filesToReplace = new HashMap<File, File>();
+		filesToReplace.put(standardBootstrapManagement, customBootstrapManagement);
+		getService().addFilesToReplace(filesToReplace);
 	}
 
 	//TODO: add support for windows machines (BYON doesn't support windows right now)

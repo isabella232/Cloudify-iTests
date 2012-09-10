@@ -32,82 +32,63 @@ import org.apache.commons.vfs2.provider.sftp.SftpFileSystemConfigBuilder;
 import org.cloudifysource.dsl.cloud.FileTransferModes;
 import org.cloudifysource.dsl.internal.CloudifyConstants;
 import org.cloudifysource.esc.util.Utils;
+import org.openspaces.admin.Admin;
 import org.openspaces.admin.AdminFactory;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
+import org.testng.ITestContext;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import test.cli.cloudify.CloudTestUtils;
-import test.cli.cloudify.CommandTestUtils;
-import test.cli.cloudify.cloud.AbstractCloudTest;
-import test.cli.cloudify.cloud.services.CloudService;
+import test.cli.cloudify.cloud.NewAbstractCloudTest;
 import framework.utils.LogUtils;
+import framework.utils.SSHUtils;
 
-public class CleanGSFilesByonTest extends AbstractCloudTest {
+public class CleanGSFilesByonTest extends NewAbstractCloudTest {
 	
 	private static final String DEFAULT_USER = "tgrid";
 	private static final String DEFAULT_PASSWORD = "tgrid";
 	private static final String TEST_MACHINES_LIST = "ipList";
 	private static final String ITEMS_NOT_DELETED_MSG = "The GS files and folders were not deleted on teardown.";
-	//TODO : TEST_CLOUD_UNI...
-	private static final String TEST_UNIQUE_NAME = "CleanGSFilesByonTest";
-	private static final String CLOUD_NAME = "byon";
+	
 	// timeout for SFTP connection
 	private static final Integer SFTP_DISCONNECT_DETECTION_TIMEOUT_MILLIS = Integer.valueOf(10 * 1000);
 	
 	private Set<String> hosts = null;
+	
+	
+	@BeforeClass
+	public void bootstrap(ITestContext context) {
+		cleanGSFilesOnAllHosts();
+		super.bootstrap(context);
+	}
+	
+	private void cleanGSFilesOnAllHosts() {
+		
+		String command = "rm -rf /tmp/gs-files";
+		String[] hosts = System.getProperty(TEST_MACHINES_LIST, "pc-lab95,pc-lab96,pc-lab105,pc-lab106,pc-lab100,pc-lab115").split(",");
+		for (String host : hosts) {
+			SSHUtils.runCommand(host, OPERATION_TIMEOUT, command, "tgrid", "tgrid");
+		}
+		
+	}
 
-	@BeforeMethod
-	public void bootstrap() throws IOException, InterruptedException {
-		setCloudService(CLOUD_NAME, TEST_UNIQUE_NAME, false);
-		CloudService service = getService();
-		if ((service != null) && service.isBootstrapped()) {
-			service.teardownCloud(); // tear down the existing byon cloud since we need a new bootstrap			
-		}
-		service.setMachinePrefix(this.getClass().getName() + CloudTestUtils.SGTEST_MACHINE_PREFIX);
-		service.bootstrapCloud();
-	}
-	
-	@AfterMethod(alwaysRun = true)
-	public void teardown() throws IOException {
-		boolean needToTeardown = false;
-		try {
-			String[] restUrls = getService().getRestUrls();
-			for (String url : restUrls) {
-				String connectCommand = "connect " + url + ";";
-				String output = CommandTestUtils.runCommandExpectedFail(connectCommand);
-				if (output.toLowerCase().contains("connected successfully".toLowerCase())) {
-					//one of the servers is up, need to tear down
-					needToTeardown = true;
-					break;
-				}
-			}
-			
-			if (needToTeardown) {
-				getService().teardownCloud();
-			}
-		}
-		catch (Throwable e) {
-			LogUtils.log("caught an exception while tearing down byon", e);
-			sendTeardownCloudFailedMail("byon", e);
-		}
-	}
-	
 	/**
 	 * Checks if the folders and files were removed as we wanted.
 	 * NOTE: In order to simplify the test we're using the default credentials to access our lab machines.
 	 * @throws Exception
 	 */
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, groups = "1", enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, groups = "1", enabled = true)
 	public void installTest() throws Exception {
+		
+		Admin admin = null;
+		
 		List<String> itemsToClean = new ArrayList<String>();
-		itemsToClean.add("/tmp/gs-files/gigaspaces/work");
-		itemsToClean.add("/tmp/gs-files/gigaspaces.zip");
+		itemsToClean.add("/tmp/gs-files/upload/gigaspaces/work");
+		itemsToClean.add("/tmp/gs-files/upload/gigaspaces.zip");
 
 		try {
 			LogUtils.log("creating admin to get active machines");
 			AdminFactory factory = new AdminFactory();
-			String machinesList = System.getProperty(TEST_MACHINES_LIST);
+			String machinesList = System.getProperty(TEST_MACHINES_LIST, "pc-lab95,pc-lab96,pc-lab105,pc-lab106,pc-lab100");
 			assertTrue("ipList system property is empty", StringUtils.isNotBlank(machinesList));
 			StringTokenizer tokenizer = new StringTokenizer(machinesList, ",");
 			while (tokenizer.hasMoreTokens()) {
@@ -121,7 +102,7 @@ public class CleanGSFilesByonTest extends AbstractCloudTest {
 				admin = null;
 			}
 		}
-		getService().teardownCloud();
+		super.teardown();
 		for (String address : hosts) {
 			//using the default credentials to access our lab machines
 			try{
@@ -214,6 +195,20 @@ public class CleanGSFilesByonTest extends AbstractCloudTest {
 		}
 		
 		return objectsExist;
+	}
+
+	@Override
+	protected void customizeCloud() throws Exception {
+	}
+
+	@Override
+	protected String getCloudName() {
+		return "byon";
+	}
+
+	@Override
+	protected boolean isReusableCloud() {
+		return false;
 	}
 
 }

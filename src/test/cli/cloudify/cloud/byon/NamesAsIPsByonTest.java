@@ -39,6 +39,21 @@ public class NamesAsIPsByonTest extends NewAbstractCloudTest{
 		super.bootstrap(testContext);
 	}
 	
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
+	public void testPetclinic() throws IOException, InterruptedException{
+		
+		installApplicationAndWait(ScriptUtils.getBuildPath() + "/recipes/apps/petclinic-simple", "petclinic");
+		
+		//TODO : edit this, so if it fails it won't be on NPE!
+		AssertUtils.assertTrue("petclinic.mongod is not up - install failed", admin.getProcessingUnits().getProcessingUnit("petclinic.mongod") != null);		
+		AssertUtils.assertTrue("petclinic.tomcat is not up - install failed", admin.getProcessingUnits().getProcessingUnit("petclinic.tomcat") != null);
+	}
+	
+	@AfterClass(alwaysRun = true)
+	protected void teardown() {
+		super.teardown();
+	}
+	
 	@Override
 	protected void customizeCloud() throws Exception {
 		
@@ -62,16 +77,6 @@ public class NamesAsIPsByonTest extends NewAbstractCloudTest{
 		admin = factory.createAdmin();
 	}
 
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
-	public void testPetclinic() throws IOException, InterruptedException{
-
-		installApplicationAndWait(ScriptUtils.getBuildPath() + "/recipes/apps/petclinic-simple", "petclinic");
-		
-		//TODO : edit this, so if it fails it won't be on NPE!
-		AssertUtils.assertTrue("petclinic.mongod is not up - install failed", admin.getProcessingUnits().getProcessingUnit("petclinic.mongod") != null);		
-		AssertUtils.assertTrue("petclinic.tomcat is not up - install failed", admin.getProcessingUnits().getProcessingUnit("petclinic.tomcat") != null);
-	}
-	
 	@Override
 	protected void beforeTeardown() throws Exception {
 		// clean
@@ -98,10 +103,4 @@ public class NamesAsIPsByonTest extends NewAbstractCloudTest{
 	protected boolean isReusableCloud() {
 		return false;
 	}
-	
-	@AfterClass(alwaysRun = true)
-	protected void teardown() {
-		super.teardown();
-	}
-
 }

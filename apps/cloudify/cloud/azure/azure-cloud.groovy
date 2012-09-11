@@ -27,16 +27,16 @@ cloud {
 		 * different HTTP server instead.																						 *
 		************************************************ *************************************************************************/
 		
-		// cloudifyUrl "http://repository.cloudifysource.org/org/cloudifysource/2.2.0/gigaspaces-cloudify-2.2.0-m2-b2492-9.zip"
+		cloudifyUrl "http://repository.cloudifysource.org/org/cloudifysource/2.2.0/gigaspaces-cloudify-2.2.0-m4-b2494.zip"
 		
-		machineNamePrefix "sgtest_azure_cloudify_agent_"
+		machineNamePrefix "cloudify_agent_"
 		
-		dedicatedManagementMachines true
+		
 		managementOnlyFiles ([])
 		
-		managementGroup "sgtest_azure_cloudify_manager"
+		managementGroup "cloudify_manager"
 		numberOfManagementMachines 1
-		zones (["agent"])
+		
 		reservedMemoryCapacityPerMachineInMB 1024
 		
 		sshLoggingLevel "WARNING"
@@ -47,7 +47,7 @@ cloud {
 	user {
 		
 		// Azure subscription id
-		user "3226dcf0-3130-42f3-b68f-a2019c09431e"
+		user "ENTER_SUBSCRIPTION_ID"
 			
 	}
 
@@ -59,34 +59,34 @@ cloud {
 					hardwareId "Small"
 					localDirectory "upload"
 					
-					username "sgtest"
-					password "1408Rokk"
+					username "ENTER_USER_NAME"
+					password "ENTER_PASSWORD"
 					
-					remoteDirectory "/home/sgtest/gs-files"
+					remoteDirectory "/home/ENTER_USER_NAME/gs-files"
 					
 					custom ([
 					
 						// Optional. each availability set represents a different fault domain.
 						
-						"azure.availability.set" : "sgtestset1",
+						"azure.availability.set" : "ENTER_AVAILABILITY_SET",
 						
 						// Choose whether do deploy this instance in Staging or Production environment. defaults to Staging
 						
-						"azure.deployment.slot": "Staging",
+						"azure.deployment.slot": "ENTER_DEPLOYMENT_SLOT",
 						
 						/**************************************************************
 						 * Mandatory only for templates used for management machines. *
 						 * Put this file under the path specified in 'localDirectory' *
 						***************************************************************/
 						
-						"azure.pfx.file": "azure-cert.pfx",
+						"azure.pfx.file": "ENTER_PFX_FILE",
 						
 						// Password that was used to create the certificate
 						
-						"azure.pfx.password" : "1408Rokk"
+						"azure.pfx.password" : "ENTER_PFX_PASSWORD"
 					])
 				},
-				
+			
 				TOMCAT : template{
 				
 					imageId "OpenLogic__OpenLogic-CentOS-62-20120531-en-us-30GB.vhd"
@@ -94,16 +94,16 @@ cloud {
 					hardwareId "Small"
 					localDirectory "upload"
 					
-					username "sgtest"
-					password "1408Rokk"
+					username "ENTER_USER_NAME"
+					password "ENTER_PASSWORD"
 					
-					remoteDirectory "/home/sgtest/gs-files"
+					remoteDirectory "/home/ENTER_USER_NAME/gs-files"
 					
 					custom ([
 					
 						// Optional. each availability set represents a different fault domain.
 						
-						"azure.availability.set" : "sgtestset1",
+						"azure.availability.set" : "ENTER_AVAILABILITY_SET",
 						
 						// Choose whether do deploy this instance in Staging or Production environment. defaults to Staging
 						
@@ -117,11 +117,11 @@ cloud {
 												])
 											]),
 						
-						"azure.pfx.file": "azure-cert.pfx",
+						"azure.pfx.file": "ENTER_PFX_FILE",
 						
 						// Password that was used to create the certificate
 						
-						"azure.pfx.password" : "1408Rokk"
+						"azure.pfx.password" : "ENTER_PFX_PASSWORD"
 					])
 				}
 			])
@@ -135,14 +135,14 @@ cloud {
 		 * in this case, you must specify the 'azure.address.space' property					 *	 
 		******************************************************************************************/
 		
-		"azure.networksite.name" : "sgtesttestnetwork",
+		"azure.networksite.name" : "ENTER_VIRTUAL_NETWORK_SITE_NAME",
 		
 		/***************************************************************************************
 		 * CIDR notation specifying the Address Space for your Virtaul Network. 			   *
 		 * All VM's will be assigned a private ip from this address space.					   *
 		****************************************************************************************/
 		
-		"azure.address.space" : "10.4.0.0/16",
+		"azure.address.space" : "ENTER_ADDRESS_SPACE",
 		
 		/****************************************************************************************	
 		 * An Affinity Group name.																*
@@ -150,7 +150,7 @@ cloud {
 		 * in this case, you must specify the 'azure.affinity.location' property				*
 		*****************************************************************************************/
 		
-		"azure.affinity.group" : "sgtestcloudifyaffinitygroup",
+		"azure.affinity.group" : "ENTER_AFFINITY_GROUP",
 
 		/********************************************************************************************************************************
 		 * The MS Data Center location. 																								*
@@ -158,7 +158,7 @@ cloud {
 		 * Mandatory only if the affinity group specifed above is not a pre-existing one.												*
 		*********************************************************************************************************************************/
 		
-		"azure.affinity.location" : "East US",
+		"azure.affinity.location" : "ENTER_LOCATION",
 		
 		/*****************************************************************************************
 		 * A Storage Account name.																 *
@@ -166,7 +166,7 @@ cloud {
 		 * If the specified account does not exist, it will be created automatically for you.	 *
 		******************************************************************************************/
 
-		"azure.storage.account" : "sgtestcloudifystorage",
+		"azure.storage.account" : "ENTER_STORAGE_ACCOUNT",
 		
 		// Specify whether or not to delete the network (if found) when you execute a teardown command. 
 		
@@ -179,7 +179,7 @@ cloud {
 
 		// Enable/Disable Cloud Requests Logging. 
 		
-		"azure.wireLog": "true"
+		"azure.wireLog": "false"
 	])
 }
 

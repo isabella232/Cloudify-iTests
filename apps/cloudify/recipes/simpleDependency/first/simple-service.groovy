@@ -1,7 +1,6 @@
 service {
     
 	name "first"
-	icon "icon.png"
 	type "UNDEFINED"
 	
 	lifecycle {

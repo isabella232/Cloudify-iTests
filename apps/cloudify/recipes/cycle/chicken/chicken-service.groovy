@@ -1,6 +1,5 @@
 service {
 	name "chicken"
-	icon "icon.png"
 	type "WEB_SERVER"
 	
 	lifecycle {

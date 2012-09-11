@@ -1,6 +1,5 @@
 service {
 	name "egg"
-	icon "icon.png"
 	type "WEB_SERVER"
 	
 	lifecycle {

@@ -24,6 +24,8 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import test.cli.cloudify.cloud.services.byon.ByonCloudService;
+
 import framework.tools.SGTestHelper;
 import framework.utils.AssertUtils;
 import framework.utils.IRepetitiveRunnable;
@@ -38,8 +40,6 @@ public class KillManagementTest extends AbstractByonCloudTest {
 	private static final String MANAGEMENT_PORT = "4170";
 	private URL petClinicUrl;
 	private int numOManagementMachines = 2;
-	final private static String USERNAME = "tgrid";
-	final private static String PASSWORD = "tgrid";
 	private static final String UPLOAD_FOLDER = "upload";
 	private Admin admin;
 	
@@ -151,7 +151,7 @@ public class KillManagementTest extends AbstractByonCloudTest {
 				readCloud.getTemplates().get(
 						readCloud.getConfiguration().getManagementMachineTemplate()
 						).getRemoteDirectory()
-				+ "/upload/gigaspaces/tools/cli/cloudify.sh start-management", USERNAME, PASSWORD);
+				+ "/upload/gigaspaces/tools/cli/cloudify.sh start-management", ByonCloudService.BYON_CLOUD_USER, ByonCloudService.BYON_CLOUD_PASSWORD);
 		
 	}
 
@@ -161,24 +161,13 @@ public class KillManagementTest extends AbstractByonCloudTest {
 		AssertUtils.repetitive(new IRepetitiveRunnable() {
 			@Override
 			public void run() throws Exception {
-				SSHUtils.validateSSHUp(machine, USERNAME, PASSWORD);
+				SSHUtils.validateSSHUp(machine, ByonCloudService.BYON_CLOUD_USER, ByonCloudService.BYON_CLOUD_PASSWORD);
 			}
 		}, (int)OPERATION_TIMEOUT);
 	}
 
 	private void restartMachine(String toKill) {
 		SSHUtils.runCommand(toKill, TimeUnit.SECONDS.toMillis(30),
-				"sudo shutdown now -r", USERNAME, PASSWORD);
+				"sudo shutdown now -r", ByonCloudService.BYON_CLOUD_USER, ByonCloudService.BYON_CLOUD_PASSWORD);
 	}
-	
-	@Override
-	protected String getCloudName() {
-		return "byon";
-	}
-	
-	@Override
-	protected boolean isReusableCloud() {
-		return false;
-	}
-
 }

@@ -27,8 +27,8 @@ import framework.utils.IOUtils;
 public class ByonCloudService extends AbstractCloudService {
 
 	private static final String BYON_CLOUD_NAME = "byon";
-	private static final String BYON_CLOUD_USER= "tgrid";
-	private static final String BYON_CLOUD_PASSWORD = "tgrid";
+	public static final String BYON_CLOUD_USER= "tgrid";
+	public static final String BYON_CLOUD_PASSWORD = "tgrid";
 	
 	public static final String IP_LIST_PROPERTY = "ipList";
 	

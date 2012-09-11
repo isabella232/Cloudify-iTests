@@ -23,10 +23,14 @@ import org.openspaces.admin.Admin;
 import org.openspaces.admin.AdminException;
 import org.openspaces.admin.AdminFactory;
 import org.openspaces.admin.gsa.GridServiceAgent;
+import org.openspaces.admin.gsa.events.ElasticGridServiceAgentProvisioningProgressChangedEvent;
+import org.openspaces.admin.gsa.events.ElasticGridServiceAgentProvisioningProgressChangedEventListener;
 import org.openspaces.admin.gsm.GridServiceManager;
 import org.openspaces.admin.internal.InternalAdminFactory;
 import org.openspaces.admin.lus.LookupService;
 import org.openspaces.admin.machine.Machine;
+import org.openspaces.admin.machine.events.ElasticMachineProvisioningProgressChangedEvent;
+import org.openspaces.admin.machine.events.ElasticMachineProvisioningProgressChangedEventListener;
 import org.openspaces.admin.pu.elastic.config.DiscoveredMachineProvisioningConfig;
 import org.openspaces.admin.zone.config.ExactZonesConfig;
 import org.openspaces.admin.zone.config.ExactZonesConfigurer;
@@ -34,7 +38,8 @@ import org.openspaces.cloud.xenserver.XenServerException;
 import org.openspaces.cloud.xenserver.XenServerMachineProvisioningConfig;
 import org.openspaces.cloud.xenserver.XenUtils;
 import org.openspaces.grid.gsm.machines.MachinesSlaEnforcement;
-import org.openspaces.grid.gsm.machines.plugins.ElasticMachineProvisioningException;
+import org.openspaces.grid.gsm.machines.plugins.exceptions.ElasticGridServiceAgentProvisioningException;
+import org.openspaces.grid.gsm.machines.plugins.exceptions.ElasticMachineProvisioningException;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 
@@ -70,7 +75,25 @@ public class AbstractXenGSMTest extends AbstractTest {
 	private boolean acceptGSCsOnStartup = false;
 	private int lookupPort = CloudifyConstants.DEFAULT_LUS_PORT;
 	private String edition = PlatformVersion.getEdition();
-    
+
+	protected final ElasticMachineProvisioningProgressChangedEventListener machineEventListener = new ElasticMachineProvisioningProgressChangedEventListener() {
+		
+		@Override
+		public void elasticMachineProvisioningProgressChanged(
+				ElasticMachineProvisioningProgressChangedEvent event) {
+			LogUtils.log(event.toString());
+		}
+	};
+	
+	protected final ElasticGridServiceAgentProvisioningProgressChangedEventListener agentEventListener = new ElasticGridServiceAgentProvisioningProgressChangedEventListener() {
+		
+		@Override
+		public void elasticGridServiceAgentProvisioningProgressChanged(
+				ElasticGridServiceAgentProvisioningProgressChangedEvent event) {
+			LogUtils.log(event.toString());
+		}
+	};
+	
 	protected void setEdition(String edition) {
 		this.edition = edition;
 	}
@@ -292,6 +315,8 @@ public class AbstractXenGSMTest extends AbstractTest {
             AssertFail("Failed creating master VM",e);
         } catch (ElasticMachineProvisioningException e) {
             AssertFail("Failed creating master VM",e);
+        } catch (ElasticGridServiceAgentProvisioningException e) {
+            AssertFail("Failed creating master VM",e);
         } catch (TimeoutException e) {
         	AssertFail("Failed creating master VM",e);
 		}
@@ -302,7 +327,7 @@ public class AbstractXenGSMTest extends AbstractTest {
 		machineProvisioningConfig.setXapGroups(new String[]{group});
 		machineProvisioningConfig.setLookupServicePort(lookupPort);
 		try {
-            GridServiceAgent gsa = XenUtils.startFirstVirtualMachine(machineProvisioningConfig, new ExactZonesConfig(), 15 * 60, TimeUnit.SECONDS);
+            GridServiceAgent gsa = XenUtils.startFirstVirtualMachine(machineProvisioningConfig, new ExactZonesConfig(), machineEventListener, agentEventListener, 15 * 60, TimeUnit.SECONDS);
 
             // we replace the admin with a single threaded admin needed for test
             String[] locators = machineProvisioningConfig.getXapLocators();
@@ -335,6 +360,8 @@ public class AbstractXenGSMTest extends AbstractTest {
             	Assert.fail("Expected only a single machine, instead found " + Arrays.toString(machineNames.toArray()));
             }
         } catch (ElasticMachineProvisioningException e) {
+            AssertFail("Failed starting first VM",e);
+        } catch (ElasticGridServiceAgentProvisioningException e) {
             AssertFail("Failed starting first VM",e);
         } catch (InterruptedException e) {
             AssertFail("Failed starting first VM",e);
@@ -422,8 +449,10 @@ public class AbstractXenGSMTest extends AbstractTest {
         
         try {
         	ExactZonesConfig zones = new ExactZonesConfigurer().addZones(newMachineProvisioningConfig.getGridServiceAgentZones().getZones()).create();
-            newGsa = XenUtils.startMachine(newMachineProvisioningConfig, admin, zones, duration, unit);
+            newGsa = XenUtils.startMachine(newMachineProvisioningConfig, admin, zones, machineEventListener, agentEventListener, duration, unit);
         } catch (ElasticMachineProvisioningException e) {
+            AssertFail("Failed starting new VM",e);
+        } catch (ElasticGridServiceAgentProvisioningException e) {
             AssertFail("Failed starting new VM",e);
         } catch (InterruptedException e) {
             AssertFail("Failed starting new VM",e);

@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
 
 import org.apache.tools.ant.taskdefs.optional.ssh.SSHExec;
 import org.openspaces.admin.Admin;
-import org.openspaces.grid.gsm.machines.plugins.ElasticMachineProvisioningException;
+import org.openspaces.grid.gsm.machines.plugins.exceptions.ElasticMachineProvisioningException;
 import org.testng.Assert;
 
 import com.gigaspaces.internal.utils.StringUtils;

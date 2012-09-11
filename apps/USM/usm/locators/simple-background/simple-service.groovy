@@ -1,6 +1,5 @@
 service {
 	name "simple-background"
-	icon "icon.png"
 	type "WEB_SERVER"
 
 	lifecycle {

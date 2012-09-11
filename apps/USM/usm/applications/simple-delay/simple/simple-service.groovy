@@ -3,7 +3,6 @@ import java.util.List;
 service {
     
 	name "simple"
-	icon "icon.png"
 	type "UNDEFINED"
 	
 	lifecycle {

@@ -2,7 +2,6 @@
 
 service {
 	name  = conf.name3
-	icon  = conf.icon
 	type  = conf.type
 	
 	lifecycle {

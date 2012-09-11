@@ -8,6 +8,7 @@ import java.util.Map;
 import org.apache.commons.io.FileUtils;
 import org.testng.ITestContext;
 import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -55,6 +56,11 @@ public class AzureTravelTest extends NewAbstractCloudTest {
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4)
 	public void testTravel() throws IOException, InterruptedException {
 		doSanityTest("travel-azure", "travel");		
+	}
+	
+	@AfterMethod
+	public void cleanUp() {
+		super.scanAgentNodesLeak();
 	}
 	
 	@Override

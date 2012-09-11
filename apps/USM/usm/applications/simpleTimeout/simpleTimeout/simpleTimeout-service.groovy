@@ -1,6 +1,5 @@
 service {
 	name "simpleTimeout"
-	icon "icon.png"
 	type "UNDEFINED"
 	
 	lifecycle {

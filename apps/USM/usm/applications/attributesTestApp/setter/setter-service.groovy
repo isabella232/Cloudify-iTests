@@ -3,7 +3,6 @@ service {
 	numInstances 2
 	maxAllowedInstances 2
 	name "setter"
-	icon "icon.png"
 	type "UNDEFINED"
 	
 	lifecycle {

@@ -1,8 +1,7 @@
 
 service {
 	name "notepad-service"
-
-	icon "icon.png"
+	
 	lifecycle {
 		init {
 

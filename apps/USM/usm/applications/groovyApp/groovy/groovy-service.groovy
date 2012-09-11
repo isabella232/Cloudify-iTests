@@ -3,7 +3,6 @@ import java.util.concurrent.TimeUnit
 
 service {
 	name "groovy"
-	icon "icon.png"
 	type "WEB_SERVER"
 	elastic true
 	numInstances 2

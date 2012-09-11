@@ -1,6 +1,5 @@
 service {
 	
-	icon "icon.png"
 	name "stateful"
 	
 	statefulProcessingUnit {

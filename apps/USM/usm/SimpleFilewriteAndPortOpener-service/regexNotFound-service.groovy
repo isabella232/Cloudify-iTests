@@ -1,7 +1,6 @@
 
 service {
 	name "SimpleFilewriteAndPortOpener-service"
-	icon "icon.png"
 
 	lifecycle {
 

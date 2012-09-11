@@ -4,7 +4,6 @@ import org.cloudifysource.dsl.utils.ServiceUtils;
 
 service {
 	name "groovy"
-	icon "icon.png"
 	type "UNDEFINED"
 	
 	elastic true

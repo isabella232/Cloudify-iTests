@@ -1,6 +1,5 @@
 service {
 	name "simplejavaprocess-service"
-	icon "icon.png"
 	type "UNDEFINED"
 
 	lifecycle{

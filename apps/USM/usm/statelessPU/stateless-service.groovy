@@ -1,6 +1,5 @@
 service {
 	
-	icon "icon.png"
 	name "statelessPU"
 	numInstances 1
 	statelessProcessingUnit {

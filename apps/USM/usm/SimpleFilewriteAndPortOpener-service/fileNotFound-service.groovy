@@ -3,7 +3,6 @@ import java.io.File;
 
 service {
 	name "SimpleFilewriteAndPortOpener-service"
-	icon "icon.png"
 
 	lifecycle {
 

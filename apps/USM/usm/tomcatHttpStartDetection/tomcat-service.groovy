@@ -1,7 +1,6 @@
 
 service {
 	name "tomcat"
-	icon "http://tomcat.apache.org/images/tomcat.gif"
 	type "WEB_SERVER"
 	numInstances 1
 	lifecycle{

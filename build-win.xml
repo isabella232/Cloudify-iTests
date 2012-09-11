@@ -50,6 +50,10 @@
         <fileset dir="${gsHome.dir}/lib/required">
             <include name="**/*.jar"/>
         </fileset>
+    	
+        <fileset dir="${gsHome.dir}/lib/platform/esm">
+            <include name="**/*.jar"/>
+        </fileset>
 
         <fileset dir="${gsHome.dir}/lib/platform/usm">
             <include name="**/*.jar"/>

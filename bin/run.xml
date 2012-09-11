@@ -44,6 +44,10 @@
         <fileset dir="${BUILD_DIR}/lib/required">
             <include name="**/*.jar"/>
         </fileset>
+    	
+        <fileset dir="${BUILD_DIR}/lib/platform/esm">
+            <include name="**/*.jar"/>
+        </fileset>
 
 		<!-- hiberbate jars -->
         <fileset dir="${sgtest.homedir}/lib/hibernate">

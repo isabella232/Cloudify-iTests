@@ -2,8 +2,6 @@ package test.cli.cloudify.cloud.azure;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 import org.testng.ITestContext;
@@ -21,19 +19,7 @@ public class AzureTravelTest extends NewAbstractCloudTest {
 
 	@BeforeClass(alwaysRun = true)
 	protected void bootstrap(final ITestContext testContext) {
-		
 		MicrosoftAzureCloudService azureCloudService = new MicrosoftAzureCloudService(this.getClass().getName());
-				
-		String cloudServiceFullPath = SGTestHelper.getBuildDir() + "/tools/cli/plugins/esc/" + azureCloudService.getServiceFolder();
-		
-		File originalCloudDriverConfigFile = new File(cloudServiceFullPath, "azure-cloud.groovy");
-		File customCloudDriverConfigFile = new File(SGTestHelper.getSGTestRootDir() + "/apps/cloudify/cloud/azure", "azure-cloud.groovy");
-				
-		Map<File, File> filesToReplace = new HashMap<File, File>();
-		filesToReplace.put(originalCloudDriverConfigFile, customCloudDriverConfigFile);
-		
-		azureCloudService.addFilesToReplace(filesToReplace);
-		
 		super.bootstrap(testContext, azureCloudService);
 	}
 	

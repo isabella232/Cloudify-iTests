@@ -29,6 +29,8 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 
 	private static final int TEN_SECONDS_IN_MILLIS = 10000;
 
+	private static final long ESTIMATED_MACHINES_SHUTDOWN_TIMEOUT = 30 * 1000; // 30 seconds
+
 	protected CloudService cloud;
 
 	// initialized in bootstrap
@@ -283,6 +285,13 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 		final String output = CommandTestUtils.runCommandAndWait(connectCommand + installCommand);
 		final String excpectedResult = "Service \"" + serviceName + "\" uninstalled successfully";
 		assertTrue(output.toLowerCase().contains(excpectedResult.toLowerCase()));
+		
+		// the uninstall only waits for the gs-agents to be shutdown on the cloud nodes.
+		// we sleep here to wait for the machines to acutally shutdown.
+		// NOTE!! this is ugly, but until we get uninstall to actually wait for machines to shutdown this should help
+		// us stabilize the tests. 
+		Thread.sleep(ESTIMATED_MACHINES_SHUTDOWN_TIMEOUT);
+
 
 	}
 
@@ -378,6 +387,12 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 		final String output = CommandTestUtils.runCommandAndWait(connectCommand + installCommand);
 		final String excpectedResult = "Application " + applicationName + " uninstalled successfully";
 		assertTrue(output.toLowerCase().contains(excpectedResult.toLowerCase()));
+		
+		// the uninstall only waits for the gs-agents to be shutdown on the cloud nodes.
+		// we sleep here to wait for the machines to acutally shutdown.
+		// NOTE!! this is ugly, but until we get uninstall to actually wait for machines to shutdown this should help
+		// us stabilize the tests. 
+		Thread.sleep(ESTIMATED_MACHINES_SHUTDOWN_TIMEOUT);
 
 	}
 

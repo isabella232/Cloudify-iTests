@@ -3,8 +3,6 @@ package test.cli.cloudify.cloud.byon;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -15,8 +13,6 @@ import org.cloudifysource.dsl.cloud.Cloud;
 import org.cloudifysource.dsl.internal.DSLException;
 import org.cloudifysource.dsl.internal.ServiceReader;
 import org.junit.Assert;
-import org.openspaces.admin.Admin;
-import org.openspaces.admin.AdminFactory;
 import org.openspaces.admin.gsm.GridServiceManager;
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.testng.ITestContext;
@@ -25,7 +21,6 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import test.cli.cloudify.cloud.services.byon.ByonCloudService;
-import framework.tools.SGTestHelper;
 import framework.utils.AssertUtils;
 import framework.utils.IRepetitiveRunnable;
 import framework.utils.LogUtils;
@@ -36,15 +31,11 @@ import framework.utils.WebUtils;
 
 public class KillManagementTest extends AbstractByonCloudTest {
 	
-	private static final String MANAGEMENT_PORT = "4170";
 	private URL petClinicUrl;
 	private int numOManagementMachines = 2;
-	private static final String UPLOAD_FOLDER = "upload";
-	private Admin admin;
 	
 	private volatile boolean run = true;
 	private ExecutorService threadPool;
-	private String restUrl;
 	
 	@BeforeClass(alwaysRun = true)
 	protected void bootstrap(final ITestContext testContext) {
@@ -55,22 +46,14 @@ public class KillManagementTest extends AbstractByonCloudTest {
 	public void testPetclinic() throws Exception {
 
 		try {
-			
-			restUrl = cloud.getRestUrls()[0];
-			String hostIp = restUrl.substring(0, restUrl.lastIndexOf(':'));
-			
-			//create admin object with a unique group
-			LogUtils.log("creating admin");
-			AdminFactory factory = new AdminFactory();
-			String ipNoHttp = hostIp.substring(7);
-			factory.addLocators(ipNoHttp + ":" + MANAGEMENT_PORT);
-			admin = factory.createAdmin();
-			
-			petClinicUrl = new URL(hostIp + ":8080/petclinic/");
-			threadPool = Executors.newFixedThreadPool(1);
-			
 			LogUtils.log("installing application petclinic on byon");
 			installApplicationAndWait(ScriptUtils.getBuildPath() + "/recipes/apps/petclinic-simple", "petclinic");
+			
+			admin.getProcessingUnits().waitFor("petclinic.tomcat", OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
+			String tomcatHost = admin.getProcessingUnits().getProcessingUnit("petclinic.tomcat").getInstances()[0].getGridServiceContainer().getMachine().getHostAddress();
+			
+			threadPool = Executors.newFixedThreadPool(1);
+			petClinicUrl = new URL(tomcatHost + ":8080/petclinic/");			
 
 			Future<Void> ping = threadPool.submit(new Callable<Void>(){
 				@Override
@@ -115,15 +98,18 @@ public class KillManagementTest extends AbstractByonCloudTest {
 			if (threadPool != null) {
 				threadPool.shutdownNow();
 			}
-			
-			if (admin != null) {
-				admin.close();
-				admin = null;
-			}
-			uninstallApplicationAndWait("petclinic");
 		}	
 	}
 	
+	@Override
+	protected void beforeTeardown() throws Exception {
+		if (admin != null) {
+			admin.close();
+			admin = null;
+		}
+		uninstallApplicationAndWait("petclinic");
+	}
+
 	@AfterClass(alwaysRun = true)
 	protected void teardown() {
 		super.teardown();
@@ -131,15 +117,8 @@ public class KillManagementTest extends AbstractByonCloudTest {
 	
 	@Override
 	protected void customizeCloud() throws Exception {
-		
+		super.customizeCloud();
 		getService().setNumberOfManagementMachines(numOManagementMachines);
-		
-		// replace the default bootstap-management.sh with a multicast version one
-		File standardBootstrapManagement = new File(getService().getPathToCloudFolder() + "/" + UPLOAD_FOLDER, "bootstrap-management.sh");
-		File customBootstrapManagement = new File(SGTestHelper.getSGTestRootDir() + "/apps/cloudify/cloud/byon/bootstrap-management-byon_KillManagementTest.sh");
-		Map<File, File> filesToReplace = new HashMap<File, File>();
-		filesToReplace.put(standardBootstrapManagement, customBootstrapManagement);
-		getService().addFilesToReplace(filesToReplace);
 	}
 
 	//TODO: add support for windows machines (BYON doesn't support windows right now)

@@ -9,7 +9,6 @@ import java.util.Map;
 import org.apache.commons.io.FileUtils;
 import org.cloudifysource.dsl.cloud.Cloud;
 import org.cloudifysource.dsl.internal.ServiceReader;
-import org.openspaces.admin.Admin;
 import org.openspaces.admin.AdminFactory;
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.testng.Assert;
@@ -52,8 +51,6 @@ public class MultipleMachineTemplatesTest extends AbstractByonCloudTest {
 	private File tomcatParentDir = new File(ScriptUtils.getBuildPath(), "recipes/services");
 	private File newCloudGroovyFile = new File(ScriptUtils.getBuildPath() + "/tools/cli/plugins/esc/byon/",
 			"byon-cloud.new");
-
-	protected Admin admin = null;
 	
 	@BeforeClass(alwaysRun = true)
 	protected void bootstrap(final ITestContext testContext) {
@@ -175,6 +172,7 @@ public class MultipleMachineTemplatesTest extends AbstractByonCloudTest {
 
 	@Override
 	protected void customizeCloud() throws Exception {
+		super.customizeCloud();
 		// NOA: note, this next section is a hack. The test needs a special copy of byon-groovy and edits it
 		// before we create the test's folder (byon_MultipleMachineTemplatesTest), so we must copy files and
 		// replace values here and eventually copy "byon-cloud.new" over
@@ -200,15 +198,10 @@ public class MultipleMachineTemplatesTest extends AbstractByonCloudTest {
 		replaceMap.put("3.3.3.3", TEMPLATE_3_IPs);
 		IOUtils.replaceTextInFile(newCloudGroovyFile.getAbsolutePath(), replaceMap);
 
-		// replace the default bootstrap-management and cloud groovy with the customized versions
-		File standardBootstrapManagement = new File(getService().getPathToCloudFolder() + "/upload",
-				"bootstrap-management.sh");
-		File bootstrapManagementCustomized = new File(SGTestHelper.getSGTestRootDir()
-				+ "/apps/cloudify/cloud/byon/" + getBootstrapManagementFileName());
+		// replace the cloud groovy file with a customized one
 		File fileToBeReplaced = new File(getService().getPathToCloudFolder(), "byon-cloud.groovy");
 		Map<File, File> filesToReplace = new HashMap<File, File>();
 		filesToReplace.put(fileToBeReplaced, newCloudGroovyFile);
-		filesToReplace.put(standardBootstrapManagement, bootstrapManagementCustomized);
 		getService().addFilesToReplace(filesToReplace);
 
 		// TODO : this is dangerous, need to fix

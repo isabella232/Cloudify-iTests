@@ -1,21 +1,14 @@
 package test.cli.cloudify.cloud.byon;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
-import org.openspaces.admin.Admin;
-import org.openspaces.admin.AdminFactory;
 import org.testng.ITestContext;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import test.cli.cloudify.cloud.services.byon.ByonCloudService;
-import framework.tools.SGTestHelper;
 import framework.utils.AssertUtils;
-import framework.utils.LogUtils;
 import framework.utils.ScriptUtils;
 
 
@@ -26,57 +19,33 @@ import framework.utils.ScriptUtils;
  */
 public class NamesAsIPsByonTest extends AbstractByonCloudTest {
 
-	private static final String TEST_UNIQUE_NAME = "NamesAsIPsByonTest";
-
 	private String namesList = "pc-lab95,pc-lab96,pc-lab100";
-	
-	private Admin admin;
-	
+
 	@BeforeClass(alwaysRun = true)
 	protected void bootstrap(final ITestContext testContext) {
 		super.bootstrap(testContext);
 	}
-	
+
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
 	public void testPetclinic() throws IOException, InterruptedException{
-		
-		try {
-			installApplicationAndWait(ScriptUtils.getBuildPath() + "/recipes/apps/petclinic-simple", "petclinic");
 
-			//TODO : edit this, so if it fails it won't be on NPE!
-			AssertUtils.assertTrue("petclinic.mongod is not up - install failed", admin.getProcessingUnits().getProcessingUnit("petclinic.mongod") != null);		
-			AssertUtils.assertTrue("petclinic.tomcat is not up - install failed", admin.getProcessingUnits().getProcessingUnit("petclinic.tomcat") != null);
-		} finally {
-			uninstallApplicationAndWait("petclinic");
-		}
+		installApplicationAndWait(ScriptUtils.getBuildPath() + "/recipes/apps/petclinic-simple", "petclinic");
+
+		//TODO : edit this, so if it fails it won't be on NPE!
+		AssertUtils.assertTrue("petclinic.mongod is not up - install failed", admin.getProcessingUnits().getProcessingUnit("petclinic.mongod") != null);		
+		AssertUtils.assertTrue("petclinic.tomcat is not up - install failed", admin.getProcessingUnits().getProcessingUnit("petclinic.tomcat") != null);
+
 	}
-	
+
 	@AfterClass(alwaysRun = true)
 	protected void teardown() {
 		super.teardown();
 	}
-	
+
 	@Override
 	protected void customizeCloud() throws Exception {
-		
-		System.setProperty(ByonCloudService.IP_LIST_PROPERTY, namesList);
-		ByonCloudService byonService = (ByonCloudService) cloud;
-		byonService.setMachinePrefix(this.getClass().getName());
-
-		// replace the default bootstap-management.sh with a multicast version one
-		File standardBootstrapManagement = new File(byonService.getPathToCloudFolder() + "/upload", "bootstrap-management.sh");
-		File customBootstrapManagement = new File(SGTestHelper.getSGTestRootDir() + "/apps/cloudify/cloud/byon/bootstrap-management-byon_NamesAsIPsByonTest.sh");
-		Map<File, File> filesToReplace = new HashMap<File, File>();
-		filesToReplace.put(standardBootstrapManagement, customBootstrapManagement);
-		byonService.addFilesToReplace(filesToReplace);
-	}
-
-	@Override
-	protected void afterBootstrap() throws Exception {
-		LogUtils.log("creating admin");
-		AdminFactory factory = new AdminFactory();
-		factory.addGroup(TEST_UNIQUE_NAME);
-		admin = factory.createAdmin();
+		super.customizeCloud();
+		getService().setIpList(System.getProperty(ByonCloudService.IP_LIST_PROPERTY, namesList));
 	}
 
 	@Override
@@ -86,11 +55,9 @@ public class NamesAsIPsByonTest extends AbstractByonCloudTest {
 			admin.close();
 			admin = null;
 		}
-		
+
 		try{
 			uninstallApplicationAndWait("petclinic");
-		} catch(Exception e) {
-			LogUtils.log("Failed to uninstall application petclinic", e);
 		} finally {
 			System.clearProperty(ByonCloudService.IP_LIST_PROPERTY);
 		}

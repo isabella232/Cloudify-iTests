@@ -3,9 +3,6 @@ package test.cli.cloudify.cloud.byon;
 import org.testng.annotations.Test;
 
 
-
-
-
 /**
  * This test installs petclinic with 3 different templates on a byon cloud. 
  * <p>for two of the three templates the test injects to byon-cloud.groovy names of machines instead of IPs.
@@ -18,18 +15,14 @@ import org.testng.annotations.Test;
  */
 public class MultipleTemplatesWithNamesAsIPsTest extends MultipleMachineTemplatesTest {
 
-	@Override
-	protected String getBootstrapManagementFileName() {
-		return "bootstrap-management-byon_MultipleTemplatesWithNamesAsIPsTest.sh";
-	}
-
+	
 	protected static String TEMPLATE_1_IPs = "pc-lab95,pc-lab96";
 	protected static String TEMPLATE_2_IPs = "192.168.9.120,192.168.9.125";
 	protected static String TEMPLATE_3_IPs = "pc-lab106";
-	
+
 	@Override
-	protected void customizeCloud() throws Exception {
-		super.customizeCloud();		
+	protected String getBootstrapManagementFileName() {
+		return "bootstrap-management-byon_MultipleTemplatesWithNamesAsIPsTest.sh";
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true, priority = 1)

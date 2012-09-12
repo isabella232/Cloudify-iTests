@@ -34,12 +34,10 @@ public class NamesAsIPsByonTest extends AbstractByonCloudTest {
 	
 	@BeforeClass(alwaysRun = true)
 	protected void bootstrap(final ITestContext testContext) {
-		super.killAllJavaOnAllHosts();
-		super.cleanGSFilesOnAllHosts();
 		super.bootstrap(testContext);
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
 	public void testPetclinic() throws IOException, InterruptedException{
 		
 		installApplicationAndWait(ScriptUtils.getBuildPath() + "/recipes/apps/petclinic-simple", "petclinic");

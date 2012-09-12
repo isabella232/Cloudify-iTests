@@ -25,7 +25,6 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import test.cli.cloudify.cloud.services.byon.ByonCloudService;
-
 import framework.tools.SGTestHelper;
 import framework.utils.AssertUtils;
 import framework.utils.IRepetitiveRunnable;
@@ -49,8 +48,6 @@ public class KillManagementTest extends AbstractByonCloudTest {
 	
 	@BeforeClass(alwaysRun = true)
 	protected void bootstrap(final ITestContext testContext) {
-		super.killAllJavaOnAllHosts();
-		super.cleanGSFilesOnAllHosts();
 		super.bootstrap(testContext);
 	}
 	

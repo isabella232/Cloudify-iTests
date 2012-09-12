@@ -54,8 +54,6 @@ public class CleanGSFilesByonTest extends AbstractByonCloudTest {
 	
 	@BeforeClass
 	public void bootstrap(ITestContext context) {
-		super.killAllJavaOnAllHosts();
-		super.cleanGSFilesOnAllHosts();
 		super.bootstrap(context);
 	}
 

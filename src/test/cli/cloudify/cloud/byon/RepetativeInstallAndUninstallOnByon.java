@@ -39,8 +39,6 @@ public class RepetativeInstallAndUninstallOnByon extends AbstractByonCloudTest {
 	
 	@BeforeClass(alwaysRun = true)
 	protected void bootstrap(final ITestContext testContext) {
-		super.killAllJavaOnAllHosts();
-		super.cleanGSFilesOnAllHosts();
 		super.bootstrap(testContext);
 	}
 	

@@ -67,24 +67,99 @@ public class MultipleMachineTemplatesTest extends AbstractByonCloudTest {
 	 */
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true, priority = 1)
 	public void testPetclinic() throws Exception {
-		
+
+		LogUtils.log("installing application petclinic on " + cloudName);
+		installApplicationAndWait(ScriptUtils.getBuildPath() + "/recipes/apps/petclinic", "petclinic");
+
+		String template1IPsArray[] = TEMPLATE_1_IPs.split(",");
+		String template2IPsArray[] = TEMPLATE_2_IPs.split(",");
+		String template3IPsArray[] = TEMPLATE_3_IPs.split(",");
+
+		Assert.assertTrue(Arrays.asList(template2IPsArray).contains(getPuHostAddress("petclinic.mongod")));
+		Assert.assertTrue(Arrays.asList(template1IPsArray).contains(getPuHostAddress("petclinic.mongos")));
+		Assert.assertTrue(Arrays.asList(template1IPsArray).contains(getPuHostAddress("petclinic.mongoConfig")));
+		Assert.assertTrue(Arrays.asList(template2IPsArray).contains(getPuHostAddress("petclinic.tomcat")));
+		Assert.assertTrue(Arrays.asList(template3IPsArray).contains(getPuHostAddress("webui")));
+		Assert.assertTrue(Arrays.asList(template3IPsArray).contains(getPuHostAddress("rest")));
+	}
+	
+
+	/**
+	 * tests the uninstall operation - uninstalls and checks that each application service is down.
+	 */
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false, priority = 2)
+	public void testPetclinicUninstall() {
+
 		try {
-			LogUtils.log("installing application petclinic on " + cloudName);
-			installApplicationAndWait(ScriptUtils.getBuildPath() + "/recipes/apps/petclinic", "petclinic");
-
-			String template1IPsArray[] = TEMPLATE_1_IPs.split(",");
-			String template2IPsArray[] = TEMPLATE_2_IPs.split(",");
-			String template3IPsArray[] = TEMPLATE_3_IPs.split(",");
-
-			Assert.assertTrue(Arrays.asList(template2IPsArray).contains(getPuHostAddress("petclinic.mongod")));
-			Assert.assertTrue(Arrays.asList(template1IPsArray).contains(getPuHostAddress("petclinic.mongos")));
-			Assert.assertTrue(Arrays.asList(template1IPsArray).contains(getPuHostAddress("petclinic.mongoConfig")));
-			Assert.assertTrue(Arrays.asList(template2IPsArray).contains(getPuHostAddress("petclinic.tomcat")));
-			Assert.assertTrue(Arrays.asList(template3IPsArray).contains(getPuHostAddress("webui")));
-			Assert.assertTrue(Arrays.asList(template3IPsArray).contains(getPuHostAddress("rest")));
-		} finally {
 			uninstallApplicationAndWait("petclinic");
+		} catch (Throwable e) {
+			LogUtils.log("caught an exception while uninstalling petclinic", e);
 		}
+
+		AssertUtils.repetitiveAssertTrue("petclinic.mongod is not down", new RepetitiveConditionProvider() {
+			public boolean getCondition() {
+				try {
+					return (admin.getProcessingUnits().getProcessingUnit("petclinic.mongod") == null);
+				} catch (Exception e) {
+					return false;
+				}
+			}
+		}, MY_OPERATION_TIMEOUT);
+		AssertUtils.repetitiveAssertTrue("petclinic.mongos is not down", new RepetitiveConditionProvider() {
+			public boolean getCondition() {
+				try {
+					return (admin.getProcessingUnits().getProcessingUnit("petclinic.mongos") == null);
+				} catch (Exception e) {
+					return false;
+				}
+			}
+		}, MY_OPERATION_TIMEOUT);
+		AssertUtils.repetitiveAssertTrue("petclinic.mongoConfig is not down", new RepetitiveConditionProvider() {
+			public boolean getCondition() {
+				try {
+					return (admin.getProcessingUnits().getProcessingUnit("petclinic.mongoConfig") == null);
+				} catch (Exception e) {
+					return false;
+				}
+			}
+		}, MY_OPERATION_TIMEOUT);
+		AssertUtils.repetitiveAssertTrue("petclinic.tomcat is not down", new RepetitiveConditionProvider() {
+			public boolean getCondition() {
+				try {
+					return (admin.getProcessingUnits().getProcessingUnit("petclinic.tomcat") == null);
+				} catch (Exception e) {
+					return false;
+				}
+			}
+		}, MY_OPERATION_TIMEOUT);
+		AssertUtils.repetitiveAssertTrue("webui is down", new RepetitiveConditionProvider() {
+			public boolean getCondition() {
+				try {
+					return (admin.getProcessingUnits().getProcessingUnit("webui") != null);
+				} catch (Exception e) {
+					return false;
+				}
+			}
+		}, MY_OPERATION_TIMEOUT);
+		AssertUtils.repetitiveAssertTrue("rest is down", new RepetitiveConditionProvider() {
+			public boolean getCondition() {
+				try {
+					return (admin.getProcessingUnits().getProcessingUnit("rest") != null);
+				} catch (Exception e) {
+					return false;
+				}
+			}
+		}, MY_OPERATION_TIMEOUT);
+		AssertUtils.repetitiveAssertTrue("cloudifyManagementSpace is down", new RepetitiveConditionProvider() {
+			public boolean getCondition() {
+				try {
+					return (admin.getProcessingUnits().getProcessingUnit("cloudifyManagementSpace") != null);
+				} catch (Exception e) {
+					return false;
+				}
+			}
+		}, MY_OPERATION_TIMEOUT);
+
 	}
 
 	@AfterMethod
@@ -171,84 +246,6 @@ public class MultipleMachineTemplatesTest extends AbstractByonCloudTest {
 		ProcessingUnit pu = admin.getProcessingUnits().getProcessingUnit(puName);
 		Assert.assertNotNull(pu.getInstances()[0], puName + " processing unit is not found");
 		return pu.getInstances()[0].getMachine().getHostAddress();		
-	}
-
-	/**
-	 * tests the uninstall operation - uninstalls and checks that each application service is down.
-	 */
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false, priority = 2)
-	public void testPetclinicUninstall() {
-
-		try {
-			uninstallApplicationAndWait("petclinic");
-		} catch (Throwable e) {
-			LogUtils.log("caught an exception while uninstalling petclinic", e);
-		}
-
-		AssertUtils.repetitiveAssertTrue("petclinic.mongod is not down", new RepetitiveConditionProvider() {
-			public boolean getCondition() {
-				try {
-					return (admin.getProcessingUnits().getProcessingUnit("petclinic.mongod") == null);
-				} catch (Exception e) {
-					return false;
-				}
-			}
-		}, MY_OPERATION_TIMEOUT);
-		AssertUtils.repetitiveAssertTrue("petclinic.mongos is not down", new RepetitiveConditionProvider() {
-			public boolean getCondition() {
-				try {
-					return (admin.getProcessingUnits().getProcessingUnit("petclinic.mongos") == null);
-				} catch (Exception e) {
-					return false;
-				}
-			}
-		}, MY_OPERATION_TIMEOUT);
-		AssertUtils.repetitiveAssertTrue("petclinic.mongoConfig is not down", new RepetitiveConditionProvider() {
-			public boolean getCondition() {
-				try {
-					return (admin.getProcessingUnits().getProcessingUnit("petclinic.mongoConfig") == null);
-				} catch (Exception e) {
-					return false;
-				}
-			}
-		}, MY_OPERATION_TIMEOUT);
-		AssertUtils.repetitiveAssertTrue("petclinic.tomcat is not down", new RepetitiveConditionProvider() {
-			public boolean getCondition() {
-				try {
-					return (admin.getProcessingUnits().getProcessingUnit("petclinic.tomcat") == null);
-				} catch (Exception e) {
-					return false;
-				}
-			}
-		}, MY_OPERATION_TIMEOUT);
-		AssertUtils.repetitiveAssertTrue("webui is down", new RepetitiveConditionProvider() {
-			public boolean getCondition() {
-				try {
-					return (admin.getProcessingUnits().getProcessingUnit("webui") != null);
-				} catch (Exception e) {
-					return false;
-				}
-			}
-		}, MY_OPERATION_TIMEOUT);
-		AssertUtils.repetitiveAssertTrue("rest is down", new RepetitiveConditionProvider() {
-			public boolean getCondition() {
-				try {
-					return (admin.getProcessingUnits().getProcessingUnit("rest") != null);
-				} catch (Exception e) {
-					return false;
-				}
-			}
-		}, MY_OPERATION_TIMEOUT);
-		AssertUtils.repetitiveAssertTrue("cloudifyManagementSpace is down", new RepetitiveConditionProvider() {
-			public boolean getCondition() {
-				try {
-					return (admin.getProcessingUnits().getProcessingUnit("cloudifyManagementSpace") != null);
-				} catch (Exception e) {
-					return false;
-				}
-			}
-		}, MY_OPERATION_TIMEOUT);
-
 	}
 
 	@Override

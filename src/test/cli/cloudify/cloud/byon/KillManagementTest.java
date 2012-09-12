@@ -120,6 +120,7 @@ public class KillManagementTest extends AbstractByonCloudTest {
 				admin.close();
 				admin = null;
 			}
+			uninstallApplicationAndWait("petclinic");
 		}	
 	}
 	

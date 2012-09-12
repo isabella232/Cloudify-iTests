@@ -40,11 +40,15 @@ public class NamesAsIPsByonTest extends AbstractByonCloudTest {
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
 	public void testPetclinic() throws IOException, InterruptedException{
 		
-		installApplicationAndWait(ScriptUtils.getBuildPath() + "/recipes/apps/petclinic-simple", "petclinic");
-		
-		//TODO : edit this, so if it fails it won't be on NPE!
-		AssertUtils.assertTrue("petclinic.mongod is not up - install failed", admin.getProcessingUnits().getProcessingUnit("petclinic.mongod") != null);		
-		AssertUtils.assertTrue("petclinic.tomcat is not up - install failed", admin.getProcessingUnits().getProcessingUnit("petclinic.tomcat") != null);
+		try {
+			installApplicationAndWait(ScriptUtils.getBuildPath() + "/recipes/apps/petclinic-simple", "petclinic");
+
+			//TODO : edit this, so if it fails it won't be on NPE!
+			AssertUtils.assertTrue("petclinic.mongod is not up - install failed", admin.getProcessingUnits().getProcessingUnit("petclinic.mongod") != null);		
+			AssertUtils.assertTrue("petclinic.tomcat is not up - install failed", admin.getProcessingUnits().getProcessingUnit("petclinic.tomcat") != null);
+		} finally {
+			uninstallApplicationAndWait("petclinic");
+		}
 	}
 	
 	@AfterClass(alwaysRun = true)

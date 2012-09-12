@@ -1,8 +1,9 @@
 
 
 service {
-	name  = conf.name3
-	type  = conf.type
+	icon   conf.icon
+	name   conf.name3
+	type   conf.type
 	
 	lifecycle {
 

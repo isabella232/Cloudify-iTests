@@ -21,8 +21,11 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 
+import test.AbstractTest;
 import test.cli.cloudify.cloud.services.AbstractCloudService;
 import framework.utils.IOUtils;
+import framework.utils.LogUtils;
+import framework.utils.SSHUtils;
 
 public class ByonCloudService extends AbstractCloudService {
 
@@ -32,16 +35,15 @@ public class ByonCloudService extends AbstractCloudService {
 	
 	public static final String IP_LIST_PROPERTY = "ipList";
 	
+	private static final String DEFAULT_MACHINES = "192.168.9.115,192.168.9.116,192.168.9.120,192.168.9.125,192.168.9.126,192.168.9.135";
+	
 	private String ipList;
 	private String[] machines;
 
 	public ByonCloudService(String uniqueName) {
 		super(uniqueName, BYON_CLOUD_NAME);
-	}
-	
-	public ByonCloudService(String uniqueName, Map<String,String> additionalPropsToReplace) {
-		super(uniqueName, BYON_CLOUD_NAME);
-		this.additionalPropsToReplace = additionalPropsToReplace;
+		this.ipList = System.getProperty(IP_LIST_PROPERTY, DEFAULT_MACHINES);
+		this.machines = ipList.split(",");
 	}
 	
 	public void setIpList(String ipList) {
@@ -65,16 +67,42 @@ public class ByonCloudService extends AbstractCloudService {
 		propsToReplace.put("cloudify_agent_", this.machinePrefix + "cloudify-agent");
 		propsToReplace.put("cloudify_manager", this.machinePrefix + "cloudify-manager");
 		propsToReplace.put("// cloudifyUrl", "   cloudifyUrl");
-		if (ipList == null) {
-			 ipList = System.getProperty(IP_LIST_PROPERTY);
-			 this.machines = ipList.split(",");
-		}
 		if (StringUtils.isNotBlank(ipList)) {
 			propsToReplace.put("0.0.0.0", ipList);
 		}
 		
 		propsToReplace.put("numberOfManagementMachines 1", "numberOfManagementMachines "  + numberOfManagementMachines);
 		IOUtils.replaceTextInFile(getPathToCloudGroovy(), propsToReplace);
+	}
+
+	@Override
+	public void beforeBootstrap() throws Exception {
+		killAllJavaOnAllHosts();
+		cleanGSFilesOnAllHosts();
+	}
+	
+	private void cleanGSFilesOnAllHosts() {
+		String command = "rm -rf /tmp/gs-files";
+		String[] hosts = this.getMachines();
+		for (String host : hosts) {
+			try {
+				LogUtils.log(SSHUtils.runCommand(host, AbstractTest.OPERATION_TIMEOUT, command, "tgrid", "tgrid"));
+			} catch (AssertionError e) {
+				LogUtils.log("Failed to clean gs-files on host " + host + " .Reason --> " + e.getMessage());
+			}
+		}	
+	}
+	
+	private void killAllJavaOnAllHosts() {
+		String command = "killall -9 java";
+		String[] hosts = this.getMachines();
+		for (String host : hosts) {
+			try {
+				LogUtils.log(SSHUtils.runCommand(host, AbstractTest.OPERATION_TIMEOUT, command, "tgrid", "tgrid"));
+			} catch (AssertionError e) {
+				LogUtils.log("Failed to clean gs-files on host " + host + " .Reason --> " + e.getMessage());
+			}
+		}
 	}
 
 	@Override

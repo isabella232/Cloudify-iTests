@@ -134,7 +134,7 @@ public abstract class AbstractCloudService implements CloudService {
 		String version = PlatformVersion.getVersion();
 		String milestone = PlatformVersion.getMilestone();
 
-		String newCloudifyURL = NEW_URL_PREFIX + "/" + version + "/build_" + buildNumber + "/cloudify/1.5/gigaspaces-cloudify-" + version + "-" + milestone + "-b" + buildNumber + ".zip";
+		String newCloudifyURL = NEW_URL_PREFIX + "/" + version + "/build_" + buildNumber + "/cloudify/1.5/gigaspaces-cloudify-" + version + "-" + milestone + "-b" + buildNumber;
 		Map<String, String> propsToReplace = new HashMap<String, String>();
 		propsToReplace.put(defaultURL, newCloudifyURL);
 		IOUtils.replaceTextInFile(getPathToCloudGroovy(), propsToReplace);

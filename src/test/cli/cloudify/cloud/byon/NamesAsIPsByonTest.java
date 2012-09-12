@@ -61,7 +61,7 @@ public class NamesAsIPsByonTest extends AbstractByonCloudTest {
 
 		// replace the default bootstap-management.sh with a multicast version one
 		File standardBootstrapManagement = new File(byonService.getPathToCloudFolder() + "/upload", "bootstrap-management.sh");
-		File customBootstrapManagement = new File(SGTestHelper.getSGTestRootDir() + "/apps/cloudify/cloud/byon/bootstrap-management-" + byonService.getServiceFolder() + ".sh");
+		File customBootstrapManagement = new File(SGTestHelper.getSGTestRootDir() + "/apps/cloudify/cloud/byon/bootstrap-management-byon_NamesAsIPsByonTest.sh");
 		Map<File, File> filesToReplace = new HashMap<File, File>();
 		filesToReplace.put(standardBootstrapManagement, customBootstrapManagement);
 		byonService.addFilesToReplace(filesToReplace);

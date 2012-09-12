@@ -59,7 +59,7 @@ public class RepetativeInstallAndUninstallOnByon extends AbstractByonCloudTest {
 		File standardBootstrapManagement = new File(byonService.getPathToCloudFolder() + "/upload",
 				"bootstrap-management.sh");
 		File bootstrapManagementWithMulticast = new File(SGTestHelper.getSGTestRootDir()
-				+ "/apps/cloudify/cloud/byon/bootstrap-management-" + byonService.getServiceFolder() + ".sh");
+				+ "/apps/cloudify/cloud/byon/bootstrap-management-byon_RepetativeInstallAndUninstallOnByon.sh");
 		Map<File, File> filesToReplace = new HashMap<File, File>();
 		filesToReplace.put(standardBootstrapManagement, bootstrapManagementWithMulticast);
 		byonService.addFilesToReplace(filesToReplace);

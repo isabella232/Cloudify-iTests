@@ -67,20 +67,24 @@ public class MultipleMachineTemplatesTest extends AbstractByonCloudTest {
 	 */
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true, priority = 1)
 	public void testPetclinic() throws Exception {
-
-		LogUtils.log("installing application petclinic on " + cloudName);
-		installApplicationAndWait(ScriptUtils.getBuildPath() + "/recipes/apps/petclinic", "petclinic");
-
-		String template1IPsArray[] = TEMPLATE_1_IPs.split(",");
-		String template2IPsArray[] = TEMPLATE_2_IPs.split(",");
-		String template3IPsArray[] = TEMPLATE_3_IPs.split(",");
 		
-		Assert.assertTrue(Arrays.asList(template2IPsArray).contains(getPuHostAddress("petclinic.mongod")));
-		Assert.assertTrue(Arrays.asList(template1IPsArray).contains(getPuHostAddress("petclinic.mongos")));
-		Assert.assertTrue(Arrays.asList(template1IPsArray).contains(getPuHostAddress("mongoConfig")));
-		Assert.assertTrue(Arrays.asList(template2IPsArray).contains(getPuHostAddress("petclinic.tomcat")));
-		Assert.assertTrue(Arrays.asList(template3IPsArray).contains(getPuHostAddress("webui")));
-		Assert.assertTrue(Arrays.asList(template3IPsArray).contains(getPuHostAddress("rest")));
+		try {
+			LogUtils.log("installing application petclinic on " + cloudName);
+			installApplicationAndWait(ScriptUtils.getBuildPath() + "/recipes/apps/petclinic", "petclinic");
+
+			String template1IPsArray[] = TEMPLATE_1_IPs.split(",");
+			String template2IPsArray[] = TEMPLATE_2_IPs.split(",");
+			String template3IPsArray[] = TEMPLATE_3_IPs.split(",");
+
+			Assert.assertTrue(Arrays.asList(template2IPsArray).contains(getPuHostAddress("petclinic.mongod")));
+			Assert.assertTrue(Arrays.asList(template1IPsArray).contains(getPuHostAddress("petclinic.mongos")));
+			Assert.assertTrue(Arrays.asList(template1IPsArray).contains(getPuHostAddress("petclinic.mongoConfig")));
+			Assert.assertTrue(Arrays.asList(template2IPsArray).contains(getPuHostAddress("petclinic.tomcat")));
+			Assert.assertTrue(Arrays.asList(template3IPsArray).contains(getPuHostAddress("webui")));
+			Assert.assertTrue(Arrays.asList(template3IPsArray).contains(getPuHostAddress("rest")));
+		} finally {
+			uninstallApplicationAndWait("petclinic");
+		}
 	}
 
 	@AfterMethod
@@ -125,7 +129,7 @@ public class MultipleMachineTemplatesTest extends AbstractByonCloudTest {
 		File standardBootstrapManagement = new File(getService().getPathToCloudFolder() + "/upload",
 				"bootstrap-management.sh");
 		File bootstrapManagementCustomized = new File(SGTestHelper.getSGTestRootDir()
-				+ "/apps/cloudify/cloud/byon/bootstrap-management-" + getService().getServiceFolder() + ".sh");
+				+ "/apps/cloudify/cloud/byon/" + getBootstrapManagementFileName());
 		File fileToBeReplaced = new File(getService().getPathToCloudFolder(), "byon-cloud.groovy");
 		Map<File, File> filesToReplace = new HashMap<File, File>();
 		filesToReplace.put(fileToBeReplaced, newCloudGroovyFile);
@@ -142,6 +146,10 @@ public class MultipleMachineTemplatesTest extends AbstractByonCloudTest {
 		IOUtils.replaceTextInFile(mongodbDir.getAbsolutePath() + "/mongod/mongod-service.groovy", "numInstances "
 				+ MONGOD_DEFAULT_INSTANCES_NUM, "numInstances " + MONGOD_INSTANCES_NUM);
 
+	}
+	
+	protected String getBootstrapManagementFileName() {
+		return "bootstrap-management-byon_MultipleMachineTemplatesTest.sh";
 	}
 
 	@Override

@@ -135,7 +135,7 @@ public class KillManagementTest extends AbstractByonCloudTest {
 		
 		// replace the default bootstap-management.sh with a multicast version one
 		File standardBootstrapManagement = new File(getService().getPathToCloudFolder() + "/" + UPLOAD_FOLDER, "bootstrap-management.sh");
-		File customBootstrapManagement = new File(SGTestHelper.getSGTestRootDir() + "/apps/cloudify/cloud/byon/bootstrap-management-" + getService().getServiceFolder() + ".sh");
+		File customBootstrapManagement = new File(SGTestHelper.getSGTestRootDir() + "/apps/cloudify/cloud/byon/bootstrap-management-byon_KillManagementTest.sh");
 		Map<File, File> filesToReplace = new HashMap<File, File>();
 		filesToReplace.put(standardBootstrapManagement, customBootstrapManagement);
 		getService().addFilesToReplace(filesToReplace);

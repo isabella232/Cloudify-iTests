@@ -18,6 +18,11 @@ import org.testng.annotations.Test;
  */
 public class MultipleTemplatesWithNamesAsIPsTest extends MultipleMachineTemplatesTest {
 
+	@Override
+	protected String getBootstrapManagementFileName() {
+		return "bootstrap-management-byon_MultipleTemplatesWithNamesAsIPsTest.sh";
+	}
+
 	protected static String TEMPLATE_1_IPs = "pc-lab95,pc-lab96";
 	protected static String TEMPLATE_2_IPs = "192.168.9.120,192.168.9.125";
 	protected static String TEMPLATE_3_IPs = "pc-lab106";

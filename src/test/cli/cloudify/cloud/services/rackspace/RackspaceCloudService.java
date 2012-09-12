@@ -101,11 +101,16 @@ public class RackspaceCloudService extends AbstractCloudService {
 
 	@Override
 	public boolean scanLeakedAgentNodes() {
-		String token = rackspaceClient.createAuthenticationToken();
+		if (rackspaceClient != null) {
+			String token = rackspaceClient.createAuthenticationToken();
 
-		final String agentPrefix = this.cloudConfiguration.getProvider().getMachineNamePrefix();
+			final String agentPrefix = this.cloudConfiguration.getProvider().getMachineNamePrefix();
 
-		return checkForLeakedNode(token, agentPrefix);
+			return checkForLeakedNode(token, agentPrefix);
+		} else {
+			LogUtils.log("Rackspace client was not initialized, therefore a bootstrap never took place, and no scan is needed.");
+			return true;
+		}
 
 	}
 	@Override

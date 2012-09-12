@@ -84,7 +84,10 @@ public class MicrosoftAzureCloudService extends AbstractCloudService {
 	
 	@Override
 	public boolean scanLeakedAgentNodes() {
-		
+		if (azureClient == null) {
+			LogUtils.log("Microsoft Azure client was not initialized, therefore a bootstrap never took place, and no scan is needed.");
+			return true;
+		}
 		List<String> leakingAgentNodesPublicIps = new ArrayList<String>();
 		
 		try {

@@ -119,6 +119,10 @@ public class HpCloudService extends AbstractCloudService {
 
 	@Override
 	public boolean scanLeakedAgentNodes() {
+		if(openstackClient == null) {
+			LogUtils.log("Openstack client was not initialized, therefore a bootstrap never took place, and no scan is needed.");
+			return true;
+		}
 		String token = openstackClient.createAuthenticationToken();
 
 		final String agentPrefix = this.cloudConfiguration.getProvider().getMachineNamePrefix();

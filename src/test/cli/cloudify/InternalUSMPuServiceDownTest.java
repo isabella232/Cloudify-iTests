@@ -13,6 +13,8 @@ import java.net.UnknownHostException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.cassandra.io.util.FileUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpStatus;
 import org.cloudifysource.dsl.utils.ServiceUtils;
 import org.cloudifysource.usm.USMException;
@@ -27,12 +29,14 @@ import org.openspaces.pu.service.CustomServiceMonitors;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import sun.swing.StringUIClientPropertyKey;
 import test.usm.USMTestUtils;
 
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
+import framework.tools.SGTestHelper;
 import framework.utils.LogUtils;
 import framework.utils.ProcessingUnitUtils;
 import framework.utils.ScriptUtils;
@@ -150,26 +154,30 @@ public class InternalUSMPuServiceDownTest extends AbstractLocalCloudTest {
 	}
 
 	private void deleteCatalinaExec()
-			throws MalformedURLException {
+			throws IOException {
 		String pathToTomcat;
 		
 		LogUtils.log("deleting catalina.sh/bat from pu folder");
 		ConfigObject tomcatConfig = new ConfigSlurper().parse(new File(this.tomcatServiceDir, "tomcat-service.properties").toURI().toURL());
 		String tomcatVersion = (String) tomcatConfig.get("version");
-		String catalinaPath = "/work/processing-units/default_tomcat_1/ext/apache-tomcat-" + tomcatVersion + "/bin/catalina.";
-		String filePath = ScriptUtils.getBuildPath()+ catalinaPath;
+		
+		String catalinaPath = "/"  + SGTestHelper.getWorkDirName()
+				+ "/processing-units/default_tomcat_1/ext/apache-tomcat-" + tomcatVersion + "/bin/catalina.";
+		
+		String filePath = ScriptUtils.getBuildPath() + catalinaPath;
 		if (isWindows()) {
 			pathToTomcat = filePath + "bat";
 		}
 		else {
 			pathToTomcat = filePath + "sh";
 		}
+		assertTrue("Catalina file was not found in path " + pathToTomcat, (FileUtils.isExists(pathToTomcat)));
 		
 		File tomcatRun = new File(pathToTomcat);
 		
 		assertTrue("failed while deleting file: " + tomcatRun, tomcatRun.delete());
 	}
-
+	
 	private void killTomcatProcess() throws IOException {
 		LogUtils.log("Retrieving tomcat process pid from admin");
 		Long tomcatPId = getTomcatPId();

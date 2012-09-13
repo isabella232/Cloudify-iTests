@@ -2,6 +2,8 @@ package framework.tools;
 
 import java.io.File;
 
+import org.apache.commons.lang.StringUtils;
+
 import framework.utils.ScriptUtils;
 
 public class SGTestHelper {
@@ -47,6 +49,26 @@ public class SGTestHelper {
 		}
 		return sgtestSrcDir;
 
+	}
+	
+	
+	public static String getSuiteName(){
+		return System.getProperty("sgtest.suiteName", "");
+	}
+	
+	public static String getSuiteId() {
+		return System.getProperty("sgtest.suiteId", "");
+	}
+	
+	//each suite has it's own work dir.
+	public static String getWorkDirName() {
+		String suiteDir = getSuiteName();
+		String suiteId = getSuiteId();
+		if (StringUtils.isEmpty(suiteDir) || StringUtils.isEmpty(suiteId)) {
+			return "work";
+		} else {
+			return suiteDir + suiteId + "_work";
+		}
 	}
 
 	/** @return SGTest root directory */

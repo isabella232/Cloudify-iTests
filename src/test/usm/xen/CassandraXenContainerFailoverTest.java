@@ -12,6 +12,7 @@ import org.openspaces.core.util.MemoryUnit;
 import org.scale7.cassandra.pelops.*;
 import org.testng.annotations.Test;
 
+import framework.tools.SGTestHelper;
 import framework.utils.LogUtils;
 import framework.utils.SSHUtils;
 import framework.utils.xen.AbstractXenGSMTest;
@@ -162,7 +163,7 @@ public class CassandraXenContainerFailoverTest extends AbstractXenGSMTest {
 
     // This method assumes NFS (i.e. XAP path on client == XAP path on server)
     private void createSchema() throws IOException, InterruptedException {
-        String cassandraDir = "/opt/gigaspaces/work/processing-units/cassandra-service_1/ext/";
+        String cassandraDir = "/opt/gigaspaces/" + SGTestHelper.getWorkDirName() + "/processing-units/cassandra-service_1/ext/";
         String pathToCassandraCli = cassandraDir + "apache-cassandra-0.7.5/bin/cassandra-cli";
         String pathToCreateSchema = cassandraDir + "createSchema.cassandra";
         String command = pathToCassandraCli + " -f " + pathToCreateSchema;

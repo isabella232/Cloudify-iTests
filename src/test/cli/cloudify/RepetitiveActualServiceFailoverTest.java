@@ -12,6 +12,7 @@ import java.net.UnknownHostException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.cassandra.io.util.FileUtils;
 import org.apache.http.HttpStatus;
 import org.cloudifysource.dsl.internal.packaging.PackagingException;
 import org.cloudifysource.dsl.utils.ServiceUtils;
@@ -32,11 +33,14 @@ import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
+import framework.tools.SGTestHelper;
 import framework.utils.AssertUtils;
 import framework.utils.AssertUtils.RepetitiveConditionProvider;
 import framework.utils.LogUtils;
 import framework.utils.ProcessingUnitUtils;
 import framework.utils.ScriptUtils;
+import groovy.util.ConfigObject;
+import groovy.util.ConfigSlurper;
 
 /**
  * 1. install tomcat service
@@ -55,6 +59,7 @@ public class RepetitiveActualServiceFailoverTest extends AbstractLocalCloudTest 
 	Machine machineA;
 	WebClient client;
 	private final String TOMCAT_URL = "http://127.0.0.1:8080";
+	private String tomcatServiceDir = ScriptUtils.getBuildPath() + "/recipes/services/tomcat";
 	
 	@Override
 	@BeforeMethod
@@ -66,8 +71,7 @@ public class RepetitiveActualServiceFailoverTest extends AbstractLocalCloudTest 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, groups = "1", enabled = true)
 	public void tomcatServiceDownAndCorruptedTest() throws IOException, InterruptedException, PackagingException {
 		
-		String serviceDir = ScriptUtils.getBuildPath() + "/recipes/services/tomcat";
-		String command = "connect " + this.restUrl + ";" + "install-service " + "--verbose -timeout 10 " + serviceDir;
+		String command = "connect " + this.restUrl + ";" + "install-service " + "--verbose -timeout 10 " + tomcatServiceDir;
 		try {
 			LogUtils.log("installing tomcat service using Cli");
 			CommandTestUtils.runCommandAndWait(command);
@@ -133,9 +137,11 @@ public class RepetitiveActualServiceFailoverTest extends AbstractLocalCloudTest 
 		LogUtils.log("Killing tomcat process and corrupting its install folder");
 		String pathToTomcat;
 		LogUtils.log("deleting catalina.sh/bat from pu folder");
+		ConfigObject tomcatConfig = new ConfigSlurper().parse(new File(this.tomcatServiceDir, "tomcat-service.properties").toURI().toURL());
+		String tomcatVersion = (String) tomcatConfig.get("version");
 		// TODO - this test will fail when we upgrade tomcat!
 		// It is better to write a simple scanner that looks for catalina.* under /ext
-		String catalinaPath = "/work/processing-units/default_tomcat_1/ext/apache-tomcat-7.0.23/bin/catalina.";
+		String catalinaPath = "/" + SGTestHelper.getWorkDirName() + "/processing-units/default_tomcat_1/ext/apache-tomcat-" + tomcatVersion + "/bin/catalina.";
 		String filePath = ScriptUtils.getBuildPath()+ catalinaPath;
 		if (ScriptUtils.isWindows()) {
 			pathToTomcat = filePath + "bat";
@@ -143,6 +149,8 @@ public class RepetitiveActualServiceFailoverTest extends AbstractLocalCloudTest 
 		else {
 			pathToTomcat = filePath + "sh";
 		}
+		assertTrue("Catalina file was not found in path " + pathToTomcat, (FileUtils.isExists(pathToTomcat)));
+		
 		File tomcatRun = new File(pathToTomcat);
 		assertTrue(tomcatRun.delete());
 		tomcatPId = getTomcatPId();

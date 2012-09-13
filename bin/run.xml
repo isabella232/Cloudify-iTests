@@ -167,6 +167,7 @@
             <classfileset dir="${tmp.testng.classes}" includes="${INCLUDE}" excludes="${EXCLUDE}"/>
 	     <sysproperty key="sgtest.suiteId" value="${SUITE_ID}"/>
 	     <sysproperty key="sgtest.numOfSuites" value="${SUITE_NUMBER}"/>
+        	<sysproperty key="sgtest.suiteName" value="${SUITE_NAME}"/>
         	<sysproperty key="ipList" value="${BYON_MACHINES}"/>
         	<sysproperty key="supported-clouds" value="${SUPPORTED_CLOUDS}"/>
         	<sysproperty key="com.gs.logging.level.config" value="true"/>

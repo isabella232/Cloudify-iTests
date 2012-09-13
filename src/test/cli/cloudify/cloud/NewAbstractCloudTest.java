@@ -112,7 +112,8 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 			try {
 				if (this.cloud.isBootstrapped()) {
 					this.cloud.teardownCloud();
-				} 
+					afterTeardown();
+				}
 				else {
 					LogUtils.log("The cloud was not bootstrapped, so no teardown required.");
 					this.cloud.scanLeakedAgentAndManagementNodes();

@@ -207,9 +207,11 @@ public abstract class AbstractCloudService implements CloudService {
 				for (Entry<File, File> fileToReplace : filesToReplace.entrySet()) {
 					// delete the old file
 					if (fileToReplace.getKey().exists()) {
+						LogUtils.log("deleting file --> " + fileToReplace.getKey());
 						(fileToReplace.getKey()).delete();
 					}
 					// copy the new file and use the name of the old file
+					LogUtils.log("copying file --> " + fileToReplace.getValue() + " to " + fileToReplace.getKey());
 					FileUtils.copyFile(fileToReplace.getValue(), fileToReplace.getKey());
 				}
 			}

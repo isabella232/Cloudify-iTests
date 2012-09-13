@@ -22,10 +22,11 @@ public class AbstractByonCloudTest extends NewAbstractCloudTest {
 	protected void bootstrap(ITestContext testContext) {
 		super.bootstrap(testContext);
 	}
-	
+
+
 	@Override
-	protected void afterTeardown() throws Exception {
-		super.afterTeardown();
+	protected void afterBootstrap() throws Exception {
+		super.afterBootstrap();
 		String[] managementHosts = getService().getRestUrls();
 		AdminFactory factory = new AdminFactory();
 		for (String host : managementHosts) {
@@ -35,7 +36,6 @@ public class AbstractByonCloudTest extends NewAbstractCloudTest {
 		}
 		admin = factory.createAdmin();
 	}
-
 
 
 	public ByonCloudService getService() {

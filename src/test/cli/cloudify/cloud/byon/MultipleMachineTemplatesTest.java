@@ -9,7 +9,6 @@ import java.util.Map;
 import org.apache.commons.io.FileUtils;
 import org.cloudifysource.dsl.cloud.Cloud;
 import org.cloudifysource.dsl.internal.ServiceReader;
-import org.openspaces.admin.AdminFactory;
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.testng.Assert;
 import org.testng.ITestContext;
@@ -62,7 +61,7 @@ public class MultipleMachineTemplatesTest extends AbstractByonCloudTest {
 	 * 
 	 * @throws Exception
 	 */
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false, priority = 1)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true, priority = 1)
 	public void testPetclinic() throws Exception {
 
 		LogUtils.log("installing application petclinic on " + cloudName);
@@ -218,16 +217,6 @@ public class MultipleMachineTemplatesTest extends AbstractByonCloudTest {
 	
 	protected String getBootstrapManagementFileName() {
 		return "bootstrap-management-byon_MultipleMachineTemplatesTest.sh";
-	}
-
-	@Override
-	protected void afterBootstrap() throws Exception {
-		// create an admin object with a unique group
-		LogUtils.log("creating admin");
-		AdminFactory factory = new AdminFactory();
-		factory.addGroup(TEST_UNIQUE_NAME);
-		admin = factory.createAdmin();
-		LogUtils.log("admin created");
 	}
 	
 	/**

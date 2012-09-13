@@ -48,6 +48,8 @@ function error_exit_on_level {
 echo LUS_IP_ADDRESS = $LUS_IP_ADDRESS
 echo WORKING_HOME_DIRECTORY = $WORKING_HOME_DIRECTORY
 
+export EXT_JAVA_OPTIONS="-Dcom.gs.multicast.enabled=false"
+
 # dont use user home for gigaspaces installation in byon tests. to avoid any accedential deletion or corruption of files
 GIGASPACES_INSTALL_DIRECTORY=$WORKING_HOME_DIRECTORY/gigaspaces
 
@@ -100,7 +102,6 @@ sed -i "1i export CLOUDIFY_CLOUD_IMAGE_ID=$CLOUDIFY_CLOUD_IMAGE_ID" setenv.sh ||
 sed -i "1i export CLOUDIFY_CLOUD_HARDWARE_ID=$CLOUDIFY_CLOUD_HARDWARE_ID" setenv.sh || error_exit $? "Failed updating setenv.sh"
 sed -i "1i export PATH=$JAVA_HOME/bin:$PATH" setenv.sh || error_exit $? "Failed updating setenv.sh"
 sed -i "1i export JAVA_HOME=$JAVA_HOME" setenv.sh || error_exit $? "Failed updating setenv.sh"
-sed -i "1i export EXT_JAVA_OPTIONS=-Dcom.gs.multicast.enabled=false" setenv.sh || error_exit $? "Failed updating setenv.sh"
 sed -i "1i export VERBOSE=true" setenv.sh || error_exit $? "Failed updating setenv.sh"
 
 cd $GIGASPACES_INSTALL_DIRECTORY/tools/cli || error_exit $? "Failed changing directory to cli directory"

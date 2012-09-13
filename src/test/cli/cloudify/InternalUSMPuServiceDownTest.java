@@ -6,7 +6,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.UnknownHostException;
@@ -14,7 +13,6 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.cassandra.io.util.FileUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpStatus;
 import org.cloudifysource.dsl.utils.ServiceUtils;
 import org.cloudifysource.usm.USMException;
@@ -29,7 +27,6 @@ import org.openspaces.pu.service.CustomServiceMonitors;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import sun.swing.StringUIClientPropertyKey;
 import test.usm.USMTestUtils;
 
 import com.gargoylesoftware.htmlunit.BrowserVersion;

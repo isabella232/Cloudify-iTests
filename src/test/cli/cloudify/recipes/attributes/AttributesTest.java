@@ -59,16 +59,16 @@ public class AttributesTest extends AbstractLocalCloudTest {
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = true)
 	public void testOverrideInstanceAttribute() throws Exception {
-		installApplication();
-		
 		
 		assertEquals("wrong number of objects in space", 1, gigaspace.count(null)); //CloudConfigurationHolder
+		installApplication();//installApplication clears all object in the space. 
+		
 		runCommand("connect " + restUrl + ";use-application " + MAIN_APPLICATION_NAME 
 				+ "; invoke -instanceid 1 setter setInstanceCustom myKey1 myValue1");
 		
 		String getBeforeOverride = runCommand("connect " + restUrl + ";use-application attributesTestApp" 
 				+ "; invoke -instanceid 1 setter getInstanceCustom myKey1");
-		assertEquals("wrong number of objects in space", 2, gigaspace.count(null));
+		assertEquals("wrong number of objects in space", 1, gigaspace.count(null));
 		assertTrue("command did not execute" , getBeforeOverride.contains("OK"));
 		assertTrue("service cannot get the instance attribute", getBeforeOverride.contains("myValue1"));
 		
@@ -76,7 +76,7 @@ public class AttributesTest extends AbstractLocalCloudTest {
 				+ "; invoke -instanceid 1 setter setInstanceCustom myKey1 myValue2");
 		String getAfterOverride = runCommand("connect " + restUrl + ";use-application attributesTestApp" 
 				+ "; invoke -instanceid 1 setter getInstanceCustom myKey1");
-		assertEquals("wrong number of objects in space", 2, gigaspace.count(null));
+		assertEquals("wrong number of objects in space", 1, gigaspace.count(null));
 		assertTrue("command did not execute" , getAfterOverride.contains("OK"));
 		assertTrue("instance attribute was not overriden properly", getAfterOverride.contains("myValue2") && 
 																   !getAfterOverride.contains("myValue1"));

@@ -81,11 +81,11 @@ public class MonitorsCacheTest extends AbstractLocalCloudTest {
 				final long valueFromAdmin2 = getDateMonitorFromAdmin(admin2);
 				LogUtils.log("Value2 is: " + valueFromAdmin2);
 				if (valueFromAdmin1 == valueFromAdmin2) {
-					++successCount;
-					values.add(valueFromAdmin1);
+					++successCount; // got identical values from different admin instances.
 				}
+				values.add(valueFromAdmin1);
 				
-				Thread.sleep(1000);
+				Thread.sleep(3000);
 			}
 			
 			final long end = System.currentTimeMillis();

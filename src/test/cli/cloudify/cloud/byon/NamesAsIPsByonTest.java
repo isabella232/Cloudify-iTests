@@ -26,7 +26,7 @@ public class NamesAsIPsByonTest extends AbstractByonCloudTest {
 		super.bootstrap(testContext);
 	}
 
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
 	public void testPetclinic() throws IOException, InterruptedException{
 
 		installApplicationAndWait(ScriptUtils.getBuildPath() + "/recipes/apps/petclinic-simple", "petclinic");

@@ -27,12 +27,18 @@ public class AbstractByonCloudTest extends NewAbstractCloudTest {
 	@Override
 	protected void afterBootstrap() throws Exception {
 		super.afterBootstrap();
+		createAdmin();
+	}
+
+
+	private void createAdmin() {
 		String[] managementHosts = getService().getRestUrls();
 		AdminFactory factory = new AdminFactory();
 		for (String host : managementHosts) {
 			LogUtils.log("creating admin");
-			String ipNoHttp = host.substring(7); // remove "http://"
-			factory.addLocators(ipNoHttp + ":" + CloudifyConstants.DEFAULT_LUS_PORT);
+			String utlNoHttp = host.substring(7); // remove "http://"
+			String ip = utlNoHttp.split(":")[0];
+			factory.addLocators(ip + ":" + CloudifyConstants.DEFAULT_LUS_PORT);
 		}
 		admin = factory.createAdmin();
 	}

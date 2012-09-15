@@ -388,8 +388,7 @@ public abstract class AbstractCloudService implements CloudService {
 			throws IOException {
 		File logging = new File(SGTestHelper.getSGTestRootDir() + "/config/gs_logging.properties");
 		File uploadOverrides =
-				new File(ScriptUtils.getBuildPath() + "/tools/cli/plugins/esc/" + getCloudName()
-						+ "/upload/cloudify-overrides/");
+				new File(getPathToCloudFolder() + "/upload/cloudify-overrides/");
 		uploadOverrides.mkdir();
 		File uploadLoggsDir = new File(uploadOverrides.getAbsoluteFile() + "/config/");
 		uploadLoggsDir.mkdir();

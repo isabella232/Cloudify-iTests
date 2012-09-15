@@ -42,7 +42,7 @@ public class KillManagementTest extends AbstractByonCloudTest {
 		super.bootstrap(testContext);
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
 	public void testPetclinic() throws Exception {
 
 		try {

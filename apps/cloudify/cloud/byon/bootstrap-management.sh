@@ -2,7 +2,7 @@
 
 #############################################################################
 # NOTE!! - This script differs from the original one by assuming that java is alerady installed on the machines.
-# 		   It also user the $WORKING_HOME_DIRECTORY as the gigaspaces install dir instead of using '~/gigaspaces'
+# 		   It also uses the $WORKING_HOME_DIRECTORY as the gigaspaces install dir instead of using '~/gigaspaces'
 #
 # This script starts a Gigaspaces agent for use with the Gigaspaces
 # Cloudify. The agent will function as management depending on the value of $GSA_MODE
@@ -48,6 +48,7 @@ function error_exit_on_level {
 echo LUS_IP_ADDRESS = $LUS_IP_ADDRESS
 echo WORKING_HOME_DIRECTORY = $WORKING_HOME_DIRECTORY
 
+export EXT_CLOUDIFY_JAVA_OPTIONS="-Dcom.gs.multicast.enabled=false"
 export EXT_JAVA_OPTIONS="-Dcom.gs.multicast.enabled=false"
 
 # dont use user home for gigaspaces installation in byon tests. to avoid any accedential deletion or corruption of files

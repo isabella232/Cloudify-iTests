@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 umask 000
 
 # user args
@@ -43,7 +45,7 @@ umask 000
  declare -a target_gsa_machines=(${19} ${21} ${23} ${25});
  BYON_MACHINES=${26}
  SUPPORTED_CLOUDS=${27}
- BUILD_LOG_URL=${28};export BUILD_LOG_URL
+ BUILD_LOG_URL=${28}; export BUILD_LOG_URL
 
 
  . set-deploy-env.sh
@@ -82,13 +84,14 @@ for ((id=0 ; id < ${SUITE_NUMBER} ; id++ )); do
  SUITE_ID=${id}
  LOOKUPGROUPS="${SG_LOOKUPGROUPS}"${SUITE_ID}; export LOOKUPGROUPS 
 
- SUITE_WORK_DIR=${BUILD_DIR}/suite${SUITE_ID}_work
+ SUITE_WORK_DIR=${BUILD_DIR}/${SUITE_NAME}${SUITE_ID}_work; export SUITE_WORK_DIR
  rm -rf ${SUITE_WORK_DIR}
  mkdir ${SUITE_WORK_DIR}	
 
- SUITE_DEPLOY_DIR=${BUILD_DIR}/suite${SUITE_ID}_deploy
+ SUITE_DEPLOY_DIR=${BUILD_DIR}/${SUITE_NAME}${SUITE_ID}_deploy; export SUITE_DEPLOY_DIR
  rm -rf ${SUITE_DEPLOY_DIR}
- mkdir ${SUITE_DEPLOY_DIR}	
+ mkdir ${SUITE_DEPLOY_DIR}
+ cp -R ${BUILD_DIR}/deploy/templates ${SUITE_DEPLOY_DIR}	
 
  SUITE_JVM_PROPERTIES="-Dcom.gs.work=${SUITE_WORK_DIR} -Dcom.gs.deploy=${SUITE_DEPLOY_DIR} ${JVM_PROPERTIES}"
 
@@ -105,8 +108,7 @@ for ((id=0 ; id < ${SUITE_NUMBER} ; id++ )); do
        rm -rf ${BUILD_CACHE_DIR}/gigaspaces*.zip
        echo copy cloudify premium license ro run cloudify xap suite
  	cp ${BUILD_DIR}/gslicense.xml ${BUILD_DIR}/gslicense.xml.org
-       cp ${DEPLOY_ROOT_BIN_DIR}/../../bin/gslicense.xml ${BUILD_DIR}
-       
+       cp ${DEPLOY_ROOT_BIN_DIR}/../../bin/gslicense.xml ${BUILD_DIR}      
  fi
 
  echo "participating machines are ${TARGET_MACHINES_ARRAY[@]}"
@@ -130,7 +132,7 @@ for ((id=0 ; id < ${SUITE_NUMBER} ; id++ )); do
  echo "   ### start sgtest ###  "
  echo ---------------------------------------
 
-CLIENT_EXECUTOR_SCRIPT="${DEPLOY_ROOT_BIN_DIR}/client-sgtest-executor.sh"
+ CLIENT_EXECUTOR_SCRIPT="${DEPLOY_ROOT_BIN_DIR}/client-sgtest-executor.sh"
 
   if [ "${SGTEST_TYPE}" == "${BACKWARDS_SGTEST_TYPE}" ]
   then if [ "${SGTEST_CLIENT_TYPE}" == "${SGTEST_OLD_CLIENT_TYPE}" ]
@@ -144,7 +146,7 @@ CLIENT_EXECUTOR_SCRIPT="${DEPLOY_ROOT_BIN_DIR}/client-sgtest-executor.sh"
  fi
 
 
- ${PDSH} -w ssh:pc-lab[${TARGET_CLIENT_MACHINE}] "${CLIENT_EXECUTOR_SCRIPT} ${DEPLOY_ROOT_BIN_DIR} ${SGTEST_CLIENT_BUILD_DIR} ${CONFIG_JAVA_ORDER} ${LOOKUPGROUPS} ${BUILD_NUMBER} ${INCLUDE} ${EXCLUDE} ${SUITE_NAME} ${MAJOR_VERSION} ${MINOR_VERSION} ${SUITE_ID} ${SUITE_NUMBER} ${BYON_MACHINES} ${SUPPORTED_CLOUDS}" &
+ ${PDSH} -w ssh:pc-lab[${TARGET_CLIENT_MACHINE}] "${CLIENT_EXECUTOR_SCRIPT} ${DEPLOY_ROOT_BIN_DIR} ${SGTEST_CLIENT_BUILD_DIR} ${CONFIG_JAVA_ORDER} ${LOOKUPGROUPS} ${BUILD_NUMBER} ${INCLUDE} ${EXCLUDE} ${SUITE_NAME} ${MAJOR_VERSION} ${MINOR_VERSION} ${SUITE_ID} ${SUITE_NUMBER} ${BYON_MACHINES} ${SUPPORTED_CLOUDS} ${SUITE_WORK_DIR} ${SUITE_DEPLOY_DIR}" &
 
 done
 #end for

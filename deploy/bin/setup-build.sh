@@ -25,7 +25,12 @@
 	fi
 
 	# full path to the build.zip file
-	BUILD_PATH=${REGRESSION_BUILDS_PATH}/${BUILD_NUMBER}/${BUILD_TYPE}/${BUILD_JDK_VER}/${BUILD_FILE}
+	if [ ${BUILD_TYPE} == "cloudify" ]; then
+        	BUILD_PATH=${REGRESSION_BUILDS_PATH}/${BUILD_NUMBER}/${BUILD_TYPE}/${BUILD_JDK_VER}/${BUILD_FILE}
+	else
+        	BUILD_PATH=${REGRESSION_BUILDS_PATH}/${BUILD_NUMBER}/xap-bigdata/${BUILD_JDK_VER}/${BUILD_FILE}
+	fi
+
 
 
 	#check that build-file path is available and readable
@@ -72,7 +77,7 @@
 		then
 		echo "ERROR: Failed to unzip ${BUILD_FILE}. *Zip file might be currupted or not readable*"
 		exit 1
-		fi
+	fi
 
 	#delete the original zip file
 	printf "\n *** Deleting original Build file: ${BUILD_FILE} file..."

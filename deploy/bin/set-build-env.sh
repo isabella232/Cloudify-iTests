@@ -36,7 +36,11 @@ fi
 BUILD_INSTALL_DIR=gigaspaces-${BUILD_TYPE}-${BUILD_VERSION}-${BUILD_MILESTONE}
 
 # location to director with all regression builds
-REGRESSION_BUILDS_PATH=/export/builds/cloudify/${BUILD_VERSION}
+if [ ${BUILD_TYPE} == "cloudify" ]; then
+	REGRESSION_BUILDS_PATH=/export/builds/cloudify/${BUILD_VERSION}
+else
+	REGRESSION_BUILDS_PATH=/export/builds/${BUILD_VERSION}
+fi
 
 #this directory contains all GS builds all ever ran by this user, every build downloaded to the specified directory and use locally!
 BUILDS_CACHE_REPOSITORY=${SGTEST_DEPLOY_DIR}/local-builds

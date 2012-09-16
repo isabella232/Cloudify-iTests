@@ -3,7 +3,7 @@
  . set-deploy-env.sh
 
 if [ ${BRANCH_NAME} != "trunk" ]; then
-	SVN_SGTEST_REPOSITORY=svn://pc-lab14/SVN/cloudify/branches/8_0_X/${BRANCH_NAME}/quality/frameworks/SGTest	
+	SVN_SGTEST_REPOSITORY=svn://pc-lab14/SVN/cloudify/branches/${SVN_BRANCH_DIRECTORY}/${BRANCH_NAME}/quality/frameworks/SGTest	
 else
 	SVN_SGTEST_REPOSITORY=svn://pc-lab14/SVN/cloudify/trunk/quality/frameworks/SGTest
 fi
@@ -30,7 +30,7 @@ rm -rf *
 svn export ${SVN_SGTEST_REPOSITORY}/apps/archives ${ARCHIVES} --force
 
 svn export ${SVN_SGTEST_REPOSITORY}/apps/cloudify ${CLOUDIFY} --force
-dos2unix ${DEPLOY_ROOT_BIN_DIR}/../../apps/cloudify/*.*
+dos2unix ${DEPLOY_ROOT_BIN_DIR}/../../apps/cloudify/cloud/**/*.sh
 
 svn export ${SVN_SGTEST_REPOSITORY}/apps/USM ${USM} --force
 
@@ -74,6 +74,7 @@ svn export ${SVN_SGTEST_REPOSITORY}/config/sgtest_logging.properties
 rm -f ${BUILD_DIR}/config/sgtest_logging.properties
 cp sgtest_logging.properties /export/tgrid/sgtest2.0-cloudify/config
 
+
 rm -rf /export/tgrid/sgtest2.0-cloudify/lib/xenserver/
 svn --force export ${SVN_SGTEST_REPOSITORY}/lib/xenserver
 mv xenserver /export/tgrid/sgtest2.0-cloudify/lib/
@@ -81,7 +82,3 @@ mv xenserver /export/tgrid/sgtest2.0-cloudify/lib/
 rm -rf /export/tgrid/sgtest2.0-cloudify/lib/selenium/
 svn --force export ${SVN_SGTEST_REPOSITORY}/lib/selenium
 mv selenium /export/tgrid/sgtest2.0-cloudify/lib/
-
-#rm -rf /export/tgrid/sgtest2.0-cloudify/lib/webui/
-#svn --force export ${SVN_SGTEST_REPOSITORY}/lib/webui
-#mv webui /export/tgrid/sgtest2.0-cloudify/lib/

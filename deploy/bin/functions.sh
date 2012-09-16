@@ -15,15 +15,15 @@
  clean_machines()
  {
 	 echo "> Clean target pc-lab machines"
-	 if [ "$TARGET_GSA_MACHINES" != "" ]
+	 if [ "$TARGET_GSA_MACHINES" != "" -a  "$TARGET_GSA_MACHINES" != "dummy" ]
 		then
 		. ${DEPLOY_ROOT_BIN_DIR}/preRemoteProcess.sh 2 ${TARGET_GSA_MACHINES}
 	 fi
-	 if [ "$TARGET_CLIENT_MACHINE" != "" ]
+	 if [ "$TARGET_CLIENT_MACHINE" != ""  -a  "$TARGET_CLIENT_MACHINE" != "dummy" ]
 		then
 		. ${DEPLOY_ROOT_BIN_DIR}/preRemoteProcess.sh 2 ${TARGET_CLIENT_MACHINE}
 	 fi
-	if [ "$TARGET_GSA_WAN_MACHINES" != "" ]
+	if [ "$TARGET_GSA_WAN_MACHINES" != ""  -a  "$TARGET_GSA_WAN_MACHINES" != "dummy" ]
                 then
                 . ${DEPLOY_ROOT_BIN_DIR}/preRemoteProcess.sh 2 ${TARGET_GSA_WAN_MACHINES}
          fi		

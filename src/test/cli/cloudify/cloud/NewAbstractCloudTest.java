@@ -48,6 +48,7 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 	
 	protected void afterTeardown() throws Exception {}
 	
+	protected void beforeBootstrap() throws Exception {}
 	
 	protected void bootstrap(final ITestContext testContext) {
 		bootstrap(testContext, null);
@@ -76,6 +77,12 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 		catch (Exception e) {
 			AssertFail("Customizing of cloud (" + cloudName + ", " + uniqueName + ") failed with the following error: " + e.getMessage(), e);
 		}
+		
+		try {
+			beforeBootstrap();
+		} catch (final Exception e) {
+			AssertFail("BeforeBootstrap method of test " + iTestContext.getClass().getName() + " using cloud " + "(" + cloudName + ", " + uniqueName + ") failed with the following error: " + e.getMessage(), e);
+		}
 
 		try {
 			this.cloud.bootstrapCloud(); // bootstrap the cloud
@@ -88,7 +95,7 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 			afterBootstrap(); // run optional post-bootstrap steps (e.g. create admin)
 
 		} catch (final Exception e) {
-			AssertFail("AfterBootstrap method of cloud (" + cloudName + ", " + uniqueName + ") failed with the following error: " + e.getMessage(), e);
+			AssertFail("AfterBootstrap method of test " + iTestContext.getClass().getName() + " using cloud " + "(" + cloudName + ", " + uniqueName + ") failed with the following error: " + e.getMessage(), e);
 		}
 	}
 

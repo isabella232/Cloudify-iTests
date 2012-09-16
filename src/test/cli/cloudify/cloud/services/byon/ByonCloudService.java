@@ -15,19 +15,14 @@
 ******************************************************************************/
 package test.cli.cloudify.cloud.services.byon;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 
-import test.AbstractTest;
 import test.cli.cloudify.cloud.services.AbstractCloudService;
 import framework.utils.IOUtils;
-import framework.utils.LogUtils;
-import framework.utils.SSHUtils;
 
 public class ByonCloudService extends AbstractCloudService {
 
@@ -79,47 +74,8 @@ public class ByonCloudService extends AbstractCloudService {
 
 	@Override
 	public void beforeBootstrap() throws Exception {
-		killAllJavaOnAllHosts();
-		cleanGSFilesOnAllHosts();
-		printBootstrapManagementFile();
 	}
 	
-	private void printBootstrapManagementFile() throws IOException {
-		String pathToBootstrap = getPathToCloudFolder() + "/upload/bootstrap-management.sh";
-		File bootstrapFile = new File(pathToBootstrap);
-		if (!bootstrapFile.exists()) {
-			LogUtils.log("Failed to print the cloud configuration file content");
-			return;
-		}
-		String cloudConfigFileAsString = FileUtils.readFileToString(bootstrapFile);
-		LogUtils.log("Bootstrap-management file: " + bootstrapFile.getAbsolutePath());
-		LogUtils.log(cloudConfigFileAsString);
-		
-	}
-
-	private void cleanGSFilesOnAllHosts() {
-		String command = "rm -rf /tmp/gs-files";
-		String[] hosts = this.getMachines();
-		for (String host : hosts) {
-			try {
-				LogUtils.log(SSHUtils.runCommand(host, AbstractTest.OPERATION_TIMEOUT, command, "tgrid", "tgrid"));
-			} catch (AssertionError e) {
-				LogUtils.log("Failed to clean gs-files on host " + host + " .Reason --> " + e.getMessage());
-			}
-		}	
-	}
-	
-	private void killAllJavaOnAllHosts() {
-		String command = "killall -9 java";
-		String[] hosts = this.getMachines();
-		for (String host : hosts) {
-			try {
-				LogUtils.log(SSHUtils.runCommand(host, AbstractTest.OPERATION_TIMEOUT, command, "tgrid", "tgrid"));
-			} catch (AssertionError e) {
-				LogUtils.log("Failed to clean gs-files on host " + host + " .Reason --> " + e.getMessage());
-			}
-		}
-	}
 
 	@Override
 	public String getUser() {

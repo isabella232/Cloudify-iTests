@@ -225,7 +225,7 @@ public abstract class AbstractCloudService implements CloudService {
 			// Load updated configuration file into POJO
 			this.cloudConfiguration = ServiceReader.readCloud(new File(getPathToCloudGroovy()));
 			
-			beforeBootstrap();
+			this.beforeBootstrap();
 			
 			printCloudConfigFile();
 

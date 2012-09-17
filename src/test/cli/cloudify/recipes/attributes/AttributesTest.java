@@ -60,7 +60,7 @@ public class AttributesTest extends AbstractLocalCloudTest {
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = true)
 	public void testOverrideInstanceAttribute() throws Exception {
 		
-		assertEquals("wrong number of objects in space", 1, gigaspace.count(null)); //CloudConfigurationHolder
+		//assertEquals("wrong number of objects in space", 1, gigaspace.count(null)); //CloudConfigurationHolder
 		installApplication();//installApplication clears all object in the space. 
 		
 		runCommand("connect " + restUrl + ";use-application " + MAIN_APPLICATION_NAME 

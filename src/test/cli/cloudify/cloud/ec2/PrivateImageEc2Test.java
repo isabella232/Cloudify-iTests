@@ -78,7 +78,6 @@ public class PrivateImageEc2Test extends NewAbstractCloudTest {
 				"imageId \"us-east-1/ami-93b068fa\"");
 		ec2Service.getAdditionalPropsToReplace().put("keyFile \"ec2-sgtest.pem\"",
 				"keyFile \"ec2-sgtest.pem\"\n\t\t\t\t\tusername \"ec2-user\"\n");
-		ec2Service.setMachinePrefix(this.getClass().getName() + CloudTestUtils.SGTEST_MACHINE_PREFIX);
 
 	};
 

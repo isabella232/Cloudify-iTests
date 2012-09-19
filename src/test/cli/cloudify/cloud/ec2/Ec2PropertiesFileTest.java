@@ -9,7 +9,6 @@ import org.testng.ITestContext;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import test.cli.cloudify.CloudTestUtils;
 import test.cli.cloudify.cloud.NewAbstractCloudTest;
 import test.cli.cloudify.cloud.services.ec2.Ec2CloudService;
 import framework.tools.SGTestHelper;
@@ -61,8 +60,6 @@ public class Ec2PropertiesFileTest extends NewAbstractCloudTest{
 		((Ec2CloudService)cloud).getAdditionalPropsToReplace().put("managementMachineTemplate \"SMALL_LINUX\"",
 				MANAGEMENT_MACHINE_TEMPLATE_MY_HARDWARE_ID);
 		
-		//set the machine name
-		cloud.setMachinePrefix(this.getClass().getName() + CloudTestUtils.SGTEST_MACHINE_PREFIX);
 		
 	}
 

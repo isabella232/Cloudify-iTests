@@ -120,8 +120,7 @@ public class Ec2LocationAwareScalingRulesTest extends AbstractScalingRulesCloudT
 			try {
 				repetitiveNumberOfInstancesHolds(getAbsoluteServiceName(),zonesToPerformAutoScaling, 1, 500, TimeUnit.SECONDS);
 			} catch (AssertionError e) {
-				LogUtils.log("Test Failed : number of instances for zone " + zonesToPerformAutoScaling + " wasnt 1 as expected");
-				Assert.fail();
+				Assert.fail(e.getMessage());
 			}
 		} finally {
 			LogUtils.log("test finished. currently in finally cause, before stopping threads");

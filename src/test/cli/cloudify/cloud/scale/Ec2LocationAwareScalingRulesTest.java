@@ -27,6 +27,7 @@ public class Ec2LocationAwareScalingRulesTest extends AbstractScalingRulesCloudT
 	
 	private static final String LOCATION_AWARE_POSTFIX = "-location-aware";
 	private static final String NEWLINE = System.getProperty("line.separator");
+	private static final long STEADY_STATE_DURATION = 1000 * 120; // 120 seconds
 
 	@Override
 	protected String getCloudName() {
@@ -67,10 +68,15 @@ public class Ec2LocationAwareScalingRulesTest extends AbstractScalingRulesCloudT
 			// increase web traffic for the instance of the specific zone, wait for scale out
 			startThreads(zonesToPerformAutoScaling);
 			repititiveAssertNumberOfInstances(getAbsoluteServiceName(),zonesToPerformAutoScaling, 2, OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
+			// assert that we reach a steady state. number of instances should not increase any further since 2 is the maximum per zone
+			repetitiveNumberOfInstancesHolds(getAbsoluteServiceName(), zonesToPerformAutoScaling, 2, STEADY_STATE_DURATION, TimeUnit.MILLISECONDS);
 
 			// stop web traffic, wait for scale in
 			stopThreads();
 			repititiveAssertNumberOfInstances(getAbsoluteServiceName(), zonesToPerformAutoScaling, 1, OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
+			// assert that we reach a steady state. number of instances should not decrease any further since 1 is the minimum per zone
+			repetitiveNumberOfInstancesHolds(getAbsoluteServiceName(), zonesToPerformAutoScaling, 1, STEADY_STATE_DURATION, TimeUnit.MILLISECONDS);
+
 
 		} finally {
 			LogUtils.log("test finished. currently in finally cause, before stopping threads");

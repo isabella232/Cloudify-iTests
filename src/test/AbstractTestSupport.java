@@ -17,6 +17,8 @@
 package test;
 
 import java.io.File;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.openspaces.admin.pu.ProcessingUnitInstance;
@@ -60,6 +62,9 @@ public abstract class AbstractTestSupport {
 		return AssertUtils.repetitiveAssertNumberOfInstances(pu,expectedNumberOfInstances);
 	}
 
+	public static void reptitiveCountdownLatchAwait(CountDownLatch latch, String name, long timeout, TimeUnit timeunit) {
+		AssertUtils.reptitiveCountdownLatchAwait(latch, name, timeout, timeunit);
+	}
 	public static void AssertFail(String msg) {
 		AssertUtils.AssertFail(msg);
 	}

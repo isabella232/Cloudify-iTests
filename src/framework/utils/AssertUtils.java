@@ -2,13 +2,15 @@ package framework.utils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
+import junit.framework.AssertionFailedError;
+
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.openspaces.admin.pu.ProcessingUnitInstance;
-
-import junit.framework.AssertionFailedError;
+import org.testng.Assert;
 
 /**
  * Allows placing a "catch all" breakpoint before all assert failures   
@@ -287,5 +289,22 @@ public class AssertUtils {
 			}
 		}, TimeUnit.MILLISECONDS.convert(5, TimeUnit.MINUTES));
 		return instances.get();
+	}
+	
+	 
+	 public static void reptitiveCountdownLatchAwait(final CountDownLatch countdownLatch, final String name, long timeout, TimeUnit timeunit) {
+			repetitiveAssertTrue("latch count is not zero", new RepetitiveConditionProvider() {
+				
+				@Override
+				public boolean getCondition() {
+					try {
+						LogUtils.log("Waiting for latch " + name + " . Current count: " + countdownLatch.getCount());
+						return countdownLatch.await(0, TimeUnit.MILLISECONDS);
+					} catch (final InterruptedException e) {
+						Assert.fail("Interrupted while waiting for latch " + name, e);
+						return false;
+					}
+				}
+			}, timeunit.toMillis(timeout));
 	}
 }

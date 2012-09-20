@@ -121,7 +121,8 @@ public class ScalingRulesRecipeTest extends AbstractLocalCloudTest {
 				repetitiveAssertStatistics(pu, averageStatisticsId, 1000.0*3/4);
 				gscCounter.repetitiveAssertNumberOfGridServiceContainersAdded(4, OPERATION_TIMEOUT);
 				gscCounter.repetitiveAssertNumberOfGridServiceContainersRemoved(0, OPERATION_TIMEOUT);
-				Assert.assertTrue(raisedLatch.await(OPERATION_TIMEOUT, TimeUnit.MILLISECONDS));
+				
+				reptitiveCountdownLatchAwait(raisedLatch, "raisedLatch", OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
 				Assert.assertEquals(numberOfRaisedAlerts.get(),1);
 				Assert.assertEquals(numberOfResolvedAlerts.get(),0);
 				
@@ -131,7 +132,7 @@ public class ScalingRulesRecipeTest extends AbstractLocalCloudTest {
 				repetitiveAssertStatistics(pu, averageStatisticsId, 0);
 				gscCounter.repetitiveAssertNumberOfGridServiceContainersAdded(4, OPERATION_TIMEOUT);
 				gscCounter.repetitiveAssertNumberOfGridServiceContainersRemoved(2, OPERATION_TIMEOUT);
-				Assert.assertTrue(resolvedLatch.await(OPERATION_TIMEOUT, TimeUnit.MILLISECONDS));
+				reptitiveCountdownLatchAwait(resolvedLatch, "resolvedLatch", OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
 				Assert.assertEquals(numberOfRaisedAlerts.get(),1);
 				Assert.assertEquals(numberOfResolvedAlerts.get(),1);
 				

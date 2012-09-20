@@ -60,20 +60,20 @@ public class Ec2LocationAwareScalingRulesTest extends AbstractScalingRulesCloudT
 			
 			// check that there are two global instances with zone 'petclinic.tomcat'
 			AtLeastOneZoneConfig zones = new AtLeastOneZoneConfigurer().addZone(getAbsoluteServiceName()).create();
-			repititiveAssertNumberOfInstances(getAbsoluteServiceName(),zones, 2, OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
+			repititiveAssertNumberOfInstances(getAbsoluteServiceName(),zones, 2);
 
 			Set<ExactZonesConfig> puExactZones = getProcessingUnitExactZones(getAbsoluteServiceName());
 			ExactZonesConfig zonesToPerformAutoScaling = puExactZones.iterator().next(); // just take the first zone
 			
 			// increase web traffic for the instance of the specific zone, wait for scale out
 			startThreads(zonesToPerformAutoScaling);
-			repititiveAssertNumberOfInstances(getAbsoluteServiceName(),zonesToPerformAutoScaling, 2, OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
+			repititiveAssertNumberOfInstances(getAbsoluteServiceName(),zonesToPerformAutoScaling, 2);
 			// assert that we reach a steady state. number of instances should not increase any further since 2 is the maximum per zone
 			repetitiveNumberOfInstancesHolds(getAbsoluteServiceName(), zonesToPerformAutoScaling, 2, STEADY_STATE_DURATION, TimeUnit.MILLISECONDS);
 
 			// stop web traffic, wait for scale in
 			stopThreads();
-			repititiveAssertNumberOfInstances(getAbsoluteServiceName(), zonesToPerformAutoScaling, 1, OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
+			repititiveAssertNumberOfInstances(getAbsoluteServiceName(), zonesToPerformAutoScaling, 1);
 			// assert that we reach a steady state. number of instances should not decrease any further since 1 is the minimum per zone
 			repetitiveNumberOfInstancesHolds(getAbsoluteServiceName(), zonesToPerformAutoScaling, 1, STEADY_STATE_DURATION, TimeUnit.MILLISECONDS);
 
@@ -86,7 +86,7 @@ public class Ec2LocationAwareScalingRulesTest extends AbstractScalingRulesCloudT
 		}
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
 	public void testScaleOutCancelation() throws Exception {	
 		
 		try {

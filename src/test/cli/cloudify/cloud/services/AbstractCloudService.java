@@ -133,6 +133,8 @@ public abstract class AbstractCloudService implements CloudService {
 		String buildNumber = PlatformVersion.getBuildNumber();
 		String version = PlatformVersion.getVersion();
 		String milestone = PlatformVersion.getMilestone();
+		
+		// TODO : replace hard coded 'cloudify' string with method to determine weather or no we are running xap or cloudify 
 
 		String newCloudifyURL = NEW_URL_PREFIX + "/" + version + "/build_" + buildNumber + "/cloudify/1.5/gigaspaces-cloudify-" + version + "-" + milestone + "-b" + buildNumber;
 		Map<String, String> propsToReplace = new HashMap<String, String>();

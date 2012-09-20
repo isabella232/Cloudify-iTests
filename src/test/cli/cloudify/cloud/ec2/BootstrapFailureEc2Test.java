@@ -14,6 +14,8 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import com.gigaspaces.webuitf.util.LogUtils;
+
 import test.cli.cloudify.CloudTestUtils;
 import test.cli.cloudify.cloud.JcloudsUtils;
 import test.cli.cloudify.cloud.NewAbstractCloudTest;
@@ -50,7 +52,7 @@ public class BootstrapFailureEc2Test extends NewAbstractCloudTest {
 		try {
 			super.bootstrap(iTestContext, service);
 		} catch (AssertionError ae) {
-			System.out.println(ae.getMessage());
+			LogUtils.log(ae.getMessage());
 		}
 		
 	}

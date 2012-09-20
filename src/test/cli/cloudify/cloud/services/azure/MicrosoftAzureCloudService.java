@@ -17,6 +17,7 @@ import org.cloudifysource.esc.driver.provisioning.azure.model.HostedService;
 import org.cloudifysource.esc.driver.provisioning.azure.model.HostedServices;
 import org.cloudifysource.esc.driver.provisioning.azure.model.NetworkConfigurationSet;
 import org.cloudifysource.esc.driver.provisioning.azure.model.Role;
+import org.openqa.selenium.TimeoutException;
 
 import test.cli.cloudify.cloud.services.AbstractCloudService;
 
@@ -37,6 +38,10 @@ public class MicrosoftAzureCloudService extends AbstractCloudService {
 	private static final String ADDRESS_SPACE = "10.4.0.0/16";
 
 	private static final long ESTIMATED_SHUTDOWN_TIME = 5 * 60 * 1000;
+
+	private static final long SCAN_INTERVAL = 10 * 1000; // 10 seconds. long time since it takes time to shutdown the machine
+
+	private static final long SCAN_TIMEOUT = 5 * 60 * 1000; // 5 minutes
 
 	public MicrosoftAzureCloudService(String uniqueName) {
 		super(uniqueName, "azure");
@@ -89,6 +94,8 @@ public class MicrosoftAzureCloudService extends AbstractCloudService {
 			LogUtils.log("Microsoft Azure client was not initialized, therefore a bootstrap never took place, and no scan is needed.");
 			return true;
 		}
+		
+		long scanEndTime = System.currentTimeMillis() + SCAN_TIMEOUT;
 
 		try {
 
@@ -98,7 +105,11 @@ public class MicrosoftAzureCloudService extends AbstractCloudService {
 			Deployments deploymentsBeingDeleted = new Deployments();
 
 			do {
-				LogUtils.log("waiting for all deployments to reach a non 'DELETING' state");
+				if (System.currentTimeMillis() > scanEndTime) {
+					throw new TimeoutException("Timed out waiting for deleting nodes to finish. last status was : " + deploymentsBeingDeleted);
+				}
+				Thread.sleep(SCAN_INTERVAL);
+				LogUtils.log("waiting for all deployments to reach a non 'Deleting' state");
 				for (HostedService hostedService : listHostedServices) {
 					List<Deployment> deploymentsForHostedSerice = azureClient.getHostedService(hostedService.getServiceName(), true).getDeployments().getDeployments();
 					if (deploymentsForHostedSerice.size() > 0) {

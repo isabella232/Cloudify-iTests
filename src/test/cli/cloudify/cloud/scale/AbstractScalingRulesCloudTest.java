@@ -152,7 +152,7 @@ public abstract class AbstractScalingRulesCloudTest extends NewAbstractCloudTest
 	
 	protected void repititiveAssertNumberOfInstances(final String absoluteServiceName, ZonesConfig zones, final int expectedNumberOfInstances, long timeout, TimeUnit timeunit) {
 
-		repetitiveAssertTrue("Failed finding " + expectedNumberOfInstances + " for " + absoluteServiceName + " in zones " + zones.getZones() + " . waited " + expectedNumberOfInstances * OPERATION_TIMEOUT * 3, 
+		repetitiveAssertTrue("Failed finding " + expectedNumberOfInstances + " for " + absoluteServiceName + " in zones " + zones.getZones() + " . waited " + timeout + " " + timeout, 
 				numberOfInstancesRepetitiveCondition(absoluteServiceName, zones, expectedNumberOfInstances), 
 				timeunit.toMillis(timeout));
 	}

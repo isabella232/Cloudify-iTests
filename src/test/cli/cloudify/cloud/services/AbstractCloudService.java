@@ -284,13 +284,8 @@ public abstract class AbstractCloudService implements CloudService {
 			}
 		} 
 		finally {
-			setBootstrapped(false);
-			try {				
-				scanLeakedAgentAndManagementNodes();
-			} 
-			finally {
-				deleteServiceFolders();
-			}
+			setBootstrapped(false); 
+			deleteServiceFolders();
 		}
 	}
 

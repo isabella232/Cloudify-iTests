@@ -85,6 +85,7 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 		}
 
 		try {
+			scanAgentAndManagementNodesLeak();
 			this.cloud.bootstrapCloud(); // bootstrap the cloud
 		} 
 		catch (final Exception e) {
@@ -119,11 +120,12 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 			try {
 				if (this.cloud.isBootstrapped()) {
 					this.cloud.teardownCloud();
+					scanAgentAndManagementNodesLeak();
 					afterTeardown();
 				}
 				else {
 					LogUtils.log("The cloud was not bootstrapped, so no teardown required.");
-					this.cloud.scanLeakedAgentAndManagementNodes();
+					scanAgentAndManagementNodesLeak();
 				}
 			} 
 			catch (final Exception e) {
@@ -305,6 +307,9 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 
 
 	public void scanAgentNodesLeak() {
+		
+		int maxRetries = 3;
+		
 		if (cloud == null) {
 			LogUtils.log("Test: " + lastTestName + " skipping scanNodesLeak since cloud is null");
 			return;
@@ -316,7 +321,17 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 		} catch (InterruptedException e) {
 			AssertFail("Failed waiting for esm to recognize instance count decrease.", e);
 		}
-		final boolean leakedAgentScanResult = this.cloud.scanLeakedAgentNodes();
+		
+		boolean leakedAgentScanResult = false;
+		for (int i = 0 ; i < maxRetries ; i++) {
+			try {
+				leakedAgentScanResult = this.cloud.scanLeakedAgentNodes();
+				break;
+			} catch (final Throwable t) {
+				LogUtils.log("Failed scaning for leaked nodes. attempt number " + (i + 1) , t);
+			}
+		}
+		
 
 		if (this.lastTestResult == ITestResult.SUCCESS) {
 			// test passed - check for leaked VMs
@@ -331,6 +346,9 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 	}
 	
 	public void scanAgentAndManagementNodesLeak() {
+		
+		int maxRetries = 3;
+		
 		if (cloud == null) {
 			LogUtils.log("Test: " + lastTestName + " skipping scanNodesLeak since cloud is null");
 			return;
@@ -342,11 +360,20 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 		} catch (InterruptedException e) {
 			AssertFail("Failed waiting for esm to recognize instance count decrease.", e);
 		}
-		final boolean leakedAgentScanResult = this.cloud.scanLeakedAgentAndManagementNodes();
-
+		
+		boolean leakedAgentAndManagementNodesScanResult = false;
+		for (int i = 0 ; i < maxRetries ; i++) {
+			try {
+				leakedAgentAndManagementNodesScanResult = this.cloud.scanLeakedAgentAndManagementNodes();
+				break;
+			} catch (final Throwable t) {
+				LogUtils.log("Failed scaning for leaked nodes. attempt number " + (i + 1) , t);
+			}
+		}
+		
 		if (this.lastTestResult == ITestResult.SUCCESS) {
 			// test passed - check for leaked VMs
-			if (!leakedAgentScanResult) {
+			if (!leakedAgentAndManagementNodesScanResult) {
 				// The test passed, but machines leaked, so the configuration should fail.
 				AssertFail("Test: " + lastTestName + " ended successfully, but leaked nodes were found!");
 			}

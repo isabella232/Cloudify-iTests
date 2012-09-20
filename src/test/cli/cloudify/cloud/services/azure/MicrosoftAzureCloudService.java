@@ -12,6 +12,7 @@ import org.cloudifysource.esc.driver.provisioning.azure.client.MicrosoftAzureRes
 import org.cloudifysource.esc.driver.provisioning.azure.model.ConfigurationSet;
 import org.cloudifysource.esc.driver.provisioning.azure.model.ConfigurationSets;
 import org.cloudifysource.esc.driver.provisioning.azure.model.Deployment;
+import org.cloudifysource.esc.driver.provisioning.azure.model.Deployments;
 import org.cloudifysource.esc.driver.provisioning.azure.model.HostedService;
 import org.cloudifysource.esc.driver.provisioning.azure.model.HostedServices;
 import org.cloudifysource.esc.driver.provisioning.azure.model.NetworkConfigurationSet;
@@ -25,18 +26,18 @@ import framework.tools.SGTestHelper;
 import framework.utils.IOUtils;
 
 public class MicrosoftAzureCloudService extends AbstractCloudService {
-	
+
 	private static final String USER_NAME = System.getProperty("user.name");
 
 	private final MicrosoftAzureRestClient azureClient;
 	private static final String AZURE_SUBSCRIPTION_ID = "3226dcf0-3130-42f3-b68f-a2019c09431e";
 	private static final String PATH_TO_PFX = SGTestHelper.getSGTestRootDir() + "/apps/cloudify/cloud/azure/azure-cert.pfx";
 	private static final String PFX_PASSWORD = "1408Rokk";
-	
+
 	private static final String ADDRESS_SPACE = "10.4.0.0/16";
-	
+
 	private static final long ESTIMATED_SHUTDOWN_TIME = 5 * 60 * 1000;
-	
+
 	public MicrosoftAzureCloudService(String uniqueName) {
 		super(uniqueName, "azure");
 		azureClient = new MicrosoftAzureRestClient(AZURE_SUBSCRIPTION_ID, 
@@ -76,52 +77,83 @@ public class MicrosoftAzureCloudService extends AbstractCloudService {
 	public String getApiKey() {
 		throw new UnsupportedOperationException("Microsoft Azure Cloud Driver does not have an API key concept. this method should have never been called");
 	}
-	
+
 	@Override
 	public void beforeBootstrap() throws Exception {		
 
 	}
-	
+
 	@Override
 	public boolean scanLeakedAgentNodes() {
 		if (azureClient == null) {
 			LogUtils.log("Microsoft Azure client was not initialized, therefore a bootstrap never took place, and no scan is needed.");
 			return true;
 		}
-		List<String> leakingAgentNodesPublicIps = new ArrayList<String>();
-		
+
 		try {
+
+			List<String> leakingAgentNodesPublicIps = new ArrayList<String>();
+
 			HostedServices listHostedServices = azureClient.listHostedServices();
-			for (HostedService hostedService : listHostedServices) {
-				Deployment deployment = hostedService.getDeployments().getDeployments().get(0); // each hosted service will have just one deployment.
-				Role role = deployment.getRoleList().getRoles().get(0);
-				String hostName = role.getRoleName(); // each deployment will have just one role.
-				if (hostName.contains("agent")) {
-					String publicIpFromDeployment = getPublicIpFromDeployment(deployment);
-					LogUtils.log("Found an agent with public ip : " + publicIpFromDeployment + " and hostName " + hostName);
-					leakingAgentNodesPublicIps.add(publicIpFromDeployment);
+			Deployments deploymentsBeingDeleted = new Deployments();
+
+			do {
+				LogUtils.log("waiting for all deployments to reach a non 'DELETING' state");
+				for (HostedService hostedService : listHostedServices) {
+					List<Deployment> deploymentsForHostedSerice = azureClient.getHostedService(hostedService.getServiceName(), true).getDeployments().getDeployments();
+					if (deploymentsForHostedSerice.size() > 0) {
+						Deployment deployment = deploymentsForHostedSerice.get(0); // each hosted service will have just one deployment.
+						if (deployment.getStatus().equals("Deleting")) {
+							LogUtils.log("Found a deployment with name : " + deployment.getName() + " and status : " + deployment.getStatus());
+							deploymentsBeingDeleted.getDeployments().add(deployment);
+						}
+					}
 				}
+
+			}
+
+			while (deploymentsBeingDeleted.getDeployments().size() != 0);
+
+
+			// now all deployment have reached a steady state.
+			// scan again to find out if there are any agents still running
+
+			LogUtils.log("scanning all remaining hosted services for running agent nodes");
+			for (HostedService hostedService : listHostedServices) {
+				List<Deployment> deploymentsForHostedSerice = azureClient.getHostedService(hostedService.getServiceName(), true).getDeployments().getDeployments();
+				if (deploymentsForHostedSerice.size() > 0) {
+					Deployment deployment = deploymentsForHostedSerice.get(0); // each hosted service will have just one deployment.
+					Role role = deployment.getRoleList().getRoles().get(0);
+					String hostName = role.getRoleName(); // each deployment will have just one role.
+					if (hostName.contains("agent")) {
+						String publicIpFromDeployment = getPublicIpFromDeployment(deployment);
+						LogUtils.log("Found an agent with public ip : " + publicIpFromDeployment + " and hostName " + hostName);
+						leakingAgentNodesPublicIps.add(publicIpFromDeployment);
+					}
+				}
+			}
+
+
+			if (!leakingAgentNodesPublicIps.isEmpty()) {
+				for (String ip : leakingAgentNodesPublicIps) {
+					LogUtils.log("attempting to kill agent node : " + ip);
+					long endTime = System.currentTimeMillis() + ESTIMATED_SHUTDOWN_TIME;
+					try {
+						azureClient.deleteVirtualMachineByIp(ip, false, endTime);
+					} catch (final Exception e) {
+						LogUtils.log("Failed deleting node with ip : " + ip + ". reason --> " + e.getMessage());
+					}
+				}
+				return false;
+			} else {
+				return true;
 			}
 		} catch (final Exception e) {
-			throw new RuntimeException("Failed retrieving hosted services list", e);
+			throw new RuntimeException(e);
 		}
-		
-		if (!leakingAgentNodesPublicIps.isEmpty()) {
-			for (String ip : leakingAgentNodesPublicIps) {
-				LogUtils.log("attempting to kill agent node : " + ip);
-				long endTime = System.currentTimeMillis() + ESTIMATED_SHUTDOWN_TIME;
-				try {
-					azureClient.deleteVirtualMachineByIp(ip, false, endTime);
-				} catch (final Exception e) {
-					LogUtils.log("Failed deleting node with ip : " + ip + ". reason --> " + e.getMessage());
-				}
-			}
-			return false;
-		} else {
-			return true;
-		}
-	}
-	
+
+	} 
+
 	private String getPublicIpFromDeployment(Deployment deployment) {		
 		String publicIp = null;
 		Role role = deployment.getRoleList().getRoles().get(0);
@@ -138,25 +170,25 @@ public class MicrosoftAzureCloudService extends AbstractCloudService {
 		}
 		return publicIp;		
 	}
-	
+
 	private void copyCustomCloudConfigurationFileToServiceFolder() throws IOException {
-		
+
 		// copy custom cloud driver configuration to test folder
 		String cloudServiceFullPath = SGTestHelper.getBuildDir() + "/tools/cli/plugins/esc/" + this.getServiceFolder();
-		
+
 		File originalCloudDriverConfigFile = new File(cloudServiceFullPath, "azure-cloud.groovy");
 		File customCloudDriverConfigFile = new File(SGTestHelper.getSGTestRootDir() + "/apps/cloudify/cloud/azure", "azure-cloud.groovy");
-				
+
 		Map<File, File> filesToReplace = new HashMap<File, File>();
 		filesToReplace.put(originalCloudDriverConfigFile, customCloudDriverConfigFile);
-		
+
 		if (originalCloudDriverConfigFile.exists()) {
 			originalCloudDriverConfigFile.delete();
 		}
 		FileUtils.copyFile(customCloudDriverConfigFile, originalCloudDriverConfigFile);
-		
+
 	}
-	
+
 	private void copyPrivateKeyToUploadFolder() throws IOException {
 		File pfxFilePath = new File(SGTestHelper.getSGTestRootDir() + "/apps/cloudify/cloud/azure/azure-cert.pfx"); 	
 		File uploadDir = new File(getPathToCloudFolder() + "/upload");

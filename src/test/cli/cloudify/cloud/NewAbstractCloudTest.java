@@ -38,7 +38,7 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 	private String uniqueName;
 
 	private String lastTestName;
-	private int lastTestResult;// see ITestResult
+	private int lastTestResult = ITestResult.SUCCESS; // default to success so that the first scan will not fail
 
 	protected abstract void customizeCloud() throws Exception;
 	

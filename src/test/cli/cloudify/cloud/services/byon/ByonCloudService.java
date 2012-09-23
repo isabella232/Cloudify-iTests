@@ -20,9 +20,17 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.cloudifysource.dsl.cloud.CloudTemplate;
+import org.cloudifysource.dsl.internal.DSLException;
 
+import test.AbstractTest;
 import test.cli.cloudify.cloud.services.AbstractCloudService;
+
+import com.j_spaces.kernel.PlatformVersion;
+
 import framework.utils.IOUtils;
+import framework.utils.LogUtils;
+import framework.utils.SSHUtils;
 
 public class ByonCloudService extends AbstractCloudService {
 
@@ -32,7 +40,15 @@ public class ByonCloudService extends AbstractCloudService {
 	
 	public static final String IP_LIST_PROPERTY = "ipList";
 	
-	private static final String DEFAULT_MACHINES = "192.168.9.115,192.168.9.116,192.168.9.120,192.168.9.125,192.168.9.126,192.168.9.135";
+	protected static final String NEW_URL_PREFIX = "http://tarzan/builds/GigaSpacesBuilds/cloudify";
+	
+	private static final String DEFAULT_MACHINES = "pc-lab95,pc-lab96,pc-lab115";
+	
+	/**
+	 * this folder is where Cloudify will be downloaded to and extracted from. NOTE - this is not the WORKING_HOME_DIRECTORY.
+	 * if is also defined in the custom bootstrap-management.sh script we use in our tests. 
+	 */
+	private static final String BYON_HOME_FOLDER = "/tmp/byon";
 	
 	private String ipList;
 	private String[] machines;
@@ -74,6 +90,68 @@ public class ByonCloudService extends AbstractCloudService {
 
 	@Override
 	public void beforeBootstrap() throws Exception {
+		cleanMachines();
+		replaceCloudifyURL();
+	}
+	
+	
+	private void replaceCloudifyURL() throws DSLException, IOException {		
+		String defaultURL = cloudConfiguration.getProvider().getCloudifyUrl();
+		String buildNumber = PlatformVersion.getBuildNumber();
+		String version = PlatformVersion.getVersion();
+		String milestone = PlatformVersion.getMilestone();
+		
+		// TODO : replace hard coded 'cloudify' string with method to determine weather or no we are running xap or cloudify 
+
+		String newCloudifyURL = NEW_URL_PREFIX + "/" + version + "/build_" + buildNumber + "/cloudify/1.5/gigaspaces-cloudify-" + version + "-" + milestone + "-b" + buildNumber;
+		Map<String, String> propsToReplace = new HashMap<String, String>();
+		propsToReplace.put(defaultURL, newCloudifyURL);
+		IOUtils.replaceTextInFile(this.getPathToCloudGroovy(), propsToReplace);
+	}
+	
+	private void cleanMachines() {
+		killAllJavaOnAllHosts();
+		cleanGSFilesOnAllHosts();
+		cleanHomeDirFolderOnAllHosts();
+	}
+	
+	private void cleanGSFilesOnAllHosts() {
+		for (CloudTemplate template : cloudConfiguration.getTemplates().values()) {
+			String command = "rm -rf " + template.getRemoteDirectory();;
+			String[] hosts = this.getMachines();			
+			for (String host : hosts) {
+				try {
+					LogUtils.log(SSHUtils.runCommand(host, AbstractTest.OPERATION_TIMEOUT, command, "tgrid", "tgrid"));
+				} catch (AssertionError e) {
+					LogUtils.log("Failed to clean files on host " + host + " .Reason --> " + e.getMessage());
+				}
+			}	
+		}			
+	}
+	
+	private void cleanHomeDirFolderOnAllHosts() {
+		String command = "rm -rf " + BYON_HOME_FOLDER;
+		String[] hosts = this.getMachines();
+		for (String host : hosts) {
+			try {
+				LogUtils.log(SSHUtils.runCommand(host, AbstractTest.OPERATION_TIMEOUT, command, "tgrid", "tgrid"));
+			} catch (AssertionError e) {
+				LogUtils.log("Failed to clean files on host " + host + " .Reason --> " + e.getMessage());
+			}
+		}	
+		
+	}
+	
+	private void killAllJavaOnAllHosts() {
+		String command = "killall -9 java";
+		String[] hosts = this.getMachines();
+		for (String host : hosts) {
+			try {
+				LogUtils.log(SSHUtils.runCommand(host, AbstractTest.OPERATION_TIMEOUT, command, "tgrid", "tgrid"));
+			} catch (AssertionError e) {
+				LogUtils.log("Failed to clean gs-files on host " + host + " .Reason --> " + e.getMessage());
+			}
+		}
 	}
 	
 

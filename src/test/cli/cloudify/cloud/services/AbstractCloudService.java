@@ -12,10 +12,7 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.io.FileUtils;
 import org.cloudifysource.dsl.cloud.Cloud;
-import org.cloudifysource.dsl.internal.DSLException;
 import org.cloudifysource.dsl.internal.ServiceReader;
-
-import com.j_spaces.kernel.PlatformVersion;
 
 import test.cli.cloudify.CloudTestUtils;
 import test.cli.cloudify.CommandTestUtils;
@@ -33,8 +30,6 @@ public abstract class AbstractCloudService implements CloudService {
 	protected static final String RELATIVE_ESC_PATH = "/tools/cli/plugins/esc/";
 	protected static final String UPLOAD_FOLDER = "upload";
 	protected static final String DEFAULT_URL_PREFIX = "repository.cloudifysource.org/org/cloudifysource";
-	protected static final String NEW_URL_PREFIX = "http://tarzan/builds/GigaSpacesBuilds/cloudify";
-
 	private String cloudName;
 	protected int numberOfManagementMachines = 1;
 	protected URL[] restAdminUrls;
@@ -46,6 +41,10 @@ public abstract class AbstractCloudService implements CloudService {
 	protected boolean bootstrapped = false;
 	private String serviceFolder;
 	protected Cloud cloudConfiguration;
+
+	public Cloud getCloudConfiguration() {
+		return cloudConfiguration;
+	}
 
 	public AbstractCloudService(String serviceUniqueName, String cloudName) {
 		this.serviceUniqueName = serviceUniqueName;
@@ -126,22 +125,6 @@ public abstract class AbstractCloudService implements CloudService {
 		IOUtils.replaceTextInFile(getPathToCloudGroovy(), propsToReplace);
 	}
 
-
-	private void replaceCloudifyURL() throws DSLException, IOException {		
-		Cloud cloud = ServiceReader.readCloud(new File(getPathToCloudGroovy()));
-		String defaultURL = cloud.getProvider().getCloudifyUrl();
-		String buildNumber = PlatformVersion.getBuildNumber();
-		String version = PlatformVersion.getVersion();
-		String milestone = PlatformVersion.getMilestone();
-		
-		// TODO : replace hard coded 'cloudify' string with method to determine weather or no we are running xap or cloudify 
-
-		String newCloudifyURL = NEW_URL_PREFIX + "/" + version + "/build_" + buildNumber + "/cloudify/1.5/gigaspaces-cloudify-" + version + "-" + milestone + "-b" + buildNumber;
-		Map<String, String> propsToReplace = new HashMap<String, String>();
-		propsToReplace.put(defaultURL, newCloudifyURL);
-		IOUtils.replaceTextInFile(getPathToCloudGroovy(), propsToReplace);
-	}
-
 	/**
 	 * Create a new folder for the configuration files of the current service.
 	 * 
@@ -216,9 +199,6 @@ public abstract class AbstractCloudService implements CloudService {
 					LogUtils.log("copying file --> " + fileToReplace.getValue() + " to " + fileToReplace.getKey());
 					FileUtils.copyFile(fileToReplace.getValue(), fileToReplace.getKey());
 				}
-			}
-			if (this.cloudName.equalsIgnoreCase("byon")){
-				replaceCloudifyURL();
 			}
 			if (additionalPropsToReplace != null) {
 				IOUtils.replaceTextInFile(getPathToCloudGroovy(), additionalPropsToReplace);

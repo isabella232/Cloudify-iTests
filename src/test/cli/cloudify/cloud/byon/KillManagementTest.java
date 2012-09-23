@@ -42,7 +42,7 @@ public class KillManagementTest extends AbstractByonCloudTest {
 		super.bootstrap(testContext);
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
 	public void testPetclinic() throws Exception {
 
 		try {
@@ -101,18 +101,16 @@ public class KillManagementTest extends AbstractByonCloudTest {
 		}	
 	}
 	
-	@Override
-	protected void beforeTeardown() throws Exception {
-		if (admin != null) {
-			admin.close();
-			admin = null;
-		}
-		uninstallApplicationAndWait("petclinic");
-	}
 
 	@AfterClass(alwaysRun = true)
 	protected void teardown() {
 		super.teardown();
+	}
+	
+	@Override
+	protected void beforeTeardown() throws Exception {
+		super.beforeTeardown();
+		uninstallApplicationAndWait("petclinic");
 	}
 	
 	@Override

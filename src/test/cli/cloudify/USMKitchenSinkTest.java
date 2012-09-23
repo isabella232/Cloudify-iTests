@@ -27,6 +27,7 @@ import org.cloudifysource.restclient.ErrorStatusException;
 import org.cloudifysource.restclient.GSRestClient;
 import org.cloudifysource.restclient.RestException;
 import org.cloudifysource.shell.commands.CLIException;
+import org.cloudifysource.shell.rest.RestAdminFacade;
 import org.cloudifysource.usm.USMException;
 import org.cloudifysource.usm.USMUtils;
 import org.hyperic.sigar.SigarException;
@@ -47,6 +48,7 @@ import org.openspaces.admin.pu.events.ProcessingUnitInstanceRemovedEventListener
 import org.openspaces.admin.zone.Zone;
 import org.openspaces.pu.service.ServiceDetails;
 import org.openspaces.pu.service.ServiceMonitors;
+import org.springframework.web.client.RestClientException;
 import org.testng.annotations.Test;
 
 import test.usm.USMTestUtils;
@@ -98,7 +100,7 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
 	public void testKitchenSink() throws IOException, InterruptedException,
 			PackagingException, DSLException, RestException {
-
+		
 		installService();
 		
 		ProcessingUnit pu = findPU();
@@ -137,6 +139,8 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 		checkServiceType();
 		
 		checkPUDump();
+		
+		verifyUninstallManagementFails();
 
 		long initialActualPid = this.actualPid;
 		
@@ -183,6 +187,27 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 
 	}
 	
+	private void verifyUninstallManagementFails() throws IOException, InterruptedException {
+		LogUtils.log("Verifing management undeployment fails when excecuted from the CLI");
+		String commandOUtput = CommandTestUtils.runCommandExpectedFail("connect " + this.restUrl + "; " 
+								+ "uninstall-application " + CloudifyConstants.MANAGEMENT_APPLICATION_NAME + "; " 
+								+ "exit");
+		assertTrue(commandOUtput.contains("Management application can not be undeployed"));
+		
+		
+		LogUtils.log("Verifing management undeployment fails when excecuted using a direct rest api call");
+		RestAdminFacade cloudifyAdminFacade = new RestAdminFacade();
+		try {
+			cloudifyAdminFacade.doConnect("", "", this.restUrl);
+			cloudifyAdminFacade.uninstallApplication(CloudifyConstants.MANAGEMENT_APPLICATION_NAME, 10);
+			AssertFail("Request to uinstall management should have thrown an exception");
+		} catch (CLIException e) {
+			assertTrue("The uninstall management response should contain the proper error message", 
+							e.getMessage().contains("cannot_uninstall_management_application"));
+		}
+		
+	}
+
 	private void checkManagementServicesPidsAreEqual() throws RemoteException {
 		DefaultProcessingUnitInstance rest = (DefaultProcessingUnitInstance) admin.getProcessingUnits().getProcessingUnit("rest").getInstances()[0];
 		DefaultProcessingUnitInstance space = (DefaultProcessingUnitInstance) admin.getProcessingUnits().getProcessingUnit("cloudifyManagementSpace").getInstances()[0];

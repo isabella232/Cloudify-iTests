@@ -1,9 +1,6 @@
 #! /bin/bash
 
 #############################################################################
-# NOTE!! - This script differs from the original one by assuming that java is alerady installed on the machines.
-# 		   It also uses the $WORKING_HOME_DIRECTORY as the gigaspaces install dir instead of using '~/gigaspaces'
-#
 # This script starts a Gigaspaces agent for use with the Gigaspaces
 # Cloudify. The agent will function as management depending on the value of $GSA_MODE
 #
@@ -45,18 +42,49 @@ function error_exit_on_level {
 		error_exit ${1} ${2}
 	fi
 }
-echo LUS_IP_ADDRESS = $LUS_IP_ADDRESS
-echo WORKING_HOME_DIRECTORY = $WORKING_HOME_DIRECTORY
 
-export EXT_CLOUDIFY_JAVA_OPTIONS="-Dcom.gs.multicast.enabled=false"
+
+JAVA_32_URL="http://repository.cloudifysource.org/com/oracle/java/1.6.0_32/jdk-6u32-linux-i586.bin"
+JAVA_64_URL="http://repository.cloudifysource.org/com/oracle/java/1.6.0_32/jdk-6u32-linux-x64.bin"
+
+HOME_DIR = /tmp/byon
+
+# If not JDK specified, determine which JDK to install based on hardware architecture
+if [ -z "$CLOUDIFY_AGENT_ENV_JAVA_URL" ]; then
+	ARCH=`uname -m`
+	echo Machine Architecture -- $ARCH
+	if [ "$ARCH" = "i686" ]; then
+		export CLOUDIFY_AGENT_ENV_JAVA_URL=$JAVA_32_URL
+	elif [ "$ARCH" = "x86_64" ]; then
+		export CLOUDIFY_AGENT_ENV_JAVA_URL=$JAVA_64_URL
+	else 
+		echo Unknown architecture -- $ARCH -- defaulting to 32 bit JDK
+		export CLOUDIFY_AGENT_ENV_JAVA_URL=$JAVA_32_URL
+	fi
+	
+fi  
+
+if [ "$CLOUDIFY_AGENT_ENV_JAVA_URL" = "NO_INSTALL" ]; then
+	echo "JDK will not be installed"
+else
+	echo Previous JAVA_HOME value -- $JAVA_HOME 
+	export CLOUDIFY_ORIGINAL_JAVA_HOME=$JAVA_HOME
+
+	echo Downloading JDK from $CLOUDIFY_AGENT_ENV_JAVA_URL    
+	wget -q -O $WORKING_HOME_DIRECTORY/java.bin $CLOUDIFY_AGENT_ENV_JAVA_URL
+	chmod +x $WORKING_HOME_DIRECTORY/java.bin
+	echo -e "\n" > $WORKING_HOME_DIRECTORY/input.txt
+	mkdir $HOME_DIR/java
+	cd $HOME_DIR/java
+	
+	echo Installing JDK
+	$WORKING_HOME_DIRECTORY/java.bin < $WORKING_HOME_DIRECTORY/input.txt > /dev/null
+	mv $HOME_DIR/java/*/* $HOME_DIR/java || error_exit $? "Failed moving JDK installation"
+	rm -f $WORKING_HOME_DIRECTORY/input.txt
+    export JAVA_HOME=$HOME_DIR/java
+fi  
+
 export EXT_JAVA_OPTIONS="-Dcom.gs.multicast.enabled=false"
-
-# dont use user home for gigaspaces installation in byon tests. to avoid any accedential deletion or corruption of files
-GIGASPACES_INSTALL_DIRECTORY=$WORKING_HOME_DIRECTORY/gigaspaces
-
-# This is where the installation of Java would go. but for testing purposes we skip this since java is already installed.  
-
-echo Existing JAVA_HOME value -- $JAVA_HOME 
 
 if [ ! -z "$CLOUDIFY_LINK" ]; then
 	echo Downloading cloudify installation from $CLOUDIFY_LINK.tar.gz
@@ -69,33 +97,32 @@ if [ ! -z "$CLOUDIFY_OVERRIDES_LINK" ]; then
 fi
 
 # Todo: Check this condition
-if [ ! -d "$GIGASPACES_INSTALL_DIRECTORY" -o $WORKING_HOME_DIRECTORY/gigaspaces.tar.gz -nt $GIGASPACES_INSTALL_DIRECTORY ]; then
-	rm -rf $GIGASPACES_INSTALL_DIRECTORY || error_exit $? "Failed removing old gigaspaces directory"
-	mkdir $GIGASPACES_INSTALL_DIRECTORY || error_exit $? "Failed creating gigaspaces directory"
+if [ ! -d "$HOME_DIR/gigaspaces" -o $WORKING_HOME_DIRECTORY/gigaspaces.tar.gz -nt $HOME_DIR/gigaspaces ]; then
+	rm -rf $HOME_DIR/gigaspaces || error_exit $? "Failed removing old gigaspaces directory"
+	mkdir $HOME_DIR/gigaspaces || error_exit $? "Failed creating gigaspaces directory"
 	
 	# 2 is the error level threshold. 1 means only warnings
 	# this is needed for testing purposes on zip files created on the windows platform 
-	tar xfz $WORKING_HOME_DIRECTORY/gigaspaces.tar.gz -C $GIGASPACES_INSTALL_DIRECTORY || error_exit_on_level $? "Failed extracting cloudify installation" 2 
+	tar xfz $WORKING_HOME_DIRECTORY/gigaspaces.tar.gz -C $HOME_DIR/gigaspaces || error_exit_on_level $? "Failed extracting cloudify installation" 2 
 
 	# Todo: consider removing this line
-	chmod -R 777 $GIGASPACES_INSTALL_DIRECTORY || error_exit $? "Failed changing permissions in cloudify installion"
-	mv $GIGASPACES_INSTALL_DIRECTORY/*/* $GIGASPACES_INSTALL_DIRECTORY || error_exit $? "Failed moving cloudify installation"
+	chmod -R 777 $HOME_DIR/gigaspaces || error_exit $? "Failed changing permissions in cloudify installion"
+	mv $HOME_DIR/gigaspaces/*/* $HOME_DIR/gigaspaces || error_exit $? "Failed moving cloudify installation"
 	
 	if [ ! -z "$CLOUDIFY_OVERRIDES_LINK" ]; then
 		echo Copying overrides into cloudify distribution
-		tar xfz $WORKING_HOME_DIRECTORY/gigaspaces_overrides.tar.gz -d $GIGASPACES_INSTALL_DIRECTORY || error_exit_on_level $? "Failed extracting cloudify overrides" 2 		
+		tar xfz $WORKING_HOME_DIRECTORY/gigaspaces_overrides.tar.gz -d $HOME_DIR/gigaspaces || error_exit_on_level $? "Failed extracting cloudify overrides" 2 		
 	fi
 fi
 
 # if an overrides directory exists, copy it into the cloudify distribution
 if [ -d $WORKING_HOME_DIRECTORY/cloudify-overrides ]; then
-	cp -rf $WORKING_HOME_DIRECTORY/cloudify-overrides/* $GIGASPACES_INSTALL_DIRECTORY
+	cp -rf $WORKING_HOME_DIRECTORY/cloudify-overrides/* $HOME_DIR/gigaspaces
 fi
 
 # UPDATE SETENV SCRIPT...
 echo Updating environment script
-echo GIGASPACES_INSTALL_DIRECTORY=$GIGASPACES_INSTALL_DIRECTORY
-cd $GIGASPACES_INSTALL_DIRECTORY/bin || error_exit $? "Failed changing directory to bin directory"
+cd $HOME_DIR/gigaspaces/bin || error_exit $? "Failed changing directory to bin directory"
 
 sed -i "1i export NIC_ADDR=$MACHINE_IP_ADDRESS" setenv.sh || error_exit $? "Failed updating setenv.sh"
 sed -i "1i export LOOKUPLOCATORS=$LUS_IP_ADDRESS" setenv.sh || error_exit $? "Failed updating setenv.sh"
@@ -103,12 +130,8 @@ sed -i "1i export CLOUDIFY_CLOUD_IMAGE_ID=$CLOUDIFY_CLOUD_IMAGE_ID" setenv.sh ||
 sed -i "1i export CLOUDIFY_CLOUD_HARDWARE_ID=$CLOUDIFY_CLOUD_HARDWARE_ID" setenv.sh || error_exit $? "Failed updating setenv.sh"
 sed -i "1i export PATH=$JAVA_HOME/bin:$PATH" setenv.sh || error_exit $? "Failed updating setenv.sh"
 sed -i "1i export JAVA_HOME=$JAVA_HOME" setenv.sh || error_exit $? "Failed updating setenv.sh"
-sed -i "1i export VERBOSE=true" setenv.sh || error_exit $? "Failed updating setenv.sh"
 
-cd $GIGASPACES_INSTALL_DIRECTORY/tools/cli || error_exit $? "Failed changing directory to cli directory"
-
-chmod +x $GIGASPACES_INSTALL_DIRECTORY/bin/*.sh
-chmod +x $GIGASPACES_INSTALL_DIRECTORY/tools/cli/*.sh
+cd $HOME_DIR/gigaspaces/tools/cli || error_exit $? "Failed changing directory to cli directory"
 
 # START AGENT ALONE OR WITH MANAGEMENT
 if [ -f nohup.out ]; then
@@ -127,7 +150,7 @@ if [ "$CLOUDIFY_AGENT_ENV_PRIVILEGED" = "true" ]; then
 		# root is privileged by definition
 		echo Running as root
 	else
-		sudo -n ls || error_exit_on_level $? "Current user is not a sudoer, or requires a password for sudo" 1
+		sudo -n ls > /dev/null || error_exit_on_level $? "Current user is not a sudoer, or requires a password for sudo" 1
 	fi
 	if [ ! -f "/etc/sudoers" ]; then
 		error_exit 101 "Could not find sudoers file at expected location (/etc/sudoers)"

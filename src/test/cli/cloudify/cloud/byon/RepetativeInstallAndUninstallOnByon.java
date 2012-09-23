@@ -1,21 +1,13 @@
 package test.cli.cloudify.cloud.byon;
 
-import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import org.openspaces.admin.Admin;
-import org.openspaces.admin.AdminFactory;
 import org.testng.Assert;
 import org.testng.ITestContext;
 import org.testng.annotations.AfterClass;
-import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import test.cli.cloudify.cloud.services.byon.ByonCloudService;
-import framework.tools.SGTestHelper;
 import framework.utils.LogUtils;
 import framework.utils.ScriptUtils;
 
@@ -33,48 +25,13 @@ import framework.utils.ScriptUtils;
 public class RepetativeInstallAndUninstallOnByon extends AbstractByonCloudTest {
 
 	private final static int REPETITIONS = 3;
-	private static final String TEST_UNIQUE_NAME = "RepetativeInstallAndUninstallOnByon";
-
-	private Admin admin;
 	
 	@BeforeClass(alwaysRun = true)
 	protected void bootstrap(final ITestContext testContext) {
 		super.bootstrap(testContext);
 	}
 	
-	@AfterClass(alwaysRun = true)
-	protected void teardown() {
-		super.teardown();
-	}
-	
-	@AfterMethod
-	public void cleanUp() {
-		super.scanAgentNodesLeak();
-	}
-
-	@Override
-	protected void customizeCloud() throws Exception {
-		// replace the default bootstrap-management.sh with a custom version one
-		ByonCloudService byonService = (ByonCloudService) cloud;
-		File standardBootstrapManagement = new File(byonService.getPathToCloudFolder() + "/upload",
-				"bootstrap-management.sh");
-		File bootstrapManagementWithMulticast = new File(SGTestHelper.getSGTestRootDir()
-				+ "/apps/cloudify/cloud/byon/bootstrap-management-byon_RepetativeInstallAndUninstallOnByon.sh");
-		Map<File, File> filesToReplace = new HashMap<File, File>();
-		filesToReplace.put(standardBootstrapManagement, bootstrapManagementWithMulticast);
-		byonService.addFilesToReplace(filesToReplace);
-		byonService.setMachinePrefix(this.getClass().getName());
-	}
-
-	@Override
-	protected void afterBootstrap() throws Exception {
-		LogUtils.log("creating admin");
-		AdminFactory factory = new AdminFactory();
-		factory.addGroup(TEST_UNIQUE_NAME);
-		admin = factory.createAdmin();
-	}
-
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
 	public void testPetclinic() throws Exception {
 
 		for (int i = 0; i < REPETITIONS; i++) {
@@ -96,13 +53,10 @@ public class RepetativeInstallAndUninstallOnByon extends AbstractByonCloudTest {
 					"petclinic.tomcat is up - uninstall failed");
 		}
 	}
-
-	@Override
-	protected void beforeTeardown() throws Exception {
-		// clean
-		if (admin != null) {
-			admin.close();
-			admin = null;
-		}
+	
+	@AfterClass(alwaysRun = true)
+	protected void teardown() {
+		super.teardown();
 	}
+
 }

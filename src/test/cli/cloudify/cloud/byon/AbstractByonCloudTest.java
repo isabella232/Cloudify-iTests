@@ -1,9 +1,5 @@
 package test.cli.cloudify.cloud.byon;
 
-import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.cloudifysource.dsl.internal.CloudifyConstants;
 import org.openspaces.admin.Admin;
 import org.openspaces.admin.AdminFactory;
@@ -11,7 +7,6 @@ import org.testng.ITestContext;
 
 import test.cli.cloudify.cloud.NewAbstractCloudTest;
 import test.cli.cloudify.cloud.services.byon.ByonCloudService;
-import framework.tools.SGTestHelper;
 import framework.utils.LogUtils;
 
 public class AbstractByonCloudTest extends NewAbstractCloudTest {
@@ -68,5 +63,12 @@ public class AbstractByonCloudTest extends NewAbstractCloudTest {
 	@Override
 	protected boolean isReusableCloud() {
 		return false;
+	}
+
+
+	@Override
+	protected void customizeCloud() throws Exception {
+		// TODO Auto-generated method stub
+		
 	}
 }

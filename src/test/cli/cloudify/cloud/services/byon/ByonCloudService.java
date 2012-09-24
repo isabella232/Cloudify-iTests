@@ -22,6 +22,8 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.cloudifysource.dsl.cloud.CloudTemplate;
+import org.cloudifysource.dsl.internal.DSLException;
+import org.cloudifysource.dsl.internal.ServiceReader;
 
 import test.AbstractTest;
 import test.cli.cloudify.cloud.services.AbstractCloudService;
@@ -87,6 +89,12 @@ public class ByonCloudService extends AbstractCloudService {
 		
 		propsToReplace.put("numberOfManagementMachines 1", "numberOfManagementMachines "  + numberOfManagementMachines);
 		IOUtils.replaceTextInFile(getPathToCloudGroovy(), propsToReplace);
+		// read again to get access to the cloudify url
+		try {
+			this.cloudConfiguration = ServiceReader.readCloud(new File(getPathToCloudGroovy()));
+		} catch (DSLException e) {
+			throw new RuntimeException(e);
+		}
 		replaceCloudifyURL();
 		replaceBootstrapManagementScript();
 	}

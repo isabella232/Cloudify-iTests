@@ -86,7 +86,7 @@ public abstract class AbstractCloudService implements CloudService {
 	public void setMachinePrefix(String machinePrefix) {
 		this.machinePrefix = machinePrefix;
 	}
-	
+
 
 	public void setCloudName(String cloudName) {
 		this.cloudName = cloudName;
@@ -112,7 +112,7 @@ public abstract class AbstractCloudService implements CloudService {
 	}
 
 	public abstract void injectServiceAuthenticationDetails() throws IOException;
-	
+
 	protected void injectCloudDriverClass() throws IOException {}
 
 	public void injectAuthenticationDetails() throws IOException {
@@ -185,53 +185,53 @@ public abstract class AbstractCloudService implements CloudService {
 
 	@Override
 	public void bootstrapCloud() throws Exception {
-			overrideLogsFile();
-			injectAuthenticationDetails();
-			if (filesToReplace != null) {
-				// replace files
-				for (Entry<File, File> fileToReplace : filesToReplace.entrySet()) {
-					// delete the old file
-					if (fileToReplace.getKey().exists()) {
-						LogUtils.log("deleting file --> " + fileToReplace.getKey());
-						(fileToReplace.getKey()).delete();
-					}
-					// copy the new file and use the name of the old file
-					LogUtils.log("copying file --> " + fileToReplace.getValue() + " to " + fileToReplace.getKey());
-					FileUtils.copyFile(fileToReplace.getValue(), fileToReplace.getKey());
+		// Load updated configuration file into POJO
+		this.cloudConfiguration = ServiceReader.readCloud(new File(getPathToCloudGroovy()));
+		overrideLogsFile();
+		injectAuthenticationDetails();
+		if (filesToReplace != null) {
+			// replace files
+			for (Entry<File, File> fileToReplace : filesToReplace.entrySet()) {
+				// delete the old file
+				if (fileToReplace.getKey().exists()) {
+					LogUtils.log("deleting file --> " + fileToReplace.getKey());
+					(fileToReplace.getKey()).delete();
 				}
+				// copy the new file and use the name of the old file
+				LogUtils.log("copying file --> " + fileToReplace.getValue() + " to " + fileToReplace.getKey());
+				FileUtils.copyFile(fileToReplace.getValue(), fileToReplace.getKey());
 			}
-			if (additionalPropsToReplace != null) {
-				IOUtils.replaceTextInFile(getPathToCloudGroovy(), additionalPropsToReplace);
-			}
-			
-			// Load updated configuration file into POJO
-			this.cloudConfiguration = ServiceReader.readCloud(new File(getPathToCloudGroovy()));
-			
-			this.beforeBootstrap();
-			
-			printCloudConfigFile();
-
-			String output = CommandTestUtils.runCommandAndWait("bootstrap-cloud --verbose " + getCloudName() + "_" + getUniqueName());
-			LogUtils.log("Extracting rest url's from cli output");
-			restAdminUrls = extractRestAdminUrls(output, numberOfManagementMachines);
-			LogUtils.log("Extracting webui url's from cli output");
-			webUIUrls = extractWebuiUrls(output, numberOfManagementMachines);
-			assertBootstrapServicesAreAvailable();
-			setBootstrapped(true);
-
-			URL machinesURL;
-
-			for (int i = 0; i < numberOfManagementMachines; i++) {
-				machinesURL = getMachinesUrl(restAdminUrls[i].toString());
-				LogUtils.log("Expecting " + numberOfManagementMachines + " machines");
-				LogUtils.log("Found " + CloudTestUtils.getNumberOfMachines(machinesURL) + " machines");
-			}
-
 		}
+		if (additionalPropsToReplace != null) {
+			IOUtils.replaceTextInFile(getPathToCloudGroovy(), additionalPropsToReplace);
+		}
+
+
+		this.beforeBootstrap();
+
+		printCloudConfigFile();
+
+		String output = CommandTestUtils.runCommandAndWait("bootstrap-cloud --verbose " + getCloudName() + "_" + getUniqueName());
+		LogUtils.log("Extracting rest url's from cli output");
+		restAdminUrls = extractRestAdminUrls(output, numberOfManagementMachines);
+		LogUtils.log("Extracting webui url's from cli output");
+		webUIUrls = extractWebuiUrls(output, numberOfManagementMachines);
+		assertBootstrapServicesAreAvailable();
+		setBootstrapped(true);
+
+		URL machinesURL;
+
+		for (int i = 0; i < numberOfManagementMachines; i++) {
+			machinesURL = getMachinesUrl(restAdminUrls[i].toString());
+			LogUtils.log("Expecting " + numberOfManagementMachines + " machines");
+			LogUtils.log("Found " + CloudTestUtils.getNumberOfMachines(machinesURL) + " machines");
+		}
+
+	}
 
 	@Override
 	public void beforeBootstrap() throws Exception {
-		
+
 	}
 
 	private void printCloudConfigFile() throws IOException {
@@ -386,7 +386,7 @@ public abstract class AbstractCloudService implements CloudService {
 	public String getUniqueName() {
 		return serviceUniqueName;
 	}
-	
+
 	@Override
 	public boolean scanLeakedAgentNodes() {
 		return true;

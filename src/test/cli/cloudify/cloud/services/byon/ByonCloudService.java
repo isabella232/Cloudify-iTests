@@ -22,7 +22,6 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.cloudifysource.dsl.cloud.CloudTemplate;
-import org.cloudifysource.dsl.internal.DSLException;
 
 import test.AbstractTest;
 import test.cli.cloudify.cloud.services.AbstractCloudService;
@@ -44,7 +43,7 @@ public class ByonCloudService extends AbstractCloudService {
 	
 	protected static final String NEW_URL_PREFIX = "http://tarzan/builds/GigaSpacesBuilds/cloudify";
 	
-	private static final String DEFAULT_MACHINES = "pc-lab95,pc-lab96,pc-lab115";
+	private static final String DEFAULT_MACHINES = "pc-lab95,pc-lab96,pc-lab100";
 	
 	/**
 	 * this folder is where Cloudify will be downloaded to and extracted from. NOTE - this is not the WORKING_HOME_DIRECTORY.
@@ -88,13 +87,13 @@ public class ByonCloudService extends AbstractCloudService {
 		
 		propsToReplace.put("numberOfManagementMachines 1", "numberOfManagementMachines "  + numberOfManagementMachines);
 		IOUtils.replaceTextInFile(getPathToCloudGroovy(), propsToReplace);
+		replaceCloudifyURL();
+		replaceBootstrapManagementScript();
 	}
 
 	@Override
 	public void beforeBootstrap() throws Exception {
 		cleanMachines();
-		replaceCloudifyURL();
-		replaceBootstrapManagementScript();
 	}
 	
 	
@@ -109,7 +108,7 @@ public class ByonCloudService extends AbstractCloudService {
 		this.addFilesToReplace(filesToReplace);
 	}
 
-	private void replaceCloudifyURL() throws DSLException, IOException {		
+	private void replaceCloudifyURL() throws IOException {		
 		String defaultURL = cloudConfiguration.getProvider().getCloudifyUrl();
 		String buildNumber = PlatformVersion.getBuildNumber();
 		String version = PlatformVersion.getVersion();
@@ -127,8 +126,21 @@ public class ByonCloudService extends AbstractCloudService {
 		killAllJavaOnAllHosts();
 		cleanGSFilesOnAllHosts();
 		cleanHomeDirFolderOnAllHosts();
+		createHomeDirFolderOnAllHosts();
 	}
 	
+	private void createHomeDirFolderOnAllHosts() {
+		String command = "mkdir " + BYON_HOME_FOLDER;
+		String[] hosts = this.getMachines();
+		for (String host : hosts) {
+			try {
+				LogUtils.log(SSHUtils.runCommand(host, AbstractTest.OPERATION_TIMEOUT, command, "tgrid", "tgrid"));
+			} catch (AssertionError e) {
+				LogUtils.log("Failed to create dir " + BYON_HOME_FOLDER + " on host " + host + " .Reason --> " + e.getMessage());
+			}
+		}
+	}
+
 	private void cleanGSFilesOnAllHosts() {
 		for (CloudTemplate template : cloudConfiguration.getTemplates().values()) {
 			String command = "rm -rf " + template.getRemoteDirectory();;

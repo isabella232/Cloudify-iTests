@@ -48,7 +48,6 @@ import org.openspaces.admin.pu.events.ProcessingUnitInstanceRemovedEventListener
 import org.openspaces.admin.zone.Zone;
 import org.openspaces.pu.service.ServiceDetails;
 import org.openspaces.pu.service.ServiceMonitors;
-import org.springframework.web.client.RestClientException;
 import org.testng.annotations.Test;
 
 import test.usm.USMTestUtils;

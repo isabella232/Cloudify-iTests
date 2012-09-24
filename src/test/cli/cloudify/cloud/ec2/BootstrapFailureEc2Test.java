@@ -14,12 +14,12 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import com.gigaspaces.webuitf.util.LogUtils;
-
-import test.cli.cloudify.CloudTestUtils;
 import test.cli.cloudify.cloud.JcloudsUtils;
 import test.cli.cloudify.cloud.NewAbstractCloudTest;
 import test.cli.cloudify.cloud.services.ec2.Ec2CloudService;
+
+import com.gigaspaces.webuitf.util.LogUtils;
+
 import framework.tools.SGTestHelper;
 import framework.utils.AssertUtils;
 import framework.utils.AssertUtils.RepetitiveConditionProvider;
@@ -36,13 +36,11 @@ public class BootstrapFailureEc2Test extends NewAbstractCloudTest {
 	private Ec2CloudService service;
 	private NodeMetadata managementMachine;
 	private static final long TIME_TO_TERMINATE_IN_MILLS = 60000;
-	private String machineName = this.getClass().getName() + "_" + CloudTestUtils.SGTEST_MACHINE_PREFIX + System.currentTimeMillis() + "_";
 	private boolean managementMachineTerminated = false;
 
 	@BeforeClass
 	public void bootstrap(ITestContext iTestContext) {	
 		service = new Ec2CloudService(this.getClass().getName());
-		service.setMachinePrefix(machineName);	
 		//replace the bootstrap-management with a bad version, to fail the bootstrap.
 		File standardBootstrapManagement = new File(service.getPathToCloudFolder() + "/upload", "bootstrap-management.sh");
 		File badBootstrapManagement = new File(SGTestHelper.getSGTestRootDir() + "/apps/cloudify/cloud/ec2/bad-bootstrap-management.sh");
@@ -61,14 +59,14 @@ public class BootstrapFailureEc2Test extends NewAbstractCloudTest {
 	public void failedBootstrapTest() throws IOException, InterruptedException {
 		
 		JcloudsUtils.createContext(service);
-		Set<? extends NodeMetadata> machines = JcloudsUtils.getServersByName(machineName);
+		Set<? extends NodeMetadata> machines = JcloudsUtils.getServersByName(getService().getMachinePrefix());
 		Assert.assertTrue(machines != null);
 		managementMachine = machines.iterator().next();
 
 		RepetitiveConditionProvider condition = new RepetitiveConditionProvider() {
 			@Override
 			public boolean getCondition() {
-				Set<? extends NodeMetadata> machines = JcloudsUtils.getServersByName(machineName);
+				Set<? extends NodeMetadata> machines = JcloudsUtils.getServersByName(getService().getMachinePrefix());
 				managementMachine = machines.iterator().next();
 				if (managementMachine.getState() == NodeState.TERMINATED) {
 					managementMachineTerminated = true;

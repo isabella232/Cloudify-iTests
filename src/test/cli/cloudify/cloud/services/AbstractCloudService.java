@@ -116,7 +116,6 @@ public abstract class AbstractCloudService implements CloudService {
 	protected void injectCloudDriverClass() throws IOException {}
 
 	public void injectAuthenticationDetails() throws IOException {
-		createServiceFolders();
 		injectServiceAuthenticationDetails();
 		injectCloudDriverClass();
 		// update localDirectory
@@ -144,6 +143,7 @@ public abstract class AbstractCloudService implements CloudService {
 
 			// create a new folder for the test to work on (if it's not created already) with the content of the
 			// original folder
+			LogUtils.log("copying " + originalCloudFolder + " to " + serviceCloudFolder);
 			FileUtils.copyDirectory(originalCloudFolder, serviceCloudFolder);
 		} 
 		catch (IOException e) {
@@ -185,6 +185,9 @@ public abstract class AbstractCloudService implements CloudService {
 
 	@Override
 	public void bootstrapCloud() throws Exception {
+		
+		createServiceFolders();
+		
 		// Load updated configuration file into POJO
 		this.cloudConfiguration = ServiceReader.readCloud(new File(getPathToCloudGroovy()));
 		overrideLogsFile();

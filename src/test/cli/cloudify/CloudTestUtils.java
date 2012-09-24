@@ -4,13 +4,14 @@ import java.net.URL;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import framework.tools.SGTestHelper;
 import framework.utils.LogUtils;
 import framework.utils.WebUtils;
 
 
 public class CloudTestUtils {
 
-	public static final String SGTEST_MACHINE_PREFIX = "sgtest_"+System.getProperty("sgtest.suiteId")+"_";
+	public static final String SGTEST_MACHINE_PREFIX = SGTestHelper.getSuiteName() + "_";
 
 	public static final String WEBUI_PORT = String.valueOf(8099); 
 	public static final String REST_PORT = String.valueOf(8100); 

@@ -31,7 +31,7 @@ public class ListServicesAndApplicationsCommandsTest extends AbstractLocalCloudT
 		
 		output = CommandTestUtils.runCommandAndWait("connect " + restUrl + ";list-applications");
 		output = output.toLowerCase();
-		Assert.assertTrue("command list-application failed.", output.contains("simple"));
+		Assert.assertTrue("command list-applications failed.", output.contains("simple"));
 	}
 	
 	private void checkListsBeforeInstallation() throws IOException,
@@ -48,9 +48,8 @@ public class ListServicesAndApplicationsCommandsTest extends AbstractLocalCloudT
 		output = output.toLowerCase();
 		Assert.assertFalse("list-applicartion command failed.", output.contains("operation failed"));
 		
-		LogUtils.log("assert that the output contains an management and an empty line (the correct output when there are no applications)");
+		LogUtils.log("assert that the output contains an empty line (the correct output when there are no applications)");
 		Assert.assertTrue("Output for list-services command does not contain a new line.", assertStringContainsOneEmptyLine(output));
-		Assert.assertTrue("Output does not reveal the management service.", output.contains("management"));
 	}
 
 	private boolean assertStringContainsOneEmptyLine(String output) {

@@ -15,6 +15,7 @@
 ******************************************************************************/
 package test.cli.cloudify.cloud.services.byon;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,6 +29,7 @@ import test.cli.cloudify.cloud.services.AbstractCloudService;
 
 import com.j_spaces.kernel.PlatformVersion;
 
+import framework.tools.SGTestHelper;
 import framework.utils.IOUtils;
 import framework.utils.LogUtils;
 import framework.utils.SSHUtils;
@@ -92,9 +94,21 @@ public class ByonCloudService extends AbstractCloudService {
 	public void beforeBootstrap() throws Exception {
 		cleanMachines();
 		replaceCloudifyURL();
+		replaceBootstrapManagementScript();
 	}
 	
 	
+	
+	
+	private void replaceBootstrapManagementScript() {
+		// use a script that does not install java
+		File standardBootstrapManagement = new File(this.getPathToCloudFolder() + "/upload", "bootstrap-management.sh");
+		File customBootstrapManagement = new File(SGTestHelper.getSGTestRootDir() + "/apps/cloudify/cloud/byon/bootstrap-management.sh");
+		Map<File, File> filesToReplace = new HashMap<File, File>();
+		filesToReplace.put(standardBootstrapManagement, customBootstrapManagement);
+		this.addFilesToReplace(filesToReplace);
+	}
+
 	private void replaceCloudifyURL() throws DSLException, IOException {		
 		String defaultURL = cloudConfiguration.getProvider().getCloudifyUrl();
 		String buildNumber = PlatformVersion.getBuildNumber();

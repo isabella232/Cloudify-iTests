@@ -59,16 +59,6 @@ public class AbstractByonCloudTest extends NewAbstractCloudTest {
 			admin = null;
 		}
 	}
-	
-	@Override
-	protected void customizeCloud() throws Exception {
-		// use a script that does not install java
-		File standardBootstrapManagement = new File(getService().getPathToCloudFolder() + "/upload", "bootstrap-management.sh");
-		File customBootstrapManagement = new File(SGTestHelper.getSGTestRootDir() + "/apps/cloudify/cloud/byon/bootstrap-management.sh");
-		Map<File, File> filesToReplace = new HashMap<File, File>();
-		filesToReplace.put(standardBootstrapManagement, customBootstrapManagement);
-		getService().addFilesToReplace(filesToReplace);
-	}
 
 	@Override
 	protected String getCloudName() {

@@ -25,17 +25,12 @@ public class ByonExamplesTest extends AbstractExamplesTest {
 		super.testTravel();
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
 	public void testPetclinic()
 			throws Exception {
 		super.testPetclinic();
 	}
-	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
-	public void testPetclinicSimple() throws Exception {
-		doTest("petclinic-simple", "petclinic");
-		
-	}
+
 
 	@AfterMethod(alwaysRun = true)
 	public void cleanUp() {

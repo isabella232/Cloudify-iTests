@@ -42,7 +42,7 @@ public class Ec2ExamplesTest extends AbstractExamplesTest {
 		super.teardown();
 	}
 	
-	@AfterMethod
+	@AfterMethod(alwaysRun = true)
 	public void cleanUp() {
 		super.uninstallApplicationIfFound();
 		super.scanAgentNodesLeak();

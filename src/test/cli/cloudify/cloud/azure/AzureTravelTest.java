@@ -44,7 +44,7 @@ public class AzureTravelTest extends NewAbstractCloudTest {
 		doSanityTest("travel-azure", "travel");		
 	}
 	
-	@AfterMethod
+	@AfterMethod(alwaysRun = true)
 	public void cleanUp() {
 		super.scanAgentNodesLeak();
 	}

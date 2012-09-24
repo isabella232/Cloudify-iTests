@@ -42,7 +42,7 @@ public class HPExamplesTest extends AbstractExamplesTest {
 		return "hp";
 	}
 	
-	@AfterMethod
+	@AfterMethod(alwaysRun = true)
 	public void cleanUp() {
 		super.uninstallApplicationIfFound();
 		super.scanAgentNodesLeak();

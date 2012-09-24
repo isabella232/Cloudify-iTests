@@ -31,7 +31,7 @@ public class ByonExamplesTest extends AbstractExamplesTest {
 		super.testPetclinic();
 	}
 
-	@AfterMethod
+	@AfterMethod(alwaysRun = true)
 	public void cleanUp() {
 		super.uninstallApplicationIfFound();
 		super.scanAgentNodesLeak();

@@ -86,7 +86,7 @@ public class Ec2LocationAwareScalingRulesTest extends AbstractScalingRulesCloudT
 		}
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
 	public void testScaleOutCancelation() throws Exception {	
 		
 		try {
@@ -118,7 +118,9 @@ public class Ec2LocationAwareScalingRulesTest extends AbstractScalingRulesCloudT
 			}, 30, TimeUnit.SECONDS);
 			
 			try {
+				LogUtils.log("Before repetitive number of instances == 1 on zone " + zonesToPerformAutoScaling);
 				repetitiveNumberOfInstancesHolds(getAbsoluteServiceName(),zonesToPerformAutoScaling, 1, 500, TimeUnit.SECONDS);
+				LogUtils.log("After repetitive number of instances == 1 on zone " + zonesToPerformAutoScaling);
 			} catch (AssertionError e) {
 				Assert.fail(e.getMessage());
 			}

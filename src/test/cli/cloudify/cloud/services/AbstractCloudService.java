@@ -39,7 +39,7 @@ public abstract class AbstractCloudService implements CloudService {
 	protected Map<String, String> additionalPropsToReplace;
 	protected Map<File, File> filesToReplace;
 	protected boolean bootstrapped = false;
-	private String serviceFolder;
+	private String serviceFolderName;
 	protected Cloud cloudConfiguration;
 
 	public Cloud getCloudConfiguration() {
@@ -49,12 +49,12 @@ public abstract class AbstractCloudService implements CloudService {
 	public AbstractCloudService(String serviceUniqueName, String cloudName) {
 		this.serviceUniqueName = serviceUniqueName;
 		this.cloudName = cloudName;
-		serviceFolder = cloudName + "_" + serviceUniqueName;
+		serviceFolderName = cloudName + "_" + serviceUniqueName;
 		filesToReplace = new HashMap<File, File>();
 	}
 
 	public String getServiceFolder() {
-		return serviceFolder;
+		return serviceFolderName;
 	}
 
 	public int getNumberOfManagementMachines() {
@@ -134,7 +134,7 @@ public abstract class AbstractCloudService implements CloudService {
 	 */
 	protected File createServiceFolders() throws IOException {
 		File originalCloudFolder = new File(ScriptUtils.getBuildPath() + RELATIVE_ESC_PATH + getCloudName());
-		File serviceCloudFolder = new File(originalCloudFolder.getParent(), serviceFolder);
+		File serviceCloudFolder = new File(originalCloudFolder.getParent(), serviceFolderName);
 
 		try {
 			if (serviceCloudFolder.isDirectory()) {

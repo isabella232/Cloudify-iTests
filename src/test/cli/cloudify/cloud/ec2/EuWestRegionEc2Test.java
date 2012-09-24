@@ -9,7 +9,6 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import test.cli.cloudify.CloudTestUtils;
 import test.cli.cloudify.cloud.NewAbstractCloudTest;
 import test.cli.cloudify.cloud.services.ec2.Ec2CloudService;
 
@@ -44,8 +43,6 @@ public class EuWestRegionEc2Test extends NewAbstractCloudTest {
 	
 	@AfterMethod
 	public void cleanUp() {
-		//The test itself will make sure to remove 
-		//any application before terminating
 		super.scanAgentNodesLeak();
 	}
 
@@ -56,7 +53,6 @@ public class EuWestRegionEc2Test extends NewAbstractCloudTest {
 		service.setAdditionalPropsToReplace(new HashMap<String, String>());
 		service.getAdditionalPropsToReplace().put("imageId \"us-east-1/ami-76f0061f\"", "imageId \"eu-west-1/ami-24506250\"");
 		service.getAdditionalPropsToReplace().put("locationId \"us-east-1\"", "locationId \"eu-west-1\"");
-		service.setMachinePrefix(this.getClass().getName() + CloudTestUtils.SGTEST_MACHINE_PREFIX);
 	} 
 
 }

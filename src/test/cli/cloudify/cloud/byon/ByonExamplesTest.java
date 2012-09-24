@@ -20,12 +20,12 @@ public class ByonExamplesTest extends AbstractExamplesTest {
 		super.bootstrap(testContext);
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
 	public void testTravel() throws Exception {
 		super.testTravel();
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
 	public void testPetclinic()
 			throws Exception {
 		super.testPetclinic();

@@ -56,8 +56,8 @@ public class MicrosoftAzureCloudService extends AbstractCloudService {
 		copyCustomCloudConfigurationFileToServiceFolder();
 		copyPrivateKeyToUploadFolder();
 		final Map<String, String> propsToReplace = new HashMap<String, String>();
-		propsToReplace.put("cloudify_agent_", this.machinePrefix + "cloudify-agent");
-		propsToReplace.put("cloudify_manager", this.machinePrefix + "cloudify-manager");
+		propsToReplace.put("cloudify_agent_", this.machinePrefix.toLowerCase() + "cloudify-agent");
+		propsToReplace.put("cloudify_manager", this.machinePrefix.toLowerCase() + "cloudify-manager");
 		propsToReplace.put("ENTER_SUBSCRIPTION_ID", AZURE_SUBSCRIPTION_ID);
 		propsToReplace.put("ENTER_USER_NAME", USER_NAME);
 		propsToReplace.put("ENTER_PASSWORD", PFX_PASSWORD);

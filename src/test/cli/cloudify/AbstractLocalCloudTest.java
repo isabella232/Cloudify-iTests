@@ -80,13 +80,8 @@ public class AbstractLocalCloudTest extends AbstractTest {
 	@BeforeSuite
 	public void printLicenseFileBeforeSuite() throws IOException {
 		String license = SGTestHelper.getBuildDir() + "/gslicense.xml";
-		LogUtils.log("license before suite started : " + FileUtils.readFileToString(new File(license)));
-	}
-	
-	@BeforeMethod
-	public void printLicenseFileBeforeTest() throws IOException {
-		String license = SGTestHelper.getBuildDir() + "/gslicense.xml";
-		LogUtils.log("license before test started : " + FileUtils.readFileToString(new File(license)));
+		LogUtils.log("license before suite started from root dir: " + FileUtils.readFileToString(new File(license)));
+		LogUtils.log("license before suite started from system propery : " + System.getProperty("com.gs.licensekey"));
 	}
 	
 	protected boolean checkIsDevEnv() {

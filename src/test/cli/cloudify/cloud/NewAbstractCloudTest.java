@@ -87,7 +87,7 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 		try {
 			scanAgentAndManagementNodesLeak();
 			// append the test name to the machine prefix
-			this.cloud.setMachinePrefix(this.cloud.getMachinePrefix() + iTestContext.getName());
+			this.cloud.setMachinePrefix(this.cloud.getMachinePrefix() + "-" + uniqueName);
 			this.cloud.bootstrapCloud(); // bootstrap the cloud
 		} 
 		catch (final Exception e) {

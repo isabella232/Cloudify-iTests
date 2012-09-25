@@ -14,7 +14,6 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import test.cli.cloudify.CloudTestUtils;
 import test.cli.cloudify.CommandTestUtils;
 import test.cli.cloudify.cloud.NewAbstractCloudTest;
 import test.cli.cloudify.cloud.services.ec2.Ec2CloudService;
@@ -66,7 +65,6 @@ public class RepetativeInstallAndUninstallStockDemoWithProblemAtInstallEc2Test e
 		}
 
 		service = new Ec2CloudService(this.getClass().getName());
-		service.setMachinePrefix(this.getClass().getName() + CloudTestUtils.SGTEST_MACHINE_PREFIX);
 
 		super.bootstrap(iTestContext, service);
 

@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 import org.testng.ITestContext;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -60,7 +61,11 @@ public class Ec2PropertiesFileTest extends NewAbstractCloudTest{
 		((Ec2CloudService)cloud).getAdditionalPropsToReplace().put("managementMachineTemplate \"SMALL_LINUX\"",
 				MANAGEMENT_MACHINE_TEMPLATE_MY_HARDWARE_ID);
 		
-		
+	}
+	
+	@AfterClass(alwaysRun = true)
+	protected void teardown() {
+		super.teardown();
 	}
 
 	@Override

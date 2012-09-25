@@ -53,7 +53,7 @@ public class KillManagementTest extends AbstractByonCloudTest {
 			String tomcatHost = admin.getProcessingUnits().getProcessingUnit("petclinic.tomcat").getInstances()[0].getGridServiceContainer().getMachine().getHostAddress();
 			
 			threadPool = Executors.newFixedThreadPool(1);
-			petClinicUrl = new URL(tomcatHost + ":8080/petclinic/");			
+			petClinicUrl = new URL("http://" + tomcatHost + ":8080/petclinic/");			
 
 			Future<Void> ping = threadPool.submit(new Callable<Void>(){
 				@Override

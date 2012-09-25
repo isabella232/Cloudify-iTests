@@ -118,10 +118,6 @@ public abstract class AbstractCloudService implements CloudService {
 	public void injectAuthenticationDetails() throws IOException {
 		injectServiceAuthenticationDetails();
 		injectCloudDriverClass();
-		// update localDirectory
-		Map<String, String> propsToReplace = new HashMap<String, String>();
-		propsToReplace.put("localDirectory \"tools/cli/plugins/esc/" + cloudName + "/upload\"", "localDirectory \""	+ "tools/cli/plugins/esc/" + getServiceFolder() + "/upload\"");
-		IOUtils.replaceTextInFile(getPathToCloudGroovy(), propsToReplace);
 	}
 
 	/**
@@ -188,8 +184,6 @@ public abstract class AbstractCloudService implements CloudService {
 		
 		createServiceFolders();
 		
-		// Load updated configuration file into POJO
-		this.cloudConfiguration = ServiceReader.readCloud(new File(getPathToCloudGroovy()));
 		overrideLogsFile();
 		injectAuthenticationDetails();
 		if (filesToReplace != null) {
@@ -209,6 +203,8 @@ public abstract class AbstractCloudService implements CloudService {
 			IOUtils.replaceTextInFile(getPathToCloudGroovy(), additionalPropsToReplace);
 		}
 
+		// Load updated configuration file into POJO
+		this.cloudConfiguration = ServiceReader.readCloud(new File(getPathToCloudGroovy()));
 
 		this.beforeBootstrap();
 

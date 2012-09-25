@@ -50,7 +50,6 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
-import org.testng.annotations.BeforeTest;
 
 import test.AbstractTest;
 import test.cli.cloudify.CommandTestUtils.ProcessResult;
@@ -84,7 +83,7 @@ public class AbstractLocalCloudTest extends AbstractTest {
 		LogUtils.log("license before suite started : " + FileUtils.readFileToString(new File(license)));
 	}
 	
-	@BeforeTest
+	@BeforeMethod
 	public void printLicenseFileBeforeTest() throws IOException {
 		String license = SGTestHelper.getBuildDir() + "/gslicense.xml";
 		LogUtils.log("license before test started : " + FileUtils.readFileToString(new File(license)));

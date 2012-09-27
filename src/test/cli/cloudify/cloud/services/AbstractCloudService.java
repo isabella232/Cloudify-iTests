@@ -35,7 +35,7 @@ public abstract class AbstractCloudService implements CloudService {
 	protected URL[] restAdminUrls;
 	protected URL[] webUIUrls;
 	protected String serviceUniqueName;
-	protected String machinePrefix = CloudTestUtils.SGTEST_MACHINE_PREFIX.replace('_', '-') + System.getProperty("user.name") + "-";
+	protected String machinePrefix = System.getProperty("user.name") + "-";
 	protected Map<String, String> additionalPropsToReplace;
 	protected Map<File, File> filesToReplace;
 	protected boolean bootstrapped = false;

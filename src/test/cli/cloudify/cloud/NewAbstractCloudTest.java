@@ -239,6 +239,8 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 			final boolean failCommand)
 			throws IOException, InterruptedException {
 
+		LogUtils.log("Installing application " + applicationName);
+		
 		final String restUrl = getRestUrl();
 
 		long timeoutToUse;
@@ -256,15 +258,15 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 				.append(timeoutToUse).append(" ")
 				.append(applicationPath.toString().replace('\\', '/'))
 				.toString();
-		final String output = CommandTestUtils.runCommand(connectCommand + installCommand, wait, failCommand);
+		String command = connectCommand + installCommand;
+		final String output = CommandTestUtils.runCommand(command, wait, failCommand);
 		final String excpectedResult = "Application " + applicationName + " installed successfully";
 		if (!failCommand) {
-			System.out.println("output:" + output);
+			LogUtils.log("'"+command + "' failed. output:" + output);
 			assertTrue(output.toLowerCase().contains(excpectedResult.toLowerCase()));
 		} else {
 			assertTrue(output.toLowerCase().contains("operation failed"));
 		}
-
 	}
 	
 	/**
@@ -395,16 +397,7 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 
 	}
 
-	/**
-	 * uninstalls an application from a specific cloud and waits for the uninstallation to complete.
-	 * 
-	 * @param applicationName - the name of the application.
-	 * @throws IOException
-	 * @throws InterruptedException
-	 */
-	public void uninstallApplicationAndWait(final String applicationName)
-			throws IOException, InterruptedException {
-
+	protected void dumpMachines() {
 		final String restUrl = getRestUrl();
 		String url = null;
 		try {
@@ -413,6 +406,24 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 		} catch (final Exception e) {
 			LogUtils.log("Failed to create dump for this url - " + url, e);
 		}
+	}
+	
+	/**
+	 * uninstalls an application from a specific cloud and waits for the uninstallation to complete.
+	 * 
+	 * @param applicationName - the name of the application.
+	 * @throws IOException
+	 * @throws InterruptedException
+	 */
+	protected void uninstallApplicationAndWait(final String applicationName)
+			throws IOException, InterruptedException {
+
+		// save the agent logs before uninstall, otherwise they will get lost
+		dumpMachines();
+		
+		LogUtils.log("uninstalling application " + applicationName);
+		
+		final String restUrl = getRestUrl();
 		final String connectCommand = "connect " + restUrl + ";";
 		final String installCommand = new StringBuilder()
 				.append("uninstall-application ")
@@ -430,7 +441,8 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 		// NOTE!! this is ugly, but until we get uninstall to actually wait for machines to shutdown this should help
 		// us stabilize the tests. 
 		Thread.sleep(ESTIMATED_MACHINES_SHUTDOWN_TIMEOUT);
-
+		
+		LogUtils.log("application " + applicationName + " uninstalled");
 	}
 
 	protected void sendTeardownCloudFailedMail(final String cloudName, final Throwable error) {

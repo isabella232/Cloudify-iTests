@@ -31,7 +31,6 @@ import test.cli.cloudify.cloud.services.AbstractCloudService;
 import com.j_spaces.kernel.PlatformVersion;
 
 import framework.tools.SGTestHelper;
-import framework.utils.IOUtils;
 import framework.utils.LogUtils;
 import framework.utils.SSHUtils;
 
@@ -45,7 +44,7 @@ public class ByonCloudService extends AbstractCloudService {
 	
 	protected static final String NEW_URL_PREFIX = "http://tarzan/builds/GigaSpacesBuilds/cloudify";
 	
-	private static final String DEFAULT_MACHINES = "pc-lab95,pc-lab96,pc-lab100";
+	private static final String DEFAULT_MACHINES = "192.168.9.115,192.168.9.116,192.168.9.120,192.168.9.118,192.168.9.136,192.168.9.135,192.168.9.137";
 	
 	/**
 	 * this folder is where Cloudify will be downloaded to and extracted from. NOTE - this is not the WORKING_HOME_DIRECTORY.
@@ -73,6 +72,10 @@ public class ByonCloudService extends AbstractCloudService {
 	public String[] getMachines() {
 		return machines;
 	}
+	
+	public void setMachines(final String[] machines) {
+		this.machines = machines;
+	}
 
 	@Override
 	public void injectServiceAuthenticationDetails() throws IOException {
@@ -88,7 +91,8 @@ public class ByonCloudService extends AbstractCloudService {
 		}
 		
 		propsToReplace.put("numberOfManagementMachines 1", "numberOfManagementMachines "  + numberOfManagementMachines);
-		IOUtils.replaceTextInFile(getPathToCloudGroovy(), propsToReplace);
+		this.getAdditionalPropsToReplace().putAll(propsToReplace);
+
 		// read again to get access to the cloudify url
 		try {
 			this.cloudConfiguration = ServiceReader.readCloud(new File(getPathToCloudGroovy()));
@@ -127,7 +131,7 @@ public class ByonCloudService extends AbstractCloudService {
 		String newCloudifyURL = NEW_URL_PREFIX + "/" + version + "/build_" + buildNumber + "/cloudify/1.5/gigaspaces-cloudify-" + version + "-" + milestone + "-b" + buildNumber;
 		Map<String, String> propsToReplace = new HashMap<String, String>();
 		propsToReplace.put(defaultURL, newCloudifyURL);
-		IOUtils.replaceTextInFile(this.getPathToCloudGroovy(), propsToReplace);
+		this.getAdditionalPropsToReplace().putAll(propsToReplace);
 	}
 	
 	private void cleanMachines() {

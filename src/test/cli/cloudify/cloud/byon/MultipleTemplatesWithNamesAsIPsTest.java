@@ -1,6 +1,15 @@
 package test.cli.cloudify.cloud.byon;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
+import org.openspaces.admin.pu.ProcessingUnit;
+import org.testng.Assert;
+import org.testng.ITestContext;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+
+import com.gigaspaces.webuitf.util.LogUtils;
 
 
 /**
@@ -14,27 +23,80 @@ import org.testng.annotations.Test;
  * <p>Note: this test uses 5 fixed machines - 192.168.9.115,192.168.9.116,192.168.9.120,192.168.9.125,192.168.9.126.
  */
 public class MultipleTemplatesWithNamesAsIPsTest extends MultipleMachineTemplatesTest {
-
 	
-	protected static String TEMPLATE_1_IPs = "pc-lab95,pc-lab96";
-	protected static String TEMPLATE_2_IPs = "192.168.9.120,192.168.9.125";
-	protected static String TEMPLATE_3_IPs = "pc-lab106";
-
+	@BeforeClass(alwaysRun = true)
+	protected void bootstrap(final ITestContext testContext) {
+		super.bootstrap(testContext);
+	}
+	
 	@Override
-	protected String getBootstrapManagementFileName() {
-		return "bootstrap-management-byon_MultipleTemplatesWithNamesAsIPsTest.sh";
+	public void customizeCloud() throws Exception {	
+		String[] machines = getService().getMachines();
+		String[] machinesHostNames = new String[machines.length];
+		LogUtils.log("converting every other address to host name");
+		for (int i = 0 ; i < machines.length ; i++) {
+			String host = machines[i];
+			if ((i % 2) == 0) {
+				
+				String[] chars = host.split("\\.");
+				
+				byte[] add = new byte[chars.length];
+				for (int j = 0 ; j < chars.length ; j++) {
+					add[j] =(byte) ((int) Integer.valueOf(chars[j]));
+				}
+				
+				try {
+					InetAddress byAddress = InetAddress.getByAddress(add);
+					String hostName = byAddress.getHostName();
+					LogUtils.log("IP address " + host + " was resolved to " + hostName);
+					machinesHostNames[i] = hostName;
+				} catch (UnknownHostException e) {
+					throw new IllegalStateException("could not resolve host name of ip " + host);
+				}
+			} else {
+				machinesHostNames[i] = host;
+			}
+		}
+		getService().setMachines(machinesHostNames);
+		super.customizeCloud();
 	}
+
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false, priority = 1)
+	@Override
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true, priority = 1)
 	public void testPetclinic() throws Exception {
-		TEMPLATE_1_IPs = "192.168.9.115,192.168.9.116";
-		TEMPLATE_3_IPs = "192.168.9.126";
-		super.testPetclinic();
+		
+		injectTemplateInService(TEMPLATE_1, "mongos");
+		injectTemplateInService(TEMPLATE_1, "mongoConfig");
+		injectTemplateInService(TEMPLATE_2, "tomcat");
+		injectTemplateInService(TEMPLATE_2, "apacheLB");
+		injectTemplateInService(TEMPLATE_3, "mongod");
+		
+		installApplicationAndWait(PETCLINIC_MULTIPLE_TEMPLATES_BUILD_PATH, "petclinic");
+
+		Assert.assertTrue(hostsPerTemplate.get(templatePerService.get("petclinic.mongod")).contains(getPuHostName("petclinic.mongod")));
+		Assert.assertTrue(hostsPerTemplate.get(templatePerService.get("petclinic.mongos")).contains(getPuHostName("petclinic.mongos")));
+		Assert.assertTrue(hostsPerTemplate.get(templatePerService.get("petclinic.mongoConfig")).contains(getPuHostName("petclinic.mongoConfig")));
+		Assert.assertTrue(hostsPerTemplate.get(templatePerService.get("petclinic.tomcat")).contains(getPuHostName("petclinic.tomcat")));
+		Assert.assertTrue(hostsPerTemplate.get(templatePerService.get("petclinic.apacheLB")).contains(getPuHostName("petclinic.apacheLB")));
+		
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false, priority = 2)
-	public void testPetclinicUninstall(){
+	@Override
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true, priority = 2)
+	public void testPetclinicUninstall() throws Exception{
 		super.testPetclinicUninstall();
+	}
+	
+	/**
+	 * Gets the address of the machine on which the given processing unit is deployed. 
+	 * @param puName The name of the processing unit to look for
+	 * @return The address of the machine on which the processing unit is deployed.
+	 */
+	private String getPuHostName(final String puName) {
+		ProcessingUnit pu = admin.getProcessingUnits().getProcessingUnit(puName);
+		Assert.assertNotNull(pu.getInstances()[0], puName + " processing unit is not found");
+		return pu.getInstances()[0].getMachine().getHostName();	
 	}
 	
 }

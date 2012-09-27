@@ -61,6 +61,10 @@ public abstract class AbstractScalingRulesCloudTest extends NewAbstractCloudTest
 	}
 
 	public void shutdownExecutorAndScanForLeakedAgentNodes() {
+		
+		// download latest management logs 
+		dumpMachines();
+		
 		if (executor != null) {
 			executor.shutdownNow();
 		}
@@ -172,7 +176,9 @@ public abstract class AbstractScalingRulesCloudTest extends NewAbstractCloudTest
 					Assert.fail("Error while polling number of ip addresses", e);
 				}
 				boolean condition = instancesDetails.size() == expectedNumberOfInstances;
-				if (!condition) {
+				if (condition) {
+					LogUtils.log("Found " + expectedNumberOfInstances + "instance(s) that satisfies zones " + zones.getZones());
+				} else {
 					LogUtils.log("Expecting " + expectedNumberOfInstances + " " + absoluteServiceName + " instance(s) that satisfies zones " + zones.getZones() + ". Instead found " + instancesDetails);
 				}
 				return condition;

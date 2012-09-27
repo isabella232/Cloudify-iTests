@@ -28,7 +28,7 @@ public class Ec2LocationAwareScalingRulesTest extends AbstractScalingRulesCloudT
 	private static final String LOCATION_AWARE_POSTFIX = "-location-aware";
 	private static final String NEWLINE = System.getProperty("line.separator");
 	private static final long STEADY_STATE_DURATION = 1000 * 120; // 120 seconds
-
+	
 	@Override
 	protected String getCloudName() {
 		return "ec2" + LOCATION_AWARE_POSTFIX;
@@ -52,84 +52,76 @@ public class Ec2LocationAwareScalingRulesTest extends AbstractScalingRulesCloudT
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
 	public void testPetclinicSimpleScalingRules() throws Exception {	
 		
-		try {
-			LogUtils.log("installing application " + getApplicationName());
+		final String applicationPath = getApplicationPath();
+		installApplicationAndWait(applicationPath, getApplicationName());
+		
+		// check that there are two global instances with zone 'petclinic.tomcat'
+		AtLeastOneZoneConfig zones = new AtLeastOneZoneConfigurer().addZone(getAbsoluteServiceName()).create();
+		repititiveAssertNumberOfInstances(getAbsoluteServiceName(),zones, 2);
 
-			final String applicationPath = getApplicationPath();
-			installApplicationAndWait(applicationPath, getApplicationName());
-			
-			// check that there are two global instances with zone 'petclinic.tomcat'
-			AtLeastOneZoneConfig zones = new AtLeastOneZoneConfigurer().addZone(getAbsoluteServiceName()).create();
-			repititiveAssertNumberOfInstances(getAbsoluteServiceName(),zones, 2);
+		Set<ExactZonesConfig> puExactZones = getProcessingUnitExactZones(getAbsoluteServiceName());
+		ExactZonesConfig zonesToPerformAutoScaling = puExactZones.iterator().next(); // just take the first zone
+		
+		// increase web traffic for the instance of the specific zone, wait for scale out
+		startThreads(zonesToPerformAutoScaling);
+		repititiveAssertNumberOfInstances(getAbsoluteServiceName(),zonesToPerformAutoScaling, 2);
+		// assert that we reach a steady state. number of instances should not increase any further since 2 is the maximum per zone
+		repetitiveNumberOfInstancesHolds(getAbsoluteServiceName(), zonesToPerformAutoScaling, 2, STEADY_STATE_DURATION, TimeUnit.MILLISECONDS);
 
-			Set<ExactZonesConfig> puExactZones = getProcessingUnitExactZones(getAbsoluteServiceName());
-			ExactZonesConfig zonesToPerformAutoScaling = puExactZones.iterator().next(); // just take the first zone
-			
-			// increase web traffic for the instance of the specific zone, wait for scale out
-			startThreads(zonesToPerformAutoScaling);
-			repititiveAssertNumberOfInstances(getAbsoluteServiceName(),zonesToPerformAutoScaling, 2);
-			// assert that we reach a steady state. number of instances should not increase any further since 2 is the maximum per zone
-			repetitiveNumberOfInstancesHolds(getAbsoluteServiceName(), zonesToPerformAutoScaling, 2, STEADY_STATE_DURATION, TimeUnit.MILLISECONDS);
+		// stop web traffic, wait for scale in
+		stopThreads();
+		repititiveAssertNumberOfInstances(getAbsoluteServiceName(), zonesToPerformAutoScaling, 1);
+		// assert that we reach a steady state. number of instances should not decrease any further since 1 is the minimum per zone
+		repetitiveNumberOfInstancesHolds(getAbsoluteServiceName(), zonesToPerformAutoScaling, 1, STEADY_STATE_DURATION, TimeUnit.MILLISECONDS);
 
-			// stop web traffic, wait for scale in
-			stopThreads();
-			repititiveAssertNumberOfInstances(getAbsoluteServiceName(), zonesToPerformAutoScaling, 1);
-			// assert that we reach a steady state. number of instances should not decrease any further since 1 is the minimum per zone
-			repetitiveNumberOfInstancesHolds(getAbsoluteServiceName(), zonesToPerformAutoScaling, 1, STEADY_STATE_DURATION, TimeUnit.MILLISECONDS);
-
-
-		} finally {
-			LogUtils.log("test finished. currently in finally cause, before stopping threads");
-			stopThreads();
-			LogUtils.log("test finished. currently in finally cause, after stopping threads");
-			uninstallApplicationAndWait(getApplicationName());
-		}
+		LogUtils.log("stopping threads");
+		stopThreads();
+		uninstallApplicationAndWait(getApplicationName());
+		
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
 	public void testScaleOutCancelation() throws Exception {	
 		
-		try {
-			LogUtils.log("installing application " + getApplicationName());
+		LogUtils.log("installing application " + getApplicationName());
 
-			final String applicationPath = getApplicationPath();
-			installApplicationAndWait(applicationPath, getApplicationName());
-			
-			// check that there are two global instances with zone 'petclinic.tomcat'
-			AtLeastOneZoneConfig zones = new AtLeastOneZoneConfigurer().addZone(getAbsoluteServiceName()).create();
-			repititiveAssertNumberOfInstances(getAbsoluteServiceName(),zones, 2, OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
+		final String applicationPath = getApplicationPath();
+		installApplicationAndWait(applicationPath, getApplicationName());
+		
+		// check that there are two global instances with zone 'petclinic.tomcat'
+		AtLeastOneZoneConfig zones = new AtLeastOneZoneConfigurer().addZone(getAbsoluteServiceName()).create();
+		repititiveAssertNumberOfInstances(getAbsoluteServiceName(),zones, 2, OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
 
-			Set<ExactZonesConfig> puExactZones = getProcessingUnitExactZones(getAbsoluteServiceName());
-			ExactZonesConfig zonesToPerformAutoScaling = puExactZones.iterator().next(); // just take the first zone
+		Set<ExactZonesConfig> puExactZones = getProcessingUnitExactZones(getAbsoluteServiceName());
+		ExactZonesConfig zonesToPerformAutoScaling = puExactZones.iterator().next(); // just take the first zone
 
-			// Try to start a new machine and then cancel it.
-			LogUtils.log("starting threads");
-			startThreads(zonesToPerformAutoScaling);
-			LogUtils.log("after start threads");
-			executor.schedule(new Runnable() {
+		// Try to start a new machine and then cancel it.
+		LogUtils.log("starting threads");
+		startThreads(zonesToPerformAutoScaling);
+		LogUtils.log("after start threads");
+		executor.schedule(new Runnable() {
 
-				@Override
-				public void run() {
-					LogUtils.log("before stop threads");
-					stopThreads();
-					LogUtils.log("after threads stop");
+			@Override
+			public void run() {
+				LogUtils.log("before stop threads");
+				stopThreads();
+				LogUtils.log("after threads stop");
 
-				}
-			}, 30, TimeUnit.SECONDS);
-			
-			try {
-				LogUtils.log("Before repetitive number of instances == 1 on zone " + zonesToPerformAutoScaling);
-				repetitiveNumberOfInstancesHolds(getAbsoluteServiceName(),zonesToPerformAutoScaling, 1, 500, TimeUnit.SECONDS);
-				LogUtils.log("After repetitive number of instances == 1 on zone " + zonesToPerformAutoScaling);
-			} catch (AssertionError e) {
-				Assert.fail(e.getMessage());
 			}
-		} finally {
-			LogUtils.log("test finished. currently in finally cause, before stopping threads");
-			stopThreads();
-			LogUtils.log("test finished. currently in finally cause, after stopping threads");
-			uninstallApplicationAndWait(getApplicationName());
+		}, 30, TimeUnit.SECONDS);
+		
+		try {
+			LogUtils.log("Before repetitive number of instances == 1 on zone " + zonesToPerformAutoScaling);
+			repetitiveNumberOfInstancesHolds(getAbsoluteServiceName(),zonesToPerformAutoScaling, 1, 500, TimeUnit.SECONDS);
+			LogUtils.log("After repetitive number of instances == 1 on zone " + zonesToPerformAutoScaling);
+		} catch (AssertionError e) {
+			Assert.fail(e.getMessage());
 		}
+	
+		LogUtils.log("stopping threads");
+		stopThreads();
+		LogUtils.log("uninstalling application");
+		uninstallApplicationAndWait(getApplicationName());
 	}
 	
 	private Set<ExactZonesConfig> getProcessingUnitExactZones(
@@ -149,6 +141,7 @@ public class Ec2LocationAwareScalingRulesTest extends AbstractScalingRulesCloudT
 	// scan for leaking nodes
 	@AfterMethod
 	public void cleanUp() {
+		stopThreads();
  		super.shutdownExecutorAndScanForLeakedAgentNodes();
 	}
 	

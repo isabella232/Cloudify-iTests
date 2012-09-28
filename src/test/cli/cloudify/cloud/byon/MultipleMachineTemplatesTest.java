@@ -10,6 +10,7 @@ import java.util.Map;
 
 import org.apache.commons.exec.util.StringUtils;
 import org.apache.commons.io.FileUtils;
+import org.cloudifysource.dsl.utils.ServiceUtils;
 import org.openspaces.admin.pu.DeploymentStatus;
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.testng.Assert;
@@ -97,7 +98,7 @@ public class MultipleMachineTemplatesTest extends AbstractByonCloudTest {
 		// "ENTER_TEMPLATE" is the hook that resides in the service file for purposes of replacing it
 		LogUtils.log("Service " + serviceName + " will use template " + template);
 		IOUtils.replaceTextInFile(serviceGroovyPath, "ENTER_TEMPLATE", template);
-		templatePerService.put(serviceName, template);
+		templatePerService.put(ServiceUtils.getAbsolutePUName("petclinic", serviceName), template);
 		
 	}
 
@@ -222,7 +223,7 @@ public class MultipleMachineTemplatesTest extends AbstractByonCloudTest {
 		AssertUtils.repetitiveAssertTrue(serviceFullName + " is not down", new RepetitiveConditionProvider() {
 			public boolean getCondition() {
 				try {
-					return (admin.getProcessingUnits().getProcessingUnit(serviceFullName).getStatus() != DeploymentStatus.UNDEPLOYED);
+					return (admin.getProcessingUnits().getProcessingUnit(serviceFullName).getStatus() == DeploymentStatus.UNDEPLOYED);
 				} catch (Exception e) {
 					return false;
 				}

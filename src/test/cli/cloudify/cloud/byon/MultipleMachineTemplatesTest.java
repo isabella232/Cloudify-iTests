@@ -10,6 +10,7 @@ import java.util.Map;
 
 import org.apache.commons.exec.util.StringUtils;
 import org.apache.commons.io.FileUtils;
+import org.openspaces.admin.pu.DeploymentStatus;
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.testng.Assert;
 import org.testng.ITestContext;
@@ -51,7 +52,7 @@ public class MultipleMachineTemplatesTest extends AbstractByonCloudTest {
 
 	private static final long MY_OPERATION_TIMEOUT = 1 * 60 * 1000;
 
-	protected static final String PETCLINIC_MULTIPLE_TEMPLATES_SG_PATH = SGTestHelper.getSGTestRootDir() + "/apps/cloudify/cloud/recipes/petclinic-multiple-templates";
+	protected static final String PETCLINIC_MULTIPLE_TEMPLATES_SG_PATH = SGTestHelper.getSGTestRootDir() + "/apps/cloudify/recipes/petclinic-multiple-templates";
 	protected static final String PETCLINIC_MULTIPLE_TEMPLATES_BUILD_PATH = SGTestHelper.getBuildDir() + "/recipes/apps/petclinic-multiple-templates";
 
 	@BeforeClass(alwaysRun = true)
@@ -175,7 +176,7 @@ public class MultipleMachineTemplatesTest extends AbstractByonCloudTest {
 		for (String template : hostsPerTemplate.keySet()) {
 			props.put(template + "_HOSTS", StringUtils.toString(hostsPerTemplate.get(template).toArray(new String[] {}), ","));			
 		}
-		getService().setAdditionalPropsToReplace(props);
+		getService().getAdditionalPropsToReplace().putAll(props);
 	}
 
 	/**
@@ -208,7 +209,7 @@ public class MultipleMachineTemplatesTest extends AbstractByonCloudTest {
 		AssertUtils.repetitiveAssertTrue(serviceFullName + " is not down", new RepetitiveConditionProvider() {
 			public boolean getCondition() {
 				try {
-					return (admin.getProcessingUnits().getProcessingUnit(serviceFullName) != null);
+					return (admin.getProcessingUnits().getProcessingUnit(serviceFullName).getStatus() != DeploymentStatus.UNDEPLOYED);
 				} catch (Exception e) {
 					return false;
 				}
@@ -221,7 +222,7 @@ public class MultipleMachineTemplatesTest extends AbstractByonCloudTest {
 		AssertUtils.repetitiveAssertTrue(serviceFullName + " is not down", new RepetitiveConditionProvider() {
 			public boolean getCondition() {
 				try {
-					return (admin.getProcessingUnits().getProcessingUnit(serviceFullName) == null);
+					return (admin.getProcessingUnits().getProcessingUnit(serviceFullName).getStatus() != DeploymentStatus.UNDEPLOYED);
 				} catch (Exception e) {
 					return false;
 				}

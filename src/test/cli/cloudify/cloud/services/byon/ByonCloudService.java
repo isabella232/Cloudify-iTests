@@ -31,6 +31,7 @@ import test.cli.cloudify.cloud.services.AbstractCloudService;
 import com.j_spaces.kernel.PlatformVersion;
 
 import framework.tools.SGTestHelper;
+import framework.utils.IOUtils;
 import framework.utils.LogUtils;
 import framework.utils.SSHUtils;
 
@@ -85,7 +86,7 @@ public class ByonCloudService extends AbstractCloudService {
 		propsToReplace.put("ENTER_PASSWORD", BYON_CLOUD_PASSWORD);
 		propsToReplace.put("cloudify_agent_", this.machinePrefix + "cloudify-agent");
 		propsToReplace.put("cloudify_manager", this.machinePrefix + "cloudify-manager");
-		propsToReplace.put("// cloudifyUrl", "   cloudifyUrl");
+		propsToReplace.put("// cloudifyUrl", "cloudifyUrl");
 		if (StringUtils.isNotBlank(ipList)) {
 			propsToReplace.put("0.0.0.0", ipList);
 		}
@@ -93,12 +94,6 @@ public class ByonCloudService extends AbstractCloudService {
 		propsToReplace.put("numberOfManagementMachines 1", "numberOfManagementMachines "  + numberOfManagementMachines);
 		this.getAdditionalPropsToReplace().putAll(propsToReplace);
 
-		// read again to get access to the cloudify url
-		try {
-			this.cloudConfiguration = ServiceReader.readCloud(new File(getPathToCloudGroovy()));
-		} catch (DSLException e) {
-			throw new RuntimeException(e);
-		}
 		replaceCloudifyURL();
 		replaceBootstrapManagementScript();
 	}
@@ -121,6 +116,15 @@ public class ByonCloudService extends AbstractCloudService {
 	}
 
 	private void replaceCloudifyURL() throws IOException {		
+		IOUtils.replaceTextInFile(getPathToCloudGroovy(), "// cloudifyUrl", "cloudifyUrl");
+		
+		// read again to get access to the cloudify url
+		try {
+			this.cloudConfiguration = ServiceReader.readCloud(new File(getPathToCloudGroovy()));
+		} catch (DSLException e) {
+			throw new RuntimeException(e);
+		}
+		
 		String defaultURL = cloudConfiguration.getProvider().getCloudifyUrl();
 		String buildNumber = PlatformVersion.getBuildNumber();
 		String version = PlatformVersion.getVersion();

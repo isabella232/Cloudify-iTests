@@ -36,7 +36,7 @@ public abstract class AbstractCloudService implements CloudService {
 	protected URL[] webUIUrls;
 	protected String serviceUniqueName;
 	protected String machinePrefix = System.getProperty("user.name") + "-";
-	protected Map<String, String> additionalPropsToReplace;
+	protected Map<String, String> additionalPropsToReplace = new HashMap<String,String>();
 	protected Map<File, File> filesToReplace;
 	protected boolean bootstrapped = false;
 	private String serviceFolderName;

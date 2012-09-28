@@ -1,7 +1,6 @@
 package test.cli.cloudify.cloud.ec2;
 
 import java.io.IOException;
-import java.util.HashMap;
 
 import org.testng.ITestContext;
 import org.testng.annotations.AfterClass;
@@ -50,7 +49,6 @@ public class EuWestRegionEc2Test extends NewAbstractCloudTest {
 	protected void customizeCloud() {
 		service = (Ec2CloudService) getService();
 		service.setPemFileName("sgtest-eu");
-		service.setAdditionalPropsToReplace(new HashMap<String, String>());
 		service.getAdditionalPropsToReplace().put("imageId \"us-east-1/ami-76f0061f\"", "imageId \"eu-west-1/ami-24506250\"");
 		service.getAdditionalPropsToReplace().put("locationId \"us-east-1\"", "locationId \"eu-west-1\"");
 	} 

@@ -1,7 +1,6 @@
 package test.cli.cloudify.cloud.ec2;
 
 import java.io.IOException;
-import java.util.HashMap;
 
 import org.testng.ITestContext;
 import org.testng.annotations.AfterClass;
@@ -72,7 +71,6 @@ public class PrivateImageEc2Test extends NewAbstractCloudTest {
 
 		final Ec2CloudService ec2Service = (Ec2CloudService) cloud;
 
-		ec2Service.setAdditionalPropsToReplace(new HashMap<String, String>());
 		ec2Service.getAdditionalPropsToReplace().put("imageId \"us-east-1/ami-76f0061f\"",
 				"imageId \"us-east-1/ami-93b068fa\"");
 		ec2Service.getAdditionalPropsToReplace().put("keyFile \"ec2-sgtest.pem\"",

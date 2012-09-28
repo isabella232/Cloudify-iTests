@@ -57,7 +57,6 @@ public class Ec2PropertiesFileTest extends NewAbstractCloudTest{
 		((Ec2CloudService)cloud).addFilesToReplace(filesToReplace);
 		
 		//Set the management machine template option to be taken from the cloud props file.
-		((Ec2CloudService)cloud).setAdditionalPropsToReplace(new HashMap<String, String>());
 		((Ec2CloudService)cloud).getAdditionalPropsToReplace().put("managementMachineTemplate \"SMALL_LINUX\"",
 				MANAGEMENT_MACHINE_TEMPLATE_MY_HARDWARE_ID);
 		

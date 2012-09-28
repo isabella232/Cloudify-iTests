@@ -345,7 +345,9 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 			}
 		} 
 		else {
-			LogUtils.log("Test: " + lastTestName + " failed, and some leaked nodes were found too");
+			if (!leakedAgentScanResult) {
+				LogUtils.log("Test: " + lastTestName + " failed, and some leaked nodes were found too");				
+			}
 		}
 	}
 	
@@ -383,7 +385,9 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 			}
 		} 
 		else {
-			LogUtils.log("Test: " + lastTestName + " failed, and some leaked nodes were found too");
+			if (!leakedAgentAndManagementNodesScanResult) {
+				LogUtils.log("Test: " + lastTestName + " failed, and some leaked nodes were found too");				
+			}
 		}
 	}
 

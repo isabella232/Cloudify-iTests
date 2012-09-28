@@ -23,9 +23,9 @@ public class StockDemoApplicationTest extends NewAbstractCloudTest {
 	}
 	
 	@BeforeMethod
-	public void prepareApplication() throws IOException {	
+	public void prepareApplication() throws IOException {
 		File stockDemoAppSG = new File(SGTestHelper.getSGTestRootDir() + "/apps/cloudify/recipes/stockdemo");
-		File appsFolder = new File(SGTestHelper.getBuildDir() + "/recipes/apps/");
+		File appsFolder = new File(SGTestHelper.getBuildDir() + "/recipes/apps/stockdemo");
 		FileUtils.copyDirectory(stockDemoAppSG, appsFolder);
 	}
 	

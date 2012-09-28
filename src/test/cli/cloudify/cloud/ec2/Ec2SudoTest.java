@@ -38,7 +38,7 @@ public class Ec2SudoTest extends AbstractExamplesTest {
 		return "ec2";
 	}
 
-	@Test
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT)
 	public void testSudo() throws IOException, InterruptedException {
 		installServiceAndWait(RECIPE_DIR_PATH, "groovy");
 		String invokeResult = CommandTestUtils.runCommandAndWait("connect " + getRestUrl()

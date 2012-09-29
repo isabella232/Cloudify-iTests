@@ -262,7 +262,7 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 		final String output = CommandTestUtils.runCommand(command, wait, failCommand);
 		final String excpectedResult = "Application " + applicationName + " installed successfully";
 		if (!failCommand) {
-			LogUtils.log("'"+command + "' failed. output:" + output);
+			// why do we need this? the output is logged anyway from the cli - LogUtils.log("'"+command + "' failed. output:" + output);
 			assertTrue(output.toLowerCase().contains(excpectedResult.toLowerCase()));
 		} else {
 			assertTrue(output.toLowerCase().contains("operation failed"));

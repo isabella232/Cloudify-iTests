@@ -65,28 +65,9 @@ public class MultipleTemplatesWithNamesAsIPsTest extends MultipleMachineTemplate
 	@Override
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true, priority = 1)
 	public void testPetclinic() throws Exception {
-		
-		injectTemplateInService(TEMPLATE_1, "mongos");
-		injectTemplateInService(TEMPLATE_1, "mongoConfig");
-		injectTemplateInService(TEMPLATE_2, "tomcat");
-		injectTemplateInService(TEMPLATE_2, "apacheLB");
-		injectTemplateInService(TEMPLATE_3, "mongod");
-		
-		installApplicationAndWait(PETCLINIC_MULTIPLE_TEMPLATES_BUILD_PATH, "petclinic");
-
-		Assert.assertTrue(hostsPerTemplate.get(templatePerService.get("petclinic.mongod")).contains(getPuHostName("petclinic.mongod")));
-		Assert.assertTrue(hostsPerTemplate.get(templatePerService.get("petclinic.mongos")).contains(getPuHostName("petclinic.mongos")));
-		Assert.assertTrue(hostsPerTemplate.get(templatePerService.get("petclinic.mongoConfig")).contains(getPuHostName("petclinic.mongoConfig")));
-		Assert.assertTrue(hostsPerTemplate.get(templatePerService.get("petclinic.tomcat")).contains(getPuHostName("petclinic.tomcat")));
-		Assert.assertTrue(hostsPerTemplate.get(templatePerService.get("petclinic.apacheLB")).contains(getPuHostName("petclinic.apacheLB")));
-		
+		super.testPetclinic();
 	}
 	
-	@Override
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true, priority = 2)
-	public void testPetclinicUninstall() throws Exception{
-		super.testPetclinicUninstall();
-	}
 	
 	/**
 	 * Gets the address of the machine on which the given processing unit is deployed. 

@@ -11,7 +11,6 @@ import java.util.Map;
 import org.apache.commons.exec.util.StringUtils;
 import org.apache.commons.io.FileUtils;
 import org.cloudifysource.dsl.utils.ServiceUtils;
-import org.openspaces.admin.pu.DeploymentStatus;
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.testng.Assert;
 import org.testng.ITestContext;
@@ -88,8 +87,20 @@ public class MultipleMachineTemplatesTest extends AbstractByonCloudTest {
 		Assert.assertTrue(hostsPerTemplate.get(templatePerService.get("petclinic.mongoConfig")).contains(getPuHostAddress("petclinic.mongoConfig")));
 		Assert.assertTrue(hostsPerTemplate.get(templatePerService.get("petclinic.tomcat")).contains(getPuHostAddress("petclinic.tomcat")));
 		Assert.assertTrue(hostsPerTemplate.get(templatePerService.get("petclinic.apacheLB")).contains(getPuHostAddress("petclinic.apacheLB")));
-	}
+		
+		uninstallApplicationAndWait("petclinic");
 
+		assertServiceIsDown("petclinic.mongod");
+		assertServiceIsDown("petclinic.mongos");
+		assertServiceIsDown("petclinic.mongoConfig");
+		assertServiceIsDown("petclinic.tomcat");
+	}
+	
+	private void assertManagementIsDown() {		
+		assertServiceIsDown("webui");
+		assertServiceIsDown("rest");
+		assertServiceIsDown("cloudifyManagementSpace");
+	}
 
 	protected void injectTemplateInService(final String template, String serviceName) throws IOException {
 		
@@ -100,23 +111,6 @@ public class MultipleMachineTemplatesTest extends AbstractByonCloudTest {
 		IOUtils.replaceTextInFile(serviceGroovyPath, "ENTER_TEMPLATE", template);
 		templatePerService.put(ServiceUtils.getAbsolutePUName("petclinic", serviceName), template);
 		
-	}
-
-	/**
-	 * tests the uninstall operation - uninstalls and checks that each application service is down.
-	 */
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true, priority = 2)
-	public void testPetclinicUninstall() throws Exception {
-
-		uninstallApplicationAndWait("petclinic");
-
-		assertServiceIsDown("petclinic.mongod");
-		assertServiceIsDown("petclinic.mongos");
-		assertServiceIsDown("petclinic.mongoConfig");
-		assertServiceIsDown("petclinic.tomcat");
-		assertServiceIsNotDown("webui");
-		assertServiceIsNotDown("rest");
-		assertServiceIsNotDown("cloudifyManagementSpace");
 	}
 
 	@AfterMethod
@@ -192,38 +186,15 @@ public class MultipleMachineTemplatesTest extends AbstractByonCloudTest {
 	}
 
 	@Override
-	protected void beforeTeardown() throws Exception {
-		if (admin != null) {
-			admin.close();
-			admin = null;
-		}
-	}
-
-	@Override
 	protected void afterTeardown() throws Exception {		
-		assertServiceIsDown("webui");
-		assertServiceIsDown("rest");
-		assertServiceIsDown("cloudifyManagementSpace");
-	}
-	
-	private void assertServiceIsNotDown(final String serviceFullName) {
-		AssertUtils.repetitiveAssertTrue(serviceFullName + " is not down", new RepetitiveConditionProvider() {
-			public boolean getCondition() {
-				try {
-					return (admin.getProcessingUnits().getProcessingUnit(serviceFullName).getStatus() != DeploymentStatus.UNDEPLOYED);
-				} catch (Exception e) {
-					return false;
-				}
-			}
-		}, MY_OPERATION_TIMEOUT);
-		
+		assertManagementIsDown();
 	}
 
 	private void assertServiceIsDown(final String serviceFullName) {
 		AssertUtils.repetitiveAssertTrue(serviceFullName + " is not down", new RepetitiveConditionProvider() {
 			public boolean getCondition() {
 				try {
-					return (admin.getProcessingUnits().getProcessingUnit(serviceFullName).getStatus() == DeploymentStatus.UNDEPLOYED);
+					return (admin.getProcessingUnits().getProcessingUnit(serviceFullName) == null);
 				} catch (Exception e) {
 					return false;
 				}

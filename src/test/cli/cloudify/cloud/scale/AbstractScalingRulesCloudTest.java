@@ -177,7 +177,7 @@ public abstract class AbstractScalingRulesCloudTest extends NewAbstractCloudTest
 				}
 				boolean condition = instancesDetails.size() == expectedNumberOfInstances;
 				if (condition) {
-					LogUtils.log("Found " + expectedNumberOfInstances + "instance(s) that satisfies zones " + zones.getZones());
+					LogUtils.log("Found " + expectedNumberOfInstances + " instance(s) that satisfies zones " + zones.getZones());
 				} else {
 					LogUtils.log("Expecting " + expectedNumberOfInstances + " " + absoluteServiceName + " instance(s) that satisfies zones " + zones.getZones() + ". Instead found " + instancesDetails);
 				}

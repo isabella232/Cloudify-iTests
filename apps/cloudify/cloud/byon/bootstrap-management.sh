@@ -49,6 +49,13 @@ JAVA_64_URL="http://repository.cloudifysource.org/com/oracle/java/1.6.0_32/jdk-6
 
 HOME_DIR="/tmp/byon"
 
+if [ -d "$HOME_DIR" ]; then
+	echo cleaning home directory
+	rm -rf $HOME_DIR
+fi
+
+mkdir $HOME_DIR
+
 # If not JDK specified, determine which JDK to install based on hardware architecture
 if [ -z "$CLOUDIFY_AGENT_ENV_JAVA_URL" ]; then
 	ARCH=`uname -m`

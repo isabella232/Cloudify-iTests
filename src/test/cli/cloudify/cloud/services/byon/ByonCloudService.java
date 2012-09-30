@@ -51,7 +51,7 @@ public class ByonCloudService extends AbstractCloudService {
 	 * this folder is where Cloudify will be downloaded to and extracted from. NOTE - this is not the WORKING_HOME_DIRECTORY.
 	 * if is also defined in the custom bootstrap-management.sh script we use in our tests. 
 	 */
-	private static final String BYON_HOME_FOLDER = "/tmp/byon";
+	public static final String BYON_HOME_FOLDER = "/tmp/byon";
 	
 	private String ipList;
 	private String[] machines;
@@ -141,8 +141,8 @@ public class ByonCloudService extends AbstractCloudService {
 	private void cleanMachines() {
 		killAllJavaOnAllHosts();
 		cleanGSFilesOnAllHosts();
-		cleanHomeDirFolderOnAllHosts();
-		createHomeDirFolderOnAllHosts();
+//		cleanHomeDirFolderOnAllHosts();
+//		createHomeDirFolderOnAllHosts();
 	}
 	
 	private void createHomeDirFolderOnAllHosts() {
@@ -191,7 +191,7 @@ public class ByonCloudService extends AbstractCloudService {
 			try {
 				LogUtils.log(SSHUtils.runCommand(host, AbstractTest.OPERATION_TIMEOUT, command, "tgrid", "tgrid"));
 			} catch (AssertionError e) {
-				LogUtils.log("Failed to clean gs-files on host " + host + " .Reason --> " + e.getMessage());
+				LogUtils.log("Failed to kill java processes on host " + host + " .Reason --> " + e.getMessage());
 			}
 		}
 	}

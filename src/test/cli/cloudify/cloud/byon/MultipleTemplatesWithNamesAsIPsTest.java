@@ -74,7 +74,8 @@ public class MultipleTemplatesWithNamesAsIPsTest extends MultipleMachineTemplate
 	 * @param puName The name of the processing unit to look for
 	 * @return The address of the machine on which the processing unit is deployed.
 	 */
-	private String getPuHostName(final String puName) {
+	@Override
+	protected String getPuHost(final String puName) {
 		ProcessingUnit pu = admin.getProcessingUnits().getProcessingUnit(puName);
 		Assert.assertNotNull(pu.getInstances()[0], puName + " processing unit is not found");
 		return pu.getInstances()[0].getMachine().getHostName();	

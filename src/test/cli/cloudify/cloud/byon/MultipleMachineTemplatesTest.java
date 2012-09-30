@@ -82,11 +82,11 @@ public class MultipleMachineTemplatesTest extends AbstractByonCloudTest {
 		
 		installApplicationAndWait(PETCLINIC_MULTIPLE_TEMPLATES_BUILD_PATH, "petclinic");
 
-		Assert.assertTrue(hostsPerTemplate.get(templatePerService.get("petclinic.mongod")).contains(getPuHostAddress("petclinic.mongod")));
-		Assert.assertTrue(hostsPerTemplate.get(templatePerService.get("petclinic.mongos")).contains(getPuHostAddress("petclinic.mongos")));
-		Assert.assertTrue(hostsPerTemplate.get(templatePerService.get("petclinic.mongoConfig")).contains(getPuHostAddress("petclinic.mongoConfig")));
-		Assert.assertTrue(hostsPerTemplate.get(templatePerService.get("petclinic.tomcat")).contains(getPuHostAddress("petclinic.tomcat")));
-		Assert.assertTrue(hostsPerTemplate.get(templatePerService.get("petclinic.apacheLB")).contains(getPuHostAddress("petclinic.apacheLB")));
+		Assert.assertTrue(hostsPerTemplate.get(templatePerService.get("petclinic.mongod")).contains(getPuHost("petclinic.mongod")));
+		Assert.assertTrue(hostsPerTemplate.get(templatePerService.get("petclinic.mongos")).contains(getPuHost("petclinic.mongos")));
+		Assert.assertTrue(hostsPerTemplate.get(templatePerService.get("petclinic.mongoConfig")).contains(getPuHost("petclinic.mongoConfig")));
+		Assert.assertTrue(hostsPerTemplate.get(templatePerService.get("petclinic.tomcat")).contains(getPuHost("petclinic.tomcat")));
+		Assert.assertTrue(hostsPerTemplate.get(templatePerService.get("petclinic.apacheLB")).contains(getPuHost("petclinic.apacheLB")));
 		
 		uninstallApplicationAndWait("petclinic");
 
@@ -179,7 +179,7 @@ public class MultipleMachineTemplatesTest extends AbstractByonCloudTest {
 	 * @param puName The name of the processing unit to look for
 	 * @return The address of the machine on which the processing unit is deployed.
 	 */
-	private String getPuHostAddress(final String puName) {
+	protected String getPuHost(final String puName) {
 		ProcessingUnit pu = admin.getProcessingUnits().getProcessingUnit(puName);
 		Assert.assertNotNull(pu.getInstances()[0], puName + " processing unit is not found");
 		return pu.getInstances()[0].getMachine().getHostAddress();		

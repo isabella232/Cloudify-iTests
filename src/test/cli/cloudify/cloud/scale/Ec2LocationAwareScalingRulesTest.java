@@ -109,14 +109,10 @@ public class Ec2LocationAwareScalingRulesTest extends AbstractScalingRulesCloudT
 
 			}
 		}, 30, TimeUnit.SECONDS);
-		
-		try {
-			LogUtils.log("Before repetitive number of instances == 1 on zone " + zonesToPerformAutoScaling);
-			repetitiveNumberOfInstancesHolds(getAbsoluteServiceName(),zonesToPerformAutoScaling, 1, 500, TimeUnit.SECONDS);
-			LogUtils.log("After repetitive number of instances == 1 on zone " + zonesToPerformAutoScaling);
-		} catch (AssertionError e) {
-			Assert.fail(e.getMessage());
-		}
+	
+		LogUtils.log("Before repetitive number of instances == 1 on zone " + zonesToPerformAutoScaling);
+		repetitiveNumberOfInstancesHolds(getAbsoluteServiceName(),zonesToPerformAutoScaling, 1, 500, TimeUnit.SECONDS);
+		LogUtils.log("After repetitive number of instances == 1 on zone " + zonesToPerformAutoScaling);
 	
 		LogUtils.log("stopping threads");
 		stopThreads();

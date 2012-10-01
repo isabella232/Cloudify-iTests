@@ -32,7 +32,7 @@ public class RepetativeInstallAndUninstallOnByon extends AbstractByonCloudTest {
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
-	public void testPetclinic() throws Exception {
+	public void testPetclinicSimple() throws Exception {
 
 		for (int i = 0; i < REPETITIONS; i++) {
 			LogUtils.log("petclinic install number " + (i + 1));

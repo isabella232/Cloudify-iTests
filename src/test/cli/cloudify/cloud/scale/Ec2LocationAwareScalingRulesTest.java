@@ -38,13 +38,13 @@ public class Ec2LocationAwareScalingRulesTest extends AbstractScalingRulesCloudT
 	@BeforeClass(alwaysRun = true)
 	protected void bootstrap(final ITestContext testContext) {
 		super.bootstrap(testContext);
+		cloneApplicaitonRecipeAndInjectLocationAware();
 	}
 	
 	// create application to be tested under the build folder
 	// create the executor service
 	@BeforeMethod
 	public void startExecutorService() {	
-		cloneApplicaitonRecipeAndInjectLocationAware();
 		super.startExecutorService();	
 	}
 		

@@ -4,12 +4,11 @@ import java.util.concurrent.TimeUnit;
 
 import org.openspaces.admin.esm.ElasticServiceManager;
 import org.openspaces.admin.machine.Machine;
-import org.openspaces.admin.machine.Machines;
 import org.testng.annotations.Test;
 
 public class KillNonElasticServiceManagerMachineTest extends AbstractKillManagementTest {
 
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
 	public void testKillMachine() throws Exception {
 		super.testKillMachine();
 	}
@@ -22,7 +21,7 @@ public class KillNonElasticServiceManagerMachineTest extends AbstractKillManagem
 		admin.getElasticServiceManagers().waitFor(1, OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
 		ElasticServiceManager elasticServiceManager = admin.getElasticServiceManagers().getManagers()[0];
 		Machine esmMachine = elasticServiceManager.getMachine();
-		Machines machines = admin.getMachines();
+		Machine[] machines = getGridServiceManagerMachines();
 		for (Machine machine : machines) {
 			if (!esmMachine.equals(machine)) {
 				result = machine;

@@ -446,6 +446,9 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 		// us stabilize the tests. 
 		Thread.sleep(ESTIMATED_MACHINES_SHUTDOWN_TIMEOUT);
 		
+		// check that all agent machines are actually down after the uninstall
+		scanAgentNodesLeak();
+		
 		LogUtils.log("application " + applicationName + " uninstalled");
 	}
 

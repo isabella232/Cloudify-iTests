@@ -55,12 +55,14 @@ public abstract class AbstractScalingRulesCloudTest extends NewAbstractCloudTest
 
 	protected ScheduledExecutorService executor;
 	private final List<HttpRequest> threads = new ArrayList<HttpRequest>();
-
+	
 	public void startExecutorService() {	
 		executor = Executors.newScheduledThreadPool(NUMBER_OF_HTTP_GET_THREADS);
 	}
 
-	public void shutdownExecutorAndScanForLeakedAgentNodes() {
+	public void cleanup() {
+		
+		stopThreads();
 		
 		// download latest management logs 
 		dumpMachines();
@@ -68,20 +70,16 @@ public abstract class AbstractScalingRulesCloudTest extends NewAbstractCloudTest
 		if (executor != null) {
 			executor.shutdownNow();
 		}
-
-		super.scanAgentNodesLeak();
 	}
 	
-
 	public void testPetclinicSimpleScalingRules() throws Exception {		
-		try {
+		
 			LogUtils.log("installing application " + getApplicationName());
 
 			final String applicationPath = getApplicationPath();
 			installApplicationAndWait(applicationPath, getApplicationName());
 
 			repititiveAssertNumberOfInstances(getAbsoluteServiceName(), new AnyZonesConfig(), 1);
-
 
 			// increase web traffic, wait for scale out
 			LogUtils.log("starting threads");
@@ -105,9 +103,7 @@ public abstract class AbstractScalingRulesCloudTest extends NewAbstractCloudTest
 				}
 			}, 60, TimeUnit.SECONDS);
 			repetitiveNumberOfInstancesHolds(getAbsoluteServiceName(), new AnyZonesConfig(), 1, 500, TimeUnit.SECONDS);
-		} finally {
 			uninstallApplicationAndWait(getApplicationName());
-		}
 	}
 
 	protected String getApplicationPath() {

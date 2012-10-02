@@ -6,7 +6,6 @@ import java.io.IOException;
 import org.apache.commons.io.FileUtils;
 import org.testng.ITestContext;
 import org.testng.annotations.AfterClass;
-import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -43,16 +42,7 @@ public class AzureTravelTest extends NewAbstractCloudTest {
 	public void testTravel() throws IOException, InterruptedException {
 		doSanityTest("travel-azure", "travel");		
 	}
-	
-	@AfterMethod(alwaysRun = true)
-	public void cleanUp() {
-		super.scanAgentNodesLeak();
-	}
-	
-	@Override
-	protected void customizeCloud() throws Exception {
-		
-	}
+
 
 	@Override
 	protected String getCloudName() {
@@ -62,6 +52,11 @@ public class AzureTravelTest extends NewAbstractCloudTest {
 	@Override
 	protected boolean isReusableCloud() {
 		return false;
+	}
+
+	@Override
+	protected void customizeCloud() throws Exception {
+		
 	}
 
 }

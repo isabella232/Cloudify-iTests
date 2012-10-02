@@ -185,7 +185,6 @@ public class RepetativeInstallAndUninstallStockDemoWithProblemAtInstallEc2Test e
 				uninstallApplicationAndWait(APPLICATION_NAME);
 			}
 		}
-		super.scanAgentNodesLeak();
 	}
 
 

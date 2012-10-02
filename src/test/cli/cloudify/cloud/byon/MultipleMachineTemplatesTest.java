@@ -15,7 +15,6 @@ import org.openspaces.admin.pu.ProcessingUnit;
 import org.testng.Assert;
 import org.testng.ITestContext;
 import org.testng.annotations.AfterClass;
-import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -111,11 +110,6 @@ public class MultipleMachineTemplatesTest extends AbstractByonCloudTest {
 		IOUtils.replaceTextInFile(serviceGroovyPath, "ENTER_TEMPLATE", template);
 		templatePerService.put(ServiceUtils.getAbsolutePUName("petclinic", serviceName), template);
 		
-	}
-
-	@AfterMethod
-	public void cleanUp() {
-		super.scanAgentNodesLeak();
 	}
 
 	@AfterClass(alwaysRun = true)

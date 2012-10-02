@@ -4,7 +4,6 @@ import java.io.IOException;
 
 import org.testng.ITestContext;
 import org.testng.annotations.AfterClass;
-import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -38,11 +37,6 @@ public class EuWestRegionEc2Test extends NewAbstractCloudTest {
 	@AfterClass(alwaysRun = true)
 	protected void teardown() {
 		super.teardown();
-	}
-	
-	@AfterMethod
-	public void cleanUp() {
-		super.scanAgentNodesLeak();
 	}
 
 	@Override

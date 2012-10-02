@@ -77,7 +77,6 @@ public class Ec2LocationAwareScalingRulesTest extends AbstractScalingRulesCloudT
 		LogUtils.log("stopping threads");
 		stopThreads();
 		uninstallApplicationAndWait(getApplicationName());
-		
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
@@ -133,12 +132,9 @@ public class Ec2LocationAwareScalingRulesTest extends AbstractScalingRulesCloudT
 	}
 	
 
-	// shutdown executor service
-	// scan for leaking nodes
-	@AfterMethod
-	public void cleanUp() {
-		stopThreads();
- 		super.shutdownExecutorAndScanForLeakedAgentNodes();
+	@AfterMethod(alwaysRun = true)
+	public void cleanup() {
+		super.cleanup();
 	}
 	
 	// teardown the cloud

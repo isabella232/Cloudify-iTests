@@ -35,7 +35,6 @@ public class ByonExamplesTest extends AbstractExamplesTest {
 	@AfterMethod(alwaysRun = true)
 	public void cleanUp() {
 		super.uninstallApplicationIfFound();
-		super.scanAgentNodesLeak();
 	}
 	
 	@AfterClass(alwaysRun = true)

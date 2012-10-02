@@ -4,7 +4,6 @@ import java.io.IOException;
 
 import org.testng.ITestContext;
 import org.testng.annotations.AfterClass;
-import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -57,13 +56,6 @@ public class PrivateImageEc2Test extends NewAbstractCloudTest {
 	@AfterClass(alwaysRun = true)
 	protected void teardown() {
 		super.teardown();
-	}
-	
-	@AfterMethod
-	public void cleanUp() {
-		//The test itself will make sure to remove 
-		//any application before terminating
-		super.scanAgentNodesLeak();
 	}
 
 	@Override

@@ -48,8 +48,8 @@ public class Ec2ScalingRulesTest extends AbstractScalingRulesCloudTest{
 	
 	
 	@AfterMethod
-	public void shutdownExecutorAndScanForLeakedAgentNodes() {
-		super.shutdownExecutorAndScanForLeakedAgentNodes();
+	public void cleanup() {
+		super.cleanup();
 	}
 	
 	@AfterClass(alwaysRun = true)

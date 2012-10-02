@@ -60,8 +60,6 @@ public abstract class AbstractKillManagementTest extends AbstractByonCloudTest {
 		
 		restartMachineAndWait(machineAddress);
 		ProcessingUnitUtils.waitForManaged(tomcat, otherManager);
-		LogUtils.log("waiting for esm to be re-discovered");
-		admin.getElasticServiceManagers().waitFor(1, OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
 		
 		RepetitiveConditionProvider condition = new RepetitiveConditionProvider() {
 			
@@ -83,7 +81,8 @@ public abstract class AbstractKillManagementTest extends AbstractByonCloudTest {
 		startManagement(machineAddress);
 		
 		Assert.assertTrue(admin.getGridServiceManagers().waitFor(numOManagementMachines, OPERATION_TIMEOUT, TimeUnit.MILLISECONDS));
-		ProcessingUnitUtils.waitForBackupGsm(tomcat, machine.getGridServiceManagers().getManagers()[0]);
+		
+		uninstallApplicationAndWait("petclinic");
 	}
 
 	/**
@@ -103,17 +102,20 @@ public abstract class AbstractKillManagementTest extends AbstractByonCloudTest {
 		}
 		return result;
 	}
+	
+	protected Machine[] getGridServiceManagerMachines() {
+		GridServiceManager[] griServiceManagers = admin.getGridServiceManagers().getManagers();
+		Machine[] gsmMachines = new Machine[griServiceManagers.length];
+		for (int i = 0 ; i < griServiceManagers.length ; i++) {
+			gsmMachines[i] = griServiceManagers[i].getMachine();
+		}
+		return gsmMachines;
+	}
 
 
 	@AfterClass(alwaysRun = true)
 	protected void teardown() {
 		super.teardown();
-	}
-
-	@Override
-	protected void beforeTeardown() throws Exception {
-		super.beforeTeardown();
-		uninstallApplicationAndWait("petclinic");
 	}
 
 	@Override
@@ -130,6 +132,7 @@ public abstract class AbstractKillManagementTest extends AbstractByonCloudTest {
 
 	private void restartMachineAndWait(final String machine) throws Exception {
 		restartMachine(machine);
+		Thread.sleep(TEN_SECONDS);
 		AssertUtils.assertTrue(WebUtils.waitForHost(machine, (int)OPERATION_TIMEOUT));
 		AssertUtils.repetitive(new IRepetitiveRunnable() {
 			@Override

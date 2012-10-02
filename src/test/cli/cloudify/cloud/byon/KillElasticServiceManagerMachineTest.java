@@ -8,7 +8,7 @@ import org.testng.annotations.Test;
 
 public class KillElasticServiceManagerMachineTest extends AbstractKillManagementTest {
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
 	public void testKillMachine() throws Exception {
 		super.testKillMachine();
 	}

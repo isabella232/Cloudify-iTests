@@ -59,7 +59,10 @@ if [ -d "$HOME_DIR/java" ]; then
 	rm -rf $HOME_DIR/java
 fi
 
-mkdir $HOME_DIR
+# this means it is the first time this machine is being used.
+if [ ! -d "$HOME_DIR" ]; then
+	mkdir $HOME_DIR
+fi
 
 # If not JDK specified, determine which JDK to install based on hardware architecture
 if [ -z "$CLOUDIFY_AGENT_ENV_JAVA_URL" ]; then

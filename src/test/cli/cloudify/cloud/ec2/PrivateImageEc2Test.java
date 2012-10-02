@@ -1,41 +1,19 @@
 package test.cli.cloudify.cloud.ec2;
 
-import java.io.IOException;
-
 import org.testng.ITestContext;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import test.cli.cloudify.CommandTestUtils;
 import test.cli.cloudify.cloud.NewAbstractCloudTest;
 import test.cli.cloudify.cloud.services.ec2.Ec2CloudService;
-import framework.utils.LogUtils;
-import framework.utils.ScriptUtils;
 
 public class PrivateImageEc2Test extends NewAbstractCloudTest {	
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, groups = "1", enabled = true)
 	public void installTest()
 			throws Exception {
-		doTest("petclinic", "petclinic");
-	}
-
-	protected void doTest(final String applicationFolderName, final String applicationName)
-			throws IOException, InterruptedException {
-		LogUtils.log("installing application " + applicationName);
-		final String applicationPath = ScriptUtils.getBuildPath() + "/recipes/apps/" + applicationFolderName;
-		try {
-			installApplicationAndWait(applicationPath, applicationName);
-		} finally {
-			if (getService() != null && getService().getRestUrls() != null) {
-				final String command = "connect " + getRestUrl() + ";list-applications";
-				final String output = CommandTestUtils.runCommandAndWait(command);
-				if (output.contains(applicationName)) {
-					uninstallApplicationAndWait(applicationName);
-				}
-			}
-		}
+		doSanityTest("petclinic", "petclinic");
 	}
 
 	@Override

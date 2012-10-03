@@ -150,7 +150,14 @@ public class AbstractLocalCloudTest extends AbstractTest {
 					LogUtils.log("Tearing-down existing localclouds");
 					ProcessResult teardownResult = CommandTestUtils.runCloudifyCommandAndWait("teardown-localcloud -force -timeout 15");
 					if (teardownResult.getExitcode() != 0) {
-						LogUtils.log("teardown failed because no cloud was found. proceeding with bootstrap.");
+						String output = teardownResult.getOutput();
+						if (!checkOutputForExceptions(output)) {
+							// we assume that if teardown failed but no exceptions were found in the output 
+							// then the reason was because no cloud was found.
+							LogUtils.log("teardown failed because no cloud was found. proceeding with bootstrap.");
+						} else {
+							Assert.fail("Failed to teardown local cloud. output = " + output);
+						}
 					}
 					
 					ProcessResult bootstrapResult = CommandTestUtils.runCloudifyCommandAndWait("bootstrap-localcloud --verbose -timeout 15");
@@ -186,6 +193,13 @@ public class AbstractLocalCloudTest extends AbstractTest {
 				+ "FreePhysicalMem [" + machine.getOperatingSystem().getStatistics().getFreePhysicalMemorySizeInGB()
 				+ "GB]]");
 		
+	}
+
+	private boolean checkOutputForExceptions(String output) {
+		if (output.contains("Exception")) {
+			return true;
+		}
+		return false;
 	}
 
 	private boolean isRequiresBootstrap() {
@@ -345,7 +359,15 @@ public class AbstractLocalCloudTest extends AbstractTest {
 		} else {
 			try {
 				LogUtils.log("Tearing-down localcloud");
-				runCommand("teardown-localcloud  -force");
+				ProcessResult teardownResult = CommandTestUtils.runCloudifyCommandAndWait("teardown-localcloud -force -timeout 15");
+				String output = teardownResult.getOutput();
+				if (!checkOutputForExceptions(output)) {
+					// we assume that if teardown failed but no exceptions were found in the output 
+					// then the reason was because no cloud was found.
+					LogUtils.log("teardown failed because no cloud was found. proceeding with bootstrap.");
+				} else {
+					Assert.fail("Failed to teardown local cloud. output = " + output);
+				}
 			} catch (final Exception e) {
 				log("Exception during teardown",e);
 			}

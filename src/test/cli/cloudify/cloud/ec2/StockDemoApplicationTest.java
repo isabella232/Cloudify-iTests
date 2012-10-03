@@ -17,6 +17,8 @@ import framework.tools.SGTestHelper;
 
 public class StockDemoApplicationTest extends NewAbstractCloudTest {
 
+	private static final int APPLICATION_INSTALL_TIMEOUT_IN_MINUTES = 60;
+	
 	@BeforeClass(alwaysRun = true)
 	protected void bootstrap(final ITestContext testContext) {
 		super.bootstrap(testContext);
@@ -31,7 +33,7 @@ public class StockDemoApplicationTest extends NewAbstractCloudTest {
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, groups = "1", enabled = true)
 	public void testStockDemo() throws IOException, InterruptedException {
-		doSanityTest("stockdemo", "stockdemo");
+		doSanityTest("stockdemo", "stockdemo", APPLICATION_INSTALL_TIMEOUT_IN_MINUTES);
 	}
 	
 	@AfterClass(alwaysRun = true)

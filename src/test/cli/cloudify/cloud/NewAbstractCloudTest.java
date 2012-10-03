@@ -165,10 +165,14 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 	 * @throws InterruptedException
 	 */
 	public void doSanityTest(String applicationFolderName, String applicationName) throws IOException, InterruptedException {
+		doSanityTest(applicationFolderName, applicationName, 0);
+	}
+
+	public void doSanityTest(String applicationFolderName, String applicationName, final int timeout) throws IOException, InterruptedException {
 		LogUtils.log("installing application " + applicationName + " on " + cloudName);
 		String applicationPath = ScriptUtils.getBuildPath() + "/recipes/apps/" + applicationFolderName;
 		try {
-			installApplicationAndWait(applicationPath, applicationName);
+			installApplicationAndWait(applicationPath, applicationName, timeout);
 		} 
 		finally {
 			if ((getService() != null) && (getService().getRestUrls() != null)) {
@@ -180,6 +184,7 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 			}
 		}
 	}
+
 	
 	
 	/**
@@ -221,6 +226,12 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 			throws IOException, InterruptedException {
 		installApplication(applicationPath, applicationName, 0, true, false);
 	}
+	
+	public void installApplicationAndWait(final String applicationPath, final String applicationName, final int timeout)
+			throws IOException, InterruptedException {
+		installApplication(applicationPath, applicationName, timeout, true, false);
+	}
+	
 
 	/**
 	 * installs an application on a specific cloud and waits for the installation to complete.

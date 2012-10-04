@@ -19,12 +19,12 @@
 	<classpathentry kind="var" path="CLOUDIFY_LATEST/lib/required/org.springframework.transaction-3.1.1.RELEASE.jar"/>
 	<classpathentry kind="var" path="CLOUDIFY_LATEST/lib/optional/spring/org.springframework.jms-3.1.1.RELEASE.jar"/>
 	<classpathentry kind="var" path="CLOUDIFY_LATEST/lib/platform/jdbc/hsqldb.jar"/>
-	<classpathentry kind="var" path="CLOUDIFY_LATEST/lib/platform/jetty/jetty-server-8.1.6.v20120903.jar"/>
-	<classpathentry kind="var" path="CLOUDIFY_LATEST/lib/platform/jetty/jetty-util-8.1.6.v20120903.jar"/>
+	<classpathentry kind="var" path="CLOUDIFY_LATEST/lib/platform/jetty/jetty-server-8.1.7.v20120910.jar"/>
+	<classpathentry kind="var" path="CLOUDIFY_LATEST/lib/platform/jetty/jetty-util-8.1.7.v20120910.jar"/>
 	<classpathentry kind="var" path="CLOUDIFY_LATEST/lib/platform/jetty/servlet-api-3.0.jar"/>
-	<classpathentry kind="var" path="CLOUDIFY_LATEST/lib/platform/jetty/jetty-http-8.1.6.v20120903.jar"/>
-	<classpathentry kind="var" path="CLOUDIFY_LATEST/lib/platform/jetty/jetty-io-8.1.6.v20120903.jar"/>
-	<classpathentry kind="var" path="CLOUDIFY_LATEST/lib/platform/jetty/jetty-continuation-8.1.6.v20120903.jar"/>
+	<classpathentry kind="var" path="CLOUDIFY_LATEST/lib/platform/jetty/jetty-http-8.1.7.v20120910.jar"/>
+	<classpathentry kind="var" path="CLOUDIFY_LATEST/lib/platform/jetty/jetty-io-8.1.7.v20120910.jar"/>
+	<classpathentry kind="var" path="CLOUDIFY_LATEST/lib/platform/jetty/jetty-continuation-8.1.7.v20120910.jar"/>
 	<classpathentry kind="var" path="CLOUDIFY_LATEST/lib/required/com.springsource.org.aopalliance-1.0.0.jar"/>
 	<classpathentry kind="var" path="CLOUDIFY_LATEST/lib/platform/ant/ant-1.8.3.jar"/>
 	<classpathentry kind="var" path="CLOUDIFY_LATEST/lib/platform/ant/ant-launcher-1.8.3.jar"/>

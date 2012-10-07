@@ -75,7 +75,7 @@ public class HtmlMailReporter {
         
         DashboardDBReporter.writeToDB(summaryReport.getSuiteName(), buildNumber, majorVersion, minorVersion, 
 				summaryReport.getDuration(), buildLogUrl, summaryReport.getTotalTestsRun(), summaryReport.getFailed(),
-				summaryReport.getSuccess(), summaryReport.getSkipped(), summaryReport.getSuspected(), link);
+				summaryReport.getSuccess(), summaryReport.getSkipped(), summaryReport.getSuspected(), wikiPageUrl);
     }
 
     static String getFullBuildLog(String buildLog) {

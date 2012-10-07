@@ -81,6 +81,11 @@
     		<fileset dir="${sgtest.lib}/webui">
     			<include name="**/*.jar"/>
     	</fileset>
+    	
+    	<!-- dashboard-reporter jars -->
+		<fileset dir="${sgtest.lib}/dashboard-reporter">
+			<include name="**/*.jar"/>
+		</fileset>
 
         <!-- hamcrest jars -->
         <fileset dir="${sgtest.lib}/hamcrest">

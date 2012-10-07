@@ -83,6 +83,11 @@
 			<include name="webuitf.jar"/>
 		</fileset>
 
+		<!-- dashboard-reporter jars -->
+		<fileset dir="${sgtest.lib}/dashboard-reporter">
+			<include name="**/*.jar"/>
+		</fileset>
+		
         <!-- USM jars -->
         <fileset dir="${BUILD_DIR}/lib/platform/usm">
             <include name="**/usm.jar"/>

@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Properties;
 import java.util.StringTokenizer;
 
+import com.gigaspaces.dashboard.DashboardDBReporter;
+
 import framework.report.MailReporterProperties;
 import framework.testng.report.wiki.WikiUtils;
 import framework.testng.report.xml.SummaryReport;
@@ -70,6 +72,10 @@ public class HtmlMailReporter {
         } catch (Exception e) {
             throw new RuntimeException("failed to send mail - " + e, e);
         }
+        
+        DashboardDBReporter.writeToDB(summaryReport.getSuiteName(), buildNumber, majorVersion, minorVersion, 
+				summaryReport.getDuration(), buildLogUrl, summaryReport.getTotalTestsRun(), summaryReport.getFailed(),
+				summaryReport.getSuccess(), summaryReport.getSkipped(), summaryReport.getSuspected(), link);
     }
 
     static String getFullBuildLog(String buildLog) {

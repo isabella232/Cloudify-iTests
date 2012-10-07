@@ -74,6 +74,11 @@
 		<fileset dir="${sgtest.homedir}/tmp">
 			<include name="**/*.jar"/>
 		</fileset>
+		
+		<!-- dashboard-reporter jars -->
+		<fileset dir="${sgtest.lib}/dashboard-reporter">
+			<include name="**/*.jar"/>
+		</fileset>
 
 		<!-- UMS jars -->
     		<fileset dir="${BUILD_DIR}/lib/platform/usm">

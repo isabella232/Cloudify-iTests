@@ -30,6 +30,11 @@
        <fileset dir="${sgtest.homedir}/lib/xstream">
          <include name="**/*.jar"/>
        </fileset>
+       
+       <!-- dashboard-reporter jars -->
+		<fileset dir="${sgtest.homedir}/lib/dashboard-reporter">
+			<include name="**/*.jar"/>
+		</fileset>
 
 	<pathelement location="${sgtest.jar}"/>
 

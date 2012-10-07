@@ -76,7 +76,7 @@
 		</fileset>
 		
 		<!-- dashboard-reporter jars -->
-		<fileset dir="${sgtest.lib}/dashboard-reporter">
+		<fileset dir="${sgtest.homedir}/lib/dashboard-reporter">
 			<include name="**/*.jar"/>
 		</fileset>
 

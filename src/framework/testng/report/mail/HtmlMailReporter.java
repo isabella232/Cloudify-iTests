@@ -73,7 +73,7 @@ public class HtmlMailReporter {
             throw new RuntimeException("failed to send mail - " + e, e);
         }
         
-        DashboardDBReporter.writeToDB(summaryReport.getSuiteName(), buildNumber, majorVersion, minorVersion, 
+        DashboardDBReporter.writeToDB(summaryReport.getSuiteName(), buildNumber.split("_")[1], majorVersion, minorVersion, 
 				summaryReport.getDuration(), buildLogUrl, summaryReport.getTotalTestsRun(), summaryReport.getFailed(),
 				summaryReport.getSuccess(), summaryReport.getSkipped(), summaryReport.getSuspected(), wikiPageUrl);
     }

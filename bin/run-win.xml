@@ -72,7 +72,7 @@
     	
 		<!-- Webui jars -->
 		<fileset dir="${sgtest.homedir}/tmp">
-			<include name="**/*.jar"/>
+			<include name="webuitf.jar"/>
 		</fileset>
 		
 		<!-- dashboard-reporter jars -->

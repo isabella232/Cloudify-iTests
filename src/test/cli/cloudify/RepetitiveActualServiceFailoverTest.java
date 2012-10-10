@@ -12,7 +12,6 @@ import java.net.UnknownHostException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.cassandra.io.util.FileUtils;
 import org.apache.http.HttpStatus;
 import org.cloudifysource.dsl.internal.packaging.PackagingException;
 import org.cloudifysource.dsl.utils.ServiceUtils;
@@ -149,7 +148,7 @@ public class RepetitiveActualServiceFailoverTest extends AbstractLocalCloudTest 
 		else {
 			pathToTomcat = filePath + "sh";
 		}
-		assertTrue("Catalina file was not found in path " + pathToTomcat, (FileUtils.isExists(pathToTomcat)));
+		assertTrue("Catalina file was not found in path " + pathToTomcat, (new File(pathToTomcat).exists()));
 		
 		File tomcatRun = new File(pathToTomcat);
 		assertTrue(tomcatRun.delete());

@@ -96,7 +96,7 @@ public class CloudServiceManager {
 			cloudService = new Ec2CloudService(serviceUniqueName);
 		} else if ("ec2-location-aware".equalsIgnoreCase(cloudName)) {
 			cloudService = new Ec2LocationAwareCloudService(serviceUniqueName);
-		} else if ("ec2_Win".equalsIgnoreCase(cloudName)) {
+		} else if ("ec2-win".equalsIgnoreCase(cloudName)) {
 			cloudService = new Ec2WinCloudService(serviceUniqueName);
 		} else if ("hp".equalsIgnoreCase(cloudName)) {
 			cloudService = new HpCloudService(serviceUniqueName);

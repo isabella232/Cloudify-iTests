@@ -31,16 +31,20 @@ import framework.utils.LogUtils;
 
 public class Ec2CloudService extends AbstractCloudService {
 
-	private static final String EC2_CLOUD_NAME = "ec2";
+	private static final String DEFAULT_EC2_CLOUD_NAME = "ec2";
 	private String user = "AKIAI4OVPQZZQT53O6SQ";
 	private String apiKey = "xI/BDTPh0LE9PcC0aHhn5GEUh+/hjOiRcKwCNVP5";
 	private String pemFileName = "ec2-sgtest";
 	private ComputeServiceContext context;
 
 	public Ec2CloudService(final String uniqueName) {
-		super(uniqueName, EC2_CLOUD_NAME);
+		super(uniqueName, DEFAULT_EC2_CLOUD_NAME);
 	}
-
+	
+	public Ec2CloudService(final String uniqueName, String cloudName) {
+		super(uniqueName, cloudName);
+	}
+	
 	@Override
 	public void beforeBootstrap() {
 		final Set<Module> wiring = new HashSet<Module>();
@@ -212,7 +216,11 @@ public class Ec2CloudService extends AbstractCloudService {
 
 		final Map<String, String> propsToReplace = new HashMap<String, String>();
 		propsToReplace.put("ENTER_USER", user);
-		propsToReplace.put("ENTER_API_KEY", apiKey);
+		if (this.getCloudName().equals("ec2-win")) {
+			propsToReplace.put("ENTER_KEY", apiKey);
+		} else {
+			propsToReplace.put("ENTER_API_KEY", apiKey);
+		}
 		propsToReplace.put("cloudify_agent_", this.machinePrefix + "cloudify-agent");
 		propsToReplace.put("cloudify_manager", this.machinePrefix + "cloudify-manager"
 				+ Long.toString(System.currentTimeMillis()));

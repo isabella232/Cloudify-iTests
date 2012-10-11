@@ -217,7 +217,7 @@ public class Ec2CloudService extends AbstractCloudService {
 		final Map<String, String> propsToReplace = new HashMap<String, String>();
 		propsToReplace.put("ENTER_USER", user);
 		if (this.getCloudName().equals("ec2-win")) {
-			propsToReplace.put("ENTER_KEY", apiKey);
+			propsToReplace.put("apiKey \"ENTER_KEY\"", "apiKey \"" + apiKey + "\"");
 		} else {
 			propsToReplace.put("ENTER_API_KEY", apiKey);
 		}

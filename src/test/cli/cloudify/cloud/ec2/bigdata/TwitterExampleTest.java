@@ -35,8 +35,8 @@ public class TwitterExampleTest extends NewAbstractCloudTest{
 	private String username = "tgrid";
 	private String password = "tgrid";
 	private String restUrl;
-	private final String applicationName = "rt_app";
-	private final String applicationFolderName = "rt-analytics";
+	private final String applicationName = "bigDataApp";
+	private final String applicationFolderName = "streaming-bigdata";
 	private final static int REPEATS = 3;
 	private static final String TOKEN_COUNTER_PROPERTY = "org.openspaces.bigdata.processor.events.TokenCounter";
 	private final static String ENTRIES_AMOUNT_REST_URL = "/admin/Spaces/Names/space/Spaces/Names/space/RuntimeDetails/CountPerClassName/" + TOKEN_COUNTER_PROPERTY;

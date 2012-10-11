@@ -1,4 +1,4 @@
-package test.cli.cloudify.cloud.ec2;
+package test.cli.cloudify.cloud.ec2.bigdata;
 
 import java.io.File;
 import java.io.IOException;

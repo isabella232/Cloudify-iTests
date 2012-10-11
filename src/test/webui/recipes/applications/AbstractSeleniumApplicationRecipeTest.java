@@ -30,7 +30,6 @@ public class AbstractSeleniumApplicationRecipeTest extends AbstractWebUILocalClo
 		LogUtils.log("Installing application " + applicationName);
 		installApplication(pathToApplication, wait);
 		LogUtils.log("retrieving webui url");
-		startBrowser();
 	}
 	
 	public void installApplication(String pathToApplication, boolean wait) throws InterruptedException, IOException {

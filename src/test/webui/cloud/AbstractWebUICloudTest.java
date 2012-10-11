@@ -12,8 +12,7 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
-import test.cli.cloudify.cloud.AbstractCloudTest;
-import test.cli.cloudify.cloud.services.CloudService;
+import test.cli.cloudify.cloud.NewAbstractCloudTest;
 
 import com.gigaspaces.webuitf.LoginPage;
 import com.gigaspaces.webuitf.WebConstants;
@@ -22,17 +21,13 @@ import com.thoughtworks.selenium.Selenium;
 import framework.tools.SGTestHelper;
 import framework.utils.LogUtils;
 
-public class AbstractWebUICloudTest extends AbstractCloudTest {
+public abstract class AbstractWebUICloudTest extends NewAbstractCloudTest {
 	
 	private WebDriver driver;
 	private Selenium selenium;
 	
 	public void launchWebui() throws InterruptedException {
-		
-		CloudService service = getService();
-		String webuiURL = getService().getWebuiUrls()[0];
-		startWebBrowser(webuiURL);
-		
+		startWebBrowser(getWebuiUrl());		
 	}
 	
     private void startWebBrowser(String uRL) throws InterruptedException {
@@ -105,4 +100,5 @@ public class AbstractWebUICloudTest extends AbstractCloudTest {
 	public LoginPage getLoginPage() {
 		return new LoginPage(selenium,driver);
 	}
+
 }

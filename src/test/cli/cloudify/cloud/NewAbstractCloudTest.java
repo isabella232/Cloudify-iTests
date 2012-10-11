@@ -411,6 +411,16 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 		return restUrl;
 
 	}
+	
+	protected String getWebuiUrl() {
+		if (cloud.getRestUrls() == null) {
+			Assert.fail("Test requested the Webui URLs for the cloud, but they were not set. This may indeicate that the cloud was not bootstrapped properly");
+		}
+		
+		final String webuiUrl = cloud.getWebuiUrls()[0];
+		return webuiUrl;
+		
+	}
 
 	protected void dumpMachines() {
 		final String restUrl = getRestUrl();

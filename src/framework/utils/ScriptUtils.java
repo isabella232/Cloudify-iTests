@@ -170,7 +170,19 @@ public class ScriptUtils {
     }
     
     public static String getBuildBinPath() {
-        return getBuildPath() + "/bin";
+        return getBuildPath() + File.separator + "bin";
+    }
+    
+    public static String getBuildRecipesPath() {
+    	return getBuildPath() + File.separator + "recipes";
+    }
+    
+    public static String getBuildRecipesServicesPath() {
+    	return getBuildRecipesPath() + File.separator + "services";
+    }
+    
+    public static String getBuildRecipesApplicationsPath() {
+    	return getBuildRecipesPath() + File.separator + "applications";
     }
     
     private static String getClassLocation(Class<?> clazz) {

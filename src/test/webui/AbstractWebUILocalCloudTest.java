@@ -76,7 +76,7 @@ public abstract class AbstractWebUILocalCloudTest extends AbstractLocalCloudTest
 	public void setLocators() throws UnknownHostException {
 		InetAddress localHost = InetAddress.getLocalHost();
 		String hostAddress = localHost.getHostAddress();
-		String locatorUrl = hostAddress + ":" + String.valueOf( 4172 ); 
+		String locatorUrl = hostAddress + ":" + String.valueOf( 4176 ); 
 		System.setProperty( SystemProperties.JINI_LUS_LOCATORS, locatorUrl );
 	}
 	

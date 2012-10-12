@@ -38,7 +38,12 @@ public abstract class AbstractExamplesTest extends NewAbstractCloudTest {
 			throws Exception {
 		LogUtils.log("installing application " + applicationName + " on " + getCloudName());
 		this.applicationName = applicationName;
-		String applicationPath = ScriptUtils.getBuildPath() + "/recipes/apps/" + applicationFolderName;
+		String applicationPath; 
+		if (getCloudName().endsWith("-win")) {
+			applicationPath = CommandTestUtils.getPath("apps/USM/usm/applications/" + applicationName + "-win");
+		} else {
+			applicationPath = ScriptUtils.getBuildPath() + "/recipes/apps/" + applicationFolderName;
+		}
 		try {
 			installApplicationAndWait(applicationPath, applicationName);
 			if (applicationName.equals("travel") && getCloudName().equals("ec2")) {

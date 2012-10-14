@@ -38,14 +38,9 @@ public class PrivateImageEc2Test extends NewAbstractCloudTest {
 
 	@Override
 	protected void customizeCloud() {
-
 		final Ec2CloudService ec2Service = (Ec2CloudService) cloud;
-
 		ec2Service.getAdditionalPropsToReplace().put("imageId \"us-east-1/ami-76f0061f\"",
 				"imageId \"us-east-1/ami-93b068fa\"");
-		ec2Service.getAdditionalPropsToReplace().put("keyFile \"ec2-sgtest.pem\"",
-				"keyFile \"ec2-sgtest.pem\"\n\t\t\t\t\tusername \"ec2-user\"\n");
-
 	};
 
 }

@@ -6,8 +6,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeoutException;
 
 import org.apache.commons.io.FileUtils;
+import org.cloudifysource.esc.driver.provisioning.azure.client.MicrosoftAzureException;
 import org.cloudifysource.esc.driver.provisioning.azure.client.MicrosoftAzureRestClient;
 import org.cloudifysource.esc.driver.provisioning.azure.model.ConfigurationSet;
 import org.cloudifysource.esc.driver.provisioning.azure.model.ConfigurationSets;
@@ -17,7 +19,6 @@ import org.cloudifysource.esc.driver.provisioning.azure.model.HostedService;
 import org.cloudifysource.esc.driver.provisioning.azure.model.HostedServices;
 import org.cloudifysource.esc.driver.provisioning.azure.model.NetworkConfigurationSet;
 import org.cloudifysource.esc.driver.provisioning.azure.model.Role;
-import org.openqa.selenium.TimeoutException;
 
 import test.cli.cloudify.cloud.services.AbstractCloudService;
 
@@ -90,6 +91,16 @@ public class MicrosoftAzureCloudService extends AbstractCloudService {
 
 	@Override
 	public boolean scanLeakedAgentNodes() {
+		return scanNodesWithPrefix("agent");
+	} 
+	
+	@Override
+	public boolean scanLeakedAgentAndManagementNodes() {
+		return scanNodesWithPrefix("agent" , "manager");
+	}
+	
+	private boolean scanNodesWithPrefix(final String... prefixes) {
+		
 		if (azureClient == null) {
 			LogUtils.log("Microsoft Azure client was not initialized, therefore a bootstrap never took place, and no scan is needed.");
 			return true;
@@ -102,7 +113,7 @@ public class MicrosoftAzureCloudService extends AbstractCloudService {
 			List<String> leakingAgentNodesPublicIps = new ArrayList<String>();
 
 			HostedServices listHostedServices = azureClient.listHostedServices();
-			Deployments deploymentsBeingDeleted = new Deployments();
+			Deployments deploymentsBeingDeleted = null;
 
 			do {
 				if (System.currentTimeMillis() > scanEndTime) {
@@ -111,19 +122,24 @@ public class MicrosoftAzureCloudService extends AbstractCloudService {
 				Thread.sleep(SCAN_INTERVAL);
 				LogUtils.log("waiting for all deployments to reach a non 'Deleting' state");
 				for (HostedService hostedService : listHostedServices) {
-					List<Deployment> deploymentsForHostedSerice = azureClient.getHostedService(hostedService.getServiceName(), true).getDeployments().getDeployments();
-					if (deploymentsForHostedSerice.size() > 0) {
-						Deployment deployment = deploymentsForHostedSerice.get(0); // each hosted service will have just one deployment.
-						if (deployment.getStatus().equals("Deleting")) {
-							LogUtils.log("Found a deployment with name : " + deployment.getName() + " and status : " + deployment.getStatus());
-							deploymentsBeingDeleted.getDeployments().add(deployment);
+					try {
+						List<Deployment> deploymentsForHostedSerice = azureClient.getHostedService(hostedService.getServiceName(), true).getDeployments().getDeployments();
+						if (deploymentsForHostedSerice.size() > 0) {
+							Deployment deployment = deploymentsForHostedSerice.get(0); // each hosted service will have just one deployment.
+							if (deployment.getStatus().equals("Deleting")) {
+								LogUtils.log("Found a deployment with name : " + deployment.getName() + " and status : " + deployment.getStatus());
+								deploymentsBeingDeleted = new Deployments();
+								deploymentsBeingDeleted.getDeployments().add(deployment);
+							}
 						}
+					} catch (MicrosoftAzureException e) {
+						LogUtils.log("Failed retrieving deployments from hosted service : " + hostedService.getServiceName() + " Reason --> " + e.getMessage()); 
 					}
 				}
 
 			}
 
-			while (deploymentsBeingDeleted.getDeployments().size() != 0);
+			while (deploymentsBeingDeleted != null && deploymentsBeingDeleted.getDeployments().size() != 0);
 
 
 			// now all deployment have reached a steady state.
@@ -136,10 +152,12 @@ public class MicrosoftAzureCloudService extends AbstractCloudService {
 					Deployment deployment = deploymentsForHostedSerice.get(0); // each hosted service will have just one deployment.
 					Role role = deployment.getRoleList().getRoles().get(0);
 					String hostName = role.getRoleName(); // each deployment will have just one role.
-					if (hostName.contains("agent")) {
-						String publicIpFromDeployment = getPublicIpFromDeployment(deployment);
-						LogUtils.log("Found an agent with public ip : " + publicIpFromDeployment + " and hostName " + hostName);
-						leakingAgentNodesPublicIps.add(publicIpFromDeployment);
+					for (String prefix : prefixes) {
+						if (hostName.contains(prefix)) {
+							String publicIpFromDeployment = getPublicIpFromDeployment(deployment,prefix);
+							LogUtils.log("Found a node with public ip : " + publicIpFromDeployment + " and hostName " + hostName);
+							leakingAgentNodesPublicIps.add(publicIpFromDeployment);
+						}						
 					}
 				}
 			}
@@ -162,14 +180,15 @@ public class MicrosoftAzureCloudService extends AbstractCloudService {
 		} catch (final Exception e) {
 			throw new RuntimeException(e);
 		}
+		
+		
+	}
 
-	} 
-
-	private String getPublicIpFromDeployment(Deployment deployment) {		
+	private String getPublicIpFromDeployment(Deployment deployment, final String prefix) {		
 		String publicIp = null;
 		Role role = deployment.getRoleList().getRoles().get(0);
 		String hostName = role.getRoleName();
-		if (hostName.contains("agent")) {
+		if (hostName.contains(prefix)) {
 			ConfigurationSets configurationSets = role.getConfigurationSets();
 			for (ConfigurationSet configurationSet : configurationSets) {
 				if (configurationSet instanceof NetworkConfigurationSet) {

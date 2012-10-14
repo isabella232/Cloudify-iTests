@@ -107,7 +107,6 @@ for ((id=0 ; id < ${SUITE_NUMBER} ; id++ )); do
   then
        rm -rf ${BUILD_CACHE_DIR}/gigaspaces*.zip
        echo copy cloudify premium license ro run cloudify xap suite
- 	cp ${BUILD_DIR}/gslicense.xml ${BUILD_DIR}/gslicense.xml.org
        cp ${DEPLOY_ROOT_BIN_DIR}/../../bin/gslicense.xml ${BUILD_DIR}      
  fi
 

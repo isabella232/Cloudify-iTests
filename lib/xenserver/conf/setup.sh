@@ -5,6 +5,7 @@ export EXT_JAVA_OPTIONS="-Xmx1024m -Xms1024m"
 
 mkdir /opt/gigaspaces
 unzip -q /opt/gigaspaces.zip -d /opt/gigaspaces
+rm -f /opt/gigaspaces.zip
 chmod -R 777 /opt/gigaspaces
 
 mv /opt/gigaspaces/*/* /opt/gigaspaces	

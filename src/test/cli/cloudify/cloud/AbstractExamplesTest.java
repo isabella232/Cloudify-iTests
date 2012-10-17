@@ -2,8 +2,12 @@ package test.cli.cloudify.cloud;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Map;
 
 import org.cloudifysource.dsl.internal.CloudifyConstants;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.type.TypeFactory;
+import org.codehaus.jackson.type.JavaType;
 
 import test.cli.cloudify.CommandTestUtils;
 
@@ -31,6 +35,10 @@ public abstract class AbstractExamplesTest extends NewAbstractCloudTest {
 	protected void testPetclinic() throws Exception {
 		doTest("petclinic", "petclinic");
 	}
+	
+	protected void testTravelChef() throws Exception {
+		doTest("travel-chef", "travel");
+	}
 
 	// petclinic-simple is covered by {@link ScalingRulesCloudTest}
 
@@ -46,7 +54,7 @@ public abstract class AbstractExamplesTest extends NewAbstractCloudTest {
 		}
 		try {
 			installApplicationAndWait(applicationPath, applicationName);
-			if (applicationName.equals("travel") && getCloudName().equals("ec2")) {
+			if (applicationFolderName.equals("travel") && getCloudName().equals("ec2")) {
 				// verify image and hardware ID only for travel on EC2
 				Client client = Client.create(new DefaultClientConfig());
 				final WebResource service = client.resource(this.getRestUrl());
@@ -84,6 +92,38 @@ public abstract class AbstractExamplesTest extends NewAbstractCloudTest {
 				
 				assertPageExists("http://" + apacheServiceHostURL + ":" + apachePort + "/");
 				
+			}
+			
+			if (applicationFolderName.equals("travel-chef")){
+				
+				String apacheUrlRestPath = "/admin/ProcessingUnits/Names/travel.apacheLB/ProcessingUnitInstances/0/ServiceDetailsByServiceId/USM/Attributes/Cloud%20Public%20IP";
+				String[] services = {"chef-server", "apacheLB", "mysql"};
+				String restUrl = getRestUrl();
+				String apachePort = "8090";
+								
+				LogUtils.log("verifing successful installation");
+
+				Client client = Client.create(new DefaultClientConfig());
+				final WebResource service = client.resource(this.getRestUrl());
+				
+				String command = "connect " + restUrl + ";use-application " + applicationName + ";list-services";
+				String output = CommandTestUtils.runCommandAndWait(command);
+				
+				for(String singleService : services){
+					AssertUtils.assertTrue("the service " + singleService + " is not running", output.contains(singleService));					
+				}
+				
+				String restApacheService = service.path(apacheUrlRestPath).get(String.class);
+				Map<String, Object> apacheUrlMap = jsonToMap(restApacheService);
+				String apacheServiceHostURL = (String) apacheUrlMap.get(restApacheService);
+				
+				assertPageExists("http://" + apacheServiceHostURL + ":" + apachePort + "/");
+				
+				super.uninstallApplicationAndWait(applicationName);
+
+				LogUtils.log("verifing successful uninstallation");
+				
+				AssertUtils.assertTrue("the application is running",!WebUtils.isURLAvailable(new URL(getWebuiUrl() + "/travel")));
 			}
 		} 
 		finally {
@@ -134,5 +174,11 @@ public abstract class AbstractExamplesTest extends NewAbstractCloudTest {
 		} catch (Exception e) {
 			AssertUtils.AssertFail(e.getMessage());
 		}
+	}
+	
+	private static Map<String, Object> jsonToMap(final String response) throws IOException {
+		final JavaType javaType = TypeFactory.type(Map.class);
+		ObjectMapper om = new ObjectMapper();
+		return om.readValue(response, javaType);
 	}
 }

@@ -22,6 +22,7 @@ import framework.utils.WebUtils;
 
 public abstract class AbstractExamplesTest extends NewAbstractCloudTest {
 	
+	private static final int WINDOWS_INSTALLATION_TIMEOUT = 50;
 	private String applicationName;
 
 	public AbstractExamplesTest() {
@@ -53,7 +54,11 @@ public abstract class AbstractExamplesTest extends NewAbstractCloudTest {
 			applicationPath = ScriptUtils.getBuildPath() + "/recipes/apps/" + applicationFolderName;
 		}
 		try {
-			installApplicationAndWait(applicationPath, applicationName);
+			if (getCloudName().endsWith("-win")) {
+				installApplicationAndWait(applicationPath, applicationName, WINDOWS_INSTALLATION_TIMEOUT);
+			} else {
+				installApplicationAndWait(applicationPath, applicationName);
+			}
 			if (applicationFolderName.equals("travel") && getCloudName().equals("ec2")) {
 				// verify image and hardware ID only for travel on EC2
 				Client client = Client.create(new DefaultClientConfig());

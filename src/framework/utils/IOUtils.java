@@ -37,8 +37,9 @@ public class IOUtils {
 		replaceTextInFile(FileName, toPass);
 	}
 	
-	public static void replaceTextInFile(String FileName, Map<String, String> map) throws IOException {
-		File file = new File(FileName);
+	public static void replaceTextInFile(String filePath, Map<String, String> map) throws IOException {
+		LogUtils.log("replacing props is file : " + filePath);
+		File file = new File(filePath);
         BufferedReader reader = new BufferedReader(new FileReader(file));
         String line = "", oldtext = "";
         while((line = reader.readLine()) != null)
@@ -48,10 +49,11 @@ public class IOUtils {
         reader.close();
         String newtext = new String(oldtext);
         for (String toReplace : map.keySet()) {
+        	LogUtils.log("replacing " + toReplace + " with " + map.get(toReplace));
         	newtext = newtext.replaceAll(toReplace, map.get(toReplace));
         }
        
-        FileWriter writer = new FileWriter(FileName);
+        FileWriter writer = new FileWriter(filePath);
         writer.write(newtext);writer.close();
 	}
 	

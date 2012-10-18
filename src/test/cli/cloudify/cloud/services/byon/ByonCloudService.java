@@ -120,12 +120,14 @@ public class ByonCloudService extends AbstractCloudService {
 		
 		// read again to get access to the cloudify url
 		try {
+			LogUtils.log("reading cloud conf to determine original cloudify url. cloud file is : " + getPathToCloudGroovy());
 			this.cloudConfiguration = ServiceReader.readCloud(new File(getPathToCloudGroovy()));
 		} catch (DSLException e) {
 			throw new RuntimeException(e);
 		}
 		
 		String defaultURL = cloudConfiguration.getProvider().getCloudifyUrl();
+		LogUtils.log("original cloudify url in byon-cloud.groovy is : " + defaultURL);
 		String buildNumber = PlatformVersion.getBuildNumber();
 		String version = PlatformVersion.getVersion();
 		String milestone = PlatformVersion.getMilestone();
@@ -134,6 +136,7 @@ public class ByonCloudService extends AbstractCloudService {
 
 		String newCloudifyURL = NEW_URL_PREFIX + "/" + version + "/build_" + buildNumber + "/cloudify/1.5/gigaspaces-cloudify-" + version + "-" + milestone + "-b" + buildNumber;
 		Map<String, String> propsToReplace = new HashMap<String, String>();
+		LogUtils.log("replacing cloudify url with : " + newCloudifyURL);
 		propsToReplace.put(defaultURL, newCloudifyURL);
 		this.getAdditionalPropsToReplace().putAll(propsToReplace);
 	}

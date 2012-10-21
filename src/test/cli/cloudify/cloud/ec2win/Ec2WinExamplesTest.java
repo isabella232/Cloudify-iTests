@@ -29,12 +29,7 @@ public class Ec2WinExamplesTest extends AbstractExamplesTest {
 		super.uninstallApplicationIfFound();
 		super.scanAgentNodesLeak();
 	}
-	
-//	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 5, enabled = true)
-//	public void testTravel() throws Exception {
-//		super.testTravel();
-//	}
-	
+		
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 5, enabled = true)
 	public void testTravel()
 			throws Exception {

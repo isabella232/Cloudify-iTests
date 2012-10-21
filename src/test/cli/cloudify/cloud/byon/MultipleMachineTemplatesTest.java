@@ -2,13 +2,10 @@ package test.cli.cloudify.cloud.byon;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.exec.util.StringUtils;
 import org.apache.commons.io.FileUtils;
 import org.cloudifysource.dsl.utils.ServiceUtils;
 import org.openspaces.admin.pu.ProcessingUnit;
@@ -19,6 +16,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import test.cli.cloudify.cloud.services.byon.MultipleTemplatesByonCloudService;
 import framework.tools.SGTestHelper;
 import framework.utils.AssertUtils;
 import framework.utils.AssertUtils.RepetitiveConditionProvider;
@@ -35,28 +33,19 @@ import framework.utils.LogUtils;
  */
 public class MultipleMachineTemplatesTest extends AbstractByonCloudTest {
 	
-	/* holds a list of hosts assigned to a certain template */
-	protected Map<String, List<String>> hostsPerTemplate = new HashMap<String, List<String>>();
-	
 	/* holds which template is used by which service */
 	protected Map<String, String> templatePerService = new HashMap<String, String>();
-		
-	private static final int NUM_HOSTS_PER_TEMPLATE = 2;
 	
-	/* template names */
-	protected static final String SMALL_LINUX = "SMALL_LINUX";
-	protected static final String TEMPLATE_1 = "TEMPLATE_1";
-	protected static final String TEMPLATE_2 = "TEMPLATE_2";
-	protected static final String TEMPLATE_3 = "TEMPLATE_3";
-
+	private MultipleTemplatesByonCloudService service = new MultipleTemplatesByonCloudService(this.getClass().getName());
+	
 	private static final long MY_OPERATION_TIMEOUT = 1 * 60 * 1000;
 
 	protected static final String PETCLINIC_MULTIPLE_TEMPLATES_SG_PATH = SGTestHelper.getSGTestRootDir() + "/apps/cloudify/recipes/petclinic-multiple-templates";
 	protected static final String PETCLINIC_MULTIPLE_TEMPLATES_BUILD_PATH = SGTestHelper.getBuildDir() + "/recipes/apps/petclinic-multiple-templates";
-
+	
 	@BeforeClass(alwaysRun = true)
 	protected void bootstrap(final ITestContext testContext) {
-		super.bootstrap(testContext);
+		super.bootstrap(testContext, service);
 	}
 
 	@BeforeMethod(alwaysRun = true)
@@ -71,16 +60,19 @@ public class MultipleMachineTemplatesTest extends AbstractByonCloudTest {
 	 * @throws Exception
 	 */
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true, priority = 1)
-	public void testPetclinic() throws Exception {
+	public void test() throws Exception {
 		
-		injectTemplateInService(TEMPLATE_1, "mongos");
-		injectTemplateInService(TEMPLATE_1, "mongoConfig");
-		injectTemplateInService(TEMPLATE_2, "tomcat");
-		injectTemplateInService(TEMPLATE_2, "apacheLB");
-		injectTemplateInService(TEMPLATE_3, "mongod");
+		String[] temlpateNames = service.getTemlpateNames();
+		
+		injectTemplateInService(temlpateNames[0], "mongos");
+		injectTemplateInService(temlpateNames[0], "mongoConfig");
+		injectTemplateInService(temlpateNames[1], "tomcat");
+		injectTemplateInService(temlpateNames[1], "apacheLB");
+		injectTemplateInService(temlpateNames[2], "mongod");
 		
 		installApplicationAndWait(PETCLINIC_MULTIPLE_TEMPLATES_BUILD_PATH, "petclinic");
 
+		Map<String, List<String>> hostsPerTemplate = service.getHostsPerTemplate();
 		Assert.assertTrue(hostsPerTemplate.get(templatePerService.get("petclinic.mongod")).contains(getPuHost("petclinic.mongod")));
 		Assert.assertTrue(hostsPerTemplate.get(templatePerService.get("petclinic.mongos")).contains(getPuHost("petclinic.mongos")));
 		Assert.assertTrue(hostsPerTemplate.get(templatePerService.get("petclinic.mongoConfig")).contains(getPuHost("petclinic.mongoConfig")));
@@ -115,57 +107,6 @@ public class MultipleMachineTemplatesTest extends AbstractByonCloudTest {
 	@AfterClass(alwaysRun = true)
 	protected void teardown() {
 		super.teardown();
-	}
-
-
-	@Override
-	protected void customizeCloud() throws Exception {
-		super.customizeCloud();
-
-		List<String> assignableHosts = new ArrayList<String>(Arrays.asList(getService().getMachines()));
-		
-		File multiTemplatesGroovy = new File(SGTestHelper.getSGTestRootDir()
-				+ "/apps/cloudify/cloud/byon/byon-cloud.groovy");
-
-		// replace the cloud groovy file with a customized one
-		File fileToBeReplaced = new File(getService().getPathToCloudFolder(), "byon-cloud.groovy");
-		Map<File, File> filesToReplace = new HashMap<File, File>();
-		filesToReplace.put(fileToBeReplaced, multiTemplatesGroovy);
-		getService().addFilesToReplace(filesToReplace);
-		
-		hostsPerTemplate.put(TEMPLATE_1, new ArrayList<String>());
-		hostsPerTemplate.put(TEMPLATE_2, new ArrayList<String>());
-		hostsPerTemplate.put(TEMPLATE_3, new ArrayList<String>());
-				
-		LogUtils.log("Assigning hosts for templates");
-		for (String templateName : hostsPerTemplate.keySet()) {
-			
-			List<String> hostsForTemplate = new ArrayList<String>();
-			for (int i = 0 ; i < NUM_HOSTS_PER_TEMPLATE ; i++) {
-				String host = assignableHosts.iterator().next();
-				if (host != null) {
-					LogUtils.log("Host " + host + " was assigned to template " + templateName);
-					hostsForTemplate.add(host);
-					assignableHosts.remove(host);
-				}
-				
-			}
-			hostsPerTemplate.put(templateName, hostsForTemplate);
-		}
-		
-		/* from the remaining hosts, construct the template for the management machine */
-		List<String> managementTemplateHosts = new ArrayList<String>(); 
-		for (String host : assignableHosts) {
-			LogUtils.log("Host " + host + " was assigned to template " + SMALL_LINUX);
-			managementTemplateHosts.add(host);
-		}
-		hostsPerTemplate.put(SMALL_LINUX, managementTemplateHosts);
-		
-		Map<String, String> props = new HashMap<String,String>();
-		for (String template : hostsPerTemplate.keySet()) {
-			props.put(template + "_HOSTS", StringUtils.toString(hostsPerTemplate.get(template).toArray(new String[] {}), ","));			
-		}
-		getService().getAdditionalPropsToReplace().putAll(props);
 	}
 
 	/**

@@ -9,6 +9,8 @@ import org.testng.ITestContext;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import test.cli.cloudify.cloud.services.byon.MultipleTemplatesByonCloudService;
+
 import com.gigaspaces.webuitf.util.LogUtils;
 
 
@@ -19,14 +21,12 @@ import com.gigaspaces.webuitf.util.LogUtils;
  */
 public class MultipleTemplatesWithNamesAsIPsTest extends MultipleMachineTemplatesTest {
 
+	private MultipleTemplatesByonCloudService service = new MultipleTemplatesByonCloudService(this.getClass().getName());
+	
 	@BeforeClass(alwaysRun = true)
 	protected void bootstrap(final ITestContext testContext) {
-		super.bootstrap(testContext);
-	}
-
-	@Override
-	public void customizeCloud() throws Exception {	
-		String[] machines = getService().getMachines();
+		
+		String[] machines = service.getMachines();
 		String[] machinesHostNames = new String[machines.length];
 		LogUtils.log("converting every other address to host name");
 		for (int i = 0 ; i < machines.length ; i++) {
@@ -49,15 +49,15 @@ public class MultipleTemplatesWithNamesAsIPsTest extends MultipleMachineTemplate
 			}
 
 		}
-		getService().setMachines(machinesHostNames);
-		super.customizeCloud();
+		service.setMachines(machinesHostNames);
+		super.bootstrap(testContext,service);
 	}
 
 
 	@Override
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true, priority = 1)
-	public void testPetclinic() throws Exception {
-		super.testPetclinic();
+	public void test() throws Exception {
+		super.test();
 	}
 
 

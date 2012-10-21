@@ -83,7 +83,7 @@
 	<classpathentry kind="lib" path="lib/selenium/apache-mime4j-0.6.jar"/>
 	<classpathentry kind="lib" path="lib/selenium/bsh-1.3.0.jar"/>
 	<classpathentry kind="lib" path="lib/selenium/cglib-nodep-2.1_3.jar"/>
-	<classpathentry kind="lib" path="lib/selenium/commons-codec-1.4.jar"/>
+	<classpathentry kind="lib" path="lib/selenium/commons-codec-1.6.jar"/>
 	<classpathentry kind="lib" path="lib/selenium/commons-collections-3.2.1.jar"/>
 	<classpathentry kind="lib" path="lib/selenium/commons-exec-1.1.jar"/>
 	<classpathentry kind="lib" path="lib/selenium/commons-io-2.0.1.jar"/>
@@ -94,15 +94,15 @@
 	<classpathentry kind="lib" path="lib/selenium/hamcrest-all-1.1.jar"/>
 	<classpathentry kind="lib" path="lib/selenium/htmlunit-2.9.jar"/>
 	<classpathentry kind="lib" path="lib/selenium/htmlunit-core-js-2.9.jar"/>
-	<classpathentry kind="lib" path="lib/selenium/httpclient-4.1.2.jar"/>
+	<classpathentry kind="lib" path="lib/selenium/httpclient-4.1.3.jar"/>
 	<classpathentry kind="lib" path="lib/selenium/httpcore-4.1.3.jar"/>
-	<classpathentry kind="lib" path="lib/selenium/httpmime-4.1.2.jar"/>
+	<classpathentry kind="lib" path="lib/selenium/httpmime-4.1.3.jar"/>
 	<classpathentry kind="lib" path="lib/selenium/jcommander-1.13.jar"/>
-	<classpathentry kind="lib" path="lib/selenium/jna-3.3.0.jar"/>
+	<classpathentry kind="lib" path="lib/selenium/jna-3.4.0.jar"/>
 	<classpathentry kind="lib" path="lib/selenium/json-20080701.jar"/>
 	<classpathentry kind="lib" path="lib/selenium/junit-dep-4.10.jar"/>
 	<classpathentry kind="lib" path="lib/selenium/nekohtml-1.9.15.jar"/>
-	<classpathentry kind="lib" path="lib/selenium/operadriver-v0.8.jar"/>
+	<classpathentry kind="lib" path="lib/selenium/operadriver-0.14.jar"/>
 	<classpathentry kind="lib" path="lib/selenium/protobuf-java-2.4.1.jar"/>
 	<classpathentry kind="lib" path="lib/selenium/sac-1.3.jar"/>
 	<classpathentry kind="lib" path="lib/selenium/serializer-2.7.1.jar"/>
@@ -186,8 +186,8 @@
 	<classpathentry kind="lib" path="lib/jclouds/trmk-vcloudexpress-1.4.0.jar"/>
 	<classpathentry kind="lib" path="lib/jclouds/vcloud-1.4.0.jar"/>
 	<classpathentry kind="lib" path="lib/testng/testng-6.5.1.jar"/>
-	<classpathentry kind="lib" path="lib/selenium/guava-11.0.2.jar"/>
+	<classpathentry kind="lib" path="lib/selenium/guava-12.0.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/webuitf"/>
-	<classpathentry kind="lib" path="lib/selenium/selenium-java-2.23.1.jar"/>
+	<classpathentry kind="lib" path="lib/selenium/selenium-java-2.25.0.jar"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>

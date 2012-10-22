@@ -150,7 +150,7 @@ public abstract class AbstractWebUILocalCloudTest extends AbstractLocalCloudTest
         			seconds++;
         		}
         	}
-        	if (seconds == 10) {
+        	if (seconds == 30) {
         		LogUtils.log("Could not establish a connection to webui server, Test will fail");
         	}
     	}

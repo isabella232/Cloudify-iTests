@@ -327,8 +327,9 @@ public class AbstractXenGSMTest extends AbstractTest {
 		machineProvisioningConfig.setXapGroups(new String[]{group});
 		machineProvisioningConfig.setLookupServicePort(lookupPort);
 		try {
+			LogUtils.log("Starting first VM");
             GridServiceAgent gsa = XenUtils.startFirstVirtualMachine(machineProvisioningConfig, new ExactZonesConfig(), machineEventListener, agentEventListener, 15 * 60, TimeUnit.SECONDS);
-
+            LogUtils.log("Started first VM on "+gsa.getMachine().getHostAddress());
             // we replace the admin with a single threaded admin needed for test
             String[] locators = machineProvisioningConfig.getXapLocators();
             if (locators.length == 0) {

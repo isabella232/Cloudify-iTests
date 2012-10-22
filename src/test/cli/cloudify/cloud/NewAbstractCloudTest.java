@@ -62,7 +62,7 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 			throw new UnsupportedOperationException(this.getClass().getName() + "Requires reusable clouds, which are not supported yet");
 		}
 
-		uniqueName = this.getClass().getSimpleName();
+		uniqueName = this.getClass().getSimpleName().toLowerCase();
 
 		if (service == null) { // use the default cloud service if non is specified
 			this.cloud = CloudServiceManager.getInstance().getCloudService(cloudName, uniqueName);

@@ -9,7 +9,7 @@ public class LicenseTest extends AbstractWebUILocalCloudTest {
 	
 
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT)
+	@Test(invocationCount = 3, timeOut = DEFAULT_TEST_TIMEOUT)
 	public void testCloudifyLicense() throws InterruptedException {
 		
 		LoginPage loginPage = getLoginPage();

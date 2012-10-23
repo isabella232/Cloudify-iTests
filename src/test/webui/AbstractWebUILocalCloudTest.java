@@ -30,6 +30,7 @@ import test.cli.cloudify.AbstractLocalCloudTest;
 import com.gigaspaces.webuitf.LoginPage;
 import com.gigaspaces.webuitf.WebConstants;
 import com.gigaspaces.webuitf.dashboard.DashboardTab;
+import com.gigaspaces.webuitf.util.AjaxUtils;
 import com.j_spaces.kernel.PlatformVersion;
 import com.j_spaces.kernel.SystemProperties;
 import com.thoughtworks.selenium.Selenium;
@@ -64,6 +65,7 @@ public abstract class AbstractWebUILocalCloudTest extends AbstractLocalCloudTest
 
     private WebDriver driver;
     private Selenium selenium;
+    private AjaxUtils helper;
     
     private final String defaultBrowser = 
     	(System.getProperty("selenium.browser") != null) ? System.getProperty("selenium.browser"): "Firefox";
@@ -134,17 +136,20 @@ public abstract class AbstractWebUILocalCloudTest extends AbstractLocalCloudTest
     	if (driver == null) {
     		LogUtils.log("unable to lauch browser, test will fail on NPE");
     	}
+    	
     	int seconds = 0;
+    	
     	if (driver != null) {
         	driver.get(uRL);
         	if ((browser == null) || browser.equals("Firefox")) {
 				maximize(); // this method is supported only on Firefox
         	}
         	selenium = new WebDriverBackedSelenium(driver, uRL);
+        	helper = new AjaxUtils(driver);
         	Thread.sleep(3000);
         	while (seconds < 30) {
         		try {
-        			driver.findElement(By.xpath(WebConstants.Xpath.loginButton));
+        			helper.waitForElement(By.xpath(WebConstants.Xpath.loginButton), AjaxUtils.ajaxWaitingTime*2);
         			LogUtils.log("Web server connection established");
         			break;
         		}

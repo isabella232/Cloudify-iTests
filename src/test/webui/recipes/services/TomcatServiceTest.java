@@ -79,7 +79,7 @@ public class TomcatServiceTest extends AbstractSeleniumServiceRecipeTest {
 				return applicationServicesGrid.getWebServerModule().getCount() == 1;
 			}
 		};
-		AssertUtils.repetitiveAssertTrue(null, condition, waitingTime);
+		AssertUtils.repetitiveAssertTrue("web server module - actual: 1, expected: " + applicationServicesGrid.getWebServerModule().getCount(), condition, waitingTime);
 
 		TopologyTab topologyTab = mainNav.switchToTopology();
 

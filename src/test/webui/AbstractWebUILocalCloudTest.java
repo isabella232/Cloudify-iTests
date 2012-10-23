@@ -7,6 +7,7 @@ import java.net.UnknownHostException;
 import java.util.Arrays;
 
 import org.apache.commons.io.FileUtils;
+import org.cloudifysource.dsl.internal.CloudifyConstants;
 import org.cloudifysource.dsl.utils.ServiceUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
@@ -80,7 +81,7 @@ public abstract class AbstractWebUILocalCloudTest extends AbstractLocalCloudTest
 	public void setLocators() throws UnknownHostException {
 		InetAddress localHost = InetAddress.getLocalHost();
 		String hostAddress = localHost.getHostAddress();
-		String locatorUrl = hostAddress + ":" + String.valueOf( 4176 ); 
+		String locatorUrl = hostAddress + ":" + String.valueOf(CloudifyConstants.DEFAULT_LOCALCLOUD_LUS_PORT);
 		System.setProperty( SystemProperties.JINI_LUS_LOCATORS, locatorUrl );
 	}
 	

@@ -247,10 +247,17 @@ public class USMTestUtils {
 		ProcessingUnitInstance[] instances = processingUnit.getInstances();
 		if(instance && instances.length != 0){
 			ProcessingUnitInstance processingUnitInstance = instances[0];
-			ProcessingUnitInstanceStatistics statistics = processingUnitInstance.getStatistics();
-			ServiceMonitors serviceMonitors = statistics.getMonitors().get(CloudifyConstants.USM_MONITORS_SERVICE_ID);
-			state = (Integer)serviceMonitors.getMonitors().get(CloudifyConstants.USM_MONITORS_STATE_ID);
+			return getPUIUSMState(processingUnitInstance);
 		}
+		return USMState.values()[state];
+	}
+
+	public static USMState getPUIUSMState(
+			ProcessingUnitInstance processingUnitInstance) {
+		int state;
+		ProcessingUnitInstanceStatistics statistics = processingUnitInstance.getStatistics();
+		ServiceMonitors serviceMonitors = statistics.getMonitors().get(CloudifyConstants.USM_MONITORS_SERVICE_ID);
+		state = (Integer)serviceMonitors.getMonitors().get(CloudifyConstants.USM_MONITORS_STATE_ID);
 		return USMState.values()[state];
 	}
 	

@@ -176,10 +176,6 @@ public abstract class AbstractWebUILocalCloudTest extends AbstractLocalCloudTest
 		selenium = null;
 		Thread.sleep(1000);
 		
-		if (driver != null) {
-    		driver.quit();
-    	}
-		
 		if (chromeService != null && chromeService.isRunning()) {
 			LogUtils.log("Chrome Driver Server is still running, shutting it down...");
 			chromeService.stop();

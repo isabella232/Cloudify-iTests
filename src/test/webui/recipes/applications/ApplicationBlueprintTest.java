@@ -24,7 +24,6 @@ public class ApplicationBlueprintTest extends AbstractSeleniumApplicationRecipeT
 	@BeforeMethod
 	public void install() throws IOException, InterruptedException {
 		setCurrentApplication(TRAVEL_APPLICATION_NAME);
-		setWait(false);
 		super.install();
 	}
 	

@@ -22,8 +22,6 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.cloudifysource.dsl.cloud.CloudTemplate;
-import org.cloudifysource.dsl.internal.DSLException;
-import org.cloudifysource.dsl.internal.ServiceReader;
 
 import test.AbstractTest;
 import test.cli.cloudify.cloud.services.AbstractCloudService;
@@ -31,7 +29,6 @@ import test.cli.cloudify.cloud.services.AbstractCloudService;
 import com.j_spaces.kernel.PlatformVersion;
 
 import framework.tools.SGTestHelper;
-import framework.utils.IOUtils;
 import framework.utils.LogUtils;
 import framework.utils.SSHUtils;
 
@@ -103,9 +100,6 @@ public class ByonCloudService extends AbstractCloudService {
 		cleanMachines();
 	}
 	
-	
-	
-	
 	private void replaceBootstrapManagementScript() {
 		// use a script that does not install java
 		File standardBootstrapManagement = new File(this.getPathToCloudFolder() + "/upload", "bootstrap-management.sh");
@@ -115,19 +109,7 @@ public class ByonCloudService extends AbstractCloudService {
 		this.addFilesToReplace(filesToReplace);
 	}
 
-	private void replaceCloudifyURL() throws IOException {		
-		IOUtils.replaceTextInFile(getPathToCloudGroovy(), "// cloudifyUrl", "cloudifyUrl");
-		
-		// read again to get access to the cloudify url
-		try {
-			LogUtils.log("reading cloud conf to determine original cloudify url. cloud file is : " + getPathToCloudGroovy());
-			this.cloudConfiguration = ServiceReader.readCloud(new File(getPathToCloudGroovy()));
-		} catch (DSLException e) {
-			throw new RuntimeException(e);
-		}
-		
-		String defaultURL = cloudConfiguration.getProvider().getCloudifyUrl();
-		LogUtils.log("original cloudify url in byon-cloud.groovy is : " + defaultURL);
+	public void replaceCloudifyURL() throws IOException {
 		String buildNumber = PlatformVersion.getBuildNumber();
 		String version = PlatformVersion.getVersion();
 		String milestone = PlatformVersion.getMilestone();
@@ -137,27 +119,13 @@ public class ByonCloudService extends AbstractCloudService {
 		String newCloudifyURL = NEW_URL_PREFIX + "/" + version + "/build_" + buildNumber + "/cloudify/1.5/gigaspaces-cloudify-" + version + "-" + milestone + "-b" + buildNumber;
 		Map<String, String> propsToReplace = new HashMap<String, String>();
 		LogUtils.log("replacing cloudify url with : " + newCloudifyURL);
-		propsToReplace.put(defaultURL, newCloudifyURL);
+		propsToReplace.put("cloudifyUrl \".+\"", "cloudifyUrl \"" + newCloudifyURL + '"');
 		this.getAdditionalPropsToReplace().putAll(propsToReplace);
 	}
 	
 	private void cleanMachines() {
 		killAllJavaOnAllHosts();
 		cleanGSFilesOnAllHosts();
-//		cleanHomeDirFolderOnAllHosts();
-//		createHomeDirFolderOnAllHosts();
-	}
-	
-	private void createHomeDirFolderOnAllHosts() {
-		String command = "mkdir " + BYON_HOME_FOLDER;
-		String[] hosts = this.getMachines();
-		for (String host : hosts) {
-			try {
-				LogUtils.log(SSHUtils.runCommand(host, AbstractTest.OPERATION_TIMEOUT, command, "tgrid", "tgrid"));
-			} catch (AssertionError e) {
-				LogUtils.log("Failed to create dir " + BYON_HOME_FOLDER + " on host " + host + " .Reason --> " + e.getMessage());
-			}
-		}
 	}
 
 	private void cleanGSFilesOnAllHosts() {
@@ -172,19 +140,6 @@ public class ByonCloudService extends AbstractCloudService {
 				}
 			}	
 		}			
-	}
-	
-	private void cleanHomeDirFolderOnAllHosts() {
-		String command = "rm -rf " + BYON_HOME_FOLDER;
-		String[] hosts = this.getMachines();
-		for (String host : hosts) {
-			try {
-				LogUtils.log(SSHUtils.runCommand(host, AbstractTest.OPERATION_TIMEOUT, command, "tgrid", "tgrid"));
-			} catch (AssertionError e) {
-				LogUtils.log("Failed to clean files on host " + host + " .Reason --> " + e.getMessage());
-			}
-		}	
-		
 	}
 	
 	private void killAllJavaOnAllHosts() {

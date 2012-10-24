@@ -3,11 +3,14 @@ package framework.utils;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import org.openspaces.admin.gsm.GridServiceManager;
+import org.openspaces.admin.machine.Machine;
 import org.openspaces.admin.pu.DeploymentStatus;
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.openspaces.admin.pu.ProcessingUnitInstance;
@@ -91,6 +94,17 @@ public class ProcessingUnitUtils {
 
         return processingUnit.getManagingGridServiceManager();
     }
+    
+	public static Set<Machine> getMachinesFromPu(final ProcessingUnit pu) {
+		
+		Set<Machine> machines = new HashSet<Machine>();
+		for (ProcessingUnitInstance groovy2Instance : pu.getInstances()) {
+			machines.add(groovy2Instance.getMachine());
+		}
+		
+		return machines;
+		
+	}
 
     /**
      * waits 1 minute until processing unit has a backup GSM

@@ -143,7 +143,7 @@ public abstract class AbstractExamplesTest extends NewAbstractCloudTest {
 	}
 
 	public void uninstallApplicationIfFound() {
-		if ((getService() != null) && (getService().getRestUrls() != null)) {
+		if ((getService() != null) && (getService().getRestUrls() != null) && (applicationName != null)) {
 			String command = "connect " + getRestUrl() + ";list-applications";
 			String output;
 			try {

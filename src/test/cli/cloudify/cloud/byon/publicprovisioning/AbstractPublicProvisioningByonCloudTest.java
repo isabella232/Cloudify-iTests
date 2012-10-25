@@ -42,9 +42,13 @@ public class AbstractPublicProvisioningByonCloudTest extends AbstractByonCloudTe
 			final int numInstances,
 			final int instanceMemoryInMB,
 			final double instanceCpuCores) throws IOException, InterruptedException {
-		generateGroovyService(serviceName, numInstances, instanceMemoryInMB, instanceCpuCores, true, DEFAULT_TEMPLATE_NAME);
-		super.installServiceAndWait(BUILD_SERVICES_FOLDER + "/" + serviceName, serviceName);
-		FileUtils.deleteDirectory(new File(BUILD_SERVICES_FOLDER + "/" + serviceName));
+		
+		try {
+			generateGroovyService(serviceName, numInstances, instanceMemoryInMB, instanceCpuCores, true, DEFAULT_TEMPLATE_NAME);
+			super.installServiceAndWait(BUILD_SERVICES_FOLDER + "/" + serviceName, serviceName);
+		} finally {
+			FileUtils.deleteDirectory(new File(BUILD_SERVICES_FOLDER + "/" + serviceName));			
+		}
 	}
 	
 	protected void installDedicatedProvisioningServiceAndWait(final String serviceName,

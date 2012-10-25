@@ -26,6 +26,7 @@ import framework.utils.AssertUtils.RepetitiveConditionProvider;
 
 public class SolrServiceTest extends AbstractSeleniumServiceRecipeTest {
 		
+	private static final String AVERAGE_REQUESTS_PER_SECOND_CLASS_NAME = "gs-metric-title-CUSTOM_Average_Requests_PerSecond";
 	@Override
 	@BeforeMethod
 	public void install() throws IOException, InterruptedException {
@@ -118,7 +119,7 @@ public class SolrServiceTest extends AbstractSeleniumServiceRecipeTest {
 
 		HealthPanel healthPanel = topologyTab.getTopologySubPanel().switchToHealthPanel();
 
-		assertTrue("Average Requests PerSecond" + METRICS_ASSERTION_SUFFIX, healthPanel.getMetric("Average Requests PerSecond") != null);
+		assertTrue("Average Requests PerSecond" + METRICS_ASSERTION_SUFFIX, healthPanel.getMetric(AVERAGE_REQUESTS_PER_SECOND_CLASS_NAME) != null);
 
 		ServicesTab servicesTab = mainNav.switchToServices();
 

@@ -49,9 +49,14 @@ public class AbstractPublicProvisioningByonCloudTest extends AbstractByonCloudTe
 	
 	protected void installDedicatedProvisioningServiceAndWait(final String serviceName,
 			final int numInstances) throws IOException, InterruptedException {
-		generateGroovyService(serviceName, numInstances, 0, 0, false, DEFAULT_TEMPLATE_NAME);
-		super.installServiceAndWait(BUILD_SERVICES_FOLDER + "/" + serviceName, serviceName);
-		FileUtils.deleteDirectory(new File(BUILD_SERVICES_FOLDER + "/" + serviceName));
+		
+		try {
+			generateGroovyService(serviceName, numInstances, 0, 0, false, DEFAULT_TEMPLATE_NAME);
+			super.installServiceAndWait(BUILD_SERVICES_FOLDER + "/" + serviceName, serviceName);
+		} finally {
+			FileUtils.deleteDirectory(new File(BUILD_SERVICES_FOLDER + "/" + serviceName));						
+		}
+		
 	}
 	
 	protected void uninstallDedicatedProvisioningServiceAndWait() throws IOException, InterruptedException {

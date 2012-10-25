@@ -13,6 +13,8 @@ import org.testng.annotations.Test;
 
 public class MultipleInstancesTest extends AbstractPublicProvisioningByonCloudTest {	
 	
+	private static final String GROOVY = "groovy";
+
 	@Override
 	protected String getCloudName() {
 		return "byon";
@@ -27,25 +29,25 @@ public class MultipleInstancesTest extends AbstractPublicProvisioningByonCloudTe
 	public void testTwoInstancesOfTheSameServiceOnOneMachine() throws IOException, InterruptedException {
 
 		// this should install both service instances on the same machine
-		installPublicProvisioningServiceAndWait("groovy", 2, 128, 0);
+		installPublicProvisioningServiceAndWait(GROOVY, 2, 128, 0);
 		
 		// check that it is the case
-		ProcessingUnit groovy = admin.getProcessingUnits().waitFor(ServiceUtils.getAbsolutePUName("default", "groovy"), OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
+		ProcessingUnit groovy = admin.getProcessingUnits().waitFor(ServiceUtils.getAbsolutePUName("default", GROOVY), OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
 		ProcessingUnitInstance[] instances = groovy.getInstances();
 		assertTrue("Wrong number of groovy instances discovered", instances.length == 2);
 		assertTrue("groovy instances were installed on 2 different machines", instances[0].getGridServiceContainer().getMachine().getHostAddress().equals(instances[1].getGridServiceContainer().getMachine().getHostAddress()));
 		
-		uninstallServiceAndWait("groovy");
+		uninstallServiceAndWait(GROOVY);
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
 	public void testTwoInstancesOfTheSameServiceOnTwoMachine() throws IOException, InterruptedException {
 		
 		// this should install both service instances on the same machine
-		installDedicatedProvisioningServiceAndWait("groovy", 2);
+		installDedicatedProvisioningServiceAndWait(GROOVY, 2);
 		
 		// check that it is the case
-		ProcessingUnit groovy = admin.getProcessingUnits().waitFor(ServiceUtils.getAbsolutePUName("default", "groovy"), OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
+		ProcessingUnit groovy = admin.getProcessingUnits().waitFor(ServiceUtils.getAbsolutePUName("default", GROOVY), OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
 		ProcessingUnitInstance[] instances = groovy.getInstances();
 		assertTrue("Wrong number of groovy instances discovered", instances.length == 2);
 		assertTrue("groovy instances were not installed on 2 different machines", !instances[0].getGridServiceContainer().getMachine().getHostAddress().equals(instances[1].getGridServiceContainer().getMachine().getHostAddress()));

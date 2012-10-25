@@ -17,6 +17,9 @@ import framework.utils.ProcessingUnitUtils;
 
 public class MultipleServicesTest extends AbstractPublicProvisioningByonCloudTest {
 			
+	private static final String GROOVY_TWO = "groovy-two";
+	private static final String GROOVY_ONE = "groovy-one";
+
 	@Override
 	protected String getCloudName() {
 		return "byon";
@@ -31,20 +34,20 @@ public class MultipleServicesTest extends AbstractPublicProvisioningByonCloudTes
 	public void testTwoPublic() throws IOException, InterruptedException {
 		
 		// this should install both services on the same machine
-		installPublicProvisioningServiceAndWait("groovy-one", 1, 128, 0);
-		installPublicProvisioningServiceAndWait("groovy-two", 1, 128, 0);
+		installPublicProvisioningServiceAndWait(GROOVY_ONE, 1, 128, 0);
+		installPublicProvisioningServiceAndWait(GROOVY_TWO, 1, 128, 0);
 		
 		// check that it is the case
-		ProcessingUnit groovy1 = admin.getProcessingUnits().waitFor(ServiceUtils.getAbsolutePUName("default", "groovy-one"), OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
-		ProcessingUnit groovy2 = admin.getProcessingUnits().waitFor(ServiceUtils.getAbsolutePUName("default", "groovy-two"), OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
+		ProcessingUnit groovy1 = admin.getProcessingUnits().waitFor(ServiceUtils.getAbsolutePUName("default", GROOVY_ONE), OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
+		ProcessingUnit groovy2 = admin.getProcessingUnits().waitFor(ServiceUtils.getAbsolutePUName("default", GROOVY_TWO), OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
 		ProcessingUnitInstance[] instances1 = groovy1.getInstances();
 		ProcessingUnitInstance[] instances2 = groovy2.getInstances();
 		assertTrue("Wrong number of groovy instances discovered", instances1.length == 1);
 		assertTrue("Wrong number of groovy instances discovered", instances2.length == 1);
 		assertTrue("groovy instances were installed on 2 different machines", instances1[0].getMachine().equals(instances2[0].getMachine()));
 		
-		uninstallServiceAndWait("groovy-one");
-		uninstallServiceAndWait("groovy-two");
+		uninstallServiceAndWait(GROOVY_ONE);
+		uninstallServiceAndWait(GROOVY_TWO);
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)

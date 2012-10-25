@@ -151,7 +151,7 @@ public class GridServiceNamesTest extends AbstractWebUILocalCloudTest {
 		int countNumberOrchestrators = hostAndServicesGrid.countNumberOf( ESM_SERVICE_NAME );		
 
 		final int expectedServicesNumber = 1;
-		final int expectedUsmNumber = 3;
+		final int expectedUsmNumber = 1;
 		
 		assertEquals( "Expected number of Agents(GSA) must be [" + expectedServicesNumber + "]", 
 				expectedServicesNumber, countNumberAgents );

@@ -95,7 +95,7 @@ public class TravelTest extends AbstractSeleniumApplicationRecipeTest {
 		condition = new RepetitiveConditionProvider() {		
 			@Override
 			public boolean getCondition() {
-				return applicationServicesGrid.getWebServerModule().getCount() == 1;
+				return applicationServicesGrid.getAppServerModule().getCount() == 1;
 			}
 		};
 		AssertUtils.repetitiveAssertTrue(null, condition, waitingTime);
@@ -103,7 +103,7 @@ public class TravelTest extends AbstractSeleniumApplicationRecipeTest {
 		condition = new RepetitiveConditionProvider() {		
 			@Override
 			public boolean getCondition() {
-				return applicationServicesGrid.getWebServerModule().getIcon().equals(Icon.OK);
+				return applicationServicesGrid.getAppServerModule().getIcon().equals(Icon.OK);
 			}
 		};
 		AssertUtils.repetitiveAssertTrue(null, condition, waitingTime);

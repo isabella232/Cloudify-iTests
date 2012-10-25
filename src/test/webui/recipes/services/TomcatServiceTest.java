@@ -26,6 +26,13 @@ import framework.utils.AssertUtils.RepetitiveConditionProvider;
 
 public class TomcatServiceTest extends AbstractSeleniumServiceRecipeTest {
 	
+	private static final String ACTIVE_SESSIONS = "gs-metric-title-CUSTOM_Active_Sessions";
+	private static final String REQUEST_BACKLOG = "gs-metric-title-CUSTOM_Request_Backlog";
+	private static final String CURRENT_HTTP_THREADS_BUSY = "gs-metric-title-CUSTOM_Current_Http_Threads_Busy";
+	private static final String NUM_OF_ACTIVE_THREADS = "gs-metric-title-CUSTOM_Num_Of_Active_Threads";
+	private static final String TOTAL_PROCESS_VIRTUAL_MEMORY = "gs-metric-title-CUSTOM_Total_Process_Virtual_Memory";
+	private static final String PROCESS_CPU_USAGE = "gs-metric-title-CUSTOM_Process_Cpu_Usage";
+
 	@Override
 	@BeforeMethod
 	public void install() throws IOException, InterruptedException {
@@ -76,10 +83,10 @@ public class TomcatServiceTest extends AbstractSeleniumServiceRecipeTest {
 		condition = new RepetitiveConditionProvider() {		
 			@Override
 			public boolean getCondition() {
-				return applicationServicesGrid.getWebServerModule().getCount() == 1;
+				return applicationServicesGrid.getAppServerModule().getCount() == 1;
 			}
 		};
-		AssertUtils.repetitiveAssertTrue("web server module - actual: 1, expected: " + applicationServicesGrid.getWebServerModule().getCount(), condition, waitingTime);
+		AssertUtils.repetitiveAssertTrue("web server module - expected: 1, actual: " + applicationServicesGrid.getAppServerModule().getCount(), condition, waitingTime);
 
 		TopologyTab topologyTab = mainNav.switchToTopology();
 
@@ -128,12 +135,12 @@ public class TomcatServiceTest extends AbstractSeleniumServiceRecipeTest {
 
 		takeScreenShot(this.getClass(),"tomcatRecipeTest", "topology-healthpanel");
 		
-		assertTrue("Process Cpu Usage " + METRICS_ASSERTION_SUFFIX , healthPanel.getMetric("Process Cpu Usage") != null);
-		assertTrue("Total Process Virtual Memory" + METRICS_ASSERTION_SUFFIX, healthPanel.getMetric("Total Process Virtual Memory") != null);
-		assertTrue("Num Of Active Threads" + METRICS_ASSERTION_SUFFIX , healthPanel.getMetric("Num Of Active Threads") != null);
-		assertTrue("Current Http Threads Busy" + METRICS_ASSERTION_SUFFIX, healthPanel.getMetric("Current Http Threads Busy") != null);
-		assertTrue("Request Backlog" + METRICS_ASSERTION_SUFFIX , healthPanel.getMetric("Request Backlog") != null);
-		assertTrue("Active Sessions" + METRICS_ASSERTION_SUFFIX, healthPanel.getMetric("Active Sessions") != null);
+		assertTrue("Process Cpu Usage " + METRICS_ASSERTION_SUFFIX , healthPanel.getMetric(PROCESS_CPU_USAGE) != null);
+		assertTrue("Total Process Virtual Memory" + METRICS_ASSERTION_SUFFIX, healthPanel.getMetric(TOTAL_PROCESS_VIRTUAL_MEMORY) != null);
+		assertTrue("Num Of Active Threads" + METRICS_ASSERTION_SUFFIX , healthPanel.getMetric(NUM_OF_ACTIVE_THREADS) != null);
+		assertTrue("Current Http Threads Busy" + METRICS_ASSERTION_SUFFIX, healthPanel.getMetric(CURRENT_HTTP_THREADS_BUSY) != null);
+		assertTrue("Request Backlog" + METRICS_ASSERTION_SUFFIX , healthPanel.getMetric(REQUEST_BACKLOG) != null);
+		assertTrue("Active Sessions" + METRICS_ASSERTION_SUFFIX, healthPanel.getMetric(ACTIVE_SESSIONS) != null);
 
 		ServicesTab servicesTab = mainNav.switchToServices();
 

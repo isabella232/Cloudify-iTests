@@ -19,6 +19,7 @@ import com.gigaspaces.webuitf.topology.healthpanel.HealthPanel;
 public class UsmPuServiceMonitorsInsteadOfDetailsTest extends AbstractSeleniumServiceRecipeTest {
 	
 	private static final String ACTIVEMQ_FULL_SERVICE_NAME = DEFAULT_APPLICATION_NAME + ".activemq";
+	private static final String STORE_PERCENT_USAGE = "gs-metric-title-CUSTOM_Store_Percent_Usage";
 	
 	@Override
 	@BeforeMethod
@@ -51,10 +52,11 @@ public class UsmPuServiceMonitorsInsteadOfDetailsTest extends AbstractSeleniumSe
 		
 		activemq.select();
 		
-		Metric storePercentUsage = healthPanel.getMetric("Store Percent Usage");
+		Metric storePercentUsage = healthPanel.getMetric(STORE_PERCENT_USAGE);
 		
 		try { 
-			storePercentUsage.swithToMetric(new MetricType("Misc.", "Child Process ID", null));
+			MetricType metricType = new MetricType("Misc.", "Child Process ID", null);
+			storePercentUsage.swithToMetric(metricType);
 			shouldFail = true;
 			failureMessage += "Child Process ID should not be a part of the metric selection menu\n";
 		}

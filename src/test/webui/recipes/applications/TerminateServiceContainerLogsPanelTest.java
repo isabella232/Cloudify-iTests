@@ -12,7 +12,6 @@ import org.testng.annotations.Test;
 
 import com.gigaspaces.webuitf.LoginPage;
 import com.gigaspaces.webuitf.MainNavigation;
-import com.gigaspaces.webuitf.WebConstants;
 import com.gigaspaces.webuitf.topology.TopologyTab;
 import com.gigaspaces.webuitf.topology.applicationmap.ApplicationMap;
 import com.gigaspaces.webuitf.topology.applicationmap.ApplicationNode;
@@ -33,7 +32,6 @@ public class TerminateServiceContainerLogsPanelTest extends AbstractSeleniumAppl
 	@Override
 	@BeforeMethod
 	public void install() throws IOException, InterruptedException {
-		setBrowser(WebConstants.CHROME);
 		setCurrentApplication(TRAVEL_APPLICATION_NAME);
 		super.install();
 	}
@@ -52,9 +50,9 @@ public class TerminateServiceContainerLogsPanelTest extends AbstractSeleniumAppl
 		
 		topology.selectApplication(TRAVEL_APPLICATION_NAME);
 		
-		ApplicationNode travelNode = appMap.getApplicationNode(TOMCAT_SERVICE_FULL_NAME);
+		ApplicationNode tomcatNode = appMap.getApplicationNode(TOMCAT_SERVICE_FULL_NAME);
 		
-		travelNode.select();
+		tomcatNode.select();
 		
 		ProcessingUnit travelPu = admin.getProcessingUnits().getProcessingUnit(TOMCAT_SERVICE_FULL_NAME);
 		
@@ -76,7 +74,7 @@ public class TerminateServiceContainerLogsPanelTest extends AbstractSeleniumAppl
 		
 		mainNav.switchToTopology();
 		
-		travelNode.select();
+		tomcatNode.select();
 		
 		ProcessingUnitUtils.waitForDeploymentStatus(travelPu, DeploymentStatus.SCHEDULED);
 		ProcessingUnitUtils.waitForDeploymentStatus(travelPu, DeploymentStatus.INTACT);

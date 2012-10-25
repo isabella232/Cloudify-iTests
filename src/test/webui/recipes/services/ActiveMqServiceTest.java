@@ -27,6 +27,8 @@ import framework.utils.AssertUtils.RepetitiveConditionProvider;
 public class ActiveMqServiceTest extends AbstractSeleniumServiceRecipeTest {
 	
 	
+	private static final String STORE_PERCENT_USAGE = "gs-metric-title-CUSTOM_Store_Percent_Usage";
+
 	@Override
 	@BeforeMethod
 	public void install() throws IOException, InterruptedException {
@@ -122,7 +124,7 @@ public class ActiveMqServiceTest extends AbstractSeleniumServiceRecipeTest {
 		
 		takeScreenShot(this.getClass(), "activeMqRecipeTest","topology-healthpanel");
 		
-		assertTrue("Store Percent Usage" + METRICS_ASSERTION_SUFFIX, healthPanel.getMetric("Store Percent Usage") != null);
+		assertTrue("Store Percent Usage" + METRICS_ASSERTION_SUFFIX, healthPanel.getMetric(STORE_PERCENT_USAGE) != null);
 		
 		ServicesTab servicesTab = mainNav.switchToServices();
 		

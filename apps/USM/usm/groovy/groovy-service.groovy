@@ -5,7 +5,7 @@ service {
 	name "groovy"
 	type "WEB_SERVER"
 	elastic true
-	numInstances 2
+	numInstances 1
 	maxAllowedInstances 2
 	lifecycle { 
 	

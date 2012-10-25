@@ -29,7 +29,7 @@ public class MultipleInstancesTest extends AbstractPublicProvisioningByonCloudTe
 	public void testTwoInstancesOfTheSameServiceOnOneMachine() throws IOException, InterruptedException {
 
 		// this should install both service instances on the same machine
-		installPublicProvisioningServiceAndWait(GROOVY, 2, 128, 0);
+		installManualPublicProvisioningServiceAndWait(GROOVY, 2, 128, 0, DEFAULT_TEMPLATE_NAME);
 		
 		// check that it is the case
 		ProcessingUnit groovy = admin.getProcessingUnits().waitFor(ServiceUtils.getAbsolutePUName("default", GROOVY), OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
@@ -38,21 +38,6 @@ public class MultipleInstancesTest extends AbstractPublicProvisioningByonCloudTe
 		assertTrue("groovy instances were installed on 2 different machines", instances[0].getGridServiceContainer().getMachine().getHostAddress().equals(instances[1].getGridServiceContainer().getMachine().getHostAddress()));
 		
 		uninstallServiceAndWait(GROOVY);
-	}
-	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
-	public void testTwoInstancesOfTheSameServiceOnTwoMachine() throws IOException, InterruptedException {
-		
-		// this should install both service instances on the same machine
-		installDedicatedProvisioningServiceAndWait(GROOVY, 2);
-		
-		// check that it is the case
-		ProcessingUnit groovy = admin.getProcessingUnits().waitFor(ServiceUtils.getAbsolutePUName("default", GROOVY), OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
-		ProcessingUnitInstance[] instances = groovy.getInstances();
-		assertTrue("Wrong number of groovy instances discovered", instances.length == 2);
-		assertTrue("groovy instances were not installed on 2 different machines", !instances[0].getGridServiceContainer().getMachine().getHostAddress().equals(instances[1].getGridServiceContainer().getMachine().getHostAddress()));
-		
-		uninstallDedicatedProvisioningServiceAndWait();
 	}
 	
 	@AfterClass(alwaysRun = true)

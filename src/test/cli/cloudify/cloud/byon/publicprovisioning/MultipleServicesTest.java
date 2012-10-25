@@ -1,19 +1,15 @@
 package test.cli.cloudify.cloud.byon.publicprovisioning;
 
 import java.io.IOException;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.cloudifysource.dsl.utils.ServiceUtils;
-import org.openspaces.admin.machine.Machine;
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.openspaces.admin.pu.ProcessingUnitInstance;
 import org.testng.ITestContext;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-
-import framework.utils.ProcessingUnitUtils;
 
 public class MultipleServicesTest extends AbstractPublicProvisioningByonCloudTest {
 			
@@ -31,11 +27,11 @@ public class MultipleServicesTest extends AbstractPublicProvisioningByonCloudTes
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
-	public void testTwoPublic() throws IOException, InterruptedException {
+	public void testTwoServiceOnOneMachine() throws IOException, InterruptedException {
 		
 		// this should install both services on the same machine
-		installPublicProvisioningServiceAndWait(GROOVY_ONE, 1, 128, 0);
-		installPublicProvisioningServiceAndWait(GROOVY_TWO, 1, 128, 0);
+		installManualPublicProvisioningServiceAndWait(GROOVY_ONE, 1, 128, 0, DEFAULT_TEMPLATE_NAME);
+		installManualPublicProvisioningServiceAndWait(GROOVY_TWO, 1, 128, 0, DEFAULT_TEMPLATE_NAME);
 		
 		// check that it is the case
 		ProcessingUnit groovy1 = admin.getProcessingUnits().waitFor(ServiceUtils.getAbsolutePUName("default", GROOVY_ONE), OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
@@ -48,33 +44,6 @@ public class MultipleServicesTest extends AbstractPublicProvisioningByonCloudTes
 		
 		uninstallServiceAndWait(GROOVY_ONE);
 		uninstallServiceAndWait(GROOVY_TWO);
-	}
-	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
-	public void testOneDedicatedOnePublic() throws IOException, InterruptedException {
-		
-		// this should install both instances of 'groovy-public' on the same machine
-		installPublicProvisioningServiceAndWait("groovy-public", 2, 128, 0);
-		
-		// this should install two instances of 'groovy-dedicated' on two different machine (and not the one for groovy-one)
-		installDedicatedProvisioningServiceAndWait("groovy-dedicated", 2);
-		
-		// check that it is the case
-		ProcessingUnit groovyPublic = admin.getProcessingUnits().waitFor(ServiceUtils.getAbsolutePUName("default", "groovy-public"), OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
-		ProcessingUnit groovyDedicated = admin.getProcessingUnits().waitFor(ServiceUtils.getAbsolutePUName("default", "groovy-dedicated"), OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
-
-		Machine groovyPublicMachine = groovyPublic.getInstances()[0].getMachine();
-		
-		Set<Machine> groovyDedicatedMachines = ProcessingUnitUtils.getMachinesFromPu(groovyDedicated);
-		
-		assertEquals("2 instances of groovy-two were not installed on two different machines", 2, groovyDedicatedMachines.size());
-		
-		// after we know they were installed on 2 different machines, make sure non of these machines is the one installed from the public service
-		assertTrue("an instance of groovy-two was installed on the same machine as groovy-one, even though one is dedicated provisioning and the other is public", !groovyDedicatedMachines.contains(groovyPublicMachine));
-		
-		uninstallServiceAndWait("groovy-public");
-		uninstallServiceAndWait("groovy-dedicated");
-		
 	}
 	
 	@AfterClass(alwaysRun = true)

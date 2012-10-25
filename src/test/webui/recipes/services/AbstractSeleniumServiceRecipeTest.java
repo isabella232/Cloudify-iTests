@@ -34,8 +34,7 @@ public class AbstractSeleniumServiceRecipeTest extends AbstractWebUILocalCloudTe
 	public void install() throws IOException, InterruptedException {	
 		LogUtils.log("Installing service " + serviceName);
 		assertNotNull(pathToService);
-		installService(pathToService, wait); 
-		startBrowser();
+		installService(pathToService, wait);
 	}
 
 

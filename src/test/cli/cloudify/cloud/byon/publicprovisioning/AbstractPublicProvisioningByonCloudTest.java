@@ -25,34 +25,48 @@ public class AbstractPublicProvisioningByonCloudTest extends AbstractByonCloudTe
 			final int numInstances,
 			final int instanceMemoryInMB,
 			final double instanceCpuCores, String templateName) throws IOException, InterruptedException {
-		generateServiceToBuildServicesFolder(
-				serviceName,
-				PUBLIC_MANUAL_PROVISIONING_ORIGINAL_GROOVY_PATH,
-				"groovy",
-				numInstances, 
-				instanceMemoryInMB, 
-				instanceCpuCores, 
-				true, 
-				templateName);
-		super.installServiceAndWait(BUILD_SERVICES_FOLDER + "/" + serviceName, serviceName);
-		FileUtils.deleteDirectory(new File(BUILD_SERVICES_FOLDER + "/" + serviceName));
+		
+		try {			
+			generateServiceToBuildServicesFolder(
+					serviceName,
+					PUBLIC_MANUAL_PROVISIONING_ORIGINAL_GROOVY_PATH,
+					"groovy",
+					numInstances, 
+					instanceMemoryInMB, 
+					instanceCpuCores, 
+					true, 
+					templateName);
+			super.installServiceAndWait(BUILD_SERVICES_FOLDER + "/" + serviceName, serviceName);
+		} finally {			
+			File serviceDir = new File(BUILD_SERVICES_FOLDER + "/" + serviceName);
+			if (serviceDir.exists()) {
+				FileUtils.deleteDirectory(serviceDir);
+			}
+		}
 	}
 	
 	protected void installAutomaticManualPublicProvisioningServiceAndWait(final String serviceName,
 			final int numInstances,
 			final int instanceMemoryInMB,
 			final double instanceCpuCores, String templateName) throws IOException, InterruptedException {
-		generateServiceToBuildServicesFolder(
-				serviceName,
-				PUBLIC_AUTOMATIC_PROVISIONING_ORIGINAL_GROOVY_PATH,
-				"customServiceMonitor-public-provisioning",
-				numInstances, 
-				instanceMemoryInMB, 
-				instanceCpuCores, 
-				true, 
-				templateName);
-		super.installServiceAndWait(BUILD_SERVICES_FOLDER + "/" + serviceName, serviceName);
-		FileUtils.deleteDirectory(new File(BUILD_SERVICES_FOLDER + "/" + serviceName));
+		
+		try {
+			generateServiceToBuildServicesFolder(
+					serviceName,
+					PUBLIC_AUTOMATIC_PROVISIONING_ORIGINAL_GROOVY_PATH,
+					"customServiceMonitor-public-provisioning",
+					numInstances, 
+					instanceMemoryInMB, 
+					instanceCpuCores, 
+					true, 
+					templateName);
+			super.installServiceAndWait(BUILD_SERVICES_FOLDER + "/" + serviceName, serviceName);			
+		} finally {
+			File serviceDir = new File(BUILD_SERVICES_FOLDER + "/" + serviceName);
+			if (serviceDir.exists()) {
+				FileUtils.deleteDirectory(serviceDir);
+			}
+		}
 	}
 
 	private void generateServiceToBuildServicesFolder(final String serviceName,
@@ -70,7 +84,7 @@ public class AbstractPublicProvisioningByonCloudTest extends AbstractByonCloudTe
 		props.put("instanceCpuCores 0", "instanceCpuCores " + instanceCpuCores);
 
 		FileUtils.copyDirectory(new File(originalServicePath), new File(BUILD_SERVICES_FOLDER + "/" + serviceName));
-		File dslFile = new File(BUILD_SERVICES_FOLDER + "/" + serviceName + "/" + originalServiceName + ".groovy");
+		File dslFile = new File(BUILD_SERVICES_FOLDER + "/" + serviceName + "/" + originalServiceName + "-service.groovy");
 		File serviceFile = new File(BUILD_SERVICES_FOLDER + "/" + serviceName + "/" + serviceName + "-service.groovy");
 		if (!serviceFile.exists()) {
 			FileUtils.moveFile(dslFile, serviceFile);

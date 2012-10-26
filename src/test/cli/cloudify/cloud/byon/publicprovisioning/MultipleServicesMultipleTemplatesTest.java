@@ -1,10 +1,10 @@
 package test.cli.cloudify.cloud.byon.publicprovisioning;
 
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import org.cloudifysource.dsl.utils.ServiceUtils;
 import org.openspaces.admin.pu.ProcessingUnit;
-import org.openspaces.admin.pu.ProcessingUnitInstance;
 import org.testng.ITestContext;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -41,11 +41,9 @@ public class MultipleServicesMultipleTemplatesTest extends AbstractPublicProvisi
 		// check that it is the case
 		ProcessingUnit groovy1 = admin.getProcessingUnits().waitFor(ServiceUtils.getAbsolutePUName("default", GROOVY_ONE), OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
 		ProcessingUnit groovy2 = admin.getProcessingUnits().waitFor(ServiceUtils.getAbsolutePUName("default", GROOVY_TWO), OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
-		ProcessingUnitInstance[] instances1 = groovy1.getInstances();
-		ProcessingUnitInstance[] instances2 = groovy2.getInstances();
-		assertTrue("Wrong number of groovy instances discovered", instances1.length == 2);
-		assertTrue("Wrong number of groovy instances discovered", instances2.length == 2);
-		assertTrue("groovy-one and groovy-two instances were installed on the same machine", !instances1[0].getGridServiceContainer().getMachine().getHostAddress().equals(instances2[0].getGridServiceContainer().getMachine().getHostAddress()));
+		assertTrue(groovy1.waitFor(1, OPERATION_TIMEOUT, TimeUnit.MILLISECONDS));
+		assertTrue(groovy2.waitFor(1, OPERATION_TIMEOUT, TimeUnit.MILLISECONDS));
+		assertTrue("groovy-one and groovy-two instances were installed on the same machine", !groovy1.getInstances()[0].getGridServiceContainer().getMachine().getHostAddress().equals(groovy2.getInstances()[0].getGridServiceContainer().getMachine().getHostAddress()));
 		
 		uninstallServiceAndWait(GROOVY_ONE);
 		uninstallServiceAndWait(GROOVY_TWO);
@@ -56,5 +54,11 @@ public class MultipleServicesMultipleTemplatesTest extends AbstractPublicProvisi
 	@AfterClass(alwaysRun = true)
 	protected void teardown() {
 		super.teardown();
+	}
+	
+	@Override
+	public void beforeTeardown() throws IOException, InterruptedException {
+		super.uninstallServicefFound(GROOVY_ONE);
+		super.uninstallServicefFound(GROOVY_TWO);
 	}
 }

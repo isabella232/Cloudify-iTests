@@ -5,7 +5,6 @@ import java.util.concurrent.TimeUnit;
 
 import org.cloudifysource.dsl.utils.ServiceUtils;
 import org.openspaces.admin.pu.ProcessingUnit;
-import org.openspaces.admin.pu.ProcessingUnitInstance;
 import org.testng.ITestContext;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -33,9 +32,8 @@ public class MultipleInstancesTest extends AbstractPublicProvisioningByonCloudTe
 		
 		// check that it is the case
 		ProcessingUnit groovy = admin.getProcessingUnits().waitFor(ServiceUtils.getAbsolutePUName("default", GROOVY), OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
-		ProcessingUnitInstance[] instances = groovy.getInstances();
-		assertTrue("Wrong number of groovy instances discovered", instances.length == 2);
-		assertTrue("groovy instances were installed on 2 different machines", instances[0].getGridServiceContainer().getMachine().getHostAddress().equals(instances[1].getGridServiceContainer().getMachine().getHostAddress()));
+		assertTrue(groovy.waitFor(2, OPERATION_TIMEOUT, TimeUnit.MILLISECONDS));
+		assertTrue("groovy instances were installed on 2 different machines", groovy.getInstances()[0].getGridServiceContainer().getMachine().getHostAddress().equals(groovy.getInstances()[1].getGridServiceContainer().getMachine().getHostAddress()));
 		
 		uninstallServiceAndWait(GROOVY);
 	}
@@ -43,5 +41,10 @@ public class MultipleInstancesTest extends AbstractPublicProvisioningByonCloudTe
 	@AfterClass(alwaysRun = true)
 	protected void teardown() {
 		super.teardown();
+	}
+	
+	@Override
+	public void beforeTeardown() throws IOException, InterruptedException {
+		super.uninstallServicefFound(GROOVY);
 	}
 }

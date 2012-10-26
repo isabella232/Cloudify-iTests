@@ -57,6 +57,11 @@ public class AutomaticPublicProvisioningTest extends AbstractPublicProvisioningB
 		super.teardown();
 	}
 	
+	@Override
+	public void beforeTeardown() throws IOException, InterruptedException {
+		super.uninstallServicefFound(SERVICE_NAME);
+	}
+	
 	private void setStatistics(final ProcessingUnit pu, final int expectedNumberOfInstances, long value) throws IOException, InterruptedException {
 		
 		ProcessingUnitInstance[] instances = repetitiveAssertNumberOfInstances(pu, expectedNumberOfInstances);

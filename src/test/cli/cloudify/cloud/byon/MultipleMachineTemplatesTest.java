@@ -126,7 +126,7 @@ public class MultipleMachineTemplatesTest extends AbstractByonCloudTest {
 
 	@Override
 	protected void beforeTeardown() {
-		// override so as to not close admin. we will use it after the teardown
+		super.uninstallApplicationIfFound("petclinic");
 	}
 	@Override
 	protected void afterTeardown() throws Exception {		

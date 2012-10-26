@@ -184,6 +184,28 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 			}
 		}
 	}
+	
+	public void uninstallApplicationIfFound(final String applicationName) {
+		
+		if ((getService() != null) && (getService().getRestUrls() != null) && (applicationName != null)) {
+			String command = "connect " + getRestUrl() + ";list-applications";
+			String output;
+			try {
+				output = CommandTestUtils.runCommandAndWait(command);
+				if (output.contains(applicationName)) {
+					uninstallApplicationAndWait(applicationName);
+				}
+			} catch (IOException e) {
+				LogUtils.log(e.getMessage(), e);
+				AssertFail(e.getMessage());
+			} catch (InterruptedException e) {
+				LogUtils.log(e.getMessage(), e);
+				AssertFail(e.getMessage());
+			}
+		}
+
+		
+	}
 
 	
 	

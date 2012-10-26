@@ -23,6 +23,7 @@ public class MultipleTemplatesWithNamesAsIPsTest extends MultipleMachineTemplate
 
 	private MultipleTemplatesByonCloudService service = new MultipleTemplatesByonCloudService(this.getClass().getName());
 	
+	@Override
 	@BeforeClass(alwaysRun = true)
 	protected void bootstrap(final ITestContext testContext) {
 		
@@ -55,7 +56,7 @@ public class MultipleTemplatesWithNamesAsIPsTest extends MultipleMachineTemplate
 
 
 	@Override
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true, priority = 1)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
 	public void test() throws Exception {
 		super.test();
 	}

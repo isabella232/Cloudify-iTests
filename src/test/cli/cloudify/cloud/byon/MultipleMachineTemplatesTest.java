@@ -73,6 +73,9 @@ public class MultipleMachineTemplatesTest extends AbstractByonCloudTest {
 		installApplicationAndWait(PETCLINIC_MULTIPLE_TEMPLATES_BUILD_PATH, "petclinic");
 
 		Map<String, List<String>> hostsPerTemplate = service.getHostsPerTemplate();
+		
+		LogUtils.log("hosts per template = " + hostsPerTemplate);
+		LogUtils.log("template per service = " + templatePerService);
 		Assert.assertTrue(hostsPerTemplate.get(templatePerService.get("petclinic.mongod")).contains(getPuHost("petclinic.mongod")));
 		Assert.assertTrue(hostsPerTemplate.get(templatePerService.get("petclinic.mongos")).contains(getPuHost("petclinic.mongos")));
 		Assert.assertTrue(hostsPerTemplate.get(templatePerService.get("petclinic.mongoConfig")).contains(getPuHost("petclinic.mongoConfig")));
@@ -85,6 +88,7 @@ public class MultipleMachineTemplatesTest extends AbstractByonCloudTest {
 		assertServiceIsDown("petclinic.mongos");
 		assertServiceIsDown("petclinic.mongoConfig");
 		assertServiceIsDown("petclinic.tomcat");
+		assertServiceIsDown("petclinic.apacheLB");
 	}
 	
 	private void assertManagementIsDown() {		

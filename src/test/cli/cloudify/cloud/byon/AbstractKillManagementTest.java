@@ -9,10 +9,6 @@ import org.junit.Assert;
 import org.openspaces.admin.gsm.GridServiceManager;
 import org.openspaces.admin.machine.Machine;
 import org.openspaces.admin.pu.ProcessingUnit;
-import org.testng.ITestContext;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeMethod;
 
 import test.cli.cloudify.cloud.services.byon.ByonCloudService;
 import framework.utils.AssertUtils;
@@ -34,13 +30,7 @@ public abstract class AbstractKillManagementTest extends AbstractByonCloudTest {
 	private static final long TEN_SECONDS = 10 * 1000;
 	
 	protected abstract Machine getMachineToKill();
-	
-	@BeforeClass(alwaysRun = true)
-	protected void bootstrap(final ITestContext testContext) {
-		super.bootstrap(testContext);
-	}
 
-	@BeforeMethod
 	public void installApplication() throws IOException, InterruptedException {
 		LogUtils.log("installing application petclinic on byon");
 		installApplicationAndWait(ScriptUtils.getBuildPath() + "/recipes/apps/petclinic-simple", "petclinic");
@@ -110,18 +100,6 @@ public abstract class AbstractKillManagementTest extends AbstractByonCloudTest {
 			gsmMachines[i] = griServiceManagers[i].getMachine();
 		}
 		return gsmMachines;
-	}
-
-
-	@AfterClass(alwaysRun = true)
-	protected void teardown() {
-		super.teardown();
-	}
-
-	@Override
-	protected void customizeCloud() throws Exception {
-		super.customizeCloud();
-		getService().setNumberOfManagementMachines(numOManagementMachines);
 	}
 
 	//TODO: add support for windows machines (BYON doesn't support windows right now)

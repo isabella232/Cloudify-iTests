@@ -1,16 +1,47 @@
 package test.cli.cloudify.cloud.byon;
 
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import org.openspaces.admin.esm.ElasticServiceManager;
 import org.openspaces.admin.machine.Machine;
+import org.testng.ITestContext;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 public class KillElasticServiceManagerMachineTest extends AbstractKillManagementTest {
 	
+	@BeforeClass(alwaysRun = true)
+	protected void bootstrap(final ITestContext testContext) {
+		super.bootstrap(testContext);
+	}
+	
+	@BeforeMethod
+	public void installApplication() throws IOException, InterruptedException {
+		super.installApplication();
+	}
+	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
 	public void testKillMachine() throws Exception {
 		super.testKillMachine();
+	}
+	
+	@Override
+	public void beforeTeardown() {
+		super.uninstallApplicationIfFound("petclinic");
+	}
+	
+	@AfterClass(alwaysRun = true)
+	protected void teardown() {
+		super.teardown();
+	}
+	
+	@Override
+	protected void customizeCloud() throws Exception {
+		super.customizeCloud();
+		getService().setNumberOfManagementMachines(2);
 	}
 	
 	@Override

@@ -31,7 +31,7 @@ public class AutomaticPublicProvisioningTest extends AbstractPublicProvisioningB
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
 	public void testAutoScalingPublicProvisioning() throws IOException, InterruptedException {
 		
-		installAutomaticManualPublicProvisioningServiceAndWait(SERVICE_NAME, 1, 128, 0, DEFAULT_TEMPLATE_NAME);
+		installAutomaticPublicProvisioningServiceAndWait(SERVICE_NAME, 1, 128, 0, DEFAULT_TEMPLATE_NAME);
 		
 		ProcessingUnit pu = admin.getProcessingUnits().waitFor(ServiceUtils.getAbsolutePUName("default", SERVICE_NAME), OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
 		

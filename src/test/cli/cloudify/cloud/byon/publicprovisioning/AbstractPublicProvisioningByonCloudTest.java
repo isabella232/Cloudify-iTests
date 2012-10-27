@@ -45,7 +45,7 @@ public class AbstractPublicProvisioningByonCloudTest extends AbstractByonCloudTe
 		}
 	}
 	
-	protected void installAutomaticManualPublicProvisioningServiceAndWait(final String serviceName,
+	protected void installAutomaticPublicProvisioningServiceAndWait(final String serviceName,
 			final int numInstances,
 			final int instanceMemoryInMB,
 			final double instanceCpuCores, String templateName) throws IOException, InterruptedException {

@@ -91,6 +91,10 @@ public class MultipleMachineTemplatesTest extends AbstractByonCloudTest {
 		assertServiceIsDown("petclinic.apacheLB");
 	}
 	
+	protected void setService(MultipleTemplatesByonCloudService service) {
+		this.service = service;
+	}
+	
 	private void assertManagementIsDown() {		
 		assertServiceIsDown("webui");
 		assertServiceIsDown("rest");

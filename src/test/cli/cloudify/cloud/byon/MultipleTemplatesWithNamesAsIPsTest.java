@@ -58,6 +58,7 @@ public class MultipleTemplatesWithNamesAsIPsTest extends MultipleMachineTemplate
 	@Override
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
 	public void test() throws Exception {
+		super.setService(service);
 		super.test();
 	}
 

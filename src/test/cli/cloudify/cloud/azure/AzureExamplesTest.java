@@ -14,8 +14,8 @@ import test.cli.cloudify.cloud.NewAbstractCloudTest;
 import test.cli.cloudify.cloud.services.azure.MicrosoftAzureCloudService;
 import framework.tools.SGTestHelper;
 
-public class AzureTravelTest extends NewAbstractCloudTest {
-
+public class AzureExamplesTest extends NewAbstractCloudTest {
+	
 	@BeforeClass(alwaysRun = true)
 	protected void bootstrap(final ITestContext testContext) {
 		MicrosoftAzureCloudService azureCloudService = new MicrosoftAzureCloudService(this.getClass().getName());
@@ -23,14 +23,18 @@ public class AzureTravelTest extends NewAbstractCloudTest {
 	}
 	
 	@BeforeMethod
-	public void copyTravelAzureApplicationToBuildDir() throws IOException {
+	public void copyAzureApplicationsToBuildDir() throws IOException {
+		copyApplicationToBuildDir("travel-azure");
+		copyApplicationToBuildDir("petclinic-simple-azure");
 		
+	}
+
+	private void copyApplicationToBuildDir(final String applicationName) throws IOException {
 		File appsDir = new File(SGTestHelper.getBuildDir() + "/recipes/apps");
-		File originalAzureApplication = new File(SGTestHelper.getBuildDir() + "/recipes/apps/travel-azure");
+		File originalAzureApplication = new File(SGTestHelper.getBuildDir() + "/recipes/apps/" + applicationName);
 		FileUtils.deleteDirectory(originalAzureApplication);
-		File newAzureApplication = new File(SGTestHelper.getSGTestRootDir() + "/apps/cloudify/recipes/travel-azure");
+		File newAzureApplication = new File(SGTestHelper.getSGTestRootDir() + "/apps/cloudify/recipes/" + applicationName);
 		FileUtils.copyDirectoryToDirectory(newAzureApplication, appsDir);
-		
 	}
 	
 	@AfterClass(alwaysRun = true)
@@ -38,9 +42,14 @@ public class AzureTravelTest extends NewAbstractCloudTest {
 		super.teardown();
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
 	public void testTravel() throws IOException, InterruptedException {
 		doSanityTest("travel-azure", "travel");		
+	}
+	
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = false)
+	public void testPetclinicSimple() throws IOException, InterruptedException {
+		doSanityTest("petclinic-simple-azure", "petclinic");
 	}
 
 

@@ -9,9 +9,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.io.FileUtils;
 import org.openspaces.admin.zone.config.AnyZonesConfig;
-import org.openspaces.admin.zone.config.AtLeastOneZoneConfig;
-import org.openspaces.admin.zone.config.AtLeastOneZoneConfigurer;
-import org.openspaces.admin.zone.config.ExactZonesConfig;
+import org.openspaces.admin.zone.config.ZonesConfig;
 import org.testng.Assert;
 import org.testng.ITestContext;
 import org.testng.annotations.AfterClass;
@@ -55,14 +53,14 @@ public class Ec2LocationAwareScalingRulesTest extends AbstractScalingRulesCloudT
 		final String applicationPath = getApplicationPath();
 		installApplicationAndWait(applicationPath, getApplicationName());
 		
-		// check that there are two global instances with zone 'petclinic.tomcat'
-		AtLeastOneZoneConfig zones = new AtLeastOneZoneConfigurer().addZone(getAbsoluteServiceName()).create();
-		repititiveAssertNumberOfInstances(getAbsoluteServiceName(),zones, 2);
+		// check that there are two global instances
+		repititiveAssertNumberOfInstances(getAbsoluteServiceName(),new AnyZonesConfig(), 2);
 
-		Set<ExactZonesConfig> puExactZones = getProcessingUnitExactZones(getAbsoluteServiceName());
-		ExactZonesConfig zonesToPerformAutoScaling = puExactZones.iterator().next(); // just take the first zone
+		Set<ZonesConfig> puExactZones = getProcessingUnitZones(getAbsoluteServiceName());
+		ZonesConfig zonesToPerformAutoScaling = puExactZones.iterator().next(); // just take the first zone
 		
 		// increase web traffic for the instance of the specific zone, wait for scale out
+		LogUtils.log("starting threads on an instance with zones " + zonesToPerformAutoScaling.getZones());
 		startThreads(zonesToPerformAutoScaling);
 		repititiveAssertNumberOfInstances(getAbsoluteServiceName(),zonesToPerformAutoScaling, 2);
 		// assert that we reach a steady state. number of instances should not increase any further since 2 is the maximum per zone
@@ -87,15 +85,14 @@ public class Ec2LocationAwareScalingRulesTest extends AbstractScalingRulesCloudT
 		final String applicationPath = getApplicationPath();
 		installApplicationAndWait(applicationPath, getApplicationName());
 		
-		// check that there are two global instances with zone 'petclinic.tomcat'
-		AtLeastOneZoneConfig zones = new AtLeastOneZoneConfigurer().addZone(getAbsoluteServiceName()).create();
-		repititiveAssertNumberOfInstances(getAbsoluteServiceName(),zones, 2, OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
+		// check that there are two global instances
+		repititiveAssertNumberOfInstances(getAbsoluteServiceName(),new AnyZonesConfig(), 2, OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
 
-		Set<ExactZonesConfig> puExactZones = getProcessingUnitExactZones(getAbsoluteServiceName());
-		ExactZonesConfig zonesToPerformAutoScaling = puExactZones.iterator().next(); // just take the first zone
+		Set<ZonesConfig> puExactZones = getProcessingUnitZones(getAbsoluteServiceName());
+		ZonesConfig zonesToPerformAutoScaling = puExactZones.iterator().next(); // just take the first zone
 
 		// Try to start a new machine and then cancel it.
-		LogUtils.log("starting threads");
+		LogUtils.log("starting threads on an instance with zones " + zonesToPerformAutoScaling.getZones());
 		startThreads(zonesToPerformAutoScaling);
 		LogUtils.log("after start threads");
 		executor.schedule(new Runnable() {
@@ -119,11 +116,11 @@ public class Ec2LocationAwareScalingRulesTest extends AbstractScalingRulesCloudT
 		uninstallApplicationAndWait(getApplicationName());
 	}
 	
-	private Set<ExactZonesConfig> getProcessingUnitExactZones(
+	private Set<ZonesConfig> getProcessingUnitZones(
 			String absoluteServiceName) throws Exception {
 		List<InstanceDetails> detailss = getInstancesDetails(absoluteServiceName, new AnyZonesConfig());
 		
-		Set<ExactZonesConfig> zones = new HashSet<ExactZonesConfig>();
+		Set<ZonesConfig> zones = new HashSet<ZonesConfig>();
 		for (InstanceDetails details : detailss) {
 			zones.add(details.getAgentZones());
 		}
@@ -168,6 +165,11 @@ public class Ec2LocationAwareScalingRulesTest extends AbstractScalingRulesCloudT
 		final File applicationPath = new File(super.getApplicationPath());
 		final File newApplicationPath = new File(applicationPath.getParentFile(), applicationPath.getName()+LOCATION_AWARE_POSTFIX);
 		return newApplicationPath.getAbsolutePath();
+	}
+	
+	@Override
+	protected void beforeTeardown() throws Exception {
+		super.uninstallApplicationIfFound("petclinic");
 	}
 
 }

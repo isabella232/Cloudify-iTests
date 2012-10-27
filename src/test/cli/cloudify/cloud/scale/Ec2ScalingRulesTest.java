@@ -56,5 +56,10 @@ public class Ec2ScalingRulesTest extends AbstractScalingRulesCloudTest{
 	protected void teardown() {
 		super.teardown();
 	}
+	
+	@Override
+	protected void beforeTeardown() throws Exception {
+		super.uninstallApplicationIfFound("petclinic");
+	}
 
 }

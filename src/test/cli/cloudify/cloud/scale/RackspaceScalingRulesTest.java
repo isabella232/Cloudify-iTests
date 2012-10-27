@@ -55,4 +55,9 @@ public class RackspaceScalingRulesTest extends AbstractScalingRulesCloudTest {
 	public void cleanUp() {
 		super.teardown();
 	}
+	
+	@Override
+	protected void beforeTeardown() throws Exception {
+		super.uninstallApplicationIfFound("petclinic");
+	}
 }

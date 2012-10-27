@@ -15,6 +15,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
@@ -285,9 +286,9 @@ public abstract class AbstractScalingRulesCloudTest extends NewAbstractCloudTest
 	
 	public class InstanceDetails {
 		private final URL publicIp;
-		private final ExactZonesConfig agentZones;
+		private final ZonesConfig agentZones;
 		
-		public InstanceDetails(URL publicIp, ExactZonesConfig agentZones) {
+		public InstanceDetails(URL publicIp, ZonesConfig agentZones) {
 			this.agentZones = agentZones;
 			this.publicIp = publicIp;
 		}
@@ -296,7 +297,7 @@ public abstract class AbstractScalingRulesCloudTest extends NewAbstractCloudTest
 			return publicIp;
 		}
 
-		public ExactZonesConfig getAgentZones() {
+		public ZonesConfig getAgentZones() {
 			return agentZones;
 		}
 
@@ -326,21 +327,32 @@ public abstract class AbstractScalingRulesCloudTest extends NewAbstractCloudTest
 			}
 			
 			URL agentZonesUrl = new URL(instanceUrl +"/GridServiceContainer/GridServiceAgent/ExactZones/Properties/"+zonesAttrName);
-			String agentZonesResponse = WebUtils.getURLContent(agentZonesUrl);
 			ExactZonesConfig agentZones = null;
-			String[] instanceZones = null;
-			if (agentZonesResponse.length() > 0) {
-				Map<String, Object> agentZoneMap = jsonToMap(agentZonesResponse);
-				instanceZones = StringUtils.commaDelimitedListToStringArray(
-						(String) agentZoneMap.get(zonesAttrName));
-				agentZones = 
-						new ExactZonesConfigurer()
-						.addZones(
-								instanceZones)
-						.create();
-			}
-			if (publicIp != null && agentZones != null && agentZones.isStasfies(zones)) {
-				instancesDetails.add(new InstanceDetails(publicIp,agentZones));
+			try {
+				String agentZonesResponse = WebUtils.getURLContent(agentZonesUrl);
+				agentZones = null;
+				String[] instanceZones = null;
+				if (agentZonesResponse.length() > 0) {
+					Map<String, Object> agentZoneMap = jsonToMap(agentZonesResponse);
+					instanceZones = StringUtils.commaDelimitedListToStringArray(
+							(String) agentZoneMap.get(zonesAttrName));
+					agentZones = 
+							new ExactZonesConfigurer()
+					.addZones(
+							instanceZones)
+							.create();
+				}
+				if (publicIp != null && agentZones != null && agentZones.isStasfies(zones)) {
+					instancesDetails.add(new InstanceDetails(publicIp,agentZones));
+				}
+			} catch (final HttpResponseException e) {
+				// agent has no zones. this is ok, can happen if the cloud driver did not start the agent on a specific location.
+				// add this instance only if the requested zones were 'AnyZonesConfig'. any other request should not include
+				// an agent with no zones.
+				LogUtils.log("caught an exception while querying instance " + publicIp + " agent zones", e);
+				if (publicIp != null) {
+					instancesDetails.add(new InstanceDetails(publicIp,new AnyZonesConfig()));
+				}
 			}
 		}
 

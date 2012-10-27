@@ -56,4 +56,9 @@ public class HPScalingRulesTest extends AbstractScalingRulesCloudTest{
 		super.testPetclinicSimpleScalingRules();
 	}
 
+	@Override
+	protected void beforeTeardown() throws Exception {
+		super.uninstallApplicationIfFound("petclinic");
+	}
+
 }

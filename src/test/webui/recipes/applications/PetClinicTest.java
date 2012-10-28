@@ -201,8 +201,16 @@ public class PetClinicTest extends AbstractSeleniumApplicationRecipeTest {
 		
 		ApplicationNode applicationNodeMongoConfig = appMap.getApplicationNode(MONGOCFG_FULL_SERVICE_NAME);
 		
-		assertTrue(tomcatConnectors.size() == 1);
+		ApplicationNode applicationNodeApacheLB = appMap.getApplicationNode(APACHELB_FULL_SERVICE_NAME);
+		
+		assertTrue(tomcatConnectors.size() == 2);
 		assertTrue(tomcatConnectors.get(0).getTarget().getName().equals(applicationNodeMongos.getName()));
+		
+		assertTrue(tomcatConnectors.size() == 2);
+		for (Connector c : tomcatConnectors) {
+			String name = c.getTarget().getName();
+			assertTrue(name.equals(applicationNodeMongos.getName()) ||name.equals(applicationNodeApacheLB.getName()));
+		}
 		
 		assertTrue(mongosConnectors.size() == 2);
 		for (Connector c : mongosConnectors) {

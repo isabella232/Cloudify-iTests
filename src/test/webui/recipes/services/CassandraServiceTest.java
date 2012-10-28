@@ -26,6 +26,12 @@ import framework.utils.AssertUtils.RepetitiveConditionProvider;
 
 public class CassandraServiceTest extends AbstractSeleniumServiceRecipeTest  {
 		
+	private static final String COMMIT_LOG_ACTIVE_TASKS = "gs-metric-title-CUSTOM_Commit_Log_Active_Tasks";
+	private static final String COMPACTION_MANAGER_PENDING_TASKS = "gs-metric-title-CUSTOM_Compaction_Manager_Pending_Tasks";
+	private static final String COMPACTION_MANAGER_COMPLETED_TASKS = "gs-metric-title-CUSTOM_Compaction_Manager_Completed_Tasks";
+	private static final String TOTAL_PROCESS_VIRTUAL_MEMORY = "gs-metric-title-CUSTOM_Total_Process_Virtual_Memory";
+	private static final String PROCESS_CPU_USAGE = "gs-metric-title-CUSTOM_Process_Cpu_Usage";
+	
 	@Override
 	@BeforeMethod
 	public void install() throws IOException, InterruptedException {
@@ -120,11 +126,11 @@ public class CassandraServiceTest extends AbstractSeleniumServiceRecipeTest  {
 
 		takeScreenShot(this.getClass(),"cassandraRecipeTest", "topology-healthpanel");
 		
-		assertTrue("Process Cpu Usage " + METRICS_ASSERTION_SUFFIX, healthPanel.getMetric("Process Cpu Usage") != null);
-		assertTrue("Total Process Virtual Memory " + METRICS_ASSERTION_SUFFIX, healthPanel.getMetric("Total Process Virtual Memory") != null);
-		assertTrue("Compaction Manager Completed Tasks " + METRICS_ASSERTION_SUFFIX , healthPanel.getMetric("Compaction Manager Completed Tasks") != null);
-		assertTrue("Compaction Manager Pending Tasks " + METRICS_ASSERTION_SUFFIX, healthPanel.getMetric("Compaction Manager Pending Tasks") != null);
-		assertTrue("Commit Log Active Tasks" + METRICS_ASSERTION_SUFFIX , healthPanel.getMetric("Commit Log Active Tasks") != null);
+		assertTrue("Process Cpu Usage " + METRICS_ASSERTION_SUFFIX, healthPanel.getMetric(PROCESS_CPU_USAGE) != null);
+		assertTrue("Total Process Virtual Memory " + METRICS_ASSERTION_SUFFIX, healthPanel.getMetric(TOTAL_PROCESS_VIRTUAL_MEMORY) != null);
+		assertTrue("Compaction Manager Completed Tasks " + METRICS_ASSERTION_SUFFIX , healthPanel.getMetric(COMPACTION_MANAGER_COMPLETED_TASKS) != null);
+		assertTrue("Compaction Manager Pending Tasks " + METRICS_ASSERTION_SUFFIX, healthPanel.getMetric(COMPACTION_MANAGER_PENDING_TASKS) != null);
+		assertTrue("Commit Log Active Tasks" + METRICS_ASSERTION_SUFFIX , healthPanel.getMetric(COMMIT_LOG_ACTIVE_TASKS) != null);
 
 		ServicesTab servicesTab = mainNav.switchToServices();
 

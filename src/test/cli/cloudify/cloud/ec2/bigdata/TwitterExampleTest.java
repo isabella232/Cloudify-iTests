@@ -6,6 +6,7 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.cloudifysource.dsl.internal.ServiceReader;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.type.TypeFactory;
 import org.codehaus.jackson.type.JavaType;
@@ -16,7 +17,6 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import test.AbstractTestSupport;
 import test.cli.cloudify.cloud.NewAbstractCloudTest;
 
 import com.sun.jersey.api.client.Client;
@@ -26,7 +26,6 @@ import com.sun.jersey.api.client.config.DefaultClientConfig;
 import framework.tools.SGTestHelper;
 import framework.utils.AssertUtils;
 import framework.utils.LogUtils;
-import framework.utils.SSHUtils;
 import framework.utils.ScriptUtils;
 import framework.utils.WebUtils;
 
@@ -35,11 +34,12 @@ public class TwitterExampleTest extends NewAbstractCloudTest{
 	private String username = "tgrid";
 	private String password = "tgrid";
 	private String restUrl;
-	private final String applicationName = "bigDataApp";
-	private final String applicationFolderName = "streaming-bigdata";
+	private String applicationName;
+	private final String applicationFolderName = "bigDataApp";
+	private final String streamingApplicationFolderName = "streaming-bigdata";
 	private final static int REPEATS = 3;
-	private static final String TOKEN_COUNTER_PROPERTY = "org.openspaces.bigdata.processor.events.TokenCounter";
-	private final static String ENTRIES_AMOUNT_REST_URL = "/admin/Spaces/Names/space/Spaces/Names/space/RuntimeDetails/CountPerClassName/" + TOKEN_COUNTER_PROPERTY;
+	private static final String GLOBAL_COUNTER_PROPERTY = "org.openspaces.bigdata.common.counters.GlobalCounter";
+	private final static String ENTRIES_AMOUNT_REST_URL = "/admin/Spaces/Names/space/Spaces/Names/space/RuntimeDetails/CountPerClassName/" + GLOBAL_COUNTER_PROPERTY;
 	
 	@BeforeClass(alwaysRun = true)
 	protected void bootstrap(final ITestContext testContext) {
@@ -59,27 +59,29 @@ public class TwitterExampleTest extends NewAbstractCloudTest{
 	@BeforeMethod
 	public void prepareApplication() throws IOException, InterruptedException {
 		String buildDir = SGTestHelper.getBuildDir();
-		File appFolder = new File(buildDir + "/recipes/apps/" + applicationFolderName);
+		File appFolder = new File(buildDir + "/recipes/apps/" + streamingApplicationFolderName);
 		String hostAddress = "127.0.0.1";
 		
-		SSHUtils.runCommand(hostAddress, AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, 
-				"cd " + appFolder + ";" + "mvn install", username, password);
+//		SSHUtils.runCommand(hostAddress, AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, 
+//				"cd " + appFolder + ";" + "mvn install", username, password);
 
 	}
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
 	public void testTwitter() throws Exception {
 
+		String applicationPath = ScriptUtils.getBuildPath() + "/recipes/apps/" + streamingApplicationFolderName + "/" + applicationFolderName;
+		File applicationDslFilePath = new File(applicationPath + "/bigDataApp-application.groovy");
+		applicationName = ServiceReader.getApplicationFromFile(applicationDslFilePath).getApplication().getName();
 		LogUtils.log("installing application " + applicationName + " on " + this.getCloudName());
-		String applicationPath = ScriptUtils.getBuildPath() + "/recipes/apps/" + applicationFolderName + "/" + applicationName;
 		
 		installApplicationAndWait(applicationPath, applicationName, 0);
 		
 		LogUtils.log("verifing successful installation");
 		restUrl = getRestUrl();
-		URL cassandraPuAdminUrl = new URL(restUrl + "/admin/ProcessingUnits/Names/rt_app.rt_cassandra");
-		URL processorPuAdminUrl = new URL(restUrl + "/admin/ProcessingUnits/Names/rt_app.processor");
-		URL feederPuAdminUrl = new URL(restUrl + "/admin/ProcessingUnits/Names/rt_app.feeder");
+		URL cassandraPuAdminUrl = new URL(restUrl + "/admin/ProcessingUnits/Names/big_data_app.cassandra");
+		URL processorPuAdminUrl = new URL(restUrl + "/admin/ProcessingUnits/Names/big_data_app.processor");
+		URL feederPuAdminUrl = new URL(restUrl + "/admin/ProcessingUnits/Names/big_data_app.feeder");
 
 		assertTrue(WebUtils.isURLAvailable(cassandraPuAdminUrl));
 		assertTrue(WebUtils.isURLAvailable(processorPuAdminUrl));
@@ -89,7 +91,7 @@ public class TwitterExampleTest extends NewAbstractCloudTest{
 		final WebResource service = client.resource(this.getRestUrl());
 		String entriesString = service.path(ENTRIES_AMOUNT_REST_URL).get(String.class);
 		Map<String, Object> entriesAmountJsonMap = jsonToMap(entriesString);
-		String entriesAmountString = (String) entriesAmountJsonMap.get(TOKEN_COUNTER_PROPERTY);
+		String entriesAmountString = (String) entriesAmountJsonMap.get(GLOBAL_COUNTER_PROPERTY);
 		int entriesAmount = Integer.parseInt(entriesAmountString);
 		
 		String newEntriesString;
@@ -103,7 +105,7 @@ public class TwitterExampleTest extends NewAbstractCloudTest{
 			
 			newEntriesString = service.path(ENTRIES_AMOUNT_REST_URL).get(String.class);
 			newEntriesAmountJsonMap = jsonToMap(newEntriesString);
-			newEntriesAmountString = (String) newEntriesAmountJsonMap.get(TOKEN_COUNTER_PROPERTY);			
+			newEntriesAmountString = (String) newEntriesAmountJsonMap.get(GLOBAL_COUNTER_PROPERTY);			
 			newEntriesAmount = Integer.parseInt(newEntriesAmountString);
 			
 			AssertUtils.assertTrue("TokenCounter entries are not written to the space. Entries in space: " + newEntriesAmount, newEntriesAmount > entriesAmount);

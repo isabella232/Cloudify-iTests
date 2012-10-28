@@ -47,7 +47,7 @@ public class AzureExamplesTest extends NewAbstractCloudTest {
 		doSanityTest("travel-azure", "travel");		
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
 	public void testPetclinicSimple() throws IOException, InterruptedException {
 		doSanityTest("petclinic-simple-azure", "petclinic");
 	}

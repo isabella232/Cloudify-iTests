@@ -34,7 +34,7 @@ service {
   }
 	
 	
-	deployment {		
+	isolationSLA {		
 		global {
 			instanceCpuCores 0
 			instanceMemoryMB 128

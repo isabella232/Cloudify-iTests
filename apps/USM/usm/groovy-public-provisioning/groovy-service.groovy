@@ -8,7 +8,7 @@ service {
 	numInstances 2
 	maxAllowedInstances 2
 	
-	deployment {		
+	isolationSLA {		
 		global {
 			instanceCpuCores 0
 			instanceMemoryMB 128

@@ -2,8 +2,6 @@ package test.cli.cloudify.cloud.ec2.bigdata;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 import org.testng.ITestContext;
@@ -41,19 +39,11 @@ public class StockDemoApplicationTest extends NewAbstractCloudTest {
 		super.teardown();
 	}
 	
-	
 	@Override
-	protected void customizeCloud() throws Exception {
-		
-		/* copy premium license to cloudify-overrides in order to run xap pu's */
-		String overridesFolder = getService().getPathToCloudFolder() + "/upload/cloudify-overrides";
-		File cloudifyPremiumLicenseFileSGPath = new File(SGTestHelper.getSGTestRootDir() + "/bin/gslicense.xml");
-		File cloudifyPremiumLicenseFileOverridesPath = new File(overridesFolder + "/gslicense.xml");
-		Map<File,File> filesToReplace = new HashMap<File,File>();
-		filesToReplace.put(cloudifyPremiumLicenseFileOverridesPath,cloudifyPremiumLicenseFileSGPath);
-		getService().addFilesToReplace(filesToReplace);
-		
+	public void beforeTeardown() {
+		super.uninstallApplicationIfFound("stockdemo");
 	}
+	
 
 	@Override
 	protected String getCloudName() {
@@ -63,5 +53,11 @@ public class StockDemoApplicationTest extends NewAbstractCloudTest {
 	@Override
 	protected boolean isReusableCloud() {
 		return false;
+	}
+
+	@Override
+	protected void customizeCloud() throws Exception {
+		// TODO Auto-generated method stub
+		
 	}
 }

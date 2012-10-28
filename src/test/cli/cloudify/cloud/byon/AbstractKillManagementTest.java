@@ -70,7 +70,14 @@ public abstract class AbstractKillManagementTest extends AbstractByonCloudTest {
 		
 		startManagement(machineAddress);
 		
-		Assert.assertTrue(admin.getGridServiceManagers().waitFor(numOManagementMachines, OPERATION_TIMEOUT, TimeUnit.MILLISECONDS));
+		Assert.assertTrue("could not find " + numOManagementMachines + " gsm's after failover", 
+				admin.getGridServiceManagers().waitFor(numOManagementMachines, OPERATION_TIMEOUT, TimeUnit.MILLISECONDS));
+		Assert.assertTrue("could not find " + numOManagementMachines + " gsm's after failover", 
+				admin.getLookupServices().waitFor(numOManagementMachines, OPERATION_TIMEOUT, TimeUnit.MILLISECONDS));
+		
+		Assert.assertTrue("could not find " + numOManagementMachines + " webui instances after failover", admin.getProcessingUnits().getProcessingUnit("webui").waitFor(numOManagementMachines, OPERATION_TIMEOUT, TimeUnit.MILLISECONDS));
+		Assert.assertTrue("could not find " + numOManagementMachines + " rest after failover", admin.getProcessingUnits().getProcessingUnit("rest").waitFor(numOManagementMachines, OPERATION_TIMEOUT, TimeUnit.MILLISECONDS));
+		Assert.assertTrue("could not find " + numOManagementMachines + " space after failover", admin.getProcessingUnits().getProcessingUnit("cloudifyManagementSpace").waitFor(numOManagementMachines, OPERATION_TIMEOUT, TimeUnit.MILLISECONDS));
 		
 		uninstallApplicationAndWait("petclinic");
 	}
@@ -123,5 +130,10 @@ public abstract class AbstractKillManagementTest extends AbstractByonCloudTest {
 	private void restartMachine(String toKill) {
 		SSHUtils.runCommand(toKill, TimeUnit.SECONDS.toMillis(30),
 				"sudo shutdown now -r", ByonCloudService.BYON_CLOUD_USER, ByonCloudService.BYON_CLOUD_PASSWORD);
+	}
+	
+	@Override
+	public void beforeTeardown() {
+		super.uninstallApplicationIfFound("petclinic");
 	}
 }

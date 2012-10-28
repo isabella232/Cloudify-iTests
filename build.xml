@@ -64,6 +64,11 @@
             <include name="**/*.jar"/>
         </fileset>
     	
+        <!-- Cloudify jars -->
+        <fileset dir="${gsHome.dir}/lib/platform/cloudify">
+            <include name="**/*.jar"/>
+        </fileset>
+    	
         <fileset dir="${gsHome.dir}/lib/platform/esm">
               <include name="**/*.jar"/>
         </fileset>

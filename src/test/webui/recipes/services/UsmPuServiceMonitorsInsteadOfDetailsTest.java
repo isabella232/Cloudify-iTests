@@ -55,12 +55,11 @@ public class UsmPuServiceMonitorsInsteadOfDetailsTest extends AbstractSeleniumSe
 		Metric storePercentUsage = healthPanel.getMetric(STORE_PERCENT_USAGE);
 		
 		try { 
-			MetricType metricType = new MetricType("Misc.", "Child Process ID", null);
-			storePercentUsage.swithToMetric(metricType);
+			storePercentUsage.swithToMetric(new MetricType("Misc.", "Child Process ID", null));
 			shouldFail = true;
 			failureMessage += "Child Process ID should not be a part of the metric selection menu\n";
 		}
-		catch (AssertionError err) {
+		catch (Exception e) {
 			
 		}
 		try { 
@@ -68,7 +67,7 @@ public class UsmPuServiceMonitorsInsteadOfDetailsTest extends AbstractSeleniumSe
 			shouldFail = true;
 			failureMessage += "Actual Process ID should not be a part of the metric selection menu\n";
 		}
-		catch (AssertionError err) {
+		catch (Exception e) {
 			
 		}
 		try { 
@@ -76,7 +75,7 @@ public class UsmPuServiceMonitorsInsteadOfDetailsTest extends AbstractSeleniumSe
 			shouldFail = true;
 			failureMessage += "USM_State should not be a part of the metric selection menu\n";
 		}
-		catch (AssertionError err) {
+		catch (Exception e) {
 			
 		}
 		if (shouldFail) {

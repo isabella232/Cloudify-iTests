@@ -85,6 +85,11 @@
 			<include name="**/usm.jar"/>
 		</fileset>
 		
+        <!-- Cloudify jars -->
+        <fileset dir="${BUILD_DIR}/lib/platform/cloudify">
+            <include name="**/*.jar"/>
+        </fileset>
+    	
 		<!-- cli jars -->
 		<fileset dir="${BUILD_DIR}/tools/cli">
 			<include name="**/*.jar"/>

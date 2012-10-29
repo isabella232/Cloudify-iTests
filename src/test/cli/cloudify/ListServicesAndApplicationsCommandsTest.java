@@ -2,58 +2,118 @@ package test.cli.cloudify;
 
 import java.io.IOException;
 
-import org.junit.Assert;
+import org.cloudifysource.dsl.internal.CloudifyConstants.DeploymentState;
 import org.testng.annotations.Test;
 
-import framework.utils.LogUtils;
+import framework.utils.ScriptUtils;
 
 public class ListServicesAndApplicationsCommandsTest extends AbstractLocalCloudTest{
 			
+	private static final int ONE_SEC_IN_MILLI = 1000;
 
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
+	public void checkListApplicationsCommandOnSuccessfulInstallation() throws Exception{
+		installApplicationAsync();
+		assertPetclinicServicesGoThroughAllStagesOfDeployment();
+	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
-	public void test() throws Exception{
-		checkListsBeforeInstallation(); 
-		installApplication();
-		checkListsAfterInstallation();
+	public void checkListApplicationsCommandOnFailedInstallation() throws Exception{
+		installBadApplicationAsync();
+		assertInstallationEndedWithFailedStatus();
 	}
 	
-	private void installApplication() throws IOException, InterruptedException {
-		final String applicationDir = CommandTestUtils.getPath("apps/USM/usm/applications/simple");
-		String output = CommandTestUtils.runCommandAndWait("connect " + restUrl + ";install-application " + applicationDir);
-		Assert.assertTrue(output.contains("Application simple installed successfully"));
-	}
-	
-	private void checkListsAfterInstallation() throws IOException, InterruptedException {
-		String output = CommandTestUtils.runCommandAndWait("connect " + restUrl + ";use-application simple;list-services");
-		output = output.toLowerCase();
-		Assert.assertTrue("listing of application services failed.", output.contains("simple"));
+	private void assertInstallationEndedWithFailedStatus() 
+			throws IOException, InterruptedException {
+		boolean applicationDeployedWithFailure = false; 
+		boolean applicationInstallStateOccurred = false;
+		boolean badGroovyServiceInstallStateOccurred = false;
+		boolean badGroovyServiceFailedStateOccurred = false;
+		boolean groovyServiceInstallStateOccurred = false;
+		boolean groovyServiceStartStateOccurred = false;
 		
-		output = CommandTestUtils.runCommandAndWait("connect " + restUrl + ";list-applications");
-		output = output.toLowerCase();
-		Assert.assertTrue("command list-applications failed.", output.contains("simple"));
-	}
-	
-	private void checkListsBeforeInstallation() throws IOException,
-			InterruptedException {
+		while (!applicationDeployedWithFailure) {
+			String listApplicationsOutput = CommandTestUtils.runCommandAndWait("connect " + restUrl + ";list-applications");
+			if (listApplicationsOutput.contains("groovyApp.badGroovyService  " + DeploymentState.INSTALLING.toString())) {
+				badGroovyServiceInstallStateOccurred = true;
+			}
+			if (listApplicationsOutput.contains("groovyApp.badGroovyService  " + DeploymentState.FAILED.toString())) {
+				badGroovyServiceFailedStateOccurred = true;
+			}
+			if (listApplicationsOutput.contains("groovyApp.groovyService  " + DeploymentState.INSTALLING.toString())) {
+				groovyServiceInstallStateOccurred = true;
+			}
+			if (listApplicationsOutput.contains("groovyApp.groovyService  " + DeploymentState.STARTED.toString())) {
+				groovyServiceStartStateOccurred = true;
+			}
+			if (listApplicationsOutput.contains("groovyApp  " + DeploymentState.INSTALLING.toString())) {
+				applicationInstallStateOccurred = true;
+			}
+			if (listApplicationsOutput.contains("groovyApp  " + DeploymentState.FAILED.toString())) {
+				applicationDeployedWithFailure = true;
+			}
+			Thread.sleep(ONE_SEC_IN_MILLI);
+		}
 		
-		String output = CommandTestUtils.runCommandAndWait("connect " + restUrl + ";list-services");
+		assertTrue("Service did not go through install state", badGroovyServiceInstallStateOccurred);
+		assertTrue("Service installation did not fail as expected", badGroovyServiceFailedStateOccurred);
+		assertTrue("Service did not go through install state", groovyServiceInstallStateOccurred);
+		assertTrue("Service did not go get to start state", groovyServiceStartStateOccurred);
+		assertTrue("Application did not go through install state", applicationInstallStateOccurred);
+		assertTrue("Application final deployment state should be failed", applicationDeployedWithFailure);
 		
-		output = output.toLowerCase();
-		Assert.assertFalse("wrong output", output.contains("operation failed"));
-		LogUtils.log("assert that the output contains an empty line (the correct output when there are no services)");
-		Assert.assertTrue("Output for list-services command does not contain a new line.", assertStringContainsOneEmptyLine(output));
-		
-		output = CommandTestUtils.runCommandAndWait("connect " + restUrl + ";list-applications");
-		output = output.toLowerCase();
-		Assert.assertFalse("list-applicartion command failed.", output.contains("operation failed"));
-		
-		LogUtils.log("assert that the output contains an empty line (the correct output when there are no applications)");
-		Assert.assertTrue("Output for list-services command does not contain a new line.", assertStringContainsOneEmptyLine(output));
 	}
 
-	private boolean assertStringContainsOneEmptyLine(String output) {
-		String lines[] = output.split("\\r?\\n\\r?\\n");
-		return lines.length == 2 ? true : false;
+
+	private void assertPetclinicServicesGoThroughAllStagesOfDeployment() 
+			throws IOException, InterruptedException {
+		
+		boolean applicationDeployed = false;
+		boolean applicationInstallStateOccurred = false;
+		boolean mongodInstallStateOccurred = false;
+		boolean mongodStartedStateOccurred = false;
+		boolean tomcatInstallStateOccurred = false;
+		boolean tomcatStartedStateOccurred = false;
+		
+		while (!applicationDeployed) {
+			String listApplicationsOutput = CommandTestUtils.runCommandAndWait("connect " + restUrl + ";list-applications");
+			if (listApplicationsOutput.contains("petclinic.mongod  " + DeploymentState.INSTALLING.toString())) {
+				mongodInstallStateOccurred = true;
+			}
+			if (listApplicationsOutput.contains("petclinic.mongod  " + DeploymentState.STARTED.toString())) {
+				mongodStartedStateOccurred = true;
+			}
+			if (listApplicationsOutput.contains("petclinic.tomcat  " + DeploymentState.INSTALLING.toString())) {
+				tomcatInstallStateOccurred = true;
+			}
+			if (listApplicationsOutput.contains("petclinic.tomcat  " + DeploymentState.STARTED.toString())) {
+				tomcatStartedStateOccurred = true;
+			}
+			if (listApplicationsOutput.contains("petclinic  " + DeploymentState.INSTALLING.toString())) {
+				applicationInstallStateOccurred = true;
+			}
+			if (listApplicationsOutput.contains("petclinic  " + DeploymentState.STARTED.toString())) {
+				applicationDeployed = true;
+			}
+			Thread.sleep(ONE_SEC_IN_MILLI);
+		}
+		
+		assertTrue("mongod did not go through the install state", mongodInstallStateOccurred);
+		assertTrue("mongod did not go through the start state", mongodStartedStateOccurred);
+		assertTrue("tomcat did not go through the install state", tomcatInstallStateOccurred);
+		assertTrue("tomcat did not go through the start state", tomcatStartedStateOccurred);
+		assertTrue("application did not go through the install state", applicationInstallStateOccurred);
+		
 	}
+
+	private void installApplicationAsync() throws IOException, InterruptedException {
+		String applicationPath = ScriptUtils.getBuildPath() + "/recipes/apps/petclinic-simple";
+		CommandTestUtils.runCommand("connect " + restUrl + ";install-application " + applicationPath);
+	}
+	
+	private void installBadApplicationAsync() throws IOException, InterruptedException {
+		String applicationPath = CommandTestUtils.getPath("apps/USM/usm/applications/badGroovyApp");
+		CommandTestUtils.runCommand("connect " + restUrl + ";install-application -disableSelfHealing " + applicationPath);
+	}
+	
 }

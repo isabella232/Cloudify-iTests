@@ -11,6 +11,8 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
 
 import test.cli.cloudify.cloud.NewAbstractCloudTest;
 
@@ -26,6 +28,8 @@ public abstract class AbstractWebUICloudTest extends NewAbstractCloudTest {
 	private WebDriver driver;
 	private Selenium selenium;
 	
+		    	
+    @BeforeMethod	    	
 	public void launchWebui() throws InterruptedException {
 		startWebBrowser(getWebuiUrl());		
 	}
@@ -93,10 +97,23 @@ public abstract class AbstractWebUICloudTest extends NewAbstractCloudTest {
     }
 
 
-	public void shutdownWebui() throws InterruptedException {
-		driver.quit();
-	}
+    @AfterMethod(alwaysRun = true)
+	public void killWebServices() {
+		stopWebBrowser();		
+	}   
 	
+    public void stopWebBrowser() {
+    	LogUtils.log("Killing browser...");
+    	if (driver != null) {
+    		driver.quit();
+    	}
+    }	
+        
+    
+    public void setBrowser(String browser) {
+		System.setProperty("selenium.browser", browser);
+	}
+    
 	public LoginPage getLoginPage() {
 		return new LoginPage(selenium,driver);
 	}

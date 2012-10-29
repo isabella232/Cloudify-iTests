@@ -12,7 +12,7 @@
 	<classpathentry kind="var" path="CLOUDIFY_LATEST/lib/required/org.springframework.aspects-3.1.1.RELEASE.jar"/>
 	<classpathentry kind="var" path="CLOUDIFY_LATEST/lib/required/org.springframework.beans-3.1.1.RELEASE.jar"/>
 	<classpathentry kind="var" path="CLOUDIFY_LATEST/lib/required/org.springframework.context-3.1.1.RELEASE.jar"/>
-	<classpathentry kind="var" path="CLOUDIFY_LATEST/lib/required/dsl.jar"/>
+	<classpathentry kind="var" path="CLOUDIFY_LATEST/lib/platform/cloudify/dsl.jar"/>
 	<classpathentry kind="var" path="CLOUDIFY_LATEST/lib/required/org.springframework.context.support-3.1.1.RELEASE.jar"/>
 	<classpathentry kind="var" path="CLOUDIFY_LATEST/lib/required/org.springframework.core-3.1.1.RELEASE.jar"/>
 	<classpathentry kind="var" path="CLOUDIFY_LATEST/lib/required/org.springframework.expression-3.1.1.RELEASE.jar"/>

@@ -3,6 +3,7 @@ package test.usm;
 import java.io.File;
 import java.io.IOException;
 import java.net.UnknownHostException;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
@@ -46,7 +47,7 @@ public class USMTestUtils {
 	public static File usmCreateJar(String processFolder) {
 		System.setProperty("com.gs.home", SGTestHelper.getBuildDir());
 		try {
-			return Packager.pack( new File(SGTestHelper.getSGTestRootDir() , processFolder), new File[0]);
+			return Packager.pack( new File(SGTestHelper.getSGTestRootDir() , processFolder), new LinkedList<File>());
 		} catch (Exception e) {
 			Assert.fail("failed to create usm jar file",e);
 			return null;
@@ -82,7 +83,7 @@ public class USMTestUtils {
 
 	public static Service packAndDeploy(final String folderPath, final String serviceFileName, Service service, String absolutePuName) throws IOException,
 			PackagingException, DSLException {
-		final File puZipFile = Packager.pack(new File(folderPath, serviceFileName), new File[0]);
+		final File puZipFile = Packager.pack(new File(folderPath, serviceFileName), new LinkedList<File>());
 
     	final ProcessingUnitDeployment processingUnitDeployment = new ProcessingUnitDeployment(puZipFile).numberOfInstances(service.getNumInstances()).name(absolutePuName);    	
     	deploy(processingUnitDeployment, puZipFile, serviceFileName);

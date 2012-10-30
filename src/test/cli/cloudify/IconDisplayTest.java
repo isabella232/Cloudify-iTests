@@ -29,7 +29,7 @@ public class IconDisplayTest extends AbstractLocalCloudTest {
 		String serviceDir = CommandTestUtils.getPath("apps/USM/usm/applications/simple/simple");
 		runCommand("connect " + restUrl + ";install-service " + serviceDir + ";exit");
 		
-		DSLServiceCompilationResult compilationResult = ServiceReader.getServiceFromDirectory(new File(serviceDir), "default");
+		DSLServiceCompilationResult compilationResult = ServiceReader.getServiceFromDirectory(new File(serviceDir));
 		Service service = compilationResult.getService();
 		String iconPath = getIconPath(service, "default");
 		
@@ -46,7 +46,7 @@ public class IconDisplayTest extends AbstractLocalCloudTest {
 		
 		runCommand("connect " + restUrl + ";install-application " + applicationDir + ";exit");
 		
-		DSLServiceCompilationResult compilationResult = ServiceReader.getServiceFromDirectory(new File(applicationServiceDir), "simple");
+		DSLServiceCompilationResult compilationResult = ServiceReader.getServiceFromDirectory(new File(applicationServiceDir));
 		Service service = compilationResult.getService();
 		
 		//test icon path

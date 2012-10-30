@@ -139,7 +139,7 @@ public class MicrosoftAzureCloudService extends AbstractCloudService {
 
 			}
 
-			while (deploymentsBeingDeleted != null && deploymentsBeingDeleted.getDeployments().size() != 0);
+			while (deploymentsBeingDeleted != null && !(deploymentsBeingDeleted.getDeployments().isEmpty()));
 
 
 			// now all deployment have reached a steady state.

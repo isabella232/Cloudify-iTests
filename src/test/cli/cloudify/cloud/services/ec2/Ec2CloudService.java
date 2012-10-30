@@ -41,7 +41,7 @@ public class Ec2CloudService extends AbstractCloudService {
 		super(uniqueName, DEFAULT_EC2_CLOUD_NAME);
 	}
 	
-	public Ec2CloudService(final String uniqueName, String cloudName) {
+	public Ec2CloudService(final String uniqueName, final String cloudName) {
 		super(uniqueName, cloudName);
 	}
 	
@@ -93,11 +93,13 @@ public class Ec2CloudService extends AbstractCloudService {
 				if (name != null) {
 					if (name.startsWith(agentPrefix)) {
 						throw new IllegalStateException(
-								"Before bootstrap, found a non-terminated node in the cloud with the agent prefix of the current cloud. Node details: "
+								"Before bootstrap, found a non-terminated node in the cloud " 
+										+ "with the agent prefix of the current cloud. Node details: "
 										+ computeMetadata);
 					} else if (name.startsWith(managerPrefix)) {
 						throw new IllegalStateException(
-								"Before bootstrap, found a non-terminated node in the cloud with the management prefix of the current cloud. Node details: "
+								"Before bootstrap, found a non-terminated node in the cloud " 
+										+ "with the management prefix of the current cloud. Node details: "
 										+ computeMetadata);
 					}
 				}
@@ -121,11 +123,11 @@ public class Ec2CloudService extends AbstractCloudService {
 		LogUtils.log("Closing jclouds context for this EC2 cloud service");
 		this.context.close();
 
-		return leakedNodes.size() == 0;
+		return leakedNodes.isEmpty();
 
 	}
 
-	private List<ComputeMetadata> checkForLeakedNodesWithPrefix(String... prefixes) {
+	private List<ComputeMetadata> checkForLeakedNodesWithPrefix(final String... prefixes) {
 		List<ComputeMetadata> leakedNodes = null;
 		int iteration = 0;
 		while (iteration < 3) {
@@ -138,14 +140,12 @@ public class Ec2CloudService extends AbstractCloudService {
 
 			if (!foundPendingNodes) {
 				break; // no need to re-run the scan
-			} else {
-				try {
-					LogUtils.log("Sleeping for several seconds to give pending nodes time to reach their new state");
-					Thread.sleep(10000);
-				} catch (InterruptedException e) {
-					// ignore.
-				}
-
+			}
+			try {
+				LogUtils.log("Sleeping for several seconds to give pending nodes time to reach their new state");
+				Thread.sleep(10000);
+			} catch (InterruptedException e) {
+				// ignore.
 			}
 			++iteration;
 		}
@@ -166,8 +166,8 @@ public class Ec2CloudService extends AbstractCloudService {
 		return leakedNodes;
 	}
 
-	private boolean scanNodes(List<ComputeMetadata> leakedNodes,
-			final Set<? extends ComputeMetadata> allNodes, String... prefixes) {
+	private boolean scanNodes(final List<ComputeMetadata> leakedNodes,
+			final Set<? extends ComputeMetadata> allNodes, final String... prefixes) {
 		boolean foundPendingNodes = false;
 		for (final ComputeMetadata computeMetadata : allNodes) {
 			final String name = computeMetadata.getName();
@@ -189,11 +189,13 @@ public class Ec2CloudService extends AbstractCloudService {
 				} else {
 					for (String prefix : prefixes) {
 						if (name.startsWith(prefix)) {
-							if(state.equals(NodeState.PENDING)) {
-								// node is transitioning from one state to another - might be shutting down, might be starting up!
+							if (state.equals(NodeState.PENDING)) {
+								// node is transitioning from one state to another 
+								// 		- might be shutting down, might be starting up!
 								// Must try again later.
 								foundPendingNodes = true;
-								LogUtils.log("While scanning for leaked nodes, found a node in state PENDING. Leak scan will be retried. Node in state pending was: "
+								LogUtils.log("While scanning for leaked nodes, found a node in state PENDING. " 
+										+ "Leak scan will be retried. Node in state pending was: "
 										+ computeMetadata);
 							} else {
 								LogUtils.log("ERROR: Found a leaking node: " + computeMetadata);
@@ -231,12 +233,12 @@ public class Ec2CloudService extends AbstractCloudService {
 
 		// add a pem file
 		final String sshKeyPemName = pemFileName + ".pem";
-		final File FileToCopy =
+		final File fileToCopy =
 				new File(SGTestHelper.getSGTestRootDir() + "/apps/cloudify/cloud/" + getCloudName() + "/"
 						+ sshKeyPemName);
 		final File targetLocation = new File(getPathToCloudFolder() + "/upload/" + sshKeyPemName);
 		final Map<File, File> filesToReplace = new HashMap<File, File>();
-		filesToReplace.put(targetLocation, FileToCopy);
+		filesToReplace.put(targetLocation, fileToCopy);
 		addFilesToReplace(filesToReplace);
 	}
 
@@ -272,7 +274,7 @@ public class Ec2CloudService extends AbstractCloudService {
 
 		final List<ComputeMetadata> leakedNodes = checkForLeakedNodesWithPrefix(agentPrefix);
 
-		return leakedNodes.size() == 0;
+		return leakedNodes.isEmpty();
 
 	}
 }

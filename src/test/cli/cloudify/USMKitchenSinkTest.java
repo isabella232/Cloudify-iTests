@@ -65,8 +65,6 @@ import framework.utils.ScriptUtils;
 
 public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 
-	
-	
 	final private String RECIPE_DIR_PATH = CommandTestUtils
 			.getPath("apps/USM/usm/kitchensink");
 
@@ -74,35 +72,32 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 	private long actualPid;
 
 	private static final String[] EXPECTED_STARTUP_EVENT_STRINGS = {
-			"init fired Test Property number 1",
-			"init external class",
-			"init Helper Field",
-			"application name is: default",
+			"init fired Test Property number 1", "init external class",
+			"init Helper Field", "application name is: default",
 			"Instantiated default.kitchensink-service",
-			"preInstall fired Test Property number 2",
-			"install event fired",
+			"preInstall fired Test Property number 2", "install event fired",
 			"postInstall fired Test Property number 1",
-			"preStart fired Test Property number 2", "postStart fired"
-			 };
+			"preStart fired Test Property number 2", "postStart fired" };
 	private static final String[] EXPECTED_SHUTDOWN_EVENT_STRINGS = {
 			"preStop fired", "String_with_Spaces", "postStop fired",
 			"shutdown fired" };
 
-	private static final String[] EXPECTED_DETAILS_FIELDS = {"stam", "SomeKey" };
+	private static final String[] EXPECTED_DETAILS_FIELDS = { "stam", "SomeKey" };
 
-	private static final String[] EXPECTED_MONITORS_FIELDS = {CloudifyConstants.USM_MONITORS_CHILD_PROCESS_ID,
+	private static final String[] EXPECTED_MONITORS_FIELDS = {
+			CloudifyConstants.USM_MONITORS_CHILD_PROCESS_ID,
 			CloudifyConstants.USM_MONITORS_ACTUAL_PROCESS_ID, "NumberTwo",
 			"NumberOne" };
-	
-	private static final String[] EXPECTED_PROCESS_PRINTOUTS ={"Opening port:"};
+
+	private static final String[] EXPECTED_PROCESS_PRINTOUTS = { "Opening port:" };
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
 	public void testKitchenSink() throws IOException, InterruptedException,
 			PackagingException, DSLException, RestException {
-		
+
 		installService();
-		
-		ProcessingUnit pu = findPU();
+
+		final ProcessingUnit pu = findPU();
 
 		ProcessingUnitInstance pui = findPUI(pu);
 
@@ -113,7 +108,7 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 		assertTrue(
 				"Process port is not open! Process did not start as expected",
 				isPortOpen(host));
-		
+
 		long pid = pui.getGridServiceContainer().getVirtualMachine()
 				.getDetails().getPid();
 
@@ -122,11 +117,11 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 
 		// run tests
 		checkManagementComponentPidsAreEqual();
-		
+
 		checkManagementServicesPidsAreEqual();
-		
+
 		validateManagementZones();
-		
+
 		checkForStartupPrintouts(pui, pid, matcher);
 
 		checkDetails(pui);
@@ -134,49 +129,55 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 		checkMonitors(pui);
 
 		checkCustomCommands();
-		
+
 		checkServiceType();
-		
+
 		checkPUDump();
-		
+
 		verifyUninstallManagementFails();
 
-		long initialActualPid = this.actualPid;
-		
+		final long initialActualPid = this.actualPid;
+
 		checkKillGSC(pid, host, pu);
-				
+
 		// pui was restarted, so find the new one
 		pui = findPUI(pu);
-		pid = pui.getGridServiceContainer().getVirtualMachine()
-				.getDetails().getPid();
-		
+		pid = pui.getGridServiceContainer().getVirtualMachine().getDetails()
+				.getPid();
+
 		// this will reset the actualPid
 		checkMonitors(pui);
-		assertEquals("The actual PID value should not change after a GSC restart", initialActualPid, this.actualPid);
+		assertEquals(
+				"The actual PID value should not change after a GSC restart",
+				initialActualPid, this.actualPid);
 
 		// reset the matcher
-		matcher = new ContinuousLogEntryMatcher(
-				new AllLogEntryMatcher(), new AllLogEntryMatcher());
+		matcher = new ContinuousLogEntryMatcher(new AllLogEntryMatcher(),
+				new AllLogEntryMatcher());
 
 		// check that previous log entries have been printed to this log
 		logger.info("Checking that previous process printouts are printed to the new GSC logs");
 		sleep(5000);
 		checkForPrintouts(pui, pid, matcher, EXPECTED_PROCESS_PRINTOUTS);
- 
+
 		// reset the matcher
-		matcher = new ContinuousLogEntryMatcher(
-				new AllLogEntryMatcher(), new AllLogEntryMatcher());
-		// check that the process printouts only appear once - to make sure that additional process invocations were not still in the same file
-		final int numOfStartupEntries = calculateNumberOfRecurrencesInGSCLog(pui, pid, matcher, EXPECTED_PROCESS_PRINTOUTS[0]);
-		assertEquals("Process startup log entries should only appear once in the log file", 1, numOfStartupEntries);
-		
-		final boolean uninstallResult = pu.undeployAndWait(OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
+		matcher = new ContinuousLogEntryMatcher(new AllLogEntryMatcher(),
+				new AllLogEntryMatcher());
+		// check that the process printouts only appear once - to make sure that
+		// additional process invocations were not still in the same file
+		final int numOfStartupEntries = calculateNumberOfRecurrencesInGSCLog(
+				pui, pid, matcher, EXPECTED_PROCESS_PRINTOUTS[0]);
+		assertEquals(
+				"Process startup log entries should only appear once in the log file",
+				1, numOfStartupEntries);
+
+		final boolean uninstallResult = pu.undeployAndWait(OPERATION_TIMEOUT,
+				TimeUnit.MILLISECONDS);
 		assertTrue("Undeploy failed", uninstallResult);
 
-		
 		// test shutdown events
-		matcher = new ContinuousLogEntryMatcher(
-				new AllLogEntryMatcher(), new AllLogEntryMatcher());
+		matcher = new ContinuousLogEntryMatcher(new AllLogEntryMatcher(),
+				new AllLogEntryMatcher());
 		checkForShutdownPrintouts(pui, pid, matcher);
 
 		// check port closed.
@@ -185,131 +186,174 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 				!isPortOpen(host));
 
 	}
-	
-	private void verifyUninstallManagementFails() throws IOException, InterruptedException {
+
+	private void verifyUninstallManagementFails() throws IOException,
+			InterruptedException {
 		LogUtils.log("Verifing management undeployment fails when excecuted from the CLI");
-		String commandOUtput = CommandTestUtils.runCommandExpectedFail("connect " + this.restUrl + "; " 
-								+ "uninstall-application " + CloudifyConstants.MANAGEMENT_APPLICATION_NAME + "; " 
-								+ "exit");
-		assertTrue(commandOUtput.contains("Management application can not be undeployed"));
-		
-		
+		final String commandOUtput = CommandTestUtils
+				.runCommandExpectedFail("connect "
+						+ AbstractLocalCloudTest.restUrl + "; "
+						+ "uninstall-application "
+						+ CloudifyConstants.MANAGEMENT_APPLICATION_NAME + "; "
+						+ "exit");
+		assertTrue(commandOUtput
+				.contains("Management application can not be undeployed"));
+
 		LogUtils.log("Verifing management undeployment fails when excecuted using a direct rest api call");
-		RestAdminFacade cloudifyAdminFacade = new RestAdminFacade();
+		final RestAdminFacade cloudifyAdminFacade = new RestAdminFacade();
 		try {
-			cloudifyAdminFacade.doConnect("", "", this.restUrl);
-			cloudifyAdminFacade.uninstallApplication(CloudifyConstants.MANAGEMENT_APPLICATION_NAME, 10);
+			cloudifyAdminFacade.doConnect("", "",
+					AbstractLocalCloudTest.restUrl);
+			cloudifyAdminFacade.uninstallApplication(
+					CloudifyConstants.MANAGEMENT_APPLICATION_NAME, 10);
 			AssertFail("Request to uinstall management should have thrown an exception");
-		} catch (CLIException e) {
-			assertTrue("The uninstall management response should contain the proper error message", 
-							e.getMessage().contains("cannot_uninstall_management_application"));
+		} catch (final CLIException e) {
+			assertTrue(
+					"The uninstall management response should contain the proper error message",
+					e.getMessage().contains(
+							"cannot_uninstall_management_application"));
 		}
-		
+
 	}
 
 	private void checkManagementServicesPidsAreEqual() throws RemoteException {
-		DefaultProcessingUnitInstance rest = (DefaultProcessingUnitInstance) admin.getProcessingUnits().getProcessingUnit("rest").getInstances()[0];
-		DefaultProcessingUnitInstance space = (DefaultProcessingUnitInstance) admin.getProcessingUnits().getProcessingUnit("cloudifyManagementSpace").getInstances()[0];
-		DefaultProcessingUnitInstance webui = (DefaultProcessingUnitInstance) admin.getProcessingUnits().getProcessingUnit("webui").getInstances()[0];
-		
-		long restPid = rest.getJVMDetails().getPid();
-		long spacePid = space.getJVMDetails().getPid();
-		long webuiPid = webui.getJVMDetails().getPid();
-		
+		final DefaultProcessingUnitInstance rest = (DefaultProcessingUnitInstance) admin
+				.getProcessingUnits().getProcessingUnit("rest").getInstances()[0];
+		final DefaultProcessingUnitInstance space = (DefaultProcessingUnitInstance) admin
+				.getProcessingUnits()
+				.getProcessingUnit("cloudifyManagementSpace").getInstances()[0];
+		final DefaultProcessingUnitInstance webui = (DefaultProcessingUnitInstance) admin
+				.getProcessingUnits().getProcessingUnit("webui").getInstances()[0];
+
+		final long restPid = rest.getJVMDetails().getPid();
+		final long spacePid = space.getJVMDetails().getPid();
+		final long webuiPid = webui.getJVMDetails().getPid();
+
 		LogUtils.log("Comparing management component pids");
-		assertTrue("rest and managementSpace did not start on the same process", restPid == spacePid);
-		assertTrue("rest and webui did not start on the same process", restPid == webuiPid);
+		assertTrue(
+				"rest and managementSpace did not start on the same process",
+				restPid == spacePid);
+		assertTrue("rest and webui did not start on the same process",
+				restPid == webuiPid);
 	}
 
 	private void checkManagementComponentPidsAreEqual() throws RemoteException {
-		DefaultGridServiceManager gsm = (DefaultGridServiceManager) admin.getGridServiceManagers().waitForAtLeastOne(5000, TimeUnit.MILLISECONDS);
-		DefaultGridServiceAgent gsa = (DefaultGridServiceAgent) admin.getGridServiceAgents().waitForAtLeastOne(5000, TimeUnit.MILLISECONDS);
-		DefaultLookupService lus = (DefaultLookupService) admin.getLookupServices().getLookupServices()[0];
-		DefaultElasticServiceManager esm = (DefaultElasticServiceManager) admin.getElasticServiceManagers().waitForAtLeastOne(5000, TimeUnit.MILLISECONDS);
-		
-		long gsmPid = gsm.getJVMDetails().getPid();
-		long gsaPid = gsa.getJVMDetails().getPid();
-		long lusPid = lus.getJVMDetails().getPid();
-		long esmPid = esm.getJVMDetails().getPid();
-		
+		final DefaultGridServiceManager gsm = (DefaultGridServiceManager) admin
+				.getGridServiceManagers().waitForAtLeastOne(5000,
+						TimeUnit.MILLISECONDS);
+		final DefaultGridServiceAgent gsa = (DefaultGridServiceAgent) admin
+				.getGridServiceAgents().waitForAtLeastOne(5000,
+						TimeUnit.MILLISECONDS);
+		final DefaultLookupService lus = (DefaultLookupService) admin
+				.getLookupServices().getLookupServices()[0];
+		final DefaultElasticServiceManager esm = (DefaultElasticServiceManager) admin
+				.getElasticServiceManagers().waitForAtLeastOne(5000,
+						TimeUnit.MILLISECONDS);
+
+		final long gsmPid = gsm.getJVMDetails().getPid();
+		final long gsaPid = gsa.getJVMDetails().getPid();
+		final long lusPid = lus.getJVMDetails().getPid();
+		final long esmPid = esm.getJVMDetails().getPid();
+
 		LogUtils.log("Comparing management component pids");
-		assertTrue("gsm and gsa did not start on the same process", gsmPid == gsaPid);
-		assertTrue("gsm and lus did not start on the same process", gsmPid == lusPid);
-		assertTrue("gsm and esm did not start on the same process", gsmPid == esmPid);
+		assertTrue("gsm and gsa did not start on the same process",
+				gsmPid == gsaPid);
+		assertTrue("gsm and lus did not start on the same process",
+				gsmPid == lusPid);
+		assertTrue("gsm and esm did not start on the same process",
+				gsmPid == esmPid);
 	}
 
 	private void validateManagementZones() {
-		//since the gsm starts in the same process as gsa,lus and esm, they share the same zone property
+		// since the gsm starts in the same process as gsa,lus and esm, they
+		// share the same zone property
 		// and thus it is enough to check only the GSM zones.
-		DefaultGridServiceManager gsm = (DefaultGridServiceManager) admin.getGridServiceManagers().waitForAtLeastOne(5000, TimeUnit.MILLISECONDS);
-		
-		List<String> gsmZones = new ArrayList<String>();
-		for (Zone zone : gsm.getZones().values()) {
+		final DefaultGridServiceManager gsm = (DefaultGridServiceManager) admin
+				.getGridServiceManagers().waitForAtLeastOne(5000,
+						TimeUnit.MILLISECONDS);
+
+		final List<String> gsmZones = new ArrayList<String>();
+		for (final Zone zone : gsm.getZones().values()) {
 			gsmZones.add(zone.getName());
 		}
-		
+
 		LogUtils.log("Checking management component zones");
-		assertTrue("gsm zones does not contain management", gsmZones.contains("management"));
-		assertTrue("gsm zones does not contain localcloud", gsmZones.contains("localcloud"));
+		assertTrue("gsm zones does not contain management",
+				gsmZones.contains("management"));
+		assertTrue("gsm zones does not contain localcloud",
+				gsmZones.contains("localcloud"));
 	}
 
 	private void checkPUDump() throws IOException, RestException {
-		
-		String[] dumpUrls = {"/service/dump/processing-units/", 
-							"/service/dump/machine/" 
-							+ admin.getMachines().getMachines()[0].getHostAddress() + "/"};
-		//Test dump processingUnit and machine according to ip
-		GSRestClient rc = new GSRestClient("", "", new URL(this.restUrl), PlatformVersion.getVersionNumber());
-		for (String dumpURI : dumpUrls) {
-			
-			String encodedResult = (String) rc.get(dumpURI);
+
+		final String[] dumpUrls = {
+				"/service/dump/processing-units/",
+				"/service/dump/machine/"
+						+ admin.getMachines().getMachines()[0].getHostAddress()
+						+ "/" };
+		// Test dump processingUnit and machine according to ip
+		final GSRestClient rc = new GSRestClient("", "", new URL(
+				AbstractLocalCloudTest.restUrl),
+				PlatformVersion.getVersionNumber());
+		for (final String dumpURI : dumpUrls) {
+
+			final String encodedResult = (String) rc.get(dumpURI);
 			LogUtils.log("Machine dump downloaded successfully");
-			
-			byte[] result = Base64.decodeBase64(encodedResult);
-			File dumpFile = File.createTempFile("dump", ".zip");
+
+			final byte[] result = Base64.decodeBase64(encodedResult);
+			final File dumpFile = File.createTempFile("dump", ".zip");
 			FileUtils.writeByteArrayToFile(dumpFile, result);
-			
-			ZipFile zip = new  ZipFile(dumpFile);
-			Assert.assertTrue("The dump zip file doesn't contain any entries. " + dumpURI, zip.size() != 0);
+
+			final ZipFile zip = new ZipFile(dumpFile);
+			Assert.assertTrue("The dump zip file doesn't contain any entries. "
+					+ dumpURI, zip.size() != 0);
 		}
-		
-		//Test dump for a ll machines
-		String machinesDumpUri = "/service/dump/machines/";
-		Map<String, Object> resultsMap = (Map) rc.get(machinesDumpUri);
+
+		// Test dump for a ll machines
+		final String machinesDumpUri = "/service/dump/machines/";
+		final Map<String, Object> resultsMap = (Map) rc.get(machinesDumpUri);
 		LogUtils.log("Machines dump downloaded successfully");
-		
-		for (String key : resultsMap.keySet()) {
-			byte[] result = Base64.decodeBase64(resultsMap.get(key).toString());
-			File dumpFile = File.createTempFile("dumpMachines", ".zip");
+
+		for (final String key : resultsMap.keySet()) {
+			final byte[] result = Base64.decodeBase64(resultsMap.get(key)
+					.toString());
+			final File dumpFile = File.createTempFile("dumpMachines", ".zip");
 			FileUtils.writeByteArrayToFile(dumpFile, result);
-			ZipFile zip = new  ZipFile(dumpFile);
-			Assert.assertTrue("The dump zip file doesn't contain any entries. " + machinesDumpUri, zip.size() != 0);
-			
+			final ZipFile zip = new ZipFile(dumpFile);
+			Assert.assertTrue("The dump zip file doesn't contain any entries. "
+					+ machinesDumpUri, zip.size() != 0);
+
 		}
-        
-		
+
 	}
 
-	// Check that the "service type" is exposed in the service map obtained by the AdminApiController.
-	private void checkServiceType(){
-		String absoluteServiceName = ServiceUtils.getAbsolutePUName("default", "kitchensink-service");
-		
+	// Check that the "service type" is exposed in the service map obtained by
+	// the AdminApiController.
+	private void checkServiceType() {
+		final String absoluteServiceName = ServiceUtils.getAbsolutePUName(
+				"default", "kitchensink-service");
+
 		Map<String, Object> adminData = null;
 		try {
-			adminData = getAdminData("ProcessingUnits/Names/" + absoluteServiceName);
-		} catch (ErrorStatusException e) {
+			adminData = getAdminData("ProcessingUnits/Names/"
+					+ absoluteServiceName);
+		} catch (final ErrorStatusException e) {
 			AssertFail("Failed to get the service admin data." + e);
-		} catch (CLIException e) {
+		} catch (final CLIException e) {
 			AssertFail("Failed to get the service admin data." + e);
 		}
-		assertTrue("Test was unable to fetch the " + absoluteServiceName + " service's admin API data.",
-				adminData != null);
+		assertTrue("Test was unable to fetch the " + absoluteServiceName
+				+ " service's admin API data.", adminData != null);
 		assertTrue("Type attribute was not found in service map.",
 				adminData.containsKey("Type-Enumerator"));
-		
-		String kitchensinkServiceType = adminData.get("Type-Enumerator").toString();
-		assertTrue("The service type " + kitchensinkServiceType + " does not match the expected service type.",
-																ProcessingUnitType.UNIVERSAL.toString().equals(kitchensinkServiceType));
+
+		final String kitchensinkServiceType = adminData.get("Type-Enumerator")
+				.toString();
+		assertTrue(
+				"The service type " + kitchensinkServiceType
+						+ " does not match the expected service type.",
+				ProcessingUnitType.UNIVERSAL.toString().equals(
+						kitchensinkServiceType));
 	}
 
 	private static final java.util.logging.Logger logger = java.util.logging.Logger
@@ -330,7 +374,7 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 
 		@Override
 		public synchronized void gridServiceContainerRemoved(
-				GridServiceContainer gridServiceContainer) {
+				final GridServiceContainer gridServiceContainer) {
 			logger.info("gridServiceContainerRemoved");
 			if (checkPreConditions(this.gscRemoved, gridServiceContainer,
 					"gridServiceContainerRemoved")) {
@@ -340,9 +384,10 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 
 		}
 
-		private synchronized boolean checkPreConditions(Object currentObject,
-				Object newObject, String objectType) {
-			
+		private synchronized boolean checkPreConditions(
+				final Object currentObject, final Object newObject,
+				final String objectType) {
+
 			if (this.errorEncountered) {
 				return false;
 			}
@@ -358,7 +403,7 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 
 		@Override
 		public synchronized void gridServiceContainerAdded(
-				GridServiceContainer gridServiceContainer) {
+				final GridServiceContainer gridServiceContainer) {
 			logger.info("gridServiceContainerAdded");
 			if (checkPreConditions(this.gscAdded, gridServiceContainer,
 					"gridServiceContainerRemoved")) {
@@ -370,7 +415,7 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 
 		@Override
 		public synchronized void processingUnitInstanceRemoved(
-				ProcessingUnitInstance processingUnitInstance) {
+				final ProcessingUnitInstance processingUnitInstance) {
 			logger.info("processingUnitInstanceRemoved");
 			if (checkPreConditions(this.puiRemoved, processingUnitInstance,
 					"processingUnitInstanceRemoved")) {
@@ -382,7 +427,7 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 
 		@Override
 		public synchronized void processingUnitInstanceAdded(
-				ProcessingUnitInstance processingUnitInstance) {
+				final ProcessingUnitInstance processingUnitInstance) {
 			logger.info("processingUnitInstanceAdded");
 			if (checkPreConditions(this.puiAdded, processingUnitInstance,
 					"processingUnitInstanceAdded")) {
@@ -418,10 +463,10 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 
 	}
 
-	private void checkKillGSC(long pid, String host, ProcessingUnit pu)
-			throws InterruptedException {
+	private void checkKillGSC(final long pid, final String host,
+			final ProcessingUnit pu) throws InterruptedException {
 
-		KitchenSinkEventListener listener = new KitchenSinkEventListener();
+		final KitchenSinkEventListener listener = new KitchenSinkEventListener();
 
 		this.admin.getGridServiceContainers().getGridServiceContainerAdded()
 				.add(listener, false);
@@ -455,7 +500,7 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 
 	}
 
-	private boolean checkListenerState(KitchenSinkEventListener listener) {
+	private boolean checkListenerState(final KitchenSinkEventListener listener) {
 		// if(listener.getGscRemoved() == null && listener.getPuiRemoved() ==
 		// null) {
 		// AssertFail("Neither GSC not PUI were removed during the first interval");
@@ -472,8 +517,9 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 
 	}
 
-	private void waitForCorrectListenerState(KitchenSinkEventListener listener,
-			long interval, long timeout) throws InterruptedException {
+	private void waitForCorrectListenerState(
+			final KitchenSinkEventListener listener, final long interval,
+			final long timeout) throws InterruptedException {
 		final long start = System.currentTimeMillis();
 		final long end = start + timeout;
 		boolean checkSucceeded = false;
@@ -485,16 +531,16 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 		assertTrue("GSC and PUI did not start", checkSucceeded);
 	}
 
-	private void killProcess(long pid) {
-        try {
-            if (ScriptUtils.isLinuxMachine()) {
-                SigarHolder.getSigar().kill(pid, "SIGKILL");
-            } else {
-                SigarHolder.getSigar().kill(pid, "SIGTERM");
-            }
-        } catch (SigarException e) {
-            throw new IllegalStateException("Failed to kill GSC PID: " + pid, e);
-        }
+	private void killProcess(final long pid) {
+		try {
+			if (ScriptUtils.isLinuxMachine()) {
+				SigarHolder.getSigar().kill(pid, "SIGKILL");
+			} else {
+				SigarHolder.getSigar().kill(pid, "SIGTERM");
+			}
+		} catch (final SigarException e) {
+			throw new IllegalStateException("Failed to kill GSC PID: " + pid, e);
+		}
 
 		sleep(1000);
 
@@ -502,19 +548,19 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 			assertTrue(
 					"Process port is not open after killing GSC! Process died unexpectedly",
 					!USMUtils.isProcessAlive(pid));
-		} catch (USMException e) {
+		} catch (final USMException e) {
 			throw new IllegalStateException("Failed to kill GSC PID: " + pid, e);
 		}
 	}
 
-	private void checkForShutdownPrintouts(ProcessingUnitInstance pui,
-			long pid, ContinuousLogEntryMatcher matcher) {
-		LogEntries shutdownEntries = pui.getGridServiceContainer()
+	private void checkForShutdownPrintouts(final ProcessingUnitInstance pui,
+			final long pid, final ContinuousLogEntryMatcher matcher) {
+		final LogEntries shutdownEntries = pui.getGridServiceContainer()
 				.getGridServiceAgent()
 				.logEntries(LogProcessType.GSC, pid, matcher);
 		int shutdownEventIndex = 0;
-		for (LogEntry logEntry : shutdownEntries) {
-			String text = logEntry.getText();
+		for (final LogEntry logEntry : shutdownEntries) {
+			final String text = logEntry.getText();
 			if (text.contains(EXPECTED_SHUTDOWN_EVENT_STRINGS[shutdownEventIndex])) {
 				++shutdownEventIndex;
 				if (shutdownEventIndex == EXPECTED_SHUTDOWN_EVENT_STRINGS.length) {
@@ -528,16 +574,17 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 					+ EXPECTED_SHUTDOWN_EVENT_STRINGS[shutdownEventIndex]);
 		}
 	}
-	
-	private void checkForPrintouts(ProcessingUnitInstance pui,
-			long pid, ContinuousLogEntryMatcher matcher, final String[] expectedValues) {
-		LogEntries entries = pui.getGridServiceContainer()
+
+	private void checkForPrintouts(final ProcessingUnitInstance pui,
+			final long pid, final ContinuousLogEntryMatcher matcher,
+			final String[] expectedValues) {
+		final LogEntries entries = pui.getGridServiceContainer()
 				.getGridServiceAgent()
 				.logEntries(LogProcessType.GSC, pid, matcher);
-		
+
 		int index = 0;
-		for (LogEntry logEntry : entries) {			
-			String text = logEntry.getText();
+		for (final LogEntry logEntry : entries) {
+			final String text = logEntry.getText();
 			logger.info(text);
 			if (text.contains(expectedValues[index])) {
 				++index;
@@ -553,15 +600,15 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 		}
 	}
 
-
-	private int calculateNumberOfRecurrencesInGSCLog(ProcessingUnitInstance pui,
-			long pid, ContinuousLogEntryMatcher matcher, final String expectedValue) {
-		LogEntries entries = pui.getGridServiceContainer()
+	private int calculateNumberOfRecurrencesInGSCLog(
+			final ProcessingUnitInstance pui, final long pid,
+			final ContinuousLogEntryMatcher matcher, final String expectedValue) {
+		final LogEntries entries = pui.getGridServiceContainer()
 				.getGridServiceAgent()
 				.logEntries(LogProcessType.GSC, pid, matcher);
 		int result = 0;
-		for (LogEntry logEntry : entries) {
-			String text = logEntry.getText();
+		for (final LogEntry logEntry : entries) {
+			final String text = logEntry.getText();
 			if (text.contains(expectedValue)) {
 				++result;
 			}
@@ -570,147 +617,156 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 		return result;
 	}
 
-	
 	private void checkCustomCommands() throws IOException, InterruptedException {
 		// test custom commands
-		String invoke1Result = runCommand("connect " + this.restUrl
+		final String invoke1Result = runCommand("connect "
+				+ AbstractLocalCloudTest.restUrl
 				+ "; invoke kitchensink-service cmd1");
 
-		if ((!invoke1Result.contains("1: OK"))
-				|| (!invoke1Result.contains("Result: null"))) {
+		if (!invoke1Result.contains("1: OK")
+				|| !invoke1Result.contains("Result: null")) {
 			AssertFail("Custom command cmd1 returned unexpected result: "
 					+ invoke1Result);
 		}
 
-		String invoke2Result = CommandTestUtils.runCommandExpectedFail("connect " + this.restUrl
-				+ "; invoke kitchensink-service cmd2");
+		final String invoke2Result = CommandTestUtils
+				.runCommandExpectedFail("connect "
+						+ AbstractLocalCloudTest.restUrl
+						+ "; invoke kitchensink-service cmd2");
 
-		if ((!invoke2Result.contains("1: FAILED"))
-				|| (!invoke2Result
-						.contains("This is the cmd2 custom command - This is an error test"))) {
+		if (!invoke2Result.contains("1: FAILED")
+				|| !invoke2Result
+						.contains("This is the cmd2 custom command - This is an error test")) {
 			AssertFail("Custom command cmd2 returned unexpected result: "
 					+ invoke2Result);
 		}
 
-		String invoke3Result = runCommand("connect " + this.restUrl
+		final String invoke3Result = runCommand("connect "
+				+ AbstractLocalCloudTest.restUrl
 				+ "; invoke kitchensink-service cmd3");
-		if ((!invoke3Result.contains("1: OK"))
-				|| (!invoke3Result
-						.contains("Result: This is the cmd3 custom command. Service Dir is:"))) {
+		if (!invoke3Result.contains("1: OK")
+				|| !invoke3Result
+						.contains("Result: This is the cmd3 custom command. Service Dir is:")) {
 			AssertFail("Custom command cmd3 returned unexpected result: "
 					+ invoke3Result);
 		}
-		String invoke4Result = runCommand("connect " + this.restUrl
+		final String invoke4Result = runCommand("connect "
+				+ AbstractLocalCloudTest.restUrl
 				+ "; invoke kitchensink-service cmd4");
-		if ((!invoke4Result.contains("1: OK"))
-				|| (!invoke4Result.contains("context_command"))
-				|| (!invoke4Result.contains("instance is:"))) {
+		if (!invoke4Result.contains("1: OK")
+				|| !invoke4Result.contains("context_command")
+				|| !invoke4Result.contains("instance is:")) {
 			AssertFail("Custom command cmd4 returned unexpected result: "
 					+ invoke4Result);
 		}
 
-		String invoke5Result = runCommand("connect " + this.restUrl
+		final String invoke5Result = runCommand("connect "
+				+ AbstractLocalCloudTest.restUrl
 				+ "; invoke kitchensink-service cmd5 2 3");
 
-		if ((!invoke5Result.contains("1: OK"))
-				|| (!invoke5Result
-						.contains("this is the custom parameters command. expecting 123: 123"))) {
+		if (!invoke5Result.contains("1: OK")
+				|| !invoke5Result
+						.contains("this is the custom parameters command. expecting 123: 123")) {
 			AssertFail("Custom command cmd5 returned unexpected result: "
 					+ invoke5Result);
-		}	
-		String invoke6Result = runCommand("connect " + this.restUrl
+		}
+		final String invoke6Result = runCommand("connect "
+				+ AbstractLocalCloudTest.restUrl
 				+ "; invoke kitchensink-service cmd6 1 2");
 
-		if ((!invoke6Result.contains("1: OK"))
-				|| (!invoke6Result.contains("Argument:1")) 
+		if (!invoke6Result.contains("1: OK")
+				|| !invoke6Result.contains("Argument:1")
 				|| !invoke6Result.contains("Argument:2")) {
 			AssertFail("Custom command cmd6 returned unexpected result: "
 					+ invoke6Result);
-		}	
-		
-		String invoke7Result = runCommand("connect " + this.restUrl
+		}
+
+		final String invoke7Result = runCommand("connect "
+				+ AbstractLocalCloudTest.restUrl
 				+ "; invoke kitchensink-service cmd7 1");
 
-		if ((!invoke7Result.contains("1: OK"))
-				|| (!invoke7Result.contains("Single parameter test:parameter=1"))) {
+		if (!invoke7Result.contains("1: OK")
+				|| !invoke7Result.contains("Single parameter test:parameter=1")) {
 			AssertFail("Custom command cmd7 returned unexpected result: "
 					+ invoke7Result);
 		}
-		
-		String invoke8Result = CommandTestUtils.runCommandExpectedFail("connect " + this.restUrl
-				+ "; invoke kitchensink-service cmd8");
 
-		if ((!invoke8Result.contains("1: FAILED"))
-				|| (!invoke8Result
-						.contains("This is the cmd8 custom command - This is an error test"))) {
+		final String invoke8Result = CommandTestUtils
+				.runCommandExpectedFail("connect "
+						+ AbstractLocalCloudTest.restUrl
+						+ "; invoke kitchensink-service cmd8");
+
+		if (!invoke8Result.contains("1: FAILED")
+				|| !invoke8Result
+						.contains("This is the cmd8 custom command - This is an error test")) {
 			AssertFail("Custom command cmd8 returned unexpected result: "
 					+ invoke8Result);
 		}
 
+		final String invoke9Result = CommandTestUtils
+				.runCommandExpectedFail("connect "
+						+ AbstractLocalCloudTest.restUrl
+						+ "; invoke kitchensink-service cmd9");
 
-		String invoke9Result = CommandTestUtils.runCommandExpectedFail("connect " + this.restUrl
-				+ "; invoke kitchensink-service cmd9");
-
-		if ((!invoke9Result.contains("1: OK"))
-			|| (!invoke9Result.contains("Result: null"))) {
+		if (!invoke9Result.contains("1: OK")
+				|| !invoke9Result.contains("Result: null")) {
 			AssertFail("Custom command cmd9 returned unexpected result: "
 					+ invoke9Result);
 		}
 	}
 
-	private void checkMonitors(ProcessingUnitInstance pui) {
+	private void checkMonitors(final ProcessingUnitInstance pui) {
 		// verify monitors
-		Collection<ServiceMonitors> allSserviceMonitors = pui.getStatistics()
-				.getMonitors().values();
-		Map<String, Object> allMonitors = new HashMap<String, Object>();
-		for (ServiceMonitors serviceMonitors : allSserviceMonitors) {
+		final Collection<ServiceMonitors> allSserviceMonitors = pui
+				.getStatistics().getMonitors().values();
+		final Map<String, Object> allMonitors = new HashMap<String, Object>();
+		for (final ServiceMonitors serviceMonitors : allSserviceMonitors) {
 			allMonitors.putAll(serviceMonitors.getMonitors());
 		}
-		
-		 
 
-		for (String monitorKey : EXPECTED_MONITORS_FIELDS) {
+		for (final String monitorKey : EXPECTED_MONITORS_FIELDS) {
 			assertTrue("Missing Monitor Key: " + monitorKey,
 					allMonitors.containsKey(monitorKey));
 		}
-		
-		this.actualPid = (Long) allMonitors.get(CloudifyConstants.USM_MONITORS_ACTUAL_PROCESS_ID);
+
+		this.actualPid = (Long) allMonitors
+				.get(CloudifyConstants.USM_MONITORS_ACTUAL_PROCESS_ID);
 		assertTrue("Actual PID should not be zero", this.actualPid > 0);
 	}
 
-	private void checkDetails(ProcessingUnitInstance pui) {
-		Collection<ServiceDetails> allServiceDetails = pui
+	private void checkDetails(final ProcessingUnitInstance pui) {
+		final Collection<ServiceDetails> allServiceDetails = pui
 				.getServiceDetailsByServiceId().values();
-		Map<String, Object> allDetails = new HashMap<String, Object>();
-		for (ServiceDetails serviceDetails : allServiceDetails) {
+		final Map<String, Object> allDetails = new HashMap<String, Object>();
+		for (final ServiceDetails serviceDetails : allServiceDetails) {
 			allDetails.putAll(serviceDetails.getAttributes());
 		}
-		for (String detailKey : EXPECTED_DETAILS_FIELDS) {
+		for (final String detailKey : EXPECTED_DETAILS_FIELDS) {
 			assertTrue("Missing details entry: " + detailKey,
 					allDetails.containsKey(detailKey));
 		}
-		
+
 		final String url = (String) allDetails.get("url");
 		assertNotNull("Missing URL details", url);
-		
+
 		try {
 			new URL(url);
-		} catch (MalformedURLException e) {
+		} catch (final MalformedURLException e) {
 			AssertFail("URL: " + url + " is not a valid URL", e);
 		}
 	}
 
 	private ContinuousLogEntryMatcher checkForStartupPrintouts(
-			ProcessingUnitInstance pui, long pid,
-			ContinuousLogEntryMatcher matcher) {
+			final ProcessingUnitInstance pui, final long pid,
+			final ContinuousLogEntryMatcher matcher) {
 
 		int startupEventIndex = 0;
-		LogEntries entries = pui.getGridServiceContainer()
+		final LogEntries entries = pui.getGridServiceContainer()
 				.getGridServiceAgent()
 				.logEntries(LogProcessType.GSC, pid, matcher);
-		for (LogEntry logEntry : entries) {
-			String text = logEntry.getText();
-			if (text.contains("application name is")){
+		for (final LogEntry logEntry : entries) {
+			final String text = logEntry.getText();
+			if (text.contains("application name is")) {
 				System.out.println("Stop");
 			}
 			if (text.contains(EXPECTED_STARTUP_EVENT_STRINGS[startupEventIndex])) {
@@ -728,41 +784,49 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 		return matcher;
 	}
 
-	private ProcessingUnitInstance findPUI(ProcessingUnit pu) throws UnknownHostException {
-		boolean found = pu.waitFor(1, 30, TimeUnit.SECONDS);
-		assertTrue("USM Service state is not RUNNING", USMTestUtils.waitForPuRunningState("default.kitchensink-service", 20, TimeUnit.SECONDS, admin));
+	private ProcessingUnitInstance findPUI(final ProcessingUnit pu)
+			throws UnknownHostException {
+		final boolean found = pu.waitFor(1, 30, TimeUnit.SECONDS);
+		assertTrue("USM Service state is not RUNNING",
+				USMTestUtils.waitForPuRunningState(
+						"default.kitchensink-service", 20, TimeUnit.SECONDS,
+						admin));
 		assertTrue("Could not find instance of deployed service", found);
 
-		ProcessingUnitInstance pui = pu.getInstances()[0];
+		final ProcessingUnitInstance pui = pu.getInstances()[0];
 		return pui;
 	}
 
 	private ProcessingUnit findPU() {
-		ProcessingUnit pu = this.admin.getProcessingUnits().waitFor(
-				ServiceUtils.getAbsolutePUName("default", "kitchensink-service"), 30, TimeUnit.SECONDS);
+		final ProcessingUnit pu = this.admin.getProcessingUnits()
+				.waitFor(
+						ServiceUtils.getAbsolutePUName("default",
+								"kitchensink-service"), 30, TimeUnit.SECONDS);
 		assertNotNull("Could not find processing unit for installed service",
 				pu);
 		return pu;
 	}
 
-	private void installService() throws PackagingException, IOException, InterruptedException, DSLException {
-		File serviceDir = new File(RECIPE_DIR_PATH);
-		ServiceReader.getServiceFromDirectory(serviceDir, CloudifyConstants.DEFAULT_APPLICATION_NAME).getService();
+	private void installService() throws PackagingException, IOException,
+			InterruptedException, DSLException {
+		final File serviceDir = new File(RECIPE_DIR_PATH);
+		ServiceReader.getServiceFromDirectory(serviceDir).getService();
 
-		runCommand("connect " + restUrl + ";install-service --verbose " + RECIPE_DIR_PATH);
+		runCommand("connect " + restUrl + ";install-service --verbose "
+				+ RECIPE_DIR_PATH);
 	}
 
-	private boolean isPortOpen(String host) {
-		Socket socket = new Socket();
+	private boolean isPortOpen(final String host) {
+		final Socket socket = new Socket();
 		try {
 			socket.connect(new InetSocketAddress(host, 7777));
 			return true;
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			return false;
 		} finally {
 			try {
 				socket.close();
-			} catch (IOException e) {
+			} catch (final IOException e) {
 				// ignore
 			}
 		}

@@ -8,7 +8,6 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import org.cloudifysource.dsl.Service;
-import org.cloudifysource.dsl.internal.CloudifyConstants;
 import org.cloudifysource.dsl.internal.ServiceReader;
 import org.cloudifysource.dsl.utils.ServiceUtils;
 import org.openspaces.admin.application.Application;
@@ -235,7 +234,7 @@ public class AbstractApplicationFailOverXenTest extends AbstractStartManagementX
 	protected void assignCassandraPorts(String stockdemoAppDirPath) {
 		Service cassandraService = null;
 		try {
-			cassandraService = ServiceReader.getServiceFromDirectory(new File(stockdemoAppDirPath + "/cassandra"), CloudifyConstants.DEFAULT_APPLICATION_NAME).getService();
+			cassandraService = ServiceReader.getServiceFromDirectory(new File(stockdemoAppDirPath + "/cassandra")).getService();
 		} catch (Exception e) {
 		    AssertFail("Failed assiging cassandra ports", e);
 		} 

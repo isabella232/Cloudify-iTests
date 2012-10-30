@@ -26,7 +26,6 @@ public class InstallAndUninstallApplicationTest extends AbstractLocalCloudTest {
 	private void doTest(final String serviceGroovyFilename) throws IOException, InterruptedException {
 
 		final String applicationDir = CommandTestUtils.getPath("apps/USM/usm/applications/" + serviceGroovyFilename);
-		
 
 		runCommand("connect " + this.restUrl + ";install-application --verbose " + applicationDir);
 		String absolutePUName = ServiceUtils.getAbsolutePUName("simple", "simple");

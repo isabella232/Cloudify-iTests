@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.concurrent.TimeUnit;
 
-import org.cloudifysource.dsl.internal.CloudifyConstants;
 import org.cloudifysource.dsl.internal.CloudifyConstants.USMState;
 import org.cloudifysource.dsl.internal.DSLException;
 import org.cloudifysource.dsl.internal.ServiceReader;
@@ -63,8 +62,7 @@ public class SelfHealingDisabledTest extends AbstractLocalCloudTest {
 	private String installService() throws PackagingException, IOException,
 			InterruptedException, DSLException {
 		final File serviceDir = new File(RECIPE_DIR_PATH);
-		ServiceReader.getServiceFromDirectory(serviceDir,
-				CloudifyConstants.DEFAULT_APPLICATION_NAME).getService();
+		ServiceReader.getServiceFromDirectory(serviceDir).getService();
 
 		return runCommand("connect " + restUrl
 				+ ";install-service -disableSelfHealing --verbose "

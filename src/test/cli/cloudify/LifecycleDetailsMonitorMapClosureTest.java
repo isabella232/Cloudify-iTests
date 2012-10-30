@@ -8,6 +8,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import org.cloudifysource.dsl.internal.DSLException;
+import org.cloudifysource.dsl.internal.ServiceReader;
+import org.cloudifysource.dsl.internal.packaging.PackagingException;
+import org.cloudifysource.dsl.utils.ServiceUtils;
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.openspaces.admin.pu.ProcessingUnitInstance;
 import org.openspaces.pu.service.ServiceDetails;
@@ -15,12 +19,6 @@ import org.openspaces.pu.service.ServiceMonitors;
 import org.testng.annotations.Test;
 
 import test.usm.USMTestUtils;
-
-import org.cloudifysource.dsl.internal.CloudifyConstants;
-import org.cloudifysource.dsl.internal.DSLException;
-import org.cloudifysource.dsl.internal.ServiceReader;
-import org.cloudifysource.dsl.internal.packaging.PackagingException;
-import org.cloudifysource.dsl.utils.ServiceUtils;
 
 
 public class LifecycleDetailsMonitorMapClosureTest extends AbstractLocalCloudTest{
@@ -53,7 +51,7 @@ public class LifecycleDetailsMonitorMapClosureTest extends AbstractLocalCloudTes
 	
 	private void installService() throws PackagingException, IOException, InterruptedException, DSLException {
 		File serviceDir = new File(RECIPE_DIR_PATH);
-		ServiceReader.getServiceFromDirectory(serviceDir, CloudifyConstants.DEFAULT_APPLICATION_NAME).getService();
+		ServiceReader.getServiceFromDirectory(serviceDir).getService();
 		runCommand("connect " + this.restUrl + ";install-service --verbose " + RECIPE_DIR_PATH);
 		assertTrue("Could not find LUS of local cloud", admin.getLookupServices().waitFor(1, 10, TimeUnit.SECONDS));
 		assertTrue("USM Service State is not RUNNING", USMTestUtils.waitForPuRunningState("default.simple", 20, TimeUnit.SECONDS, admin));

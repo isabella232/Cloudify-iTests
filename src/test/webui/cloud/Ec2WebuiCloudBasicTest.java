@@ -3,6 +3,7 @@ package test.webui.cloud;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.util.List;
 import java.util.Map;
 
@@ -13,6 +14,9 @@ import org.testng.ITestContext;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+
+import test.cli.cloudify.cloud.NewAbstractCloudTest;
+import test.webui.WebuiEnabler;
 
 import com.gigaspaces.webuitf.LoginPage;
 import com.gigaspaces.webuitf.MainNavigation;
@@ -47,7 +51,7 @@ import framework.utils.AssertUtils.RepetitiveConditionProvider;
 import framework.utils.LogUtils;
 import framework.utils.ScriptUtils;
 
-public class Ec2WebuiCloudBasicTest extends AbstractWebUICloudTest {
+public class Ec2WebuiCloudBasicTest extends NewAbstractCloudTest {
 	
 	private static final String MANAGEMENT_APPLICATION_NAME = "management";
 	private static final String applicationFolderName = "petclinic-simple";
@@ -66,7 +70,8 @@ public class Ec2WebuiCloudBasicTest extends AbstractWebUICloudTest {
 	private MainNavigation mainNav;
 	private static long assertWaitingTime = 10000;
 	
-
+	private WebuiEnabler webuiEnabler;
+	
 	@Override
 	protected void customizeCloud() throws Exception {
 		// not needed
@@ -85,11 +90,23 @@ public class Ec2WebuiCloudBasicTest extends AbstractWebUICloudTest {
 	@BeforeClass(alwaysRun = true)
 	protected void bootstrap(final ITestContext testContext) {
 		super.bootstrap(testContext);
+		try {
+			webuiEnabler = new WebuiEnabler(cloud);
+		} catch (InterruptedException e) {
+			throw new RuntimeException(e);
+		} catch (UnknownHostException e) {
+			throw new RuntimeException(e);
+		}
 	}
 	
 	@AfterClass(alwaysRun = true)
 	protected void teardown() {
 		super.teardown();
+		try {
+			webuiEnabler.close();
+		} catch (InterruptedException e) {
+			throw new RuntimeException(e);
+		}
 	}
 	
 		
@@ -101,7 +118,7 @@ public class Ec2WebuiCloudBasicTest extends AbstractWebUICloudTest {
 		restUrl = getRestUrl();	
 		
 		// begin tests on the webui 
-		LoginPage loginPage = getLoginPage();
+		LoginPage loginPage = webuiEnabler.getLoginPage();
 		
 		mainNav = loginPage.login();
 

@@ -1,5 +1,7 @@
 package test.webui.cloud;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 
 import org.openqa.selenium.By;
@@ -7,10 +9,12 @@ import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverBackedSelenium;
 import org.openqa.selenium.WebDriverException;
-import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeDriverService;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.remote.RemoteWebDriver;
+import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 
@@ -27,12 +31,17 @@ public abstract class AbstractWebUICloudTest extends NewAbstractCloudTest {
 	
 	private WebDriver driver;
 	private Selenium selenium;
+	private ChromeDriverService chromeService;
 	
-		    	
-    @BeforeMethod	    	
+	@BeforeMethod
 	public void launchWebui() throws InterruptedException {
 		startWebBrowser(getWebuiUrl());		
 	}
+	
+	@AfterMethod(alwaysRun = true)
+	public void killWebServices() throws InterruptedException {
+		stopWebBrowser();
+	} 
 	
     private void startWebBrowser(String uRL) throws InterruptedException {
     	LogUtils.log("Launching browser...");
@@ -55,10 +64,13 @@ public abstract class AbstractWebUICloudTest extends NewAbstractCloudTest {
     						driver = new InternetExplorerDriver(desired);
     					}
     					else {
-    						System.setProperty("webdriver.chrome.driver", SGTestHelper.getSGTestRootDir() + "/src/test/webui/resources/chromedriver.exe");
     						DesiredCapabilities desired = DesiredCapabilities.chrome();
-    						desired.setCapability("chrome.switches", Arrays.asList("--start-maximized"));
-    						driver = new ChromeDriver(desired);
+							desired.setCapability("chrome.switches", Arrays.asList("--start-maximized"));
+							String chromeDriverExePath = SGTestHelper.getSGTestRootDir() + "/src/test/webui/resources/chromedriver.exe";
+							chromeService = new ChromeDriverService.Builder().usingAnyFreePort().usingDriverExecutable(new File(chromeDriverExePath)).build();
+							LogUtils.log("Starting Chrome Driver Server...");
+							chromeService.start();
+							driver = new RemoteWebDriver(chromeService.getUrl(), desired);
     					}
     				}
     			}
@@ -67,7 +79,9 @@ public abstract class AbstractWebUICloudTest extends NewAbstractCloudTest {
     		}
     		catch (WebDriverException e) {
     			LogUtils.log("Failed to lanch browser, retyring...Attempt number " + (i + 1));
-    		}
+    		} catch (IOException e) {
+				Assert.fail("Failed to lanch browser", e);
+			}
     	}
     	if (driver == null) {
     		LogUtils.log("unable to lauch browser, test will fail on NPE");
@@ -97,25 +111,32 @@ public abstract class AbstractWebUICloudTest extends NewAbstractCloudTest {
     }
 
 
-    @AfterMethod(alwaysRun = true)
-	public void killWebServices() {
-		stopWebBrowser();		
-	}   
-	
-    public void stopWebBrowser() {
-    	LogUtils.log("Killing browser...");
-    	if (driver != null) {
-    		driver.quit();
-    	}
-    }	
-        
-    
-    public void setBrowser(String browser) {
-		System.setProperty("selenium.browser", browser);
+	public void shutdownWebui() throws InterruptedException {
+		driver.quit();
 	}
-    
+	
+	public void stopWebBrowser() throws InterruptedException {
+    	LogUtils.log("Killing browser...");
+    	
+    	if(selenium != null)
+    		selenium.stop();
+    	
+		selenium = null;
+		Thread.sleep(1000);
+		
+		if (chromeService != null && chromeService.isRunning()) {
+			LogUtils.log("Chrome Driver Server is still running, shutting it down...");
+			chromeService.stop();
+			chromeService = null;
+		}
+    }
+	
 	public LoginPage getLoginPage() {
 		return new LoginPage(selenium,driver);
+	}
+	
+	public void setBrowser(String browser) {
+		System.setProperty("selenium.browser", browser);
 	}
 
 }

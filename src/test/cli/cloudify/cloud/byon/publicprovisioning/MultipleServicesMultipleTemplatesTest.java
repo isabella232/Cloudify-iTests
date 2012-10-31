@@ -1,6 +1,5 @@
 package test.cli.cloudify.cloud.byon.publicprovisioning;
 
-import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import org.cloudifysource.dsl.utils.ServiceUtils;
@@ -57,7 +56,8 @@ public class MultipleServicesMultipleTemplatesTest extends AbstractPublicProvisi
 	}
 	
 	@Override
-	public void beforeTeardown() throws IOException, InterruptedException {
+	public void beforeTeardown() throws Exception {
+		super.beforeTeardown();
 		super.uninstallServicefFound(GROOVY_ONE);
 		super.uninstallServicefFound(GROOVY_TWO);
 	}

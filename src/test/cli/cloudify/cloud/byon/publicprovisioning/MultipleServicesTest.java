@@ -35,6 +35,7 @@ public class MultipleServicesTest extends AbstractPublicProvisioningByonCloudTes
 		// check that it is the case
 		ProcessingUnit groovy1 = admin.getProcessingUnits().waitFor(ServiceUtils.getAbsolutePUName("default", GROOVY_ONE), OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
 		ProcessingUnit groovy2 = admin.getProcessingUnits().waitFor(ServiceUtils.getAbsolutePUName("default", GROOVY_TWO), OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
+		
 		assertTrue(groovy1.waitFor(1, OPERATION_TIMEOUT, TimeUnit.MILLISECONDS));
 		assertTrue(groovy2.waitFor(1, OPERATION_TIMEOUT, TimeUnit.MILLISECONDS));
 		assertTrue("groovy instances were installed on 2 different machines",  groovy1.getInstances()[0].getMachine().equals(groovy2.getInstances()[0].getMachine()));
@@ -49,7 +50,8 @@ public class MultipleServicesTest extends AbstractPublicProvisioningByonCloudTes
 	}
 	
 	@Override
-	public void beforeTeardown() throws IOException, InterruptedException {
+	public void beforeTeardown() throws Exception {
+		super.beforeTeardown();
 		super.uninstallServicefFound(GROOVY_ONE);
 		super.uninstallServicefFound(GROOVY_TWO);
 	}

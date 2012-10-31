@@ -44,7 +44,8 @@ public class MultipleInstancesTest extends AbstractPublicProvisioningByonCloudTe
 	}
 	
 	@Override
-	public void beforeTeardown() throws IOException, InterruptedException {
+	public void beforeTeardown() throws Exception {
+		super.beforeTeardown();
 		super.uninstallServicefFound(GROOVY);
 	}
 }

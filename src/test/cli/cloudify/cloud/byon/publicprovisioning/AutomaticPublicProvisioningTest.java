@@ -58,7 +58,8 @@ public class AutomaticPublicProvisioningTest extends AbstractPublicProvisioningB
 	}
 	
 	@Override
-	public void beforeTeardown() throws IOException, InterruptedException {
+	public void beforeTeardown() throws Exception {
+		super.beforeTeardown();
 		super.uninstallServicefFound(SERVICE_NAME);
 	}
 	

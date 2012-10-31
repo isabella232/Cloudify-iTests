@@ -105,7 +105,7 @@ public class InstallApplicationWithOverridesFile extends AbstractLocalCloudTest 
 		reqEntity.addPart("file", applicationFileBody);
 		// add overrides file to reqEntity
 		final FileBody overridesFileBody = new FileBody(overridesFile);
-		reqEntity.addPart("recipeOverrides", overridesFileBody);
+		reqEntity.addPart("recipeOverridesFile", overridesFileBody);
 		// create HttpPost
 		String postCommand = restUrl + "/service/applications/" + APPLICATION_OVERRIDEN_NAME + "/timeout/10";
 		final HttpPost httppost = new HttpPost(postCommand);

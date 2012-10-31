@@ -10,6 +10,7 @@ import org.testng.ITestContext;
 import org.testng.ITestListener;
 import org.testng.ITestResult;
 import org.testng.TestRunner;
+import org.testng.annotations.BeforeMethod;
 
 import test.AbstractTestSupport;
 import test.cli.cloudify.CommandTestUtils;
@@ -52,6 +53,11 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 	
 	protected void bootstrap(final ITestContext testContext) {
 		bootstrap(testContext, null);
+	}
+	
+	@BeforeMethod
+	public void beforeTest() {	
+		LogUtils.log("Creating test folder");
 	}
 	
 	protected void bootstrap(final ITestContext iTestContext, CloudService service) {

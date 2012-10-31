@@ -53,11 +53,20 @@ public class HPExamplesTest extends AbstractExamplesTest {
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
-	public void testPetclinic()
-			throws Exception {
+	public void testPetclinicSimple() throws Exception {
+		super.testPetclinicSimple();
+	}
+	
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
+	public void testPetclinic() throws Exception {
 		super.testPetclinic();
 	}
 	
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
+	public void testHelloWorld() throws Exception {
+		super.testHelloWorld();
+	}
+		
 	@Override
 	protected void customizeCloud() {
 

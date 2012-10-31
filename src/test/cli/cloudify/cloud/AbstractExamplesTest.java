@@ -37,6 +37,14 @@ public abstract class AbstractExamplesTest extends NewAbstractCloudTest {
 		doTest("petclinic", "petclinic");
 	}
 	
+	protected void testPetclinicSimple() throws Exception {
+		doTest("petclinic-simple", "petclinic");
+	}
+	
+	protected void testHelloWorld() throws Exception {
+		doTest("helloworld", "helloworld");
+	}
+	
 	protected void testTravelChef() throws Exception {
 		doTest("travel-chef", "travel");
 	}
@@ -59,70 +67,67 @@ public abstract class AbstractExamplesTest extends NewAbstractCloudTest {
 			} else {
 				installApplicationAndWait(applicationPath, applicationName);
 			}
-			if (applicationFolderName.equals("travel") && getCloudName().equals("ec2")) {
+			if (applicationFolderName.equals("travel")) {
+				
+				String[] services = {"cassandra", "tomcat"};
+				
+				verifyServices(applicationName, services);
+				
+				verifyApplicationUrls(applicationName, false);
+				
 				// verify image and hardware ID only for travel on EC2
-				Client client = Client.create(new DefaultClientConfig());
-				final WebResource service = client.resource(this.getRestUrl());
-				String hardwareIDResult = service.path( "/admin/ProcessingUnits/Names/travel.tomcat/Instances/0/Statistics/Monitors/USM/Details/Attributes/"
-										+ CloudifyConstants.USM_DETAILS_HARDWARE_ID).get(String.class);
-				assertTrue("error reading hardware id", !hardwareIDResult.contains("error"));
-				assertTrue("Could not find expected hardware ID: m1.small in response", hardwareIDResult.contains("m1.small"));
-
-				String imageIDResult = service.path("/admin/ProcessingUnits/Names/travel.tomcat/Instances/0/Statistics/Monitors/USM/Details/Attributes/" 
-										+ CloudifyConstants.USM_DETAILS_IMAGE_ID).get(String.class);
-				assertTrue("error reading image id", !imageIDResult.toLowerCase().contains("error"));
+				if(getCloudName().equals("ec2")){
+					
+					Client client = Client.create(new DefaultClientConfig());
+					final WebResource service = client.resource(this.getRestUrl());
+					String hardwareIDResult = service.path( "/admin/ProcessingUnits/Names/travel.tomcat/Instances/0/Statistics/Monitors/USM/Details/Attributes/"
+							+ CloudifyConstants.USM_DETAILS_HARDWARE_ID).get(String.class);
+					assertTrue("error reading hardware id", !hardwareIDResult.contains("error"));
+					assertTrue("Could not find expected hardware ID: m1.small in response", hardwareIDResult.contains("m1.small"));
+					
+					String imageIDResult = service.path("/admin/ProcessingUnits/Names/travel.tomcat/Instances/0/Statistics/Monitors/USM/Details/Attributes/" 
+							+ CloudifyConstants.USM_DETAILS_IMAGE_ID).get(String.class);
+					assertTrue("error reading image id", !imageIDResult.toLowerCase().contains("error"));
+				}
 
 			}
 			
-			if (applicationName.equals("petclinic")){
+			if (applicationFolderName.equals("petclinic")){
 				
 				String[] services = {"mongod", "mongoConfig", "mongos", "tomcat", "apacheLB"};
 				
-				Client client = Client.create(new DefaultClientConfig());
-				final WebResource service = client.resource(this.getRestUrl());
+				verifyServices(applicationName, services);
 				
-				String command = "connect " + getRestUrl() + ";use-application petclinic;list-services";
-				String output = CommandTestUtils.runCommandAndWait(command);
+				verifyApplicationUrls(applicationName, true);				
+			}
+			
+			if (applicationFolderName.equals("petclinic-simple")){
 				
-				for(String singleService : services){
-					AssertUtils.assertTrue("the service " + singleService + " is not running", output.contains(singleService));					
-				}
+				String[] services = {"mongod", "tomcat"};
 				
-				String restApacheService = service.path("/admin/ProcessingUnits/Names/petclinic.apacheLB/ProcessingUnitInstances/0/ServiceDetailsByServiceId/USM/Attributes/Cloud%20Public%20IP").get(String.class);
-				int urlStartIndex = restApacheService.indexOf(":") + 2;
-				int urlEndIndex = restApacheService.indexOf("\"", urlStartIndex);
+				verifyServices(applicationName, services);
 				
-				String apacheServiceHostURL = restApacheService.substring(urlStartIndex, urlEndIndex);
-				String apachePort = "8090";
+				verifyApplicationUrls(applicationName, false);				
+			}
+			
+			if (applicationName.equals("helloworld")){
 				
-				assertPageExists("http://" + apacheServiceHostURL + ":" + apachePort + "/");
+				String[] services = {"tomcat"};
 				
+				verifyServices(applicationName, services);
+				
+				verifyApplicationUrls(applicationName, false);				
 			}
 			
 			if (applicationFolderName.equals("travel-chef")){
 				
-				String apacheUrlRestPath = "/admin/ProcessingUnits/Names/travel.apacheLB/ProcessingUnitInstances/0/ServiceDetailsByServiceId/USM/Attributes/Cloud%20Public%20IP";
 				String[] services = {"chef-server", "apacheLB", "mysql"};
-				String restUrl = getRestUrl();
-				String apachePort = "8090";
 								
 				LogUtils.log("verifing successful installation");
 
-				Client client = Client.create(new DefaultClientConfig());
-				final WebResource service = client.resource(this.getRestUrl());
+				verifyServices(applicationName, services);
 				
-				String command = "connect " + restUrl + ";use-application " + applicationName + ";list-services";
-				String output = CommandTestUtils.runCommandAndWait(command);
-				
-				for(String singleService : services){
-					AssertUtils.assertTrue("the service " + singleService + " is not running", output.contains(singleService));					
-				}
-				
-				String restApacheService = service.path(apacheUrlRestPath).get(String.class);
-				Map<String, Object> apacheUrlMap = jsonToMap(restApacheService);
-				String apacheServiceHostURL = (String) apacheUrlMap.get(restApacheService);
-				
-				assertPageExists("http://" + apacheServiceHostURL + ":" + apachePort + "/");
+				verifyApplicationUrls(applicationName, true);
 				
 				super.uninstallApplicationAndWait(applicationName);
 
@@ -139,6 +144,34 @@ public abstract class AbstractExamplesTest extends NewAbstractCloudTest {
 					uninstallApplicationAndWait(applicationName);
 				}
 			}
+		}
+	}
+
+	private void verifyApplicationUrls(String appName, boolean hasApacheLB) {
+		
+		Client client = Client.create(new DefaultClientConfig());
+		final WebResource service = client.resource(this.getRestUrl());
+		
+		if(hasApacheLB){
+			
+			String restApacheService = service.path("/admin/ProcessingUnits/Names/" + appName + ".apacheLB/ProcessingUnitInstances/0/ServiceDetailsByServiceId/USM/Attributes/Cloud%20Public%20IP").get(String.class);
+			int urlStartIndex = restApacheService.indexOf(":") + 2;
+			int urlEndIndex = restApacheService.indexOf("\"", urlStartIndex);
+			
+			String apacheServiceHostURL = restApacheService.substring(urlStartIndex, urlEndIndex);
+			String apachePort = "8090";
+			
+			assertPageExists("http://" + apacheServiceHostURL + ":" + apachePort + "/");
+		}
+	}
+
+	private void verifyServices(String applicationName, String[] services) throws IOException, InterruptedException {
+		
+		String command = "connect " + getRestUrl() + ";use-application " + applicationName + ";list-services";
+		String output = CommandTestUtils.runCommandAndWait(command);
+		
+		for(String singleService : services){
+			AssertUtils.assertTrue("the service " + singleService + " is not running", output.contains(singleService));					
 		}
 	}
 

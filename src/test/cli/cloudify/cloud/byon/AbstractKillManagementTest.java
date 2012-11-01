@@ -3,7 +3,6 @@ package test.cli.cloudify.cloud.byon;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
-import org.cloudifysource.dsl.internal.DSLException;
 import org.cloudifysource.dsl.utils.ServiceUtils;
 import org.junit.Assert;
 import org.openspaces.admin.gsm.GridServiceManager;
@@ -110,8 +109,17 @@ public abstract class AbstractKillManagementTest extends AbstractByonCloudTest {
 	}
 
 	//TODO: add support for windows machines (BYON doesn't support windows right now)
-	private void startManagement(String machine1) throws IOException, DSLException {
-		SSHUtils.runCommand(machine1, DEFAULT_TEST_TIMEOUT,  ByonCloudService.BYON_HOME_FOLDER + "/gigaspaces/tools/cli/cloudify.sh start-management", ByonCloudService.BYON_CLOUD_USER, ByonCloudService.BYON_CLOUD_PASSWORD);
+	private void startManagement(String machine1) throws Exception {
+		
+		for (int i = 0 ; i < 3 ; i++) {
+			try {
+				SSHUtils.runCommand(machine1, DEFAULT_TEST_TIMEOUT,  ByonCloudService.BYON_HOME_FOLDER + "/gigaspaces/tools/cli/cloudify.sh start-management", ByonCloudService.BYON_CLOUD_USER, ByonCloudService.BYON_CLOUD_PASSWORD);
+				return;
+			} catch (Throwable t) {
+				LogUtils.log("Failed to start management on machine " + machine1 + " restarting machine before attempting again. attempt number " + (i + 1));
+				restartMachineAndWait(machine1);
+			}
+		}
 
 	}
 

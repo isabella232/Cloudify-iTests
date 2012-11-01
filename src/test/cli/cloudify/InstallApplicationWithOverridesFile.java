@@ -42,11 +42,12 @@ public class InstallApplicationWithOverridesFile extends AbstractLocalCloudTest 
 	private static final String SERVICE_ICON = "simpleOverridesApplicationIcon.png";
 	private static final String SERVICE_URL = APPLICATION_OVERRIDEN_NAME;
 
-	private static final String APPLICATION_DIR_PATH = "apps/USM/usm/applications/simpleOverridesApplication";
-	private static final String OVERRIDES_FILE_PATH = APPLICATION_DIR_PATH
-			+ "/overridesFile/simpleOverrides-application.overrides";
+	private static final String APPLICATION_DIR_PATH = 
+			CommandTestUtils.getPath("apps/USM/usm/applications/simpleOverridesApplication");
+	private static final String OVERRIDES_FILE_PATH = 
+			APPLICATION_DIR_PATH + "/overridesFile/simpleOverrides-application.overrides";
 	private static final String APPLICATION_WITH_OVERRIDES_FILE_DIR_PATH = 
-			"apps/USM/usm/applications/simpleOverridesApplicationWithOverrideFile";
+			CommandTestUtils.getPath("apps/USM/usm/applications/simpleOverridesApplicationWithOverrideFile");
 
 	private static final Map<String, Object> EXPECTED_SERVICE_FIELDS = new HashMap<String, Object>();
 	static {
@@ -169,7 +170,6 @@ public class InstallApplicationWithOverridesFile extends AbstractLocalCloudTest 
 		assertTrue("list-services command output doesn't conatin "
 				+ SERVICE_OVERRIDEN_NAME + ", output: " + output,
 				output.contains(SERVICE_OVERRIDEN_NAME));
-		System.out.println("*** list-services output: " + output + " ***");		
 	}
 
 	private static void assertApplication() 
@@ -189,9 +189,7 @@ public class InstallApplicationWithOverridesFile extends AbstractLocalCloudTest 
 			command += " -overrides " + overridesFilePath;
 		} 
 		try {
-			String output = runCommand(command + " " + applicationDirPath);
-			System.out.println("*** connect and install-application "
-					+ applicationDirPath + ", output: " + output + " ***");
+			runCommand(command + " " + applicationDirPath);
 		} catch (final Exception e) {
 			LogUtils.log("Failed to install application " + applicationDirPath, e);
 			e.printStackTrace();
@@ -201,10 +199,8 @@ public class InstallApplicationWithOverridesFile extends AbstractLocalCloudTest 
 	private void uninstallApplication(final String url,
 			final String applicationName) {
 		try {
-			final String runCommand = runCommand("connect " + url
+			runCommand("connect " + url
 					+ ";uninstall-application -timeout 5 " + applicationName);
-			System.out.println("*** connect and uninstall-application"
-					+ applicationName + ", output: " + runCommand + " ***");
 		} catch (final Exception e) {
 			LogUtils.log("Failed to uninstall application " + applicationName, e);
 			e.printStackTrace();

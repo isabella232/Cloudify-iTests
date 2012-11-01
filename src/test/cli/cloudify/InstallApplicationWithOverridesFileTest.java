@@ -33,7 +33,7 @@ import framework.utils.LogUtils;
  * @author yael
  *
  */
-public class InstallApplicationWithOverridesFile extends AbstractLocalCloudTest {
+public class InstallApplicationWithOverridesFileTest extends AbstractLocalCloudTest {
 
 	private static final String APPLICATION_OVERRIDEN_NAME = "simpleOverridesApplicationOverriden";
 	private static final String SERVICE_OVERRIDEN_NAME = "simpleOverridesService";

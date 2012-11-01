@@ -25,10 +25,6 @@ public abstract class AbstractExamplesTest extends NewAbstractCloudTest {
 	private static final int WINDOWS_INSTALLATION_TIMEOUT = 50;
 	private String applicationName;
 
-	public AbstractExamplesTest() {
-		LogUtils.log("Instansiated " + AbstractExamplesTest.class.getName());
-	}
-
 	protected void testTravel() throws Exception {
 		doTest("travel", "travel");
 	}

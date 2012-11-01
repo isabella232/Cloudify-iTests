@@ -126,6 +126,12 @@ public class ByonCloudService extends AbstractCloudService {
 	private void cleanMachines() {
 		killAllJavaOnAllHosts();
 		cleanGSFilesOnAllHosts();
+		cleanCloudifyTempDir();
+	}
+
+	private void cleanCloudifyTempDir() {
+		LogUtils.log(SSHUtils.runCommand(getMachines()[0], AbstractTest.OPERATION_TIMEOUT, "rm -rf /export/tgrid/.cloudify/", "tgrid", "tgrid"));
+		
 	}
 
 	private void cleanGSFilesOnAllHosts() {

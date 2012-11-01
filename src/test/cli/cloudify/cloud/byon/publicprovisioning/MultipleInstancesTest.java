@@ -7,6 +7,7 @@ import org.cloudifysource.dsl.utils.ServiceUtils;
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.testng.ITestContext;
 import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -38,14 +39,13 @@ public class MultipleInstancesTest extends AbstractPublicProvisioningByonCloudTe
 		uninstallServiceAndWait(GROOVY);
 	}
 	
+	@AfterMethod(alwaysRun = true)
+	public void cleanup() {
+		super.uninstallServicefFound(GROOVY);
+	}
+	
 	@AfterClass(alwaysRun = true)
 	protected void teardown() {
 		super.teardown();
-	}
-	
-	@Override
-	public void beforeTeardown() throws Exception {
-		super.beforeTeardown();
-		super.uninstallServicefFound(GROOVY);
 	}
 }

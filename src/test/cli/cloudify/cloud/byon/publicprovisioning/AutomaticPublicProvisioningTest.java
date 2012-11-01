@@ -8,6 +8,7 @@ import org.openspaces.admin.pu.ProcessingUnit;
 import org.openspaces.admin.pu.ProcessingUnitInstance;
 import org.testng.ITestContext;
 import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -51,16 +52,15 @@ public class AutomaticPublicProvisioningTest extends AbstractPublicProvisioningB
 
 		
 	}
+	
+	@AfterMethod(alwaysRun = true)
+	public void cleanup() {
+		super.uninstallServicefFound(SERVICE_NAME);
+	}
 		
 	@AfterClass(alwaysRun = true)
 	protected void teardown() {
 		super.teardown();
-	}
-	
-	@Override
-	public void beforeTeardown() throws Exception {
-		super.beforeTeardown();
-		super.uninstallServicefFound(SERVICE_NAME);
 	}
 	
 	private void setStatistics(final ProcessingUnit pu, final int expectedNumberOfInstances, long value) throws IOException, InterruptedException {

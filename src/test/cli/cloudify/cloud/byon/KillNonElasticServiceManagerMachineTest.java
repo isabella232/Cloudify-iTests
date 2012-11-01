@@ -7,6 +7,7 @@ import org.openspaces.admin.esm.ElasticServiceManager;
 import org.openspaces.admin.machine.Machine;
 import org.testng.ITestContext;
 import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -28,8 +29,8 @@ public class KillNonElasticServiceManagerMachineTest extends AbstractKillManagem
 		super.testKillMachine();
 	}
 	
-	@Override
-	public void beforeTeardown() {
+	@AfterMethod(alwaysRun = true)
+	public void cleanup() {
 		super.uninstallApplicationIfFound("petclinic");
 	}
 	

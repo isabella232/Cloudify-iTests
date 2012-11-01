@@ -5,6 +5,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.testng.ITestContext;
 import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -33,6 +34,11 @@ public class NamesAsIPsByonTest extends AbstractByonCloudTest {
 		assertTrue("petclinic.tomcat is not up - install failed", admin.getProcessingUnits().waitFor("petclinic.tomcat", OPERATION_TIMEOUT, TimeUnit.MILLISECONDS) != null);
 		uninstallApplicationAndWait("petclinic");
 
+	}
+	
+	@AfterMethod(alwaysRun = true)
+	public void cleanup() {
+		super.uninstallApplicationIfFound("petclinic");
 	}
 
 	@AfterClass(alwaysRun = true)

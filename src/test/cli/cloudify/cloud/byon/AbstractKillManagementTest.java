@@ -131,9 +131,4 @@ public abstract class AbstractKillManagementTest extends AbstractByonCloudTest {
 		SSHUtils.runCommand(toKill, TimeUnit.SECONDS.toMillis(30),
 				"sudo shutdown now -r", ByonCloudService.BYON_CLOUD_USER, ByonCloudService.BYON_CLOUD_PASSWORD);
 	}
-	
-	@Override
-	public void beforeTeardown() {
-		super.uninstallApplicationIfFound("petclinic");
-	}
 }

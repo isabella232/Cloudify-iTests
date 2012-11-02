@@ -53,11 +53,11 @@ public class SGTestHelper {
 	
 	
 	public static String getSuiteName(){
-		return System.getProperty("sgtest.suiteName", "sgtest");
+		return System.getProperty("sgtest.suiteName", "");
 	}
 	
 	public static String getSuiteId() {
-		return System.getProperty("sgtest.suiteId", "0");
+		return System.getProperty("sgtest.suiteId", "");
 	}
 	
 	//each suite has it's own work dir.

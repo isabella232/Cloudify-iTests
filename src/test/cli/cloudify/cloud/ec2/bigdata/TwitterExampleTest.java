@@ -17,6 +17,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import test.AbstractTestSupport;
 import test.cli.cloudify.cloud.NewAbstractCloudTest;
 
 import com.sun.jersey.api.client.Client;
@@ -26,6 +27,7 @@ import com.sun.jersey.api.client.config.DefaultClientConfig;
 import framework.tools.SGTestHelper;
 import framework.utils.AssertUtils;
 import framework.utils.LogUtils;
+import framework.utils.SSHUtils;
 import framework.utils.ScriptUtils;
 import framework.utils.WebUtils;
 
@@ -62,8 +64,8 @@ public class TwitterExampleTest extends NewAbstractCloudTest{
 		File appFolder = new File(buildDir + "/recipes/apps/" + streamingApplicationFolderName);
 		String hostAddress = "127.0.0.1";
 		
-//		SSHUtils.runCommand(hostAddress, AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, 
-//				"cd " + appFolder + ";" + "mvn install", username, password);
+		SSHUtils.runCommand(hostAddress, AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, 
+				"cd " + appFolder + ";" + "mvn install", username, password);
 
 	}
 

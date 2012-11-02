@@ -605,6 +605,7 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 
 		@Override
 		public void onTestStart(final ITestResult arg0) {
+			lastTestName = arg0.getName();
 		}
 
 		@Override

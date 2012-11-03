@@ -212,6 +212,21 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 
 		
 	}
+
+	private String getLiveRestUrl() {
+		String[] restUrls = getService().getRestUrls();
+		for (String url : restUrls) {
+			String command = "connect " + url;
+			try {
+				LogUtils.log("trying to connect to rest with url " + url);
+				CommandTestUtils.runCommandAndWait(command);
+				return url;
+			} catch (Throwable e) {
+				LogUtils.log("caught an exception while trying to connect to rest server with url " + url, e);
+			}
+		}
+		return null;
+	}
 	
 	public void uninstallServicefFound(final String serviceName) {
 		
@@ -457,7 +472,7 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 			Assert.fail("Test requested the REST URLs for the cloud, but they were not set. This may indeicate that the cloud was not bootstrapped properly");
 		}
 
-		final String restUrl = cloud.getRestUrls()[0];
+		final String restUrl = getLiveRestUrl();
 		return restUrl;
 
 	}

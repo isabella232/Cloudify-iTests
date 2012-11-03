@@ -41,15 +41,7 @@ public abstract class AbstractKillManagementTest extends AbstractByonCloudTest {
 	
 	public void testKillMachine() throws Exception {
 		
-		Machine machine = getMachineToKill();
-		
-		String machineAddress = machine.getHostAddress();
-		
-		GridServiceManager otherManager = getManagerInOtherHostThen(machineAddress);
-		
-		restartMachineAndWait(machineAddress);
-		ProcessingUnitUtils.waitForManaged(tomcat, otherManager);
-		
+		LogUtils.log("before restart, checking for liveness of tomcat pu");
 		RepetitiveConditionProvider condition = new RepetitiveConditionProvider() {
 			
 			@Override
@@ -67,6 +59,37 @@ public abstract class AbstractKillManagementTest extends AbstractByonCloudTest {
 		};
 		AssertUtils.repetitiveAssertConditionHolds("petclinic url is not available!", condition, TEN_SECONDS, 1000);
 		
+		
+		Machine machine = getMachineToKill();
+		
+		String machineAddress = machine.getHostAddress();
+		
+		GridServiceManager otherManager = getManagerInOtherHostThen(machineAddress);
+		
+		LogUtils.log("restarting machine with ip " + machine.getHostAddress());
+		restartMachineAndWait(machineAddress);
+		LogUtils.log("restart was susccefull");
+		LogUtils.log("waiting for backup GSM to manage the tomcat processing unit");
+		ProcessingUnitUtils.waitForManaged(tomcat, otherManager);
+		
+		condition = new RepetitiveConditionProvider() {
+			
+			@Override
+			public boolean getCondition() {
+				String spec = null;
+				try {
+					String hostAddress = tomcat.getInstances()[0].getGridServiceContainer().getMachine().getHostAddress();
+					spec = "http://" + hostAddress + ":8080/petclinic";
+					LogUtils.log("checking that url : " + spec + " is available");
+					return ServiceUtils.isHttpURLAvailable(spec);
+				} catch (final Exception e) {
+					throw new RuntimeException("Error polling to URL : " + spec + " . Reason --> " + e.getMessage());
+				} 
+			}
+		};
+		AssertUtils.repetitiveAssertConditionHolds("petclinic url is not available!", condition, TEN_SECONDS, 1000);
+		
+		LogUtils.log("starting management services on machine " + machineAddress);
 		startManagement(machineAddress);
 		
 		Assert.assertTrue("could not find " + numOManagementMachines + " gsm's after failover", 

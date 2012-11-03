@@ -173,6 +173,8 @@
     -->
     <target name="testsummary" description="Run tests and generate test summary">
         <mkdir dir="${testng.summary.dir}"/>
+    	<echo message="include list is ${INCLUDE}"/>
+    	<echo message="exclude list is ${EXCLUDE}"/>
 	 <taskdef resource="testngtasks" classpathref="classpath"/>
         <testng suitename="${SUITE_NAME}${SUITE_ID}" testname="${SUITE_NAME}${SUITE_ID}" classpathref="classpath" outputDir="${testng.summary.dir}"
                 configFailurePolicy="continue" haltOnfailure="false" useDefaultListeners="false"

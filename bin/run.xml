@@ -187,6 +187,7 @@
 	     <sysproperty key="supported-clouds" value="${SUPPORTED_CLOUDS}"/>
 	     <sysproperty key="com.gigaspaces.client.router.disableNewRouter" value="false"/>	
 	     <sysproperty key="ipList" value="${BYON_MACHINES}"/>
+        <sysproperty key="ec2.region" value="${EC2_REGION}"/>
 	     <sysproperty key="com.gs.logging.level.config" value="true"/>	
 	     <sysproperty key="org.apache.commons.logging.Log" value="org.apache.commons.logging.impl.Jdk14Logger"/>
 	     <sysproperty key="java.util.logging.config.file" value="${sgtest.homedir}/config/sgtest_logging.properties"/>

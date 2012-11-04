@@ -7,6 +7,7 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -41,7 +42,12 @@ public abstract class AbstractCloudService implements CloudService {
 	protected boolean bootstrapped = false;
 	private String serviceFolderName;
 	protected Cloud cloudConfiguration;
-
+	protected Properties properties = new Properties();
+	
+	public Properties getProperties() {
+		return properties;
+	}
+	
 	public Cloud getCloudConfiguration() {
 		return cloudConfiguration;
 	}
@@ -202,6 +208,9 @@ public abstract class AbstractCloudService implements CloudService {
 		if (additionalPropsToReplace != null) {
 			IOUtils.replaceTextInFile(getPathToCloudGroovy(), additionalPropsToReplace);
 		}
+		
+		// add a properties file to the cloud driver
+		IOUtils.writePropertiesToFile(getProperties(), new File(getPathToCloudFolder() + "/" + getCloudName() + "-cloud.properties"));
 
 		// Load updated configuration file into POJO
 		this.cloudConfiguration = ServiceReader.readCloud(new File(getPathToCloudGroovy()));

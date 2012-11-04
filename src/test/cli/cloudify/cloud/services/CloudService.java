@@ -3,6 +3,7 @@ package test.cli.cloudify.cloud.services;
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
+import java.util.Properties;
 
 import org.cloudifysource.shell.commands.CLIException;
 
@@ -83,5 +84,7 @@ public interface CloudService {
 	public void addFilesToReplace(Map<File, File> filesToReplace);
 	
 	public String getPathToCloudFolder();
+	
+	public Properties getProperties();
 
 }

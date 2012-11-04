@@ -31,8 +31,14 @@ import framework.utils.LogUtils;
 
 public class Ec2CloudService extends AbstractCloudService {
 	
-	private static final String LINUX_AMI = "us-east-1/ami-76f0061f";
-	private static final String UBUNTU_AMI = "us-east-1/ami-82fa58eb";
+	private static final String UE_EAST_LINUX_AMI = "us-east-1/ami-76f0061f";
+	private static final String US_EAST_UBUNTU_AMI = "us-east-1/ami-82fa58eb";
+	
+	private static final String EU_WEST_LINUX_AMI = "\"eu-west-1/ami-c37474b7\"";
+	private static final String EU_WEST_UBUNTU_AMI = "\"eu-west-1/ami-c1aaabb5\"";
+	
+	private static final String LINUX_AMI_VARIABLE = "LINUX_AMI";
+	private static final String UBUNTU_AMI_VARIABLE = "UBUNTU_AMI";
 
 	private static final String DEFAULT_EC2_CLOUD_NAME = "ec2";
 	private String user = "AKIAI4OVPQZZQT53O6SQ";
@@ -231,8 +237,8 @@ public class Ec2CloudService extends AbstractCloudService {
 			propsToReplace.put("locationId \"us-east-1\"", "locationId \"eu-west-1\"");
 			setPemFileName("sgtest-eu");
 			if (!getCloudName().contains("win")) {
-				propsToReplace.put('"' + LINUX_AMI + '"', "LINUX_AMI");
-				propsToReplace.put('"' + UBUNTU_AMI + '"', "UBUNTU_AMI");
+				propsToReplace.put('"' + UE_EAST_LINUX_AMI + '"', LINUX_AMI_VARIABLE);
+				propsToReplace.put('"' + US_EAST_UBUNTU_AMI + '"', UBUNTU_AMI_VARIABLE);
 			}
 		}
 		
@@ -254,7 +260,8 @@ public class Ec2CloudService extends AbstractCloudService {
 		filesToReplace.put(targetLocation, fileToCopy);
 		
 		if (getRegion().contains("eu") && !getCloudName().contains("win")) {
-			filesToReplace.put(new File(getPathToCloudFolder() + "/ec2-cloud.properties"), new File(SGTestHelper.getSGTestRootDir() + "/apps/cloudify/cloud/ec2/eu/ec2-cloud.properties"));
+			getProperties().setProperty(LINUX_AMI_VARIABLE, EU_WEST_LINUX_AMI);
+			getProperties().setProperty(UBUNTU_AMI_VARIABLE, EU_WEST_UBUNTU_AMI);
 		}
 		
 		addFilesToReplace(filesToReplace);

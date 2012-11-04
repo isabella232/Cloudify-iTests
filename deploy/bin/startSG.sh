@@ -41,11 +41,11 @@ umask 000
  SUITE_NUMBER=${17}
  ## total number of init parameters is 25
  
- declare -a target_client_machines=(${18} ${20} ${22} ${24});
- declare -a target_gsa_machines=(${19} ${21} ${23} ${25});
- BYON_MACHINES=${26}
- SUPPORTED_CLOUDS=${27}
- BUILD_LOG_URL=${28}; export BUILD_LOG_URL
+ declare -a target_client_machines=(${18} ${20} ${22} ${24} ${26} ${28} ${30} ${32});
+ declare -a target_gsa_machines=(${19} ${21} ${23} ${25} ${27} ${29} ${31} ${33});
+ BYON_MACHINES=${34}
+ SUPPORTED_CLOUDS=${35}
+ BUILD_LOG_URL=${36}; export BUILD_LOG_URL
 
 
  . set-deploy-env.sh

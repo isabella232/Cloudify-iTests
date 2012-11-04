@@ -30,6 +30,9 @@ import framework.utils.IOUtils;
 import framework.utils.LogUtils;
 
 public class Ec2CloudService extends AbstractCloudService {
+	
+	private static final String LINUX_AMI = "us-east-1/ami-76f0061f";
+	private static final String UBUNTU_AMI = "us-east-1/ami-82fa58eb";
 
 	private static final String DEFAULT_EC2_CLOUD_NAME = "ec2";
 	private String user = "AKIAI4OVPQZZQT53O6SQ";
@@ -223,6 +226,16 @@ public class Ec2CloudService extends AbstractCloudService {
 		} else {
 			propsToReplace.put("ENTER_API_KEY", apiKey);
 		}
+		
+		if (getRegion().contains("eu")) {
+			propsToReplace.put("locationId \"us-east-1\"", "locationId \"eu-west-1\"");
+			setPemFileName("sgtest-eu");
+			if (!getCloudName().contains("win")) {
+				propsToReplace.put('"' + LINUX_AMI + '"', "LINUX_AMI");
+				propsToReplace.put('"' + UBUNTU_AMI + '"', "UBUNTU_AMI");
+			}
+		}
+		
 		propsToReplace.put("cloudify_agent_", this.machinePrefix + "cloudify-agent");
 		propsToReplace.put("cloudify_manager", this.machinePrefix + "cloudify-manager");
 		propsToReplace.put("ENTER_KEY_FILE", getPemFileName() + ".pem");
@@ -239,6 +252,11 @@ public class Ec2CloudService extends AbstractCloudService {
 		final File targetLocation = new File(getPathToCloudFolder() + "/upload/" + sshKeyPemName);
 		final Map<File, File> filesToReplace = new HashMap<File, File>();
 		filesToReplace.put(targetLocation, fileToCopy);
+		
+		if (getRegion().contains("eu") && !getCloudName().contains("win")) {
+			filesToReplace.put(new File(getPathToCloudFolder() + "/ec2-cloud.properties"), new File(SGTestHelper.getSGTestRootDir() + "/apps/cloudify/cloud/ec2/eu/ec2-cloud.properties"));
+		}
+		
 		addFilesToReplace(filesToReplace);
 	}
 
@@ -258,6 +276,10 @@ public class Ec2CloudService extends AbstractCloudService {
 	@Override
 	public String getApiKey() {
 		return apiKey;
+	}
+	
+	public String getRegion() {
+		return System.getProperty("ec2.region" , "eu");
 	}
 
 	public void setPemFileName(final String pemFileName) {

@@ -78,7 +78,10 @@
 	fi
 
 	echo "build cache dir=${BUILD_CACHE_DIR}"
-	chmod -R 777 ${BUILD_CACHE_DIR}
+	chmod 777 ${BUILD_CACHE_DIR}/bin
+	chmod 777 ${BUILD_CACHE_DIR}/tools/cli
+	chmod 777 ${BUILD_CACHE_DIR}/tools/maven
+	chmod 777 ${BUILD_CACHE_DIR}/tools/groovy
 
 	sleep 30
  }

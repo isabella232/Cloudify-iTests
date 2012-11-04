@@ -165,6 +165,7 @@
             <sysproperty key="sgtest.suiteId" value="${SUITE_ID}"/>
        	    <sysproperty key="sgtest.numOfSuites" value="${SUITE_NUMBER}"/>	
         	<sysproperty key="com.gs.logging.level.config" value="true"/>
+        	<sysproperty key="ec2.region" value="${EC2_REGION}"/>
         	<sysproperty key="org.apache.commons.logging.Log" value="org.apache.commons.logging.impl.Jdk14Logger"/>
         	<sysproperty key="java.util.logging.config.file" value="${sgtest.homedir}/config/sgtest_logging.properties"/>
             <sysproperty key="sgtest.buildFolder" value="${sgtest.homedir}/deploy/local-builds/${BUILD_NUMBER}"/>

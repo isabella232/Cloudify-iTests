@@ -16,6 +16,8 @@ set BUILD_LOG_URL=%9
 shift
 set BRANCH_NAME=%9
 
+set EC2_REGION=%10
+
 @echo setting up enviroment variables
 call set-build-env.bat
 
@@ -37,7 +39,7 @@ xcopy %REMOTE_BUILD_DIR%\cloudify\1.5\gigaspaces-cloudify-%VERSION%-%MILESTONE%-
 @call %LOCAL_SGPATH%\deploy\bin\windows\download_processing_units.bat
 
 @echo Running %selenium.browser% Suite : 
-@call %LOCAL_SGPATH%\deploy\bin\windows\start-suite.bat %SUITE_NAME% %INCLUDE% %EXCLUDE%
+@call %LOCAL_SGPATH%\deploy\bin\windows\start-suite.bat %SUITE_NAME% %INCLUDE% %EXCLUDE% %EC2_REGION%
 
 if %selenium.browser% == Chrome (
 	taskkill /im chromedriver.exe /F

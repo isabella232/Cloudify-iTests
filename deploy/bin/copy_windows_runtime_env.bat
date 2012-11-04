@@ -13,7 +13,7 @@ set BUILD_LOG_URL=%9
 shift
 shift
 set BRANCH_NAME=%8
-set EC2_REGION=&9
+set EC2_REGION=%9
 
 set SGTEST_RUNTIME_FOLDER=C:\Users\ca\sgtest-cloudify
 

@@ -234,6 +234,7 @@ public class Ec2CloudService extends AbstractCloudService {
 		}
 		
 		if (getRegion().contains("eu")) {
+			LogUtils.log("Working in eu region");
 			propsToReplace.put("locationId \"us-east-1\"", "locationId \"eu-west-1\"");
 			setPemFileName("sgtest-eu");
 			if (!getCloudName().contains("win")) {

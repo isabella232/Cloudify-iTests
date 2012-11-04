@@ -77,6 +77,9 @@ public class IOUtils {
 		FileOutputStream fileOut = new FileOutputStream(destinationFile);
 		properties.store(fileOut,null);
 		fileOut.close();
+		String readFileToString = FileUtils.readFileToString(destinationFile);
+		destinationFile.delete();
+		FileUtils.writeStringToFile(destinationFile, readFileToString.replaceAll("#", "//"));
 
 	}
 }

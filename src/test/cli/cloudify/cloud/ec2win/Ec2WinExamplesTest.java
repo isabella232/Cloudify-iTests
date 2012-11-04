@@ -55,17 +55,17 @@ public class Ec2WinExamplesTest extends AbstractExamplesTest {
 		
 	}
 
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = false)
 	public void testTravel() throws Exception {
 		super.testTravel();
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = false)
 	public void testPetclinicSimple() throws Exception {
 		super.testPetclinicSimple();
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = false)
 	public void testPetclinic() throws Exception {
 		super.testPetclinic();
 	}

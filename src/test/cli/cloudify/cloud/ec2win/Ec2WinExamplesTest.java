@@ -48,7 +48,7 @@ public class Ec2WinExamplesTest extends AbstractExamplesTest {
 	private void prepareApplication(String applicationName) throws IOException {
 		
 		String applicationSGPath = WINDOWS_APPS_PATH + "/" + applicationName;
-		String applicationBuildPath = SGTestHelper.getBuildDir() + "/recipes/apps/" + applicationName;
+		String applicationBuildPath = SGTestHelper.getBuildDir() + "/recipes/apps/";
 		
 		LogUtils.log("copying " + applicationSGPath + " to " + applicationBuildPath);
 		FileUtils.copyDirectoryToDirectory(new File(applicationSGPath), new File(applicationBuildPath));

@@ -14,8 +14,8 @@ set EXCLUDE=%8
 set BUILD_LOG_URL=%9
 
 shift
-set BRANCH_NAME=%9
 shift
+set BRANCH_NAME=%8
 set EC2_REGION=%9
 
 @echo setting up enviroment variables

@@ -12,8 +12,11 @@ set SUITE_NAME=%6
 set INCLUDE=%7
 set EXCLUDE=%8
 set BUILD_LOG_URL=%9
-set BRANCH_NAME=%10
-set EC2_REGION=%11
+
+shift
+set BRANCH_NAME=%9
+shift
+set EC2_REGION=%9
 
 @echo setting up enviroment variables
 call set-build-env.bat

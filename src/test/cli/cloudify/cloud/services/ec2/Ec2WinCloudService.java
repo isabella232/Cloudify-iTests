@@ -20,6 +20,8 @@ public class Ec2WinCloudService extends Ec2CloudService {
 	@Override
 	public void injectServiceAuthenticationDetails() throws IOException {
 		super.injectServiceAuthenticationDetails();
+		getAdditionalPropsToReplace().put("cloudifyagent_", this.machinePrefix + "cloudify-agent");
+		getAdditionalPropsToReplace().put("cloudifymanager", this.machinePrefix + "cloudify-manager");
 		if (getRegion().contains("eu")) {
 			getAdditionalPropsToReplace().put('"' + DEFAULT_MEDIUM_WIN_AMI + '"', '"' + "eu-west-1/ami-911616e5" + '"');			
 		}

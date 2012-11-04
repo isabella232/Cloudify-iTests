@@ -23,6 +23,7 @@ public class Ec2WinCloudService extends Ec2CloudService {
 		getAdditionalPropsToReplace().put("cloudifyagent", this.machinePrefix + "cloudify-agent");
 		getAdditionalPropsToReplace().put("cloudifymanager", this.machinePrefix + "cloudify-manager");
 		if (getRegion().contains("eu")) {
+			getAdditionalPropsToReplace().put("locationId \"us-east-1c\"", "locationId \"eu-west-1\"");
 			getAdditionalPropsToReplace().put('"' + DEFAULT_MEDIUM_WIN_AMI + '"', '"' + "eu-west-1/ami-911616e5" + '"');			
 		}
 	}

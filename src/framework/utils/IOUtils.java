@@ -50,8 +50,6 @@ public class IOUtils {
             oldtext += line + "\r\n";
         }
         reader.close();
-        LogUtils.log("File before replacement :");
-        LogUtils.log(oldtext);
         String newtext = new String(oldtext);
         for (String toReplace : map.keySet()) {
         	LogUtils.log("replacing " + toReplace + " with " + map.get(toReplace));
@@ -61,8 +59,6 @@ public class IOUtils {
         FileWriter writer = new FileWriter(filePath);
         writer.write(newtext);
         writer.close();
-        LogUtils.log("File after replacement :");
-        LogUtils.log(newtext);
 	}
 	
 	public static void replaceTextInFile(File file, Map<String,String> map) throws IOException {

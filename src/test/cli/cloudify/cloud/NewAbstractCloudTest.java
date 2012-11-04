@@ -17,6 +17,7 @@ import test.cli.cloudify.CommandTestUtils;
 import test.cli.cloudify.cloud.services.CloudService;
 import test.cli.cloudify.cloud.services.CloudServiceManager;
 
+import com.gigaspaces.internal.utils.StringUtils;
 import com.j_spaces.kernel.JSpaceUtilities;
 
 import framework.report.MailReporterProperties;
@@ -225,6 +226,7 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 				LogUtils.log("caught an exception while trying to connect to rest server with url " + url, e);
 			}
 		}
+		Assert.fail("Failed to find a working rest URL. tried : " + StringUtils.arrayToCommaDelimitedString(restUrls));
 		return null;
 	}
 	

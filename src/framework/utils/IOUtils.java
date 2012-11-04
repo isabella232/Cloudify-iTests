@@ -2,11 +2,14 @@ package framework.utils;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Properties;
 
 import org.apache.commons.io.FileUtils;
 
@@ -64,6 +67,17 @@ public class IOUtils {
 			modified = modified.replace(s, map.get(s));
 		}
 		FileUtils.write(file, modified);
+	}
+	
+	public static void writePropertiesToFile(final Properties props , final File destinationFile) throws IOException {
+		Properties properties = new Properties();
+		for (Entry<Object, Object> entry : props.entrySet()) {
+			properties.setProperty(entry.getKey().toString(), entry.getValue().toString());
+		}
+		FileOutputStream fileOut = new FileOutputStream(destinationFile);
+		properties.store(fileOut,null);
+		fileOut.close();
+
 	}
 }
 

@@ -12,6 +12,8 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import com.gigaspaces.webuitf.util.LogUtils;
+
 import framework.tools.SGTestHelper;
 
 import test.cli.cloudify.CommandTestUtils;
@@ -48,6 +50,7 @@ public class Ec2WinExamplesTest extends AbstractExamplesTest {
 		String applicationSGPath = WINDOWS_APPS_PATH + "/" + applicationName;
 		String applicationBuildPath = SGTestHelper.getBuildDir() + "/recipes/apps/" + applicationName;
 		
+		LogUtils.log("copying " + applicationSGPath + " to " + applicationBuildPath);
 		FileUtils.copyDirectoryToDirectory(new File(applicationSGPath), new File(applicationBuildPath));
 		
 	}

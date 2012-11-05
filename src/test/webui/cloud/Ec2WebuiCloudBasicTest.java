@@ -16,7 +16,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import test.cli.cloudify.cloud.NewAbstractCloudTest;
-import test.webui.WebuiEnabler;
+import test.webui.WebuiTestUtils;
 
 import com.gigaspaces.webuitf.LoginPage;
 import com.gigaspaces.webuitf.MainNavigation;
@@ -70,7 +70,7 @@ public class Ec2WebuiCloudBasicTest extends NewAbstractCloudTest {
 	private MainNavigation mainNav;
 	private static long assertWaitingTime = 10000;
 	
-	private WebuiEnabler webuiEnabler;
+	private WebuiTestUtils webuiHelper;
 	
 	@Override
 	protected void customizeCloud() throws Exception {
@@ -91,7 +91,7 @@ public class Ec2WebuiCloudBasicTest extends NewAbstractCloudTest {
 	protected void bootstrap(final ITestContext testContext) {
 		super.bootstrap(testContext);
 		try {
-			webuiEnabler = new WebuiEnabler(cloud);
+			webuiHelper = new WebuiTestUtils(cloud);
 		} catch (InterruptedException e) {
 			throw new RuntimeException(e);
 		} catch (UnknownHostException e) {
@@ -103,7 +103,7 @@ public class Ec2WebuiCloudBasicTest extends NewAbstractCloudTest {
 	protected void teardown() {
 		super.teardown();
 		try {
-			webuiEnabler.close();
+			webuiHelper.close();
 		} catch (InterruptedException e) {
 			throw new RuntimeException(e);
 		}
@@ -118,7 +118,7 @@ public class Ec2WebuiCloudBasicTest extends NewAbstractCloudTest {
 		restUrl = getRestUrl();	
 		
 		// begin tests on the webui 
-		LoginPage loginPage = webuiEnabler.getLoginPage();
+		LoginPage loginPage = webuiHelper.getLoginPage();
 		
 		mainNav = loginPage.login();
 

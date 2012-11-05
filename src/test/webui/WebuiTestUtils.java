@@ -46,7 +46,7 @@ import framework.utils.ProcessingUnitUtils;
  * 
  * <p> call close() when done.
  */
-public class WebuiEnabler{
+public class WebuiTestUtils{
 
 	private static final String WEBUI_DEFAULT_URL = "127.0.0.1:8099";
 	private WebDriver driver;
@@ -66,7 +66,7 @@ public class WebuiEnabler{
 	 * @throws UnknownHostException
 	 * @throws InterruptedException
 	 */
-	public WebuiEnabler() throws UnknownHostException, InterruptedException {
+	public WebuiTestUtils() throws UnknownHostException, InterruptedException {
 		startup(null,null);
 	}
 
@@ -75,7 +75,7 @@ public class WebuiEnabler{
 	 * @throws UnknownHostException
 	 * @throws InterruptedException
 	 */
-	public WebuiEnabler(Admin admin) throws UnknownHostException, InterruptedException {
+	public WebuiTestUtils(Admin admin) throws UnknownHostException, InterruptedException {
 		startup(admin, null);
 	}
 
@@ -85,7 +85,7 @@ public class WebuiEnabler{
 	 * @throws InterruptedException
 	 * @throws UnknownHostException
 	 */
-	public WebuiEnabler(CloudService cloud) throws InterruptedException, UnknownHostException{
+	public WebuiTestUtils(CloudService cloud) throws InterruptedException, UnknownHostException{
 		startup(null,cloud);
 	}
 
@@ -94,8 +94,9 @@ public class WebuiEnabler{
 		this.admin = admin;
 		this.cloud = cloud;
 
-		if(this.cloud == null)
-			setLocators();
+		if(this.cloud == null){
+			setLocators();			
+		}
 
 		String webuiUrl = getWebuiUrl();
 		startWebBrowser(webuiUrl);

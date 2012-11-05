@@ -13,20 +13,20 @@ import framework.utils.AssertUtils;
 
 public class LicenseTest extends AbstractLocalCloudTest{
 	
-	private WebuiEnabler webuiEnabler;
+	private WebuiTestUtils webuiHelper;
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT)
 	public void testCloudifyLicense() throws InterruptedException, UnknownHostException {
 		
-		webuiEnabler = new WebuiEnabler();
+		webuiHelper = new WebuiTestUtils();
 		
-		LoginPage loginPage = webuiEnabler.getLoginPage();
+		LoginPage loginPage = webuiHelper.getLoginPage();
 		
 		DashboardTab dashboard = loginPage.login().switchToDashboard();
 		
 		AssertUtils.assertTrue(!dashboard.isXap());
 		
-		webuiEnabler.close();
+		webuiHelper.close();
 	}
 
 }

@@ -49,7 +49,7 @@ public abstract class AbstractKillManagementTest extends AbstractByonCloudTest {
 				String spec = null;
 				try {
 					String hostAddress = tomcat.getInstances()[0].getGridServiceContainer().getMachine().getHostAddress();
-					spec = "http://" + hostAddress + ":8080/petclinic";
+					spec = "http://" + hostAddress + ":8080/petclinic/";
 					LogUtils.log("checking that url : " + spec + " is available");
 					return ServiceUtils.isHttpURLAvailable(spec);
 				} catch (final Exception e) {
@@ -57,7 +57,7 @@ public abstract class AbstractKillManagementTest extends AbstractByonCloudTest {
 				} 
 			}
 		};
-		AssertUtils.repetitiveAssertConditionHolds("petclinic url is not available!", condition, TEN_SECONDS, 1000);
+		AssertUtils.repetitiveAssertTrue("petclinic url is not available! waited for 10 seconds", condition, TEN_SECONDS);
 		
 		
 		Machine machine = getMachineToKill();
@@ -79,7 +79,7 @@ public abstract class AbstractKillManagementTest extends AbstractByonCloudTest {
 				String spec = null;
 				try {
 					String hostAddress = tomcat.getInstances()[0].getGridServiceContainer().getMachine().getHostAddress();
-					spec = "http://" + hostAddress + ":8080/petclinic";
+					spec = "http://" + hostAddress + ":8080/petclinic/";
 					LogUtils.log("checking that url : " + spec + " is available");
 					return ServiceUtils.isHttpURLAvailable(spec);
 				} catch (final Exception e) {

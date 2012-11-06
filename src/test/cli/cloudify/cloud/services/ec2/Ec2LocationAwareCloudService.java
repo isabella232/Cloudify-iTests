@@ -35,7 +35,7 @@ public class Ec2LocationAwareCloudService extends Ec2CloudService {
 	protected void injectCloudDriverClass() throws IOException {
 		
 		// copy custom location aware driver to cloudify-overrides
-		File locationAwareDriver = DeploymentUtils.getArchive("location-aware-driver-2.2.0.jar");
+		File locationAwareDriver = DeploymentUtils.getArchive("location-aware-driver.jar");
 		File uploadOverrides =
 				new File(getPathToCloudFolder() + "/upload/cloudify-overrides/");
 		if (!uploadOverrides.exists()) {
@@ -65,7 +65,12 @@ public class Ec2LocationAwareCloudService extends Ec2CloudService {
 		
 		final Map<String, String> propsToReplace = new HashMap<String, String>();
 		final String oldCloudDriverClazz = DefaultProvisioningDriver.class.getName();
-		final String newCloudDriverClazz = "org.cloudifysource.test.LocationAwareDriver";
+		String newCloudDriverClazz = null;
+		if (getRegion().contains("eu")) {
+			newCloudDriverClazz = "org.cloudifysource.test.EUWestLocationAwareDriver";
+		} else {
+			newCloudDriverClazz = "org.cloudifysource.test.USEastLocationAwareDriver";
+		}
 		propsToReplace.put(toClassName(oldCloudDriverClazz),toClassName(newCloudDriverClazz));
 		IOUtils.replaceTextInFile(getPathToCloudGroovy(), propsToReplace);
 	}

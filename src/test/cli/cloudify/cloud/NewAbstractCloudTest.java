@@ -216,6 +216,9 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 
 	private String getLiveRestUrl() {
 		String[] restUrls = getService().getRestUrls();
+		if (restUrls.length == 1) {
+			return restUrls[0];
+		}
 		for (String url : restUrls) {
 			String command = "connect " + url;
 			try {

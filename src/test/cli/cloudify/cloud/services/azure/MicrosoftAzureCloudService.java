@@ -22,6 +22,7 @@ import org.cloudifysource.esc.driver.provisioning.azure.model.Role;
 
 import test.cli.cloudify.cloud.services.AbstractCloudService;
 
+import com.gigaspaces.internal.utils.StringUtils;
 import com.gigaspaces.webuitf.util.LogUtils;
 
 import framework.tools.SGTestHelper;
@@ -105,6 +106,7 @@ public class MicrosoftAzureCloudService extends AbstractCloudService {
 			LogUtils.log("Microsoft Azure client was not initialized, therefore a bootstrap never took place, and no scan is needed.");
 			return true;
 		}
+		LogUtils.log("scanning leaking nodes with prefix " + StringUtils.arrayToCommaDelimitedString(prefixes));
 		
 		long scanEndTime = System.currentTimeMillis() + SCAN_TIMEOUT;
 

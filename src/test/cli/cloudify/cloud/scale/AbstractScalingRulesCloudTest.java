@@ -112,7 +112,7 @@ public abstract class AbstractScalingRulesCloudTest extends NewAbstractCloudTest
 	} 
 
 	protected void repetitiveNumberOfInstancesHolds(String absoluteServiceName, ZonesConfig zones, int expectedNumberOfInstances, long duration, TimeUnit timeunit) {
-		AssertUtils.repetitiveAssertConditionHolds("Expected " + expectedNumberOfInstances + " "+ absoluteServiceName +" instance(s)", 
+		AssertUtils.repetitiveAssertConditionHolds("Expected " + expectedNumberOfInstances + " "+ absoluteServiceName +" instance(s) in zones " + zones.getZones(), 
 				numberOfInstancesRepetitiveCondition(absoluteServiceName, zones, expectedNumberOfInstances), 
 				timeunit.toMillis(duration), 1000);
 

@@ -531,12 +531,6 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 		final String excpectedResult = "Application " + applicationName + " uninstalled successfully";
 		assertTrue(output.toLowerCase().contains(excpectedResult.toLowerCase()));
 		
-		// the uninstall only waits for the gs-agents to be shutdown on the cloud nodes.
-		// we sleep here to wait for the machines to acutally shutdown.
-		// NOTE!! this is ugly, but until we get uninstall to actually wait for machines to shutdown this should help
-		// us stabilize the tests. 
-		Thread.sleep(ESTIMATED_MACHINES_SHUTDOWN_TIMEOUT);
-		
 		// check that all agent machines are actually down after the uninstall
 		LogUtils.log("scanning for leaking agent nodes on cloud " + this.cloud.getUniqueName());
 		scanAgentNodesLeak();

@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -82,19 +80,22 @@ public abstract class AbstractScalingRulesCloudTest extends NewAbstractCloudTest
 
 			repititiveAssertNumberOfInstances(getAbsoluteServiceName(), new AnyZonesConfig(), 1);
 
+			InstanceDetails instnaceToPing = getInstancesDetails(getAbsoluteServiceName(), new AnyZonesConfig()).get(0);
 			// increase web traffic, wait for scale out
 			LogUtils.log("starting threads");
-			startThreads();
+			startThreads(instnaceToPing);
 			repititiveAssertNumberOfInstances(getAbsoluteServiceName(), new AnyZonesConfig(), 2);
 
 			LogUtils.log("stopping threads");
 			// stop web traffic, wait for scale in
 			stopThreads();
 			repititiveAssertNumberOfInstances(getAbsoluteServiceName(), new AnyZonesConfig(),  1);
+			
+			instnaceToPing = getInstancesDetails(getAbsoluteServiceName(), new AnyZonesConfig()).get(0);
 
 			LogUtils.log("starting threads");
 			// Try to start a new machine and then cancel it.
-			startThreads();
+			startThreads(instnaceToPing);
 			executor.schedule(new Runnable() {
 
 				@Override
@@ -126,18 +127,9 @@ public abstract class AbstractScalingRulesCloudTest extends NewAbstractCloudTest
 		}
 	}
 
-	protected void startThreads() {
+	protected void startThreads(InstanceDetails instanceToPing) {
 		for(int i = 0 ; i < NUMBER_OF_HTTP_GET_THREADS ; i++){
-			final HttpRequest thread = new HttpRequest(getAbsoluteServiceName());
-			threads.add(thread);
-			executor.scheduleWithFixedDelay(thread, 0, THROUGHPUT_PER_THREAD, TimeUnit.SECONDS);
-		}
-	}
-	
-	protected void startThreads(ZonesConfig zones) {
-		for(int i = 0 ; i < NUMBER_OF_HTTP_GET_THREADS ; i++){
-			final HttpRequest thread = new HttpRequest(getAbsoluteServiceName());
-			thread.setZones(zones);
+			final HttpRequest thread = new HttpRequest(getAbsoluteServiceName(), instanceToPing);
 			threads.add(thread);
 			executor.scheduleWithFixedDelay(thread, 0, THROUGHPUT_PER_THREAD, TimeUnit.SECONDS);
 		}
@@ -189,14 +181,15 @@ public abstract class AbstractScalingRulesCloudTest extends NewAbstractCloudTest
 	 */
 	public class HttpRequest implements Runnable{
 
+		private InstanceDetails instanceToPing;
 		private final String absoluteServiceName;
 		private final HttpClient client;
 		private boolean closed = false;
-		private ZonesConfig zones = new AnyZonesConfig(); // to get all instances if no zone specified
 
-		public HttpRequest(String absoluteServiceName){
+		public HttpRequest(String absoluteServiceName, InstanceDetails instanceToPing){
 			this.absoluteServiceName = absoluteServiceName;
-			this.client = new DefaultHttpClient();;
+			this.client = new DefaultHttpClient();
+			this.instanceToPing = instanceToPing;
 		}
 
 		public synchronized void close() {
@@ -205,30 +198,14 @@ public abstract class AbstractScalingRulesCloudTest extends NewAbstractCloudTest
 				client.getConnectionManager().shutdown();
 			}
 		}
-		
-		public void setZones(ZonesConfig zones) {
-			this.zones = zones;
-		}
 
 		@Override
 		public synchronized void run() {
 			if (closed) {
 				return;
 			}
-			List<InstanceDetails> instancesDetails = null;
 			try {
-				instancesDetails = getInstancesDetails(absoluteServiceName, zones);
-				assertTrue("Could not retrieve public ip addresses of " + absoluteServiceName, !instancesDetails.isEmpty());
-				// choose the instance with the lowest zone
-				Collections.sort(instancesDetails, new Comparator<InstanceDetails>(){
-
-					@Override
-					public int compare(InstanceDetails o1, InstanceDetails o2) {
-						String zones1ToString = o1.getAgentZones().toString();
-						String zones2ToString = o2.getAgentZones().toString();
-						return zones1ToString.compareTo(zones2ToString);
-					}});
-				URL publicIpAddress = instancesDetails.get(0).getPublicIp();
+				URL publicIpAddress = instanceToPing.getPublicIp();
 				final URL petclinicHomePageUrl = new URL(publicIpAddress.getProtocol(),publicIpAddress.getHost(),TOMCAT_PORT,"/petclinic");
 				final HttpGet get = new HttpGet(petclinicHomePageUrl.toURI());
 

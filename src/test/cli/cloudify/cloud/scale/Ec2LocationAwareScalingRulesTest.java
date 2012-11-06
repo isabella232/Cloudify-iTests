@@ -61,7 +61,10 @@ public class Ec2LocationAwareScalingRulesTest extends AbstractScalingRulesCloudT
 		
 		// increase web traffic for the instance of the specific zone, wait for scale out
 		LogUtils.log("starting threads on an instance with zones " + zonesToPerformAutoScaling.getZones());
-		startThreads(zonesToPerformAutoScaling);
+		
+		InstanceDetails instanceToPing = getInstancesDetails(getAbsoluteServiceName(), zonesToPerformAutoScaling).get(0);
+		
+		startThreads(instanceToPing);
 		repititiveAssertNumberOfInstances(getAbsoluteServiceName(),zonesToPerformAutoScaling, 2);
 		// assert that we reach a steady state. number of instances should not increase any further since 2 is the maximum per zone
 		repetitiveNumberOfInstancesHolds(getAbsoluteServiceName(), zonesToPerformAutoScaling, 2, STEADY_STATE_DURATION, TimeUnit.MILLISECONDS);
@@ -91,24 +94,20 @@ public class Ec2LocationAwareScalingRulesTest extends AbstractScalingRulesCloudT
 		Set<ZonesConfig> puExactZones = getProcessingUnitZones(getAbsoluteServiceName());
 		ZonesConfig zonesToPerformAutoScaling = puExactZones.iterator().next(); // just take the first zone
 
+		InstanceDetails instanceToPing = getInstancesDetails(getAbsoluteServiceName(), zonesToPerformAutoScaling).get(0);
+		
 		// Try to start a new machine and then cancel it.
-		LogUtils.log("starting threads on an instance with zones " + zonesToPerformAutoScaling.getZones());
-		startThreads(zonesToPerformAutoScaling);
-		LogUtils.log("after start threads");
+		startThreads(instanceToPing);
 		executor.schedule(new Runnable() {
 
 			@Override
 			public void run() {
-				LogUtils.log("before stop threads");
 				stopThreads();
-				LogUtils.log("after threads stop");
 
 			}
 		}, 30, TimeUnit.SECONDS);
 	
-		LogUtils.log("Before repetitive number of instances == 1 on zone " + zonesToPerformAutoScaling);
 		repetitiveNumberOfInstancesHolds(getAbsoluteServiceName(),zonesToPerformAutoScaling, 1, 500, TimeUnit.SECONDS);
-		LogUtils.log("After repetitive number of instances == 1 on zone " + zonesToPerformAutoScaling);
 	
 		LogUtils.log("stopping threads");
 		stopThreads();

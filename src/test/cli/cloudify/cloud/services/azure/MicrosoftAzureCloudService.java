@@ -117,7 +117,7 @@ public class MicrosoftAzureCloudService extends AbstractCloudService {
 
 			do {
 				if (System.currentTimeMillis() > scanEndTime) {
-					throw new TimeoutException("Timed out waiting for deleting nodes to finish. last status was : " + deploymentsBeingDeleted);
+					throw new TimeoutException("Timed out waiting for deleting nodes to finish. last status was : " + deploymentsBeingDeleted.getDeployments());
 				}
 				Thread.sleep(SCAN_INTERVAL);
 				LogUtils.log("waiting for all deployments to reach a non 'Deleting' state");
@@ -126,7 +126,7 @@ public class MicrosoftAzureCloudService extends AbstractCloudService {
 						List<Deployment> deploymentsForHostedSerice = azureClient.getHostedService(hostedService.getServiceName(), true).getDeployments().getDeployments();
 						if (deploymentsForHostedSerice.size() > 0) {
 							Deployment deployment = deploymentsForHostedSerice.get(0); // each hosted service will have just one deployment.
-							if (deployment.getStatus().equals("Deleting")) {
+							if (deployment.getStatus().toLowerCase().equals("deleting")) {
 								LogUtils.log("Found a deployment with name : " + deployment.getName() + " and status : " + deployment.getStatus());
 								deploymentsBeingDeleted = new Deployments();
 								deploymentsBeingDeleted.getDeployments().add(deployment);

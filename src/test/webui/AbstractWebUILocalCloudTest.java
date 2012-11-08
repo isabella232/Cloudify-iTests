@@ -100,6 +100,14 @@ public abstract class AbstractWebUILocalCloudTest extends AbstractLocalCloudTest
     	LogUtils.log("Launching browser...");
     	String browser = System.getProperty("selenium.browser");
     	LogUtils.log("Current browser is " + browser);
+    	
+    	////////debug
+    	String suiteId = System.getProperty("sgtest.suiteId");
+    	String suiteNumber = System.getProperty("sgtest.numOfSuites");
+    	LogUtils.log("Current suiteId is " + suiteId);
+    	LogUtils.log("Current suiteNumber is " + suiteNumber);
+    	////////
+    	
     	for (int i = 0 ; i < 3 ; i++) {
     		try {
     			if (browser == null) {

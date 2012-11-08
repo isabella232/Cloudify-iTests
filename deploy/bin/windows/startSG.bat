@@ -15,7 +15,9 @@ set BUILD_LOG_URL=%9
 
 shift
 shift
-set BRANCH_NAME=%8
+shift
+set BRANCH_NAME=%7
+set SVN_BRANCH_DIRECTORY=%8
 set EC2_REGION=%9
 
 @echo setting up enviroment variables

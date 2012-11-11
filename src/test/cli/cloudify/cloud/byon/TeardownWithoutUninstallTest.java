@@ -1,20 +1,19 @@
 package test.cli.cloudify.cloud.byon;
 
 import java.io.IOException;
-import java.util.concurrent.TimeUnit;
 
 import org.testng.ITestContext;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import framework.utils.ApplicationInstaller;
 import framework.utils.AssertUtils;
-
-import test.cli.cloudify.CommandTestUtils;
-import test.cli.cloudify.cloud.ApplicationInstaller;
+import framework.utils.ScriptUtils;
 
 public class TeardownWithoutUninstallTest extends AbstractByonCloudTest {
 	
-	private final static String SIMPLE_APP_FOLDER = CommandTestUtils.getPath("apps/USM/usm/applications/simple");
+	private final static String TRAVEL_PATH = ScriptUtils.getBuildPath() + "/recipes/apps/travel";
+	private final static String PETCLINIC_SIMPLE_PATH = ScriptUtils.getBuildPath() + "/recipes/apps/petclinic-simple";
 	
 	@Override
 	protected String getCloudName() {
@@ -29,14 +28,23 @@ public class TeardownWithoutUninstallTest extends AbstractByonCloudTest {
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
 	public void testTeardownWithoutUnInstallApplication() throws IOException, InterruptedException {
 
-		ApplicationInstaller applicationInstaller = new ApplicationInstaller(getRestUrl(), "simple");
-		applicationInstaller.setRecipePath(SIMPLE_APP_FOLDER);
-		applicationInstaller.install();
+		ApplicationInstaller travelInstaller = new ApplicationInstaller(getRestUrl(), "travel");
+		travelInstaller.setRecipePath(TRAVEL_PATH);
+		
+		ApplicationInstaller petclinicInstaller = new ApplicationInstaller(getRestUrl(), "petclinic");
+		petclinicInstaller.setRecipePath(PETCLINIC_SIMPLE_PATH);
+
+		travelInstaller.install();
+		petclinicInstaller.install();
 		
 		super.teardown();
 		
-		AssertUtils.assertTrue("Application 'simple' should not have been discovered since a teardown was executed", 
-				admin.getApplications().waitFor("simple", OPERATION_TIMEOUT, TimeUnit.MILLISECONDS) == null);
+		AssertUtils.assertTrue("Application 'travel' should not have been discovered since a teardown was executed", 
+				admin.getApplications().getApplication("travel") == null);
+		
+		AssertUtils.assertTrue("Application 'petclinic' should not have been discovered since a teardown was executed", 
+				admin.getApplications().getApplication("petclinic") == null);
+
 	}
 	
 	@Override

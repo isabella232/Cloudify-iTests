@@ -70,7 +70,7 @@ public class IOUtils {
 		FileUtils.write(file, modified);
 	}
 	
-	public static void writePropertiesToFile(final Properties props , final File destinationFile) throws IOException {
+	public static File writePropertiesToFile(final Properties props , final File destinationFile) throws IOException {
 		Properties properties = new Properties();
 		for (Entry<Object, Object> entry : props.entrySet()) {
 			properties.setProperty(entry.getKey().toString(), entry.getValue().toString());
@@ -81,6 +81,7 @@ public class IOUtils {
 		String readFileToString = FileUtils.readFileToString(destinationFile);
 		destinationFile.delete();
 		FileUtils.writeStringToFile(destinationFile, readFileToString.replaceAll("#", "//"));
+		return destinationFile;
 
 	}
 }

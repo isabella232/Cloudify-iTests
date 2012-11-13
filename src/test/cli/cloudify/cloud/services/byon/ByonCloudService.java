@@ -42,7 +42,10 @@ public class ByonCloudService extends AbstractCloudService {
 	
 	protected static final String NEW_URL_PREFIX = "http://tarzan/builds/GigaSpacesBuilds/cloudify";
 	
-	private static final String DEFAULT_MACHINES = "192.168.9.115,192.168.9.116,192.168.9.120,192.168.9.118,192.168.9.136,192.168.9.135,192.168.9.137";
+	private static final String DEFAULT_MACHINES = "192.168.9.118,192.168.9.136,192.168.9.135,192.168.9.137";
+	
+	public static final String ENV_VARIABLE_NAME = "GIGASPACES_TEST_ENV";
+	public static final String ENV_VARIABLE_VALUE = "DEFAULT_ENV_VARIABLE";
 	
 	/**
 	 * this folder is where Cloudify will be downloaded to and extracted from. NOTE - this is not the WORKING_HOME_DIRECTORY.
@@ -76,11 +79,11 @@ public class ByonCloudService extends AbstractCloudService {
 	}
 
 	@Override
-	public void injectServiceAuthenticationDetails() throws IOException {
-	
+	public void injectServiceAuthenticationDetails() throws IOException {	
+		getProperties().put("username", '"' + BYON_CLOUD_USER+  '"');
+		getProperties().put("password", '"' + BYON_CLOUD_PASSWORD +  '"');
+		
 		Map<String, String> propsToReplace = new HashMap<String,String>();
-		propsToReplace.put("ENTER_USER", BYON_CLOUD_USER);
-		propsToReplace.put("ENTER_PASSWORD", BYON_CLOUD_PASSWORD);
 		propsToReplace.put("cloudify_agent_", this.machinePrefix + "cloudify-agent");
 		propsToReplace.put("cloudify_manager", this.machinePrefix + "cloudify-manager");
 		propsToReplace.put("// cloudifyUrl", "cloudifyUrl");
@@ -93,6 +96,11 @@ public class ByonCloudService extends AbstractCloudService {
 
 		replaceCloudifyURL();
 		replaceBootstrapManagementScript();
+		
+		// byon-cloud.groovy in SGTest has this variable defined for cloud overrides tests.
+		// that why we need to add a properties file with a default value so that bootstrap will work 
+		// on other tests.
+		getProperties().setProperty("myEnvVariable", '"' + ENV_VARIABLE_VALUE + '"');
 	}
 
 	@Override

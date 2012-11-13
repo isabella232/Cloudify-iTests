@@ -29,11 +29,28 @@ public class MultipleTemplatesByonCloudService extends ByonCloudService {
 	protected static final String TEMPLATE_1 = "TEMPLATE_1";
 	protected static final String TEMPLATE_2 = "TEMPLATE_2";
 	protected static final String TEMPLATE_3 = "TEMPLATE_3";
+	
+	private Map<String, Integer> numberOfHostsPerTemplate = new HashMap<String, Integer>();
 
 	private static final int NUM_HOSTS_PER_TEMPLATE = 2;
 
+
 	public MultipleTemplatesByonCloudService(String uniqueName) {
 		super(uniqueName);
+	}
+	
+	public void setNumberOfHostsForTemplate(final String templateName, int numberOfHosts) {
+		numberOfHostsPerTemplate.put(templateName, numberOfHosts);
+	}
+	
+	public void addHostToTemplate(final String host, final String template) {
+		if (hostsPerTemplate.get(template) == null) {
+			List<String> hosts = new ArrayList<String>();
+			hosts.add(host);
+			hostsPerTemplate.put(template, hosts);
+		} else {
+			hostsPerTemplate.get(template).add(host);
+		}
 	}
 	
 	@Override
@@ -51,15 +68,22 @@ public class MultipleTemplatesByonCloudService extends ByonCloudService {
 		filesToReplace.put(fileToBeReplaced, multiTemplatesGroovy);
 		addFilesToReplace(filesToReplace);
 		
-		hostsPerTemplate.put(TEMPLATE_1, new ArrayList<String>());
-		hostsPerTemplate.put(TEMPLATE_2, new ArrayList<String>());
-		hostsPerTemplate.put(TEMPLATE_3, new ArrayList<String>());
+		if (hostsPerTemplate.get(TEMPLATE_1) == null) {
+			hostsPerTemplate.put(TEMPLATE_1, new ArrayList<String>());			
+		}
+		if (hostsPerTemplate.get(TEMPLATE_2) == null) {
+			hostsPerTemplate.put(TEMPLATE_2, new ArrayList<String>());			
+		}
+		if (hostsPerTemplate.get(TEMPLATE_3) == null) {
+			hostsPerTemplate.put(TEMPLATE_3, new ArrayList<String>());			
+		}
 				
 		LogUtils.log("Assigning hosts for templates");
 		for (String templateName : hostsPerTemplate.keySet()) {
 			
-			List<String> hostsForTemplate = new ArrayList<String>();
-			for (int i = 0 ; i < NUM_HOSTS_PER_TEMPLATE ; i++) {
+			List<String> hostsForTemplate = hostsPerTemplate.get(templateName);
+			Integer numberOfHostsForTemplate = numberOfHostsPerTemplate.get(templateName);
+			for (int i = 0 ; i < (numberOfHostsForTemplate != null ? numberOfHostsForTemplate : NUM_HOSTS_PER_TEMPLATE) ; i++) {
 				String host = assignableHosts.iterator().next();
 				if (host != null) {
 					LogUtils.log("Host " + host + " was assigned to template " + templateName);

@@ -20,7 +20,7 @@ public class HpCloudService extends AbstractCloudService {
 	private String tenant = "24912589714038";
 	private String user = "98173213380893";
 	private String apiKey = "C5nobOW90bhnCmE5AQaLaJ0Ubd8UISPxGih";
-	private String pemFileName = "sgtest-hp";
+	private String keyPair = "sgtest";
 	private OpenstackClient openstackClient;
 
 	public HpCloudService(final String uniqueName) {
@@ -53,33 +53,35 @@ public class HpCloudService extends AbstractCloudService {
 		this.apiKey = apiKey;
 	}
 
-	public String getPemFileName() {
-		return pemFileName;
+	public String getKeyPair() {
+		return keyPair;
 	}
 
-	public void setPemFileName(final String pemFileName) {
-		this.pemFileName = pemFileName;
+	public void setKeyPair(final String keyPair) {
+		this.keyPair = keyPair;
 	}
 
 	@Override
 	public void injectServiceAuthenticationDetails()
 			throws IOException {
 
+		getProperties().put("user", '"' + this.user +  '"');
+		getProperties().put("apiKey", '"' + this.apiKey +  '"');
+		getProperties().put("keyFile", '"' + this.keyPair + ".pem" +  '"');
+		getProperties().put("keyPair", '"' + this.keyPair +  '"');
+		getProperties().put("tenant", '"' + this.tenant +  '"');
+
 		final Map<String, String> propsToReplace = new HashMap<String, String>();
-		propsToReplace.put("ENTER_USER", user);
-		propsToReplace.put("ENTER_API_KEY", apiKey);
+		
 		propsToReplace.put("cloudify_agent_", this.machinePrefix + "cloudify-agent");
 		propsToReplace.put("cloudify_manager", this.machinePrefix + "cloudify-manager");
-		propsToReplace.put("ENTER_KEY_FILE", pemFileName + ".pem");
-		propsToReplace.put("ENTER_TENANT", tenant);
-		propsToReplace.put("ENTER_KEY_PAIR_NAME", "sgtest");
 		propsToReplace.put("numberOfManagementMachines 1", "numberOfManagementMachines " + numberOfManagementMachines);
 		propsToReplace.put("\"openstack.wireLog\": \"false\"", "\"openstack.wireLog\": \"true\"");
 
 		IOUtils.replaceTextInFile(getPathToCloudGroovy(), propsToReplace);
 
 		// add a pem file
-		final String sshKeyPemName = pemFileName + ".pem";
+		final String sshKeyPemName = this.keyPair + ".pem";
 		final File FileToCopy =
 				new File(SGTestHelper.getSGTestRootDir() + "/apps/cloudify/cloud/" + getCloudName() + "/"
 						+ sshKeyPemName);

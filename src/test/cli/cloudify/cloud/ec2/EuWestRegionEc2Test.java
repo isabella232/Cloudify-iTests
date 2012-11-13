@@ -42,7 +42,7 @@ public class EuWestRegionEc2Test extends NewAbstractCloudTest {
 	@Override
 	protected void customizeCloud() {
 		service = (Ec2CloudService) getService();
-		service.setPemFileName("sgtest-eu");
+		service.setKeyPair("sgtest-eu");
 		service.getAdditionalPropsToReplace().put("imageId \"us-east-1/ami-76f0061f\"", "imageId \"eu-west-1/ami-24506250\"");
 		service.getAdditionalPropsToReplace().put("locationId \"us-east-1\"", "locationId \"eu-west-1\"");
 	} 

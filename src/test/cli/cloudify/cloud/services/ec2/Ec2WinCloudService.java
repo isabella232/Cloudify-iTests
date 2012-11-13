@@ -27,7 +27,4 @@ public class Ec2WinCloudService extends Ec2CloudService {
 			getAdditionalPropsToReplace().put('"' + DEFAULT_MEDIUM_WIN_AMI + '"', '"' + "eu-west-1/ami-911616e5" + '"');			
 		}
 	}
-	
-	
-
 }

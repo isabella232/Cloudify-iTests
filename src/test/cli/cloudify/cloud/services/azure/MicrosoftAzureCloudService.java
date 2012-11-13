@@ -30,6 +30,8 @@ import framework.utils.IOUtils;
 
 public class MicrosoftAzureCloudService extends AbstractCloudService {
 
+	private static final String AZURE_CERT_PFX = "azure-cert.pfx";
+
 	private static final String USER_NAME = System.getProperty("user.name");
 
 	private final MicrosoftAzureRestClient azureClient;
@@ -57,16 +59,18 @@ public class MicrosoftAzureCloudService extends AbstractCloudService {
 	public void injectServiceAuthenticationDetails() throws IOException {
 		copyCustomCloudConfigurationFileToServiceFolder();
 		copyPrivateKeyToUploadFolder();
+		
+		getProperties().put("subscriptionId", '"' + AZURE_SUBSCRIPTION_ID +  '"');
+		getProperties().put("username", '"' + USER_NAME +  '"');
+		getProperties().put("password", '"' + PFX_PASSWORD +  '"');
+		getProperties().put("pfxFile", '"' + AZURE_CERT_PFX +  '"');
+		getProperties().put("pfxPassword", '"' + PFX_PASSWORD +  '"');
+		
 		final Map<String, String> propsToReplace = new HashMap<String, String>();
 		propsToReplace.put("cloudify_agent_", this.machinePrefix.toLowerCase() + "cloudify-agent");
 		propsToReplace.put("cloudify_manager", this.machinePrefix.toLowerCase() + "cloudify-manager");
-		propsToReplace.put("ENTER_SUBSCRIPTION_ID", AZURE_SUBSCRIPTION_ID);
-		propsToReplace.put("ENTER_USER_NAME", USER_NAME);
-		propsToReplace.put("ENTER_PASSWORD", PFX_PASSWORD);
 		propsToReplace.put("ENTER_AVAILABILITY_SET", USER_NAME);
 		propsToReplace.put("ENTER_DEPLOYMENT_SLOT", "Staging");
-		propsToReplace.put("ENTER_PFX_FILE", "azure-cert.pfx");
-		propsToReplace.put("ENTER_PFX_PASSWORD", PFX_PASSWORD);
 		propsToReplace.put("ENTER_VIRTUAL_NETWORK_SITE_NAME", USER_NAME + "networksite");
 		propsToReplace.put("ENTER_ADDRESS_SPACE", ADDRESS_SPACE);
 		propsToReplace.put("ENTER_AFFINITY_GROUP", USER_NAME + "cloudifyaffinity");

@@ -31,19 +31,21 @@ import framework.utils.LogUtils;
 
 public class Ec2CloudService extends AbstractCloudService {
 	
-	private static final String UE_EAST_LINUX_AMI = "us-east-1/ami-76f0061f";
-	private static final String US_EAST_UBUNTU_AMI = "us-east-1/ami-82fa58eb";
-	
-	private static final String EU_WEST_LINUX_AMI = "\"eu-west-1/ami-c37474b7\"";
-	private static final String EU_WEST_UBUNTU_AMI = "\"eu-west-1/ami-c1aaabb5\"";
-	
-	private static final String LINUX_AMI_VARIABLE = "LINUX_AMI";
-	private static final String UBUNTU_AMI_VARIABLE = "UBUNTU_AMI";
+	public static final String DEFAULT_US_EAST_LINUX_AMI = "us-east-1/ami-76f0061f";
+	public static final String DEFAULT_US_EAST_UBUNTU_AMI = "us-east-1/ami-82fa58eb";
+	public static final String DEFAULT_EU_WEST_LINUX_AMI = "eu-west-1/ami-c37474b7";
+	public static final String DEFAULT_EU_WEST_UBUNTU_AMI = "eu-west-1/ami-c1aaabb5";
+	public static final String LINUX_AMI_VARIABLE = "LINUX_AMI";
+	public static final String UBUNTU_AMI_VARIABLE = "UBUNTU_AMI";
 
 	private static final String DEFAULT_EC2_CLOUD_NAME = "ec2";
+	
+	public static final String DEFAULT_EC2_LINUX_AMI_USERNAME = "ec2-user";
+	public static final String DEFAULT_EC2_UBUNTU_AMI_USERNAME = "ubuntu";
+	
 	private String user = "AKIAI4OVPQZZQT53O6SQ";
 	private String apiKey = "xI/BDTPh0LE9PcC0aHhn5GEUh+/hjOiRcKwCNVP5";
-	private String pemFileName = "ec2-sgtest";
+	private String keyPair = "ec2-sgtest";
 	private ComputeServiceContext context;
 
 	public Ec2CloudService(final String uniqueName) {
@@ -54,8 +56,39 @@ public class Ec2CloudService extends AbstractCloudService {
 		super(uniqueName, cloudName);
 	}
 	
+	public void setUser(final String user) {
+		this.user = user;
+	}
+
+	@Override
+	public String getUser() {
+		return user;
+	}
+
+	public void setApiKey(final String apiKey) {
+		this.apiKey = apiKey;
+	}
+
+	@Override
+	public String getApiKey() {
+		return apiKey;
+	}
+	
+	public String getRegion() {
+		return System.getProperty("ec2.region" , "eu");
+	}
+
+	public void setKeyPair(final String keyPair) {
+		this.keyPair = keyPair;
+	}
+
+	public String getKeyPair() {
+		return keyPair;
+	}
+	
 	@Override
 	public void beforeBootstrap() {
+
 		final Set<Module> wiring = new HashSet<Module>();
 		wiring.add(new AbstractModule() {
 
@@ -120,6 +153,7 @@ public class Ec2CloudService extends AbstractCloudService {
 	@Override
 	public boolean scanLeakedAgentAndManagementNodes() {
 
+
 		if (this.context == null) {
 			return true;
 		}
@@ -131,6 +165,61 @@ public class Ec2CloudService extends AbstractCloudService {
 
 		LogUtils.log("Closing jclouds context for this EC2 cloud service");
 		this.context.close();
+
+		return leakedNodes.isEmpty();
+
+	}
+	
+	@Override
+	public void injectServiceAuthenticationDetails()
+			throws IOException {
+		
+		getProperties().put("user", '"' + this.user +  '"');
+		getProperties().put("apiKey", '"' + this.apiKey +  '"');
+		getProperties().put("keyFile", '"' + this.keyPair + ".pem" +  '"');
+		getProperties().put("keyPair", '"' + this.keyPair +  '"');
+		
+
+		final Map<String, String> propsToReplace = new HashMap<String, String>();
+		
+		if (getRegion().contains("eu")) {
+			LogUtils.log("Working in eu region");
+			propsToReplace.put("locationId \"us-east-1\"", "locationId \"eu-west-1\"");
+			setKeyPair("sgtest-eu");
+			if (!getCloudName().contains("win")) {
+				propsToReplace.put('"' + DEFAULT_US_EAST_LINUX_AMI + '"', LINUX_AMI_VARIABLE);
+				propsToReplace.put('"' + DEFAULT_US_EAST_UBUNTU_AMI + '"', UBUNTU_AMI_VARIABLE);
+			}
+		}
+		
+		propsToReplace.put("cloudify_agent_", this.machinePrefix + "cloudify-agent");
+		propsToReplace.put("cloudify_manager", this.machinePrefix + "cloudify-manager");
+		propsToReplace.put("numberOfManagementMachines 1", "numberOfManagementMachines " + numberOfManagementMachines);
+
+		IOUtils.replaceTextInFile(getPathToCloudGroovy(), propsToReplace);
+
+		// add a pem file
+		final String sshKeyPemName = this.keyPair + ".pem";
+		final File fileToCopy =
+				new File(SGTestHelper.getSGTestRootDir() + "/apps/cloudify/cloud/" + getCloudName() + "/"
+						+ sshKeyPemName);
+		final File targetLocation = new File(getPathToCloudFolder() + "/upload/" + sshKeyPemName);
+		final Map<File, File> filesToReplace = new HashMap<File, File>();
+		filesToReplace.put(targetLocation, fileToCopy);
+		
+		if (getRegion().contains("eu") && !getCloudName().contains("win")) {
+			getProperties().setProperty(LINUX_AMI_VARIABLE, '"' + DEFAULT_EU_WEST_LINUX_AMI + '"');
+			getProperties().setProperty(UBUNTU_AMI_VARIABLE, '"' + DEFAULT_EU_WEST_UBUNTU_AMI + '"');
+		}
+		
+		addFilesToReplace(filesToReplace);
+	}
+
+	@Override
+	public boolean scanLeakedAgentNodes() {
+		final String agentPrefix = this.cloudConfiguration.getProvider().getMachineNamePrefix();
+
+		final List<ComputeMetadata> leakedNodes = checkForLeakedNodesWithPrefix(agentPrefix);
 
 		return leakedNodes.isEmpty();
 
@@ -221,90 +310,4 @@ public class Ec2CloudService extends AbstractCloudService {
 		return foundPendingNodes;
 	}
 
-	@Override
-	public void injectServiceAuthenticationDetails()
-			throws IOException {
-
-		final Map<String, String> propsToReplace = new HashMap<String, String>();
-		propsToReplace.put("ENTER_USER", user);
-		if (this.getCloudName().equals("ec2-win")) {
-			propsToReplace.put("apiKey \"ENTER_KEY\"", "apiKey \"" + apiKey + "\"");
-		} else {
-			propsToReplace.put("ENTER_API_KEY", apiKey);
-		}
-		
-		if (getRegion().contains("eu")) {
-			LogUtils.log("Working in eu region");
-			propsToReplace.put("locationId \"us-east-1\"", "locationId \"eu-west-1\"");
-			setPemFileName("sgtest-eu");
-			if (!getCloudName().contains("win")) {
-				propsToReplace.put('"' + UE_EAST_LINUX_AMI + '"', LINUX_AMI_VARIABLE);
-				propsToReplace.put('"' + US_EAST_UBUNTU_AMI + '"', UBUNTU_AMI_VARIABLE);
-			}
-		}
-		
-		propsToReplace.put("cloudify_agent_", this.machinePrefix + "cloudify-agent");
-		propsToReplace.put("cloudify_manager", this.machinePrefix + "cloudify-manager");
-		propsToReplace.put("ENTER_KEY_FILE", getPemFileName() + ".pem");
-		propsToReplace.put("ENTER_KEY_PAIR_NAME", getPemFileName());
-		propsToReplace.put("numberOfManagementMachines 1", "numberOfManagementMachines " + numberOfManagementMachines);
-
-		IOUtils.replaceTextInFile(getPathToCloudGroovy(), propsToReplace);
-
-		// add a pem file
-		final String sshKeyPemName = pemFileName + ".pem";
-		final File fileToCopy =
-				new File(SGTestHelper.getSGTestRootDir() + "/apps/cloudify/cloud/" + getCloudName() + "/"
-						+ sshKeyPemName);
-		final File targetLocation = new File(getPathToCloudFolder() + "/upload/" + sshKeyPemName);
-		final Map<File, File> filesToReplace = new HashMap<File, File>();
-		filesToReplace.put(targetLocation, fileToCopy);
-		
-		if (getRegion().contains("eu") && !getCloudName().contains("win")) {
-			getProperties().setProperty(LINUX_AMI_VARIABLE, EU_WEST_LINUX_AMI);
-			getProperties().setProperty(UBUNTU_AMI_VARIABLE, EU_WEST_UBUNTU_AMI);
-		}
-		
-		addFilesToReplace(filesToReplace);
-	}
-
-	public void setUser(final String user) {
-		this.user = user;
-	}
-
-	@Override
-	public String getUser() {
-		return user;
-	}
-
-	public void setApiKey(final String apiKey) {
-		this.apiKey = apiKey;
-	}
-
-	@Override
-	public String getApiKey() {
-		return apiKey;
-	}
-	
-	public String getRegion() {
-		return System.getProperty("ec2.region" , "us-east-1");
-	}
-
-	public void setPemFileName(final String pemFileName) {
-		this.pemFileName = pemFileName;
-	}
-
-	public String getPemFileName() {
-		return pemFileName;
-	}
-
-	@Override
-	public boolean scanLeakedAgentNodes() {
-		final String agentPrefix = this.cloudConfiguration.getProvider().getMachineNamePrefix();
-
-		final List<ComputeMetadata> leakedNodes = checkForLeakedNodesWithPrefix(agentPrefix);
-
-		return leakedNodes.isEmpty();
-
-	}
 }

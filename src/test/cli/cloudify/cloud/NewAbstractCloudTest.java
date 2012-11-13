@@ -255,6 +255,34 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 		
 	}
 
+	public void installServiceAndWait(final String servicePath, final String cloudOverridesFilePath, final String serviceName) throws IOException, InterruptedException {
+	
+		
+//		ServiceInstaller installer = new ServiceInstaller(getRestUrl(), serviceName);
+//		installer.setRecipePath(servicePath);
+//		installer.setCloudOverridesFilePath(cloudOverridesFilePath);
+//		installer.setWaitForFinish(true);
+//		installer.install();
+		
+		final String restUrl = getRestUrl();
+
+		final String connectCommand = "connect " + restUrl + ";";
+		StringBuilder commandBuilder = new StringBuilder()
+				.append("install-service ")
+				.append("--verbose ")
+				.append("-timeout ")
+				.append(TimeUnit.MILLISECONDS.toMinutes(DEFAULT_TEST_TIMEOUT * 2)).append(" ");
+		if (cloudOverridesFilePath != null && !cloudOverridesFilePath.isEmpty()) {
+			commandBuilder.append("-cloud-overrides ").append(cloudOverridesFilePath).append(" ");
+		}
+		commandBuilder.append(servicePath.toString().replace('\\', '/'));
+		final String installCommand = commandBuilder.toString();
+		final String output = CommandTestUtils.runCommandAndWait(connectCommand + installCommand);
+		final String excpectedResult = "Service \"" + serviceName + "\" successfully installed";
+		assertTrue("output " + output + " Does not contain " + excpectedResult,
+				output.toLowerCase().contains(excpectedResult.toLowerCase()));
+		
+	}
 	
 	
 	/**
@@ -267,23 +295,22 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 	 */
 	public void installServiceAndWait(final String servicePath, final String serviceName)
 			throws IOException, InterruptedException {
-
-		final String restUrl = getRestUrl();
-
-		final String connectCommand = "connect " + restUrl + ";";
-		final String installCommand = new StringBuilder()
-				.append("install-service ")
-				.append("--verbose ")
-				.append("-timeout ")
-				.append(TimeUnit.MILLISECONDS.toMinutes(DEFAULT_TEST_TIMEOUT * 2)).append(" ")
-				.append(servicePath.toString().replace('\\', '/'))
-				.toString();
-		final String output = CommandTestUtils.runCommandAndWait(connectCommand + installCommand);
-		final String excpectedResult = "Service \"" + serviceName + "\" successfully installed";
-		assertTrue("output " + output + " Does not contain " + excpectedResult,
-				output.toLowerCase().contains(excpectedResult.toLowerCase()));
+		installServiceAndWait(servicePath, null, serviceName);
 	}
 
+	/**
+	 * installs an application on a specific cloud and waits for the installation to complete.
+	 * 
+	 * @param applicationPath - full path to the -application.groovy file on the local file system.
+	 * @param applicationName - the name of the service.
+	 * @throws IOException
+	 * @throws InterruptedException
+	 */
+	public void installApplicationAndWait(final String applicationPath, final String cloudOverridesPath, final String applicationName)
+			throws IOException, InterruptedException {
+		installApplication(applicationPath, cloudOverridesPath, applicationName, 0, true, false);
+	}
+	
 	/**
 	 * installs an application on a specific cloud and waits for the installation to complete.
 	 * 
@@ -319,7 +346,15 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 			final boolean wait,
 			final boolean failCommand)
 			throws IOException, InterruptedException {
+		installApplication(applicationPath, null, applicationName, timeout, wait, failCommand);
 
+	}
+	
+	public void installApplication(final String applicationPath, final String cloudOverridesPath , final String applicationName, final int timeout,
+			final boolean wait,
+			final boolean failCommand)
+			throws IOException, InterruptedException {
+		
 		LogUtils.log("Installing application " + applicationName);
 		
 		final String restUrl = getRestUrl();
@@ -332,12 +367,18 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 		}
 
 		final String connectCommand = "connect " + restUrl + ";";
-		final String installCommand = new StringBuilder()
+		StringBuilder commandBuilder = new StringBuilder()
 				.append("install-application ")
 				.append("--verbose ")
 				.append("-timeout ")
-				.append(timeoutToUse).append(" ")
-				.append(applicationPath.toString().replace('\\', '/'))
+				.append(timeoutToUse).append(" ");
+		
+		if (cloudOverridesPath != null && !cloudOverridesPath.isEmpty()) {
+			commandBuilder.append("-cloud-overrides ").append(cloudOverridesPath).append(" ");
+		}
+		commandBuilder.append(applicationPath.toString().replace('\\', '/'));
+		
+		final String installCommand = commandBuilder
 				.toString();
 		String command = connectCommand + installCommand;
 		final String output = CommandTestUtils.runCommand(command, wait, failCommand);

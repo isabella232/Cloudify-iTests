@@ -1,8 +1,15 @@
 package test.cli.cloudify.cloud.byon;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
 import org.cloudifysource.dsl.internal.CloudifyConstants;
 import org.openspaces.admin.Admin;
 import org.openspaces.admin.AdminFactory;
+import org.openspaces.admin.machine.Machine;
+import org.openspaces.admin.pu.ProcessingUnit;
+import org.openspaces.admin.pu.ProcessingUnitInstance;
 import org.testng.ITestContext;
 
 import test.cli.cloudify.cloud.NewAbstractCloudTest;
@@ -70,5 +77,22 @@ public class AbstractByonCloudTest extends NewAbstractCloudTest {
 	protected void customizeCloud() throws Exception {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	protected List<Machine> getManagementMachines() {
+		return getProcessingUnitMachines("rest");
+	}
+	
+	protected List<Machine> getAgentMachines(final String processingUnitName) {
+		return getProcessingUnitMachines(processingUnitName);
+	}
+	
+	private List<Machine> getProcessingUnitMachines(final String processingUnitName) {
+		List<Machine> machines = new ArrayList<Machine>();
+		ProcessingUnit pu = admin.getProcessingUnits().waitFor(processingUnitName, OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
+		for (ProcessingUnitInstance puInstance : pu.getInstances()) {
+			machines.add(puInstance.getMachine());
+		}
+		return machines;
 	}
 }

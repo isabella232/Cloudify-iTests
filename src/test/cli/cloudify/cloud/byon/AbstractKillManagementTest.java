@@ -132,7 +132,7 @@ public abstract class AbstractKillManagementTest extends AbstractByonCloudTest {
 	}
 
 	//TODO: add support for windows machines (BYON doesn't support windows right now)
-	private void startManagement(String machine1) throws Exception {
+	protected void startManagement(String machine1) throws Exception {
 		
 		for (int i = 0 ; i < 3 ; i++) {
 			try {
@@ -146,7 +146,7 @@ public abstract class AbstractKillManagementTest extends AbstractByonCloudTest {
 
 	}
 
-	private void restartMachineAndWait(final String machine) throws Exception {
+	protected void restartMachineAndWait(final String machine) throws Exception {
 		restartMachine(machine);
 		Thread.sleep(TEN_SECONDS);
 		AssertUtils.assertTrue(WebUtils.waitForHost(machine, (int)OPERATION_TIMEOUT));

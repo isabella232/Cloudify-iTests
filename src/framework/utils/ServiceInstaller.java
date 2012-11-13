@@ -55,4 +55,18 @@ public class ServiceInstaller extends RecipeInstaller {
 			}
 		}
 	}
+	
+	public void setInstances(int numberOfInstances) {
+		
+		if (getRestUrl() != null) {
+			String command = "connect " + getRestUrl() + ";set-instances " + serviceName + " " + numberOfInstances;
+			try {
+				CommandTestUtils.runCommandAndWait(command);
+			} catch (final Exception e) {
+				LogUtils.log(e.getMessage(), e);
+				Assert.fail(e.getMessage());
+			}
+		}
+		
+	}
 }

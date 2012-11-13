@@ -54,14 +54,15 @@ public class RackspaceCloudService extends AbstractCloudService {
 	public void injectServiceAuthenticationDetails()
 			throws IOException {
 
+		getProperties().put("user", '"' + this.user +  '"');
+		getProperties().put("apiKey", '"' + this.apiKey +  '"');
+		getProperties().put("tenant", '"' + this.tenant +  '"');
+		
 		Map<String, String> propsToReplace = new HashMap<String, String>();
-		propsToReplace.put("USER_NAME", user);
-		propsToReplace.put("API_KEY", apiKey);
 		propsToReplace.put("machineNamePrefix " + "\"agent\"", "machineNamePrefix " + '"' + this.machinePrefix
 				+ "cloudify-agent" + '"');
 		propsToReplace.put("managementGroup " + "\"management\"", "managementGroup " + '"' + this.machinePrefix
 				+ "cloudify-manager" + '"');
-		propsToReplace.put("ENTER_TENANT", tenant);
 		propsToReplace.put("numberOfManagementMachines 1", "numberOfManagementMachines " + numberOfManagementMachines);
 		propsToReplace.put("\"openstack.wireLog\": \"false\"", "\"openstack.wireLog\": \"true\"");
 

@@ -23,7 +23,6 @@ import framework.utils.ScriptUtils;
 public class NamesAsIPsByonTest extends AbstractByonCloudTest {
 
 	private static int REQUIRED_NUMBER_OF_MACHINES = 3;
-	private String namesList = "pc-lab95,pc-lab96,pc-lab100";
 
 	@BeforeClass(alwaysRun = true)
 	protected void bootstrap(final ITestContext testContext) {
@@ -55,7 +54,7 @@ public class NamesAsIPsByonTest extends AbstractByonCloudTest {
 		
 		String[] ips = getService().getIpList().split(",");
 		
-		if (ips.length < 3) {
+		if (ips.length < REQUIRED_NUMBER_OF_MACHINES) {
 			throw new IllegalStateException("This test requires a minimum 3 thress machines in the machines pool");
 		} 
 		

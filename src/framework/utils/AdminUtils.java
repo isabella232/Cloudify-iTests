@@ -21,6 +21,7 @@ import org.openspaces.admin.gsm.GridServiceManager;
 import org.openspaces.admin.internal.InternalAdminFactory;
 import org.openspaces.admin.lus.LookupService;
 import org.openspaces.admin.machine.Machine;
+import org.openspaces.security.AdminFilter;
 
 import com.gigaspaces.log.LogEntryMatchers;
 import com.gigaspaces.security.directory.UserDetails;
@@ -70,6 +71,22 @@ public class AdminUtils {
 		admin.setDefaultTimeout(TIMEOUT, TimeUnit.SECONDS); //default - 15 minutes
 		return admin;
 	}
+	
+	public static Admin createAdmin( String username, String password, String locator, AdminFilter adminFilter ) {
+		AdminFactory adminFactory = new AdminFactory();
+		if( username != null && password != null ){
+			adminFactory.userDetails( username, password );
+		}
+		if( adminFilter != null ){
+			adminFactory.adminFilter( adminFilter );
+		}
+		if( locator != null && locator.trim().length() > 0 ){
+			adminFactory.addLocator(locator);
+		}
+		Admin admin = createAdmin( adminFactory );
+		admin.setDefaultTimeout(TIMEOUT, TimeUnit.SECONDS); //default - 15 minutes
+		return admin;
+	}	
 
 	public static Admin createSingleThreadAdmin() {
 		Admin admin = createAdmin(new InternalAdminFactory().singleThreadedEventListeners());

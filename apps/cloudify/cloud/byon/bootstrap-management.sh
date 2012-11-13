@@ -185,6 +185,7 @@ ERRMSG="Failed Starting"
 if [ "$GSA_MODE" = "agent" ]; then
 	ERRMSG="${ERRMSG} agent"
 	START_COMMAND_ARGS="${START_COMMAND_ARGS}agent -timeout 30 --verbose -auto-shutdown"
+	export GIGASPACES_MODE="my-agent"
 	# Check if there any zones to start the agent with
 	if [ ! -z "$MACHINE_ZONES" ]; then
 		START_COMMAND_ARGS="${START_COMMAND_ARGS} -zone ${MACHINE_ZONES}"
@@ -192,6 +193,7 @@ if [ "$GSA_MODE" = "agent" ]; then
 else
 	ERRMSG="${ERRMSG} management services"
 	START_COMMAND_ARGS="${START_COMMAND_ARGS}management -timeout 30 --verbose -auto-shutdown -cloud-file ${CLOUD_FILE}"
+	export GIGASPACES_MODE="my-management"
 	if [ "$NO_WEB_SERVICES" = "true" ]; then
 		START_COMMAND_ARGS="${START_COMMAND_ARGS} -no-web-services -no-management-space"
 	fi

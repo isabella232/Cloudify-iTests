@@ -42,7 +42,7 @@ public class ByonCloudService extends AbstractCloudService {
 	
 	protected static final String NEW_URL_PREFIX = "http://tarzan/builds/GigaSpacesBuilds/cloudify";
 	
-	private static final String DEFAULT_MACHINES = "192.168.9.118,192.168.9.136,192.168.9.135,192.168.9.137";
+	private static final String DEFAULT_MACHINES = "192.168.9.115,192.168.9.116,192.168.9.118,192.168.9.120,192.168.9.135,192.168.9.136,192.168.9.137";
 	
 	public static final String ENV_VARIABLE_NAME = "GIGASPACES_TEST_ENV";
 	public static final String ENV_VARIABLE_VALUE = "DEFAULT_ENV_VARIABLE";

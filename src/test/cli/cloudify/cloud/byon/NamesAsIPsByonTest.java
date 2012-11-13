@@ -3,12 +3,15 @@ package test.cli.cloudify.cloud.byon;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.lang.ArrayUtils;
+import org.springframework.util.StringUtils;
 import org.testng.ITestContext;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import framework.utils.NetworkUtils;
 import framework.utils.ScriptUtils;
 
 
@@ -19,6 +22,7 @@ import framework.utils.ScriptUtils;
  */
 public class NamesAsIPsByonTest extends AbstractByonCloudTest {
 
+	private static int REQUIRED_NUMBER_OF_MACHINES = 3;
 	private String namesList = "pc-lab95,pc-lab96,pc-lab100";
 
 	@BeforeClass(alwaysRun = true)
@@ -48,7 +52,17 @@ public class NamesAsIPsByonTest extends AbstractByonCloudTest {
 
 	@Override
 	protected void customizeCloud() throws Exception {
+		
+		String[] ips = getService().getIpList().split(",");
+		
+		if (ips.length < 3) {
+			throw new IllegalStateException("This test requires a minimum 3 thress machines in the machines pool");
+		} 
+		
+		String[] hostNames = NetworkUtils.resolveIpsToHostNames((String[])ArrayUtils.subarray(ips, 0, 3));
+		
 		super.customizeCloud();
-		getService().setIpList(namesList);
+		getService().setMachines(hostNames);
+		getService().setIpList(StringUtils.arrayToCommaDelimitedString(hostNames));
 	}
 }

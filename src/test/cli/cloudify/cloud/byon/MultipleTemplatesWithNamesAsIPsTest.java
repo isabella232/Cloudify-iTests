@@ -1,8 +1,5 @@
 package test.cli.cloudify.cloud.byon;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.testng.Assert;
 import org.testng.ITestContext;
@@ -12,6 +9,8 @@ import org.testng.annotations.Test;
 import test.cli.cloudify.cloud.services.byon.MultipleTemplatesByonCloudService;
 
 import com.gigaspaces.webuitf.util.LogUtils;
+
+import framework.utils.NetworkUtils;
 
 
 /**
@@ -28,32 +27,12 @@ public class MultipleTemplatesWithNamesAsIPsTest extends MultipleMachineTemplate
 	protected void bootstrap(final ITestContext testContext) {
 		
 		String[] machines = service.getMachines();
-		String[] machinesHostNames = new String[machines.length];
 		LogUtils.log("converting every other address to host name");
-		for (int i = 0 ; i < machines.length ; i++) {
-			String host = machines[i];
-
-			String[] chars = host.split("\\.");
-
-			byte[] add = new byte[chars.length];
-			for (int j = 0 ; j < chars.length ; j++) {
-				add[j] =(byte) ((int) Integer.valueOf(chars[j]));
-			}
-
-			try {
-				InetAddress byAddress = InetAddress.getByAddress(add);
-				String hostName = byAddress.getHostName();
-				LogUtils.log("IP address " + host + " was resolved to " + hostName);
-				machinesHostNames[i] = hostName;
-			} catch (UnknownHostException e) {
-				throw new IllegalStateException("could not resolve host name of ip " + host);
-			}
-
-		}
+		String[] machinesHostNames = NetworkUtils.resolveIpsToHostNames(machines);
 		service.setMachines(machinesHostNames);
 		super.bootstrap(testContext,service);
 	}
-
+	
 
 	@Override
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)

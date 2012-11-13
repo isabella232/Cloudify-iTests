@@ -71,6 +71,11 @@ public class IOUtils {
 	}
 	
 	public static File writePropertiesToFile(final Properties props , final File destinationFile) throws IOException {
+		
+		if (destinationFile.exists()) {
+			destinationFile.delete();
+		}
+		
 		Properties properties = new Properties();
 		for (Entry<Object, Object> entry : props.entrySet()) {
 			properties.setProperty(entry.getKey().toString(), entry.getValue().toString());

@@ -23,6 +23,9 @@ import javax.xml.xpath.XPathFactory;
 import org.cloudifysource.dsl.cloud.Cloud;
 import org.cloudifysource.dsl.cloud.CloudTemplate;
 import org.cloudifysource.esc.driver.provisioning.MachineDetails;
+import org.cloudifysource.esc.driver.provisioning.openstack.FloatingIP;
+import org.cloudifysource.esc.driver.provisioning.openstack.Node;
+import org.cloudifysource.esc.driver.provisioning.openstack.OpenstackException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
@@ -649,19 +652,5 @@ public class OpenstackClient {
 		}
 
 		throw new RuntimeException("error:" + resp);
-	}
-
-	/**
-	 * Checks if throttling is now activated, to avoid overloading the cloud.
-	 * 
-	 * @return True if throttling is activate, false otherwise
-	 */
-	public boolean isThrottling() {
-		boolean throttling = false;
-		if (throttlingTimeout > 0 && throttlingTimeout - System.currentTimeMillis() > 0) {
-			throttling = true;
-		}
-
-		return throttling;
 	}
 }

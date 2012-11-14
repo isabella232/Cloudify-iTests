@@ -134,7 +134,7 @@ public abstract class AbstractExamplesTest extends NewAbstractCloudTest {
 
 			AssertUtils.assertTrue("the application is running",!WebUtils.isURLAvailable(new URL(getWebuiUrl() + "/travel")));
 		}
-		uninstallApplicationIfFound(applicationName);
+		uninstallApplicationAndWait(applicationName);
 		super.scanForLeakedAgentNodes();
 	}
 

@@ -123,7 +123,7 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 		LogUtils.log("installing application " + applicationName + " on " + this.cloudName);
 		String applicationPath = ScriptUtils.getBuildPath() + "/recipes/apps/" + applicationFolderName;
 		installApplicationAndWait(applicationPath, applicationName);
-		uninstallApplicationIfFound(applicationName);
+		uninstallApplicationAndWait(applicationName);
 		scanForLeakedAgentNodes();
 	}
 

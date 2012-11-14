@@ -5,11 +5,22 @@ import test.cli.cloudify.CommandTestUtils;
 
 public class ServiceInstaller extends RecipeInstaller {
 
-	private String serviceName;
+	private static final int DEFAULT_INSTALL_SERVICE_TIMEOUT = 15;
 	
+	private String serviceName;
+	private boolean disableSelfHealing = false;
+
 	public ServiceInstaller(String restUrl, String serviceName) {
-		super(restUrl);
+		super(restUrl, DEFAULT_INSTALL_SERVICE_TIMEOUT);
 		this.serviceName = serviceName;
+	}
+	
+	public boolean isDisableSelfHealing() {
+		return disableSelfHealing;
+	}
+
+	public void setDisableSelfHealing(boolean disableSelfHealing) {
+		this.disableSelfHealing = disableSelfHealing;
 	}
 	
 	@Override

@@ -1,24 +1,25 @@
 package framework.utils;
 
+import java.io.File;
 import java.io.IOException;
-import java.util.concurrent.TimeUnit;
+import java.util.Map;
+import java.util.Properties;
 
-
-import test.AbstractTest;
 import test.cli.cloudify.CommandTestUtils;
 
 public abstract class RecipeInstaller {
 	
 	private String restUrl;
 	private String recipePath;
-	private String overridesFilePath;
-	private String cloudOverridesFilePath;
-	private long timeoutInMinutes = TimeUnit.MILLISECONDS.toMinutes(AbstractTest.DEFAULT_TEST_TIMEOUT);
+	private Map<String, Object> overrideProperties;
+	private Map<String, Object> cloudOverrideProperties;
+	private long timeoutInMinutes;
 	private boolean waitForFinish = true;
 	private boolean expectToFail = false;
 
-	public RecipeInstaller(final String restUrl) {
+	public RecipeInstaller(final String restUrl, int timeout) {
 		this.restUrl = restUrl;
+		this.timeoutInMinutes = timeout;
 	}
 	
 	public String getRestUrl() {
@@ -37,20 +38,20 @@ public abstract class RecipeInstaller {
 		this.recipePath = recipePath;
 	}
 
-	public String getOverridesFilePath() {
-		return overridesFilePath;
+	public Map<String, Object> getOverrides() {
+		return overrideProperties;
 	}
 
-	public void setOverridesFilePath(String overridesFilePath) {
-		this.overridesFilePath = overridesFilePath;
+	public void setOverrides(Map<String, Object> overridesFilePath) {
+		this.overrideProperties = overridesFilePath;
 	}
 
-	public String getCloudOverridesFilePath() {
-		return cloudOverridesFilePath;
+	public Map<String, Object> getCloudOverrides() {
+		return cloudOverrideProperties;
 	}
 
-	public void setCloudOverridesFilePath(String cloudOverridesFilePath) {
-		this.cloudOverridesFilePath = cloudOverridesFilePath;
+	public void setCloudOverrides(Map<String, Object> cloudOverridesFilePath) {
+		this.cloudOverrideProperties = cloudOverridesFilePath;
 	}
 
 	public long getTimeoutInMinutes() {
@@ -100,11 +101,13 @@ public abstract class RecipeInstaller {
 				.append("-timeout").append(" ")
 				.append(timeoutInMinutes).append(" ");
 		
-		if (cloudOverridesFilePath != null && !cloudOverridesFilePath.isEmpty()) {
-			commandBuilder.append("-cloud-overrides ").append(cloudOverridesFilePath).append(" ");
+		if (cloudOverrideProperties != null && !cloudOverrideProperties.isEmpty()) {	
+			File cloudOverridesFile = createTempOverridesFile(cloudOverrideProperties);
+			commandBuilder.append("-cloud-overrides ").append(cloudOverridesFile.getAbsolutePath()).append(" ");
 		}
-		if (overridesFilePath != null && !overridesFilePath.isEmpty()) {
-			commandBuilder.append("-overrides ").append(overridesFilePath).append(" ");
+		if (overrideProperties != null && !overrideProperties.isEmpty()) {
+			File serviceOverridesFile = createTempOverridesFile(overrideProperties);
+			commandBuilder.append("-overrides ").append(serviceOverridesFile.getAbsolutePath()).append(" ");
 		}
 		
 		commandBuilder.append(recipePath.replace('\\', '/'));
@@ -140,5 +143,27 @@ public abstract class RecipeInstaller {
 				.toString();
 		String output = CommandTestUtils.runCommandAndWait(connectCommand + installCommand);
 		assertUninstall(output);
+	}
+	
+	private File createTempOverridesFile(Map<String, Object> overrides) throws IOException {
+		
+		File createTempFile = File.createTempFile("__sgtest_cloudify", ".overrides");	
+		
+		Properties props = new Properties();
+		for (Map.Entry<String, Object> entry : overrides.entrySet()) {
+			Object value = entry.getValue();
+			String key = entry.getKey();
+			String actualValue = null;
+			if (value instanceof String) {
+				actualValue = '"' + value.toString() + '"';
+			} else {
+				actualValue = value.toString();
+			}
+			props.setProperty(key, actualValue);
+		}
+		
+		File overridePropsFile = IOUtils.writePropertiesToFile(props, createTempFile);
+		return overridePropsFile;
+
 	}
 }

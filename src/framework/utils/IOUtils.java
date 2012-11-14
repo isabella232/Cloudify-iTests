@@ -98,6 +98,19 @@ public class IOUtils {
 		return destinationFile;
 
 	}
+	
+	public static void replaceFile(final File originalFile, final File replaceToReplaceWith) throws IOException {
+		
+		File parentFolder = originalFile.getParentFile();
+		
+		// delete the old file
+		if (originalFile.exists()) {
+			originalFile.delete();
+		}
+		// copy the new file and use the name of the old file
+		FileUtils.copyFileToDirectory(replaceToReplaceWith, parentFolder);
+		
+	}
 }
 
 

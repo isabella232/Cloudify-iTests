@@ -23,17 +23,21 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import test.cli.cloudify.CommandTestUtils;
-import test.cli.cloudify.cloud.AbstractExamplesTest;
+import test.cli.cloudify.cloud.NewAbstractCloudTest;
 
 
-public class Ec2SudoTest extends AbstractExamplesTest {
+public class Ec2SudoTest extends NewAbstractCloudTest {
 
 	final private String serviceName = "groovy";
-	final private String RECIPE_DIR_PATH = CommandTestUtils
-			.getPath("apps/USM/usm/groovySudo");
+	final private static String RECIPE_DIR_PATH = CommandTestUtils.getPath("apps/USM/usm/groovySudo");
 	@Override
 	protected String getCloudName() {
 		return "ec2";
+	}
+	
+	@BeforeClass(alwaysRun = true)
+	protected void bootstrap() throws Exception {
+		super.bootstrap();
 	}
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT)
@@ -49,13 +53,15 @@ public class Ec2SudoTest extends AbstractExamplesTest {
 		super.scanForLeakedAgentNodes();
 	}
 	
-	@BeforeClass(alwaysRun = true)
-	protected void bootstrap() throws Exception {
-		super.bootstrap();
-	}
 	
 	@AfterClass(alwaysRun = true)
 	protected void teardown() throws Exception {
 		super.teardown();
+	}
+
+	@Override
+	protected boolean isReusableCloud() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }

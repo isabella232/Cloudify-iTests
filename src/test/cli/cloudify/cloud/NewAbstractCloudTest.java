@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
+import org.openspaces.admin.Admin;
 import org.testng.Assert;
 import org.testng.ITestContext;
 import org.testng.ITestListener;
@@ -43,24 +44,24 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 	private int lastTestResult = ITestResult.SUCCESS; // default to success so that the first scan will not fail
 
 	protected abstract void customizeCloud() throws Exception;
-	
+
 	protected void afterBootstrap() throws Exception {} 
-	
+
 	protected void beforeTeardown() throws Exception {}
-	
+
 	protected void afterTeardown() throws Exception {}
-	
+
 	protected void beforeBootstrap() throws Exception {}
-	
+
 	protected void bootstrap(final ITestContext testContext) {
 		bootstrap(testContext, null);
 	}
-	
+
 	@BeforeMethod
 	public void beforeTest() {	
 		LogUtils.log("Creating test folder");
 	}
-	
+
 	protected void bootstrap(final ITestContext iTestContext, CloudService service) {
 		final TestRunner runner = (TestRunner) iTestContext;
 		runner.addTestListener(new TestNameListener());
@@ -84,7 +85,7 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 		catch (Exception e) {
 			AssertFail("Customizing of cloud (" + cloudName + ", " + uniqueName + ") failed with the following error: " + e.getMessage(), e);
 		}
-		
+
 		try {
 			beforeBootstrap();
 		} catch (final Exception e) {
@@ -100,7 +101,7 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 		catch (final Exception e) {
 			AssertFail("Bootstrapping of cloud (" + cloudName + ", " + uniqueName + ") failed with the following error: " + e.getMessage(), e);
 		}
-		
+
 		try {
 			afterBootstrap(); // run optional post-bootstrap steps (e.g. create admin)
 
@@ -110,17 +111,17 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 	}
 
 	protected void teardown() {
-				
+
 		final String cloudName = this.getCloudName();
 
 		// run optional pre-teardown steps (e.g. clean objects)
 		try {
-			beforeTeardown();
+			beforeTeardown();			
 		} 
 		catch (final Exception e) {
 			AssertFail("BeforeTeardown method of cloud (" + cloudName + ", " + uniqueName + ") failed with the following error: " + e.getMessage(), e);
 		}
-		
+
 		// perform teardown
 		if (this.cloud == null) {
 			LogUtils.log("No teardown was executed as the cloud instance for this class was not created");
@@ -143,7 +144,41 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 			}
 		}
 	}
-	
+
+	protected void teardown(Admin admin) {
+		try {
+			final String cloudName = this.getCloudName();
+			// perform teardown
+			if (this.cloud == null) {
+				LogUtils.log("No teardown was executed as the cloud instance for this class was not created");
+			} 
+			else {
+				try {
+					if (this.cloud.isBootstrapped()) {
+						this.cloud.teardownCloud(admin);
+						scanAgentAndManagementNodesLeak();
+						afterTeardown();
+					}
+					else {
+						LogUtils.log("The cloud was not bootstrapped, so no teardown required.");
+						scanAgentAndManagementNodesLeak();
+					}
+				} 
+				catch (final Exception e) {
+					LogUtils.log("Tear-down of cloud (" + cloudName + ", " + uniqueName + ") failed with the following error: " + e.getMessage(), e);
+					sendTeardownCloudFailedMail(cloudName, e);
+				}
+			}
+		}
+		finally {
+			if (admin != null) {
+				admin.close();
+				admin = null;
+			}
+		}
+
+	}
+
 	/******
 	 * Returns the name of the cloud, as used in the bootstrap-cloud command.
 	 * 
@@ -160,7 +195,7 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 	 */
 	protected abstract boolean isReusableCloud();
 
-	
+
 	/**
 	 * This method is meant for the simple tests. all it does is install the application, and the immediately uninstalls
 	 * it.
@@ -191,9 +226,9 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 			}
 		}
 	}
-	
+
 	public void uninstallApplicationIfFound(final String applicationName) {
-		
+
 		if ((getService() != null) && (getService().getRestUrls() != null) && (applicationName != null)) {
 			String command = "connect " + getRestUrl() + ";list-applications";
 			String output;
@@ -211,7 +246,7 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 			}
 		}
 
-		
+
 	}
 
 	private String getLiveRestUrl() {
@@ -232,9 +267,9 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 		Assert.fail("Failed to find a working rest URL. tried : " + StringUtils.arrayToCommaDelimitedString(restUrls));
 		return null;
 	}
-	
+
 	public void uninstallServicefFound(final String serviceName) {
-		
+
 		if ((getService() != null) && (getService().getRestUrls() != null) && (serviceName != null)) {
 			String command = "connect " + getRestUrl() + ";list-services";
 			String output;
@@ -252,26 +287,26 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 			}
 		}
 
-		
+
 	}
 
 	public void installServiceAndWait(final String servicePath, final String cloudOverridesFilePath, final String serviceName) throws IOException, InterruptedException {
-	
-		
-//		ServiceInstaller installer = new ServiceInstaller(getRestUrl(), serviceName);
-//		installer.setRecipePath(servicePath);
-//		installer.setCloudOverridesFilePath(cloudOverridesFilePath);
-//		installer.setWaitForFinish(true);
-//		installer.install();
-		
+
+
+		//		ServiceInstaller installer = new ServiceInstaller(getRestUrl(), serviceName);
+		//		installer.setRecipePath(servicePath);
+		//		installer.setCloudOverridesFilePath(cloudOverridesFilePath);
+		//		installer.setWaitForFinish(true);
+		//		installer.install();
+
 		final String restUrl = getRestUrl();
 
 		final String connectCommand = "connect " + restUrl + ";";
 		StringBuilder commandBuilder = new StringBuilder()
-				.append("install-service ")
-				.append("--verbose ")
-				.append("-timeout ")
-				.append(TimeUnit.MILLISECONDS.toMinutes(DEFAULT_TEST_TIMEOUT * 2)).append(" ");
+		.append("install-service ")
+		.append("--verbose ")
+		.append("-timeout ")
+		.append(TimeUnit.MILLISECONDS.toMinutes(DEFAULT_TEST_TIMEOUT * 2)).append(" ");
 		if (cloudOverridesFilePath != null && !cloudOverridesFilePath.isEmpty()) {
 			commandBuilder.append("-cloud-overrides ").append(cloudOverridesFilePath).append(" ");
 		}
@@ -281,10 +316,10 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 		final String excpectedResult = "Service \"" + serviceName + "\" successfully installed";
 		assertTrue("output " + output + " Does not contain " + excpectedResult,
 				output.toLowerCase().contains(excpectedResult.toLowerCase()));
-		
+
 	}
-	
-	
+
+
 	/**
 	 * installs a service on a specific cloud and waits for the installation to complete.
 	 * 
@@ -310,7 +345,7 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 			throws IOException, InterruptedException {
 		installApplication(applicationPath, cloudOverridesPath, applicationName, 0, true, false);
 	}
-	
+
 	/**
 	 * installs an application on a specific cloud and waits for the installation to complete.
 	 * 
@@ -323,12 +358,12 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 			throws IOException, InterruptedException {
 		installApplication(applicationPath, applicationName, 0, true, false);
 	}
-	
+
 	public void installApplicationAndWait(final String applicationPath, final String applicationName, final int timeout)
 			throws IOException, InterruptedException {
 		installApplication(applicationPath, applicationName, timeout, true, false);
 	}
-	
+
 
 	/**
 	 * installs an application on a specific cloud and waits for the installation to complete.
@@ -345,18 +380,18 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 	public void installApplication(final String applicationPath, final String applicationName, final int timeout,
 			final boolean wait,
 			final boolean failCommand)
-			throws IOException, InterruptedException {
+					throws IOException, InterruptedException {
 		installApplication(applicationPath, null, applicationName, timeout, wait, failCommand);
 
 	}
-	
+
 	public void installApplication(final String applicationPath, final String cloudOverridesPath , final String applicationName, final int timeout,
 			final boolean wait,
 			final boolean failCommand)
-			throws IOException, InterruptedException {
-		
+					throws IOException, InterruptedException {
+
 		LogUtils.log("Installing application " + applicationName);
-		
+
 		final String restUrl = getRestUrl();
 
 		long timeoutToUse;
@@ -368,16 +403,16 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 
 		final String connectCommand = "connect " + restUrl + ";";
 		StringBuilder commandBuilder = new StringBuilder()
-				.append("install-application ")
-				.append("--verbose ")
-				.append("-timeout ")
-				.append(timeoutToUse).append(" ");
-		
+		.append("install-application ")
+		.append("--verbose ")
+		.append("-timeout ")
+		.append(timeoutToUse).append(" ");
+
 		if (cloudOverridesPath != null && !cloudOverridesPath.isEmpty()) {
 			commandBuilder.append("-cloud-overrides ").append(cloudOverridesPath).append(" ");
 		}
 		commandBuilder.append(applicationPath.toString().replace('\\', '/'));
-		
+
 		final String installCommand = commandBuilder
 				.toString();
 		String command = connectCommand + installCommand;
@@ -390,7 +425,7 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 			assertTrue(output.toLowerCase().contains("operation failed"));
 		}
 	}
-	
+
 	/**
 	 * uninstalls a service from a specific cloud and waits for the uninstallation to complete.
 	 * 
@@ -412,16 +447,16 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 
 		final String connectCommand = "connect " + restUrl + ";";
 		final String installCommand = new StringBuilder()
-				.append("uninstall-service ")
-				.append("--verbose ")
-				.append("-timeout ")
-				.append(TimeUnit.MILLISECONDS.toMinutes(DEFAULT_TEST_TIMEOUT * 2)).append(" ")
-				.append(serviceName)
-				.toString();
+		.append("uninstall-service ")
+		.append("--verbose ")
+		.append("-timeout ")
+		.append(TimeUnit.MILLISECONDS.toMinutes(DEFAULT_TEST_TIMEOUT * 2)).append(" ")
+		.append(serviceName)
+		.toString();
 		final String output = CommandTestUtils.runCommandAndWait(connectCommand + installCommand);
 		final String excpectedResult = "Service \"" + serviceName + "\" uninstalled successfully";
 		assertTrue(output.toLowerCase().contains(excpectedResult.toLowerCase()));
-		
+
 		// the uninstall only waits for the gs-agents to be shutdown on the cloud nodes.
 		// we sleep here to wait for the machines to acutally shutdown.
 		// NOTE!! this is ugly, but until we get uninstall to actually wait for machines to shutdown this should help
@@ -433,9 +468,9 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 
 
 	public void scanAgentNodesLeak() {
-		
+
 		int maxRetries = 3;
-		
+
 		if (cloud == null) {
 			LogUtils.log("Test: " + lastTestName + " skipping scanNodesLeak since cloud is null");
 			return;
@@ -447,7 +482,7 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 		} catch (InterruptedException e) {
 			AssertFail("Failed waiting for esm to recognize instance count decrease.", e);
 		}
-		
+
 		boolean leakedAgentScanResult = false;
 		for (int i = 0 ; i < maxRetries ; i++) {
 			try {
@@ -457,7 +492,7 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 				LogUtils.log("Failed scaning for leaked nodes. attempt number " + (i + 1) , t);
 			}
 		}
-		
+
 
 		if (this.lastTestResult == ITestResult.SUCCESS) {
 			// test passed - check for leaked VMs
@@ -472,11 +507,11 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 			}
 		}
 	}
-	
+
 	public void scanAgentAndManagementNodesLeak() {
-		
+
 		int maxRetries = 3;
-		
+
 		if (cloud == null) {
 			LogUtils.log("Test: " + lastTestName + " skipping scanNodesLeak since cloud is null");
 			return;
@@ -488,7 +523,7 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 		} catch (InterruptedException e) {
 			AssertFail("Failed waiting for esm to recognize instance count decrease.", e);
 		}
-		
+
 		boolean leakedAgentAndManagementNodesScanResult = false;
 		for (int i = 0 ; i < maxRetries ; i++) {
 			try {
@@ -498,7 +533,7 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 				LogUtils.log("Failed scaning for leaked nodes. attempt number " + (i + 1) , t);
 			}
 		}
-		
+
 		if (this.lastTestResult == ITestResult.SUCCESS) {
 			// test passed - check for leaked VMs
 			if (!leakedAgentAndManagementNodesScanResult) {
@@ -522,15 +557,15 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 		return restUrl;
 
 	}
-	
+
 	protected String getWebuiUrl() {
 		if (cloud.getRestUrls() == null) {
 			Assert.fail("Test requested the Webui URLs for the cloud, but they were not set. This may indeicate that the cloud was not bootstrapped properly");
 		}
-		
+
 		final String webuiUrl = cloud.getWebuiUrls()[0];
 		return webuiUrl;
-		
+
 	}
 
 	protected void dumpMachines() {
@@ -543,7 +578,7 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 			LogUtils.log("Failed to create dump for this url - " + url, e);
 		}
 	}
-	
+
 	/**
 	 * uninstalls an application from a specific cloud and waits for the uninstallation to complete.
 	 * 
@@ -556,26 +591,26 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 
 		// save the agent logs before uninstall, otherwise they will get lost
 		dumpMachines();
-		
+
 		LogUtils.log("uninstalling application " + applicationName);
-		
+
 		final String restUrl = getRestUrl();
 		final String connectCommand = "connect " + restUrl + ";";
 		final String installCommand = new StringBuilder()
-				.append("uninstall-application ")
-				.append("--verbose ")
-				.append("-timeout ")
-				.append(TimeUnit.MILLISECONDS.toMinutes(DEFAULT_TEST_TIMEOUT * 2)).append(" ")
-				.append(applicationName)
-				.toString();
+		.append("uninstall-application ")
+		.append("--verbose ")
+		.append("-timeout ")
+		.append(TimeUnit.MILLISECONDS.toMinutes(DEFAULT_TEST_TIMEOUT * 2)).append(" ")
+		.append(applicationName)
+		.toString();
 		final String output = CommandTestUtils.runCommandAndWait(connectCommand + installCommand);
 		final String excpectedResult = "Application " + applicationName + " uninstalled successfully";
 		assertTrue(output.toLowerCase().contains(excpectedResult.toLowerCase()));
-		
+
 		// check that all agent machines are actually down after the uninstall
 		LogUtils.log("scanning for leaking agent nodes on cloud " + this.cloud.getUniqueName());
 		scanAgentNodesLeak();
-		
+
 		LogUtils.log("application " + applicationName + " uninstalled");
 	}
 
@@ -628,7 +663,7 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 	}
 
 
-	
+
 	private class TestNameListener implements ITestListener {
 
 		@Override

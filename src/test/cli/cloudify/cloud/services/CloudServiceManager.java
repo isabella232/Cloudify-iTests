@@ -92,7 +92,12 @@ public class CloudServiceManager {
 
 		if ("byon".equalsIgnoreCase(cloudName)) {
 			cloudService = new ByonCloudService(serviceUniqueName);
-		} else if ("ec2".equalsIgnoreCase(cloudName)) {
+		}
+		else if ("byon-xap".equalsIgnoreCase(cloudName)) {
+			cloudService = new ByonCloudService(serviceUniqueName);
+			((ByonCloudService)cloudService).setNoWebServices(true);
+		}
+		else if ("ec2".equalsIgnoreCase(cloudName)) {
 			cloudService = new Ec2CloudService(serviceUniqueName);
 		} else if ("ec2-location-aware".equalsIgnoreCase(cloudName)) {
 			cloudService = new Ec2LocationAwareCloudService(serviceUniqueName);

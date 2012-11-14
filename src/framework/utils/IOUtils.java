@@ -13,6 +13,8 @@ import java.util.Properties;
 
 import org.apache.commons.io.FileUtils;
 
+import test.cli.cloudify.CommandTestUtils;
+
 import com.google.common.io.Files;
 
 /**
@@ -45,9 +47,16 @@ public class IOUtils {
 		File file = new File(filePath);
         BufferedReader reader = new BufferedReader(new FileReader(file));
         String line = "", oldtext = "";
+        String newLine;
+        if(CommandTestUtils.isWindows()){
+        	newLine = "\r\n";
+        }
+        else {
+        	newLine = "\n";
+        }
         while((line = reader.readLine()) != null)
             {
-            oldtext += line + "\r\n";
+            oldtext += line + newLine;
         }
         reader.close();
         String newtext = new String(oldtext);
@@ -60,7 +69,7 @@ public class IOUtils {
         writer.write(newtext);
         writer.close();
 	}
-	
+		
 	public static void replaceTextInFile(File file, Map<String,String> map) throws IOException {
 		String originalFileContents = FileUtils.readFileToString(file);
 		String modified = originalFileContents;

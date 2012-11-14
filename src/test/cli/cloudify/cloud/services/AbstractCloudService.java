@@ -14,6 +14,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.io.FileUtils;
 import org.cloudifysource.dsl.cloud.Cloud;
 import org.cloudifysource.dsl.internal.ServiceReader;
+import org.openspaces.admin.Admin;
 
 import test.cli.cloudify.CloudTestUtils;
 import test.cli.cloudify.CommandTestUtils;
@@ -42,12 +43,14 @@ public abstract class AbstractCloudService implements CloudService {
 	protected boolean bootstrapped = false;
 	private String serviceFolderName;
 	protected Cloud cloudConfiguration;
+	private final String NO_WEB_SERVICES = "-no-web-services";
+	protected boolean noWebServices; 
 	protected Properties properties = new Properties();
-	
+
 	public Properties getProperties() {
 		return properties;
 	}
-	
+
 	public Cloud getCloudConfiguration() {
 		return cloudConfiguration;
 	}
@@ -187,9 +190,9 @@ public abstract class AbstractCloudService implements CloudService {
 
 	@Override
 	public void bootstrapCloud() throws Exception {
-		
+
 		createServiceFolders();
-		
+
 		overrideLogsFile();
 		injectAuthenticationDetails();
 		if (filesToReplace != null) {
@@ -208,7 +211,7 @@ public abstract class AbstractCloudService implements CloudService {
 		if (additionalPropsToReplace != null) {
 			IOUtils.replaceTextInFile(getPathToCloudGroovy(), additionalPropsToReplace);
 		}
-		
+
 		// add a properties file to the cloud driver
 		IOUtils.writePropertiesToFile(getProperties(), new File(getPathToCloudFolder() + "/" + getCloudName() + "-cloud.properties"));
 
@@ -217,23 +220,30 @@ public abstract class AbstractCloudService implements CloudService {
 
 		this.beforeBootstrap();
 
-		printCloudConfigFile();
+		printCloudConfigFile();		
 
-		String output = CommandTestUtils.runCommandAndWait("bootstrap-cloud --verbose " + getCloudName() + "_" + getUniqueName());
-		LogUtils.log("Extracting rest url's from cli output");
-		restAdminUrls = extractRestAdminUrls(output, numberOfManagementMachines);
-		LogUtils.log("Extracting webui url's from cli output");
-		webUIUrls = extractWebuiUrls(output, numberOfManagementMachines);
-		assertBootstrapServicesAreAvailable();
+		// if web services is needed - the standard configuration
+		if(!noWebServices){
+			String output = CommandTestUtils.runCommandAndWait("bootstrap-cloud --verbose " + getCloudName() + "_" + getUniqueName());
+			LogUtils.log("Extracting rest url's from cli output");
+			restAdminUrls = extractRestAdminUrls(output, numberOfManagementMachines);
+			LogUtils.log("Extracting webui url's from cli output");
+			webUIUrls = extractWebuiUrls(output, numberOfManagementMachines);
+			assertBootstrapServicesAreAvailable();
+			setBootstrapped(true);
+
+			URL machinesURL;
+
+			for (int i = 0; i < numberOfManagementMachines; i++) {
+				machinesURL = getMachinesUrl(restAdminUrls[i].toString());
+				LogUtils.log("Expecting " + numberOfManagementMachines + " machines");
+				LogUtils.log("Found " + CloudTestUtils.getNumberOfMachines(machinesURL) + " machines");
+			}
+		}		
+		else {
+			CommandTestUtils.runCommandAndWait("bootstrap-cloud"+ " "+NO_WEB_SERVICES+ " --verbose " + getCloudName() + "_" + getUniqueName());
+		}		
 		setBootstrapped(true);
-
-		URL machinesURL;
-
-		for (int i = 0; i < numberOfManagementMachines; i++) {
-			machinesURL = getMachinesUrl(restAdminUrls[i].toString());
-			LogUtils.log("Expecting " + numberOfManagementMachines + " machines");
-			LogUtils.log("Found " + CloudTestUtils.getNumberOfMachines(machinesURL) + " machines");
-		}
 
 	}
 
@@ -255,9 +265,24 @@ public abstract class AbstractCloudService implements CloudService {
 	}
 
 	@Override
-	public void teardownCloud() throws IOException, InterruptedException {
-
+	public void teardownCloud(Admin admin) throws IOException,
+	InterruptedException {
 		try {
+			DumpUtils.dumpLogs(admin);
+			CommandTestUtils.runCommandAndWait("teardown-cloud -force " +"--verbose " + getCloudName() + "_" + getUniqueName());			
+		}
+		finally {
+			
+			setBootstrapped(false); 
+			deleteServiceFolders();
+		}
+
+	}
+
+	@Override
+	public void teardownCloud() throws IOException, InterruptedException {
+		try {
+			// tearing down cloud which uses web services			
 			String[] restUrls = getRestUrls();
 			String url = null;
 			if (restUrls != null) {
@@ -269,13 +294,15 @@ public abstract class AbstractCloudService implements CloudService {
 				}
 				String connect = "connect " + restUrls[0];
 				CommandTestUtils.runCommandAndWait(connect + ";" + "teardown-cloud --verbose " + getCloudName() + "_" + getUniqueName());
-			}
+			}					
+
 		} 
 		finally {
 			setBootstrapped(false); 
 			deleteServiceFolders();
 		}
 	}
+
 
 	@Override
 	public boolean scanLeakedAgentAndManagementNodes() {
@@ -393,6 +420,14 @@ public abstract class AbstractCloudService implements CloudService {
 
 	public String getUniqueName() {
 		return serviceUniqueName;
+	}
+
+	public boolean getNoWebServices(){
+		return noWebServices;
+	}
+
+	public void setNoWebServices(boolean b){
+		noWebServices = b;
 	}
 
 	@Override

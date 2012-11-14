@@ -7,10 +7,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.io.FileUtils;
+import org.cloudifysource.esc.driver.provisioning.openstack.Node;
+import org.cloudifysource.esc.driver.provisioning.openstack.OpenstackException;
+
 import test.cli.cloudify.cloud.services.AbstractCloudService;
-import test.cli.cloudify.cloud.services.tools.openstack.Node;
 import test.cli.cloudify.cloud.services.tools.openstack.OpenstackClient;
-import test.cli.cloudify.cloud.services.tools.openstack.OpenstackException;
 import framework.tools.SGTestHelper;
 import framework.utils.IOUtils;
 import framework.utils.LogUtils;
@@ -23,8 +25,8 @@ public class HpCloudService extends AbstractCloudService {
 	private String keyPair = "sgtest";
 	private OpenstackClient openstackClient;
 
-	public HpCloudService(final String uniqueName) {
-		super(uniqueName, "openstack");
+	public HpCloudService() {
+		super("openstack");
 	}
 
 	public String getTenant() {
@@ -62,72 +64,41 @@ public class HpCloudService extends AbstractCloudService {
 	}
 
 	@Override
-	public void injectServiceAuthenticationDetails()
+	public void injectCloudAuthenticationDetails()
 			throws IOException {
 
-		getProperties().put("user", '"' + this.user +  '"');
-		getProperties().put("apiKey", '"' + this.apiKey +  '"');
-		getProperties().put("keyFile", '"' + this.keyPair + ".pem" +  '"');
-		getProperties().put("keyPair", '"' + this.keyPair +  '"');
-		getProperties().put("tenant", '"' + this.tenant +  '"');
+		getProperties().put("user", this.user);
+		getProperties().put("apiKey", this.apiKey);
+		getProperties().put("keyFile", this.keyPair + ".pem");
+		getProperties().put("keyPair", this.keyPair);
+		getProperties().put("tenant", this.tenant);
 
 		final Map<String, String> propsToReplace = new HashMap<String, String>();
 		
-		propsToReplace.put("cloudify_agent_", this.machinePrefix + "cloudify-agent");
-		propsToReplace.put("cloudify_manager", this.machinePrefix + "cloudify-manager");
-		propsToReplace.put("numberOfManagementMachines 1", "numberOfManagementMachines " + numberOfManagementMachines);
+		propsToReplace.put("cloudify_agent_", getMachinePrefix() + "cloudify-agent");
+		propsToReplace.put("cloudify_manager", getMachinePrefix() + "cloudify-manager");
+		propsToReplace.put("numberOfManagementMachines 1", "numberOfManagementMachines " + getNumberOfManagementMachines());
 		propsToReplace.put("\"openstack.wireLog\": \"false\"", "\"openstack.wireLog\": \"true\"");
 
 		IOUtils.replaceTextInFile(getPathToCloudGroovy(), propsToReplace);
 
 		// add a pem file
 		final String sshKeyPemName = this.keyPair + ".pem";
-		final File FileToCopy =
+		final File fileToCopy =
 				new File(SGTestHelper.getSGTestRootDir() + "/apps/cloudify/cloud/" + getCloudName() + "/"
 						+ sshKeyPemName);
-		final File targetLocation = new File(getPathToCloudFolder() + "/upload/" + sshKeyPemName);
-		final Map<File, File> filesToReplace = new HashMap<File, File>();
-		filesToReplace.put(targetLocation, FileToCopy);
-		addFilesToReplace(filesToReplace);
-	}
-
-	@Override
-	public void beforeBootstrap() {
-		this.openstackClient = new OpenstackClient();
-		openstackClient.setConfig(this.cloudConfiguration);
-
-		String token = openstackClient.createAuthenticationToken();
-
-		final String agentPrefix = this.cloudConfiguration.getProvider().getMachineNamePrefix();
-		final String mgmtPrefix = this.cloudConfiguration.getProvider().getManagementGroup();
-
-		List<Node> nodes;
-		try {
-			nodes = openstackClient.listServers(token);
-		} catch (OpenstackException e) {
-			throw new IllegalStateException("Failed to query openstack cloud for current servers", e);
-		}
-
-		for (Node node : nodes) {
-			if (node.getStatus().equals(OpenstackClient.MACHINE_STATUS_ACTIVE)) {
-				if (node.getName().startsWith(mgmtPrefix) || node.getName().startsWith(agentPrefix)) {
-					throw new IllegalStateException("Before bootstrap, found an active node with name: "
-							+ node.getName() + ". Details: " + node);
-				}
-			}
-		}
-
+		final File targetLocation = new File(getPathToCloudFolder() + "/upload/");
+		FileUtils.copyFileToDirectory(fileToCopy, targetLocation);
 	}
 
 	@Override
 	public boolean scanLeakedAgentNodes() {
-		if(openstackClient == null) {
-			LogUtils.log("Openstack client was not initialized, therefore a bootstrap never took place, and no scan is needed.");
-			return true;
+		if (openstackClient == null) {
+			this.openstackClient = createClient();
 		}
 		String token = openstackClient.createAuthenticationToken();
 
-		final String agentPrefix = this.cloudConfiguration.getProvider().getMachineNamePrefix();
+		final String agentPrefix = getCloud().getProvider().getMachineNamePrefix();
 
 		return checkForLeakedNode(token, agentPrefix);
 
@@ -135,13 +106,12 @@ public class HpCloudService extends AbstractCloudService {
 	@Override
 	public boolean scanLeakedAgentAndManagementNodes() {
 		if(openstackClient == null) {
-			LogUtils.log("Openstack client was not initialized, so no test was performed after teardown");
-			return true;
+			openstackClient = createClient();
 		}
 		String token = openstackClient.createAuthenticationToken();
 
-		final String agentPrefix = this.cloudConfiguration.getProvider().getMachineNamePrefix();
-		final String mgmtPrefix = this.cloudConfiguration.getProvider().getManagementGroup();
+		final String agentPrefix = getCloud().getProvider().getMachineNamePrefix();
+		final String mgmtPrefix = getCloud().getProvider().getManagementGroup();
 		
 		final boolean result = checkForLeakedNode(token, agentPrefix, mgmtPrefix);
 		this.openstackClient.close();
@@ -184,5 +154,12 @@ public class HpCloudService extends AbstractCloudService {
 		}
 		
 		return true;
+	}
+	
+	private OpenstackClient createClient() {
+		OpenstackClient client = new OpenstackClient();
+		client.setConfig(getCloud());
+		return client;
+		
 	}
 }

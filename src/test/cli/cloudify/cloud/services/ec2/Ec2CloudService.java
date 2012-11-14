@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import org.apache.commons.io.FileUtils;
 import org.cloudifysource.esc.jclouds.WindowsServerEC2ReviseParsedImage;
 import org.jclouds.aws.ec2.compute.strategy.AWSEC2ReviseParsedImage;
 import org.jclouds.compute.ComputeServiceContext;
@@ -31,14 +32,18 @@ import framework.utils.LogUtils;
 
 public class Ec2CloudService extends AbstractCloudService {
 	
+	public Ec2CloudService() {
+		super("ec2");
+	}
+	
+	public Ec2CloudService(final String cloudName) {
+		super(cloudName);
+	}
+
 	public static final String DEFAULT_US_EAST_LINUX_AMI = "us-east-1/ami-76f0061f";
 	public static final String DEFAULT_US_EAST_UBUNTU_AMI = "us-east-1/ami-82fa58eb";
 	public static final String DEFAULT_EU_WEST_LINUX_AMI = "eu-west-1/ami-c37474b7";
 	public static final String DEFAULT_EU_WEST_UBUNTU_AMI = "eu-west-1/ami-c1aaabb5";
-	public static final String LINUX_AMI_VARIABLE = "LINUX_AMI";
-	public static final String UBUNTU_AMI_VARIABLE = "UBUNTU_AMI";
-
-	private static final String DEFAULT_EC2_CLOUD_NAME = "ec2";
 	
 	public static final String DEFAULT_EC2_LINUX_AMI_USERNAME = "ec2-user";
 	public static final String DEFAULT_EC2_UBUNTU_AMI_USERNAME = "ubuntu";
@@ -47,14 +52,6 @@ public class Ec2CloudService extends AbstractCloudService {
 	private String apiKey = "xI/BDTPh0LE9PcC0aHhn5GEUh+/hjOiRcKwCNVP5";
 	private String keyPair = "ec2-sgtest";
 	private ComputeServiceContext context;
-
-	public Ec2CloudService(final String uniqueName) {
-		super(uniqueName, DEFAULT_EC2_CLOUD_NAME);
-	}
-	
-	public Ec2CloudService(final String uniqueName, final String cloudName) {
-		super(uniqueName, cloudName);
-	}
 	
 	public void setUser(final String user) {
 		this.user = user;
@@ -77,6 +74,10 @@ public class Ec2CloudService extends AbstractCloudService {
 	public String getRegion() {
 		return System.getProperty("ec2.region" , "eu");
 	}
+	
+	public void setRegion(final String region) {
+		System.setProperty("ec2.region", region);
+	}
 
 	public void setKeyPair(final String keyPair) {
 		this.keyPair = keyPair;
@@ -85,10 +86,8 @@ public class Ec2CloudService extends AbstractCloudService {
 	public String getKeyPair() {
 		return keyPair;
 	}
-	
-	@Override
-	public void beforeBootstrap() {
 
+	private ComputeServiceContext createContext() {
 		final Set<Module> wiring = new HashSet<Module>();
 		wiring.add(new AbstractModule() {
 
@@ -108,58 +107,23 @@ public class Ec2CloudService extends AbstractCloudService {
 		overrides.put("jclouds.ec2.ami-query", "");
 		overrides.put("jclouds.ec2.cc-ami-query", "");
 
-		final String provider = this.cloudConfiguration.getProvider().getProvider();
-		final String user = this.cloudConfiguration.getUser().getUser();
-		final String key = this.cloudConfiguration.getUser().getApiKey();
+		final String provider = getCloud().getProvider().getProvider();
+		final String user = getCloud().getUser().getUser();
+		final String key = getCloud().getUser().getApiKey();
 		LogUtils.log("Creating jclouds context, this may take a few seconds");
-		this.context = new ComputeServiceContextFactory().createContext(
+		return new ComputeServiceContextFactory().createContext(
 				provider, user, key, wiring, overrides);
-		LogUtils.log("Jclouds context created successfully, scanning for machines leaked from previous tests");
-		final Set<? extends ComputeMetadata> aloNodes = this.context.getComputeService().listNodes();
-		final String agentPrefix = this.cloudConfiguration.getProvider().getMachineNamePrefix();
-		final String managerPrefix = this.cloudConfiguration.getProvider().getManagementGroup();
-
-		for (final ComputeMetadata computeMetadata : aloNodes) {
-			final String name = computeMetadata.getName();
-			final NodeState state = ((NodeMetadata) computeMetadata).getState();
-			switch (state) {
-			case TERMINATED:
-				// ignore
-				break;
-			case ERROR:
-			case PENDING:
-			case RUNNING:
-			case UNRECOGNIZED:
-			case SUSPENDED:
-			default:
-				if (name != null) {
-					if (name.startsWith(agentPrefix)) {
-						throw new IllegalStateException(
-								"Before bootstrap, found a non-terminated node in the cloud " 
-										+ "with the agent prefix of the current cloud. Node details: "
-										+ computeMetadata);
-					} else if (name.startsWith(managerPrefix)) {
-						throw new IllegalStateException(
-								"Before bootstrap, found a non-terminated node in the cloud " 
-										+ "with the management prefix of the current cloud. Node details: "
-										+ computeMetadata);
-					}
-				}
-				break;
-			}
-		}
 	}
 
 	@Override
 	public boolean scanLeakedAgentAndManagementNodes() {
 
-
 		if (this.context == null) {
-			return true;
+			this.context = createContext();
 		}
 
-		final String agentPrefix = this.cloudConfiguration.getProvider().getMachineNamePrefix();
-		final String managerPrefix = this.cloudConfiguration.getProvider().getManagementGroup();
+		final String agentPrefix = getCloud().getProvider().getMachineNamePrefix();
+		final String managerPrefix = getCloud().getProvider().getManagementGroup();
 
 		final List<ComputeMetadata> leakedNodes = checkForLeakedNodesWithPrefix(agentPrefix, managerPrefix);
 
@@ -171,30 +135,30 @@ public class Ec2CloudService extends AbstractCloudService {
 	}
 	
 	@Override
-	public void injectServiceAuthenticationDetails()
+	public void injectCloudAuthenticationDetails()
 			throws IOException {
 		
-		getProperties().put("user", '"' + this.user +  '"');
-		getProperties().put("apiKey", '"' + this.apiKey +  '"');
-		getProperties().put("keyFile", '"' + this.keyPair + ".pem" +  '"');
-		getProperties().put("keyPair", '"' + this.keyPair +  '"');
-		
+		getProperties().put("user", this.user);
+		getProperties().put("apiKey", this.apiKey);
 
 		final Map<String, String> propsToReplace = new HashMap<String, String>();
 		
 		if (getRegion().contains("eu")) {
 			LogUtils.log("Working in eu region");
-			propsToReplace.put("locationId \"us-east-1\"", "locationId \"eu-west-1\"");
+			getProperties().put("locationId", "eu-west-1");
 			setKeyPair("sgtest-eu");
 			if (!getCloudName().contains("win")) {
-				propsToReplace.put('"' + DEFAULT_US_EAST_LINUX_AMI + '"', LINUX_AMI_VARIABLE);
-				propsToReplace.put('"' + DEFAULT_US_EAST_UBUNTU_AMI + '"', UBUNTU_AMI_VARIABLE);
+				getProperties().put("linuxImageId", DEFAULT_EU_WEST_LINUX_AMI);
+				getProperties().put("ubuntuImageId", DEFAULT_EU_WEST_UBUNTU_AMI);
+				getProperties().put("hardwareId", "m1.small");
 			}
 		}
+		getProperties().put("keyPair", this.keyPair);
+		getProperties().put("keyFile", this.keyPair + ".pem");
 		
-		propsToReplace.put("cloudify_agent_", this.machinePrefix + "cloudify-agent");
-		propsToReplace.put("cloudify_manager", this.machinePrefix + "cloudify-manager");
-		propsToReplace.put("numberOfManagementMachines 1", "numberOfManagementMachines " + numberOfManagementMachines);
+		propsToReplace.put("cloudify_agent_", getMachinePrefix() + "cloudify-agent");
+		propsToReplace.put("cloudify_manager", getMachinePrefix() + "cloudify-manager");
+		propsToReplace.put("numberOfManagementMachines 1", "numberOfManagementMachines " + getNumberOfManagementMachines());
 
 		IOUtils.replaceTextInFile(getPathToCloudGroovy(), propsToReplace);
 
@@ -203,21 +167,18 @@ public class Ec2CloudService extends AbstractCloudService {
 		final File fileToCopy =
 				new File(SGTestHelper.getSGTestRootDir() + "/apps/cloudify/cloud/" + getCloudName() + "/"
 						+ sshKeyPemName);
-		final File targetLocation = new File(getPathToCloudFolder() + "/upload/" + sshKeyPemName);
-		final Map<File, File> filesToReplace = new HashMap<File, File>();
-		filesToReplace.put(targetLocation, fileToCopy);
-		
-		if (getRegion().contains("eu") && !getCloudName().contains("win")) {
-			getProperties().setProperty(LINUX_AMI_VARIABLE, '"' + DEFAULT_EU_WEST_LINUX_AMI + '"');
-			getProperties().setProperty(UBUNTU_AMI_VARIABLE, '"' + DEFAULT_EU_WEST_UBUNTU_AMI + '"');
-		}
-		
-		addFilesToReplace(filesToReplace);
+		final File targetLocation = new File(getPathToCloudFolder() + "/upload/");
+		FileUtils.copyFileToDirectory(fileToCopy, targetLocation);		
 	}
 
 	@Override
 	public boolean scanLeakedAgentNodes() {
-		final String agentPrefix = this.cloudConfiguration.getProvider().getMachineNamePrefix();
+		
+		if (this.context == null) {
+			this.context = createContext();
+		}
+		
+		final String agentPrefix = getCloud().getProvider().getMachineNamePrefix();
 
 		final List<ComputeMetadata> leakedNodes = checkForLeakedNodesWithPrefix(agentPrefix);
 

@@ -21,20 +21,17 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.cloudifysource.dsl.cloud.CloudTemplate;
 
-import test.AbstractTest;
 import test.cli.cloudify.cloud.services.AbstractCloudService;
 
 import com.j_spaces.kernel.PlatformVersion;
 
 import framework.tools.SGTestHelper;
+import framework.utils.IOUtils;
 import framework.utils.LogUtils;
-import framework.utils.SSHUtils;
 
 public class ByonCloudService extends AbstractCloudService {
 
-	private static final String BYON_CLOUD_NAME = "byon";
 	public static final String BYON_CLOUD_USER= "tgrid";
 	public static final String BYON_CLOUD_PASSWORD = "tgrid";
 	
@@ -56,8 +53,14 @@ public class ByonCloudService extends AbstractCloudService {
 	private String ipList;
 	private String[] machines;
 
-	public ByonCloudService(String uniqueName) {
-		super(uniqueName, BYON_CLOUD_NAME);
+	public ByonCloudService() {
+		super("byon");
+		this.ipList = System.getProperty(IP_LIST_PROPERTY, DEFAULT_MACHINES);
+		this.machines = ipList.split(",");
+	}
+	
+	public ByonCloudService(final String name) {
+		super(name);
 		this.ipList = System.getProperty(IP_LIST_PROPERTY, DEFAULT_MACHINES);
 		this.machines = ipList.split(",");
 	}
@@ -79,19 +82,19 @@ public class ByonCloudService extends AbstractCloudService {
 	}
 
 	@Override
-	public void injectServiceAuthenticationDetails() throws IOException {	
-		getProperties().put("username", '"' + BYON_CLOUD_USER+  '"');
-		getProperties().put("password", '"' + BYON_CLOUD_PASSWORD +  '"');
+	public void injectCloudAuthenticationDetails() throws IOException {	
+		getProperties().put("username", BYON_CLOUD_USER);
+		getProperties().put("password", BYON_CLOUD_PASSWORD);
 		
 		Map<String, String> propsToReplace = new HashMap<String,String>();
-		propsToReplace.put("cloudify_agent_", this.machinePrefix + "cloudify-agent");
-		propsToReplace.put("cloudify_manager", this.machinePrefix + "cloudify-manager");
+		propsToReplace.put("cloudify_agent_", getMachinePrefix() + "cloudify-agent");
+		propsToReplace.put("cloudify_manager", getMachinePrefix() + "cloudify-manager");
 		propsToReplace.put("// cloudifyUrl", "cloudifyUrl");
 		if (StringUtils.isNotBlank(ipList)) {
 			propsToReplace.put("0.0.0.0", ipList);
 		}
 		
-		propsToReplace.put("numberOfManagementMachines 1", "numberOfManagementMachines "  + numberOfManagementMachines);
+		propsToReplace.put("numberOfManagementMachines 1", "numberOfManagementMachines "  + getNumberOfManagementMachines());
 		this.getAdditionalPropsToReplace().putAll(propsToReplace);
 
 		replaceCloudifyURL();
@@ -100,21 +103,14 @@ public class ByonCloudService extends AbstractCloudService {
 		// byon-cloud.groovy in SGTest has this variable defined for cloud overrides tests.
 		// that why we need to add a properties file with a default value so that bootstrap will work 
 		// on other tests.
-		getProperties().setProperty("myEnvVariable", '"' + ENV_VARIABLE_VALUE + '"');
-	}
-
-	@Override
-	public void beforeBootstrap() throws Exception {
-		cleanMachines();
+		getProperties().put("myEnvVariable", ENV_VARIABLE_VALUE);
 	}
 	
-	private void replaceBootstrapManagementScript() {
+	private void replaceBootstrapManagementScript() throws IOException {
 		// use a script that does not install java
 		File standardBootstrapManagement = new File(this.getPathToCloudFolder() + "/upload", "bootstrap-management.sh");
 		File customBootstrapManagement = new File(SGTestHelper.getSGTestRootDir() + "/apps/cloudify/cloud/byon/bootstrap-management.sh");
-		Map<File, File> filesToReplace = new HashMap<File, File>();
-		filesToReplace.put(standardBootstrapManagement, customBootstrapManagement);
-		this.addFilesToReplace(filesToReplace);
+		IOUtils.replaceFile(standardBootstrapManagement, customBootstrapManagement);
 	}
 
 	public void replaceCloudifyURL() throws IOException {
@@ -131,44 +127,6 @@ public class ByonCloudService extends AbstractCloudService {
 		this.getAdditionalPropsToReplace().putAll(propsToReplace);
 	}
 	
-	private void cleanMachines() {
-		killAllJavaOnAllHosts();
-		cleanGSFilesOnAllHosts();
-		cleanCloudifyTempDir();
-	}
-
-	private void cleanCloudifyTempDir() {
-		LogUtils.log(SSHUtils.runCommand(getMachines()[0], AbstractTest.OPERATION_TIMEOUT, "rm -rf /export/tgrid/.cloudify/", "tgrid", "tgrid"));
-		
-	}
-
-	private void cleanGSFilesOnAllHosts() {
-		for (CloudTemplate template : cloudConfiguration.getTemplates().values()) {
-			String command = "rm -rf " + template.getRemoteDirectory();;
-			String[] hosts = this.getMachines();			
-			for (String host : hosts) {
-				try {
-					LogUtils.log(SSHUtils.runCommand(host, AbstractTest.OPERATION_TIMEOUT, command, "tgrid", "tgrid"));
-				} catch (AssertionError e) {
-					LogUtils.log("Failed to clean files on host " + host + " .Reason --> " + e.getMessage());
-				}
-			}	
-		}			
-	}
-	
-	private void killAllJavaOnAllHosts() {
-		String command = "killall -9 java";
-		String[] hosts = this.getMachines();
-		for (String host : hosts) {
-			try {
-				LogUtils.log(SSHUtils.runCommand(host, AbstractTest.OPERATION_TIMEOUT, command, "tgrid", "tgrid"));
-			} catch (AssertionError e) {
-				LogUtils.log("Failed to kill java processes on host " + host + " .Reason --> " + e.getMessage());
-			}
-		}
-	}
-	
-
 	@Override
 	public String getUser() {
 		return BYON_CLOUD_USER;

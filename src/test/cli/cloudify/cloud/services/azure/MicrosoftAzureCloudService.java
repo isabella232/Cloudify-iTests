@@ -47,8 +47,8 @@ public class MicrosoftAzureCloudService extends AbstractCloudService {
 
 	private static final long SCAN_TIMEOUT = 5 * 60 * 1000; // 5 minutes
 
-	public MicrosoftAzureCloudService(String uniqueName) {
-		super(uniqueName, "azure");
+	public MicrosoftAzureCloudService() {
+		super("azure");
 		azureClient = new MicrosoftAzureRestClient(AZURE_SUBSCRIPTION_ID, 
 				PATH_TO_PFX, PFX_PASSWORD, 
 				null, null, null);
@@ -56,19 +56,19 @@ public class MicrosoftAzureCloudService extends AbstractCloudService {
 
 
 	@Override
-	public void injectServiceAuthenticationDetails() throws IOException {
+	public void injectCloudAuthenticationDetails() throws IOException {
 		copyCustomCloudConfigurationFileToServiceFolder();
 		copyPrivateKeyToUploadFolder();
 		
-		getProperties().put("subscriptionId", '"' + AZURE_SUBSCRIPTION_ID +  '"');
-		getProperties().put("username", '"' + USER_NAME +  '"');
-		getProperties().put("password", '"' + PFX_PASSWORD +  '"');
-		getProperties().put("pfxFile", '"' + AZURE_CERT_PFX +  '"');
-		getProperties().put("pfxPassword", '"' + PFX_PASSWORD +  '"');
+		getProperties().put("subscriptionId", AZURE_SUBSCRIPTION_ID);
+		getProperties().put("username", USER_NAME);
+		getProperties().put("password", PFX_PASSWORD);
+		getProperties().put("pfxFile", AZURE_CERT_PFX);
+		getProperties().put("pfxPassword", PFX_PASSWORD);
 		
 		final Map<String, String> propsToReplace = new HashMap<String, String>();
-		propsToReplace.put("cloudify_agent_", this.machinePrefix.toLowerCase() + "cloudify-agent");
-		propsToReplace.put("cloudify_manager", this.machinePrefix.toLowerCase() + "cloudify-manager");
+		propsToReplace.put("cloudify_agent_", getMachinePrefix().toLowerCase() + "cloudify-agent");
+		propsToReplace.put("cloudify_manager", getMachinePrefix().toLowerCase() + "cloudify-manager");
 		propsToReplace.put("ENTER_AVAILABILITY_SET", USER_NAME);
 		propsToReplace.put("ENTER_DEPLOYMENT_SLOT", "Staging");
 		propsToReplace.put("ENTER_VIRTUAL_NETWORK_SITE_NAME", USER_NAME + "networksite");
@@ -90,11 +90,6 @@ public class MicrosoftAzureCloudService extends AbstractCloudService {
 	}
 
 	@Override
-	public void beforeBootstrap() throws Exception {		
-
-	}
-
-	@Override
 	public boolean scanLeakedAgentNodes() {
 		return scanNodesWithPrefix("agent");
 	} 
@@ -106,10 +101,6 @@ public class MicrosoftAzureCloudService extends AbstractCloudService {
 	
 	private boolean scanNodesWithPrefix(final String... prefixes) {
 		
-		if (azureClient == null) {
-			LogUtils.log("Microsoft Azure client was not initialized, therefore a bootstrap never took place, and no scan is needed.");
-			return true;
-		}
 		LogUtils.log("scanning leaking nodes with prefix " + StringUtils.arrayToCommaDelimitedString(prefixes));
 		
 		long scanEndTime = System.currentTimeMillis() + SCAN_TIMEOUT;
@@ -210,7 +201,7 @@ public class MicrosoftAzureCloudService extends AbstractCloudService {
 	private void copyCustomCloudConfigurationFileToServiceFolder() throws IOException {
 
 		// copy custom cloud driver configuration to test folder
-		String cloudServiceFullPath = SGTestHelper.getBuildDir() + "/tools/cli/plugins/esc/" + this.getServiceFolder();
+		String cloudServiceFullPath = this.getPathToCloudFolder();
 
 		File originalCloudDriverConfigFile = new File(cloudServiceFullPath, "azure-cloud.groovy");
 		File customCloudDriverConfigFile = new File(SGTestHelper.getSGTestRootDir() + "/apps/cloudify/cloud/azure", "azure-cloud.groovy");

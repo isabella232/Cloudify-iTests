@@ -1,11 +1,8 @@
 package test.cli.cloudify.cloud.services;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Map;
-import java.util.Properties;
 
-import org.cloudifysource.shell.commands.CLIException;
 import org.openspaces.admin.Admin;
 
 /**
@@ -16,85 +13,40 @@ import org.openspaces.admin.Admin;
  */
 public interface CloudService {
 
-	/**
-	 * performs a bootstrap to a specific cloud. see {@link AbstractCloudService} for generic implementation.
-	 * 
-	 * @throws IOException
-	 * @throws InterruptedException
-	 * @throws Exception
-	 */
-	public void bootstrapCloud() throws Exception;
+	void bootstrapCloud() throws Exception;
 
-	/**
-	 * tears down the specific cloud of all machines. see {@link AbstractCloudService} for generic implementation.
-	 * 
-	 * @throws CLIException
-	 * @throws IOException
-	 * @throws InterruptedException
-	 */
-	public void teardownCloud()
-			throws IOException, InterruptedException;
+	void teardownCloud() throws IOException, InterruptedException;
 	
-	/**
-	 * tears down the specific cloud of all machines - used in byon xap, with additional admin. see {@link AbstractCloudService} for generic implementation.
-	 * 
-	 * @throws CLIException
-	 * @throws IOException
-	 * @throws InterruptedException
-	 */
-	public void teardownCloud(Admin admin) throws IOException, InterruptedException;
+	void teardownCloud(Admin admin) throws IOException, InterruptedException;
 
-	/**
-	 * @return the rest url cloudify shell can connect to.
-	 */
-	public String[] getRestUrls();
+	String[] getRestUrls();
 
-	/**
-	 * 
-	 * @return the webui url browsers can connect to.
-	 */
-	public String[] getWebuiUrls();
+	String[] getWebuiUrls();
 
-	/**
-	 * @return the cloud provider name as specified in the jclouds documentation.
-	 */
-	public String getCloudName();
+	String getCloudName();
 
-	/**
-	 * replaces the cloud dsl file with SGTest specific details.
-	 */
-	public void injectAuthenticationDetails() throws IOException;
-
-	public boolean isBootstrapped();
-
-	public String getUser();
-
-	public String getApiKey();
-
-	public String getUniqueName();
-
-	public String getServiceFolder();
-
-	public void setMachinePrefix(String machinePrefix);
+	void injectCloudAuthenticationDetails() throws IOException;
 	
-	public void setNumberOfManagementMachines(int numberOfManagementMachines);
-	
-	public String getMachinePrefix();
+	void init(final String uniqueName) throws Exception;
 
-	public void beforeBootstrap() throws Exception;
-	
-	/********
-	 * True if teardown cleanup did not find any leaked nodes, false if there was a leak.
-	 * @return .
-	 */
-	public boolean scanLeakedAgentAndManagementNodes();
+	String getUser();
 
-	public boolean scanLeakedAgentNodes();
+	String getApiKey();
+
+	void setMachinePrefix(String machinePrefix);
 	
-	public void addFilesToReplace(Map<File, File> filesToReplace);
+	void setNumberOfManagementMachines(int numberOfManagementMachines);
 	
-	public String getPathToCloudFolder();
+	String getMachinePrefix();
+
+	boolean scanLeakedAgentAndManagementNodes();
+
+	boolean scanLeakedAgentNodes();
+		
+	String getPathToCloudFolder();
 	
-	public Properties getProperties();
+	String getPathToCloudGroovy();
+	
+	Map<String, Object> getProperties();
 
 }

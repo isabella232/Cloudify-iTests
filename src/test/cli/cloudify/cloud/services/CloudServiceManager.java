@@ -16,14 +16,10 @@
 package test.cli.cloudify.cloud.services;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 
 import test.cli.cloudify.cloud.services.byon.ByonCloudService;
 import test.cli.cloudify.cloud.services.ec2.Ec2CloudService;
-import test.cli.cloudify.cloud.services.ec2.Ec2LocationAwareCloudService;
 import test.cli.cloudify.cloud.services.ec2.Ec2WinCloudService;
 import test.cli.cloudify.cloud.services.hp.HpCloudService;
 import test.cli.cloudify.cloud.services.rackspace.RackspaceCloudService;
@@ -32,10 +28,9 @@ public class CloudServiceManager {
 
 	private static CloudServiceManager instance = null;
 	
-	private static final Map<String, Map<String, CloudService>> allCloudServices = 
-			new HashMap<String, Map<String, CloudService>>();
+	private static final Map<String, CloudService> allCloudServices = new HashMap<String, CloudService>();
 
-	protected CloudServiceManager() {
+	private CloudServiceManager() {
 		// Exists only to defeat instantiation.
 	}
 
@@ -52,61 +47,35 @@ public class CloudServiceManager {
 	 * @param uniqueName The unique name of the service
 	 * @return The matching cached CloudService instance, or a new instance of non was cached.
 	 */
-	public CloudService getCloudService(String cloudName, String uniqueName) {
-		if (allCloudServices.get(cloudName) == null) {
-			allCloudServices.put(cloudName, new HashMap<String, CloudService>());
-		}
-		
-		Map<String, CloudService> servicesByNamesMap = allCloudServices.get(cloudName);
-		if (servicesByNamesMap.get(uniqueName) == null) {
-			servicesByNamesMap.put(uniqueName, createCloudService(cloudName, uniqueName));	
-		}
-		
-		CloudService cloud = servicesByNamesMap.get(uniqueName);
+	public CloudService getCloudService(String cloudName) {
+		CloudService cloud = allCloudServices.get(cloudName);
 		if (cloud == null) {
-			throw new IllegalArgumentException("Could not create cloud: cloudName="+cloudName + " uniqueName="+uniqueName);
+			allCloudServices.put(cloudName, createCloudService(cloudName));
+			return allCloudServices.get(cloudName);
 		}
 		return cloud;
-	}
-	
-	/**
-	 * Gets all the cloud services
-	 * @return A set of all cached cloud services
-	 */
-	public Set<CloudService> getAllCloudServices() {
-		Set<CloudService> cloudServicesSet = new HashSet<CloudService>();
-		
-		for (Entry<String, Map<String, CloudService>> cloudServicesMap: allCloudServices.entrySet()) {
-			cloudServicesSet.addAll(cloudServicesMap.getValue().values());
-		}
-		
-		return cloudServicesSet;
 	}
 	
 	public void clearCache() {
 		allCloudServices.clear();
 	}
 
-	private CloudService createCloudService(String cloudName, String serviceUniqueName) {
+	private CloudService createCloudService(String cloudName) {
 		CloudService cloudService = null;
 
 		if ("byon".equalsIgnoreCase(cloudName)) {
-			cloudService = new ByonCloudService(serviceUniqueName);
-		}
-		else if ("byon-xap".equalsIgnoreCase(cloudName)) {
-			cloudService = new ByonCloudService(serviceUniqueName);
+			cloudService = new ByonCloudService();
+		} else if ("byon-xap".equalsIgnoreCase(cloudName)) {
+			cloudService = new ByonCloudService();
 			((ByonCloudService)cloudService).setNoWebServices(true);
-		}
-		else if ("ec2".equalsIgnoreCase(cloudName)) {
-			cloudService = new Ec2CloudService(serviceUniqueName);
-		} else if ("ec2-location-aware".equalsIgnoreCase(cloudName)) {
-			cloudService = new Ec2LocationAwareCloudService(serviceUniqueName);
+		} else if ("ec2".equalsIgnoreCase(cloudName)) {
+			cloudService = new Ec2CloudService();
 		} else if ("ec2-win".equalsIgnoreCase(cloudName)) {
-			cloudService = new Ec2WinCloudService(serviceUniqueName);
+			cloudService = new Ec2WinCloudService();
 		} else if ("hp".equalsIgnoreCase(cloudName)) {
-			cloudService = new HpCloudService(serviceUniqueName);
+			cloudService = new HpCloudService();
 		} else if ("rackspace".equalsIgnoreCase(cloudName)) {
-			cloudService = new RackspaceCloudService(serviceUniqueName);
+			cloudService = new RackspaceCloudService();
 		}
 
 		return cloudService;

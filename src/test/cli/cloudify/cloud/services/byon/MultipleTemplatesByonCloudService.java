@@ -11,6 +11,7 @@ import java.util.Map;
 import org.apache.commons.exec.util.StringUtils;
 
 import framework.tools.SGTestHelper;
+import framework.utils.IOUtils;
 import framework.utils.LogUtils;
 
 /**
@@ -54,8 +55,8 @@ public class MultipleTemplatesByonCloudService extends ByonCloudService {
 	}
 	
 	@Override
-	public void injectAuthenticationDetails() throws IOException {
-		super.injectAuthenticationDetails();
+	public void injectCloudAuthenticationDetails() throws IOException {
+		super.injectCloudAuthenticationDetails();
 		
 		List<String> assignableHosts = new ArrayList<String>(Arrays.asList(getMachines()));
 		
@@ -64,10 +65,7 @@ public class MultipleTemplatesByonCloudService extends ByonCloudService {
 
 		// replace the cloud groovy file with a customized one
 		File fileToBeReplaced = new File(getPathToCloudFolder(), "byon-cloud.groovy");
-		Map<File, File> filesToReplace = new HashMap<File, File>();
-		filesToReplace.put(fileToBeReplaced, multiTemplatesGroovy);
-		addFilesToReplace(filesToReplace);
-		
+		IOUtils.replaceFile(fileToBeReplaced, multiTemplatesGroovy);
 		if (hostsPerTemplate.get(TEMPLATE_1) == null) {
 			hostsPerTemplate.put(TEMPLATE_1, new ArrayList<String>());			
 		}

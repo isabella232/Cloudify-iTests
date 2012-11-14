@@ -6,10 +6,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.cloudifysource.esc.driver.provisioning.openstack.Node;
+import org.cloudifysource.esc.driver.provisioning.openstack.OpenstackException;
+
 import test.cli.cloudify.cloud.services.AbstractCloudService;
-import test.cli.cloudify.cloud.services.tools.openstack.Node;
 import test.cli.cloudify.cloud.services.tools.openstack.OpenstackClient;
-import test.cli.cloudify.cloud.services.tools.openstack.OpenstackException;
 import test.cli.cloudify.cloud.services.tools.openstack.RackspaceClient;
 import framework.utils.IOUtils;
 import framework.utils.LogUtils;
@@ -21,8 +22,8 @@ public class RackspaceCloudService extends AbstractCloudService {
 	private String tenant = "658142";
 	private RackspaceClient rackspaceClient;
 
-	public RackspaceCloudService(String uniqueName) {
-		super(uniqueName, "rsopenstack");
+	public RackspaceCloudService() {
+		super("rsopenstack");
 
 	}
 
@@ -51,79 +52,54 @@ public class RackspaceCloudService extends AbstractCloudService {
 	}
 
 	@Override
-	public void injectServiceAuthenticationDetails()
+	public void injectCloudAuthenticationDetails()
 			throws IOException {
 
-		getProperties().put("user", '"' + this.user +  '"');
-		getProperties().put("apiKey", '"' + this.apiKey +  '"');
-		getProperties().put("tenant", '"' + this.tenant +  '"');
+		getProperties().put("user", this.user);
+		getProperties().put("apiKey", this.apiKey);
+		getProperties().put("tenant", this.tenant);
 		
 		Map<String, String> propsToReplace = new HashMap<String, String>();
-		propsToReplace.put("machineNamePrefix " + "\"agent\"", "machineNamePrefix " + '"' + this.machinePrefix
+		propsToReplace.put("machineNamePrefix " + "\"agent\"", "machineNamePrefix " + '"' + getMachinePrefix()
 				+ "cloudify-agent" + '"');
-		propsToReplace.put("managementGroup " + "\"management\"", "managementGroup " + '"' + this.machinePrefix
+		propsToReplace.put("managementGroup " + "\"management\"", "managementGroup " + '"' + getMachinePrefix()
 				+ "cloudify-manager" + '"');
-		propsToReplace.put("numberOfManagementMachines 1", "numberOfManagementMachines " + numberOfManagementMachines);
+		propsToReplace.put("numberOfManagementMachines 1", "numberOfManagementMachines " + getNumberOfManagementMachines());
 		propsToReplace.put("\"openstack.wireLog\": \"false\"", "\"openstack.wireLog\": \"true\"");
 
 		IOUtils.replaceTextInFile(getPathToCloudGroovy(), propsToReplace);
 	}
 
-
-	@Override
-	public void beforeBootstrap() {
-		this.rackspaceClient = new RackspaceClient();
-		rackspaceClient.setConfig(this.cloudConfiguration);
-
-		LogUtils.log("Getting list of current machines from Rackspace cloud");
-		String token = rackspaceClient.createAuthenticationToken();
-
-		final String agentPrefix = this.cloudConfiguration.getProvider().getMachineNamePrefix();
-		final String mgmtPrefix = this.cloudConfiguration.getProvider().getManagementGroup();
-
-		List<Node> nodes;
-		try {
-			nodes = rackspaceClient.listServers(token);
-		} catch (OpenstackException e) {
-			throw new IllegalStateException("Failed to query openstack cloud for current servers", e);
-		}
-
-		for (Node node : nodes) {
-			if (node.getStatus().equals(OpenstackClient.MACHINE_STATUS_ACTIVE)) {
-				if (node.getName().startsWith(mgmtPrefix) || node.getName().startsWith(agentPrefix)) {
-					throw new IllegalStateException("Before bootstrap, found an active node with name: "
-							+ node.getName() + ". Details: " + node);
-				}
-			}
-		}
-		LogUtils.log("No leaked machine found");
-
+	private RackspaceClient createClient() {
+		RackspaceClient client = new RackspaceClient();
+		client.setConfig(getCloud());
+		return client;
 	}
 
 	@Override
 	public boolean scanLeakedAgentNodes() {
-		if (rackspaceClient != null) {
-			String token = rackspaceClient.createAuthenticationToken();
-
-			final String agentPrefix = this.cloudConfiguration.getProvider().getMachineNamePrefix();
-
-			return checkForLeakedNode(token, agentPrefix);
-		} else {
-			LogUtils.log("Rackspace client was not initialized, therefore a bootstrap never took place, and no scan is needed.");
-			return true;
+		
+		if (rackspaceClient == null) {
+			this.rackspaceClient = createClient();
 		}
+		
+		String token = rackspaceClient.createAuthenticationToken();
+
+		final String agentPrefix = getCloud().getProvider().getMachineNamePrefix();
+
+		return checkForLeakedNode(token, agentPrefix);
+	
 
 	}
 	@Override
 	public boolean scanLeakedAgentAndManagementNodes() {
 		if(rackspaceClient == null) {
-			LogUtils.log("Openstack client was not initialized, so no test was performed after teardown");
-			return true;
+			rackspaceClient = createClient();
 		}
 		String token = rackspaceClient.createAuthenticationToken();
 
-		final String agentPrefix = this.cloudConfiguration.getProvider().getMachineNamePrefix();
-		final String mgmtPrefix = this.cloudConfiguration.getProvider().getManagementGroup();
+		final String agentPrefix = getCloud().getProvider().getMachineNamePrefix();
+		final String mgmtPrefix = getCloud().getProvider().getManagementGroup();
 		
 		final boolean result = checkForLeakedNode(token, agentPrefix, mgmtPrefix);
 		this.rackspaceClient.close();

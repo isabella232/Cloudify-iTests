@@ -6,7 +6,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -31,39 +30,43 @@ public abstract class AbstractCloudService implements CloudService {
 
 	protected static final String RELATIVE_ESC_PATH = "/tools/cli/plugins/esc/";
 	protected static final String UPLOAD_FOLDER = "upload";
-	protected static final String DEFAULT_URL_PREFIX = "repository.cloudifysource.org/org/cloudifysource";
-	private String cloudName;
-	protected int numberOfManagementMachines = 1;
-	protected URL[] restAdminUrls;
-	protected URL[] webUIUrls;
-	protected String serviceUniqueName;
-	protected String machinePrefix = System.getProperty("user.name") + "-";
-	protected Map<String, String> additionalPropsToReplace = new HashMap<String,String>();
-	protected Map<File, File> filesToReplace;
-	protected boolean bootstrapped = false;
-	private String serviceFolderName;
-	protected Cloud cloudConfiguration;
-	private final String NO_WEB_SERVICES = "-no-web-services";
-	protected boolean noWebServices; 
-	protected Properties properties = new Properties();
+	
+	private static final int TEN_SECONDS_IN_MILLIS = 10000;
+	
+	private static final int MAX_SCAN_RETRY = 3;
 
-	public Properties getProperties() {
+	protected boolean noWebServices; 
+	
+	private int numberOfManagementMachines = 1;
+	private URL[] restAdminUrls;
+	private URL[] webUIUrls;
+	private String machinePrefix = System.getProperty("user.name") + "-";
+	private Map<String, String> additionalPropsToReplace = new HashMap<String,String>();
+	private Cloud cloud;
+	private Map<String,Object> properties = new HashMap<String,Object>();	
+	private String cloudName;
+	private String cloudFolderName;
+	
+	private String cloudUniqueName = this.getClass().getSimpleName();
+
+	public boolean isNoWebServices(){
+		return noWebServices;
+	}
+
+	public void setNoWebServices(boolean noWebServices){
+		this.noWebServices = noWebServices;
+	}
+	
+	public Map<String,Object> getProperties() {
 		return properties;
 	}
-
-	public Cloud getCloudConfiguration() {
-		return cloudConfiguration;
+	
+	public Cloud getCloud() {
+		return cloud;
 	}
 
-	public AbstractCloudService(String serviceUniqueName, String cloudName) {
-		this.serviceUniqueName = serviceUniqueName;
+	public AbstractCloudService(String cloudName) {
 		this.cloudName = cloudName;
-		serviceFolderName = cloudName + "_" + serviceUniqueName;
-		filesToReplace = new HashMap<File, File>();
-	}
-
-	public String getServiceFolder() {
-		return serviceFolderName;
 	}
 
 	public int getNumberOfManagementMachines() {
@@ -76,16 +79,6 @@ public abstract class AbstractCloudService implements CloudService {
 
 	public Map<String, String> getAdditionalPropsToReplace() {
 		return additionalPropsToReplace;
-	}
-
-	public void setAdditionalPropsToReplace(
-			Map<String, String> additionalPropsToReplace) {
-		this.additionalPropsToReplace = additionalPropsToReplace;
-	}
-
-	public void addFilesToReplace(
-			Map<File, File> moreFilesToReplace) {
-		this.filesToReplace.putAll(moreFilesToReplace);
 	}
 
 	public String getMachinePrefix() {
@@ -101,214 +94,24 @@ public abstract class AbstractCloudService implements CloudService {
 		this.cloudName = cloudName;
 	}
 
-	@Override
-	public String getCloudName() {
-		return cloudName;
-	}
+	public abstract void injectCloudAuthenticationDetails() throws IOException;
+	
+	public abstract String getUser();
 
-	/**
-	 * @return the bootstrapped
-	 */
-	public boolean isBootstrapped() {
-		return bootstrapped;
-	}
-
-	/**
-	 * @param bootstrapped the bootstrapped to set
-	 */
-	public void setBootstrapped(boolean bootstrapped) {
-		this.bootstrapped = bootstrapped;
-	}
-
-	public abstract void injectServiceAuthenticationDetails() throws IOException;
-
-	protected void injectCloudDriverClass() throws IOException {}
-
-	public void injectAuthenticationDetails() throws IOException {
-		injectServiceAuthenticationDetails();
-		injectCloudDriverClass();
-	}
-
-	/**
-	 * Create a new folder for the configuration files of the current service.
-	 * 
-	 * @param cloudName The name of the cloud (e.g. ec2, byon)
-	 * @param testUniqueName The unique name of the test, used to the folder naming
-	 * @return The created folder
-	 * @throws IOException Indicates the folder could not be created
-	 */
-	protected File createServiceFolders() throws IOException {
-		File originalCloudFolder = new File(ScriptUtils.getBuildPath() + RELATIVE_ESC_PATH + getCloudName());
-		File serviceCloudFolder = new File(originalCloudFolder.getParent(), serviceFolderName);
-
-		try {
-			if (serviceCloudFolder.isDirectory()) {
-				FileUtils.deleteDirectory(serviceCloudFolder);
-			}
-
-			// create a new folder for the test to work on (if it's not created already) with the content of the
-			// original folder
-			LogUtils.log("copying " + originalCloudFolder + " to " + serviceCloudFolder);
-			FileUtils.copyDirectory(originalCloudFolder, serviceCloudFolder);
-		} 
-		catch (IOException e) {
-			LogUtils.log("caught an exception while creating service folder " + serviceCloudFolder.getAbsolutePath(), e);
-			throw e;
-		}
-
-		return serviceCloudFolder;
-	}
-
-	/**
-	 * Deletes the temporary folder created earlier for the current service.
-	 * 
-	 * @throws IOException Indicates the folder could not be deleted
-	 */
-	protected void deleteServiceFolders()
-			throws IOException {
-		File serviceCloudFolder = new File(ScriptUtils.getBuildPath() + RELATIVE_ESC_PATH + getServiceFolder());
-		try {
-			FileUtils.deleteDirectory(serviceCloudFolder);
-		} catch (IOException e) {
-			LogUtils.log("caught an exception while deleting service folder " + serviceCloudFolder.getAbsolutePath(), e);
-			throw e;
-		}
-	}
-
-	public URL getMachinesUrl(String url)
-			throws Exception {
-		return new URL(stripSlash(url) + "/admin/machines");
-	}
-
-	public String getPathToCloudGroovy() {
-		return getPathToCloudFolder() + "/" + getCloudName() + "-cloud.groovy";
-	}
-
-	public String getPathToCloudFolder() {
-		return ScriptUtils.getBuildPath() + "/tools/cli/plugins/esc/" + getServiceFolder();
-	}
+	public abstract String getApiKey();
 
 	@Override
-	public void bootstrapCloud() throws Exception {
-
-		createServiceFolders();
-
-		overrideLogsFile();
-		injectAuthenticationDetails();
-		if (filesToReplace != null) {
-			// replace files
-			for (Entry<File, File> fileToReplace : filesToReplace.entrySet()) {
-				// delete the old file
-				if (fileToReplace.getKey().exists()) {
-					LogUtils.log("deleting file --> " + fileToReplace.getKey());
-					(fileToReplace.getKey()).delete();
-				}
-				// copy the new file and use the name of the old file
-				LogUtils.log("copying file --> " + fileToReplace.getValue() + " to " + fileToReplace.getKey());
-				FileUtils.copyFile(fileToReplace.getValue(), fileToReplace.getKey());
-			}
-		}
-		if (additionalPropsToReplace != null) {
-			IOUtils.replaceTextInFile(getPathToCloudGroovy(), additionalPropsToReplace);
-		}
-
-		// add a properties file to the cloud driver
-		IOUtils.writePropertiesToFile(getProperties(), new File(getPathToCloudFolder() + "/" + getCloudName() + "-cloud.properties"));
-
-		// Load updated configuration file into POJO
-		this.cloudConfiguration = ServiceReader.readCloud(new File(getPathToCloudGroovy()));
-
-		this.beforeBootstrap();
-
-		printCloudConfigFile();		
-
-		// if web services is needed - the standard configuration
-		if(!noWebServices){
-			String output = CommandTestUtils.runCommandAndWait("bootstrap-cloud --verbose " + getCloudName() + "_" + getUniqueName());
-			LogUtils.log("Extracting rest url's from cli output");
-			restAdminUrls = extractRestAdminUrls(output, numberOfManagementMachines);
-			LogUtils.log("Extracting webui url's from cli output");
-			webUIUrls = extractWebuiUrls(output, numberOfManagementMachines);
-			assertBootstrapServicesAreAvailable();
-			setBootstrapped(true);
-
-			URL machinesURL;
-
-			for (int i = 0; i < numberOfManagementMachines; i++) {
-				machinesURL = getMachinesUrl(restAdminUrls[i].toString());
-				LogUtils.log("Expecting " + numberOfManagementMachines + " machines");
-				LogUtils.log("Found " + CloudTestUtils.getNumberOfMachines(machinesURL) + " machines");
-			}
-		}		
-		else {
-			CommandTestUtils.runCommandAndWait("bootstrap-cloud"+ " "+NO_WEB_SERVICES+ " --verbose " + getCloudName() + "_" + getUniqueName());
-		}		
-		setBootstrapped(true);
-
+	public void init(final String uniqueName) throws IOException {
+		this.cloudUniqueName = uniqueName;
+		this.cloudFolderName = cloudName + "_" + cloudUniqueName;
+		createCloudFolder();
 	}
-
+	
 	@Override
-	public void beforeBootstrap() throws Exception {
-
-	}
-
-	private void printCloudConfigFile() throws IOException {
-		String pathToCloudGroovy = getPathToCloudGroovy();
-		File cloudConfigFile = new File(pathToCloudGroovy);
-		if (!cloudConfigFile.exists()) {
-			LogUtils.log("Failed to print the cloud configuration file content");
-			return;
-		}
-		String cloudConfigFileAsString = FileUtils.readFileToString(cloudConfigFile);
-		LogUtils.log("Cloud configuration file: " + cloudConfigFile.getAbsolutePath());
-		LogUtils.log(cloudConfigFileAsString);
-	}
-
-	@Override
-	public void teardownCloud(Admin admin) throws IOException,
-	InterruptedException {
-		try {
-			DumpUtils.dumpLogs(admin);
-			CommandTestUtils.runCommandAndWait("teardown-cloud -force " +"--verbose " + getCloudName() + "_" + getUniqueName());			
-		}
-		finally {
-			
-			setBootstrapped(false); 
-			deleteServiceFolders();
-		}
-
-	}
-
-	@Override
-	public void teardownCloud() throws IOException, InterruptedException {
-		try {
-			// tearing down cloud which uses web services			
-			String[] restUrls = getRestUrls();
-			String url = null;
-			if (restUrls != null) {
-				try {
-					url = restUrls[0] + "/service/dump/machines/?fileSizeLimit=50000000";
-					DumpUtils.dumpMachines(restUrls[0]);
-				} catch (Exception e) {
-					LogUtils.log("Failed to create dump for this url - " + url, e);
-				}
-				String connect = "connect " + restUrls[0];
-				CommandTestUtils.runCommandAndWait(connect + ";" + "teardown-cloud --verbose " + getCloudName() + "_" + getUniqueName());
-			}					
-
-		} 
-		finally {
-			setBootstrapped(false); 
-			deleteServiceFolders();
-		}
-	}
-
-
-	@Override
-	public boolean scanLeakedAgentAndManagementNodes() {
+	public boolean scanLeakedAgentNodes() {
 		return true;
 	}
-
+	
 	@Override
 	public String[] getWebuiUrls() {
 		if (webUIUrls == null) {
@@ -332,6 +135,193 @@ public abstract class AbstractCloudService implements CloudService {
 			result[i] = restAdminUrls[i].toString();
 		}
 		return result;
+	}
+	
+	@Override
+	public boolean scanLeakedAgentAndManagementNodes() {
+		return true;
+	}
+
+	@Override
+	public String getCloudName() {
+		return cloudName;
+	}
+	
+	public String getPathToCloudGroovy() {
+		return getPathToCloudFolder() + "/" + getCloudName() + "-cloud.groovy";
+	}
+
+	public String getPathToCloudFolder() {
+		return ScriptUtils.getBuildPath() + RELATIVE_ESC_PATH + cloudFolderName;
+	}
+	
+	@Override
+	public void teardownCloud() throws IOException, InterruptedException {
+
+		try {
+			String[] restUrls = getRestUrls();
+			String url = null;
+			if (restUrls != null) {
+				try {
+					url = restUrls[0] + "/service/dump/machines/?fileSizeLimit=50000000";
+					DumpUtils.dumpMachines(restUrls[0]);
+				} catch (Exception e) {
+					LogUtils.log("Failed to create dump for this url - " + url, e);
+				}
+				String connect = "connect " + restUrls[0];
+				CommandTestUtils.runCommandAndWait(connect + ";" + "teardown-cloud --verbose " + this.cloudName + "_" + this.cloudUniqueName);
+			}
+		} 
+		finally {
+			deleteServiceFolders();
+			scanForLeakedAgentAndManagementNodes();
+		}
+	}
+	
+	@Override
+	public void teardownCloud(Admin admin) throws IOException ,InterruptedException {
+		try {
+			DumpUtils.dumpLogs(admin);
+			CommandTestUtils.runCommandAndWait("teardown-cloud -force --verbose " + this.cloudName + "_" + this.cloudUniqueName);			
+		}
+		finally {			
+			deleteServiceFolders();
+			scanForLeakedAgentAndManagementNodes();
+		}
+	}
+	
+	@Override
+	public void bootstrapCloud() throws Exception {
+		
+		overrideLogsFile();
+		injectCloudAuthenticationDetails();
+		replaceProps();
+		
+		writePropertiesToCloudFolder(getProperties());
+		// Load updated configuration file into POJO
+		this.cloud = ServiceReader.readCloud(new File(getPathToCloudGroovy()));
+
+		scanForLeakedAgentAndManagementNodes();
+		
+		printCloudConfigFile();
+		
+		if(!noWebServices){
+			String output = CommandTestUtils.runCommandAndWait("bootstrap-cloud --verbose " + this.cloudName + "_" + this.cloudUniqueName);			
+			restAdminUrls = extractRestAdminUrls(output, numberOfManagementMachines);
+			this.webUIUrls = extractWebuiUrls(output, numberOfManagementMachines);
+			assertBootstrapServicesAreAvailable();
+		} else {
+			CommandTestUtils.runCommandAndWait("bootstrap-cloud -no-web-services --verbose " + this.cloudName + "_" + this.cloudUniqueName);
+		}
+
+		URL machinesURL;
+
+		for (int i = 0; i < numberOfManagementMachines; i++) {
+			machinesURL = getMachinesUrl(restAdminUrls[i].toString());
+			LogUtils.log("Expecting " + numberOfManagementMachines + " machines");
+			LogUtils.log("Found " + CloudTestUtils.getNumberOfMachines(machinesURL) + " machines");
+		}
+	}
+		
+	private void scanForLeakedAgentAndManagementNodes() {
+		
+		if (cloud == null) {
+			return;
+		}
+		// We will give a short timeout to give the ESM 
+		// time to recognize that he needs to shutdown the machine.
+		
+		try {
+			Thread.sleep(TEN_SECONDS_IN_MILLIS);
+		} catch (InterruptedException e) {
+		}
+		
+		boolean leakedAgentAndManagementNodesScanResult = false;
+		for (int i = 0 ; i < MAX_SCAN_RETRY ; i++) {
+			try {
+				leakedAgentAndManagementNodesScanResult = scanLeakedAgentAndManagementNodes();
+				break;
+			} catch (final Throwable t) {
+				LogUtils.log("Failed scaning for leaked nodes. attempt number " + (i + 1) , t);
+			}
+		}
+		AssertUtils.assertTrue("Leaked nodes were found!", leakedAgentAndManagementNodesScanResult);
+	} 
+	
+	private void writePropertiesToCloudFolder(Map<String, Object> properties) throws IOException {
+		
+		Properties props = new Properties();
+		for (Map.Entry<String, Object> entry : properties.entrySet()) {
+			Object value = entry.getValue();
+			String key = entry.getKey();
+			String actualValue = null;
+			if (value instanceof String) {
+				actualValue = '"' + value.toString() + '"';
+			} else {
+				actualValue = value.toString();
+			}
+			props.setProperty(key, actualValue);
+		}
+		// add a properties file to the cloud driver
+		IOUtils.writePropertiesToFile(props, new File(getPathToCloudFolder() + "/" + getCloudName() + "-cloud.properties"));
+	}
+	
+	private File createCloudFolder() throws IOException {
+		File originalCloudFolder = new File(ScriptUtils.getBuildPath() + RELATIVE_ESC_PATH + getCloudName());
+		File serviceCloudFolder = new File(originalCloudFolder.getParent(), cloudFolderName);
+
+		try {
+			if (serviceCloudFolder.isDirectory()) {
+				FileUtils.deleteDirectory(serviceCloudFolder);
+			}
+
+			// create a new folder for the test to work on (if it's not created already) with the content of the
+			// original folder
+			LogUtils.log("copying " + originalCloudFolder + " to " + serviceCloudFolder);
+			FileUtils.copyDirectory(originalCloudFolder, serviceCloudFolder);
+		} 
+		catch (IOException e) {
+			LogUtils.log("caught an exception while creating service folder " + serviceCloudFolder.getAbsolutePath(), e);
+			throw e;
+		}
+
+		return serviceCloudFolder;
+	}
+
+	private void deleteServiceFolders()
+			throws IOException {
+		File serviceCloudFolder = new File(getPathToCloudFolder());
+		try {
+			FileUtils.deleteDirectory(serviceCloudFolder);
+		} catch (IOException e) {
+			LogUtils.log("caught an exception while deleting service folder " + serviceCloudFolder.getAbsolutePath(), e);
+			throw e;
+		}
+	}
+
+	private void replaceProps() throws IOException {
+		if (additionalPropsToReplace != null) {
+			IOUtils.replaceTextInFile(getPathToCloudGroovy(), additionalPropsToReplace);
+		}
+	}
+
+
+
+	private void printCloudConfigFile() throws IOException {
+		String pathToCloudGroovy = getPathToCloudGroovy();
+		File cloudConfigFile = new File(pathToCloudGroovy);
+		if (!cloudConfigFile.exists()) {
+			LogUtils.log("Failed to print the cloud configuration file content");
+			return;
+		}
+		String cloudConfigFileAsString = FileUtils.readFileToString(cloudConfigFile);
+		LogUtils.log("Cloud configuration file: " + cloudConfigFile.getAbsolutePath());
+		LogUtils.log(cloudConfigFileAsString);
+	}
+	
+	private URL getMachinesUrl(String url)
+			throws Exception {
+		return new URL(stripSlash(url) + "/admin/machines");
 	}
 
 	private URL[] extractRestAdminUrls(String output, int numberOfManagementMachines)
@@ -412,26 +402,5 @@ public abstract class AbstractCloudService implements CloudService {
 			return str;
 		}
 		return str.substring(0, str.length() - 1);
-	}
-
-	public abstract String getUser();
-
-	public abstract String getApiKey();
-
-	public String getUniqueName() {
-		return serviceUniqueName;
-	}
-
-	public boolean getNoWebServices(){
-		return noWebServices;
-	}
-
-	public void setNoWebServices(boolean noWebServices){
-		this.noWebServices = noWebServices;
-	}
-
-	@Override
-	public boolean scanLeakedAgentNodes() {
-		return true;
 	}
 }

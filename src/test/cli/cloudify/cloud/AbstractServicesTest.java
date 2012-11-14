@@ -6,22 +6,29 @@ import java.util.Map;
 
 import org.cloudifysource.restclient.GSRestClient;
 import org.cloudifysource.restclient.RestException;
+import org.testng.annotations.AfterMethod;
 
 import com.j_spaces.kernel.PlatformVersion;
 
 import framework.utils.AssertUtils;
-import framework.utils.LogUtils;
 import framework.utils.ScriptUtils;
 
 public abstract class AbstractServicesTest extends NewAbstractCloudTest {
+
 	private static final String STATUS_PROPERTY = "DeclaringClass-Enumerator";
 	private String recipesDirPath = ScriptUtils.getBuildPath() + "/recipes/services/";
 
-	public AbstractServicesTest(){
-		LogUtils.log("Instansiated " + AbstractServicesTest.class.getName());	
+	private String name;
+	
+	@AfterMethod
+	public void cleanup() throws IOException, InterruptedException {
+		super.uninstallServiceIfFound(name);
+		super.scanForLeakedAgentNodes();
 	}
 	
+	
 	public void testService(String serviceFolderName, String serviceName) throws IOException, InterruptedException, RestException{
+		this.name = serviceName;
 		installServiceAndWait(recipesDirPath + serviceFolderName, serviceName);
 		String restUrl = getRestUrl();
 		GSRestClient client = new GSRestClient("", "", new URL(restUrl), PlatformVersion.getVersionNumber());

@@ -16,7 +16,8 @@
 
 package test.cli.cloudify.cloud.scale;
 
-import org.testng.ITestContext;
+import java.io.IOException;
+
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
@@ -32,8 +33,8 @@ public class Ec2ScalingRulesTest extends AbstractScalingRulesCloudTest{
 	}
 	
 	@BeforeClass(alwaysRun = true)
-	protected void bootstrap(final ITestContext testContext) {
-		super.bootstrap(testContext);
+	protected void bootstrap() throws Exception {
+		super.bootstrap();
 	}
 
 	@BeforeMethod
@@ -48,12 +49,13 @@ public class Ec2ScalingRulesTest extends AbstractScalingRulesCloudTest{
 	
 	
 	@AfterMethod
-	public void cleanup() {
+	public void cleanup() throws IOException, InterruptedException {
 		super.cleanup();
+		
 	}
 	
 	@AfterClass(alwaysRun = true)
-	protected void teardown() {
+	protected void teardown() throws Exception {
 		super.teardown();
 	}
 	

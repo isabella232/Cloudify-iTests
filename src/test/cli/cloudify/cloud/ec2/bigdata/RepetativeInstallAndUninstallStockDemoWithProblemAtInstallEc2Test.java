@@ -8,7 +8,6 @@ import java.net.URL;
 import junit.framework.Assert;
 
 import org.apache.commons.io.FileUtils;
-import org.testng.ITestContext;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
@@ -49,7 +48,7 @@ public class RepetativeInstallAndUninstallStockDemoWithProblemAtInstallEc2Test e
 
 
 	@BeforeClass
-	public void bootstrap(ITestContext iTestContext) {	
+	public void bootstrap() throws Exception {	
 
 		LogUtils.log("put cloudify-xap license in upload dir, needed to run stockdemo app");
 		File xapLicense = new File(SGTestHelper.getSGTestRootDir() + "/apps/cloudify/cloud/gslicense.xml");
@@ -66,7 +65,7 @@ public class RepetativeInstallAndUninstallStockDemoWithProblemAtInstallEc2Test e
 
 		service = new Ec2CloudService(this.getClass().getName());
 
-		super.bootstrap(iTestContext, service);
+		super.bootstrap(service);
 
 		restUrl = super.getRestUrl();
 
@@ -117,7 +116,7 @@ public class RepetativeInstallAndUninstallStockDemoWithProblemAtInstallEc2Test e
 		corruptCassandraService(cassandraPostStartScriptPath ,newPostStartScriptPath);
 		try {
 			LogUtils.log("first installation of stockdemo - this should fail");
-			installApplication(stockdemoAppPath, APPLICATION_NAME, 5, true, true);		
+			installApplicationAndWait(stockdemoAppPath, APPLICATION_NAME, 5, true);		
 		} catch(AssertionError e){
 			return 1;
 		}
@@ -129,7 +128,7 @@ public class RepetativeInstallAndUninstallStockDemoWithProblemAtInstallEc2Test e
 		assertUninstallWasSuccessful();
 		try {
 			LogUtils.log("second installation of stockdemo - this should succeed");
-			installApplication(stockdemoAppPath, APPLICATION_NAME, 45, true, false);
+			installApplicationAndWait(stockdemoAppPath, APPLICATION_NAME, 45, false);
 			LogUtils.log("checking second installation's result");
 			Assert.assertTrue("The applications home page isn't available, counts as not installed properly" , WebUtils.isURLAvailable(stockdemoUrl));
 			return 2;
@@ -172,7 +171,7 @@ public class RepetativeInstallAndUninstallStockDemoWithProblemAtInstallEc2Test e
 	}
 	
 	@AfterClass
-	public void teardown() {
+	public void teardown() throws Exception {
 		super.teardown();
 	}
 	
@@ -198,12 +197,5 @@ public class RepetativeInstallAndUninstallStockDemoWithProblemAtInstallEc2Test e
 	protected boolean isReusableCloud() {
 		// TODO Auto-generated method stub
 		return false;
-	}
-
-
-	@Override
-	protected void customizeCloud() throws Exception {
-		// TODO Auto-generated method stub
-
 	}
 }

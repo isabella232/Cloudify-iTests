@@ -16,10 +16,10 @@
 
 package test.webui.cloud;
 
+import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.List;
 
-import org.testng.ITestContext;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
@@ -50,10 +50,10 @@ public class Ec2WebuiScalingRulesTest extends AbstractScalingRulesCloudTest{
 	}
 	
 	@BeforeClass(alwaysRun = true)
-	protected void bootstrap(final ITestContext testContext) {
-		super.bootstrap(testContext);
+	protected void bootstrap() throws Exception {
+		super.bootstrap();
 		try {
-			webuiHelper = new WebuiTestUtils(cloud);
+			webuiHelper = new WebuiTestUtils(cloudService);
 		} catch (UnknownHostException e) {
 			throw new RuntimeException(e);
 		} catch (InterruptedException e) {
@@ -100,12 +100,12 @@ public class Ec2WebuiScalingRulesTest extends AbstractScalingRulesCloudTest{
 	}
 		
 	@AfterMethod
-	public void cleanup() {
+	public void cleanup() throws IOException, InterruptedException {
 		super.cleanup();
 	}
 	
 	@AfterClass(alwaysRun = true)
-	protected void teardown() {
+	protected void teardown() throws Exception {
 		super.teardown();
 		try {
 			webuiHelper.close();

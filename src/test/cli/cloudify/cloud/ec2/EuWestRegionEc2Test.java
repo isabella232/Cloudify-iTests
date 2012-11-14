@@ -2,7 +2,6 @@ package test.cli.cloudify.cloud.ec2;
 
 import java.io.IOException;
 
-import org.testng.ITestContext;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -30,21 +29,20 @@ public class EuWestRegionEc2Test extends NewAbstractCloudTest {
 	}
 	
 	@BeforeClass(alwaysRun = true)
-	protected void bootstrap(final ITestContext testContext) {
-		super.bootstrap(testContext);
+	protected void bootstrap() throws Exception {
+		super.bootstrap();
 	}
 	
 	@AfterClass(alwaysRun = true)
-	protected void teardown() {
+	protected void teardown() throws Exception {
 		super.teardown();
 	}
 
 	@Override
 	protected void customizeCloud() {
 		service = (Ec2CloudService) getService();
+		service.setRegion("eu");
 		service.setKeyPair("sgtest-eu");
-		service.getAdditionalPropsToReplace().put("imageId \"us-east-1/ami-76f0061f\"", "imageId \"eu-west-1/ami-24506250\"");
-		service.getAdditionalPropsToReplace().put("locationId \"us-east-1\"", "locationId \"eu-west-1\"");
 	} 
 
 }

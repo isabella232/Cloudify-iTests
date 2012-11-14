@@ -18,9 +18,7 @@ package test.cli.cloudify.cloud.ec2;
 
 import java.io.IOException;
 
-import org.testng.ITestContext;
 import org.testng.annotations.AfterClass;
-import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -45,24 +43,19 @@ public class Ec2SudoTest extends AbstractExamplesTest {
 				+ "; invoke groovy sudo");
 		assertTrue("Could not find expected output ('OK') in custom command response", invokeResult.contains("OK"));
 		assertTrue("Could not find expected output ('marker.txt') in custom command response", invokeResult.contains("marker.txt"));
+		
+		uninstallServiceAndWait("groovy");
+		
+		super.scanForLeakedAgentNodes();
 	}
 	
 	@BeforeClass(alwaysRun = true)
-	protected void bootstrap(final ITestContext testContext) {
-		super.bootstrap(testContext);
+	protected void bootstrap() throws Exception {
+		super.bootstrap();
 	}
 	
 	@AfterClass(alwaysRun = true)
-	protected void teardown() {
+	protected void teardown() throws Exception {
 		super.teardown();
-	}
-	
-	@AfterMethod
-	public void cleanUp() {
-		try {
-			super.uninstallServiceAndWait(serviceName);
-		} catch (Exception e) {
-			AssertFail("Failed to uninstall application " + serviceName + " in the aftertest method", e);
-		}
 	}
 }

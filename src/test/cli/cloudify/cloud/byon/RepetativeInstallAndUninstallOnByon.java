@@ -3,9 +3,7 @@ package test.cli.cloudify.cloud.byon;
 import java.util.concurrent.TimeUnit;
 
 import org.testng.Assert;
-import org.testng.ITestContext;
 import org.testng.annotations.AfterClass;
-import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -28,8 +26,8 @@ public class RepetativeInstallAndUninstallOnByon extends AbstractByonCloudTest {
 	private final static int REPETITIONS = 3;
 	
 	@BeforeClass(alwaysRun = true)
-	protected void bootstrap(final ITestContext testContext) {
-		super.bootstrap(testContext);
+	protected void bootstrap() throws Exception {
+		super.bootstrap();
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
@@ -52,16 +50,13 @@ public class RepetativeInstallAndUninstallOnByon extends AbstractByonCloudTest {
 					"petclinic.mongod is up - uninstall failed");
 			Assert.assertTrue(admin.getProcessingUnits().getProcessingUnit("petclinic.tomcat") == null,
 					"petclinic.tomcat is up - uninstall failed");
+			
+			super.scanForLeakedAgentNodes();
 		}
 	}
 	
-	@AfterMethod(alwaysRun = true)
-	public void cleanup() {
-		super.uninstallApplicationIfFound("petclinic");
-	}
-	
 	@AfterClass(alwaysRun = true)
-	protected void teardown() {
+	protected void teardown() throws Exception {
 		super.teardown();
 	}
 

@@ -4,22 +4,20 @@ import java.io.File;
 import java.io.IOException;
 
 import org.apache.commons.io.FileUtils;
-import org.testng.ITestContext;
 import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import test.cli.cloudify.cloud.NewAbstractCloudTest;
-import test.cli.cloudify.cloud.services.azure.MicrosoftAzureCloudService;
 import framework.tools.SGTestHelper;
 
 public class AzureExamplesTest extends NewAbstractCloudTest {
 	
 	@BeforeClass(alwaysRun = true)
-	protected void bootstrap(final ITestContext testContext) {
-		MicrosoftAzureCloudService azureCloudService = new MicrosoftAzureCloudService(this.getClass().getName());
-		super.bootstrap(testContext, azureCloudService);
+	protected void bootstrap() throws Exception {
+		super.bootstrap();
 	}
 	
 	@BeforeMethod
@@ -38,7 +36,7 @@ public class AzureExamplesTest extends NewAbstractCloudTest {
 	}
 	
 	@AfterClass(alwaysRun = true)
-	protected void teardown() {
+	protected void teardown() throws Exception {
 		super.teardown();
 	}
 	
@@ -51,7 +49,11 @@ public class AzureExamplesTest extends NewAbstractCloudTest {
 	public void testPetclinicSimple() throws IOException, InterruptedException {
 		doSanityTest("petclinic-simple-azure", "petclinic");
 	}
-
+	
+	@AfterMethod(alwaysRun = true)
+	public void cleanUp() throws IOException, InterruptedException {
+		super.scanForLeakedAgentNodes();
+	}
 
 	@Override
 	protected String getCloudName() {
@@ -62,10 +64,4 @@ public class AzureExamplesTest extends NewAbstractCloudTest {
 	protected boolean isReusableCloud() {
 		return false;
 	}
-
-	@Override
-	protected void customizeCloud() throws Exception {
-		
-	}
-
 }

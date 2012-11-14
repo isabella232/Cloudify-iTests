@@ -1,8 +1,5 @@
 package test.cli.cloudify.cloud.byon;
 
-import java.io.IOException;
-
-import org.testng.ITestContext;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -21,12 +18,12 @@ public class TeardownWithoutUninstallTest extends AbstractByonCloudTest {
 	}
 	
 	@BeforeClass(alwaysRun = true)
-	protected void bootstrap(final ITestContext testContext) {
-		super.bootstrap(testContext);
+	protected void bootstrap() throws Exception {
+		super.bootstrap();
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
-	public void testTeardownWithoutUnInstallApplication() throws IOException, InterruptedException {
+	public void testTeardownWithoutUnInstallApplication() throws Exception {
 
 		ApplicationInstaller travelInstaller = new ApplicationInstaller(getRestUrl(), "travel");
 		travelInstaller.setRecipePath(TRAVEL_PATH);
@@ -44,6 +41,8 @@ public class TeardownWithoutUninstallTest extends AbstractByonCloudTest {
 		
 		AssertUtils.assertTrue("Application 'petclinic' should not have been discovered since a teardown was executed", 
 				admin.getApplications().getApplication("petclinic") == null);
+		
+		super.scanForLeakedAgentNodes();
 
 	}
 	

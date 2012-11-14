@@ -5,7 +5,6 @@ import java.util.concurrent.TimeUnit;
 
 import org.openspaces.admin.esm.ElasticServiceManager;
 import org.openspaces.admin.machine.Machine;
-import org.testng.ITestContext;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
@@ -15,8 +14,8 @@ import org.testng.annotations.Test;
 public class KillNonElasticServiceManagerMachineTest extends AbstractKillManagementTest {
 
 	@BeforeClass(alwaysRun = true)
-	protected void bootstrap(final ITestContext testContext) {
-		super.bootstrap(testContext);
+	protected void bootstrap() throws Exception {
+		super.bootstrap();
 	}
 	
 	@BeforeMethod
@@ -30,12 +29,13 @@ public class KillNonElasticServiceManagerMachineTest extends AbstractKillManagem
 	}
 	
 	@AfterMethod(alwaysRun = true)
-	public void cleanup() {
+	public void cleanup() throws IOException, InterruptedException {
 		super.uninstallApplicationIfFound("petclinic");
+		super.scanForLeakedAgentNodes();
 	}
 	
 	@AfterClass(alwaysRun = true)
-	protected void teardown() {
+	protected void teardown() throws Exception {
 		super.teardown();
 	}
 	

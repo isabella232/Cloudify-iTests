@@ -5,9 +5,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.cloudifysource.dsl.utils.ServiceUtils;
 import org.openspaces.admin.pu.ProcessingUnit;
-import org.testng.ITestContext;
 import org.testng.annotations.AfterClass;
-import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -22,8 +20,8 @@ public class MultipleServicesTest extends AbstractPublicProvisioningByonCloudTes
 	}
 	
 	@BeforeClass(alwaysRun = true)
-	protected void bootstrap(final ITestContext testContext) {
-		super.bootstrap(testContext);
+	protected void bootstrap() throws Exception {
+		super.bootstrap();
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
@@ -43,16 +41,12 @@ public class MultipleServicesTest extends AbstractPublicProvisioningByonCloudTes
 		
 		uninstallServiceAndWait(GROOVY_ONE);
 		uninstallServiceAndWait(GROOVY_TWO);
-	}
-	
-	@AfterMethod(alwaysRun = true)
-	public void cleanup() {
-		super.uninstallServicefFound(GROOVY_ONE);
-		super.uninstallServicefFound(GROOVY_TWO);
+		
+		super.scanForLeakedAgentNodes();
 	}
 	
 	@AfterClass(alwaysRun = true)
-	protected void teardown() {
+	protected void teardown() throws Exception {
 		super.teardown();
 	}	
 }

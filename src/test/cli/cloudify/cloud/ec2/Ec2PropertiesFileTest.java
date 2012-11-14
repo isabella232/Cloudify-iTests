@@ -3,7 +3,6 @@ package test.cli.cloudify.cloud.ec2;
 import java.io.File;
 
 import org.apache.commons.io.FileUtils;
-import org.testng.ITestContext;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -24,13 +23,13 @@ public class Ec2PropertiesFileTest extends NewAbstractCloudTest{
 	}
 	
 	@BeforeClass(alwaysRun = true)
-	protected void bootstrap(final ITestContext testContext) {
-		super.bootstrap(testContext);
+	protected void bootstrap() throws Exception {
+		super.bootstrap();
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
 	public void testInstallationWithPropsFile() throws Exception {
-		String pathToCloudFolder = ((Ec2CloudService)cloud).getPathToCloudFolder();
+		String pathToCloudFolder = ((Ec2CloudService)cloudService).getPathToCloudFolder();
 		File cloudConfig = new File(pathToCloudFolder, "ec2-cloud.groovy");
 		String configFileAsString = FileUtils.readFileToString(cloudConfig);
 		LogUtils.log("asserting cloud was bootstrapped with the correct properties (properties were overridden)");
@@ -40,24 +39,26 @@ public class Ec2PropertiesFileTest extends NewAbstractCloudTest{
 		LogUtils.log("Testing service installation");
 		installServiceAndWait(tomcatServicePath, serviceName);
 		uninstallServiceAndWait(serviceName);
+		
+		super.scanForLeakedAgentNodes();
 	}
 
 	@Override
 	protected void customizeCloud() throws Exception {
 		
 		//Set the management machine template option to be taken from the cloud props file.
-		((Ec2CloudService)cloud).getAdditionalPropsToReplace().put("managementMachineTemplate \"SMALL_LINUX\"",
+		((Ec2CloudService)cloudService).getAdditionalPropsToReplace().put("managementMachineTemplate \"SMALL_LINUX\"",
 				MANAGEMENT_MACHINE_TEMPLATE_MY_HARDWARE_ID);
 		
 		// add this prop to the properties file attached to the cloud driver
-		getService().getProperties().setProperty("myHardwareId", "\"SMALL_UBUNTU\"");
+		getService().getProperties().put("myHardwareId", "SMALL_UBUNTU");
 	}
 	
 	@AfterClass(alwaysRun = true)
-	protected void teardown() {
+	protected void teardown() throws Exception {
 		super.teardown();
 	}
-
+	
 	@Override
 	protected boolean isReusableCloud() {
 		return false;

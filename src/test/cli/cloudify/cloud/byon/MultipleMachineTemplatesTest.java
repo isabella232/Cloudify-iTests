@@ -10,7 +10,6 @@ import org.apache.commons.io.FileUtils;
 import org.cloudifysource.dsl.utils.ServiceUtils;
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.testng.Assert;
-import org.testng.ITestContext;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
@@ -45,8 +44,8 @@ public class MultipleMachineTemplatesTest extends AbstractByonCloudTest {
 	protected static final String PETCLINIC_MULTIPLE_TEMPLATES_BUILD_PATH = SGTestHelper.getBuildDir() + "/recipes/apps/petclinic-multiple-templates";
 	
 	@BeforeClass(alwaysRun = true)
-	protected void bootstrap(final ITestContext testContext) {
-		super.bootstrap(testContext, service);
+	protected void bootstrap() throws Exception {
+		super.bootstrap(service);
 	}
 
 	@BeforeMethod(alwaysRun = true)
@@ -90,6 +89,8 @@ public class MultipleMachineTemplatesTest extends AbstractByonCloudTest {
 		assertServiceIsDown("petclinic.mongoConfig");
 		assertServiceIsDown("petclinic.tomcat");
 		assertServiceIsDown("petclinic.apacheLB");
+		
+		super.scanForLeakedAgentNodes();
 	}
 	
 	protected void setService(MultipleTemplatesByonCloudService service) {
@@ -114,12 +115,13 @@ public class MultipleMachineTemplatesTest extends AbstractByonCloudTest {
 	}
 	
 	@AfterMethod(alwaysRun = true)
-	public void cleanup() {
+	public void cleanup() throws IOException, InterruptedException {
 		super.uninstallApplicationIfFound("petclinic");
+		super.scanForLeakedAgentNodes();
 	}
 
 	@AfterClass(alwaysRun = true)
-	protected void teardown() {
+	protected void teardown() throws Exception {
 		super.teardown();
 	}
 

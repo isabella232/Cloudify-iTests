@@ -10,7 +10,6 @@ import java.util.Map;
 import org.cloudifysource.restclient.GSRestClient;
 import org.cloudifysource.restclient.RestException;
 import org.openspaces.admin.pu.DeploymentStatus;
-import org.testng.ITestContext;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -71,11 +70,6 @@ public class Ec2WebuiCloudBasicTest extends NewAbstractCloudTest {
 	private static long assertWaitingTime = 10000;
 	
 	private WebuiTestUtils webuiHelper;
-	
-	@Override
-	protected void customizeCloud() throws Exception {
-		// not needed
-	}
 
 	@Override
 	protected String getCloudName() {
@@ -88,10 +82,10 @@ public class Ec2WebuiCloudBasicTest extends NewAbstractCloudTest {
 	}
 	
 	@BeforeClass(alwaysRun = true)
-	protected void bootstrap(final ITestContext testContext) {
-		super.bootstrap(testContext);
+	protected void bootstrap() throws Exception {
+		super.bootstrap();
 		try {
-			webuiHelper = new WebuiTestUtils(cloud);
+			webuiHelper = new WebuiTestUtils(cloudService);
 		} catch (InterruptedException e) {
 			throw new RuntimeException(e);
 		} catch (UnknownHostException e) {
@@ -100,7 +94,7 @@ public class Ec2WebuiCloudBasicTest extends NewAbstractCloudTest {
 	}
 	
 	@AfterClass(alwaysRun = true)
-	protected void teardown() {
+	protected void teardown() throws Exception {
 		super.teardown();
 		try {
 			webuiHelper.close();

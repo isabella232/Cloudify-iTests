@@ -3,7 +3,6 @@ package test.cli.cloudify.cloud.ec2;
 import java.io.IOException;
 
 import org.cloudifysource.restclient.RestException;
-import org.testng.ITestContext;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -18,12 +17,12 @@ public class Ec2ServicesTest extends AbstractServicesTest{
 	}
 	
 	@BeforeClass(alwaysRun = true)
-	protected void bootstrap(final ITestContext testContext) {
-		super.bootstrap(testContext);
+	protected void bootstrap() throws Exception {
+		super.bootstrap();
 	}
 	
 	@AfterClass(alwaysRun = true)
-	protected void teardown() {
+	protected void teardown() throws Exception {
 		super.teardown();
 	}
 	

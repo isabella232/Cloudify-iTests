@@ -2,11 +2,11 @@ package test.cli.cloudify.cloud.byon;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Properties;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.openspaces.admin.gsa.GridServiceAgent;
 import org.openspaces.admin.machine.Machine;
-import org.testng.ITestContext;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -14,10 +14,7 @@ import org.testng.annotations.Test;
 import test.cli.cloudify.CommandTestUtils;
 import test.cli.cloudify.cloud.services.byon.ByonCloudService;
 import test.cli.cloudify.cloud.services.byon.MultipleTemplatesByonCloudService;
-import framework.tools.SGTestHelper;
 import framework.utils.ApplicationInstaller;
-import framework.utils.DumpUtils;
-import framework.utils.IOUtils;
 import framework.utils.ServiceInstaller;
 
 /**
@@ -34,14 +31,14 @@ public class CloudOverridesTest extends AbstractByonCloudTest {
 	private MultipleTemplatesByonCloudService service = new MultipleTemplatesByonCloudService(this.getClass().getName());
 	
 	@BeforeClass(alwaysRun = true)
-	protected void bootstrap(final ITestContext testContext) {
+	protected void bootstrap() throws Exception {
 		service.setNumberOfHostsForTemplate("TEMPLATE_1", 2);
 		service.setNumberOfHostsForTemplate("TEMPLATE_2", 0);
 		service.setNumberOfHostsForTemplate("TEMPLATE_3", 0);
 		// this is for validation purposes, cant have an empty list as host-list in BYON
 		service.addHostToTemplate("192.168.1.1","TEMPLATE_2");
 		service.addHostToTemplate("192.168.1.2", "TEMPLATE_3");
-		super.bootstrap(testContext, service);
+		super.bootstrap(service);
 	}
 	
 	
@@ -50,12 +47,9 @@ public class CloudOverridesTest extends AbstractByonCloudTest {
 		
 		File createOverridesFile = null;
 		try {
-			createOverridesFile = createCloudOverridesFile(createCloudOverrideProperties());
-			String cloudOverridesPath = createOverridesFile.getAbsolutePath().replace('\\', '/');
-					
 			ServiceInstaller serviceInstaller = new ServiceInstaller(getRestUrl(), "simple");
 			serviceInstaller.setRecipePath(SIMPLE_RECIPE_FOLDER);
-			serviceInstaller.setCloudOverridesFilePath(cloudOverridesPath);
+			serviceInstaller.setCloudOverrides(createCloudOverrideProperties());
 			
 			serviceInstaller.install();
 			
@@ -63,6 +57,8 @@ public class CloudOverridesTest extends AbstractByonCloudTest {
 			assertOverrides("default.simple");
 			
 			serviceInstaller.uninstall();
+			
+			super.scanForLeakedAgentNodes();
 			
 		} finally {
 			if (createOverridesFile != null) {
@@ -77,12 +73,9 @@ public class CloudOverridesTest extends AbstractByonCloudTest {
 		File cloudOverridesFile = null;
 	
 		try {
-			cloudOverridesFile = createCloudOverridesFile(createCloudOverrideProperties());
-			String cloudOverridesPath = cloudOverridesFile.getAbsolutePath().replace('\\', '/');
-			
 			ApplicationInstaller applicationInstaller = new ApplicationInstaller(getRestUrl(), "simple");
 			applicationInstaller.setRecipePath(SIMPLE_APP_FOLDER);
-			applicationInstaller.setCloudOverridesFilePath(cloudOverridesPath);
+			applicationInstaller.setCloudOverrides(createCloudOverrideProperties());
 			
 			applicationInstaller.install();
 			
@@ -90,6 +83,8 @@ public class CloudOverridesTest extends AbstractByonCloudTest {
 			assertOverrides("simple.simple");
 			
 			applicationInstaller.uninstall();
+			
+			super.scanForLeakedAgentNodes();
 
 		} finally {
 			if (cloudOverridesFile != null) {
@@ -104,12 +99,9 @@ public class CloudOverridesTest extends AbstractByonCloudTest {
 		
 		File createOverridesFile = null;
 		try {
-			createOverridesFile = createCloudOverridesFile(createCloudOverrideProperties());
-			String cloudOverridesPath = createOverridesFile.getAbsolutePath().replace('\\', '/');
-					
 			ServiceInstaller serviceInstaller = new ServiceInstaller(getRestUrl(), "simple");
 			serviceInstaller.setRecipePath(SIMPLE_RECIPE_FOLDER);
-			serviceInstaller.setCloudOverridesFilePath(cloudOverridesPath);
+			serviceInstaller.setCloudOverrides(createCloudOverrideProperties());
 			
 			serviceInstaller.install();
 			
@@ -122,6 +114,8 @@ public class CloudOverridesTest extends AbstractByonCloudTest {
 			assertOverrides("default.simple");
 			
 			serviceInstaller.uninstall();
+			
+			super.scanForLeakedAgentNodes();
 						
 		} finally {
 			if (createOverridesFile != null) {
@@ -132,7 +126,7 @@ public class CloudOverridesTest extends AbstractByonCloudTest {
 	}
 	
 	@AfterClass(alwaysRun = true)
-	protected void teardown() {
+	protected void teardown() throws Exception {
 		super.teardown();
 	}
 
@@ -141,27 +135,12 @@ public class CloudOverridesTest extends AbstractByonCloudTest {
 		return false;
 	}
 	
-	@Override
-	protected void customizeCloud() throws Exception {		
-	}
-	
-	private File createCloudOverridesFile(final Properties props) throws IOException {
+	private Map<String, Object> createCloudOverrideProperties() {
 		
-		// create in test folder, or in temp when running locally
-		String destFolder = DumpUtils.getTestFolder().getAbsolutePath();
-		if (destFolder == null) {
-			destFolder = new File(System.getProperty("java.io.tmpdir", SGTestHelper.getBuildDir())).getAbsolutePath();
-		}
-		File destFile = new File(destFolder + "/" + getCloudName() + "-cloud.overrides");
-		File overridePropsFile = IOUtils.writePropertiesToFile(props, destFile);
-		return overridePropsFile;
-	}
-	
-	private Properties createCloudOverrideProperties() {
-		
-		Properties overrideProps = new Properties();
-		overrideProps.setProperty("myEnvVariable", '"' + "DEFAULT_OVERRIDES_ENV_VARIABLE" + '"');
-		return overrideProps;
+		Map<String, Object> cloudOverrides = new HashMap<String, Object>();
+		cloudOverrides.put("myEnvVariable", "DEFAULT_OVERRIDES_ENV_VARIABLE");
+
+		return cloudOverrides;
 	}
 	
 	private void assertOverrides(final String puName) {

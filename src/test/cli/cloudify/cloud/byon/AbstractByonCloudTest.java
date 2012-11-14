@@ -4,17 +4,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import org.cloudifysource.dsl.cloud.CloudTemplate;
 import org.cloudifysource.dsl.internal.CloudifyConstants;
 import org.openspaces.admin.Admin;
 import org.openspaces.admin.AdminFactory;
 import org.openspaces.admin.machine.Machine;
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.openspaces.admin.pu.ProcessingUnitInstance;
-import org.testng.ITestContext;
 
+import test.AbstractTest;
 import test.cli.cloudify.cloud.NewAbstractCloudTest;
 import test.cli.cloudify.cloud.services.byon.ByonCloudService;
 import framework.utils.LogUtils;
+import framework.utils.SSHUtils;
 
 public class AbstractByonCloudTest extends NewAbstractCloudTest {
 	
@@ -29,38 +31,70 @@ public class AbstractByonCloudTest extends NewAbstractCloudTest {
 		return (ByonCloudService) super.getService();
 	}
 
+
 	@Override
-	protected void bootstrap(ITestContext testContext) {
-		super.bootstrap(testContext);
+	protected void bootstrap() throws Exception {
+		super.bootstrap();
 	}
+
 
 	@Override
 	protected void afterBootstrap() throws Exception {
 		super.afterBootstrap();
 		createAdmin();
 	}
+	
+	@Override
+	public void beforeBootstrap() {
+		cleanMachines();
+	}
+	
+	private void cleanMachines() {
+		killAllJavaOnAllHosts();
+		cleanGSFilesOnAllHosts();
+		cleanCloudifyTempDir();
+	}
+	
+	private void cleanCloudifyTempDir() {
+		LogUtils.log(SSHUtils.runCommand(getService().getMachines()[0], AbstractTest.OPERATION_TIMEOUT, "rm -rf /export/tgrid/.cloudify/", "tgrid", "tgrid"));
+		
+	}
 
-	private void createAdmin() {
-		ByonCloudService cloudService = getService();
-		AdminFactory factory = new AdminFactory();
-		String[] managementHosts;
-		// if the cloud is using web services 
-		if (!cloudService.getNoWebServices()){
-			managementHosts = cloudService.getRestUrls();		
-			for (String host : managementHosts) {				
-				String utlNoHttp = host.substring(7); /* remove "http://" */
-				String ip = utlNoHttp.split(":")[0];
-				factory.addLocators(ip + ":" + CloudifyConstants.DEFAULT_LUS_PORT);
+	private void cleanGSFilesOnAllHosts() {
+		for (CloudTemplate template : getService().getCloud().getTemplates().values()) {
+			String command = "rm -rf " + template.getRemoteDirectory();;
+			String[] hosts = getService().getMachines();			
+			for (String host : hosts) {
+				try {
+					LogUtils.log(SSHUtils.runCommand(host, AbstractTest.OPERATION_TIMEOUT, command, "tgrid", "tgrid"));
+				} catch (AssertionError e) {
+					LogUtils.log("Failed to clean files on host " + host + " .Reason --> " + e.getMessage());
+				}
+			}	
+		}			
+	}
+	
+	private void killAllJavaOnAllHosts() {
+		String command = "killall -9 java";
+		String[] hosts = getService().getMachines();
+		for (String host : hosts) {
+			try {
+				LogUtils.log(SSHUtils.runCommand(host, AbstractTest.OPERATION_TIMEOUT, command, "tgrid", "tgrid"));
+			} catch (AssertionError e) {
+				LogUtils.log("Failed to kill java processes on host " + host + " .Reason --> " + e.getMessage());
 			}
 		}
-		// if the cloud is not using web services
-		else {
-			managementHosts = cloudService.getMachines();			
-			String host = managementHosts[0];
-			factory.addLocators(host + ":" + CloudifyConstants.DEFAULT_LUS_PORT);
+	}
+
+	private void createAdmin() {
+		String[] managementHosts = getService().getRestUrls();
+		AdminFactory factory = new AdminFactory();
+		for (String host : managementHosts) {
+			LogUtils.log("creating admin");
+			String utlNoHttp = host.substring(7); /* remove "http://" */
+			String ip = utlNoHttp.split(":")[0];
+			factory.addLocators(ip + ":" + CloudifyConstants.DEFAULT_LUS_PORT);
 		}
-		
-		LogUtils.log("creating admin");		
 		admin = factory.createAdmin();
 	}
 	

@@ -2,7 +2,6 @@ package test.cli.cloudify.cloud.byon;
 
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.testng.Assert;
-import org.testng.ITestContext;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -24,13 +23,13 @@ public class MultipleTemplatesWithNamesAsIPsTest extends MultipleMachineTemplate
 	
 	@Override
 	@BeforeClass(alwaysRun = true)
-	protected void bootstrap(final ITestContext testContext) {
+	protected void bootstrap() throws Exception {
 		
 		String[] machines = service.getMachines();
 		LogUtils.log("converting every other address to host name");
 		String[] machinesHostNames = NetworkUtils.resolveIpsToHostNames(machines);
 		service.setMachines(machinesHostNames);
-		super.bootstrap(testContext,service);
+		super.bootstrap(service);
 	}
 	
 

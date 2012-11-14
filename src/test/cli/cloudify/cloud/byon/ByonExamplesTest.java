@@ -1,8 +1,6 @@
 package test.cli.cloudify.cloud.byon;
 
-import org.testng.ITestContext;
 import org.testng.annotations.AfterClass;
-import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -16,8 +14,8 @@ public class ByonExamplesTest extends AbstractExamplesTest {
 	}
 	
 	@BeforeClass(alwaysRun = true)
-	protected void bootstrap(final ITestContext testContext) {
-		super.bootstrap(testContext);
+	protected void bootstrap() throws Exception {
+		super.bootstrap();
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
@@ -30,15 +28,9 @@ public class ByonExamplesTest extends AbstractExamplesTest {
 			throws Exception {
 		super.testPetclinic();
 	}
-
-
-	@AfterMethod(alwaysRun = true)
-	public void cleanUp() {
-		super.uninstallApplicationIfFound();
-	}
 	
 	@AfterClass(alwaysRun = true)
-	protected void teardown() {
+	protected void teardown() throws Exception {
 		super.teardown();
 	}
 }

@@ -16,9 +16,7 @@
 
 package test.cli.cloudify.cloud.ec2;
 
-import org.testng.ITestContext;
 import org.testng.annotations.AfterClass;
-import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -33,18 +31,13 @@ public class Ec2ExamplesTest extends AbstractExamplesTest {
 	}
 	
 	@BeforeClass(alwaysRun = true)
-	protected void bootstrap(final ITestContext testContext) {
-		super.bootstrap(testContext);
+	protected void bootstrap() throws Exception {
+		super.bootstrap();
 	}
 	
 	@AfterClass(alwaysRun = true)
-	protected void teardown() {
+	protected void teardown() throws Exception {
 		super.teardown();
-	}
-	
-	@AfterMethod(alwaysRun = true)
-	public void cleanUp() {
-		super.uninstallApplicationIfFound();
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)

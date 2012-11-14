@@ -3,16 +3,13 @@ package test.cli.cloudify.cloud.ec2.bigdata;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.cloudifysource.dsl.internal.ServiceReader;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.type.TypeFactory;
 import org.codehaus.jackson.type.JavaType;
-import org.testng.ITestContext;
 import org.testng.annotations.AfterClass;
-import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -26,6 +23,7 @@ import com.sun.jersey.api.client.config.DefaultClientConfig;
 
 import framework.tools.SGTestHelper;
 import framework.utils.AssertUtils;
+import framework.utils.IOUtils;
 import framework.utils.LogUtils;
 import framework.utils.SSHUtils;
 import framework.utils.ScriptUtils;
@@ -44,18 +42,13 @@ public class TwitterExampleTest extends NewAbstractCloudTest{
 	private final static String ENTRIES_AMOUNT_REST_URL = "/admin/Spaces/Names/space/Spaces/Names/space/RuntimeDetails/CountPerClassName/" + GLOBAL_COUNTER_PROPERTY;
 	
 	@BeforeClass(alwaysRun = true)
-	protected void bootstrap(final ITestContext testContext) {
-		super.bootstrap(testContext);
+	protected void bootstrap() throws Exception {
+		super.bootstrap();
 	}
 
 	@AfterClass(alwaysRun = true)
-	protected void teardown() {
+	protected void teardown() throws Exception {
 		super.teardown();
-	}
-	
-	@AfterMethod(alwaysRun = true)
-	public void cleanUp() throws IOException, InterruptedException {
-		super.uninstallApplicationAndWait(applicationName);
 	}
 	
 	@BeforeMethod
@@ -77,7 +70,7 @@ public class TwitterExampleTest extends NewAbstractCloudTest{
 		applicationName = ServiceReader.getApplicationFromFile(applicationDslFilePath).getApplication().getName();
 		LogUtils.log("installing application " + applicationName + " on " + this.getCloudName());
 		
-		installApplicationAndWait(applicationPath, applicationName, 0);
+		installApplicationAndWait(applicationPath, applicationName);
 		
 		LogUtils.log("verifing successful installation");
 		restUrl = getRestUrl();
@@ -114,18 +107,20 @@ public class TwitterExampleTest extends NewAbstractCloudTest{
 			
 			entriesAmount = newEntriesAmount;
 		}
+		
+		uninstallApplicationAndWait(applicationName);
+		
+		super.scanForLeakedAgentNodes();
 	}
 
 	@Override
-	protected void customizeCloud() throws Exception {
+	protected void beforeBootstrap() throws Exception {
 
 		/* copy premium license to cloudify-overrides in order to run xap pu's */
 		String overridesFolder = getService().getPathToCloudFolder() + "/upload/cloudify-overrides";
 		File cloudifyPremiumLicenseFileBuildPath = new File(SGTestHelper.getBuildDir() + "/gslicense.xml");
 		File cloudifyPremiumLicenseFileOverridesPath = new File(overridesFolder + "/gslicense.xml");
-		Map<File,File> filesToReplace = new HashMap<File,File>();
-		filesToReplace.put(cloudifyPremiumLicenseFileOverridesPath,cloudifyPremiumLicenseFileBuildPath);
-		getService().addFilesToReplace(filesToReplace);
+		IOUtils.replaceFile(cloudifyPremiumLicenseFileBuildPath, cloudifyPremiumLicenseFileOverridesPath);
 	}
 
 	@Override

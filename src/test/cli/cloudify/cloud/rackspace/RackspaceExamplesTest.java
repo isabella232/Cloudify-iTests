@@ -16,9 +16,7 @@
 
 package test.cli.cloudify.cloud.rackspace;
 
-import org.testng.ITestContext;
 import org.testng.annotations.AfterClass;
-import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -41,8 +39,8 @@ import test.cli.cloudify.cloud.AbstractExamplesTest;
 public class RackspaceExamplesTest extends AbstractExamplesTest {
 	
 	@BeforeClass(alwaysRun = true)
-	protected void bootstrap(final ITestContext testContext) {
-		super.bootstrap(testContext);
+	protected void bootstrap() throws Exception {
+		super.bootstrap();
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
@@ -65,30 +63,13 @@ public class RackspaceExamplesTest extends AbstractExamplesTest {
 		super.testHelloWorld();
 	}
 
-	@AfterMethod(alwaysRun = true)
-	public void cleanUp() {
-		super.uninstallApplicationIfFound();
-	}
-
 	@AfterClass(alwaysRun = true)
-	protected void teardown() {
+	protected void teardown() throws Exception {
 		super.teardown();
 	}
 	
 	@Override
 	protected String getCloudName() {
 		return "rackspace";
-	}
-	
-	@Override
-	protected void customizeCloud() {
-
-		//removed this since privileged true should be in the dsl file
-		
-//		final HpCloudService hpService = (HpCloudService) cloud;
-//
-//		hpService.setAdditionalPropsToReplace(new HashMap<String, String>());
-//		hpService.getAdditionalPropsToReplace().put("imageId \"221\"",
-//				"imageId \"221\"" + System.getProperty("line.separator") + "\t\t\t\t\tprivileged true");
 	}
 }

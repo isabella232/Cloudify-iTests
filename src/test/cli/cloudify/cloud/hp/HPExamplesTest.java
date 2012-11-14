@@ -16,9 +16,7 @@
 
 package test.cli.cloudify.cloud.hp;
 
-import org.testng.ITestContext;
 import org.testng.annotations.AfterClass;
-import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -28,23 +26,18 @@ import test.cli.cloudify.cloud.AbstractExamplesTest;
 public class HPExamplesTest extends AbstractExamplesTest {
 
 	@BeforeClass(alwaysRun = true)
-	protected void bootstrap(final ITestContext testContext) {
-		super.bootstrap(testContext);
+	protected void bootstrap() throws Exception {
+		super.bootstrap();
 	}
 	
 	@AfterClass(alwaysRun = true)
-	protected void teardown() {
+	protected void teardown() throws Exception {
 		super.teardown();
 	}
 	
 	@Override
 	protected String getCloudName() {
 		return "hp";
-	}
-	
-	@AfterMethod(alwaysRun = true)
-	public void cleanUp() {
-		super.uninstallApplicationIfFound();
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
@@ -65,18 +58,6 @@ public class HPExamplesTest extends AbstractExamplesTest {
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
 	public void testHelloWorld() throws Exception {
 		super.testHelloWorld();
-	}
-		
-	@Override
-	protected void customizeCloud() {
-
-		//removed this since privileged true should be in the dsl file
-		
-//		final HpCloudService hpService = (HpCloudService) cloud;
-//
-//		hpService.setAdditionalPropsToReplace(new HashMap<String, String>());
-//		hpService.getAdditionalPropsToReplace().put("imageId \"221\"",
-//				"imageId \"221\"" + System.getProperty("line.separator") + "\t\t\t\t\tprivileged true");
 	}
 
 }

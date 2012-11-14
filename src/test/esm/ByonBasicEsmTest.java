@@ -12,7 +12,6 @@ import org.openspaces.admin.pu.elastic.ElasticStatefulProcessingUnitDeployment;
 import org.openspaces.admin.pu.elastic.config.ManualCapacityScaleConfig;
 import org.openspaces.admin.pu.elastic.config.ManualCapacityScaleConfigurer;
 import org.openspaces.core.util.MemoryUnit;
-import org.testng.ITestContext;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -31,12 +30,12 @@ public class ByonBasicEsmTest extends AbstractByonCloudTest {
 	public final static long OPERATION_TIMEOUT = 5 * 60 * 1000;
 
 	@BeforeClass
-	public void bootstrap(ITestContext context) {
-		super.bootstrap(context);
+	public void bootstrap() throws Exception {
+		super.bootstrap();
 	}
 	
 	@AfterClass(alwaysRun = true)
-	protected void teardown() {
+	protected void teardown() throws Exception {
 		super.teardown(admin);
 		
 	}
@@ -91,7 +90,7 @@ public class ByonBasicEsmTest extends AbstractByonCloudTest {
 	private ElasticMachineProvisioningConfig getMachineProvisioningConfig() {
 		String templateName = "SMALL_LINUX";
 		ByonCloudService cloudService = getService();
-		Cloud cloud = cloudService.getCloudConfiguration();
+		Cloud cloud = cloudService.getCloud();
 		final CloudTemplate template = cloud.getTemplates().get(templateName);
 		CloudTemplate managementTemplate = cloud.getTemplates().get(cloud.getConfiguration().getManagementMachineTemplate());
 		managementTemplate.getRemoteDirectory();

@@ -1,6 +1,5 @@
 package test.cli.cloudify.cloud.ec2;
 
-import org.testng.ITestContext;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -27,18 +26,18 @@ public class PrivateImageEc2Test extends NewAbstractCloudTest {
 	}
 	
 	@BeforeClass(alwaysRun = true)
-	protected void bootstrap(final ITestContext testContext) {
-		super.bootstrap(testContext);
+	protected void bootstrap() throws Exception {
+		super.bootstrap();
 	}
 	
 	@AfterClass(alwaysRun = true)
-	protected void teardown() {
+	protected void teardown() throws Exception {
 		super.teardown();
 	}
 
 	@Override
 	protected void customizeCloud() {
-		final Ec2CloudService ec2Service = (Ec2CloudService) cloud;
+		final Ec2CloudService ec2Service = (Ec2CloudService) cloudService;
 		ec2Service.getAdditionalPropsToReplace().put("imageId \"us-east-1/ami-76f0061f\"",
 				"imageId \"us-east-1/ami-93b068fa\"");
 	};

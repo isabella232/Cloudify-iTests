@@ -28,7 +28,6 @@ import org.apache.commons.vfs2.provider.sftp.SftpFileSystemConfigBuilder;
 import org.cloudifysource.dsl.cloud.FileTransferModes;
 import org.cloudifysource.dsl.internal.CloudifyConstants;
 import org.cloudifysource.esc.util.Utils;
-import org.testng.ITestContext;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -42,8 +41,8 @@ public class CleanGSFilesByonTest extends AbstractByonCloudTest {
 	private static final Integer SFTP_DISCONNECT_DETECTION_TIMEOUT_MILLIS = Integer.valueOf(10 * 1000);
 
 	@BeforeClass
-	public void bootstrap(ITestContext context) {
-		super.bootstrap(context);
+	public void bootstrap() throws Exception {
+		super.bootstrap();
 	}
 
 	/**
@@ -55,7 +54,7 @@ public class CleanGSFilesByonTest extends AbstractByonCloudTest {
 	public void testCleanFilesAfterTeardown() throws Exception {
 
 		@SuppressWarnings("unchecked")
-		List<String> itemsToClean = (List<String>) getService().getCloudConfiguration().getCustom().get("itemsToClean");
+		List<String> itemsToClean = (List<String>) getService().getCloud().getCustom().get("itemsToClean");
 
 		super.teardown();
 

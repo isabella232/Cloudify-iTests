@@ -1,15 +1,14 @@
 package test.cli.cloudify.cloud.byon;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.Properties;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.Assert;
 import org.openspaces.admin.esm.ElasticServiceManager;
 import org.openspaces.admin.gsa.GridServiceAgent;
 import org.openspaces.admin.machine.Machine;
-import org.testng.ITestContext;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -17,9 +16,6 @@ import org.testng.annotations.Test;
 import test.cli.cloudify.CommandTestUtils;
 import test.cli.cloudify.cloud.services.byon.ByonCloudService;
 import test.cli.cloudify.cloud.services.byon.MultipleTemplatesByonCloudService;
-import framework.tools.SGTestHelper;
-import framework.utils.DumpUtils;
-import framework.utils.IOUtils;
 import framework.utils.ServiceInstaller;
 
 public class CloudOverridesESMFailoverTest extends AbstractKillManagementTest {
@@ -38,8 +34,8 @@ public class CloudOverridesESMFailoverTest extends AbstractKillManagementTest {
 	}
 	
 	@BeforeClass(alwaysRun = true)
-	protected void bootstrap(final ITestContext testContext) {
-		super.bootstrap(testContext, service);
+	protected void bootstrap() throws Exception {
+		super.bootstrap(service);
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
@@ -47,12 +43,10 @@ public class CloudOverridesESMFailoverTest extends AbstractKillManagementTest {
 		
 		File createOverridesFile = null;
 		try {
-			createOverridesFile = createCloudOverridesFile(createCloudOverrideProperties());
-			String cloudOverridesPath = createOverridesFile.getAbsolutePath().replace('\\', '/');
-					
+						
 			ServiceInstaller serviceInstaller = new ServiceInstaller(getRestUrl(), "simple");
 			serviceInstaller.setRecipePath(SIMPLE_RECIPE_FOLDER);
-			serviceInstaller.setCloudOverridesFilePath(cloudOverridesPath);
+			serviceInstaller.setCloudOverrides(createCloudOverrideProperties());
 			
 			serviceInstaller.install();
 			
@@ -82,6 +76,8 @@ public class CloudOverridesESMFailoverTest extends AbstractKillManagementTest {
 			assertOverrides("default.simple");
 			
 			serviceInstaller.uninstall();
+			
+			super.scanForLeakedAgentNodes();
 						
 		} finally {
 			if (createOverridesFile != null) {
@@ -93,7 +89,7 @@ public class CloudOverridesESMFailoverTest extends AbstractKillManagementTest {
 	}
 	
 	@AfterClass(alwaysRun = true)
-	protected void teardown() {
+	protected void teardown() throws Exception {
 		super.teardown();
 	}
 	
@@ -103,23 +99,12 @@ public class CloudOverridesESMFailoverTest extends AbstractKillManagementTest {
 		getService().setNumberOfManagementMachines(2);
 	}
 	
-	private File createCloudOverridesFile(final Properties props) throws IOException {
+	private Map<String, Object> createCloudOverrideProperties() {
 		
-		// create in test folder, or in temp when running locally
-		String destFolder = DumpUtils.getTestFolder().getAbsolutePath();
-		if (destFolder == null) {
-			destFolder = new File(System.getProperty("java.io.tmpdir", SGTestHelper.getBuildDir())).getAbsolutePath();
-		}
-		File destFile = new File(destFolder + "/" + getCloudName() + "-cloud.overrides");
-		File overridePropsFile = IOUtils.writePropertiesToFile(props, destFile);
-		return overridePropsFile;
-	}
-	
-	private Properties createCloudOverrideProperties() {
-		
-		Properties overrideProps = new Properties();
-		overrideProps.setProperty("myEnvVariable", '"' + "DEFAULT_OVERRIDES_ENV_VARIABLE" + '"');
-		return overrideProps;
+		Map<String, Object> cloudOverrides = new HashMap<String, Object>();
+		cloudOverrides.put("myEnvVariable", "DEFAULT_OVERRIDES_ENV_VARIABLE");
+
+		return cloudOverrides;
 	}
 	
 	private void assertOverrides(final String puName) {

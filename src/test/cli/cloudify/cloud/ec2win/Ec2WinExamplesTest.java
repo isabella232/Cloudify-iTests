@@ -6,18 +6,16 @@ import java.io.IOException;
 import junit.framework.Assert;
 
 import org.apache.commons.io.FileUtils;
-import org.testng.ITestContext;
 import org.testng.annotations.AfterClass;
-import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+
+import test.cli.cloudify.CommandTestUtils;
+import test.cli.cloudify.cloud.AbstractExamplesTest;
 
 import com.gigaspaces.webuitf.util.LogUtils;
 
 import framework.tools.SGTestHelper;
-
-import test.cli.cloudify.CommandTestUtils;
-import test.cli.cloudify.cloud.AbstractExamplesTest;
 
 public class Ec2WinExamplesTest extends AbstractExamplesTest {
 	
@@ -29,13 +27,13 @@ public class Ec2WinExamplesTest extends AbstractExamplesTest {
 	}
 	
 	@BeforeClass(alwaysRun = true)
-	protected void bootstrap(final ITestContext testContext) {
+	protected void bootstrap() throws Exception {
 		try {
 			prepareApplications();
 		} catch (final Exception e) {
 			Assert.fail("Failed preparing windows applications for deployment. Reason : " + e.getMessage());
 		}
-		super.bootstrap(testContext);
+		super.bootstrap();
 	}
 	
 	private void prepareApplications() throws IOException {
@@ -74,15 +72,10 @@ public class Ec2WinExamplesTest extends AbstractExamplesTest {
 	public void testHelloWorld() throws Exception {
 		super.testHelloWorld();
 	}
-	
-	@AfterMethod(alwaysRun = true)
-	public void cleanUp() {
-		super.uninstallApplicationIfFound();
-		super.scanAgentNodesLeak();
-	}
+
 	
 	@AfterClass(alwaysRun = true)
-	protected void teardown() {
+	protected void teardown() throws Exception {
 		super.teardown();
 	}
 }

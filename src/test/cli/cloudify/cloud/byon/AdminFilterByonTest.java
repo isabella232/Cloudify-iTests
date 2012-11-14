@@ -18,9 +18,7 @@ import org.openspaces.admin.lus.LookupServices;
 import org.openspaces.admin.machine.Machines;
 import org.openspaces.admin.pu.ProcessingUnits;
 import org.openspaces.security.AdminFilter;
-import org.testng.ITestContext;
 import org.testng.annotations.AfterClass;
-import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -50,8 +48,8 @@ public class AdminFilterByonTest extends AbstractByonCloudTest {
 
 
 	@BeforeClass(alwaysRun = true)
-	protected void bootstrap(final ITestContext testContext) {
-		super.bootstrap(testContext);
+	protected void bootstrap() throws Exception {
+		super.bootstrap();
 	}
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 3, enabled = true)
@@ -105,6 +103,8 @@ public class AdminFilterByonTest extends AbstractByonCloudTest {
 							expectedPuAmount, processingUnits.getSize() );
 		
 		uninstallApplicationAndWait( SERVICE_NAME );
+		
+		super.scanForLeakedAgentNodes();
 	}
 
 	private String retrieveLocatorsFromAdmin() {
@@ -130,14 +130,9 @@ public class AdminFilterByonTest extends AbstractByonCloudTest {
 	private Admin createAdmin( String username, String password, String locator ){
         return AdminUtils.createAdmin( username, password, locator, new AdminFilterImpl( username ) );
     }	
-	
-	@AfterMethod(alwaysRun = true)
-	public void cleanup() {
-		super.uninstallApplicationIfFound( SERVICE_NAME );
-	}
 
 	@AfterClass(alwaysRun = true)
-	protected void teardown() {
+	protected void teardown() throws Exception {
 		super.teardown();
 	}
 

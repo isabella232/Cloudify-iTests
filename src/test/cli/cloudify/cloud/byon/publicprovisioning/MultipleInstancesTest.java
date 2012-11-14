@@ -5,9 +5,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.cloudifysource.dsl.utils.ServiceUtils;
 import org.openspaces.admin.pu.ProcessingUnit;
-import org.testng.ITestContext;
 import org.testng.annotations.AfterClass;
-import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -21,8 +19,8 @@ public class MultipleInstancesTest extends AbstractPublicProvisioningByonCloudTe
 	}
 	
 	@BeforeClass(alwaysRun = true)
-	protected void bootstrap(final ITestContext testContext) {
-		super.bootstrap(testContext);
+	protected void bootstrap() throws Exception {
+		super.bootstrap();
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
@@ -37,15 +35,12 @@ public class MultipleInstancesTest extends AbstractPublicProvisioningByonCloudTe
 		assertTrue("groovy instances were installed on 2 different machines", groovy.getInstances()[0].getGridServiceContainer().getMachine().getHostAddress().equals(groovy.getInstances()[1].getGridServiceContainer().getMachine().getHostAddress()));
 		
 		uninstallServiceAndWait(GROOVY);
-	}
-	
-	@AfterMethod(alwaysRun = true)
-	public void cleanup() {
-		super.uninstallServicefFound(GROOVY);
+		
+		super.scanForLeakedAgentNodes();
 	}
 	
 	@AfterClass(alwaysRun = true)
-	protected void teardown() {
+	protected void teardown() throws Exception {
 		super.teardown();
 	}
 }

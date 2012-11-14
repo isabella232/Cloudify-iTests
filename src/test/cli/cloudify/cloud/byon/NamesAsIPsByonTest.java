@@ -5,9 +5,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.springframework.util.StringUtils;
-import org.testng.ITestContext;
 import org.testng.annotations.AfterClass;
-import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -25,8 +23,8 @@ public class NamesAsIPsByonTest extends AbstractByonCloudTest {
 	private static int REQUIRED_NUMBER_OF_MACHINES = 3;
 
 	@BeforeClass(alwaysRun = true)
-	protected void bootstrap(final ITestContext testContext) {
-		super.bootstrap(testContext);
+	protected void bootstrap() throws Exception {
+		super.bootstrap();
 	}
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
@@ -36,16 +34,13 @@ public class NamesAsIPsByonTest extends AbstractByonCloudTest {
 		assertTrue("petclinic.mongod is not up - install failed", admin.getProcessingUnits().waitFor("petclinic.mongod", OPERATION_TIMEOUT, TimeUnit.MILLISECONDS) != null);
 		assertTrue("petclinic.tomcat is not up - install failed", admin.getProcessingUnits().waitFor("petclinic.tomcat", OPERATION_TIMEOUT, TimeUnit.MILLISECONDS) != null);
 		uninstallApplicationAndWait("petclinic");
+		
+		super.scanForLeakedAgentNodes();
 
-	}
-	
-	@AfterMethod(alwaysRun = true)
-	public void cleanup() {
-		super.uninstallApplicationIfFound("petclinic");
-	}
+	}	
 
 	@AfterClass(alwaysRun = true)
-	protected void teardown() {
+	protected void teardown() throws Exception {
 		super.teardown();
 	}
 

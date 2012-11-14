@@ -7,7 +7,6 @@ import java.util.Map;
 import org.cloudifysource.restclient.GSRestClient;
 import org.cloudifysource.restclient.RestException;
 import org.junit.Assert;
-import org.testng.ITestContext;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -16,8 +15,6 @@ import test.cli.cloudify.cloud.NewAbstractCloudTest;
 import test.cli.cloudify.cloud.services.ec2.Ec2CloudService;
 
 import com.j_spaces.kernel.PlatformVersion;
-
-import framework.utils.LogUtils;
 
 
 public class MultipleManagementMachinesTest extends NewAbstractCloudTest {
@@ -30,12 +27,8 @@ public class MultipleManagementMachinesTest extends NewAbstractCloudTest {
 	
 	
 	@BeforeClass
-	public void bootstrap(ITestContext iTestContext) {	
-		try {
-			super.bootstrap(iTestContext);
-		} catch (AssertionError ae) {
-			LogUtils.log(ae.getMessage());
-		}						
+	public void bootstrap() throws Exception {	
+		super.bootstrap();
 	}
 			
 		
@@ -63,10 +56,10 @@ public class MultipleManagementMachinesTest extends NewAbstractCloudTest {
 	}
 
 	@AfterClass
-	public void teardown() {		
+	public void teardown() throws Exception {		
 		super.teardown();					
 	}
-
+	
 	@Override
 	protected String getCloudName() {
 		return "ec2";
@@ -79,7 +72,7 @@ public class MultipleManagementMachinesTest extends NewAbstractCloudTest {
 
 	@Override
 	protected void customizeCloud() throws Exception {
-		service = (Ec2CloudService) cloud;
+		service = (Ec2CloudService) cloudService;
 		service.setNumberOfManagementMachines(2);
 
 	};

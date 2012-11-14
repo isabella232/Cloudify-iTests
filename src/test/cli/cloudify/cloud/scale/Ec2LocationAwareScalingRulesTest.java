@@ -2,22 +2,29 @@ package test.cli.cloudify.cloud.scale;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.io.FileUtils;
+import org.cloudifysource.esc.driver.provisioning.jclouds.DefaultProvisioningDriver;
 import org.openspaces.admin.zone.config.AnyZonesConfig;
 import org.openspaces.admin.zone.config.ZonesConfig;
 import org.testng.Assert;
-import org.testng.ITestContext;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import test.cli.cloudify.cloud.services.ec2.Ec2CloudService;
+
+import framework.tools.SGTestHelper;
+import framework.utils.DeploymentUtils;
+import framework.utils.IOUtils;
 import framework.utils.LogUtils;
 import framework.utils.TestUtils;
 
@@ -27,20 +34,49 @@ public class Ec2LocationAwareScalingRulesTest extends AbstractScalingRulesCloudT
 	private static final String NEWLINE = System.getProperty("line.separator");
 	private static final long STEADY_STATE_DURATION = 1000 * 120; // 120 seconds
 	
+	
 	@Override
-	protected String getCloudName() {
-		return "ec2" + LOCATION_AWARE_POSTFIX;
+	public void beforeBootstrap() throws IOException {
+		
+		// copy custom location aware driver to cloudify-overrides
+		File locationAwareDriver = DeploymentUtils.getArchive("location-aware-driver.jar");
+		File uploadOverrides =
+				new File(getService().getPathToCloudFolder() + "/upload/cloudify-overrides/");
+		if (!uploadOverrides.exists()) {
+			uploadOverrides.mkdir();
+		}
+		File uploadEsmDir = new File(uploadOverrides.getAbsoluteFile() + "/lib/platform/esm");
+		File localEsmFolder = new File(SGTestHelper.getBuildDir() + "/lib/platform/esm");
+		
+		FileUtils.copyFileToDirectory(locationAwareDriver, uploadEsmDir, true);
+		FileUtils.copyFileToDirectory(locationAwareDriver, localEsmFolder, false);		
+		
+		final Map<String, String> propsToReplace = new HashMap<String, String>();
+		final String oldCloudDriverClazz = DefaultProvisioningDriver.class.getName();
+		String newCloudDriverClazz = null;
+		
+		String region = ((Ec2CloudService) getService()).getRegion();
+		
+		if (region.contains("eu")) {
+			newCloudDriverClazz = "org.cloudifysource.test.EUWestLocationAwareDriver";
+		} else {
+			newCloudDriverClazz = "org.cloudifysource.test.USEastLocationAwareDriver";
+		}
+		propsToReplace.put(toClassName(oldCloudDriverClazz),toClassName(newCloudDriverClazz));
+		IOUtils.replaceTextInFile(getService().getPathToCloudGroovy(), propsToReplace);
 	}
 	
-	// bootstrap with the appropriate credentials and cloud driver class
+	@Override
+	protected String getCloudName() {
+		return "ec2";
+	}
+	
 	@BeforeClass(alwaysRun = true)
-	protected void bootstrap(final ITestContext testContext) {
-		super.bootstrap(testContext);
+	protected void bootstrap() throws Exception {
+		super.bootstrap();
 		cloneApplicaitonRecipeAndInjectLocationAware();
 	}
 	
-	// create application to be tested under the build folder
-	// create the executor service
 	@BeforeMethod
 	public void startExecutorService() {	
 		super.startExecutorService();	
@@ -113,6 +149,8 @@ public class Ec2LocationAwareScalingRulesTest extends AbstractScalingRulesCloudT
 		stopThreads();
 		LogUtils.log("uninstalling application");
 		uninstallApplicationAndWait(getApplicationName());
+		
+		super.scanForLeakedAgentNodes();
 	}
 	
 	private Set<ZonesConfig> getProcessingUnitZones(
@@ -129,13 +167,12 @@ public class Ec2LocationAwareScalingRulesTest extends AbstractScalingRulesCloudT
 	
 
 	@AfterMethod(alwaysRun = true)
-	public void cleanup() {
+	public void cleanup() throws IOException, InterruptedException {
 		super.cleanup();
 	}
 	
-	// teardown the cloud
 	@AfterClass(alwaysRun = true)
-	protected void teardown() {
+	protected void teardown() throws Exception {
 		super.teardown();
 	}
 	
@@ -162,13 +199,12 @@ public class Ec2LocationAwareScalingRulesTest extends AbstractScalingRulesCloudT
 	@Override
 	protected String getApplicationPath() {
 		final File applicationPath = new File(super.getApplicationPath());
-		final File newApplicationPath = new File(applicationPath.getParentFile(), applicationPath.getName()+LOCATION_AWARE_POSTFIX);
+		final File newApplicationPath = new File(applicationPath.getParentFile(), applicationPath.getName() + LOCATION_AWARE_POSTFIX);
 		return newApplicationPath.getAbsolutePath();
 	}
 	
-	@Override
-	protected void beforeTeardown() throws Exception {
-		super.uninstallApplicationIfFound("petclinic");
+	public String toClassName(String className) {
+		return "className \""+className+"\"";
 	}
 
 }

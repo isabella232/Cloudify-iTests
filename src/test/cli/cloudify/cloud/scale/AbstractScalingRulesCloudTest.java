@@ -59,7 +59,7 @@ public abstract class AbstractScalingRulesCloudTest extends NewAbstractCloudTest
 		executor = Executors.newScheduledThreadPool(NUMBER_OF_HTTP_GET_THREADS);
 	}
 
-	public void cleanup() {
+	public void cleanup() throws IOException, InterruptedException {
 		
 		stopThreads();
 		
@@ -69,6 +69,9 @@ public abstract class AbstractScalingRulesCloudTest extends NewAbstractCloudTest
 		if (executor != null) {
 			executor.shutdownNow();
 		}
+		
+		super.uninstallApplicationIfFound("petclinic");
+		super.scanForLeakedAgentNodes();
 	}
 	
 	public void testPetclinicSimpleScalingRules() throws Exception {		
@@ -106,6 +109,8 @@ public abstract class AbstractScalingRulesCloudTest extends NewAbstractCloudTest
 			}, 60, TimeUnit.SECONDS);
 			repetitiveNumberOfInstancesHolds(getAbsoluteServiceName(), new AnyZonesConfig(), 1, 500, TimeUnit.SECONDS);
 			uninstallApplicationAndWait(getApplicationName());
+			
+			super.scanForLeakedAgentNodes();
 	}
 
 	protected String getApplicationPath() {
@@ -359,11 +364,6 @@ public abstract class AbstractScalingRulesCloudTest extends NewAbstractCloudTest
 	@Override
 	protected boolean isReusableCloud() {
 		return false;
-	}
-
-	@Override
-	protected void customizeCloud() {
-
 	}
 
 	protected String getApplicationName() {

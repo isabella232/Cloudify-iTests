@@ -426,8 +426,8 @@ public abstract class AbstractCloudService implements CloudService {
 		return noWebServices;
 	}
 
-	public void setNoWebServices(boolean b){
-		noWebServices = b;
+	public void setNoWebServices(boolean noWebServices){
+		this.noWebServices = noWebServices;
 	}
 
 	@Override

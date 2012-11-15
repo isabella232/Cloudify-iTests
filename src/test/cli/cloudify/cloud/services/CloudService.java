@@ -3,6 +3,7 @@ package test.cli.cloudify.cloud.services;
 import java.io.IOException;
 import java.util.Map;
 
+import org.cloudifysource.dsl.cloud.Cloud;
 import org.openspaces.admin.Admin;
 
 /**
@@ -24,6 +25,8 @@ public interface CloudService {
 	String[] getWebuiUrls();
 
 	String getCloudName();
+	
+	Cloud getCloud();
 
 	void injectCloudAuthenticationDetails() throws IOException;
 	

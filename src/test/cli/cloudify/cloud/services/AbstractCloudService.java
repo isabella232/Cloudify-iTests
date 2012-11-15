@@ -40,7 +40,7 @@ public abstract class AbstractCloudService implements CloudService {
 	private int numberOfManagementMachines = 1;
 	private URL[] restAdminUrls;
 	private URL[] webUIUrls;
-	private String machinePrefix = System.getProperty("user.name") + "-";
+	private String machinePrefix;
 	private Map<String, String> additionalPropsToReplace = new HashMap<String,String>();
 	private Cloud cloud;
 	private Map<String,Object> properties = new HashMap<String,Object>();	

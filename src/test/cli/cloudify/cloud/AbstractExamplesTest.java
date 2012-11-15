@@ -127,12 +127,6 @@ public abstract class AbstractExamplesTest extends NewAbstractCloudTest {
 			verifyServices(applicationName, services);
 
 			verifyApplicationUrls(applicationName, true);
-
-			super.uninstallApplicationAndWait(applicationName);
-
-			LogUtils.log("verifing successful uninstallation");
-
-			AssertUtils.assertTrue("the application is running",!WebUtils.isURLAvailable(new URL(getWebuiUrl() + "/travel")));
 		}
 		uninstallApplicationAndWait(applicationName);
 		super.scanForLeakedAgentNodes();

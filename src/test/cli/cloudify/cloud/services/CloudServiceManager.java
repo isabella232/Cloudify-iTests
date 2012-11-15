@@ -15,9 +15,6 @@
  ******************************************************************************/
 package test.cli.cloudify.cloud.services;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import test.cli.cloudify.cloud.services.azure.MicrosoftAzureCloudService;
 import test.cli.cloudify.cloud.services.byon.ByonCloudService;
 import test.cli.cloudify.cloud.services.ec2.Ec2CloudService;
@@ -29,8 +26,6 @@ public class CloudServiceManager {
 
 	private static CloudServiceManager instance = null;
 	
-	private static final Map<String, CloudService> allCloudServices = new HashMap<String, CloudService>();
-
 	private CloudServiceManager() {
 		// Exists only to defeat instantiation.
 	}
@@ -42,23 +37,8 @@ public class CloudServiceManager {
 		return instance;
 	}
 
-	/**
-	 * Gets the service instance of the given cloud and with the specified unique name
-	 * @param cloudName The cloudName of the service
-	 * @param uniqueName The unique name of the service
-	 * @return The matching cached CloudService instance, or a new instance of non was cached.
-	 */
 	public CloudService getCloudService(String cloudName) {
-		CloudService cloud = allCloudServices.get(cloudName);
-		if (cloud == null) {
-			allCloudServices.put(cloudName, createCloudService(cloudName));
-			return allCloudServices.get(cloudName);
-		}
-		return cloud;
-	}
-	
-	public void clearCache() {
-		allCloudServices.clear();
+		return createCloudService(cloudName);
 	}
 
 	private CloudService createCloudService(String cloudName) {

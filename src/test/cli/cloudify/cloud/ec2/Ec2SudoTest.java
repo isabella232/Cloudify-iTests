@@ -42,13 +42,13 @@ public class Ec2SudoTest extends NewAbstractCloudTest {
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT)
 	public void testSudo() throws IOException, InterruptedException {
-		installServiceAndWait(RECIPE_DIR_PATH, "groovy");
+		installServiceAndWait(RECIPE_DIR_PATH, serviceName);
 		String invokeResult = CommandTestUtils.runCommandAndWait("connect " + getRestUrl()
 				+ "; invoke groovy sudo");
 		assertTrue("Could not find expected output ('OK') in custom command response", invokeResult.contains("OK"));
 		assertTrue("Could not find expected output ('marker.txt') in custom command response", invokeResult.contains("marker.txt"));
 		
-		uninstallServiceAndWait("groovy");
+		uninstallServiceAndWait(serviceName);
 		
 		super.scanForLeakedAgentNodes();
 	}

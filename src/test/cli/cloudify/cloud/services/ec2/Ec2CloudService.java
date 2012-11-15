@@ -127,9 +127,6 @@ public class Ec2CloudService extends AbstractCloudService {
 
 		final List<ComputeMetadata> leakedNodes = checkForLeakedNodesWithPrefix(agentPrefix, managerPrefix);
 
-		LogUtils.log("Closing jclouds context for this EC2 cloud service");
-		this.context.close();
-
 		return leakedNodes.isEmpty();
 
 	}

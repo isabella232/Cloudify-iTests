@@ -42,7 +42,7 @@ public class CloudOverridesTest extends AbstractByonCloudTest {
 	}
 	
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
 	public void testInstallService() throws IOException, InterruptedException {
 		
 		File createOverridesFile = null;

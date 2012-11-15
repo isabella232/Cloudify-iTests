@@ -22,7 +22,7 @@ public class TeardownWithoutUninstallTest extends AbstractByonCloudTest {
 		super.bootstrap();
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
 	public void testTeardownWithoutUnInstallApplication() throws Exception {
 
 		ApplicationInstaller travelInstaller = new ApplicationInstaller(getRestUrl(), "travel");

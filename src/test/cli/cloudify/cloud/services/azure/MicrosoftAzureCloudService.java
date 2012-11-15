@@ -23,10 +23,10 @@ import org.cloudifysource.esc.driver.provisioning.azure.model.Role;
 import test.cli.cloudify.cloud.services.AbstractCloudService;
 
 import com.gigaspaces.internal.utils.StringUtils;
-import com.gigaspaces.webuitf.util.LogUtils;
 
 import framework.tools.SGTestHelper;
 import framework.utils.IOUtils;
+import framework.utils.LogUtils;
 
 public class MicrosoftAzureCloudService extends AbstractCloudService {
 

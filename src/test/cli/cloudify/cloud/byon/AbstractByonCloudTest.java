@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import org.cloudifysource.dsl.cloud.CloudTemplate;
 import org.cloudifysource.dsl.internal.CloudifyConstants;
 import org.openspaces.admin.Admin;
 import org.openspaces.admin.AdminFactory;
@@ -61,17 +60,15 @@ public class AbstractByonCloudTest extends NewAbstractCloudTest {
 	}
 
 	private void cleanGSFilesOnAllHosts() {
-		for (CloudTemplate template : getService().getCloud().getTemplates().values()) {
-			String command = "rm -rf " + template.getRemoteDirectory();;
-			String[] hosts = getService().getMachines();			
-			for (String host : hosts) {
-				try {
-					LogUtils.log(SSHUtils.runCommand(host, AbstractTest.OPERATION_TIMEOUT, command, "tgrid", "tgrid"));
-				} catch (AssertionError e) {
-					LogUtils.log("Failed to clean files on host " + host + " .Reason --> " + e.getMessage());
-				}
-			}	
-		}			
+		String command = "rm -rf /tmp/gs-files";
+		String[] hosts = getService().getMachines();			
+		for (String host : hosts) {
+			try {
+				LogUtils.log(SSHUtils.runCommand(host, AbstractTest.OPERATION_TIMEOUT, command, "tgrid", "tgrid"));
+			} catch (AssertionError e) {
+				LogUtils.log("Failed to clean files on host " + host + " .Reason --> " + e.getMessage());
+			}
+		}				
 	}
 	
 	private void killAllJavaOnAllHosts() {

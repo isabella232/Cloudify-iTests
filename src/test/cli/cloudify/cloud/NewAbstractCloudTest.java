@@ -90,7 +90,7 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 		customizeCloud();
 
 		beforeBootstrap();
-		this.cloudService.setMachinePrefix(this.cloudService.getMachinePrefix() + this.getClass().getSimpleName().toLowerCase() + "-");
+		this.cloudService.setMachinePrefix(System.getProperty("user.name") + "-" + this.getClass().getSimpleName().toLowerCase() + "-");
 		this.cloudService.bootstrapCloud();
 
 		afterBootstrap();

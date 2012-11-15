@@ -34,11 +34,6 @@ public class MultipleTemplatesByonCloudService extends ByonCloudService {
 	private Map<String, Integer> numberOfHostsPerTemplate = new HashMap<String, Integer>();
 
 	private static final int NUM_HOSTS_PER_TEMPLATE = 2;
-
-
-	public MultipleTemplatesByonCloudService(String uniqueName) {
-		super(uniqueName);
-	}
 	
 	public void setNumberOfHostsForTemplate(final String templateName, int numberOfHosts) {
 		numberOfHostsPerTemplate.put(templateName, numberOfHosts);

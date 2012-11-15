@@ -36,7 +36,7 @@ import framework.utils.ScriptUtils;
  */
 public class AdminFilterByonTest extends AbstractByonCloudTest {
 
-	private String SERVICE_NAME = "petclinic";
+	private String applicationName = "petclinic";
 	
 	private final int expectedGsmAmount = 0;
 	private final int expectedEsmAmount = 0;
@@ -102,7 +102,7 @@ public class AdminFilterByonTest extends AbstractByonCloudTest {
 		assertEquals( "Number of pu must be expectedPuAmount", 
 							expectedPuAmount, processingUnits.getSize() );
 		
-		uninstallApplicationAndWait( SERVICE_NAME );
+		uninstallApplicationAndWait( applicationName );
 		
 		super.scanForLeakedAgentNodes();
 	}

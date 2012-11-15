@@ -14,7 +14,7 @@ public class MultipleServicesMultipleTemplatesTest extends AbstractPublicProvisi
 	
 	private static final String GROOVY_TWO = "groovy-two";
 	private static final String GROOVY_ONE = "groovy-one";
-	private MultipleTemplatesByonCloudService service = new MultipleTemplatesByonCloudService(this.getClass().getName());
+	private MultipleTemplatesByonCloudService service = new MultipleTemplatesByonCloudService();
 	
 	@BeforeClass(alwaysRun = true)
 	protected void bootstrap() throws Exception {

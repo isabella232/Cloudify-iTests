@@ -19,7 +19,7 @@ import framework.utils.NetworkUtils;
  */
 public class MultipleTemplatesWithNamesAsIPsTest extends MultipleMachineTemplatesTest {
 
-	private MultipleTemplatesByonCloudService service = new MultipleTemplatesByonCloudService(this.getClass().getName());
+	private MultipleTemplatesByonCloudService service = new MultipleTemplatesByonCloudService();
 	
 	@Override
 	@BeforeClass(alwaysRun = true)

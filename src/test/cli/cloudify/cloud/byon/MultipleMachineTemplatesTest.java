@@ -36,7 +36,7 @@ public class MultipleMachineTemplatesTest extends AbstractByonCloudTest {
 	/* holds which template is used by which service */
 	protected Map<String, String> templatePerService = new HashMap<String, String>();
 	
-	private MultipleTemplatesByonCloudService service = new MultipleTemplatesByonCloudService(this.getClass().getName());
+	private MultipleTemplatesByonCloudService service = new MultipleTemplatesByonCloudService();
 	
 	private static final long MY_OPERATION_TIMEOUT = 1 * 60 * 1000;
 

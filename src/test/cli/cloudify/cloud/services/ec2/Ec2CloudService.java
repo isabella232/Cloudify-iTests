@@ -118,6 +118,10 @@ public class Ec2CloudService extends AbstractCloudService {
 	@Override
 	public boolean scanLeakedAgentAndManagementNodes() {
 
+		if (this.context == null) {
+			this.context = createContext();
+		}
+		
 		final String agentPrefix = getCloud().getProvider().getMachineNamePrefix();
 		final String managerPrefix = getCloud().getProvider().getManagementGroup();
 
@@ -125,15 +129,6 @@ public class Ec2CloudService extends AbstractCloudService {
 
 		return leakedNodes.isEmpty();
 
-	}
-	
-	
-	
-	@Override
-	public void bootstrapCloud() throws Exception {
-		LogUtils.log("Creating ec2 ComputeServiceContext");
-		this.context = createContext();
-		super.bootstrapCloud();
 	}
 
 	@Override

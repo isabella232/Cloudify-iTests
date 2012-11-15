@@ -18,6 +18,7 @@ package test.cli.cloudify.cloud.services;
 import java.util.HashMap;
 import java.util.Map;
 
+import test.cli.cloudify.cloud.services.azure.MicrosoftAzureCloudService;
 import test.cli.cloudify.cloud.services.byon.ByonCloudService;
 import test.cli.cloudify.cloud.services.ec2.Ec2CloudService;
 import test.cli.cloudify.cloud.services.ec2.Ec2WinCloudService;
@@ -76,6 +77,8 @@ public class CloudServiceManager {
 			cloudService = new HpCloudService();
 		} else if ("rackspace".equalsIgnoreCase(cloudName)) {
 			cloudService = new RackspaceCloudService();
+		} else if ("azure".equalsIgnoreCase(cloudName)) {
+			cloudService = new MicrosoftAzureCloudService();
 		}
 
 		return cloudService;

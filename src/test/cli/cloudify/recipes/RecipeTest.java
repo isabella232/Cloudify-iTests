@@ -67,7 +67,7 @@ public class RecipeTest extends AbstractLocalCloudTest {
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, groups = "1", enabled = true)
 	public void testHsqldb() throws IOException, InterruptedException{
 		String hsqldbDirPath = recipesDirPath + "/hsqldb";
-		String output = runCommand("test-recipe " + hsqldbDirPath + " " + RecipeTestUtil.DEFAULT_RECIPE_TEST_TIMEOUT + " hsqldb-service.groovy");
+		String output = runCommand("test-recipe --verbose " + hsqldbDirPath + " " + RecipeTestUtil.DEFAULT_RECIPE_TEST_TIMEOUT + " hsqldb-service.groovy");
 		assertTrue("test-recipe failed and runCommand didn't throw an Exception as it should !!", output.contains("Recipe test completed") && output.contains("Server socket opened successfully"));
 	}
 	

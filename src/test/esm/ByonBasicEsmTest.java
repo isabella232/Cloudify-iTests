@@ -18,11 +18,9 @@ import org.testng.annotations.Test;
 
 import test.cli.cloudify.cloud.byon.AbstractByonCloudTest;
 import test.cli.cloudify.cloud.services.byon.ByonCloudService;
-
-import com.gigaspaces.webuitf.util.LogUtils;
-
 import framework.utils.AssertUtils;
 import framework.utils.DeploymentUtils;
+import framework.utils.LogUtils;
 
 
 

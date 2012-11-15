@@ -6,9 +6,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import test.cli.cloudify.cloud.services.byon.MultipleTemplatesByonCloudService;
-
-import com.gigaspaces.webuitf.util.LogUtils;
-
+import framework.utils.LogUtils;
 import framework.utils.NetworkUtils;
 
 

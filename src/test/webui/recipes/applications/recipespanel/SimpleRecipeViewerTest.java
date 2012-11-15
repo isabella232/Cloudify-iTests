@@ -19,8 +19,8 @@ import com.gigaspaces.webuitf.topology.recipes.RecipesViewPanel;
 import com.gigaspaces.webuitf.topology.recipes.selectionpanel.RecipeFileNode;
 import com.gigaspaces.webuitf.topology.recipes.selectionpanel.RecipeFolderNode;
 import com.gigaspaces.webuitf.topology.recipes.selectionpanel.RecipesSelectionPanel;
-import com.gigaspaces.webuitf.util.LogUtils;
 
+import framework.utils.LogUtils;
 import framework.utils.ScriptUtils;
 
 public class SimpleRecipeViewerTest extends AbstractSeleniumApplicationRecipeTest {

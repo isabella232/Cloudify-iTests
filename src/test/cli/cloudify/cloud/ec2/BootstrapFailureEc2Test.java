@@ -13,13 +13,11 @@ import org.testng.annotations.Test;
 
 import test.cli.cloudify.cloud.JcloudsUtils;
 import test.cli.cloudify.cloud.NewAbstractCloudTest;
-
-import com.gigaspaces.webuitf.util.LogUtils;
-
 import framework.tools.SGTestHelper;
 import framework.utils.AssertUtils;
 import framework.utils.AssertUtils.RepetitiveConditionProvider;
 import framework.utils.IOUtils;
+import framework.utils.LogUtils;
 
 /**
  * This test makes a bootstrap on ec2 fail by changing the JAVA_HOME path to a bad one in the bootstrap-management.sh file.

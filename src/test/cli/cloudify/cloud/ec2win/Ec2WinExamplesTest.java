@@ -12,10 +12,8 @@ import org.testng.annotations.Test;
 
 import test.cli.cloudify.CommandTestUtils;
 import test.cli.cloudify.cloud.AbstractExamplesTest;
-
-import com.gigaspaces.webuitf.util.LogUtils;
-
 import framework.tools.SGTestHelper;
+import framework.utils.LogUtils;
 
 public class Ec2WinExamplesTest extends AbstractExamplesTest {
 	

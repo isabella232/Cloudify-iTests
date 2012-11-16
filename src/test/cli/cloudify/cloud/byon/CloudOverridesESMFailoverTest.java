@@ -35,6 +35,12 @@ public class CloudOverridesESMFailoverTest extends AbstractKillManagementTest {
 	
 	@BeforeClass(alwaysRun = true)
 	protected void bootstrap() throws Exception {
+		service.setNumberOfHostsForTemplate("TEMPLATE_1", 2);
+		service.setNumberOfHostsForTemplate("TEMPLATE_2", 0);
+		service.setNumberOfHostsForTemplate("TEMPLATE_3", 0);
+		// this is for validation purposes, cant have an empty list as host-list in BYON
+		service.addHostToTemplate("192.168.1.1","TEMPLATE_2");
+		service.addHostToTemplate("192.168.1.2", "TEMPLATE_3");
 		super.bootstrap(service);
 	}
 	

@@ -12,6 +12,9 @@ import org.testng.annotations.Test;
 
 import test.cli.cloudify.cloud.NewAbstractCloudTest;
 import framework.tools.SGTestHelper;
+import framework.utils.ApplicationInstaller;
+import framework.utils.LogUtils;
+import framework.utils.ScriptUtils;
 
 public class AzureExamplesTest extends NewAbstractCloudTest {
 	
@@ -40,14 +43,30 @@ public class AzureExamplesTest extends NewAbstractCloudTest {
 		super.teardown();
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 5, enabled = true)
 	public void testTravel() throws IOException, InterruptedException {
-		doSanityTest("travel-azure", "travel");		
+		LogUtils.log("installing application travel on azure");
+		String applicationPath = ScriptUtils.getBuildPath() + "/recipes/apps/travel-azure";
+		ApplicationInstaller applicationInstaller = new ApplicationInstaller(getRestUrl(), "travel");
+		applicationInstaller.setRecipePath(applicationPath);
+		applicationInstaller.setWaitForFinish(true);
+		applicationInstaller.setTimeoutInMinutes(45);
+		applicationInstaller.install();		
+		applicationInstaller.uninstall();
+		super.scanForLeakedAgentNodes();		
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 5, enabled = true)
 	public void testPetclinicSimple() throws IOException, InterruptedException {
-		doSanityTest("petclinic-simple-azure", "petclinic");
+		LogUtils.log("installing application petclinic-simple on azure");
+		String applicationPath = ScriptUtils.getBuildPath() + "/recipes/apps/petclinic-simple-azure";
+		ApplicationInstaller applicationInstaller = new ApplicationInstaller(getRestUrl(), "petclinic");
+		applicationInstaller.setRecipePath(applicationPath);
+		applicationInstaller.setWaitForFinish(true);
+		applicationInstaller.setTimeoutInMinutes(45);
+		applicationInstaller.install();		
+		applicationInstaller.uninstall();
+		super.scanForLeakedAgentNodes();		
 	}
 	
 	@AfterMethod(alwaysRun = true)

@@ -21,7 +21,7 @@ import framework.utils.ScriptUtils;
  * 4. uninstall petclinic-simple and assert successful uninstall.
  * 
  */
-public class RepetativeInstallAndUninstallOnByon extends AbstractByonCloudTest {
+public class RepetativeInstallAndUninstallOnByonTest extends AbstractByonCloudTest {
 
 	private final static int REPETITIONS = 3;
 	

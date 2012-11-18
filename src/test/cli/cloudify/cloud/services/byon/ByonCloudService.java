@@ -22,6 +22,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 
+import test.AbstractTest;
 import test.cli.cloudify.cloud.services.AbstractCloudService;
 
 import com.j_spaces.kernel.PlatformVersion;
@@ -29,6 +30,7 @@ import com.j_spaces.kernel.PlatformVersion;
 import framework.tools.SGTestHelper;
 import framework.utils.IOUtils;
 import framework.utils.LogUtils;
+import framework.utils.SSHUtils;
 
 public class ByonCloudService extends AbstractCloudService {
 
@@ -136,5 +138,46 @@ public class ByonCloudService extends AbstractCloudService {
 	public String getApiKey() {
 		return BYON_CLOUD_PASSWORD;
 	}
+	
+	@Override
+	public void beforeBootstrap() {
+		cleanMachines();
+	}
+	
+	private void cleanMachines() {
+		killAllJavaOnAllHosts();
+		cleanGSFilesOnAllHosts();
+		cleanCloudifyTempDir();
+	}
+	
+	private void cleanCloudifyTempDir() {
+		LogUtils.log(SSHUtils.runCommand(this.getMachines()[0], AbstractTest.OPERATION_TIMEOUT, "rm -rf /export/tgrid/.cloudify/", "tgrid", "tgrid"));
+		
+	}
+
+	private void cleanGSFilesOnAllHosts() {
+		String command = "rm -rf /tmp/gs-files";
+		String[] hosts = this.getMachines();			
+		for (String host : hosts) {
+			try {
+				LogUtils.log(SSHUtils.runCommand(host, AbstractTest.OPERATION_TIMEOUT, command, "tgrid", "tgrid"));
+			} catch (AssertionError e) {
+				LogUtils.log("Failed to clean files on host " + host + " .Reason --> " + e.getMessage());
+			}
+		}				
+	}
+	
+	private void killAllJavaOnAllHosts() {
+		String command = "killall -9 java";
+		String[] hosts = this.getMachines();
+		for (String host : hosts) {
+			try {
+				LogUtils.log(SSHUtils.runCommand(host, AbstractTest.OPERATION_TIMEOUT, command, "tgrid", "tgrid"));
+			} catch (AssertionError e) {
+				LogUtils.log("Failed to kill java processes on host " + host + " .Reason --> " + e.getMessage());
+			}
+		}
+	}
+
 
 }

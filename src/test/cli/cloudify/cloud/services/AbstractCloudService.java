@@ -49,6 +49,9 @@ public abstract class AbstractCloudService implements CloudService {
 	
 	private String cloudUniqueName = this.getClass().getSimpleName();
 
+	@Override
+	public void beforeBootstrap() throws Exception {}
+	
 	public boolean isNoWebServices(){
 		return noWebServices;
 	}

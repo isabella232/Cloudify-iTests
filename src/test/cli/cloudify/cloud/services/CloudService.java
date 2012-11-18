@@ -18,6 +18,12 @@ public interface CloudService {
 
 	void teardownCloud() throws IOException, InterruptedException;
 	
+	/**
+	 * Some clouds need a generic action to be performed before the bootstrapping process.
+	 * @throws Exception
+	 */
+	void beforeBootstrap() throws Exception;
+	
 	void teardownCloud(Admin admin) throws IOException, InterruptedException;
 
 	String[] getRestUrls();

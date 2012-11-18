@@ -157,6 +157,14 @@ public class Ec2CloudService extends AbstractCloudService {
 				getProperties().put("ubuntuImageId", DEFAULT_EU_WEST_UBUNTU_AMI);
 				getProperties().put("hardwareId", "m1.small");
 			}
+		} else {
+			getProperties().put("locationId", "us-east-1");
+			if (!getCloudName().contains("win")) {
+				getProperties().put("linuxImageId", DEFAULT_US_EAST_LINUX_AMI);
+				getProperties().put("ubuntuImageId", DEFAULT_US_EAST_UBUNTU_AMI);
+				getProperties().put("hardwareId", "m1.small");
+			}
+
 		}
 		getProperties().put("keyPair", this.keyPair);
 		getProperties().put("keyFile", this.keyPair + ".pem");

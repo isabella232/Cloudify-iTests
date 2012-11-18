@@ -210,6 +210,8 @@ public abstract class AbstractCloudService implements CloudService {
 		
 		printCloudConfigFile();
 		
+		printPropertiesFile();
+		
 		if(!noWebServices){
 			String output = CommandTestUtils.runCommandAndWait("bootstrap-cloud --verbose " + this.cloudName + "_" + this.cloudUniqueName);			
 			restAdminUrls = extractRestAdminUrls(output, numberOfManagementMachines);
@@ -228,6 +230,10 @@ public abstract class AbstractCloudService implements CloudService {
 		}
 	}
 		
+	private void printPropertiesFile() throws IOException {
+		LogUtils.log(FileUtils.readFileToString(new File(getPathToCloudFolder(), getCloudName() + "-cloud.properties")));
+	}
+
 	private void scanForLeakedAgentAndManagementNodes() {
 		
 		if (cloud == null) {

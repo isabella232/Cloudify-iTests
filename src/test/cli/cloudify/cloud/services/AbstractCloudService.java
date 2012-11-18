@@ -206,6 +206,8 @@ public abstract class AbstractCloudService implements CloudService {
 
 		scanForLeakedAgentAndManagementNodes();
 		
+		beforeBootstrap();
+		
 		printCloudConfigFile();
 		
 		if(!noWebServices){

@@ -72,7 +72,7 @@ public class Ec2CloudService extends AbstractCloudService {
 	}
 	
 	public String getRegion() {
-		return System.getProperty("ec2.region" , "eu");
+		return System.getProperty("ec2.region" , "us-east-1");
 	}
 	
 	public void setRegion(final String region) {

@@ -1,4 +1,4 @@
-package test.cli.cloudify.cloud.byon;
+package test.cli.cloudify.cloud.byon.failover;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
@@ -9,6 +9,7 @@ import org.openspaces.admin.gsm.GridServiceManager;
 import org.openspaces.admin.machine.Machine;
 import org.openspaces.admin.pu.ProcessingUnit;
 
+import test.cli.cloudify.cloud.byon.AbstractByonCloudTest;
 import test.cli.cloudify.cloud.services.byon.ByonCloudService;
 import framework.utils.AssertUtils;
 import framework.utils.AssertUtils.RepetitiveConditionProvider;

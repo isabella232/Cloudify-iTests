@@ -1,4 +1,4 @@
-package test.cli.cloudify.cloud.byon;
+package test.cli.cloudify.cloud.byon.failover;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
@@ -6,13 +6,12 @@ import java.util.concurrent.TimeUnit;
 import org.openspaces.admin.esm.ElasticServiceManager;
 import org.openspaces.admin.machine.Machine;
 import org.testng.annotations.AfterClass;
-import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-public class KillNonElasticServiceManagerMachineTest extends AbstractKillManagementTest {
-
+public class KillElasticServiceManagerMachineTest extends AbstractKillManagementTest {
+	
 	@BeforeClass(alwaysRun = true)
 	protected void bootstrap() throws Exception {
 		super.bootstrap();
@@ -28,12 +27,6 @@ public class KillNonElasticServiceManagerMachineTest extends AbstractKillManagem
 		super.testKillMachine();
 	}
 	
-	@AfterMethod(alwaysRun = true)
-	public void cleanup() throws IOException, InterruptedException {
-		super.uninstallApplicationIfFound("petclinic");
-		super.scanForLeakedAgentNodes();
-	}
-	
 	@AfterClass(alwaysRun = true)
 	protected void teardown() throws Exception {
 		super.teardown();
@@ -47,18 +40,9 @@ public class KillNonElasticServiceManagerMachineTest extends AbstractKillManagem
 	
 	@Override
 	protected Machine getMachineToKill() {
-		
-		Machine result = null;
-		
 		admin.getElasticServiceManagers().waitFor(1, OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
 		ElasticServiceManager elasticServiceManager = admin.getElasticServiceManagers().getManagers()[0];
 		Machine esmMachine = elasticServiceManager.getMachine();
-		Machine[] machines = getGridServiceManagerMachines();
-		for (Machine machine : machines) {
-			if (!esmMachine.equals(machine)) {
-				result = machine;
-			}
-		}
-		return result;
+		return esmMachine;
 	}
 }

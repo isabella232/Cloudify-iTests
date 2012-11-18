@@ -1,4 +1,4 @@
-package test.cli.cloudify.cloud.byon;
+package test.cli.cloudify.cloud.byon.failover;
 
 import java.io.File;
 import java.util.HashMap;

@@ -19,6 +19,7 @@ import org.openqa.selenium.WebDriverBackedSelenium;
 import org.openqa.selenium.chrome.ChromeDriverService;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
+import org.openqa.selenium.remote.Augmenter;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openspaces.admin.pu.DeploymentStatus;
@@ -205,9 +206,17 @@ public abstract class AbstractWebUILocalCloudTest extends AbstractLocalCloudTest
 		if (!isDevMode()) {
 			
 			String suiteName = "webui-" + System.getProperty("selenium.browser");
-			
-			File scrFile = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
-
+	    	String browser = System.getProperty("selenium.browser");
+	    	File scrFile = null;
+	    	
+			if((browser == null) || (!browser.equalsIgnoreCase("Chrome"))){
+				scrFile = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);				
+			}
+			else{
+				WebDriver augmentedDriver = new Augmenter().augment(driver);				
+				scrFile = ((TakesScreenshot)augmentedDriver).getScreenshotAs(OutputType.FILE);				
+			}
+						
 			String buildDir = SGTestHelper.getSGTestRootDir() + "/deploy/local-builds/build_" + PlatformVersion.getBuildNumber();
 
 			String testLogsDir = cls.getName() + "." + testMethod + "()";

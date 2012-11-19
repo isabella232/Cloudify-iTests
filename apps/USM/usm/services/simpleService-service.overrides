@@ -1,0 +1,2 @@
+initService = "simple_init_overriden.groovy"
+urlProp = "simpleOverridenUrl"

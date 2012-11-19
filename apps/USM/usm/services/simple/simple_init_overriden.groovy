@@ -1,0 +1,1 @@
+println "simple service - this is the init event overriden"

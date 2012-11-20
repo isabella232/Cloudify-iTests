@@ -103,11 +103,11 @@ public abstract class RecipeInstaller {
 		
 		if (cloudOverrideProperties != null && !cloudOverrideProperties.isEmpty()) {	
 			File cloudOverridesFile = createTempOverridesFile(cloudOverrideProperties);
-			commandBuilder.append("-cloud-overrides ").append(cloudOverridesFile.getAbsolutePath()).append(" ");
+			commandBuilder.append("-cloud-overrides ").append(cloudOverridesFile.getAbsolutePath().replace("\\", "/")).append(" ");
 		}
 		if (overrideProperties != null && !overrideProperties.isEmpty()) {
 			File serviceOverridesFile = createTempOverridesFile(overrideProperties);
-			commandBuilder.append("-overrides ").append(serviceOverridesFile.getAbsolutePath()).append(" ");
+			commandBuilder.append("-overrides ").append(serviceOverridesFile.getAbsolutePath().replace("\\", "/")).append(" ");
 		}
 		
 		commandBuilder.append(recipePath.replace('\\', '/'));

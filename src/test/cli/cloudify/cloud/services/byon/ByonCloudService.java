@@ -151,12 +151,12 @@ public class ByonCloudService extends AbstractCloudService {
 	}
 	
 	private void cleanCloudifyTempDir() {
-		LogUtils.log(SSHUtils.runCommand(this.getMachines()[0], AbstractTest.OPERATION_TIMEOUT, "rm -rf /export/tgrid/.cloudify/", "tgrid", "tgrid"));
+		LogUtils.log(SSHUtils.runCommand(this.getMachines()[0], AbstractTest.OPERATION_TIMEOUT, "sudo rm -rf /export/tgrid/.cloudify/", "tgrid", "tgrid"));
 		
 	}
 
 	private void cleanGSFilesOnAllHosts() {
-		String command = "rm -rf /tmp/gs-files";
+		String command = "sudo rm -rf /tmp/gs-files";
 		String[] hosts = this.getMachines();			
 		for (String host : hosts) {
 			try {
@@ -168,7 +168,7 @@ public class ByonCloudService extends AbstractCloudService {
 	}
 	
 	private void killAllJavaOnAllHosts() {
-		String command = "killall -9 java";
+		String command = "sudo killall -9 java";
 		String[] hosts = this.getMachines();
 		for (String host : hosts) {
 			try {

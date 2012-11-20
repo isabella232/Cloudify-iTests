@@ -8,6 +8,7 @@ import java.util.Map;
 import org.openspaces.admin.gsa.GridServiceAgent;
 import org.openspaces.admin.machine.Machine;
 import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -123,6 +124,12 @@ public class CloudOverridesTest extends AbstractByonCloudTest {
 			}
 		}
 		
+	}
+	
+	@AfterMethod
+	public void cleanup() throws IOException, InterruptedException {
+		super.uninstallApplicationIfFound("simple");
+		super.uninstallServiceIfFound("simple");
 	}
 	
 	@AfterClass(alwaysRun = true)

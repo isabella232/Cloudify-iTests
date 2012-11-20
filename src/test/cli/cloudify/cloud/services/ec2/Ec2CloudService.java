@@ -72,7 +72,7 @@ public class Ec2CloudService extends AbstractCloudService {
 	}
 	
 	public String getRegion() {
-		return System.getProperty("ec2.region" , "us-east-1");
+	return System.getProperty("ec2.region" , "us-east-1");
 	}
 	
 	public void setRegion(final String region) {
@@ -164,7 +164,6 @@ public class Ec2CloudService extends AbstractCloudService {
 				getProperties().put("ubuntuImageId", DEFAULT_US_EAST_UBUNTU_AMI);
 				getProperties().put("hardwareId", "m1.small");
 			}
-
 		}
 		getProperties().put("keyPair", this.keyPair);
 		getProperties().put("keyFile", this.keyPair + ".pem");

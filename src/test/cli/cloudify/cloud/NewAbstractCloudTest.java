@@ -10,6 +10,7 @@ import test.AbstractTestSupport;
 import test.cli.cloudify.CommandTestUtils;
 import test.cli.cloudify.cloud.services.CloudService;
 import test.cli.cloudify.cloud.services.CloudServiceManager;
+import test.cli.cloudify.security.SecuredCloudService;
 
 import com.gigaspaces.internal.utils.StringUtils;
 
@@ -269,8 +270,17 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 		final String restUrl = getRestUrl();
 		String url = null;
 		try {
+			String cloudifyUser = "";
+			String cloudifyPassword = "";
+			
 			url = restUrl + "/service/dump/machines/?fileSizeLimit=50000000";
-			DumpUtils.dumpMachines(restUrl);
+			if (cloudService instanceof SecuredCloudService) {
+				SecuredCloudService securedService = (SecuredCloudService)cloudService;
+				cloudifyUser = securedService.getCloudifyUsername();
+				cloudifyPassword = securedService.getCloudifyPassword();
+			}
+			DumpUtils.dumpMachines(restUrl, cloudifyUser, cloudifyPassword);
+			
 		} catch (final Exception e) {
 			LogUtils.log("Failed to create dump for this url - " + url, e);
 		}

@@ -72,6 +72,10 @@ public class AbstractLocalCloudTest extends AbstractTest {
 	protected static final String DEFAULT_APPLICATION_NAME = CloudifyConstants.DEFAULT_APPLICATION_NAME;
 
 	protected boolean isDevEnv = false;
+	
+	protected boolean isSecured = Boolean.getBoolean("secured.suite");	//defaults to false
+	protected String user = "Amanda";
+	protected String password = "Amanda";
 
 	protected boolean checkIsDevEnv() {
 		if (this.isDevEnv) {
@@ -162,8 +166,18 @@ public class AbstractLocalCloudTest extends AbstractTest {
 						}
 					}
 
-					final ProcessResult bootstrapResult = CommandTestUtils
-							.runCloudifyCommandAndWait("bootstrap-localcloud --verbose -timeout 15");
+					final ProcessResult bootstrapResult;
+					if (isSecured) {
+						//use security
+						bootstrapResult = CommandTestUtils
+								.runCloudifyCommandAndWait("bootstrap-localcloud --verbose -user " + user 
+										+ " -password " + password + " -timeout 15");
+					} else {
+						//don't use security
+						bootstrapResult = CommandTestUtils
+								.runCloudifyCommandAndWait("bootstrap-localcloud --verbose -timeout 15");
+					}
+					
 					LogUtils.log(bootstrapResult.getOutput());
 					Assert.assertEquals(bootstrapResult.getExitcode(), 0,
 							"Bootstrap failed");

@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.Properties;
 
+import org.apache.commons.lang.StringUtils;
+
 import test.cli.cloudify.CommandTestUtils;
 
 public abstract class RecipeInstaller {
@@ -16,6 +18,10 @@ public abstract class RecipeInstaller {
 	private long timeoutInMinutes;
 	private boolean waitForFinish = true;
 	private boolean expectToFail = false;
+	private String cloudifyUsername;
+	private String cloudifyPassword;
+	private String authGroups;
+	
 
 	public RecipeInstaller(final String restUrl, int timeout) {
 		this.restUrl = restUrl;
@@ -78,6 +84,22 @@ public abstract class RecipeInstaller {
 		this.expectToFail = expectToFail;
 	}
 	
+	public void setCloudifyUsername(String cloudifyUsername) {
+		this.cloudifyUsername = cloudifyUsername;
+	}
+
+	public void setCloudifyPassword(String cloudifyPassword) {
+		this.cloudifyPassword = cloudifyPassword;
+	}
+	
+	public String getAuthGroups() {
+		return authGroups;
+	}
+
+	public void setAuthGroups(String authGroups) {
+		this.authGroups = authGroups;
+	}
+
 	public abstract String getInstallCommand();
 	
 	public abstract String getUninstallCommand();
@@ -94,13 +116,23 @@ public abstract class RecipeInstaller {
 			throw new IllegalStateException("recipe path cannot be null. please use setRecipePath before calling install");
 		}
 		
-		final String connectCommand = "connect " + restUrl + ";";
+		StringBuilder connectCommandBuilder = new StringBuilder()
+		.append("connect").append(" ");
+		if (StringUtils.isNotBlank(cloudifyUsername) && StringUtils.isNotBlank(cloudifyPassword)){
+			//TODO : More validations
+			connectCommandBuilder.append("-user").append(" ")
+			.append(cloudifyUsername).append(" ")
+			.append("-pwd").append(" ")
+			.append(cloudifyPassword).append(" ");
+		}
+		connectCommandBuilder.append(restUrl).append(";");
+		
 		StringBuilder commandBuilder = new StringBuilder()
 				.append(getInstallCommand()).append(" ")
 				.append("--verbose").append(" ")
 				.append("-timeout").append(" ")
 				.append(timeoutInMinutes).append(" ");
-		
+
 		if (cloudOverrideProperties != null && !cloudOverrideProperties.isEmpty()) {	
 			File cloudOverridesFile = createTempOverridesFile(cloudOverrideProperties);
 			commandBuilder.append("-cloud-overrides ").append(cloudOverridesFile.getAbsolutePath().replace("\\", "/")).append(" ");
@@ -112,6 +144,7 @@ public abstract class RecipeInstaller {
 		
 		commandBuilder.append(recipePath.replace('\\', '/'));
 		final String installCommand = commandBuilder.toString();
+		final String connectCommand = connectCommandBuilder.toString();
 		if (expectToFail) {
 			CommandTestUtils.runCommandExpectedFail(connectCommand + installCommand);
 			return;
@@ -128,12 +161,23 @@ public abstract class RecipeInstaller {
 		String url = null;
 		try {
 			url = restUrl + "/service/dump/machines/?fileSizeLimit=50000000";
-			DumpUtils.dumpMachines(restUrl);
+			DumpUtils.dumpMachines(restUrl, cloudifyUsername, cloudifyPassword);
 		} catch (final Exception e) {
 			LogUtils.log("Failed to create dump for this url - " + url, e);
 		}
 
-		final String connectCommand = "connect " + restUrl + ";";
+		//final String connectCommand = "connect " + restUrl + ";";
+		StringBuilder connectCommandBuilder = new StringBuilder()
+		.append("connect").append(" ");
+		if (StringUtils.isNotBlank(cloudifyUsername) && StringUtils.isNotBlank(cloudifyPassword)){
+			//TODO : More validations
+			connectCommandBuilder.append("-user").append(" ")
+			.append(cloudifyUsername).append(" ")
+			.append("-pwd").append(" ")
+			.append(cloudifyPassword).append(" ");
+		}
+		connectCommandBuilder.append(restUrl).append(";");
+		
 		final String installCommand = new StringBuilder()
 				.append(getUninstallCommand()).append(" ")
 				.append("--verbose").append(" ")
@@ -141,7 +185,7 @@ public abstract class RecipeInstaller {
 				.append(timeoutInMinutes).append(" ")
 				.append(getRecipeName())
 				.toString();
-		String output = CommandTestUtils.runCommandAndWait(connectCommand + installCommand);
+		String output = CommandTestUtils.runCommandAndWait(connectCommandBuilder.toString() + installCommand);
 		assertUninstall(output);
 	}
 	

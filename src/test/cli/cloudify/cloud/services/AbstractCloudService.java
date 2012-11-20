@@ -11,12 +11,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
 import org.cloudifysource.dsl.cloud.Cloud;
 import org.cloudifysource.dsl.internal.ServiceReader;
 import org.openspaces.admin.Admin;
 
 import test.cli.cloudify.CloudTestUtils;
 import test.cli.cloudify.CommandTestUtils;
+import test.cli.cloudify.security.SecuredCloudService;
 import framework.tools.SGTestHelper;
 import framework.utils.AssertUtils;
 import framework.utils.AssertUtils.RepetitiveConditionProvider;
@@ -165,14 +167,36 @@ public abstract class AbstractCloudService implements CloudService {
 			String[] restUrls = getRestUrls();
 			String url = null;
 			if (restUrls != null) {
+				
+				String cloudifyUser = "";
+				String cloudifyPassword = "";
+				
+				if (this instanceof SecuredCloudService) {
+					SecuredCloudService securedService = (SecuredCloudService)this;
+					cloudifyUser = securedService.getCloudifyUsername();
+					cloudifyPassword = securedService.getCloudifyPassword();
+				}
+				
 				try {
 					url = restUrls[0] + "/service/dump/machines/?fileSizeLimit=50000000";
-					DumpUtils.dumpMachines(restUrls[0]);
+					DumpUtils.dumpMachines(restUrls[0], cloudifyUser, cloudifyPassword);
 				} catch (Exception e) {
 					LogUtils.log("Failed to create dump for this url - " + url, e);
 				}
-				String connect = "connect " + restUrls[0];
-				CommandTestUtils.runCommandAndWait(connect + ";" + "teardown-cloud --verbose " + this.cloudName + "_" + this.cloudUniqueName);
+				
+				StringBuilder commandBuilder = new StringBuilder("connect").append(" ");
+				if (StringUtils.isNotBlank(cloudifyUser) && StringUtils.isNotBlank(cloudifyPassword)) {
+					commandBuilder.append("-user").append(" ")
+					.append(cloudifyUser).append(" ")
+					.append("-pwd").append(" ")
+					.append(cloudifyPassword).append(" ");
+				}
+				commandBuilder.append(restUrls[0]).append(";")
+				.append("teardown-cloud").append(" ")
+				.append("--verbose").append(" ");
+				
+				commandBuilder.append(this.cloudName + "_" + this.cloudUniqueName);
+				CommandTestUtils.runCommandAndWait(commandBuilder.toString());
 			}
 		} 
 		finally {
@@ -213,7 +237,33 @@ public abstract class AbstractCloudService implements CloudService {
 		printPropertiesFile();
 		
 		if(!noWebServices){
-			String output = CommandTestUtils.runCommandAndWait("bootstrap-cloud --verbose " + this.cloudName + "_" + this.cloudUniqueName);			
+			String output;
+			StringBuilder commandBuilder = new StringBuilder()
+			.append("bootstrap-cloud").append(" ")
+			.append("--verbose").append(" ");
+			
+			if (this instanceof SecuredCloudService) {
+				SecuredCloudService securedService = (SecuredCloudService)this;
+				String cloudifyUser = securedService.getCloudifyUsername();
+				String cloudifyPassword = securedService.getCloudifyPassword();
+				String securityFile = securedService.getSecurityConfigFile();
+				
+				if (StringUtils.isNotBlank(cloudifyUser) && StringUtils.isNotBlank(cloudifyPassword)) {
+					commandBuilder.append("-user").append(" ")
+					.append(cloudifyUser).append(" ")
+					.append("-pwd").append(" ")
+					.append(cloudifyPassword).append(" ");
+				}
+				
+				if (StringUtils.isNotBlank(securityFile)) {
+					commandBuilder.append("-security").append(" ")
+					.append(securityFile.replace('\\', '/')).append(" ");
+				}
+			}
+			
+			commandBuilder.append(this.cloudName + "_" + this.cloudUniqueName);
+			output = CommandTestUtils.runCommandAndWait(commandBuilder.toString());
+			
 			restAdminUrls = extractRestAdminUrls(output, numberOfManagementMachines);
 			this.webUIUrls = extractWebuiUrls(output, numberOfManagementMachines);
 			assertBootstrapServicesAreAvailable();

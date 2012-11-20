@@ -12,6 +12,7 @@ import java.util.Map;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
 import org.cloudifysource.restclient.GSRestClient;
 import org.openspaces.admin.Admin;
 import org.openspaces.admin.dump.DumpResult;
@@ -66,9 +67,20 @@ public class DumpUtils {
     }
 
     public static void dumpMachines(String restUrl) throws Exception {
+    	dumpMachines(restUrl, "", "");
+    }
+    
+    public static void dumpMachines(String restUrl, String username, String password) throws Exception {
     	LogUtils.log("Downloading machines dump");
     	String machinesDumpUri = "/service/dump/machines/";
-    	GSRestClient rc = new GSRestClient("", "", new URL(restUrl), PlatformVersion.getVersionNumber());
+    	if (StringUtils.isBlank(username)) {
+    		username = "";
+    	}
+    	if (StringUtils.isBlank(password)) {
+    		password = "";
+    	}
+    	
+    	GSRestClient rc = new GSRestClient(username, password, new URL(restUrl), PlatformVersion.getVersionNumber());
     	DateFormat date1 = new SimpleDateFormat("dd-MM-yyyy");
     	DateFormat hour = new SimpleDateFormat("HH-mm-ss-SSS");
     	Map<String, Object> resultsMap = (Map) rc.get(machinesDumpUri);

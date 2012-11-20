@@ -48,7 +48,7 @@ public class ApplicationInstaller extends RecipeInstaller {
 	
 	public void uninstallIfFound() {	
 		if (getRestUrl() != null) {
-			String command = "connect " + getRestUrl() + ";list-application";
+			String command = "connect " + getRestUrl() + ";list-applications";
 			String output;
 			try {
 				output = CommandTestUtils.runCommandAndWait(command);

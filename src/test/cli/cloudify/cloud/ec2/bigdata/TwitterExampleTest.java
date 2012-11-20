@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Map;
 
+import org.apache.commons.io.FileUtils;
 import org.cloudifysource.dsl.internal.ServiceReader;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.type.TypeFactory;
@@ -23,7 +24,6 @@ import com.sun.jersey.api.client.config.DefaultClientConfig;
 
 import framework.tools.SGTestHelper;
 import framework.utils.AssertUtils;
-import framework.utils.IOUtils;
 import framework.utils.LogUtils;
 import framework.utils.SSHUtils;
 import framework.utils.ScriptUtils;
@@ -118,9 +118,8 @@ public class TwitterExampleTest extends NewAbstractCloudTest{
 
 		/* copy premium license to cloudify-overrides in order to run xap pu's */
 		String overridesFolder = getService().getPathToCloudFolder() + "/upload/cloudify-overrides";
-		File cloudifyPremiumLicenseFileBuildPath = new File(SGTestHelper.getBuildDir() + "/gslicense.xml");
-		File cloudifyPremiumLicenseFileOverridesPath = new File(overridesFolder + "/gslicense.xml");
-		IOUtils.replaceFile(cloudifyPremiumLicenseFileBuildPath, cloudifyPremiumLicenseFileOverridesPath);
+		File cloudifyPremiumLicenseFile = new File(SGTestHelper.getSGTestRootDir() + "/config/gslicense.xml");
+		FileUtils.copyFileToDirectory(cloudifyPremiumLicenseFile, new File(overridesFolder));
 	}
 
 	@Override

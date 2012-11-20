@@ -33,6 +33,15 @@ public class StockDemoApplicationTest extends NewAbstractCloudTest {
 		doSanityTest("stockdemo", "stockdemo", APPLICATION_INSTALL_TIMEOUT_IN_MINUTES);
 	}
 	
+	@Override
+	protected void beforeBootstrap() throws Exception {
+
+		/* copy premium license to cloudify-overrides in order to run xap pu's */
+		String overridesFolder = getService().getPathToCloudFolder() + "/upload/cloudify-overrides";
+		File cloudifyPremiumLicenseFile = new File(SGTestHelper.getSGTestRootDir() + "/config/gslicense.xml");
+		FileUtils.copyFileToDirectory(cloudifyPremiumLicenseFile, new File(overridesFolder));
+	}
+	
 	@AfterClass(alwaysRun = true)
 	protected void teardown() throws Exception {
 		super.teardown();

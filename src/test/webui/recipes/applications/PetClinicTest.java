@@ -209,7 +209,8 @@ public class PetClinicTest extends AbstractSeleniumApplicationRecipeTest {
 			assertTrue(name.equals(applicationNodeMongos.getName()) ||name.equals(applicationNodeApacheLB.getName()));
 		}
 		
-		assertTrue(mongosConnectors.size() == 2);
+		takeScreenShot(this.getClass(), "petClinicDemoTest", "petClinicDemoTest");
+		assertEquals(2, mongosConnectors.size());
 		for (Connector c : mongosConnectors) {
 			String name = c.getTarget().getName();
 			assertTrue(name.equals(applicationNodeMongod.getName()) ||name.equals(applicationNodeMongoConfig.getName()));

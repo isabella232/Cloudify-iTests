@@ -149,6 +149,7 @@
 
 
 	<build>
+		<testSourceDirectory>src/main/java</testSourceDirectory>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -162,6 +163,86 @@
 						<exclude>**/*Xen*.*</exclude>
 					</excludes>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.12.4</version>
+				<configuration>
+					<classpathDependencyExcludes>
+						<classpathDependencyExcludes>com.gigaspaces.quality.sgtest.apps.security:processor</classpathDependencyExcludes>
+						<classpathDependencyExcludes>com.gigaspaces.quality.sgtest.apps.archives:customSecurityProcessor</classpathDependencyExcludes>
+						<classpathDependencyScopeExclude>runtime</classpathDependencyScopeExclude>
+					</classpathDependencyExcludes>
+					<argLine>-Xmx2048m -XX:MaxPermSize=512m</argLine>
+					<includes>
+						<include>${includes}</include>
+					</includes>
+					<excludes>
+						<exclude>${excludes}</exclude>
+					</excludes>
+					<disableXmlReport>true</disableXmlReport>
+					<reportsDirectory>${sgtest.summary.dir}</reportsDirectory>
+					<reportFormat>xml</reportFormat>
+					<properties>
+						<property>
+							<name>configfailurepolicy</name>
+							<value>continue</value>
+						</property>
+						<property>
+							<name>suitename</name>
+							<value>${sgtest.suiteName}${sgtest.suiteId}</value>
+						</property>
+						<property>
+							<name>testname</name>
+							<value>${sgtest.suiteName}${sgtest.suiteId}</value>
+						</property>
+						<property>
+							<name>outputDir</name>
+							<value>${sgtest.summary.dir}</value>
+						</property>
+						<property>
+							<name>listener</name>
+							<value>framework.testng.SGTestNGListener,framework.testng.SGTestNgSuiteSplitter,framework.testng.report.TestNgReporterImpl</value>
+						</property>
+					</properties>
+					<systemProperties>
+						<sgtest.suiteId>${sgtest.suiteId}</sgtest.suiteId>
+						<sgtest.numOfSuites>${sgtest.numOfSuites}</sgtest.numOfSuites>
+						<selenium.browser>${selenium.browser}</selenium.browser>
+						<org.apache.commons.logging.Log>org.apache.commons.logging.impl.Jdk14Logger</org.apache.commons.logging.Log>
+						<com.gs.logging.level.config>true</com.gs.logging.level.config>
+						<java.util.logging.config.file>${basedir}/logging/sgtest_logging.properties</java.util.logging.config.file>
+						<sgtest.buildFolder>${sgtest.buildFolder}</sgtest.buildFolder>
+						<sgtest.url>http://192.168.9.121:8087/sgtest3.0-cloudify/</sgtest.url>
+						<com.gs.work>${com.gs.work}</com.gs.work>
+						<com.gs.deploy>${com.gs.deploy}"</com.gs.deploy>
+						<ec2.region>${ec2.region}</ec2.region>
+						<ipList>${ipList}</ipList>
+						<supported-clouds>${supported-clouds}</supported-clouds>
+					</systemProperties>
+					<testFailureIgnore>true</testFailureIgnore>
+					<detail>true</detail>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.3</version>
+				<configuration>
+					<descriptors>
+						<descriptor>src/main/assembly/assembly.xml</descriptor>
+					</descriptors>
+					<appendAssemblyId>false</appendAssemblyId>
+				</configuration>
+				<executions>
+					<execution>
+						<id>make-assembly</id> <!-- this is used for inheritance merges -->
+						<phase>package</phase> <!-- bind to the packaging phase -->
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>

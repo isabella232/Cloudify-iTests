@@ -161,7 +161,8 @@ public class GsmTestUtils {
 			}};
 			
 		admin.getMachines().getMachineRemoved().add(eventListener);
-		try {
+		//TODO: Boris shold change these tests CLOUDIFY-1229
+		/*try {
 			if (hardShutdown) {
 			    XenUtils.hardShutdownMachineByIpAddress(xenConfig, ipAdresss, timeoutInMilliseconds, TimeUnit.MILLISECONDS);
 			}
@@ -174,7 +175,7 @@ public class GsmTestUtils {
 		}
 		finally {
 			admin.getMachines().getMachineRemoved().remove(eventListener);
-		}
+		}*/
 	}
 
 	public static void writeData(final ProcessingUnit pu, final int numToAdd) {

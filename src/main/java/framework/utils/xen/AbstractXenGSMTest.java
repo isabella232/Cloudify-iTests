@@ -246,7 +246,7 @@ public class AbstractXenGSMTest extends AbstractTest {
             for (String label : machineLabels) {
                 if (label.startsWith(xenServerMasterMachineLabelPrefix) &&
                     !label.equals(getXenServerMasterMachineNameLabel())) {
-                	XenUtils.hardShutdownMachinesByLabelStartsWith(machineProvisioningConfig, label, 5*60, TimeUnit.SECONDS);
+                	//XenUtils.hardShutdownMachinesByLabelStartsWith(machineProvisioningConfig, label, 5*60, TimeUnit.SECONDS);
                 }
             }
         
@@ -448,7 +448,7 @@ public class AbstractXenGSMTest extends AbstractTest {
             newMachineProvisioningConfig.setMemoryCapacityPerMachineInMB(memoryCapacityInMB);
         }
         
-        try {
+        /*try {CLOUDIFY-1229
         	ExactZonesConfig zones = new ExactZonesConfigurer().addZones(newMachineProvisioningConfig.getGridServiceAgentZones().getZones()).create();
             newGsa = XenUtils.startMachine(newMachineProvisioningConfig, admin, zones, machineEventListener, agentEventListener, duration, unit);
         } catch (ElasticMachineProvisioningException e) {
@@ -459,7 +459,7 @@ public class AbstractXenGSMTest extends AbstractTest {
             AssertFail("Failed starting new VM",e);
         } catch (TimeoutException e) {
             AssertFail("Failed starting new VM",e);
-        }
+        }*/
         
         return newGsa;
     }
@@ -522,7 +522,7 @@ public class AbstractXenGSMTest extends AbstractTest {
         String label = machineProvisioningConfig.getStartMachineNameLabel();
         try {
             while (XenUtils.getNumberOfMachinesByLabel(machineProvisioningConfig, label) > 0) {
-                XenUtils.hardShutdownMachinesByLabelStartsWith(machineProvisioningConfig, label, 60*10, TimeUnit.SECONDS);
+                //XenUtils.hardShutdownMachinesByLabelStartsWith(machineProvisioningConfig, label, 60*10, TimeUnit.SECONDS);CLOUDIFY-1229
                 Thread.sleep(1000);
             }
         } 
@@ -533,9 +533,9 @@ public class AbstractXenGSMTest extends AbstractTest {
         catch (ElasticMachineProvisioningException e) {
         	LogUtils.log("Failed removing VMs with label: " + label, e);
         } 
-        catch (TimeoutException e) {
+       /* catch (TimeoutException e) { CLOUDIFY-1229
         	LogUtils.log("Failed removing VMs with label: " + label, e);
-		} 
+		} */
     }
 
     public void repetitiveAssertNumberOfGSAsAdded(int expected, long timeoutMilliseconds) {

@@ -1,4 +1,4 @@
-package test.usm.xen;
+/*package test.usm.xen;
 
 import org.apache.cassandra.thrift.Column;
 import org.apache.cassandra.thrift.ConsistencyLevel;
@@ -23,7 +23,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-/**
+*//**
  * This test deploys a ring of two cassandra instances using an
  * elastic processing unit running the USM with a cassandra service DSL.
  * 
@@ -36,9 +36,9 @@ import java.util.List;
  * @author itaif - ESM integration
  * @author dank - Cassandra client integration
  *
- */
+ *//*
 public class CassandraXenContainerFailoverTest extends AbstractXenGSMTest {
-
+//TODO: Boris shold change these tests CLOUDIFY-1229
 	static final String CASSANDRA = "/src/main/resources/apps/USM/usm/cassandra";
 	
 	// total number of CPU cores allocated to the cassandra cluster
@@ -170,3 +170,4 @@ public class CassandraXenContainerFailoverTest extends AbstractXenGSMTest {
         SSHUtils.runCommand(admin.getMachines().getMachines()[0].getHostAddress(), OPERATION_TIMEOUT, command, SSH_USERNAME, SSH_PASSWORD);
     }
 }
+*/

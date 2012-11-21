@@ -153,25 +153,10 @@
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.5.1</version>
-				<configuration>
-					<!-- excluding all xen test as they should be converted to byon -->
-					<excludes>
-						<exclude>**/*xen*.*</exclude>
-						<exclude>**/xen/*.*</exclude>
-						<exclude>**/*Xen*.*</exclude>
-					</excludes>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>2.12.4</version>
 				<configuration>
 					<classpathDependencyExcludes>
-						<classpathDependencyExcludes>com.gigaspaces.quality.sgtest.apps.security:processor</classpathDependencyExcludes>
-						<classpathDependencyExcludes>com.gigaspaces.quality.sgtest.apps.archives:customSecurityProcessor</classpathDependencyExcludes>
 						<classpathDependencyScopeExclude>runtime</classpathDependencyScopeExclude>
 					</classpathDependencyExcludes>
 					<argLine>-Xmx2048m -XX:MaxPermSize=512m</argLine>

@@ -13,7 +13,7 @@ import org.testng.annotations.Test;
 import com.j_spaces.kernel.PlatformVersion;
 
 /**
- * Tests that check REST’s version validation, which is performed for each
+ * Tests that check REST's version validation, which is performed for each
  * request received from the client.
  * 
  * @author yael

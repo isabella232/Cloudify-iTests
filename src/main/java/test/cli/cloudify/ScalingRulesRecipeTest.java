@@ -34,7 +34,7 @@ import framework.utils.LogUtils;
 public class ScalingRulesRecipeTest extends AbstractLocalCloudTest {
 
 	private static final String SERVICE_NAME = "customServiceMonitor";
-	private static final String SERVICE_RELATIVE_PATH = "/apps/cloudify/recipes/" + SERVICE_NAME;
+	private static final String SERVICE_RELATIVE_PATH = "/src/main/resources/apps/cloudify/recipes/" + SERVICE_NAME;
 	
 	private static final String COUNTER_METRIC = "counter";
 	private static final String ABSOLUTE_SERVICE_NAME = ServiceUtils.getAbsolutePUName(DEFAULT_APPLICATION_NAME,SERVICE_NAME);

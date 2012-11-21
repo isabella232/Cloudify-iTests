@@ -22,7 +22,7 @@ import test.cli.cloudify.CommandTestUtils;
 
 public class RecipeInheritenceTest extends AbstractLocalCloudTest {
 
-    private String tomcatParentPath = CommandTestUtils.getPath("apps/USM/usm/tomcatHttpLivenessDetectorPlugin");
+    private String tomcatParentPath = CommandTestUtils.getPath("src/main/resources/apps/USM/usm/tomcatHttpLivenessDetectorPlugin");
     private Application app;
 
     @Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)

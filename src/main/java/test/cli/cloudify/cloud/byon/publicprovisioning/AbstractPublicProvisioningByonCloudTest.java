@@ -16,8 +16,8 @@ public class AbstractPublicProvisioningByonCloudTest extends AbstractByonCloudTe
 	
 	protected static final String DEFAULT_TEMPLATE_NAME = "SMALL_LINUX";
 	
-	private static final String PUBLIC_MANUAL_PROVISIONING_ORIGINAL_GROOVY_PATH = CommandTestUtils.getPath("/apps/USM/usm/groovy-public-provisioning");
-	private static final String PUBLIC_AUTOMATIC_PROVISIONING_ORIGINAL_GROOVY_PATH = CommandTestUtils.getPath("/apps/USM/usm/customServiceMonitor-public-provisioning");
+	private static final String PUBLIC_MANUAL_PROVISIONING_ORIGINAL_GROOVY_PATH = CommandTestUtils.getPath("/src/main/resources/apps/USM/usm/groovy-public-provisioning");
+	private static final String PUBLIC_AUTOMATIC_PROVISIONING_ORIGINAL_GROOVY_PATH = CommandTestUtils.getPath("/src/main/resources/apps/USM/usm/customServiceMonitor-public-provisioning");
 		
 	private static final String BUILD_SERVICES_FOLDER = SGTestHelper.getBuildDir() + "/recipes/services";
 	

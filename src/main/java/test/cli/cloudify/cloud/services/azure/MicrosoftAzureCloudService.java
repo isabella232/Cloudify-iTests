@@ -36,7 +36,7 @@ public class MicrosoftAzureCloudService extends AbstractCloudService {
 
 	private final MicrosoftAzureRestClient azureClient;
 	private static final String AZURE_SUBSCRIPTION_ID = "3226dcf0-3130-42f3-b68f-a2019c09431e";
-	private static final String PATH_TO_PFX = SGTestHelper.getSGTestRootDir() + "/apps/cloudify/cloud/azure/azure-cert.pfx";
+	private static final String PATH_TO_PFX = SGTestHelper.getSGTestRootDir() + "/src/main/resources/apps/cloudify/cloud/azure/azure-cert.pfx";
 	private static final String PFX_PASSWORD = "1408Rokk";
 
 	private static final String ADDRESS_SPACE = "10.4.0.0/16";
@@ -204,7 +204,7 @@ public class MicrosoftAzureCloudService extends AbstractCloudService {
 		String cloudServiceFullPath = this.getPathToCloudFolder();
 
 		File originalCloudDriverConfigFile = new File(cloudServiceFullPath, "azure-cloud.groovy");
-		File customCloudDriverConfigFile = new File(SGTestHelper.getSGTestRootDir() + "/apps/cloudify/cloud/azure", "azure-cloud.groovy");
+		File customCloudDriverConfigFile = new File(SGTestHelper.getSGTestRootDir() + "/src/main/resources/apps/cloudify/cloud/azure", "azure-cloud.groovy");
 
 		Map<File, File> filesToReplace = new HashMap<File, File>();
 		filesToReplace.put(originalCloudDriverConfigFile, customCloudDriverConfigFile);
@@ -217,7 +217,7 @@ public class MicrosoftAzureCloudService extends AbstractCloudService {
 	}
 
 	private void copyPrivateKeyToUploadFolder() throws IOException {
-		File pfxFilePath = new File(SGTestHelper.getSGTestRootDir() + "/apps/cloudify/cloud/azure/azure-cert.pfx"); 	
+		File pfxFilePath = new File(SGTestHelper.getSGTestRootDir() + "/src/main/resources/apps/cloudify/cloud/azure/azure-cert.pfx"); 	
 		File uploadDir = new File(getPathToCloudFolder() + "/upload");
 		FileUtils.copyFileToDirectory(pfxFilePath, uploadDir);
 	}

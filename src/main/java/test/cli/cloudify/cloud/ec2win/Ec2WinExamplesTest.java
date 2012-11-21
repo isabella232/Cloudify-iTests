@@ -17,7 +17,7 @@ import framework.utils.LogUtils;
 
 public class Ec2WinExamplesTest extends AbstractExamplesTest {
 	
-	private static final String WINDOWS_APPS_PATH = CommandTestUtils.getPath("apps/USM/usm/applications/windows");
+	private static final String WINDOWS_APPS_PATH = CommandTestUtils.getPath("src/main/resources/apps/USM/usm/applications/windows");
 	
 	@Override
 	protected String getCloudName() {

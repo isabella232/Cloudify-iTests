@@ -62,6 +62,6 @@ public class InstallTimoutTest extends AbstractLocalCloudTest{
 	}
 	
 	private String getUsmApplicationPath(String dirOrFilename) {
-		return CommandTestUtils.getPath("apps/USM/usm/applications/" + dirOrFilename);
+		return CommandTestUtils.getPath("src/main/resources/apps/USM/usm/applications/" + dirOrFilename);
 	}
 }

@@ -28,7 +28,7 @@ public class SimpleDependencyTest extends AbstractLocalCloudTest{
 	public void dependencyTest() throws IOException, InterruptedException{
 
 		String ApplicationName = "simpleDependency";
-		String path = CommandTestUtils.getPath("apps/cloudify/recipes/" + ApplicationName);
+		String path = CommandTestUtils.getPath("src/main/resources/apps/cloudify/recipes/" + ApplicationName);
 		final AtomicInteger firstStarted = new AtomicInteger();
 		final AtomicInteger secondStarted = new AtomicInteger();
 		final AtomicBoolean testFailed = new AtomicBoolean();

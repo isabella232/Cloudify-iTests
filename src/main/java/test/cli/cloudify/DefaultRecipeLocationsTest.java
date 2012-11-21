@@ -33,7 +33,7 @@ public class DefaultRecipeLocationsTest extends AbstractLocalCloudTest {
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
 	public void testInstallApplicationWithDefaultExtend() throws IOException, InterruptedException {
 		
-		String applicationPath = CommandTestUtils.getPath("apps/USM/usm/applications/petclinic-simple-default-extend");
+		String applicationPath = CommandTestUtils.getPath("src/main/resources/apps/USM/usm/applications/petclinic-simple-default-extend");
 		
 		CommandTestUtils.runCommandAndWait("connect " + restUrl + 
 				";install-application --verbose " + applicationPath );
@@ -47,7 +47,7 @@ public class DefaultRecipeLocationsTest extends AbstractLocalCloudTest {
 		// first copy the application to the current directory
 		File currentDir = new File(".");
 		// just take some application that is not in the official build
-		String applicationPath = CommandTestUtils.getPath("apps/USM/usm/applications/simple");
+		String applicationPath = CommandTestUtils.getPath("src/main/resources/apps/USM/usm/applications/simple");
 		FileUtils.copyDirectoryToDirectory(new File(applicationPath), currentDir);
 		
 		CommandTestUtils.runCommandAndWait("connect " + restUrl + 

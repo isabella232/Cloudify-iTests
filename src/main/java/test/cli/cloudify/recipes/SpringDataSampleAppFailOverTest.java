@@ -39,11 +39,11 @@
 //		super.beforeTest();
 ////		File mongodArchiveSrc;
 //		if(System.getProperty("user.name").equals("tgrid")){
-//			dataSampleAppDirPath = CommandTestUtils.getPath("apps/cloudify/recipes/springDataSample_Linux");
+//			dataSampleAppDirPath = CommandTestUtils.getPath("src/main/resources/apps/cloudify/recipes/springDataSample_Linux");
 ////			mongodArchiveSrc = new File(dataSampleAppDirPath + "/mongodb-osx-x86_64-2.0.0.tgz");
 //		}
 //		else{
-//			dataSampleAppDirPath = CommandTestUtils.getPath("apps/cloudify/recipes/springDataSample_Windows");
+//			dataSampleAppDirPath = CommandTestUtils.getPath("src/main/resources/apps/cloudify/recipes/springDataSample_Windows");
 ////			mongodArchiveSrc = new File(dataSampleAppDirPath + "/mongodb-win32-i386-2.0.0.zip");
 //		}	
 //		springDataSampleInstalled = false;

@@ -66,7 +66,7 @@ public class AbstractCloudEc2Test extends AbstractTest {
 	private void bootstrapCloud() throws IOException, InterruptedException, DSLException {
 		
 	    //String applicationPath = (new File(ScriptUtils.getBuildPath(), "recipes/apps/travel").toString()).replace('\\', '/');
-		String ec2TestPath = (SGTestHelper.getSGTestRootDir() + "/apps/cloudify/cloud/ec2").replace('\\', '/');
+		String ec2TestPath = (SGTestHelper.getSGTestRootDir() + "/src/main/resources/apps/cloudify/cloud/ec2").replace('\\', '/');
 		String sshKeyPemName = "ec2-sgtest.pem";
 		
 		// ec2 plugin should include recipe that includes secret key 

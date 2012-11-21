@@ -582,7 +582,7 @@ public class AbstractLocalCloudTest extends AbstractTest {
 	protected Application installApplication(final String applicationName) {
 
 		final String applicationDir = CommandTestUtils
-				.getPath("apps/USM/usm/applications/" + applicationName);
+				.getPath("src/main/resources/apps/USM/usm/applications/" + applicationName);
 
 		try {
 			final Application app = ServiceReader.getApplicationFromFile(
@@ -602,7 +602,7 @@ public class AbstractLocalCloudTest extends AbstractTest {
 	}
 
 	protected void installService(final String serviceName) {
-		final String serviceDir = CommandTestUtils.getPath("apps/USM/usm/"
+		final String serviceDir = CommandTestUtils.getPath("src/main/resources/apps/USM/usm/"
 				+ serviceName);
 		try {
 			ServiceReader.getServiceFromDirectory(new File(serviceDir))

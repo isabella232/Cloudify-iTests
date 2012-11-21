@@ -36,8 +36,8 @@ public class StartDetectionTest extends AbstractLocalCloudTest {
 	private final String serviceName = "simple";
 	private final String applicationName = "default";
 	private final String absolutePUName = ServiceUtils.getAbsolutePUName(applicationName, serviceName);
-	private final String serviceDir = CommandTestUtils.getPath("/apps/USM/usm/SimpleDetection");
-	private final String serviceFailDir = CommandTestUtils.getPath("/apps/USM/usm/SimpleDetectionFail");
+	private final String serviceDir = CommandTestUtils.getPath("/src/main/resources/apps/USM/usm/SimpleDetection");
+	private final String serviceFailDir = CommandTestUtils.getPath("/src/main/resources/apps/USM/usm/SimpleDetectionFail");
 	private File startDetectionFile = new File(serviceDir, "startDetection.groovy");
 	private String installCommand;
 	private String unInstallCommand;

@@ -49,6 +49,6 @@ public class FailedToInstallServiceApplicationTest extends AbstractLocalCloudTes
 	}
 
 	private String getUsmBadServicePath(String dirOrFilename) {
-		return CommandTestUtils.getPath("apps/USM/badUsmServices/" + dirOrFilename);
+		return CommandTestUtils.getPath("src/main/resources/apps/USM/badUsmServices/" + dirOrFilename);
 	}
 }

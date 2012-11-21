@@ -39,7 +39,7 @@ public class RepetativeInstallAndUninstallStockDemoWithProblemAtInstallTest exte
 	public void installAndUninstallTest() throws Exception {
 		
 		stockdemoUrl = new URL("http://" + InetAddress.getLocalHost().getHostAddress() + ":8080/stockdemo.StockDemo/");
-		final String stockdemoAppPath = CommandTestUtils.getPath("apps/USM/usm/applications/stockdemo");	
+		final String stockdemoAppPath = CommandTestUtils.getPath("src/main/resources/apps/USM/usm/applications/stockdemo");	
 		cassandraPostStartScriptPath = stockdemoAppPath + "/cassandra/cassandra_poststart.groovy";	
 		newPostStartScriptPath = stockdemoAppPath + "/cassandra/cassandra_poststart123.groovy";
 		int secondInstallationSuccessCounter = 0;

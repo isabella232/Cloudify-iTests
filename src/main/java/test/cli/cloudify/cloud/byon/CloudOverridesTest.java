@@ -26,8 +26,8 @@ import framework.utils.ServiceInstaller;
  */
 public class CloudOverridesTest extends AbstractByonCloudTest {
 
-	private final static String SIMPLE_RECIPE_FOLDER = CommandTestUtils.getPath("apps/USM/usm/simple-with-template");
-	private final static String SIMPLE_APP_FOLDER = CommandTestUtils.getPath("apps/USM/usm/applications/simple-with-template");
+	private final static String SIMPLE_RECIPE_FOLDER = CommandTestUtils.getPath("src/main/resources/apps/USM/usm/simple-with-template");
+	private final static String SIMPLE_APP_FOLDER = CommandTestUtils.getPath("src/main/resources/apps/USM/usm/applications/simple-with-template");
 	
 	private MultipleTemplatesByonCloudService service = new MultipleTemplatesByonCloudService();
 	

@@ -15,7 +15,7 @@ import framework.utils.LogUtils;
 
 public class StockdemoAppFailOverUsingXenTest extends AbstractApplicationFailOverXenTest {
 
-	private final String stockdemoAppDirPath = SGTestHelper.getSGTestRootDir().replace("\\", "/") + "/apps/USM/usm/applications/stockdemo";
+	private final String stockdemoAppDirPath = SGTestHelper.getSGTestRootDir().replace("\\", "/") + "/src/main/resources/apps/USM/usm/applications/stockdemo";
 	private String cassandraHostIp;
 	
 	@Override

@@ -34,7 +34,7 @@ import framework.utils.SigarUtils;
 public class StopLifecycleTest extends AbstractLocalCloudTest {
 
 	final private String RECIPE_DIR_PATH = CommandTestUtils
-			.getPath("apps/USM/usm/stopTest");
+			.getPath("src/main/resources/apps/USM/usm/stopTest");
 
 	// set in checkMonitors
 	private long actualPid;

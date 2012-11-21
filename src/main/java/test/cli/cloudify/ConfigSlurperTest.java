@@ -17,7 +17,7 @@ public class ConfigSlurperTest extends AbstractLocalCloudTest {
 
     @Test
     public void test() throws IOException, InterruptedException {
-        final String serviceDir = CommandTestUtils.getPath("apps/USM/usm/slurper");
+        final String serviceDir = CommandTestUtils.getPath("src/main/resources/apps/USM/usm/slurper");
         String command = "connect " + restUrl + ";install-service --verbose " + serviceDir + ";exit";
 
         runCommand(command);

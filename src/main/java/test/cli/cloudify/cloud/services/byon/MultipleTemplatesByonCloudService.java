@@ -56,7 +56,7 @@ public class MultipleTemplatesByonCloudService extends ByonCloudService {
 		List<String> assignableHosts = new ArrayList<String>(Arrays.asList(getMachines()));
 		
 		File multiTemplatesGroovy = new File(SGTestHelper.getSGTestRootDir()
-				+ "/apps/cloudify/cloud/byon/byon-cloud.groovy");
+				+ "/src/main/resources/apps/cloudify/cloud/byon/byon-cloud.groovy");
 
 		// replace the cloud groovy file with a customized one
 		File fileToBeReplaced = new File(getPathToCloudFolder(), "byon-cloud.groovy");

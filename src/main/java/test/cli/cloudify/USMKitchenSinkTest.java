@@ -66,7 +66,7 @@ import framework.utils.ScriptUtils;
 public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 
 	final private String RECIPE_DIR_PATH = CommandTestUtils
-			.getPath("apps/USM/usm/kitchensink");
+			.getPath("src/main/resources/apps/USM/usm/kitchensink");
 
 	// set in checkMonitors
 	private long actualPid;

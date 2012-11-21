@@ -20,7 +20,7 @@ import test.usm.USMTestUtils;
 public class SelfHealingDisabledTest extends AbstractLocalCloudTest {
 
 	final private String RECIPE_DIR_PATH = CommandTestUtils
-			.getPath("apps/USM/usm/failedGroovy");
+			.getPath("src/main/resources/apps/USM/usm/failedGroovy");
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
 	public void testNoSelfHealing() throws IOException, InterruptedException,

@@ -24,7 +24,7 @@ import test.usm.USMTestUtils;
 public class LifecycleDetailsMonitorMapClosureTest extends AbstractLocalCloudTest{
 
 	final private String RECIPE_DIR_PATH = CommandTestUtils
-	.getPath("apps/USM/usm/simple");
+	.getPath("src/main/resources/apps/USM/usm/simple");
 	private static final String EXPECTED_DETAILS_FIELDS[] = { "1", "2"};
 	private static final String EXPECTED_MONITORS_FIELDS[] = {"3", "4" };
 

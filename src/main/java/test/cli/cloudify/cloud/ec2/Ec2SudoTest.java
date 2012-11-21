@@ -29,7 +29,7 @@ import test.cli.cloudify.cloud.NewAbstractCloudTest;
 public class Ec2SudoTest extends NewAbstractCloudTest {
 
 	final private String serviceName = "groovy";
-	final private static String RECIPE_DIR_PATH = CommandTestUtils.getPath("apps/USM/usm/groovySudo");
+	final private static String RECIPE_DIR_PATH = CommandTestUtils.getPath("src/main/resources/apps/USM/usm/groovySudo");
 	@Override
 	protected String getCloudName() {
 		return "ec2";

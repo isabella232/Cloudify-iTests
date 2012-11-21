@@ -29,7 +29,7 @@ public class ScalingRulesCorruptedTest extends AbstractSeleniumServiceRecipeTest
 
 	private final static String SERVICE_NAME = "customServiceMonitor";
 	
-	private static final String SERVICE_RELATIVE_PATH = "apps/cloudify/recipes/" + SERVICE_NAME;
+	private static final String SERVICE_RELATIVE_PATH = "src/main/resources/apps/cloudify/recipes/" + SERVICE_NAME;
 	
 	private File customServiceMonitorOriginalDSLFile;
 
@@ -130,7 +130,7 @@ public class ScalingRulesCorruptedTest extends AbstractSeleniumServiceRecipeTest
 	
 	private void replaceInServiceFile(String whatToReplace, String whatToReplaceTo) throws IOException {
 
-		String customServiceMonitorOriginalDSLPath = CommandTestUtils.getPath("apps/cloudify/recipes/" + SERVICE_NAME);
+		String customServiceMonitorOriginalDSLPath = CommandTestUtils.getPath("src/main/resources/apps/cloudify/recipes/" + SERVICE_NAME);
 		customServiceMonitorOriginalDSLFile = new File(customServiceMonitorOriginalDSLPath + "/" + SERVICE_NAME + "-service.groovy");
 		customServiceMonitorBackupDSLFile = new File(customServiceMonitorOriginalDSLPath + "/" + SERVICE_NAME + "-backup.groovy");
 

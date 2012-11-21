@@ -30,12 +30,12 @@ public class ProcessLocatorsTest extends AbstractLocalCloudTest {
 	}
 
 	final private String BG_RECIPE_DIR_PATH = CommandTestUtils
-			.getPath("apps/USM/usm/locators/simple-background");
+			.getPath("src/main/resources/apps/USM/usm/locators/simple-background");
 	final private String EMPTY_RECIPE_DIR_PATH = CommandTestUtils
-			.getPath("apps/USM/usm/locators/empty");
+			.getPath("src/main/resources/apps/USM/usm/locators/empty");
 
 	final private String MULTI_RECIPE_DIR_PATH = CommandTestUtils
-			.getPath("apps/USM/usm/locators/multi-simple");
+			.getPath("src/main/resources/apps/USM/usm/locators/multi-simple");
 
 	private boolean isPortOpen(final int port) {
 		final Socket socket = new Socket();

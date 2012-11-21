@@ -17,7 +17,7 @@ public class BadUSMServiceDownAfterUninstallApplicationTest extends AbstractLoca
 
     @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, groups = "1")
     public void badUsmServiceDownTest() throws IOException, InterruptedException {
-        final String serviceDir = CommandTestUtils.getPath("apps/USM/badUsmServices/simpleApplication");
+        final String serviceDir = CommandTestUtils.getPath("src/main/resources/apps/USM/badUsmServices/simpleApplication");
         String command = "connect " + restUrl + ";install-application --verbose " + serviceDir + ";exit";
 
         CommandTestUtils.runCommandExpectedFail(command);

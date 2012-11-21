@@ -112,7 +112,7 @@ public class ListServicesAndApplicationsCommandsTest extends AbstractLocalCloudT
 	}
 	
 	private void installBadApplicationAsync() throws IOException, InterruptedException {
-		String applicationPath = CommandTestUtils.getPath("apps/USM/usm/applications/badGroovyApp");
+		String applicationPath = CommandTestUtils.getPath("src/main/resources/apps/USM/usm/applications/badGroovyApp");
 		CommandTestUtils.runCommand("connect " + restUrl + ";install-application -disableSelfHealing " + applicationPath);
 	}
 	

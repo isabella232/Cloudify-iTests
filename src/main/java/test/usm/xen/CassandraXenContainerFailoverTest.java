@@ -39,7 +39,7 @@ import java.util.List;
  */
 public class CassandraXenContainerFailoverTest extends AbstractXenGSMTest {
 
-	static final String CASSANDRA = "/apps/USM/usm/cassandra";
+	static final String CASSANDRA = "/src/main/resources/apps/USM/usm/cassandra";
 	
 	// total number of CPU cores allocated to the cassandra cluster
 	// by default each VM has 2 cores, so 4 cores means 2 machines 

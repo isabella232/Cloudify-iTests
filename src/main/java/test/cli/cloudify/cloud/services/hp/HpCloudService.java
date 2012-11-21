@@ -85,7 +85,7 @@ public class HpCloudService extends AbstractCloudService {
 		// add a pem file
 		final String sshKeyPemName = this.keyPair + ".pem";
 		final File fileToCopy =
-				new File(SGTestHelper.getSGTestRootDir() + "/apps/cloudify/cloud/" + getCloudName() + "/"
+				new File(SGTestHelper.getSGTestRootDir() + "/src/main/resources/apps/cloudify/cloud/" + getCloudName() + "/"
 						+ sshKeyPemName);
 		final File targetLocation = new File(getPathToCloudFolder() + "/upload/");
 		FileUtils.copyFileToDirectory(fileToCopy, targetLocation);

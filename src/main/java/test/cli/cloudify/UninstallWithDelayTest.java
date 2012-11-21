@@ -24,9 +24,9 @@ import framework.utils.AssertUtils.RepetitiveConditionProvider;
  */
 public class UninstallWithDelayTest extends AbstractLocalCloudTest {
 
-    private static final String APPLICATION_DIRECTORY = CommandTestUtils.getPath("apps/USM/usm/applications/simple-delay");
+    private static final String APPLICATION_DIRECTORY = CommandTestUtils.getPath("src/main/resources/apps/USM/usm/applications/simple-delay");
     private static final String SERVICE_NAME = "simple";
-    private static final String SERVICE_DIRECTORY = CommandTestUtils.getPath("apps/USM/usm/applications/simple-delay/" + SERVICE_NAME);
+    private static final String SERVICE_DIRECTORY = CommandTestUtils.getPath("src/main/resources/apps/USM/usm/applications/simple-delay/" + SERVICE_NAME);
     private static final String MESSAGE1 = "__preStop__ Waking up after sleep";
     private static final String MESSAGE2 = "__postStop__ Waking up after sleep";
     private static final LogEntryMatcher MATCHER1 = LogEntryMatchers.containsString(MESSAGE1);

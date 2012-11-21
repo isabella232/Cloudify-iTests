@@ -26,7 +26,7 @@ public class IconDisplayTest extends AbstractLocalCloudTest {
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
 	public void testServiceIcon() throws PackagingException, DSLException, MalformedURLException, IOException, InterruptedException{
 		
-		String serviceDir = CommandTestUtils.getPath("apps/USM/usm/applications/simple/simple");
+		String serviceDir = CommandTestUtils.getPath("src/main/resources/apps/USM/usm/applications/simple/simple");
 		runCommand("connect " + restUrl + ";install-service " + serviceDir + ";exit");
 		
 		DSLServiceCompilationResult compilationResult = ServiceReader.getServiceFromDirectory(new File(serviceDir));
@@ -41,8 +41,8 @@ public class IconDisplayTest extends AbstractLocalCloudTest {
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
 	public void testApplicationIcon() throws PackagingException, DSLException, MalformedURLException, IOException, InterruptedException{
-		String applicationDir = CommandTestUtils.getPath("apps/USM/usm/applications/simple");
-		String applicationServiceDir = CommandTestUtils.getPath("apps/USM/usm/applications/simple/simple");
+		String applicationDir = CommandTestUtils.getPath("src/main/resources/apps/USM/usm/applications/simple");
+		String applicationServiceDir = CommandTestUtils.getPath("src/main/resources/apps/USM/usm/applications/simple/simple");
 		
 		runCommand("connect " + restUrl + ";install-application " + applicationDir + ";exit");
 		

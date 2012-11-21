@@ -87,7 +87,7 @@ public class BootstrapFailureEc2Test extends NewAbstractCloudTest {
 	public void beforeBootstrap() throws IOException {
 		//replace the bootstrap-management with a bad version, to fail the bootstrap.
 		File standardBootstrapManagement = new File(getService().getPathToCloudFolder() + "/upload", "bootstrap-management.sh");
-		File badBootstrapManagement = new File(SGTestHelper.getSGTestRootDir() + "/apps/cloudify/cloud/ec2/bad-bootstrap-management.sh");
+		File badBootstrapManagement = new File(SGTestHelper.getSGTestRootDir() + "/src/main/resources/apps/cloudify/cloud/ec2/bad-bootstrap-management.sh");
 		IOUtils.replaceFile(standardBootstrapManagement, badBootstrapManagement);
 	}
 }

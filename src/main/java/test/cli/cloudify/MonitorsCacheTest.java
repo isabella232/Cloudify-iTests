@@ -137,7 +137,7 @@ public class MonitorsCacheTest extends AbstractLocalCloudTest {
 	}
 
 	private String getUsmServicePath(final String dirOrFilename) {
-		return CommandTestUtils.getPath("apps/USM/usm/" + dirOrFilename);
+		return CommandTestUtils.getPath("src/main/resources/apps/USM/usm/" + dirOrFilename);
 	}
 
 }

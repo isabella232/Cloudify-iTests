@@ -59,7 +59,7 @@ public class DSLParsingTest extends AbstractLocalCloudTest {
 	}	
 	
 	private String getParsingServicePath(String dirOrFilename) {
-		return CommandTestUtils.getPath("apps/USM/badUsmServices/" + dirOrFilename);
+		return CommandTestUtils.getPath("src/main/resources/apps/USM/badUsmServices/" + dirOrFilename);
 	}
 	
 }

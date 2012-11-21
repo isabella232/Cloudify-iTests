@@ -17,9 +17,9 @@ import org.cloudifysource.dsl.internal.ServiceReader;
 public class TestRecipeCommandTest extends AbstractLocalCloudTest {
 	
 	final private String SIMPLE_RECIPE_DIR_PATH = CommandTestUtils
-			.getPath("apps/USM/usm/simplejavaprocess");
+			.getPath("src/main/resources/apps/USM/usm/simplejavaprocess");
 	final private String GROOVY_RECIPE_DIR_PATH = CommandTestUtils
-			.getPath("apps/USM/usm/groovy");
+			.getPath("src/main/resources/apps/USM/usm/groovy");
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
 	public void testInvocationUsingDirAndFile() throws IOException,

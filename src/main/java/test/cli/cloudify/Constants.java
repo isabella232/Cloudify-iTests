@@ -8,7 +8,7 @@ import framework.tools.SGTestHelper;
 
 public class Constants {
 	//Changing either the service-name will require changing the service name as well.
-	protected static final String SERVICE_PATH = CommandTestUtils.getPath("apps/archives/servlet.war");
+	protected static final String SERVICE_PATH = CommandTestUtils.getPath("src/main/resources/apps/archives/servlet.war");
 	
 	protected static final String RESTFUL_WAR_PATH = SGTestHelper.getBuildDir()
 			+ MessageFormat.format("{0}tools{0}rest{0}rest.war", File.separatorChar);

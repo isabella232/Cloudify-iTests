@@ -25,7 +25,7 @@ public class ServiceFileNameOptionTest extends AbstractLocalCloudTest {
 		
 		File simpleServiceNewDSLFile = null;
 		try {
-			String simpleServiceOriginalDSLPath = CommandTestUtils.getPath("apps/USM/usm/simple");
+			String simpleServiceOriginalDSLPath = CommandTestUtils.getPath("src/main/resources/apps/USM/usm/simple");
 			File simpleServiceOriginalDSLFile = new File(simpleServiceOriginalDSLPath + "/simple-service.groovy");
 			simpleServiceNewDSLFile = new File(simpleServiceOriginalDSLPath + "/" + SERVICE_FILE_NAME + ".groovy");
 

@@ -111,7 +111,7 @@ public class ByonCloudService extends AbstractCloudService {
 	private void replaceBootstrapManagementScript() throws IOException {
 		// use a script that does not install java
 		File standardBootstrapManagement = new File(this.getPathToCloudFolder() + "/upload", "bootstrap-management.sh");
-		File customBootstrapManagement = new File(SGTestHelper.getSGTestRootDir() + "/apps/cloudify/cloud/byon/bootstrap-management.sh");
+		File customBootstrapManagement = new File(SGTestHelper.getSGTestRootDir() + "/src/main/resources/apps/cloudify/cloud/byon/bootstrap-management.sh");
 		IOUtils.replaceFile(standardBootstrapManagement, customBootstrapManagement);
 	}
 

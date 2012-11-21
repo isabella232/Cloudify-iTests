@@ -16,7 +16,7 @@ import test.cli.cloudify.CommandTestUtils;
 public class CyclicDependencyTest extends AbstractLocalCloudTest{
 
     private void dependencyTest(String ApplicationName) throws IOException, InterruptedException {
-        String path = CommandTestUtils.getPath("apps/cloudify/recipes/" + ApplicationName);
+        String path = CommandTestUtils.getPath("src/main/resources/apps/cloudify/recipes/" + ApplicationName);
         CommandTestUtils.runCommandExpectedFail("connect " + this.restUrl + ";install-application " + path + ";exit");
 
         GridServiceContainer[] gscs = admin.getGridServiceContainers().getContainers();
@@ -48,7 +48,7 @@ public class CyclicDependencyTest extends AbstractLocalCloudTest{
     @Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
     public void diamondTest() throws IOException, InterruptedException {
 
-        String path = CommandTestUtils.getPath("apps/cloudify/recipes/diamond");
+        String path = CommandTestUtils.getPath("src/main/resources/apps/cloudify/recipes/diamond");
 
         //this app is only a mock so the command to install it is not successful
         CommandTestUtils.runCommand("connect " + this.restUrl + ";install-application " + path + ";exit");

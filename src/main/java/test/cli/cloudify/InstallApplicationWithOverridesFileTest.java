@@ -43,11 +43,11 @@ public class InstallApplicationWithOverridesFileTest extends AbstractLocalCloudT
 	private static final String SERVICE_URL = APPLICATION_OVERRIDEN_NAME;
 
 	private static final String APPLICATION_DIR_PATH = 
-			CommandTestUtils.getPath("apps/USM/usm/applications/simpleOverridesApplication");
+			CommandTestUtils.getPath("src/main/resources/apps/USM/usm/applications/simpleOverridesApplication");
 	private static final String OVERRIDES_FILE_PATH = 
 			APPLICATION_DIR_PATH + "/overridesFile/simpleOverrides-application.overrides";
 	private static final String APPLICATION_WITH_OVERRIDES_FILE_DIR_PATH = 
-			CommandTestUtils.getPath("apps/USM/usm/applications/simpleOverridesApplicationWithOverrideFile");
+			CommandTestUtils.getPath("src/main/resources/apps/USM/usm/applications/simpleOverridesApplicationWithOverrideFile");
 
 	private static final Map<String, Object> EXPECTED_SERVICE_FIELDS = new HashMap<String, Object>();
 	static {

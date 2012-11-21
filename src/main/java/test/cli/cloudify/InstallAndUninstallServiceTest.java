@@ -11,6 +11,7 @@ import test.usm.USMTestUtils;
 
 import org.cloudifysource.dsl.utils.ServiceUtils;
 
+import framework.utils.DeploymentUtils;
 import framework.utils.DumpUtils;
 import framework.utils.LogUtils;
 import framework.utils.AssertUtils.RepetitiveConditionProvider;
@@ -103,10 +104,10 @@ public class InstallAndUninstallServiceTest extends AbstractLocalCloudTest {
 	}
 	
 	private String getArchiveServicePath(String dirOrFilename) {
-		return CommandTestUtils.getPath("apps/archives/" + dirOrFilename);
+		return DeploymentUtils.getArchive(dirOrFilename).getAbsolutePath();
 	}
 	
 	private String getUsmServicePath(String dirOrFilename) {
-		return CommandTestUtils.getPath("apps/USM/usm/" + dirOrFilename);
+		return CommandTestUtils.getPath("src/main/resources/apps/USM/usm/" + dirOrFilename);
 	}
 }

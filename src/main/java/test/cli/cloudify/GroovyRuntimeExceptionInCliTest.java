@@ -13,8 +13,8 @@ import org.testng.annotations.Test;
  *
  */
 public class GroovyRuntimeExceptionInCliTest extends AbstractLocalCloudTest {
-	private static final String SERVICE_WITH_RUNTIME_EXCEPTION = CommandTestUtils.getPath("apps/USM/badUsmServices/Cassandra");
-	private static final String SERVICE_WITH_COMPILATION_EXCEPTION = CommandTestUtils.getPath("apps/USM/badUsmServices/simpleCompilation");
+	private static final String SERVICE_WITH_RUNTIME_EXCEPTION = CommandTestUtils.getPath("src/main/resources/apps/USM/badUsmServices/Cassandra");
+	private static final String SERVICE_WITH_COMPILATION_EXCEPTION = CommandTestUtils.getPath("src/main/resources/apps/USM/badUsmServices/simpleCompilation");
 	private static final String RUNTIME_EXCEPTION_CAUGHT_REGEX = "(Caught:.*\\.groovy:[1-9]{1,}\\))";
 	//This regex assumes that the char before the exception string would either
 	//be a Space char or a newLine Char. to grab the whole line use thhis regex:

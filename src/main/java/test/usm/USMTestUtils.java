@@ -168,7 +168,7 @@ public class USMTestUtils {
 	}
 	
 	public static Service usmDeploy(String processName, String serviceFileName) throws IOException, PackagingException, DSLException {
-		final String processFolder = SGTestHelper.getSGTestRootDir() + "/apps/USM/usm/" + ServiceUtils.getFullServiceName(processName).getServiceName();
+		final String processFolder = SGTestHelper.getSGTestRootDir() + "/src/main/resources/apps/USM/usm/" + ServiceUtils.getFullServiceName(processName).getServiceName();
 		
 		return packAndDeploy(processFolder, serviceFileName, processName);
 	}

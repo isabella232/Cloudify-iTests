@@ -34,7 +34,7 @@ public class AzureExamplesTest extends NewAbstractCloudTest {
 		File appsDir = new File(SGTestHelper.getBuildDir() + "/recipes/apps");
 		File originalAzureApplication = new File(SGTestHelper.getBuildDir() + "/recipes/apps/" + applicationName);
 		FileUtils.deleteDirectory(originalAzureApplication);
-		File newAzureApplication = new File(SGTestHelper.getSGTestRootDir() + "/apps/cloudify/recipes/" + applicationName);
+		File newAzureApplication = new File(SGTestHelper.getSGTestRootDir() + "/src/main/resources/apps/cloudify/recipes/" + applicationName);
 		FileUtils.copyDirectoryToDirectory(newAzureApplication, appsDir);
 	}
 	

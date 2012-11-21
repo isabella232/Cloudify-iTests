@@ -20,7 +20,7 @@ import framework.utils.ServiceInstaller;
 
 public class CloudOverridesESMFailoverTest extends AbstractKillManagementTest {
 
-	private final static String SIMPLE_RECIPE_FOLDER = CommandTestUtils.getPath("apps/USM/usm/simple-with-template");
+	private final static String SIMPLE_RECIPE_FOLDER = CommandTestUtils.getPath("src/main/resources/apps/USM/usm/simple-with-template");
 	
 	private MultipleTemplatesByonCloudService service = new MultipleTemplatesByonCloudService();
 

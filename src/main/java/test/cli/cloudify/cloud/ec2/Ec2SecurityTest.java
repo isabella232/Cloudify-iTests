@@ -91,7 +91,7 @@ public class Ec2SecurityTest extends NewAbstractCloudTest {
 			RestException {
 
 		ApplicationInstaller applicationInstaller = new ApplicationInstaller(restUrl, applicationName);
-		applicationInstaller.setRecipePath(CommandTestUtils.getPath("apps/USM/usm/applications/" + applicationName));
+		applicationInstaller.setRecipePath(CommandTestUtils.getPath("src/main/resources/apps/USM/usm/applications/" + applicationName));
 		applicationInstaller.setWaitForFinish(true);
 		applicationInstaller.setCloudifyUsername(cloudifyUsername);
 		applicationInstaller.setCloudifyPassword(cloudifyPassword);
@@ -118,7 +118,7 @@ public class Ec2SecurityTest extends NewAbstractCloudTest {
 			throws IOException, InterruptedException, RestException {
 		
 		ApplicationInstaller applicationInstaller = new ApplicationInstaller(restUrl, applicationName);
-		applicationInstaller.setRecipePath(CommandTestUtils.getPath("apps/USM/usm/applications/" + applicationName));
+		applicationInstaller.setRecipePath(CommandTestUtils.getPath("src/main/resources/apps/USM/usm/applications/" + applicationName));
 		applicationInstaller.setWaitForFinish(true);
 		if (StringUtils.isNotBlank(authGroups)) {
 			applicationInstaller.setAuthGroups(authGroups);

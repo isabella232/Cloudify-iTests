@@ -32,7 +32,7 @@ public class HttpStartDetectionTest extends AbstractLocalCloudTest {
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, groups = "1")
 	public void httpStartDetectionTest()
 			throws IOException, InterruptedException {
-		final String serviceDir = CommandTestUtils.getPath("/apps/USM/usm/tomcatHttpStartDetection");
+		final String serviceDir = CommandTestUtils.getPath("/src/main/resources/apps/USM/usm/tomcatHttpStartDetection");
 		doTest(serviceDir);
 	}
 
@@ -46,7 +46,7 @@ public class HttpStartDetectionTest extends AbstractLocalCloudTest {
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, groups = "1")
 	public void urlLivenessDetectorTest()
 			throws IOException, InterruptedException {
-		final String serviceDir = CommandTestUtils.getPath("/apps/USM/usm/tomcatHttpLivenessDetectorPlugin");
+		final String serviceDir = CommandTestUtils.getPath("/src/main/resources/apps/USM/usm/tomcatHttpLivenessDetectorPlugin");
 		doTest(serviceDir);
 	}
 

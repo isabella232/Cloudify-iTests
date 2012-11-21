@@ -106,6 +106,6 @@ public class InstallAndUninstallPUTest extends AbstractLocalCloudTest {
 	}
 	
 	private String getUsmServicePath(String dirOrFilename) {
-		return CommandTestUtils.getPath("apps/USM/usm/" + dirOrFilename);
+		return CommandTestUtils.getPath("src/main/resources/apps/USM/usm/" + dirOrFilename);
 	}
 }

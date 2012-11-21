@@ -18,11 +18,11 @@ public class InstallServiceWithOverridesFile extends OverridesTest {
 	private static final String SERVICE_WITH_OVERRIDES_NAME = "simpleWithOverrides";
 
 	private static final String SERVICE_DIR_PATH = 
-			CommandTestUtils.getPath("apps/USM/usm/services/simple");
+			CommandTestUtils.getPath("src/main/resources/apps/USM/usm/services/simple");
 	private static final String OVERRIDES_FILE_PATH = 
-			CommandTestUtils.getPath("apps/USM/usm/services/simpleService-service.overrides");
+			CommandTestUtils.getPath("src/main/resources/apps/USM/usm/services/simpleService-service.overrides");
 	private static final String SERVICE_WITH_OVERRIDES_FILE_DIR_PATH = 
-			CommandTestUtils.getPath("apps/USM/usm/services/simpleWithOverrides");
+			CommandTestUtils.getPath("src/main/resources/apps/USM/usm/services/simpleWithOverrides");
 	private static final Map<String, Object> EXPECTED_SERVICE_FIELDS = new HashMap<String, Object>();
 	
 	private static final String SERVICE_ICON = "simpleServiceIcon.png";

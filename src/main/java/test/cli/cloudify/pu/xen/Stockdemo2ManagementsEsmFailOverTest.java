@@ -26,7 +26,7 @@ import framework.utils.xen.GsmTestUtils;
 
 public class Stockdemo2ManagementsEsmFailOverTest extends AbstractApplicationFailOverXenTest {
 	
-	private final String stockdemoAppDirPath = SGTestHelper.getSGTestRootDir().replace("\\", "/") + "/apps/USM/usm/applications/stockdemo";
+	private final String stockdemoAppDirPath = SGTestHelper.getSGTestRootDir().replace("\\", "/") + "/src/main/resources/apps/USM/usm/applications/stockdemo";
 	private XenServerMachineProvisioningConfig xenConfigOfEsmMachine;
 	private Machine esmMachine;
 	

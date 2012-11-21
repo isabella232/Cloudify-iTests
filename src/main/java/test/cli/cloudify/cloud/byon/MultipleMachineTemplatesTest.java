@@ -40,7 +40,7 @@ public class MultipleMachineTemplatesTest extends AbstractByonCloudTest {
 	
 	private static final long MY_OPERATION_TIMEOUT = 1 * 60 * 1000;
 
-	protected static final String PETCLINIC_MULTIPLE_TEMPLATES_SG_PATH = SGTestHelper.getSGTestRootDir() + "/apps/cloudify/recipes/petclinic-multiple-templates";
+	protected static final String PETCLINIC_MULTIPLE_TEMPLATES_SG_PATH = SGTestHelper.getSGTestRootDir() + "/src/main/resources/apps/cloudify/recipes/petclinic-multiple-templates";
 	protected static final String PETCLINIC_MULTIPLE_TEMPLATES_BUILD_PATH = SGTestHelper.getBuildDir() + "/recipes/apps/petclinic-multiple-templates";
 	
 	@BeforeClass(alwaysRun = true)

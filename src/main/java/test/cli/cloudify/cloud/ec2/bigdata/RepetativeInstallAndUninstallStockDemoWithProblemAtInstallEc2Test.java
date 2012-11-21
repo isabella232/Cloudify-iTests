@@ -41,7 +41,7 @@ public class RepetativeInstallAndUninstallStockDemoWithProblemAtInstallEc2Test e
 	private String newPostStartScriptPath = null;
 	private Ec2CloudService service;
 	private String restUrl;
-	private final String stockdemoAppPath = CommandTestUtils.getPath("apps/USM/usm/applications/stockdemo");
+	private final String stockdemoAppPath = CommandTestUtils.getPath("src/main/resources/apps/USM/usm/applications/stockdemo");
 
 	private File cloudPluginDir = new File(ScriptUtils.getBuildPath() + "/tools/cli/plugins/esc/ec2");
 	private URL stockdemoUrl;
@@ -51,7 +51,7 @@ public class RepetativeInstallAndUninstallStockDemoWithProblemAtInstallEc2Test e
 	public void bootstrap() throws Exception {	
 
 		LogUtils.log("put cloudify-xap license in upload dir, needed to run stockdemo app");
-		File xapLicense = new File(SGTestHelper.getSGTestRootDir() + "/apps/cloudify/cloud/gslicense.xml");
+		File xapLicense = new File(SGTestHelper.getSGTestRootDir() + "/src/main/resources/apps/cloudify/cloud/gslicense.xml");
 		File cloudifyOverrides = new File(cloudPluginDir.getAbsolutePath() + "/upload/cloudify-overrides");
 		if (!cloudifyOverrides.exists()) {
 			cloudifyOverrides.mkdir();

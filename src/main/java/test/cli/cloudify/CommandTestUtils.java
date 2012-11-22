@@ -81,7 +81,7 @@ public class CommandTestUtils {
     	return process;
     }
 	
-    static class ProcessResult {
+    public static class ProcessResult {
     	
     	private final String output;
     	private final int exitcode;

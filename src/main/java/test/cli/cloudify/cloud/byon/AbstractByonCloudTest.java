@@ -1,6 +1,7 @@
 package test.cli.cloudify.cloud.byon;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -83,6 +84,10 @@ public class AbstractByonCloudTest extends NewAbstractCloudTest {
 	
 	protected List<Machine> getAgentMachines(final String processingUnitName) {
 		return getProcessingUnitMachines(processingUnitName);
+	}
+	
+	protected List<Machine> getAllMachines() {
+		return Arrays.asList(admin.getMachines().getMachines());
 	}
 	
 	private List<Machine> getProcessingUnitMachines(final String processingUnitName) {

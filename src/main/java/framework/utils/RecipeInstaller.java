@@ -118,7 +118,7 @@ public abstract class RecipeInstaller {
 	
 	public abstract void assertUninstall(String output);
 	
-	public void install() throws IOException, InterruptedException {
+	public String install() throws IOException, InterruptedException {
 		
 		if (recipePath == null) {
 			throw new IllegalStateException("recipe path cannot be null. please use setRecipePath before calling install");
@@ -158,15 +158,14 @@ public abstract class RecipeInstaller {
 		final String installCommand = commandBuilder.toString();
 		final String connectCommand = connectCommandBuilder.toString();
 		if (expectToFail) {
-			CommandTestUtils.runCommandExpectedFail(connectCommand + installCommand);
-			return;
+			return CommandTestUtils.runCommandExpectedFail(connectCommand + installCommand);
 		}
 		if (waitForFinish) {
-			CommandTestUtils.runCommandAndWait(connectCommand + installCommand);
-			return;			
+			String output = CommandTestUtils.runCommandAndWait(connectCommand + installCommand);
+			assertInstall(output);
+			return output;			
 		}
-		String output = CommandTestUtils.runCommand(connectCommand + installCommand);
-		assertInstall(output);
+		return CommandTestUtils.runCommand(connectCommand + installCommand);
 	}
 	
 	public void uninstall() throws IOException, InterruptedException {

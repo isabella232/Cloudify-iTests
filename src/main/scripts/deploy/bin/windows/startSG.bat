@@ -37,9 +37,9 @@ xcopy %REMOTE_BUILD_DIR%\cloudify\1.5\gigaspaces-cloudify-%VERSION%-%MILESTONE%-
 
 @echo exporting SGTest
 @if %BRANCH_NAME%==trunk (
-	set SVN_SGTEST_REPOSITORY=svn://svn-srv/SVN/xap/trunk/quality/frameworks/SGTest
+	set SVN_SGTEST_REPOSITORY=svn://svn-srv/SVN/cloudify/trunk/quality/frameworks/SGTest
 ) else ( 
-	set SVN_SGTEST_REPOSITORY=svn://svn-srv/SVN/xap/branches/%SVN_BRANCH_DIRECTORY%/%BRANCH_NAME%/quality/frameworks/SGTest
+	set SVN_SGTEST_REPOSITORY=svn://svn-srv/SVN/cloudify/branches/%SVN_BRANCH_DIRECTORY%/%BRANCH_NAME%/quality/frameworks/SGTest
 )
 
 @mkdir %WEBUI_TMP_DIR%

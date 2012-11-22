@@ -43,11 +43,11 @@ public class CloudBootstrapper extends Bootstrapper {
 	}
 
 	@Override
-	public String getOptions() throws IOException {
+	public String getOptions() throws IOException{
 		
 		StringBuilder builder = new StringBuilder();
 		if (noWebServices) {
-			builder.append("-no-web-services");
+			builder.append("-no-web-services ");
 		}
 		if (cloudOverrides != null && !cloudOverrides.isEmpty()) {
 			File cloudOverridesFile = IOUtils.createTempOverridesFile(cloudOverrides);
@@ -55,6 +55,9 @@ public class CloudBootstrapper extends Bootstrapper {
 				.append("-cloud-overrides").append(" ")
 				.append(cloudOverridesFile.getAbsolutePath().replace("\\", "/")).append(" ");
 		}
+		
+		builder.append(super.getOptions());
+		
 		return builder.toString();
 	}
 

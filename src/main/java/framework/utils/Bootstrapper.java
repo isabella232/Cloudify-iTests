@@ -2,32 +2,84 @@ package framework.utils;
 
 import java.io.IOException;
 
+import org.apache.commons.lang.StringUtils;
+
 import test.cli.cloudify.CommandTestUtils;
 import test.cli.cloudify.CommandTestUtils.ProcessResult;
+import test.cli.cloudify.security.SecurityConstants;
 
 
 public abstract class Bootstrapper {
 	
 
 	private int timeoutInMinutes;
+	private String user = SecurityConstants.CLOUD_ADMIN_USER_PWD;
+	private String password = SecurityConstants.CLOUD_ADMIN_USER_PWD;
+	private String securityFilePath;
 	private boolean force = true;
 	
 	public abstract String getBootstrapCommand();
-	
-	public abstract String getOptions() throws Exception;
-	
+		
 	public abstract String getTeardownCommand();
 	
 	public Bootstrapper(int timeoutInMinutes) {
 		this.timeoutInMinutes = timeoutInMinutes;
 	}
 	
-	public void setTimeoutInMinutes(int timeoutInMinutes) {
+	public Bootstrapper setTimeoutInMinutes(int timeoutInMinutes) {
 		this.timeoutInMinutes = timeoutInMinutes;
+		return this;
 	}
 	
-	public void setForce(boolean force) {
+	public Bootstrapper setForce(boolean force) {
 		this.force = force;
+		return this;
+	}
+	
+	public Bootstrapper setUser(String user) {
+		this.user = user;
+		return this;
+	}
+
+	public Bootstrapper setPassword(String password) {
+		this.password = password;
+		return this;
+	}
+	
+	public Bootstrapper setSecurityFilePath(String securityFilePath) {
+		this.securityFilePath = securityFilePath;
+		return this;
+	}
+
+	public String getUser() {
+		return user;
+	}
+	
+	public String getPassword() {
+		return password;
+	}
+	
+	public String getSecurityFilePath() {
+		return securityFilePath;
+	}
+	
+	public String getOptions() throws IOException{
+		
+		StringBuilder builder = new StringBuilder();
+		
+		if(StringUtils.isNotBlank(user)){
+			builder.append("-user " + user + " ");
+		}
+		
+		if(StringUtils.isNotBlank(password)){
+			builder.append("-pwd " + password + " ");
+		}
+		
+		if(StringUtils.isNotBlank(securityFilePath)){
+			builder.append("-security " + securityFilePath + " ");
+		}
+		
+		return builder.toString();
 	}
 
 	public ProcessResult bootstrap() throws Exception {

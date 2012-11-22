@@ -14,12 +14,6 @@ public class LocalCloudBootstrapper extends Bootstrapper {
 	}
 
 	@Override
-	public String getOptions() {
-		return null;
-	}
-	
-
-	@Override
 	public String getTeardownCommand() {
 		return "teardown-localcloud";
 	}

@@ -121,7 +121,7 @@ public abstract class AbstractWebUILocalCloudTest extends AbstractLocalCloudTest
     					else {
     						DesiredCapabilities desired = DesiredCapabilities.chrome();
 							desired.setCapability("chrome.switches", Arrays.asList("--start-maximized"));
-							String chromeDriverExePath = SGTestHelper.getSGTestRootDir() + "/src/test/webui/resources/chromedriver.exe";
+							String chromeDriverExePath = SGTestHelper.getSGTestRootDir() + "/src/main/resources/webui/chromedriver.exe";
 							chromeService = new ChromeDriverService.Builder().usingAnyFreePort().usingDriverExecutable(new File(chromeDriverExePath)).build();
 							LogUtils.log("Starting Chrome Driver Server...");
 							chromeService.start();

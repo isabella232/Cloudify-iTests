@@ -11,7 +11,6 @@ import test.cli.cloudify.security.SecurityConstants;
 
 public abstract class Bootstrapper {
 	
-
 	private int timeoutInMinutes;
 	private String user = SecurityConstants.CLOUD_ADMIN_USER_PWD;
 	private String password = SecurityConstants.CLOUD_ADMIN_USER_PWD;
@@ -21,6 +20,8 @@ public abstract class Bootstrapper {
 	public abstract String getBootstrapCommand();
 		
 	public abstract String getTeardownCommand();
+	
+	public abstract String getCustomOptions() throws Exception;
 	
 	public Bootstrapper(int timeoutInMinutes) {
 		this.timeoutInMinutes = timeoutInMinutes;
@@ -62,10 +63,18 @@ public abstract class Bootstrapper {
 	public String getSecurityFilePath() {
 		return securityFilePath;
 	}
-	
-	public String getOptions() throws IOException{
-		
+
+	public ProcessResult bootstrap() throws Exception {
 		StringBuilder builder = new StringBuilder();
+		
+		String[] bootstrapCommandParts = getBootstrapCommand().split(" ");
+		String commandAndOptions = bootstrapCommandParts[0] + " " + getCustomOptions();
+		
+		builder
+			.append(commandAndOptions).append(" ")
+			.append("--verbose").append(" ")
+			.append("-timeout").append(" ")
+			.append(timeoutInMinutes).append(" ");
 		
 		if(StringUtils.isNotBlank(user)){
 			builder.append("-user " + user + " ");
@@ -79,20 +88,6 @@ public abstract class Bootstrapper {
 			builder.append("-security " + securityFilePath + " ");
 		}
 		
-		return builder.toString();
-	}
-
-	public ProcessResult bootstrap() throws Exception {
-		StringBuilder builder = new StringBuilder();
-		
-		String[] bootstrapCommandParts = getBootstrapCommand().split(" ");
-		String commandAndOptions = bootstrapCommandParts[0] + " " + getOptions();
-		
-		builder
-			.append(commandAndOptions).append(" ")
-			.append("--verbose").append(" ")
-			.append("-timeout").append(" ")
-			.append(timeoutInMinutes).append(" ");
 		if (bootstrapCommandParts.length == 2) {
 			// cloud bootstrap, append provider
 			builder.append(bootstrapCommandParts[1]);

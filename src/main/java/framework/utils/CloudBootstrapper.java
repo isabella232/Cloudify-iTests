@@ -43,7 +43,7 @@ public class CloudBootstrapper extends Bootstrapper {
 	}
 
 	@Override
-	public String getOptions() throws IOException{
+	public String getCustomOptions() throws IOException{
 		
 		StringBuilder builder = new StringBuilder();
 		if (noWebServices) {
@@ -55,8 +55,6 @@ public class CloudBootstrapper extends Bootstrapper {
 				.append("-cloud-overrides").append(" ")
 				.append(cloudOverridesFile.getAbsolutePath().replace("\\", "/")).append(" ");
 		}
-		
-		builder.append(super.getOptions());
 		
 		return builder.toString();
 	}

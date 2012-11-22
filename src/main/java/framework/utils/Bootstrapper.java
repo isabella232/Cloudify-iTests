@@ -27,27 +27,27 @@ public abstract class Bootstrapper {
 		this.timeoutInMinutes = timeoutInMinutes;
 	}
 	
-	public Bootstrapper setTimeoutInMinutes(int timeoutInMinutes) {
+	public Bootstrapper timeoutInMinutes(int timeoutInMinutes) {
 		this.timeoutInMinutes = timeoutInMinutes;
 		return this;
 	}
 	
-	public Bootstrapper setForce(boolean force) {
+	public Bootstrapper force(boolean force) {
 		this.force = force;
 		return this;
 	}
 	
-	public Bootstrapper setUser(String user) {
+	public Bootstrapper user(String user) {
 		this.user = user;
 		return this;
 	}
 
-	public Bootstrapper setPassword(String password) {
+	public Bootstrapper password(String password) {
 		this.password = password;
 		return this;
 	}
 	
-	public Bootstrapper setSecurityFilePath(String securityFilePath) {
+	public Bootstrapper securityFilePath(String securityFilePath) {
 		this.securityFilePath = securityFilePath;
 		return this;
 	}

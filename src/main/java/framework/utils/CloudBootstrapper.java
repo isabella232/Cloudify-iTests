@@ -16,20 +16,23 @@ public class CloudBootstrapper extends Bootstrapper {
 		super(DEFAULT_BOOTSTRAP_CLOUD_TIMEOUT);
 	}
 	
-	public void setProvider(String provider) {
+	public CloudBootstrapper provider(String provider) {
 		this.provider = provider;
+		return this;
 	}
 	
-	public void setNoWebServices(boolean noWebServices) {
+	public CloudBootstrapper noWebServices(boolean noWebServices) {
 		this.noWebServices = noWebServices;
+		return this;
 	}
 	
 	public boolean isNoWebServices() {
 		return noWebServices;
 	}
 	
-	public void setCloudOverrides(Map<String, Object> overrides) {
+	public CloudBootstrapper cloudOverrides(Map<String, Object> overrides) {
 		this.cloudOverrides = overrides;
+		return this;
 	}
 	
 	@Override

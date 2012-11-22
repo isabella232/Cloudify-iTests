@@ -77,7 +77,7 @@
 	./preRemoteProcess.sh 1 ${TARGET_GSA_WAN_MACHINES} ${GSA_WAN_TYPE} &
 	fi
 
-	echo "build cache dir=${BUILD_CACHE_DIR}"
+	echo "build cache dir=${BUILD_DIR}"
 	chmod 777 ${BUILD_DIR}/bin
 	chmod 777 ${BUILD_DIR}/tools/cli
 	chmod 777 ${BUILD_DIR}/tools/maven

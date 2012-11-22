@@ -71,15 +71,10 @@ umask 000
  BUILD_DIR=${BUILD_CACHE_DIR}/${BUILD_INSTALL_DIR}; export BUILD_DIR
  OLD_BUILD_DIR=/export/tgrid/sgtest/deploy/local-builds/build_5000/gigaspaces-xap-premium-8.0.0-ga; export OLD_BUILD_DIR
  
- if [ -d ${SGTEST_CHECKOUT_FOLDER} ];
- then
- 	. create_sgtest_jar.sh
- fi 
+ . create_webuitf_jar.sh 
 
  echo "> Downloading jars/wars"
  . download-processing-units.sh
- 
-/export/utils/ant/apache-ant-1.8.1/bin/ant -f ${DEPLOY_ROOT_BIN_DIR}/../../bin/pre-run.xml prepare
 
 for ((id=0 ; id < ${SUITE_NUMBER} ; id++ )); do
  SUITE_ID=${id}
@@ -106,9 +101,8 @@ for ((id=0 ; id < ${SUITE_NUMBER} ; id++ )); do
  # copy cloudify premium license ro run cloudify xap suite
  if [ "${SUITE_NAME}" == "CLOUDIFY_XAP" ]
   then
-       rm -rf ${BUILD_CACHE_DIR}/gigaspaces*.zip
        echo copy cloudify premium license ro run cloudify xap suite
-       cp ${DEPLOY_ROOT_BIN_DIR}/../../bin/gslicense.xml ${BUILD_DIR}      
+       cp ${DEPLOY_ROOT_BIN_DIR}/../../config/gslicense.xml ${BUILD_DIR}      
  fi
 
  echo "participating machines are ${TARGET_MACHINES_ARRAY[@]}"
@@ -144,7 +138,7 @@ for ((id=0 ; id < ${SUITE_NUMBER} ; id++ )); do
   else
 	SGTEST_CLIENT_BUILD_DIR=${BUILD_DIR}
  fi
-
+ export SGTEST_CLIENT_BUILD_DIR=${SGTEST_CLIENT_BUILD_DIR}
 
  ${PDSH} -w ssh:pc-lab[${TARGET_CLIENT_MACHINE}] "${CLIENT_EXECUTOR_SCRIPT} ${DEPLOY_ROOT_BIN_DIR} ${SGTEST_CLIENT_BUILD_DIR} ${CONFIG_JAVA_ORDER} ${LOOKUPGROUPS} ${BUILD_NUMBER} ${INCLUDE} ${EXCLUDE} ${SUITE_NAME} ${MAJOR_VERSION} ${MINOR_VERSION} ${SUITE_ID} ${SUITE_NUMBER} ${BYON_MACHINES} ${SUPPORTED_CLOUDS} ${EC2_REGION} ${SUITE_WORK_DIR} ${SUITE_DEPLOY_DIR}" &
 
@@ -184,5 +178,8 @@ for ((s=0 ; s < ${SUITE_NUMBER} ; s++ )); do
 done
 
 ${DEPLOY_ROOT_BIN_DIR}/../../bin/generate-report-cmd.sh Regression ${BUILD_NUMBER} ${SUITE_NAME} ${MAJOR_VERSION} ${MINOR_VERSION} ${DEPLOY_ROOT_BIN_DIR} ${BUILD_LOG_URL}
+
+echo "Deleting ${SUITE_WORK_DIR} ${SUITE_DEPLOY_DIR}"
+rm -rf ${SUITE_WORK_DIR} ${SUITE_DEPLOY_DIR}
 
  exit ${EXIT_CODE}

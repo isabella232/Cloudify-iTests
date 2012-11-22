@@ -23,7 +23,7 @@ set SUITE_ID=0
 
 pushd %SGTEST_HOME%
 call mvn test -e -X -U ^
--Dxap.home=%RUNTIME_BUILD_LOCATION% ^
+-Dcloudify.home=%RUNTIME_BUILD_LOCATION% ^
 -Dincludes="%INCLUDE%" ^
 -Dexcludes="%EXCLUDE%" ^
 -Dselenium.browser=%selenium.browser% ^
@@ -42,5 +42,5 @@ call mvn test -e -X -U ^
 
 popd
 
-rem -DBUILD_NUMBER=%BUILD_NUMBER%  -DMAJOR_VERSION=%VERSION% -DMINOR_VERSION=%MILESTONE%
+REM -DBUILD_NUMBER=%BUILD_NUMBER%  -DMAJOR_VERSION=%VERSION% -DMINOR_VERSION=%MILESTONE%
 call %LOCAL_SGPATH%\deploy\bin\windows\generate-report.bat %BUILD_NUMBER% %SUITE_NAME% %VERSION% %MILESTONE% %BUILD_LOG_URL%

@@ -2,6 +2,12 @@ package framework.utils;
 
 public class LocalCloudBootstrapper extends Bootstrapper {
 
+	private static final int DEFAULT_BOOTSTRAP_LOCAL_CLOUD_TIMEOUT = 15;
+	
+	public LocalCloudBootstrapper() {
+		super(DEFAULT_BOOTSTRAP_LOCAL_CLOUD_TIMEOUT);
+	}
+
 	@Override
 	public String getBootstrapCommand() {
 		return "bootstrap-localcloud";
@@ -9,7 +15,6 @@ public class LocalCloudBootstrapper extends Bootstrapper {
 
 	@Override
 	public String getOptions() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 	

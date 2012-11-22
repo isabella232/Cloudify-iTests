@@ -9,8 +9,10 @@ public class CloudBootstrapper extends Bootstrapper {
 	private String provider;
 	private boolean noWebServices = false;
 	private Map<String, Object> cloudOverrides;
+	private static final int DEFAULT_BOOTSTRAP_CLOUD_TIMEOUT = 30;
 	
 	public CloudBootstrapper(final String provider) {
+		super(DEFAULT_BOOTSTRAP_CLOUD_TIMEOUT);
 		this.provider = provider;
 	}
 	
@@ -25,9 +27,7 @@ public class CloudBootstrapper extends Bootstrapper {
 
 	@Override
 	public String getOptions() throws IOException {
-		
-		
-		
+				
 		StringBuilder builder = new StringBuilder();
 		if (noWebServices) {
 			builder.append("-no-web-services");

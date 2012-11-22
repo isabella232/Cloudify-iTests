@@ -3,10 +3,12 @@ package framework.utils;
 import java.io.IOException;
 
 import test.cli.cloudify.CommandTestUtils;
+import test.cli.cloudify.CommandTestUtils.ProcessResult;
 
 
 public abstract class Bootstrapper {
 	
+
 	private int timeoutInMinutes;
 	private boolean force = true;
 	
@@ -16,6 +18,10 @@ public abstract class Bootstrapper {
 	
 	public abstract String getTeardownCommand();
 	
+	public Bootstrapper(int timeoutInMinutes) {
+		this.timeoutInMinutes = timeoutInMinutes;
+	}
+	
 	public void setTimeoutInMinutes(int timeoutInMinutes) {
 		this.timeoutInMinutes = timeoutInMinutes;
 	}
@@ -24,7 +30,7 @@ public abstract class Bootstrapper {
 		this.force = force;
 	}
 
-	public String bootstrap() throws Exception {
+	public ProcessResult bootstrap() throws Exception {
 		StringBuilder builder = new StringBuilder();
 		
 		String[] bootstrapCommandParts = getBootstrapCommand().split(" ");
@@ -42,10 +48,10 @@ public abstract class Bootstrapper {
 			// localcloud bootstrap.
 		}
 		
-		return CommandTestUtils.runCommandAndWait(builder.toString());	
+		return CommandTestUtils.runCloudifyCommandAndWait(builder.toString());	
 	}
 	
-	public void teardown() throws IOException, InterruptedException {
+	public ProcessResult teardown() throws IOException, InterruptedException {
 		
 		String[] teardownCommandParts = getTeardownCommand().split(" ");
 		String command = teardownCommandParts[0];
@@ -63,6 +69,6 @@ public abstract class Bootstrapper {
 		} else {
 			// localcloud teardown.
 		}
-		CommandTestUtils.runCommandAndWait(builder.toString());	
+		return CommandTestUtils.runCloudifyCommandAndWait(builder.toString());	
 	}
 }

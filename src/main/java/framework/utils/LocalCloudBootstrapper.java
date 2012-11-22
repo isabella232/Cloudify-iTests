@@ -12,6 +12,7 @@ public class LocalCloudBootstrapper extends Bootstrapper {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
 
 	@Override
 	public String getTeardownCommand() {

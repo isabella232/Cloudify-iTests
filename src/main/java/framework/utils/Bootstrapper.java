@@ -12,7 +12,7 @@ public abstract class Bootstrapper {
 	
 	public abstract String getBootstrapCommand();
 	
-	public abstract String getOptions();
+	public abstract String getOptions() throws Exception;
 	
 	public abstract String getTeardownCommand();
 	
@@ -24,7 +24,7 @@ public abstract class Bootstrapper {
 		this.force = force;
 	}
 
-	public void bootstrap() throws IOException, InterruptedException {
+	public String bootstrap() throws Exception {
 		StringBuilder builder = new StringBuilder();
 		
 		String[] bootstrapCommandParts = getBootstrapCommand().split(" ");
@@ -41,7 +41,8 @@ public abstract class Bootstrapper {
 		} else {
 			// localcloud bootstrap.
 		}
-		CommandTestUtils.runCommandAndWait(builder.toString());	
+		
+		return CommandTestUtils.runCommandAndWait(builder.toString());	
 	}
 	
 	public void teardown() throws IOException, InterruptedException {

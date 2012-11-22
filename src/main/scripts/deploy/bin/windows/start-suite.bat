@@ -22,7 +22,7 @@ if %SUITE_NAME% == webui-IE (
 set SUITE_ID=0
 
 pushd %SGTEST_HOME%
-call mvn test -e -X -U ^
+call mvn test -e -U ^
 -Dcloudify.home=%RUNTIME_BUILD_LOCATION% ^
 -Dincludes="%INCLUDE%" ^
 -Dexcludes="%EXCLUDE%" ^

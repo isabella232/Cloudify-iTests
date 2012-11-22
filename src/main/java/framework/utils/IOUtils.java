@@ -111,6 +111,28 @@ public class IOUtils {
 		FileUtils.copyFileToDirectory(replaceToReplaceWith, parentFolder);
 		
 	}
+	
+	public static File createTempOverridesFile(Map<String, Object> overrides) throws IOException {
+		
+		File createTempFile = File.createTempFile("__sgtest_cloudify", ".overrides");	
+		
+		Properties props = new Properties();
+		for (Map.Entry<String, Object> entry : overrides.entrySet()) {
+			Object value = entry.getValue();
+			String key = entry.getKey();
+			String actualValue = null;
+			if (value instanceof String) {
+				actualValue = '"' + value.toString() + '"';
+			} else {
+				actualValue = value.toString();
+			}
+			props.setProperty(key, actualValue);
+		}
+		
+		File overridePropsFile = writePropertiesToFile(props, createTempFile);
+		return overridePropsFile;
+
+	}
 }
 
 

@@ -3,7 +3,6 @@ package framework.utils;
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
-import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -147,12 +146,12 @@ public abstract class RecipeInstaller {
 		}
 
 		if (cloudOverrideProperties != null && !cloudOverrideProperties.isEmpty()) {	
-			File cloudOverridesFile = createTempOverridesFile(cloudOverrideProperties);
-			commandBuilder.append("-cloud-overrides ").append(cloudOverridesFile.getAbsolutePath().replace("\\", "/")).append(" ");
+			File cloudOverridesFile = IOUtils.createTempOverridesFile(cloudOverrideProperties);
+			commandBuilder.append("-cloud-overrides").append(" ").append(cloudOverridesFile.getAbsolutePath().replace("\\", "/")).append(" ");
 		}
 		if (overrideProperties != null && !overrideProperties.isEmpty()) {
-			File serviceOverridesFile = createTempOverridesFile(overrideProperties);
-			commandBuilder.append("-overrides ").append(serviceOverridesFile.getAbsolutePath().replace("\\", "/")).append(" ");
+			File serviceOverridesFile = IOUtils.createTempOverridesFile(overrideProperties);
+			commandBuilder.append("-overrides").append(" ").append(serviceOverridesFile.getAbsolutePath().replace("\\", "/")).append(" ");
 		}
 		
 		commandBuilder.append(recipePath.replace('\\', '/'));
@@ -200,27 +199,5 @@ public abstract class RecipeInstaller {
 				.toString();
 		String output = CommandTestUtils.runCommandAndWait(connectCommandBuilder.toString() + installCommand);
 		assertUninstall(output);
-	}
-	
-	private File createTempOverridesFile(Map<String, Object> overrides) throws IOException {
-		
-		File createTempFile = File.createTempFile("__sgtest_cloudify", ".overrides");	
-		
-		Properties props = new Properties();
-		for (Map.Entry<String, Object> entry : overrides.entrySet()) {
-			Object value = entry.getValue();
-			String key = entry.getKey();
-			String actualValue = null;
-			if (value instanceof String) {
-				actualValue = '"' + value.toString() + '"';
-			} else {
-				actualValue = value.toString();
-			}
-			props.setProperty(key, actualValue);
-		}
-		
-		File overridePropsFile = IOUtils.writePropertiesToFile(props, createTempFile);
-		return overridePropsFile;
-
 	}
 }

@@ -23,6 +23,8 @@ set EC2_REGION=%9
 @echo setting up enviroment variables
 call set-build-env.bat
 
+set SGTEST_HOME=%LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER%\SGTest
+
 @echo cleaning sgtest...
 @if exist %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER% rmdir %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER% /s /q
 
@@ -33,15 +35,23 @@ xcopy %REMOTE_BUILD_DIR%\cloudify\1.5\gigaspaces-cloudify-%VERSION%-%MILESTONE%-
 7z x %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER%\gigaspaces-cloudify-%VERSION%-%MILESTONE%-b%BUILD_VERSION%.zip -o%LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER%
 @del %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER%\gigaspaces-cloudify-%VERSION%-%MILESTONE%-b%BUILD_VERSION%.zip
 
-@call set-deploy-env.bat
+@echo exporting SGTest
+@if %BRANCH_NAME%==trunk (
+	set SVN_SGTEST_REPOSITORY=svn://svn-srv/SVN/xap/trunk/quality/frameworks/SGTest
+) else ( 
+	set SVN_SGTEST_REPOSITORY=svn://svn-srv/SVN/xap/branches/%SVN_BRANCH_DIRECTORY%/%BRANCH_NAME%/quality/frameworks/SGTest
+)
 
-@echo creating sgtest.jar...
-@call %LOCAL_SGPATH%\deploy\bin\windows\create_sgtest_jar.bat
+@mkdir %WEBUI_TMP_DIR%
+svn export --force %SVN_SGTEST_REPOSITORY% %SGTEST_HOME% 
 
-@call %LOCAL_SGPATH%\deploy\bin\windows\download_processing_units.bat
+@call %SGTEST_HOME%\src\main\scripts\deploy\bin\windows\set-deploy-env.bat
 
-@echo Running %selenium.browser% Suite : 
-@call %LOCAL_SGPATH%\deploy\bin\windows\start-suite.bat %SUITE_NAME% %INCLUDE% %EXCLUDE% %EC2_REGION%
+@echo updating webuitf...
+@call %SGTEST_HOME%\src\main\scripts\deploy\bin\windows\deploy_webuitf.bat
+
+@echo Running Suite %SUITE_NAME%:  
+@call %SGTEST_HOME%\src\main\scripts\deploy\bin\windows\start-suite.bat %SUITE_NAME% %INCLUDE% %EXCLUDE% %EC2_REGION%
 
 if %selenium.browser% == Chrome (
 	taskkill /im chromedriver.exe /F
@@ -54,10 +64,9 @@ if %selenium.browser% == Firefox (
 
 @echo tranferring reports to tgrid
 echo %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER%
-xcopy %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER% Y:\%BUILD_NUMBER% /s /i /y
-xcopy %LOCAL_SGPATH%\deploy\local-builds\wiki-summary\*.wiki Y:\wiki-summary /s /i /y
-xcopy %LOCAL_SGPATH%\deploy\local-builds\wiki-backup\*.wiki Y:\wiki-backup /s /i /y
+xcopy %BUILD_LOCATION% Z:\%BUILD_NUMBER% /s /i /y
+xcopy %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER%\%SUITE_NAME% Z:\%BUILD_NUMBER%\%SUITE_NAME% /s /i /y
 
 @echo cleaning local build folder
-@rmdir %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER% /s /q
-call %LOCAL_SGPATH%\deploy\bin\windows\delete_local_build.bat %VERSION% %MILESTONE% %USER_HOME%
+rmdir %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER% /s /q
+call %SGTEST_HOME%\src\main\scripts\deploy\bin\windows\delete_build.bat %VERSION% %MILESTONE% %USER_HOME%

@@ -20,6 +20,24 @@ if %SUITE_NAME% == webui-IE (
  
 @echo running %selenium.browser% tests...
 set SUITE_ID=0
-call ant -buildfile %LOCAL_SGPATH%\bin\pre-run.xml
-call ant -verbose -buildfile %LOCAL_SGPATH%\bin\run-win.xml testsummary -DBUILD_NUMBER=%BUILD_NUMBER% -DSUITE_NAME=%SUITE_NAME% -DBUILD_DIR=%RUNTIME_BUILD_LOCATION% -DMAJOR_VERSION=%VERSION% -DMINOR_VERSION=%MILESTONE% -DSELENIUM_BROWSER=%selenium.browser% -DSUITE_ID=%SUITE_ID% -DSUITE_NUMBER=1 -DINCLUDE="%INCLUDE%" -DEXCLUDE="%EXCLUDE%" -DEC2_REGION=%EC2_REGION%
+
+call mvn test -e -X -U ^
+-Dxap.home=%RUNTIME_BUILD_LOCATION% ^
+-Dincludes="%INCLUDE%" ^
+-Dexcludes="%EXCLUDE%" ^
+-Dselenium.browser=%selenium.browser% ^
+-Djava.security.policy=policy/policy.all ^
+-Djava.awt.headless=true ^
+-Dsgtest.suiteName=%SUITE_NAME% ^
+-Dsgtest.suiteId=%SUITE_ID% ^
+-Dsgtest.summary.dir=%BUILD_DIR%/../%SUITE_NAME% ^
+-Dsgtest.numOfSuites=1 ^
+-Dorg.apache.commons.logging.Log=org.apache.commons.logging.impl.Jdk14Logger ^
+-Dcom.gs.logging.level.config=true ^
+-Djava.util.logging.config.file=%SGTEST_HOME%/src/main/config/sgtest_logging.properties ^
+-Dsgtest.buildFolder=../ ^
+-Dsgtest.url=http://192.168.9.121:8087/sgtest3.0-cloudify/ ^
+-Dec2.region=%EC2_REGION%
+
+-DBUILD_NUMBER=%BUILD_NUMBER%  -DMAJOR_VERSION=%VERSION% -DMINOR_VERSION=%MILESTONE%
 call %LOCAL_SGPATH%\deploy\bin\windows\generate-report.bat %BUILD_NUMBER% %SUITE_NAME% %VERSION% %MILESTONE% %BUILD_LOG_URL%

@@ -7,6 +7,13 @@ set MAJOR_VERSION=%3
 set MINOR_VERSION=%4
 set BUILD_LOG_URL=%5
 
-call ant -d -DSUITE_TYPE=%SUITE_TYPE% -DBUILD_NUMBER=%BUILD_NUMBER% -DSUITE_NAME=%SUITE_NAME% -DMAJOR_VERSION=%MAJOR_VERSION% -DMINOR_VERSION=%MINOR_VERSION% -f %LOCAL_SGPATH%/bin/post-run.xml report-merger
 
-call ant -d -DSUITE_TYPE=%SUITE_TYPE% -DBUILD_NUMBER=%BUILD_NUMBER% -DSUITE_NAME=%SUITE_NAME% -DMAJOR_VERSION=%MAJOR_VERSION% -DMINOR_VERSION=%MINOR_VERSION% -DBUILD_LOG_URL=%BUILD_LOG_URL% -f %LOCAL_SGPATH%/bin/post-run.xml wiki-reporter
+pushd %SGTEST_HOME%
+
+CLOUDIFY_HOME=/export/tgrid/sgtest3.0-cloudify/deploy/local-builds/%BUILD_NUMBER%/gigaspaces-cloudify-%MAJOR_VERSION%-%MINOR_VERSION%
+
+call mvn exec:java -Dexec.mainClass="framework.testng.report.TestsReportMerger" -Dexec.args="%SUITE_TYPE% %BUILD_NUMBER% %SUITE_NAME% %MAJOR_VERSION% %MINOR_VERSION%" -Dcloudify.home=%CLOUDIFY_HOME%
+
+call mvn exec:java -Dexec.mainClass="framework.testng.report.wiki.WikiReporter" -Dexec.args="%SUITE_TYPE% %BUILD_NUMBER% %SUITE_NAME% %MAJOR_VERSION% %MINOR_VERSION% %BUILD_LOG_URL%" -Dcloudify.home=%CLOUDIFY_HOME%
+
+popd

@@ -44,7 +44,7 @@ xcopy %REMOTE_BUILD_DIR%\cloudify\1.5\gigaspaces-cloudify-%VERSION%-%MILESTONE%-
 
 @mkdir %WEBUI_TMP_DIR%
 svn export --force %SVN_SGTEST_REPOSITORY% %SGTEST_HOME% 
-
+ 
 @call %SGTEST_HOME%\src\main\scripts\deploy\bin\windows\set-deploy-env.bat
 
 @echo updating webuitf...

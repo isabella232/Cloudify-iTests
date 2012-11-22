@@ -21,6 +21,7 @@ if %SUITE_NAME% == webui-IE (
 @echo running %selenium.browser% tests...
 set SUITE_ID=0
 
+pushd %SGTEST_HOME%
 call mvn test -e -X -U ^
 -Dxap.home=%RUNTIME_BUILD_LOCATION% ^
 -Dincludes="%INCLUDE%" ^
@@ -38,6 +39,8 @@ call mvn test -e -X -U ^
 -Dsgtest.buildFolder=../ ^
 -Dsgtest.url=http://192.168.9.121:8087/sgtest3.0-cloudify/ ^
 -Dec2.region=%EC2_REGION%
+
+popd
 
 -DBUILD_NUMBER=%BUILD_NUMBER%  -DMAJOR_VERSION=%VERSION% -DMINOR_VERSION=%MILESTONE%
 call %LOCAL_SGPATH%\deploy\bin\windows\generate-report.bat %BUILD_NUMBER% %SUITE_NAME% %VERSION% %MILESTONE% %BUILD_LOG_URL%

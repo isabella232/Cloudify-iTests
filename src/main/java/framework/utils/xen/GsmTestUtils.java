@@ -1,7 +1,6 @@
 package framework.utils.xen;
 
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -25,7 +24,6 @@ import org.openspaces.admin.machine.events.MachineRemovedEventListener;
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.openspaces.admin.space.Space;
 import org.openspaces.cloud.xenserver.XenServerMachineProvisioningConfig;
-import org.openspaces.cloud.xenserver.XenUtils;
 import org.openspaces.core.GigaSpace;
 import org.openspaces.grid.gsm.capacity.CapacityRequirementsPerAgent;
 import org.openspaces.grid.gsm.capacity.DriveCapacityRequirement;

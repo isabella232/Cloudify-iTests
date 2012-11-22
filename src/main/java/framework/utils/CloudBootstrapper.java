@@ -52,7 +52,7 @@ public class CloudBootstrapper extends Bootstrapper {
 		if (cloudOverrides != null && !cloudOverrides.isEmpty()) {
 			File cloudOverridesFile = IOUtils.createTempOverridesFile(cloudOverrides);
 			builder
-				.append("--cloud-overrides").append(" ")
+				.append("-cloud-overrides").append(" ")
 				.append(cloudOverridesFile.getAbsolutePath().replace("\\", "/")).append(" ");
 		}
 		return builder.toString();

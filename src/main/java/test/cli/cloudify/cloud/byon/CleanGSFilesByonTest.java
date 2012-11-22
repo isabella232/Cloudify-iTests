@@ -27,7 +27,7 @@ import org.apache.commons.vfs2.VFS;
 import org.apache.commons.vfs2.provider.sftp.SftpFileSystemConfigBuilder;
 import org.cloudifysource.dsl.cloud.FileTransferModes;
 import org.cloudifysource.dsl.internal.CloudifyConstants;
-import org.cloudifysource.esc.util.Utils;
+import org.cloudifysource.esc.util.IPUtils;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -61,7 +61,7 @@ public class CleanGSFilesByonTest extends AbstractByonCloudTest {
 		for (String address : getService().getMachines()) {
 			//using the default credentials to access our lab machines
 			try{
-				Utils.validateConnection(address, CloudifyConstants.SSH_PORT);
+				IPUtils.validateConnection(address, CloudifyConstants.SSH_PORT);
 				assertTrue(ITEMS_NOT_DELETED_MSG, !fileSystemObjectsExist(address, DEFAULT_USER, DEFAULT_PASSWORD, null /*key file*/,
 						itemsToClean, FileTransferModes.SCP, false));
 			} catch (Exception e) {

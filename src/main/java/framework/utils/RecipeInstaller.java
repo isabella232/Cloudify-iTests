@@ -13,6 +13,7 @@ public abstract class RecipeInstaller {
 	
 	private String restUrl;
 	private String recipePath;
+	private boolean disableSelfHealing = false;
 	private Map<String, Object> overrideProperties;
 	private Map<String, Object> cloudOverrideProperties;
 	private long timeoutInMinutes;
@@ -26,6 +27,14 @@ public abstract class RecipeInstaller {
 	public RecipeInstaller(final String restUrl, int timeout) {
 		this.restUrl = restUrl;
 		this.timeoutInMinutes = timeout;
+	}
+	
+	public boolean isDisableSelfHealing() {
+		return disableSelfHealing;
+	}
+
+	public void setDisableSelfHealing(boolean disableSelfHealing) {
+		this.disableSelfHealing = disableSelfHealing;
 	}
 	
 	public String getRestUrl() {
@@ -132,6 +141,10 @@ public abstract class RecipeInstaller {
 				.append("--verbose").append(" ")
 				.append("-timeout").append(" ")
 				.append(timeoutInMinutes).append(" ");
+		
+		if (disableSelfHealing) {
+			commandBuilder.append("-disableSelfHealing").append(" ");
+		}
 
 		if (cloudOverrideProperties != null && !cloudOverrideProperties.isEmpty()) {	
 			File cloudOverridesFile = createTempOverridesFile(cloudOverrideProperties);

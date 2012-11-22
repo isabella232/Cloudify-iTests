@@ -11,17 +11,16 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.StringUtils;
 import org.cloudifysource.dsl.cloud.Cloud;
 import org.cloudifysource.dsl.internal.ServiceReader;
 import org.openspaces.admin.Admin;
 
 import test.cli.cloudify.CloudTestUtils;
 import test.cli.cloudify.CommandTestUtils;
-import test.cli.cloudify.security.SecuredCloudService;
 import framework.tools.SGTestHelper;
 import framework.utils.AssertUtils;
 import framework.utils.AssertUtils.RepetitiveConditionProvider;
+import framework.utils.CloudBootstrapper;
 import framework.utils.DumpUtils;
 import framework.utils.IOUtils;
 import framework.utils.LogUtils;
@@ -48,8 +47,18 @@ public abstract class AbstractCloudService implements CloudService {
 	private Map<String,Object> properties = new HashMap<String,Object>();	
 	private String cloudName;
 	private String cloudFolderName;
-	
 	private String cloudUniqueName = this.getClass().getSimpleName();
+	private CloudBootstrapper bootstrapper = new CloudBootstrapper();
+	
+	public CloudBootstrapper getBootstrapper() {
+		return bootstrapper;
+	}
+	
+	public void setBootstrapper(CloudBootstrapper bootstrapper) {
+		bootstrapper.provider(this.cloudFolderName);
+		this.bootstrapper = bootstrapper;
+		
+	}
 
 	@Override
 	public void beforeBootstrap() throws Exception {}
@@ -109,6 +118,7 @@ public abstract class AbstractCloudService implements CloudService {
 	public void init(final String uniqueName) throws IOException {
 		this.cloudUniqueName = uniqueName;
 		this.cloudFolderName = cloudName + "_" + cloudUniqueName;
+		bootstrapper.provider(this.cloudFolderName);
 		createCloudFolder();
 	}
 	
@@ -168,35 +178,14 @@ public abstract class AbstractCloudService implements CloudService {
 			String url = null;
 			if (restUrls != null) {
 				
-				String cloudifyUser = "";
-				String cloudifyPassword = "";
-				
-				if (this instanceof SecuredCloudService) {
-					SecuredCloudService securedService = (SecuredCloudService)this;
-					cloudifyUser = securedService.getCloudifyUsername();
-					cloudifyPassword = securedService.getCloudifyPassword();
-				}
-				
 				try {
 					url = restUrls[0] + "/service/dump/machines/?fileSizeLimit=50000000";
-					DumpUtils.dumpMachines(restUrls[0], cloudifyUser, cloudifyPassword);
+					DumpUtils.dumpMachines(restUrls[0], null, null);
 				} catch (Exception e) {
 					LogUtils.log("Failed to create dump for this url - " + url, e);
 				}
 				
-				StringBuilder commandBuilder = new StringBuilder("connect").append(" ");
-				if (StringUtils.isNotBlank(cloudifyUser) && StringUtils.isNotBlank(cloudifyPassword)) {
-					commandBuilder.append("-user").append(" ")
-					.append(cloudifyUser).append(" ")
-					.append("-pwd").append(" ")
-					.append(cloudifyPassword).append(" ");
-				}
-				commandBuilder.append(restUrls[0]).append(";")
-				.append("teardown-cloud").append(" ")
-				.append("--verbose").append(" ");
-				
-				commandBuilder.append(this.cloudName + "_" + this.cloudUniqueName);
-				CommandTestUtils.runCommandAndWait(commandBuilder.toString());
+				bootstrapper.teardown();
 			}
 		} 
 		finally {
@@ -236,39 +225,13 @@ public abstract class AbstractCloudService implements CloudService {
 		
 		printPropertiesFile();
 		
-		if(!noWebServices){
-			String output;
-			StringBuilder commandBuilder = new StringBuilder()
-			.append("bootstrap-cloud").append(" ")
-			.append("--verbose").append(" ");
-			
-			if (this instanceof SecuredCloudService) {
-				SecuredCloudService securedService = (SecuredCloudService)this;
-				String cloudifyUser = securedService.getCloudifyUsername();
-				String cloudifyPassword = securedService.getCloudifyPassword();
-				String securityFile = securedService.getSecurityConfigFile();
-				
-				if (StringUtils.isNotBlank(cloudifyUser) && StringUtils.isNotBlank(cloudifyPassword)) {
-					commandBuilder.append("-user").append(" ")
-					.append(cloudifyUser).append(" ")
-					.append("-pwd").append(" ")
-					.append(cloudifyPassword).append(" ");
-				}
-				
-				if (StringUtils.isNotBlank(securityFile)) {
-					commandBuilder.append("-security").append(" ")
-					.append(securityFile.replace('\\', '/')).append(" ");
-				}
-			}
-			
-			commandBuilder.append(this.cloudName + "_" + this.cloudUniqueName);
-			output = CommandTestUtils.runCommandAndWait(commandBuilder.toString());
-			
+		if(!bootstrapper.isNoWebServices()){
+			String output = bootstrapper.bootstrap().getOutput();	
 			restAdminUrls = extractRestAdminUrls(output, numberOfManagementMachines);
 			this.webUIUrls = extractWebuiUrls(output, numberOfManagementMachines);
 			assertBootstrapServicesAreAvailable();
 		} else {
-			CommandTestUtils.runCommandAndWait("bootstrap-cloud -no-web-services --verbose " + this.cloudName + "_" + this.cloudUniqueName);
+			bootstrapper.bootstrap();
 		}
 
 		URL machinesURL;

@@ -6,6 +6,8 @@ import java.util.Map;
 import org.cloudifysource.dsl.cloud.Cloud;
 import org.openspaces.admin.Admin;
 
+import framework.utils.CloudBootstrapper;
+
 /**
  * Every supported cloud must have a service that implements this interface in order to be included in the test cycle.
  * 
@@ -37,6 +39,10 @@ public interface CloudService {
 	void injectCloudAuthenticationDetails() throws IOException;
 	
 	void init(final String uniqueName) throws Exception;
+	
+	void setBootstrapper(CloudBootstrapper bootstrapper);
+	
+	CloudBootstrapper getBootstrapper();
 
 	String getUser();
 

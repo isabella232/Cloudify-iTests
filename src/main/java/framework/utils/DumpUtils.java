@@ -31,6 +31,7 @@ public class DumpUtils {
 
     private static File testFolder;
     private static File zipFile;
+    private static File buildFolder;
 
     public static void dumpALL(Admin admin) {
         dump(admin, null, getAllDumpOptions());
@@ -113,7 +114,7 @@ public class DumpUtils {
             return null;
         }
 
-        File buildFolder = new File(SGTestHelper.getSGTestRootDir() + "/deploy/local-builds/build_" + buildNumber);
+        buildFolder = new File(SGTestHelper.getSGTestRootDir() + "/../");
 
         if (!buildFolder.exists())
             buildFolder.mkdir();
@@ -143,13 +144,12 @@ public class DumpUtils {
     }
 
     public static void copyBeforeConfigurationsLogToTestDir(String testName, String suiteName) {
-
-        String buildNumber = PlatformVersion.getBuildNumber();
-        File buildFolder = new File(SGTestHelper.getSGTestRootDir() + "/deploy/local-builds/build_" + buildNumber);
         File beforeConfigurationsLogDir = new File(buildFolder.getAbsolutePath() + "/" + suiteName + "/" + testName);
         if (beforeConfigurationsLogDir.exists()) {
             try {
+            	LogUtils.log("Copying files from source dir:" + beforeConfigurationsLogDir.getAbsolutePath() + " to target dir:" + testFolder.getAbsolutePath());
                 FileUtils.copyDirectory(beforeConfigurationsLogDir, testFolder);
+                LogUtils.log("Deleting directory:" + beforeConfigurationsLogDir.getAbsolutePath());
                 FileUtils.deleteDirectory(beforeConfigurationsLogDir);
             } catch (IOException e) {
                 LogUtils.log("Failed to copy before configurations to test dir : " + testFolder.getAbsolutePath(), e);

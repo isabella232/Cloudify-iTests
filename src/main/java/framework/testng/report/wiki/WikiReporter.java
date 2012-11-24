@@ -60,13 +60,15 @@ public class WikiReporter {
     
     private Properties getWikiProperties() {
     	Properties properties = new Properties();
-    	InputStream is = this.getClass().getResourceAsStream( WIKI_REPORTER_PROPERTIES );
+    	InputStream is = WikiReporter.class.getClassLoader().getResourceAsStream( WIKI_REPORTER_PROPERTIES );
     	if ( is != null ) {
     		try {
     			properties.load( is );
     		} catch (IOException e) {
     			throw new RuntimeException("failed to read wikiproperties.properties file - " + e, e);
     		}
+    	}else{
+    		throw new RuntimeException("failed to find wikiproperties.properties file - ");
     	}
 
     	return properties;

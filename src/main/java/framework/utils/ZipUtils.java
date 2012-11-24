@@ -14,16 +14,14 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
-import com.j_spaces.kernel.PlatformVersion;
 import org.apache.commons.io.IOUtils;
 
 import framework.tools.SGTestHelper;
 
 public class ZipUtils {
-
+	
     public static void unzipArchive(String testName, String suiteName) {
-        String buildNumber = PlatformVersion.getBuildNumber();
-        File buildFolder = new File(SGTestHelper.getSGTestRootDir()+"/deploy/local-builds/build_" + buildNumber);
+        File buildFolder = new File(SGTestHelper.getSGTestRootDir() + "/../");
         File testFolder = null;
         testFolder = new File(buildFolder +"/" + suiteName + "/" +testName);
         File[] children = testFolder.listFiles();
@@ -32,6 +30,7 @@ public class ZipUtils {
         for (int n = 0; n < children.length; n++) {
             File file = children[n];
             if (file.getName().contains(".zip")) {
+            	LogUtils.log("unzipping file [ "+file.getName() + " ]");
                 unzipArchive(file, testFolder.getAbsoluteFile());
                 file.delete();
             }

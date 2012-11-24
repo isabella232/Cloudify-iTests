@@ -52,9 +52,12 @@ public class TestsReportFileStream {
 		String[] files = dir.list(new FilenameFilter() {
 			@Override
 			public boolean accept(File dir, String name) {
-				return name.endsWith(".xml");
+				return name.startsWith("sgtest-result");
 			}
 		});
+		for (String fileName : files) {
+			System.out.println("fileName "+fileName);
+		}
 		for (String fileName : files) {
 			TestsReport testsReport = readFromFile(inputDirectory, fileName);
 			combinedTestsReport.getReports().addAll(testsReport.getReports());

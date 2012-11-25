@@ -32,80 +32,91 @@ public abstract class RecipeInstaller {
 		return disableSelfHealing;
 	}
 
-	public void setDisableSelfHealing(boolean disableSelfHealing) {
+	public RecipeInstaller setDisableSelfHealing(boolean disableSelfHealing) {
 		this.disableSelfHealing = disableSelfHealing;
+		return this;
 	}
 	
 	public String getRestUrl() {
 		return restUrl;
 	}
 
-	public void setRestUrl(String restUrl) {
+	public RecipeInstaller restUrl(String restUrl) {
 		this.restUrl = restUrl;
+		return this;
 	}
 
 	public String getRecipePath() {
 		return recipePath;
 	}
 
-	public void setRecipePath(String recipePath) {
+	public RecipeInstaller setRecipePath(String recipePath) {
 		this.recipePath = recipePath;
+		return this;
 	}
 
 	public Map<String, Object> getOverrides() {
 		return overrideProperties;
 	}
 
-	public void setOverrides(Map<String, Object> overridesFilePath) {
+	public RecipeInstaller setOverrides(Map<String, Object> overridesFilePath) {
 		this.overrideProperties = overridesFilePath;
+		return this;
 	}
 
 	public Map<String, Object> getCloudOverrides() {
 		return cloudOverrideProperties;
 	}
 
-	public void setCloudOverrides(Map<String, Object> cloudOverridesFilePath) {
+	public RecipeInstaller setCloudOverrides(Map<String, Object> cloudOverridesFilePath) {
 		this.cloudOverrideProperties = cloudOverridesFilePath;
+		return this;
 	}
 
 	public long getTimeoutInMinutes() {
 		return timeoutInMinutes;
 	}
 
-	public void setTimeoutInMinutes(long timeoutInMinutes) {
+	public RecipeInstaller setTimeoutInMinutes(long timeoutInMinutes) {
 		this.timeoutInMinutes = timeoutInMinutes;
+		return this;
 	}
 
 	public boolean isWaitForFinish() {
 		return waitForFinish;
 	}
 
-	public void setWaitForFinish(boolean waitForFinish) {
+	public RecipeInstaller setWaitForFinish(boolean waitForFinish) {
 		this.waitForFinish = waitForFinish;
+		return this;
 	}
 
 	public boolean isExpectToFail() {
 		return expectToFail;
 	}
 
-	public void setExpectToFail(boolean expectToFail) {
+	public RecipeInstaller setExpectToFail(boolean expectToFail) {
 		this.expectToFail = expectToFail;
+		return this;
 	}
 	
-	public void setCloudifyUsername(String cloudifyUsername) {
+	public RecipeInstaller setCloudifyUsername(String cloudifyUsername) {
 		this.cloudifyUsername = cloudifyUsername;
+		return this;
 	}
 
-	public void setCloudifyPassword(String cloudifyPassword) {
+	public RecipeInstaller setCloudifyPassword(String cloudifyPassword) {
 		this.cloudifyPassword = cloudifyPassword;
+		return this;
 	}
 	
 	public String getAuthGroups() {
 		return authGroups;
 	}
 
-	public void setAuthGroups(String authGroups) {
+	public RecipeInstaller setAuthGroups(String authGroups) {
 		this.authGroups = authGroups;
+		return this;
 	}
 
 	public abstract String getInstallCommand();

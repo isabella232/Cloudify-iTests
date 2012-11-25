@@ -50,12 +50,12 @@ JAVA_64_URL="http://repository.cloudifysource.org/com/oracle/java/1.6.0_32/jdk-6
 HOME_DIR="/tmp/byon"
 
 if [ -d "$HOME_DIR/gigaspaces" ]; then
-	echo cleaning home directory
+	echo cleaning home directory from gigaspaces installation
 	rm -rf $HOME_DIR/gigaspaces
 fi
 
 if [ -d "$HOME_DIR/java" ]; then
-	echo cleaning home directory
+	echo cleaning home directory from java installation
 	rm -rf $HOME_DIR/java
 fi
 

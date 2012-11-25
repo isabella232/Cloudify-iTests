@@ -13,9 +13,9 @@ set WEBUI_TMP_DIR=%SGTEST_CHECKOUT_FOLDER%\apps\webuitf
 )
 
 for /f "tokens=2" %%i in ('svn info -rHEAD %SVN_WEBUITF_REPOSITORY%^|find "Revision"') do @set REVISION=%%i
-set /p PREV_REVISION=<a.txt
+set /p PREV_REVISION=<\\tarzan\tgrid\webuitf.revision
 if %REVISION% == %PREV_REVISION% goto:_skip
-@echo %REVISION% > a.txt
+@echo %REVISION% > \\tarzan\tgrid\webuitf.revision
 
 
 @mkdir %WEBUI_TMP_DIR%

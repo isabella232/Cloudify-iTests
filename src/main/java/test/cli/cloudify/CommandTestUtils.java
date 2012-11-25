@@ -198,7 +198,7 @@ public class CommandTestUtils {
 	}
 	
 	public static String getBuildApplicationsPath() {
-		return SGTestHelper.getBuildDir() + "/recipes/applications";
+		return SGTestHelper.getBuildDir() + "/recipes/apps";
 	}
 
 

@@ -12,6 +12,11 @@ set WEBUI_TMP_DIR=%SGTEST_CHECKOUT_FOLDER%\apps\webuitf
 	set SVN_WEBUITF_REPOSITORY=svn://pc-lab14/SVN/xap/branches/%SVN_BRANCH_DIRECTORY%/%BRANCH_NAME%/quality/frameworks/webuitf
 )
 
+for /f "tokens=2" %%i in ('svn info -rHEAD %SVN_WEBUITF_REPOSITORY%^|find "Revision"') do @set REVISION=%%i
+set /p PREV_REVISION=<a.txt
+if %REVISION% == %PREV_REVISION% goto:_skip
+
+
 @mkdir %WEBUI_TMP_DIR%
 @svn export %SVN_WEBUITF_REPOSITORY% %WEBUI_TMP_DIR% --force
 
@@ -19,3 +24,7 @@ set WEBUI_TMP_DIR=%SGTEST_CHECKOUT_FOLDER%\apps\webuitf
 pushd %WEBUI_TMP_DIR%
 mvn clean install s3client:deploy -U
 popd
+
+@echo %REVISION% > a.txt
+
+:_skip

@@ -9,6 +9,8 @@ import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
+import org.openspaces.admin.Admin;
+import org.openspaces.admin.application.Application;
 import org.openspaces.admin.gsm.GridServiceManager;
 import org.openspaces.admin.machine.Machine;
 import org.openspaces.admin.pu.DeploymentStatus;
@@ -18,6 +20,8 @@ import org.openspaces.admin.space.events.SpaceModeChangedEvent;
 import org.openspaces.admin.space.events.SpaceModeChangedEventListener;
 import org.openspaces.core.cluster.ClusterInfo;
 import org.openspaces.pu.service.ServiceDetails;
+
+import test.AbstractTest;
 
 import com.gigaspaces.cluster.activeelection.SpaceMode;
 
@@ -174,5 +178,17 @@ public class ProcessingUnitUtils {
 			// this is a bug since we formed the URL correctly
 			throw new IllegalStateException(e);
 		}
+	}
+	
+	public static Set<Machine> getMachinesOfApplication(final Admin admin , final String applicationName) {
+		Set<Machine> machines = new HashSet<Machine>();
+		Application app = admin.getApplications().waitFor(applicationName, AbstractTest.OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
+		for (ProcessingUnit pu : app.getProcessingUnits()) {
+			for (ProcessingUnitInstance puInstance : pu.getInstances()) {
+				machines.add(puInstance.getMachine());
+			}
+			
+		}
+		return machines;
 	}
 }

@@ -2,11 +2,12 @@ package test.cli.cloudify.cloud.byon;
 
 import java.util.concurrent.TimeUnit;
 
-import org.testng.Assert;
+import org.openspaces.admin.pu.ProcessingUnit;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import framework.utils.AssertUtils;
 import framework.utils.LogUtils;
 import framework.utils.ScriptUtils;
 
@@ -37,19 +38,20 @@ public class RepetativeInstallAndUninstallOnByonTest extends AbstractByonCloudTe
 			LogUtils.log("petclinic install number " + (i + 1));
 			installApplicationAndWait(ScriptUtils.getBuildPath() + "/recipes/apps/petclinic-simple", "petclinic");
 
-			Assert.assertTrue(
-					admin.getProcessingUnits().getProcessingUnit("petclinic.mongod").waitFor(1, 10, TimeUnit.MINUTES),
-					"petclinic.mongod is not up - install failed");
-			Assert.assertTrue(
-					admin.getProcessingUnits().getProcessingUnit("petclinic.tomcat").waitFor(1, 10, TimeUnit.MINUTES),
-					"petclinic.tomcat is not up - install failed");
-
+			ProcessingUnit mongod = admin.getProcessingUnits().waitFor("petclinic.mongod", 5, TimeUnit.MINUTES);
+			ProcessingUnit tomcat = admin.getProcessingUnits().waitFor("petclinic.tomcat", 5, TimeUnit.MINUTES);
+			
+			AssertUtils.assertNotNull("Failed to discover processing unit petclinic.mongod even though it was installed succesfully ", mongod);
+			AssertUtils.assertNotNull("Failed to discover processing unit petclinic.tomcat even though it was installed succesfully ", tomcat);
+			
 			LogUtils.log("petclinic uninstall number " + (i + 1));
 			uninstallApplicationAndWait("petclinic");
-			Assert.assertTrue(admin.getProcessingUnits().getProcessingUnit("petclinic.mongod") == null,
-					"petclinic.mongod is up - uninstall failed");
-			Assert.assertTrue(admin.getProcessingUnits().getProcessingUnit("petclinic.tomcat") == null,
-					"petclinic.tomcat is up - uninstall failed");
+
+			mongod = admin.getProcessingUnits().waitFor("petclinic.mongod", 5, TimeUnit.MINUTES);
+			tomcat = admin.getProcessingUnits().waitFor("petclinic.tomcat", 5, TimeUnit.MINUTES);
+			
+			AssertUtils.assertNull("Processing unit petclinic.mongod is still discovered even though it was uninstalled succesfully ", mongod);
+			AssertUtils.assertNull("Processing unit petclinic.tomcat is still discovered even though it was uninstalled succesfully ", tomcat);
 			
 			super.scanForLeakedAgentNodes();
 		}

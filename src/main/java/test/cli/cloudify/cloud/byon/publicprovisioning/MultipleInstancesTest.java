@@ -9,6 +9,8 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import framework.utils.AssertUtils;
+
 public class MultipleInstancesTest extends AbstractPublicProvisioningByonCloudTest {	
 	
 	private static final String GROOVY = "groovy";
@@ -31,6 +33,9 @@ public class MultipleInstancesTest extends AbstractPublicProvisioningByonCloudTe
 		
 		// check that it is the case
 		ProcessingUnit groovy = admin.getProcessingUnits().waitFor(ServiceUtils.getAbsolutePUName("default", GROOVY), OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
+		
+		AssertUtils.assertNotNull("Failed to discover processing unit " + GROOVY + " even though it was installed succesfully", groovy);
+		
 		assertTrue(groovy.waitFor(2, OPERATION_TIMEOUT, TimeUnit.MILLISECONDS));
 		assertTrue("groovy instances were installed on 2 different machines", groovy.getInstances()[0].getGridServiceContainer().getMachine().getHostAddress().equals(groovy.getInstances()[1].getGridServiceContainer().getMachine().getHostAddress()));
 		

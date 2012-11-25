@@ -14,6 +14,7 @@ import org.testng.annotations.Test;
 
 import test.cli.cloudify.cloud.services.byon.ByonCloudService;
 import test.cli.cloudify.cloud.services.byon.MultipleTemplatesByonCloudService;
+import framework.utils.AssertUtils;
 import framework.utils.CloudBootstrapper;
 import framework.utils.ServiceInstaller;
 
@@ -44,6 +45,9 @@ public class BootstrapCloudWithOverridesTest extends AbstractByonCloudTest {
 	public void testOverridesDuringBootstrap() throws IOException, InterruptedException {
 		
 		List<Machine> machines = getAllMachines();
+		
+		AssertUtils.assertNotNull("Failed to discover any machines after bootstrap", machines);
+		
 		assertOverrides(machines);
 		
 		ServiceInstaller installer = new ServiceInstaller(getRestUrl(), "tomcat");
@@ -82,7 +86,10 @@ public class BootstrapCloudWithOverridesTest extends AbstractByonCloudTest {
 	private void assertOverrides(List<Machine> machines) {
 		
 		for (Machine machine : machines) {
-			GridServiceAgent agent = machine.getGridServiceAgent();		
+			GridServiceAgent agent = machine.getGridServiceAgent();	
+			
+			AssertUtils.assertNotNull("Failed to discover agent on machine " + machine.getHostName() , agent);
+			
 			String agentMachineEnvVariable = agent.getVirtualMachine().getDetails().
 					getEnvironmentVariables().get(ByonCloudService.ENV_VARIABLE_NAME);
 			

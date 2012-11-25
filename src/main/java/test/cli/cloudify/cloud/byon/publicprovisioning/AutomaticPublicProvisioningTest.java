@@ -11,6 +11,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import test.cli.cloudify.CommandTestUtils;
+import framework.utils.AssertUtils;
 import framework.utils.LogUtils;
 
 public class AutomaticPublicProvisioningTest extends AbstractPublicProvisioningByonCloudTest {
@@ -33,6 +34,9 @@ public class AutomaticPublicProvisioningTest extends AbstractPublicProvisioningB
 		installAutomaticPublicProvisioningServiceAndWait(SERVICE_NAME, 1, 128, 0, DEFAULT_TEMPLATE_NAME);
 		
 		ProcessingUnit pu = admin.getProcessingUnits().waitFor(ServiceUtils.getAbsolutePUName("default", SERVICE_NAME), OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
+		
+		AssertUtils.assertNotNull("Failed to discover processing unit " + SERVICE_NAME + " even though it was installed succesfully", pu);
+
 		
 		// the threshold is set to 1 averaged on all instances.
 		// we set the value to 10 causing the average to be 10, this breaches the threshold and an instance should be added.

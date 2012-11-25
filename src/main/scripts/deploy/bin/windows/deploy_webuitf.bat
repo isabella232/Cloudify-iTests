@@ -15,6 +15,7 @@ set WEBUI_TMP_DIR=%SGTEST_CHECKOUT_FOLDER%\apps\webuitf
 for /f "tokens=2" %%i in ('svn info -rHEAD %SVN_WEBUITF_REPOSITORY%^|find "Revision"') do @set REVISION=%%i
 set /p PREV_REVISION=<a.txt
 if %REVISION% == %PREV_REVISION% goto:_skip
+@echo %REVISION% > a.txt
 
 
 @mkdir %WEBUI_TMP_DIR%
@@ -25,6 +26,5 @@ pushd %WEBUI_TMP_DIR%
 mvn clean install s3client:deploy -U
 popd
 
-@echo %REVISION% > a.txt
 
 :_skip

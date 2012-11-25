@@ -10,7 +10,7 @@ set BUILD_LOG_URL=%5
 
 pushd %SGTEST_HOME%
 
-CLOUDIFY_HOME=/export/tgrid/sgtest3.0-cloudify/deploy/local-builds/%BUILD_NUMBER%/gigaspaces-cloudify-%MAJOR_VERSION%-%MINOR_VERSION%
+set CLOUDIFY_HOME=/export/tgrid/sgtest3.0-cloudify/deploy/local-builds/%BUILD_NUMBER%/gigaspaces-cloudify-%MAJOR_VERSION%-%MINOR_VERSION%
 
 call mvn exec:java -Dexec.mainClass="framework.testng.report.TestsReportMerger" -Dexec.args="%SUITE_TYPE% %BUILD_NUMBER% %SUITE_NAME% %MAJOR_VERSION% %MINOR_VERSION%" -Dcloudify.home=%CLOUDIFY_HOME%
 

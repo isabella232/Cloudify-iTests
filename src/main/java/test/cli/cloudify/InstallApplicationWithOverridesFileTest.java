@@ -2,11 +2,8 @@ package test.cli.cloudify;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -20,20 +17,16 @@ import org.cloudifysource.dsl.internal.packaging.Packager;
 import org.cloudifysource.dsl.internal.packaging.PackagingException;
 import org.cloudifysource.restclient.StringUtils;
 import org.openspaces.admin.pu.ProcessingUnit;
-import org.openspaces.admin.pu.ProcessingUnitInstance;
-import org.openspaces.pu.service.ServiceDetails;
 import org.testng.Assert;
+import org.testng.annotations.AfterSuite;
 import org.testng.annotations.Test;
-
-import test.usm.USMTestUtils;
-import framework.utils.LogUtils;
 
 /**
  * 
  * @author yael
  *
  */
-public class InstallApplicationWithOverridesFileTest extends AbstractLocalCloudTest {
+public class InstallApplicationWithOverridesFileTest extends OverridesTest {
 
 	private static final String APPLICATION_OVERRIDEN_NAME = "simpleOverridesApplicationOverriden";
 	private static final String SERVICE_OVERRIDEN_NAME = "simpleOverridesService";
@@ -54,9 +47,6 @@ public class InstallApplicationWithOverridesFileTest extends AbstractLocalCloudT
 		EXPECTED_SERVICE_FIELDS.put("icon", SERVICE_ICON);
 		EXPECTED_SERVICE_FIELDS.put("url", SERVICE_URL);
 	}
-	private static final int STATUS_OK = 200;
-	private static final long PU_TIMEOUT = 30;
-	private static final long PU_STATE_TIMEOUT = 60;
 
 	/**
 	 * Tests overrides properties of application that has overrides file in addition to properties file.
@@ -118,14 +108,14 @@ public class InstallApplicationWithOverridesFileTest extends AbstractLocalCloudT
 		Assert.assertEquals(STATUS_OK, response.getStatusLine().getStatusCode());
 			
 		// asserts
-		ProcessingUnit processingUnit = getProcessingUnit();
+		ProcessingUnit processingUnit = getProcessingUnit(PU_NAME);
 		assertProcessingUnit(processingUnit);
 		assertApplication();
 		assertService();
 		assertOverrides(processingUnit);
 		
 		// un-install
-		uninstallApplication(restUrl, APPLICATION_OVERRIDEN_NAME);
+		uninstall(restUrl, "application", APPLICATION_OVERRIDEN_NAME);
 
 	}
 
@@ -133,10 +123,10 @@ public class InstallApplicationWithOverridesFileTest extends AbstractLocalCloudT
 			final String overridesFilePath) throws IOException, InterruptedException {
 
 		// install
-		installApplication(restUrl, applicationDirName, overridesFilePath);
+		install(restUrl, "application", applicationDirName, overridesFilePath);
 
 		// get PU
-		final ProcessingUnit processingUnit = getProcessingUnit();
+		final ProcessingUnit processingUnit = getProcessingUnit(PU_NAME);
 
 		// asserts
 		assertProcessingUnit(processingUnit);
@@ -145,20 +135,8 @@ public class InstallApplicationWithOverridesFileTest extends AbstractLocalCloudT
 		assertOverrides(processingUnit);
 
 		// un-install
-		uninstallApplication(restUrl, APPLICATION_OVERRIDEN_NAME);
+		uninstall(restUrl, "application", APPLICATION_OVERRIDEN_NAME);
 
-	}
-
-	private ProcessingUnit getProcessingUnit() {
-		return admin.getProcessingUnits().waitFor(PU_NAME, PU_TIMEOUT, TimeUnit.SECONDS);
-	}
-
-	private void assertProcessingUnit(final ProcessingUnit processingUnit) {
-		Assert.assertNotNull(processingUnit);
-		Assert.assertTrue(processingUnit.waitFor(1, PU_TIMEOUT, TimeUnit.SECONDS),
-				"Instance of '" + PU_NAME + "' service was not found");
-		Assert.assertTrue(USMTestUtils.waitForPuRunningState(PU_NAME,
-				PU_STATE_TIMEOUT, TimeUnit.SECONDS, admin));		
 	}
 
 	private static void assertService() 
@@ -182,49 +160,22 @@ public class InstallApplicationWithOverridesFileTest extends AbstractLocalCloudT
 				output.contains(APPLICATION_OVERRIDEN_NAME));
 	}
 
-	private void installApplication(final String url,
-			final String applicationDirPath, final String overridesFilePath) {
-		String command = "connect " + restUrl + ";install-application --verbose";
-		if (overridesFilePath != null) {
-			command += " -overrides " + overridesFilePath;
-		} 
-		try {
-			runCommand(command + " " + applicationDirPath);
-		} catch (final Exception e) {
-			LogUtils.log("Failed to install application " + applicationDirPath, e);
-			e.printStackTrace();
-		}
-	}
-
-	private void uninstallApplication(final String url,
-			final String applicationName) {
-		try {
-			runCommand("connect " + url
-					+ ";uninstall-application -timeout 5 " + applicationName);
-		} catch (final Exception e) {
-			LogUtils.log("Failed to uninstall application " + applicationName, e);
-			e.printStackTrace();
-		}
-	}
-
-	private static void assertOverrides(final ProcessingUnit processingUnit) {
+	private void assertOverrides(final ProcessingUnit processingUnit) {
 		// application's name was overridden.
 		assertEquals(APPLICATION_OVERRIDEN_NAME, processingUnit.getApplication().getName());
 		// service's fields were overridden by application's properties.
-		ProcessingUnitInstance processingUnitInstance = processingUnit.getInstances()[0];
-		final Collection<ServiceDetails> allServiceDetails = processingUnitInstance
-				.getServiceDetailsByServiceId().values();
-		final Map<String, Object> allDetails = new HashMap<String, Object>();
-		for (final ServiceDetails serviceDetails : allServiceDetails) {
-			allDetails.putAll(serviceDetails.getAttributes());
-		}
-		for (final Entry<String, Object> details : EXPECTED_SERVICE_FIELDS
-				.entrySet()) {
-			final String detailKey = details.getKey();
-			assertTrue("Missing details entry: " + detailKey,
-					allDetails.containsKey(detailKey));
-			assertEquals(details.getValue(), allDetails.get(detailKey));
-		}
+		assertServiceOverridenFields(processingUnit);
 	}
 
+	
+	@Override
+	protected Map<String, Object> getExpectedServiceFields() {
+		return EXPECTED_SERVICE_FIELDS;
+	}
+	
+	@Override
+	@AfterSuite(alwaysRun = true)
+	public void afterSuite() {
+		// TODO Auto-generated method stub
+	}
 }

@@ -13,7 +13,7 @@ import org.testng.annotations.Test;
  * @author yael
  *
  */
-public class InstallServiceWithOverridesFile extends OverridesTest {
+public class InstallServiceWithOverridesFileTest extends OverridesTest {
 	private static final String SERVICE_NAME = "simple";
 	private static final String SERVICE_WITH_OVERRIDES_NAME = "simpleWithOverrides";
 

@@ -14,6 +14,7 @@ import org.apache.commons.io.FileUtils;
 import org.cloudifysource.dsl.cloud.Cloud;
 import org.cloudifysource.dsl.internal.ServiceReader;
 import org.openspaces.admin.Admin;
+import org.testng.Assert;
 
 import test.cli.cloudify.CloudTestUtils;
 import test.cli.cloudify.CommandTestUtils;
@@ -260,16 +261,24 @@ public abstract class AbstractCloudService implements CloudService {
 		} catch (InterruptedException e) {
 		}
 		
-		boolean leakedAgentAndManagementNodesScanResult = false;
+		Throwable first = null;
 		for (int i = 0 ; i < MAX_SCAN_RETRY ; i++) {
 			try {
-				leakedAgentAndManagementNodesScanResult = scanLeakedAgentAndManagementNodes();
+				boolean leakedAgentAndManagementNodesScanResult = scanLeakedAgentAndManagementNodes();
+				if (leakedAgentAndManagementNodesScanResult == true) {
+					return;
+				} else {
+					Assert.fail("Leaked nodes were found!");
+				}
 				break;
 			} catch (final Throwable t) {
+				first = t;
 				LogUtils.log("Failed scaning for leaked nodes. attempt number " + (i + 1) , t);
 			}
 		}
-		AssertUtils.assertTrue("Leaked nodes were found!", leakedAgentAndManagementNodesScanResult);
+		if (first != null) {
+			Assert.fail("Failed scanning for leaked nodes after " + MAX_SCAN_RETRY + " attempts. First exception was --> " + first.getMessage(), first);
+		}
 	} 
 	
 	private void writePropertiesToCloudFolder(Map<String, Object> properties) throws IOException {

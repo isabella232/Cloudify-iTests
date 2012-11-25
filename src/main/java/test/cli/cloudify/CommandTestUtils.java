@@ -15,9 +15,6 @@ import framework.utils.ScriptUtils;
 
 public class CommandTestUtils {
 
-
-	private static final int ADMIN_REFRESH_TIME_MILLIS = 15000;
-
 	/**
 	 * Runs the specified cloudify commands and outputs the result log.
 	 * @param command - The actual cloudify commands delimited by ';'.
@@ -194,6 +191,14 @@ public class CommandTestUtils {
 
 	public static String getPath(String relativePath) {
 		return new File(SGTestHelper.getSGTestRootDir(), relativePath).getAbsolutePath().replace('\\', '/');
+	}
+	
+	public static String getBuildServicesPath() {
+		return SGTestHelper.getBuildDir() + "/recipes/services";
+	}
+	
+	public static String getBuildApplicationsPath() {
+		return SGTestHelper.getBuildDir() + "/recipes/applications";
 	}
 
 

@@ -23,9 +23,9 @@ public class ApplicationInstaller extends RecipeInstaller {
 	public void assertInstall(String output) {
 		final String excpectedResult = "Application " + applicationName + " installed successfully";
 		if (!isExpectToFail()) {
-			AssertUtils.assertTrue(output.toLowerCase().contains(excpectedResult.toLowerCase()));
+			AssertUtils.assertTrue("Application installation failed", output.toLowerCase().contains(excpectedResult.toLowerCase()));
 		} else {
-			AssertUtils.assertTrue(output.toLowerCase().contains("operation failed"));
+			AssertUtils.assertTrue("Application installation succeeded", output.toLowerCase().contains("operation failed"));
 		}
 		
 	}

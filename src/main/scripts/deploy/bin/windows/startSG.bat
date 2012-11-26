@@ -64,9 +64,6 @@ call %SGTEST_HOME%\src\main\scripts\deploy\bin\windows\start-suite.bat %SUITE_NA
 @echo generating report... 
 call %SGTEST_HOME%\src\main\scripts\deploy\bin\windows\generate-report.bat %BUILD_NUMBER% %SUITE_NAME% %VERSION% %MILESTONE% %BUILD_LOG_URL%
 
-@echo shutting down agents
-call %BUILD_LOCATION%\tools\groovy\bin\groovy.bat %SGTEST_HOME%\src\main\scripts\deploy\bin\windows\shutdown
-
 if %selenium.browser% == Chrome (
 	taskkill /im chromedriver.exe /F
 	taskkill /im chrome.exe /F

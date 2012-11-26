@@ -86,6 +86,10 @@ public class WikiReporter {
     public static void main(String[] args) {
 		
     	String fileName = "sgtest-results.xml";
+    	
+    	for(String s : args){
+    		System.out.println("%%%%%%%%%%%%%%%%%%% "+ s);
+    	}
 
     	//args
     	String inputDirectory = args[0];

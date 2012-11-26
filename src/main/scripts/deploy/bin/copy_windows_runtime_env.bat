@@ -17,34 +17,7 @@ set BRANCH_NAME=%7
 set SVN_BRANCH_DIRECTORY=%8
 set EC2_REGION=%9
 
-set SGTEST_RUNTIME_FOLDER=C:\Users\ca\sgtest-cloudify
-
-@echo copying execution script to runtime sgtest folder
-@if exist %SGTEST_RUNTIME_FOLDER%\deploy\bin\windows rmdir %SGTEST_RUNTIME_FOLDER%\deploy\bin\windows /s /q
-@xcopy %SGTEST_CHECKOUT_FOLDER%\deploy\bin\windows %SGTEST_RUNTIME_FOLDER%\deploy\bin\windows /s /i /y
-
-@echo copying run.xml to runtime sgtest folder
-
-@if exist %SGTEST_RUNTIME_FOLDER%\bin\run-win.xml del %SGTEST_RUNTIME_FOLDER%\bin\run-win.xml /s /q
-@xcopy %SGTEST_CHECKOUT_FOLDER%\bin\run-win.xml %SGTEST_RUNTIME_FOLDER%\bin /s /i /y
-
-@if exist %SGTEST_RUNTIME_FOLDER%\bin\pre-run.xml del %SGTEST_RUNTIME_FOLDER%\bin\pre-run.xml /s /q
-@xcopy %SGTEST_CHECKOUT_FOLDER%\bin\pre-run.xml %SGTEST_RUNTIME_FOLDER%\bin /s /i /y
-
-@if exist %SGTEST_RUNTIME_FOLDER%\bin\post-run.xml del %SGTEST_RUNTIME_FOLDER%\bin\post-run.xml /s /q
-@xcopy %SGTEST_CHECKOUT_FOLDER%\bin\post-run.xml %SGTEST_RUNTIME_FOLDER%\bin /s /i /y
-
-@if exist %SGTEST_RUNTIME_FOLDER%\config\gs_logging.properties del %SGTEST_RUNTIME_FOLDER%\config\gs_logging.properties /s /q
-@xcopy %SGTEST_CHECKOUT_FOLDER%\config\gs_logging.properties %SGTEST_RUNTIME_FOLDER%\config /s /i /y
-
-@echo copying test resources to sgtest runtime folder
-
-@if exist %SGTEST_RUNTIME_FOLDER%\src\test\webui\resources rmdir %SGTEST_RUNTIME_FOLDER%\src\test\webui\resources /s /q
-@xcopy %SGTEST_CHECKOUT_FOLDER%\src\test\webui\resources %SGTEST_RUNTIME_FOLDER%\src\test\webui\resources /s /i /y
-
-@echo copying config files to sgtest runtime folder
-@if exist %SGTEST_RUNTIME_FOLDER%\config rmdir %SGTEST_RUNTIME_FOLDER%\config /s /q
-@xcopy %SGTEST_CHECKOUT_FOLDER%\config %SGTEST_RUNTIME_FOLDER%\config /s /i /y
+set SGTEST_RUNTIME_FOLDER=C:\Users\ca\sgtest-cloudify3.0
 
 
 cd windows

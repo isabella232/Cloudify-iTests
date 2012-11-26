@@ -23,7 +23,7 @@ set SUITE_ID=0
 
 pushd %SGTEST_HOME%
 
-echo "making suite dir" %BUILD_DIR%/../%SUITE_NAME%
+echo "making suite dir" %BUILD_TEST_DIR%/%SUITE_NAME%
 mkdir %BUILD_TEST_DIR%/%SUITE_NAME%
 
 call mvn test -e -U ^

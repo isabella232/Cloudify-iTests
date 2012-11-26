@@ -36,7 +36,7 @@ call mvn test -e -U ^
 -Djava.awt.headless=true ^
 -Dsgtest.suiteName=%SUITE_NAME% ^
 -Dsgtest.suiteId=%SUITE_ID% ^
--Dsgtest.summary.dir=%LOC_BUILD_TEST_DIR%/../%SUITE_NAME% ^
+-Dsgtest.summary.dir=../ ^
 -Dsgtest.numOfSuites=1 ^
 -Dorg.apache.commons.logging.Log=org.apache.commons.logging.impl.Jdk14Logger ^
 -Dcom.gs.logging.level.config=true ^

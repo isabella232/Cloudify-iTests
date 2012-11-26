@@ -1,4 +1,4 @@
-package test.gsm.stateful.manual.memory.xen;
+package test.esm.stateful.manual.memory;
 
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.openspaces.admin.pu.elastic.config.ManualCapacityScaleConfigurer;
@@ -6,10 +6,10 @@ import org.openspaces.admin.space.ElasticSpaceDeployment;
 import org.openspaces.core.util.MemoryUnit;
 import org.testng.annotations.Test;
 
-import test.gsm.AbstractXenGSMTest;
-import test.gsm.GsmTestUtils;
+import test.esm.AbstractFromXenToByonGSMTest;
+import framework.utils.GsmTestUtils;
 
-public class DedicatedManualXenStatefulMediumDeploymentTest extends AbstractXenGSMTest {
+public class DedicatedManualXenStatefulMediumDeploymentTest extends AbstractFromXenToByonGSMTest {
 
 	private static final int CONTAINER_CAPACITY = 256;
     private static final int HIGH_NUM_CPU = 8;

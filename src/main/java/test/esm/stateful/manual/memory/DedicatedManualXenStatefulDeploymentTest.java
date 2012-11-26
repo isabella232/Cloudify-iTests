@@ -1,4 +1,4 @@
-package test.gsm.stateful.manual.memory.xen;
+package test.esm.stateful.manual.memory;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,11 +12,11 @@ import org.openspaces.admin.pu.elastic.config.ScaleStrategyConfig;
 import org.openspaces.core.util.MemoryUnit;
 import org.testng.annotations.Test;
 
-import test.gsm.AbstractXenGSMTest;
-import test.gsm.GsmTestUtils;
+import test.esm.AbstractFromXenToByonGSMTest;
 import framework.utils.DeploymentUtils;
+import framework.utils.GsmTestUtils;
 
-public class DedicatedManualXenStatefulDeploymentTest extends AbstractXenGSMTest {
+public class DedicatedManualXenStatefulDeploymentTest extends AbstractFromXenToByonGSMTest {
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1")
     public void testElasticStatefulProcessingUnitDeploymentScale() throws IOException {

@@ -31,10 +31,9 @@ set SGTEST_HOME=%LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER%\SGTest
 @if exist %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER% rmdir %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER% /s /q
 
 @echo retrieving build from tarzan...
-@mkdir %BUILD_LOCATION%
-xcopy %REMOTE_BUILD_DIR%\cloudify\1.5\gigaspaces-cloudify-%VERSION%-%MILESTONE%-b%BUILD_VERSION%.zip %BUILD_LOCATION%
+xcopy %REMOTE_BUILD_DIR%\cloudify\1.5\gigaspaces-cloudify-%VERSION%-%MILESTONE%-b%BUILD_VERSION%.zip %BUILD_TEST_DIR% /D
 @echo extracting build file to local-builds folder
-@7z x %BUILD_LOCATION%-b%BUILD_VERSION%.zip -o%BUILD_LOCATION%
+@7z x %BUILD_LOCATION%-b%BUILD_VERSION%.zip -o%BUILD_TEST_DIR%
 @del %BUILD_LOCATION%-b%BUILD_VERSION%.zip
 
 @echo exporting SGTest

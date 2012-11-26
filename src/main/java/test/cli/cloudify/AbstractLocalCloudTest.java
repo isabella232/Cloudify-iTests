@@ -66,16 +66,16 @@ public class AbstractLocalCloudTest extends AbstractTest {
 	final int BOOTSTRAP_RETRIES_BEFOREMETHOD = 2;
 	protected final int WAIT_FOR_TIMEOUT_SECONDS = 60;
 	private final int HTTP_STATUS_OK = 200;
-	private final int restPort = 8100;
+	protected final int restPort = 8100;
 	protected static String restUrl = null;
 	protected static final String MANAGEMENT_APPLICATION_NAME = "management";
 	protected static final String DEFAULT_APPLICATION_NAME = CloudifyConstants.DEFAULT_APPLICATION_NAME;
 
 	protected boolean isDevEnv = false;
-	
-	protected boolean isSecured = Boolean.getBoolean("secured.suite");	//defaults to false
-	protected String user = "Amanda";
-	protected String password = "Amanda";
+
+	protected boolean isSecured = false;
+	protected String user = null;
+	protected String password = null;
 
 	protected boolean checkIsDevEnv() {
 		if (this.isDevEnv) {
@@ -100,14 +100,14 @@ public class AbstractLocalCloudTest extends AbstractTest {
 
 	}
 
-	private void cleanUpCloudifyLocalDir() throws IOException {
+	protected void cleanUpCloudifyLocalDir() throws IOException {
 		String userHomeProp = null;
 		if (ScriptUtils.isLinuxMachine()) {
 			userHomeProp = System.getProperty("user.home");
 		} else {
 			// TODO eli - fix this hack. not very nice and generic
 			userHomeProp = System.getProperty("user.dir") + "/../../"; // windows
-																		// machine
+			// machine
 		}
 		final File userHomeDir = new File(userHomeProp, ".cloudify");
 		LogUtils.log("Cleaning up cloudify folder under 'user.home' folder at: "
@@ -167,17 +167,10 @@ public class AbstractLocalCloudTest extends AbstractTest {
 					}
 
 					final ProcessResult bootstrapResult;
-					if (isSecured) {
-						//use security
-						bootstrapResult = CommandTestUtils
-								.runCloudifyCommandAndWait("bootstrap-localcloud --verbose -user " + user 
-										+ " -password " + password + " -timeout 15");
-					} else {
-						//don't use security
-						bootstrapResult = CommandTestUtils
-								.runCloudifyCommandAndWait("bootstrap-localcloud --verbose -timeout 15");
-					}
-					
+
+					bootstrapResult = CommandTestUtils
+							.runCloudifyCommandAndWait("bootstrap-localcloud --verbose -timeout 15");
+
 					LogUtils.log(bootstrapResult.getOutput());
 					Assert.assertEquals(bootstrapResult.getExitcode(), 0,
 							"Bootstrap failed");
@@ -217,26 +210,26 @@ public class AbstractLocalCloudTest extends AbstractTest {
 				+ "], "
 				+ "TotalPhysicalMem ["
 				+ machine.getOperatingSystem().getDetails()
-						.getTotalPhysicalMemorySizeInGB()
+				.getTotalPhysicalMemorySizeInGB()
 				+ "GB], "
 				+ "FreePhysicalMem ["
 				+ machine.getOperatingSystem().getStatistics()
-						.getFreePhysicalMemorySizeInGB() + "GB]]");
+				.getFreePhysicalMemorySizeInGB() + "GB]]");
 
 	}
 
-	private boolean checkOutputForExceptions(final String output) {
+	protected boolean checkOutputForExceptions(final String output) {
 		if (output.contains("Exception")) {
 			return true;
 		}
 		return false;
 	}
 
-	private boolean isRequiresBootstrap() {
+	protected boolean isRequiresBootstrap() {
 		boolean requiredBootstrap = true;
 		try {
 			final ProcessResult connectResult = CommandTestUtils
-					.runCloudifyCommandAndWait("connect " + restUrl);
+					.runCloudifyCommandAndWait(connectCommand());
 			final boolean leakedProcessesFound = killLeakedProcesses();
 			final boolean restPortResponding = PortConnectionUtils.isPortOpen(
 					"localhost", restPort);
@@ -266,7 +259,7 @@ public class AbstractLocalCloudTest extends AbstractTest {
 		return requiredBootstrap;
 	}
 
-	private String getLocalHostIpAddress() {
+	protected String getLocalHostIpAddress() {
 		return "127.0.0.1";
 	}
 
@@ -430,7 +423,7 @@ public class AbstractLocalCloudTest extends AbstractTest {
 		}
 	}
 
-	private Admin getAdminWithLocators() {
+	protected Admin getAdminWithLocators() {
 		final String nicAddress = getLocalHostIpAddress();
 
 		final AdminFactory factory = new AdminFactory();
@@ -582,12 +575,12 @@ public class AbstractLocalCloudTest extends AbstractTest {
 	protected Application installApplication(final String applicationName) {
 
 		final String applicationDir = CommandTestUtils
-				.getPath("src/main/resources/apps/USM/usm/applications/" + applicationName);
+				.getPath("apps/USM/usm/applications/" + applicationName);
 
 		try {
 			final Application app = ServiceReader.getApplicationFromFile(
 					new File(applicationDir)).getApplication();
-			runCommand("connect " + restUrl + ";install-application --verbose "
+			runCommand(connectCommand() + ";install-application --verbose "
 					+ applicationDir);
 			return app;
 		} catch (final IOException e) {
@@ -602,12 +595,12 @@ public class AbstractLocalCloudTest extends AbstractTest {
 	}
 
 	protected void installService(final String serviceName) {
-		final String serviceDir = CommandTestUtils.getPath("src/main/resources/apps/USM/usm/"
+		final String serviceDir = CommandTestUtils.getPath("apps/USM/usm/"
 				+ serviceName);
 		try {
 			ServiceReader.getServiceFromDirectory(new File(serviceDir))
-					.getService();
-			runCommand("connect " + restUrl + ";install-service --verbose "
+			.getService();
+			runCommand(connectCommand() + ";install-service --verbose "
 					+ serviceDir);
 		} catch (final FileNotFoundException e) {
 			Assert.fail("Failed to install service", e);
@@ -618,5 +611,40 @@ public class AbstractLocalCloudTest extends AbstractTest {
 		} catch (final InterruptedException e) {
 			Assert.fail("Failed to install service", e);
 		}
+	}
+
+	protected String listApplications(){
+		try {
+			return CommandTestUtils.runCommandAndWait(connectCommand() + ";list-applications");
+		} catch (IOException e) {
+			Assert.fail("Failed to list applications", e);
+		} catch (InterruptedException e) {
+			Assert.fail("Failed to list applications", e);
+		}
+
+		return null;
+	}
+
+	protected String connect(){	
+
+		String output = "no output";
+		try {
+			output = CommandTestUtils.runCommandAndWait(connectCommand());
+		} catch (IOException e) {
+			Assert.fail("Failed to connect");
+		} catch (InterruptedException e) {
+			Assert.fail("Failed to connect");
+		}
+
+		return output;
+	}
+
+	protected String connectCommand(){
+
+		if(isSecured){
+			return("connect -user " + user + " -pwd " + password + " " + restUrl);
+		}
+
+		return("connect " + restUrl);
 	}
 }

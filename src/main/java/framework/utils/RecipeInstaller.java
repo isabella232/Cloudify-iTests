@@ -179,7 +179,7 @@ public abstract class RecipeInstaller {
 		return CommandTestUtils.runCommand(connectCommand + installCommand);
 	}
 	
-	public void uninstall() throws IOException, InterruptedException {
+	public String uninstall() throws IOException, InterruptedException {
 		String url = null;
 		try {
 			url = restUrl + "/service/dump/machines/?fileSizeLimit=50000000";
@@ -209,5 +209,7 @@ public abstract class RecipeInstaller {
 				.toString();
 		String output = CommandTestUtils.runCommandAndWait(connectCommandBuilder.toString() + installCommand);
 		assertUninstall(output);
+		
+		return output;
 	}
 }

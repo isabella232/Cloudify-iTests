@@ -30,6 +30,11 @@ public class ApplicationInstaller extends RecipeInstaller {
 		
 	}
 
+	public ApplicationInstaller setApplicationName(String applicationName) {
+		this.applicationName = applicationName;
+		return this;
+	}
+
 	@Override
 	public String getUninstallCommand() {
 		return "uninstall-application";

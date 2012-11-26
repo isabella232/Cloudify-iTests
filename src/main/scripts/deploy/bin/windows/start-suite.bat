@@ -4,6 +4,7 @@ set TEMP_EXCLUDE=%3
 set INCLUDE=%TEMP_INCLUDE:_=,%
 set EXCLUDE=%TEMP_EXCLUDE:_=,%
 set EC2_REGION=%4
+set LOC_BUILD_TEST_DIR=%5
 
 @cd %LOCAL_SGPATH%\bin
 
@@ -23,8 +24,8 @@ set SUITE_ID=0
 
 pushd %SGTEST_HOME%
 
-echo "making suite dir" %BUILD_TEST_DIR%/%SUITE_NAME%
-mkdir %BUILD_TEST_DIR%/%SUITE_NAME%
+echo "making suite dir" %LOC_BUILD_TEST_DIR%/%SUITE_NAME%
+mkdir %LOC_BUILD_TEST_DIR%/%SUITE_NAME%
 
 call mvn test -e -U ^
 -Dcloudify.home=%RUNTIME_BUILD_LOCATION% ^
@@ -35,7 +36,7 @@ call mvn test -e -U ^
 -Djava.awt.headless=true ^
 -Dsgtest.suiteName=%SUITE_NAME% ^
 -Dsgtest.suiteId=%SUITE_ID% ^
--Dsgtest.summary.dir=%BUILD_DIR%/../%SUITE_NAME% ^
+-Dsgtest.summary.dir=%LOC_BUILD_TEST_DIR%/../%SUITE_NAME% ^
 -Dsgtest.numOfSuites=1 ^
 -Dorg.apache.commons.logging.Log=org.apache.commons.logging.impl.Jdk14Logger ^
 -Dcom.gs.logging.level.config=true ^

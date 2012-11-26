@@ -22,8 +22,8 @@ if %SUITE_NAME% == webui-IE (
 @echo running %selenium.browser% tests...
 set SUITE_ID=0
 
-echo "making suite dir" %LOC_BUILD_TEST_DIR%/%SUITE_NAME%
-mkdir %LOC_BUILD_TEST_DIR%/%SUITE_NAME%
+echo "making suite dir" %LOC_BUILD_TEST_DIR%\%SUITE_NAME%
+mkdir %LOC_BUILD_TEST_DIR%\%SUITE_NAME%
 
 pushd %SGTEST_HOME%
 

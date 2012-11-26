@@ -22,7 +22,7 @@ if %SUITE_NAME% == webui-IE (
 @echo running %selenium.browser% tests...
 set SUITE_ID=0
 
-echo "making suite dir" %LOC_BUILD_TEST_DIR%\%SUITE_NAME%
+echo "making suite dir" %LOC_BUILD_TEST_DIR%\..\%SUITE_NAME%
 mkdir %LOC_BUILD_TEST_DIR%\%SUITE_NAME%
 
 pushd %SGTEST_HOME%
@@ -36,7 +36,7 @@ call mvn test -e -U ^
 -Djava.awt.headless=true ^
 -Dsgtest.suiteName=%SUITE_NAME% ^
 -Dsgtest.suiteId=%SUITE_ID% ^
--Dsgtest.summary.dir=../ ^
+-Dsgtest.summary.dir=%LOC_BUILD_TEST_DIR%\..\%SUITE_NAME% ^
 -Dsgtest.numOfSuites=1 ^
 -Dorg.apache.commons.logging.Log=org.apache.commons.logging.impl.Jdk14Logger ^
 -Dcom.gs.logging.level.config=true ^

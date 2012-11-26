@@ -40,8 +40,9 @@ public class ByonCloudService extends AbstractCloudService {
 	public static final String IP_LIST_PROPERTY = "ipList";
 	
 	protected static final String NEW_URL_PREFIX = "http://tarzan/builds/GigaSpacesBuilds/cloudify";
+	protected static final String NEW_XAP_URL_PREFIX = "http://tarzan/builds/GigaSpacesBuilds";
 	
-	private static final String DEFAULT_MACHINES = "192.168.9.115,192.168.9.116,192.168.9.118,192.168.9.120,192.168.9.135,192.168.9.136,192.168.9.137";
+	private static final String DEFAULT_MACHINES = "192.168.9.98,192.168.9.115,192.168.9.116,192.168.9.117,192.168.9.118,192.168.9.135,192.168.9.136,192.168.9.137";
 	
 	public static final String ENV_VARIABLE_NAME = "GIGASPACES_TEST_ENV";
 	public static final String ENV_VARIABLE_VALUE = "DEFAULT_ENV_VARIABLE";
@@ -119,10 +120,15 @@ public class ByonCloudService extends AbstractCloudService {
 		String buildNumber = PlatformVersion.getBuildNumber();
 		String version = PlatformVersion.getVersion();
 		String milestone = PlatformVersion.getMilestone();
-		
-		// TODO : replace hard coded 'cloudify' string with method to determine weather or no we are running xap or cloudify 
-
-		String newCloudifyURL = NEW_URL_PREFIX + "/" + version + "/build_" + buildNumber + "/cloudify/1.5/gigaspaces-cloudify-" + version + "-" + milestone + "-b" + buildNumber;
+	
+		// TODO : replace hard coded 'cloudify' string with method to determine weather or no we are running xap or cloudify
+		String newCloudifyURL;
+		if(isNoWebServices()){
+			newCloudifyURL =NEW_XAP_URL_PREFIX+ "/" +version +"/build_" + buildNumber + "/xap-bigdata/1.5/gigaspaces-xap-premium-" + version + "-" + milestone + "-b" + buildNumber;
+		}
+		else {
+			newCloudifyURL = NEW_URL_PREFIX + "/" + version + "/build_" + buildNumber + "/cloudify/1.5/gigaspaces-cloudify-" + version + "-" + milestone + "-b" + buildNumber;
+		}
 		Map<String, String> propsToReplace = new HashMap<String, String>();
 		LogUtils.log("replacing cloudify url with : " + newCloudifyURL);
 		propsToReplace.put("cloudifyUrl \".+\"", "cloudifyUrl \"" + newCloudifyURL + '"');

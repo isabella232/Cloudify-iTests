@@ -298,4 +298,12 @@ public class AssertUtils {
 					}
 				}, timeunit.toMillis(timeout));
 	}
+	public static void sleep(long durationMillis) throws InterruptedException {
+		long start = System.currentTimeMillis();
+		Thread.sleep(durationMillis);
+		long actualDurationMillis = System.currentTimeMillis()- start;
+		if (Math.abs(actualDurationMillis - durationMillis) > TimeUnit.MINUTES.toMillis(1)) {
+			throw new IllegalStateException("Sleep " + durationMillis + " resulted in actual sleep for " + actualDurationMillis + ". Could be system clock drift or GC, etc...");
+		}
+	}
 }

@@ -2,14 +2,18 @@ package framework.utils;
 
 import static framework.utils.ProcessingUnitUtils.getProcessingUnitInstanceName;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
+import org.openspaces.admin.gsa.GridServiceAgent;
 import org.openspaces.admin.gsc.GridServiceContainer;
 import org.openspaces.admin.gsm.GridServiceManager;
 import org.openspaces.admin.machine.Machine;
 import org.openspaces.admin.pu.ProcessingUnitInstance;
 import org.openspaces.admin.space.SpaceInstance;
 import org.openspaces.admin.zone.Zone;
+import org.openspaces.admin.zone.ZoneAware;
 
 public class ToStringUtils {
 	
@@ -68,5 +72,37 @@ public class ToStringUtils {
 		}
 		
 		return name;
+	}
+	
+	public static String gscsToString(Iterable<GridServiceContainer> containers) {
+		List<String> s = new ArrayList<String>();
+		for (GridServiceContainer container : containers) {
+			s.add(gscToString(container));
+		}
+		return s.toString();
+	}
+	
+
+	public static String gsasToString(Iterable<GridServiceAgent> agents) {
+		List<String> s = new ArrayList<String>();
+		for (GridServiceAgent agent : agents) {
+			s.add(gsaToString(agent));
+		}
+		return s.toString();
+	}
+	
+	public static String gsaToString(GridServiceAgent gsa) {
+		if (gsa == null) return "GSA is null" ;
+		
+		String toString = "GSA["+gsa.getVirtualMachine().getDetails().getPid()+"]@" + gsa.getMachine().getHostName()+ getZones(gsa);
+		return toString;
+	}
+	
+	public static String getZones(ZoneAware component) {
+		final Map<String, Zone> zones = component.getZones();
+		if (!zones.isEmpty()) {
+			return " Zones:" + zones.keySet().toString();
+		}
+		return "";
 	}
 }

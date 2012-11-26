@@ -226,22 +226,29 @@ public abstract class AbstractCloudService implements CloudService {
 		
 		printPropertiesFile();
 		
+		if(isNoWebServices()){
+			bootstrapper.noWebServices(true);
+		}
+		
 		if(!bootstrapper.isNoWebServices()){
 			String output = bootstrapper.bootstrap().getOutput();	
 			restAdminUrls = extractRestAdminUrls(output, numberOfManagementMachines);
 			this.webUIUrls = extractWebuiUrls(output, numberOfManagementMachines);
 			assertBootstrapServicesAreAvailable();
-		} else {
+			
+			URL machinesURL;
+
+			for (int i = 0; i < numberOfManagementMachines; i++) {
+				machinesURL = getMachinesUrl(restAdminUrls[i].toString());
+				LogUtils.log("Expecting " + numberOfManagementMachines + " machines");
+				LogUtils.log("Found " + CloudTestUtils.getNumberOfMachines(machinesURL) + " machines");
+			}
+		} 
+		else {
 			bootstrapper.bootstrap();
 		}
 
-		URL machinesURL;
-
-		for (int i = 0; i < numberOfManagementMachines; i++) {
-			machinesURL = getMachinesUrl(restAdminUrls[i].toString());
-			LogUtils.log("Expecting " + numberOfManagementMachines + " machines");
-			LogUtils.log("Found " + CloudTestUtils.getNumberOfMachines(machinesURL) + " machines");
-		}
+		
 	}
 		
 	private void printPropertiesFile() throws IOException {

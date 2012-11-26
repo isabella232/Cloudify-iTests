@@ -2,6 +2,8 @@ package framework.utils;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -9,6 +11,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
@@ -155,6 +163,51 @@ public class DumpUtils {
                 LogUtils.log("Failed to copy before configurations to test dir : " + testFolder.getAbsolutePath(), e);
             }
         }
+    }
+
+	public static <T> T dumpThreadsEveryMinute(final Admin admin, final Callable<T> callable) {
+        final AtomicBoolean completed = new AtomicBoolean(false);
+        ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor(new ThreadFactory() {
+
+            @Override
+            public Thread newThread(Runnable r) {
+                Thread t = new Thread(r, "DumpScheduler thread");
+                t.setDaemon(true);
+                return t;
+            }
+        });
+        executor.scheduleWithFixedDelay(new Runnable() {
+
+            @Override
+            public void run() {
+                if (!completed.get()) {
+                    DumpUtils.dumpThreads(admin);
+                    DumpUtils.dumpLocalThreads();
+                }
+            }
+        }, 1, 1, TimeUnit.MINUTES);
+
+        try {
+            return callable.call();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        } finally {
+            completed.set(true);
+            executor.shutdown();
+        }
+    }
+	
+	protected static void dumpLocalThreads() {
+        final StringWriter sw = new StringWriter();
+        final PrintWriter pw = new PrintWriter(sw);
+
+        try {
+            new ThreadDumpProcessor().processAllThreads(pw);
+        } catch (final Throwable t) {
+            LogUtils.log("Failed to generate local thread dump", t);
+        }
+        pw.flush();
+        LogUtils.log("Local Thread Dump:" + sw.toString());
     }
 
 //    public static void main(String[] args) throws IOException {

@@ -1,7 +1,10 @@
 package framework.utils;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import org.openspaces.admin.Admin;
 import org.openspaces.admin.gsa.GridServiceAgent;
@@ -14,8 +17,9 @@ import framework.utils.AssertUtils.RepetitiveConditionProvider;
 public class GridServiceAgentsCounter implements GridServiceAgentAddedEventListener, GridServiceAgentRemovedEventListener {
 
 	Admin admin;
-	private final AtomicInteger numberOfAddedGSAs = new AtomicInteger(0);
-    private final AtomicInteger numberOfRemovedGSAs = new AtomicInteger(0);
+	private final Queue<GridServiceAgent> added = new ConcurrentLinkedQueue<GridServiceAgent>();
+	private final Queue<GridServiceAgent> removed = new ConcurrentLinkedQueue<GridServiceAgent>();
+	
     
 	
 	public GridServiceAgentsCounter(final Admin admin) {
@@ -41,38 +45,37 @@ public class GridServiceAgentsCounter implements GridServiceAgentAddedEventListe
     }
     
     public int getNumberOfGSAsAdded() {
-        return numberOfAddedGSAs.get();
+    	return added.size();
     }
     
     public int getNumberOfGSAsRemoved() {
-        return numberOfRemovedGSAs.get();
+    	return removed.size();
     }
 
 	public void gridServiceAgentAdded(
-			GridServiceAgent gridServiceAgent) {
-		numberOfAddedGSAs.incrementAndGet();
-		LogUtils.log("GridServiceAgentAdded on machine " + gridServiceAgent.getMachine().getHostAddress());
+			GridServiceAgent agent) {
+		added.add(agent);
 		
 	}
 
 	public void gridServiceAgentRemoved(
-			GridServiceAgent gridServiceAgent) {
-		numberOfRemovedGSAs.incrementAndGet();
-		LogUtils.log("GridServiceAgentRemoved from machine " + gridServiceAgent.getMachine().getHostAddress());
+			GridServiceAgent agent) {
+		removed.add(agent);
 	}
 	
 	public void repetitiveAssertNumberOfGridServiceAgentsAdded(final int expected, long timeoutMilliseconds) {
-		if (numberOfAddedGSAs.get() > expected) {
-			AssertUtils.AssertFail("Expected " + expected +" GSAs Added. actual " + numberOfAddedGSAs.get());
+		if (added.size() > expected) {
+			AssertUtils.AssertFail("Expected " + expected +" GSAs Added. actual " + added.size() + " : " + ToStringUtils.gsasToString(added));
 		}
 		AssertUtils.repetitiveAssertTrue("Expected " + expected +" GSAs Added.", new RepetitiveConditionProvider() {
 			
 			@Override
 			public boolean getCondition() {
-				int actual = numberOfAddedGSAs.get();
+				List<GridServiceAgent> copy = new ArrayList<GridServiceAgent>(added);
+				int actual = copy.size();
 				boolean condition = expected == actual;
 				if (!condition) {
-					LogUtils.log("Expected " + expected +" GSAs Added. actual " + actual);
+					LogUtils.log("Expected " + expected +" GSAs Added. actual " + actual+ " : " + ToStringUtils.gsasToString(copy));
 				}
 				return condition;
 			}
@@ -81,21 +84,73 @@ public class GridServiceAgentsCounter implements GridServiceAgentAddedEventListe
 	}
 	
 	public void repetitiveAssertNumberOfGridServiceAgentsRemoved(final int expected, long timeoutMilliseconds) {
-		if (numberOfRemovedGSAs.get() > expected) {
-			AssertUtils.AssertFail("Expected " + expected +" GSAs Removed. actual " + numberOfRemovedGSAs.get());
+		if (removed.size() > expected) {
+			AssertUtils.AssertFail("Expected " + expected +" GSAs Removed. actual " + ToStringUtils.gsasToString(removed));
 		}
 		AssertUtils.repetitiveAssertTrue("Expected " + expected +" GSAs Removed.", new RepetitiveConditionProvider() {
 			
 			@Override
 			public boolean getCondition() {
-				int actual = numberOfRemovedGSAs.get();
+				List<GridServiceAgent> copy = new ArrayList<GridServiceAgent>(removed);
+				int actual = copy.size();
 				boolean condition = expected == actual;
 				if (!condition) {
-					LogUtils.log("Expected " + expected +" GSAs Removed. actual " + actual);
+					LogUtils.log("Expected " + expected +" GSAs Removed. actual " + actual + " : " + ToStringUtils.gsasToString(copy));
 				}
 				return condition;
 			}
 		}, 
 		timeoutMilliseconds);
+	}
+	
+	public void repetitiveAssertGridServiceAgentRemoved(final GridServiceAgent agent, long timeoutMilliseconds) {
+		AssertUtils.repetitiveAssertTrue("Expected " + ToStringUtils.gsaToString(agent)+" to be removed.", new RepetitiveConditionProvider() {
+			
+			@Override
+			public boolean getCondition() {
+				boolean condition = removed.contains(agent);
+				if (!condition) {
+					LogUtils.log("Expected " + ToStringUtils.gsaToString(agent)+" to be removed.");
+				}
+				return condition;
+			}
+		}, 
+		timeoutMilliseconds);
+	}
+
+	public void repetitiveAssertNumberOfGSAsHolds(final int expectedAdded,
+			final int expectedRemoved, final long timeoutMilliseconds) {
+		
+		if (removed.size() > expectedRemoved) {
+			AssertUtils.AssertFail("Expected " + expectedRemoved +" GSAs Removed. actual " + ToStringUtils.gsasToString(removed));
+		}
+		
+		if (added.size() > expectedAdded) {
+			AssertUtils.AssertFail("Expected " + expectedAdded +" GSAs Added. actual " + ToStringUtils.gsasToString(added));
+		}
+		
+		AssertUtils.repetitiveAssertConditionHolds("Expected " + expectedAdded +" GSAs Added and " + expectedRemoved +" GSAs Removed.", new RepetitiveConditionProvider() {
+			
+			@Override
+			public boolean getCondition() {
+				boolean condition = true;
+				List<GridServiceAgent> removedCopy = new ArrayList<GridServiceAgent>(removed);
+				int actualRemoved = removedCopy.size();
+				if (expectedRemoved != actualRemoved) {
+					condition = false;
+					LogUtils.log("Expected " + expectedRemoved +" GSAs Removed. actual " + actualRemoved + " : " + ToStringUtils.gsasToString(removedCopy));
+				}
+				
+				List<GridServiceAgent> addedCopy = new ArrayList<GridServiceAgent>(added);
+				int actualAdded = addedCopy.size();
+				if (expectedAdded != actualAdded) {
+					condition = false;
+					LogUtils.log("Expected " + expectedAdded +" GSAs Removed. actual " + actualAdded + " : " + ToStringUtils.gsasToString(addedCopy));
+				}
+				
+				return condition;
+			}
+		}, 
+		timeoutMilliseconds, timeoutMilliseconds);
 	}
 }

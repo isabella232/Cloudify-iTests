@@ -43,14 +43,26 @@ public class AbstractByonCloudTest extends NewAbstractCloudTest {
 	}
 	
 	private void createAdmin() {
-		String[] managementHosts = getService().getRestUrls();
+		ByonCloudService cloudService = getService();
 		AdminFactory factory = new AdminFactory();
-		for (String host : managementHosts) {
-			LogUtils.log("creating admin");
-			String utlNoHttp = host.substring(7); /* remove "http://" */
-			String ip = utlNoHttp.split(":")[0];
-			factory.addLocators(ip + ":" + CloudifyConstants.DEFAULT_LUS_PORT);
+		String[] managementHosts;
+		// if the cloud is using web services 
+		if (!cloudService.isNoWebServices()){
+			managementHosts = cloudService.getRestUrls();		
+			for (String host : managementHosts) {				
+				String utlNoHttp = host.substring(7); /* remove "http://" */
+				String ip = utlNoHttp.split(":")[0];
+				factory.addLocators(ip + ":" + CloudifyConstants.DEFAULT_LUS_PORT);
+			}
 		}
+		// if the cloud is not using web services
+		else {
+			managementHosts = cloudService.getMachines();			
+			String host = managementHosts[0];
+			factory.addLocators(host + ":" + CloudifyConstants.DEFAULT_LUS_PORT);
+		}
+		
+		LogUtils.log("creating admin");		
 		admin = factory.createAdmin();
 	}
 	

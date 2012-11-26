@@ -22,6 +22,10 @@ if %SUITE_NAME% == webui-IE (
 set SUITE_ID=0
 
 pushd %SGTEST_HOME%
+
+echo "making suite dir" %BUILD_DIR%/../%SUITE_NAME%
+mkdir %BUILD_DIR%/../%SUITE_NAME%
+
 call mvn test -e -U ^
 -Dcloudify.home=%RUNTIME_BUILD_LOCATION% ^
 -Dincludes="%INCLUDE%" ^
@@ -42,4 +46,5 @@ call mvn test -e -U ^
 
 popd
 
-call %SGTEST_HOME%\src\main\scripts\deploy\bin\windows\generate-report.bat %BUILD_NUMBER% %SUITE_NAME% %VERSION% %MILESTONE% %BUILD_LOG_URL%
+REM -DBUILD_NUMBER=%BUILD_NUMBER%  -DMAJOR_VERSION=%VERSION% -DMINOR_VERSION=%MILESTONE%
+call %LOCAL_SGPATH%\deploy\bin\windows\generate-report.bat %BUILD_NUMBER% %SUITE_NAME% %VERSION% %MILESTONE% %BUILD_LOG_URL%

@@ -22,10 +22,10 @@ if %SUITE_NAME% == webui-IE (
 @echo running %selenium.browser% tests...
 set SUITE_ID=0
 
-pushd %SGTEST_HOME%
-
 echo "making suite dir" %LOC_BUILD_TEST_DIR%/%SUITE_NAME%
 mkdir %LOC_BUILD_TEST_DIR%/%SUITE_NAME%
+
+pushd %SGTEST_HOME%
 
 call mvn test -e -U ^
 -Dcloudify.home=%RUNTIME_BUILD_LOCATION% ^

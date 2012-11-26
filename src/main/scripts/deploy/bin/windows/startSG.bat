@@ -56,7 +56,7 @@ svn export --force %SVN_SGTEST_REPOSITORY% %SGTEST_HOME%
 call %SGTEST_HOME%\src\main\scripts\deploy\bin\windows\deploy_webuitf.bat
 
 @echo Running Suite %SUITE_NAME%: 
-call %SGTEST_HOME%\src\main\scripts\deploy\bin\windows\start-suite.bat %SUITE_NAME% %INCLUDE% %EXCLUDE%
+call %SGTEST_HOME%\src\main\scripts\deploy\bin\windows\start-suite.bat %SUITE_NAME% %INCLUDE% %EXCLUDE% %BUILD_TEST_DIR%
 
 @echo generating report... 
 call %SGTEST_HOME%\src\main\scripts\deploy\bin\windows\generate-report.bat %BUILD_NUMBER% %SUITE_NAME% %VERSION% %MILESTONE% %BUILD_LOG_URL%

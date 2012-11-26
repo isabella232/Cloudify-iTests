@@ -23,18 +23,19 @@ set EC2_REGION=%9
 @echo setting up enviroment variables
 call set-build-env.bat
 
-set BUILD_DIR=%LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER%
-set SGTEST_HOME=%BUILD_DIR%\SGTest
+@mkdir %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER%
+set SGTEST_HOME=%LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER%\SGTest
 
-@echo cleaning sgtest...
-@if exist %BUILD_DIR% rmdir %BUILD_DIR% /s /q
+@echo cleaning build folder..
+@if exist %BUILD_LOCATION% rmdir %BUILD_LOCATION% /s /q
+@if exist %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER% rmdir %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER% /s /q
 
 @echo retrieving build from tarzan...
-@mkdir %BUILD_DIR%
-xcopy %REMOTE_BUILD_DIR%\cloudify\1.5\gigaspaces-cloudify-%VERSION%-%MILESTONE%-b%BUILD_VERSION%.zip %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER%
+@mkdir %BUILD_LOCATION%
+xcopy %REMOTE_BUILD_DIR%\xap-premium\1.5\gigaspaces-cloudify-premium-%VERSION%-%MILESTONE%-b%BUILD_VERSION%.zip %USER_HOME%
 @echo extracting build file to local-builds folder
-7z x %BUILD_DIR%\gigaspaces-cloudify-%VERSION%-%MILESTONE%-b%BUILD_VERSION%.zip -o%BUILD_DIR%
-@del %BUILD_DIR%\gigaspaces-cloudify-%VERSION%-%MILESTONE%-b%BUILD_VERSION%.zip
+@7z x %BUILD_LOCATION%-b%BUILD_VERSION%.zip -o%USER_HOME%
+@del %BUILD_LOCATION%-b%BUILD_VERSION%.zip
 
 @echo exporting SGTest
 @if %BRANCH_NAME%==trunk (

@@ -18,6 +18,7 @@ import test.cli.cloudify.CommandTestUtils;
 import org.cloudifysource.dsl.Service;
 import org.cloudifysource.dsl.internal.CloudifyConstants;
 import org.cloudifysource.dsl.internal.DSLReader;
+import org.cloudifysource.dsl.internal.DSLUtils;
 import org.cloudifysource.dsl.internal.ServiceReader;
 import org.cloudifysource.dsl.internal.packaging.Packager;
 import org.cloudifysource.dsl.internal.packaging.PackagingException;
@@ -95,7 +96,7 @@ public class USMSimpleOverrideServiceSettingsTest extends UsmAbstractTest {
 		
 		try {
 			//Sould throw an exception.
-			Packager.pack(DSLReader.findDefaultDSLFile(DSLReader.SERVICE_DSL_FILE_NAME_SUFFIX, folderPath), service, null);
+			Packager.pack(DSLReader.findDefaultDSLFile(DSLUtils.SERVICE_DSL_FILE_NAME_SUFFIX, folderPath), service, null);
 			Assert.fail("Failed overriding max jar property");
 		} catch (PackagingException e) {
 			assertTrue("Unexpected exception", e.getMessage().contains("it must be smaller than: 1 KB"));

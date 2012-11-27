@@ -46,6 +46,3 @@ call mvn test -e -U ^
 -Dec2.region=%EC2_REGION%
 
 popd
-
-REM -DBUILD_NUMBER=%BUILD_NUMBER%  -DMAJOR_VERSION=%VERSION% -DMINOR_VERSION=%MILESTONE%
-call %LOCAL_SGPATH%\deploy\bin\windows\generate-report.bat %BUILD_NUMBER% %SUITE_NAME% %VERSION% %MILESTONE% %BUILD_LOG_URL%

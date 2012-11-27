@@ -21,7 +21,7 @@ public class LogFetcher {
 	
 	public List<TestLog> getLogs(ITestResult result) {
 		List<TestLog> logs = new ArrayList<TestLog>();
-		String suiteName = result.getTestClass().getXmlTest().getSuite().getName().split("[0-9]+")[0];
+		String suiteName = System.getProperty("sgtest.suiteName");
 		String testName = TestNGUtils.constructTestMethodName(result);
 		File testDir = new File(getBuildFolder() + "/" + suiteName + "/" + testName);
 		return fetchLogs(testDir, logs);

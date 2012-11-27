@@ -80,4 +80,7 @@ xcopy %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER%\%SUITE_NAME% X:\%BUILD_N
 
 @echo cleaning local build folder
 rmdir %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER% /s /q
-call %SGTEST_HOME%\src\main\scripts\deploy\bin\windows\delete_local_build.bat %VERSION% %MILESTONE% %USER_HOME%
+
+@if exist %USER_HOME%\gigaspaces-cloudify-%VERSION%-%MILESTONE% (
+    rmdir %USER_HOME%\gigaspaces-cloudify-%VERSION%-%MILESTONE% /s /q
+)

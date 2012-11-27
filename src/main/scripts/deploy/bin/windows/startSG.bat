@@ -75,15 +75,9 @@ if %selenium.browser% == Firefox (
 
 @echo transferring reports to tgrid
 echo %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER%
-xcopy %BUILD_LOCATION% X:\%BUILD_NUMBER% /s /i /y
+xcopy %BUILD_LOCATION% X:\%BUILD_NUMBER%\%BUILD_FOLDER% /s /i /y
 xcopy %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER%\%SUITE_NAME% X:\%BUILD_NUMBER%\%SUITE_NAME% /s /i /y
-
-@echo cleaning remote build folder
-call %SGTEST_HOME%\src\main\resources\webui\psexec.exe \\pc-lab73 -u GSPACES\ca -p password -c -f %SGTEST_HOME%\src\main\scripts\deploy\bin\windows\delete_build.bat %VERSION% %MILESTONE% %USER_HOME%
-
-rem @echo killing all cmd processes on remote machine
-rem @start /b %LOCAL_SGPATH%\src\test\webui\resources\psexec.exe \\pc-lab73 -u GSPACES\ca -p password %USER_HOME%\killall-on-73.bat
 
 @echo cleaning local build folder
 rmdir %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER% /s /q
-call %SGTEST_HOME%\src\main\scripts\deploy\bin\windows\delete_build.bat %VERSION% %MILESTONE% %USER_HOME%
+call %SGTEST_HOME%\src\main\scripts\deploy\bin\windows\delete_local_build.bat %VERSION% %MILESTONE% %USER_HOME%

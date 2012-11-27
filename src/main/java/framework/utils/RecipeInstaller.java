@@ -164,6 +164,9 @@ public abstract class RecipeInstaller {
 			File serviceOverridesFile = IOUtils.createTempOverridesFile(overrideProperties);
 			commandBuilder.append("-overrides").append(" ").append(serviceOverridesFile.getAbsolutePath().replace("\\", "/")).append(" ");
 		}
+		if (authGroups != null && !authGroups.isEmpty()) {
+			commandBuilder.append("-authGroups").append(" ").append(authGroups).append(" ");
+		}
 		
 		commandBuilder.append(recipePath.replace('\\', '/'));
 		final String installCommand = commandBuilder.toString();

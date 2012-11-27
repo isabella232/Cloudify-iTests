@@ -203,7 +203,7 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 		final RestAdminFacade cloudifyAdminFacade = new RestAdminFacade();
 		try {
 			cloudifyAdminFacade.doConnect("", "",
-					AbstractLocalCloudTest.restUrl);
+					AbstractLocalCloudTest.restUrl, false);
 			cloudifyAdminFacade.uninstallApplication(
 					CloudifyConstants.MANAGEMENT_APPLICATION_NAME, 10);
 			AssertFail("Request to uinstall management should have thrown an exception");

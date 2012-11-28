@@ -9,6 +9,7 @@ import test.cli.cloudify.CommandTestUtils;
 import test.cli.cloudify.cloud.byon.AbstractByonCloudTest;
 import framework.utils.ApplicationInstaller;
 import framework.utils.IOUtils;
+import framework.utils.ServiceInstaller;
 
 public class AbstractSharedProvisioningByonCloudTest extends AbstractByonCloudTest {
 
@@ -30,9 +31,9 @@ public class AbstractSharedProvisioningByonCloudTest extends AbstractByonCloudTe
 			IOUtils.replaceTextInFile(CommandTestUtils.getBuildApplicationsPath() + "/groovy-app-shared-provisioning/groovyApp-application.groovy", "groovyApp", applicationName);
 
 			// install
-			ApplicationInstaller installer = new ApplicationInstaller("http://192.168.9.130:8100", applicationName);
-			installer.setWaitForFinish(true);
-			installer.setRecipePath("groovy-app-shared-provisioning");
+			ApplicationInstaller installer = new ApplicationInstaller(getRestUrl(), applicationName);
+			installer.waitForFinish(true);
+			installer.recipePath("groovy-app-shared-provisioning");
 			installer.install();
 		} finally {
 			File service = new File(CommandTestUtils.getBuildServicesPath(), "groovy-app-shared-provisioning");
@@ -62,11 +63,11 @@ public class AbstractSharedProvisioningByonCloudTest extends AbstractByonCloudTe
 			// install
 
 			ApplicationInstaller installer = new ApplicationInstaller(getRestUrl(), applicationName);
-			installer.setCloudifyUsername("Dana");
-			installer.setCloudifyPassword("Dana");
-			installer.setWaitForFinish(true);
-			installer.setRecipePath("groovy-tenant-shared-provisioning");
-			installer.setAuthGroups(authGroup);
+			installer.cloudifyUsername("Dana");
+			installer.cloudifyPassword("Dana");
+			installer.waitForFinish(true);
+			installer.recipePath("groovy-tenant-shared-provisioning");
+			installer.authGroups(authGroup);
 
 			installer.install();
 		} finally {
@@ -77,6 +78,52 @@ public class AbstractSharedProvisioningByonCloudTest extends AbstractByonCloudTe
 			File application = new File(CommandTestUtils.getBuildApplicationsPath(), "groovy-tenant-shared-provisioning");
 			if (application.exists()) {
 				FileUtils.deleteDirectory(application);
+			}
+		}
+	}
+	
+	protected void installManualAppSharedProvisioningServiceAndWait(final String serviceName, final String applicationName) throws IOException, InterruptedException {
+
+		try {
+			// first copy our service file to build folder
+			FileUtils.copyDirectoryToDirectory(new File(APP_SHARED_SERVICE_SGTEST_PATH), new File(CommandTestUtils.getBuildServicesPath()));
+
+			// change the service name
+			IOUtils.replaceTextInFile(CommandTestUtils.getBuildServicesPath() + "/groovy-app-shared-provisioning/groovy-service.groovy", "name \"groovy\"", "name " + '"' + serviceName + '"');
+
+			// install
+			ServiceInstaller installer = new ServiceInstaller(getRestUrl(), serviceName);
+			installer.waitForFinish(true).recipePath("groovy-app-shared-provisioning");
+			installer.applicationName(applicationName).install();
+		} finally {
+			File service = new File(CommandTestUtils.getBuildServicesPath(), "groovy-app-shared-provisioning");
+			if (service.exists()) {
+				FileUtils.deleteDirectory(service);
+			}
+		}
+
+	}
+	
+	protected void installManualTenantSharedProvisioningServiceAndWait(final String authGroups, final String serviceName) throws IOException, InterruptedException {
+
+		try {
+			// first copy our service file to build folder
+			FileUtils.copyDirectoryToDirectory(new File(TENANT_SHARED_SERVICE_SGTEST_PATH), new File(CommandTestUtils.getBuildServicesPath()));
+
+			// change the service name
+			IOUtils.replaceTextInFile(CommandTestUtils.getBuildServicesPath() + "/groovy-tenant-shared-provisioning/groovy-service.groovy", "name \"groovy\"", "name " + '"' + serviceName + '"');
+
+			// install
+			ServiceInstaller installer = new ServiceInstaller(getRestUrl(), serviceName);
+			installer.waitForFinish(true).recipePath("groovy-tenant-shared-provisioning");
+			installer.cloudifyPassword("Dana");
+			installer.cloudifyUsername("Dana");
+			installer.authGroups(authGroups);
+			installer.install();
+		} finally {
+			File service = new File(CommandTestUtils.getBuildServicesPath(), "groovy-tenant-shared-provisioning");
+			if (service.exists()) {
+				FileUtils.deleteDirectory(service);
 			}
 		}
 

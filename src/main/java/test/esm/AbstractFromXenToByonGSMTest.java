@@ -6,12 +6,17 @@ import org.cloudifysource.dsl.cloud.Cloud;
 import org.cloudifysource.dsl.cloud.CloudTemplate;
 import org.cloudifysource.esc.driver.provisioning.CloudifyMachineProvisioningConfig;
 import org.openspaces.admin.gsa.GridServiceAgent;
+import org.openspaces.admin.machine.events.ElasticMachineProvisioningProgressChangedEvent;
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.openspaces.admin.pu.ProcessingUnits;
 import org.openspaces.admin.pu.elastic.ElasticMachineProvisioningConfig;
 import org.openspaces.admin.pu.elastic.ElasticStatefulProcessingUnitDeployment;
 import org.openspaces.admin.pu.elastic.ElasticStatelessProcessingUnitDeployment;
 import org.openspaces.admin.space.ElasticSpaceDeployment;
+import org.openspaces.grid.gsm.machines.plugins.events.MachineStartRequestedEvent;
+import org.openspaces.grid.gsm.machines.plugins.events.MachineStartedEvent;
+import org.openspaces.grid.gsm.machines.plugins.events.MachineStopRequestedEvent;
+import org.openspaces.grid.gsm.machines.plugins.events.MachineStoppedEvent;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
@@ -29,6 +34,7 @@ public class AbstractFromXenToByonGSMTest extends AbstractByonCloudTest {
 	public final static long OPERATION_TIMEOUT = 5 * 60 * 1000;
 	public final static String DefaultByonXapMachineMemoryMB = "5000";
 	public final static String standardMachineMemoryMB = "1600";
+	private MachinesEventsCounter machineEventsCounter;
 	
 	private GridServiceContainersCounter gscCounter;
     private GridServiceAgentsCounter gsaCounter;
@@ -61,6 +67,10 @@ public class AbstractFromXenToByonGSMTest extends AbstractByonCloudTest {
     	gscCounter.repetitiveAssertNumberOfGridServiceContainersHolds(expectedAdded, expectedRemoved, timeout, timeunit);
     }
     
+    protected void repetitiveAssertNumberOfMachineEvents(Class<? extends ElasticMachineProvisioningProgressChangedEvent> eventClass, int expected, long timeoutMilliseconds) {
+		machineEventsCounter.repetitiveAssertNumberOfMachineEvents(eventClass, expected, timeoutMilliseconds);
+	}
+    
 	@BeforeClass
 	protected void bootstrap() throws Exception {
 		super.bootstrap();
@@ -70,6 +80,11 @@ public class AbstractFromXenToByonGSMTest extends AbstractByonCloudTest {
     public void beforeTest() {
 		gscCounter = new GridServiceContainersCounter(admin); 
         gsaCounter = new GridServiceAgentsCounter(admin);
+        machineEventsCounter = new MachinesEventsCounter(admin);
+		repetitiveAssertNumberOfMachineEvents(MachineStartRequestedEvent.class, 0, OPERATION_TIMEOUT);
+        repetitiveAssertNumberOfMachineEvents(MachineStartedEvent.class, 0, OPERATION_TIMEOUT);
+        repetitiveAssertNumberOfMachineEvents(MachineStopRequestedEvent.class, 0, OPERATION_TIMEOUT);
+        repetitiveAssertNumberOfMachineEvents(MachineStoppedEvent.class, 0, OPERATION_TIMEOUT);
 	}
 	
 
@@ -125,7 +140,7 @@ public class AbstractFromXenToByonGSMTest extends AbstractByonCloudTest {
 		managementTemplate.getRemoteDirectory();
 		final CloudifyMachineProvisioningConfig config = new CloudifyMachineProvisioningConfig(
 				cloud, template, templateName,
-				managementTemplate.getRemoteDirectory());		
+				managementTemplate.getRemoteDirectory());
 		return config;
 	}
 

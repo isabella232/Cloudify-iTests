@@ -50,7 +50,7 @@ public abstract class RecipeInstaller {
 		return recipePath;
 	}
 
-	public RecipeInstaller setRecipePath(String recipePath) {
+	public RecipeInstaller recipePath(String recipePath) {
 		this.recipePath = recipePath;
 		return this;
 	}
@@ -59,7 +59,7 @@ public abstract class RecipeInstaller {
 		return overrideProperties;
 	}
 
-	public RecipeInstaller setOverrides(Map<String, Object> overridesFilePath) {
+	public RecipeInstaller overrides(Map<String, Object> overridesFilePath) {
 		this.overrideProperties = overridesFilePath;
 		return this;
 	}
@@ -68,7 +68,7 @@ public abstract class RecipeInstaller {
 		return cloudOverrideProperties;
 	}
 
-	public RecipeInstaller setCloudOverrides(Map<String, Object> cloudOverridesFilePath) {
+	public RecipeInstaller cloudOverrides(Map<String, Object> cloudOverridesFilePath) {
 		this.cloudOverrideProperties = cloudOverridesFilePath;
 		return this;
 	}
@@ -77,7 +77,7 @@ public abstract class RecipeInstaller {
 		return timeoutInMinutes;
 	}
 
-	public RecipeInstaller setTimeoutInMinutes(long timeoutInMinutes) {
+	public RecipeInstaller timeoutInMinutes(long timeoutInMinutes) {
 		this.timeoutInMinutes = timeoutInMinutes;
 		return this;
 	}
@@ -86,7 +86,7 @@ public abstract class RecipeInstaller {
 		return waitForFinish;
 	}
 
-	public RecipeInstaller setWaitForFinish(boolean waitForFinish) {
+	public RecipeInstaller waitForFinish(boolean waitForFinish) {
 		this.waitForFinish = waitForFinish;
 		return this;
 	}
@@ -95,17 +95,17 @@ public abstract class RecipeInstaller {
 		return expectToFail;
 	}
 
-	public RecipeInstaller setExpectToFail(boolean expectToFail) {
+	public RecipeInstaller expectToFail(boolean expectToFail) {
 		this.expectToFail = expectToFail;
 		return this;
 	}
 	
-	public RecipeInstaller setCloudifyUsername(String cloudifyUsername) {
+	public RecipeInstaller cloudifyUsername(String cloudifyUsername) {
 		this.cloudifyUsername = cloudifyUsername;
 		return this;
 	}
 
-	public RecipeInstaller setCloudifyPassword(String cloudifyPassword) {
+	public RecipeInstaller cloudifyPassword(String cloudifyPassword) {
 		this.cloudifyPassword = cloudifyPassword;
 		return this;
 	}
@@ -114,7 +114,7 @@ public abstract class RecipeInstaller {
 		return authGroups;
 	}
 
-	public RecipeInstaller setAuthGroups(String authGroups) {
+	public RecipeInstaller authGroups(String authGroups) {
 		this.authGroups = authGroups;
 		return this;
 	}

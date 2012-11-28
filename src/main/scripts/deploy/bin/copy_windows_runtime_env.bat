@@ -22,7 +22,14 @@ set SGTEST_CHECKOUT_FOLDER=%SGTEST_RUNTIME_FOLDER%\deploy\local-builds\%BUILD_NU
 
 @echo copying execution script to runtime sgtest folder
 @if exist %SGTEST_RUNTIME_FOLDER%\deploy\bin\windows rmdir %SGTEST_RUNTIME_FOLDER%\deploy\bin\windows /s /q
-@xcopy %SGTEST_CHECKOUT_FOLDER%\deploy\bin\windows %SGTEST_RUNTIME_FOLDER%\deploy\bin\windows /s /i /y
+
+@if %BRANCH_NAME%==trunk (
+	set SVN_WIN_SCRIPTS_SGTEST_REPOSITORY=svn://svn-srv/SVN/cloudify/trunk/quality/frameworks/SGTest/src/main/scripts/deploy/bin/windows
+) else ( 
+	set SVN_WIN_SCRIPTS_SGTEST_REPOSITORY=svn://svn-srv/SVN/cloudify/branches/%SVN_BRANCH_DIRECTORY%/%BRANCH_NAME%/quality/frameworks/SGTest/src/main/scripts/deploy/bin/windows
+)
+svn export --force %SVN_WIN_SCRIPTS_SGTEST_REPOSITORY% %SGTEST_RUNTIME_FOLDER%\deploy\bin\windows 
+
 
 cd windows
 @echo starting sgtest execution

@@ -26,6 +26,8 @@ import framework.utils.LogUtils;
 public abstract class JCloudsCloudService extends AbstractCloudService {
 
 	protected ComputeServiceContext context;
+	
+	public abstract void addOverrides(Properties overridesProps);
 
 	public JCloudsCloudService(String cloudName) {
 		super(cloudName);
@@ -53,9 +55,8 @@ public abstract class JCloudsCloudService extends AbstractCloudService {
 		for (Entry<String, Object> entry : entries) {
 			overrides.setProperty(entry.getKey(), (String)entry.getValue());
 		}
-//		overrides.put("jclouds.ec2.ami-query", "");
-//		overrides.put("jclouds.ec2.cc-ami-query", "");
-	
+		
+		addOverrides(overrides);	
 		
 		final String provider = getCloud().getProvider().getProvider();
 		final String user = getCloud().getUser().getUser();

@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 import org.apache.commons.io.FileUtils;
 
@@ -112,6 +113,12 @@ public class Ec2CloudService extends JCloudsCloudService {
 						+ sshKeyPemName);
 		final File targetLocation = new File(getPathToCloudFolder() + "/upload/");
 		FileUtils.copyFileToDirectory(fileToCopy, targetLocation);
+	}
+
+	@Override
+	public void addOverrides(Properties overridesProps) {
+		overridesProps.put("jclouds.ec2.ami-query", "");
+		overridesProps.put("jclouds.ec2.cc-ami-query", "");		
 	}
 
 }

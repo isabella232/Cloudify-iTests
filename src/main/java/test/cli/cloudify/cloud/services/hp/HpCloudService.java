@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 import org.apache.commons.io.FileUtils;
 
@@ -89,6 +90,12 @@ public class HpCloudService extends JCloudsCloudService {
 
 		final File targetLocation = new File(getPathToCloudFolder() + "/upload/");
 		FileUtils.copyFileToDirectory(fileToCopy, targetLocation);
+	}
+
+	@Override
+	public void addOverrides(Properties overridesProps) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

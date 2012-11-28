@@ -27,9 +27,6 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 
 	private static final int MAX_SCAN_RETRY = 3;
 
-	// initialized in bootstrap
-	private String cloudName;
-
 	protected CloudService cloudService;
 
 	protected void customizeCloud() throws Exception {};
@@ -120,7 +117,7 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 
 
 	protected void doSanityTest(String applicationFolderName, String applicationName) throws IOException, InterruptedException {
-		LogUtils.log("installing application " + applicationName + " on " + this.cloudName);
+		LogUtils.log("installing application " + applicationName + " on " + cloudService.getCloudName());
 		String applicationPath = ScriptUtils.getBuildPath() + "/recipes/apps/" + applicationFolderName;
 		installApplicationAndWait(applicationPath, applicationName);
 		uninstallApplicationAndWait(applicationName);
@@ -128,7 +125,7 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 	}
 
 	protected void doSanityTest(String applicationFolderName, String applicationName, final int timeout) throws IOException, InterruptedException {
-		LogUtils.log("installing application " + applicationName + " on " + this.cloudName);
+		LogUtils.log("installing application " + applicationName + " on " + cloudService.getCloudName());
 		String applicationPath = ScriptUtils.getBuildPath() + "/recipes/apps/" + applicationFolderName;
 		installApplicationAndWait(applicationPath, applicationName, timeout);
 		uninstallApplicationIfFound(applicationName);

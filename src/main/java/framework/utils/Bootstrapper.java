@@ -6,14 +6,14 @@ import org.apache.commons.lang.StringUtils;
 
 import test.cli.cloudify.CommandTestUtils;
 import test.cli.cloudify.CommandTestUtils.ProcessResult;
-import test.cli.cloudify.security.SecurityConstants;
 
 
 public abstract class Bootstrapper {
 	
 	private int timeoutInMinutes;
-	private String user = SecurityConstants.CLOUD_ADMIN_USER_PWD;
-	private String password = SecurityConstants.CLOUD_ADMIN_USER_PWD;
+	private String user;
+	private String password;
+	private boolean secured = false;
 	private String securityFilePath;
 	private boolean force = true;
 	
@@ -37,6 +37,11 @@ public abstract class Bootstrapper {
 		return this;
 	}
 	
+	public Bootstrapper secured(boolean secured) {
+		this.secured = secured;
+		return this;
+	}
+
 	public Bootstrapper user(String user) {
 		this.user = user;
 		return this;
@@ -52,6 +57,10 @@ public abstract class Bootstrapper {
 		return this;
 	}
 
+	public boolean isSecured() {
+		return secured;
+	}
+	
 	public String getUser() {
 		return user;
 	}
@@ -76,6 +85,10 @@ public abstract class Bootstrapper {
 			.append("-timeout").append(" ")
 			.append(timeoutInMinutes).append(" ");
 		
+		if(secured){
+			builder.append("-secured " + secured + " ");
+		}
+		
 		if(StringUtils.isNotBlank(user)){
 			builder.append("-user " + user + " ");
 		}
@@ -87,7 +100,7 @@ public abstract class Bootstrapper {
 		if(StringUtils.isNotBlank(securityFilePath)){
 			builder.append("-security " + securityFilePath + " ");
 		}
-		
+			
 		if (bootstrapCommandParts.length == 2) {
 			// cloud bootstrap, append provider
 			builder.append(bootstrapCommandParts[1]);

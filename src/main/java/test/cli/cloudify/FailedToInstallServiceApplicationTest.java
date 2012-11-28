@@ -3,7 +3,6 @@ package test.cli.cloudify;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
-import org.openspaces.admin.pu.ProcessingUnit;
 import org.testng.annotations.Test;
 
 import org.cloudifysource.dsl.utils.ServiceUtils;

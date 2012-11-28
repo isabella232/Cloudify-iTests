@@ -48,9 +48,9 @@ public class AzureExamplesTest extends NewAbstractCloudTest {
 		LogUtils.log("installing application travel on azure");
 		String applicationPath = ScriptUtils.getBuildPath() + "/recipes/apps/travel-azure";
 		ApplicationInstaller applicationInstaller = new ApplicationInstaller(getRestUrl(), "travel");
-		applicationInstaller.setRecipePath(applicationPath);
-		applicationInstaller.setWaitForFinish(true);
-		applicationInstaller.setTimeoutInMinutes(45);
+		applicationInstaller.recipePath(applicationPath);
+		applicationInstaller.waitForFinish(true);
+		applicationInstaller.timeoutInMinutes(45);
 		applicationInstaller.install();		
 		applicationInstaller.uninstall();
 		super.scanForLeakedAgentNodes();		
@@ -61,9 +61,9 @@ public class AzureExamplesTest extends NewAbstractCloudTest {
 		LogUtils.log("installing application petclinic-simple on azure");
 		String applicationPath = ScriptUtils.getBuildPath() + "/recipes/apps/petclinic-simple-azure";
 		ApplicationInstaller applicationInstaller = new ApplicationInstaller(getRestUrl(), "petclinic");
-		applicationInstaller.setRecipePath(applicationPath);
-		applicationInstaller.setWaitForFinish(true);
-		applicationInstaller.setTimeoutInMinutes(45);
+		applicationInstaller.recipePath(applicationPath);
+		applicationInstaller.waitForFinish(true);
+		applicationInstaller.timeoutInMinutes(45);
 		applicationInstaller.install();		
 		applicationInstaller.uninstall();
 		super.scanForLeakedAgentNodes();		

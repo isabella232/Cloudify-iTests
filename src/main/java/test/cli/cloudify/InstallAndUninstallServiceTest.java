@@ -20,7 +20,7 @@ public class InstallAndUninstallServiceTest extends AbstractLocalCloudTest {
 
 	private static final String DEFAULT_APPLICATION_NAME = "default";
 	public static final String SERVLET_WAR_NAME = "servlet.war";
-	public static final String SERVLET_SERVICE_NAME = "servlet";
+	public static final String SERVLET_SERVICE_NAME = "servlet-3.0.0-SNAPSHOT";
 	
 	public static final String SERVLET_FOLDER_NAME = "statelessPU";
 	public static final String SERVLET_RECIPE_SERVICE_NAME = "statelessPU";

@@ -76,6 +76,8 @@ public class HpCloudService extends JCloudsCloudService {
 
 		final Map<String, String> propsToReplace = new HashMap<String, String>();
 		
+		propsToReplace.put("cloudify-agent-", getMachinePrefix() + "cloudify-agent");
+		propsToReplace.put("cloudify-manager", getMachinePrefix() + "cloudify-manager");
 		propsToReplace.put("numberOfManagementMachines 1", "numberOfManagementMachines "
 				+ getNumberOfManagementMachines());
 

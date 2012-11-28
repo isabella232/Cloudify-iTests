@@ -18,8 +18,14 @@ set SVN_BRANCH_DIRECTORY=%8
 set EC2_REGION=%9
 
 set SGTEST_RUNTIME_FOLDER=C:\Users\ca\sgtest-cloudify3.0
+set SGTEST_CHECKOUT_FOLDER=%SGTEST_RUNTIME_FOLDER%\deploy\local-builds\%BUILD_NUMBER%\SGTest
 
+@echo copying execution script to runtime sgtest folder
+@if exist %SGTEST_RUNTIME_FOLDER%\deploy\bin\windows rmdir %SGTEST_RUNTIME_FOLDER%\deploy\bin\windows /s /q
+@xcopy %SGTEST_CHECKOUT_FOLDER%\deploy\bin\windows %SGTEST_RUNTIME_FOLDER%\deploy\bin\windows /s /i /y
 
 cd windows
 @echo starting sgtest execution
-@call startSG.bat %VERSION% %MILESTONE% %BUILD_NUMBER% %BUILD_VERSION% %SGTEST_CHECKOUT_FOLDER% %SUITE_NAME% %INCLUDE% %EXCLUDE% %BUILD_LOG_URL% %BRANCH_NAME% %SVN_BRANCH_DIRECTORY% %EC2_REGION%
+@call startSG.bat %VERSION% %MILESTONE% %BUILD_NUMBER% %BUILD_VERSION% %SGTEST_CHECKOUT_FOLDER% %SUITE_NAME% %INCLUDE% 
+
+%EXCLUDE% %BUILD_LOG_URL% %BRANCH_NAME% %SVN_BRANCH_DIRECTORY% %EC2_REGION%

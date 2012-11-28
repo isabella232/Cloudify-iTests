@@ -66,11 +66,11 @@ public abstract class AbstractTestSupport {
 		AssertUtils.reptitiveCountdownLatchAwait(latch, name, timeout, timeunit);
 	}
 	public static void AssertFail(String msg) {
-		AssertUtils.AssertFail(msg);
+		AssertUtils.assertFail(msg);
 	}
 
 	public static void AssertFail(String msg, Exception e) {
-		AssertUtils.AssertFail(msg, e);
+		AssertUtils.assertFail(msg, e);
 	}
 
 	public static void assertNotNull(String msg, Object obj) {

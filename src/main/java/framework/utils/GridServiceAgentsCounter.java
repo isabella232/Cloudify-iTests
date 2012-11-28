@@ -65,7 +65,7 @@ public class GridServiceAgentsCounter implements GridServiceAgentAddedEventListe
 	
 	public void repetitiveAssertNumberOfGridServiceAgentsAdded(final int expected, long timeoutMilliseconds) {
 		if (added.size() > expected) {
-			AssertUtils.AssertFail("Expected " + expected +" GSAs Added. actual " + added.size() + " : " + ToStringUtils.gsasToString(added));
+			AssertUtils.assertFail("Expected " + expected +" GSAs Added. actual " + added.size() + " : " + ToStringUtils.gsasToString(added));
 		}
 		AssertUtils.repetitiveAssertTrue("Expected " + expected +" GSAs Added.", new RepetitiveConditionProvider() {
 			
@@ -85,7 +85,7 @@ public class GridServiceAgentsCounter implements GridServiceAgentAddedEventListe
 	
 	public void repetitiveAssertNumberOfGridServiceAgentsRemoved(final int expected, long timeoutMilliseconds) {
 		if (removed.size() > expected) {
-			AssertUtils.AssertFail("Expected " + expected +" GSAs Removed. actual " + ToStringUtils.gsasToString(removed));
+			AssertUtils.assertFail("Expected " + expected +" GSAs Removed. actual " + ToStringUtils.gsasToString(removed));
 		}
 		AssertUtils.repetitiveAssertTrue("Expected " + expected +" GSAs Removed.", new RepetitiveConditionProvider() {
 			
@@ -122,11 +122,11 @@ public class GridServiceAgentsCounter implements GridServiceAgentAddedEventListe
 			final int expectedRemoved, final long timeoutMilliseconds) {
 		
 		if (removed.size() > expectedRemoved) {
-			AssertUtils.AssertFail("Expected " + expectedRemoved +" GSAs Removed. actual " + ToStringUtils.gsasToString(removed));
+			AssertUtils.assertFail("Expected " + expectedRemoved +" GSAs Removed. actual " + ToStringUtils.gsasToString(removed));
 		}
 		
 		if (added.size() > expectedAdded) {
-			AssertUtils.AssertFail("Expected " + expectedAdded +" GSAs Added. actual " + ToStringUtils.gsasToString(added));
+			AssertUtils.assertFail("Expected " + expectedAdded +" GSAs Added. actual " + ToStringUtils.gsasToString(added));
 		}
 		
 		AssertUtils.repetitiveAssertConditionHolds("Expected " + expectedAdded +" GSAs Added and " + expectedRemoved +" GSAs Removed.", new RepetitiveConditionProvider() {

@@ -99,11 +99,11 @@ public class AssertUtils {
 		}
 	}
 
-	public static void AssertFail(final String msg) {
-		AssertFail(msg, null);
+	public static void assertFail(final String msg) {
+		assertFail(msg, null);
 	}
 
-	public static void AssertFail(final String msg, final Throwable t) {
+	public static void assertFail(final String msg, final Throwable t) {
 		if (!skipException()) {
 			if (t != null) {
 				org.testng.Assert.fail(msg, t);
@@ -233,7 +233,7 @@ public class AssertUtils {
 		} catch (final AssertionError e) {
 			throw e;
 		} catch (final Exception e) {
-			AssertFail(e.getMessage(), e);
+			assertFail(e.getMessage(), e);
 		}
 	}
 

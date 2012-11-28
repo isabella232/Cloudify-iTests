@@ -170,7 +170,7 @@ public abstract class AbstractExamplesTest extends NewAbstractCloudTest {
 		try {
 			WebUtils.isURLAvailable(new URL(url));
 		} catch (Exception e) {
-			AssertUtils.AssertFail(e.getMessage());
+			AssertUtils.assertFail(e.getMessage());
 		}
 	}
 

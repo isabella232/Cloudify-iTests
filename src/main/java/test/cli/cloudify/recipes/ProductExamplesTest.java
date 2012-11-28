@@ -58,7 +58,7 @@ public class ProductExamplesTest extends AbstractLocalCloudTest {
 			LogUtils.log("Running Linux verion: " + out);
 			out = out.toLowerCase();
 			if (out.contains("2007") && out.contains("linux")) {
-				AssertUtils.AssertFail("Mongo service is not supported in this version of linux");
+				AssertUtils.assertFail("Mongo service is not supported in this version of linux");
 			}
 		}
 	}

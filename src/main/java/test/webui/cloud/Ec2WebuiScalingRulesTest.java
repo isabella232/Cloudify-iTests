@@ -91,7 +91,7 @@ public class Ec2WebuiScalingRulesTest extends AbstractScalingRulesCloudTest{
 			}
 			
 			if (!found){
-				AssertUtils.AssertFail("could not find event with description: " + expectedEventDescription);
+				AssertUtils.assertFail("could not find event with description: " + expectedEventDescription);
 			}
 			
 			found = false;

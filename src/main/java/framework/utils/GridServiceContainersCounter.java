@@ -86,7 +86,7 @@ public class GridServiceContainersCounter implements GridServiceContainerAddedEv
 	
 	public void repetitiveAssertNumberOfGridServiceContainersAdded(final int expected, long timeoutMilliseconds) {
 		if (added.size() > expected) {
-			AssertUtils.AssertFail("Expected " + expected +" GSCs Added. actual " + added.size() + " : " + ToStringUtils.gscsToString(added));
+			AssertUtils.assertFail("Expected " + expected +" GSCs Added. actual " + added.size() + " : " + ToStringUtils.gscsToString(added));
 		}
 		
 		AssertUtils.repetitiveAssertTrue("Expected " + expected +" GSCs Added.", new RepetitiveConditionProvider() {
@@ -119,7 +119,7 @@ public class GridServiceContainersCounter implements GridServiceContainerAddedEv
 			final String messagePrefix, final int expected, long timeoutMilliseconds) {
 
 		if (removed.size() > expected) {
-			AssertUtils.AssertFail(messagePrefix + "Expected " + expected +" GSCs Removed. actual " + removed.size() + " : " + ToStringUtils.gscsToString(removed));
+			AssertUtils.assertFail(messagePrefix + "Expected " + expected +" GSCs Removed. actual " + removed.size() + " : " + ToStringUtils.gscsToString(removed));
 		}
 		
 		AssertUtils.repetitiveAssertTrue(messagePrefix + "Expected " + expected +" GSCs Removed.", new RepetitiveConditionProvider() {
@@ -142,11 +142,11 @@ public class GridServiceContainersCounter implements GridServiceContainerAddedEv
 	}
 	public void repetitiveAssertNumberOfGridServiceContainersHolds(final int expectedAdded, final int expectedRemoved, long timeout, TimeUnit timeunit) {
 		if (added.size() > expectedAdded) {
-			AssertUtils.AssertFail("Expected " + expectedAdded +" GSCs Added. actual " + added.size() + " : " + ToStringUtils.gscsToString(added));
+			AssertUtils.assertFail("Expected " + expectedAdded +" GSCs Added. actual " + added.size() + " : " + ToStringUtils.gscsToString(added));
 		}
 		
 		if (removed.size() > expectedRemoved) {
-			AssertUtils.AssertFail("Expected " + expectedRemoved +" GSCs Removed . actual " + removed.size() + " : " + ToStringUtils.gscsToString(removed));
+			AssertUtils.assertFail("Expected " + expectedRemoved +" GSCs Removed . actual " + removed.size() + " : " + ToStringUtils.gscsToString(removed));
 		}
 		
 		AssertUtils.repetitiveAssertConditionHolds("Expected " + expectedAdded +" GSCs Added and " + expectedRemoved + " GSCs Removed", new RepetitiveConditionProvider() {

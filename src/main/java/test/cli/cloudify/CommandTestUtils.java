@@ -7,7 +7,6 @@ import java.io.InputStreamReader;
 import java.text.MessageFormat;
 import java.util.concurrent.atomic.AtomicReference;
 
-import test.AbstractTest;
 import framework.tools.SGTestHelper;
 import framework.utils.AssertUtils;
 import framework.utils.LogUtils;
@@ -107,7 +106,7 @@ public class CommandTestUtils {
 		ProcessResult result = handleCliOutput(process);
 		
 		if (result.getExitcode() != 0 && !failCommand) {
-			AbstractTest.AssertFail("In RunCommand: Process did not complete successfully. " + result);
+			AssertUtils.assertFail("In RunCommand: Process did not complete successfully. " + result);
 		}
 		return result.output;
 	}
@@ -145,7 +144,7 @@ public class CommandTestUtils {
 		thread.join(5000);
 		
 		if (exception.get() != null) {
-			AssertUtils.AssertFail("Failed to get process output. output="+consoleOutput,exception.get());
+			AssertUtils.assertFail("Failed to get process output. output="+consoleOutput,exception.get());
 		}
 		String stdout = consoleOutput.toString();
 		return new ProcessResult(stdout, exitcode);

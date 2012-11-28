@@ -53,7 +53,7 @@ public class AdminUtils {
 			try {
 				groups = "sgtest-"+InetAddress.getLocalHost().getHostName();
 			} catch (UnknownHostException e) {
-				AssertUtils.AssertFail("Failed generating unique group name",e);
+				AssertUtils.assertFail("Failed generating unique group name",e);
 			}
 		}
 		return groups;

@@ -248,7 +248,7 @@ public abstract class AbstractWebUILocalCloudTest extends AbstractLocalCloudTest
 		catch (AssertionError err) {
 			takeScreenShot(cls, methodName, picName);
 			LogUtils.log(message, err);
-			AssertUtils.AssertFail("Test Failed");
+			AssertUtils.assertFail("Test Failed");
 		}
 		
 	}
@@ -261,7 +261,7 @@ public abstract class AbstractWebUILocalCloudTest extends AbstractLocalCloudTest
 		catch (AssertionError err) {
 			takeScreenShot(cls, methodName, picName);
 			LogUtils.log("Stacktrace: ", err);
-			AssertUtils.AssertFail("Test Failed");
+			AssertUtils.assertFail("Test Failed");
 		}
 		
 	}

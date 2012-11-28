@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import org.testng.annotations.Test;
-
+import org.openspaces.admin.pu.ProcessingUnit;
 import org.cloudifysource.dsl.utils.ServiceUtils;
 
 public class FailedToInstallServiceApplicationTest extends AbstractLocalCloudTest {

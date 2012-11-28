@@ -145,16 +145,24 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 		} catch (InterruptedException e) {
 		}
 
-		boolean leakedAgentScanResult = false;
+		Throwable first = null;
 		for (int i = 0 ; i < MAX_SCAN_RETRY ; i++) {
 			try {
-				leakedAgentScanResult = this.cloudService.scanLeakedAgentNodes();
+				boolean leakedAgentNodesScanResult = this.cloudService.scanLeakedAgentNodes();
+				if (leakedAgentNodesScanResult == true) {
+					return;
+				} else {
+					Assert.fail("Leaked nodes were found!");
+				}
 				break;
 			} catch (final Throwable t) {
+				first = t;
 				LogUtils.log("Failed scaning for leaked nodes. attempt number " + (i + 1) , t);
 			}
 		}
-		AssertUtils.assertTrue("Leaked nodes were found!", leakedAgentScanResult);
+		if (first != null) {
+			Assert.fail("Failed scanning for leaked nodes after " + MAX_SCAN_RETRY + " attempts. First exception was --> " + first.getMessage(), first);
+		}
 	}
 
 	protected void installApplicationAndWait(String applicationPath, String applicationName) throws IOException, InterruptedException {

@@ -23,11 +23,11 @@ import com.google.inject.Module;
 
 import framework.utils.LogUtils;
 
-public abstract class JcloudCloudService extends AbstractCloudService {
+public abstract class JCloudsCloudService extends AbstractCloudService {
 
 	protected ComputeServiceContext context;
 
-	public JcloudCloudService(String cloudName) {
+	public JCloudsCloudService(String cloudName) {
 		super(cloudName);
 	}
 
@@ -128,7 +128,7 @@ public abstract class JcloudCloudService extends AbstractCloudService {
 		}
 	
 		if (leakedNodes.size() > 0) {
-			LogUtils.log("Killing leaked EC2 nodes");
+			LogUtils.log("Killing leaked nodes");
 			for (final ComputeMetadata leakedNode : leakedNodes) {
 	
 				LogUtils.log("Killing node: " + leakedNode.getName() + ": " + leakedNode);

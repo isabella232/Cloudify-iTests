@@ -7,11 +7,11 @@ import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 
-import test.cli.cloudify.cloud.services.JcloudCloudService;
+import test.cli.cloudify.cloud.services.JCloudsCloudService;
 import framework.tools.SGTestHelper;
 import framework.utils.IOUtils;
 
-public class HpCloudService extends JcloudCloudService {
+public class HpCloudService extends JCloudsCloudService {
 
 	private String tenant = "hpcloud@gigaspaces.com";
 	private String user = "98173213380893";

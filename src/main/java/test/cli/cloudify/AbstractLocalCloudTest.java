@@ -71,7 +71,7 @@ public class AbstractLocalCloudTest extends AbstractTest {
 	protected static final String MANAGEMENT_APPLICATION_NAME = "management";
 	protected static final String DEFAULT_APPLICATION_NAME = CloudifyConstants.DEFAULT_APPLICATION_NAME;
 
-	protected boolean isDevEnv = false;
+	protected boolean isDevEnv = true;
 
 	protected boolean isSecured = false;
 	protected String user = null;

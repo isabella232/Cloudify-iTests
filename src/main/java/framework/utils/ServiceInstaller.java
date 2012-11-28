@@ -1,5 +1,7 @@
 package framework.utils;
 
+import org.cloudifysource.dsl.internal.CloudifyConstants;
+
 import junit.framework.Assert;
 import test.cli.cloudify.CommandTestUtils;
 
@@ -8,15 +10,26 @@ public class ServiceInstaller extends RecipeInstaller {
 	private static final int DEFAULT_INSTALL_SERVICE_TIMEOUT = 15;
 	
 	private String serviceName;
+	private String applicationName = CloudifyConstants.DEFAULT_APPLICATION_NAME;
 	
 	public ServiceInstaller(String restUrl, String serviceName) {
 		super(restUrl, DEFAULT_INSTALL_SERVICE_TIMEOUT);
 		this.serviceName = serviceName;
 	}
 	
+	public ServiceInstaller applicationName(final String applicationName) {
+		this.applicationName = applicationName;
+		return this;
+	}
+	
 	@Override
 	public String getInstallCommand() {
-		return "install-service";
+		if (!applicationName.equals(CloudifyConstants.DEFAULT_APPLICATION_NAME)) {
+			// we wish to install the service on a specific application
+			return "use-application " + applicationName + ";" + " install-service";
+		} else {
+			return "install-service";
+		}
 	}
 
 	@Override

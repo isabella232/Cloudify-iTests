@@ -23,7 +23,7 @@ public class LocalCloudSecurityTest extends AbstractSecuredLocalCloudTest{
 
 		ApplicationInstaller appInstaller = new ApplicationInstaller(restUrl, APP_NAME);
 		
-		String output = appInstaller.setCloudifyUsername(SecurityConstants.CLOUD_ADMIN_USER_PWD).setCloudifyPassword(SecurityConstants.CLOUD_ADMIN_USER_PWD).setRecipePath(SGTestHelper.getSGTestRootDir() + APP_PATH).install();
+		String output = appInstaller.cloudifyUsername(SecurityConstants.CLOUD_ADMIN_USER_PWD).cloudifyPassword(SecurityConstants.CLOUD_ADMIN_USER_PWD).recipePath(SGTestHelper.getSGTestRootDir() + APP_PATH).install();
 		appInstaller.assertInstall(output);
 		
 		output = appInstaller.uninstall();
@@ -35,10 +35,10 @@ public class LocalCloudSecurityTest extends AbstractSecuredLocalCloudTest{
 		
 		ApplicationInstaller appInstaller = new ApplicationInstaller(restUrl, APP_NAME);
 		
-		String output = appInstaller.setCloudifyUsername(SecurityConstants.APP_MANAGER_AND_VIEWER_USER_PWD).setCloudifyPassword(SecurityConstants.APP_MANAGER_AND_VIEWER_USER_PWD).setRecipePath(SGTestHelper.getSGTestRootDir() + APP_PATH).install();
+		String output = appInstaller.cloudifyUsername(SecurityConstants.APP_MANAGER_AND_VIEWER_USER_PWD).cloudifyPassword(SecurityConstants.APP_MANAGER_AND_VIEWER_USER_PWD).recipePath(SGTestHelper.getSGTestRootDir() + APP_PATH).install();
 		appInstaller.assertInstall(output);
 		
-		output = appInstaller.setCloudifyUsername(SecurityConstants.VIEWER_USER_PWD).setCloudifyPassword(SecurityConstants.VIEWER_USER_PWD).setExpectToFail(true).uninstall();
+		output = appInstaller.cloudifyUsername(SecurityConstants.VIEWER_USER_PWD).cloudifyPassword(SecurityConstants.VIEWER_USER_PWD).expectToFail(true).uninstall();
 		appInstaller.assertUninstall(output);
 	}
 
@@ -46,7 +46,7 @@ public class LocalCloudSecurityTest extends AbstractSecuredLocalCloudTest{
 	public void installWithViewerTest() throws IOException, InterruptedException{
 
 		ApplicationInstaller appInstaller = new ApplicationInstaller(restUrl, APP_NAME);
-		String output = appInstaller.setCloudifyUsername(SecurityConstants.VIEWER_USER_PWD).setCloudifyPassword(SecurityConstants.VIEWER_USER_PWD).setRecipePath(SGTestHelper.getSGTestRootDir() + APP_PATH).setExpectToFail(true).install();
+		String output = appInstaller.cloudifyUsername(SecurityConstants.VIEWER_USER_PWD).cloudifyPassword(SecurityConstants.VIEWER_USER_PWD).recipePath(SGTestHelper.getSGTestRootDir() + APP_PATH).expectToFail(true).install();
 
 		assertTrue("install access granted to " + SecurityConstants.VIEWER_USER_PWD, output.contains("no_permission_access_is_denied"));
 		appInstaller.assertInstall(output);
@@ -56,7 +56,7 @@ public class LocalCloudSecurityTest extends AbstractSecuredLocalCloudTest{
 	public void installWithoutCredentialsTest() throws IOException, InterruptedException{
 
 		ApplicationInstaller appInstaller = new ApplicationInstaller(restUrl, APP_NAME);
-		String output = appInstaller.setRecipePath(SGTestHelper.getSGTestRootDir() + APP_PATH).setExpectToFail(true).install();
+		String output = appInstaller.recipePath(SGTestHelper.getSGTestRootDir() + APP_PATH).expectToFail(true).install();
 
 		assertTrue("install access granted to an Anonymous user" , output.contains("bad_credentials"));
 		appInstaller.assertInstall(output);
@@ -68,10 +68,10 @@ public class LocalCloudSecurityTest extends AbstractSecuredLocalCloudTest{
 		String output = "no output";
 		ApplicationInstaller appInstaller = new ApplicationInstaller(restUrl, APP_NAME);
 
-		output = appInstaller.setCloudifyUsername(SecurityConstants.APP_MANAGER_USER_PWD).setCloudifyPassword(SecurityConstants.APP_MANAGER_USER_PWD).setRecipePath(SGTestHelper.getSGTestRootDir() + APP_PATH).install();		
+		output = appInstaller.cloudifyUsername(SecurityConstants.APP_MANAGER_USER_PWD).cloudifyPassword(SecurityConstants.APP_MANAGER_USER_PWD).recipePath(SGTestHelper.getSGTestRootDir() + APP_PATH).install();		
 		appInstaller.assertInstall(output);
 		
-		output = appInstaller.setApplicationName(APP_NAME_2).setCloudifyUsername(SecurityConstants.APP_MANAGER_AND_VIEWER_USER_PWD).setCloudifyPassword(SecurityConstants.APP_MANAGER_AND_VIEWER_USER_PWD).setRecipePath(SGTestHelper.getSGTestRootDir() + APP_PATH_2).install();		
+		output = appInstaller.setApplicationName(APP_NAME_2).cloudifyUsername(SecurityConstants.APP_MANAGER_AND_VIEWER_USER_PWD).cloudifyPassword(SecurityConstants.APP_MANAGER_AND_VIEWER_USER_PWD).recipePath(SGTestHelper.getSGTestRootDir() + APP_PATH_2).install();		
 		appInstaller.assertInstall(output);
 
 		output = listApplications(SecurityConstants.CLOUD_ADMIN_USER_PWD, SecurityConstants.CLOUD_ADMIN_USER_PWD);
@@ -157,7 +157,7 @@ public class LocalCloudSecurityTest extends AbstractSecuredLocalCloudTest{
 			FileUtils.copyFile(fakeFile, originalFile);
 
 			ApplicationInstaller appInstaller = new ApplicationInstaller(restUrl, APP_NAME);
-			String output = appInstaller.setCloudifyUsername(fakeCloudAdminUserAndPassword).setCloudifyPassword(fakeCloudAdminUserAndPassword).setRecipePath(SGTestHelper.getSGTestRootDir() + APP_PATH).install();
+			String output = appInstaller.cloudifyUsername(fakeCloudAdminUserAndPassword).cloudifyPassword(fakeCloudAdminUserAndPassword).recipePath(SGTestHelper.getSGTestRootDir() + APP_PATH).install();
 
 			assertTrue("install access granted to " + fakeCloudAdminUserAndPassword, output.contains("no_permission_access_is_denied"));
 			appInstaller.assertInstall(output);

@@ -35,8 +35,8 @@ public class OverridePropertiesPropogationTest extends AbstractLocalCloudTest {
 	public void testInstallService() throws IOException, InterruptedException {
 		
 		ServiceInstaller tomcatInstaller = new ServiceInstaller(restUrl, "tomcat");
-		tomcatInstaller.setRecipePath(TOMCAT_SERVICE_PATH);
-		tomcatInstaller.setOverrides(overrides);
+		tomcatInstaller.recipePath(TOMCAT_SERVICE_PATH);
+		tomcatInstaller.overrides(overrides);
 		
 		tomcatInstaller.install();
 		
@@ -50,8 +50,8 @@ public class OverridePropertiesPropogationTest extends AbstractLocalCloudTest {
 	public void testInstallApplication() throws IOException, InterruptedException {
 
 		ApplicationInstaller travelInstaller = new ApplicationInstaller(restUrl, "travel");
-		travelInstaller.setRecipePath(TRAVEL_APP_PATH);
-		travelInstaller.setOverrides(overrides);
+		travelInstaller.recipePath(TRAVEL_APP_PATH);
+		travelInstaller.overrides(overrides);
 		
 		travelInstaller.install();
 		

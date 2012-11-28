@@ -38,7 +38,7 @@ public class MachinesEventsCounter implements AdminEventListener, ElasticMachine
 		List<ElasticMachineProvisioningProgressChangedEvent> copy = getMachineEventsCopy();
 		int actual = countEvents(eventClass, copy);
 		if (actual > expected) {
-			AssertUtils.AssertFail("Expected " + expected +" " + eventClass + " events. actual " + actual + " : " + copy);
+			AssertUtils.assertFail("Expected " + expected +" " + eventClass + " events. actual " + actual + " : " + copy);
 		}
 
 		AssertUtils.repetitiveAssertTrue("Expected " + expected +" " + eventClass + " events", new RepetitiveConditionProvider() {

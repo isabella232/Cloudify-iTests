@@ -1,4 +1,4 @@
-package test.gsm.datagrid.manual.memory.xen;
+package test.esm.datagrid.manual.memory;
 
 
 import java.util.HashSet;
@@ -13,13 +13,13 @@ import org.openspaces.admin.space.Space;
 import org.openspaces.core.util.MemoryUnit;
 import org.testng.annotations.Test;
 
-import test.gsm.AbstractXenGSMTest;
+import test.esm.AbstractFromXenToByonGSMTest;
 /**
  * Tests deployment of two different space (each space should be (1,1), there should be 4 machines in total
  *
  * @author dank
  */
-public class DedicatedManualXenDataGridTwoIndenpendentDeploymentsTest extends AbstractXenGSMTest {
+public class DedicatedManualXenDataGridTwoIndenpendentDeploymentsTest extends AbstractFromXenToByonGSMTest {
 
     @Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1")
     public void manualXenDataGridDeploymentTwoIndenpendentDeploymentsTest() {

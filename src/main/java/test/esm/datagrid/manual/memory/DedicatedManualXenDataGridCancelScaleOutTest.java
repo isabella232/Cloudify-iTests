@@ -1,4 +1,4 @@
-package test.gsm.datagrid.manual.memory.xen;
+package test.esm.datagrid.manual.memory;
 
 import java.util.concurrent.TimeUnit;
 
@@ -14,10 +14,10 @@ import org.openspaces.grid.gsm.machines.plugins.events.MachineStopRequestedEvent
 import org.openspaces.grid.gsm.machines.plugins.events.MachineStoppedEvent;
 import org.testng.annotations.Test;
 
-import test.gsm.AbstractXenGSMTest;
-import test.gsm.GsmTestUtils;
+import test.esm.AbstractFromXenToByonGSMTest;
+import framework.utils.GsmTestUtils;
 
-public class DedicatedManualXenDataGridCancelScaleOutTest extends AbstractXenGSMTest { 
+public class DedicatedManualXenDataGridCancelScaleOutTest extends AbstractFromXenToByonGSMTest{ 
 
     private static final int CONTAINER_MEMORY_IN_MEGABYTES = 1024;
     private static final int INITIAL_NUMBER_OF_CONTAINERS = 2;
@@ -51,6 +51,7 @@ public class DedicatedManualXenDataGridCancelScaleOutTest extends AbstractXenGSM
                 .memoryCapacityPerContainer(CONTAINER_MEMORY_IN_MEGABYTES,MemoryUnit.MEGABYTES)
                 .scale(new ManualCapacityScaleConfigurer()
                        .memoryCapacity(INITIAL_MEMORY_IN_MEGABYTES,MemoryUnit.MEGABYTES)
+                       .atMostOneContainerPerMachine()
                        .create())
                 .dedicatedMachineProvisioning(getMachineProvisioningConfig())
         );
@@ -72,6 +73,7 @@ public class DedicatedManualXenDataGridCancelScaleOutTest extends AbstractXenGSM
         
         pu.scale(new ManualCapacityScaleConfigurer()
                  .memoryCapacity(SCALEOUT_MEMORY_IN_MEGABYTES, MemoryUnit.MEGABYTES)
+                 .atMostOneContainerPerMachine()
                  .create());
         
         repetitiveAssertNumberOfMachineEvents(MachineStartRequestedEvent.class, 3, OPERATION_TIMEOUT);

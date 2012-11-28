@@ -1,4 +1,4 @@
-package test.gsm.datagrid.manual.memory.xen;
+package test.esm.datagrid.manual.memory;
 
 import java.util.concurrent.TimeUnit;
 
@@ -9,10 +9,10 @@ import org.openspaces.admin.space.Space;
 import org.openspaces.core.util.MemoryUnit;
 import org.testng.annotations.Test;
 
-import test.gsm.AbstractXenGSMTest;
-import test.gsm.GsmTestUtils;
+import test.esm.AbstractFromXenToByonGSMTest;
+import framework.utils.GsmTestUtils;
 
-public class DedicatedManualXenDataGridScaleOutAndScaleInTest extends AbstractXenGSMTest {
+public class DedicatedManualXenDataGridScaleOutAndScaleInTest extends AbstractFromXenToByonGSMTest {
 
     private final String gridName = "myspace";
     

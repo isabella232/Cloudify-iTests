@@ -191,4 +191,13 @@ public class ProcessingUnitUtils {
 		}
 		return machines;
 	}
+	
+	public static Set<Machine> getMachinesOfService(final Admin admin, final String serviceName) {
+		Set<Machine> machines = new HashSet<Machine>();
+		ProcessingUnit pu = admin.getProcessingUnits().waitFor(serviceName, AbstractTest.OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
+		for (ProcessingUnitInstance puInstance : pu.getInstances()) {
+			machines.add(puInstance.getMachine());
+		}
+		return machines;
+	}
 }

@@ -51,8 +51,8 @@ public class CloudOverridesESMFailoverTest extends AbstractKillManagementTest {
 		try {
 						
 			ServiceInstaller serviceInstaller = new ServiceInstaller(getRestUrl(), "simple");
-			serviceInstaller.setRecipePath(SIMPLE_RECIPE_FOLDER);
-			serviceInstaller.setCloudOverrides(createCloudOverrideProperties());
+			serviceInstaller.recipePath(SIMPLE_RECIPE_FOLDER);
+			serviceInstaller.cloudOverrides(createCloudOverrideProperties());
 			
 			serviceInstaller.install();
 			

@@ -51,7 +51,7 @@ public class BootstrapCloudWithOverridesTest extends AbstractByonCloudTest {
 		assertOverrides(machines);
 		
 		ServiceInstaller installer = new ServiceInstaller(getRestUrl(), "tomcat");
-		installer.setRecipePath("tomcat");
+		installer.recipePath("tomcat");
 		
 		installer.install();
 		

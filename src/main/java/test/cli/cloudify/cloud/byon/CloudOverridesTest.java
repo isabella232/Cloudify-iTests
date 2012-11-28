@@ -49,8 +49,8 @@ public class CloudOverridesTest extends AbstractByonCloudTest {
 		File createOverridesFile = null;
 		try {
 			ServiceInstaller serviceInstaller = new ServiceInstaller(getRestUrl(), "simple");
-			serviceInstaller.setRecipePath(SIMPLE_RECIPE_FOLDER);
-			serviceInstaller.setCloudOverrides(createCloudOverrideProperties());
+			serviceInstaller.recipePath(SIMPLE_RECIPE_FOLDER);
+			serviceInstaller.cloudOverrides(createCloudOverrideProperties());
 			
 			serviceInstaller.install();
 			
@@ -75,8 +75,8 @@ public class CloudOverridesTest extends AbstractByonCloudTest {
 	
 		try {
 			ApplicationInstaller applicationInstaller = new ApplicationInstaller(getRestUrl(), "simple");
-			applicationInstaller.setRecipePath(SIMPLE_APP_FOLDER);
-			applicationInstaller.setCloudOverrides(createCloudOverrideProperties());
+			applicationInstaller.recipePath(SIMPLE_APP_FOLDER);
+			applicationInstaller.cloudOverrides(createCloudOverrideProperties());
 			
 			applicationInstaller.install();
 			
@@ -101,8 +101,8 @@ public class CloudOverridesTest extends AbstractByonCloudTest {
 		File createOverridesFile = null;
 		try {
 			ServiceInstaller serviceInstaller = new ServiceInstaller(getRestUrl(), "simple");
-			serviceInstaller.setRecipePath(SIMPLE_RECIPE_FOLDER);
-			serviceInstaller.setCloudOverrides(createCloudOverrideProperties());
+			serviceInstaller.recipePath(SIMPLE_RECIPE_FOLDER);
+			serviceInstaller.cloudOverrides(createCloudOverrideProperties());
 			
 			serviceInstaller.install();
 			

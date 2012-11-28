@@ -26,10 +26,10 @@ public class TeardownWithoutUninstallTest extends AbstractByonCloudTest {
 	public void testTeardownWithoutUnInstallApplication() throws Exception {
 
 		ApplicationInstaller travelInstaller = new ApplicationInstaller(getRestUrl(), "travel");
-		travelInstaller.setRecipePath(TRAVEL_PATH);
+		travelInstaller.recipePath(TRAVEL_PATH);
 		
 		ApplicationInstaller petclinicInstaller = new ApplicationInstaller(getRestUrl(), "petclinic");
-		petclinicInstaller.setRecipePath(PETCLINIC_SIMPLE_PATH);
+		petclinicInstaller.recipePath(PETCLINIC_SIMPLE_PATH);
 
 		travelInstaller.install();
 		petclinicInstaller.install();

@@ -162,74 +162,74 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 
 	protected void installApplicationAndWait(String applicationPath, String applicationName) throws IOException, InterruptedException {
 		ApplicationInstaller applicationInstaller = new ApplicationInstaller(getRestUrl(), applicationName);
-		applicationInstaller.setRecipePath(applicationPath);
-		applicationInstaller.setWaitForFinish(true);
+		applicationInstaller.recipePath(applicationPath);
+		applicationInstaller.waitForFinish(true);
 		applicationInstaller.install();
 	}
 
 	protected void uninstallApplicationAndWait(String applicationName) throws IOException, InterruptedException {
 		ApplicationInstaller applicationInstaller = new ApplicationInstaller(getRestUrl(), applicationName);
-		applicationInstaller.setWaitForFinish(true);
+		applicationInstaller.waitForFinish(true);
 		applicationInstaller.uninstall();
 	}
 
 	protected void uninstallApplicationIfFound(String applicationName) throws IOException, InterruptedException {
 		ApplicationInstaller applicationInstaller = new ApplicationInstaller(getRestUrl(), applicationName);
-		applicationInstaller.setWaitForFinish(true);
+		applicationInstaller.waitForFinish(true);
 		applicationInstaller.uninstallIfFound();
 	}
 
 	protected void installApplicationAndWait(String applicationPath, String applicationName, int timeout) throws IOException, InterruptedException {
 		ApplicationInstaller applicationInstaller = new ApplicationInstaller(getRestUrl(), applicationName);
-		applicationInstaller.setRecipePath(applicationPath);
-		applicationInstaller.setWaitForFinish(true);
-		applicationInstaller.setTimeoutInMinutes(timeout);
+		applicationInstaller.recipePath(applicationPath);
+		applicationInstaller.waitForFinish(true);
+		applicationInstaller.timeoutInMinutes(timeout);
 		applicationInstaller.install();
 	}
 
 	protected void installApplicationAndWait(String applicationPath, String applicationName, int timeout , boolean expectToFail) throws IOException, InterruptedException {
 		ApplicationInstaller applicationInstaller = new ApplicationInstaller(getRestUrl(), applicationName);
-		applicationInstaller.setRecipePath(applicationPath);
-		applicationInstaller.setWaitForFinish(true);
-		applicationInstaller.setExpectToFail(expectToFail);
-		applicationInstaller.setTimeoutInMinutes(timeout);
+		applicationInstaller.recipePath(applicationPath);
+		applicationInstaller.waitForFinish(true);
+		applicationInstaller.expectToFail(expectToFail);
+		applicationInstaller.timeoutInMinutes(timeout);
 		applicationInstaller.install();		
 	}
 
 
 	protected void installServiceAndWait(String servicePath, String serviceName) throws IOException, InterruptedException {
 		ServiceInstaller serviceInstaller = new ServiceInstaller(getRestUrl(), serviceName);
-		serviceInstaller.setRecipePath(servicePath);
-		serviceInstaller.setWaitForFinish(true);
+		serviceInstaller.recipePath(servicePath);
+		serviceInstaller.waitForFinish(true);
 		serviceInstaller.install();
 	}
 
 	protected void uninstallServiceAndWait(String serviceName) throws IOException, InterruptedException {
 		ServiceInstaller serviceInstaller = new ServiceInstaller(getRestUrl(), serviceName);
-		serviceInstaller.setWaitForFinish(true);
+		serviceInstaller.waitForFinish(true);
 		serviceInstaller.uninstall();
 	}
 
 	protected void uninstallServiceIfFound(String serviceName) throws IOException, InterruptedException {
 		ServiceInstaller serviceInstaller = new ServiceInstaller(getRestUrl(), serviceName);
-		serviceInstaller.setWaitForFinish(true);
+		serviceInstaller.waitForFinish(true);
 		serviceInstaller.uninstallIfFound();
 	}
 
 	protected void installServiceAndWait(String servicePath, String serviceName, int timeout) throws IOException, InterruptedException {
 		ServiceInstaller serviceInstaller = new ServiceInstaller(getRestUrl(), serviceName);
-		serviceInstaller.setRecipePath(servicePath);
-		serviceInstaller.setWaitForFinish(true);
-		serviceInstaller.setTimeoutInMinutes(timeout);
+		serviceInstaller.recipePath(servicePath);
+		serviceInstaller.waitForFinish(true);
+		serviceInstaller.timeoutInMinutes(timeout);
 		serviceInstaller.install();
 	}
 
 	protected void installServiceAndWait(String servicePath, String serviceName, int timeout , boolean expectToFail) throws IOException, InterruptedException {
 		ServiceInstaller serviceInstaller = new ServiceInstaller(getRestUrl(), serviceName);
-		serviceInstaller.setRecipePath(servicePath);
-		serviceInstaller.setWaitForFinish(true);
-		serviceInstaller.setExpectToFail(expectToFail);
-		serviceInstaller.setTimeoutInMinutes(timeout);
+		serviceInstaller.recipePath(servicePath);
+		serviceInstaller.waitForFinish(true);
+		serviceInstaller.expectToFail(expectToFail);
+		serviceInstaller.timeoutInMinutes(timeout);
 		serviceInstaller.install();
 	}
 

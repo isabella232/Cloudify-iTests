@@ -91,12 +91,12 @@ public class Ec2SecurityTest extends NewAbstractCloudTest {
 			RestException {
 
 		ApplicationInstaller applicationInstaller = new ApplicationInstaller(restUrl, applicationName);
-		applicationInstaller.setRecipePath(CommandTestUtils.getPath("src/main/resources/apps/USM/usm/applications/" + applicationName));
-		applicationInstaller.setWaitForFinish(true);
-		applicationInstaller.setCloudifyUsername(cloudifyUsername);
-		applicationInstaller.setCloudifyPassword(cloudifyPassword);
+		applicationInstaller.recipePath(CommandTestUtils.getPath("src/main/resources/apps/USM/usm/applications/" + applicationName));
+		applicationInstaller.waitForFinish(true);
+		applicationInstaller.cloudifyUsername(cloudifyUsername);
+		applicationInstaller.cloudifyPassword(cloudifyPassword);
 		if (StringUtils.isNotBlank(authGroups)) {
-			applicationInstaller.setAuthGroups(authGroups);
+			applicationInstaller.authGroups(authGroups);
 		}
 		
 		applicationInstaller.install();
@@ -118,10 +118,10 @@ public class Ec2SecurityTest extends NewAbstractCloudTest {
 			throws IOException, InterruptedException, RestException {
 		
 		ApplicationInstaller applicationInstaller = new ApplicationInstaller(restUrl, applicationName);
-		applicationInstaller.setRecipePath(CommandTestUtils.getPath("src/main/resources/apps/USM/usm/applications/" + applicationName));
-		applicationInstaller.setWaitForFinish(true);
+		applicationInstaller.recipePath(CommandTestUtils.getPath("src/main/resources/apps/USM/usm/applications/" + applicationName));
+		applicationInstaller.waitForFinish(true);
 		if (StringUtils.isNotBlank(authGroups)) {
-			applicationInstaller.setAuthGroups(authGroups);
+			applicationInstaller.authGroups(authGroups);
 		}
 		
 		applicationInstaller.uninstall();

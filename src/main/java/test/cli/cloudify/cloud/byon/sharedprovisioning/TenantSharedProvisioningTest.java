@@ -3,6 +3,7 @@ package test.cli.cloudify.cloud.byon.sharedprovisioning;
 import java.io.IOException;
 import java.util.Set;
 
+import org.cloudifysource.dsl.internal.CloudifyConstants;
 import org.cloudifysource.dsl.utils.ServiceUtils;
 import org.openspaces.admin.machine.Machine;
 import org.testng.annotations.AfterClass;
@@ -51,8 +52,8 @@ public class TenantSharedProvisioningTest extends AbstractSharedProvisioningByon
 		super.installManualTenantSharedProvisioningServiceAndWait("ROLE_CLOUDADMINS", SERVICE_ONE);
 		super.installManualTenantSharedProvisioningServiceAndWait("ROLE_CLOUDADMINS", SERVICE_TWO);
 		
-		Set<Machine> serviceOneMachines = ProcessingUnitUtils.getMachinesOfService(admin, ServiceUtils.getAbsolutePUName(APPLICATION_ONE, SERVICE_ONE));
-		Set<Machine> serviceTwoMachines = ProcessingUnitUtils.getMachinesOfService(admin, ServiceUtils.getAbsolutePUName(APPLICATION_ONE, SERVICE_TWO));
+		Set<Machine> serviceOneMachines = ProcessingUnitUtils.getMachinesOfService(admin, ServiceUtils.getAbsolutePUName(CloudifyConstants.DEFAULT_APPLICATION_NAME, SERVICE_ONE));
+		Set<Machine> serviceTwoMachines = ProcessingUnitUtils.getMachinesOfService(admin, ServiceUtils.getAbsolutePUName(CloudifyConstants.DEFAULT_APPLICATION_NAME, SERVICE_TWO));
 		
 		AssertUtils.assertTrue("services should be deployed on the same machine since they belong to the same tenant", 
 				serviceOneMachines.equals(serviceTwoMachines));
@@ -67,8 +68,8 @@ public class TenantSharedProvisioningTest extends AbstractSharedProvisioningByon
 	public void cleanup() throws IOException, InterruptedException {
 		super.uninstallApplicationIfFound(APPLICATION_ONE);
 		super.uninstallApplicationIfFound(APPLICATION_TWO);
-		super.uninstallApplicationIfFound(SERVICE_ONE);
-		super.uninstallApplicationIfFound(SERVICE_TWO);
+		super.uninstallServiceIfFound(SERVICE_ONE);
+		super.uninstallServiceIfFound(SERVICE_TWO);
 	}
 	
 	

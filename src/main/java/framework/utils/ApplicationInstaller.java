@@ -1,5 +1,7 @@
 package framework.utils;
 
+import org.apache.commons.lang.StringUtils;
+
 import junit.framework.Assert;
 import test.cli.cloudify.CommandTestUtils;
 
@@ -53,7 +55,7 @@ public class ApplicationInstaller extends RecipeInstaller {
 	
 	public void uninstallIfFound() {	
 		if (getRestUrl() != null) {
-			String command = "connect " + getRestUrl() + ";list-applications";
+			String command = connectCommand() + ";list-applications";
 			String output;
 			try {
 				output = CommandTestUtils.runCommandAndWait(command);
@@ -65,5 +67,17 @@ public class ApplicationInstaller extends RecipeInstaller {
 				Assert.fail(e.getMessage());
 			}
 		}
+	}
+	
+	protected String connectCommand(){
+
+		String user = getCloudifyUsername();
+		String password = getCloudifyPassword();
+		
+		if(StringUtils.isNotBlank(user) && StringUtils.isNotBlank(password)){
+			return("connect -user " + user + " -pwd " + password + " " + getRestUrl());
+		}
+
+		return("connect " + getRestUrl());
 	}
 }

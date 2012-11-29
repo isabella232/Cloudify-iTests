@@ -2,7 +2,7 @@ package test.cli.cloudify;
 
 import java.io.IOException;
 
-import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import framework.tools.SGTestHelper;
@@ -19,15 +19,16 @@ public class CustomSecurityFileTest extends AbstractSecuredLocalCloudTest{
 	private static final String APP_PATH = SGTEST_ROOT_DIR + "/src/main/resources/apps/USM/usm/applications/" + APP_NAME;
 	
 	@Override
-	@BeforeMethod
+	@BeforeClass
 	public void beforeTest() {
 		LocalCloudBootstrapper bootstrapper = new LocalCloudBootstrapper();
-		bootstrapper.securityFilePath(CUSTUM_SECURITY_FILE_PATH);
+		bootstrapper.secured(true).securityFilePath(CUSTUM_SECURITY_FILE_PATH);
+		bootstrapper.keystoreFilePath(getDefaultKeystoreFilePath()).keystorePassword(getDefaultKeystorePassword());
 		beforeTest(bootstrapper);		
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = false)
-	public void installWithcustomCloudAdminTest() throws IOException, InterruptedException {
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
+	public void installWithCustomCloudAdminTest() throws IOException, InterruptedException {
 		
 		ApplicationInstaller appInstaller = new ApplicationInstaller(restUrl, APP_NAME);
 		String output = appInstaller.cloudifyUsername(CLOUD_ADMIN_USER_AND_PASSWORD).cloudifyPassword(CLOUD_ADMIN_USER_AND_PASSWORD).recipePath(APP_PATH).install();
@@ -35,7 +36,7 @@ public class CustomSecurityFileTest extends AbstractSecuredLocalCloudTest{
 		appInstaller.assertInstall(output);
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
 	public void installWithCustomViewerTest() throws IOException, InterruptedException{
 		
 		ApplicationInstaller appInstaller = new ApplicationInstaller(restUrl, APP_NAME);

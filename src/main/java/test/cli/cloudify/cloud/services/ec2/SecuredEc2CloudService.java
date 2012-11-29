@@ -1,5 +1,6 @@
 package test.cli.cloudify.cloud.services.ec2;
 
+import framework.utils.CloudBootstrapper;
 import test.cli.cloudify.security.SecuredCloudService;
 
 public class SecuredEc2CloudService extends Ec2CloudService implements SecuredCloudService {
@@ -12,6 +13,15 @@ public class SecuredEc2CloudService extends Ec2CloudService implements SecuredCl
 		this.cloudifyUsername = username;
 		this.cloudifyPassword = password;
 		this.securityConfigFile = securityConfigFile;
+		
+		CloudBootstrapper bootstrapper = new CloudBootstrapper();
+		bootstrapper.user(username).password(password).securityFilePath(securityConfigFile);
+		setBootstrapper(bootstrapper);
+	}
+
+	public SecuredEc2CloudService() {
+		cloudifyUsername = getBootstrapper().getUser();
+		cloudifyPassword = getBootstrapper().getPassword();
 	}
 
 	public String getCloudifyUsername() {

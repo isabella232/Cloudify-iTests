@@ -3,32 +3,44 @@ package test.cli.cloudify;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.lang.StringUtils;
 import org.cloudifysource.dsl.Application;
 import org.openspaces.admin.machine.Machine;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 
+import test.cli.cloudify.CommandTestUtils.ProcessResult;
+import test.cli.cloudify.security.SecurityConstants;
+import framework.tools.SGTestHelper;
 import framework.utils.LocalCloudBootstrapper;
 import framework.utils.LogUtils;
 
-import test.cli.cloudify.CommandTestUtils.ProcessResult;
-import test.cli.cloudify.security.SecurityConstants;
-
 public class AbstractSecuredLocalCloudTest extends AbstractLocalCloudTest{
 	
+	private static final String DEFAULT_SECURITY_FILE_PATH = SGTestHelper.getSGTestRootDir().replace('\\', '/') + "/src/main/config/security/spring-security.xml";
+	private static final String DEFAULT_KEYSTORE_FILE_PATH = SGTestHelper.getSGTestRootDir().replace('\\', '/') + "/src/main/config/security/keystore";
+	private static final String DEFAULT_KEYSTORE_PASSWORD = "sgtest";
+	private static final int BOOTSTRAP_RETRIES_BEFOREMETHOD = 1; //TODO remove this
+
 	@Override
 	@BeforeMethod
 	public void beforeTest() {
 		LocalCloudBootstrapper bootstrapper = new LocalCloudBootstrapper();
-		beforeTest(bootstrapper);
-		
+		bootstrapper.secured(true).securityFilePath(DEFAULT_SECURITY_FILE_PATH);
+		bootstrapper.keystoreFilePath(DEFAULT_KEYSTORE_FILE_PATH).keystorePassword(DEFAULT_KEYSTORE_PASSWORD);
+		beforeTest(bootstrapper);		
+	}
+
+	public static String getDefaultSecurityFilePath() {
+		return DEFAULT_SECURITY_FILE_PATH;
 	}
 
 	public void beforeTest(LocalCloudBootstrapper bootstrapper) {
 		
-		user = bootstrapper.getUser();
-		password = bootstrapper.getPassword();
 		isSecured = true;
+		
+		//pre-bootstrap actions will be made with the super-user
+		setUserAndPassword(SecurityConstants.ALL_ROLES_USER_PWD, SecurityConstants.ALL_ROLES_USER_PWD);
 
 		LogUtils.log("Test Configuration Started: " + this.getClass());
 
@@ -38,7 +50,7 @@ public class AbstractSecuredLocalCloudTest extends AbstractLocalCloudTest{
 			admin = null;
 		}
 
-		restUrl = "http://" + getLocalHostIpAddress() + ":" + restPort;
+		securedRestUrl = "https://" + getLocalHostIpAddress() + ":" + securedRestPort;
 
 		if (checkIsDevEnv()) {
 			LogUtils.log("Local cloud test running in dev mode, will use existing localcloud");
@@ -46,9 +58,11 @@ public class AbstractSecuredLocalCloudTest extends AbstractLocalCloudTest{
 			for (int i = 0; i < BOOTSTRAP_RETRIES_BEFOREMETHOD; i++) {
 
 				try {
-					if (!isRequiresBootstrap()) {
-						break;
-					}
+					
+					//TODO do not always bootstrap
+//					if (!isRequiresBootstrap()) {
+//						break;
+//					}
 
 					cleanUpCloudifyLocalDir();
 
@@ -68,7 +82,12 @@ public class AbstractSecuredLocalCloudTest extends AbstractLocalCloudTest{
 					}
 
 					final ProcessResult bootstrapResult;
-
+					
+					//switching from the super-user to the entered credentials
+					if(StringUtils.isNotBlank(bootstrapper.getUser()) && StringUtils.isNotBlank(bootstrapper.getPassword())){	
+						setUserAndPassword(bootstrapper.getUser(), bootstrapper.getPassword());
+					}
+					
 					bootstrapResult = bootstrapper.bootstrap();
 
 					LogUtils.log(bootstrapResult.getOutput());
@@ -147,6 +166,12 @@ public class AbstractSecuredLocalCloudTest extends AbstractLocalCloudTest{
 		setUserAndPassword(user, password);
 		return listApplications();
 	}
+	
+	protected String listServices(String user, String password){
+		
+		setUserAndPassword(user, password);
+		return listServices();
+	}
 
 	protected String connect(String user, String password){
 
@@ -154,18 +179,14 @@ public class AbstractSecuredLocalCloudTest extends AbstractLocalCloudTest{
 		return connect();
 	}
 
-	protected String login(String user, String password){
+	protected String login(String user, String password, boolean failCommand){
 
-		if(user.equals(SecurityConstants.CLOUD_ADMIN_USER_PWD)){
-			setUserAndPassword(SecurityConstants.APP_MANAGER_USER_PWD, SecurityConstants.APP_MANAGER_USER_PWD);	
-		}
-		else{
-			setUserAndPassword(SecurityConstants.CLOUD_ADMIN_USER_PWD, SecurityConstants.CLOUD_ADMIN_USER_PWD);	
-		}
+		setUserAndPassword(SecurityConstants.ALL_ROLES_USER_PWD, SecurityConstants.ALL_ROLES_USER_PWD);
+
 		String output = "no output";
 
 		try {
-			output = runCommand(connectCommand() + ";" + loginCommand(user, password));
+			output = CommandTestUtils.runCommand(connectCommand() + ";" + loginCommand(user, password), true, failCommand);
 		} catch (IOException e) {
 			Assert.fail("Failed to connect and login");
 		} catch (InterruptedException e) {
@@ -182,6 +203,14 @@ public class AbstractSecuredLocalCloudTest extends AbstractLocalCloudTest{
 	protected void setUserAndPassword(String user, String password) {
 		this.user = user;
 		this.password = password;
+	}
+
+	public static String getDefaultKeystoreFilePath() {
+		return DEFAULT_KEYSTORE_FILE_PATH;
+	}
+
+	public static String getDefaultKeystorePassword() {
+		return DEFAULT_KEYSTORE_PASSWORD;
 	}
 
 }

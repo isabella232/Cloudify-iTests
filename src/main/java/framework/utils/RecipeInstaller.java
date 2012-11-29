@@ -110,6 +110,14 @@ public abstract class RecipeInstaller {
 		return this;
 	}
 	
+	public String getCloudifyUsername() {
+		return cloudifyUsername;
+	}
+
+	public String getCloudifyPassword() {
+		return cloudifyPassword;
+	}
+	
 	public String getAuthGroups() {
 		return authGroups;
 	}
@@ -191,9 +199,9 @@ public abstract class RecipeInstaller {
 			LogUtils.log("Failed to create dump for this url - " + url, e);
 		}
 
-		//final String connectCommand = "connect " + restUrl + ";";
 		StringBuilder connectCommandBuilder = new StringBuilder()
 		.append("connect").append(" ");
+				
 		if (StringUtils.isNotBlank(cloudifyUsername) && StringUtils.isNotBlank(cloudifyPassword)){
 			//TODO : More validations
 			connectCommandBuilder.append("-user").append(" ")
@@ -215,4 +223,5 @@ public abstract class RecipeInstaller {
 		
 		return output;
 	}
+
 }

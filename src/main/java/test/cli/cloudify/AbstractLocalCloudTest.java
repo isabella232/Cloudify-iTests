@@ -54,6 +54,7 @@ import test.cli.cloudify.CommandTestUtils.ProcessResult;
 
 import com.gigaspaces.internal.sigar.SigarHolder;
 
+import framework.utils.ApplicationInstaller;
 import framework.utils.DumpUtils;
 import framework.utils.LogUtils;
 import framework.utils.PortConnectionUtils;
@@ -76,7 +77,9 @@ public class AbstractLocalCloudTest extends AbstractTest {
 	protected boolean isSecured = false;
 	protected String user = null;
 	protected String password = null;
-
+	protected final int securedRestPort = 8443;
+	protected static String securedRestUrl = null;
+	
 	protected boolean checkIsDevEnv() {
 		if (this.isDevEnv) {
 			return true;
@@ -137,7 +140,7 @@ public class AbstractLocalCloudTest extends AbstractTest {
 		}
 
 		restUrl = "http://" + getLocalHostIpAddress() + ":" + restPort;
-
+		
 		if (checkIsDevEnv()) {
 			LogUtils.log("Local cloud test running in dev mode, will use existing localcloud");
 		} else {
@@ -231,8 +234,15 @@ public class AbstractLocalCloudTest extends AbstractTest {
 			final ProcessResult connectResult = CommandTestUtils
 					.runCloudifyCommandAndWait(connectCommand());
 			final boolean leakedProcessesFound = killLeakedProcesses();
-			final boolean restPortResponding = PortConnectionUtils.isPortOpen(
-					"localhost", restPort);
+			final boolean restPortResponding;
+			
+			if(isSecured){
+				restPortResponding = PortConnectionUtils.isPortOpen("localhost", securedRestPort);
+			}
+			else{
+				restPortResponding = PortConnectionUtils.isPortOpen("localhost", restPort);
+			}
+			
 			if (connectResult.getExitcode() != 0) {
 				LogUtils.log("connect " + getLocalHostIpAddress() + " failed");
 			}
@@ -515,12 +525,20 @@ public class AbstractLocalCloudTest extends AbstractTest {
 	protected void uninstallApplication(final String applicationName) {
 		try {
 			DumpUtils.dumpLogs(admin);
-			runCommand("connect " + restUrl
+			runCommand(connectCommand()
 					+ ";uninstall-application --verbose " + applicationName);
 		} catch (final Exception e) {
 			LogUtils.log("Failed to uninstall " + applicationName, e);
 			e.printStackTrace();
 		}
+	}
+	
+	protected void uninstallApplicationIfFound(String applicationName) throws IOException, InterruptedException {
+		ApplicationInstaller applicationInstaller = new ApplicationInstaller(restUrl, applicationName);
+		applicationInstaller.waitForFinish(true);
+		applicationInstaller.cloudifyUsername(user);
+		applicationInstaller.cloudifyPassword(password);
+		applicationInstaller.uninstallIfFound();
 	}
 
 	protected void uninstallService(final String serviceName) {
@@ -624,6 +642,18 @@ public class AbstractLocalCloudTest extends AbstractTest {
 
 		return null;
 	}
+	
+	protected String listServices(){
+		try {
+			return CommandTestUtils.runCommandAndWait(connectCommand() + ";list-services");
+		} catch (IOException e) {
+			Assert.fail("Failed to list applications", e);
+		} catch (InterruptedException e) {
+			Assert.fail("Failed to list applications", e);
+		}
+		
+		return null;
+	}
 
 	protected String connect(){	
 
@@ -642,7 +672,22 @@ public class AbstractLocalCloudTest extends AbstractTest {
 	protected String connectCommand(){
 
 		if(isSecured){
-			return("connect -user " + user + " -pwd " + password + " " + restUrl);
+			
+			StringBuilder builder = new StringBuilder();
+			
+			builder.append("connect ");
+			
+			if(user != null){
+				builder.append("-user " + user + " ");
+			}
+			
+			if(password != null){
+				builder.append("-pwd " + password + " ");
+			}
+			
+			builder.append(securedRestUrl);
+			
+			return builder.toString();
 		}
 
 		return("connect " + restUrl);

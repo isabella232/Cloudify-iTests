@@ -15,6 +15,8 @@ public abstract class Bootstrapper {
 	private String password;
 	private boolean secured = false;
 	private String securityFilePath;
+	private String keystoreFilePath;
+	private String keystorePassword;
 	private boolean force = true;
 	
 	public abstract String getBootstrapCommand();
@@ -54,6 +56,24 @@ public abstract class Bootstrapper {
 	
 	public Bootstrapper securityFilePath(String securityFilePath) {
 		this.securityFilePath = securityFilePath;
+		return this;
+	}
+
+	public String getKeystoreFilePath() {
+		return keystoreFilePath;
+	}
+
+	public Bootstrapper keystoreFilePath(String keystoreFilePath) {
+		this.keystoreFilePath = keystoreFilePath;
+		return this;
+	}
+
+	public String getKeystorePassword() {
+		return keystorePassword;
+	}
+
+	public Bootstrapper keystorePassword(String keystorePassword) {
+		this.keystorePassword = keystorePassword;
 		return this;
 	}
 
@@ -98,7 +118,15 @@ public abstract class Bootstrapper {
 		}
 		
 		if(StringUtils.isNotBlank(securityFilePath)){
-			builder.append("-security " + securityFilePath + " ");
+			builder.append("-securityFile " + securityFilePath + " ");
+		}
+		
+		if(StringUtils.isNotBlank(keystoreFilePath)){
+			builder.append("-keystore " + keystoreFilePath + " ");
+		}
+		
+		if(StringUtils.isNotBlank(keystorePassword)){
+			builder.append("-keystorePassword " + keystorePassword + " ");
 		}
 			
 		if (bootstrapCommandParts.length == 2) {

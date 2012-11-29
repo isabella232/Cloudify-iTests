@@ -86,7 +86,7 @@ public abstract class Bootstrapper {
 			.append(timeoutInMinutes).append(" ");
 		
 		if(secured){
-			builder.append("-secured " + secured + " ");
+			builder.append("-secured").append(" ");
 		}
 		
 		if(StringUtils.isNotBlank(user)){

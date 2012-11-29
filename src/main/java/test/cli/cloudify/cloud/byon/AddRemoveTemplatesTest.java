@@ -31,7 +31,7 @@ import test.cli.cloudify.cloud.services.byon.ByonCloudService;
 import framework.utils.IOUtils;
 import framework.utils.LogUtils;
 
-public class AddRemoveTempaltesTest extends AbstractByonCloudTest {
+public class AddRemoveTemplatesTest extends AbstractByonCloudTest {
 
 	private final String SERVICE1_PATH = 
 			CommandTestUtils.getPath("src/main/resources/apps/USM/usm/services/simpleWithTemplates/simple1");

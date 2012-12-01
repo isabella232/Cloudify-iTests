@@ -168,7 +168,8 @@
 					</excludes>
 					<disableXmlReport>true</disableXmlReport>
 					<reportsDirectory>${sgtest.summary.dir}</reportsDirectory>
-					<reportFormat>xml</reportFormat>
+					<reportFormat>brief</reportFormat>
+       				<useFile>false</useFile>
 					<properties>
 						<property>
 							<name>configfailurepolicy</name>

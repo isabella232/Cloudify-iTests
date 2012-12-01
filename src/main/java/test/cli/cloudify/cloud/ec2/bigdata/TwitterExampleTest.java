@@ -66,7 +66,10 @@ public class TwitterExampleTest extends NewAbstractCloudTest{
 	public void testTwitter() throws Exception {
 		LogUtils.log("installing application " + streamingApplicationFolderName + " on " + this.getCloudName());
 		
-		installApplicationAndWait(streamingApplicationFolderName);
+		String applicationPath = ScriptUtils.getBuildPath() + "/recipes/apps/" + streamingApplicationFolderName + "/" + applicationFolderName;
+		File applicationDslFilePath = new File(applicationPath + "/bigDataApp-application.groovy");
+		applicationName = ServiceReader.getApplicationFromFile(applicationDslFilePath).getApplication().getName();			
+		installApplicationAndWait(applicationPath, applicationName);
 		
 		LogUtils.log("verifing successful installation");
 		restUrl = getRestUrl();

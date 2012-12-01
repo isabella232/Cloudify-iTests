@@ -115,11 +115,13 @@ public class TwitterExampleTest extends NewAbstractCloudTest{
 
 	@Override
 	protected void beforeBootstrap() throws Exception {
-
-		/* copy premium license to cloudify-overrides in order to run xap pu's */
-		String overridesFolder = getService().getPathToCloudFolder() + "/upload/cloudify-overrides";
-		File cloudifyPremiumLicenseFile = new File(SGTestHelper.getSGTestRootDir() + "/src/main/config/gslicense.xml");
-		FileUtils.copyFileToDirectory(cloudifyPremiumLicenseFile, new File(overridesFolder));
+		String suiteName = System.getProperty("sgtest.suiteName");
+		if(suiteName != null && "CLOUDIFY_XAP".equalsIgnoreCase(suiteName)){
+			/* copy premium license to cloudify-overrides in order to run xap pu's */
+			String overridesFolder = getService().getPathToCloudFolder() + "/upload/cloudify-overrides";
+			File cloudifyPremiumLicenseFile = new File(SGTestHelper.getSGTestRootDir() + "/src/main/config/gslicense.xml");
+			FileUtils.copyFileToDirectory(cloudifyPremiumLicenseFile, new File(overridesFolder));
+		}				
 	}
 
 	@Override

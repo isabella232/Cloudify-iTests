@@ -164,6 +164,12 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 			Assert.fail("Failed scanning for leaked nodes after " + MAX_SCAN_RETRY + " attempts. First exception was --> " + first.getMessage(), first);
 		}
 	}
+	
+	protected void installApplicationAndWait(String applicationName) throws IOException, InterruptedException {
+		ApplicationInstaller applicationInstaller = new ApplicationInstaller(getRestUrl(), applicationName);
+		applicationInstaller.waitForFinish(true);
+		applicationInstaller.install();
+	}
 
 	protected void installApplicationAndWait(String applicationPath, String applicationName) throws IOException, InterruptedException {
 		ApplicationInstaller applicationInstaller = new ApplicationInstaller(getRestUrl(), applicationName);

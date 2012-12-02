@@ -29,18 +29,41 @@ public class InstallAndUninstallApplicationTest extends AbstractLocalCloudTest {
 
 		runCommand("connect " + this.restUrl + ";install-application --verbose " + applicationDir);
 		String absolutePUName = ServiceUtils.getAbsolutePUName("simple", "simple");
-		final ProcessingUnit processingUnit = admin.getProcessingUnits().waitFor(absolutePUName, 30, TimeUnit.SECONDS);
-		if (processingUnit == null) {
-			Assert.fail("Processing unit '" + absolutePUName + "' was not found");
-		}
-        Assert.assertTrue(processingUnit.waitFor(1, 30, TimeUnit.SECONDS), "Instance of '" + absolutePUName + "' service was not found");
-		assertTrue(USMTestUtils.waitForPuRunningState(absolutePUName, 60, TimeUnit.SECONDS, admin));
+		final ProcessingUnit processingUnit = assertProcessingUnitDeployed(absolutePUName);
 
 	    final GridServiceContainer gsc = processingUnit.getInstances()[0].getGridServiceContainer();
 
 		runCommand("connect " + this.restUrl + ";uninstall-application -timeout 5 " + serviceGroovyFilename);
 
 		assertGSCIsNotDiscovered(gsc);
+	}
+
+	
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
+	private void testInstallAndUninstallWithNameOption() throws IOException, InterruptedException {
+
+		final String applicationName = "simpleApp";
+		final String applicationDir = CommandTestUtils.getPath("src/main/resources/apps/USM/usm/applications/simple");
+
+		runCommand("connect " + this.restUrl + ";install-application --verbose -name " + applicationName + " " + applicationDir);
+		String absolutePUName = ServiceUtils.getAbsolutePUName(applicationName, "simple");
+		final ProcessingUnit processingUnit = assertProcessingUnitDeployed(absolutePUName);
+
+	    final GridServiceContainer gsc = processingUnit.getInstances()[0].getGridServiceContainer();
+
+		runCommand("connect " + this.restUrl + ";uninstall-application -timeout 5 " + applicationName);
+
+		assertGSCIsNotDiscovered(gsc);
+	}
+	
+	private ProcessingUnit assertProcessingUnitDeployed(String absolutePUName) {
+		final ProcessingUnit processingUnit = admin.getProcessingUnits().waitFor(absolutePUName, 30, TimeUnit.SECONDS);
+		if (processingUnit == null) {
+			Assert.fail("Processing unit '" + absolutePUName + "' was not found");
+		}
+		Assert.assertTrue(processingUnit.waitFor(1, 30, TimeUnit.SECONDS), "Instance of '" + absolutePUName + "' service was not found");
+		assertTrue(USMTestUtils.waitForPuRunningState(absolutePUName, 60, TimeUnit.SECONDS, admin));
+		return processingUnit;
 	}
 
 	private static void assertGSCIsNotDiscovered(final GridServiceContainer gsc) {

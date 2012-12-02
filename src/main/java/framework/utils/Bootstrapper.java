@@ -18,7 +18,16 @@ public abstract class Bootstrapper {
 	private String keystoreFilePath;
 	private String keystorePassword;
 	private boolean force = true;
+	private String restUrl;
 	
+	public String getRestUrl() {
+		return restUrl;
+	}
+
+	public void setRestUrl(String restUrl) {
+		this.restUrl = restUrl;
+	}
+
 	public abstract String getBootstrapCommand();
 		
 	public abstract String getTeardownCommand();
@@ -141,10 +150,22 @@ public abstract class Bootstrapper {
 	
 	public ProcessResult teardown() throws IOException, InterruptedException {
 		
+		StringBuilder connectCommandBuilder = new StringBuilder();
+		if (restUrl != null) {
+			connectCommandBuilder.append("connect").append(" ");
+			if (StringUtils.isNotBlank(user) && StringUtils.isNotBlank(password)){
+				//TODO : More validations
+				connectCommandBuilder.append("-user").append(" ")
+				.append(user).append(" ")
+				.append("-pwd").append(" ")
+				.append(password).append(" ");
+			}
+			connectCommandBuilder.append(restUrl).append(";");
+		}
+		
 		String[] teardownCommandParts = getTeardownCommand().split(" ");
 		String command = teardownCommandParts[0];
 
-		
 		StringBuilder builder = new StringBuilder();
 		builder
 			.append(command).append(" ");
@@ -157,6 +178,6 @@ public abstract class Bootstrapper {
 		} else {
 			// localcloud teardown.
 		}
-		return CommandTestUtils.runCloudifyCommandAndWait(builder.toString());	
+		return CommandTestUtils.runCloudifyCommandAndWait(connectCommandBuilder.toString() + builder.toString());	
 	}
 }

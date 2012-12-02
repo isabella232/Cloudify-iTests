@@ -186,6 +186,8 @@ public abstract class AbstractCloudService implements CloudService {
 					LogUtils.log("Failed to create dump for this url - " + url, e);
 				}
 				
+				// this is to connect to the cloud before tearing down.
+				bootstrapper.setRestUrl(restUrls[0]);
 				bootstrapper.teardown();
 			}
 		} 

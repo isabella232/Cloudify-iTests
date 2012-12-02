@@ -134,7 +134,7 @@
 			<version>0.8.0</version>
 		</dependency>
 	</dependencies>
-	
+
 	<profiles>
 		<profile>
 			<id>tgrid-sgtest-cloudify</id>
@@ -183,6 +183,16 @@
 				</dependency>
 			</dependencies>
 		</profile>
+		<profile>
+			<id>quickbuild-compile</id>
+			<dependencies>
+				<dependency>
+					<groupId>org.hyperic</groupId>
+					<artifactId>sigar</artifactId>
+					<version>1.6.5</version>
+				</dependency>
+			</dependencies>
+		</profile>
 	</profiles>
 
 	<build>
@@ -206,7 +216,7 @@
 					<disableXmlReport>true</disableXmlReport>
 					<reportsDirectory>${sgtest.summary.dir}</reportsDirectory>
 					<reportFormat>brief</reportFormat>
-       				<useFile>false</useFile>
+					<useFile>false</useFile>
 					<properties>
 						<property>
 							<name>configfailurepolicy</name>

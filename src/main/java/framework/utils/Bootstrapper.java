@@ -169,6 +169,8 @@ public abstract class Bootstrapper {
 		StringBuilder builder = new StringBuilder();
 		builder
 			.append(command).append(" ");
+		builder.append("-timeout").append(" ")
+			.append(timeoutInMinutes).append(" ");
 		if (force) {
 			builder.append("-force").append(" ");
 		}

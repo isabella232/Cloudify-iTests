@@ -17,14 +17,16 @@ import test.cli.cloudify.cloud.services.byon.ByonCloudService;
 import framework.utils.LogUtils;
 
 public class AbstractByonCloudTest extends NewAbstractCloudTest {
-	
+
+	private static final int CREATE_ADMIN_TIMEOUT = 120 * 1000; // two minutes
+
 	@Override
 	protected void beforeTeardown() throws Exception {
 		closeAdmin();
 	}
 
 	protected Admin admin;
-	
+
 	public ByonCloudService getService() {
 		return (ByonCloudService) super.getService();
 	}
@@ -41,7 +43,7 @@ public class AbstractByonCloudTest extends NewAbstractCloudTest {
 		super.afterBootstrap();
 		createAdmin();
 	}
-	
+
 	private void createAdmin() {
 		ByonCloudService cloudService = getService();
 		AdminFactory factory = new AdminFactory();
@@ -61,11 +63,40 @@ public class AbstractByonCloudTest extends NewAbstractCloudTest {
 			String host = managementHosts[0];
 			factory.addLocators(host + ":" + CloudifyConstants.DEFAULT_LUS_PORT);
 		}
-		
+
 		LogUtils.log("creating admin");		
-		admin = factory.createAdmin();
+
+		// TODO elip - Remove this once GS-10453 is fixed and use factory.createAndWait();
+		createAndWait(factory);
+
 	}
-	
+
+	private void createAndWait(AdminFactory factory) {
+
+		long endTime = System.currentTimeMillis() + CREATE_ADMIN_TIMEOUT;
+
+		while (System.currentTimeMillis() < endTime) {
+			admin = factory.create();
+			ProcessingUnit rest = admin.getProcessingUnits()
+					.waitFor("rest", 10, TimeUnit.SECONDS);
+			if (rest != null) {
+				LogUtils.log("Admin was created succesfully");
+				break;
+			} else {
+				LogUtils.log("Admin was created but failed to discover rest service, trying again");
+				closeAdmin();
+				try {
+					Thread.sleep(5000);
+				} catch (InterruptedException e) {
+					// Ignore
+				}
+			}
+		}
+
+
+	}
+
+
 	protected void closeAdmin() {
 		if (admin != null) {
 			admin.close();
@@ -87,21 +118,21 @@ public class AbstractByonCloudTest extends NewAbstractCloudTest {
 	@Override
 	protected void customizeCloud() throws Exception {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
+
 	protected List<Machine> getManagementMachines() {
 		return getProcessingUnitMachines("rest");
 	}
-	
+
 	protected List<Machine> getAgentMachines(final String processingUnitName) {
 		return getProcessingUnitMachines(processingUnitName);
 	}
-	
+
 	protected List<Machine> getAllMachines() {
 		return Arrays.asList(admin.getMachines().getMachines());
 	}
-	
+
 	private List<Machine> getProcessingUnitMachines(final String processingUnitName) {
 		List<Machine> machines = new ArrayList<Machine>();
 		ProcessingUnit pu = admin.getProcessingUnits().waitFor(processingUnitName, OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);

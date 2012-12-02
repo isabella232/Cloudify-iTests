@@ -21,7 +21,7 @@ echo clouds=$SUPPORTED_CLOUDS
 mkdir ${BUILD_DIR}/../${SUITE_NAME}
 cd ${BUILD_DIR}/../SGTest
 
-mvn test -e -X -U \
+mvn test -e -X -U -P tgrid-sgtest-cloudify \
 -Dcloudify.home=${BUILD_DIR} \
 -Dincludes=${INCLUDE} \
 -Dexcludes=${EXCLUDE} \

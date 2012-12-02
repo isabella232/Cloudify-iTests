@@ -10,7 +10,11 @@
 
 pushd ../local-builds/${BUILD_NUMBER}/SGTest
 
-CLOUDIFY_HOME=/export/tgrid/sgtest3.0-cloudify/deploy/local-builds/${BUILD_NUMBER}/gigaspaces-cloudify-${MAJOR_VERSION}-${MINOR_VERSION}
+TYPE=cloudify
+
+if [ ! -z `echo ${SUITE_NAME} | grep BigData` ] ; then TYPE=xap-premium; fi
+
+CLOUDIFY_HOME=/export/tgrid/sgtest3.0-cloudify/deploy/local-builds/${BUILD_NUMBER}/${TYPE}-${MAJOR_VERSION}-${MINOR_VERSION}
 
 mvn exec:java -Dexec.mainClass="framework.testng.report.TestsReportMerger" -Dexec.args="${SUITE_TYPE} ${BUILD_NUMBER} ${SUITE_NAME} ${MAJOR_VERSION} ${MINOR_VERSION}" -Dcloudify.home=${CLOUDIFY_HOME}
 

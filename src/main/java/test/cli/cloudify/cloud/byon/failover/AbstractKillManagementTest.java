@@ -157,6 +157,7 @@ public abstract class AbstractKillManagementTest extends AbstractByonCloudTest {
 				SSHUtils.validateSSHUp(machine, ByonCloudService.BYON_CLOUD_USER, ByonCloudService.BYON_CLOUD_PASSWORD);
 			}
 		}, (int)OPERATION_TIMEOUT);
+		Thread.sleep(TEN_SECONDS * 3);
 	}
 
 	private void restartMachine(String toKill) {

@@ -4,26 +4,28 @@ import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.StringUtils;
-import org.cloudifysource.dsl.Application;
 import org.openspaces.admin.machine.Machine;
 import org.testng.Assert;
-import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.BeforeClass;
 
 import test.cli.cloudify.CommandTestUtils.ProcessResult;
 import test.cli.cloudify.security.SecurityConstants;
 import framework.tools.SGTestHelper;
+import framework.utils.ApplicationInstaller;
 import framework.utils.LocalCloudBootstrapper;
 import framework.utils.LogUtils;
+import framework.utils.ServiceInstaller;
 
 public class AbstractSecuredLocalCloudTest extends AbstractLocalCloudTest{
 	
+	private static final String BUILD_SECURITY_FILE_PATH = SGTestHelper.getBuildDir().replace('\\', '/') + "/config/security/spring-security.xml";
 	private static final String DEFAULT_SECURITY_FILE_PATH = SGTestHelper.getSGTestRootDir().replace('\\', '/') + "/src/main/config/security/spring-security.xml";
 	private static final String DEFAULT_KEYSTORE_FILE_PATH = SGTestHelper.getSGTestRootDir().replace('\\', '/') + "/src/main/config/security/keystore";
 	private static final String DEFAULT_KEYSTORE_PASSWORD = "sgtest";
 	private static final int BOOTSTRAP_RETRIES_BEFOREMETHOD = 1; //TODO remove this
 
 	@Override
-	@BeforeMethod
+	@BeforeClass
 	public void beforeTest() {
 		LocalCloudBootstrapper bootstrapper = new LocalCloudBootstrapper();
 		bootstrapper.secured(true).securityFilePath(DEFAULT_SECURITY_FILE_PATH);
@@ -33,6 +35,10 @@ public class AbstractSecuredLocalCloudTest extends AbstractLocalCloudTest{
 
 	public static String getDefaultSecurityFilePath() {
 		return DEFAULT_SECURITY_FILE_PATH;
+	}
+
+	public static String getBuildSecurityFilePath() {
+		return BUILD_SECURITY_FILE_PATH;
 	}
 
 	public void beforeTest(LocalCloudBootstrapper bootstrapper) {
@@ -137,34 +143,104 @@ public class AbstractSecuredLocalCloudTest extends AbstractLocalCloudTest{
 
 	}
 
-	protected Application installApplication(final String applicationName, String user, String password) {
+//	protected Application installApplication(final String applicationName, String user, String password) {
+//
+//		setUserAndPassword(user, password);
+//		return installApplication(applicationName);
+//	}
+//
+//	protected void uninstallApplication(final String applicationName, String user, String password) {
+//
+//		setUserAndPassword(user, password);
+//		uninstallApplication(applicationName);
+//	}
+//
+//	protected void installService(final String serviceName, String user, String password) {
+//
+//		setUserAndPassword(user, password);
+//		installService(serviceName);
+//	}
+//
+//	protected void uninstallService(final String serviceName, String user, String password) {
+//
+//		setUserAndPassword(user, password);
+//		uninstallService(serviceName);
+//	}
 
-		setUserAndPassword(user, password);
-		return installApplication(applicationName);
+	protected String installApplicationAndWait(String applicationPath, String applicationName, int timeout, final String cloudifyUsername,
+			final String cloudifyPassword, boolean isExpectedToFail, final String authGroups) throws IOException, InterruptedException {
+
+		ApplicationInstaller applicationInstaller = new ApplicationInstaller(securedRestUrl, applicationName);
+		applicationInstaller.recipePath(applicationPath);
+		applicationInstaller.waitForFinish(true);
+		applicationInstaller.cloudifyUsername(cloudifyUsername);
+		applicationInstaller.cloudifyPassword(cloudifyPassword);
+		applicationInstaller.expectToFail(isExpectedToFail);
+		if (StringUtils.isNotBlank(authGroups)) {
+			applicationInstaller.authGroups(authGroups);
+		}
+
+		return applicationInstaller.install();
 	}
 
-	protected void uninstallApplication(final String applicationName, String user, String password) {
+	protected String uninstallApplicationAndWait(String applicationPath, String applicationName, int timeout, final String cloudifyUsername,
+			final String cloudifyPassword, boolean isExpectedToFail, final String authGroups) throws IOException, InterruptedException {
 
-		setUserAndPassword(user, password);
-		uninstallApplication(applicationName);
+		ApplicationInstaller applicationInstaller = new ApplicationInstaller(securedRestUrl, applicationName);
+		applicationInstaller.recipePath(applicationPath);
+		applicationInstaller.waitForFinish(true);
+		applicationInstaller.cloudifyUsername(cloudifyUsername);
+		applicationInstaller.cloudifyPassword(cloudifyPassword);
+		applicationInstaller.expectToFail(isExpectedToFail);
+		if (StringUtils.isNotBlank(authGroups)) {
+			applicationInstaller.authGroups(authGroups);
+		}
+
+		return applicationInstaller.uninstall();
 	}
-
-	protected void installService(final String serviceName, String user, String password) {
-
-		setUserAndPassword(user, password);
-		installService(serviceName);
+	
+	protected String installServiceAndWait(String servicePath, String serviceName, int timeout, final String cloudifyUsername,
+			final String cloudifyPassword, boolean isExpectedToFail, final String authGroups) throws IOException, InterruptedException {
+		
+		ServiceInstaller serviceInstaller = new ServiceInstaller(securedRestUrl, serviceName);
+		serviceInstaller.recipePath(servicePath);
+		serviceInstaller.waitForFinish(true);
+		serviceInstaller.cloudifyUsername(cloudifyUsername);
+		serviceInstaller.cloudifyPassword(cloudifyPassword);
+		serviceInstaller.expectToFail(isExpectedToFail);
+		if (StringUtils.isNotBlank(authGroups)) {
+			serviceInstaller.authGroups(authGroups);
+		}
+		
+		return serviceInstaller.install();
 	}
-
-	protected void uninstallService(final String serviceName, String user, String password) {
-
-		setUserAndPassword(user, password);
-		uninstallService(serviceName);
+	
+	protected String uninstallServiceAndWait(String servicePath, String serviceName, int timeout, final String cloudifyUsername,
+			final String cloudifyPassword, boolean isExpectedToFail, final String authGroups) throws IOException, InterruptedException {
+		
+		ServiceInstaller serviceInstaller = new ServiceInstaller(securedRestUrl, serviceName);
+		serviceInstaller.recipePath(servicePath);
+		serviceInstaller.waitForFinish(true);
+		serviceInstaller.cloudifyUsername(cloudifyUsername);
+		serviceInstaller.cloudifyPassword(cloudifyPassword);
+		serviceInstaller.expectToFail(isExpectedToFail);
+		if (StringUtils.isNotBlank(authGroups)) {
+			serviceInstaller.authGroups(authGroups);
+		}
+		
+		return serviceInstaller.uninstall();
 	}
-
+	
 	protected String listApplications(String user, String password){
 
 		setUserAndPassword(user, password);
 		return listApplications();
+	}
+	
+	protected String listInstances(String user, String password, String serviceName){
+		
+		setUserAndPassword(user, password);
+		return listInstances(serviceName);
 	}
 	
 	protected String listServices(String user, String password){

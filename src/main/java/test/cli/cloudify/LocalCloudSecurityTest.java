@@ -4,25 +4,26 @@ import java.io.File;
 import java.io.IOException;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.StringUtils;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.Test;
 
 import test.cli.cloudify.security.SecurityConstants;
 import framework.tools.SGTestHelper;
-import framework.utils.ApplicationInstaller;
 
 public class LocalCloudSecurityTest extends AbstractSecuredLocalCloudTest{
 
 	private static final String SIMPLE_APP_NAME = "simple";
 	private static final String SIMPLE_APP_PATH = "\\src\\main\\resources\\apps\\USM\\usm\\applications\\" + SIMPLE_APP_NAME;
 	private static final String SIMPLE_SERVICE_NAME = "simple";
+	private static final String SIMPLE_SERVICE_PATH = "\\src\\main\\resources\\apps\\USM\\usm\\services\\" + SIMPLE_SERVICE_NAME;
+
 	
 	private static final String TRAVEL_APP_NAME = "travelExtended";
 	private static final String TRAVEL_APP_PATH = "\\src\\main\\resources\\apps\\USM\\usm\\applications\\" + TRAVEL_APP_NAME;
 	private static final String TOMCAT_SERVICE_NAME = "tomcat-extend";
 	private static final String CASSANDRA_SERVICE_NAME = "cassandra-extend";
 	
+	private static final String INSTANCE_VERIFICATION_STRING = "instance #1";
 	private static final int TIMEOUT_IN_MINUTES = 30;
 
 	@AfterMethod(alwaysRun = true)
@@ -34,11 +35,14 @@ public class LocalCloudSecurityTest extends AbstractSecuredLocalCloudTest{
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
-	public void installAndUninstallWithCloudAdminTest() throws IOException, InterruptedException {
+	public void installAndUninstallTest() throws IOException, InterruptedException {
 
-		installApplicationAndWait(SIMPLE_APP_PATH, SIMPLE_APP_NAME, TIMEOUT_IN_MINUTES, SecurityConstants.CLOUD_ADMIN_USER_PWD, SecurityConstants.CLOUD_ADMIN_USER_PWD, false, null);
-		uninstallApplicationAndWait(SIMPLE_APP_PATH, SIMPLE_APP_NAME, TIMEOUT_IN_MINUTES, SecurityConstants.CLOUD_ADMIN_USER_PWD, SecurityConstants.CLOUD_ADMIN_USER_PWD, false, null);
-
+		installAndUninstall(SecurityConstants.APP_MANAGER_AND_VIEWER_USER_PWD, SecurityConstants.APP_MANAGER_AND_VIEWER_USER_PWD, false);
+		installAndUninstall(SecurityConstants.APP_MANAGER_USER_PWD, SecurityConstants.APP_MANAGER_USER_PWD, false);
+		installAndUninstall(SecurityConstants.CLOUD_ADMIN_AND_APP_MANAGER_USER_PWD, SecurityConstants.CLOUD_ADMIN_AND_APP_MANAGER_USER_PWD, false);
+		installAndUninstall(SecurityConstants.CLOUD_ADMIN_USER_PWD, SecurityConstants.CLOUD_ADMIN_USER_PWD, false);
+		installAndUninstall(SecurityConstants.VIEWER_USER_PWD, SecurityConstants.VIEWER_USER_PWD, true);
+		installAndUninstall(SecurityConstants.NO_ROLE_USER_PWD, SecurityConstants.NO_ROLE_USER_PWD, true);
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
@@ -47,25 +51,10 @@ public class LocalCloudSecurityTest extends AbstractSecuredLocalCloudTest{
 		installApplicationAndWait(SIMPLE_APP_PATH, SIMPLE_APP_NAME, TIMEOUT_IN_MINUTES, SecurityConstants.APP_MANAGER_AND_VIEWER_USER_PWD, SecurityConstants.APP_MANAGER_AND_VIEWER_USER_PWD, false, null);
 
 		String output = uninstallApplicationAndWait(SIMPLE_APP_PATH, SIMPLE_APP_NAME, TIMEOUT_IN_MINUTES, SecurityConstants.VIEWER_USER_PWD, SecurityConstants.VIEWER_USER_PWD, true, null);
-		assertTrue("install access granted to " + SecurityConstants.VIEWER_USER_PWD, output.contains("no_permission_access_is_denied"));
+		assertTrue("install access granted to " + SecurityConstants.VIEWER_USER_PWD, output.contains("Access is denied"));
 
 		uninstallApplicationAndWait(SIMPLE_APP_PATH, SIMPLE_APP_NAME, TIMEOUT_IN_MINUTES, SecurityConstants.APP_MANAGER_USER_PWD, SecurityConstants.APP_MANAGER_USER_PWD, false, null);
 	
-	}
-
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
-	public void installWithViewerTest() throws IOException, InterruptedException{
-
-		String output = installApplicationAndWait(SIMPLE_APP_PATH, SIMPLE_APP_NAME, TIMEOUT_IN_MINUTES, SecurityConstants.VIEWER_USER_PWD, SecurityConstants.VIEWER_USER_PWD, true, null);
-
-		assertTrue("install access granted to " + SecurityConstants.VIEWER_USER_PWD, output.contains("no_permission_access_is_denied"));
-	}
-	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
-	public void installWithUserWithNoRolesTest() throws IOException, InterruptedException{
-		
-		String output = installApplicationAndWait(SIMPLE_APP_PATH, SIMPLE_APP_NAME, TIMEOUT_IN_MINUTES, SecurityConstants.NO_ROLE_USER_PWD, SecurityConstants.NO_ROLE_USER_PWD, true, null);
-		assertTrue("install access granted to " + SecurityConstants.NO_ROLE_USER_PWD, output.contains("no_permission_access_is_denied"));
 	}
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
@@ -82,19 +71,19 @@ public class LocalCloudSecurityTest extends AbstractSecuredLocalCloudTest{
 		installApplicationAndWait(SIMPLE_APP_PATH, SIMPLE_APP_NAME, TIMEOUT_IN_MINUTES, SecurityConstants.APP_MANAGER_USER_PWD, SecurityConstants.APP_MANAGER_USER_PWD, false, null);
 		installApplicationAndWait(TRAVEL_APP_PATH, TRAVEL_APP_NAME, TIMEOUT_IN_MINUTES, SecurityConstants.APP_MANAGER_AND_VIEWER_USER_PWD, SecurityConstants.APP_MANAGER_AND_VIEWER_USER_PWD, false, null);
 
-		verifyVisibleLists(SecurityConstants.APP_MANAGER_USER_PWD, SecurityConstants.CLOUD_ADMIN_USER_PWD, SecurityConstants.CLOUD_ADMIN_USER_PWD, SIMPLE_APP_NAME, false);
-		verifyVisibleLists(SecurityConstants.APP_MANAGER_AND_VIEWER_USER_PWD, SecurityConstants.CLOUD_ADMIN_USER_PWD, SecurityConstants.CLOUD_ADMIN_USER_PWD, TRAVEL_APP_NAME, false);
+		verifyVisibleLists(SecurityConstants.APP_MANAGER_USER_PWD, SecurityConstants.CLOUD_ADMIN_USER_PWD, SecurityConstants.CLOUD_ADMIN_USER_PWD, SIMPLE_APP_NAME, true);
+		verifyVisibleLists(SecurityConstants.APP_MANAGER_AND_VIEWER_USER_PWD, SecurityConstants.CLOUD_ADMIN_USER_PWD, SecurityConstants.CLOUD_ADMIN_USER_PWD, TRAVEL_APP_NAME, true);
 		
-		verifyVisibleLists(SecurityConstants.APP_MANAGER_USER_PWD, SecurityConstants.CLOUD_ADMIN_AND_APP_MANAGER_USER_PWD, SecurityConstants.CLOUD_ADMIN_AND_APP_MANAGER_USER_PWD, SIMPLE_APP_NAME, true);
-		verifyVisibleLists(SecurityConstants.APP_MANAGER_AND_VIEWER_USER_PWD, SecurityConstants.CLOUD_ADMIN_AND_APP_MANAGER_USER_PWD, SecurityConstants.CLOUD_ADMIN_AND_APP_MANAGER_USER_PWD, TRAVEL_APP_NAME, true);
+		verifyVisibleLists(SecurityConstants.APP_MANAGER_USER_PWD, SecurityConstants.CLOUD_ADMIN_AND_APP_MANAGER_USER_PWD, SecurityConstants.CLOUD_ADMIN_AND_APP_MANAGER_USER_PWD, SIMPLE_APP_NAME, false);
+		verifyVisibleLists(SecurityConstants.APP_MANAGER_AND_VIEWER_USER_PWD, SecurityConstants.CLOUD_ADMIN_AND_APP_MANAGER_USER_PWD, SecurityConstants.CLOUD_ADMIN_AND_APP_MANAGER_USER_PWD, TRAVEL_APP_NAME, false);
 		
 		verifyVisibleLists(SecurityConstants.APP_MANAGER_USER_PWD, SecurityConstants.APP_MANAGER_USER_PWD, SecurityConstants.APP_MANAGER_USER_PWD, SIMPLE_APP_NAME, true);
-		verifyVisibleLists(SecurityConstants.APP_MANAGER_AND_VIEWER_USER_PWD, SecurityConstants.APP_MANAGER_USER_PWD, SecurityConstants.APP_MANAGER_USER_PWD, TRAVEL_APP_NAME, true);
+		verifyVisibleLists(SecurityConstants.APP_MANAGER_AND_VIEWER_USER_PWD, SecurityConstants.APP_MANAGER_USER_PWD, SecurityConstants.APP_MANAGER_USER_PWD, TRAVEL_APP_NAME, false);
 		
-		verifyVisibleLists(SecurityConstants.APP_MANAGER_USER_PWD, SecurityConstants.APP_MANAGER_AND_VIEWER_USER_PWD, SecurityConstants.APP_MANAGER_AND_VIEWER_USER_PWD, SIMPLE_APP_NAME, true);
+		verifyVisibleLists(SecurityConstants.APP_MANAGER_USER_PWD, SecurityConstants.APP_MANAGER_AND_VIEWER_USER_PWD, SecurityConstants.APP_MANAGER_AND_VIEWER_USER_PWD, SIMPLE_APP_NAME, false);
 		verifyVisibleLists(SecurityConstants.APP_MANAGER_AND_VIEWER_USER_PWD, SecurityConstants.APP_MANAGER_AND_VIEWER_USER_PWD, SecurityConstants.APP_MANAGER_AND_VIEWER_USER_PWD, TRAVEL_APP_NAME, true);
 		
-		verifyVisibleLists(SecurityConstants.APP_MANAGER_USER_PWD, SecurityConstants.VIEWER_USER_PWD, SecurityConstants.VIEWER_USER_PWD, SIMPLE_APP_NAME, false);
+		verifyVisibleLists(SecurityConstants.APP_MANAGER_USER_PWD, SecurityConstants.VIEWER_USER_PWD, SecurityConstants.VIEWER_USER_PWD, SIMPLE_APP_NAME, true);
 		verifyVisibleLists(SecurityConstants.APP_MANAGER_AND_VIEWER_USER_PWD, SecurityConstants.VIEWER_USER_PWD, SecurityConstants.VIEWER_USER_PWD, TRAVEL_APP_NAME, true);
 		
 		verifyVisibleLists(SecurityConstants.APP_MANAGER_USER_PWD, SecurityConstants.NO_ROLE_USER_PWD, SecurityConstants.NO_ROLE_USER_PWD, SIMPLE_APP_NAME, false);
@@ -161,7 +150,7 @@ public class LocalCloudSecurityTest extends AbstractSecuredLocalCloudTest{
 
 		String fakeCloudAdminUserAndPassword = "John";
 
-		String originalFilePath = getDefaultSecurityFilePath();
+		String originalFilePath = getBuildSecurityFilePath();
 		String backupFilePath = originalFilePath + ".backup";
 		String fakeFilePath = SGTestHelper.getSGTestRootDir() + "\\src\\main\\config\\security\\fake-spring-security.xml";
 		File originalFile = new File(originalFilePath);
@@ -172,10 +161,11 @@ public class LocalCloudSecurityTest extends AbstractSecuredLocalCloudTest{
 		FileUtils.copyFile(fakeFile, originalFile);
 
 		String output = installApplicationAndWait(SIMPLE_APP_PATH, SIMPLE_APP_NAME, TIMEOUT_IN_MINUTES, fakeCloudAdminUserAndPassword, fakeCloudAdminUserAndPassword, true, null);
-		assertTrue("install access granted to " + fakeCloudAdminUserAndPassword, output.contains("no_permission_access_is_denied"));
 
 		FileUtils.deleteQuietly(originalFile);
 		FileUtils.moveFile(backupFile, originalFile);
+		
+		assertTrue("install access granted to " + fakeCloudAdminUserAndPassword, output.contains("Access is denied"));
 			
 	}
 
@@ -212,37 +202,59 @@ public class LocalCloudSecurityTest extends AbstractSecuredLocalCloudTest{
 				assertTrue(viewerName + " sees the services of " + installer, !(output.contains(TOMCAT_SERVICE_NAME) || output.contains(CASSANDRA_SERVICE_NAME)));							
 			}
 		}
+		
+		
+		if(appName.equalsIgnoreCase(SIMPLE_APP_NAME)){
+			
+			output = listInstances(viewerName, viewerPassword, SIMPLE_APP_NAME + "." + SIMPLE_SERVICE_NAME);
+			
+			if(isVisible){	
+				
+				assertTrue(viewerName + " doesn't see the instances of " + installer, output.contains(INSTANCE_VERIFICATION_STRING));
+			}
+			else{
+				assertTrue(viewerName + " sees the services of " + installer, !output.contains(INSTANCE_VERIFICATION_STRING));
+				
+			}
+			
+		}
+		else{	
+			
+			output = listInstances(viewerName, viewerPassword, TRAVEL_APP_NAME + "." + TOMCAT_SERVICE_NAME);
+
+			if(isVisible){	
+				assertTrue(viewerName + " doesn't see the instances of " + installer, output.contains(INSTANCE_VERIFICATION_STRING));			
+			}
+			else{
+				assertTrue(viewerName + " sees the services of " + installer, !output.contains(INSTANCE_VERIFICATION_STRING));							
+			}
+		}
 	}
 	
-	protected String installApplicationAndWait(String applicationPath, String applicationName, int timeout, final String cloudifyUsername,
-			final String cloudifyPassword, boolean isExpectedToFail, final String authGroups) throws IOException, InterruptedException {
-
-		ApplicationInstaller applicationInstaller = new ApplicationInstaller(securedRestUrl, applicationName);
-		applicationInstaller.recipePath(applicationPath);
-		applicationInstaller.waitForFinish(true);
-		applicationInstaller.cloudifyUsername(cloudifyUsername);
-		applicationInstaller.cloudifyPassword(cloudifyPassword);
-		applicationInstaller.expectToFail(isExpectedToFail);
-		if (StringUtils.isNotBlank(authGroups)) {
-			applicationInstaller.authGroups(authGroups);
+	public void installAndUninstall(String user, String password, boolean isInstallExpectedToFail) throws IOException, InterruptedException{
+		
+		String output = installApplicationAndWait(SIMPLE_APP_PATH, SIMPLE_APP_NAME, TIMEOUT_IN_MINUTES, user, password, isInstallExpectedToFail, null);
+		
+		if(isInstallExpectedToFail){
+			assertTrue("application installation access granted to " + user, output.contains("Access is denied"));
+		}
+		
+		if(output.contains("Application " + SIMPLE_APP_NAME + " installed successfully")){			
+			uninstallApplicationAndWait(SIMPLE_APP_PATH, SIMPLE_APP_NAME, TIMEOUT_IN_MINUTES, user, password, isInstallExpectedToFail, null);
+		}
+		
+		listApplications(user, password);
+		
+		output = installServiceAndWait(SIMPLE_SERVICE_PATH, SIMPLE_SERVICE_NAME, TIMEOUT_IN_MINUTES, user, password, isInstallExpectedToFail, null);
+		
+		if(isInstallExpectedToFail){
+			assertTrue("service installation access granted to " + user, output.contains("Access is denied"));
+		}
+		
+		if(output.contains("Service \"" + SIMPLE_SERVICE_NAME + "\" successfully installed")){			
+			uninstallServiceAndWait(SIMPLE_APP_PATH, SIMPLE_APP_NAME, TIMEOUT_IN_MINUTES, user, password, isInstallExpectedToFail, null);
 		}
 
-		return applicationInstaller.install();
 	}
 
-	protected String uninstallApplicationAndWait(String applicationPath, String applicationName, int timeout, final String cloudifyUsername,
-			final String cloudifyPassword, boolean isExpectedToFail, final String authGroups) throws IOException, InterruptedException {
-
-		ApplicationInstaller applicationInstaller = new ApplicationInstaller(securedRestUrl, applicationName);
-		applicationInstaller.recipePath(applicationPath);
-		applicationInstaller.waitForFinish(true);
-		applicationInstaller.cloudifyUsername(cloudifyUsername);
-		applicationInstaller.cloudifyPassword(cloudifyPassword);
-		applicationInstaller.expectToFail(isExpectedToFail);
-		if (StringUtils.isNotBlank(authGroups)) {
-			applicationInstaller.authGroups(authGroups);
-		}
-
-		return applicationInstaller.uninstall();
-	}
 }

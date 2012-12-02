@@ -643,6 +643,18 @@ public class AbstractLocalCloudTest extends AbstractTest {
 		return null;
 	}
 	
+	protected String listInstances(String serviceName){
+		try {
+			return CommandTestUtils.runCommandAndWait(connectCommand() + ";list-instances " + serviceName);
+		} catch (IOException e) {
+			Assert.fail("Failed to list applications", e);
+		} catch (InterruptedException e) {
+			Assert.fail("Failed to list applications", e);
+		}
+		
+		return null;
+	}
+	
 	protected String listServices(){
 		try {
 			return CommandTestUtils.runCommandAndWait(connectCommand() + ";list-services");

@@ -7,6 +7,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 
 import test.cli.cloudify.CommandTestUtils;
+import test.cli.cloudify.security.SecurityConstants;
 
 public abstract class RecipeInstaller {
 	
@@ -194,7 +195,7 @@ public abstract class RecipeInstaller {
 		String url = null;
 		try {
 			url = restUrl + "/service/dump/machines/?fileSizeLimit=50000000";
-			DumpUtils.dumpMachines(restUrl, cloudifyUsername, cloudifyPassword);
+			DumpUtils.dumpMachines(restUrl, SecurityConstants.ALL_ROLES_USER_PWD, SecurityConstants.ALL_ROLES_USER_PWD);
 		} catch (final Exception e) {
 			LogUtils.log("Failed to create dump for this url - " + url, e);
 		}

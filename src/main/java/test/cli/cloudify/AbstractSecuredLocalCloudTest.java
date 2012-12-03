@@ -21,7 +21,7 @@ import framework.utils.LogUtils;
 import framework.utils.ServiceInstaller;
 
 public class AbstractSecuredLocalCloudTest extends AbstractLocalCloudTest{
-	
+
 	private static final String BUILD_SECURITY_FILE_PATH = SGTestHelper.getBuildDir().replace('\\', '/') + "/config/security/spring-security.xml";
 	private static final String BUILD_SECURITY_BACKUP_FILE_PATH = SGTestHelper.getBuildDir().replace('\\', '/') + "/config/security/spring-security.xml.backup";
 	private static final String DEFAULT_SECURITY_FILE_PATH = SGTestHelper.getSGTestRootDir().replace('\\', '/') + "/src/main/config/security/spring-security.xml";
@@ -30,43 +30,33 @@ public class AbstractSecuredLocalCloudTest extends AbstractLocalCloudTest{
 	private static final int BOOTSTRAP_RETRIES_BEFOREMETHOD = 1; //TODO remove this
 
 	@BeforeClass
-	public void beforeClass() {
+	public void beforeClass() throws IOException {
 		LocalCloudBootstrapper bootstrapper = new LocalCloudBootstrapper();
 		bootstrapper.secured(true).securityFilePath(DEFAULT_SECURITY_FILE_PATH);
 		bootstrapper.keystoreFilePath(DEFAULT_KEYSTORE_FILE_PATH).keystorePassword(DEFAULT_KEYSTORE_PASSWORD);
-		
-		// GS-1286 creating a backup for the security xml file. Shouldn't be here.
-		File originalFile = new File(BUILD_SECURITY_FILE_PATH);
-		File backupFile = new File(BUILD_SECURITY_BACKUP_FILE_PATH);
-		
-		try {
-			FileUtils.copyFile(originalFile, backupFile);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
+
 		beforeTest(bootstrapper);		
 	}
-	
+
 	@Override
 	@BeforeMethod
 	public void beforeTest() {
 		//do nothing
 	}
-	
+
 	@AfterClass
 	public void afterClass() {
-		
+
 		File originalFile = new File(BUILD_SECURITY_FILE_PATH);
 		File backupFile = new File(BUILD_SECURITY_BACKUP_FILE_PATH);
-		
+
 		try {
 			FileUtils.deleteQuietly(originalFile);
 			FileUtils.moveFile(backupFile, originalFile);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 	}
 
 	public static String getDefaultSecurityFilePath() {
@@ -77,10 +67,20 @@ public class AbstractSecuredLocalCloudTest extends AbstractLocalCloudTest{
 		return BUILD_SECURITY_FILE_PATH;
 	}
 
-	public void beforeTest(LocalCloudBootstrapper bootstrapper) {
-		
+	public static String getBuildSecurityBackupFilePath() {
+		return BUILD_SECURITY_BACKUP_FILE_PATH;
+	}
+
+	public void beforeTest(LocalCloudBootstrapper bootstrapper) throws IOException {
+
 		isSecured = true;
+
+		// GS-1286 creating a backup for the security xml file. Shouldn't be here.
+		File originalFile = new File(BUILD_SECURITY_FILE_PATH);
+		File backupFile = new File(BUILD_SECURITY_BACKUP_FILE_PATH);
 		
+		FileUtils.copyFile(originalFile, backupFile);		
+
 		//pre-bootstrap actions will be made with the super-user
 		setUserAndPassword(SecurityConstants.ALL_ROLES_USER_PWD, SecurityConstants.ALL_ROLES_USER_PWD);
 
@@ -100,11 +100,11 @@ public class AbstractSecuredLocalCloudTest extends AbstractLocalCloudTest{
 			for (int i = 0; i < BOOTSTRAP_RETRIES_BEFOREMETHOD; i++) {
 
 				try {
-					
+
 					//TODO do not always bootstrap
-//					if (!isRequiresBootstrap()) {
-//						break;
-//					}
+					//					if (!isRequiresBootstrap()) {
+					//						break;
+					//					}
 
 					cleanUpCloudifyLocalDir();
 
@@ -124,12 +124,12 @@ public class AbstractSecuredLocalCloudTest extends AbstractLocalCloudTest{
 					}
 
 					final ProcessResult bootstrapResult;
-					
+
 					//switching from the super-user to the entered credentials
 					if(StringUtils.isNotBlank(bootstrapper.getUser()) && StringUtils.isNotBlank(bootstrapper.getPassword())){	
 						setUserAndPassword(bootstrapper.getUser(), bootstrapper.getPassword());
 					}
-					
+
 					bootstrapResult = bootstrapper.bootstrap();
 
 					LogUtils.log(bootstrapResult.getOutput());
@@ -179,29 +179,29 @@ public class AbstractSecuredLocalCloudTest extends AbstractLocalCloudTest{
 
 	}
 
-//	protected Application installApplication(final String applicationName, String user, String password) {
-//
-//		setUserAndPassword(user, password);
-//		return installApplication(applicationName);
-//	}
-//
-//	protected void uninstallApplication(final String applicationName, String user, String password) {
-//
-//		setUserAndPassword(user, password);
-//		uninstallApplication(applicationName);
-//	}
-//
-//	protected void installService(final String serviceName, String user, String password) {
-//
-//		setUserAndPassword(user, password);
-//		installService(serviceName);
-//	}
-//
-//	protected void uninstallService(final String serviceName, String user, String password) {
-//
-//		setUserAndPassword(user, password);
-//		uninstallService(serviceName);
-//	}
+	//	protected Application installApplication(final String applicationName, String user, String password) {
+	//
+	//		setUserAndPassword(user, password);
+	//		return installApplication(applicationName);
+	//	}
+	//
+	//	protected void uninstallApplication(final String applicationName, String user, String password) {
+	//
+	//		setUserAndPassword(user, password);
+	//		uninstallApplication(applicationName);
+	//	}
+	//
+	//	protected void installService(final String serviceName, String user, String password) {
+	//
+	//		setUserAndPassword(user, password);
+	//		installService(serviceName);
+	//	}
+	//
+	//	protected void uninstallService(final String serviceName, String user, String password) {
+	//
+	//		setUserAndPassword(user, password);
+	//		uninstallService(serviceName);
+	//	}
 
 	protected String installApplicationAndWait(String applicationPath, String applicationName, int timeout, final String cloudifyUsername,
 			final String cloudifyPassword, boolean isExpectedToFail, final String authGroups) throws IOException, InterruptedException {
@@ -234,7 +234,7 @@ public class AbstractSecuredLocalCloudTest extends AbstractLocalCloudTest{
 
 		return applicationInstaller.uninstall();
 	}
-	
+
 	protected void uninstallApplicationIfFound(String applicationName, final String cloudifyUsername, final String cloudifyPassword) throws IOException, InterruptedException {
 		ApplicationInstaller applicationInstaller = new ApplicationInstaller(securedRestUrl, applicationName);
 		applicationInstaller.waitForFinish(true);
@@ -245,7 +245,7 @@ public class AbstractSecuredLocalCloudTest extends AbstractLocalCloudTest{
 	
 	protected String installServiceAndWait(String servicePath, String serviceName, int timeout, final String cloudifyUsername,
 			final String cloudifyPassword, boolean isExpectedToFail, final String authGroups) throws IOException, InterruptedException {
-		
+
 		ServiceInstaller serviceInstaller = new ServiceInstaller(securedRestUrl, serviceName);
 		serviceInstaller.recipePath(servicePath);
 		serviceInstaller.waitForFinish(true);
@@ -255,13 +255,13 @@ public class AbstractSecuredLocalCloudTest extends AbstractLocalCloudTest{
 		if (StringUtils.isNotBlank(authGroups)) {
 			serviceInstaller.authGroups(authGroups);
 		}
-		
+
 		return serviceInstaller.install();
 	}
-	
+
 	protected String uninstallServiceAndWait(String servicePath, String serviceName, int timeout, final String cloudifyUsername,
 			final String cloudifyPassword, boolean isExpectedToFail, final String authGroups) throws IOException, InterruptedException {
-		
+
 		ServiceInstaller serviceInstaller = new ServiceInstaller(securedRestUrl, serviceName);
 		serviceInstaller.recipePath(servicePath);
 		serviceInstaller.waitForFinish(true);
@@ -271,24 +271,24 @@ public class AbstractSecuredLocalCloudTest extends AbstractLocalCloudTest{
 		if (StringUtils.isNotBlank(authGroups)) {
 			serviceInstaller.authGroups(authGroups);
 		}
-		
+
 		return serviceInstaller.uninstall();
 	}
-	
+
 	protected String listApplications(String user, String password){
 
 		setUserAndPassword(user, password);
 		return listApplications();
 	}
-	
+
 	protected String listInstances(String user, String password, String serviceName){
-		
+
 		setUserAndPassword(user, password);
 		return listInstances(serviceName);
 	}
-	
+
 	protected String listServices(String user, String password){
-		
+
 		setUserAndPassword(user, password);
 		return listServices();
 	}

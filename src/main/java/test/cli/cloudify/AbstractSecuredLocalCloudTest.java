@@ -235,6 +235,14 @@ public class AbstractSecuredLocalCloudTest extends AbstractLocalCloudTest{
 		return applicationInstaller.uninstall();
 	}
 	
+	protected void uninstallApplicationIfFound(String applicationName, final String cloudifyUsername, final String cloudifyPassword) throws IOException, InterruptedException {
+		ApplicationInstaller applicationInstaller = new ApplicationInstaller(securedRestUrl, applicationName);
+		applicationInstaller.waitForFinish(true);
+		applicationInstaller.cloudifyUsername(cloudifyUsername);
+		applicationInstaller.cloudifyPassword(cloudifyPassword);
+		applicationInstaller.uninstallIfFound();
+	}
+	
 	protected String installServiceAndWait(String servicePath, String serviceName, int timeout, final String cloudifyUsername,
 			final String cloudifyPassword, boolean isExpectedToFail, final String authGroups) throws IOException, InterruptedException {
 		

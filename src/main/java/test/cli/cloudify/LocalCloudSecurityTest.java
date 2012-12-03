@@ -29,9 +29,8 @@ public class LocalCloudSecurityTest extends AbstractSecuredLocalCloudTest{
 	@AfterMethod(alwaysRun = true)
 	protected void uninstall() throws Exception {
 
-		setUserAndPassword(SecurityConstants.ALL_ROLES_USER_PWD, SecurityConstants.ALL_ROLES_USER_PWD);
-		uninstallApplicationIfFound(SIMPLE_APP_NAME);
-		uninstallApplicationIfFound(TRAVEL_APP_NAME);	
+		uninstallApplicationIfFound(SIMPLE_APP_NAME, SecurityConstants.ALL_ROLES_USER_PWD, SecurityConstants.ALL_ROLES_USER_PWD);
+		uninstallApplicationIfFound(TRAVEL_APP_NAME, SecurityConstants.ALL_ROLES_USER_PWD, SecurityConstants.ALL_ROLES_USER_PWD);
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)

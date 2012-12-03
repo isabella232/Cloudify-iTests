@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.cloudifysource.dsl.internal.CloudifyConstants;
 import org.openspaces.admin.Admin;
@@ -44,7 +45,33 @@ public class AbstractByonCloudTest extends NewAbstractCloudTest {
 		createAdmin();
 	}
 
-	private void createAdmin() {
+	private void createAdmin() throws TimeoutException {
+		
+		long endTime = System.currentTimeMillis() + CREATE_ADMIN_TIMEOUT;
+
+		// TODO elip - Remove this once GS-10453 is fixed and use factory.createAndWait();
+		while (System.currentTimeMillis() < endTime) {
+			admin = createAdminFactory().create();
+			ProcessingUnit rest = admin.getProcessingUnits()
+					.waitFor("rest", 10, TimeUnit.SECONDS);
+			if (rest != null) {
+				LogUtils.log("Admin was created succesfully");
+				break;
+			} else {
+				LogUtils.log("Admin was created but failed to discover rest service, trying again");
+				closeAdmin();
+				try {
+					Thread.sleep(5000);
+				} catch (InterruptedException e) {
+					// Ignore
+				}
+			}
+		}
+		throw new TimeoutException("Timed out while creating admin");
+	}
+	
+	private AdminFactory createAdminFactory() {
+		
 		ByonCloudService cloudService = getService();
 		AdminFactory factory = new AdminFactory();
 		String[] managementHosts;
@@ -63,39 +90,8 @@ public class AbstractByonCloudTest extends NewAbstractCloudTest {
 			String host = managementHosts[0];
 			factory.addLocators(host + ":" + CloudifyConstants.DEFAULT_LUS_PORT);
 		}
-
-		LogUtils.log("creating admin");		
-
-		// TODO elip - Remove this once GS-10453 is fixed and use factory.createAndWait();
-		createAndWait(factory);
-
+		return factory;
 	}
-
-	private void createAndWait(AdminFactory factory) {
-
-		long endTime = System.currentTimeMillis() + CREATE_ADMIN_TIMEOUT;
-
-		while (System.currentTimeMillis() < endTime) {
-			admin = factory.create();
-			ProcessingUnit rest = admin.getProcessingUnits()
-					.waitFor("rest", 10, TimeUnit.SECONDS);
-			if (rest != null) {
-				LogUtils.log("Admin was created succesfully");
-				break;
-			} else {
-				LogUtils.log("Admin was created but failed to discover rest service, trying again");
-				closeAdmin();
-				try {
-					Thread.sleep(5000);
-				} catch (InterruptedException e) {
-					// Ignore
-				}
-			}
-		}
-
-
-	}
-
 
 	protected void closeAdmin() {
 		if (admin != null) {

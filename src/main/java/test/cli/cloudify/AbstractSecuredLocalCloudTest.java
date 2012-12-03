@@ -1,12 +1,16 @@
 package test.cli.cloudify;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.openspaces.admin.machine.Machine;
 import org.testng.Assert;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
 
 import test.cli.cloudify.CommandTestUtils.ProcessResult;
 import test.cli.cloudify.security.SecurityConstants;
@@ -19,18 +23,50 @@ import framework.utils.ServiceInstaller;
 public class AbstractSecuredLocalCloudTest extends AbstractLocalCloudTest{
 	
 	private static final String BUILD_SECURITY_FILE_PATH = SGTestHelper.getBuildDir().replace('\\', '/') + "/config/security/spring-security.xml";
+	private static final String BUILD_SECURITY_BACKUP_FILE_PATH = SGTestHelper.getBuildDir().replace('\\', '/') + "/config/security/spring-security.xml.backup";
 	private static final String DEFAULT_SECURITY_FILE_PATH = SGTestHelper.getSGTestRootDir().replace('\\', '/') + "/src/main/config/security/spring-security.xml";
 	private static final String DEFAULT_KEYSTORE_FILE_PATH = SGTestHelper.getSGTestRootDir().replace('\\', '/') + "/src/main/config/security/keystore";
 	private static final String DEFAULT_KEYSTORE_PASSWORD = "sgtest";
 	private static final int BOOTSTRAP_RETRIES_BEFOREMETHOD = 1; //TODO remove this
 
-	@Override
 	@BeforeClass
-	public void beforeTest() {
+	public void beforeClass() {
 		LocalCloudBootstrapper bootstrapper = new LocalCloudBootstrapper();
 		bootstrapper.secured(true).securityFilePath(DEFAULT_SECURITY_FILE_PATH);
 		bootstrapper.keystoreFilePath(DEFAULT_KEYSTORE_FILE_PATH).keystorePassword(DEFAULT_KEYSTORE_PASSWORD);
+		
+		// GS- creating a backup for the security xml file. Shouldn't be here.
+		File originalFile = new File(BUILD_SECURITY_FILE_PATH);
+		File backupFile = new File(BUILD_SECURITY_BACKUP_FILE_PATH);
+		
+		try {
+			FileUtils.copyFile(originalFile, backupFile);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
 		beforeTest(bootstrapper);		
+	}
+	
+	@Override
+	@BeforeMethod
+	public void beforeTest() {
+		//do nothing
+	}
+	
+	@AfterClass
+	public void afterClass() {
+		
+		File originalFile = new File(BUILD_SECURITY_FILE_PATH);
+		File backupFile = new File(BUILD_SECURITY_BACKUP_FILE_PATH);
+		
+		try {
+			FileUtils.deleteQuietly(originalFile);
+			FileUtils.moveFile(backupFile, originalFile);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
 	}
 
 	public static String getDefaultSecurityFilePath() {

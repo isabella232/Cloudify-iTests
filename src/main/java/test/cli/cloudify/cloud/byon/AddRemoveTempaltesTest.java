@@ -1,9 +1,7 @@
 package test.cli.cloudify.cloud.byon;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -36,10 +34,25 @@ import test.cli.cloudify.cloud.services.byon.ByonCloudService;
 import framework.utils.IOUtils;
 import framework.utils.LogUtils;
 
+/**
+ * 
+ * @author yael
+ *
+ */
 public class AddRemoveTempaltesTest extends AbstractByonCloudTest {
 
+	/**
+	 * Change to false to use the DESAULT machines (pc-lab).
+	 * If it is true, the test will use machines from the {@link ByonCloudService}.DEFAULT_MACHINES
+	 */
 	private final boolean USE_NODES_FROM_SGTEST_BYON_POOL = true;
+	/** 
+	 * Change to false to avoid bootstrap
+	 */
 	private final boolean BOOTSTRAP = true;
+	/** 
+	 * Change to false to avoid teardown
+	 */
 	private final boolean TEARDOWN = true;
 
 	private final String DESAULT_MNG_NODE_IP = "pc-lab111";
@@ -143,24 +156,11 @@ public class AddRemoveTempaltesTest extends AbstractByonCloudTest {
 	}
 
 	private void updateTemplatesProperties(String machineIP, String propertiesFile) throws IOException {
-
-		OutputStream out = null;
-		try {
-			File template5PropsFile = new File(propertiesFile);		
+			File templatePropsFile = new File(propertiesFile);		
 			Properties props = new Properties();
 			props.setProperty("node_ip", '"' + machineIP + '"');
 			props.setProperty("node_id", "\"byon-pc-lab{0}\"");
-			out = new FileOutputStream(template5PropsFile);
-			props.store(out, null);
-			IOUtils.writePropertiesToFile(props, template5PropsFile);
-
-
-		}finally {
-			if (out != null) {
-				out.close();
-			}
-		}
-
+			IOUtils.writePropertiesToFile(props, templatePropsFile);
 	}
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)

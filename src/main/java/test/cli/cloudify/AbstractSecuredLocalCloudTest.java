@@ -35,7 +35,7 @@ public class AbstractSecuredLocalCloudTest extends AbstractLocalCloudTest{
 		bootstrapper.secured(true).securityFilePath(DEFAULT_SECURITY_FILE_PATH);
 		bootstrapper.keystoreFilePath(DEFAULT_KEYSTORE_FILE_PATH).keystorePassword(DEFAULT_KEYSTORE_PASSWORD);
 		
-		// GS- creating a backup for the security xml file. Shouldn't be here.
+		// GS-1286 creating a backup for the security xml file. Shouldn't be here.
 		File originalFile = new File(BUILD_SECURITY_FILE_PATH);
 		File backupFile = new File(BUILD_SECURITY_BACKUP_FILE_PATH);
 		

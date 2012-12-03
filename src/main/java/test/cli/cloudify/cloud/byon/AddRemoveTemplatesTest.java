@@ -39,7 +39,7 @@ import framework.utils.LogUtils;
  * @author yael
  *
  */
-public class AddRemoveTempaltesTest extends AbstractByonCloudTest {
+public class AddRemoveTemplatesTest extends AbstractByonCloudTest {
 
 	/**
 	 * Change to false to use the DESAULT machines (pc-lab).

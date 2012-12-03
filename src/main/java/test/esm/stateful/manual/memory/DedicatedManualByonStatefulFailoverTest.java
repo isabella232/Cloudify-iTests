@@ -14,7 +14,7 @@ import test.esm.AbstractFromXenToByonGSMTest;
 import framework.utils.DeploymentUtils;
 import framework.utils.GsmTestUtils;
 
-public class DedicatedManualXenStatefulFailoverTest extends AbstractFromXenToByonGSMTest {
+public class DedicatedManualByonStatefulFailoverTest extends AbstractFromXenToByonGSMTest {
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
 	public void testElasticStatefulProcessingUnitDeploymentWithKillGSC() {       

@@ -16,7 +16,7 @@ import test.esm.AbstractFromXenToByonGSMTest;
 import framework.utils.DeploymentUtils;
 import framework.utils.GsmTestUtils;
 
-public class DedicatedManualXenStatefulDeploymentTest extends AbstractFromXenToByonGSMTest {
+public class DedicatedManualByonStatefulDeploymentTest extends AbstractFromXenToByonGSMTest {
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1")
     public void testElasticStatefulProcessingUnitDeploymentScale() throws IOException {

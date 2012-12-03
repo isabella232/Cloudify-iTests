@@ -9,7 +9,7 @@ import org.testng.annotations.Test;
 import test.esm.AbstractFromXenToByonGSMTest;
 import framework.utils.GsmTestUtils;
 
-public class DedicatedManualXenStatefulMediumDeploymentTest extends AbstractFromXenToByonGSMTest {
+public class DedicatedManualByonStatefulMediumDeploymentTest extends AbstractFromXenToByonGSMTest {
 
 	private static final int CONTAINER_CAPACITY = 256;
     private static final int HIGH_NUM_CPU = 8;

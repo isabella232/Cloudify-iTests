@@ -19,7 +19,7 @@ import test.esm.AbstractFromXenToByonGSMTest;
  *
  * @author dank
  */
-public class DedicatedManualXenDataGridTwoIndenpendentDeploymentsTest extends AbstractFromXenToByonGSMTest {
+public class DedicatedManualByonDataGridTwoIndenpendentDeploymentsTest extends AbstractFromXenToByonGSMTest {
 
     @Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1")
     public void manualXenDataGridDeploymentTwoIndenpendentDeploymentsTest() {

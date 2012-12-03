@@ -17,7 +17,7 @@ import org.testng.annotations.Test;
 import test.esm.AbstractFromXenToByonGSMTest;
 import framework.utils.GsmTestUtils;
 
-public class DedicatedManualXenDataGridCancelScaleOutTest extends AbstractFromXenToByonGSMTest{ 
+public class DedicatedManualByonDataGridCancelScaleOutTest extends AbstractFromXenToByonGSMTest{ 
 
     private static final int CONTAINER_MEMORY_IN_MEGABYTES = 1024;
     private static final int INITIAL_NUMBER_OF_CONTAINERS = 2;

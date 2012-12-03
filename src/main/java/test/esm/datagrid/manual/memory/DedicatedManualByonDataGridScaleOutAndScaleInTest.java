@@ -12,7 +12,7 @@ import org.testng.annotations.Test;
 import test.esm.AbstractFromXenToByonGSMTest;
 import framework.utils.GsmTestUtils;
 
-public class DedicatedManualXenDataGridScaleOutAndScaleInTest extends AbstractFromXenToByonGSMTest {
+public class DedicatedManualByonDataGridScaleOutAndScaleInTest extends AbstractFromXenToByonGSMTest {
 
     private final String gridName = "myspace";
     

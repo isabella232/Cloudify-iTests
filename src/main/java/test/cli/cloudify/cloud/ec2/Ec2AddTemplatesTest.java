@@ -12,7 +12,6 @@ import org.testng.annotations.Test;
 
 import test.cli.cloudify.CommandTestUtils;
 import test.cli.cloudify.cloud.NewAbstractCloudTest;
-import test.cli.cloudify.cloud.services.CloudServiceManager;
 import test.cli.cloudify.cloud.services.ec2.Ec2CloudService;
 import framework.utils.IOUtils;
 import framework.utils.LogUtils;
@@ -35,8 +34,7 @@ public class Ec2AddTemplatesTest extends NewAbstractCloudTest {
 	@Override
 	@BeforeClass(alwaysRun = true)
 	protected void bootstrap() throws Exception {
-		Ec2CloudService service = (Ec2CloudService)CloudServiceManager.getInstance().getCloudService(getCloudName());
-		super.bootstrap(service);
+		super.bootstrap();
 	}
 
 	@Override

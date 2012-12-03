@@ -66,18 +66,15 @@ public class Ec2AddTemplatesTest extends NewAbstractCloudTest {
 		Assert.assertTrue(output.contains("Templates added successfully"));
 		Assert.assertTrue(output.contains(TEMPLATE_NAME));
 
-		try{
-			//install service
-			installServiceAndWait(SERVICE_FOLDER_PATH, SERVICE_NAME);
-		} finally {
-			uninstallServiceIfFound(SERVICE_NAME);	
-			// remove templates
-			command = "connect " + getRestUrl() + ";remove-template " + TEMPLATE_NAME;
-			output = CommandTestUtils.runCommandAndWait(command);
-			Assert.assertTrue(output.contains("Template " + TEMPLATE_NAME + " removed successfully"));
-			assertTempalteRemoved(TEMPLATE_NAME);
-		}
+		//install service
+		installServiceAndWait(SERVICE_FOLDER_PATH, SERVICE_NAME);
 		
+		uninstallServiceIfFound(SERVICE_NAME);	
+		// remove templates
+		command = "connect " + getRestUrl() + ";remove-template " + TEMPLATE_NAME;
+		output = CommandTestUtils.runCommandAndWait(command);
+		Assert.assertTrue(output.contains("Template " + TEMPLATE_NAME + " removed successfully"));
+		assertTempalteRemoved(TEMPLATE_NAME);
 	}
 
 	private void updatePropertiesFile() throws IOException {
@@ -91,8 +88,8 @@ public class Ec2AddTemplatesTest extends NewAbstractCloudTest {
 		props.put("ubuntuImageId", '"' + "us-east-1/ami-82fa58eb" + '"');
 		IOUtils.writePropertiesToFile(props, propsFile);
 	}
-	
-	
+
+
 	private void assertTempalteRemoved(String templateName) {
 		String command = "connect " + getRestUrl() + ";list-templates";
 		try {

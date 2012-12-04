@@ -137,7 +137,7 @@ public abstract class AbstractKillManagementTest extends AbstractByonCloudTest {
 		
 		for (int i = 0 ; i < 3 ; i++) {
 			try {
-				SSHUtils.runCommand(machine1, DEFAULT_TEST_TIMEOUT,  ByonCloudService.BYON_HOME_FOLDER + "/gigaspaces/tools/cli/cloudify.sh start-management", ByonCloudService.BYON_CLOUD_USER, ByonCloudService.BYON_CLOUD_PASSWORD);
+				LogUtils.log(SSHUtils.runCommand(machine1, DEFAULT_TEST_TIMEOUT,  ByonCloudService.BYON_HOME_FOLDER + "/gigaspaces/tools/cli/cloudify.sh start-management", ByonCloudService.BYON_CLOUD_USER, ByonCloudService.BYON_CLOUD_PASSWORD));
 				return;
 			} catch (Throwable t) {
 				LogUtils.log("Failed to start management on machine " + machine1 + " restarting machine before attempting again. attempt number " + (i + 1));
@@ -161,7 +161,7 @@ public abstract class AbstractKillManagementTest extends AbstractByonCloudTest {
 	}
 
 	private void restartMachine(String toKill) {
-		SSHUtils.runCommand(toKill, TimeUnit.SECONDS.toMillis(30),
-				"sudo shutdown now -r", ByonCloudService.BYON_CLOUD_USER, ByonCloudService.BYON_CLOUD_PASSWORD);
+		LogUtils.log(SSHUtils.runCommand(toKill, TimeUnit.SECONDS.toMillis(30),
+				"sudo shutdown now -r", ByonCloudService.BYON_CLOUD_USER, ByonCloudService.BYON_CLOUD_PASSWORD));
 	}
 }

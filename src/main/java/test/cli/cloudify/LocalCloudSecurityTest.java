@@ -167,6 +167,15 @@ public class LocalCloudSecurityTest extends AbstractSecuredLocalCloudTest{
 	}
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
+	public void securityKitchenSinkTest() throws IOException, InterruptedException {
+		String output = installApplicationAndWait(SIMPLE_APP_PATH, SIMPLE_APP_NAME, TIMEOUT_IN_MINUTES, user, password, false, null);
+		output += runCommand("connect -user " + user + " -password " + password + " " + securedRestUrl + "; use-application simple");
+		
+		assertTrue("Failed to change application context. Use-application command failed. output was: " + output, output.contains("Using application simple"));
+		
+	}
+	
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
 	public void TamperWithSecurityFileTest() throws IOException, InterruptedException {
 
 		String fakeCloudAdminUserAndPassword = "John";
@@ -278,13 +287,5 @@ public class LocalCloudSecurityTest extends AbstractSecuredLocalCloudTest{
 
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
-	public void securityKitchenSinkTest() throws IOException, InterruptedException {
-		String output = installApplicationAndWait(SIMPLE_APP_PATH, SIMPLE_APP_NAME, TIMEOUT_IN_MINUTES, user, password, false, null);
-		output += runCommand("connect -user " + user + " -password " + password + " https://localhost:8443; use-application simple");
-		
-		assertTrue("Failed to change application context. Use-application command failed. output was: " + output, output.contains("Using application simple"));
-		
-	}
 
 }

@@ -56,7 +56,7 @@ public class AbstractByonCloudTest extends NewAbstractCloudTest {
 					.waitFor("rest", 10, TimeUnit.SECONDS);
 			if (rest != null) {
 				LogUtils.log("Admin was created succesfully");
-				break;
+				return;
 			} else {
 				LogUtils.log("Admin was created but failed to discover rest service, trying again");
 				closeAdmin();

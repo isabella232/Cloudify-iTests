@@ -142,7 +142,7 @@ public class MicrosoftAzureCloudService extends AbstractCloudService {
 			// now all deployment have reached a steady state.
 			// scan again to find out if there are any agents still running
 
-			LogUtils.log("scanning all remaining hosted services for running agent nodes");
+			LogUtils.log("scanning all remaining hosted services for running nodes");
 			for (HostedService hostedService : listHostedServices) {
 				List<Deployment> deploymentsForHostedSerice = azureClient.getHostedService(hostedService.getServiceName(), true).getDeployments().getDeployments();
 				if (deploymentsForHostedSerice.size() > 0) {
@@ -162,7 +162,7 @@ public class MicrosoftAzureCloudService extends AbstractCloudService {
 
 			if (!leakingAgentNodesPublicIps.isEmpty()) {
 				for (String ip : leakingAgentNodesPublicIps) {
-					LogUtils.log("attempting to kill agent node : " + ip);
+					LogUtils.log("attempting to kill node : " + ip);
 					long endTime = System.currentTimeMillis() + ESTIMATED_SHUTDOWN_TIME;
 					try {
 						azureClient.deleteVirtualMachineByIp(ip, false, endTime);

@@ -44,7 +44,7 @@ public class CloudOverridesESMFailoverTest extends AbstractKillManagementTest {
 		super.bootstrap(service);
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
 	public void testCloudOverridesPersistsAfterESMFailover() throws Exception {
 		
 		File createOverridesFile = null;

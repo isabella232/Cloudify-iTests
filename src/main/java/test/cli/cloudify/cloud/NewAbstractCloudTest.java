@@ -99,6 +99,7 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 
 		if (this.cloudService == null) {
 			LogUtils.log("No teardown was executed as the cloud instance for this class was not created");
+			return;
 		} 
 		this.cloudService.teardownCloud();
 		afterTeardown();

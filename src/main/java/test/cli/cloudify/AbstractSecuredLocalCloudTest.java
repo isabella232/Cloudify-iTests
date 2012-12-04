@@ -30,12 +30,11 @@ public class AbstractSecuredLocalCloudTest extends AbstractLocalCloudTest{
 	private static final int BOOTSTRAP_RETRIES_BEFOREMETHOD = 1; //TODO remove this
 
 	@BeforeClass
-	public void beforeClass() throws IOException {
+	public void bootstrap() throws IOException {
 		LocalCloudBootstrapper bootstrapper = new LocalCloudBootstrapper();
 		bootstrapper.secured(true).securityFilePath(DEFAULT_SECURITY_FILE_PATH);
 		bootstrapper.keystoreFilePath(DEFAULT_KEYSTORE_FILE_PATH).keystorePassword(DEFAULT_KEYSTORE_PASSWORD);
-
-		beforeTest(bootstrapper);		
+		bootstrap(bootstrapper);		
 	}
 
 	@Override
@@ -71,7 +70,7 @@ public class AbstractSecuredLocalCloudTest extends AbstractLocalCloudTest{
 		return BUILD_SECURITY_BACKUP_FILE_PATH;
 	}
 
-	public void beforeTest(LocalCloudBootstrapper bootstrapper) throws IOException {
+	public void bootstrap(LocalCloudBootstrapper bootstrapper) throws IOException {
 
 		isSecured = true;
 

@@ -91,7 +91,7 @@ public class LocalCloudSecurityTest extends AbstractSecuredLocalCloudTest{
 	}
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
-	public void loginTest() throws IOException, InterruptedException{
+	public void loginTest() {
 
 		String output = "no output";
 		
@@ -101,47 +101,47 @@ public class LocalCloudSecurityTest extends AbstractSecuredLocalCloudTest{
 	}
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
-	public void connectWithNonexistentUserTest() throws IOException, InterruptedException{
+	public void connectWithNonexistentUserTest() {
 
-		String output = connect(SecurityConstants.CLOUD_ADMIN_USER_PWD + "bad", SecurityConstants.CLOUD_ADMIN_USER_PWD);		
-		assertTrue("connect succeeded for user: " + SecurityConstants.CLOUD_ADMIN_USER_PWD + "bad", output.contains("bad credentials"));			
+		String output = connect(SecurityConstants.CLOUD_ADMIN_USER_PWD + "bad", SecurityConstants.CLOUD_ADMIN_USER_PWD, true);		
+		assertTrue("connect succeeded for user: " + SecurityConstants.CLOUD_ADMIN_USER_PWD + "bad", output.contains("Bad credentials."));			
 
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
-	public void connectWithNoPasswordTest() throws IOException, InterruptedException{
+	public void connectWithNoPasswordTest() {
 		
-		String output = connect(SecurityConstants.CLOUD_ADMIN_USER_PWD, null);		
-		assertTrue("connect succeeded for user: " + SecurityConstants.CLOUD_ADMIN_USER_PWD + " without providing a password", output.contains("password is required"));			
+		String output = connect(SecurityConstants.CLOUD_ADMIN_USER_PWD, null, true);		
+		assertTrue("connect succeeded for user: " + SecurityConstants.CLOUD_ADMIN_USER_PWD + " without providing a password", output.contains("Bad credentials."));			
 		
 	}
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
-	public void loginWithNonexistentUserTest() throws IOException, InterruptedException{
+	public void loginWithNonexistentUserTest() {
 
 		String output = "no output";
 		
 		output = login(SecurityConstants.CLOUD_ADMIN_USER_PWD + "bad", SecurityConstants.CLOUD_ADMIN_USER_PWD, true);					
 
-		assertTrue("login succeeded for user: " + SecurityConstants.CLOUD_ADMIN_USER_PWD + "bad", output.contains("Bad credentials"));			
+		assertTrue("login succeeded for user: " + SecurityConstants.CLOUD_ADMIN_USER_PWD + "bad", output.contains("Bad credentials."));			
 	}
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
 	public void connectWithWrongPassword() {
 
-		String output = connect(SecurityConstants.CLOUD_ADMIN_USER_PWD, SecurityConstants.CLOUD_ADMIN_USER_PWD + "bad");		
-		assertTrue("connect succeeded for password: " + SecurityConstants.CLOUD_ADMIN_USER_PWD + "bad", output.contains("Access denied"));			
+		String output = connect(SecurityConstants.CLOUD_ADMIN_USER_PWD, SecurityConstants.CLOUD_ADMIN_USER_PWD + "bad", true);		
+		assertTrue("connect succeeded for password: " + SecurityConstants.CLOUD_ADMIN_USER_PWD + "bad", output.contains("Bad credentials."));			
 
 	}
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
-	public void loginWithWrongPassword() throws IOException, InterruptedException {
+	public void loginWithWrongPassword() {
 
 		String output = "no output";
 		
 		output = login(SecurityConstants.CLOUD_ADMIN_USER_PWD, SecurityConstants.CLOUD_ADMIN_USER_PWD + "bad", true);
 		
-		assertTrue("login succeeded for password: " + SecurityConstants.CLOUD_ADMIN_USER_PWD + "bad", output.contains("Bad credentials"));
+		assertTrue("login succeeded for password: " + SecurityConstants.CLOUD_ADMIN_USER_PWD + "bad", output.contains("Bad credentials."));
 	}
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)

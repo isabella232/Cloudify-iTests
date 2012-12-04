@@ -666,12 +666,16 @@ public class AbstractLocalCloudTest extends AbstractTest {
 		
 		return null;
 	}
-
-	protected String connect(){	
+	
+	protected String connect(boolean failCommand){	
 
 		String output = "no output";
 		try {
-			output = CommandTestUtils.runCommandAndWait(connectCommand());
+			if (failCommand) {
+				output = CommandTestUtils.runCommandExpectedFail(connectCommand());
+			} else {
+				output = CommandTestUtils.runCommandAndWait(connectCommand());
+			}
 		} catch (IOException e) {
 			Assert.fail("Failed to connect");
 		} catch (InterruptedException e) {

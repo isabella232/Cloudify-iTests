@@ -27,7 +27,7 @@ mkdir %LOC_BUILD_TEST_DIR%\%SUITE_NAME%
 
 pushd %SGTEST_HOME%
 
-call mvn test -e -U ^
+call mvn test -e -U -P tgrid-sgtest-cloudify ^
 -Dcloudify.home=%RUNTIME_BUILD_LOCATION% ^
 -Dincludes="%INCLUDE%" ^
 -Dexcludes="%EXCLUDE%" ^

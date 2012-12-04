@@ -47,6 +47,8 @@ public class ByonCloudService extends AbstractCloudService {
 	public static final String ENV_VARIABLE_NAME = "GIGASPACES_TEST_ENV";
 	public static final String ENV_VARIABLE_VALUE = "DEFAULT_ENV_VARIABLE";
 	
+	private boolean sudo = true;
+	
 	/**
 	 * this folder is where Cloudify will be downloaded to and extracted from. NOTE - this is not the WORKING_HOME_DIRECTORY.
 	 * if is also defined in the custom bootstrap-management.sh script we use in our tests. 
@@ -60,14 +62,28 @@ public class ByonCloudService extends AbstractCloudService {
 		super("byon");
 		this.ipList = System.getProperty(IP_LIST_PROPERTY, DEFAULT_MACHINES);
 		this.machines = ipList.split(",");
+		if (SGTestHelper.isDevMode()) {
+			this.sudo = false;
+		}
 	}
 	
 	public ByonCloudService(final String name) {
 		super(name);
 		this.ipList = System.getProperty(IP_LIST_PROPERTY, DEFAULT_MACHINES);
 		this.machines = ipList.split(",");
+		if (SGTestHelper.isDevMode()) {
+			this.sudo = false;
+		}
 	}
 	
+	public boolean isSudo() {
+		return sudo;
+	}
+
+	public void setSudo(boolean sudo) {
+		this.sudo = sudo;
+	}
+
 	public void setIpList(String ipList) {
 		this.ipList = ipList;
 	}
@@ -93,6 +109,11 @@ public class ByonCloudService extends AbstractCloudService {
 		propsToReplace.put("cloudify_agent_", getMachinePrefix() + "cloudify-agent");
 		propsToReplace.put("cloudify_manager", getMachinePrefix() + "cloudify-manager");
 		propsToReplace.put("// cloudifyUrl", "cloudifyUrl");
+		
+		if (!sudo) {
+			propsToReplace.put("\"privileged true\"", "\"privileged false\"");
+		}
+		
 		if (StringUtils.isNotBlank(ipList)) {
 			propsToReplace.put("0.0.0.0", ipList);
 		}
@@ -157,12 +178,23 @@ public class ByonCloudService extends AbstractCloudService {
 	}
 	
 	private void cleanCloudifyTempDir() {
-		LogUtils.log(SSHUtils.runCommand(this.getMachines()[0], AbstractTest.OPERATION_TIMEOUT, "sudo rm -rf /export/tgrid/.cloudify/", "tgrid", "tgrid"));
+		
+		String command = "rm -rf /export/tgrid/.cloudify/";
+		if (sudo) {
+			command = "sudo " + command;
+		}
+		
+		LogUtils.log(SSHUtils.runCommand(this.getMachines()[0], AbstractTest.OPERATION_TIMEOUT, command, "tgrid", "tgrid"));
 		
 	}
 
 	private void cleanGSFilesOnAllHosts() {
-		String command = "sudo rm -rf /tmp/gs-files";
+		
+		String command = "rm -rf /tmp/gs-files";
+		if (sudo) {
+			command = "sudo " + command;
+		}
+		
 		String[] hosts = this.getMachines();			
 		for (String host : hosts) {
 			try {
@@ -174,7 +206,12 @@ public class ByonCloudService extends AbstractCloudService {
 	}
 	
 	private void killAllJavaOnAllHosts() {
-		String command = "sudo killall -9 java";
+		
+		String command = "killall -9 java";
+		if (sudo) {
+			command = "sudo " + command;
+		}
+		
 		String[] hosts = this.getMachines();
 		for (String host : hosts) {
 			try {

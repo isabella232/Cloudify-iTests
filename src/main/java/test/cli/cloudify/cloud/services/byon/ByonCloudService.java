@@ -42,7 +42,7 @@ public class ByonCloudService extends AbstractCloudService {
 	protected static final String NEW_URL_PREFIX = "http://tarzan/builds/GigaSpacesBuilds/cloudify";
 	protected static final String NEW_XAP_URL_PREFIX = "http://tarzan/builds/GigaSpacesBuilds";
 	
-	private static final String DEFAULT_MACHINES = "192.168.9.98,192.168.9.115,192.168.9.116,192.168.9.117,192.168.9.118,192.168.9.135,192.168.9.136,192.168.9.137";
+	private static final String DEV_MODE_MACHINES = /* Populate with the machines you wish to use */ "";
 	
 	public static final String ENV_VARIABLE_NAME = "GIGASPACES_TEST_ENV";
 	public static final String ENV_VARIABLE_VALUE = "DEFAULT_ENV_VARIABLE";
@@ -60,7 +60,10 @@ public class ByonCloudService extends AbstractCloudService {
 
 	public ByonCloudService() {
 		super("byon");
-		this.ipList = System.getProperty(IP_LIST_PROPERTY, DEFAULT_MACHINES);
+		this.ipList = System.getProperty(IP_LIST_PROPERTY, DEV_MODE_MACHINES);
+		if (this.ipList == null || this.ipList.isEmpty()) {
+			throw new IllegalStateException("ipList is empty! , please populate ByonCloudService.DEV_MODE_MACHINES with the machines you wish to use");
+		}
 		this.machines = ipList.split(",");
 		if (SGTestHelper.isDevMode()) {
 			this.sudo = false;
@@ -69,7 +72,10 @@ public class ByonCloudService extends AbstractCloudService {
 	
 	public ByonCloudService(final String name) {
 		super(name);
-		this.ipList = System.getProperty(IP_LIST_PROPERTY, DEFAULT_MACHINES);
+		this.ipList = System.getProperty(IP_LIST_PROPERTY, DEV_MODE_MACHINES);
+		if (this.ipList == null || this.ipList.isEmpty()) {
+			throw new IllegalStateException("ipList is empty! , please populate ByonCloudService.DEV_MODE_MACHINES with the machines you wish to use");
+		}
 		this.machines = ipList.split(",");
 		if (SGTestHelper.isDevMode()) {
 			this.sudo = false;

@@ -1,15 +1,12 @@
 package test.cli.cloudify;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.openspaces.admin.machine.Machine;
 import org.testng.Assert;
-import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 
@@ -44,21 +41,6 @@ public class AbstractSecuredLocalCloudTest extends AbstractLocalCloudTest{
 		//do nothing
 	}
 
-	@AfterClass
-	public void afterClass() {
-
-		File originalFile = new File(BUILD_SECURITY_FILE_PATH);
-		File backupFile = new File(BUILD_SECURITY_BACKUP_FILE_PATH);
-
-		try {
-			FileUtils.deleteQuietly(originalFile);
-			FileUtils.moveFile(backupFile, originalFile);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-	}
-
 	public static String getDefaultSecurityFilePath() {
 		return DEFAULT_SECURITY_FILE_PATH;
 	}
@@ -73,13 +55,7 @@ public class AbstractSecuredLocalCloudTest extends AbstractLocalCloudTest{
 
 	public void bootstrap(LocalCloudBootstrapper bootstrapper) throws IOException, TimeoutException, InterruptedException {
 
-		isSecured = true;
-
-		// GS-1286 creating a backup for the security xml file. Shouldn't be here.
-		File originalFile = new File(BUILD_SECURITY_FILE_PATH);
-		File backupFile = new File(BUILD_SECURITY_BACKUP_FILE_PATH);
-		
-		FileUtils.copyFile(originalFile, backupFile);		
+		isSecured = true;	
 
 		//pre-bootstrap actions will be made with the super-user
 		setUserAndPassword(SecurityConstants.ALL_ROLES_USER_PWD, SecurityConstants.ALL_ROLES_USER_PWD);

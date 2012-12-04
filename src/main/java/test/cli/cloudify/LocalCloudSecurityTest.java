@@ -151,9 +151,9 @@ public class LocalCloudSecurityTest extends AbstractSecuredLocalCloudTest{
 		
 		String output = "no output";
 		
-		output = installApplicationAndWait(SIMPLE_APP_PATH, SIMPLE_APP_NAME, TIMEOUT_IN_MINUTES, SecurityConstants.APP_MANAGER_AND_VIEWER_USER_PWD, SecurityConstants.APP_MANAGER_AND_VIEWER_USER_PWD, true, "Bezeq");
+		output = installApplicationAndWait(SIMPLE_APP_PATH, SIMPLE_APP_NAME, TIMEOUT_IN_MINUTES, SecurityConstants.APP_MANAGER_AND_VIEWER_USER_PWD, SecurityConstants.APP_MANAGER_AND_VIEWER_USER_PWD, true, "ROLE_CLOUDADMINS");
 		
-		assertTrue("install succeeded with authGroup Bezeq for: " + SecurityConstants.APP_MANAGER_AND_VIEWER_USER_PWD, output.contains("Access denied") || output.contains("no_permission_access_is_denied"));
+		assertTrue("install succeeded with authGroup ROLE_CLOUDADMINS for: " + SecurityConstants.APP_MANAGER_AND_VIEWER_USER_PWD, output.contains("Access denied") || output.contains("no_permission_access_is_denied"));
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
@@ -161,9 +161,9 @@ public class LocalCloudSecurityTest extends AbstractSecuredLocalCloudTest{
 		
 		String output = "no output";
 		
-		installApplicationAndWait(SIMPLE_APP_PATH, SIMPLE_APP_NAME, TIMEOUT_IN_MINUTES, SecurityConstants.CLOUD_ADMIN_USER_PWD, SecurityConstants.CLOUD_ADMIN_USER_PWD, false, "GE");
-		output = uninstallApplicationAndWait(SIMPLE_APP_PATH, SIMPLE_APP_NAME, TIMEOUT_IN_MINUTES, SecurityConstants.CLOUD_ADMIN_AND_APP_MANAGER_USER_PWD, SecurityConstants.CLOUD_ADMIN_AND_APP_MANAGER_USER_PWD, true, null);
-		assertTrue("unseen application uninstall succeeded", output.contains("Access denied") || output.contains("no_permission_access_is_denied"));
+		installApplicationAndWait(SIMPLE_APP_PATH, SIMPLE_APP_NAME, TIMEOUT_IN_MINUTES, SecurityConstants.CLOUD_ADMIN_AND_APP_MANAGER_USER_PWD, SecurityConstants.CLOUD_ADMIN_AND_APP_MANAGER_USER_PWD, false, "ROLE_CLOUDADMINS");
+		output = uninstallApplicationAndWait(SIMPLE_APP_PATH, SIMPLE_APP_NAME, TIMEOUT_IN_MINUTES, SecurityConstants.APP_MANAGER_AND_VIEWER_USER_PWD, SecurityConstants.APP_MANAGER_AND_VIEWER_USER_PWD, true, null);
+		assertTrue("unseen application uninstall succeeded", output.contains("cant_find_service_for_app"));
 	}
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)

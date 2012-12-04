@@ -212,17 +212,26 @@ public abstract class RecipeInstaller {
 		}
 		connectCommandBuilder.append(restUrl).append(";");
 		
-		final String installCommand = new StringBuilder()
+		final String uninstallCommand = new StringBuilder()
 				.append(getUninstallCommand()).append(" ")
 				.append("--verbose").append(" ")
 				.append("-timeout").append(" ")
 				.append(timeoutInMinutes).append(" ")
 				.append(getRecipeName())
 				.toString();
-		String output = CommandTestUtils.runCommandAndWait(connectCommandBuilder.toString() + installCommand);
-		assertUninstall(output);
 		
-		return output;
+		final String connectCommand = connectCommandBuilder.toString();
+		
+		if (expectToFail) {
+			return CommandTestUtils.runCommandExpectedFail(connectCommand + uninstallCommand);
+		}
+		if (waitForFinish) {
+			String output = CommandTestUtils.runCommandAndWait(connectCommand + uninstallCommand);
+			assertUninstall(output);
+			return output;			
+		}
+		return CommandTestUtils.runCommand(connectCommand + uninstallCommand);
+				
 	}
 
 }

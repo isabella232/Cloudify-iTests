@@ -44,7 +44,7 @@ public class CommandTestUtils {
 		final String commandExtention = getCommandExtention();
 		final String cloudifyPath = ScriptUtils.getBuildPath()+
 				MessageFormat.format("{0}tools{0}cli{0}cloudify.{1} ", File.separatorChar, commandExtention);
-		return cloudifyPath + command;
+		return (cloudifyPath + command).replace("\\", "/");
 	}
 
 

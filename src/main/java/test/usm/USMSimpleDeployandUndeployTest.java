@@ -5,6 +5,7 @@ import static framework.utils.AdminUtils.loadGSM;
 import static framework.utils.LogUtils.log;
 
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.openspaces.admin.gsa.GridServiceAgent;
 import org.openspaces.admin.gsm.GridServiceManager;
@@ -24,7 +25,7 @@ public class USMSimpleDeployandUndeployTest extends UsmAbstractTest {
 
     @Override
     @BeforeMethod
-    public void beforeTest() {
+    public void beforeTest() throws TimeoutException, InterruptedException {
         super.beforeTest();
         
         //1 GSM and 1 GSC at 1 machines

@@ -3,6 +3,7 @@ package test.cli.cloudify;
 import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
@@ -30,7 +31,7 @@ public class AbstractSecuredLocalCloudTest extends AbstractLocalCloudTest{
 	private static final int BOOTSTRAP_RETRIES_BEFOREMETHOD = 1; //TODO remove this
 
 	@BeforeClass
-	public void bootstrap() throws IOException {
+	public void bootstrap() throws IOException, TimeoutException, InterruptedException {
 		LocalCloudBootstrapper bootstrapper = new LocalCloudBootstrapper();
 		bootstrapper.secured(true).securityFilePath(DEFAULT_SECURITY_FILE_PATH);
 		bootstrapper.keystoreFilePath(DEFAULT_KEYSTORE_FILE_PATH).keystorePassword(DEFAULT_KEYSTORE_PASSWORD);
@@ -70,7 +71,7 @@ public class AbstractSecuredLocalCloudTest extends AbstractLocalCloudTest{
 		return BUILD_SECURITY_BACKUP_FILE_PATH;
 	}
 
-	public void bootstrap(LocalCloudBootstrapper bootstrapper) throws IOException {
+	public void bootstrap(LocalCloudBootstrapper bootstrapper) throws IOException, TimeoutException, InterruptedException {
 
 		isSecured = true;
 

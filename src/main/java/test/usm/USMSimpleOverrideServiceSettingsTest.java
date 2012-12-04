@@ -5,6 +5,7 @@ import static framework.utils.LogUtils.log;
 
 import java.io.File;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.openspaces.admin.gsa.GridServiceAgent;
 import org.openspaces.admin.machine.Machine;
@@ -33,7 +34,7 @@ public class USMSimpleOverrideServiceSettingsTest extends UsmAbstractTest {
 
 	@Override
 	@BeforeMethod
-	public void beforeTest() {
+	public void beforeTest() throws TimeoutException, InterruptedException {
 		super.beforeTest();
 
 		// 1 GSM and 2 GSC at 2 machines

@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.http.HttpEntity;
@@ -54,6 +55,7 @@ import test.cli.cloudify.CommandTestUtils.ProcessResult;
 
 import com.gigaspaces.internal.sigar.SigarHolder;
 
+import framework.utils.AdminUtils;
 import framework.utils.ApplicationInstaller;
 import framework.utils.DumpUtils;
 import framework.utils.LogUtils;
@@ -129,7 +131,7 @@ public class AbstractLocalCloudTest extends AbstractTest {
 
 	@Override
 	@BeforeMethod
-	public void beforeTest() {
+	public void beforeTest() throws TimeoutException, InterruptedException {
 
 		LogUtils.log("Test Configuration Started: " + this.getClass());
 
@@ -433,7 +435,7 @@ public class AbstractLocalCloudTest extends AbstractTest {
 		}
 	}
 
-	protected Admin getAdminWithLocators() {
+	protected Admin getAdminWithLocators() throws TimeoutException, InterruptedException {
 		final String nicAddress = getLocalHostIpAddress();
 
 		final AdminFactory factory = new AdminFactory();
@@ -441,7 +443,8 @@ public class AbstractLocalCloudTest extends AbstractTest {
 				+ CloudifyConstants.DEFAULT_LOCALCLOUD_LUS_PORT;
 		LogUtils.log("adding locator to admin : " + locator);
 		factory.addLocator(locator);
-		return factory.createAdmin();
+		LogUtils.log("Creating admin");
+		return AdminUtils.createAdminAndWaitForManagement(factory);
 	}
 
 	// This method implementation is used in order to access the admin api

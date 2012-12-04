@@ -3,6 +3,7 @@ package framework.utils.xen;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.openspaces.admin.Admin;
@@ -44,7 +45,7 @@ public class AbstractGsmTest extends AbstractTest {
     
     @Override 
     @BeforeMethod
-    public void beforeTest() {
+    public void beforeTest() throws TimeoutException, InterruptedException {
     	super.beforeTest();
     	    	
     	LookupService[] lookupServices =  restartLus(); // workaround for admin.close() container discovery leakage from previous test

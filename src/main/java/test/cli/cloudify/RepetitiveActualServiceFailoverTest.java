@@ -11,6 +11,7 @@ import java.net.URLConnection;
 import java.net.UnknownHostException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.apache.http.HttpStatus;
 import org.cloudifysource.dsl.internal.packaging.PackagingException;
@@ -62,7 +63,7 @@ public class RepetitiveActualServiceFailoverTest extends AbstractLocalCloudTest 
 	
 	@Override
 	@BeforeMethod
-	public void beforeTest() {
+	public void beforeTest() throws TimeoutException, InterruptedException {
 		super.beforeTest();	
 		client = new WebClient(BrowserVersion.getDefault());
 	}

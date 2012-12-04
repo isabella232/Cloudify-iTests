@@ -2,6 +2,7 @@ package test.usm;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.testng.annotations.BeforeMethod;
@@ -34,7 +35,7 @@ public class UsmAbstractTest extends AbstractTest{
 	
 	@BeforeMethod
 	@Override
-	public void beforeTest() {
+	public void beforeTest() throws TimeoutException, InterruptedException {
 		super.beforeTest();
 		String testGroups = AdminUtils.getTestGroups();
 		System.setProperty("com.gs.jini_lus.groups", testGroups);

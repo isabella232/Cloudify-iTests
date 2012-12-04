@@ -1,6 +1,7 @@
 package test.usm;
 
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.openspaces.admin.gsa.GridServiceAgent;
 import org.openspaces.admin.gsc.GridServiceContainer;
@@ -25,7 +26,7 @@ public class USMMultipleDeployAndKillGSCTest extends UsmAbstractTest {
 
 	@Override
 	@BeforeMethod
-	public void beforeTest() {
+	public void beforeTest() throws TimeoutException, InterruptedException {
 		super.beforeTest();
 
 		// 1 GSM and 2 GSC at 2 machines

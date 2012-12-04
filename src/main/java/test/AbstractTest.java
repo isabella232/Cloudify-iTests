@@ -2,6 +2,8 @@ package test;
 
 import static framework.utils.LogUtils.log;
 
+import java.util.concurrent.TimeoutException;
+
 
 import org.openspaces.admin.Admin;
 import org.testng.annotations.AfterMethod;
@@ -19,7 +21,7 @@ public abstract class AbstractTest extends AbstractTestSupport {
 	protected Admin admin;
 
     @BeforeMethod
-    public void beforeTest() {
+    public void beforeTest() throws TimeoutException, InterruptedException {
         LogUtils.log("Test Configuration Started: "+ this.getClass());
         admin = newAdmin();
         SetupUtils.assertCleanSetup(admin);

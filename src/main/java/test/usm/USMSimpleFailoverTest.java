@@ -6,6 +6,7 @@ import static framework.utils.LogUtils.log;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import javax.management.MBeanServerConnection;
 import javax.management.MBeanServerInvocationHandler;
@@ -36,7 +37,7 @@ public class USMSimpleFailoverTest extends UsmAbstractTest {
 
     @Override
     @BeforeMethod
-    public void beforeTest() {
+    public void beforeTest() throws TimeoutException, InterruptedException {
         super.beforeTest();
         
         //1 GSM and 1 GSC at 1 machines

@@ -1,5 +1,6 @@
 package test.usm.cli;
 
+import org.testng.annotations.Test;
 import framework.tools.SGTestHelper;
 import framework.utils.AdminUtils;
 
@@ -17,6 +18,7 @@ import test.AbstractTest;
 
 import java.io.File;
 import java.text.MessageFormat;
+import java.util.concurrent.TimeoutException;
 
 public class USMCliRestDeploymentTest extends AbstractTest {
 
@@ -28,7 +30,7 @@ public class USMCliRestDeploymentTest extends AbstractTest {
 			+ MessageFormat.format("{0}tools{0}rest{0}rest.war", File.separatorChar);
     @BeforeMethod
     @Override
-    public void beforeTest() {
+    public void beforeTest() throws TimeoutException, InterruptedException {
         super.beforeTest();
         gsa = admin.getGridServiceAgents().waitForAtLeastOne();
         gsm = AdminUtils.loadGSM(gsa);
@@ -37,7 +39,8 @@ public class USMCliRestDeploymentTest extends AbstractTest {
     }
     
 //    @Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1")
-    public void test() throws Exception {
+    @Test
+	public void test() throws Exception {
         SshClient client = SshClient.setUpDefaultClient();
         client.start();
         ConnectFuture future = client.connect(gsc.getMachine().getHostAddress(), 8080);

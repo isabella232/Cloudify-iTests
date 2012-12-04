@@ -5,6 +5,7 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.openspaces.admin.gsa.GridServiceAgent;
 import org.openspaces.admin.gsc.GridServiceContainer;
@@ -40,7 +41,7 @@ public class USMAllProcessesBasicTest extends UsmAbstractTest {
 
 	@BeforeMethod
 	@Override
-	public void beforeTest() {
+	public void beforeTest() throws TimeoutException, InterruptedException {
 		super.beforeTest();
 		LogUtils.log("waiting for 1 machine");
 		admin.getMachines().waitFor(1); // TODO - ALWAYS INCLUDE TIMEOUT!!!

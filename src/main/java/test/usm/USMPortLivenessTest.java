@@ -4,6 +4,7 @@ import static framework.utils.AdminUtils.loadGSC;
 import static framework.utils.AdminUtils.loadGSM;
 
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -16,7 +17,7 @@ public class USMPortLivenessTest extends UsmAbstractTest{
 
 	@BeforeMethod
 	@Override
-	public void beforeTest() {
+	public void beforeTest() throws TimeoutException, InterruptedException {
 		super.beforeTest();
 		loadGSM(admin.getGridServiceAgents().waitForAtLeastOne(10, TimeUnit.SECONDS));
 		loadGSC(admin.getGridServiceAgents().waitForAtLeastOne(10, TimeUnit.SECONDS));

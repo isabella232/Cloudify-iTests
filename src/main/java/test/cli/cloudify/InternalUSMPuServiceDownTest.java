@@ -11,6 +11,8 @@ import java.net.URLConnection;
 import java.net.UnknownHostException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+
 import org.apache.http.HttpStatus;
 import org.cloudifysource.dsl.utils.ServiceUtils;
 import org.cloudifysource.usm.USMException;
@@ -51,7 +53,7 @@ public class InternalUSMPuServiceDownTest extends AbstractLocalCloudTest {
 
 	@Override
 	@BeforeMethod
-	public void beforeTest() {
+	public void beforeTest() throws TimeoutException, InterruptedException {
 		super.beforeTest();	
 		this.client = new WebClient(BrowserVersion.getDefault());
 	}

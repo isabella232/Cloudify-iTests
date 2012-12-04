@@ -13,15 +13,11 @@ import org.openspaces.admin.machine.Machine;
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.openspaces.admin.pu.ProcessingUnitInstance;
 
-import framework.utils.AssertUtils;
-import framework.utils.LogUtils;
-
 import test.cli.cloudify.cloud.NewAbstractCloudTest;
 import test.cli.cloudify.cloud.services.byon.ByonCloudService;
+import framework.utils.AdminUtils;
 
 public class AbstractByonCloudTest extends NewAbstractCloudTest {
-
-	private static final int CREATE_ADMIN_TIMEOUT = 120 * 1000; // two minutes
 
 	@Override
 	protected void beforeTeardown() throws Exception {
@@ -52,32 +48,11 @@ public class AbstractByonCloudTest extends NewAbstractCloudTest {
 	}
 
 	protected void createAdmin() throws TimeoutException, InterruptedException {
-		
-		long endTime = System.currentTimeMillis() + CREATE_ADMIN_TIMEOUT;
-
-		// TODO elip - Remove this once GS-10453 is fixed and use factory.createAndWait();
-		while (System.currentTimeMillis() < endTime) {
+		if (!isFilteredAdmin()) {
+			admin = AdminUtils.createAdminAndWaitForManagement(createAdminFactory());
+		} else {
 			admin = createAdminFactory().create();
-
-			try {
-				if (!isFilteredAdmin()) {
-					// make sure lus is discovered
-					AssertUtils.assertTrue("Failed to discover lookup service even though admin was created", admin.getLookupServices().waitFor(1, 1, TimeUnit.MINUTES));
-					// make sure rest is discovered
-					AssertUtils.assertTrue("Failed to discover lookup service even though admin was created", admin.getProcessingUnits().waitFor("rest", 1, TimeUnit.MINUTES) != null);
-					return;
-				} else {
-					return; // cant wait for management services in filtered admin
-				}
-			} catch (final AssertionError ae) {
-				LogUtils.log("Failed to create admin succesfully --> " + ae.getMessage());
-				LogUtils.log("Closing admin and retrying");
-				closeAdmin();
-				Thread.sleep(5000);
-			}
-
 		}
-		throw new TimeoutException("Timed out while creating admin");
 	}
 	
 	protected AdminFactory createAdminFactory() {

@@ -1,6 +1,7 @@
 package test.cli.cloudify;
 
 import java.io.IOException;
+import java.util.concurrent.TimeoutException;
 
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -20,7 +21,7 @@ public class CustomSecurityFileTest extends AbstractSecuredLocalCloudTest{
 	
 	@Override
 	@BeforeClass
-	public void bootstrap() throws IOException {
+	public void bootstrap() throws IOException, TimeoutException, InterruptedException {
 		LocalCloudBootstrapper bootstrapper = new LocalCloudBootstrapper();
 		bootstrapper.secured(true).securityFilePath(CUSTUM_SECURITY_FILE_PATH);
 		bootstrapper.keystoreFilePath(getDefaultKeystoreFilePath()).keystorePassword(getDefaultKeystorePassword());

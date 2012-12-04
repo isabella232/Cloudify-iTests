@@ -1,6 +1,7 @@
 package test.rest;
 
 import java.io.IOException;
+import java.util.concurrent.TimeoutException;
 
 import junit.framework.Assert;
 
@@ -25,7 +26,7 @@ public class AdminAPIControllerConsistencyTest extends AbstractTest {
 	GridServiceManager gsm;
 	@Override
 	@BeforeMethod
-	public void beforeTest() {
+	public void beforeTest() throws TimeoutException, InterruptedException {
 		super.beforeTest();
 		AdminUtils.loadGSM(admin.getGridServiceAgents().waitForAtLeastOne());
 		AdminUtils.loadGSC(admin.getGridServiceAgents().waitForAtLeastOne());

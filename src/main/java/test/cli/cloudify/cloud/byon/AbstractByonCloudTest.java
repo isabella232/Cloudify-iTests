@@ -13,9 +13,11 @@ import org.openspaces.admin.machine.Machine;
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.openspaces.admin.pu.ProcessingUnitInstance;
 
+import framework.utils.AssertUtils;
+import framework.utils.LogUtils;
+
 import test.cli.cloudify.cloud.NewAbstractCloudTest;
 import test.cli.cloudify.cloud.services.byon.ByonCloudService;
-import framework.utils.LogUtils;
 
 public class AbstractByonCloudTest extends NewAbstractCloudTest {
 
@@ -24,6 +26,10 @@ public class AbstractByonCloudTest extends NewAbstractCloudTest {
 	@Override
 	protected void beforeTeardown() throws Exception {
 		closeAdmin();
+	}
+	
+	protected boolean isFilteredAdmin() {
+		return false;
 	}
 
 	protected Admin admin;
@@ -45,32 +51,36 @@ public class AbstractByonCloudTest extends NewAbstractCloudTest {
 		createAdmin();
 	}
 
-	private void createAdmin() throws TimeoutException {
+	protected void createAdmin() throws TimeoutException, InterruptedException {
 		
 		long endTime = System.currentTimeMillis() + CREATE_ADMIN_TIMEOUT;
 
 		// TODO elip - Remove this once GS-10453 is fixed and use factory.createAndWait();
 		while (System.currentTimeMillis() < endTime) {
 			admin = createAdminFactory().create();
-			ProcessingUnit rest = admin.getProcessingUnits()
-					.waitFor("rest", 10, TimeUnit.SECONDS);
-			if (rest != null) {
-				LogUtils.log("Admin was created succesfully");
-				return;
-			} else {
-				LogUtils.log("Admin was created but failed to discover rest service, trying again");
-				closeAdmin();
-				try {
-					Thread.sleep(5000);
-				} catch (InterruptedException e) {
-					// Ignore
+
+			try {
+				if (!isFilteredAdmin()) {
+					// make sure lus is discovered
+					AssertUtils.assertTrue("Failed to discover lookup service even though admin was created", admin.getLookupServices().waitFor(1, 1, TimeUnit.MINUTES));
+					// make sure rest is discovered
+					AssertUtils.assertTrue("Failed to discover lookup service even though admin was created", admin.getProcessingUnits().waitFor("rest", 1, TimeUnit.MINUTES) != null);
+					return;
+				} else {
+					return; // cant wait for management services in filtered admin
 				}
+			} catch (final AssertionError ae) {
+				LogUtils.log("Failed to create admin succesfully --> " + ae.getMessage());
+				LogUtils.log("Closing admin and retrying");
+				closeAdmin();
+				Thread.sleep(5000);
 			}
+
 		}
 		throw new TimeoutException("Timed out while creating admin");
 	}
 	
-	private AdminFactory createAdminFactory() {
+	protected AdminFactory createAdminFactory() {
 		
 		ByonCloudService cloudService = getService();
 		AdminFactory factory = new AdminFactory();

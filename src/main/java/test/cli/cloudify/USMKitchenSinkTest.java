@@ -202,7 +202,7 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 		LogUtils.log("Verifing management undeployment fails when excecuted using a direct rest api call");
 		final RestAdminFacade cloudifyAdminFacade = new RestAdminFacade();
 		try {
-			cloudifyAdminFacade.doConnect("", "",
+			cloudifyAdminFacade.doConnect(null, null,
 					AbstractLocalCloudTest.restUrl, false);
 			cloudifyAdminFacade.uninstallApplication(
 					CloudifyConstants.MANAGEMENT_APPLICATION_NAME, 10);

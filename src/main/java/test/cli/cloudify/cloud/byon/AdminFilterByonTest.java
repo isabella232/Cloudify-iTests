@@ -1,19 +1,14 @@
 package test.cli.cloudify.cloud.byon;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import net.jini.core.discovery.LookupLocator;
-
-import org.openspaces.admin.Admin;
+import org.openspaces.admin.AdminFactory;
 import org.openspaces.admin.esm.ElasticServiceManagers;
 import org.openspaces.admin.gsa.GridServiceAgents;
 import org.openspaces.admin.gsc.GridServiceContainers;
 import org.openspaces.admin.gsm.GridServiceManagers;
-import org.openspaces.admin.lus.LookupService;
 import org.openspaces.admin.lus.LookupServices;
 import org.openspaces.admin.machine.Machines;
 import org.openspaces.admin.pu.ProcessingUnits;
@@ -22,9 +17,7 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import com.j_spaces.kernel.JSpaceUtilities;
-
-import framework.utils.AdminUtils;
+import framework.utils.AssertUtils;
 import framework.utils.LogUtils;
 import framework.utils.ScriptUtils;
 
@@ -46,7 +39,6 @@ public class AdminFilterByonTest extends AbstractByonCloudTest {
 	private final int expectedPuAmount = 2;
 	private final int expectedMachinesAmount = 2;
 
-
 	@BeforeClass(alwaysRun = true)
 	protected void bootstrap() throws Exception {
 		super.bootstrap();
@@ -58,26 +50,21 @@ public class AdminFilterByonTest extends AbstractByonCloudTest {
 		installApplicationAndWait(ScriptUtils.getBuildPath() + "/recipes/apps/petclinic-simple", "petclinic");
 		assertTrue("petclinic.mongod is not up - install failed", admin.getProcessingUnits().waitFor("petclinic.mongod", OPERATION_TIMEOUT, TimeUnit.MILLISECONDS) != null);
 		assertTrue("petclinic.tomcat is not up - install failed", admin.getProcessingUnits().waitFor("petclinic.tomcat", OPERATION_TIMEOUT, TimeUnit.MILLISECONDS) != null);
+				
+		GridServiceAgents gridServiceAgents = admin.getGridServiceAgents();
+		GridServiceContainers gridServiceContainers = admin.getGridServiceContainers();
+		GridServiceManagers gridServiceManagers = admin.getGridServiceManagers();
+		ElasticServiceManagers elasticServiceManagers = admin.getElasticServiceManagers();
+		LookupServices lookupServices = admin.getLookupServices();
+		ProcessingUnits processingUnits = admin.getProcessingUnits();
+		Machines machines = admin.getMachines();
 		
-		String locators = retrieveLocatorsFromAdmin();
-		
-		Admin filteredAdmin = createAdmin( "user1", "", locators );
-		
-		GridServiceAgents gridServiceAgents = filteredAdmin.getGridServiceAgents();
-		GridServiceContainers gridServiceContainers = filteredAdmin.getGridServiceContainers();
-		GridServiceManagers gridServiceManagers = filteredAdmin.getGridServiceManagers();
-		ElasticServiceManagers elasticServiceManagers = filteredAdmin.getElasticServiceManagers();
-		LookupServices lookupServices = filteredAdmin.getLookupServices();
-		ProcessingUnits processingUnits = filteredAdmin.getProcessingUnits();
-		Machines machines = filteredAdmin.getMachines();
-		
-		final long timeout = 20;
-		gridServiceAgents.waitFor( expectedGsaAmount, timeout, TimeUnit.SECONDS );
-		gridServiceContainers.waitFor( expectedGscAmount, timeout, TimeUnit.SECONDS );
-		gridServiceManagers.waitFor( expectedGsmAmount, timeout, TimeUnit.SECONDS );
-		elasticServiceManagers.waitFor( expectedEsmAmount, timeout, TimeUnit.SECONDS );
-		lookupServices.waitFor( expectedLusAmount, timeout, TimeUnit.SECONDS );
-		machines.waitFor( expectedMachinesAmount, timeout, TimeUnit.SECONDS );
+		AssertUtils.assertTrue( "Number of gsa must be " + expectedGsaAmount, gridServiceAgents.waitFor( expectedGsaAmount, OPERATION_TIMEOUT, TimeUnit.MILLISECONDS));
+		AssertUtils.assertTrue( "Number of gsc must be " + expectedGscAmount, gridServiceContainers.waitFor( expectedGscAmount, OPERATION_TIMEOUT, TimeUnit.MILLISECONDS));
+		AssertUtils.assertTrue( "Number of gsm must be " + expectedGsmAmount, gridServiceManagers.waitFor( expectedGsmAmount, OPERATION_TIMEOUT, TimeUnit.MILLISECONDS));
+		AssertUtils.assertTrue( "Number of esm must be " + expectedEsmAmount, elasticServiceManagers.waitFor( expectedEsmAmount, OPERATION_TIMEOUT, TimeUnit.MILLISECONDS));
+		AssertUtils.assertTrue( "Number of lus must be " + expectedLusAmount, lookupServices.waitFor( expectedLusAmount, OPERATION_TIMEOUT, TimeUnit.MILLISECONDS));
+		AssertUtils.assertTrue( "Number of machines must be " + expectedMachinesAmount, machines.waitFor( expectedMachinesAmount, OPERATION_TIMEOUT, TimeUnit.MILLISECONDS));
 		
 		LogUtils.log( "Number of gsa:" + gridServiceAgents.getSize() );
 		LogUtils.log( "Number of gsc:" + gridServiceContainers.getSize() );
@@ -106,30 +93,16 @@ public class AdminFilterByonTest extends AbstractByonCloudTest {
 		
 		super.scanForLeakedAgentNodes();
 	}
-
-	private String retrieveLocatorsFromAdmin() {
-		
-		Admin nonFilteredAdmin = admin;
-		LookupServices lookupServicesNonFiltered = nonFilteredAdmin.getLookupServices();
-		lookupServicesNonFiltered.waitFor( 1 );
-		LookupService[] lookupServicesArray = lookupServicesNonFiltered.getLookupServices();
-		List<LookupLocator> lookupLocators = new ArrayList<LookupLocator>();
-		if( lookupServicesArray.length > 0 ){
-			LookupLocator lookupLocator = lookupServicesArray[ 0 ].getLookupLocator();
-			lookupLocators.add(lookupLocator);
-			if( lookupServicesArray.length > 1 ){
-				lookupLocator = lookupServicesArray[ 1 ].getLookupLocator();
-				lookupLocators.add(lookupLocator);
-			}
-		}
-		
-		return JSpaceUtilities.getLookupLocatorsStringRepresentation( 
-						lookupLocators.toArray( new LookupLocator[ lookupLocators.size() ] ) );
+	
+	@Override
+	protected AdminFactory createAdminFactory() {
+		return super.createAdminFactory().adminFilter(new AdminFilterImpl());		
 	}
-
-	private Admin createAdmin( String username, String password, String locator ){
-        return AdminUtils.createAdmin( username, password, locator, new AdminFilterImpl( username ) );
-    }	
+	
+	@Override 
+	protected boolean isFilteredAdmin() {
+		return true;
+	}
 
 	@AfterClass(alwaysRun = true)
 	protected void teardown() throws Exception {
@@ -143,12 +116,7 @@ public class AdminFilterByonTest extends AbstractByonCloudTest {
 	 */
 	private class AdminFilterImpl implements AdminFilter{
 
-		private final String username;
-		private static final String GIGASPACES_MODE = "GIGASPACES_MODE";
-
-		AdminFilterImpl( String username ){
-			this.username = username;
-		}
+		private static final String GIGASPACES_MODE = "GIGASPACES_MODE"; // see bootstrap-management.sh in SGTest
 
 		@Override
 		public boolean acceptJavaVirtualMachine( Map<String,String> envVariables, Map<String,String> sysProperties ){

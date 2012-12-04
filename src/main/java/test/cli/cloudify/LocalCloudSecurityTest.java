@@ -12,14 +12,16 @@ import framework.tools.SGTestHelper;
 
 public class LocalCloudSecurityTest extends AbstractSecuredLocalCloudTest{
 
+	private static final String SGTEST_ROOT_DIR = SGTestHelper.getSGTestRootDir().replace('\\', '/');
+
 	private static final String SIMPLE_APP_NAME = "simple";
-	private static final String SIMPLE_APP_PATH = "\\src\\main\\resources\\apps\\USM\\usm\\applications\\" + SIMPLE_APP_NAME;
+	private static final String SIMPLE_APP_PATH = SGTEST_ROOT_DIR + "/src/main/resources/apps/USM/usm/applications/" + SIMPLE_APP_NAME;
 	private static final String SIMPLE_SERVICE_NAME = "simple";
-	private static final String SIMPLE_SERVICE_PATH = "\\src\\main\\resources\\apps\\USM\\usm\\services\\" + SIMPLE_SERVICE_NAME;
+	private static final String SIMPLE_SERVICE_PATH = SGTEST_ROOT_DIR + "/src/main/resources/apps/USM/usm/" + SIMPLE_SERVICE_NAME;
 
 	
 	private static final String TRAVEL_APP_NAME = "travelExtended";
-	private static final String TRAVEL_APP_PATH = "\\src\\main\\resources\\apps\\USM\\usm\\applications\\" + TRAVEL_APP_NAME;
+	private static final String TRAVEL_APP_PATH = SGTEST_ROOT_DIR + "/src/main/resources/apps/USM/usm/applications/" + TRAVEL_APP_NAME;
 	private static final String TOMCAT_SERVICE_NAME = "tomcat-extend";
 	private static final String CASSANDRA_SERVICE_NAME = "cassandra-extend";
 	
@@ -50,7 +52,7 @@ public class LocalCloudSecurityTest extends AbstractSecuredLocalCloudTest{
 		installApplicationAndWait(SIMPLE_APP_PATH, SIMPLE_APP_NAME, TIMEOUT_IN_MINUTES, SecurityConstants.APP_MANAGER_AND_VIEWER_USER_PWD, SecurityConstants.APP_MANAGER_AND_VIEWER_USER_PWD, false, null);
 
 		String output = uninstallApplicationAndWait(SIMPLE_APP_PATH, SIMPLE_APP_NAME, TIMEOUT_IN_MINUTES, SecurityConstants.VIEWER_USER_PWD, SecurityConstants.VIEWER_USER_PWD, true, null);
-		assertTrue("install access granted to " + SecurityConstants.VIEWER_USER_PWD, output.contains("Access is denied"));
+		assertTrue("install access granted to " + SecurityConstants.VIEWER_USER_PWD, output.contains("Access is denied") || output.contains("no_permission_access_is_denied"));
 
 		uninstallApplicationAndWait(SIMPLE_APP_PATH, SIMPLE_APP_NAME, TIMEOUT_IN_MINUTES, SecurityConstants.APP_MANAGER_USER_PWD, SecurityConstants.APP_MANAGER_USER_PWD, false, null);
 	
@@ -143,6 +145,26 @@ public class LocalCloudSecurityTest extends AbstractSecuredLocalCloudTest{
 		
 		assertTrue("login succeeded for password: " + SecurityConstants.CLOUD_ADMIN_USER_PWD + "bad", output.contains("Bad credentials."));
 	}
+	
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
+	public void installWithWrongGroup() throws IOException, InterruptedException {
+		
+		String output = "no output";
+		
+		output = installApplicationAndWait(SIMPLE_APP_PATH, SIMPLE_APP_NAME, TIMEOUT_IN_MINUTES, SecurityConstants.APP_MANAGER_AND_VIEWER_USER_PWD, SecurityConstants.APP_MANAGER_AND_VIEWER_USER_PWD, true, "Bezeq");
+		
+		assertTrue("install succeeded with authGroup Bezeq for: " + SecurityConstants.APP_MANAGER_AND_VIEWER_USER_PWD, output.contains("Access denied") || output.contains("no_permission_access_is_denied"));
+	}
+	
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
+	public void installAndUninstallWithDifferentGroup() throws IOException, InterruptedException {
+		
+		String output = "no output";
+		
+		installApplicationAndWait(SIMPLE_APP_PATH, SIMPLE_APP_NAME, TIMEOUT_IN_MINUTES, SecurityConstants.CLOUD_ADMIN_USER_PWD, SecurityConstants.CLOUD_ADMIN_USER_PWD, false, "GE");
+		output = uninstallApplicationAndWait(SIMPLE_APP_PATH, SIMPLE_APP_NAME, TIMEOUT_IN_MINUTES, SecurityConstants.CLOUD_ADMIN_AND_APP_MANAGER_USER_PWD, SecurityConstants.CLOUD_ADMIN_AND_APP_MANAGER_USER_PWD, true, null);
+		assertTrue("unseen application uninstall succeeded", output.contains("Access denied") || output.contains("no_permission_access_is_denied"));
+	}
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
 	public void TamperWithSecurityFileTest() throws IOException, InterruptedException {
@@ -150,7 +172,7 @@ public class LocalCloudSecurityTest extends AbstractSecuredLocalCloudTest{
 		String fakeCloudAdminUserAndPassword = "John";
 
 		String originalFilePath = getBuildSecurityFilePath();
-		String backupFilePath = originalFilePath + ".backup";
+		String backupFilePath = originalFilePath + ".tempBackup";
 		String fakeFilePath = SGTestHelper.getSGTestRootDir() + "\\src\\main\\config\\security\\fake-spring-security.xml";
 		File originalFile = new File(originalFilePath);
 		File backupFile = new File(backupFilePath);
@@ -164,7 +186,7 @@ public class LocalCloudSecurityTest extends AbstractSecuredLocalCloudTest{
 		FileUtils.deleteQuietly(originalFile);
 		FileUtils.moveFile(backupFile, originalFile);
 		
-		assertTrue("install access granted to " + fakeCloudAdminUserAndPassword, output.contains("Access is denied"));
+		assertTrue("install access granted to " + fakeCloudAdminUserAndPassword, output.contains("Access is denied") || output.contains("no_permission_access_is_denied"));
 			
 	}
 
@@ -235,7 +257,7 @@ public class LocalCloudSecurityTest extends AbstractSecuredLocalCloudTest{
 		String output = installApplicationAndWait(SIMPLE_APP_PATH, SIMPLE_APP_NAME, TIMEOUT_IN_MINUTES, user, password, isInstallExpectedToFail, null);
 		
 		if(isInstallExpectedToFail){
-			assertTrue("application installation access granted to " + user, output.contains("Access is denied"));
+			assertTrue("application installation access granted to " + user, output.contains("Access is denied") || output.contains("no_permission_access_is_denied"));
 		}
 		
 		if(output.contains("Application " + SIMPLE_APP_NAME + " installed successfully")){			
@@ -247,7 +269,7 @@ public class LocalCloudSecurityTest extends AbstractSecuredLocalCloudTest{
 		output = installServiceAndWait(SIMPLE_SERVICE_PATH, SIMPLE_SERVICE_NAME, TIMEOUT_IN_MINUTES, user, password, isInstallExpectedToFail, null);
 		
 		if(isInstallExpectedToFail){
-			assertTrue("service installation access granted to " + user, output.contains("Access is denied"));
+			assertTrue("service installation access granted to " + user, output.contains("Access is denied") || output.contains("no_permission_access_is_denied"));
 		}
 		
 		if(output.contains("Service \"" + SIMPLE_SERVICE_NAME + "\" successfully installed")){			

@@ -698,7 +698,7 @@ public class AbstractLocalCloudTest extends AbstractTest {
 			}
 			
 			if(password != null){
-				builder.append("-pwd " + password + " ");
+				builder.append("-password " + password + " ");
 			}
 			
 			builder.append(securedRestUrl);

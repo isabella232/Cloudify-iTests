@@ -75,7 +75,7 @@ public class ApplicationInstaller extends RecipeInstaller {
 		String password = getCloudifyPassword();
 		
 		if(StringUtils.isNotBlank(user) && StringUtils.isNotBlank(password)){
-			return("connect -user " + user + " -pwd " + password + " " + getRestUrl());
+			return("connect -user " + user + " -password " + password + " " + getRestUrl());
 		}
 
 		return("connect " + getRestUrl());

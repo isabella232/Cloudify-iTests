@@ -1,7 +1,9 @@
 package test.cli.cloudify.cloud;
 
+import java.io.File;
 import java.io.IOException;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.testng.Assert;
 
@@ -13,6 +15,8 @@ import framework.utils.CloudBootstrapper;
 
 public abstract class NewAbstractSecurityCloudTest extends NewAbstractCloudTest{
 
+	private static final String BUILD_SECURITY_FILE_PATH = SGTestHelper.getBuildDir().replace('\\', '/') + "/config/security/spring-security.xml";
+	private static final String BUILD_SECURITY_BACKUP_FILE_PATH = SGTestHelper.getBuildDir().replace('\\', '/') + "/config/security/spring-security.xml.backup";
 	private static final String DEFAULT_SECURITY_FILE_PATH = SGTestHelper.getSGTestRootDir().replace('\\', '/') + "/src/main/config/security/spring-security.xml";
 	private static final String DEFAULT_KEYSTORE_FILE_PATH = SGTestHelper.getSGTestRootDir().replace('\\', '/') + "/src/main/config/security/keystore";
 	private static final String DEFAULT_KEYSTORE_PASSWORD = "sgtest";
@@ -24,8 +28,26 @@ public abstract class NewAbstractSecurityCloudTest extends NewAbstractCloudTest{
 		securedBootstrapper.secured(true).securityFilePath(DEFAULT_SECURITY_FILE_PATH);
 		securedBootstrapper.keystoreFilePath(DEFAULT_KEYSTORE_FILE_PATH).keystorePassword(DEFAULT_KEYSTORE_PASSWORD);
 		service.setBootstrapper(securedBootstrapper);
+				
+		// GS-1286 creating a backup for the security xml file. Shouldn't be here.
+		File originalFile = new File(BUILD_SECURITY_FILE_PATH);
+		File backupFile = new File(BUILD_SECURITY_BACKUP_FILE_PATH);
+		
+		FileUtils.copyFile(originalFile, backupFile);
 		
 		super.bootstrap(service);
+	}
+	
+	@Override
+	protected void teardown() throws Exception {
+		
+		File originalFile = new File(BUILD_SECURITY_FILE_PATH);
+		File backupFile = new File(BUILD_SECURITY_BACKUP_FILE_PATH);
+		
+		FileUtils.deleteQuietly(originalFile);
+		FileUtils.moveFile(backupFile, originalFile);
+		
+		super.teardown();
 	}
 	
 	protected String installApplicationAndWait(String applicationPath, String applicationName, int timeout, final String cloudifyUsername,
@@ -126,8 +148,6 @@ public abstract class NewAbstractSecurityCloudTest extends NewAbstractCloudTest{
 	}
 
 	protected String connectCommand(String user, String password){
-
-//		return("connect -user " + user + " -pwd " + password + " " + getRestUrl());
 		
 		StringBuilder builder = new StringBuilder();
 		
@@ -138,7 +158,7 @@ public abstract class NewAbstractSecurityCloudTest extends NewAbstractCloudTest{
 		}
 		
 		if(password != null){
-			builder.append("-pwd " + password + " ");
+			builder.append("-password " + password + " ");
 		}
 		
 		builder.append(getRestUrl());

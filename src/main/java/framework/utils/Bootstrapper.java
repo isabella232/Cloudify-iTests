@@ -123,11 +123,11 @@ public abstract class Bootstrapper {
 		}
 		
 		if(StringUtils.isNotBlank(password)){
-			builder.append("-pwd " + password + " ");
+			builder.append("-password " + password + " ");
 		}
 		
 		if(StringUtils.isNotBlank(securityFilePath)){
-			builder.append("-securityFile " + securityFilePath + " ");
+			builder.append("-security-file " + securityFilePath + " ");
 		}
 		
 		if(StringUtils.isNotBlank(keystoreFilePath)){
@@ -135,7 +135,7 @@ public abstract class Bootstrapper {
 		}
 		
 		if(StringUtils.isNotBlank(keystorePassword)){
-			builder.append("-keystorePassword " + keystorePassword + " ");
+			builder.append("-keystore-password " + keystorePassword + " ");
 		}
 			
 		if (bootstrapCommandParts.length == 2) {
@@ -157,7 +157,7 @@ public abstract class Bootstrapper {
 				//TODO : More validations
 				connectCommandBuilder.append("-user").append(" ")
 				.append(user).append(" ")
-				.append("-pwd").append(" ")
+				.append("-password").append(" ")
 				.append(password).append(" ");
 			}
 			connectCommandBuilder.append(restUrl).append(";");

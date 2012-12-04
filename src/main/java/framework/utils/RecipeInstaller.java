@@ -150,7 +150,7 @@ public abstract class RecipeInstaller {
 			//TODO : More validations
 			connectCommandBuilder.append("-user").append(" ")
 			.append(cloudifyUsername).append(" ")
-			.append("-pwd").append(" ")
+			.append("-password").append(" ")
 			.append(cloudifyPassword).append(" ");
 		}
 		connectCommandBuilder.append(restUrl).append(";");
@@ -207,7 +207,7 @@ public abstract class RecipeInstaller {
 			//TODO : More validations
 			connectCommandBuilder.append("-user").append(" ")
 			.append(cloudifyUsername).append(" ")
-			.append("-pwd").append(" ")
+			.append("-password").append(" ")
 			.append(cloudifyPassword).append(" ");
 		}
 		connectCommandBuilder.append(restUrl).append(";");

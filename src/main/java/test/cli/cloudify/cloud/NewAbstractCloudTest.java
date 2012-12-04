@@ -155,7 +155,7 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 					Assert.fail("Leaked nodes were found!");
 				}
 				break;
-			} catch (final Throwable t) {
+			} catch (final Exception t) {
 				first = t;
 				LogUtils.log("Failed scaning for leaked nodes. attempt number " + (i + 1) , t);
 			}

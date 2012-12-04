@@ -2,15 +2,21 @@ package test.cli.cloudify.cloud.ec2;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 
 import junit.framework.Assert;
 
+import org.jclouds.compute.domain.ComputeMetadata;
+import org.jclouds.compute.domain.NodeMetadata;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import test.cli.cloudify.CommandTestUtils;
+import test.cli.cloudify.cloud.JcloudsUtils;
 import test.cli.cloudify.cloud.NewAbstractCloudTest;
 import test.cli.cloudify.cloud.services.ec2.Ec2CloudService;
 import framework.utils.IOUtils;
@@ -28,6 +34,7 @@ public class Ec2AddTemplatesTest extends NewAbstractCloudTest {
 	private final String TEMPLATE_FOLDER_PATH = SERVICE_FOLDER_PATH + "/templates";
 	private final String TEMPLATE_NAME = "UBUNTU_TEST";
 	private final String TEMPLATE_PROPERTIES_FILE_PATH = TEMPLATE_FOLDER_PATH + "/ubuntu-template.properties";
+	private final String UBUNTU_IMAGE_ID = "us-east-1/ami-82fa58eb";
 
 
 
@@ -68,6 +75,7 @@ public class Ec2AddTemplatesTest extends NewAbstractCloudTest {
 
 		//install service
 		installServiceAndWait(SERVICE_FOLDER_PATH, SERVICE_NAME);
+		assertImageID(UBUNTU_IMAGE_ID);
 		
 		uninstallServiceIfFound(SERVICE_NAME);	
 		// remove templates
@@ -75,6 +83,22 @@ public class Ec2AddTemplatesTest extends NewAbstractCloudTest {
 		output = CommandTestUtils.runCommandAndWait(command);
 		Assert.assertTrue(output.contains("Template " + TEMPLATE_NAME + " removed successfully"));
 		assertTempalteRemoved(TEMPLATE_NAME);
+	}
+
+	private void assertImageID(String expectedImageID) {
+		JcloudsUtils.createContext(getService());
+		Set<? extends ComputeMetadata> allNodes = JcloudsUtils.getAllNodes();
+		List<String> foundImages = new LinkedList<String>();
+		for (ComputeMetadata computeMetadata : allNodes) {
+			NodeMetadata nodeMetadata = (NodeMetadata)computeMetadata;
+			String imageId = nodeMetadata.getImageId();
+			foundImages.add(imageId);
+			if (expectedImageID.equals(imageId)) {
+				return;
+			}
+		}
+		Assert.fail("Expecting to find image id " + expectedImageID + ", but found " + foundImages);
+		
 	}
 
 	private void updatePropertiesFile() throws IOException {

@@ -3,8 +3,11 @@ package test.cli.cloudify;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URLDecoder;
 import java.text.MessageFormat;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
 import framework.tools.SGTestHelper;
@@ -76,7 +79,13 @@ public class CommandTestUtils {
     	final Process process = pb.start();
     	return process;
     }
-	
+
+    public static int startLocalProcess(String command, String dirToStratIn) throws Exception {
+        dirToStratIn = URLDecoder.decode(dirToStratIn, "ISO-8859-1");
+        Process p = Runtime.getRuntime().exec("cmd /c start cmd.exe /K \"cd /d" + dirToStratIn + " && " + command + " && exit\"");
+        return p.waitFor();
+    }
+    
     public static class ProcessResult {
     	
     	private final String output;

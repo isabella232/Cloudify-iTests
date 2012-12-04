@@ -1,9 +1,14 @@
 package test.cli.cloudify.cloud;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.Map;
 
+import org.apache.commons.exec.environment.EnvironmentUtils;
+import org.apache.tools.ant.launch.Launcher;
 import org.openspaces.admin.Admin;
 import org.testng.Assert;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 
 import test.AbstractTestSupport;
@@ -56,7 +61,26 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 	 */
 	protected abstract boolean isReusableCloud();
 
-	@BeforeMethod
+	@BeforeClass(alwaysRun = true)
+    public void beforeClass() throws Exception {  
+        LogUtils.log("Running before Class method");
+        if(System.getProperty("copyCloudifyJars") != null)
+            copyCloudifyJars(getCloudName());
+    }
+	
+	private void copyCloudifyJars(String cloudName) throws Exception{
+        String clodifySourceDir = ScriptUtils.getCloudifySourceDir() + "cloudify";
+	    CommandTestUtils.startLocalProcess("mvn clean package -DskipTests",
+	            clodifySourceDir);
+	    CommandTestUtils.startLocalProcess("ant -f copy_jars_local.xml \"Copy Cloudify jars to install dir\"",
+	            clodifySourceDir);
+	    CommandTestUtils.startLocalProcess("ant -f copy_jars_local.xml \"Copy Cloudify jars to " + getCloudName() + " upload dir\"",
+	            clodifySourceDir);
+    }
+
+    
+
+    @BeforeMethod
 	public void beforeTest() {	
 		LogUtils.log("Creating test folder");
 	}

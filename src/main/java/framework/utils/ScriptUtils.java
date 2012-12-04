@@ -26,6 +26,7 @@ import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
+import org.cloudifysource.dsl.internal.CloudifyConstants;
 import org.codehaus.groovy.control.CompilationFailedException;
 import org.hyperic.sigar.Sigar;
 
@@ -152,6 +153,16 @@ public class ScriptUtils {
     
     public static boolean isLinuxMachine() {
         return !isWindows();
+    }
+    
+    public static String getCloudifySourceDir() {
+        String referencePath = getClassLocation(CloudifyConstants.class);
+        String ans = "";
+        String[] split = referencePath.split("/");
+        for (int i = 0; i < split.length - 8; i++) {
+            ans += split[i] + "\\";
+        }
+        return ans.substring(1, ans.length());
     }
 
     public static String getBuildPath() {

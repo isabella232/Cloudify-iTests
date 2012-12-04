@@ -79,7 +79,7 @@ public class AbstractLocalCloudTest extends AbstractTest {
 	protected boolean isSecured = false;
 	protected String user = null;
 	protected String password = null;
-	protected final int securedRestPort = 8443;
+	protected final int securedRestPort = 8100;
 	protected static String securedRestUrl = null;
 	
 	protected boolean checkIsDevEnv() {

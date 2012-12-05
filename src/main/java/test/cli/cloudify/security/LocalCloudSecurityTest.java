@@ -39,7 +39,7 @@ public class LocalCloudSecurityTest extends AbstractSecuredLocalCloudTest{
 		uninstallApplicationIfFound(GROOVY_APP_NAME, SecurityConstants.ALL_ROLES_USER_PWD, SecurityConstants.ALL_ROLES_USER_PWD);
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
 	public void installAndUninstallTest() throws IOException, InterruptedException {
 
 		installAndUninstall(SecurityConstants.APP_MANAGER_AND_VIEWER_USER_PWD, SecurityConstants.APP_MANAGER_AND_VIEWER_USER_PWD, false);
@@ -50,7 +50,7 @@ public class LocalCloudSecurityTest extends AbstractSecuredLocalCloudTest{
 		installAndUninstall(SecurityConstants.NO_ROLE_USER_PWD, SecurityConstants.NO_ROLE_USER_PWD, true);
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
 	public void installAndUninstallWithDifferentUsersTest() throws IOException, InterruptedException {
 		
 		installApplicationAndWait(SIMPLE_APP_PATH, SIMPLE_APP_NAME, TIMEOUT_IN_MINUTES, SecurityConstants.APP_MANAGER_AND_VIEWER_USER_PWD, SecurityConstants.APP_MANAGER_AND_VIEWER_USER_PWD, false, null);
@@ -62,7 +62,7 @@ public class LocalCloudSecurityTest extends AbstractSecuredLocalCloudTest{
 	
 	}
 
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
 	public void installWithoutCredentialsTest() throws IOException, InterruptedException{
 
 		String output = installApplicationAndWait(SIMPLE_APP_PATH, SIMPLE_APP_NAME, TIMEOUT_IN_MINUTES, null, null, true, null);
@@ -70,7 +70,7 @@ public class LocalCloudSecurityTest extends AbstractSecuredLocalCloudTest{
 		assertTrue("install access granted to an Anonymous user" , output.contains(BAD_CREDENTIALS_MESSAGE));
 	}
 
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
 	public void installingAndViewingTest() throws IOException, InterruptedException{
 
 		installApplicationAndWait(SIMPLE_APP_PATH, SIMPLE_APP_NAME, TIMEOUT_IN_MINUTES, SecurityConstants.APP_MANAGER_USER_PWD, SecurityConstants.APP_MANAGER_USER_PWD, false, null);
@@ -96,7 +96,7 @@ public class LocalCloudSecurityTest extends AbstractSecuredLocalCloudTest{
 
 	}
 
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
 	public void loginTest() {
 
 		String output = "no output";
@@ -122,7 +122,7 @@ public class LocalCloudSecurityTest extends AbstractSecuredLocalCloudTest{
 		
 	}
 
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
 	public void loginWithNonexistentUserTest() {
 
 		String output = "no output";
@@ -132,7 +132,7 @@ public class LocalCloudSecurityTest extends AbstractSecuredLocalCloudTest{
 		assertTrue("login succeeded for user: " + SecurityConstants.CLOUD_ADMIN_USER_PWD + "bad", output.contains(BAD_CREDENTIALS_MESSAGE));			
 	}
 
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
 	public void connectWithWrongPassword() {
 
 		String output = connect(SecurityConstants.CLOUD_ADMIN_USER_PWD, SecurityConstants.CLOUD_ADMIN_USER_PWD + "bad", true);		
@@ -160,7 +160,7 @@ public class LocalCloudSecurityTest extends AbstractSecuredLocalCloudTest{
 		assertTrue("install succeeded with authGroup ROLE_CLOUDADMINS for: " + SecurityConstants.APP_MANAGER_AND_VIEWER_DESCRIPTIN, output.contains(ACCESS_DENIED_MESSAGE));
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
 	public void installAndUninstallWithDifferentGroup() throws IOException, InterruptedException {
 		
 		String output = "no output";
@@ -261,7 +261,7 @@ public class LocalCloudSecurityTest extends AbstractSecuredLocalCloudTest{
 		
 		if(appName.equalsIgnoreCase(SIMPLE_APP_NAME)){
 			
-			output = listInstances(viewerName, viewerPassword, SIMPLE_APP_NAME + "." + SIMPLE_SERVICE_NAME);
+			output = listInstances(viewerName, viewerPassword, SIMPLE_APP_NAME, SIMPLE_SERVICE_NAME);
 			
 			if(isVisible){	
 				
@@ -275,7 +275,7 @@ public class LocalCloudSecurityTest extends AbstractSecuredLocalCloudTest{
 		}
 		else{	
 			
-			output = listInstances(viewerName, viewerPassword, GROOVY_APP_NAME + "." + GROOVY_SERVICE_NAME);
+			output = listInstances(viewerName, viewerPassword, GROOVY_APP_NAME, GROOVY_SERVICE_NAME);
 
 			if(isVisible){	
 				assertTrue(viewerDescription + " doesn't see the instances of " + installer, output.contains(INSTANCE_VERIFICATION_STRING));			

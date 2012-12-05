@@ -42,7 +42,7 @@ public class ByonCloudService extends AbstractCloudService {
 	protected static final String NEW_URL_PREFIX = "http://tarzan/builds/GigaSpacesBuilds/cloudify";
 	protected static final String NEW_XAP_URL_PREFIX = "http://tarzan/builds/GigaSpacesBuilds";
 	
-	private static final String DEV_MODE_MACHINES = /* Populate with the machines you wish to use */ "";
+	private static final String DEV_MODE_MACHINES = /* Populate with the machines you wish to use */ "pc-lab111,pc-lab112";
 	
 	public static final String ENV_VARIABLE_NAME = "GIGASPACES_TEST_ENV";
 	public static final String ENV_VARIABLE_VALUE = "DEFAULT_ENV_VARIABLE";
@@ -117,7 +117,7 @@ public class ByonCloudService extends AbstractCloudService {
 		propsToReplace.put("// cloudifyUrl", "cloudifyUrl");
 		
 		if (!sudo) {
-			propsToReplace.put("\"privileged true\"", "\"privileged false\"");
+			propsToReplace.put("privileged true", "privileged false");
 		}
 		
 		if (StringUtils.isNotBlank(ipList)) {

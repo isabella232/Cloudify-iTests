@@ -1,11 +1,7 @@
 package test.cli.cloudify.cloud;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.Map;
 
-import org.apache.commons.exec.environment.EnvironmentUtils;
-import org.apache.tools.ant.launch.Launcher;
 import org.openspaces.admin.Admin;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;

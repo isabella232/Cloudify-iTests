@@ -1,4 +1,4 @@
-package test.cli.cloudify;
+package test.cli.cloudify.security;
 
 import java.io.File;
 import java.io.IOException;
@@ -7,7 +7,7 @@ import org.apache.commons.io.FileUtils;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.Test;
 
-import test.cli.cloudify.security.SecurityConstants;
+import test.cli.cloudify.AbstractSecuredLocalCloudTest;
 import framework.tools.SGTestHelper;
 
 public class LocalCloudSecurityTest extends AbstractSecuredLocalCloudTest{

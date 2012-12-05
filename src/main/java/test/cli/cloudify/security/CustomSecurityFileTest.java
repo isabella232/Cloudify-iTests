@@ -1,10 +1,12 @@
-package test.cli.cloudify;
+package test.cli.cloudify.security;
 
 import java.io.IOException;
 import java.util.concurrent.TimeoutException;
 
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+
+import test.cli.cloudify.AbstractSecuredLocalCloudTest;
 
 import framework.tools.SGTestHelper;
 import framework.utils.ApplicationInstaller;

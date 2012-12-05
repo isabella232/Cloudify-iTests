@@ -19,11 +19,15 @@ package test;
 import java.io.File;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
+import org.openspaces.admin.Admin;
+import org.openspaces.admin.AdminFactory;
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.openspaces.admin.pu.ProcessingUnitInstance;
 
 import framework.utils.AssertUtils;
+import framework.utils.LogUtils;
 import framework.utils.AssertUtils.RepetitiveConditionProvider;
 import framework.utils.DumpUtils;
 
@@ -33,7 +37,46 @@ public abstract class AbstractTestSupport {
 	public static final long DEFAULT_TEST_TIMEOUT = 15 * 60 * 1000;
 	public static final long OPERATION_TIMEOUT = 5 * 60 * 1000;
 	public static final String SUSPECTED = "SUSPECTED";
+	
+	private static final int CREATE_ADMIN_TIMEOUT = 120 * 1000; // two minutes
 
+	protected Admin createAdmin() throws TimeoutException, InterruptedException {
+		
+		long endTime = System.currentTimeMillis() + CREATE_ADMIN_TIMEOUT;
+
+		while (System.currentTimeMillis() < endTime) {
+			Admin admin = createAdminFactory().create();
+
+			try {
+				if (!isFilteredAdmin()) {
+					AssertUtils.assertTrue("Failed to discover lookup service even though admin was created", admin.getLookupServices().waitFor(1, 1, TimeUnit.MINUTES));
+					AssertUtils.assertTrue("Failed to discover lookup service even though admin was created", admin.getProcessingUnits().waitFor("rest", 1, TimeUnit.MINUTES) != null);
+					return admin;
+				} else {
+					return admin; // filtered, cant wait for anything
+				}
+			} catch (final AssertionError ae) {
+				LogUtils.log("Failed to create admin succesfully --> " + ae.getMessage());
+				LogUtils.log("Closing admin and retrying");
+				if (admin != null) {
+					admin.close();
+					admin = null;
+				}
+				Thread.sleep(5000);
+			}
+
+		}
+		throw new TimeoutException("Timed out while creating admin");
+	}
+	
+	protected AdminFactory createAdminFactory() {
+		return new AdminFactory();
+	}
+	
+	protected boolean isFilteredAdmin() {
+		return false;
+	}
+	
 	protected File getTestFolder() {
 	    return DumpUtils.getTestFolder();
 	}

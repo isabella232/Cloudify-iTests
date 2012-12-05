@@ -7,7 +7,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 import org.openspaces.admin.Admin;
 import org.openspaces.admin.AdminFactory;
@@ -36,9 +35,7 @@ import com.gigaspaces.security.directory.UserDetails;
 public class AdminUtils {
 	
 	private static final int TIMEOUT = 15 * 60; //default - 15 minutes
-	
-	private static final int CREATE_ADMIN_TIMEOUT = 120 * 1000; // two minutes
-	
+		
 	/**
 	 * @return lookup group environment variable value or null if undefined.
 	 */
@@ -73,34 +70,6 @@ public class AdminUtils {
 		Admin admin = createAdmin(new AdminFactory());
 		admin.setDefaultTimeout(TIMEOUT, TimeUnit.SECONDS); //default - 15 minutes
 		return admin;
-	}
-	
-	public static Admin createAdminAndWaitForManagement(AdminFactory factory) throws TimeoutException, InterruptedException {
-		
-		long endTime = System.currentTimeMillis() + CREATE_ADMIN_TIMEOUT;
-
-		while (System.currentTimeMillis() < endTime) {
-			Admin admin = factory.create();
-
-			try {
-					// make sure lus is discovered
-					AssertUtils.assertTrue("Failed to discover lookup service even though admin was created", admin.getLookupServices().waitFor(1, 1, TimeUnit.MINUTES));
-					// make sure rest is discovered
-					AssertUtils.assertTrue("Failed to discover lookup service even though admin was created", admin.getProcessingUnits().waitFor("rest", 1, TimeUnit.MINUTES) != null);
-					return admin;
-			} catch (final AssertionError ae) {
-				LogUtils.log("Failed to create admin succesfully --> " + ae.getMessage());
-				LogUtils.log("Closing admin and retrying");
-				if (admin != null) {
-					admin.close();
-					admin = null;
-				}
-				Thread.sleep(5000);
-			}
-
-		}
-		throw new TimeoutException("Timed out while creating admin");
-		
 	}
 	
 	public static Admin createAdmin( String username, String password, String locator, AdminFilter adminFilter ) {

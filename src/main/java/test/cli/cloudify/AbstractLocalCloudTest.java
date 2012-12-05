@@ -55,7 +55,6 @@ import test.cli.cloudify.CommandTestUtils.ProcessResult;
 
 import com.gigaspaces.internal.sigar.SigarHolder;
 
-import framework.utils.AdminUtils;
 import framework.utils.ApplicationInstaller;
 import framework.utils.DumpUtils;
 import framework.utils.LogUtils;
@@ -196,7 +195,7 @@ public class AbstractLocalCloudTest extends AbstractTest {
 		Assert.assertFalse(isRequiresBootstrap(),
 				"Cannot establish connection with localcloud");
 
-		this.admin = getAdminWithLocators();
+		this.admin = super.createAdmin();
 		final boolean foundLookupService = admin.getLookupServices().waitFor(1,
 				WAIT_FOR_TIMEOUT_SECONDS, TimeUnit.SECONDS);
 		Assert.assertTrue(foundLookupService,
@@ -434,8 +433,10 @@ public class AbstractLocalCloudTest extends AbstractTest {
 			admin = null;
 		}
 	}
-
-	protected Admin getAdminWithLocators() throws TimeoutException, InterruptedException {
+	
+	@Override
+	protected AdminFactory createAdminFactory() {
+		
 		final String nicAddress = getLocalHostIpAddress();
 
 		final AdminFactory factory = new AdminFactory();
@@ -443,8 +444,8 @@ public class AbstractLocalCloudTest extends AbstractTest {
 				+ CloudifyConstants.DEFAULT_LOCALCLOUD_LUS_PORT;
 		LogUtils.log("adding locator to admin : " + locator);
 		factory.addLocator(locator);
-		LogUtils.log("Creating admin");
-		return AdminUtils.createAdminAndWaitForManagement(factory);
+		return factory;
+		
 	}
 
 	// This method implementation is used in order to access the admin api

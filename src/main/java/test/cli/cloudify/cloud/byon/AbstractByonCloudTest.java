@@ -15,10 +15,9 @@ import org.openspaces.admin.pu.ProcessingUnitInstance;
 
 import test.cli.cloudify.cloud.NewAbstractCloudTest;
 import test.cli.cloudify.cloud.services.byon.ByonCloudService;
-import framework.utils.AdminUtils;
 
 public class AbstractByonCloudTest extends NewAbstractCloudTest {
-
+	
 	@Override
 	protected void beforeTeardown() throws Exception {
 		closeAdmin();
@@ -47,14 +46,11 @@ public class AbstractByonCloudTest extends NewAbstractCloudTest {
 		createAdmin();
 	}
 
-	protected void createAdmin() throws TimeoutException, InterruptedException {
-		if (!isFilteredAdmin()) {
-			admin = AdminUtils.createAdminAndWaitForManagement(createAdminFactory());
-		} else {
-			admin = createAdminFactory().create();
-		}
+	protected Admin createAdmin() throws TimeoutException, InterruptedException {
+		return super.createAdmin();
 	}
 	
+	@Override
 	protected AdminFactory createAdminFactory() {
 		
 		ByonCloudService cloudService = getService();

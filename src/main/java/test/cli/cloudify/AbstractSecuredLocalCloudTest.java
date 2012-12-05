@@ -155,30 +155,6 @@ public class AbstractSecuredLocalCloudTest extends AbstractLocalCloudTest{
 
 	}
 
-	//	protected Application installApplication(final String applicationName, String user, String password) {
-	//
-	//		setUserAndPassword(user, password);
-	//		return installApplication(applicationName);
-	//	}
-	//
-	//	protected void uninstallApplication(final String applicationName, String user, String password) {
-	//
-	//		setUserAndPassword(user, password);
-	//		uninstallApplication(applicationName);
-	//	}
-	//
-	//	protected void installService(final String serviceName, String user, String password) {
-	//
-	//		setUserAndPassword(user, password);
-	//		installService(serviceName);
-	//	}
-	//
-	//	protected void uninstallService(final String serviceName, String user, String password) {
-	//
-	//		setUserAndPassword(user, password);
-	//		uninstallService(serviceName);
-	//	}
-
 	protected String installApplicationAndWait(String applicationPath, String applicationName, int timeout, final String cloudifyUsername,
 			final String cloudifyPassword, boolean isExpectedToFail, final String authGroups) throws IOException, InterruptedException {
 

@@ -60,6 +60,7 @@ import framework.utils.DumpUtils;
 import framework.utils.LogUtils;
 import framework.utils.PortConnectionUtils;
 import framework.utils.ScriptUtils;
+import framework.utils.ServiceInstaller;
 import framework.utils.SetupUtils;
 import framework.utils.TeardownUtils;
 
@@ -633,6 +634,16 @@ public class AbstractLocalCloudTest extends AbstractTest {
 		} catch (final InterruptedException e) {
 			Assert.fail("Failed to install service", e);
 		}
+	}
+	
+	protected String installServiceAndWait(String servicePath, String serviceName, int timeout, boolean isExpectedToFail) throws IOException, InterruptedException {
+
+		ServiceInstaller serviceInstaller = new ServiceInstaller(restUrl, serviceName);
+		serviceInstaller.recipePath(servicePath);
+		serviceInstaller.waitForFinish(true);
+		serviceInstaller.expectToFail(isExpectedToFail);
+
+		return serviceInstaller.install();
 	}
 
 	protected String listApplications(){

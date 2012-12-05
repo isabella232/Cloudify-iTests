@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 import org.cloudifysource.dsl.internal.CloudifyConstants;
 import org.openspaces.admin.Admin;
@@ -43,11 +42,7 @@ public class AbstractByonCloudTest extends NewAbstractCloudTest {
 	@Override
 	protected void afterBootstrap() throws Exception {
 		super.afterBootstrap();
-		createAdmin();
-	}
-
-	protected Admin createAdmin() throws TimeoutException, InterruptedException {
-		return super.createAdmin();
+		admin = super.createAdmin();
 	}
 	
 	@Override

@@ -5,13 +5,21 @@ import java.lang.reflect.Method;
 import java.net.InetAddress;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
+
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.conn.scheme.Scheme;
+import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.openspaces.jee.sessions.jetty.SessionData;
@@ -51,20 +59,20 @@ public class WebUtils {
 
 	public static void repetitiveAssertWebUrlAvailable(final String applicationUrl, long timeout, TimeUnit timeUnit) {
 		AssertUtils.repetitiveAssertTrue("Cannot access " + applicationUrl, new RepetitiveConditionProvider() {
-			
+
 			@Override
 			public boolean getCondition() {
 				try {
 					final HttpClient client = new DefaultHttpClient();
 					try {
 						final HttpGet get = new HttpGet(new URL(applicationUrl).toURI());
-						
-							final HttpResponse response = client.execute(get);
-							if (response.getStatusLine().getStatusCode() != 200) {
-								LogUtils.log("Failed to access " + applicationUrl + " response:"+ response.getStatusLine().getReasonPhrase() + " status code:" + response.getStatusLine().getStatusCode());
-							}
-							return true;
-						
+
+						final HttpResponse response = client.execute(get);
+						if (response.getStatusLine().getStatusCode() != 200) {
+							LogUtils.log("Failed to access " + applicationUrl + " response:"+ response.getStatusLine().getReasonPhrase() + " status code:" + response.getStatusLine().getStatusCode());
+						}
+						return true;
+
 					} finally {
 						client.getConnectionManager().shutdown();
 					}
@@ -78,6 +86,8 @@ public class WebUtils {
 
 	public static boolean isURLAvailable(URL url) throws Exception{
 		HttpClient client = new DefaultHttpClient();
+		trustAllCertificates(client);
+
 		// Do not use HEAD here! The spring framework we use does not like it. 
 		HttpGet get = new HttpGet(url.toURI());
 		try {
@@ -91,6 +101,36 @@ public class WebUtils {
 		} finally {
 			client.getConnectionManager().shutdown();
 		}
+	}
+	
+	private static void trustAllCertificates(HttpClient client) throws NoSuchAlgorithmException, KeyManagementException {
+		
+		TrustManager[] trustAllCerts = new TrustManager[]{
+				new X509TrustManager() {
+
+					public java.security.cert.X509Certificate[] getAcceptedIssuers()
+					{
+						return null;
+					}
+					public void checkClientTrusted(java.security.cert.X509Certificate[] certs, String authType)
+					{
+						//No need to implement.
+					}
+					public void checkServerTrusted(java.security.cert.X509Certificate[] certs, String authType)
+					{
+						//No need to implement.
+					}
+				}
+		};
+
+		// Install the all-trusting trust manager
+		SSLContext sc = SSLContext.getInstance("SSL");
+		sc.init(null, trustAllCerts, new java.security.SecureRandom());
+		
+		SSLSocketFactory socketFactory = new SSLSocketFactory(sc, SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
+		Scheme sch = new Scheme("https", 443, socketFactory);
+		client.getConnectionManager().getSchemeRegistry().register(sch);
+		
 	}
 
 	public static boolean waitForHost(String url, int timeout) throws Exception {

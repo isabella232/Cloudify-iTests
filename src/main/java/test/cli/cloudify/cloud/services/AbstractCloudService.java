@@ -243,7 +243,11 @@ public abstract class AbstractCloudService implements CloudService {
 			for (int i = 0; i < numberOfManagementMachines; i++) {
 				machinesURL = getMachinesUrl(restAdminUrls[i].toString());
 				LogUtils.log("Expecting " + numberOfManagementMachines + " machines");
-				LogUtils.log("Found " + CloudTestUtils.getNumberOfMachines(machinesURL) + " machines");
+				if (bootstrapper.isSecured()) {
+					LogUtils.log("Found " + CloudTestUtils.getNumberOfMachines(machinesURL, bootstrapper.getUser(), bootstrapper.getPassword()) + " machines");
+				} else {
+					LogUtils.log("Found " + CloudTestUtils.getNumberOfMachines(machinesURL) + " machines");
+				}
 			}
 		} 
 		else {

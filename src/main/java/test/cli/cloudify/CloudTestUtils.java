@@ -26,8 +26,18 @@ public class CloudTestUtils {
 	public final static long OPERATION_TIMEOUT = 5 * 60 * 1000;	
 
 	public static int getNumberOfMachines(URL machinesRestAdminUrl) throws Exception {
-		String json = WebUtils.getURLContentSwallowExceptions(machinesRestAdminUrl);
+		String json = WebUtils.getURLContent(machinesRestAdminUrl);
 		LogUtils.log("-- getNumberOfMachines received json text: " + json);
+		return parseNumberOfMachines(json);
+	}
+
+	public static int getNumberOfMachines(URL machinesRestAdminUrl, String username, String password) throws Exception {
+		String json = WebUtils.getURLContent(machinesRestAdminUrl, username, password);
+		LogUtils.log("-- getNumberOfMachines received json text: " + json);
+		return parseNumberOfMachines(json);
+	}
+	
+	private static int parseNumberOfMachines(String json) {
 		Matcher matcher = Pattern.compile("\"Size\":\"([0-9]+)\"").matcher(json);
 		if (matcher.find()) {
 			String rawSize = matcher.group(1);

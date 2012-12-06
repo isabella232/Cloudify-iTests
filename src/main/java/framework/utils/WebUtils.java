@@ -15,6 +15,8 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
 import org.apache.http.HttpResponse;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -162,6 +164,21 @@ public class WebUtils {
 	public static String getURLContent(URL url) throws ClientProtocolException, IOException, URISyntaxException, KeyManagementException, NoSuchAlgorithmException {
 		HttpClient client = new DefaultHttpClient();
 		trustAllCertificates(client);
+		HttpGet get = new HttpGet(url.toURI());
+		try {
+			return client.execute(get, new BasicResponseHandler());
+		} 
+		finally {
+			client.getConnectionManager().shutdown();
+		}        
+	}
+	
+	public static String getURLContent(URL url, String username, String password) throws ClientProtocolException, IOException, URISyntaxException, KeyManagementException, NoSuchAlgorithmException {
+		DefaultHttpClient client = new DefaultHttpClient();
+		trustAllCertificates(client);
+		client.getCredentialsProvider().setCredentials(new AuthScope(AuthScope.ANY),
+				new UsernamePasswordCredentials(username, password));
+
 		HttpGet get = new HttpGet(url.toURI());
 		try {
 			return client.execute(get, new BasicResponseHandler());

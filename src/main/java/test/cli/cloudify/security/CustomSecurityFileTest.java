@@ -3,6 +3,7 @@ package test.cli.cloudify.security;
 import java.io.IOException;
 import java.util.concurrent.TimeoutException;
 
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -28,6 +29,12 @@ public class CustomSecurityFileTest extends AbstractSecuredLocalCloudTest{
 		bootstrapper.secured(true).securityFilePath(CUSTUM_SECURITY_FILE_PATH);
 		bootstrapper.keystoreFilePath(getDefaultKeystoreFilePath()).keystorePassword(getDefaultKeystorePassword());
 		super.bootstrap(bootstrapper);		
+	}
+	
+	@AfterMethod(alwaysRun = true)
+	protected void uninstall() throws Exception {
+
+		uninstallApplicationIfFound(APP_NAME, SecurityConstants.ALL_ROLES_USER_PWD, SecurityConstants.ALL_ROLES_USER_PWD);
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)

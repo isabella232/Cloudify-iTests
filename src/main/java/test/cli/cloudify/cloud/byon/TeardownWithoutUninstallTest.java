@@ -1,5 +1,6 @@
 package test.cli.cloudify.cloud.byon;
 
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -49,6 +50,11 @@ public class TeardownWithoutUninstallTest extends AbstractByonCloudTest {
 	@Override
 	protected void beforeTeardown() throws Exception {
 		// override so as to not close the admin. we need it after teardown
+	}
+	
+	@AfterMethod(alwaysRun = true)
+	public void closeAdmin() {
+		super.closeAdmin();
 	}
 
 }

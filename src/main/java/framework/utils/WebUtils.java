@@ -57,13 +57,15 @@ public class WebUtils {
 	}
 
 
-	public static void repetitiveAssertWebUrlAvailable(final String applicationUrl, long timeout, TimeUnit timeUnit) {
+	public static void repetitiveAssertWebUrlAvailable(final String applicationUrl, long timeout, TimeUnit timeUnit) throws KeyManagementException, NoSuchAlgorithmException {
+		final HttpClient client = new DefaultHttpClient();
+		trustAllCertificates(client);
+
 		AssertUtils.repetitiveAssertTrue("Cannot access " + applicationUrl, new RepetitiveConditionProvider() {
 
 			@Override
 			public boolean getCondition() {
 				try {
-					final HttpClient client = new DefaultHttpClient();
 					try {
 						final HttpGet get = new HttpGet(new URL(applicationUrl).toURI());
 
@@ -146,6 +148,7 @@ public class WebUtils {
 	@Deprecated
 	public static String getURLContentSwallowExceptions(URL url) throws Exception {
 		HttpClient client = new DefaultHttpClient();
+		trustAllCertificates(client);
 		HttpGet get = new HttpGet(url.toURI());
 		try {
 			return client.execute(get, new BasicResponseHandler());
@@ -156,8 +159,9 @@ public class WebUtils {
 		}        
 	}
 
-	public static String getURLContent(URL url) throws ClientProtocolException, IOException, URISyntaxException {
+	public static String getURLContent(URL url) throws ClientProtocolException, IOException, URISyntaxException, KeyManagementException, NoSuchAlgorithmException {
 		HttpClient client = new DefaultHttpClient();
+		trustAllCertificates(client);
 		HttpGet get = new HttpGet(url.toURI());
 		try {
 			return client.execute(get, new BasicResponseHandler());

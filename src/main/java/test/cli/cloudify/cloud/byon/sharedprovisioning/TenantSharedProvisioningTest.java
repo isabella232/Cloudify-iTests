@@ -7,12 +7,17 @@ import org.cloudifysource.dsl.internal.CloudifyConstants;
 import org.cloudifysource.dsl.utils.ServiceUtils;
 import org.openspaces.admin.machine.Machine;
 import org.testng.annotations.AfterClass;
-import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import test.cli.cloudify.cloud.NewAbstractSecurityCloudTest;
+import test.cli.cloudify.cloud.services.CloudService;
+import test.cli.cloudify.cloud.services.CloudServiceManager;
+import framework.utils.ApplicationInstaller;
 import framework.utils.AssertUtils;
+import framework.utils.CloudBootstrapper;
 import framework.utils.ProcessingUnitUtils;
+import framework.utils.ServiceInstaller;
 
 public class TenantSharedProvisioningTest extends AbstractSharedProvisioningByonCloudTest {
 		
@@ -25,7 +30,16 @@ public class TenantSharedProvisioningTest extends AbstractSharedProvisioningByon
 	
 	@BeforeClass(alwaysRun = true)
 	protected void bootstrap() throws Exception {
-		super.bootstrap();
+		
+		CloudBootstrapper bootstrapper = new CloudBootstrapper();
+		bootstrapper.user("Dana").password("Dana").secured(true)
+			.securityFilePath(NewAbstractSecurityCloudTest.DEFAULT_SECURITY_FILE_PATH)
+			.keystoreFilePath(NewAbstractSecurityCloudTest.DEFAULT_KEYSTORE_FILE_PATH)
+			.keystorePassword(NewAbstractSecurityCloudTest.DEFAULT_KEYSTORE_PASSWORD);
+		
+		CloudService service = CloudServiceManager.getInstance().getCloudService(getCloudName());
+		service.setBootstrapper(bootstrapper);
+		super.bootstrap(service);
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
@@ -41,8 +55,16 @@ public class TenantSharedProvisioningTest extends AbstractSharedProvisioningByon
 		AssertUtils.assertTrue("applications have ovelapping machines even though the isolation is app based", 
 				!applicationOneMachines.removeAll(applicationTwoMachines));
 		
-		super.uninstallApplicationAndWait(APPLICATION_ONE);
-		super.uninstallApplicationAndWait(APPLICATION_TWO);
+		ApplicationInstaller applicationOneInstaller = new ApplicationInstaller(getRestUrl(), APPLICATION_ONE);
+		applicationOneInstaller.cloudifyPassword("Dana").cloudifyUsername("Dana");
+		applicationOneInstaller.recipePath(APPLICATION_ONE);
+		applicationOneInstaller.uninstall();
+		
+		ApplicationInstaller applicationTwoInstaller = new ApplicationInstaller(getRestUrl(), APPLICATION_TWO);
+		applicationTwoInstaller.cloudifyPassword("Dana").cloudifyUsername("Dana");
+		applicationTwoInstaller.recipePath(APPLICATION_TWO);
+		applicationTwoInstaller.uninstall();
+
 		
 	}
 	
@@ -58,18 +80,15 @@ public class TenantSharedProvisioningTest extends AbstractSharedProvisioningByon
 		AssertUtils.assertTrue("services should be deployed on the same machine since they belong to the same tenant", 
 				serviceOneMachines.equals(serviceTwoMachines));
 		
-		super.uninstallServiceAndWait(SERVICE_ONE);
-		super.uninstallServiceAndWait(SERVICE_TWO);
+		ServiceInstaller serviceOneInstaller = new ServiceInstaller(getRestUrl(), SERVICE_ONE);
+		serviceOneInstaller.cloudifyPassword("Dana").cloudifyUsername("Dana");
+		serviceOneInstaller.recipePath(SERVICE_ONE);
+		serviceOneInstaller.uninstall();
 		
-		
-	}
-	
-	@AfterMethod
-	public void cleanup() throws IOException, InterruptedException {
-		super.uninstallApplicationIfFound(APPLICATION_ONE);
-		super.uninstallApplicationIfFound(APPLICATION_TWO);
-		super.uninstallServiceIfFound(SERVICE_ONE);
-		super.uninstallServiceIfFound(SERVICE_TWO);
+		ServiceInstaller serviceTwoInstaller = new ServiceInstaller(getRestUrl(), SERVICE_TWO);
+		serviceTwoInstaller.cloudifyPassword("Dana").cloudifyUsername("Dana");
+		serviceTwoInstaller.recipePath(SERVICE_TWO);
+		serviceTwoInstaller.uninstall();
 	}
 	
 	
@@ -77,5 +96,4 @@ public class TenantSharedProvisioningTest extends AbstractSharedProvisioningByon
 	protected void teardown() throws Exception {
 		super.teardown();
 	}
-
 }

@@ -33,9 +33,9 @@ public class TenantSharedProvisioningTest extends AbstractSharedProvisioningByon
 		
 		CloudBootstrapper bootstrapper = new CloudBootstrapper();
 		bootstrapper.user("Dana").password("Dana").secured(true)
-			.securityFilePath(NewAbstractSecurityCloudTest.DEFAULT_SECURITY_FILE_PATH)
-			.keystoreFilePath(NewAbstractSecurityCloudTest.DEFAULT_KEYSTORE_FILE_PATH)
-			.keystorePassword(NewAbstractSecurityCloudTest.DEFAULT_KEYSTORE_PASSWORD);
+			.securityFilePath(NewAbstractSecurityCloudTest.getDefaultSecurityFilePath())
+			.keystoreFilePath(NewAbstractSecurityCloudTest.getDefaultKeystoreFilePath())
+			.keystorePassword(NewAbstractSecurityCloudTest.getDefaultKeystorePassword());
 		
 		CloudService service = CloudServiceManager.getInstance().getCloudService(getCloudName());
 		service.setBootstrapper(bootstrapper);

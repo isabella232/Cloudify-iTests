@@ -54,8 +54,13 @@ public class AbstractByonCloudTest extends NewAbstractCloudTest {
 		// if the cloud is using web services 
 		if (!cloudService.isNoWebServices()){
 			managementHosts = cloudService.getRestUrls();		
-			for (String host : managementHosts) {				
-				String utlNoHttp = host.substring(7); /* remove "http://" */
+			for (String host : managementHosts) {
+				String utlNoHttp = null;
+				if (getService().getBootstrapper().isSecured()) {
+					utlNoHttp = host.substring(8); /* remove "https://" */
+				} else {
+					utlNoHttp = host.substring(7); /* remove "http://" */
+				}
 				String ip = utlNoHttp.split(":")[0];
 				factory.addLocators(ip + ":" + CloudifyConstants.DEFAULT_LUS_PORT);
 			}

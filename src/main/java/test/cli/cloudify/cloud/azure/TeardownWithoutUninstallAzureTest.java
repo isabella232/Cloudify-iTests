@@ -55,7 +55,7 @@ public class TeardownWithoutUninstallAzureTest extends NewAbstractCloudTest {
 		FileUtils.copyDirectoryToDirectory(newAzureApplication, appsDir);
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 5, enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 5, enabled = false)
 	public void testTeardownWithoutUninstall() throws Exception {
 		
 		ApplicationInstaller travelInstaller = new ApplicationInstaller(getRestUrl(), "travel");

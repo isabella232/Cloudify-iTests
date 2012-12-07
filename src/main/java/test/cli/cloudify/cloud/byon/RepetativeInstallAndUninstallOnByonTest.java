@@ -46,6 +46,7 @@ public class RepetativeInstallAndUninstallOnByonTest extends AbstractByonCloudTe
 			
 			LogUtils.log("petclinic uninstall number " + (i + 1));
 			uninstallApplicationAndWait("petclinic");
+			LogUtils.log("Application petclinic uninstalled succesfully");
 
 			mongod = admin.getProcessingUnits().waitFor("petclinic.mongod", 5, TimeUnit.MINUTES);
 			tomcat = admin.getProcessingUnits().waitFor("petclinic.tomcat", 5, TimeUnit.MINUTES);
@@ -53,7 +54,6 @@ public class RepetativeInstallAndUninstallOnByonTest extends AbstractByonCloudTe
 			AssertUtils.assertNull("Processing unit petclinic.mongod is still discovered even though it was uninstalled succesfully ", mongod);
 			AssertUtils.assertNull("Processing unit petclinic.tomcat is still discovered even though it was uninstalled succesfully ", tomcat);
 			
-			super.scanForLeakedAgentNodes();
 		}
 	}
 	

@@ -47,7 +47,7 @@ public class ScalingRulesRecipeTest extends AbstractLocalCloudTest {
 		runCommand("connect " + restUrl + ";install-service --verbose " + serviceDir);
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = false)
 	public void customServiceMonitorsAutoScalingTest() throws InterruptedException, IOException {
 		
 		final InternalProcessingUnit pu = (InternalProcessingUnit) admin.getProcessingUnits().waitFor(ABSOLUTE_SERVICE_NAME,OPERATION_TIMEOUT,TimeUnit.MILLISECONDS);

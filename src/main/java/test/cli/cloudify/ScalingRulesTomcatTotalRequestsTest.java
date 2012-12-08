@@ -59,7 +59,7 @@ public class ScalingRulesTomcatTotalRequestsTest extends AbstractLocalCloudTest 
 		}
 	}
 
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT , enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT , enabled = false)
 	public void tomcatAutoScalingTest() throws Exception {
 
 		try {

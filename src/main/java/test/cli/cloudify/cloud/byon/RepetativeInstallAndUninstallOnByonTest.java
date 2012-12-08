@@ -38,8 +38,8 @@ public class RepetativeInstallAndUninstallOnByonTest extends AbstractByonCloudTe
 			LogUtils.log("petclinic install number " + (i + 1));
 			installApplicationAndWait(ScriptUtils.getBuildPath() + "/recipes/apps/petclinic-simple", "petclinic");
 
-			ProcessingUnit mongod = admin.getProcessingUnits().waitFor("petclinic.mongod", 5, TimeUnit.MINUTES);
-			ProcessingUnit tomcat = admin.getProcessingUnits().waitFor("petclinic.tomcat", 5, TimeUnit.MINUTES);
+			ProcessingUnit mongod = admin.getProcessingUnits().waitFor("petclinic.mongod", 1, TimeUnit.MINUTES);
+			ProcessingUnit tomcat = admin.getProcessingUnits().waitFor("petclinic.tomcat", 1, TimeUnit.MINUTES);
 			
 			AssertUtils.assertNotNull("Failed to discover processing unit petclinic.mongod even though it was installed succesfully ", mongod);
 			AssertUtils.assertNotNull("Failed to discover processing unit petclinic.tomcat even though it was installed succesfully ", tomcat);
@@ -48,8 +48,8 @@ public class RepetativeInstallAndUninstallOnByonTest extends AbstractByonCloudTe
 			uninstallApplicationAndWait("petclinic");
 			LogUtils.log("Application petclinic uninstalled succesfully");
 
-			mongod = admin.getProcessingUnits().waitFor("petclinic.mongod", 5, TimeUnit.MINUTES);
-			tomcat = admin.getProcessingUnits().waitFor("petclinic.tomcat", 5, TimeUnit.MINUTES);
+			mongod = admin.getProcessingUnits().waitFor("petclinic.mongod", 1, TimeUnit.MINUTES);
+			tomcat = admin.getProcessingUnits().waitFor("petclinic.tomcat", 1, TimeUnit.MINUTES);
 			
 			AssertUtils.assertNull("Processing unit petclinic.mongod is still discovered even though it was uninstalled succesfully ", mongod);
 			AssertUtils.assertNull("Processing unit petclinic.tomcat is still discovered even though it was uninstalled succesfully ", tomcat);

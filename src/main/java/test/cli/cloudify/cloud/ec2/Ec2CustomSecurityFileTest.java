@@ -8,7 +8,8 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import test.cli.cloudify.cloud.NewAbstractSecurityCloudTest;
-import test.cli.cloudify.cloud.services.ec2.SecuredEc2CloudService;
+import test.cli.cloudify.cloud.services.CloudService;
+import test.cli.cloudify.cloud.services.CloudServiceManager;
 import test.cli.cloudify.security.SecurityConstants;
 import framework.tools.SGTestHelper;
 import framework.utils.CloudBootstrapper;
@@ -29,12 +30,13 @@ public class Ec2CustomSecurityFileTest extends NewAbstractSecurityCloudTest{
 	
 	@BeforeClass(alwaysRun = true)
 	protected void bootstrap() throws Exception {
+		CloudService service = CloudServiceManager.getInstance().getCloudService(getCloudName());
 		CloudBootstrapper bootstrapper = new CloudBootstrapper();
 		bootstrapper.secured(true).securityFilePath(CUSTUM_SECURITY_FILE_PATH);
 		bootstrapper.keystoreFilePath(getDefaultKeystoreFilePath()).keystorePassword(getDefaultKeystorePassword());
-
-		cloudService = new SecuredEc2CloudService();
-		super.bootstrap(cloudService, bootstrapper);	
+		bootstrapper.user(SecurityConstants.ALL_ROLES_USER_PWD).password(SecurityConstants.ALL_ROLES_USER_PWD);
+		service.setBootstrapper(bootstrapper);
+		super.bootstrap(cloudService);	
 	}
 	
 	@AfterClass(alwaysRun = true)

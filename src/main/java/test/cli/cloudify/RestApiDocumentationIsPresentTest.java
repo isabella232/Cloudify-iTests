@@ -19,7 +19,7 @@ public class RestApiDocumentationIsPresentTest extends AbstractLocalCloudTest {
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
 	public void test() {
 		final DefaultHttpClient httpClient = new DefaultHttpClient();
-		String url = restUrl + "/resources/restDoclet/restDoclet.html";
+		String url = restUrl + "/resources/restdoclet/restdoclet.html";
 		HttpGet get = new HttpGet(url);
 		HttpResponse response = null;
 		LogUtils.log("Validating that rest documentation exists - sending get request to " + url);

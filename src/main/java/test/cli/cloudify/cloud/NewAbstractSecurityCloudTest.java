@@ -165,9 +165,9 @@ public abstract class NewAbstractSecurityCloudTest extends NewAbstractCloudTest{
 		return null;
 	}
 	
-	protected String listServices(String user, String password){
+	protected String listServices(String user, String password, String applicationName){
 		try {
-			return CommandTestUtils.runCommandAndWait(connectCommand(user, password) + ";list-services");
+			return CommandTestUtils.runCommandAndWait(connectCommand(user, password) + ";use-application " + applicationName + ";list-services");
 		} catch (IOException e) {
 			Assert.fail("Failed to list applications", e);
 		} catch (InterruptedException e) {
@@ -179,7 +179,7 @@ public abstract class NewAbstractSecurityCloudTest extends NewAbstractCloudTest{
 	
 	protected String listInstances(String user, String password, String applicationName, String serviceName){
 		try {
-			return CommandTestUtils.runCommandAndWait(connectCommand(user, password) + ";use-application " + applicationName +";list-instances " + serviceName);
+			return CommandTestUtils.runCommandAndWait(connectCommand(user, password) + ";use-application " + applicationName + ";list-instances " + serviceName);
 		} catch (IOException e) {
 			Assert.fail("Failed to list applications", e);
 		} catch (InterruptedException e) {

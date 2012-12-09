@@ -239,10 +239,10 @@ public class AbstractSecuredLocalCloudTest extends AbstractLocalCloudTest{
 		return listInstances(applicationName, serviceName);
 	}
 
-	protected String listServices(String user, String password){
+	protected String listServices(String user, String password, String applicationName){
 
 		setUserAndPassword(user, password);
-		return listServices();
+		return listServices(applicationName);
 	}
 
 	protected String connect(String user, String password, boolean failCommand){

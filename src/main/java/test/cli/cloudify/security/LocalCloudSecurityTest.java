@@ -273,24 +273,31 @@ public class LocalCloudSecurityTest extends AbstractSecuredLocalCloudTest{
 			assertTrue(viewerDescription + " sees the application of " + installer, !output.contains(appName));
 		}
 		
-		output = listServices(viewerName, viewerPassword);
 		
 		if(isVisible){
-			if(appName.equalsIgnoreCase(SIMPLE_APP_NAME)){					
-				assertTrue(viewerDescription + " doesn't see the services of " + installer, output.contains(SIMPLE_SERVICE_NAME));
+			if(appName.equalsIgnoreCase(SIMPLE_APP_NAME)){	
+				
+				output = listServices(viewerName, viewerPassword, SIMPLE_APP_NAME);
+				assertTrue(viewerDescription + " doesn't see the services of " + installer, output.contains(SIMPLE_APP_NAME + "." + SIMPLE_SERVICE_NAME));
 			}
 			else{
-				assertTrue(viewerDescription + " doesn't see the services of " + installer, output.contains(GROOVY_SERVICE_NAME) && output.contains(GROOVY2_SERVICE_NAME));
+				
+				output = listServices(viewerName, viewerPassword, GROOVY_APP_NAME);
+				assertTrue(viewerDescription + " doesn't see the services of " + installer, output.contains(GROOVY_APP_NAME + "." + GROOVY_SERVICE_NAME) && output.contains(GROOVY_APP_NAME + "." + GROOVY2_SERVICE_NAME));
 				
 			}
 				
 		}
 		else{	
-			if(appName.equalsIgnoreCase(SIMPLE_APP_NAME)){	
-				assertTrue(viewerDescription + " sees the services of " + installer, !output.contains(SIMPLE_SERVICE_NAME));			
+			if(appName.equalsIgnoreCase(SIMPLE_APP_NAME)){
+				
+				output = listServices(viewerName, viewerPassword, SIMPLE_APP_NAME);
+				assertTrue(viewerDescription + " sees the services of " + installer, !output.contains(SIMPLE_APP_NAME + "." + SIMPLE_SERVICE_NAME));			
 			}
 			else{
-				assertTrue(viewerDescription + " sees the services of " + installer, !(output.contains(GROOVY_SERVICE_NAME) || output.contains(GROOVY2_SERVICE_NAME)));							
+				
+				output = listServices(viewerName, viewerPassword, GROOVY_APP_NAME);
+				assertTrue(viewerDescription + " sees the services of " + installer, !(output.contains(GROOVY_APP_NAME + "." + GROOVY_SERVICE_NAME) || output.contains(GROOVY_APP_NAME + "." + GROOVY2_SERVICE_NAME)));							
 			}
 		}
 		

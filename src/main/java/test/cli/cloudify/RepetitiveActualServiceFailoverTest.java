@@ -128,6 +128,8 @@ public class RepetitiveActualServiceFailoverTest extends AbstractLocalCloudTest 
 			RepetitiveConditionProvider condition = new RepetitiveConditionProvider() {	
 				@Override
 				public boolean getCondition() {
+					ProcessingUnit tomcat = admin.getProcessingUnits().waitFor(ServiceUtils.getAbsolutePUName("default", "tomcat"));
+					ProcessingUnitUtils.waitForDeploymentStatus(tomcat, DeploymentStatus.INTACT);
 					return isTomcatPageExists(client);
 				}
 			};

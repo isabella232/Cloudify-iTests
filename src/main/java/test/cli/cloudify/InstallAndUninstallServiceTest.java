@@ -7,7 +7,6 @@ import org.openspaces.admin.gsc.GridServiceContainer;
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.testng.annotations.Test;
 
-import test.usm.USMTestUtils;
 
 import org.cloudifysource.dsl.utils.ServiceUtils;
 
@@ -15,6 +14,7 @@ import framework.utils.DeploymentUtils;
 import framework.utils.DumpUtils;
 import framework.utils.LogUtils;
 import framework.utils.AssertUtils.RepetitiveConditionProvider;
+import framework.utils.usm.USMTestUtils;
 
 public class InstallAndUninstallServiceTest extends AbstractLocalCloudTest {
 

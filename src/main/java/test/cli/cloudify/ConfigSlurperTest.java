@@ -9,9 +9,10 @@ import org.openspaces.pu.service.ServiceDetails;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import test.usm.USMTestUtils;
 
 import org.cloudifysource.dsl.utils.ServiceUtils;
+
+import framework.utils.usm.USMTestUtils;
 
 public class ConfigSlurperTest extends AbstractLocalCloudTest {
 

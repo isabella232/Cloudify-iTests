@@ -15,7 +15,8 @@ import org.openspaces.admin.pu.ProcessingUnit;
 import org.openspaces.admin.pu.ProcessingUnitInstance;
 import org.testng.annotations.Test;
 
-import test.usm.USMTestUtils;
+import framework.utils.usm.USMTestUtils;
+
 
 public class SelfHealingDisabledTest extends AbstractLocalCloudTest {
 

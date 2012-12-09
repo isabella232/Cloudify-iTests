@@ -20,7 +20,6 @@ import org.openspaces.admin.pu.ProcessingUnitInstance;
 import org.openspaces.pu.service.ServiceMonitors;
 import org.testng.annotations.Test;
 
-import test.usm.USMTestUtils;
 
 import com.gigaspaces.log.AllLogEntryMatcher;
 import com.gigaspaces.log.ContinuousLogEntryMatcher;
@@ -30,6 +29,7 @@ import com.gigaspaces.log.LogProcessType;
 
 import framework.utils.LogUtils;
 import framework.utils.SigarUtils;
+import framework.utils.usm.USMTestUtils;
 
 public class StopLifecycleTest extends AbstractLocalCloudTest {
 

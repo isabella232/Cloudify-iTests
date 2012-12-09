@@ -8,8 +8,8 @@ import org.openspaces.admin.machine.Machine;
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.testng.annotations.Test;
 
-import test.usm.USMTestUtils;
 import framework.utils.LogUtils;
+import framework.utils.usm.USMTestUtils;
 
 /**
  * 

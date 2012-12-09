@@ -18,7 +18,8 @@ import org.openspaces.pu.service.ServiceDetails;
 import org.openspaces.pu.service.ServiceMonitors;
 import org.testng.annotations.Test;
 
-import test.usm.USMTestUtils;
+import framework.utils.usm.USMTestUtils;
+
 
 
 public class LifecycleDetailsMonitorMapClosureTest extends AbstractLocalCloudTest{

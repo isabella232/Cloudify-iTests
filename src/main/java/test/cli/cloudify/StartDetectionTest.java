@@ -26,10 +26,10 @@ import org.openspaces.admin.pu.DeploymentStatus;
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.testng.annotations.Test;
 
-import test.usm.USMTestUtils;
 
 import framework.utils.IOUtils;
 import framework.utils.LogUtils;
+import framework.utils.usm.USMTestUtils;
 
 public class StartDetectionTest extends AbstractLocalCloudTest {
 	

@@ -8,7 +8,6 @@ import org.openspaces.admin.gsc.GridServiceContainer;
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.testng.annotations.Test;
 
-import test.usm.USMTestUtils;
 
 
 import org.cloudifysource.dsl.utils.ServiceUtils;
@@ -17,6 +16,7 @@ import com.gigaspaces.log.LogEntryMatcher;
 import com.gigaspaces.log.LogEntryMatchers;
 
 import framework.utils.AssertUtils.RepetitiveConditionProvider;
+import framework.utils.usm.USMTestUtils;
 /**
  * @since 8.0.4
  * @author dank

@@ -11,8 +11,8 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import test.cli.cloudify.AbstractLocalCloudTest;
-import test.usm.USMTestUtils;
 import framework.utils.LogUtils;
+import framework.utils.usm.USMTestUtils;
 
 public class AttributesTest extends AbstractLocalCloudTest {
 

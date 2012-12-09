@@ -20,8 +20,8 @@ import org.openspaces.admin.pu.ProcessingUnitInstance;
 import org.openspaces.pu.service.ServiceMonitors;
 import org.testng.annotations.Test;
 
-import test.usm.USMTestUtils;
 import framework.utils.LogUtils;
+import framework.utils.usm.USMTestUtils;
 
 public class ProcessLocatorsTest extends AbstractLocalCloudTest {
 

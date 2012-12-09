@@ -11,8 +11,8 @@ import org.openspaces.admin.pu.ProcessingUnitInstance;
 import org.openspaces.pu.service.ServiceDetails;
 import org.testng.Assert;
 
-import test.usm.USMTestUtils;
 import framework.utils.LogUtils;
+import framework.utils.usm.USMTestUtils;
 
 /**
  * 

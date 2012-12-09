@@ -27,7 +27,6 @@ import org.openspaces.pu.service.CustomServiceMonitors;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import test.usm.USMTestUtils;
 
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.WebClient;
@@ -37,6 +36,7 @@ import framework.tools.SGTestHelper;
 import framework.utils.LogUtils;
 import framework.utils.ProcessingUnitUtils;
 import framework.utils.ScriptUtils;
+import framework.utils.usm.USMTestUtils;
 import groovy.util.ConfigObject;
 import groovy.util.ConfigSlurper;
 

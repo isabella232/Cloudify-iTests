@@ -8,8 +8,8 @@ import org.openspaces.admin.pu.ProcessingUnit;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import test.usm.USMTestUtils;
 import framework.utils.LogUtils;
+import framework.utils.usm.USMTestUtils;
 
 public class CustomCommandsOnMultipleInstancesApplicationTest extends AbstractLocalCloudTest {
 

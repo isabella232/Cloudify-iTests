@@ -8,11 +8,11 @@ import org.openspaces.admin.pu.ProcessingUnit;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import test.usm.USMTestUtils;
 
 import org.cloudifysource.dsl.utils.ServiceUtils;
 
 import framework.utils.AssertUtils.RepetitiveConditionProvider;
+import framework.utils.usm.USMTestUtils;
 
 public class InstallAndUninstallApplicationTest extends AbstractLocalCloudTest {
 

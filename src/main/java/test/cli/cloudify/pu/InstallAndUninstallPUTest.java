@@ -11,10 +11,10 @@ import org.testng.annotations.Test;
 import test.cli.cloudify.AbstractLocalCloudTest;
 import test.cli.cloudify.CommandTestUtils;
 import test.cli.cloudify.Constants;
-import test.usm.USMTestUtils;
 import framework.utils.DumpUtils;
 import framework.utils.LogUtils;
 import framework.utils.AssertUtils.RepetitiveConditionProvider;
+import framework.utils.usm.USMTestUtils;
 
 public class InstallAndUninstallPUTest extends AbstractLocalCloudTest {
 

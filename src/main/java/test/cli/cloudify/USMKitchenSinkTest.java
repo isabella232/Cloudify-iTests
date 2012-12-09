@@ -50,7 +50,6 @@ import org.openspaces.pu.service.ServiceDetails;
 import org.openspaces.pu.service.ServiceMonitors;
 import org.testng.annotations.Test;
 
-import test.usm.USMTestUtils;
 
 import com.gigaspaces.internal.sigar.SigarHolder;
 import com.gigaspaces.log.AllLogEntryMatcher;
@@ -62,6 +61,7 @@ import com.j_spaces.kernel.PlatformVersion;
 
 import framework.utils.LogUtils;
 import framework.utils.ScriptUtils;
+import framework.utils.usm.USMTestUtils;
 
 public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 

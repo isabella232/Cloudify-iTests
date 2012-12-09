@@ -38,7 +38,7 @@ public abstract class AbstractTestSupport {
 	public static final long OPERATION_TIMEOUT = 5 * 60 * 1000;
 	public static final String SUSPECTED = "SUSPECTED";
 	
-	private static final int CREATE_ADMIN_TIMEOUT = 5 * 60 * 1000; // two minutes
+	private static final int CREATE_ADMIN_TIMEOUT = 10 * 60 * 1000;
 
 	protected Admin createAdmin() throws TimeoutException, InterruptedException {
 		
@@ -49,8 +49,8 @@ public abstract class AbstractTestSupport {
 
 			try {
 				if (!isFilteredAdmin()) {
-					AssertUtils.assertTrue("Failed to discover lookup service even though admin was created", admin.getLookupServices().waitFor(1, 30, TimeUnit.SECONDS));
-					AssertUtils.assertTrue("Failed to discover rest service even though admin was created", admin.getProcessingUnits().waitFor("rest", 30, TimeUnit.SECONDS) != null);
+					AssertUtils.assertTrue("Failed to discover lookup service even though admin was created", admin.getLookupServices().waitFor(1, 2, TimeUnit.MINUTES));
+					AssertUtils.assertTrue("Failed to discover rest service even though admin was created", admin.getProcessingUnits().waitFor("rest", 2, TimeUnit.MINUTES) != null);
 					return admin;
 				} else {
 					return admin; // filtered, cant wait for anything

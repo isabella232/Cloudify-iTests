@@ -8,6 +8,7 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.Test;
 
 import test.cli.cloudify.AbstractSecuredLocalCloudTest;
+import test.cli.cloudify.CommandTestUtils;
 import framework.tools.SGTestHelper;
 import framework.utils.LogUtils;
 
@@ -37,6 +38,7 @@ public class LocalCloudSecurityTest extends AbstractSecuredLocalCloudTest{
 
 		uninstallApplicationIfFound(SIMPLE_APP_NAME, SecurityConstants.ALL_ROLES_USER_PWD, SecurityConstants.ALL_ROLES_USER_PWD);
 		uninstallApplicationIfFound(GROOVY_APP_NAME, SecurityConstants.ALL_ROLES_USER_PWD, SecurityConstants.ALL_ROLES_USER_PWD);
+		super.afterTest();
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
@@ -172,14 +174,48 @@ public class LocalCloudSecurityTest extends AbstractSecuredLocalCloudTest{
 	}
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
-	public void securityKitchenSinkTest() throws IOException, InterruptedException {
-		String output = installApplicationAndWait(SIMPLE_APP_PATH, SIMPLE_APP_NAME, TIMEOUT_IN_MINUTES, user, password, false, null);
-		output += runCommand("connect -user " + user + " -password " + password + " " + securedRestUrl + "; use-application simple");
+	public void securedUseApplicationTest() throws IOException, InterruptedException {
+		installApplicationAndWait(SIMPLE_APP_PATH, SIMPLE_APP_NAME, TIMEOUT_IN_MINUTES, user, password, false, null);
+		//Check use-application command.
+		String useApplicationOutput;
+		//appManager role has permissions to use the application
+		useApplicationOutput = useApplication(SecurityConstants.APP_MANAGER_USER_PWD, SecurityConstants.APP_MANAGER_USER_PWD, SIMPLE_APP_NAME, false);
+		assertTrue("Failed to change application context. Use-application command failed. output was: " + useApplicationOutput, 
+					useApplicationOutput.contains("Using application simple"));
 		
-		assertTrue("Failed to change application context. Use-application command failed. output was: " + output, output.contains("Using application simple"));
+		//appManager role has permissions to create a new application context
+		useApplicationOutput = useApplication(SecurityConstants.APP_MANAGER_USER_PWD, SecurityConstants.APP_MANAGER_USER_PWD, "SomeApp", false);
+		assertTrue("Failed to change application context. Use-application command failed. output was: " + useApplicationOutput, 
+					useApplicationOutput.contains("Using application SomeApp"));
 		
+		//user has viewing permission to view the existing installed app
+		useApplicationOutput = useApplication(SecurityConstants.VIEWER_USER_PWD, SecurityConstants.VIEWER_USER_PWD, SIMPLE_APP_NAME, false);
+		assertTrue("Failed to change application context. Use-application command failed. output was: " + useApplicationOutput, 
+				useApplicationOutput.contains("Using application simple"));
+		
+		//user has permission to view the app but does not have permission to create a new one.
+		useApplicationOutput = useApplication(SecurityConstants.VIEWER_USER_PWD, SecurityConstants.VIEWER_USER_PWD, "SomeApp", true);
+		assertTrue("Failed to change application context. Use-application command failed. output was: " + useApplicationOutput, 
+				useApplicationOutput.contains("Permission not granted, access is denied."));
+		
+		//user does not have permission to view the app.
+		useApplicationOutput = useApplication(SecurityConstants.NO_ROLE_USER_PWD, SecurityConstants.NO_ROLE_USER_PWD, SIMPLE_APP_NAME, true);
+		assertTrue("Failed to change application context. Use-application command failed. output was: " + useApplicationOutput, 
+				useApplicationOutput.contains("Permission not granted, access is denied."));
 	}
 	
+	private String useApplication(String user, String password,
+			String applicationName, boolean expectedFail) throws IOException, InterruptedException {
+		String useApplicationOutput;
+		String command = "connect -user " + user + " -password " + password + " " + securedRestUrl + "; use-application " + applicationName;
+		if (expectedFail) {
+			useApplicationOutput = CommandTestUtils.runCommandExpectedFail(command);
+		} else {
+			useApplicationOutput = runCommand(command);
+		}
+		return useApplicationOutput;
+	}
+
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
 	public void tamperWithSecurityFileTest() throws Exception{
 

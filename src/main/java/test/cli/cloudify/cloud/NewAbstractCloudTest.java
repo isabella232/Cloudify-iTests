@@ -1,5 +1,6 @@
 package test.cli.cloudify.cloud;
 
+import java.io.File;
 import java.io.IOException;
 
 import org.openspaces.admin.Admin;
@@ -66,12 +67,23 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 	
 	private void copyCloudifyJars(String cloudName) throws Exception{
         String clodifySourceDir = ScriptUtils.getCloudifySourceDir() + "cloudify";
-	    CommandTestUtils.startLocalProcess("mvn clean package -DskipTests",
-	            clodifySourceDir);
-	    CommandTestUtils.startLocalProcess("ant -f copy_jars_local.xml \"Copy Cloudify jars to install dir\"",
-	            clodifySourceDir);
-	    CommandTestUtils.startLocalProcess("ant -f copy_jars_local.xml \"Copy Cloudify jars to " + getCloudName() + " upload dir\"",
-	            clodifySourceDir);
+        String prefix = "";
+        String extension = "";
+        if(ScriptUtils.isWindows()) {
+            prefix = getPrefix(System.getenv("M2_HOME"));
+            extension = ".bat";
+        }
+	    ScriptUtils.startLocalProcces(clodifySourceDir, (prefix + "mvn" + extension + " clean package -DskipTests").split(" "));
+	    if(ScriptUtils.isWindows()) {	        
+	        prefix = getPrefix(System.getenv("ANT_HOME"));
+	    }
+	    ScriptUtils.startLocalProcces(clodifySourceDir, (prefix + "ant" + extension + " -f copy_jars_local.xml \"Copy Cloudify jars to install dir\"").split(" "));
+	    ScriptUtils.startLocalProcces(clodifySourceDir, (prefix + "ant" + extension + " -f copy_jars_local.xml \"Copy Cloudify jars to " + getCloudName() + " upload dir\"").split(" "));
+    }
+
+    private String getPrefix(String homeVar) {
+        String s = File.separator;
+        return "cmd /c call " + homeVar + s + "bin" + s;
     }
 
     

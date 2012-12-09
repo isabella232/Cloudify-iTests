@@ -78,12 +78,6 @@ public class CommandTestUtils {
     	return process;
     }
 
-    public static int startLocalProcess(String command, String dirToStratIn) throws Exception {
-        dirToStratIn = URLDecoder.decode(dirToStratIn, "ISO-8859-1");
-        Process p = Runtime.getRuntime().exec("cmd /c start cmd.exe /K \"cd /d" + dirToStratIn + " && " + command + " && exit\"");
-        return p.waitFor();
-    }
-    
     public static class ProcessResult {
     	
     	private final String output;

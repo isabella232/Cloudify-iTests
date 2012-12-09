@@ -36,7 +36,7 @@ public class Ec2CustomSecurityFileTest extends NewAbstractSecurityCloudTest{
 		bootstrapper.keystoreFilePath(getDefaultKeystoreFilePath()).keystorePassword(getDefaultKeystorePassword());
 		bootstrapper.user(SecurityConstants.ALL_ROLES_USER_PWD).password(SecurityConstants.ALL_ROLES_USER_PWD);
 		service.setBootstrapper(bootstrapper);
-		super.bootstrap(cloudService);	
+		super.bootstrap(service);	
 	}
 	
 	@AfterClass(alwaysRun = true)

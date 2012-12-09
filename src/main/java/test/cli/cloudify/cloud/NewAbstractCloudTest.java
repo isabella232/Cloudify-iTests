@@ -11,7 +11,7 @@ import test.AbstractTestSupport;
 import test.cli.cloudify.CommandTestUtils;
 import test.cli.cloudify.cloud.services.CloudService;
 import test.cli.cloudify.cloud.services.CloudServiceManager;
-import test.cli.cloudify.security.SecuredCloudService;
+import test.cli.cloudify.security.SecurityConstants;
 
 import com.gigaspaces.internal.utils.StringUtils;
 
@@ -302,14 +302,13 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 		final String restUrl = getRestUrl();
 		String url = null;
 		try {
-			String cloudifyUser = "";
-			String cloudifyPassword = "";
+			String cloudifyUser = null;
+			String cloudifyPassword = null;
 			
 			url = restUrl + "/service/dump/machines/?fileSizeLimit=50000000";
-			if (cloudService instanceof SecuredCloudService) {
-				SecuredCloudService securedService = (SecuredCloudService)cloudService;
-				cloudifyUser = securedService.getCloudifyUsername();
-				cloudifyPassword = securedService.getCloudifyPassword();
+			if (cloudService.getBootstrapper().isSecured()) {
+				cloudifyUser = SecurityConstants.ALL_ROLES_USER_PWD;
+				cloudifyPassword = SecurityConstants.ALL_ROLES_USER_PWD;
 			}
 			DumpUtils.dumpMachines(restUrl, cloudifyUser, cloudifyPassword);
 			

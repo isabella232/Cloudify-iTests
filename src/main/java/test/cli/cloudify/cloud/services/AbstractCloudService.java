@@ -18,6 +18,7 @@ import org.testng.Assert;
 
 import test.cli.cloudify.CloudTestUtils;
 import test.cli.cloudify.CommandTestUtils;
+import test.cli.cloudify.security.SecurityConstants;
 import framework.tools.SGTestHelper;
 import framework.utils.AssertUtils;
 import framework.utils.AssertUtils.RepetitiveConditionProvider;
@@ -181,7 +182,11 @@ public abstract class AbstractCloudService implements CloudService {
 				
 				try {
 					url = restUrls[0] + "/service/dump/machines/?fileSizeLimit=50000000";
-					DumpUtils.dumpMachines(restUrls[0], bootstrapper.getUser(), bootstrapper.getPassword());
+					if (this.bootstrapper.isSecured()) {
+						DumpUtils.dumpMachines(restUrls[0], SecurityConstants.ALL_ROLES_USER_PWD, SecurityConstants.ALL_ROLES_USER_PWD);
+					} else {
+						DumpUtils.dumpMachines(restUrls[0], null, null);
+					}
 				} catch (Exception e) {
 					LogUtils.log("Failed to create dump for this url - " + url, e);
 				}

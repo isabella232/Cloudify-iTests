@@ -7,6 +7,7 @@ import org.testng.Assert;
 
 import test.cli.cloudify.CommandTestUtils;
 import test.cli.cloudify.cloud.services.CloudService;
+import test.cli.cloudify.cloud.services.CloudServiceManager;
 import test.cli.cloudify.security.SecurityConstants;
 import framework.tools.SGTestHelper;
 import framework.utils.ApplicationInstaller;
@@ -21,10 +22,12 @@ public abstract class NewAbstractSecurityCloudTest extends NewAbstractCloudTest{
 	private static final String DEFAULT_KEYSTORE_PASSWORD = "sgtest";
 	
 	@Override
-	protected void bootstrap(CloudService service) throws Exception {
+	protected void bootstrap() throws Exception {
 		
+		CloudService service = CloudServiceManager.getInstance().getCloudService(getCloudName());
 		CloudBootstrapper securedBootstrapper = new CloudBootstrapper();
-		securedBootstrapper.secured(true).securityFilePath(DEFAULT_SECURITY_FILE_PATH).user(SecurityConstants.ALL_ROLES_USER_PWD).password(SecurityConstants.ALL_ROLES_USER_PWD);
+		securedBootstrapper.secured(true).securityFilePath(DEFAULT_SECURITY_FILE_PATH)
+			.user(SecurityConstants.ALL_ROLES_USER_PWD).password(SecurityConstants.ALL_ROLES_USER_PWD);
 		securedBootstrapper.keystoreFilePath(DEFAULT_KEYSTORE_FILE_PATH).keystorePassword(DEFAULT_KEYSTORE_PASSWORD);
 		service.setBootstrapper(securedBootstrapper);
 		

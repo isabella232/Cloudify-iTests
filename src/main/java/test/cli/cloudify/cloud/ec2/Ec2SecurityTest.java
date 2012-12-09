@@ -11,8 +11,6 @@ import org.testng.annotations.Test;
 
 import test.cli.cloudify.CommandTestUtils;
 import test.cli.cloudify.cloud.NewAbstractSecurityCloudTest;
-import test.cli.cloudify.cloud.services.ec2.SecuredEc2CloudService;
-import test.cli.cloudify.security.SecuredCloudService;
 import test.cli.cloudify.security.SecurityConstants;
 import framework.tools.SGTestHelper;
 import framework.utils.LogUtils;
@@ -38,12 +36,9 @@ public class Ec2SecurityTest extends NewAbstractSecurityCloudTest {
 	
 	private static final int TIMEOUT_IN_MINUTES = 60;
 
-	SecuredCloudService cloudService;
-
 	@BeforeClass(alwaysRun = true)
 	protected void bootstrap() throws Exception {
-		cloudService = new SecuredEc2CloudService();
-		super.bootstrap(cloudService);		
+		super.bootstrap();		
 	}
 
 	@AfterClass(alwaysRun = true)

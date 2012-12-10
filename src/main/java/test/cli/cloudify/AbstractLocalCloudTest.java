@@ -646,9 +646,13 @@ public class AbstractLocalCloudTest extends AbstractTest {
 		return serviceInstaller.install();
 	}
 
-	protected String listApplications(){
+	protected String listApplications(boolean expectedFail) {
+		String command = connectCommand() + ";list-applications";
 		try {
-			return CommandTestUtils.runCommandAndWait(connectCommand() + ";list-applications");
+			if (expectedFail) {
+				return CommandTestUtils.runCommandExpectedFail(command);
+			}
+			return CommandTestUtils.runCommandAndWait(command);
 		} catch (IOException e) {
 			Assert.fail("Failed to list applications", e);
 		} catch (InterruptedException e) {
@@ -658,9 +662,13 @@ public class AbstractLocalCloudTest extends AbstractTest {
 		return null;
 	}
 	
-	protected String listInstances(String applicationName, String serviceName){
+	protected String listInstances(String applicationName, String serviceName, boolean expectedFail){
+		String command = connectCommand() + ";use-application " + applicationName +";list-instances " + serviceName;
 		try {
-			return CommandTestUtils.runCommandAndWait(connectCommand() + ";use-application " + applicationName +";list-instances " + serviceName);
+			if (expectedFail) {
+				return CommandTestUtils.runCommandExpectedFail(command);
+			}
+			return CommandTestUtils.runCommandAndWait(command);
 		} catch (IOException e) {
 			Assert.fail("Failed to list applications", e);
 		} catch (InterruptedException e) {
@@ -670,9 +678,14 @@ public class AbstractLocalCloudTest extends AbstractTest {
 		return null;
 	}
 	
-	protected String listServices(String applicationName){
+	protected String listServices(String applicationName, boolean expectedFail){
+		String command = connectCommand() + ";use-application " + applicationName + ";list-services";
 		try {
-			return CommandTestUtils.runCommandAndWait(connectCommand() + ";use-application " + applicationName + ";list-services");
+			if (expectedFail) {
+				return CommandTestUtils.runCommandExpectedFail(command);
+			} 
+			return CommandTestUtils.runCommandAndWait(command);
+			
 		} catch (IOException e) {
 			Assert.fail("Failed to list applications", e);
 		} catch (InterruptedException e) {

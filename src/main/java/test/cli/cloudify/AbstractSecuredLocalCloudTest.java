@@ -227,22 +227,22 @@ public class AbstractSecuredLocalCloudTest extends AbstractLocalCloudTest{
 		return serviceInstaller.uninstall();
 	}
 
-	protected String listApplications(String user, String password){
+	protected String listApplications(String user, String password, boolean expectedFail){
 
 		setUserAndPassword(user, password);
-		return listApplications();
+		return listApplications(expectedFail);
 	}
 
-	protected String listInstances(String user, String password, String applicationName, String serviceName){
+	protected String listInstances(String user, String password, String applicationName, String serviceName, boolean expectedFail){
 
 		setUserAndPassword(user, password);
-		return listInstances(applicationName, serviceName);
+		return listInstances(applicationName, serviceName, expectedFail);
 	}
 
-	protected String listServices(String user, String password, String applicationName){
+	protected String listServices(String user, String password, String applicationName, boolean expectedFail){
 
 		setUserAndPassword(user, password);
-		return listServices(applicationName);
+		return listServices(applicationName, expectedFail);
 	}
 
 	protected String connect(String user, String password, boolean failCommand){

@@ -27,6 +27,11 @@ public class AbstractSecuredLocalCloudTest extends AbstractLocalCloudTest{
 	private static final String DEFAULT_KEYSTORE_PASSWORD = "sgtest";
 	private static final int BOOTSTRAP_RETRIES_BEFOREMETHOD = 1; //TODO remove this
 
+
+
+
+	private ProcessResult bootstrapResult = null;
+
 	@BeforeClass
 	public void bootstrap() throws IOException, TimeoutException, InterruptedException {
 		LocalCloudBootstrapper bootstrapper = new LocalCloudBootstrapper();
@@ -52,6 +57,7 @@ public class AbstractSecuredLocalCloudTest extends AbstractLocalCloudTest{
 	public static String getBuildSecurityBackupFilePath() {
 		return BUILD_SECURITY_BACKUP_FILE_PATH;
 	}
+
 
 	public void bootstrap(LocalCloudBootstrapper bootstrapper) throws IOException, TimeoutException, InterruptedException {
 
@@ -99,19 +105,22 @@ public class AbstractSecuredLocalCloudTest extends AbstractLocalCloudTest{
 						}
 					}
 
-					final ProcessResult bootstrapResult;
-
 					//switching from the super-user to the entered credentials
 					if(StringUtils.isNotBlank(bootstrapper.getUser()) && StringUtils.isNotBlank(bootstrapper.getPassword())){	
 						setUserAndPassword(bootstrapper.getUser(), bootstrapper.getPassword());
 					}
 
 					bootstrapResult = bootstrapper.bootstrap();
-
+					if (bootstrapper.isBootstrapExpectedToFail() && bootstrapResult.getExitcode()!=0){
+						throw new AssertionError(bootstrapResult.getOutput());
+					}
 					LogUtils.log(bootstrapResult.getOutput());
 					Assert.assertEquals(bootstrapResult.getExitcode(), 0,
 							"Bootstrap failed");
-				} catch (final Throwable t) {
+					} catch (final Throwable t) {
+					if(bootstrapper.isBootstrapExpectedToFail()){
+						throw new AssertionError(bootstrapResult.getOutput());
+					}
 					LogUtils.log("Failed to bootstrap localcloud. iteration="
 							+ i, t);
 
@@ -194,7 +203,7 @@ public class AbstractSecuredLocalCloudTest extends AbstractLocalCloudTest{
 		applicationInstaller.cloudifyPassword(cloudifyPassword);
 		applicationInstaller.uninstallIfFound();
 	}
-	
+
 	protected String installServiceAndWait(String servicePath, String serviceName, int timeout, final String cloudifyUsername,
 			final String cloudifyPassword, boolean isExpectedToFail, final String authGroups) throws IOException, InterruptedException {
 

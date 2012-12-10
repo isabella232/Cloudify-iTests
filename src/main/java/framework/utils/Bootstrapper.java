@@ -19,11 +19,20 @@ public abstract class Bootstrapper {
 	private String keystorePassword;
 	private boolean force = true;
 	private String restUrl;
+	private boolean bootstrapExpectedToFail = false;
 	
 	public String getRestUrl() {
 		return restUrl;
 	}
-
+	
+	public boolean isBootstrapExpectedToFail() {
+		return bootstrapExpectedToFail;
+	}
+	
+	public void setBootstrapExpectedToFail(boolean isAboutToFail) {
+		bootstrapExpectedToFail = isAboutToFail;
+	}
+	
 	public void setRestUrl(String restUrl) {
 		this.restUrl = restUrl;
 	}
@@ -144,7 +153,7 @@ public abstract class Bootstrapper {
 		} else {
 			// localcloud bootstrap.
 		}
-		
+	
 		return CommandTestUtils.runCloudifyCommandAndWait(builder.toString());	
 	}
 	

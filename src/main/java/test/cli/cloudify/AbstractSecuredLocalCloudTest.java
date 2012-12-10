@@ -59,7 +59,7 @@ public class AbstractSecuredLocalCloudTest extends AbstractLocalCloudTest{
 	}
 
 
-	public void bootstrap(LocalCloudBootstrapper bootstrapper) throws IOException, TimeoutException, InterruptedException {
+	public ProcessResult bootstrap(LocalCloudBootstrapper bootstrapper) throws IOException, TimeoutException, InterruptedException {
 
 		isSecured = true;	
 
@@ -112,15 +112,12 @@ public class AbstractSecuredLocalCloudTest extends AbstractLocalCloudTest{
 
 					bootstrapResult = bootstrapper.bootstrap();
 					if (bootstrapper.isBootstrapExpectedToFail() && bootstrapResult.getExitcode()!=0){
-						throw new AssertionError(bootstrapResult.getOutput());
+						return bootstrapResult;
 					}
 					LogUtils.log(bootstrapResult.getOutput());
 					Assert.assertEquals(bootstrapResult.getExitcode(), 0,
 							"Bootstrap failed");
 					} catch (final Throwable t) {
-					if(bootstrapper.isBootstrapExpectedToFail()){
-						throw new AssertionError(bootstrapResult.getOutput());
-					}
 					LogUtils.log("Failed to bootstrap localcloud. iteration="
 							+ i, t);
 
@@ -161,6 +158,8 @@ public class AbstractSecuredLocalCloudTest extends AbstractLocalCloudTest{
 				+ "FreePhysicalMem ["
 				+ machine.getOperatingSystem().getStatistics()
 				.getFreePhysicalMemorySizeInGB() + "GB]]");
+		
+		return bootstrapResult;
 
 	}
 

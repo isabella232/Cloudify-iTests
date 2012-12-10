@@ -107,8 +107,10 @@ public abstract class AbstractByonAddRemoveTemplatesTest extends AbstractByonClo
 		}
 		return super.getRestUrl();
 	}
-
 	protected String addTempaltes(TemplatesBatchHandler handler) {
+		return addTempaltes(handler, null);
+	}
+	protected String addTempaltes(TemplatesBatchHandler handler, String outputContains) {
 		String command = "connect " + getRestUrl() + ";add-templates " + handler.getTemplatesFolderPath();
 		String output = null;
 		try {
@@ -117,6 +119,9 @@ public abstract class AbstractByonAddRemoveTemplatesTest extends AbstractByonClo
 				output = CommandTestUtils.runCommandExpectedFail(command);
 			} else {
 				output = CommandTestUtils.runCommandAndWait(command);
+			}
+			if (outputContains != null) {
+				Assert.assertTrue(output.contains(outputContains));
 			}
 			assertListTempaltes(getExistTemplateNames());
 		} catch (final Exception e) {
@@ -150,7 +155,7 @@ public abstract class AbstractByonAddRemoveTemplatesTest extends AbstractByonClo
 			List<String> expectedList = new LinkedList<String>(defaultTempaltes);
 			if (expectedAfterRemove != null && !expectedAfterRemove.isEmpty()) {
 				expectedList.addAll(expectedAfterRemove);
-				assertListTempaltes(expectedAfterRemove);
+				assertListTempaltes(expectedList);
 			} 
 		} catch (final Exception e) {
 			LogUtils.log(e.getMessage(), e);
@@ -200,7 +205,10 @@ public abstract class AbstractByonAddRemoveTemplatesTest extends AbstractByonClo
 		List<String> names = new LinkedList<String>();
 		names.addAll(defaultTempaltes);
 		for (TemplatesBatchHandler handler : templatesHandlers) {
-			names.addAll(handler.getExpectedTempaltesExist());
+			final List<String> expectedTempaltesExist = handler.getExpectedTempaltesExist();
+			if (expectedTempaltesExist != null) {
+				names.addAll(expectedTempaltesExist);
+			}
 		}
 		return names;
 	}
@@ -328,7 +336,7 @@ public abstract class AbstractByonAddRemoveTemplatesTest extends AbstractByonClo
 			return addCustomTemplate(new TemplateDetails(), false, false);
 		}
 		public TemplateDetails addExpectedToFailTempalte() throws IOException {
-			return addCustomTemplate(new TemplateDetails(), false, false);
+			return addCustomTemplate(new TemplateDetails(), false, true);
 		}
 		public TemplateDetails addServiceTemplate() throws IOException {
 			return addCustomTemplate(new TemplateDetails(), true, false);

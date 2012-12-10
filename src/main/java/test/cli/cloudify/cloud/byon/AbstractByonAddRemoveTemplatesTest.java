@@ -45,6 +45,8 @@ public abstract class AbstractByonAddRemoveTemplatesTest extends AbstractByonClo
 
 	private final String[] DEFAULT_TEMPLATES = {"SMALL_LINUX"};
 	private final String TEMPLATE_NAME_PREFIX = "template_";
+	private final String UPLOAD_DIR_NAME_PREFIX = "upload";
+
 	protected final String TEMPLATES_ROOT_PATH = 
 			CommandTestUtils.getPath("src/main/resources/apps/USM/usm/services/simpleWithTemplates/templates");
 	protected final String TEMP_TEMPLATES_DIR_PATH = TEMPLATES_ROOT_PATH + File.separator + "templates.tmp";
@@ -323,36 +325,51 @@ public abstract class AbstractByonAddRemoveTemplatesTest extends AbstractByonClo
 		}
 
 		public TemplateDetails addTemplate() throws IOException {
-			return addTemplate(false);
+			return addCustomTemplate(new TemplateDetails(), false, false);
 		}
 		public TemplateDetails addExpectedToFailTempalte() throws IOException {
-			int size = numLastAddedTemplate.getAndIncrement();
-			return addCustomTemplate(TEMPLATE_NAME_PREFIX + size, "upload" + size, getNextMachineIP(false), null, true);
+			return addCustomTemplate(new TemplateDetails(), false, false);
 		}
-		public TemplateDetails addTemplate(boolean forServiceInstallation) throws IOException {
-			int size = numLastAddedTemplate.getAndIncrement();
-			return addCustomTemplate(TEMPLATE_NAME_PREFIX + size, "upload" + size, getNextMachineIP(forServiceInstallation), null, false);
+		public TemplateDetails addServiceTemplate() throws IOException {
+			return addCustomTemplate(new TemplateDetails(), true, false);
 		}
 		public TemplateDetails addExpectedToFailTemplate(TemplateDetails template) throws IOException {
-			return addCustomTemplate(template.getTemplateName(), template.getUploadDirName(), template.getMachineIP(), template.getTemplateFile().getName(), true);
+			return addCustomTemplate(template, false, true);
 		}
-		private TemplateDetails addCustomTemplate(String templateName, String uploadDirName, String nodeIP, String tempalteFileName, boolean expectedToFail) 
+		public TemplateDetails addCustomTemplate(TemplateDetails template, boolean isForService, boolean expectedToFail) 
 				throws IOException {
+			int size = numLastAddedTemplate.getAndIncrement();
+			String templateName = template.getTemplateName();
+			if (templateName == null) {
+				templateName = TEMPLATE_NAME_PREFIX + size;
+			}
 			File basicTemplateFile = new File(TEMPLATES_ROOT_PATH, TEMPLATE_FILE_NAME);
-			File addedTemplateFile;
-			if(tempalteFileName != null) {
-				addedTemplateFile = new File(templatesFolderPath, tempalteFileName);
-			} else {
+			File addedTemplateFile = template.getTemplateFile();
+			if(addedTemplateFile == null) {
 				addedTemplateFile = new File(templatesFolderPath, templateName + DSLUtils.TEMPLATE_DSL_FILE_NAME_SUFFIX);
 			}
 			replaceStringInFile(basicTemplateFile, addedTemplateFile, TEMPLATE_NAME_STRING, templateName);
 
 			Properties props = new Properties();
+			String uploadDirName = template.getUploadDirName();
+			if (uploadDirName == null) {
+				uploadDirName = UPLOAD_DIR_NAME_PREFIX + size;
+			}
 			props.put(UPLOAD_PROPERTY_NAME, '"' + uploadDirName + '"');
+			String nodeIP = template.getMachineIP();
+			if (nodeIP == null) {
+				nodeIP = getNextMachineIP(isForService);
+			}
 			props.put(NODE_IP_PROPERTY_NAME, '"' + nodeIP + '"');
 			props.put(NODE_ID_PROPERTY_NAME, "\"byon-pc-lab-" + nodeIP + "{0}\"");
-			String proeprtiesFileName = templateName + DSLUtils.TEMPLATE_FILE_NAME_SUFFIX + DSLUtils.PROPERTIES_FILE_SUFFIX;
-			File templatePropsFile = new File(templatesFolderPath, proeprtiesFileName);
+			File templatePropsFile = template.getTemplatePropertiesFile();
+			if (templatePropsFile == null) {
+				final String templateFileName = addedTemplateFile.getName();
+				final int tempalteFileNamePrefixEndIndex = templateFileName.indexOf(".");
+				final String templateFileNamePrefix = templateFileName.substring(0, tempalteFileNamePrefixEndIndex);
+				String proeprtiesFileName =  templateFileNamePrefix + DSLUtils.PROPERTIES_FILE_SUFFIX;				
+				templatePropsFile = new File(templatesFolderPath, proeprtiesFileName);
+			}
 			IOUtils.writePropertiesToFile(props, templatePropsFile);
 
 			File uploadFolder = new File(templatesFolderPath, uploadDirName);
@@ -362,7 +379,7 @@ public abstract class AbstractByonAddRemoveTemplatesTest extends AbstractByonClo
 			final File addedBootstrapManagementFile = new File(uploadFolder, BOOTSTRAP_MANAGEMENT_FILE_NAME);
 			replaceStringInFile(basicBootstrapManagementFile, addedBootstrapManagementFile, UPLOAD_DIR_NAME_STRING, uploadDirName);
 		
-			TemplateDetails tempalteDetails = new TemplateDetails(templateName, addedTemplateFile, uploadDirName, nodeIP);
+			TemplateDetails tempalteDetails = new TemplateDetails(templateName, addedTemplateFile, templatePropsFile, uploadDirName, nodeIP);
 			templatesToAdd.add(tempalteDetails);
 			
 			if (expectedToFail) {
@@ -401,12 +418,18 @@ public abstract class AbstractByonAddRemoveTemplatesTest extends AbstractByonClo
 	public class TemplateDetails {
 		private String templateName;
 		private File templateFile;
+		private File templatePropertiesFile;
 		private String uploadDirName;
 		private String machineIP;
 
-		TemplateDetails(String templateName, File templateFile, String uploadDirName, String machineIP) {
+		TemplateDetails() {
+			
+		}
+		
+		TemplateDetails(String templateName, File templateFile, File propertiesFile, String uploadDirName, String machineIP) {
 			this.templateName = templateName;
 			this.templateFile = templateFile;
+			this.templatePropertiesFile = propertiesFile;
 			this.uploadDirName = uploadDirName;
 			this.machineIP = machineIP;
 		}
@@ -440,6 +463,14 @@ public abstract class AbstractByonAddRemoveTemplatesTest extends AbstractByonClo
 			}
 			TemplateDetails tempalteDetails = (TemplateDetails) obj;
 			return this.templateName.equals(tempalteDetails.getTemplateName());
+		}
+
+		public File getTemplatePropertiesFile() {
+			return templatePropertiesFile;
+		}
+
+		public void setTemplatePropertiesFile(File templatePropertiesFile) {
+			this.templatePropertiesFile = templatePropertiesFile;
 		}
 	}
 }

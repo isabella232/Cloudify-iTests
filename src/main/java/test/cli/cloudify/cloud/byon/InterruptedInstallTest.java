@@ -42,19 +42,24 @@ public class InterruptedInstallTest extends AbstractByonCloudTest {
         processingUnit.waitFor(1, 5, TimeUnit.MINUTES);
         Machine machine = processingUnit.getInstances()[0].getMachine();
         SSHUtils.runCommand(machine.getHostAddress(), 5000, "killall -9 java", "tgrid", "tgrid");
-        
+
         try {
             Assert.assertTrue("install failed", future.get());
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
+
+        final ProcessingUnit[] processingUnits = application.getProcessingUnits().getProcessingUnits();
         AssertUtils.repetitive(new IRepetitiveRunnable() {
-            
+
             @Override
             public void run() throws Exception {
-                Assert.assertEquals("mongoConfig is not intact", DeploymentStatus.INTACT, processingUnit.getStatus());
+                for (ProcessingUnit pu : processingUnits) {
+                    Assert.assertEquals(pu.getName() + " is not intact", DeploymentStatus.INTACT, pu.getStatus());
+                }
             }
         }, 10 * 60 * 1000);
+
     }
-    
+
 }

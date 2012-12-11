@@ -42,7 +42,6 @@ public class GridServiceAgentsCounter implements GridServiceAgentAddedEventListe
     public void close() {
         admin.getGridServiceAgents().getGridServiceAgentAdded().remove(this);
         admin.getGridServiceAgents().getGridServiceAgentRemoved().remove(this);
-        admin.close();
     }
     
     public int getNumberOfGSAsAdded() {

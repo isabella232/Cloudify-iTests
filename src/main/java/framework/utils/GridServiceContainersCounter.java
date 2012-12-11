@@ -55,7 +55,6 @@ public class GridServiceContainersCounter implements GridServiceContainerAddedEv
     public void close() {
         admin.getGridServiceContainers().getGridServiceContainerAdded().remove(this);
         admin.getGridServiceContainers().getGridServiceContainerRemoved().remove(this);
-        admin.close();
     }
     
     public int getNumberOfGSCsAdded() {

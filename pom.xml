@@ -24,11 +24,15 @@
 			<groupId>com.gigaspaces</groupId>
 			<artifactId>gs-openspaces</artifactId>
 			<version>${gsVersion}</version>
+			<scope>system</scope>
+			<systemPath>${cloudify.home}/lib/required/gs-openspaces.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>com.gigaspaces</groupId>
 			<artifactId>gs-runtime</artifactId>
 			<version>${gsVersion}</version>
+			<scope>system</scope>
+			<systemPath>${cloudify.home}/lib/required/gs-runtime.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>org.cloudifysource</groupId>
@@ -139,20 +143,6 @@
 		<profile>
 			<id>tgrid-sgtest-cloudify</id>
 			<dependencies>
-				<dependency>
-					<groupId>com.gigaspaces</groupId>
-					<artifactId>gs-openspaces</artifactId>
-					<version>${gsVersion}</version>
-					<scope>system</scope>
-					<systemPath>${cloudify.home}/lib/required/gs-openspaces.jar</systemPath>
-				</dependency>
-				<dependency>
-					<groupId>com.gigaspaces</groupId>
-					<artifactId>gs-runtime</artifactId>
-					<version>${gsVersion}</version>
-					<scope>system</scope>
-					<systemPath>${cloudify.home}/lib/required/gs-runtime.jar</systemPath>
-				</dependency>
 				<dependency>
 					<groupId>org.cloudifysource</groupId>
 					<artifactId>CLI</artifactId>

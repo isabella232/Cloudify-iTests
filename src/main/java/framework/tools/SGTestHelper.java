@@ -78,7 +78,8 @@ public class SGTestHelper {
 		String sgTestJarPath = getClassLocation(SGTestHelper.class);
 		String sgTestRootDir = new File(sgTestJarPath).getParent();
 		tmp = sgTestRootDir.toLowerCase();
-		if (!tmp.contains("sgtest") && !tmp.endsWith("sgtest") && !tmp.endsWith("sgtest-xap") && !tmp.endsWith("sgtest-cloudify" ) && !tmp.endsWith("sgtest_cloudify")){
+		if (!tmp.endsWith("sgtest") && !tmp.endsWith("sgtest-xap") && !tmp.endsWith("sgtest-cloudify" ) && !tmp.endsWith("sgtest_cloudify")){
+			//TODO: handle with SGTest*
 			sgTestRootDir = new File(sgTestJarPath).getParentFile().getParent();
 		}
 		return sgTestRootDir;
@@ -87,4 +88,5 @@ public class SGTestHelper {
 	public static String getBuildDir() {
 		return ScriptUtils.getBuildPath();
 	}
+	
 }

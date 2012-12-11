@@ -28,7 +28,7 @@ public class LocalCloudSecurityKeystorePathFailTest extends AbstractSecuredLocal
 
 
 
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = false)
 	public void wrongKeystorePathTest () {
 		LocalCloudBootstrapper bootstrapper = new LocalCloudBootstrapper();
 		bootstrapper.setBootstrapExpectedToFail(true); 

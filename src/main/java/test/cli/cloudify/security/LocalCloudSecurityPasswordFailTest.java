@@ -27,7 +27,7 @@ public class LocalCloudSecurityPasswordFailTest extends AbstractSecuredLocalClou
 
 
 
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = false)
 	public void wrongPasswordTest () {
 		LocalCloudBootstrapper bootstrapper = new LocalCloudBootstrapper();
 		bootstrapper.setBootstrapExpectedToFail(true); // new flag which says bootstrapper is about to fail

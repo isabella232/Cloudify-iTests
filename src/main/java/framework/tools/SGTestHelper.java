@@ -72,17 +72,8 @@ public class SGTestHelper {
 	}
 
 	/** @return SGTest root directory */
-	public static String getSGTestRootDir()
-	{
-		String tmp;
-		String sgTestJarPath = getClassLocation(SGTestHelper.class);
-		String sgTestRootDir = new File(sgTestJarPath).getParent();
-		tmp = sgTestRootDir.toLowerCase();
-		if (!tmp.endsWith("sgtest") && !tmp.endsWith("sgtest-xap") && !tmp.endsWith("sgtest-cloudify" ) && !tmp.endsWith("sgtest_cloudify")){
-			//TODO: handle with SGTest*
-			sgTestRootDir = new File(sgTestJarPath).getParentFile().getParent();
-		}
-		return sgTestRootDir;
+	public static String getSGTestRootDir(){
+		return new File(".").getAbsolutePath();
 	}
 
 	public static String getBuildDir() {

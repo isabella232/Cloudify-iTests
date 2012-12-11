@@ -153,9 +153,13 @@ public abstract class NewAbstractSecurityCloudTest extends NewAbstractCloudTest{
 		return output;
 	}
 
-	protected String listApplications(String user, String password){
+	protected String listApplications(String user, String password, boolean expectedFail){
+		String command = connectCommand(user, password) + ";list-applications";
 		try {
-			return CommandTestUtils.runCommandAndWait(connectCommand(user, password) + ";list-applications");
+			if (expectedFail) {
+				return CommandTestUtils.runCommandExpectedFail(command);
+			}
+			return CommandTestUtils.runCommandAndWait(command);
 		} catch (IOException e) {
 			Assert.fail("Failed to list applications", e);
 		} catch (InterruptedException e) {
@@ -165,9 +169,13 @@ public abstract class NewAbstractSecurityCloudTest extends NewAbstractCloudTest{
 		return null;
 	}
 	
-	protected String listServices(String user, String password, String applicationName){
+	protected String listServices(String user, String password, String applicationName, boolean expectedFail){
+		String command = connectCommand(user, password) + ";use-application " + applicationName + ";list-services";
 		try {
-			return CommandTestUtils.runCommandAndWait(connectCommand(user, password) + ";use-application " + applicationName + ";list-services");
+			if (expectedFail) {
+				return CommandTestUtils.runCommandExpectedFail(command);
+			}
+			return CommandTestUtils.runCommandAndWait(command);
 		} catch (IOException e) {
 			Assert.fail("Failed to list applications", e);
 		} catch (InterruptedException e) {
@@ -177,9 +185,13 @@ public abstract class NewAbstractSecurityCloudTest extends NewAbstractCloudTest{
 		return null;
 	}
 	
-	protected String listInstances(String user, String password, String applicationName, String serviceName){
+	protected String listInstances(String user, String password, String applicationName, String serviceName, boolean expectedFail){
+		String command = connectCommand(user, password) + ";use-application " + applicationName + ";list-instances " + serviceName;
 		try {
-			return CommandTestUtils.runCommandAndWait(connectCommand(user, password) + ";use-application " + applicationName + ";list-instances " + serviceName);
+			if (expectedFail) {
+				return CommandTestUtils.runCommandExpectedFail(command);
+			}
+			return CommandTestUtils.runCommandAndWait(command);
 		} catch (IOException e) {
 			Assert.fail("Failed to list applications", e);
 		} catch (InterruptedException e) {

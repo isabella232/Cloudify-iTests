@@ -235,24 +235,24 @@ public class Ec2SecurityTest extends NewAbstractSecurityCloudTest {
 		
 		String output = "no output";
 		
-		output = listApplications(viewerName, viewerPassword);
-		
 		if(isVisible){
+			output = listApplications(viewerName, viewerPassword, false);
 			assertTrue(viewerDescription + " doesn't see the application of " + installer, output.contains(appName));
 		}
 		else{			
+			output = listApplications(viewerName, viewerPassword, true);
 			assertTrue(viewerDescription + " sees the application of " + installer, !output.contains(appName));
 		}
 		
 		if(isVisible){
 			if(appName.equalsIgnoreCase(SIMPLE_APP_NAME)){	
 				
-				output = listServices(viewerName, viewerPassword, SIMPLE_APP_NAME);
+				output = listServices(viewerName, viewerPassword, SIMPLE_APP_NAME, false);
 				assertTrue(viewerDescription + " doesn't see the services of " + installer, output.contains(SIMPLE_APP_NAME + "." + SIMPLE_SERVICE_NAME));
 			}
 			else{
 				
-				output = listServices(viewerName, viewerPassword, GROOVY_APP_NAME);
+				output = listServices(viewerName, viewerPassword, GROOVY_APP_NAME, true);
 				assertTrue(viewerDescription + " doesn't see the services of " + installer, output.contains(GROOVY_APP_NAME + "." + GROOVY_SERVICE_NAME) && output.contains(GROOVY_APP_NAME + "." + GROOVY2_SERVICE_NAME));
 				
 			}
@@ -260,13 +260,12 @@ public class Ec2SecurityTest extends NewAbstractSecurityCloudTest {
 		}
 		else{	
 			if(appName.equalsIgnoreCase(SIMPLE_APP_NAME)){
-				
-				output = listServices(viewerName, viewerPassword, SIMPLE_APP_NAME);
+				output = listServices(viewerName, viewerPassword, SIMPLE_APP_NAME, true);
 				assertTrue(viewerDescription + " sees the services of " + installer, !output.contains(SIMPLE_APP_NAME + "." + SIMPLE_SERVICE_NAME));			
 			}
 			else{
 				
-				output = listServices(viewerName, viewerPassword, GROOVY_APP_NAME);
+				output = listServices(viewerName, viewerPassword, GROOVY_APP_NAME, true);
 				assertTrue(viewerDescription + " sees the services of " + installer, !(output.contains(GROOVY_APP_NAME + "." + GROOVY_SERVICE_NAME) || output.contains(GROOVY_APP_NAME + "." + GROOVY2_SERVICE_NAME)));							
 			}
 		}
@@ -274,26 +273,26 @@ public class Ec2SecurityTest extends NewAbstractSecurityCloudTest {
 		
 		if(appName.equalsIgnoreCase(SIMPLE_APP_NAME)){
 			
-			output = listInstances(viewerName, viewerPassword, SIMPLE_APP_NAME, SIMPLE_SERVICE_NAME);
+			
 			
 			if(isVisible){	
-				
+				output = listInstances(viewerName, viewerPassword, SIMPLE_APP_NAME, SIMPLE_SERVICE_NAME, false);
 				assertTrue(viewerDescription + " doesn't see the instances of " + installer, output.contains(INSTANCE_VERIFICATION_STRING));
 			}
 			else{
+				output = listInstances(viewerName, viewerPassword, SIMPLE_APP_NAME, SIMPLE_SERVICE_NAME, true);
 				assertTrue(viewerDescription + " sees the instances of " + installer, !output.contains(INSTANCE_VERIFICATION_STRING));
 				
 			}
 			
 		}
 		else{	
-			
-			output = listInstances(viewerName, viewerPassword, GROOVY_APP_NAME, GROOVY_SERVICE_NAME);
-
-			if(isVisible){	
+			if(isVisible){
+				output = listInstances(viewerName, viewerPassword, GROOVY_APP_NAME, GROOVY_SERVICE_NAME, false);
 				assertTrue(viewerDescription + " doesn't see the instances of " + installer, output.contains(INSTANCE_VERIFICATION_STRING));			
 			}
 			else{
+				output = listInstances(viewerName, viewerPassword, GROOVY_APP_NAME, GROOVY_SERVICE_NAME, true);
 				assertTrue(viewerDescription + " sees the instances of " + installer, !output.contains(INSTANCE_VERIFICATION_STRING));							
 			}
 		}
@@ -327,7 +326,7 @@ public class Ec2SecurityTest extends NewAbstractSecurityCloudTest {
 	
 	
 
-//	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 20, enabled = false)
+//	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 20, enabled = true)
 //	public void testRoles() throws IOException, InterruptedException, RestException {
 //		doTest(SIMPLE_APP_NAME, SERVICE_NAME);
 //	}

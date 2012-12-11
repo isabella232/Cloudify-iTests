@@ -20,6 +20,8 @@ import framework.utils.ServiceInstaller;
 
 public class AbstractSecuredLocalCloudTest extends AbstractLocalCloudTest{
 
+	protected static final String SGTEST_ROOT_DIR = SGTestHelper.getSGTestRootDir().replace('\\', '/');
+
 	private static final String BUILD_SECURITY_FILE_PATH = SGTestHelper.getBuildDir().replace('\\', '/') + "/config/security/spring-security.xml";
 	private static final String BUILD_SECURITY_BACKUP_FILE_PATH = SGTestHelper.getBuildDir().replace('\\', '/') + "/config/security/spring-security.xml.backup";
 	private static final String DEFAULT_SECURITY_FILE_PATH = SGTestHelper.getSGTestRootDir().replace('\\', '/') + "/src/main/config/security/spring-security.xml";
@@ -169,6 +171,7 @@ public class AbstractSecuredLocalCloudTest extends AbstractLocalCloudTest{
 		ApplicationInstaller applicationInstaller = new ApplicationInstaller(securedRestUrl, applicationName);
 		applicationInstaller.recipePath(applicationPath);
 		applicationInstaller.waitForFinish(true);
+		applicationInstaller.timeoutInMinutes(timeout);
 		applicationInstaller.cloudifyUsername(cloudifyUsername);
 		applicationInstaller.cloudifyPassword(cloudifyPassword);
 		applicationInstaller.expectToFail(isExpectedToFail);
@@ -185,6 +188,7 @@ public class AbstractSecuredLocalCloudTest extends AbstractLocalCloudTest{
 		ApplicationInstaller applicationInstaller = new ApplicationInstaller(securedRestUrl, applicationName);
 		applicationInstaller.recipePath(applicationPath);
 		applicationInstaller.waitForFinish(true);
+		applicationInstaller.timeoutInMinutes(timeout);
 		applicationInstaller.cloudifyUsername(cloudifyUsername);
 		applicationInstaller.cloudifyPassword(cloudifyPassword);
 		applicationInstaller.expectToFail(isExpectedToFail);

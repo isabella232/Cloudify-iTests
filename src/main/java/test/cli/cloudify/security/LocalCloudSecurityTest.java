@@ -9,14 +9,11 @@ import org.testng.annotations.Test;
 
 import test.cli.cloudify.AbstractSecuredLocalCloudTest;
 import test.cli.cloudify.CommandTestUtils;
-import framework.tools.SGTestHelper;
 import framework.utils.LogUtils;
 
 public class LocalCloudSecurityTest extends AbstractSecuredLocalCloudTest{
 
 	private String s = File.separator;
-
-	protected static final String SGTEST_ROOT_DIR = SGTestHelper.getSGTestRootDir().replace('\\', '/');
 
 	protected static final String SIMPLE_APP_NAME = "simple";
 	protected static final String SIMPLE_APP_PATH = SGTEST_ROOT_DIR + "/src/main/resources/apps/USM/usm/applications/" + SIMPLE_APP_NAME;

@@ -111,7 +111,7 @@ public class AbstractLocalCloudTest extends AbstractTest {
 			userHomeProp = System.getProperty("user.home");
 		} else {
 			// TODO eli - fix this hack. not very nice and generic
-			userHomeProp = System.getProperty("user.dir") + "/../../"; // windows
+			userHomeProp = System.getProperty("USERPROFILE"); // windows
 			// machine
 		}
 		final File userHomeDir = new File(userHomeProp, ".cloudify");

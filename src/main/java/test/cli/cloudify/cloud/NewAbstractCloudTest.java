@@ -73,12 +73,12 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
             prefix = getPrefix(System.getenv("M2_HOME"));
             extension = ".bat";
         }
-	    ScriptUtils.startLocalProcces(cloudifySourceDir, (prefix + "mvn" + extension + " compile package -DskipTests").split(" "));
+	    ScriptUtils.startLocalProcess(cloudifySourceDir, (prefix + "mvn" + extension + " compile package -DskipTests").split(" "));
 	    if(ScriptUtils.isWindows()) {	        
 	        prefix = getPrefix(System.getenv("ANT_HOME"));
 	    }
-	    ScriptUtils.startLocalProcces(cloudifySourceDir, (prefix + "ant" + extension + " -f copy_jars_local.xml \"Copy Cloudify jars to install dir\"").split(" "));
-	    ScriptUtils.startLocalProcces(cloudifySourceDir, (prefix + "ant" + extension + " -f copy_jars_local.xml \"Copy Cloudify jars to " + getCloudName() + " upload dir\"").split(" "));
+	    ScriptUtils.startLocalProcess(cloudifySourceDir, (prefix + "ant" + extension + " -f copy_jars_local.xml \"Copy Cloudify jars to install dir\"").split(" "));
+	    ScriptUtils.startLocalProcess(cloudifySourceDir, (prefix + "ant" + extension + " -f copy_jars_local.xml \"Copy Cloudify jars to " + getCloudName() + " upload dir\"").split(" "));
     }
 
     private String getPrefix(String homeVar) {

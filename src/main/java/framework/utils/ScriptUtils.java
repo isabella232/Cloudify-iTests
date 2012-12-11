@@ -148,7 +148,7 @@ public class ScriptUtils {
 
 
     }
-    public static void startLocalProcces(String dir, String ... command) throws IOException, InterruptedException {        
+    public static void startLocalProcess(String dir, String ... command) throws IOException, InterruptedException {        
         ProcessBuilder pb = new ProcessBuilder(command).directory(new File(URLDecoder.decode(dir, "ISO-8859-1")));
         pb.redirectErrorStream(true);
         Process p = pb.start();

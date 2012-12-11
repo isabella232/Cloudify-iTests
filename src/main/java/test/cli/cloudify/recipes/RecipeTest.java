@@ -5,16 +5,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.TimeoutException;
 
-import org.testng.annotations.AfterMethod;
+import org.cloudifysource.dsl.Service;
+import org.cloudifysource.dsl.internal.DSLException;
+import org.cloudifysource.dsl.internal.ServiceReader;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import test.cli.cloudify.AbstractLocalCloudTest;
-
-import org.cloudifysource.dsl.Service;
-import org.cloudifysource.dsl.internal.DSLException;
-import org.cloudifysource.dsl.internal.ServiceReader;
-
 import framework.utils.ScriptUtils;
 
 public class RecipeTest extends AbstractLocalCloudTest {
@@ -28,14 +25,11 @@ public class RecipeTest extends AbstractLocalCloudTest {
 
 	@Override
 	@BeforeMethod
-	public void beforeTest() {
+	public void beforeTest() throws TimeoutException, InterruptedException {
+		super.beforeTest();
 		portReleasedBeforTimeout = false;
 		portTakenBeforTimeout = false;
 	}
-
-	@Override
-	@AfterMethod
-	public void afterTest() {}
 
     @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, groups = "1", enabled = false)
     public void testMongod() throws IOException, InterruptedException{
@@ -130,7 +124,4 @@ public class RecipeTest extends AbstractLocalCloudTest {
 		assertTrue("cassandra didn't take it's port and runCommand didn't throw an Exception as it should !!" , portTakenBeforTimeout);
 		assertTrue("cassandra didn't release it's port befor timeout and runCommand didn't throw an Exception as it should !!" , portReleasedBeforTimeout);
 	}
-	
-	
-	
 }

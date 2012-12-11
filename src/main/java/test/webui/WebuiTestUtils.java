@@ -67,7 +67,7 @@ public class WebuiTestUtils{
 	 * @throws InterruptedException
 	 */
 	public WebuiTestUtils() throws UnknownHostException, InterruptedException {
-		startup(null,null);
+		this(null,null);
 	}
 
 	/**
@@ -76,7 +76,7 @@ public class WebuiTestUtils{
 	 * @throws InterruptedException
 	 */
 	public WebuiTestUtils(Admin admin) throws UnknownHostException, InterruptedException {
-		startup(admin, null);
+		this(null, admin);
 	}
 
 	/**
@@ -86,7 +86,11 @@ public class WebuiTestUtils{
 	 * @throws UnknownHostException
 	 */
 	public WebuiTestUtils(CloudService cloud) throws InterruptedException, UnknownHostException{
-		startup(null,cloud);
+		this( cloud, null );
+	}
+	
+	private WebuiTestUtils(CloudService cloud, Admin admin) throws InterruptedException, UnknownHostException{
+		startup(admin, cloud);
 	}
 
 	private void startup(Admin admin, CloudService cloud) throws UnknownHostException, InterruptedException {

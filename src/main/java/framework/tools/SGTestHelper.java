@@ -78,7 +78,7 @@ public class SGTestHelper {
 		String sgTestJarPath = getClassLocation(SGTestHelper.class);
 		String sgTestRootDir = new File(sgTestJarPath).getParent();
 		tmp = sgTestRootDir.toLowerCase();
-		if (!tmp.endsWith("sgtest") && !tmp.endsWith("sgtest-xap") && !tmp.endsWith("sgtest-cloudify" ) && !tmp.endsWith("sgtest_cloudify")){
+		if (!tmp.contains("sgtest") && !tmp.endsWith("sgtest") && !tmp.endsWith("sgtest-xap") && !tmp.endsWith("sgtest-cloudify" ) && !tmp.endsWith("sgtest_cloudify")){
 			sgTestRootDir = new File(sgTestJarPath).getParentFile().getParent();
 		}
 		return sgTestRootDir;

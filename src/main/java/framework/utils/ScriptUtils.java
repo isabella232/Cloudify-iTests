@@ -177,7 +177,10 @@ public class ScriptUtils {
         for (int i = 0; i < split.length - 8; i++) {
             ans += split[i] + s;
         }
-        return ans.substring(1, ans.length());
+        int startIndex = 1;
+        if(isLinuxMachine())
+        	startIndex = 0;
+        return ans.substring(startIndex, ans.length());
     }
 
     public static String getBuildPath() {

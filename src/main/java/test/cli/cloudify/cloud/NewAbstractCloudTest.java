@@ -66,19 +66,19 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
     }
 	
 	private void copyCloudifyJars(String cloudName) throws Exception{
-        String clodifySourceDir = ScriptUtils.getCloudifySourceDir() + "cloudify";
+        String cloudifySourceDir = ScriptUtils.getCloudifySourceDir() + "cloudify";
         String prefix = "";
         String extension = "";
         if(ScriptUtils.isWindows()) {
             prefix = getPrefix(System.getenv("M2_HOME"));
             extension = ".bat";
         }
-	    ScriptUtils.startLocalProcces(clodifySourceDir, (prefix + "mvn" + extension + " clean package -DskipTests").split(" "));
+	    ScriptUtils.startLocalProcces(cloudifySourceDir, (prefix + "mvn" + extension + " compile package -DskipTests").split(" "));
 	    if(ScriptUtils.isWindows()) {	        
 	        prefix = getPrefix(System.getenv("ANT_HOME"));
 	    }
-	    ScriptUtils.startLocalProcces(clodifySourceDir, (prefix + "ant" + extension + " -f copy_jars_local.xml \"Copy Cloudify jars to install dir\"").split(" "));
-	    ScriptUtils.startLocalProcces(clodifySourceDir, (prefix + "ant" + extension + " -f copy_jars_local.xml \"Copy Cloudify jars to " + getCloudName() + " upload dir\"").split(" "));
+	    ScriptUtils.startLocalProcces(cloudifySourceDir, (prefix + "ant" + extension + " -f copy_jars_local.xml \"Copy Cloudify jars to install dir\"").split(" "));
+	    ScriptUtils.startLocalProcces(cloudifySourceDir, (prefix + "ant" + extension + " -f copy_jars_local.xml \"Copy Cloudify jars to " + getCloudName() + " upload dir\"").split(" "));
     }
 
     private String getPrefix(String homeVar) {

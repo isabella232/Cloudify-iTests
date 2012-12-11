@@ -5,14 +5,12 @@ import java.io.IOException;
 
 import junit.framework.Assert;
 
-import org.testng.annotations.AfterMethod;
+import org.cloudifysource.dsl.internal.DSLException;
+import org.cloudifysource.dsl.internal.ServiceReader;
 import org.testng.annotations.Test;
 
 import test.cli.cloudify.AbstractLocalCloudTest;
 import test.cli.cloudify.CommandTestUtils;
-
-import org.cloudifysource.dsl.internal.DSLException;
-import org.cloudifysource.dsl.internal.ServiceReader;
 
 public class TestRecipeCommandTest extends AbstractLocalCloudTest {
 	
@@ -52,11 +50,5 @@ public class TestRecipeCommandTest extends AbstractLocalCloudTest {
 				+ GROOVY_RECIPE_DIR_PATH
 				+ " 30 ");
 		
-	}
-
-
-	@Override
-	@AfterMethod
-	public void afterTest() {
 	}
 }

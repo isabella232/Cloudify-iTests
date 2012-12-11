@@ -32,6 +32,7 @@ import org.testng.annotations.BeforeMethod;
 import test.cli.cloudify.CommandTestUtils;
 import test.cli.cloudify.cloud.services.CloudServiceManager;
 import test.cli.cloudify.cloud.services.byon.ByonCloudService;
+import framework.utils.AssertUtils;
 import framework.utils.IOUtils;
 import framework.utils.LogUtils;
 
@@ -43,7 +44,7 @@ public abstract class AbstractByonAddRemoveTemplatesTest extends AbstractByonClo
 	AtomicInteger numLastAddedTemplate;
 	List<String> defaultTempaltes;
 
-	private final String[] DEFAULT_TEMPLATES = {"SMALL_LINUX"};
+	protected final String[] DEFAULT_TEMPLATES = {"SMALL_LINUX"};
 	private final String TEMPLATE_NAME_PREFIX = "template_";
 	private final String UPLOAD_DIR_NAME_PREFIX = "upload";
 
@@ -57,6 +58,8 @@ public abstract class AbstractByonAddRemoveTemplatesTest extends AbstractByonClo
 	protected final String UPLOAD_PROPERTY_NAME = "uploadDir";
 	protected final String NODE_IP_PROPERTY_NAME = "node_ip";
 	protected final String NODE_ID_PROPERTY_NAME = "node_id";
+	protected final String ABSOLUTE_UPLOAD_DIR_PROPERTY = "absoluteUploadDir";
+	protected final String UPLOAD_DIR_NAME_PROPERTY = "localDirectory";
 
 	protected final String SERVICES_ROOT_PATH = 
 			CommandTestUtils.getPath("src/main/resources/apps/USM/usm/services/simpleWithTemplates/services");
@@ -275,6 +278,46 @@ public abstract class AbstractByonAddRemoveTemplatesTest extends AbstractByonClo
 			templateNames.add(nextTemplateName);
 		}
 		return templateNames;		
+	}
+	
+	public String getUploadDirName(String templateName, String outputTemplatesList) throws Exception{
+		
+		int index = outputTemplatesList.indexOf(templateName);
+		
+		if(index == -1){
+			AssertUtils.assertFail("the template " + templateName + " does not exist");
+		}
+		
+		index = outputTemplatesList.indexOf(UPLOAD_DIR_NAME_PROPERTY, index) + UPLOAD_DIR_NAME_PROPERTY.length() + 3;
+		int endIndex = outputTemplatesList.indexOf(",", index);
+		
+		return outputTemplatesList.substring(index, endIndex);
+		
+	}
+	
+	public String getTemplateRemoteDirFullPath(String templateName) throws Exception{
+		 
+		String output = listTemplates();
+		int index = output.indexOf(templateName);
+		
+		if(index == -1){
+			AssertUtils.assertFail("the template " + templateName + " does not exist");
+		}
+		
+		index = output.indexOf(ABSOLUTE_UPLOAD_DIR_PROPERTY, index) + ABSOLUTE_UPLOAD_DIR_PROPERTY.length() + 3;
+		int endIndex = output.indexOf(getUploadDirName(templateName, output), index);
+				
+		return output.substring(index, endIndex);
+		
+	}
+	
+	public String listTemplates() throws Exception{
+		
+		String command = "connect " + getRestUrl() + ";list-templates";
+		String output = CommandTestUtils.runCommandAndWait(command);
+		
+		return output;
+		
 	}
 	
 	private void removeAllAddedTempaltes() {

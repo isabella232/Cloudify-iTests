@@ -60,7 +60,7 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 
 	@BeforeClass(alwaysRun = true)
     public void overrideCloudifyJars() throws Exception {  
-        if(System.getProperty("override.cloudify") != null) {
+        if(System.getProperty("cloudify.override") != null) {
             buildAndCopyCloudifyJars(getCloudName());
         }
     }

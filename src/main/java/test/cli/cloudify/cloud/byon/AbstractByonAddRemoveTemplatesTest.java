@@ -37,7 +37,7 @@ import framework.utils.IOUtils;
 import framework.utils.LogUtils;
 
 public abstract class AbstractByonAddRemoveTemplatesTest extends AbstractByonCloudTest {
-	String mngMachineIP;
+	String[] mngMachinesIP;
 	AtomicInteger numOfMachinesInUse = new AtomicInteger(0);
 	List<TemplatesBatchHandler> templatesHandlers;
 	AtomicInteger numLastTemplateFolder;
@@ -68,7 +68,7 @@ public abstract class AbstractByonAddRemoveTemplatesTest extends AbstractByonClo
 	protected final String SERVICE_NAME_PROPERTY_NAME = "serviceName";
 	protected final String TEMPLATE_NAME_PROPERTY_NAME = "templateName";
 
-
+	public abstract int getNumOfMngMachines();
 	public abstract boolean isBootstrap();
 	public abstract boolean isTeardown();
 
@@ -76,17 +76,33 @@ public abstract class AbstractByonAddRemoveTemplatesTest extends AbstractByonClo
 	@BeforeClass(alwaysRun = true)
 	protected void bootstrap() throws Exception {
 		ByonCloudService service = new ByonCloudService();
-		mngMachineIP = service.getMachines()[0];
-		numOfMachinesInUse.getAndIncrement();
-		LogUtils.log("Updating MNG machine IP: " + mngMachineIP);
-		service.setIpList(mngMachineIP);
+		String[] machines = service.getMachines();
+		final int numOfMngMachines = getNumOfMngMachines();
+		if (machines.length < numOfMngMachines) {
+			Assert.fail("Not enough management machines to use.");
+		}
+		mngMachinesIP = new String[numOfMngMachines];
+		StringBuilder ipListBuilder = new StringBuilder();
+		for (int i = 0; i < numOfMngMachines; i++) {
+			final String nextMachine = machines[i];
+			mngMachinesIP[i] = nextMachine;
+			if (i > 0) {
+				ipListBuilder.append(",");
+			}
+			ipListBuilder.append(nextMachine);
+		}
+		numOfMachinesInUse.addAndGet(numOfMngMachines);
+		LogUtils.log("Updating MNG machine IPs: " + ipListBuilder);
+		service.setIpList(ipListBuilder.toString());
 
 		if (isBootstrap()) {
 			super.bootstrap(service);
 		} else {
 			this.cloudService = CloudServiceManager.getInstance().getCloudService(this.getCloudName());
 			AdminFactory factory = new AdminFactory();
-			factory.addLocators(mngMachineIP + ":" + CloudifyConstants.DEFAULT_LUS_PORT);
+			for (String mngMachineIP : mngMachinesIP) {				
+				factory.addLocators(mngMachineIP + ":" + CloudifyConstants.DEFAULT_LUS_PORT);
+			}
 			admin = factory.createAdmin();
 		}
 		defaultTempaltes = new LinkedList<String>();
@@ -106,7 +122,7 @@ public abstract class AbstractByonAddRemoveTemplatesTest extends AbstractByonClo
 	@Override
 	protected String getRestUrl() {
 		if (!isBootstrap()) {
-			return "http://" + mngMachineIP + ":8100";
+			return "http://" + mngMachinesIP[0] + ":8100";
 		}
 		return super.getRestUrl();
 	}
@@ -114,7 +130,7 @@ public abstract class AbstractByonAddRemoveTemplatesTest extends AbstractByonClo
 		return addTempaltes(handler, null);
 	}
 	protected String addTempaltes(TemplatesBatchHandler handler, String outputContains) {
-		String command = "connect " + getRestUrl() + ";add-templates " + handler.getTemplatesFolderPath();
+		String command = "connect " + getRestUrl() + ";add-templates " + handler.getTemplatesFolder();
 		String output = null;
 		try {
 			List<String> expectedFailedToAddTemplates = handler.getExpectedFailedTempaltes();
@@ -126,7 +142,6 @@ public abstract class AbstractByonAddRemoveTemplatesTest extends AbstractByonClo
 			if (outputContains != null) {
 				Assert.assertTrue(output.contains(outputContains));
 			}
-			assertListTempaltes(getExistTemplateNames());
 		} catch (final Exception e) {
 			LogUtils.log(e.getMessage(), e);
 			Assert.fail(e.getMessage());
@@ -134,15 +149,14 @@ public abstract class AbstractByonAddRemoveTemplatesTest extends AbstractByonClo
 		return output;
 	}
 
-	
 	protected void removeTemplate(TemplatesBatchHandler handler, String templateName, boolean expectedToFail, String expectedOutput) {
 		if (!expectedToFail) {
 			handler.removeTemplate(templateName);
 		}
-		removeTemplate(templateName, handler.getExpectedTempaltesExist(), expectedToFail, expectedOutput);
+		removeTemplate(templateName, expectedToFail, expectedOutput);
 	}
 	
-	protected void removeTemplate(String templateName, List<String> expectedAfterRemove, boolean expectToFail, String expectedOutput) {
+	protected void removeTemplate(String templateName, boolean expectToFail, String expectedOutput) {
 		
 		String command = "connect " + getRestUrl() + ";remove-template " + templateName;
 		String output;
@@ -155,11 +169,6 @@ public abstract class AbstractByonAddRemoveTemplatesTest extends AbstractByonClo
 			if (expectedOutput != null) {
 				Assert.assertTrue(output.contains(expectedOutput));
 			}
-			List<String> expectedList = new LinkedList<String>(defaultTempaltes);
-			if (expectedAfterRemove != null && !expectedAfterRemove.isEmpty()) {
-				expectedList.addAll(expectedAfterRemove);
-				assertListTempaltes(expectedList);
-			} 
 		} catch (final Exception e) {
 			LogUtils.log(e.getMessage(), e);
 			Assert.fail(e.getMessage());
@@ -172,74 +181,6 @@ public abstract class AbstractByonAddRemoveTemplatesTest extends AbstractByonClo
 		} catch (Exception e) {
 			Assert.fail(e.getMessage());
 		}
-	}
-
-	protected void assertRightUploadDir(String serviceName, String expectedUploadDirName) {
-		ProcessingUnits processingUnits = admin.getProcessingUnits();
-		ProcessingUnit processingUnit = processingUnits.getProcessingUnit("default." + serviceName);
-		ProcessingUnitInstance processingUnitInstance = processingUnit.getInstances()[0];
-		Collection<ServiceDetails> detailes = processingUnitInstance.getServiceDetailsByServiceId().values();		
-		final Map<String, Object> allDetails = new HashMap<String, Object>();
-		for (final ServiceDetails serviceDetails : detailes) {
-			allDetails.putAll(serviceDetails.getAttributes());
-		}
-		Object uploadDetail = allDetails.get("UPLOAD_NAME");
-		Assert.assertNotNull(uploadDetail);
-		Assert.assertEquals(expectedUploadDirName, uploadDetail.toString());
-	}
-	
-	protected void assertListTempaltes(List<String> expectedTemplatesList) {
-		String command = "connect " + getRestUrl() + ";list-templates";
-		try {
-			String output = CommandTestUtils.runCommandAndWait(command);
-			List<String> templateNames = getTemplateNamesFromOutput(output);
-			assertEquals("Expected tempaltes: " + expectedTemplatesList + ", but was: " 
-					+ templateNames, expectedTemplatesList.size(), templateNames.size());
-			for (String templateName : expectedTemplatesList) {
-				Assert.assertTrue(templateNames.contains(templateName));
-			}
-		} catch (final Exception e) {
-			LogUtils.log(e.getMessage(), e);
-			Assert.fail(e.getMessage());
-		}
-	}
-
-	protected List<String> getExistTemplateNames() {
-		List<String> names = new LinkedList<String>();
-		names.addAll(defaultTempaltes);
-		for (TemplatesBatchHandler handler : templatesHandlers) {
-			final List<String> expectedTempaltesExist = handler.getExpectedTempaltesExist();
-			if (expectedTempaltesExist != null) {
-				names.addAll(expectedTempaltesExist);
-			}
-		}
-		return names;
-	}
-	
-	private String getNextMachineIP(boolean forServiceInstallation) {
-		if (forServiceInstallation) {
-			String[] machines = getService().getMachines();
-			final int nextMachine = numOfMachinesInUse.getAndIncrement();
-			if (machines.length <= nextMachine) {
-				Assert.fail("Cannot allocate machine number " + nextMachine + ", there are only " + machines.length + " machines to use.");
-			}
-			return getService().getMachines()[nextMachine];
-		}
-		return mngMachineIP;
-	}
-
-	private void replaceStringInFile(File readFrom, File writeTo, String stringToReplace, String replacement) 
-			throws IOException {
-
-		BufferedReader reader = new BufferedReader(new FileReader(readFrom));
-		PrintWriter writer = new PrintWriter(new FileWriter(writeTo));
-		String line = null;
-		while ((line = reader.readLine()) != null) {
-			writer.print(line.replace(stringToReplace, replacement));
-			writer.print("\n");
-		}
-		reader.close();
-		writer.close();		
 	}
 
 	protected String createServiceDir(String serviceName, String templateName) throws IOException {
@@ -261,6 +202,77 @@ public abstract class AbstractByonAddRemoveTemplatesTest extends AbstractByonClo
 		IOUtils.writePropertiesToFile(props, servicePropsFile);
 
 		return serviceFolder.getAbsolutePath();
+	}
+
+	protected void assertRightUploadDir(String serviceName, String expectedUploadDirName) {
+		ProcessingUnits processingUnits = admin.getProcessingUnits();
+		ProcessingUnit processingUnit = processingUnits.getProcessingUnit("default." + serviceName);
+		ProcessingUnitInstance processingUnitInstance = processingUnit.getInstances()[0];
+		Collection<ServiceDetails> detailes = processingUnitInstance.getServiceDetailsByServiceId().values();		
+		final Map<String, Object> allDetails = new HashMap<String, Object>();
+		for (final ServiceDetails serviceDetails : detailes) {
+			allDetails.putAll(serviceDetails.getAttributes());
+		}
+		Object uploadDetail = allDetails.get("UPLOAD_NAME");
+		Assert.assertNotNull(uploadDetail);
+		Assert.assertEquals(expectedUploadDirName, uploadDetail.toString());
+	}
+	
+	protected void assertExpectedListTempaltes() {
+		assertListTempaltes(getExpectedExistTemplateNames());
+	}
+	
+	protected void assertListTempaltes(List<String> expectedTemplatesList) {
+		try {
+			String output = listTemplates();
+			List<String> templateNames = getTemplateNamesFromOutput(output);
+			assertEquals("Expected tempaltes: " + expectedTemplatesList + ", but was: " 
+					+ templateNames, expectedTemplatesList.size(), templateNames.size());
+			for (String templateName : expectedTemplatesList) {
+				Assert.assertTrue(templateNames.contains(templateName));
+			}
+		} catch (final Exception e) {
+			LogUtils.log(e.getMessage(), e);
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	protected List<String> getExpectedExistTemplateNames() {
+		List<String> names = new LinkedList<String>();
+		names.addAll(defaultTempaltes);
+		for (TemplatesBatchHandler handler : templatesHandlers) {
+			final List<String> expectedTempaltesExist = handler.getExpectedTempaltesExist();
+			if (expectedTempaltesExist != null) {
+				names.addAll(expectedTempaltesExist);
+			}
+		}
+		return names;
+	}
+	
+	private String getNextMachineIP(boolean forServiceInstallation) {
+		if (forServiceInstallation) {
+			String[] machines = getService().getMachines();
+			final int nextMachine = numOfMachinesInUse.getAndIncrement();
+			if (machines.length <= nextMachine) {
+				Assert.fail("Cannot allocate machine number " + nextMachine + ", there are only " + machines.length + " machines to use.");
+			}
+			return machines[nextMachine];
+		}
+		return mngMachinesIP[0];
+	}
+
+	private void replaceStringInFile(File readFrom, File writeTo, String stringToReplace, String replacement) 
+			throws IOException {
+
+		BufferedReader reader = new BufferedReader(new FileReader(readFrom));
+		PrintWriter writer = new PrintWriter(new FileWriter(writeTo));
+		String line = null;
+		while ((line = reader.readLine()) != null) {
+			writer.print(line.replace(stringToReplace, replacement));
+			writer.print("\n");
+		}
+		reader.close();
+		writer.close();		
 	}
 	
 	private List<String> getTemplateNamesFromOutput(String outputTemplatesList) {
@@ -320,12 +332,12 @@ public abstract class AbstractByonAddRemoveTemplatesTest extends AbstractByonClo
 		
 	}
 	
-	private void removeAllAddedTempaltes() {
-		for (String templateName : getExistTemplateNames()) {
+	protected void removeAllAddedTempaltes(List<String> templateNames) throws Exception {
+		for (String templateName : templateNames) {
 			if (defaultTempaltes.contains(templateName)) {
 				continue;
 			}
-			removeTemplate(templateName, null, false, null);
+			removeTemplate(templateName, false, null);
 		}
 		assertListTempaltes(defaultTempaltes);
 	}
@@ -333,22 +345,23 @@ public abstract class AbstractByonAddRemoveTemplatesTest extends AbstractByonClo
 	@BeforeMethod(alwaysRun = true) 
 	public void init() {
 		templatesHandlers = new LinkedList<TemplatesBatchHandler>();
+		numOfMachinesInUse = new AtomicInteger(getNumOfMngMachines());
 		numLastTemplateFolder = new AtomicInteger(0);
 		numLastAddedTemplate = new AtomicInteger(0);
 	}
 	
 	@AfterMethod(alwaysRun = true)
-	public void clean() {
+	public void clean() throws Exception {
 		File tempalteFolder = new File(TEMP_TEMPLATES_DIR_PATH);
 		FileUtils.deleteQuietly(tempalteFolder);
 		File serviceFolder = new File(TEMP_SERVICES_DIR_PATH);
 		FileUtils.deleteQuietly(serviceFolder);
 		
-		removeAllAddedTempaltes();
+		removeAllAddedTempaltes(getTemplateNamesFromOutput(listTemplates()));
 	}
 
 	public class TemplatesBatchHandler {
-		private String templatesFolderPath;
+		private File templatesFolder;
 		private List<TemplateDetails> templatesToAdd;
 		private List<String> expectedTempaltesExist;
 		private List<String> expectedFailedTempaltes;
@@ -360,7 +373,7 @@ public abstract class AbstractByonAddRemoveTemplatesTest extends AbstractByonClo
 			}
 			File newTemplatesFolder = new File(tempaltesTempFolder, TEMPLATE_NAME_PREFIX + numLastTemplateFolder.getAndIncrement());
 			newTemplatesFolder.mkdir();
-			this.templatesFolderPath = newTemplatesFolder.getAbsolutePath();
+			this.templatesFolder = newTemplatesFolder;
 
 			templatesToAdd = new LinkedList<TemplateDetails>();
 			templatesHandlers.add(this);
@@ -397,7 +410,7 @@ public abstract class AbstractByonAddRemoveTemplatesTest extends AbstractByonClo
 			File basicTemplateFile = new File(TEMPLATES_ROOT_PATH, TEMPLATE_FILE_NAME);
 			File addedTemplateFile = template.getTemplateFile();
 			if(addedTemplateFile == null) {
-				addedTemplateFile = new File(templatesFolderPath, templateName + DSLUtils.TEMPLATE_DSL_FILE_NAME_SUFFIX);
+				addedTemplateFile = new File(templatesFolder, templateName + DSLUtils.TEMPLATE_DSL_FILE_NAME_SUFFIX);
 			}
 			replaceStringInFile(basicTemplateFile, addedTemplateFile, TEMPLATE_NAME_STRING, templateName);
 
@@ -419,11 +432,11 @@ public abstract class AbstractByonAddRemoveTemplatesTest extends AbstractByonClo
 				final int tempalteFileNamePrefixEndIndex = templateFileName.indexOf(".");
 				final String templateFileNamePrefix = templateFileName.substring(0, tempalteFileNamePrefixEndIndex);
 				String proeprtiesFileName =  templateFileNamePrefix + DSLUtils.PROPERTIES_FILE_SUFFIX;				
-				templatePropsFile = new File(templatesFolderPath, proeprtiesFileName);
+				templatePropsFile = new File(templatesFolder, proeprtiesFileName);
 			}
 			IOUtils.writePropertiesToFile(props, templatePropsFile);
 
-			File uploadFolder = new File(templatesFolderPath, uploadDirName);
+			File uploadFolder = new File(templatesFolder, uploadDirName);
 			uploadFolder.mkdir();
 
 			File basicBootstrapManagementFile = new File(TEMPLATES_ROOT_PATH, BOOTSTRAP_MANAGEMENT_FILE_NAME);
@@ -452,8 +465,8 @@ public abstract class AbstractByonAddRemoveTemplatesTest extends AbstractByonClo
 			expectedTempaltesExist.remove(templateName);
 		}
 
-		public String getTemplatesFolderPath() {
-			return templatesFolderPath;
+		public File getTemplatesFolder() {
+			return templatesFolder;
 		}
 		public List<TemplateDetails> getTemplatesToAdd() {
 			return templatesToAdd;

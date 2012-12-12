@@ -12,6 +12,7 @@ import org.openspaces.admin.application.Application;
 import org.openspaces.admin.machine.Machine;
 import org.openspaces.admin.pu.DeploymentStatus;
 import org.openspaces.admin.pu.ProcessingUnit;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -39,14 +40,16 @@ public class InterruptedInstallTest extends AbstractByonCloudTest {
 
         Application application = admin.getApplications().waitFor("petclinic", 5, TimeUnit.MINUTES);
         final ProcessingUnit processingUnit = application.getProcessingUnits().waitFor("petclinic.mongoConfig", 5, TimeUnit.MINUTES);
-        processingUnit.waitFor(1, 5, TimeUnit.MINUTES);
+        AssertUtils.assertNotNull("petclinic.mongoConfig failed to be discovered after waiting for 5 minutes");
+        AssertUtils.assertTrue("admin failed to discover at least 1 instance of " + processingUnit.getName() + " after waiting for 5 minutes", processingUnit.waitFor(1, 5, TimeUnit.MINUTES));
         Machine machine = processingUnit.getInstances()[0].getMachine();
         SSHUtils.runCommand(machine.getHostAddress(), 5000, "killall -9 java", "tgrid", "tgrid");
 
         try {
-            Assert.assertTrue("install failed", future.get());
+            Assert.assertTrue("install failed after killing a machine during installation", future.get());
         } catch (ExecutionException e) {
-            e.printStackTrace();
+            AssertUtils.assertFail("install failed after killing a machine during installation", e);
+            
         }
 
         final ProcessingUnit[] processingUnits = application.getProcessingUnits().getProcessingUnits();
@@ -61,5 +64,9 @@ public class InterruptedInstallTest extends AbstractByonCloudTest {
         }, 10 * 60 * 1000);
 
     }
-
+    
+	@AfterClass(alwaysRun = true)
+	protected void teardown() throws Exception {
+		super.teardown();
+	}
 }

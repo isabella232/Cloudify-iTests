@@ -60,12 +60,12 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 
 	@BeforeClass(alwaysRun = true)
     public void beforeClass() throws Exception {  
-        LogUtils.log("Running before Class method");
-        if(System.getProperty("copyCloudifyJars") != null)
-            copyCloudifyJars(getCloudName());
+        if(System.getProperty("override.cloudify") != null) {
+            buildAndCopyCloudifyJars(getCloudName());
+        }
     }
 	
-	private void copyCloudifyJars(String cloudName) throws Exception{
+	private void buildAndCopyCloudifyJars(String cloudName) throws Exception{
         String cloudifySourceDir = ScriptUtils.getCloudifySourceDir() + "cloudify";
         String prefix = "";
         String extension = "";

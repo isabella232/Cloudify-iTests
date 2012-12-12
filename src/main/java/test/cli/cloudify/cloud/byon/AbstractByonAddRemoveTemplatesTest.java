@@ -48,8 +48,7 @@ public abstract class AbstractByonAddRemoveTemplatesTest extends AbstractByonClo
 	private final String TEMPLATE_NAME_PREFIX = "template_";
 	private final String UPLOAD_DIR_NAME_PREFIX = "upload";
 
-	protected final String TEMPLATES_ROOT_PATH = 
-			CommandTestUtils.getPath("src/main/resources/apps/USM/usm/services/simpleWithTemplates/templates");
+	protected final String TEMPLATES_ROOT_PATH = CommandTestUtils.getPath("src/main/resources/apps/USM/usm/services/simpleWithTemplates/templates");
 	protected final String TEMP_TEMPLATES_DIR_PATH = TEMPLATES_ROOT_PATH + File.separator + "templates.tmp";
 	protected final String TEMPLATE_FILE_NAME = "template"; 
 	protected final String BOOTSTRAP_MANAGEMENT_FILE_NAME = "bootstrap-management.sh"; 
@@ -61,8 +60,7 @@ public abstract class AbstractByonAddRemoveTemplatesTest extends AbstractByonClo
 	protected final String ABSOLUTE_UPLOAD_DIR_PROPERTY = "absoluteUploadDir";
 	protected final String UPLOAD_DIR_NAME_PROPERTY = "localDirectory";
 
-	protected final String SERVICES_ROOT_PATH = 
-			CommandTestUtils.getPath("src/main/resources/apps/USM/usm/services/simpleWithTemplates/services");
+	protected final String SERVICES_ROOT_PATH = CommandTestUtils.getPath("src/main/resources/apps/USM/usm/services/simpleWithTemplates/services");
 	protected final String TEMP_SERVICES_DIR_PATH = SERVICES_ROOT_PATH + File.separator + "services.tmp";
 	protected final String SERVICE_FILE_NAME = "service"; 
 	protected final String SERVICE_NAME_PROPERTY_NAME = "serviceName";
@@ -348,7 +346,6 @@ public abstract class AbstractByonAddRemoveTemplatesTest extends AbstractByonClo
 		templatesHandlers = new LinkedList<TemplatesBatchHandler>();
 		numOfMachinesInUse = new AtomicInteger(getNumOfMngMachines());
 		numLastTemplateFolder = new AtomicInteger(0);
-		numLastAddedTemplate = new AtomicInteger(0);
 	}
 	
 	@AfterMethod(alwaysRun = true)
@@ -363,7 +360,7 @@ public abstract class AbstractByonAddRemoveTemplatesTest extends AbstractByonClo
 
 	public class TemplatesBatchHandler {
 		private File templatesFolder;
-		private List<TemplateDetails> templatesToAdd;
+		private Map<String, TemplateDetails> templates;
 		private List<String> expectedTempaltesExist;
 		private List<String> expectedFailedTempaltes;
 
@@ -376,7 +373,10 @@ public abstract class AbstractByonAddRemoveTemplatesTest extends AbstractByonClo
 			newTemplatesFolder.mkdir();
 			this.templatesFolder = newTemplatesFolder;
 
-			templatesToAdd = new LinkedList<TemplateDetails>();
+			templates = new HashMap<String, AbstractByonAddRemoveTemplatesTest.TemplateDetails>();
+			
+			numLastAddedTemplate = new AtomicInteger(0);
+			
 			templatesHandlers.add(this);
 		}
 
@@ -406,7 +406,7 @@ public abstract class AbstractByonAddRemoveTemplatesTest extends AbstractByonClo
 			int size = numLastAddedTemplate.getAndIncrement();
 			String templateName = template.getTemplateName();
 			if (templateName == null) {
-				templateName = TEMPLATE_NAME_PREFIX + size;
+				templateName = templatesFolder.getName() + "_" + size;
 			}
 			File basicTemplateFile = new File(TEMPLATES_ROOT_PATH, TEMPLATE_FILE_NAME);
 			File addedTemplateFile = template.getTemplateFile();
@@ -445,7 +445,7 @@ public abstract class AbstractByonAddRemoveTemplatesTest extends AbstractByonClo
 			replaceStringInFile(basicBootstrapManagementFile, addedBootstrapManagementFile, UPLOAD_DIR_NAME_STRING, uploadDirName);
 		
 			TemplateDetails tempalteDetails = new TemplateDetails(templateName, addedTemplateFile, templatePropsFile, uploadDirName, nodeIP);
-			templatesToAdd.add(tempalteDetails);
+			templates.put(templateName, tempalteDetails);
 			
 			if (expectedToFail) {
 				if (expectedFailedTempaltes == null) {
@@ -464,13 +464,16 @@ public abstract class AbstractByonAddRemoveTemplatesTest extends AbstractByonClo
 
 		public void removeTemplate(String templateName) {
 			expectedTempaltesExist.remove(templateName);
+			TemplateDetails templateDetails = templates.get(templateName);
+			templateDetails.getTemplateFile().delete();
+			templateDetails.getTemplatePropertiesFile().delete();
 		}
 
 		public File getTemplatesFolder() {
 			return templatesFolder;
 		}
-		public List<TemplateDetails> getTemplatesToAdd() {
-			return templatesToAdd;
+		public Map<String, TemplateDetails> getTemplates() {
+			return templates;
 		}
 		public List<String> getExpectedTempaltesExist() {
 			return expectedTempaltesExist;

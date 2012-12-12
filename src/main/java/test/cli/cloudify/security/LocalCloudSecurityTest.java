@@ -4,11 +4,14 @@ import java.io.File;
 import java.io.IOException;
 
 import org.apache.commons.io.FileUtils;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import test.cli.cloudify.AbstractSecuredLocalCloudTest;
 import test.cli.cloudify.CommandTestUtils;
+import framework.utils.LocalCloudBootstrapper;
 import framework.utils.LogUtils;
 
 public class LocalCloudSecurityTest extends AbstractSecuredLocalCloudTest{
@@ -19,16 +22,15 @@ public class LocalCloudSecurityTest extends AbstractSecuredLocalCloudTest{
 	protected static final String ACCESS_DENIED_MESSAGE = "no_permission_access_is_denied";
 	protected static final String BAD_CREDENTIALS_MESSAGE = "Bad credentials";
 	protected static final int TIMEOUT_IN_MINUTES = 30;
-
-	@AfterMethod(alwaysRun = true)
-	protected void uninstall() throws Exception {
-
-		uninstallApplicationIfFound(SIMPLE_APP_NAME, SecurityConstants.ALL_ROLES_USER_PWD, SecurityConstants.ALL_ROLES_USER_PWD);
-		uninstallApplicationIfFound(GROOVY_APP_NAME, SecurityConstants.ALL_ROLES_USER_PWD, SecurityConstants.ALL_ROLES_USER_PWD);
-		super.afterTest();
-	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
+	LocalCloudBootstrapper bootstrapper;
+
+	@BeforeClass
+	public void bootsrap() throws Exception {
+		super.bootstrap();
+	}
+		
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = false)
 	public void installAndUninstallTest() throws IOException, InterruptedException {
 
 		installAndUninstall(SecurityConstants.APP_MANAGER_AND_VIEWER_USER_PWD, SecurityConstants.APP_MANAGER_AND_VIEWER_USER_PWD, false);
@@ -86,7 +88,7 @@ public class LocalCloudSecurityTest extends AbstractSecuredLocalCloudTest{
 	}
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
-	public void loginTest() {
+	public void loginTest() throws IOException, InterruptedException {
 
 		String output = "no output";
 		
@@ -96,7 +98,7 @@ public class LocalCloudSecurityTest extends AbstractSecuredLocalCloudTest{
 	}
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
-	public void connectWithNonexistentUserTest() {
+	public void connectWithNonexistentUserTest() throws IOException, InterruptedException {
 
 		String output = connect(SecurityConstants.CLOUD_ADMIN_USER_PWD + "bad", SecurityConstants.CLOUD_ADMIN_USER_PWD, true);		
 		assertTrue("connect succeeded for user: " + SecurityConstants.CLOUD_ADMIN_USER_PWD + "bad", output.contains(BAD_CREDENTIALS_MESSAGE));			
@@ -104,7 +106,7 @@ public class LocalCloudSecurityTest extends AbstractSecuredLocalCloudTest{
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
-	public void connectWithNoPasswordTest() {
+	public void connectWithNoPasswordTest() throws IOException, InterruptedException {
 		
 		String output = connect(SecurityConstants.CLOUD_ADMIN_USER_PWD, null, true);		
 		assertTrue("connect succeeded for: " + SecurityConstants.CLOUD_ADMIN_DESCRIPTIN + " without providing a password", output.contains(BAD_CREDENTIALS_MESSAGE));			
@@ -112,7 +114,7 @@ public class LocalCloudSecurityTest extends AbstractSecuredLocalCloudTest{
 	}
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
-	public void loginWithNonexistentUserTest() {
+	public void loginWithNonexistentUserTest() throws IOException, InterruptedException {
 
 		String output = "no output";
 		
@@ -122,7 +124,7 @@ public class LocalCloudSecurityTest extends AbstractSecuredLocalCloudTest{
 	}
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
-	public void connectWithWrongPassword() {
+	public void connectWithWrongPassword() throws IOException, InterruptedException {
 
 		String output = connect(SecurityConstants.CLOUD_ADMIN_USER_PWD, SecurityConstants.CLOUD_ADMIN_USER_PWD + "bad", true);		
 		assertTrue("connect succeeded for password: " + SecurityConstants.CLOUD_ADMIN_USER_PWD + "bad", output.contains(BAD_CREDENTIALS_MESSAGE));			
@@ -130,7 +132,7 @@ public class LocalCloudSecurityTest extends AbstractSecuredLocalCloudTest{
 	}
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
-	public void loginWithWrongPassword() {
+	public void loginWithWrongPassword() throws IOException, InterruptedException {
 
 		String output = "no output";
 		
@@ -162,7 +164,7 @@ public class LocalCloudSecurityTest extends AbstractSecuredLocalCloudTest{
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
 	public void securedUseApplicationTest() throws IOException, InterruptedException {
-		installApplicationAndWait(SIMPLE_APP_PATH, SIMPLE_APP_NAME, TIMEOUT_IN_MINUTES, user, password, false, null);
+		installApplicationAndWait(SIMPLE_APP_PATH, SIMPLE_APP_NAME, TIMEOUT_IN_MINUTES, SecurityConstants.ALL_ROLES_USER_PWD, SecurityConstants.ALL_ROLES_USER_PWD, false, null);
 		//Check use-application command.
 		String useApplicationOutput;
 		//appManager role has permissions to use the application
@@ -191,18 +193,6 @@ public class LocalCloudSecurityTest extends AbstractSecuredLocalCloudTest{
 				useApplicationOutput.contains("Permission not granted, access is denied."));
 	}
 	
-	private String useApplication(String user, String password,
-			String applicationName, boolean expectedFail) throws IOException, InterruptedException {
-		String useApplicationOutput;
-		String command = "connect -user " + user + " -password " + password + " " + securedRestUrl + "; use-application " + applicationName;
-		if (expectedFail) {
-			useApplicationOutput = CommandTestUtils.runCommandExpectedFail(command);
-		} else {
-			useApplicationOutput = runCommand(command);
-		}
-		return useApplicationOutput;
-	}
-
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
 	public void tamperWithSecurityFileTest() throws Exception{
 
@@ -210,7 +200,7 @@ public class LocalCloudSecurityTest extends AbstractSecuredLocalCloudTest{
 
 		String originalFilePath = getBuildSecurityFilePath();
 		String backupFilePath = originalFilePath + ".tempBackup";
-		String fakeFilePath = SGTEST_ROOT_DIR + s + "src" + s + "main" + s + "config" + s + "security" + s + "fake-spring-security.xml";
+		String fakeFilePath = SGTEST_ROOT_DIR + s + "src" + s + "main" + s + "config" + s + "security" + s + "custom-spring-security.xml";
 		File originalFile = new File(originalFilePath);
 		File backupFile = new File(backupFilePath);
 		File fakeFile = new File(fakeFilePath);
@@ -246,8 +236,31 @@ public class LocalCloudSecurityTest extends AbstractSecuredLocalCloudTest{
 				
 		assertTrue("install access granted to viewer " + fakeCloudAdminUserAndPassword, output.contains(ACCESS_DENIED_MESSAGE));			
 	}
+	
+	@AfterMethod(alwaysRun = true)
+	protected void uninstall() throws Exception {
+		uninstallApplicationIfFound(SIMPLE_APP_NAME, SecurityConstants.ALL_ROLES_USER_PWD, SecurityConstants.ALL_ROLES_USER_PWD);
+		uninstallApplicationIfFound(GROOVY_APP_NAME, SecurityConstants.ALL_ROLES_USER_PWD, SecurityConstants.ALL_ROLES_USER_PWD);
+	}
+	
+	@AfterClass(alwaysRun = true)
+	public void teardown() throws IOException, InterruptedException {
+		super.teardown();
+	}
+	
+	private String useApplication(String user, String password,
+			String applicationName, boolean expectedFail) throws IOException, InterruptedException {
+		String useApplicationOutput;
+		String command = "connect -user " + user + " -password " + password + " " + getRestUrl() + "; use-application " + applicationName;
+		if (expectedFail) {
+			useApplicationOutput = CommandTestUtils.runCommandExpectedFail(command);
+		} else {
+			useApplicationOutput = CommandTestUtils.runCommandAndWait(command);
+		}
+		return useApplicationOutput;
+	}
 
-	protected void verifyVisibleLists(String installer, String viewerName, String viewerPassword, String viewerDescription, String appName, boolean isVisible) {
+	protected void verifyVisibleLists(String installer, String viewerName, String viewerPassword, String viewerDescription, String appName, boolean isVisible) throws IOException, InterruptedException {
 		
 		String output = "no output";
 		

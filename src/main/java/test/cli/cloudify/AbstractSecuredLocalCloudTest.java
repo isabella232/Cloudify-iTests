@@ -1,24 +1,20 @@
 package test.cli.cloudify;
 
 import java.io.IOException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 import org.apache.commons.lang.StringUtils;
-import org.openspaces.admin.machine.Machine;
-import org.testng.Assert;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeMethod;
+import org.cloudifysource.dsl.internal.CloudifyConstants;
+import org.openspaces.admin.AdminFactory;
 
+import test.AbstractTest;
 import test.cli.cloudify.CommandTestUtils.ProcessResult;
-import test.cli.cloudify.security.SecurityConstants;
+
 import framework.tools.SGTestHelper;
 import framework.utils.ApplicationInstaller;
 import framework.utils.LocalCloudBootstrapper;
-import framework.utils.LogUtils;
 import framework.utils.ServiceInstaller;
 
-public class AbstractSecuredLocalCloudTest extends AbstractLocalCloudTest{
+public class AbstractSecuredLocalCloudTest extends AbstractTest {
 
 	protected static final String SGTEST_ROOT_DIR = SGTestHelper.getSGTestRootDir().replace('\\', '/');
 
@@ -34,31 +30,12 @@ public class AbstractSecuredLocalCloudTest extends AbstractLocalCloudTest{
 	
 	private static final String BUILD_SECURITY_FILE_PATH = SGTestHelper.getBuildDir().replace('\\', '/') + "/config/security/spring-security.xml";
 	private static final String BUILD_SECURITY_BACKUP_FILE_PATH = SGTestHelper.getBuildDir().replace('\\', '/') + "/config/security/spring-security.xml.backup";
-	private static final String DEFAULT_SECURITY_FILE_PATH = SGTestHelper.getSGTestRootDir().replace('\\', '/') + "/src/main/config/security/spring-security.xml";
 	private static final String DEFAULT_KEYSTORE_FILE_PATH = SGTestHelper.getSGTestRootDir().replace('\\', '/') + "/src/main/config/security/keystore";
 	private static final String DEFAULT_KEYSTORE_PASSWORD = "sgtest";
-
-
-
-
-	private ProcessResult bootstrapResult = null;
-
-	@BeforeClass
-	public void bootstrap() throws IOException, TimeoutException, InterruptedException {
-		LocalCloudBootstrapper bootstrapper = new LocalCloudBootstrapper();
-		bootstrapper.secured(true).securityFilePath(DEFAULT_SECURITY_FILE_PATH);
-		bootstrapper.keystoreFilePath(DEFAULT_KEYSTORE_FILE_PATH).keystorePassword(DEFAULT_KEYSTORE_PASSWORD);
-		bootstrap(bootstrapper);		
-	}
-
-	@Override
-	@BeforeMethod
-	public void beforeTest() {
-		//do nothing
-	}
-
-	public static String getDefaultSecurityFilePath() {
-		return DEFAULT_SECURITY_FILE_PATH;
+	private static final String LDAP_SECURITY_FILE_PATH = SGTEST_ROOT_DIR + "/src/main/config/security/ldap-spring-security.xml";
+	
+	public static String getDefaultLdapSecurityFilePath() {
+		return LDAP_SECURITY_FILE_PATH;
 	}
 
 	public static String getBuildSecurityFilePath() {
@@ -69,114 +46,58 @@ public class AbstractSecuredLocalCloudTest extends AbstractLocalCloudTest{
 		return BUILD_SECURITY_BACKUP_FILE_PATH;
 	}
 
+	public static String getDefaultKeystoreFilePath() {
+		return DEFAULT_KEYSTORE_FILE_PATH;
+	}
 
-	public ProcessResult bootstrap(LocalCloudBootstrapper bootstrapper) throws IOException, TimeoutException, InterruptedException {
-
-		isSecured = true;	
-
-		//pre-bootstrap actions will be made with the super-user
-		setUserAndPassword(SecurityConstants.ALL_ROLES_USER_PWD, SecurityConstants.ALL_ROLES_USER_PWD);
-
-		LogUtils.log("Test Configuration Started: " + this.getClass());
-
-		if (admin != null) {
-			LogUtils.log("Admin has not been closed properly in the previous test. Closing old admin");
-			admin.close();
-			admin = null;
+	public static String getDefaultKeystorePassword() {
+		return DEFAULT_KEYSTORE_PASSWORD;
+	}
+	
+	protected String getRestUrl() {
+		return "https://127.0.0.1:8100";
+	}
+	
+	protected void bootstrap() throws Exception {
+		LocalCloudBootstrapper bootstrapper = new LocalCloudBootstrapper();
+		bootstrapper.secured(true).securityFilePath(getBuildSecurityFilePath());
+		bootstrapper.keystoreFilePath(getDefaultKeystoreFilePath()).keystorePassword(getDefaultKeystorePassword());
+		bootstrap(bootstrapper);
+	}
+	
+	protected ProcessResult bootstrap(LocalCloudBootstrapper bootstrapper) throws Exception {
+		ProcessResult bootstrapResult = bootstrapper.bootstrap();
+		if (bootstrapper.isBootstraped()) {
+			// only create admin if bootstrap was successful
+			admin = super.createAdminAndWaitForManagement();
 		}
-
-		securedRestUrl = "https://" + getLocalHostIpAddress() + ":" + securedRestPort;
-
-		if (checkIsDevEnv()) {
-			LogUtils.log("Local cloud test running in dev mode, will use existing localcloud");
-		} else {
-			for (int i = 0; i < BOOTSTRAP_RETRIES_BEFOREMETHOD; i++) {
-
-				try {
-
-					if (!isRequiresBootstrap()) {
-						break;
-					}
-
-					cleanUpCloudifyLocalDir();
-
-					LogUtils.log("Tearing-down existing localclouds");
-					final ProcessResult teardownResult = bootstrapper.teardown();
-					if (teardownResult.getExitcode() != 0) {
-						final String output = teardownResult.getOutput();
-						if (!checkOutputForExceptions(output)) {
-							// we assume that if teardown failed but no
-							// exceptions were found in the output
-							// then the reason was because no cloud was found.
-							LogUtils.log("teardown failed because no cloud was found. proceeding with bootstrap.");
-						} else {
-							Assert.fail("Failed to teardown local cloud. output = "
-									+ output);
-						}
-					}
-
-					//switching from the super-user to the entered credentials
-					if(StringUtils.isNotBlank(bootstrapper.getUser()) && StringUtils.isNotBlank(bootstrapper.getPassword())){	
-						setUserAndPassword(bootstrapper.getUser(), bootstrapper.getPassword());
-					}
-
-					bootstrapResult = bootstrapper.bootstrap();
-					if (bootstrapper.isBootstrapExpectedToFail() && bootstrapResult.getExitcode()!=0){
-						return bootstrapResult;
-					}
-					LogUtils.log(bootstrapResult.getOutput());
-					Assert.assertEquals(bootstrapResult.getExitcode(), 0,
-							"Bootstrap failed");
-				} catch (final Throwable t) {
-					LogUtils.log("Failed to bootstrap localcloud. iteration="
-							+ i, t);
-
-					if (i >= BOOTSTRAP_RETRIES_BEFOREMETHOD - 1) {
-						Assert.fail("Failed to bootstrap localcloud after "
-								+ BOOTSTRAP_RETRIES_BEFOREMETHOD + " retries.",
-								t);
-					}
-				}
-
-			}
-		}
-
-		Assert.assertFalse(isRequiresBootstrap(),
-				"Cannot establish connection with localcloud");
-
-		this.admin = super.createAdminAndWaitForManagement();
-		final boolean foundLookupService = admin.getLookupServices().waitFor(1,
-				WAIT_FOR_TIMEOUT_SECONDS, TimeUnit.SECONDS);
-		Assert.assertTrue(foundLookupService,
-				"Failed to discover lookup service after "
-						+ WAIT_FOR_TIMEOUT_SECONDS + " seconds");
-
-		final boolean foundMachine = admin.getMachines().waitFor(1,
-				WAIT_FOR_TIMEOUT_SECONDS, TimeUnit.SECONDS);
-		Assert.assertTrue(foundMachine, "Failed to discover machine after "
-				+ WAIT_FOR_TIMEOUT_SECONDS + " seconds");
-		final Machine[] machines = admin.getMachines().getMachines();
-		Assert.assertTrue(machines.length >= 1, "Expected at least one machine");
-		final Machine machine = machines[0];
-		System.out.println("Machine ["
-				+ machine.getHostName()
-				+ "], "
-				+ "TotalPhysicalMem ["
-				+ machine.getOperatingSystem().getDetails()
-				.getTotalPhysicalMemorySizeInGB()
-				+ "GB], "
-				+ "FreePhysicalMem ["
-				+ machine.getOperatingSystem().getStatistics()
-				.getFreePhysicalMemorySizeInGB() + "GB]]");
-
 		return bootstrapResult;
-
+	}
+	
+	protected void teardown(LocalCloudBootstrapper bootstrapper) throws IOException, InterruptedException {
+		if (admin != null) {
+			admin.close();
+		}
+		bootstrapper.setRestUrl(getRestUrl());
+		bootstrapper.teardown();
+	}
+	
+	protected void teardown() throws IOException, InterruptedException {
+		LocalCloudBootstrapper bootstrapper = new LocalCloudBootstrapper();
+		teardown(bootstrapper);
+	}
+	
+	@Override
+	protected AdminFactory createAdminFactory() {
+		AdminFactory factory = new AdminFactory();
+		factory.addLocator("127.0.0.1:" + CloudifyConstants.DEFAULT_LOCALCLOUD_LUS_PORT);
+		return factory;
 	}
 
 	protected String installApplicationAndWait(String applicationPath, String applicationName, int timeout, final String cloudifyUsername,
 			final String cloudifyPassword, boolean isExpectedToFail, final String authGroups) throws IOException, InterruptedException {
 
-		ApplicationInstaller applicationInstaller = new ApplicationInstaller(securedRestUrl, applicationName);
+		ApplicationInstaller applicationInstaller = new ApplicationInstaller(getRestUrl(), applicationName);
 		applicationInstaller.recipePath(applicationPath);
 		applicationInstaller.waitForFinish(true);
 		applicationInstaller.timeoutInMinutes(timeout);
@@ -193,7 +114,7 @@ public class AbstractSecuredLocalCloudTest extends AbstractLocalCloudTest{
 	protected String uninstallApplicationAndWait(String applicationPath, String applicationName, int timeout, final String cloudifyUsername,
 			final String cloudifyPassword, boolean isExpectedToFail, final String authGroups) throws IOException, InterruptedException {
 
-		ApplicationInstaller applicationInstaller = new ApplicationInstaller(securedRestUrl, applicationName);
+		ApplicationInstaller applicationInstaller = new ApplicationInstaller(getRestUrl(), applicationName);
 		applicationInstaller.recipePath(applicationPath);
 		applicationInstaller.waitForFinish(true);
 		applicationInstaller.timeoutInMinutes(timeout);
@@ -208,7 +129,7 @@ public class AbstractSecuredLocalCloudTest extends AbstractLocalCloudTest{
 	}
 
 	protected void uninstallApplicationIfFound(String applicationName, final String cloudifyUsername, final String cloudifyPassword) throws IOException, InterruptedException {
-		ApplicationInstaller applicationInstaller = new ApplicationInstaller(securedRestUrl, applicationName);
+		ApplicationInstaller applicationInstaller = new ApplicationInstaller(getRestUrl(), applicationName);
 		applicationInstaller.waitForFinish(true);
 		applicationInstaller.cloudifyUsername(cloudifyUsername);
 		applicationInstaller.cloudifyPassword(cloudifyPassword);
@@ -218,7 +139,7 @@ public class AbstractSecuredLocalCloudTest extends AbstractLocalCloudTest{
 	protected String installServiceAndWait(String servicePath, String serviceName, int timeout, final String cloudifyUsername,
 			final String cloudifyPassword, boolean isExpectedToFail, final String authGroups) throws IOException, InterruptedException {
 
-		ServiceInstaller serviceInstaller = new ServiceInstaller(securedRestUrl, serviceName);
+		ServiceInstaller serviceInstaller = new ServiceInstaller(getRestUrl(), serviceName);
 		serviceInstaller.recipePath(servicePath);
 		serviceInstaller.waitForFinish(true);
 		serviceInstaller.cloudifyUsername(cloudifyUsername);
@@ -234,7 +155,7 @@ public class AbstractSecuredLocalCloudTest extends AbstractLocalCloudTest{
 	protected String uninstallServiceAndWait(String servicePath, String serviceName, int timeout, final String cloudifyUsername,
 			final String cloudifyPassword, boolean isExpectedToFail, final String authGroups) throws IOException, InterruptedException {
 
-		ServiceInstaller serviceInstaller = new ServiceInstaller(securedRestUrl, serviceName);
+		ServiceInstaller serviceInstaller = new ServiceInstaller(getRestUrl(), serviceName);
 		serviceInstaller.recipePath(servicePath);
 		serviceInstaller.waitForFinish(true);
 		serviceInstaller.cloudifyUsername(cloudifyUsername);
@@ -247,62 +168,38 @@ public class AbstractSecuredLocalCloudTest extends AbstractLocalCloudTest{
 		return serviceInstaller.uninstall();
 	}
 
-	protected String listApplications(String user, String password, boolean expectedFail){
-
-		setUserAndPassword(user, password);
-		return listApplications(expectedFail);
+	protected String listApplications(String user, String password, boolean expectedFail) throws IOException, InterruptedException {
+		LocalCloudBootstrapper bootstrapper = new LocalCloudBootstrapper();
+		bootstrapper.setRestUrl(getRestUrl());
+		bootstrapper.user(user).password(password);
+		return bootstrapper.listApplications(expectedFail);
 	}
 
-	protected String listInstances(String user, String password, String applicationName, String serviceName, boolean expectedFail){
-
-		setUserAndPassword(user, password);
-		return listInstances(applicationName, serviceName, expectedFail);
+	protected String listInstances(String user, String password, String applicationName, String serviceName, boolean expectedFail) throws IOException, InterruptedException{
+		LocalCloudBootstrapper bootstrapper = new LocalCloudBootstrapper();
+		bootstrapper.setRestUrl(getRestUrl());
+		bootstrapper.user(user).password(password);
+		return bootstrapper.listInstances(applicationName, serviceName, expectedFail);
 	}
 
-	protected String listServices(String user, String password, String applicationName, boolean expectedFail){
-
-		setUserAndPassword(user, password);
-		return listServices(applicationName, expectedFail);
+	protected String listServices(String user, String password, String applicationName, boolean expectedFail) throws IOException, InterruptedException {
+		LocalCloudBootstrapper bootstrapper = new LocalCloudBootstrapper();
+		bootstrapper.setRestUrl(getRestUrl());
+		bootstrapper.user(user).password(password);
+		return bootstrapper.listServices(applicationName, expectedFail);
 	}
 
-	protected String connect(String user, String password, boolean failCommand){
-
-		setUserAndPassword(user, password);
-		return connect(failCommand);
+	protected String connect(String user, String password, boolean failCommand) throws IOException, InterruptedException{
+		LocalCloudBootstrapper bootstrapper = new LocalCloudBootstrapper();
+		bootstrapper.setRestUrl(getRestUrl());
+		bootstrapper.user(user).password(password);
+		return bootstrapper.connect(failCommand);
 	}
 
-	protected String login(String user, String password, boolean failCommand){
-
-		setUserAndPassword(SecurityConstants.ALL_ROLES_USER_PWD, SecurityConstants.ALL_ROLES_USER_PWD);
-
-		String output = "no output";
-
-		try {
-			output = CommandTestUtils.runCommand(connectCommand() + ";" + loginCommand(user, password), true, failCommand);
-		} catch (IOException e) {
-			Assert.fail("Failed to connect and login");
-		} catch (InterruptedException e) {
-			Assert.fail("Failed to connect and login");
-		}
-
-		return output;
+	protected String login(String user, String password, boolean failCommand) throws IOException, InterruptedException{
+		LocalCloudBootstrapper bootstrapper = new LocalCloudBootstrapper();
+		bootstrapper.setRestUrl(getRestUrl());
+		bootstrapper.user(user).password(password);
+		return bootstrapper.login(failCommand);		
 	}
-
-	protected String loginCommand(String user, String password){		
-		return ("login " + user + " " + password);
-	}
-
-	protected void setUserAndPassword(String user, String password) {
-		this.user = user;
-		this.password = password;
-	}
-
-	public static String getDefaultKeystoreFilePath() {
-		return DEFAULT_KEYSTORE_FILE_PATH;
-	}
-
-	public static String getDefaultKeystorePassword() {
-		return DEFAULT_KEYSTORE_PASSWORD;
-	}
-
 }

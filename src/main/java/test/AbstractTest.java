@@ -11,7 +11,6 @@ import org.testng.annotations.BeforeMethod;
 import framework.utils.AdminUtils;
 import framework.utils.DumpUtils;
 import framework.utils.LogUtils;
-import framework.utils.TeardownUtils;
 
 
 
@@ -51,19 +50,6 @@ public abstract class AbstractTest extends AbstractTestSupport {
 	        } catch (Throwable t) {
 	            log("failed to dump logs", t);
 	        }
-	        try {
-	            TeardownUtils.teardownAll(admin);
-	        } catch (Throwable t) {
-	            log("failed to teardown", t);
-	        }
-        	admin.close();
-        	admin = null;
         }
-	}
-
-    
-    ////////////
-
-
-    
+	}    
 }

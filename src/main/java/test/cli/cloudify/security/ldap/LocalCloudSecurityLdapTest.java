@@ -1,27 +1,25 @@
 package test.cli.cloudify.security.ldap;
 
 import java.io.IOException;
-import java.util.concurrent.TimeoutException;
 
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import test.cli.cloudify.security.LocalCloudSecurityTest;
 import test.cli.cloudify.security.SecurityConstants;
-
 import framework.utils.LocalCloudBootstrapper;
 
 public class LocalCloudSecurityLdapTest extends LocalCloudSecurityTest{
 
-	private static final String LDAP_SECURITY_FILE_PATH = SGTEST_ROOT_DIR + "/src/main/config/security/ldap-spring-security.xml";
-
-	@Override
+	private LocalCloudBootstrapper bootstrapper;
+	
 	@BeforeClass
-	public void bootstrap() throws IOException, TimeoutException, InterruptedException {
-		LocalCloudBootstrapper bootstrapper = new LocalCloudBootstrapper();
-		bootstrapper.secured(true).securityFilePath(LDAP_SECURITY_FILE_PATH);
+	public void bootstrap() throws Exception {
+		bootstrapper = new LocalCloudBootstrapper();
+		bootstrapper.secured(true).securityFilePath(getDefaultLdapSecurityFilePath());
 		bootstrapper.keystoreFilePath(getDefaultKeystoreFilePath()).keystorePassword(getDefaultKeystorePassword());
-		super.bootstrap(bootstrapper);		
+		super.bootstrap(bootstrapper);	
 	}
 	
 	@Override
@@ -86,4 +84,12 @@ public class LocalCloudSecurityLdapTest extends LocalCloudSecurityTest{
 		
 		assertTrue("unseen application uninstall succeeded", output.contains(ACCESS_DENIED_MESSAGE));
 	}
+	
+	@AfterClass(alwaysRun = true)
+	public void teardown() throws IOException, InterruptedException {
+		if (bootstrapper != null) {
+			super.teardown(bootstrapper);
+		}
+	}
+	
 }

@@ -1,14 +1,11 @@
 package test.cli.cloudify.security;
 
 import java.io.IOException;
-import java.util.concurrent.TimeoutException;
 
-import org.testng.annotations.BeforeClass;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
 
 import test.cli.cloudify.AbstractSecuredLocalCloudTest;
-
-import framework.tools.SGTestHelper;
 import framework.utils.LocalCloudBootstrapper;
 
 /**
@@ -18,19 +15,20 @@ import framework.utils.LocalCloudBootstrapper;
  */
 public class DefaultSecurityFileLocationTest extends AbstractSecuredLocalCloudTest {
 	
-	@Override
-	@BeforeClass
-	public void bootstrap() throws IOException {
-		
-		// dont bootstrap, it is part of the test
-	}
+	private LocalCloudBootstrapper bootstrapper;
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
-	public void testDefaultSecurityFileLocation() throws IOException, TimeoutException, InterruptedException {
-		LocalCloudBootstrapper bootstrapper = new LocalCloudBootstrapper();
-		bootstrapper.secured(true).securityFilePath(SGTestHelper.getBuildDir() + "/config/security/spring-security.xml");
+	public void testDefaultSecurityFileLocation() throws Exception {
+		bootstrapper = new LocalCloudBootstrapper();
+		bootstrapper.secured(true).securityFilePath(getBuildSecurityFilePath());
 		bootstrapper.keystoreFilePath(getDefaultKeystoreFilePath()).keystorePassword(getDefaultKeystorePassword());
 		super.bootstrap(bootstrapper);
 	}
-
+	
+	@AfterClass(alwaysRun = true)
+	public void teardown() throws IOException, InterruptedException {
+		if (bootstrapper != null) {
+			super.teardown(bootstrapper);
+		}
+	}
 }

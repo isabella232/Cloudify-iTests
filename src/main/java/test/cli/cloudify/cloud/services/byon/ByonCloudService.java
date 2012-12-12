@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -41,13 +42,11 @@ public class ByonCloudService extends AbstractCloudService {
 	
 	protected static final String NEW_URL_PREFIX = "http://tarzan/builds/GigaSpacesBuilds/cloudify";
 	protected static final String NEW_XAP_URL_PREFIX = "http://tarzan/builds/GigaSpacesBuilds";
-	
-	private static final String DEV_MODE_MACHINES = /* Populate with the machines you wish to use */ "";
-	
+		
 	public static final String ENV_VARIABLE_NAME = "GIGASPACES_TEST_ENV";
 	public static final String ENV_VARIABLE_VALUE = "DEFAULT_ENV_VARIABLE";
 	
-	private boolean sudo = true;
+	private boolean sudo;
 	
 	/**
 	 * this folder is where Cloudify will be downloaded to and extracted from. NOTE - this is not the WORKING_HOME_DIRECTORY.
@@ -59,27 +58,22 @@ public class ByonCloudService extends AbstractCloudService {
 	private String[] machines;
 
 	public ByonCloudService() {
-		super("byon");
-		this.ipList = System.getProperty(IP_LIST_PROPERTY, DEV_MODE_MACHINES);
-		if (this.ipList == null || this.ipList.isEmpty()) {
-			throw new IllegalStateException("ipList is empty! , please populate ByonCloudService.DEV_MODE_MACHINES with the machines you wish to use");
-		}
-		this.machines = ipList.split(",");
-		if (SGTestHelper.isDevMode()) {
-			this.sudo = false;
-		}
+		this("byon");
 	}
-	
+
 	public ByonCloudService(final String name) {
 		super(name);
-		this.ipList = System.getProperty(IP_LIST_PROPERTY, DEV_MODE_MACHINES);
-		if (this.ipList == null || this.ipList.isEmpty()) {
-			throw new IllegalStateException("ipList is empty! , please populate ByonCloudService.DEV_MODE_MACHINES with the machines you wish to use");
-		}
-		this.machines = ipList.split(",");
 		if (SGTestHelper.isDevMode()) {
 			this.sudo = false;
+			this.ipList = getIpListFromPropsFile();
+		} else {
+			this.ipList = System.getProperty(IP_LIST_PROPERTY);
+			this.sudo = true;
 		}
+		if (this.ipList == null || this.ipList.isEmpty()) {
+			throw new IllegalStateException("ipList is empty! , please populate ipList property in the byon.properties file with the machines you wish to use");
+		}
+		this.machines = ipList.split(",");
 	}
 	
 	public boolean isSudo() {
@@ -228,5 +222,15 @@ public class ByonCloudService extends AbstractCloudService {
 		}
 	}
 
-
+	private String getIpListFromPropsFile() {
+		
+		File propsFile = new File(SGTestHelper.getSGTestRootDir() + "/src/main/resources/apps/cloudify/cloud/byon/byon.properties");
+		Properties props;
+		try {
+			props = IOUtils.readPropertiesFromFile(propsFile);
+		} catch (final Exception e) {
+			throw new IllegalStateException("Failed reading properties file : " + e.getMessage());
+		}
+		return props.getProperty(IP_LIST_PROPERTY);
+	}
 }

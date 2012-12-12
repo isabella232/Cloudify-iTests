@@ -15,16 +15,6 @@ public class LocalCloudSecurityTest extends AbstractSecuredLocalCloudTest{
 
 	private String s = File.separator;
 
-	protected static final String SIMPLE_APP_NAME = "simple";
-	protected static final String SIMPLE_APP_PATH = SGTEST_ROOT_DIR + "/src/main/resources/apps/USM/usm/applications/" + SIMPLE_APP_NAME;
-	protected static final String SIMPLE_SERVICE_NAME = "simple";
-	protected static final String SIMPLE_SERVICE_PATH = SGTEST_ROOT_DIR + "/src/main/resources/apps/USM/usm/" + SIMPLE_SERVICE_NAME;
-	
-	protected static final String GROOVY_APP_NAME = "groovyApp";
-	protected static final String GROOVY_APP_PATH = SGTEST_ROOT_DIR + "/src/main/resources/apps/USM/usm/applications/" + GROOVY_APP_NAME;
-	protected static final String GROOVY_SERVICE_NAME = "groovy";
-	protected static final String GROOVY2_SERVICE_NAME = "groovy2";
-	
 	protected static final String INSTANCE_VERIFICATION_STRING = "instance #1";
 	protected static final String ACCESS_DENIED_MESSAGE = "no_permission_access_is_denied";
 	protected static final String BAD_CREDENTIALS_MESSAGE = "Bad credentials";

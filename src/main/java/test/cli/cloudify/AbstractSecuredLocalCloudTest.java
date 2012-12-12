@@ -22,6 +22,16 @@ public class AbstractSecuredLocalCloudTest extends AbstractLocalCloudTest{
 
 	protected static final String SGTEST_ROOT_DIR = SGTestHelper.getSGTestRootDir().replace('\\', '/');
 
+	protected static final String SIMPLE_APP_NAME = "simple";
+	protected static final String SIMPLE_APP_PATH = SGTEST_ROOT_DIR + "/src/main/resources/apps/USM/usm/applications/" + SIMPLE_APP_NAME;
+	protected static final String SIMPLE_SERVICE_NAME = "simple";
+	protected static final String SIMPLE_SERVICE_PATH = SGTEST_ROOT_DIR + "/src/main/resources/apps/USM/usm/" + SIMPLE_SERVICE_NAME;
+	
+	protected static final String GROOVY_APP_NAME = "groovyApp";
+	protected static final String GROOVY_APP_PATH = SGTEST_ROOT_DIR + "/src/main/resources/apps/USM/usm/applications/" + GROOVY_APP_NAME;
+	protected static final String GROOVY_SERVICE_NAME = "groovy";
+	protected static final String GROOVY2_SERVICE_NAME = "groovy2";	
+	
 	private static final String BUILD_SECURITY_FILE_PATH = SGTestHelper.getBuildDir().replace('\\', '/') + "/config/security/spring-security.xml";
 	private static final String BUILD_SECURITY_BACKUP_FILE_PATH = SGTestHelper.getBuildDir().replace('\\', '/') + "/config/security/spring-security.xml.backup";
 	private static final String DEFAULT_SECURITY_FILE_PATH = SGTestHelper.getSGTestRootDir().replace('\\', '/') + "/src/main/config/security/spring-security.xml";

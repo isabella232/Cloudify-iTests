@@ -2,6 +2,8 @@ package framework.utils;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -132,6 +134,12 @@ public class IOUtils {
 		File overridePropsFile = writePropertiesToFile(props, createTempFile);
 		return overridePropsFile;
 
+	}
+	
+	public static Properties readPropertiesFromFile(File file) throws FileNotFoundException, IOException {
+		Properties props = new Properties();
+		props.load(new FileInputStream(file));
+		return props;
 	}
 }
 

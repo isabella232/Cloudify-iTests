@@ -91,6 +91,7 @@ public abstract class AbstractByonAddRemoveTemplatesTest extends AbstractByonClo
 			}
 			ipListBuilder.append(nextMachine);
 		}
+		service.setNumberOfManagementMachines(numOfMngMachines);
 		numOfMachinesInUse.addAndGet(numOfMngMachines);
 		LogUtils.log("Updating MNG machine IPs: " + ipListBuilder);
 		service.setIpList(ipListBuilder.toString());

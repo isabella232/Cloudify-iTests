@@ -11,6 +11,10 @@ import org.openspaces.admin.pu.elastic.config.ManualCapacityScaleConfigurer;
 import org.openspaces.admin.space.ElasticSpaceDeployment;
 import org.openspaces.admin.space.Space;
 import org.openspaces.core.util.MemoryUnit;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import test.esm.AbstractFromXenToByonGSMTest;
@@ -20,7 +24,27 @@ import test.esm.AbstractFromXenToByonGSMTest;
  * @author dank
  */
 public class DedicatedManualByonDataGridTwoIndenpendentDeploymentsTest extends AbstractFromXenToByonGSMTest {
-
+	
+	@BeforeMethod
+    public void beforeTest() {
+		super.beforeTestInit();
+	}
+	
+	@BeforeClass
+	protected void bootstrap() throws Exception {
+		super.bootstrapBeforeClass();
+	}
+	
+	@AfterMethod
+    public void afterTest() {
+		super.afterTest();
+	}
+	
+	@AfterClass(alwaysRun = true)
+	protected void teardownAfterClass() throws Exception {
+		super.teardownAfterClass();
+	}
+	
     @Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1")
     public void manualXenDataGridDeploymentTwoIndenpendentDeploymentsTest() {
    	    	 

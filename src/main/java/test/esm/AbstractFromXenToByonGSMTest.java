@@ -17,10 +17,6 @@ import org.openspaces.grid.gsm.machines.plugins.events.MachineStartRequestedEven
 import org.openspaces.grid.gsm.machines.plugins.events.MachineStartedEvent;
 import org.openspaces.grid.gsm.machines.plugins.events.MachineStopRequestedEvent;
 import org.openspaces.grid.gsm.machines.plugins.events.MachineStoppedEvent;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeMethod;
 
 import test.cli.cloudify.cloud.byon.AbstractByonCloudTest;
 import test.cli.cloudify.cloud.services.byon.ByonCloudService;
@@ -71,13 +67,12 @@ public class AbstractFromXenToByonGSMTest extends AbstractByonCloudTest {
 		machineEventsCounter.repetitiveAssertNumberOfMachineEvents(eventClass, expected, timeoutMilliseconds);
 	}
     
-	@BeforeClass
-	protected void bootstrap() throws Exception {
+	
+	protected void bootstrapBeforeClass() throws Exception {
 		super.bootstrap();
 	}
 	
-	@BeforeMethod
-    public void beforeTest() {
+    public void beforeTestInit() {
 		gscCounter = new GridServiceContainersCounter(admin); 
         gsaCounter = new GridServiceAgentsCounter(admin);
         machineEventsCounter = new MachinesEventsCounter(admin);
@@ -87,8 +82,6 @@ public class AbstractFromXenToByonGSMTest extends AbstractByonCloudTest {
         repetitiveAssertNumberOfMachineEvents(MachineStoppedEvent.class, 0, OPERATION_TIMEOUT);
 	}
 	
-
-    @AfterMethod
     public void afterTest() {
     	if (gscCounter != null) {
         	gscCounter.close();
@@ -108,14 +101,18 @@ public class AbstractFromXenToByonGSMTest extends AbstractByonCloudTest {
         }
 	}
 	
-	@AfterClass(alwaysRun = true)
-	protected void teardown() throws Exception {
+	protected void teardownAfterClass() throws Exception {
 		super.teardown(admin);
 	}
 
 	@Override
 	protected String getCloudName() {
 		return "byon-xap";
+	}
+	
+	@Override
+	protected void afterBootstrap() throws Exception {
+		admin = super.createAdmin();
 	}
 	
 	protected void customizeCloud() throws Exception {

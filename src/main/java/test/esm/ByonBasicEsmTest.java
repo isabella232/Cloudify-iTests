@@ -3,44 +3,44 @@ package test.esm;
 import java.io.File;
 import java.util.concurrent.TimeUnit;
 
-import org.cloudifysource.dsl.cloud.Cloud;
-import org.cloudifysource.dsl.cloud.CloudTemplate;
-import org.cloudifysource.esc.driver.provisioning.CloudifyMachineProvisioningConfig;
 import org.openspaces.admin.pu.ProcessingUnit;
-import org.openspaces.admin.pu.elastic.ElasticMachineProvisioningConfig;
 import org.openspaces.admin.pu.elastic.ElasticStatefulProcessingUnitDeployment;
 import org.openspaces.admin.pu.elastic.config.ManualCapacityScaleConfig;
 import org.openspaces.admin.pu.elastic.config.ManualCapacityScaleConfigurer;
 import org.openspaces.core.util.MemoryUnit;
 import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import test.cli.cloudify.cloud.byon.AbstractByonCloudTest;
-import test.cli.cloudify.cloud.services.byon.ByonCloudService;
 import framework.utils.AssertUtils;
 import framework.utils.DeploymentUtils;
 import framework.utils.LogUtils;
 
 
 
-public class ByonBasicEsmTest extends AbstractByonCloudTest {
+public class ByonBasicEsmTest extends AbstractFromXenToByonGSMTest {
 	public final static long OPERATION_TIMEOUT = 5 * 60 * 1000;
 
+	@BeforeMethod
+    public void beforeTest() {
+		super.beforeTestInit();
+	}
+	
 	@BeforeClass
-	public void bootstrap() throws Exception {
-		super.bootstrap();
+	protected void bootstrap() throws Exception {
+		super.bootstrapBeforeClass();
+	}
+	
+	@AfterMethod
+    public void afterTest() {
+		super.afterTest();
 	}
 	
 	@AfterClass(alwaysRun = true)
-	protected void teardown() throws Exception {
-		super.teardown(admin);
-		
-	}
-	
-	@Override
-	protected String getCloudName() {
-		return "byon-xap";
+	protected void teardownAfterClass() throws Exception {
+		super.teardownAfterClass();
 	}
 	
 	
@@ -84,19 +84,4 @@ public class ByonBasicEsmTest extends AbstractByonCloudTest {
         LogUtils.log("simulating xen stateful proccesing unit deployment passed");
 	}
 	
-	//config the machine
-	private ElasticMachineProvisioningConfig getMachineProvisioningConfig() {
-		String templateName = "SMALL_LINUX";
-		ByonCloudService cloudService = getService();
-		Cloud cloud = cloudService.getCloud();
-		final CloudTemplate template = cloud.getTemplates().get(templateName);
-		CloudTemplate managementTemplate = cloud.getTemplates().get(cloud.getConfiguration().getManagementMachineTemplate());
-		managementTemplate.getRemoteDirectory();
-		final CloudifyMachineProvisioningConfig config = new CloudifyMachineProvisioningConfig(
-				cloud, template, templateName,
-				managementTemplate.getRemoteDirectory());		
-		return config;
-	}
-	
-
 }

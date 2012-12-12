@@ -10,6 +10,10 @@ import org.openspaces.admin.pu.elastic.config.ManualCapacityScaleConfig;
 import org.openspaces.admin.pu.elastic.config.ManualCapacityScaleConfigurer;
 import org.openspaces.admin.pu.elastic.config.ScaleStrategyConfig;
 import org.openspaces.core.util.MemoryUnit;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import test.esm.AbstractFromXenToByonGSMTest;
@@ -17,7 +21,28 @@ import framework.utils.DeploymentUtils;
 import framework.utils.GsmTestUtils;
 
 public class DedicatedManualByonStatefulDeploymentTest extends AbstractFromXenToByonGSMTest {
-
+	
+	@BeforeMethod
+    public void beforeTest() {
+		super.beforeTestInit();
+	}
+	
+	@BeforeClass
+	protected void bootstrap() throws Exception {
+		super.bootstrapBeforeClass();
+	}
+	
+	@AfterMethod
+    public void afterTest() {
+		super.afterTest();
+	}
+	
+	@AfterClass(alwaysRun = true)
+	protected void teardownAfterClass() throws Exception {
+		super.teardownAfterClass();
+	}
+	
+	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1")
     public void testElasticStatefulProcessingUnitDeploymentScale() throws IOException {
 		elasticStatefulProcessingUnitDeployment(true);
@@ -33,8 +58,7 @@ public class DedicatedManualByonStatefulDeploymentTest extends AbstractFromXenTo
         repetitiveAssertNumberOfGSCsAdded(0, OPERATION_TIMEOUT);
         repetitiveAssertNumberOfGSAsAdded(1, OPERATION_TIMEOUT);
          
-        DeploymentUtils.prepareApp("simpledata");
-        File puDir = DeploymentUtils.getProcessingUnit("simpledata", "processor");
+        File puDir = DeploymentUtils.getArchive("processorPU.jar"); 
         
         ManualCapacityScaleConfig manualCapacityScaleConfig = 
         	new ManualCapacityScaleConfigurer()

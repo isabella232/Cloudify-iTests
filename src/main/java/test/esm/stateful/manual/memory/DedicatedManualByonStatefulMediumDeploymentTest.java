@@ -4,17 +4,41 @@ import org.openspaces.admin.pu.ProcessingUnit;
 import org.openspaces.admin.pu.elastic.config.ManualCapacityScaleConfigurer;
 import org.openspaces.admin.space.ElasticSpaceDeployment;
 import org.openspaces.core.util.MemoryUnit;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import test.esm.AbstractFromXenToByonGSMTest;
 import framework.utils.GsmTestUtils;
 
 public class DedicatedManualByonStatefulMediumDeploymentTest extends AbstractFromXenToByonGSMTest {
-
+	
 	private static final int CONTAINER_CAPACITY = 256;
     private static final int HIGH_NUM_CPU = 8;
     private static final int HIGH_MEM_CAPACITY = 6000;
-
+    
+    @BeforeMethod
+    public void beforeTest() {
+		super.beforeTestInit();
+	}
+	
+	@BeforeClass
+	protected void bootstrap() throws Exception {
+		super.bootstrapBeforeClass();
+	}
+	
+	@AfterMethod
+    public void afterTest() {
+		super.afterTest();
+	}
+	
+	@AfterClass(alwaysRun = true)
+	protected void teardownAfterClass() throws Exception {
+		super.teardownAfterClass();
+	}
+    
     @Test(timeOut=DEFAULT_TEST_TIMEOUT*2 , groups = "1" )
 	public void largeDeploymentTest() {
 	

@@ -12,6 +12,10 @@ import org.openspaces.grid.gsm.machines.plugins.events.MachineStartRequestedEven
 import org.openspaces.grid.gsm.machines.plugins.events.MachineStartedEvent;
 import org.openspaces.grid.gsm.machines.plugins.events.MachineStopRequestedEvent;
 import org.openspaces.grid.gsm.machines.plugins.events.MachineStoppedEvent;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import test.esm.AbstractFromXenToByonGSMTest;
@@ -25,6 +29,26 @@ public class DedicatedManualByonDataGridCancelScaleOutTest extends AbstractFromX
 	private static final int SCALEOUT_NUMBER_OF_CONTAINERS = 4;
 	private static final int SCALEOUT_MEMORY_IN_MEGABYTES = CONTAINER_MEMORY_IN_MEGABYTES * SCALEOUT_NUMBER_OF_CONTAINERS;
 	private final String gridName = "myspace";
+	
+	@BeforeMethod
+    public void beforeTest() {
+		super.beforeTestInit();
+	}
+	
+	@BeforeClass
+	protected void bootstrap() throws Exception {
+		super.bootstrapBeforeClass();
+	}
+	
+	@AfterMethod
+    public void afterTest() {
+		super.afterTest();
+	}
+	
+	@AfterClass(alwaysRun = true)
+	protected void teardownAfterClass() throws Exception {
+		super.teardownAfterClass();
+	}
 	
     /**
      * This test should reproduce a case where scale-out is canceled 

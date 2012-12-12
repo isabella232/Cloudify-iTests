@@ -213,7 +213,18 @@ public class AddRemoveTemplatesTest extends AbstractByonAddRemoveTemplatesTest {
 			uninstallServiceIfFound(serviceName);
 		}
 	}
-
+	
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
+	public void AddRemoveAndAddAgainTemplates() throws IOException {
+		TemplatesBatchHandler handler = new TemplatesBatchHandler();
+		TemplateDetails toRemoveTemplate = handler.addTemplate();
+		addTempaltes(handler);
+		removeTemplate(handler, toRemoveTemplate.getTemplateName(), false, null);
+		assertListTempaltes(defaultTempaltes);
+		handler.addCustomTemplate(toRemoveTemplate, false, false);		
+		addTempaltes(handler);
+		assertExpectedListTempaltes();
+	}
 
 	@Override
 	public boolean isBootstrap() {

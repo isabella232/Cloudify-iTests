@@ -59,7 +59,7 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 	protected abstract boolean isReusableCloud();
 
 	@BeforeClass(alwaysRun = true)
-    public void beforeClass() throws Exception {  
+    public void overrideCloudifyJars() throws Exception {  
         if(System.getProperty("override.cloudify") != null) {
             buildAndCopyCloudifyJars(getCloudName());
         }

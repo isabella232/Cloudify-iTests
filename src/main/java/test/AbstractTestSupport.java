@@ -40,7 +40,7 @@ public abstract class AbstractTestSupport {
 	
 	private static final int CREATE_ADMIN_TIMEOUT = 10 * 60 * 1000;
 
-	protected Admin createAdmin() throws TimeoutException, InterruptedException {
+	protected Admin createAdminAndWaitForManagement() throws TimeoutException, InterruptedException {
 		
 		long endTime = System.currentTimeMillis() + CREATE_ADMIN_TIMEOUT;
 
@@ -67,6 +67,10 @@ public abstract class AbstractTestSupport {
 
 		}
 		throw new TimeoutException("Timed out while creating admin");
+	}
+	
+	protected Admin createAdmin() {
+		return createAdminFactory().create();
 	}
 	
 	protected AdminFactory createAdminFactory() {

@@ -136,7 +136,7 @@ public class AbstractSecuredLocalCloudTest extends AbstractLocalCloudTest{
 		Assert.assertFalse(isRequiresBootstrap(),
 				"Cannot establish connection with localcloud");
 
-		this.admin = super.createAdmin();
+		this.admin = super.createAdminAndWaitForManagement();
 		final boolean foundLookupService = admin.getLookupServices().waitFor(1,
 				WAIT_FOR_TIMEOUT_SECONDS, TimeUnit.SECONDS);
 		Assert.assertTrue(foundLookupService,

@@ -42,7 +42,7 @@ public class AbstractByonCloudTest extends NewAbstractCloudTest {
 	@Override
 	protected void afterBootstrap() throws Exception {
 		super.afterBootstrap();
-		admin = super.createAdmin();
+		admin = super.createAdminAndWaitForManagement();
 	}
 	
 	@Override

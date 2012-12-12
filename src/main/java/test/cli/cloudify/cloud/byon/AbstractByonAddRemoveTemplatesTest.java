@@ -35,6 +35,7 @@ import test.cli.cloudify.cloud.services.byon.ByonCloudService;
 import framework.utils.AssertUtils;
 import framework.utils.IOUtils;
 import framework.utils.LogUtils;
+import framework.utils.SSHUtils;
 
 public abstract class AbstractByonAddRemoveTemplatesTest extends AbstractByonCloudTest {
 	String[] mngMachinesIP;
@@ -44,6 +45,9 @@ public abstract class AbstractByonAddRemoveTemplatesTest extends AbstractByonClo
 	AtomicInteger numLastAddedTemplate;
 	List<String> defaultTempaltes;
 
+	public static final String USER = "tgrid";
+	public static final String PASSWORD = "tgrid";
+	
 	protected final String[] DEFAULT_TEMPLATES = {"SMALL_LINUX"};
 	private final String TEMPLATE_NAME_PREFIX = "template_";
 	private final String UPLOAD_DIR_NAME_PREFIX = "upload";
@@ -148,17 +152,17 @@ public abstract class AbstractByonAddRemoveTemplatesTest extends AbstractByonClo
 		return output;
 	}
 
-	protected void removeTemplate(TemplatesBatchHandler handler, String templateName, boolean expectedToFail, String expectedOutput) {
+	protected String removeTemplate(TemplatesBatchHandler handler, String templateName, boolean expectedToFail, String expectedOutput) {
 		if (!expectedToFail) {
 			handler.removeTemplate(templateName);
 		}
-		removeTemplate(templateName, expectedToFail, expectedOutput);
+		return removeTemplate(templateName, expectedToFail, expectedOutput);
 	}
 	
-	protected void removeTemplate(String templateName, boolean expectToFail, String expectedOutput) {
+	protected String removeTemplate(String templateName, boolean expectToFail, String expectedOutput) {
 		
 		String command = "connect " + getRestUrl() + ";remove-template " + templateName;
-		String output;
+		String output = "no output";
 		try {
 			if (expectToFail) {
 				output = CommandTestUtils.runCommandExpectedFail(command);
@@ -172,6 +176,8 @@ public abstract class AbstractByonAddRemoveTemplatesTest extends AbstractByonClo
 			LogUtils.log(e.getMessage(), e);
 			Assert.fail(e.getMessage());
 		}
+		
+		return output;
 	}
 	
 	protected void installService(String serviceName, String templateName, boolean expectToFail) {
@@ -356,6 +362,23 @@ public abstract class AbstractByonAddRemoveTemplatesTest extends AbstractByonClo
 		FileUtils.deleteQuietly(serviceFolder);
 		
 		removeAllAddedTempaltes(getTemplateNamesFromOutput(listTemplates()));
+	}
+	
+	public void verifyTemplateExistence(String machineIP, TemplateDetails template, String templateRemotePath, boolean shouldExist) throws Exception {
+		
+		String output;
+		
+		String templateName = template.getTemplateName();
+		String command = "if [ -f " + templateRemotePath + " ]; then echo " + shouldExist + "; else echo " + (!shouldExist) + "; fi";
+
+		output = SSHUtils.runCommand(machineIP, OPERATION_TIMEOUT, command, USER, PASSWORD);
+		
+		if(shouldExist){			
+			AssertUtils.assertTrue("the template " + templateName + " doesn't exist in " + mngMachinesIP[0] + " under " + templateRemotePath, output.contains(Boolean.toString(shouldExist)));
+		}
+		else{
+			AssertUtils.assertTrue("the template " + templateName + " exists in " + mngMachinesIP[0] + " under " + templateRemotePath, output.contains(Boolean.toString(!shouldExist)));
+		}
 	}
 
 	public class TemplatesBatchHandler {

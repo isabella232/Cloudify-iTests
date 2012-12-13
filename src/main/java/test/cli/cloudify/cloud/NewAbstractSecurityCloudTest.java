@@ -111,22 +111,27 @@ public abstract class NewAbstractSecurityCloudTest extends NewAbstractCloudTest 
 	}
 
 	protected String login(String user, String password, boolean failCommand) throws IOException, InterruptedException{
+		getService().getBootstrapper().setRestUrl(getRestUrl());
 		return getService().getBootstrapper().user(user).password(password).login(failCommand);
 	}
 	
-	protected String connect(String user, String password, boolean isExpectedToFail) throws IOException, InterruptedException{	
+	protected String connect(String user, String password, boolean isExpectedToFail) throws IOException, InterruptedException{
+		getService().getBootstrapper().setRestUrl(getRestUrl());
 		return getService().getBootstrapper().user(user).password(password).connect(isExpectedToFail);
 	}
 
 	protected String listApplications(String user, String password, boolean expectedFail) throws IOException, InterruptedException{
+		getService().getBootstrapper().setRestUrl(getRestUrl());
 		return getService().getBootstrapper().user(user).password(password).listApplications(expectedFail);
 	}
 	
 	protected String listServices(String user, String password, String applicationName, boolean expectedFail) throws IOException, InterruptedException{
+		getService().getBootstrapper().setRestUrl(getRestUrl());
 		return getService().getBootstrapper().user(user).password(password).listServices(applicationName, expectedFail);
 	}
 	
 	protected String listInstances(String user, String password, String applicationName, String serviceName, boolean expectedFail) throws IOException, InterruptedException{
+		getService().getBootstrapper().setRestUrl(getRestUrl());
 		return getService().getBootstrapper().user(user).password(password).listInstances(applicationName, serviceName, expectedFail);
 	}
 }

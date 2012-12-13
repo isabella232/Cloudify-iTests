@@ -3,6 +3,7 @@ package test.cli.cloudify.security.ldap;
 import java.io.IOException;
 
 import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -134,6 +135,12 @@ public class LocalCloudSecurityLdapTest extends AbstractSecuredLocalCloudTest {
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
 	public void tamperWithSecurityFileTest() throws Exception{
 		super.testTamperWithSecurityFile();			
+	}
+	
+	@AfterMethod(alwaysRun = true)
+	protected void uninstall() throws Exception {
+		uninstallApplicationIfFound(SIMPLE_APP_NAME, SecurityConstants.ALL_ROLES_USER_PWD, SecurityConstants.ALL_ROLES_USER_PWD);
+		uninstallApplicationIfFound(GROOVY_APP_NAME, SecurityConstants.ALL_ROLES_USER_PWD, SecurityConstants.ALL_ROLES_USER_PWD);
 	}
 	
 	@AfterClass(alwaysRun = true)

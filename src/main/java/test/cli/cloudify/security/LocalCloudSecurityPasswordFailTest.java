@@ -21,8 +21,8 @@ public class LocalCloudSecurityPasswordFailTest extends AbstractSecuredLocalClou
 	public void wrongPasswordTest () {
 		bootstrapper = new LocalCloudBootstrapper();
 		bootstrapper.setBootstrapExpectedToFail(true); // new flag which says bootstrapper is about to fail
-		bootstrapper.secured(true).securityFilePath(getBuildSecurityFilePath());
-		bootstrapper.keystoreFilePath(getDefaultKeystoreFilePath()).keystorePassword(FAKE_PASSWORD);
+		bootstrapper.secured(true).securityFilePath(SecurityConstants.BUILD_SECURITY_FILE_PATH);
+		bootstrapper.keystoreFilePath(SecurityConstants.DEFAULT_KEYSTORE_FILE_PATH).keystorePassword(FAKE_PASSWORD);
 		ProcessResult res = null ;
 		try {
 			res  = super.bootstrap(bootstrapper);

@@ -198,9 +198,9 @@ public class LocalCloudSecurityTest extends AbstractSecuredLocalCloudTest{
 
 		String fakeCloudAdminUserAndPassword = "John";
 
-		String originalFilePath = getBuildSecurityFilePath();
+		String originalFilePath = SecurityConstants.BUILD_SECURITY_FILE_PATH;
 		String backupFilePath = originalFilePath + ".tempBackup";
-		String fakeFilePath = SGTEST_ROOT_DIR + s + "src" + s + "main" + s + "config" + s + "security" + s + "custom-spring-security.xml";
+		String fakeFilePath = CommandTestUtils.getPath("src/main/config/security/custom-spring-security.xml");
 		File originalFile = new File(originalFilePath);
 		File backupFile = new File(backupFilePath);
 		File fakeFile = new File(fakeFilePath);

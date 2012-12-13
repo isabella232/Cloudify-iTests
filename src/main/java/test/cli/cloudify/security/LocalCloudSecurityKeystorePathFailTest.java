@@ -27,8 +27,8 @@ public class LocalCloudSecurityKeystorePathFailTest extends AbstractSecuredLocal
 	public void wrongKeystorePathTest () {
 		bootstrapper = new LocalCloudBootstrapper();
 		bootstrapper.setBootstrapExpectedToFail(true); 
-		bootstrapper.secured(true).securityFilePath(getBuildSecurityFilePath());
-		bootstrapper.keystoreFilePath(WRONG_KEYSTORE_PATH).keystorePassword(getDefaultKeystorePassword());
+		bootstrapper.secured(true).securityFilePath(SecurityConstants.BUILD_SECURITY_FILE_PATH);
+		bootstrapper.keystoreFilePath(WRONG_KEYSTORE_PATH).keystorePassword(SecurityConstants.DEFAULT_KEYSTORE_PASSWORD);
 		ProcessResult res = null ;
 		try {
 			res = super.bootstrap(bootstrapper);

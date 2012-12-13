@@ -8,60 +8,31 @@ import org.openspaces.admin.AdminFactory;
 
 import test.AbstractTest;
 import test.cli.cloudify.CommandTestUtils.ProcessResult;
-
-import framework.tools.SGTestHelper;
+import test.cli.cloudify.security.SecurityConstants;
 import framework.utils.ApplicationInstaller;
 import framework.utils.LocalCloudBootstrapper;
 import framework.utils.ServiceInstaller;
 
 public class AbstractSecuredLocalCloudTest extends AbstractTest {
 
-	protected static final String SGTEST_ROOT_DIR = SGTestHelper.getSGTestRootDir().replace('\\', '/');
-
 	protected static final String SIMPLE_APP_NAME = "simple";
-	protected static final String SIMPLE_APP_PATH = SGTEST_ROOT_DIR + "/src/main/resources/apps/USM/usm/applications/" + SIMPLE_APP_NAME;
+	protected static final String SIMPLE_APP_PATH = CommandTestUtils.getPath("/src/main/resources/apps/USM/usm/applications/" + SIMPLE_APP_NAME);
 	protected static final String SIMPLE_SERVICE_NAME = "simple";
-	protected static final String SIMPLE_SERVICE_PATH = SGTEST_ROOT_DIR + "/src/main/resources/apps/USM/usm/" + SIMPLE_SERVICE_NAME;
+	protected static final String SIMPLE_SERVICE_PATH = CommandTestUtils.getPath("/src/main/resources/apps/USM/usm/" + SIMPLE_SERVICE_NAME);
 	
 	protected static final String GROOVY_APP_NAME = "groovyApp";
-	protected static final String GROOVY_APP_PATH = SGTEST_ROOT_DIR + "/src/main/resources/apps/USM/usm/applications/" + GROOVY_APP_NAME;
+	protected static final String GROOVY_APP_PATH = CommandTestUtils.getPath("/src/main/resources/apps/USM/usm/applications/" + GROOVY_APP_NAME);
 	protected static final String GROOVY_SERVICE_NAME = "groovy";
 	protected static final String GROOVY2_SERVICE_NAME = "groovy2";	
-	
-	private static final String BUILD_SECURITY_FILE_PATH = SGTestHelper.getBuildDir().replace('\\', '/') + "/config/security/spring-security.xml";
-	private static final String BUILD_SECURITY_BACKUP_FILE_PATH = SGTestHelper.getBuildDir().replace('\\', '/') + "/config/security/spring-security.xml.backup";
-	private static final String DEFAULT_KEYSTORE_FILE_PATH = SGTestHelper.getSGTestRootDir().replace('\\', '/') + "/src/main/config/security/keystore";
-	private static final String DEFAULT_KEYSTORE_PASSWORD = "sgtest";
-	private static final String LDAP_SECURITY_FILE_PATH = SGTEST_ROOT_DIR + "/src/main/config/security/ldap-spring-security.xml";
-	
-	public static String getDefaultLdapSecurityFilePath() {
-		return LDAP_SECURITY_FILE_PATH;
-	}
-
-	public static String getBuildSecurityFilePath() {
-		return BUILD_SECURITY_FILE_PATH;
-	}
-
-	public static String getBuildSecurityBackupFilePath() {
-		return BUILD_SECURITY_BACKUP_FILE_PATH;
-	}
-
-	public static String getDefaultKeystoreFilePath() {
-		return DEFAULT_KEYSTORE_FILE_PATH;
-	}
-
-	public static String getDefaultKeystorePassword() {
-		return DEFAULT_KEYSTORE_PASSWORD;
-	}
-	
+		
 	protected String getRestUrl() {
 		return "https://127.0.0.1:8100";
 	}
 	
 	protected void bootstrap() throws Exception {
 		LocalCloudBootstrapper bootstrapper = new LocalCloudBootstrapper();
-		bootstrapper.secured(true).securityFilePath(getBuildSecurityFilePath());
-		bootstrapper.keystoreFilePath(getDefaultKeystoreFilePath()).keystorePassword(getDefaultKeystorePassword());
+		bootstrapper.secured(true).securityFilePath(SecurityConstants.BUILD_SECURITY_FILE_PATH);
+		bootstrapper.keystoreFilePath(SecurityConstants.DEFAULT_KEYSTORE_FILE_PATH).keystorePassword(SecurityConstants.DEFAULT_KEYSTORE_PASSWORD);
 		bootstrap(bootstrapper);
 	}
 	

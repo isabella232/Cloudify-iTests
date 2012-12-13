@@ -27,7 +27,7 @@ public class CustomSecurityFileTest extends AbstractSecuredLocalCloudTest{
 	public void bootstrap() throws Exception {
 		bootstrapper = new LocalCloudBootstrapper();
 		bootstrapper.secured(true).securityFilePath(CUSTUM_SECURITY_FILE_PATH);
-		bootstrapper.keystoreFilePath(getDefaultKeystoreFilePath()).keystorePassword(getDefaultKeystorePassword());
+		bootstrapper.keystoreFilePath(SecurityConstants.BUILD_SECURITY_FILE_PATH).keystorePassword(SecurityConstants.DEFAULT_KEYSTORE_PASSWORD);
 		super.bootstrap(bootstrapper);
 	}
 	

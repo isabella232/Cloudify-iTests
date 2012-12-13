@@ -20,8 +20,8 @@ public class DefaultSecurityFileLocationTest extends AbstractSecuredLocalCloudTe
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
 	public void testDefaultSecurityFileLocation() throws Exception {
 		bootstrapper = new LocalCloudBootstrapper();
-		bootstrapper.secured(true).securityFilePath(getBuildSecurityFilePath());
-		bootstrapper.keystoreFilePath(getDefaultKeystoreFilePath()).keystorePassword(getDefaultKeystorePassword());
+		bootstrapper.secured(true).securityFilePath(SecurityConstants.BUILD_SECURITY_FILE_PATH);
+		bootstrapper.keystoreFilePath(SecurityConstants.DEFAULT_KEYSTORE_FILE_PATH).keystorePassword(SecurityConstants.DEFAULT_KEYSTORE_PASSWORD);
 		super.bootstrap(bootstrapper);
 	}
 	

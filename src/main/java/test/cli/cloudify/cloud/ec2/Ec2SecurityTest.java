@@ -12,13 +12,9 @@ import org.testng.annotations.Test;
 import test.cli.cloudify.CommandTestUtils;
 import test.cli.cloudify.cloud.NewAbstractSecurityCloudTest;
 import test.cli.cloudify.security.SecurityConstants;
-import framework.tools.SGTestHelper;
 import framework.utils.LogUtils;
 
 public class Ec2SecurityTest extends NewAbstractSecurityCloudTest {
-
-	private static final String FILE_SEP = System.getProperty("file.separator");
-	private static final String SGTEST_ROOT_DIR = SGTestHelper.getSGTestRootDir().replace('\\', '/');
 
 	private static final String SIMPLE_APP_NAME = "simple";
 	private static final String SIMPLE_APP_PATH = CommandTestUtils.getPath("src/main/resources/apps/USM/usm/applications/" + SIMPLE_APP_NAME);
@@ -113,7 +109,7 @@ public class Ec2SecurityTest extends NewAbstractSecurityCloudTest {
 	}
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
-	public void loginTest() {
+	public void loginTest() throws IOException, InterruptedException {
 
 		String output = "no output";
 		
@@ -123,7 +119,7 @@ public class Ec2SecurityTest extends NewAbstractSecurityCloudTest {
 	}
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
-	public void connectWithNonexistentUserTest() {
+	public void connectWithNonexistentUserTest() throws IOException, InterruptedException {
 
 		String output = connect(SecurityConstants.CLOUD_ADMIN_USER_PWD + "bad", SecurityConstants.CLOUD_ADMIN_USER_PWD, true);		
 		assertTrue("connect succeeded for user: " + SecurityConstants.CLOUD_ADMIN_USER_PWD + "bad", output.contains(BAD_CREDENTIALS_MESSAGE));			
@@ -131,7 +127,7 @@ public class Ec2SecurityTest extends NewAbstractSecurityCloudTest {
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
-	public void connectWithNoPasswordTest() {
+	public void connectWithNoPasswordTest() throws IOException, InterruptedException {
 		
 		String output = connect(SecurityConstants.CLOUD_ADMIN_USER_PWD, null, true);		
 		assertTrue("connect succeeded for: " + SecurityConstants.CLOUD_ADMIN_DESCRIPTIN + " without providing a password", output.contains(BAD_CREDENTIALS_MESSAGE));			
@@ -139,7 +135,7 @@ public class Ec2SecurityTest extends NewAbstractSecurityCloudTest {
 	}
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
-	public void loginWithNonexistentUserTest() {
+	public void loginWithNonexistentUserTest() throws IOException, InterruptedException {
 
 		String output = "no output";
 		
@@ -149,7 +145,7 @@ public class Ec2SecurityTest extends NewAbstractSecurityCloudTest {
 	}
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
-	public void connectWithWrongPassword() {
+	public void connectWithWrongPassword() throws IOException, InterruptedException {
 
 		String output = connect(SecurityConstants.CLOUD_ADMIN_USER_PWD, SecurityConstants.CLOUD_ADMIN_USER_PWD + "bad", true);		
 		assertTrue("connect succeeded for password: " + SecurityConstants.CLOUD_ADMIN_USER_PWD + "bad", output.contains(BAD_CREDENTIALS_MESSAGE));			
@@ -157,7 +153,7 @@ public class Ec2SecurityTest extends NewAbstractSecurityCloudTest {
 	}
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
-	public void loginWithWrongPassword() {
+	public void loginWithWrongPassword() throws IOException, InterruptedException {
 
 		String output = "no output";
 		
@@ -192,9 +188,9 @@ public class Ec2SecurityTest extends NewAbstractSecurityCloudTest {
 
 		String fakeCloudAdminUserAndPassword = "John";
 
-		String originalFilePath = getBuildSecurityFilePath();
+		String originalFilePath = SecurityConstants.BUILD_SECURITY_FILE_PATH;
 		String backupFilePath = originalFilePath + ".tempBackup";
-		String fakeFilePath = SGTEST_ROOT_DIR + FILE_SEP + "src" + FILE_SEP + "main" + FILE_SEP + "config" + FILE_SEP + "security" + FILE_SEP + "fake-spring-security.xml";
+		String fakeFilePath = CommandTestUtils.getPath("src/main/config/security/custom-spring-security.xml");
 		File originalFile = new File(originalFilePath);
 		File backupFile = new File(backupFilePath);
 		File fakeFile = new File(fakeFilePath);
@@ -231,7 +227,7 @@ public class Ec2SecurityTest extends NewAbstractSecurityCloudTest {
 		assertTrue("install access granted to viewer " + fakeCloudAdminUserAndPassword, output.contains(ACCESS_DENIED_MESSAGE));			
 	}
 
-	protected void verifyVisibleLists(String installer, String viewerName, String viewerPassword, String viewerDescription, String appName, boolean isVisible) {
+	protected void verifyVisibleLists(String installer, String viewerName, String viewerPassword, String viewerDescription, String appName, boolean isVisible) throws IOException, InterruptedException {
 		
 		String output = "no output";
 		

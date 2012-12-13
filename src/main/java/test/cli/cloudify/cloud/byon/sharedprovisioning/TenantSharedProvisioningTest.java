@@ -10,9 +10,9 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import test.cli.cloudify.cloud.NewAbstractSecurityCloudTest;
 import test.cli.cloudify.cloud.services.CloudService;
 import test.cli.cloudify.cloud.services.CloudServiceManager;
+import test.cli.cloudify.security.SecurityConstants;
 import framework.utils.ApplicationInstaller;
 import framework.utils.AssertUtils;
 import framework.utils.CloudBootstrapper;
@@ -33,9 +33,9 @@ public class TenantSharedProvisioningTest extends AbstractSharedProvisioningByon
 		
 		CloudBootstrapper bootstrapper = new CloudBootstrapper();
 		bootstrapper.user("Dana").password("Dana").secured(true)
-			.securityFilePath(NewAbstractSecurityCloudTest.getDefaultSecurityFilePath())
-			.keystoreFilePath(NewAbstractSecurityCloudTest.getDefaultKeystoreFilePath())
-			.keystorePassword(NewAbstractSecurityCloudTest.getDefaultKeystorePassword());
+			.securityFilePath(SecurityConstants.BUILD_SECURITY_FILE_PATH)
+			.keystoreFilePath(SecurityConstants.DEFAULT_KEYSTORE_FILE_PATH)
+			.keystorePassword(SecurityConstants.DEFAULT_KEYSTORE_PASSWORD);
 		
 		CloudService service = CloudServiceManager.getInstance().getCloudService(getCloudName());
 		service.setBootstrapper(bootstrapper);

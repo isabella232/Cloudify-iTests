@@ -3,32 +3,24 @@ package test.cli.cloudify.cloud;
 import java.io.IOException;
 
 import org.apache.commons.lang.StringUtils;
-import org.testng.Assert;
 
-import test.cli.cloudify.CommandTestUtils;
 import test.cli.cloudify.cloud.services.CloudService;
 import test.cli.cloudify.cloud.services.CloudServiceManager;
 import test.cli.cloudify.security.SecurityConstants;
-import framework.tools.SGTestHelper;
 import framework.utils.ApplicationInstaller;
 import framework.utils.CloudBootstrapper;
 import framework.utils.ServiceInstaller;
 
-public abstract class NewAbstractSecurityCloudTest extends NewAbstractCloudTest{
-
-	private static final String BUILD_SECURITY_FILE_PATH = SGTestHelper.getBuildDir().replace('\\', '/') + "/config/security/spring-security.xml";
-	private static final String DEFAULT_SECURITY_FILE_PATH = SGTestHelper.getSGTestRootDir().replace('\\', '/') + "/src/main/config/security/spring-security.xml";
-	private static final String DEFAULT_KEYSTORE_FILE_PATH = SGTestHelper.getSGTestRootDir().replace('\\', '/') + "/src/main/config/security/keystore";
-	private static final String DEFAULT_KEYSTORE_PASSWORD = "sgtest";
+public abstract class NewAbstractSecurityCloudTest extends NewAbstractCloudTest {
 	
 	@Override
 	protected void bootstrap() throws Exception {
 		
 		CloudService service = CloudServiceManager.getInstance().getCloudService(getCloudName());
 		CloudBootstrapper securedBootstrapper = new CloudBootstrapper();
-		securedBootstrapper.secured(true).securityFilePath(DEFAULT_SECURITY_FILE_PATH)
+		securedBootstrapper.secured(true).securityFilePath(SecurityConstants.BUILD_SECURITY_FILE_PATH)
 			.user(SecurityConstants.ALL_ROLES_USER_PWD).password(SecurityConstants.ALL_ROLES_USER_PWD);
-		securedBootstrapper.keystoreFilePath(DEFAULT_KEYSTORE_FILE_PATH).keystorePassword(DEFAULT_KEYSTORE_PASSWORD);
+		securedBootstrapper.keystoreFilePath(SecurityConstants.DEFAULT_KEYSTORE_FILE_PATH).keystorePassword(SecurityConstants.DEFAULT_KEYSTORE_PASSWORD);
 		service.setBootstrapper(securedBootstrapper);
 		
 		super.bootstrap(service);
@@ -118,128 +110,24 @@ public abstract class NewAbstractSecurityCloudTest extends NewAbstractCloudTest{
 		return serviceInstaller.uninstall();
 	}
 
-	protected String login(String user, String password, boolean failCommand){
-
-		String output = "no output";
-
-		try {
-			output = CommandTestUtils.runCommand(connectCommand(user, password) + ";" + loginCommand(user, password), true, failCommand);
-		} catch (IOException e) {
-			Assert.fail("Failed to connect and login");
-		} catch (InterruptedException e) {
-			Assert.fail("Failed to connect and login");
-		}
-
-		return output;
+	protected String login(String user, String password, boolean failCommand) throws IOException, InterruptedException{
+		return getService().getBootstrapper().user(user).password(password).login(failCommand);
 	}
 	
-	protected String connect(String user, String password, boolean isExpectedToFail){	
-
-		String output = "no output";
-		try {
-			
-			if (isExpectedToFail) {
-				output = CommandTestUtils.runCommandExpectedFail(connectCommand(user, password));
-			} else {
-				output = CommandTestUtils.runCommandAndWait(connectCommand(user, password));
-			}	
-			
-		} catch (IOException e) {
-			Assert.fail("Failed to connect");
-		} catch (InterruptedException e) {
-			Assert.fail("Failed to connect");
-		}
-
-		return output;
+	protected String connect(String user, String password, boolean isExpectedToFail) throws IOException, InterruptedException{	
+		return getService().getBootstrapper().user(user).password(password).login(isExpectedToFail);
 	}
 
-	protected String listApplications(String user, String password, boolean expectedFail){
-		String command = connectCommand(user, password) + ";list-applications";
-		try {
-			if (expectedFail) {
-				return CommandTestUtils.runCommandExpectedFail(command);
-			}
-			return CommandTestUtils.runCommandAndWait(command);
-		} catch (IOException e) {
-			Assert.fail("Failed to list applications", e);
-		} catch (InterruptedException e) {
-			Assert.fail("Failed to list applications", e);
-		}
-
-		return null;
+	protected String listApplications(String user, String password, boolean expectedFail) throws IOException, InterruptedException{
+		return getService().getBootstrapper().user(user).password(password).listApplications(expectedFail);
 	}
 	
-	protected String listServices(String user, String password, String applicationName, boolean expectedFail){
-		String command = connectCommand(user, password) + ";use-application " + applicationName + ";list-services";
-		try {
-			if (expectedFail) {
-				return CommandTestUtils.runCommandExpectedFail(command);
-			}
-			return CommandTestUtils.runCommandAndWait(command);
-		} catch (IOException e) {
-			Assert.fail("Failed to list applications", e);
-		} catch (InterruptedException e) {
-			Assert.fail("Failed to list applications", e);
-		}
-		
-		return null;
+	protected String listServices(String user, String password, String applicationName, boolean expectedFail) throws IOException, InterruptedException{
+		return getService().getBootstrapper().user(user).password(password).listServices(applicationName, expectedFail);
 	}
 	
-	protected String listInstances(String user, String password, String applicationName, String serviceName, boolean expectedFail){
-		String command = connectCommand(user, password) + ";use-application " + applicationName + ";list-instances " + serviceName;
-		try {
-			if (expectedFail) {
-				return CommandTestUtils.runCommandExpectedFail(command);
-			}
-			return CommandTestUtils.runCommandAndWait(command);
-		} catch (IOException e) {
-			Assert.fail("Failed to list applications", e);
-		} catch (InterruptedException e) {
-			Assert.fail("Failed to list applications", e);
-		}
-		
-		return null;
+	protected String listInstances(String user, String password, String applicationName, String serviceName, boolean expectedFail) throws IOException, InterruptedException{
+		return getService().getBootstrapper().user(user).password(password).listInstances(applicationName, serviceName, expectedFail);
 	}
-	
-	protected String loginCommand(String user, String password){		
-		return ("login " + user + " " + password);
-	}
-
-	protected String connectCommand(String user, String password){
-		
-		StringBuilder builder = new StringBuilder();
-		
-		builder.append("connect ");
-		
-		if(user != null){
-			builder.append("-user " + user + " ");
-		}
-		
-		if(password != null){
-			builder.append("-password " + password + " ");
-		}
-		
-		builder.append(getRestUrl());
-		
-		return builder.toString();
-	}
-	
-	public static String getDefaultSecurityFilePath() {
-		return DEFAULT_SECURITY_FILE_PATH;
-	}
-
-	public static String getDefaultKeystoreFilePath() {
-		return DEFAULT_KEYSTORE_FILE_PATH;
-	}
-
-	public static String getDefaultKeystorePassword() {
-		return DEFAULT_KEYSTORE_PASSWORD;
-	}
-	
-	public static String getBuildSecurityFilePath() {
-		return BUILD_SECURITY_FILE_PATH;
-	}
-	
-	
 }
 

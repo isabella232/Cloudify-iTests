@@ -7,22 +7,21 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import test.cli.cloudify.CommandTestUtils;
 import test.cli.cloudify.cloud.NewAbstractSecurityCloudTest;
 import test.cli.cloudify.cloud.services.CloudService;
 import test.cli.cloudify.cloud.services.CloudServiceManager;
 import test.cli.cloudify.security.SecurityConstants;
-import framework.tools.SGTestHelper;
 import framework.utils.CloudBootstrapper;
 
 public class Ec2CustomSecurityFileTest extends NewAbstractSecurityCloudTest{
 
-	private static final String SGTEST_ROOT_DIR = SGTestHelper.getSGTestRootDir().replace('\\', '/');
 	private static final String CLOUD_ADMIN_USER_AND_PASSWORD = "John"; 
 	private static final String VIEWER_USER_AND_PASSWORD = "Amanda"; 
 	private static final String VIEWER_DESCRIPTIN = VIEWER_USER_AND_PASSWORD + " (viewer)";
 	private static final String APP_NAME = "simple";
-	private static final String CUSTUM_SECURITY_FILE_PATH = SGTEST_ROOT_DIR + "/src/main/config/security/fake-spring-security.xml";
-	private static final String APP_PATH = SGTEST_ROOT_DIR + "/src/main/resources/apps/USM/usm/applications/" + APP_NAME;
+	private static final String CUSTUM_SECURITY_FILE_PATH = CommandTestUtils.getPath("/src/main/config/security/custom-spring-security.xml");
+	private static final String APP_PATH = CommandTestUtils.getPath("/src/main/resources/apps/USM/usm/applications/" + APP_NAME);
 	
 	private static final String ACCESS_DENIED_MESSAGE = "no_permission_access_is_denied";
 	
@@ -33,7 +32,7 @@ public class Ec2CustomSecurityFileTest extends NewAbstractSecurityCloudTest{
 		CloudService service = CloudServiceManager.getInstance().getCloudService(getCloudName());
 		CloudBootstrapper bootstrapper = new CloudBootstrapper();
 		bootstrapper.secured(true).securityFilePath(CUSTUM_SECURITY_FILE_PATH);
-		bootstrapper.keystoreFilePath(getDefaultKeystoreFilePath()).keystorePassword(getDefaultKeystorePassword());
+		bootstrapper.keystoreFilePath(SecurityConstants.DEFAULT_KEYSTORE_FILE_PATH).keystorePassword(SecurityConstants.DEFAULT_KEYSTORE_PASSWORD);
 		bootstrapper.user(SecurityConstants.ALL_ROLES_USER_PWD).password(SecurityConstants.ALL_ROLES_USER_PWD);
 		service.setBootstrapper(bootstrapper);
 		super.bootstrap(service);	

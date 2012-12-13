@@ -34,7 +34,7 @@ public abstract class NewAbstractSecurityCloudTest extends NewAbstractCloudTest 
 	
 	@Override
 	protected void teardown() throws Exception {
-		
+		getService().getBootstrapper().user(SecurityConstants.ALL_ROLES_USER_PWD).password(SecurityConstants.ALL_ROLES_USER_PWD);
 		super.teardown();
 	}
 	

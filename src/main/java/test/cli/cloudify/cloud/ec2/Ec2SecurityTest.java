@@ -39,7 +39,6 @@ public class Ec2SecurityTest extends NewAbstractSecurityCloudTest {
 
 	@AfterClass(alwaysRun = true)
 	protected void teardown() throws Exception {
-		getService().getBootstrapper().user(SecurityConstants.ALL_ROLES_USER_PWD).password(SecurityConstants.ALL_ROLES_USER_PWD);
 		super.teardown();
 	}
 	

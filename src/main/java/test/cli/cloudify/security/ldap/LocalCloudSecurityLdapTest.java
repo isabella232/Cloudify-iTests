@@ -145,9 +145,7 @@ public class LocalCloudSecurityLdapTest extends AbstractSecuredLocalCloudTest {
 	
 	@AfterClass(alwaysRun = true)
 	public void teardown() throws IOException, InterruptedException {
-		if (bootstrapper != null) {
-			super.teardown(bootstrapper);
-		}
+		super.teardown();
 	}
 	
 }

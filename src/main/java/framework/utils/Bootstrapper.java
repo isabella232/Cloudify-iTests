@@ -241,6 +241,10 @@ public abstract class Bootstrapper {
 	public String login(boolean expectedToFail) throws IOException, InterruptedException {
 		return CommandTestUtils.runCommand(connectCommand() + ";" + "login " + user + " " + password, true, expectedToFail);
 	}
+	
+	public String login(final String user, final String password, boolean expectedToFail) throws IOException, InterruptedException {
+		return CommandTestUtils.runCommand(connectCommand() + ";" + "login " + user + " " + password, true, expectedToFail);
+	}
 
 	private String connectCommand() {
 		StringBuilder connectCommandBuilder = new StringBuilder();

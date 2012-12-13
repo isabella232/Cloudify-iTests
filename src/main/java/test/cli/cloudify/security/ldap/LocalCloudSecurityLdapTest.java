@@ -6,11 +6,11 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import test.cli.cloudify.security.LocalCloudSecurityTest;
+import test.cli.cloudify.AbstractSecuredLocalCloudTest;
 import test.cli.cloudify.security.SecurityConstants;
 import framework.utils.LocalCloudBootstrapper;
 
-public class LocalCloudSecurityLdapTest extends LocalCloudSecurityTest{
+public class LocalCloudSecurityLdapTest extends AbstractSecuredLocalCloudTest {
 
 	private LocalCloudBootstrapper bootstrapper;
 	
@@ -22,7 +22,7 @@ public class LocalCloudSecurityLdapTest extends LocalCloudSecurityTest{
 		super.bootstrap(bootstrapper);	
 	}
 	
-	@Override
+
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
 	public void installAndUninstallWithDifferentUsersTest() throws IOException, InterruptedException {
 		
@@ -35,7 +35,6 @@ public class LocalCloudSecurityLdapTest extends LocalCloudSecurityTest{
 	
 	}
 	
-	@Override
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
 	public void installingAndViewingTest() throws IOException, InterruptedException{
 
@@ -62,7 +61,6 @@ public class LocalCloudSecurityLdapTest extends LocalCloudSecurityTest{
 
 	}
 	
-	@Override
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
 	public void installWithWrongGroup() throws IOException, InterruptedException {
 		
@@ -73,7 +71,6 @@ public class LocalCloudSecurityLdapTest extends LocalCloudSecurityTest{
 		assertTrue("install succeeded with authGroup " + SecurityConstants.GE_GROUP + " for: " + SecurityConstants.APP_MANAGER_AND_VIEWER_DESCRIPTIN, output.contains(ACCESS_DENIED_MESSAGE));
 	}
 	
-	@Override
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
 	public void installAndUninstallWithDifferentGroup() throws IOException, InterruptedException {
 		
@@ -83,6 +80,60 @@ public class LocalCloudSecurityLdapTest extends LocalCloudSecurityTest{
 		output = uninstallApplicationAndWait(SIMPLE_APP_PATH, SIMPLE_APP_NAME, TIMEOUT_IN_MINUTES, SecurityConstants.CLOUD_ADMIN_AND_APP_MANAGER_USER_PWD, SecurityConstants.CLOUD_ADMIN_AND_APP_MANAGER_USER_PWD, true, null);
 		
 		assertTrue("unseen application uninstall succeeded", output.contains(ACCESS_DENIED_MESSAGE));
+	}
+	
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
+	public void testInstallAndUninstall() throws IOException, InterruptedException {
+		super.installAndUninstallTest();
+	}
+	
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
+	public void testInstallWithoutCredentials() throws IOException, InterruptedException{
+		super.installWithoutCredentialsTest();
+	}
+
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
+	public void loginTest() throws IOException, InterruptedException {
+		super.testLogin();			
+	}
+
+
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
+	public void connectWithNonexistentUserTest() throws IOException, InterruptedException {
+		super.testConnectWithNonExistingUser();			
+	}
+	
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
+	public void connectWithNoPasswordTest() throws IOException, InterruptedException {
+		super.testConnectWithNoPassword();			
+	}
+
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
+	public void loginWithNonexistentUserTest() throws IOException, InterruptedException {
+		super.testLoginWithNonexistingUser();			
+	}
+
+
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
+	public void connectWithWrongPassword() throws IOException, InterruptedException {
+		super.testConnectWithWrongPassword();			
+
+	}
+
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
+	public void loginWithWrongPassword() throws IOException, InterruptedException {
+		super.testLoginWithWrongPassword();
+	}
+
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
+	public void securedUseApplicationTest() throws IOException, InterruptedException {
+		super.testSecuredUseApplication();
+	}
+
+	
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
+	public void tamperWithSecurityFileTest() throws Exception{
+		super.testTamperWithSecurityFile();			
 	}
 	
 	@AfterClass(alwaysRun = true)

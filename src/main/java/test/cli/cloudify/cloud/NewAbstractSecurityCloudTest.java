@@ -115,7 +115,7 @@ public abstract class NewAbstractSecurityCloudTest extends NewAbstractCloudTest 
 	}
 	
 	protected String connect(String user, String password, boolean isExpectedToFail) throws IOException, InterruptedException{	
-		return getService().getBootstrapper().user(user).password(password).login(isExpectedToFail);
+		return getService().getBootstrapper().user(user).password(password).connect(isExpectedToFail);
 	}
 
 	protected String listApplications(String user, String password, boolean expectedFail) throws IOException, InterruptedException{

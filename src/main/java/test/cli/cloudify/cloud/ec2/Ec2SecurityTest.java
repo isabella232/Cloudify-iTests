@@ -39,12 +39,13 @@ public class Ec2SecurityTest extends NewAbstractSecurityCloudTest {
 
 	@AfterClass(alwaysRun = true)
 	protected void teardown() throws Exception {
+		getService().getBootstrapper().user(SecurityConstants.ALL_ROLES_USER_PWD).password(SecurityConstants.ALL_ROLES_USER_PWD);
 		super.teardown();
 	}
 	
 	@AfterMethod(alwaysRun = true)
 	protected void uninstall() throws Exception {
-
+		
 		uninstallApplicationIfFound(SIMPLE_APP_NAME, SecurityConstants.ALL_ROLES_USER_PWD, SecurityConstants.ALL_ROLES_USER_PWD);
 		uninstallApplicationIfFound(GROOVY_APP_NAME, SecurityConstants.ALL_ROLES_USER_PWD, SecurityConstants.ALL_ROLES_USER_PWD);
 	}

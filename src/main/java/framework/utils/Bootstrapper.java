@@ -245,11 +245,12 @@ public abstract class Bootstrapper {
 	private String connectCommand() {
 		StringBuilder connectCommandBuilder = new StringBuilder();
 		connectCommandBuilder.append("connect").append(" ");
-		if (StringUtils.isNotBlank(user) && StringUtils.isNotBlank(password)){
+		if (StringUtils.isNotBlank(user)){
 			//TODO : More validations
 			connectCommandBuilder.append("-user").append(" ")
-			.append(user).append(" ")
-			.append("-password").append(" ")
+			.append(user).append(" ");
+		if (StringUtils.isNotBlank(password))
+			connectCommandBuilder.append("-password").append(" ")
 			.append(password).append(" ");
 		}
 		connectCommandBuilder.append(restUrl).append(";");

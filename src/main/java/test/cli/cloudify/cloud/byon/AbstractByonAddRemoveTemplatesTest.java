@@ -360,8 +360,15 @@ public abstract class AbstractByonAddRemoveTemplatesTest extends AbstractByonClo
 		FileUtils.deleteQuietly(tempalteFolder);
 		File serviceFolder = new File(TEMP_SERVICES_DIR_PATH);
 		FileUtils.deleteQuietly(serviceFolder);
-		
-		removeAllAddedTempaltes(getTemplateNamesFromOutput(listTemplates()));
+		String remoteDir = getService().getCloud().getTemplates().get(DEFAULT_TEMPLATES[0]).getRemoteDirectory();
+		try{
+			removeAllAddedTempaltes(getTemplateNamesFromOutput(listTemplates()));
+		}
+		catch (AssertionError ae){
+			for(String mngMachineIP : mngMachinesIP){
+				SSHUtils.runCommand(mngMachineIP, OPERATION_TIMEOUT, "rm -f -r " + remoteDir + "/" + CloudifyConstants.ADDITIONAL_TEMPLATES_FOLDER_NAME, USER, PASSWORD);
+			}
+		}
 	}
 	
 	public void verifyTemplateExistence(String machineIP, TemplateDetails template, String templateRemotePath, boolean shouldExist) throws Exception {

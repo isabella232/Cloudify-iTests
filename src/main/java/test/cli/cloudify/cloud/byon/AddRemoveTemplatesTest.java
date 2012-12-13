@@ -16,6 +16,9 @@ import org.cloudifysource.dsl.internal.CloudifyConstants;
 import org.cloudifysource.dsl.internal.packaging.Packager;
 import org.testng.annotations.Test;
 
+import framework.utils.LogUtils;
+import framework.utils.ThreadBarrier;
+
 /**
  * 
  * @author yael
@@ -23,6 +26,9 @@ import org.testng.annotations.Test;
  */
 public class AddRemoveTemplatesTest extends AbstractByonAddRemoveTemplatesTest {
 	
+	private static final int NUM_OF_THREADS = 3;
+	private ThreadBarrier barrier = new ThreadBarrier(NUM_OF_THREADS + 1);
+
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
 	public void addTempaltesTest() throws IOException {
 		TemplatesBatchHandler templatesHandler1 = new TemplatesBatchHandler();
@@ -225,6 +231,36 @@ public class AddRemoveTemplatesTest extends AbstractByonAddRemoveTemplatesTest {
 		addTempaltes(handler);
 		assertExpectedListTempaltes();
 	}
+	
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
+	public void ThreadedAddRemoveTemplate() throws Exception {
+		
+		TemplatesBatchHandler handler = new TemplatesBatchHandler();
+		TemplateDetails template = handler.addExpectedToFailTempalte();
+		String templateName = template.getTemplateName();
+		String templateRemotePath;
+
+		LogUtils.log("starting adder threads");
+		for (int i = 0; i < NUM_OF_THREADS; i++) {
+			new Thread(new AddTemplatesThread(handler)).start();
+		}
+		
+		barrier.await();
+		barrier.inspect();
+		
+		templateRemotePath = getTemplateRemoteDirFullPath(templateName) + template.getTemplateFile().getName();
+		verifyTemplateExistence(mngMachinesIP[0], template, templateRemotePath, true);
+		
+		LogUtils.log("starting remover threads");
+		for (int i = 0; i < NUM_OF_THREADS; i++) {
+			new Thread(new RemoveTemplatesThread(handler, templateName)).start();
+		}
+		
+		barrier.await();
+		barrier.inspect();
+		
+		verifyTemplateExistence(mngMachinesIP[0], template, templateRemotePath, false);
+	}
 
 	@Override
 	public boolean isBootstrap() {
@@ -240,5 +276,42 @@ public class AddRemoveTemplatesTest extends AbstractByonAddRemoveTemplatesTest {
 	public int getNumOfMngMachines() {
 		return 1;
 	}
+	
+	class AddTemplatesThread implements Runnable {
 
+		private TemplatesBatchHandler handler;
+		
+		public AddTemplatesThread(TemplatesBatchHandler handler) {			
+			this.handler = handler;
+		}
+		
+		public void run() {
+			try {				
+				addTempaltes(handler);	
+				barrier.await();
+			} catch (Exception e) {
+				barrier.reset(e);
+			}
+		}
+	}
+
+	class RemoveTemplatesThread implements Runnable {
+		
+		private TemplatesBatchHandler handler;
+		private String templateName;
+		
+		public RemoveTemplatesThread(TemplatesBatchHandler handler, String templateName) {			
+			this.handler = handler;
+			this.templateName = templateName;
+		}
+		
+		public void run() {
+			try {				
+				removeTemplate(handler, templateName, true, null);
+				barrier.await();
+			} catch (Exception e) {
+				barrier.reset(e);
+			}
+		}
+	}
 }

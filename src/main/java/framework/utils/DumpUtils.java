@@ -152,6 +152,9 @@ public class DumpUtils {
     }
 
     public static void copyBeforeConfigurationsLogToTestDir(String testName, String suiteName) {
+    	if (buildFolder == null) {
+    		buildFolder = new File(SGTestHelper.getSGTestRootDir() + "/../");
+    	}
         File beforeConfigurationsLogDir = new File(buildFolder.getAbsolutePath() + "/" + suiteName + "/" + testName);
         if (beforeConfigurationsLogDir.exists()) {
             try {

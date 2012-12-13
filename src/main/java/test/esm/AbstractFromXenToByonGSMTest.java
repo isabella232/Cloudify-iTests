@@ -30,6 +30,7 @@ public class AbstractFromXenToByonGSMTest extends AbstractByonCloudTest {
 	public final static long OPERATION_TIMEOUT = 5 * 60 * 1000;
 	public final static String DefaultByonXapMachineMemoryMB = "5000";
 	public final static String standardMachineMemoryMB = "1600";
+	public final static int NUM_OF_CORES = 4;
 	private MachinesEventsCounter machineEventsCounter;
 	
 	private GridServiceContainersCounter gscCounter;
@@ -118,7 +119,9 @@ public class AbstractFromXenToByonGSMTest extends AbstractByonCloudTest {
 	protected void customizeCloud() throws Exception {
 		String oldMemory = "machineMemoryMB " + standardMachineMemoryMB;
 		String newMemory = "machineMemoryMB " + DefaultByonXapMachineMemoryMB;
-		getService().getAdditionalPropsToReplace().put(oldMemory, newMemory);
+		String numOfCores = "numberOfCores "+NUM_OF_CORES;
+		// sets number of cores to 4 - can be modified
+		getService().getAdditionalPropsToReplace().put(oldMemory, newMemory +"\n"+numOfCores);					
 	}
 
 	protected void assertUndeployAndWait(ProcessingUnit pu) {
@@ -132,7 +135,7 @@ public class AbstractFromXenToByonGSMTest extends AbstractByonCloudTest {
 		String templateName = "SMALL_LINUX";
 		ByonCloudService cloudService = getService();
 		Cloud cloud = cloudService.getCloud();
-		final CloudTemplate template = cloud.getTemplates().get(templateName);
+		final CloudTemplate template = cloud.getTemplates().get(templateName);			
 		CloudTemplate managementTemplate = cloud.getTemplates().get(cloud.getConfiguration().getManagementMachineTemplate());
 		managementTemplate.getRemoteDirectory();
 		final CloudifyMachineProvisioningConfig config = new CloudifyMachineProvisioningConfig(

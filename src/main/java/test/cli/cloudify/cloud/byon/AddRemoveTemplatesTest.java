@@ -221,7 +221,7 @@ public class AddRemoveTemplatesTest extends AbstractByonAddRemoveTemplatesTest {
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
-	public void AddRemoveAndAddAgainTemplates() throws IOException {
+	public void addRemoveAndAddAgainTemplates() throws IOException {
 		TemplatesBatchHandler handler = new TemplatesBatchHandler();
 		TemplateDetails toRemoveTemplate = handler.addTemplate();
 		addTempaltes(handler);
@@ -233,7 +233,7 @@ public class AddRemoveTemplatesTest extends AbstractByonAddRemoveTemplatesTest {
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
-	public void ThreadedAddRemoveTemplate() throws Exception {
+	public void threadedAddRemoveTemplate() throws Exception {
 		
 		TemplatesBatchHandler handler = new TemplatesBatchHandler();
 		TemplateDetails template = handler.addExpectedToFailTempalte();

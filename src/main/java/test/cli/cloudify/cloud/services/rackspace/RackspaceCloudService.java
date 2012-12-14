@@ -134,7 +134,7 @@ public class RackspaceCloudService extends AbstractCloudService {
 				try {
 					rackspaceClient.terminateServer(node.getId(), token, System.currentTimeMillis() + 60000);
 				} catch (Exception e) {
-					LogUtils.log("Failed to terminate HP openstack node: " + node.getId()
+					LogUtils.log("Failed to terminate Rackspace openstack node: " + node.getId()
 							+ ". This node may be leaking. Node details: " + node + ", Error was: " + e.getMessage(), e);
 				}
 			}

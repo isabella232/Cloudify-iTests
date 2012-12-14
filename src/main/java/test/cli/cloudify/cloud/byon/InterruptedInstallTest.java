@@ -28,7 +28,7 @@ public class InterruptedInstallTest extends AbstractByonCloudTest {
         super.bootstrap();
     }
 
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 3, enabled = true)
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 3, enabled = false)
     public void testPetclinic() throws IOException, InterruptedException{
         Future<Boolean> future = Executors.newSingleThreadExecutor().submit(new Callable<Boolean>() {
             @Override

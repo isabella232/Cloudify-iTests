@@ -91,7 +91,9 @@ public class RepetativeInstallAndUninstallStockDemoWithProblemAtInstallTest exte
 	public void afterTest() throws Exception {
 		super.afterTest();
 		try {
-			fixCassandraService(cassandraPostStartScriptPath , newPostStartScriptPath);
+			if ((newPostStartScriptPath != null) && (cassandraPostStartScriptPath != null)) {
+				fixCassandraService(cassandraPostStartScriptPath , newPostStartScriptPath);				
+			}
 		} catch (IOException e) {
 			LogUtils.log("FAILED FIXING CASSANDRA SERVICE!!!");
 		}

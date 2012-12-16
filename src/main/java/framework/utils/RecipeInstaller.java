@@ -21,8 +21,7 @@ public abstract class RecipeInstaller {
 	private boolean expectToFail = false;
 	private String cloudifyUsername;
 	private String cloudifyPassword;
-	private String authGroups;
-	
+	private String authGroups;	
 
 	public RecipeInstaller(final String restUrl, int timeout) {
 		this.restUrl = restUrl;
@@ -128,11 +127,11 @@ public abstract class RecipeInstaller {
 		return this;
 	}
 
+	public abstract String getRecipeName();
+	
 	public abstract String getInstallCommand();
 	
-	public abstract String getUninstallCommand();
-	
-	public abstract String getRecipeName();
+	public abstract String getUninstallCommand();	
 	
 	public abstract void assertInstall(String output);
 	
@@ -175,6 +174,10 @@ public abstract class RecipeInstaller {
 		}
 		if (authGroups != null && !authGroups.isEmpty()) {
 			commandBuilder.append("-authGroups").append(" ").append(authGroups).append(" ");
+		}
+		
+		if (getRecipeName() != null && !getRecipeName().isEmpty()) {
+			commandBuilder.append("-name").append(" ").append(getRecipeName()).append(" ");
 		}
 		
 		commandBuilder.append(recipePath.replace('\\', '/'));

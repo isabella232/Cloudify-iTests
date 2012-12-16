@@ -48,7 +48,7 @@ import framework.utils.ProcessingUnitUtils;
  */
 public class WebuiTestUtils{
 
-	private static final String WEBUI_DEFAULT_URL = "127.0.0.1:8099";
+	private static final String WEBUI_DEFAULT_URL = "http://127.0.0.1:8099";
 	private WebDriver driver;
 	private Selenium selenium;
 	private String defaultBrowser;

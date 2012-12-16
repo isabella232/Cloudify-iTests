@@ -57,6 +57,7 @@ import com.gigaspaces.internal.sigar.SigarHolder;
 
 import framework.utils.ApplicationInstaller;
 import framework.utils.DumpUtils;
+import framework.utils.LocalCloudBootstrapper;
 import framework.utils.LogUtils;
 import framework.utils.PortConnectionUtils;
 import framework.utils.ScriptUtils;
@@ -407,8 +408,12 @@ public class AbstractLocalCloudTest extends AbstractTest {
 		} else {
 			try {
 				LogUtils.log("Tearing-down localcloud");
-				final ProcessResult teardownResult = CommandTestUtils
-						.runCloudifyCommandAndWait("teardown-localcloud -force -timeout 15");
+				
+				LocalCloudBootstrapper bootstrapper = new LocalCloudBootstrapper();
+				bootstrapper.timeoutInMinutes(15);
+				bootstrapper.setRestUrl(restUrl);
+				final ProcessResult teardownResult = bootstrapper.teardown();
+				
 				final String output = teardownResult.getOutput();
 				if (!checkOutputForExceptions(output)) {
 					// we assume that if teardown failed but no exceptions were

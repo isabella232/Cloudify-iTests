@@ -113,6 +113,7 @@ public class USMTestUtils {
     	} finally {
     		if (admin != null) {
     			admin.close();
+    			admin = null;
     		}
     	}
     }

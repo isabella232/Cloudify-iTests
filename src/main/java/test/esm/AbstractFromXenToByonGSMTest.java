@@ -30,7 +30,7 @@ public class AbstractFromXenToByonGSMTest extends AbstractByonCloudTest {
 	public final static long OPERATION_TIMEOUT = 5 * 60 * 1000;
 	public final static String DefaultByonXapMachineMemoryMB = "5000";
 	public final static String standardMachineMemoryMB = "1600";
-	public final static int NUM_OF_CORES = 4;
+	public final static int NUM_OF_CORES = 2;
 	private MachinesEventsCounter machineEventsCounter;
 	
 	private GridServiceContainersCounter gscCounter;

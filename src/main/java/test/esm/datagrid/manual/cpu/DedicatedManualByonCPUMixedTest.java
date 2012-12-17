@@ -4,14 +4,17 @@ import org.openspaces.admin.pu.ProcessingUnit;
 import org.openspaces.admin.pu.elastic.config.ManualCapacityScaleConfigurer;
 import org.openspaces.admin.space.ElasticSpaceDeployment;
 import org.openspaces.core.util.MemoryUnit;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import test.esm.AbstractFromXenToByonGSMTest;
 import framework.utils.GsmTestUtils;
 
-
-public class DedicatedManualXenCPUMixedTest extends AbstractFromXenToByonGSMTest {
-
+public class DedicatedManualByonCPUMixedTest extends AbstractFromXenToByonGSMTest{
+	
 	private static final int CONTAINER_CAPACITY = 256;
     private static final int HIGH_NUM_CPU = 8;
     private static final int LOW_NUM_CPU = 4;
@@ -19,8 +22,27 @@ public class DedicatedManualXenCPUMixedTest extends AbstractFromXenToByonGSMTest
     private static final int LOW_MEM_CAPACITY = 1024;
     private static final int HIGH_MEM_CAPACITY = 6000;
                          
-
-    @Test(timeOut = 2*DEFAULT_TEST_TIMEOUT, groups = "5")
+    @BeforeMethod
+    public void beforeTest() {
+		super.beforeTestInit();
+	}
+	
+	@BeforeClass
+	protected void bootstrap() throws Exception {
+		super.bootstrapBeforeClass();
+	}
+	
+	@AfterMethod
+    public void afterTest() {
+		super.afterTest();
+	}
+	
+	@AfterClass(alwaysRun = true)
+	protected void teardownAfterClass() throws Exception {
+		super.teardownAfterClass();
+	}
+	
+    @Test(timeOut = 2*DEFAULT_TEST_TIMEOUT, groups = "1")
     public void doTest() {
     	         
 	    // make sure no gscs yet created
@@ -87,19 +109,19 @@ public class DedicatedManualXenCPUMixedTest extends AbstractFromXenToByonGSMTest
 	    // make sure all pojos handled by PUs
         assertEquals("Number of Person Pojos in space", NUM_OF_POJOS, GsmTestUtils.countData(pu));
 	
-	    // increase (by memory) to 4 machines   
+	    /*// increase (by memory) to 3 machines   
 	    pu.scale(
 	    		new ManualCapacityScaleConfigurer()
-	    		.memoryCapacity(HIGH_MEM_CAPACITY,MemoryUnit.MEGABYTES)
+	    		.memoryCapacity(HIGH_MEM_CAPACITY*2,MemoryUnit.MEGABYTES)
 	    		.create());
 	   
 	    int expectedNumberOfContainersAfterScaleOut2 = (int) Math.ceil(HIGH_MEM_CAPACITY/(1.0*CONTAINER_CAPACITY));
-	    int expectedNumberOfMachinesAfterScaleOut2 = 5;
+	    int expectedNumberOfMachinesAfterScaleOut2 = 3;
 	    GsmTestUtils.waitForScaleToComplete(pu, expectedNumberOfContainersAfterScaleOut2, expectedNumberOfMachinesAfterScaleOut2, 4*OPERATION_TIMEOUT);
-
+*/
 	    // make sure all pojos handled by PUs
-        assertEquals("Number of Person Pojos in space", NUM_OF_POJOS, GsmTestUtils.countData(pu));
         
         assertUndeployAndWait(pu);
     }
+
 }

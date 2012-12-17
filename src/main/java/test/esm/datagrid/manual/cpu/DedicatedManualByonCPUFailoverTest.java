@@ -1,31 +1,54 @@
 package test.esm.datagrid.manual.cpu;
 
-
-import java.io.IOException;
-
 import org.openspaces.admin.gsc.GridServiceContainer;
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.openspaces.admin.pu.elastic.config.ManualCapacityScaleConfig;
 import org.openspaces.admin.pu.elastic.config.ManualCapacityScaleConfigurer;
 import org.openspaces.admin.space.ElasticSpaceDeployment;
 import org.openspaces.core.util.MemoryUnit;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import test.esm.AbstractFromXenToByonGSMTest;
 import framework.utils.GsmTestUtils;
 
-public class DedicatedManualXenCPUFailoverTest extends AbstractFromXenToByonGSMTest {
- 
+public class DedicatedManualByonCPUFailoverTest extends AbstractFromXenToByonGSMTest{
 	private static final int CONTAINER_CAPACITY = 256;
     private static final int HIGH_NUM_CPU = 8;
     private static final int HIGH_MEM_CAPACITY = 2048;
-        
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT*2, groups = "1")
+    
+    
+	@BeforeMethod
+    public void beforeTest() {
+		super.beforeTestInit();
+	}
+	
+	@BeforeClass
+	protected void bootstrap() throws Exception {
+		super.bootstrapBeforeClass();
+	}
+	
+	@AfterMethod
+    public void afterTest() {
+		super.afterTest();
+	}
+	
+	@AfterClass(alwaysRun = true)
+	protected void teardownAfterClass() throws Exception {
+		super.teardownAfterClass();
+	}
+	
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT*2, groups = "1")
     public void cpuThreeMachinesAndMemoryFailoverTest() {
     	doTest(1024,6);
     }
-    
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT*2, groups = "1")
+	
+    //TODO find a way to run few tests in one class - for now only one test works
+	
+    /*@Test(timeOut = DEFAULT_TEST_TIMEOUT*2, groups = "1")
     public void cpuThreeMachinesFailoverTest() {
     	doTest(0,6);
     }
@@ -38,7 +61,7 @@ public class DedicatedManualXenCPUFailoverTest extends AbstractFromXenToByonGSMT
     @Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1")
     public void cpuFailoverTest() throws IOException {
     	doTest(0,4);
-    }
+    }*/
     
     private void doTest(int memoryCapacity,int lowNumberOfCpus) {
     	          
@@ -47,7 +70,7 @@ public class DedicatedManualXenCPUFailoverTest extends AbstractFromXenToByonGSMT
     	repetitiveAssertNumberOfGSAsAdded(1, OPERATION_TIMEOUT);	    
 	    
 	    final int expectedNumberOfMachines = (int)  
-    		Math.ceil(lowNumberOfCpus/super.getMachineProvisioningConfig().getMinimumNumberOfCpuCoresPerMachine());
+    		Math.ceil(lowNumberOfCpus/super.getMachineProvisioningConfig().getMinimumNumberOfCpuCoresPerMachine()); // was getNumberOfCpuCoresPerMachine()
 
 	    ManualCapacityScaleConfig scaleConfig = 
 	    	new ManualCapacityScaleConfigurer()
@@ -56,7 +79,7 @@ public class DedicatedManualXenCPUFailoverTest extends AbstractFromXenToByonGSMT
 	    
 	    int expectedNumberOfContainers; 
 	    if (memoryCapacity == 0) {
-	    	expectedNumberOfContainers = (int) Math.ceil(lowNumberOfCpus/super.getMachineProvisioningConfig().getMinimumNumberOfCpuCoresPerMachine());
+	    	expectedNumberOfContainers = (int) Math.ceil(lowNumberOfCpus/super.getMachineProvisioningConfig().getMinimumNumberOfCpuCoresPerMachine()); // was getNumberOfCpuCoresPerMachine()
 	    } else {
 	    	scaleConfig.setMemoryCapacityInMB(memoryCapacity);
 	    	expectedNumberOfContainers = (int) Math.ceil(memoryCapacity/CONTAINER_CAPACITY);
@@ -100,4 +123,5 @@ public class DedicatedManualXenCPUFailoverTest extends AbstractFromXenToByonGSMT
         
         assertUndeployAndWait(pu);
 	}
+
 }

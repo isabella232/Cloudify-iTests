@@ -6,8 +6,8 @@ service {
   
 	lifecycle {
 		init initService
-		start (["Win.*":"run.bat", "Linux":"run.sh"])
-		shutdown {println "This is the shutdown event" }
+		start {println "This is the shutdown event"}
+		shutdown {println "This is the shutdown event"}
 	}
 	
 }

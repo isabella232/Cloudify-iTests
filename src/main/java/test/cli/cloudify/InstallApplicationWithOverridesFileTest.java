@@ -5,20 +5,9 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.mime.MultipartEntity;
-import org.apache.http.entity.mime.content.FileBody;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.cloudifysource.dsl.Application;
 import org.cloudifysource.dsl.internal.DSLException;
-import org.cloudifysource.dsl.internal.ServiceReader;
-import org.cloudifysource.dsl.internal.packaging.Packager;
 import org.cloudifysource.dsl.internal.packaging.PackagingException;
-import org.cloudifysource.restclient.StringUtils;
 import org.openspaces.admin.pu.ProcessingUnit;
-import org.testng.Assert;
-import org.testng.annotations.AfterSuite;
 import org.testng.annotations.Test;
 
 /**
@@ -62,7 +51,7 @@ public class InstallApplicationWithOverridesFileTest extends OverridesTest {
 
 	/**
 	 * Tests overrides properties of application that has overrides file in addition to properties file.
-	 * The overrides file located in theapplication directory.
+	 * The overrides file located in the application directory.
 	 * Using 'install-application &ltapplication directory path&gt' CLI command.
 	 * @throws InterruptedException .
 	 * @throws IOException .
@@ -75,7 +64,7 @@ public class InstallApplicationWithOverridesFileTest extends OverridesTest {
 
 	/**
 	 * Tests overrides properties of application that has overrides file in addition to properties file.
-	 * Using the REST API directly to invoke deployApplication, passing the overrides file in the HTTP request.
+	 * Using the REST API directly to invoke deployApplication, post the overrides file as part of the HTTP request.
 	 * @throws IOException .
 	 * @throws DSLException .
 	 * @throws PackagingException .
@@ -84,80 +73,35 @@ public class InstallApplicationWithOverridesFileTest extends OverridesTest {
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
 	public void applicationWithOverridesFilePostedDirectlyTest()
 			throws IOException, DSLException, PackagingException, InterruptedException {
-
-		// create application zip file
-		final File applicationDir = new File(APPLICATION_DIR_PATH);
-		final File overridesFile = new File(OVERRIDES_FILE_PATH);
-		Application application = ServiceReader.getApplicationFromFile(applicationDir, overridesFile).getApplication();
-		File packApplication = Packager.packApplication(application, applicationDir);
-		final FileBody applicationFileBody = new FileBody(packApplication);
-		final MultipartEntity reqEntity = new MultipartEntity();
-		//add application zip file to reqEntity
-		reqEntity.addPart("file", applicationFileBody);
-		// add overrides file to reqEntity
-		final FileBody overridesFileBody = new FileBody(overridesFile);
-		reqEntity.addPart("recipeOverridesFile", overridesFileBody);
-		// create HttpPost
-		String postCommand = restUrl + "/service/applications/" + APPLICATION_OVERRIDEN_NAME + "/timeout/10";
-		final HttpPost httppost = new HttpPost(postCommand);
-		httppost.setEntity(reqEntity);
-		// execute
-		final DefaultHttpClient httpClient = new DefaultHttpClient();
-		final HttpResponse response = httpClient.execute(httppost);
-		StringUtils.getStringFromStream(response.getEntity().getContent());
-		Assert.assertEquals(STATUS_OK, response.getStatusLine().getStatusCode());
-			
-		// asserts
-		ProcessingUnit processingUnit = getProcessingUnit(PU_NAME);
-		assertProcessingUnit(processingUnit);
-		assertApplication();
-		assertService();
-		assertOverrides(processingUnit);
-		
-		// un-install
-		uninstall(restUrl, "application", APPLICATION_OVERRIDEN_NAME);
-
+		try {
+			RestTestUtils.installApplicationUsingRestApi(restUrl, APPLICATION_OVERRIDEN_NAME, new File(APPLICATION_DIR_PATH), new File(OVERRIDES_FILE_PATH));
+			// asserts
+			ProcessingUnit processingUnit = getProcessingUnit(PU_NAME);
+			assertProcessingUnit(processingUnit);
+			assertApplication(APPLICATION_OVERRIDEN_NAME);
+			assertService(APPLICATION_OVERRIDEN_NAME, SERVICE_OVERRIDEN_NAME);
+			assertOverrides(processingUnit);
+		} finally {
+			// un-install
+			uninstallApplicationIfFound(APPLICATION_OVERRIDEN_NAME);
+		}
 	}
 
 	private void applicationOverridesTest(final String applicationDirName,
 			final String overridesFilePath) throws IOException, InterruptedException {
-
-		// install
-		install(restUrl, "application", applicationDirName, overridesFilePath);
-
-		// get PU
-		final ProcessingUnit processingUnit = getProcessingUnit(PU_NAME);
-
-		// asserts
-		assertProcessingUnit(processingUnit);
-		assertApplication();
-		assertService();
-		assertOverrides(processingUnit);
-
-		// un-install
-		uninstall(restUrl, "application", APPLICATION_OVERRIDEN_NAME);
-
-	}
-
-	private static void assertService() 
-			throws IOException, InterruptedException {
-		// service exists in services list.
-		String output = CommandTestUtils.runCommandAndWait("connect " + restUrl
-				+ ";use-application " + APPLICATION_OVERRIDEN_NAME
-				+ ";list-services");
-		assertTrue("list-services command output doesn't conatin "
-				+ SERVICE_OVERRIDEN_NAME + ", output: " + output,
-				output.contains(SERVICE_OVERRIDEN_NAME));
-	}
-
-	private static void assertApplication() 
-			throws IOException, InterruptedException {
-		// application exists in applications list.
-		String output = CommandTestUtils.runCommandAndWait("connect " + restUrl
-				+ ";list-applications");
-		assertTrue("list-application command output doesn't conatin "
-				+ APPLICATION_OVERRIDEN_NAME + ", output: " + output,
-				output.contains(APPLICATION_OVERRIDEN_NAME));
+		try {
+			// install
+			install(restUrl, "application", applicationDirName, overridesFilePath);
+			// asserts
+			final ProcessingUnit processingUnit = getProcessingUnit(PU_NAME);
+			assertProcessingUnit(processingUnit);
+			assertApplication(APPLICATION_OVERRIDEN_NAME);
+			assertService(APPLICATION_OVERRIDEN_NAME, SERVICE_OVERRIDEN_NAME);
+			assertOverrides(processingUnit);
+		} finally {
+			// un-install
+			uninstallApplicationIfFound(APPLICATION_OVERRIDEN_NAME);
+		}
 	}
 
 	private void assertOverrides(final ProcessingUnit processingUnit) {
@@ -167,15 +111,8 @@ public class InstallApplicationWithOverridesFileTest extends OverridesTest {
 		assertServiceOverridenFields(processingUnit);
 	}
 
-	
 	@Override
 	protected Map<String, Object> getExpectedServiceFields() {
 		return EXPECTED_SERVICE_FIELDS;
-	}
-	
-	@Override
-	@AfterSuite(alwaysRun = true)
-	public void afterSuite() {
-		// TODO Auto-generated method stub
 	}
 }

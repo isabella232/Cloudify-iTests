@@ -20,7 +20,7 @@ import framework.utils.usm.USMTestUtils;
  *
  */
 public abstract class OverridesTest extends AbstractLocalCloudTest {
-	protected static final long PU_TIMEOUT = 30;
+	protected static final long PU_TIMEOUT = 5 * 60;
 	protected static final long PU_STATE_TIMEOUT = 60;
 	protected static final int STATUS_OK = 200;
 	
@@ -41,23 +41,6 @@ public abstract class OverridesTest extends AbstractLocalCloudTest {
 			runCommand(command + " " + dslDirPath);
 		} catch (final Exception e) {
 			LogUtils.log("Failed to install " + dslTypeName + " " + dslDirPath, e);
-			e.printStackTrace();
-		}
-	}
-
-	/**
-	 * 
-	 * @param url the rest URL.
-	 * @param dslTypeName the name of the DSL type (e.g application).
-	 * @param dslName the DSL name (e.g application's name)
-	 */
-	protected void uninstall(final String url,
-			final String dslTypeName, final String dslName) {
-		try {
-			runCommand("connect " + url
-					+ ";uninstall-" + dslTypeName + " -timeout 5 " + dslName);
-		} catch (final Exception e) {
-			LogUtils.log("Failed to uninstall application " + dslName, e);
 			e.printStackTrace();
 		}
 	}
@@ -109,4 +92,19 @@ public abstract class OverridesTest extends AbstractLocalCloudTest {
 	 * @return the expected service's fields.
 	 */
 	protected abstract Map<String, Object> getExpectedServiceFields();
+	
+	
+	protected void assertService(String applicationName, String serviceName) {
+		String output = listServices(applicationName, false);
+		assertTrue("list-services command output doesn't conatin "
+				+ serviceName + ", output: " + output,
+				output.contains(serviceName));
+	}
+	
+	protected void assertApplication(String applicationName) {
+		String output = listApplications(false);
+		assertTrue("list-applications command output doesn't conatin "
+				+ applicationName + ", output: " + output,
+				output.contains(applicationName));
+	}
 }

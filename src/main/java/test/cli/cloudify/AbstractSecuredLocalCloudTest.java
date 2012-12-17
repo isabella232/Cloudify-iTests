@@ -29,6 +29,8 @@ public class AbstractSecuredLocalCloudTest extends AbstractTest {
 	protected static final String GROOVY2_SERVICE_NAME = "groovy2";	
 	protected static final int TIMEOUT_IN_MINUTES = 30;
 	protected static final String ACCESS_DENIED_MESSAGE = "no_permission_access_is_denied";
+	protected static final String TEARDOWN_ACCESS_DENIED_MESSAGE = "Permission not granted, access is denied.";
+	protected static final String TEARDOWN_SUCCESSFULL_MESSAGE = "SUCCESSFULLY COMPLETED LOCAL-CLOUD TEARDOWN";
 	protected static final String INSTANCE_VERIFICATION_STRING = "instance #1";
 	protected static final String BAD_CREDENTIALS_MESSAGE = "Bad credentials";
 
@@ -74,12 +76,12 @@ public class AbstractSecuredLocalCloudTest extends AbstractTest {
 		assertTrue("connect succeeded for user: " + SecurityConstants.CLOUD_ADMIN_USER_PWD + "bad", output.contains(BAD_CREDENTIALS_MESSAGE));
 	}
 
-	protected void teardown(LocalCloudBootstrapper bootstrapper) throws IOException, InterruptedException {
+	protected String teardown(LocalCloudBootstrapper bootstrapper) throws IOException, InterruptedException {
 		if (admin != null) {
 			admin.close();
 		}
 		bootstrapper.setRestUrl(getRestUrl());
-		bootstrapper.teardown();
+		return bootstrapper.teardown().getOutput();
 	}
 
 	protected void teardown() throws IOException, InterruptedException {
@@ -195,12 +197,10 @@ public class AbstractSecuredLocalCloudTest extends AbstractTest {
 		}
 
 	}
-
-
-
+	
 	protected String installApplicationAndWait(String applicationPath, String applicationName, int timeout, final String cloudifyUsername,
 			final String cloudifyPassword, boolean isExpectedToFail, final String authGroups) throws IOException, InterruptedException {
-
+		
 		ApplicationInstaller applicationInstaller = new ApplicationInstaller(getRestUrl(), applicationName);
 		applicationInstaller.recipePath(applicationPath);
 		applicationInstaller.waitForFinish(true);
@@ -252,7 +252,7 @@ public class AbstractSecuredLocalCloudTest extends AbstractTest {
 		if (StringUtils.isNotBlank(authGroups)) {
 			serviceInstaller.authGroups(authGroups);
 		}
-
+		
 		return serviceInstaller.install();
 	}
 

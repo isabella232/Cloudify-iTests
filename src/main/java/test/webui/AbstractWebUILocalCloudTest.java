@@ -92,7 +92,7 @@ public abstract class AbstractWebUILocalCloudTest extends AbstractLocalCloudTest
 		ProcessingUnitUtils.waitForDeploymentStatus(webui, DeploymentStatus.INTACT);
 		assertTrue(webui != null);
 		assertTrue(webui.getInstances().length != 0);	
-		String url = ProcessingUnitUtils.getWebProcessingUnitURL(webui).toString();	
+		String url = ProcessingUnitUtils.getWebProcessingUnitURL(webui, false).toString();	
 		startWebBrowser(url); 
 		
 	}

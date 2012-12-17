@@ -162,7 +162,10 @@ public class ProcessingUnitUtils {
         return name;
     }
     
-	public static URL getWebProcessingUnitURL(ProcessingUnit pu) {
+	public static URL getWebProcessingUnitURL(ProcessingUnit pu, boolean isSecured) {
+		
+		String url;
+		
 		ProcessingUnitInstance pui = pu.getInstances()[0];
 		Map<String, ServiceDetails> alldetails = pui
 		.getServiceDetailsByServiceId();
@@ -171,7 +174,12 @@ public class ProcessingUnitUtils {
 		String host = details.getAttributes().get("host").toString();
 		String port = details.getAttributes().get("port").toString();
 		String ctx = details.getAttributes().get("context-path").toString();
-		String url = "http://" + host + ":" + port + ctx;
+		if(isSecured){			
+			url = "https://" + host + ":" + port + ctx;
+		}
+		else{
+			url = "http://" + host + ":" + port + ctx;
+		}
 		try {
 			return new URL(url);
 		} catch (MalformedURLException e) {

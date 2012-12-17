@@ -63,37 +63,40 @@ public class WebuiTestUtils{
 
 	/**
 	 * use this constructor when testing local cloud (on localhost).
+	 * Secured by default.
 	 * @throws UnknownHostException
 	 * @throws InterruptedException
 	 */
 	public WebuiTestUtils() throws UnknownHostException, InterruptedException {
-		this(null,null);
+		this(null,null, true);
 	}
 
 	/**
 	 * use this constructor when testing local cloud.
+	 * Secured by default.
 	 * @throws UnknownHostException
 	 * @throws InterruptedException
 	 */
 	public WebuiTestUtils(Admin admin) throws UnknownHostException, InterruptedException {
-		this(null, admin);
+		this(null, admin, true);
 	}
 
 	/**
 	 * use this constructor when testing non-local clouds.
+	 * Secured by default.
 	 * @param cloud
 	 * @throws InterruptedException
 	 * @throws UnknownHostException
 	 */
 	public WebuiTestUtils(CloudService cloud) throws InterruptedException, UnknownHostException{
-		this( cloud, null );
+		this( cloud, null , true);
 	}
 	
-	private WebuiTestUtils(CloudService cloud, Admin admin) throws InterruptedException, UnknownHostException{
-		startup(admin, cloud);
+	public WebuiTestUtils(CloudService cloud, Admin admin, boolean isSecured) throws InterruptedException, UnknownHostException{
+		startup(admin, cloud, isSecured);
 	}
 
-	private void startup(Admin admin, CloudService cloud) throws UnknownHostException, InterruptedException {
+	private void startup(Admin admin, CloudService cloud, boolean isSecured) throws UnknownHostException, InterruptedException {
 		this.defaultBrowser = (System.getProperty("selenium.browser") != null) ? System.getProperty("selenium.browser"): "Firefox";
 		this.admin = admin;
 		this.cloud = cloud;
@@ -102,7 +105,7 @@ public class WebuiTestUtils{
 			setLocators();			
 		}
 
-		String webuiUrl = getWebuiUrl();
+		String webuiUrl = getWebuiUrl(isSecured);
 		startWebBrowser(webuiUrl);
 	}
 
@@ -246,7 +249,7 @@ public class WebuiTestUtils{
 		System.setProperty("selenium.browser", browser);
 	}
 
-	private String getWebuiUrl() {
+	private String getWebuiUrl(boolean isSecured) {
 
 		String webuiUrl;
 		
@@ -263,7 +266,7 @@ public class WebuiTestUtils{
 			ProcessingUnitUtils.waitForDeploymentStatus(webui, DeploymentStatus.INTACT);
 			AssertUtils.assertTrue(webui != null);
 			AssertUtils.assertTrue(webui.getInstances().length != 0);	
-			webuiUrl = ProcessingUnitUtils.getWebProcessingUnitURL(webui).toString();	
+			webuiUrl = ProcessingUnitUtils.getWebProcessingUnitURL(webui, isSecured).toString();
 		}
 		
 		else{

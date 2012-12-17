@@ -1,4 +1,4 @@
-package test.gsm.datagrid.manual.cpu.xen;
+package test.esm.datagrid.manual.cpu;
 
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.openspaces.admin.pu.elastic.config.ManualCapacityScaleConfigurer;
@@ -6,10 +6,10 @@ import org.openspaces.admin.space.ElasticSpaceDeployment;
 import org.openspaces.core.util.MemoryUnit;
 import org.testng.annotations.Test;
 
-import test.gsm.AbstractXenGSMTest;
-import test.gsm.GsmTestUtils;
+import test.esm.AbstractFromXenToByonGSMTest;
+import framework.utils.GsmTestUtils;
 
-public class DedicatedManualXenCPUDeploymentTest extends AbstractXenGSMTest {
+public class DedicatedManualXenCPUDeploymentTest extends AbstractFromXenToByonGSMTest {
     
     @Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1")
     public void doTest4()  {

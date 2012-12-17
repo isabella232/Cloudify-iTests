@@ -1,4 +1,4 @@
-package test.gsm.datagrid.manual.cpu.xen;
+package test.esm.datagrid.manual.cpu;
 
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.openspaces.admin.pu.elastic.config.ManualCapacityScaleConfigurer;
@@ -6,11 +6,11 @@ import org.openspaces.admin.space.ElasticSpaceDeployment;
 import org.openspaces.core.util.MemoryUnit;
 import org.testng.annotations.Test;
 
-import test.gsm.AbstractXenGSMTest;
-import test.gsm.GsmTestUtils;
+import test.esm.AbstractFromXenToByonGSMTest;
+import framework.utils.GsmTestUtils;
 
 
-public class DedicatedManualXenCPUMixedTest extends AbstractXenGSMTest {
+public class DedicatedManualXenCPUMixedTest extends AbstractFromXenToByonGSMTest {
 
 	private static final int CONTAINER_CAPACITY = 256;
     private static final int HIGH_NUM_CPU = 8;
@@ -38,7 +38,7 @@ public class DedicatedManualXenCPUMixedTest extends AbstractXenGSMTest {
 	            	   .create()))
 	    );
 
-	    int expectedNumberOfMachines = (int)Math.ceil(LOW_NUM_CPU/super.getMachineProvisioningConfig().getNumberOfCpuCoresPerMachine());
+	    int expectedNumberOfMachines = (int)Math.ceil(LOW_NUM_CPU/super.getMachineProvisioningConfig().getMinimumNumberOfCpuCoresPerMachine());
 	    int expectedNumberOfContainers = (int) Math.max(
 	    		Math.ceil(LOW_MEM_CAPACITY/(1.0*CONTAINER_CAPACITY)),
 	    		expectedNumberOfMachines);
@@ -59,7 +59,7 @@ public class DedicatedManualXenCPUMixedTest extends AbstractXenGSMTest {
 	    		.memoryCapacity(LOW_MEM_CAPACITY,MemoryUnit.MEGABYTES)
 	    		.create());
 	    	
-	    int expectedNumberOfMachinesAfterScaleOut = (int)Math.ceil(HIGH_NUM_CPU/super.getMachineProvisioningConfig().getNumberOfCpuCoresPerMachine());
+	    int expectedNumberOfMachinesAfterScaleOut = (int)Math.ceil(HIGH_NUM_CPU/super.getMachineProvisioningConfig().getMinimumNumberOfCpuCoresPerMachine());
 	    GsmTestUtils.waitForScaleToComplete(pu, expectedNumberOfContainers, expectedNumberOfMachinesAfterScaleOut, 4*OPERATION_TIMEOUT);
 	    
 	    repetitiveAssertNumberOfGSCsAdded(2+expectedNumberOfContainers, OPERATION_TIMEOUT);

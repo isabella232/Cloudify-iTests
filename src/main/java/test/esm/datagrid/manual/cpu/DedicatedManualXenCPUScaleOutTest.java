@@ -1,4 +1,4 @@
-package test.gsm.datagrid.manual.cpu.xen;
+package test.esm.datagrid.manual.cpu;
 
 import java.io.IOException;
 
@@ -8,10 +8,10 @@ import org.openspaces.admin.space.ElasticSpaceDeployment;
 import org.openspaces.core.util.MemoryUnit;
 import org.testng.annotations.Test;
 
-import test.gsm.AbstractXenGSMTest;
-import test.gsm.GsmTestUtils;
+import test.esm.AbstractFromXenToByonGSMTest;
+import framework.utils.GsmTestUtils;
 
-public class DedicatedManualXenCPUScaleOutTest extends AbstractXenGSMTest {
+public class DedicatedManualXenCPUScaleOutTest extends AbstractFromXenToByonGSMTest {
 
     private static final int HIGH_NUM_CPU = 8;
     private static final int LOW_NUM_CPU = 4;
@@ -37,7 +37,7 @@ public class DedicatedManualXenCPUScaleOutTest extends AbstractXenGSMTest {
 	            	   .create())
 	    );
 
-	    int expectedNumberOfContainers = (int) Math.ceil(LOW_NUM_CPU/super.getMachineProvisioningConfig().getNumberOfCpuCoresPerMachine());
+	    int expectedNumberOfContainers = (int) Math.ceil(LOW_NUM_CPU/super.getMachineProvisioningConfig().getMinimumNumberOfCpuCoresPerMachine());
 	    int expectedNumberOfMachines = expectedNumberOfContainers;
 	    
 	    GsmTestUtils.waitForScaleToComplete(pu, expectedNumberOfContainers, expectedNumberOfMachines, OPERATION_TIMEOUT*2);
@@ -55,7 +55,7 @@ public class DedicatedManualXenCPUScaleOutTest extends AbstractXenGSMTest {
 	    		 .numberOfCpuCores(HIGH_NUM_CPU)
 	    		 .create());
 	    	    
-	    int expectedNumberOfContainersAfterScaleOut = (int) Math.ceil(HIGH_NUM_CPU/super.getMachineProvisioningConfig().getNumberOfCpuCoresPerMachine());
+	    int expectedNumberOfContainersAfterScaleOut = (int) Math.ceil(HIGH_NUM_CPU/super.getMachineProvisioningConfig().getMinimumNumberOfCpuCoresPerMachine());
 	    int expectedNumberOfMachinesAfterScaleOut = expectedNumberOfContainersAfterScaleOut;
 	    GsmTestUtils.waitForScaleToComplete(pu, expectedNumberOfContainersAfterScaleOut, expectedNumberOfMachinesAfterScaleOut, OPERATION_TIMEOUT);
 	    

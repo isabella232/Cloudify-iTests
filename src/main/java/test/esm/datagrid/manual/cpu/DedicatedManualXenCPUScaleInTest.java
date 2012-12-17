@@ -1,4 +1,4 @@
-package test.gsm.datagrid.manual.cpu.xen;
+package test.esm.datagrid.manual.cpu;
 
 import java.io.IOException;
 
@@ -8,10 +8,10 @@ import org.openspaces.admin.space.ElasticSpaceDeployment;
 import org.openspaces.core.util.MemoryUnit;
 import org.testng.annotations.Test;
 
-import test.gsm.AbstractXenGSMTest;
-import test.gsm.GsmTestUtils;
+import test.esm.AbstractFromXenToByonGSMTest;
+import framework.utils.GsmTestUtils;
 
-public class DedicatedManualXenCPUScaleInTest extends AbstractXenGSMTest {
+public class DedicatedManualXenCPUScaleInTest extends AbstractFromXenToByonGSMTest {
 
     private static final int HIGH_NUM_CPU = 8;
     private static final int LOW_NUM_CPU = 4;
@@ -38,7 +38,7 @@ public class DedicatedManualXenCPUScaleInTest extends AbstractXenGSMTest {
 	            		 .create())
 	    );
 
-	    int expectedNumberOfContainers = (int) Math.ceil(HIGH_NUM_CPU/super.getMachineProvisioningConfig().getNumberOfCpuCoresPerMachine());
+	    int expectedNumberOfContainers = (int) Math.ceil(HIGH_NUM_CPU/super.getMachineProvisioningConfig().getMinimumNumberOfCpuCoresPerMachine());
 	    int expectedNumberOfMachines = expectedNumberOfContainers;
 	    
 	    GsmTestUtils.waitForScaleToComplete(pu, expectedNumberOfContainers, expectedNumberOfMachines, OPERATION_TIMEOUT*2);
@@ -56,7 +56,7 @@ public class DedicatedManualXenCPUScaleInTest extends AbstractXenGSMTest {
 	    		 .numberOfCpuCores(LOW_NUM_CPU)
 	    		 .create());
 	    	    
-	    int expectedNumberOfContainersAfterScaleIn = (int) Math.ceil(LOW_NUM_CPU/super.getMachineProvisioningConfig().getNumberOfCpuCoresPerMachine());
+	    int expectedNumberOfContainersAfterScaleIn = (int) Math.ceil(LOW_NUM_CPU/super.getMachineProvisioningConfig().getMinimumNumberOfCpuCoresPerMachine());
 	    int expectedNumberOfMachinesAfterScaleIn = expectedNumberOfContainersAfterScaleIn;
 	    int expectedRemoved = expectedNumberOfContainers - expectedNumberOfContainersAfterScaleIn;
 	    GsmTestUtils.waitForScaleToComplete(pu, expectedNumberOfContainersAfterScaleIn, expectedNumberOfMachinesAfterScaleIn, OPERATION_TIMEOUT);

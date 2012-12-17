@@ -1,20 +1,20 @@
-package test.gsm.datagrid.manual.cpu.xen;
+package test.esm.datagrid.manual.cpu;
 
 
 import java.io.IOException;
 
 import org.openspaces.admin.gsc.GridServiceContainer;
 import org.openspaces.admin.pu.ProcessingUnit;
-import org.openspaces.admin.pu.elastic.config.ManualCapacityScaleConfigurer;
 import org.openspaces.admin.pu.elastic.config.ManualCapacityScaleConfig;
+import org.openspaces.admin.pu.elastic.config.ManualCapacityScaleConfigurer;
 import org.openspaces.admin.space.ElasticSpaceDeployment;
 import org.openspaces.core.util.MemoryUnit;
 import org.testng.annotations.Test;
 
-import test.gsm.AbstractXenGSMTest;
-import test.gsm.GsmTestUtils;
+import test.esm.AbstractFromXenToByonGSMTest;
+import framework.utils.GsmTestUtils;
 
-public class DedicatedManualXenCPUFailoverTest extends AbstractXenGSMTest {
+public class DedicatedManualXenCPUFailoverTest extends AbstractFromXenToByonGSMTest {
  
 	private static final int CONTAINER_CAPACITY = 256;
     private static final int HIGH_NUM_CPU = 8;
@@ -47,7 +47,7 @@ public class DedicatedManualXenCPUFailoverTest extends AbstractXenGSMTest {
     	repetitiveAssertNumberOfGSAsAdded(1, OPERATION_TIMEOUT);	    
 	    
 	    final int expectedNumberOfMachines = (int)  
-    		Math.ceil(lowNumberOfCpus/super.getMachineProvisioningConfig().getNumberOfCpuCoresPerMachine());
+    		Math.ceil(lowNumberOfCpus/super.getMachineProvisioningConfig().getMinimumNumberOfCpuCoresPerMachine());
 
 	    ManualCapacityScaleConfig scaleConfig = 
 	    	new ManualCapacityScaleConfigurer()
@@ -56,7 +56,7 @@ public class DedicatedManualXenCPUFailoverTest extends AbstractXenGSMTest {
 	    
 	    int expectedNumberOfContainers; 
 	    if (memoryCapacity == 0) {
-	    	expectedNumberOfContainers = (int) Math.ceil(lowNumberOfCpus/super.getMachineProvisioningConfig().getNumberOfCpuCoresPerMachine());
+	    	expectedNumberOfContainers = (int) Math.ceil(lowNumberOfCpus/super.getMachineProvisioningConfig().getMinimumNumberOfCpuCoresPerMachine());
 	    } else {
 	    	scaleConfig.setMemoryCapacityInMB(memoryCapacity);
 	    	expectedNumberOfContainers = (int) Math.ceil(memoryCapacity/CONTAINER_CAPACITY);

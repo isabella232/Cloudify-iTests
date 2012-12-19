@@ -128,16 +128,18 @@ public abstract class RecipeInstaller {
 	}
 
 	public abstract String getRecipeName();
-	
-	public abstract String getInstallCommand();
-	
-	public abstract String getUninstallCommand();	
-	
-	public abstract void assertInstall(String output);
-	
-	public abstract void assertUninstall(String output);
-	
+			
 	public String install() throws IOException, InterruptedException {
+		
+		String installCommand = null;
+		String excpectedResult = null;
+		if (this instanceof ServiceInstaller) {
+			installCommand = "install-service";
+			excpectedResult = "Service \"" + ((ServiceInstaller)this).getServiceName() + "\" uninstalled successfully";
+		} else if (this instanceof ApplicationInstaller) {
+			installCommand = "install-application";
+			excpectedResult = "Application " + ((ApplicationInstaller)this).getApplicationName() + " installed successfully";
+		}
 		
 		if (recipePath == null) {
 			throw new IllegalStateException("recipe path cannot be null. please use setRecipePath before calling install");
@@ -146,7 +148,6 @@ public abstract class RecipeInstaller {
 		StringBuilder connectCommandBuilder = new StringBuilder()
 		.append("connect").append(" ");
 		if (StringUtils.isNotBlank(cloudifyUsername) && StringUtils.isNotBlank(cloudifyPassword)){
-			//TODO : More validations
 			connectCommandBuilder.append("-user").append(" ")
 			.append(cloudifyUsername).append(" ")
 			.append("-password").append(" ")
@@ -155,7 +156,7 @@ public abstract class RecipeInstaller {
 		connectCommandBuilder.append(restUrl).append(";");
 		
 		StringBuilder commandBuilder = new StringBuilder()
-				.append(getInstallCommand()).append(" ")
+				.append(installCommand).append(" ")
 				.append("--verbose").append(" ")
 				.append("-timeout").append(" ")
 				.append(timeoutInMinutes).append(" ");
@@ -181,20 +182,33 @@ public abstract class RecipeInstaller {
 		}
 		
 		commandBuilder.append(recipePath.replace('\\', '/'));
-		final String installCommand = commandBuilder.toString();
+		final String installationCommand = commandBuilder.toString();
 		final String connectCommand = connectCommandBuilder.toString();
 		if (expectToFail) {
-			return CommandTestUtils.runCommandExpectedFail(connectCommand + installCommand);
+			String output = CommandTestUtils.runCommandExpectedFail(connectCommand + installationCommand);
+			AssertUtils.assertTrue("Installation succeeded", output.toLowerCase().contains("operation failed"));
 		}
 		if (waitForFinish) {
-			String output = CommandTestUtils.runCommandAndWait(connectCommand + installCommand);
-			assertInstall(output);
+			String output = CommandTestUtils.runCommandAndWait(connectCommand + installationCommand);
+			AssertUtils.assertTrue("Installation failed", output.toLowerCase().contains(excpectedResult.toLowerCase()));
 			return output;			
+		} else {
+			return CommandTestUtils.runCommand(connectCommand + installationCommand);
 		}
-		return CommandTestUtils.runCommand(connectCommand + installCommand);
 	}
 	
 	public String uninstall() throws IOException, InterruptedException {
+		
+		String uninstallCommand = null;
+		String excpectedResult = null;
+		if (this instanceof ServiceInstaller) {
+			uninstallCommand = "uninstall-service";
+			excpectedResult = "Service \"" + ((ServiceInstaller)this).getServiceName() + "\" uninstalled successfully";
+		} else if (this instanceof ApplicationInstaller) {
+			uninstallCommand = "uninstall-application";
+			excpectedResult = "Application " + ((ApplicationInstaller)this).getApplicationName() + " uninstalled successfully";
+		}
+		
 		String url = null;
 		try {
 			url = restUrl + "/service/dump/machines/?fileSizeLimit=50000000";
@@ -207,7 +221,6 @@ public abstract class RecipeInstaller {
 		.append("connect").append(" ");
 				
 		if (StringUtils.isNotBlank(cloudifyUsername) && StringUtils.isNotBlank(cloudifyPassword)){
-			//TODO : More validations
 			connectCommandBuilder.append("-user").append(" ")
 			.append(cloudifyUsername).append(" ")
 			.append("-password").append(" ")
@@ -215,8 +228,8 @@ public abstract class RecipeInstaller {
 		}
 		connectCommandBuilder.append(restUrl).append(";");
 		
-		final String uninstallCommand = new StringBuilder()
-				.append(getUninstallCommand()).append(" ")
+		final String uninstallationCommand = new StringBuilder()
+				.append(uninstallCommand).append(" ")
 				.append("--verbose").append(" ")
 				.append("-timeout").append(" ")
 				.append(timeoutInMinutes).append(" ")
@@ -226,14 +239,16 @@ public abstract class RecipeInstaller {
 		final String connectCommand = connectCommandBuilder.toString();
 		
 		if (expectToFail) {
-			return CommandTestUtils.runCommandExpectedFail(connectCommand + uninstallCommand);
+			String output = CommandTestUtils.runCommandExpectedFail(connectCommand + uninstallationCommand);
+			AssertUtils.assertTrue("Installation succeeded", output.toLowerCase().contains("operation failed"));
 		}
 		if (waitForFinish) {
-			String output = CommandTestUtils.runCommandAndWait(connectCommand + uninstallCommand);
-			assertUninstall(output);
+			String output = CommandTestUtils.runCommandAndWait(connectCommand + uninstallationCommand);
+			AssertUtils.assertTrue(output.toLowerCase().contains(excpectedResult.toLowerCase()));
 			return output;			
+		} else {
+			return CommandTestUtils.runCommand(connectCommand + uninstallationCommand);
 		}
-		return CommandTestUtils.runCommand(connectCommand + uninstallCommand);
 				
 	}
 

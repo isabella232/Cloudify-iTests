@@ -9,16 +9,6 @@ public class LocalCloudBootstrapper extends Bootstrapper {
 	}
 
 	@Override
-	public String getBootstrapCommand() {
-		return "bootstrap-localcloud";
-	}
-
-	@Override
-	public String getTeardownCommand() {
-		return "teardown-localcloud";
-	}
-
-	@Override
 	public String getCustomOptions() throws Exception {
 		return "";
 	}

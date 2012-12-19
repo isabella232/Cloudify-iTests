@@ -16,41 +16,14 @@ public class ApplicationInstaller extends RecipeInstaller {
 		this.applicationName = applicationName;
 	}
 
-	@Override
-	public String getInstallCommand() {
-		return "install-application";
-	}
-
-	@Override
-	public void assertInstall(String output) {
-		final String excpectedResult = "Application " + applicationName + " installed successfully";
-		if (!isExpectToFail()) {
-			AssertUtils.assertTrue("Application installation failed", output.toLowerCase().contains(excpectedResult.toLowerCase()));
-		} else {
-			AssertUtils.assertTrue("Application installation succeeded", output.toLowerCase().contains("operation failed"));
-		}
-		
-	}
-
 	public ApplicationInstaller setApplicationName(String applicationName) {
 		this.applicationName = applicationName;
 		return this;
 	}
 
 	@Override
-	public String getUninstallCommand() {
-		return "uninstall-application";
-	}
-
-	@Override
 	public String getRecipeName() {
 		return applicationName;
-	}
-
-	@Override
-	public void assertUninstall(String output) {
-		final String excpectedResult = "Application " + applicationName + " uninstalled successfully";
-		AssertUtils.assertTrue(output.toLowerCase().contains(excpectedResult.toLowerCase()));
 	}
 	
 	public void uninstallIfFound() {	
@@ -79,5 +52,9 @@ public class ApplicationInstaller extends RecipeInstaller {
 		}
 
 		return("connect " + getRestUrl());
+	}
+	
+	public String getApplicationName() {
+		return applicationName;
 	}
 }

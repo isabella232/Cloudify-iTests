@@ -59,10 +59,6 @@ public abstract class Bootstrapper {
 		this.restUrl = restUrl;
 	}
 
-	public abstract String getBootstrapCommand();
-
-	public abstract String getTeardownCommand();
-
 	public abstract String getCustomOptions() throws Exception;
 
 	public Bootstrapper(int timeoutInMinutes) {
@@ -134,10 +130,21 @@ public abstract class Bootstrapper {
 	}
 
 	public ProcessResult bootstrap() throws Exception {
+		
+		String bootstrapCommand = null;
+		String provider = null;
+		if (this instanceof LocalCloudBootstrapper) {
+			bootstrapCommand = "bootstrap-localcloud";
+			provider = "";
+		} else if (this instanceof CloudBootstrapper) {
+			bootstrapCommand = "bootstrap-cloud";
+			provider = ((CloudBootstrapper) this).getProvider();
+		}
+		
+		
 		StringBuilder builder = new StringBuilder();
 
-		String[] bootstrapCommandParts = getBootstrapCommand().split(" ");
-		String commandAndOptions = bootstrapCommandParts[0] + " " + getCustomOptions();
+		String commandAndOptions = bootstrapCommand + "" + getCustomOptions();
 
 		builder
 		.append(commandAndOptions).append(" ")
@@ -169,12 +176,8 @@ public abstract class Bootstrapper {
 			builder.append("-keystore-password " + keystorePassword + " ");
 		}
 
-		if (bootstrapCommandParts.length == 2) {
-			// cloud bootstrap, append provider
-			builder.append(bootstrapCommandParts[1]);
-		} else {
-			// localcloud bootstrap.
-		}
+		builder.append(provider);
+
 		if (bootstrapExpectedToFail) {
 			String output = CommandTestUtils.runCommandExpectedFail(builder.toString());
 			ProcessResult result = new ProcessResult(output, 1);
@@ -194,7 +197,6 @@ public abstract class Bootstrapper {
 		if (restUrl != null) {
 			connectCommandBuilder.append("connect").append(" ");
 			if (StringUtils.isNotBlank(user) && StringUtils.isNotBlank(password)){
-				//TODO : More validations
 				connectCommandBuilder.append("-user").append(" ")
 				.append(user).append(" ")
 				.append("-password").append(" ")
@@ -203,23 +205,27 @@ public abstract class Bootstrapper {
 			connectCommandBuilder.append(restUrl).append(";");
 		}
 
-		String[] teardownCommandParts = getTeardownCommand().split(" ");
-		String command = teardownCommandParts[0];
-
+		String teardownCommand = null;
+		String provider = null;
+		if (this instanceof LocalCloudBootstrapper) {
+			teardownCommand = "teardown-localcloud";
+			provider = "";
+		} else if (this instanceof CloudBootstrapper) {
+			teardownCommand = "teardown-cloud";
+			provider = ((CloudBootstrapper) this).getProvider();
+		}
+		
 		StringBuilder builder = new StringBuilder();
 		builder
-		.append(command).append(" ");
-		builder.append("-timeout").append(" ")
-		.append(timeoutInMinutes).append(" ");
+				.append(teardownCommand)
+				.append(" ")
+			    .append("-timeout")
+			    .append(" ")
+			    .append(timeoutInMinutes).append(" ");
 		if (force) {
 			builder.append("-force").append(" ");
 		}
-		if (teardownCommandParts.length == 2) {
-			// cloud teardown, append provider
-			builder.append(teardownCommandParts[1]);
-		} else {
-			// localcloud teardown.
-		}
+		builder.append(provider);
 		ProcessResult result = CommandTestUtils.runCloudifyCommandAndWait(connectCommandBuilder.toString() + builder.toString());
 		lastActionOutput = result.getOutput();
 		return result;
@@ -280,7 +286,6 @@ public abstract class Bootstrapper {
 		StringBuilder connectCommandBuilder = new StringBuilder();
 		connectCommandBuilder.append("connect").append(" ");
 		if (StringUtils.isNotBlank(user)){
-			//TODO : More validations
 			connectCommandBuilder.append("-user").append(" ")
 			.append(user).append(" ");
 		if (StringUtils.isNotBlank(password))

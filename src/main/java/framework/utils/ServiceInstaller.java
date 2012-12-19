@@ -21,38 +21,10 @@ public class ServiceInstaller extends RecipeInstaller {
 		this.applicationName = applicationName;
 		return this;
 	}
-	
-	@Override
-	public String getInstallCommand() {
-		if (!applicationName.equals(CloudifyConstants.DEFAULT_APPLICATION_NAME)) {
-			// we wish to install the service on a specific application
-			return "use-application " + applicationName + ";" + " install-service";
-		} else {
-			return "install-service";
-		}
-	}
-
-	@Override
-	public void assertInstall(String output) {
-		final String excpectedResult = "Service \"" + serviceName + "\" successfully installed";
-		AssertUtils.assertTrue("output " + output + " Does not contain " + excpectedResult,
-				output.toLowerCase().contains(excpectedResult.toLowerCase()));
-	}
-
-	@Override
-	public String getUninstallCommand() {
-		return "uninstall-service";
-	}
 
 	@Override
 	public String getRecipeName() {
 		return serviceName;
-	}
-
-	@Override
-	public void assertUninstall(String output) {
-		final String excpectedResult = "Service \"" + serviceName + "\" uninstalled successfully";
-		AssertUtils.assertTrue(output.toLowerCase().contains(excpectedResult.toLowerCase()));
 	}
 	
 	public void uninstallIfFound() {	
@@ -83,5 +55,9 @@ public class ServiceInstaller extends RecipeInstaller {
 			}
 		}
 		
+	}
+
+	public String getServiceName() {
+		return serviceName;
 	}
 }

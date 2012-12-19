@@ -21,6 +21,10 @@ public class CloudBootstrapper extends Bootstrapper {
 		return this;
 	}
 	
+	public String getProvider() {
+		return provider;
+	}
+	
 	public CloudBootstrapper noWebServices(boolean noWebServices) {
 		this.noWebServices = noWebServices;
 		return this;
@@ -34,16 +38,6 @@ public class CloudBootstrapper extends Bootstrapper {
 		this.cloudOverrides = overrides;
 		return this;
 	}
-	
-	@Override
-	public String getBootstrapCommand() {
-		
-		if (provider == null) {
-			throw new IllegalStateException("provider cannot be null!, please use setProvider");
-		}
-		
-		return "bootstrap-cloud " + provider;
-	}
 
 	@Override
 	public String getCustomOptions() throws IOException{
@@ -56,14 +50,9 @@ public class CloudBootstrapper extends Bootstrapper {
 			File cloudOverridesFile = IOUtils.createTempOverridesFile(cloudOverrides);
 			builder
 				.append("-cloud-overrides").append(" ")
-				.append(cloudOverridesFile.getAbsolutePath().replace("\\", "/")).append(" ");
+				.append(cloudOverridesFile.getAbsolutePath().replace("\\", "/"));
 		}
 		
 		return builder.toString();
-	}
-
-	@Override
-	public String getTeardownCommand() {
-		return "teardown-cloud " + provider;
 	}
 }

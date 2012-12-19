@@ -31,7 +31,7 @@ public class Ec2TeardownAfterInstallSecurityTest extends NewAbstractSecurityClou
 	}
 
 	private void teardownAndVerify(String user, String password, String userDescription ,boolean isExpectedToFail) throws Exception{
-		CloudBootstrapper bootstrapper = (CloudBootstrapper) getService().getBootstrapper().user(user).password(password).tearExpectedToFail(true);
+		CloudBootstrapper bootstrapper = (CloudBootstrapper) getService().getBootstrapper().user(user).password(password).teardownExpectedToFail(true);
 		super.teardown(bootstrapper);
 		String output = bootstrapper.getLastActionOutput();
 	

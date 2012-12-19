@@ -22,12 +22,12 @@ public abstract class Bootstrapper {
 	private boolean bootstrapExpectedToFail = false;
 	private boolean teardownExpectedToFail = false;
 	
-	public boolean isTearExpectedToFail() {
+	public boolean isTeardownExpectedToFail() {
 		return teardownExpectedToFail;
 	}
 
-	public Bootstrapper tearExpectedToFail(boolean tearExpectedToFail) {
-		this.teardownExpectedToFail = tearExpectedToFail;
+	public Bootstrapper teardownExpectedToFail(boolean tearDownExpectedToFail) {
+		this.teardownExpectedToFail = tearDownExpectedToFail;
 		return this;
 	}
 

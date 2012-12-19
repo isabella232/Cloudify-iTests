@@ -86,7 +86,7 @@ public abstract class JCloudsCloudService extends AbstractCloudService {
 	public void teardownCloud() throws IOException, InterruptedException {
 		super.teardownCloud();
 		
-		if(!getBootstrapper().isTearExpectedToFail()){		
+		if(!getBootstrapper().isTeardownExpectedToFail()){		
 			LogUtils.log("Closing jclouds ComputeServiceContext");
 			this.context.close();
 			this.context = null;

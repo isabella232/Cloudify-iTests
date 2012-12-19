@@ -198,7 +198,7 @@ public abstract class AbstractCloudService implements CloudService {
 			}
 		} 
 		finally {
-			if (!bootstrapper.isTearExpectedToFail()) {
+			if (!bootstrapper.isTeardownExpectedToFail()) {
 				scanForLeakedAgentAndManagementNodes();				
 			} else {
 				// machines were not supposed to be terminated.

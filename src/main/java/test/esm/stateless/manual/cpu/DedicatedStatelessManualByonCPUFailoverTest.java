@@ -1,4 +1,4 @@
-package test.gsm.stateless.manual.cpu.xen;
+package test.esm.stateless.manual.cpu;
 
 
 import java.io.File;
@@ -8,15 +8,38 @@ import org.openspaces.admin.pu.ProcessingUnit;
 import org.openspaces.admin.pu.elastic.ElasticStatelessProcessingUnitDeployment;
 import org.openspaces.admin.pu.elastic.config.ManualCapacityScaleConfigurer;
 import org.openspaces.core.util.MemoryUnit;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import test.esm.AbstractFromXenToByonGSMTest;
 import framework.utils.DeploymentUtils;
+import framework.utils.GsmTestUtils;
 
-import test.gsm.AbstractXenGSMTest;
-import test.gsm.GsmTestUtils;
-
-public class DedicatedStatelessManualXenCPUFailoverTest extends AbstractXenGSMTest {
-
+public class DedicatedStatelessManualByonCPUFailoverTest extends AbstractFromXenToByonGSMTest {
+	
+	@BeforeMethod
+    public void beforeTest() {
+		super.beforeTestInit();
+	}
+	
+	@BeforeClass
+	protected void bootstrap() throws Exception {
+		super.bootstrapBeforeClass();
+	}
+	
+	@AfterMethod
+    public void afterTest() {
+		super.afterTest();
+	}
+	
+	@AfterClass(alwaysRun = true)
+	protected void teardownAfterClass() throws Exception {
+		super.teardownAfterClass();
+	}
+	
     @Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1")
     public void doTest() {
     	                  
@@ -27,9 +50,9 @@ public class DedicatedStatelessManualXenCPUFailoverTest extends AbstractXenGSMTe
 	    repetitiveAssertNumberOfGSAsAdded(1, OPERATION_TIMEOUT);	    
 	    
 	    final int expectedNumberOfMachines = (int)  
-    		Math.ceil(numberOfCpuCores/super.getMachineProvisioningConfig().getNumberOfCpuCoresPerMachine());
+    		Math.ceil(numberOfCpuCores/super.getMachineProvisioningConfig().getMinimumNumberOfCpuCoresPerMachine());
 
-	    int expectedNumberOfContainers = (int) Math.ceil(numberOfCpuCores/super.getMachineProvisioningConfig().getNumberOfCpuCoresPerMachine());
+	    int expectedNumberOfContainers = (int) Math.ceil(numberOfCpuCores/super.getMachineProvisioningConfig().getMinimumNumberOfCpuCoresPerMachine());
 	    
 	    File archive = DeploymentUtils.getArchive("servlet.war");
 	    

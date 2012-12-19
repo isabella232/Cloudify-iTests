@@ -1,4 +1,4 @@
-package test.gsm.stateless.manual.cpu.xen;
+package test.esm.stateless.manual.cpu;
 
 import java.io.File;
 import java.io.IOException;
@@ -7,16 +7,39 @@ import org.openspaces.admin.pu.ProcessingUnit;
 import org.openspaces.admin.pu.elastic.ElasticStatelessProcessingUnitDeployment;
 import org.openspaces.admin.pu.elastic.config.ManualCapacityScaleConfigurer;
 import org.openspaces.core.util.MemoryUnit;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import test.esm.AbstractFromXenToByonGSMTest;
+import framework.utils.AssertUtils.RepetitiveConditionProvider;
 import framework.utils.DeploymentUtils;
 import framework.utils.LogUtils;
-import framework.utils.AssertUtils.RepetitiveConditionProvider;
 
-import test.gsm.AbstractXenGSMTest;
-
-public class DedicatedStatelessManualXenCPUScaleInTest extends AbstractXenGSMTest {
-
+public class DedicatedStatelessManualByonCPUScaleInTest extends AbstractFromXenToByonGSMTest {
+	
+	@BeforeMethod
+    public void beforeTest() {
+		super.beforeTestInit();
+	}
+	
+	@BeforeClass
+	protected void bootstrap() throws Exception {
+		super.bootstrapBeforeClass();
+	}
+	
+	@AfterMethod
+    public void afterTest() {
+		super.afterTest();
+	}
+	
+	@AfterClass(alwaysRun = true)
+	protected void teardownAfterClass() throws Exception {
+		super.teardownAfterClass();
+	}
+	
     @Test(timeOut = DEFAULT_TEST_TIMEOUT*2, groups = "1")
     public void doTest() throws IOException {
     	         
@@ -37,7 +60,7 @@ public class DedicatedStatelessManualXenCPUScaleInTest extends AbstractXenGSMTes
                       .create())
         );
         
-	    int expectedNumberOfContainers = (int) Math.ceil(numberOfCpuCores/super.getMachineProvisioningConfig().getNumberOfCpuCoresPerMachine());
+	    int expectedNumberOfContainers = (int) Math.ceil(numberOfCpuCores/super.getMachineProvisioningConfig().getMinimumNumberOfCpuCoresPerMachine());
 	    int expectedNumberOfMachines = expectedNumberOfContainers;
 	    
 	    pu.waitFor(expectedNumberOfContainers);
@@ -53,7 +76,7 @@ public class DedicatedStatelessManualXenCPUScaleInTest extends AbstractXenGSMTes
 	    		 .numberOfCpuCores(numberOfCpuCores)
 	    		 .create());
 	    	    
-	    final int expectedNumberOfContainersAfterScaleIn = (int) Math.ceil(numberOfCpuCores/super.getMachineProvisioningConfig().getNumberOfCpuCoresPerMachine());
+	    final int expectedNumberOfContainersAfterScaleIn = (int) Math.ceil(numberOfCpuCores/super.getMachineProvisioningConfig().getMinimumNumberOfCpuCoresPerMachine());
 	    final int expectedRemoved = expectedNumberOfContainers - expectedNumberOfContainersAfterScaleIn;
 
 	    repetitiveAssertTrue("Scaling in two instances",new RepetitiveConditionProvider() {

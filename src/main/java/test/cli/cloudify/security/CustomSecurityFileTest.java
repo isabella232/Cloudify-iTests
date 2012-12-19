@@ -35,9 +35,7 @@ public class CustomSecurityFileTest extends AbstractSecuredLocalCloudTest{
 	public void installWithCustomCloudAdminTest() throws IOException, InterruptedException {
 		
 		ApplicationInstaller appInstaller = new ApplicationInstaller(getRestUrl(), APP_NAME);
-		String output = appInstaller.cloudifyUsername(CLOUD_ADMIN_USER_AND_PASSWORD).cloudifyPassword(CLOUD_ADMIN_USER_AND_PASSWORD).recipePath(APP_PATH).install();
-				
-		appInstaller.assertInstall(output);
+		appInstaller.cloudifyUsername(CLOUD_ADMIN_USER_AND_PASSWORD).cloudifyPassword(CLOUD_ADMIN_USER_AND_PASSWORD).recipePath(APP_PATH).install();
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
@@ -47,7 +45,6 @@ public class CustomSecurityFileTest extends AbstractSecuredLocalCloudTest{
 		String output = appInstaller.cloudifyUsername(VIEWER_USER_AND_PASSWORD).cloudifyPassword(VIEWER_USER_AND_PASSWORD).recipePath(APP_PATH).expectToFail(true).install();
 
 		assertTrue("install access granted to a viewer", output.contains("Access is denied") || output.contains("no_permission_access_is_denied"));
-		appInstaller.assertInstall(output);
 	}
 	
 	@AfterMethod(alwaysRun = true)

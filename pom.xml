@@ -16,7 +16,7 @@
 
 	<properties>
 		<cloudify.home>${env.CLOUDIFY_HOME}</cloudify.home>
-		<gsVersion>9.1.1-SNAPSHOT</gsVersion>
+		<gsVersion>9.5.0-SNAPSHOT</gsVersion>
 	</properties>
 
 	<dependencies>

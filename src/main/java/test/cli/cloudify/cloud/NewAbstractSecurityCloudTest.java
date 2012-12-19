@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import org.apache.commons.lang.StringUtils;
 
+import test.cli.cloudify.CommandTestUtils;
 import test.cli.cloudify.cloud.services.CloudService;
 import test.cli.cloudify.cloud.services.CloudServiceManager;
 import test.cli.cloudify.security.SecurityConstants;
@@ -12,6 +13,12 @@ import framework.utils.CloudBootstrapper;
 import framework.utils.ServiceInstaller;
 
 public abstract class NewAbstractSecurityCloudTest extends NewAbstractCloudTest {
+	
+	protected static final int TIMEOUT_IN_MINUTES = 60;
+	protected static final String APP_NAME = "simple";
+	protected static final String APP_PATH = CommandTestUtils.getPath("/src/main/resources/apps/USM/usm/applications/" + APP_NAME);
+	protected static final String TEARDOWN_ACCESS_DENIED_MESSAGE = "Permission not granted, access is denied.";
+	protected static final String TEARDOWN_SUCCESSFULL_MESSAGE = "Cloud terminated successfully.";
 	
 	@Override
 	protected void bootstrap() throws Exception {
@@ -34,7 +41,12 @@ public abstract class NewAbstractSecurityCloudTest extends NewAbstractCloudTest 
 	
 	@Override
 	protected void teardown() throws Exception {
-		getService().getBootstrapper().user(SecurityConstants.ALL_ROLES_USER_PWD).password(SecurityConstants.ALL_ROLES_USER_PWD);
+		CloudBootstrapper securedBootstrapper = (CloudBootstrapper) getService().getBootstrapper().user(SecurityConstants.ALL_ROLES_USER_PWD).password(SecurityConstants.ALL_ROLES_USER_PWD);
+		teardown(securedBootstrapper);
+	}
+	
+	protected void teardown(CloudBootstrapper securedBootstrapper) throws Exception {
+		getService().setBootstrapper(securedBootstrapper);
 		super.teardown();
 	}
 	

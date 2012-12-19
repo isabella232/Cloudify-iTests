@@ -121,6 +121,7 @@ public abstract class AbstractCloudService implements CloudService {
 		this.cloudUniqueName = uniqueName;
 		this.cloudFolderName = cloudName + "_" + cloudUniqueName;
 		bootstrapper.provider(this.cloudFolderName);
+		deleteServiceFolders();
 		createCloudFolder();
 	}
 	
@@ -197,8 +198,11 @@ public abstract class AbstractCloudService implements CloudService {
 			}
 		} 
 		finally {
-			deleteServiceFolders();
-			scanForLeakedAgentAndManagementNodes();
+			if (!bootstrapper.isTearExpectedToFail()) {
+				scanForLeakedAgentAndManagementNodes();				
+			} else {
+				// machines were not supposed to be terminated.
+			}
 		}
 	}
 	
@@ -209,7 +213,6 @@ public abstract class AbstractCloudService implements CloudService {
 			CommandTestUtils.runCommandAndWait("teardown-cloud -force --verbose " + this.cloudName + "_" + this.cloudUniqueName);			
 		}
 		finally {			
-			deleteServiceFolders();
 			scanForLeakedAgentAndManagementNodes();
 		}
 	}
@@ -343,7 +346,9 @@ public abstract class AbstractCloudService implements CloudService {
 			throws IOException {
 		File serviceCloudFolder = new File(getPathToCloudFolder());
 		try {
-			FileUtils.deleteDirectory(serviceCloudFolder);
+			if(serviceCloudFolder.exists()){				
+				FileUtils.deleteDirectory(serviceCloudFolder);
+			}
 		} catch (IOException e) {
 			LogUtils.log("caught an exception while deleting service folder " + serviceCloudFolder.getAbsolutePath(), e);
 			throw e;

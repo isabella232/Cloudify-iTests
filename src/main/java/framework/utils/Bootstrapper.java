@@ -20,11 +20,27 @@ public abstract class Bootstrapper {
 	private boolean force = true;
 	private String restUrl;
 	private boolean bootstrapExpectedToFail = false;
+	private boolean teardownExpectedToFail = false;
+	
+	public boolean isTearExpectedToFail() {
+		return teardownExpectedToFail;
+	}
+
+	public Bootstrapper tearExpectedToFail(boolean tearExpectedToFail) {
+		this.teardownExpectedToFail = tearExpectedToFail;
+		return this;
+	}
+
+	protected String lastActionOutput = "no action performed";
 	
 	private boolean bootstrapped;
 	
 	public boolean isBootstraped() {
 		return bootstrapped;
+	}
+
+	public String getLastActionOutput() {
+		return lastActionOutput;
 	}
 
 	public String getRestUrl() {
@@ -163,9 +179,11 @@ public abstract class Bootstrapper {
 			String output = CommandTestUtils.runCommandExpectedFail(builder.toString());
 			ProcessResult result = new ProcessResult(output, 1);
 			bootstrapped = false;
+			lastActionOutput = result.getOutput();
 			return result;
 		}
 		ProcessResult result = CommandTestUtils.runCloudifyCommandAndWait(builder.toString());
+		lastActionOutput = result.getOutput();
 		bootstrapped = true;
 		return result;	
 	}
@@ -202,48 +220,60 @@ public abstract class Bootstrapper {
 		} else {
 			// localcloud teardown.
 		}
-		return CommandTestUtils.runCloudifyCommandAndWait(connectCommandBuilder.toString() + builder.toString());	
+		ProcessResult result = CommandTestUtils.runCloudifyCommandAndWait(connectCommandBuilder.toString() + builder.toString());
+		lastActionOutput = result.getOutput();
+		return result;
 	}
 
 	public String listApplications(boolean expectedToFail) throws IOException, InterruptedException {
 		String command = connectCommand() + ";list-applications";
 		if (expectedToFail) {
-			return CommandTestUtils.runCommandExpectedFail(command);
+			lastActionOutput = CommandTestUtils.runCommandExpectedFail(command);
+			return lastActionOutput;
 		}
-		return CommandTestUtils.runCommandAndWait(command);
+		lastActionOutput = CommandTestUtils.runCommandAndWait(command);
+		return lastActionOutput;
 	}
 
 	public String listServices(final String applicationName, boolean expectedToFail) throws IOException, InterruptedException {
 		String command = connectCommand() + ";use-application " + applicationName + ";list-services";
 		if (expectedToFail) {
-			return CommandTestUtils.runCommandExpectedFail(command);
-		} 
-		return CommandTestUtils.runCommandAndWait(command);
+			lastActionOutput = CommandTestUtils.runCommandExpectedFail(command);
+			return lastActionOutput;
+		}
+		lastActionOutput = CommandTestUtils.runCommandAndWait(command);
+		return lastActionOutput;
 
 	}
 
 	public String listInstances(final String applicationName, final String serviceName, boolean expectedToFail) throws IOException, InterruptedException {
 		String command = connectCommand() + ";use-application " + applicationName +";list-instances " + serviceName;
 		if (expectedToFail) {
-			return CommandTestUtils.runCommandExpectedFail(command);
+			lastActionOutput = CommandTestUtils.runCommandExpectedFail(command);
+			return lastActionOutput;
 		}
-		return CommandTestUtils.runCommandAndWait(command);
+		lastActionOutput = CommandTestUtils.runCommandAndWait(command);
+		return lastActionOutput;
 	}
 
 	public String connect(boolean expectedToFail) throws IOException, InterruptedException {
 		String command = connectCommand();
 		if (expectedToFail) {
-			return CommandTestUtils.runCommandExpectedFail(command);
+			lastActionOutput = CommandTestUtils.runCommandExpectedFail(command);
+			return lastActionOutput;
 		}
-		return CommandTestUtils.runCommandAndWait(command);
+		lastActionOutput = CommandTestUtils.runCommandAndWait(command);
+		return lastActionOutput;
 	}
 
 	public String login(boolean expectedToFail) throws IOException, InterruptedException {
-		return CommandTestUtils.runCommand(connectCommand() + ";" + "login " + user + " " + password, true, expectedToFail);
+		lastActionOutput = CommandTestUtils.runCommand(connectCommand() + ";" + "login " + user + " " + password, true, expectedToFail);
+		return lastActionOutput;
 	}
 	
 	public String login(final String user, final String password, boolean expectedToFail) throws IOException, InterruptedException {
-		return CommandTestUtils.runCommand(connectCommand() + ";" + "login " + user + " " + password, true, expectedToFail);
+		lastActionOutput = CommandTestUtils.runCommand(connectCommand() + ";" + "login " + user + " " + password, true, expectedToFail);
+		return lastActionOutput;
 	}
 
 	private String connectCommand() {

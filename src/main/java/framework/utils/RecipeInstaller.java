@@ -135,7 +135,7 @@ public abstract class RecipeInstaller {
 		if (this instanceof ServiceInstaller) {
 			installCommand = "install-service";
 			recipeName = ((ServiceInstaller)this).getServiceName();
-			excpectedResult = "Service \"" + recipeName + "\" uninstalled successfully";
+			excpectedResult = "Service \"" + recipeName + "\" successfully installed";
 		} else if (this instanceof ApplicationInstaller) {
 			installCommand = "install-application";
 			recipeName = ((ApplicationInstaller)this).getApplicationName();
@@ -207,7 +207,7 @@ public abstract class RecipeInstaller {
 		if (this instanceof ServiceInstaller) {
 			uninstallCommand = "uninstall-service";
 			recipeName = ((ServiceInstaller)this).getServiceName();
-			excpectedResult = "Service \"" + recipeName + "\" uninstalled successfully";
+			excpectedResult = "Successfully undeployed " + recipeName;
 		} else if (this instanceof ApplicationInstaller) {
 			uninstallCommand = "uninstall-application";
 			recipeName = ((ApplicationInstaller)this).getApplicationName();

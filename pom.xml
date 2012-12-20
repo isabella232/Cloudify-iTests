@@ -15,7 +15,7 @@
 	</parent>
 
 	<properties>
-		<cloudify.home>${env.CLOUDIFY_HOME}</cloudify.home>
+		<cloudify.home>D:\opt\cloudify</cloudify.home>
 		<gsVersion>9.5.0-SNAPSHOT</gsVersion>
 	</properties>
 
@@ -135,9 +135,13 @@
 		</dependency>
 	</dependencies>
 
+
 	<profiles>
 		<profile>
 			<id>tgrid-sgtest-cloudify</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
 			<dependencies>
 				<dependency>
 					<groupId>com.gigaspaces</groupId>
@@ -245,7 +249,7 @@
 						<selenium.browser>${selenium.browser}</selenium.browser>
 						<org.apache.commons.logging.Log>org.apache.commons.logging.impl.Jdk14Logger</org.apache.commons.logging.Log>
 						<com.gs.logging.level.config>true</com.gs.logging.level.config>
-						<java.util.logging.config.file>${basedir}/logging/sgtest_logging.properties</java.util.logging.config.file>
+						<java.util.logging.config.file>${basedir}/src/config/sgtest_logging.properties</java.util.logging.config.file>
 						<sgtest.buildFolder>${sgtest.buildFolder}</sgtest.buildFolder>
 						<sgtest.url>http://192.168.9.121:8087/sgtest3.0-cloudify/</sgtest.url>
 						<com.gs.work>${com.gs.work}</com.gs.work>

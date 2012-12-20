@@ -1,5 +1,8 @@
 @echo on
 
+@echo setting up enviroment variables
+call set-build-env.bat
+
 set SUITE_TYPE=Regression
 set BUILD_NUMBER=%1
 set SUITE_NAME=%2
@@ -10,7 +13,7 @@ set BUILD_LOG_URL=%5
 
 pushd %SGTEST_HOME%
 
-set CLOUDIFY_HOME=%SGTEST_HOME%\..\gigaspaces-cloudify-%MAJOR_VERSION%-%MINOR_VERSION%
+set CLOUDIFY_HOME=%BUILD_LOCATION%
 
 call mvn exec:java -Dexec.mainClass="framework.testng.report.TestsReportMerger" -Dexec.args="%SUITE_NAME% %SGTEST_HOME%\..\%SUITE_NAME% %SGTEST_HOME%\..\%SUITE_NAME%" -Dcloudify.home=%CLOUDIFY_HOME%
 

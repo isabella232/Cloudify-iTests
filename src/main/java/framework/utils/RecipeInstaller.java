@@ -246,6 +246,7 @@ public abstract class RecipeInstaller {
 		if (expectToFail) {
 			String output = CommandTestUtils.runCommandExpectedFail(connectCommand + uninstallationCommand);
 			AssertUtils.assertTrue("Installation succeeded", output.toLowerCase().contains("operation failed"));
+			return output;
 		}
 		if (waitForFinish) {
 			String output = CommandTestUtils.runCommandAndWait(connectCommand + uninstallationCommand);

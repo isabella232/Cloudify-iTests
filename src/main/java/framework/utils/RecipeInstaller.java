@@ -126,19 +126,20 @@ public abstract class RecipeInstaller {
 		this.authGroups = authGroups;
 		return this;
 	}
-
-	public abstract String getRecipeName();
 			
 	public String install() throws IOException, InterruptedException {
 		
 		String installCommand = null;
 		String excpectedResult = null;
+		String recipeName = null;
 		if (this instanceof ServiceInstaller) {
 			installCommand = "install-service";
-			excpectedResult = "Service \"" + ((ServiceInstaller)this).getServiceName() + "\" uninstalled successfully";
+			recipeName = ((ServiceInstaller)this).getServiceName();
+			excpectedResult = "Service \"" + recipeName + "\" uninstalled successfully";
 		} else if (this instanceof ApplicationInstaller) {
 			installCommand = "install-application";
-			excpectedResult = "Application " + ((ApplicationInstaller)this).getApplicationName() + " installed successfully";
+			recipeName = ((ApplicationInstaller)this).getApplicationName();
+			excpectedResult = "Application " + recipeName + " installed successfully";
 		}
 		
 		if (recipePath == null) {
@@ -177,8 +178,8 @@ public abstract class RecipeInstaller {
 			commandBuilder.append("-authGroups").append(" ").append(authGroups).append(" ");
 		}
 		
-		if (getRecipeName() != null && !getRecipeName().isEmpty()) {
-			commandBuilder.append("-name").append(" ").append(getRecipeName()).append(" ");
+		if (recipeName != null && !recipeName.isEmpty()) {
+			commandBuilder.append("-name").append(" ").append(recipeName).append(" ");
 		}
 		
 		commandBuilder.append(recipePath.replace('\\', '/'));
@@ -187,6 +188,7 @@ public abstract class RecipeInstaller {
 		if (expectToFail) {
 			String output = CommandTestUtils.runCommandExpectedFail(connectCommand + installationCommand);
 			AssertUtils.assertTrue("Installation succeeded", output.toLowerCase().contains("operation failed"));
+			return output;
 		}
 		if (waitForFinish) {
 			String output = CommandTestUtils.runCommandAndWait(connectCommand + installationCommand);
@@ -201,12 +203,15 @@ public abstract class RecipeInstaller {
 		
 		String uninstallCommand = null;
 		String excpectedResult = null;
+		String recipeName = null;
 		if (this instanceof ServiceInstaller) {
 			uninstallCommand = "uninstall-service";
-			excpectedResult = "Service \"" + ((ServiceInstaller)this).getServiceName() + "\" uninstalled successfully";
+			recipeName = ((ServiceInstaller)this).getServiceName();
+			excpectedResult = "Service \"" + recipeName + "\" uninstalled successfully";
 		} else if (this instanceof ApplicationInstaller) {
 			uninstallCommand = "uninstall-application";
-			excpectedResult = "Application " + ((ApplicationInstaller)this).getApplicationName() + " uninstalled successfully";
+			recipeName = ((ApplicationInstaller)this).getApplicationName();
+			excpectedResult = "Application " + recipeName + " uninstalled successfully";
 		}
 		
 		String url = null;
@@ -233,7 +238,7 @@ public abstract class RecipeInstaller {
 				.append("--verbose").append(" ")
 				.append("-timeout").append(" ")
 				.append(timeoutInMinutes).append(" ")
-				.append(getRecipeName())
+				.append(recipeName)
 				.toString();
 		
 		final String connectCommand = connectCommandBuilder.toString();

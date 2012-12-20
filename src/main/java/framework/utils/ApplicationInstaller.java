@@ -20,11 +20,6 @@ public class ApplicationInstaller extends RecipeInstaller {
 		this.applicationName = applicationName;
 		return this;
 	}
-
-	@Override
-	public String getRecipeName() {
-		return applicationName;
-	}
 	
 	public void uninstallIfFound() {	
 		if (getRestUrl() != null) {

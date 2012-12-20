@@ -187,12 +187,12 @@ public abstract class RecipeInstaller {
 		final String connectCommand = connectCommandBuilder.toString();
 		if (expectToFail) {
 			String output = CommandTestUtils.runCommandExpectedFail(connectCommand + installationCommand);
-			AssertUtils.assertTrue("Installation succeeded", output.toLowerCase().contains("operation failed"));
+			AssertUtils.assertTrue("Installation of " + recipeName + "was expected to fail. but it succeeded", output.toLowerCase().contains("operation failed"));
 			return output;
 		}
 		if (waitForFinish) {
 			String output = CommandTestUtils.runCommandAndWait(connectCommand + installationCommand);
-			AssertUtils.assertTrue("Installation failed", output.toLowerCase().contains(excpectedResult.toLowerCase()));
+			AssertUtils.assertTrue("Installation of " + recipeName + " was expected to succeed, but it failed", output.toLowerCase().contains(excpectedResult.toLowerCase()));
 			return output;			
 		} else {
 			return CommandTestUtils.runCommand(connectCommand + installationCommand);

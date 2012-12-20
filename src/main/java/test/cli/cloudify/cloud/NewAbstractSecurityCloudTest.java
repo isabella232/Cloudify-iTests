@@ -90,6 +90,14 @@ public abstract class NewAbstractSecurityCloudTest extends NewAbstractCloudTest 
 		applicationInstaller.uninstallIfFound();
 	}
 	
+	protected void uninstallServiceIfFound(String serviceName, final String cloudifyUsername, final String cloudifyPassword) throws IOException, InterruptedException {
+		ServiceInstaller serviceInstaller = new ServiceInstaller(getRestUrl(), serviceName);
+		serviceInstaller.waitForFinish(true);
+		serviceInstaller.cloudifyUsername(cloudifyUsername);
+		serviceInstaller.cloudifyPassword(cloudifyPassword);
+		serviceInstaller.uninstallIfFound();		
+	}
+	
 	protected String installServiceAndWait(String servicePath, String serviceName, int timeout, final String cloudifyUsername,
 			final String cloudifyPassword, boolean isExpectedToFail, final String authGroups) throws IOException, InterruptedException {
 

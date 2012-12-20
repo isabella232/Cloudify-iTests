@@ -4,21 +4,21 @@ import framework.tools.SGTestHelper;
 
 public class SecurityConstants {
 	
-	public static final String ALL_ROLES_USER_PWD = "Superuser";
-	public static final String CLOUD_ADMIN_USER_PWD = "Amanda";
-	public static final String CLOUD_ADMIN_AND_APP_MANAGER_USER_PWD = "Dana";
-	public static final String APP_MANAGER_USER_PWD = "Dan";
-	public static final String APP_MANAGER_AND_VIEWER_USER_PWD = "Don";
-	public static final String VIEWER_USER_PWD = "John";
-	public static final String NO_ROLE_USER_PWD = "Jane";
+	public static final String USER_PWD_ALL_ROLES = "Superuser";
+	public static final String USER_PWD_CLOUD_ADMIN = "Amanda";
+	public static final String USER_PWD_CLOUD_ADMIN_AND_APP_MANAGER = "Dana";
+	public static final String USER_PWD_APP_MANAGER = "Dan";
+	public static final String USER_PWD_APP_MANAGER_AND_VIEWER = "Don";
+	public static final String USER_PWD_VIEWER = "John";
+	public static final String USER_PWD_NO_ROLE = "Jane";
 
-	public static final String ALL_ROLES_DESCRIPTIN = ALL_ROLES_USER_PWD + " (all roles)";
-	public static final String CLOUD_ADMIN_DESCRIPTIN = CLOUD_ADMIN_USER_PWD + " (cloud admin)";
-	public static final String CLOUD_ADMIN_AND_APP_MANAGER_DESCRIPTION = CLOUD_ADMIN_AND_APP_MANAGER_USER_PWD + " (cloud admin and app manager)";
-	public static final String APP_MANAGER_DESCRIPTIN = APP_MANAGER_USER_PWD + " (app manager)";
-	public static final String APP_MANAGER_AND_VIEWER_DESCRIPTIN = APP_MANAGER_AND_VIEWER_USER_PWD + " (app manager and viewer)";
-	public static final String VIEWER_DESCRIPTIN = VIEWER_USER_PWD + " (viewer)";
-	public static final String NO_ROLE_DESCRIPTIN = NO_ROLE_USER_PWD + " (no roles)";
+	public static final String ALL_ROLES_DESCRIPTIN = USER_PWD_ALL_ROLES + " (all roles)";
+	public static final String CLOUD_ADMIN_DESCRIPTIN = USER_PWD_CLOUD_ADMIN + " (cloud admin)";
+	public static final String CLOUD_ADMIN_AND_APP_MANAGER_DESCRIPTION = USER_PWD_CLOUD_ADMIN_AND_APP_MANAGER + " (cloud admin and app manager)";
+	public static final String APP_MANAGER_DESCRIPTIN = USER_PWD_APP_MANAGER + " (app manager)";
+	public static final String APP_MANAGER_AND_VIEWER_DESCRIPTIN = USER_PWD_APP_MANAGER_AND_VIEWER + " (app manager and viewer)";
+	public static final String VIEWER_DESCRIPTIN = USER_PWD_VIEWER + " (viewer)";
+	public static final String NO_ROLE_DESCRIPTIN = USER_PWD_NO_ROLE + " (no roles)";
 	
 	public static final String GE_GROUP = "GE";
 	public static final String BEZEQ_GROUP = "Bezeq";

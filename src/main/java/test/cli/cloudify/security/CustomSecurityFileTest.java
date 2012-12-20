@@ -49,7 +49,7 @@ public class CustomSecurityFileTest extends AbstractSecuredLocalCloudTest{
 	
 	@AfterMethod(alwaysRun = true)
 	protected void uninstall() throws Exception {
-		uninstallApplicationIfFound(APP_NAME, SecurityConstants.ALL_ROLES_USER_PWD, SecurityConstants.ALL_ROLES_USER_PWD);
+		uninstallApplicationIfFound(APP_NAME, SecurityConstants.USER_PWD_ALL_ROLES, SecurityConstants.USER_PWD_ALL_ROLES);
 	}
 	
 	@AfterClass(alwaysRun = true)

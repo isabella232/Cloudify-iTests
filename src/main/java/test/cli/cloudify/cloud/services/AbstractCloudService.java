@@ -184,7 +184,7 @@ public abstract class AbstractCloudService implements CloudService {
 				try {
 					url = restUrls[0] + "/service/dump/machines/?fileSizeLimit=50000000";
 					if (this.bootstrapper.isSecured()) {
-						DumpUtils.dumpMachines(restUrls[0], SecurityConstants.ALL_ROLES_USER_PWD, SecurityConstants.ALL_ROLES_USER_PWD);
+						DumpUtils.dumpMachines(restUrls[0], SecurityConstants.USER_PWD_ALL_ROLES, SecurityConstants.USER_PWD_ALL_ROLES);
 					} else {
 						DumpUtils.dumpMachines(restUrls[0], null, null);
 					}

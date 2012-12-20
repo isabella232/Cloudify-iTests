@@ -33,7 +33,7 @@ public class Ec2CustomSecurityFileTest extends NewAbstractSecurityCloudTest{
 		CloudBootstrapper bootstrapper = new CloudBootstrapper();
 		bootstrapper.secured(true).securityFilePath(CUSTUM_SECURITY_FILE_PATH);
 		bootstrapper.keystoreFilePath(SecurityConstants.DEFAULT_KEYSTORE_FILE_PATH).keystorePassword(SecurityConstants.DEFAULT_KEYSTORE_PASSWORD);
-		bootstrapper.user(SecurityConstants.ALL_ROLES_USER_PWD).password(SecurityConstants.ALL_ROLES_USER_PWD);
+		bootstrapper.user(SecurityConstants.USER_PWD_ALL_ROLES).password(SecurityConstants.USER_PWD_ALL_ROLES);
 		service.setBootstrapper(bootstrapper);
 		super.bootstrap(service);	
 	}
@@ -46,7 +46,7 @@ public class Ec2CustomSecurityFileTest extends NewAbstractSecurityCloudTest{
 	@AfterMethod(alwaysRun = true)
 	protected void uninstall() throws Exception {
 
-		uninstallApplicationIfFound(APP_NAME, SecurityConstants.ALL_ROLES_USER_PWD, SecurityConstants.ALL_ROLES_USER_PWD);
+		uninstallApplicationIfFound(APP_NAME, SecurityConstants.USER_PWD_ALL_ROLES, SecurityConstants.USER_PWD_ALL_ROLES);
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)

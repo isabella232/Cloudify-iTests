@@ -33,14 +33,16 @@ public class AbstractSecuredLocalCloudTest extends AbstractTest {
 	protected static final String TEARDOWN_SUCCESSFULL_MESSAGE = "SUCCESSFULLY COMPLETED LOCAL-CLOUD TEARDOWN";
 	protected static final String INSTANCE_VERIFICATION_STRING = "instance #1";
 	protected static final String BAD_CREDENTIALS_MESSAGE = "Bad credentials";
+	
+	protected static final String MANAGEMENT_APPLICATION_NAME = "management";
 
 	protected void installAndUninstallTest() throws IOException,InterruptedException {
-		installAndUninstall(SecurityConstants.APP_MANAGER_AND_VIEWER_USER_PWD, SecurityConstants.APP_MANAGER_AND_VIEWER_USER_PWD, false);
-		installAndUninstall(SecurityConstants.APP_MANAGER_USER_PWD, SecurityConstants.APP_MANAGER_USER_PWD, false);
-		installAndUninstall(SecurityConstants.CLOUD_ADMIN_AND_APP_MANAGER_USER_PWD, SecurityConstants.CLOUD_ADMIN_AND_APP_MANAGER_USER_PWD, false);
-		installAndUninstall(SecurityConstants.CLOUD_ADMIN_USER_PWD, SecurityConstants.CLOUD_ADMIN_USER_PWD, false);
-		installAndUninstall(SecurityConstants.VIEWER_USER_PWD, SecurityConstants.VIEWER_USER_PWD, true);
-		installAndUninstall(SecurityConstants.NO_ROLE_USER_PWD, SecurityConstants.NO_ROLE_USER_PWD, true);
+		installAndUninstall(SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, false);
+		installAndUninstall(SecurityConstants.USER_PWD_APP_MANAGER, SecurityConstants.USER_PWD_APP_MANAGER, false);
+		installAndUninstall(SecurityConstants.USER_PWD_CLOUD_ADMIN_AND_APP_MANAGER, SecurityConstants.USER_PWD_CLOUD_ADMIN_AND_APP_MANAGER, false);
+		installAndUninstall(SecurityConstants.USER_PWD_CLOUD_ADMIN, SecurityConstants.USER_PWD_CLOUD_ADMIN, false);
+		installAndUninstall(SecurityConstants.USER_PWD_VIEWER, SecurityConstants.USER_PWD_VIEWER, true);
+		installAndUninstall(SecurityConstants.USER_PWD_NO_ROLE, SecurityConstants.USER_PWD_NO_ROLE, true);
 	}
 
 
@@ -67,13 +69,13 @@ public class AbstractSecuredLocalCloudTest extends AbstractTest {
 	protected void testLogin() throws IOException, InterruptedException {
 		String output = "no output";
 
-		output = login(SecurityConstants.VIEWER_USER_PWD, SecurityConstants.VIEWER_USER_PWD, false);		
+		output = login(SecurityConstants.USER_PWD_VIEWER, SecurityConstants.USER_PWD_VIEWER, false);		
 		assertTrue("login failed for: " + SecurityConstants.VIEWER_DESCRIPTIN, output.contains("Logged in successfully"));
 	}
 	protected void testConnectWithNonExistingUser() throws IOException,
 	InterruptedException {
-		String output = connect(SecurityConstants.CLOUD_ADMIN_USER_PWD + "bad", SecurityConstants.CLOUD_ADMIN_USER_PWD, true);		
-		assertTrue("connect succeeded for user: " + SecurityConstants.CLOUD_ADMIN_USER_PWD + "bad", output.contains(BAD_CREDENTIALS_MESSAGE));
+		String output = connect(SecurityConstants.USER_PWD_CLOUD_ADMIN + "bad", SecurityConstants.USER_PWD_CLOUD_ADMIN, true);		
+		assertTrue("connect succeeded for user: " + SecurityConstants.USER_PWD_CLOUD_ADMIN + "bad", output.contains(BAD_CREDENTIALS_MESSAGE));
 	}
 
 	protected String teardown(LocalCloudBootstrapper bootstrapper) throws IOException, InterruptedException {
@@ -86,7 +88,7 @@ public class AbstractSecuredLocalCloudTest extends AbstractTest {
 
 	protected void teardown() throws IOException, InterruptedException {
 		LocalCloudBootstrapper bootstrapper = new LocalCloudBootstrapper();
-		bootstrapper.user(SecurityConstants.ALL_ROLES_USER_PWD).password(SecurityConstants.ALL_ROLES_USER_PWD);
+		bootstrapper.user(SecurityConstants.USER_PWD_ALL_ROLES).password(SecurityConstants.USER_PWD_ALL_ROLES);
 		teardown(bootstrapper);
 	}
 
@@ -197,7 +199,9 @@ public class AbstractSecuredLocalCloudTest extends AbstractTest {
 		}
 
 	}
-	
+
+
+
 	protected String installApplicationAndWait(String applicationPath, String applicationName, int timeout, final String cloudifyUsername,
 			final String cloudifyPassword, boolean isExpectedToFail, final String authGroups) throws IOException, InterruptedException {
 		
@@ -309,7 +313,7 @@ public class AbstractSecuredLocalCloudTest extends AbstractTest {
 
 	protected void testConnectWithNoPassword() throws IOException,
 	InterruptedException {
-		String output = connect(SecurityConstants.CLOUD_ADMIN_USER_PWD, null, true);		
+		String output = connect(SecurityConstants.USER_PWD_CLOUD_ADMIN, null, true);		
 		assertTrue("connect succeeded for: " + SecurityConstants.CLOUD_ADMIN_DESCRIPTIN + " without providing a password", output.contains(BAD_CREDENTIALS_MESSAGE));
 	}
 
@@ -317,53 +321,53 @@ public class AbstractSecuredLocalCloudTest extends AbstractTest {
 	InterruptedException {
 		String output = "no output";
 
-		output = login(SecurityConstants.CLOUD_ADMIN_USER_PWD + "bad", SecurityConstants.CLOUD_ADMIN_USER_PWD, true);					
+		output = login(SecurityConstants.USER_PWD_CLOUD_ADMIN + "bad", SecurityConstants.USER_PWD_CLOUD_ADMIN, true);					
 
-		assertTrue("login succeeded for user: " + SecurityConstants.CLOUD_ADMIN_USER_PWD + "bad", output.contains(BAD_CREDENTIALS_MESSAGE));
+		assertTrue("login succeeded for user: " + SecurityConstants.USER_PWD_CLOUD_ADMIN + "bad", output.contains(BAD_CREDENTIALS_MESSAGE));
 	}
 
 	protected void testConnectWithWrongPassword() throws IOException,
 	InterruptedException {
-		String output = connect(SecurityConstants.CLOUD_ADMIN_USER_PWD, SecurityConstants.CLOUD_ADMIN_USER_PWD + "bad", true);		
-		assertTrue("connect succeeded for password: " + SecurityConstants.CLOUD_ADMIN_USER_PWD + "bad", output.contains(BAD_CREDENTIALS_MESSAGE));
+		String output = connect(SecurityConstants.USER_PWD_CLOUD_ADMIN, SecurityConstants.USER_PWD_CLOUD_ADMIN + "bad", true);		
+		assertTrue("connect succeeded for password: " + SecurityConstants.USER_PWD_CLOUD_ADMIN + "bad", output.contains(BAD_CREDENTIALS_MESSAGE));
 	}
 
 	protected void testLoginWithWrongPassword() throws IOException,
 	InterruptedException {
 		String output = "no output";
 
-		output = login(SecurityConstants.CLOUD_ADMIN_USER_PWD, SecurityConstants.CLOUD_ADMIN_USER_PWD + "bad", true);
+		output = login(SecurityConstants.USER_PWD_CLOUD_ADMIN, SecurityConstants.USER_PWD_CLOUD_ADMIN + "bad", true);
 
-		assertTrue("login succeeded for password: " + SecurityConstants.CLOUD_ADMIN_USER_PWD + "bad", output.contains(BAD_CREDENTIALS_MESSAGE));
+		assertTrue("login succeeded for password: " + SecurityConstants.USER_PWD_CLOUD_ADMIN + "bad", output.contains(BAD_CREDENTIALS_MESSAGE));
 	}
 
 	protected void testSecuredUseApplication() throws IOException,
 	InterruptedException {
-		installApplicationAndWait(SIMPLE_APP_PATH, SIMPLE_APP_NAME, TIMEOUT_IN_MINUTES, SecurityConstants.ALL_ROLES_USER_PWD, SecurityConstants.ALL_ROLES_USER_PWD, false, null);
+		installApplicationAndWait(SIMPLE_APP_PATH, SIMPLE_APP_NAME, TIMEOUT_IN_MINUTES, SecurityConstants.USER_PWD_ALL_ROLES, SecurityConstants.USER_PWD_ALL_ROLES, false, null);
 		//Check use-application command.
 		String useApplicationOutput;
 		//appManager role has permissions to use the application
-		useApplicationOutput = useApplication(SecurityConstants.APP_MANAGER_USER_PWD, SecurityConstants.APP_MANAGER_USER_PWD, SIMPLE_APP_NAME, false);
+		useApplicationOutput = useApplication(SecurityConstants.USER_PWD_APP_MANAGER, SecurityConstants.USER_PWD_APP_MANAGER, SIMPLE_APP_NAME, false);
 		assertTrue("Failed to change application context. Use-application command failed. output was: " + useApplicationOutput, 
 				useApplicationOutput.contains("Using application simple"));
 
 		//appManager role has permissions to create a new application context
-		useApplicationOutput = useApplication(SecurityConstants.APP_MANAGER_USER_PWD, SecurityConstants.APP_MANAGER_USER_PWD, "SomeApp", false);
+		useApplicationOutput = useApplication(SecurityConstants.USER_PWD_APP_MANAGER, SecurityConstants.USER_PWD_APP_MANAGER, "SomeApp", false);
 		assertTrue("Failed to change application context. Use-application command failed. output was: " + useApplicationOutput, 
 				useApplicationOutput.contains("Using application SomeApp"));
 
 		//user has viewing permission to view the existing installed app
-		useApplicationOutput = useApplication(SecurityConstants.VIEWER_USER_PWD, SecurityConstants.VIEWER_USER_PWD, SIMPLE_APP_NAME, false);
+		useApplicationOutput = useApplication(SecurityConstants.USER_PWD_VIEWER, SecurityConstants.USER_PWD_VIEWER, SIMPLE_APP_NAME, false);
 		assertTrue("Failed to change application context. Use-application command failed. output was: " + useApplicationOutput, 
 				useApplicationOutput.contains("Using application simple"));
 
 		//user has permission to view the app but does not have permission to create a new one.
-		useApplicationOutput = useApplication(SecurityConstants.VIEWER_USER_PWD, SecurityConstants.VIEWER_USER_PWD, "SomeApp", true);
+		useApplicationOutput = useApplication(SecurityConstants.USER_PWD_VIEWER, SecurityConstants.USER_PWD_VIEWER, "SomeApp", true);
 		assertTrue("Failed to change application context. Use-application command failed. output was: " + useApplicationOutput, 
 				useApplicationOutput.contains("Permission not granted, access is denied."));
 
 		//user does not have permission to view the app.
-		useApplicationOutput = useApplication(SecurityConstants.NO_ROLE_USER_PWD, SecurityConstants.NO_ROLE_USER_PWD, SIMPLE_APP_NAME, true);
+		useApplicationOutput = useApplication(SecurityConstants.USER_PWD_NO_ROLE, SecurityConstants.USER_PWD_NO_ROLE, SIMPLE_APP_NAME, true);
 		assertTrue("Failed to change application context. Use-application command failed. output was: " + useApplicationOutput, 
 				useApplicationOutput.contains("Permission not granted, access is denied."));
 	}

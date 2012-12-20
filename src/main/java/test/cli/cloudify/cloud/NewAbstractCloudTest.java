@@ -319,8 +319,8 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 			
 			url = restUrl + "/service/dump/machines/?fileSizeLimit=50000000";
 			if (cloudService.getBootstrapper().isSecured()) {
-				cloudifyUser = SecurityConstants.ALL_ROLES_USER_PWD;
-				cloudifyPassword = SecurityConstants.ALL_ROLES_USER_PWD;
+				cloudifyUser = SecurityConstants.USER_PWD_ALL_ROLES;
+				cloudifyPassword = SecurityConstants.USER_PWD_ALL_ROLES;
 			}
 			DumpUtils.dumpMachines(restUrl, cloudifyUser, cloudifyPassword);
 			

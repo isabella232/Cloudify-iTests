@@ -26,7 +26,7 @@ public abstract class NewAbstractSecurityCloudTest extends NewAbstractCloudTest 
 		CloudService service = CloudServiceManager.getInstance().getCloudService(getCloudName());
 		CloudBootstrapper securedBootstrapper = new CloudBootstrapper();
 		securedBootstrapper.secured(true).securityFilePath(SecurityConstants.BUILD_SECURITY_FILE_PATH)
-			.user(SecurityConstants.ALL_ROLES_USER_PWD).password(SecurityConstants.ALL_ROLES_USER_PWD);
+			.user(SecurityConstants.USER_PWD_ALL_ROLES).password(SecurityConstants.USER_PWD_ALL_ROLES);
 		securedBootstrapper.keystoreFilePath(SecurityConstants.DEFAULT_KEYSTORE_FILE_PATH).keystorePassword(SecurityConstants.DEFAULT_KEYSTORE_PASSWORD);
 		service.setBootstrapper(securedBootstrapper);
 		
@@ -41,7 +41,7 @@ public abstract class NewAbstractSecurityCloudTest extends NewAbstractCloudTest 
 	
 	@Override
 	protected void teardown() throws Exception {
-		CloudBootstrapper securedBootstrapper = (CloudBootstrapper) getService().getBootstrapper().user(SecurityConstants.ALL_ROLES_USER_PWD).password(SecurityConstants.ALL_ROLES_USER_PWD);
+		CloudBootstrapper securedBootstrapper = (CloudBootstrapper) getService().getBootstrapper().user(SecurityConstants.USER_PWD_ALL_ROLES).password(SecurityConstants.USER_PWD_ALL_ROLES);
 		teardown(securedBootstrapper);
 	}
 	

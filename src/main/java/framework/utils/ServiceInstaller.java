@@ -28,7 +28,7 @@ public class ServiceInstaller extends RecipeInstaller {
 			String output;
 			try {
 				output = CommandTestUtils.runCommandAndWait(command);
-				if (output.contains(serviceName)) {
+				if (output.contains("." + serviceName)) {
 					uninstall();
 				}
 			} catch (final Exception e) {

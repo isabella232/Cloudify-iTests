@@ -27,7 +27,7 @@ public class ApplicationInstaller extends RecipeInstaller {
 			String output;
 			try {
 				output = CommandTestUtils.runCommandAndWait(command);
-				if (output.contains(applicationName)) {
+				if (output.contains(applicationName + ".")) {
 					uninstall();
 				}
 			} catch (final Exception e) {

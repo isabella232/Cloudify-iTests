@@ -24,7 +24,7 @@ public class ServiceInstaller extends RecipeInstaller {
 	
 	public void uninstallIfFound() {	
 		if (getRestUrl() != null) {
-			String command = "connect " + getRestUrl() + ";list-services";
+			String command = connectCommand() + ";list-services";
 			String output;
 			try {
 				output = CommandTestUtils.runCommandAndWait(command);
@@ -41,7 +41,7 @@ public class ServiceInstaller extends RecipeInstaller {
 	public void setInstances(int numberOfInstances) {
 		
 		if (getRestUrl() != null) {
-			String command = "connect " + getRestUrl() + ";set-instances " + serviceName + " " + numberOfInstances;
+			String command = connectCommand() + ";set-instances " + serviceName + " " + numberOfInstances;
 			try {
 				CommandTestUtils.runCommandAndWait(command);
 			} catch (final Exception e) {

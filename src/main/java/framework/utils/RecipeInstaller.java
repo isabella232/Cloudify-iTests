@@ -145,17 +145,7 @@ public abstract class RecipeInstaller {
 		if (recipePath == null) {
 			throw new IllegalStateException("recipe path cannot be null. please use setRecipePath before calling install");
 		}
-		
-		StringBuilder connectCommandBuilder = new StringBuilder()
-		.append("connect").append(" ");
-		if (StringUtils.isNotBlank(cloudifyUsername) && StringUtils.isNotBlank(cloudifyPassword)){
-			connectCommandBuilder.append("-user").append(" ")
-			.append(cloudifyUsername).append(" ")
-			.append("-password").append(" ")
-			.append(cloudifyPassword).append(" ");
-		}
-		connectCommandBuilder.append(restUrl).append(";");
-		
+			
 		StringBuilder commandBuilder = new StringBuilder()
 				.append(installCommand).append(" ")
 				.append("--verbose").append(" ")
@@ -184,18 +174,18 @@ public abstract class RecipeInstaller {
 		
 		commandBuilder.append(recipePath.replace('\\', '/'));
 		final String installationCommand = commandBuilder.toString();
-		final String connectCommand = connectCommandBuilder.toString();
+		final String connectCommand = connectCommand();
 		if (expectToFail) {
-			String output = CommandTestUtils.runCommandExpectedFail(connectCommand + installationCommand);
+			String output = CommandTestUtils.runCommandExpectedFail(connectCommand + ";" + installationCommand);
 			AssertUtils.assertTrue("Installation of " + recipeName + "was expected to fail. but it succeeded", output.toLowerCase().contains("operation failed"));
 			return output;
 		}
 		if (waitForFinish) {
-			String output = CommandTestUtils.runCommandAndWait(connectCommand + installationCommand);
+			String output = CommandTestUtils.runCommandAndWait(connectCommand + ";" + installationCommand);
 			AssertUtils.assertTrue("Installation of " + recipeName + " was expected to succeed, but it failed", output.toLowerCase().contains(excpectedResult.toLowerCase()));
 			return output;			
 		} else {
-			return CommandTestUtils.runCommand(connectCommand + installationCommand);
+			return CommandTestUtils.runCommand(connectCommand + ";" + installationCommand);
 		}
 	}
 	
@@ -221,17 +211,6 @@ public abstract class RecipeInstaller {
 		} catch (final Exception e) {
 			LogUtils.log("Failed to create dump for this url - " + url, e);
 		}
-
-		StringBuilder connectCommandBuilder = new StringBuilder()
-		.append("connect").append(" ");
-				
-		if (StringUtils.isNotBlank(cloudifyUsername) && StringUtils.isNotBlank(cloudifyPassword)){
-			connectCommandBuilder.append("-user").append(" ")
-			.append(cloudifyUsername).append(" ")
-			.append("-password").append(" ")
-			.append(cloudifyPassword).append(" ");
-		}
-		connectCommandBuilder.append(restUrl).append(";");
 		
 		final String uninstallationCommand = new StringBuilder()
 				.append(uninstallCommand).append(" ")
@@ -241,21 +220,32 @@ public abstract class RecipeInstaller {
 				.append(recipeName)
 				.toString();
 		
-		final String connectCommand = connectCommandBuilder.toString();
+		final String connectCommand = connectCommand();
 		
 		if (expectToFail) {
-			String output = CommandTestUtils.runCommandExpectedFail(connectCommand + uninstallationCommand);
-			AssertUtils.assertTrue("Installation succeeded", output.toLowerCase().contains("operation failed"));
+			String output = CommandTestUtils.runCommandExpectedFail(connectCommand + ";" + uninstallationCommand);
+			AssertUtils.assertTrue("Uninstallation of " + recipeName + "was expected to fail. but it succeeded", output.toLowerCase().contains("operation failed"));
 			return output;
 		}
 		if (waitForFinish) {
-			String output = CommandTestUtils.runCommandAndWait(connectCommand + uninstallationCommand);
-			AssertUtils.assertTrue(output.toLowerCase().contains(excpectedResult.toLowerCase()));
+			String output = CommandTestUtils.runCommandAndWait(connectCommand + ";" + uninstallationCommand);
+			AssertUtils.assertTrue("Uninstallation of " + recipeName + " was expected to succeed, but it failed", output.toLowerCase().contains(excpectedResult.toLowerCase()));
 			return output;			
 		} else {
-			return CommandTestUtils.runCommand(connectCommand + uninstallationCommand);
+			return CommandTestUtils.runCommand(connectCommand + ";" + uninstallationCommand);
 		}
 				
 	}
+	
+	protected String connectCommand(){
 
+		if (restUrl == null || restUrl.isEmpty()) {
+			throw new IllegalStateException("Rest URL cannot be null or empty when trying to connect");
+		}
+		if(StringUtils.isNotBlank(cloudifyUsername) && StringUtils.isNotBlank(cloudifyPassword)){
+			return "connect -user " + cloudifyUsername + " -password " + cloudifyPassword + " " + getRestUrl();
+		}
+
+		return "connect " + getRestUrl();
+	}
 }

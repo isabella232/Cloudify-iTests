@@ -1,7 +1,5 @@
 package framework.utils;
 
-import org.apache.commons.lang.StringUtils;
-
 import junit.framework.Assert;
 import test.cli.cloudify.CommandTestUtils;
 
@@ -35,18 +33,6 @@ public class ApplicationInstaller extends RecipeInstaller {
 				Assert.fail(e.getMessage());
 			}
 		}
-	}
-	
-	protected String connectCommand(){
-
-		String user = getCloudifyUsername();
-		String password = getCloudifyPassword();
-		
-		if(StringUtils.isNotBlank(user) && StringUtils.isNotBlank(password)){
-			return("connect -user " + user + " -password " + password + " " + getRestUrl());
-		}
-
-		return("connect " + getRestUrl());
 	}
 	
 	public String getApplicationName() {

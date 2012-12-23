@@ -8,7 +8,6 @@ import java.util.Map;
 
 import org.cloudifysource.esc.driver.provisioning.openstack.Node;
 import org.cloudifysource.esc.driver.provisioning.openstack.OpenstackException;
-
 import test.cli.cloudify.cloud.services.AbstractCloudService;
 import test.cli.cloudify.cloud.services.tools.openstack.OpenstackClient;
 import test.cli.cloudify.cloud.services.tools.openstack.RackspaceClient;
@@ -120,6 +119,7 @@ public class RackspaceCloudService extends AbstractCloudService {
 			if (node.getStatus().equals(OpenstackClient.MACHINE_STATUS_ACTIVE)) {
 				for (String prefix : prefixes) {
 					if (node.getName().startsWith(prefix)) {
+						LogUtils.log("Found leaking node with name " + node.getName());
 						leakedNodes.add(node);
 					}
 				}

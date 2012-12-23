@@ -3,6 +3,7 @@ package test.cli.cloudify;
 import static org.testng.AssertJUnit.fail;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
@@ -143,7 +144,7 @@ public class RepetitiveActualServiceFailoverTest extends AbstractLocalCloudTest 
 		String tomcatVersion = (String) tomcatConfig.get("version");
 		// TODO - this test will fail when we upgrade tomcat!
 		// It is better to write a simple scanner that looks for catalina.* under /ext
-		String catalinaPath = "/" + SGTestHelper.getWorkDirName() + "/processing-units/default_tomcat_1/ext/apache-tomcat-" + tomcatVersion + "/bin/catalina.";
+		String catalinaPath = "/" + SGTestHelper.getWorkDirName() + "/processing-units/" + getTomcatDirName() +"/ext/apache-tomcat-" + tomcatVersion + "/bin/catalina.";
 		String filePath = ScriptUtils.getBuildPath()+ catalinaPath;
 		if (ScriptUtils.isWindows()) {
 			pathToTomcat = filePath + "bat";
@@ -177,6 +178,32 @@ public class RepetitiveActualServiceFailoverTest extends AbstractLocalCloudTest 
 		LogUtils.log("all's well that ends well :)");
 	}
 	
+	private String getTomcatDirName() {
+		File processingUnitsDir = new File(ScriptUtils.getBuildPath(), SGTestHelper.getWorkDirName()  + "/processing-units/");
+		String[] foundFiles = processingUnitsDir.list(new FilenameFilter() {
+		    public boolean accept(File dir, String name) {
+		        return name.startsWith("default_tomcat_1_");
+		    }
+		});
+		if (foundFiles.length == 0) {
+			AssertFail("No tomcat dircetory was found under work directory.");
+		}
+		return getLatestTomcatDir(foundFiles);
+	}
+
+	private String getLatestTomcatDir(String[] foundFiles) {
+		Long maxTimestamp = 0l;
+		String lastModifiedTomcatDir = "";
+		File processingUnitsFolder = new File(ScriptUtils.getBuildPath(), SGTestHelper.getWorkDirName()  + "/processing-units/");
+		for (String fileFound : foundFiles) {
+			File tomcatFolder = new File(processingUnitsFolder, fileFound);
+			if (tomcatFolder.lastModified() > maxTimestamp) {
+				lastModifiedTomcatDir = fileFound;
+				maxTimestamp = tomcatFolder.lastModified(); 
+			}
+		}
+		return lastModifiedTomcatDir;
+	}
 	private boolean isTomcatPageExists(WebClient client) {
 		
         HtmlPage page = null;

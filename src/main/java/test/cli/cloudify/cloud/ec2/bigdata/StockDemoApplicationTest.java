@@ -9,6 +9,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import test.cli.cloudify.CommandTestUtils;
 import test.cli.cloudify.cloud.NewAbstractCloudTest;
 import framework.tools.SGTestHelper;
 
@@ -23,7 +24,7 @@ public class StockDemoApplicationTest extends NewAbstractCloudTest {
 	
 	@BeforeMethod
 	public void prepareApplication() throws IOException {
-		File stockDemoAppSG = new File(SGTestHelper.getSGTestRootDir() + "/src/main/resources/apps/cloudify/recipes/stockdemo");
+		File stockDemoAppSG = new File(CommandTestUtils.getPath("src/main/resources/apps/USM/usm/applications/stockdemo"));
 		File appsFolder = new File(SGTestHelper.getBuildDir() + "/recipes/apps/stockdemo");
 		FileUtils.copyDirectory(stockDemoAppSG, appsFolder);
 	}

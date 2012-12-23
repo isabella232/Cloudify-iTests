@@ -46,8 +46,8 @@ public class AppSharedProvisioningTest extends AbstractSharedProvisioningByonClo
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
 	public void testTwoServicesOnOneApplication() throws IOException, InterruptedException {
-		super.installManualAppSharedProvisioningServiceAndWait(SERVICE_ONE, APPLICATION_ONE);
-		super.installManualAppSharedProvisioningServiceAndWait(SERVICE_TWO, APPLICATION_ONE);
+		super.installManualAppSharedProvisioningServiceAndWait(SERVICE_ONE);
+		super.installManualAppSharedProvisioningServiceAndWait(SERVICE_TWO);
 		
 		Set<Machine> serviceOneMachines = ProcessingUnitUtils.getMachinesOfService(admin, ServiceUtils.getAbsolutePUName(APPLICATION_ONE, SERVICE_ONE));
 		Set<Machine> serviceTwoMachines = ProcessingUnitUtils.getMachinesOfService(admin, ServiceUtils.getAbsolutePUName(APPLICATION_ONE, SERVICE_TWO));
@@ -55,7 +55,8 @@ public class AppSharedProvisioningTest extends AbstractSharedProvisioningByonClo
 		AssertUtils.assertTrue("services should be deployed on the same machine since they belong to the same application", 
 				serviceOneMachines.equals(serviceTwoMachines));
 		
-		super.uninstallApplicationAndWait(APPLICATION_ONE);	
+		super.uninstallServiceAndWait(SERVICE_ONE);
+		super.uninstallServiceAndWait(SERVICE_TWO);
 	}
 	
 	@AfterMethod

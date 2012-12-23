@@ -82,7 +82,7 @@ public class AbstractSharedProvisioningByonCloudTest extends AbstractByonCloudTe
 		}
 	}
 	
-	protected void installManualAppSharedProvisioningServiceAndWait(final String serviceName, final String applicationName) throws IOException, InterruptedException {
+	protected void installManualAppSharedProvisioningServiceAndWait(final String serviceName) throws IOException, InterruptedException {
 
 		try {
 			// first copy our service file to build folder
@@ -94,7 +94,7 @@ public class AbstractSharedProvisioningByonCloudTest extends AbstractByonCloudTe
 			// install
 			ServiceInstaller installer = new ServiceInstaller(getRestUrl(), serviceName);
 			installer.waitForFinish(true).recipePath("groovy-app-shared-provisioning");
-			installer.applicationName(applicationName).install();
+			installer.install();
 		} finally {
 			File service = new File(CommandTestUtils.getBuildServicesPath(), "groovy-app-shared-provisioning");
 			if (service.exists()) {

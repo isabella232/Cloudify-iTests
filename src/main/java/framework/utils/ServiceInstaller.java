@@ -1,7 +1,5 @@
 package framework.utils;
 
-import org.cloudifysource.dsl.internal.CloudifyConstants;
-
 import junit.framework.Assert;
 import test.cli.cloudify.CommandTestUtils;
 
@@ -10,16 +8,10 @@ public class ServiceInstaller extends RecipeInstaller {
 	private static final int DEFAULT_INSTALL_SERVICE_TIMEOUT = 15;
 	
 	private String serviceName;
-	private String applicationName = CloudifyConstants.DEFAULT_APPLICATION_NAME;
 	
 	public ServiceInstaller(String restUrl, String serviceName) {
 		super(restUrl, DEFAULT_INSTALL_SERVICE_TIMEOUT);
 		this.serviceName = serviceName;
-	}
-	
-	public ServiceInstaller applicationName(final String applicationName) {
-		this.applicationName = applicationName;
-		return this;
 	}
 	
 	public void uninstallIfFound() {	

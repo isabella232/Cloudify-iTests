@@ -144,7 +144,7 @@ public abstract class Bootstrapper {
 		
 		StringBuilder builder = new StringBuilder();
 
-		String commandAndOptions = bootstrapCommand + "" + getCustomOptions();
+		String commandAndOptions = bootstrapCommand + " " + getCustomOptions();
 
 		builder
 		.append(commandAndOptions).append(" ")

@@ -5,7 +5,7 @@ import java.io.IOException;
 public class Ec2WinCloudService extends Ec2CloudService {
 	
 	private static final String DEFAULT_EU_WEST_MEDIUM_WIN_AMI = "eu-west-1/ami-911616e5";
-	private static final String DEFAULT_US_EAST_MEDIUM_WIN_AMI = "us-east-1/ami-6cb90605";
+	private static final String DEFAULT_US_EAST_MEDIUM_WIN_AMI = "us-east-1/ami-2542c04c";
 	
 	public Ec2WinCloudService() {
 		super("ec2-win");

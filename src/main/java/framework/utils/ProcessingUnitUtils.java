@@ -201,6 +201,7 @@ public class ProcessingUnitUtils {
 	}
 	
 	public static Set<Machine> getMachinesOfService(final Admin admin, final String serviceName) {
+		LogUtils.log("Retreiving machines for processing unit " + serviceName);
 		Set<Machine> machines = new HashSet<Machine>();
 		ProcessingUnit pu = admin.getProcessingUnits().waitFor(serviceName, AbstractTest.OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
 		for (ProcessingUnitInstance puInstance : pu.getInstances()) {

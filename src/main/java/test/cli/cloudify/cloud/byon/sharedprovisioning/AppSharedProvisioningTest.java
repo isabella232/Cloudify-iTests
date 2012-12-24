@@ -3,6 +3,7 @@ package test.cli.cloudify.cloud.byon.sharedprovisioning;
 import java.io.IOException;
 import java.util.Set;
 
+import org.cloudifysource.dsl.internal.CloudifyConstants;
 import org.cloudifysource.dsl.utils.ServiceUtils;
 import org.openspaces.admin.machine.Machine;
 import org.testng.annotations.AfterClass;
@@ -49,8 +50,8 @@ public class AppSharedProvisioningTest extends AbstractSharedProvisioningByonClo
 		super.installManualAppSharedProvisioningServiceAndWait(SERVICE_ONE);
 		super.installManualAppSharedProvisioningServiceAndWait(SERVICE_TWO);
 		
-		Set<Machine> serviceOneMachines = ProcessingUnitUtils.getMachinesOfService(admin, ServiceUtils.getAbsolutePUName(APPLICATION_ONE, SERVICE_ONE));
-		Set<Machine> serviceTwoMachines = ProcessingUnitUtils.getMachinesOfService(admin, ServiceUtils.getAbsolutePUName(APPLICATION_ONE, SERVICE_TWO));
+		Set<Machine> serviceOneMachines = ProcessingUnitUtils.getMachinesOfService(admin, ServiceUtils.getAbsolutePUName(CloudifyConstants.DEFAULT_APPLICATION_NAME, SERVICE_ONE));
+		Set<Machine> serviceTwoMachines = ProcessingUnitUtils.getMachinesOfService(admin, ServiceUtils.getAbsolutePUName(CloudifyConstants.DEFAULT_APPLICATION_NAME, SERVICE_TWO));
 		
 		AssertUtils.assertTrue("services should be deployed on the same machine since they belong to the same application", 
 				serviceOneMachines.equals(serviceTwoMachines));

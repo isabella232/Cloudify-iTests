@@ -177,7 +177,8 @@ public class InternalUSMPuServiceDownTest extends AbstractLocalCloudTest {
 	}
 	
 	private String getTomcatDirName() {
-		File processingUnitsDir = new File(ScriptUtils.getBuildPath(), SGTestHelper.getWorkDirName()  + "/processing-units/");
+		File processingUnitsDir = new File(ScriptUtils.getBuildPath(), SGTestHelper.getWorkDirName()  + "/processing-units");
+		LogUtils.log("processingUnits Folder is " + processingUnitsDir.getAbsolutePath());
 		String[] foundFiles = processingUnitsDir.list(new FilenameFilter() {
 		    public boolean accept(File dir, String name) {
 		    	LogUtils.log("Checking file Named " + name);

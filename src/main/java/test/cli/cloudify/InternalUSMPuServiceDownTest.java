@@ -177,8 +177,7 @@ public class InternalUSMPuServiceDownTest extends AbstractLocalCloudTest {
 	}
 	
 	private String getTomcatDirName() {
-		File processingUnitsDir = new File(ScriptUtils.getBuildPath(), SGTestHelper.getWorkDirName()  + "/processing-units");
-		LogUtils.log("processingUnits Folder is " + processingUnitsDir.getAbsolutePath());
+		File processingUnitsDir = new File(ScriptUtils.getBuildPath(), "work/processing-units");
 		String[] foundFiles = processingUnitsDir.list(new FilenameFilter() {
 		    public boolean accept(File dir, String name) {
 		    	LogUtils.log("Checking file Named " + name);
@@ -188,13 +187,23 @@ public class InternalUSMPuServiceDownTest extends AbstractLocalCloudTest {
 		if (foundFiles == null || foundFiles.length == 0) {
 			AssertFail("No tomcat dircetory was found under work directory.");
 		}
+		printBuildFolders();
 		return getLatestTomcatDir(foundFiles);
+	}
+
+	private void printBuildFolders() {
+		File buildPath = new File(ScriptUtils.getBuildPath());
+		String[] list = buildPath.list();
+		LogUtils.log("Listing files in build path. workDir according to SG is " + SGTestHelper.getWorkDirName() );
+		for (String fileName : list) {
+			LogUtils.log(fileName);
+		}
 	}
 
 	private String getLatestTomcatDir(String[] foundFiles) {
 		Long maxTimestamp = 0l;
 		String lastModifiedTomcatDir = "";
-		File processingUnitsFolder = new File(ScriptUtils.getBuildPath(), SGTestHelper.getWorkDirName()  + "/processing-units/");
+		File processingUnitsFolder = new File(ScriptUtils.getBuildPath(), "work/processing-units/");
 		for (String fileFound : foundFiles) {
 			File tomcatFolder = new File(processingUnitsFolder, fileFound);
 			if (tomcatFolder.lastModified() > maxTimestamp) {

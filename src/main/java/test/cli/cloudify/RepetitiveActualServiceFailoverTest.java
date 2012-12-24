@@ -179,7 +179,7 @@ public class RepetitiveActualServiceFailoverTest extends AbstractLocalCloudTest 
 	}
 	
 	private String getTomcatDirName() {
-		File processingUnitsDir = new File(ScriptUtils.getBuildPath(), SGTestHelper.getWorkDirName()  + "/processing-units/");
+		File processingUnitsDir = new File(ScriptUtils.getBuildPath(), "work/processing-units/");
 		String[] foundFiles = processingUnitsDir.list(new FilenameFilter() {
 		    public boolean accept(File dir, String name) {
 		        return name.startsWith("default_tomcat_1_");
@@ -194,7 +194,7 @@ public class RepetitiveActualServiceFailoverTest extends AbstractLocalCloudTest 
 	private String getLatestTomcatDir(String[] foundFiles) {
 		Long maxTimestamp = 0l;
 		String lastModifiedTomcatDir = "";
-		File processingUnitsFolder = new File(ScriptUtils.getBuildPath(), SGTestHelper.getWorkDirName()  + "/processing-units/");
+		File processingUnitsFolder = new File(ScriptUtils.getBuildPath(), "work/processing-units/");
 		for (String fileFound : foundFiles) {
 			File tomcatFolder = new File(processingUnitsFolder, fileFound);
 			if (tomcatFolder.lastModified() > maxTimestamp) {

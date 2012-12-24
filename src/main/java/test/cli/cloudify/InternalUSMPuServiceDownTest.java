@@ -180,10 +180,11 @@ public class InternalUSMPuServiceDownTest extends AbstractLocalCloudTest {
 		File processingUnitsDir = new File(ScriptUtils.getBuildPath(), SGTestHelper.getWorkDirName()  + "/processing-units/");
 		String[] foundFiles = processingUnitsDir.list(new FilenameFilter() {
 		    public boolean accept(File dir, String name) {
-		        return name.startsWith("default_tomcat_1_");
+		    	LogUtils.log("Checking file Named " + name);
+		        return name.startsWith("default_tomcat_1");
 		    }
 		});
-		if (foundFiles.length == 0) {
+		if (foundFiles == null || foundFiles.length == 0) {
 			AssertFail("No tomcat dircetory was found under work directory.");
 		}
 		return getLatestTomcatDir(foundFiles);

@@ -185,7 +185,8 @@ public class RepetitiveActualServiceFailoverTest extends AbstractLocalCloudTest 
 		        return name.startsWith("default_tomcat_1_");
 		    }
 		});
-		if (foundFiles.length == 0) {
+		if (foundFiles != null && foundFiles.length == 0) {
+			
 			AssertFail("No tomcat dircetory was found under work directory.");
 		}
 		return getLatestTomcatDir(foundFiles);

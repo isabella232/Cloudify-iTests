@@ -16,7 +16,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import test.cli.cloudify.CommandTestUtils;
-import test.cli.cloudify.cloud.JcloudsUtils;
+import test.cli.cloudify.cloud.JCloudsUtils;
 import test.cli.cloudify.cloud.NewAbstractCloudTest;
 import test.cli.cloudify.cloud.services.ec2.Ec2CloudService;
 import framework.utils.IOUtils;
@@ -86,8 +86,8 @@ public class Ec2AddTemplatesTest extends NewAbstractCloudTest {
 	}
 
 	private void assertImageID(String expectedImageID) {
-		JcloudsUtils.createContext(getService());
-		Set<? extends ComputeMetadata> allNodes = JcloudsUtils.getAllNodes();
+		JCloudsUtils.createContext(getService());
+		Set<? extends ComputeMetadata> allNodes = JCloudsUtils.getAllNodes();
 		List<String> foundImages = new LinkedList<String>();
 		for (ComputeMetadata computeMetadata : allNodes) {
 			NodeMetadata nodeMetadata = (NodeMetadata)computeMetadata;

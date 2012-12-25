@@ -11,7 +11,7 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import test.cli.cloudify.cloud.JcloudsUtils;
+import test.cli.cloudify.cloud.JCloudsUtils;
 import test.cli.cloudify.cloud.NewAbstractCloudTest;
 import framework.tools.SGTestHelper;
 import framework.utils.AssertUtils;
@@ -45,15 +45,15 @@ public class BootstrapFailureEc2Test extends NewAbstractCloudTest {
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
 	public void failedBootstrapTest() throws IOException, InterruptedException {
 		
-		JcloudsUtils.createContext(getService());
-		Set<? extends NodeMetadata> machines = JcloudsUtils.getServersByName(getService().getMachinePrefix());
+		JCloudsUtils.createContext(getService());
+		Set<? extends NodeMetadata> machines = JCloudsUtils.getServersByName(getService().getMachinePrefix());
 		Assert.assertTrue(machines != null);
 		managementMachine = machines.iterator().next();
 
 		RepetitiveConditionProvider condition = new RepetitiveConditionProvider() {
 			@Override
 			public boolean getCondition() {
-				Set<? extends NodeMetadata> machines = JcloudsUtils.getServersByName(getService().getMachinePrefix());
+				Set<? extends NodeMetadata> machines = JCloudsUtils.getServersByName(getService().getMachinePrefix());
 				managementMachine = machines.iterator().next();
 				if (managementMachine.getState() == NodeState.TERMINATED) {
 					managementMachineTerminated = true;
@@ -67,7 +67,7 @@ public class BootstrapFailureEc2Test extends NewAbstractCloudTest {
 
 	@AfterClass
 	public void teardown() throws Exception {
-		JcloudsUtils.closeContext();		
+		JCloudsUtils.closeContext();		
 		if (!managementMachineTerminated) {
 			super.teardown();			
 		}		

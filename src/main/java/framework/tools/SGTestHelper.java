@@ -64,7 +64,9 @@ public class SGTestHelper {
 	public static String getWorkDirName() {
 		String suiteDir = getSuiteName();
 		String suiteId = getSuiteId();
-		if (StringUtils.isEmpty(suiteDir) || StringUtils.isEmpty(suiteId) || ScriptUtils.isWindows()) {
+		Integer numberOfSuite = Integer.getInteger("sgtest.numOfSuites",1);
+
+		if (StringUtils.isEmpty(suiteDir) || StringUtils.isEmpty(suiteId) || numberOfSuite == 1) {
 			return "work";
 		} else {
 			return suiteDir + suiteId + "_work";

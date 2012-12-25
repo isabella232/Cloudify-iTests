@@ -1,4 +1,4 @@
-package test.cli.cloudify.cloud;
+package framework.utils;
 
 import java.util.HashSet;
 import java.util.Properties;
@@ -25,7 +25,6 @@ import com.google.common.base.Predicate;
 import com.google.inject.AbstractModule;
 import com.google.inject.Module;
 
-import framework.utils.LogUtils;
 
 /**
  * The class provides JClouds functionality. 

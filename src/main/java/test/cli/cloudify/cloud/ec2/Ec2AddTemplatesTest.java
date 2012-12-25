@@ -16,10 +16,10 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import test.cli.cloudify.CommandTestUtils;
-import test.cli.cloudify.cloud.JCloudsUtils;
 import test.cli.cloudify.cloud.NewAbstractCloudTest;
 import test.cli.cloudify.cloud.services.ec2.Ec2CloudService;
 import framework.utils.IOUtils;
+import framework.utils.JCloudsUtils;
 import framework.utils.LogUtils;
 
 /**

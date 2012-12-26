@@ -1,17 +1,20 @@
-package test.gsm.component.machines.xen;
+package test.esm.component.machines;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicReference;
 
+import org.cloudifysource.esc.driver.provisioning.CloudifyMachineProvisioningConfig;
+import org.cloudifysource.esc.driver.provisioning.ElasticMachineProvisioningCloudifyAdapter;
 import org.openspaces.admin.gsa.GridServiceAgent;
 import org.openspaces.admin.gsa.GridServiceContainerOptions;
+import org.openspaces.admin.gsa.events.ElasticGridServiceAgentProvisioningProgressChangedEvent;
+import org.openspaces.admin.gsa.events.ElasticGridServiceAgentProvisioningProgressChangedEventListener;
 import org.openspaces.admin.gsc.GridServiceContainer;
 import org.openspaces.admin.internal.admin.InternalAdmin;
+import org.openspaces.admin.machine.events.ElasticMachineProvisioningProgressChangedEvent;
+import org.openspaces.admin.machine.events.ElasticMachineProvisioningProgressChangedEventListener;
 import org.openspaces.admin.pu.ProcessingUnit;
-import org.openspaces.admin.space.SpaceDeployment;
 import org.openspaces.admin.zone.config.AnyZonesConfig;
-import org.openspaces.cloud.xenserver.XenServerMachineProvisioning;
-import org.openspaces.cloud.xenserver.XenServerMachineProvisioningConfig;
 import org.openspaces.grid.gsm.capacity.CapacityRequirements;
 import org.openspaces.grid.gsm.capacity.MemoryCapacityRequirement;
 import org.openspaces.grid.gsm.machines.CapacityMachinesSlaPolicy;
@@ -22,35 +25,26 @@ import org.openspaces.grid.gsm.machines.isolation.ElasticProcessingUnitMachineIs
 import org.openspaces.grid.gsm.machines.plugins.ElasticMachineProvisioning;
 import org.openspaces.grid.gsm.machines.plugins.NonBlockingElasticMachineProvisioningAdapterFactory;
 import org.testng.Assert;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
 
-import test.gsm.AbstractXenGSMTest;
-import test.gsm.component.SlaEnforcementTestUtils;
+import test.esm.AbstractFromXenToByonGSMTest;
+import test.esm.component.SlaEnforcementTestUtils;
 import framework.utils.LogUtils;
 
-public abstract class AbstractMachinesSlaEnforcementTest extends AbstractXenGSMTest {
+public abstract class AbstractMachinesSlaEnforcementTest extends AbstractFromXenToByonGSMTest {
 
-    private static final String PU_NAME = "testspace";
+    protected static final String PU_NAME = "testspace";
 	protected final static long CONTAINER_MEGABYTES = 250;
+	private final static int MACHINE_MEMORY_CAPACITY_MB = 5000;
 	protected MachinesSlaEnforcement machinesSlaEnforcement;
     protected MachinesSlaEnforcementEndpoint endpoint;
     protected ProcessingUnit pu;
-    protected XenServerMachineProvisioning machineProvisioning; 
+    protected ElasticMachineProvisioningCloudifyAdapter machineProvisioning; 
     private static NonBlockingElasticMachineProvisioningAdapterFactory nonblockingAdapterFactory = new NonBlockingElasticMachineProvisioningAdapterFactory();
     protected static final String ZONE = "test_zone";
     protected static final String WRONG_ZONE = "wrong_test_zone";
     
-    @BeforeMethod
-    public void beforeTest() {
-        super.beforeTest();
-        
-        updateMachineProvisioningConfig(getMachineProvisioningConfig());
-        machinesSlaEnforcement = new MachinesSlaEnforcement();
-        pu = super.deploy(new SpaceDeployment(PU_NAME).partitioned(10,1).addZone(ZONE));
-    }
 
-	protected void updateMachineProvisioningConfig(XenServerMachineProvisioningConfig config) {
+	protected void updateMachineProvisioningConfig(CloudifyMachineProvisioningConfig config) {
 		if (machineProvisioning != null) {
 			LogUtils.log("machineProvisioning:"+machineProvisioning.getConfig().getProperties().toString());
 		}
@@ -66,12 +60,29 @@ public abstract class AbstractMachinesSlaEnforcementTest extends AbstractXenGSMT
 		            Assert.fail("Failed to destroy machinesSlaEnforcement",e);
 		        }
 			}
-			machineProvisioning = new XenServerMachineProvisioning();
+			machineProvisioning = new ElasticMachineProvisioningCloudifyAdapter();
 	        machineProvisioning.setAdmin(admin);
+	        config.setCloudConfigurationDirectory(getService().getPathToCloudFolder());
 	        machineProvisioning.setProperties(config.getProperties());
 	        ElasticProcessingUnitMachineIsolation isolation = new DedicatedMachineIsolation(PU_NAME);
 	        machineProvisioning.setElasticProcessingUnitMachineIsolation(isolation);
+	        ElasticGridServiceAgentProvisioningProgressChangedEventListener agentEventListener = new ElasticGridServiceAgentProvisioningProgressChangedEventListener() {
+	    		
+	    		@Override
+	    		public void elasticGridServiceAgentProvisioningProgressChanged(
+	    				ElasticGridServiceAgentProvisioningProgressChangedEvent event) {
+	    			LogUtils.log(event.toString());
+	    		}
+	    	};
 	        machineProvisioning.setElasticGridServiceAgentProvisioningProgressEventListener(agentEventListener);
+	        ElasticMachineProvisioningProgressChangedEventListener machineEventListener = new ElasticMachineProvisioningProgressChangedEventListener() {
+	    		
+	    		@Override
+	    		public void elasticMachineProvisioningProgressChanged(
+	    				ElasticMachineProvisioningProgressChangedEvent event) {
+	    			LogUtils.log(event.toString());
+	    		}
+	    	};
 	        machineProvisioning.setElasticMachineProvisioningProgressChangedEventListener(machineEventListener);
 	        try {
 	            machineProvisioning.afterPropertiesSet();
@@ -82,28 +93,8 @@ public abstract class AbstractMachinesSlaEnforcementTest extends AbstractXenGSMT
 		}
 	}
     
-    @AfterMethod
-    public void afterTest() {
-        machinesSlaEnforcement.destroyEndpoint(pu);
-        pu.undeploy();
-        
-        try {
-            machinesSlaEnforcement.destroy();
-        } catch (Exception e) {
-            Assert.fail("Failed to destroy machinesSlaEnforcement",e);
-        }
-        
-        try {
-            machineProvisioning.destroy();
-        } catch (Exception e) {
-            Assert.fail("Failed to destroy machineProvisioning",e);
-        }
-        super.afterTest();
-    }
-    
-
     protected void enforceNumberOfMachines(int numberOfMachines) throws InterruptedException {
-    	XenServerMachineProvisioningConfig config = getMachineProvisioningConfig();
+    	CloudifyMachineProvisioningConfig config = getMachineProvisioningConfig();
         config.setDedicatedManagementMachines(true);
 		updateMachineProvisioningConfig(config);
 		CapacityMachinesSlaPolicy sla = createSla(numberOfMachines);
@@ -113,7 +104,7 @@ public abstract class AbstractMachinesSlaEnforcementTest extends AbstractXenGSMT
     protected CapacityMachinesSlaPolicy createSla(int numberOfMachines) {
         long minimumMemoryInMB = Math.min(numberOfMachines,2) * CONTAINER_MEGABYTES;
 		long maximumMemoryInMB = pu.getTotalNumberOfInstances() * CONTAINER_MEGABYTES;
-		long memoryCapacityPerMachineInMB = super.getMachineProvisioningConfig().getMemoryCapacityPerMachineInMB() - super.getMachineProvisioningConfig().getReservedMemoryCapacityPerMachineInMB();
+		long memoryCapacityPerMachineInMB = MACHINE_MEMORY_CAPACITY_MB - super.getMachineProvisioningConfig().getReservedMemoryCapacityPerMachineInMB();
 		memoryCapacityPerMachineInMB -= memoryCapacityPerMachineInMB % CONTAINER_MEGABYTES;
 		long memoryCapacityInMB = numberOfMachines * memoryCapacityPerMachineInMB;
 		if (memoryCapacityInMB < minimumMemoryInMB) {

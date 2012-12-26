@@ -1,28 +1,74 @@
-package test.gsm.component.machines.xen;
+package test.esm.component.machines;
 
 import java.util.Collection;
 import java.util.concurrent.TimeUnit;
 
 import org.openspaces.admin.gsa.GridServiceAgent;
 import org.openspaces.admin.gsa.GridServiceManagerOptions;
+import org.openspaces.admin.space.SpaceDeployment;
 import org.openspaces.grid.gsm.machines.CapacityMachinesSlaPolicy;
+import org.openspaces.grid.gsm.machines.MachinesSlaEnforcement;
 import org.testng.Assert;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import test.gsm.component.SlaEnforcementTestUtils;
+import test.esm.component.SlaEnforcementTestUtils;
 
 public class MachinesSlaEnforcementTwoManagementMachinesXenTest extends AbstractMachinesSlaEnforcementTest {
     
+	
+	@BeforeMethod
+    public void beforeTest() {
+		super.beforeTestInit();
+        
+        updateMachineProvisioningConfig(getMachineProvisioningConfig());
+        machinesSlaEnforcement = new MachinesSlaEnforcement();
+    }
+	
+	@BeforeClass
+	protected void bootstrap() throws Exception {
+		super.bootstrapBeforeClass();
+	}
+	
+	@AfterMethod
+    public void afterTest() {
+        machinesSlaEnforcement.destroyEndpoint(pu);
+        pu.undeploy();
+        
+        try {
+            machinesSlaEnforcement.destroy();
+        } catch (Exception e) {
+            Assert.fail("Failed to destroy machinesSlaEnforcement",e);
+        }
+        
+        try {
+            machineProvisioning.destroy();
+        } catch (Exception e) {
+            Assert.fail("Failed to destroy machineProvisioning",e);
+        }
+        super.afterTest();
+    }
+    	
+	@AfterClass(alwaysRun = true)
+	protected void teardownAfterClass() throws Exception {
+		super.teardownAfterClass();
+	}
+	
     @Test(timeOut = DEFAULT_TEST_TIMEOUT)
-    public void oneMachineTest() throws InterruptedException  {
+    public void oneMachineTest() throws Exception  {
         
         // the first GSAs is already started in BeginTest
         Assert.assertEquals(admin.getGridServiceAgents().getSize(),1);
         repetitiveAssertNumberOfGSAsAdded(1, OPERATION_TIMEOUT);
         repetitiveAssertNumberOfGSAsRemoved(0, OPERATION_TIMEOUT);
         
+        pu = super.deploy(new SpaceDeployment(PU_NAME).partitioned(10,1).addZone(ZONE));
+        
         // Start a seconds machine and put a LUS on it
-        GridServiceAgent gsa2 = super.startNewVM(OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
+        GridServiceAgent gsa2 = startNewByonMachine(getElasticMachineProvisioningCloudifyAdapter(), OPERATION_TIMEOUT,TimeUnit.MILLISECONDS);
         gsa2.startGridService(new GridServiceManagerOptions());
         Assert.assertEquals(admin.getGridServiceAgents().getSize(),2);
         Assert.assertTrue(admin.getGridServiceManagers().waitFor(2,OPERATION_TIMEOUT,TimeUnit.MILLISECONDS));
@@ -48,8 +94,6 @@ public class MachinesSlaEnforcementTwoManagementMachinesXenTest extends Abstract
         				allocatedAgentUid,
         				"MachinesSla keeps changing its mind");
         	}
-	        
-        	
         }
         
         // make sure no extra machine was started nor terminated

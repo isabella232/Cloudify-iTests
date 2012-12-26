@@ -1,4 +1,4 @@
-package test.webui.cloud;
+package test.webui;
 
 import java.net.UnknownHostException;
 import java.util.HashMap;
@@ -21,6 +21,8 @@ import com.gigaspaces.webuitf.topology.TopologyTab;
 
 import framework.utils.LocalCloudBootstrapper;
 import framework.utils.LogUtils;
+import test.webui.cloud.PermittedServicesWrapper;
+import test.webui.cloud.WebSecurityAuthorizationHelper;
 
 public class LocalCloudAuthorizationWebLdapTest extends AbstractSecuredLocalCloudTest {
 
@@ -79,10 +81,10 @@ public class LocalCloudAuthorizationWebLdapTest extends AbstractSecuredLocalClou
 		LoginPage loginPage = webuiHelper.getLoginPage();
 		
 		String userAndPassword = SecurityConstants.USER_PWD_ALL_ROLES;//Superuser
-		PermittedServicesWrapper permittedServicesWrapper = 
+		PermittedServicesWrapper permittedServicesWrapper =
 										createPemittedServicesWrapperForAllRoles( userAndPassword );
-		WebSecurityAuthorizationHelper.performLoginAndAllViewsTests( 
-							loginPage, userAndPassword, userAndPassword, permittedServicesWrapper );
+		WebSecurityAuthorizationHelper.performLoginAndAllViewsTests(
+                loginPage, userAndPassword, userAndPassword, permittedServicesWrapper );
 		
 		loginPage = mainNav.logout();
 		userAndPassword = SecurityConstants.USER_PWD_APP_MANAGER;//Dan

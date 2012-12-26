@@ -43,7 +43,7 @@ public class SlaEnforcementTestUtils {
 			final ProcessingUnitSchemaConfig schema,
 			final int minimumNumberOfInstances, long timeout, TimeUnit timeunit) throws InterruptedException, TimeoutException {
 		
-		enforceSlaAndWait(pu.getAdmin(), new Callable<Void>() {
+		    enforceSlaAndWait(pu.getAdmin(), new Callable<Void>() {
 
 			boolean reachedMinimumNumberOfInstances = false;
 			@Override

@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -187,7 +188,8 @@ public class RecipesStatsTest extends AbstractLocalCloudTest {
 		final UserInterface serviceUI = service.getUserInterface();
 		if (serviceUI != null) {
 			for (final MetricGroup metricGroup : serviceUI.getMetricGroups()) {
-				metrics.addAll(metricGroup.getMetrics());
+			List<String> metricsByGroup = metricGroup.getMetrics();
+				metrics.addAll(metricsByGroup);
 			}
 		}
 

@@ -2,7 +2,6 @@ package test.cli.cloudify.recipes;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -189,10 +188,7 @@ public class RecipesStatsTest extends AbstractLocalCloudTest {
 		final UserInterface serviceUI = service.getUserInterface();
 		if (serviceUI != null) {
 			for (final MetricGroup metricGroup : serviceUI.getMetricGroups()) {
-			List<String> metricsByGroup = new ArrayList<String>();
-			for (Object object : metricGroup.getMetrics()) {
-				metricsByGroup.add(object.toString());
-			}
+				List<String> metricsByGroup = metricGroup.getMetrics();
 				metrics.addAll(metricsByGroup);
 			}
 		}

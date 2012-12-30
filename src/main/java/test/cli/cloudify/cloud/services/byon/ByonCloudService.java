@@ -184,7 +184,11 @@ public class ByonCloudService extends AbstractCloudService {
 			command = "sudo " + command;
 		}
 		
-		LogUtils.log(SSHUtils.runCommand(this.getMachines()[0], AbstractTest.OPERATION_TIMEOUT, command, "tgrid", "tgrid"));
+		try {
+			LogUtils.log(SSHUtils.runCommand(this.getMachines()[0], AbstractTest.OPERATION_TIMEOUT, command, "tgrid", "tgrid"));
+		} catch (AssertionError e) {
+			LogUtils.log("Failed to clean files .cloudify folder Reason --> " + e.getMessage());
+		}
 		
 	}
 

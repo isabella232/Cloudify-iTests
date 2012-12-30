@@ -30,7 +30,11 @@ import org.cloudifysource.dsl.internal.DSLUtils;
 import org.cloudifysource.dsl.internal.ServiceReader;
 import org.cloudifysource.dsl.internal.packaging.Packager;
 import org.cloudifysource.dsl.internal.packaging.PackagingException;
+import org.cloudifysource.restclient.GSRestClient;
+import org.cloudifysource.restclient.RestException;
 import org.cloudifysource.restclient.StringUtils;
+
+import com.j_spaces.kernel.PlatformVersion;
 
 public class RestTestUtils {
 
@@ -58,14 +62,14 @@ public class RestTestUtils {
 	}
 
 	private static HttpResponse sendRestGetRequest(String uri) 
-			throws ClientProtocolException, IOException {
+			throws ClientProtocolException, IOException, RestException {
 
+		GSRestClient client = new GSRestClient(null, null, null, PlatformVersion.getVersionNumber());
 		HttpGet get = new HttpGet(uri);
 
 		DefaultHttpClient httpClient = new DefaultHttpClient();	
 		return httpClient.execute(get);
 	}
-
 
 	/**
 	 * 
@@ -79,7 +83,7 @@ public class RestTestUtils {
 	 * @throws DSLException
 	 * @throws PackagingException
 	 */
-	public static void restInstallService(final String restUrl, final String serviceName, 
+	public static void installServiceUsingRestApi(final String restUrl, final String serviceName, 
 			final File serviceDir, final Properties props, Map<String, String> params,  
 			final File overridesFile) throws IOException, DSLException, PackagingException {
 		
@@ -163,7 +167,6 @@ public class RestTestUtils {
 		}
 		return tempFile;
 	}
-
 
 	public static Properties createServiceContextProperties(final Service service, final String serviceGroovyFileName) {
 		final Properties contextProperties = new Properties();

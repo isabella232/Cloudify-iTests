@@ -43,7 +43,7 @@ public class InstallServiceWithOverridesFileTest extends OverridesTest {
 
 		try {
 //			restUrl = "http://localhost:8888/rest";
-			RestTestUtils.restInstallService(restUrl, SERVICE_NAME, serviceDir, null, null, overridesFile);
+			RestTestUtils.installServiceUsingRestApi(restUrl, SERVICE_NAME, serviceDir, null, null, overridesFile);
 
 			// get PU
 			final ProcessingUnit processingUnit = getProcessingUnit("default." + SERVICE_NAME);

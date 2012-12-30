@@ -52,6 +52,10 @@ public abstract class AbstractCloudService implements CloudService {
 	private String cloudUniqueName = this.getClass().getSimpleName();
 	private CloudBootstrapper bootstrapper = new CloudBootstrapper();
 	
+	public AbstractCloudService(String cloudName) {
+		this.cloudName = cloudName;
+	}
+
 	public CloudBootstrapper getBootstrapper() {
 		return bootstrapper;
 	}
@@ -81,9 +85,6 @@ public abstract class AbstractCloudService implements CloudService {
 		return cloud;
 	}
 
-	public AbstractCloudService(String cloudName) {
-		this.cloudName = cloudName;
-	}
 
 	public int getNumberOfManagementMachines() {
 		return numberOfManagementMachines;

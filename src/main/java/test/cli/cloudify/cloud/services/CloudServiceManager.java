@@ -17,6 +17,7 @@ package test.cli.cloudify.cloud.services;
 
 import test.cli.cloudify.cloud.services.azure.MicrosoftAzureCloudService;
 import test.cli.cloudify.cloud.services.byon.ByonCloudService;
+import test.cli.cloudify.cloud.services.byon.DynamicByonCloudService;
 import test.cli.cloudify.cloud.services.ec2.Ec2CloudService;
 import test.cli.cloudify.cloud.services.ec2.Ec2WinCloudService;
 import test.cli.cloudify.cloud.services.hp.HpCloudService;
@@ -59,6 +60,8 @@ public class CloudServiceManager {
 			cloudService = new RackspaceCloudService();
 		} else if ("azure".equalsIgnoreCase(cloudName)) {
 			cloudService = new MicrosoftAzureCloudService();
+		} else if ("dynamic-byon".equalsIgnoreCase(cloudName)) {
+			cloudService = new DynamicByonCloudService();
 		}
 
 		return cloudService;

@@ -65,7 +65,7 @@ public class FailoverDuringExecutorByonTest extends AbstractFromXenToByonGSMTest
     @Test(timeOut=DEFAULT_TEST_TIMEOUT, invocationCount=5, enabled=  true)
     public void test() throws Exception {
     	
-    	// the first GSAs is already started in BeginTest
+    	 // the first GSAs is already started in BeginTest
     	repetitiveAssertNumberOfGSAsAdded(1, OPERATION_TIMEOUT);
 		pu = super.deploy(new SpaceDeployment(PU_NAME).partitioned(1,0));
 		

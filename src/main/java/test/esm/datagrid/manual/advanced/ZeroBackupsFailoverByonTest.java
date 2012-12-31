@@ -21,7 +21,7 @@ import framework.utils.GsmTestUtils;
  * @author itaif
  * GS-10332 - undeployAndWait of elastic pu may timeout
  */
-public class ZeroBackupsFailoverXenTest extends AbstractFromXenToByonGSMTest {
+public class ZeroBackupsFailoverByonTest extends AbstractFromXenToByonGSMTest {
     
 	@BeforeMethod
     public void beforeTest() {

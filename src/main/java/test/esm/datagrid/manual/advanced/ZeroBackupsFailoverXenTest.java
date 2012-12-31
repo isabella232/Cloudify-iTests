@@ -1,4 +1,6 @@
-package test.gsm.datagrid.manual.advanced.xen;
+package test.esm.datagrid.manual.advanced;
+
+import java.util.concurrent.TimeUnit;
 
 import org.openspaces.admin.gsa.GridServiceAgent;
 import org.openspaces.admin.machine.Machine;
@@ -6,19 +8,43 @@ import org.openspaces.admin.pu.ProcessingUnit;
 import org.openspaces.admin.pu.elastic.config.ManualCapacityScaleConfigurer;
 import org.openspaces.admin.space.ElasticSpaceDeployment;
 import org.openspaces.core.util.MemoryUnit;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import test.gsm.AbstractXenGSMTest;
-import test.gsm.GsmTestUtils;
+import test.esm.AbstractFromXenToByonGSMTest;
+import framework.utils.GsmTestUtils;
 
 /**
  * @author itaif
  * GS-10332 - undeployAndWait of elastic pu may timeout
  */
-public class ZeroBackupsFailoverXenTest extends AbstractXenGSMTest {
+public class ZeroBackupsFailoverXenTest extends AbstractFromXenToByonGSMTest {
     
+	@BeforeMethod
+    public void beforeTest() {
+		super.beforeTestInit();
+	}
+	
+	@BeforeClass
+	protected void bootstrap() throws Exception {
+		super.bootstrapBeforeClass();
+	}
+	
+	@AfterMethod
+    public void afterTest() {
+		super.afterTest();
+	}
+	
+	@AfterClass(alwaysRun = true)
+	protected void teardownAfterClass() throws Exception {
+		super.teardownAfterClass();
+	}
+	
     @Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = SUSPECTED) //TWO BACKUPS ESM IS NOT SUPPORTED DUE TO PRIMARY REBALANCING ISSUES
-    public void doTest() {
+    public void doTest() throws Exception {
         repetitiveAssertNumberOfGSCsAdded(0, OPERATION_TIMEOUT);
         repetitiveAssertNumberOfGSAsAdded(1, OPERATION_TIMEOUT);
 
@@ -36,7 +62,7 @@ public class ZeroBackupsFailoverXenTest extends AbstractXenGSMTest {
                 .dedicatedMachineProvisioning(getMachineProvisioningConfig())
                 .scale(new ManualCapacityScaleConfigurer()
                        .memoryCapacity(NUM_CONTAINERS*MEM_PER_CONTAINER, MemoryUnit.MEGABYTES)
-                       .numberOfCpuCores(NUM_MACHINES*getMachineProvisioningConfig().getNumberOfCpuCoresPerMachine())
+                       .numberOfCpuCores(NUM_MACHINES*getMachineProvisioningConfig().getMinimumNumberOfCpuCoresPerMachine())
                        .create())
         );
         
@@ -54,7 +80,7 @@ public class ZeroBackupsFailoverXenTest extends AbstractXenGSMTest {
         for (int i = 0; i < gsas.length; i++) {
             Machine curMachine = gsas[i].getMachine();
             if (!curMachine.equals(managerMachine)) {
-                shutdownMachine(curMachine, super.getMachineProvisioningConfig(), OPERATION_TIMEOUT);
+                stopByonMachine(getElasticMachineProvisioningCloudifyAdapter(), gsas[i], OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
                 if (++ctr == 2) break;
             }
         }

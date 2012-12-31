@@ -502,6 +502,11 @@ public abstract class AbstractByonAddRemoveTemplatesTest extends AbstractByonClo
 		public File getTemplatesFolder() {
 			return templatesFolder;
 		}
+		
+		public void setTemplatesFolder(File templatesFolder) {
+			this.templatesFolder = templatesFolder;
+		}
+
 		public Map<String, TemplateDetails> getTemplates() {
 			return templates;
 		}

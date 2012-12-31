@@ -14,6 +14,7 @@ import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.cloudifysource.dsl.internal.CloudifyConstants;
 import org.cloudifysource.dsl.internal.packaging.Packager;
+import org.cloudifysource.dsl.internal.packaging.ZipUtils;
 import org.testng.annotations.Test;
 
 import framework.utils.LogUtils;
@@ -61,6 +62,27 @@ public class AddRemoveTemplatesTest extends AbstractByonAddRemoveTemplatesTest {
 		try {
 			installService(serviceName, templateName, false);
 			assertRightUploadDir(serviceName, addedTemplate.getUploadDirName());
+		} finally {		
+			uninstallServiceIfFound(serviceName);
+		}
+	}
+	
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
+	public void addZippedTempalteAndInstallService() throws IOException, InterruptedException {
+		TemplatesBatchHandler templatesHandler = new TemplatesBatchHandler();
+		TemplateDetails addedTemplate = templatesHandler.addServiceTemplate();
+		File zippedTemplateFile = new File(templatesHandler.getTemplatesFolder() + "\\..\\zipped-template.zip"); 
+		ZipUtils.zip(templatesHandler.getTemplatesFolder(), zippedTemplateFile);
+		templatesHandler.setTemplatesFolder(zippedTemplateFile);
+		
+		// add templates
+		addTempaltes(templatesHandler);
+		assertExpectedListTempaltes();
+		
+		final String templateName = addedTemplate.getTemplateName();
+		String serviceName = templateName + "_service";
+		try {
+			installService(serviceName, templateName, false);
 		} finally {		
 			uninstallServiceIfFound(serviceName);
 		}

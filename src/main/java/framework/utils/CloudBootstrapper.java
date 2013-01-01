@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 
+import test.cli.cloudify.CommandTestUtils;
+
 public class CloudBootstrapper extends Bootstrapper {
 
 	private static final int DEFAULT_BOOTSTRAP_CLOUD_TIMEOUT = 30;
@@ -54,5 +56,25 @@ public class CloudBootstrapper extends Bootstrapper {
 		}
 		
 		return builder.toString();
+	}
+	
+	public String addTemplate(String templatePath, boolean isExpectedToFail) throws Exception {
+		lastActionOutput = CommandTestUtils.runCommand(connectCommand() + ";add-templates " + templatePath, true, isExpectedToFail);
+		return lastActionOutput;
+	}
+	
+	public String getTemplate(String templateName, boolean isExpectedToFail) throws Exception {
+		lastActionOutput = CommandTestUtils.runCommand(connectCommand() + ";get-template " + templateName, true, isExpectedToFail);
+		return lastActionOutput;
+	}
+	
+	public String listTemplates(boolean isExpectedToFail) throws Exception {
+		lastActionOutput = CommandTestUtils.runCommand(connectCommand() + ";list-templates", true, isExpectedToFail);
+		return lastActionOutput;
+	}
+	
+	public String removeTemplate(String templateName, boolean isExpectedToFail) throws Exception {
+		lastActionOutput = CommandTestUtils.runCommand(connectCommand() + ";remove-template " + templateName, true, isExpectedToFail);
+		return lastActionOutput;
 	}
 }

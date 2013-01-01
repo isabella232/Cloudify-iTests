@@ -154,5 +154,11 @@ public abstract class NewAbstractSecurityCloudTest extends NewAbstractCloudTest 
 		getService().getBootstrapper().setRestUrl(getRestUrl());
 		return getService().getBootstrapper().user(user).password(password).listInstances(applicationName, serviceName, expectedFail);
 	}
+	
+	public String addTemplate(String user, String password, String templatePath) throws Exception{
+		cloudService.getBootstrapper().setRestUrl(getRestUrl());
+		cloudService.getBootstrapper().user(user).password(password);
+		return cloudService.getBootstrapper().addTemplate(templatePath, false);
+	}
 }
 

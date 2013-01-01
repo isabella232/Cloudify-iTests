@@ -282,7 +282,7 @@ public abstract class Bootstrapper {
 		return lastActionOutput;
 	}
 
-	private String connectCommand() {
+	protected String connectCommand() {
 		StringBuilder connectCommandBuilder = new StringBuilder();
 		connectCommandBuilder.append("connect").append(" ");
 		if (StringUtils.isNotBlank(user)){

@@ -32,7 +32,7 @@ public class TenantSharedProvisioningTest extends AbstractSharedProvisioningByon
 	protected void bootstrap() throws Exception {
 		
 		CloudBootstrapper bootstrapper = new CloudBootstrapper();
-		bootstrapper.user("Dana").password("Dana").secured(true)
+		bootstrapper.user(SecurityConstants.USER_PWD_CLOUD_ADMIN_AND_APP_MANAGER).password(SecurityConstants.USER_PWD_CLOUD_ADMIN_AND_APP_MANAGER).secured(true)
 			.securityFilePath(SecurityConstants.BUILD_SECURITY_FILE_PATH)
 			.keystoreFilePath(SecurityConstants.DEFAULT_KEYSTORE_FILE_PATH)
 			.keystorePassword(SecurityConstants.DEFAULT_KEYSTORE_PASSWORD);

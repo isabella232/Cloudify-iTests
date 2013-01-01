@@ -11,7 +11,7 @@
 		<groupId>com.gigaspaces.quality.sgtest</groupId>
 		<artifactId>SGTest-parent</artifactId>
 		<version>3.0.0-SNAPSHOT</version>
-		<relativePath>http://maven-repository.openspaces.org/com/gigaspaces/quality/sgtest/SGTest-parent/3.0.0-SNAPSHOT/SGTest-parent-3.0.0-SNAPSHOT.pom</relativePath>
+		<relativePath>parent</relativePath>
 	</parent>
 
 	<properties>

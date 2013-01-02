@@ -17,6 +17,7 @@ public class ByonAddTemplatesWithSecurityTest extends AbstractByonAddRemoveTempl
 	private static final String REMOVE_FAILED_MESSAGE = "remove failed";
 	private static final String REMOVE_SUCCEEDED_MESSAGE = "removed successfully";
 
+	@Override
 	@BeforeClass(alwaysRun = true)
 	protected void bootstrap() throws Exception {
 		
@@ -31,13 +32,14 @@ public class ByonAddTemplatesWithSecurityTest extends AbstractByonAddRemoveTempl
 		super.bootstrap(service);
 	}
 
+	@Override
 	@AfterClass(alwaysRun = true)
 	protected void teardown() throws Exception {
 		super.teardown();
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
-	public void testAddTempaltesAndInstallWithDifferentUsers() throws Exception {
+	public void testAddTemplatesAndInstallWithDifferentUsers() throws Exception {
 		
 		CloudBootstrapper bootstrapper = new CloudBootstrapper();
 		TemplatesBatchHandler templatesHandler = new TemplatesBatchHandler();
@@ -56,7 +58,7 @@ public class ByonAddTemplatesWithSecurityTest extends AbstractByonAddRemoveTempl
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
-	public void testAddTempaltes() throws Exception{
+	public void testAddTemplates() throws Exception{
 		
 		verifyAddTemplate(SecurityConstants.USER_PWD_APP_MANAGER, SecurityConstants.USER_PWD_APP_MANAGER, SecurityConstants.APP_MANAGER_DESCRIPTIN, true);
 		verifyAddTemplate(SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, SecurityConstants.APP_MANAGER_AND_VIEWER_DESCRIPTIN, true);
@@ -67,7 +69,7 @@ public class ByonAddTemplatesWithSecurityTest extends AbstractByonAddRemoveTempl
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
-	public void testGetTempalte() throws Exception{
+	public void testGetTemplate() throws Exception{
 		
 		CloudBootstrapper bootstrapper = new CloudBootstrapper();
 		TemplatesBatchHandler templatesHandler = new TemplatesBatchHandler();
@@ -86,7 +88,7 @@ public class ByonAddTemplatesWithSecurityTest extends AbstractByonAddRemoveTempl
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
-	public void testRemoveTempalte() throws Exception{
+	public void testRemoveTemplate() throws Exception{
 		
 		CloudBootstrapper bootstrapper = new CloudBootstrapper();
 		TemplatesBatchHandler templatesHandler = new TemplatesBatchHandler();
@@ -109,7 +111,7 @@ public class ByonAddTemplatesWithSecurityTest extends AbstractByonAddRemoveTempl
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
-	public void testListTempalte() throws Exception{
+	public void testListTemplate() throws Exception{
 		
 		CloudBootstrapper bootstrapper = new CloudBootstrapper();
 		TemplatesBatchHandler templatesHandler = new TemplatesBatchHandler();
@@ -148,7 +150,7 @@ public class ByonAddTemplatesWithSecurityTest extends AbstractByonAddRemoveTempl
 			AssertUtils.assertTrue(userDescription + " succeeded in adding a template", output.contains(SecurityConstants.ACCESS_DENIED_MESSAGE));
 		}
 		else{
-			AssertUtils.assertTrue(userDescription + " didn't succeed in adding a template", output.contains(addedTemplate.getTemplateName()) && output.contains(ADDED_SUCCESSFULLY_MESSAGE));
+			AssertUtils.assertTrue(userDescription + " didn't succeed in adding a template", output.contains(addedTemplate.getTemplateName()) && output.contains(ADDED_SUCCESSFULLY_MESSAGE) && !output.contains("Failed"));
 
 		}
 	}
@@ -200,6 +202,17 @@ public class ByonAddTemplatesWithSecurityTest extends AbstractByonAddRemoveTempl
 		else{
 			AssertUtils.assertTrue(userDescription + " didn't succeed removing the template " + templateName, output.contains(REMOVE_SUCCEEDED_MESSAGE));		
 		}
+	}
+	
+	@Override
+	public String listTemplates() throws Exception{
+
+		CloudBootstrapper bootstrapper = new CloudBootstrapper();	
+		bootstrapper.user(SecurityConstants.USER_PWD_ALL_ROLES).password(SecurityConstants.USER_PWD_ALL_ROLES).setRestUrl(getRestUrl());
+		
+		String output = bootstrapper.listTemplates(false);
+
+		return output;
 	}
 	
 	@Override

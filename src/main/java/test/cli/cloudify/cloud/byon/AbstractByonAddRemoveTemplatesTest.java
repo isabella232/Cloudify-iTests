@@ -30,6 +30,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 
 import test.cli.cloudify.CommandTestUtils;
+import test.cli.cloudify.cloud.services.CloudService;
 import test.cli.cloudify.cloud.services.CloudServiceManager;
 import test.cli.cloudify.cloud.services.byon.ByonCloudService;
 import framework.utils.AssertUtils;
@@ -77,8 +78,22 @@ public abstract class AbstractByonAddRemoveTemplatesTest extends AbstractByonClo
 	@Override
 	@BeforeClass(alwaysRun = true)
 	protected void bootstrap() throws Exception {
-		ByonCloudService service = new ByonCloudService();
-		String[] machines = service.getMachines();
+		CloudService service = null;
+		bootstrap(service);
+	}
+
+	@Override
+	protected void bootstrap(CloudService service) throws Exception {
+		
+		ByonCloudService byonService;
+		
+		if(service == null){
+			byonService = new ByonCloudService();
+
+		}else{
+			byonService = (ByonCloudService)service;
+		}
+		String[] machines = byonService.getMachines();
 		final int numOfMngMachines = getNumOfMngMachines();
 		if (machines.length < numOfMngMachines) {
 			Assert.fail("Not enough management machines to use.");
@@ -93,13 +108,13 @@ public abstract class AbstractByonAddRemoveTemplatesTest extends AbstractByonClo
 			}
 			ipListBuilder.append(nextMachine);
 		}
-		service.setNumberOfManagementMachines(numOfMngMachines);
+		byonService.setNumberOfManagementMachines(numOfMngMachines);
 		numOfMachinesInUse.addAndGet(numOfMngMachines);
 		LogUtils.log("Updating MNG machine IPs: " + ipListBuilder);
-		service.setIpList(ipListBuilder.toString());
+		byonService.setIpList(ipListBuilder.toString());
 
 		if (isBootstrap()) {
-			super.bootstrap(service);
+			super.bootstrap(byonService);
 		} else {
 			this.cloudService = CloudServiceManager.getInstance().getCloudService(this.getCloudName());
 			AdminFactory factory = new AdminFactory();
@@ -113,7 +128,7 @@ public abstract class AbstractByonAddRemoveTemplatesTest extends AbstractByonClo
 			defaultTempaltes.add(templateName);
 		}
 	}
-
+	
 	@Override
 	@AfterClass(alwaysRun = true)
 	protected void teardown() throws Exception {

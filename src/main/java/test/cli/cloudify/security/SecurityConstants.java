@@ -35,6 +35,6 @@ public class SecurityConstants {
 	public static final String DEFAULT_KEYSTORE_PASSWORD = "sgtest";
 	public static final String LDAP_SECURITY_FILE_PATH = SGTEST_ROOT_DIR + "/src/main/config/security/ldap-spring-security.xml";
 
-	public static final String ACCESS_DENIED_MESSAGE = "no_permission_access_is_denied";
+	public static final String ACCESS_DENIED_MESSAGE = "access is denied";
 
 }

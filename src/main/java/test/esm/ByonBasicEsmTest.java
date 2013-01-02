@@ -48,10 +48,8 @@ public class ByonBasicEsmTest extends AbstractFromXenToByonGSMTest {
 	public void xenStatefulProccesingUnitDeploymentSimulation() throws Exception {
 		LogUtils.log("simulating xen stateful proccesing unit deployment");
 		
-		AssertUtils.assertEquals(0, admin.getGridServiceContainers().getSize());	
-		admin.getGridServiceAgents().waitFor(1,OPERATION_TIMEOUT,TimeUnit.MILLISECONDS);
-		AssertUtils.assertEquals(1, admin.getGridServiceAgents().getSize());
-		
+		repetitiveAssertNumberOfGSAsAdded(1, OPERATION_TIMEOUT);
+		repetitiveAssertNumberOfGSCsAdded(0,OPERATION_TIMEOUT);
 		//get pu dir
         File puDir = DeploymentUtils.getArchive("processorPU.jar");      
         
@@ -71,7 +69,7 @@ public class ByonBasicEsmTest extends AbstractFromXenToByonGSMTest {
         deployment.scale(manualCapacityScaleConfig);
         
         // deploy pu
-        final ProcessingUnit pu = admin.getGridServiceManagers().getManagers()[0].deploy(deployment);
+        final ProcessingUnit pu = deploy(deployment);
         AssertUtils.assertNotNull(pu); 
         
         // undeploy pu

@@ -18,6 +18,7 @@ import com.gigaspaces.internal.utils.StringUtils;
 
 import framework.utils.ApplicationInstaller;
 import framework.utils.AssertUtils;
+import framework.utils.CloudBootstrapper;
 import framework.utils.DumpUtils;
 import framework.utils.LogUtils;
 import framework.utils.ScriptUtils;
@@ -98,10 +99,18 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 	}	
 
 	protected void bootstrap() throws Exception {
-		bootstrap(null);
+		bootstrap(null, null);
+	}
+	
+	protected void bootstrap(CloudBootstrapper bootstrapper) throws Exception {
+		bootstrap(null, bootstrapper);
+	}
+	
+	protected void bootstrap(CloudService service) throws Exception {
+		bootstrap(service, null);
 	}
 
-	protected void bootstrap(CloudService service) throws Exception {
+	protected void bootstrap(CloudService service, CloudBootstrapper bootstrapper) throws Exception {
 		if (this.isReusableCloud()) {
 			throw new UnsupportedOperationException(this.getClass().getName() + "Requires reusable clouds, which are not supported yet");
 		}
@@ -111,6 +120,9 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 		}
 		else {
 			this.cloudService = service; // use the custom service to execute bootstrap and teardown commands
+		}
+		if (bootstrapper != null) { // use the custom bootstrapper
+			this.cloudService.setBootstrapper(bootstrapper);
 		}
 
 		this.cloudService.init(this.getClass().getSimpleName().toLowerCase());

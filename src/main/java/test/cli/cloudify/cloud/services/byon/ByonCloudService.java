@@ -144,7 +144,7 @@ public class ByonCloudService extends AbstractCloudService {
 	
 		// TODO : replace hard coded 'cloudify' string with method to determine weather or no we are running xap or cloudify
 		String newCloudifyURL;
-		if(isNoWebServices()){
+		if(getBootstrapper().isNoWebServices()){
 			newCloudifyURL =NEW_XAP_URL_PREFIX+ "/" +version +"/build_" + buildNumber + "/xap-bigdata/1.5/gigaspaces-xap-premium-" + version + "-" + milestone + "-b" + buildNumber;
 		}
 		else {

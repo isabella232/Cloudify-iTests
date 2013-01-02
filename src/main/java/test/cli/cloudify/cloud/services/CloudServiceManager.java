@@ -15,6 +15,7 @@
  ******************************************************************************/
 package test.cli.cloudify.cloud.services;
 
+import framework.utils.CloudBootstrapper;
 import test.cli.cloudify.cloud.services.azure.MicrosoftAzureCloudService;
 import test.cli.cloudify.cloud.services.byon.ByonCloudService;
 import test.cli.cloudify.cloud.services.byon.DynamicByonCloudService;
@@ -49,7 +50,9 @@ public class CloudServiceManager {
 			cloudService = new ByonCloudService();
 		} else if ("byon-xap".equalsIgnoreCase(cloudName)) {
 			cloudService = new ByonCloudService();
-			((ByonCloudService)cloudService).setNoWebServices(true);
+			CloudBootstrapper bootstrapper = new CloudBootstrapper();
+			bootstrapper.noWebServices(true);
+			cloudService.setBootstrapper(bootstrapper);
 		} else if ("ec2".equalsIgnoreCase(cloudName)) {
 			cloudService = new Ec2CloudService();
 		} else if ("ec2-win".equalsIgnoreCase(cloudName)) {

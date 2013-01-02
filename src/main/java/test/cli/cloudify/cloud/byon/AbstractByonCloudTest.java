@@ -52,7 +52,7 @@ public class AbstractByonCloudTest extends NewAbstractCloudTest {
 		AdminFactory factory = new AdminFactory();
 		String[] managementHosts;
 		// if the cloud is using web services 
-		if (!cloudService.isNoWebServices()){
+		if (!cloudService.getBootstrapper().isNoWebServices()){
 			managementHosts = cloudService.getRestUrls();		
 			for (String host : managementHosts) {
 				String utlNoHttp = null;

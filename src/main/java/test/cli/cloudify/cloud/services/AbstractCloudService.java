@@ -37,8 +37,6 @@ public abstract class AbstractCloudService implements CloudService {
 	private static final int TEN_SECONDS_IN_MILLIS = 10000;
 	
 	private static final int MAX_SCAN_RETRY = 3;
-
-	protected boolean noWebServices; 
 	
 	private int numberOfManagementMachines = 1;
 	private URL[] restAdminUrls;
@@ -69,13 +67,6 @@ public abstract class AbstractCloudService implements CloudService {
 	@Override
 	public void beforeBootstrap() throws Exception {}
 	
-	public boolean isNoWebServices(){
-		return noWebServices;
-	}
-
-	public void setNoWebServices(boolean noWebServices){
-		this.noWebServices = noWebServices;
-	}
 	
 	public Map<String,Object> getProperties() {
 		return properties;
@@ -237,11 +228,10 @@ public abstract class AbstractCloudService implements CloudService {
 		
 		printPropertiesFile();
 		
-		if(isNoWebServices()){
-			bootstrapper.noWebServices(true);
-		}
-		
-		if(!bootstrapper.isNoWebServices()){
+		if(bootstrapper.isNoWebServices()){
+			bootstrapper.bootstrap();
+		} 
+		else {			
 			String output = bootstrapper.bootstrap().getOutput();	
 			restAdminUrls = extractRestAdminUrls(output, numberOfManagementMachines);
 			this.webUIUrls = extractWebuiUrls(output, numberOfManagementMachines);
@@ -258,12 +248,7 @@ public abstract class AbstractCloudService implements CloudService {
 					LogUtils.log("Found " + CloudTestUtils.getNumberOfMachines(machinesURL) + " machines");
 				}
 			}
-		} 
-		else {
-			bootstrapper.bootstrap();
 		}
-
-		
 	}
 		
 	private void printPropertiesFile() throws IOException {

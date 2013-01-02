@@ -61,7 +61,6 @@ public class MachinesSlaEnforcementTwoManagementMachinesByonTest extends Abstrac
     public void oneMachineTest() throws Exception  {
         
         // the first GSAs is already started in BeginTest
-        Assert.assertEquals(admin.getGridServiceAgents().getSize(),1);
         repetitiveAssertNumberOfGSAsAdded(1, OPERATION_TIMEOUT);
         repetitiveAssertNumberOfGSAsRemoved(0, OPERATION_TIMEOUT);
         
@@ -69,6 +68,7 @@ public class MachinesSlaEnforcementTwoManagementMachinesByonTest extends Abstrac
         
         // Start a seconds machine and put a LUS on it
         GridServiceAgent gsa2 = startNewByonMachine(getElasticMachineProvisioningCloudifyAdapter(), OPERATION_TIMEOUT,TimeUnit.MILLISECONDS);
+        repetitiveAssertNumberOfGSAsAdded(2, OPERATION_TIMEOUT);
         gsa2.startGridService(new GridServiceManagerOptions());
         Assert.assertEquals(admin.getGridServiceAgents().getSize(),2);
         Assert.assertTrue(admin.getGridServiceManagers().waitFor(2,OPERATION_TIMEOUT,TimeUnit.MILLISECONDS));

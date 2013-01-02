@@ -33,12 +33,6 @@ public abstract class NewAbstractSecurityCloudTest extends NewAbstractCloudTest 
 		super.bootstrap(service);
 	}
 	
-	protected void bootstrap(CloudService service, CloudBootstrapper securedBootstrapper) throws Exception {
-		
-		service.setBootstrapper(securedBootstrapper);		
-		super.bootstrap(service);
-	}
-	
 	@Override
 	protected void teardown() throws Exception {
 		CloudBootstrapper securedBootstrapper = (CloudBootstrapper) getService().getBootstrapper().user(SecurityConstants.USER_PWD_ALL_ROLES).password(SecurityConstants.USER_PWD_ALL_ROLES);

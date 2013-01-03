@@ -139,7 +139,7 @@ public abstract class AbstractKillManagementTest extends AbstractByonCloudTest {
 		
 		for (int i = 0 ; i < 3 ; i++) {
 			try {
-				LogUtils.log(SSHUtils.runCommand(machine1, DEFAULT_TEST_TIMEOUT,  ByonCloudService.BYON_HOME_FOLDER + "/gigaspaces/tools/cli/cloudify.sh start-managemen --verboset", ByonCloudService.BYON_CLOUD_USER, ByonCloudService.BYON_CLOUD_PASSWORD));
+				LogUtils.log(SSHUtils.runCommand(machine1, DEFAULT_TEST_TIMEOUT,  ByonCloudService.BYON_HOME_FOLDER + "/gigaspaces/tools/cli/cloudify.sh start-managemen --verbose", ByonCloudService.BYON_CLOUD_USER, ByonCloudService.BYON_CLOUD_PASSWORD));
 				return;
 			} catch (Throwable t) {
 				LogUtils.log("Failed to start management on machine " + machine1 + " restarting machine before attempting again. attempt number " + (i + 1), t);

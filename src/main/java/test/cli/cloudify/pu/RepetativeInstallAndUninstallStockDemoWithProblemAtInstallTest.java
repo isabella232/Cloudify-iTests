@@ -121,7 +121,7 @@ private void assertUninstallWasSuccessful() throws Exception{
 		URL stockAnalyticsMirrorPuAdminUrl = new URL(restUrl + "/admin/ProcessingUnits/Names/stockdemo.stockAnalyticsMirror");
 		URL stockAnalyticsSpacePuAdminUrl = new URL(restUrl + "/admin/ProcessingUnits/Names/stockdemo.stockAnalyticsSpace");
 		URL stockAnalyticsProcessorPuAdminUrl = new URL(restUrl + "/admin/ProcessingUnits/Names/stockdemo.stockAnalyticsProcessor");
-		URL StockDemoPuAdminUrl = new URL(restUrl + "/admin/ProcessingUnits/Names/stockdemo.StockDemo");
+		URL stockDemoPuAdminUrl = new URL(restUrl + "/admin/ProcessingUnits/Names/stockdemo.StockDemo");
 		URL stockAnalyticsPuAdminUrl = new URL(restUrl + "/admin/ProcessingUnits/Names/stockdemo.stockAnalytics");
 		URL stockAnalyticsFeederPuAdminUrl = new URL(restUrl + "/admin/ProcessingUnits/Names/stockdemo.stockAnalyticsFeeder");
 		
@@ -129,7 +129,7 @@ private void assertUninstallWasSuccessful() throws Exception{
 		assertTrue(!WebUtils.isURLAvailable(stockAnalyticsMirrorPuAdminUrl));
 		assertTrue(!WebUtils.isURLAvailable(stockAnalyticsSpacePuAdminUrl));
 		assertTrue(!WebUtils.isURLAvailable(stockAnalyticsProcessorPuAdminUrl));
-		assertTrue(!WebUtils.isURLAvailable(StockDemoPuAdminUrl));
+		assertTrue(!WebUtils.isURLAvailable(stockDemoPuAdminUrl));
 		assertTrue(!WebUtils.isURLAvailable(stockAnalyticsPuAdminUrl));
 		assertTrue(!WebUtils.isURLAvailable(stockAnalyticsFeederPuAdminUrl));
 	}

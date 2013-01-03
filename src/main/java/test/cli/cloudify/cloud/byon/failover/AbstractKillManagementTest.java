@@ -50,9 +50,11 @@ public abstract class AbstractKillManagementTest extends AbstractByonCloudTest {
 				String spec = null;
 				try {
 					String hostAddress = tomcat.getInstances()[0].getGridServiceContainer().getMachine().getHostAddress();
+					LogUtils.log("Checking that url : " + spec + " is available");
 					spec = "http://" + hostAddress + ":8080/petclinic/";
-					LogUtils.log("checking that url : " + spec + " is available");
-					return ServiceUtils.isHttpURLAvailable(spec);
+					boolean httpURLAvailable = ServiceUtils.isHttpURLAvailable(spec);
+					LogUtils.log(spec + " available = " + httpURLAvailable);
+					return httpURLAvailable;
 				} catch (final Exception e) {
 					throw new RuntimeException("Error polling to URL : " + spec + " . Reason --> " + e.getMessage());
 				} 

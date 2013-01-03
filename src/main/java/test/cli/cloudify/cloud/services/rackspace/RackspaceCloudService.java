@@ -128,7 +128,6 @@ public class RackspaceCloudService extends AbstractCloudService {
 		}
 
 		if (leakedNodes.size() > 0) {
-			LogUtils.log("Found leaking nodes in Rackspace cloud after teardown");
 			for (Node node : leakedNodes) {
 				LogUtils.log("Shutting down: " + node);
 				try {

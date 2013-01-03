@@ -16,6 +16,7 @@ import framework.utils.LogUtils;
 
 public class RackspaceCloudService extends AbstractCloudService {
 
+	private static final int DEFAULT_SERVER_SHUTDOWN_TIMEOUT = 5 * 60000;
 	private String user = "gsrackspace";
 	private String apiKey = "1ee2495897b53409f4643926f1968c0c";
 	private String tenant = "658142";
@@ -131,7 +132,7 @@ public class RackspaceCloudService extends AbstractCloudService {
 			for (Node node : leakedNodes) {
 				LogUtils.log("Shutting down: " + node);
 				try {
-					rackspaceClient.terminateServer(node.getId(), token, System.currentTimeMillis() + 60000);
+					rackspaceClient.terminateServer(node.getId(), token, System.currentTimeMillis() + DEFAULT_SERVER_SHUTDOWN_TIMEOUT);
 				} catch (Exception e) {
 					LogUtils.log("Failed to terminate Rackspace openstack node: " + node.getId()
 							+ ". This node may be leaking. Node details: " + node + ", Error was: " + e.getMessage(), e);

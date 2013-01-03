@@ -13,6 +13,8 @@ import org.testng.annotations.Test;
 import test.cli.cloudify.AbstractLocalCloudTest;
 import test.cli.cloudify.CommandTestUtils;
 
+import framework.utils.AssertUtils;
+import framework.utils.AssertUtils.RepetitiveConditionProvider;
 import framework.utils.LogUtils;
 import framework.utils.WebUtils;
 /**
@@ -21,7 +23,7 @@ import framework.utils.WebUtils;
 	1. try to install stockdemo on and fail<p>
 	2. uninstall<p>
 	3. try to install again <p>
-	
+
 	Details: the failour at step 1 is achieved by renaming cassandra's post start script.
 	before step 3 is done the script is renamed back to the original name, this is why step 3 
 	is asserted.
@@ -34,10 +36,10 @@ public class RepetativeInstallAndUninstallStockDemoWithProblemAtInstallTest exte
 	private String cassandraPostStartScriptPath = null;
 	private String newPostStartScriptPath = null;
 	private URL stockdemoUrl;
-		
+
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * repetitions *2 , groups = "1", enabled = true)
 	public void installAndUninstallTest() throws Exception {
-		
+
 		stockdemoUrl = new URL("http://" + InetAddress.getLocalHost().getHostAddress() + ":8080/stockdemo.StockDemo/");
 		final String stockdemoAppPath = CommandTestUtils.getPath("src/main/resources/apps/USM/usm/applications/stockdemo");	
 		cassandraPostStartScriptPath = stockdemoAppPath + "/cassandra/cassandra_poststart.groovy";	
@@ -45,7 +47,7 @@ public class RepetativeInstallAndUninstallStockDemoWithProblemAtInstallTest exte
 		int secondInstallationSuccessCounter = 0;
 		int secondInstallationFailCounter = 0;
 		int firstInstallSuccessCounter = 0;
-		
+
 		for(int i=0 ; i < repetitions ; i++){
 			LogUtils.log("starting iteration " + i);
 			switch(installUninstallInstall(stockdemoAppPath, cassandraPostStartScriptPath ,newPostStartScriptPath)){
@@ -85,7 +87,7 @@ public class RepetativeInstallAndUninstallStockDemoWithProblemAtInstallTest exte
 		else
 			return 3;
 	}
-	
+
 	@Override
 	@AfterMethod
 	public void afterTest() throws Exception {
@@ -105,7 +107,7 @@ public class RepetativeInstallAndUninstallStockDemoWithProblemAtInstallTest exte
 		if(!success)
 			throw new IOException("Test error: failed renaming " +  cassandraPostStartScriptPath + " to " + newPostStartScriptPath);
 	}
-	
+
 	private void fixCassandraService(String cassandraPostStartScriptPath , String newPostStartScriptPath) throws IOException {
 		File cassandraPostStartScript = new File(newPostStartScriptPath);
 		if(!cassandraPostStartScript.exists())
@@ -114,9 +116,9 @@ public class RepetativeInstallAndUninstallStockDemoWithProblemAtInstallTest exte
 		if(!success)
 			throw new IOException("Test error: failed renaming " +  newPostStartScriptPath + " to " + cassandraPostStartScriptPath);
 	}
-	
-private void assertUninstallWasSuccessful() throws Exception{
-		
+
+	private void assertUninstallWasSuccessful() throws Exception{
+
 		URL cassandraPuAdminUrl = new URL(restUrl + "/admin/ProcessingUnits/Names/stockdemo.cassandra");
 		URL stockAnalyticsMirrorPuAdminUrl = new URL(restUrl + "/admin/ProcessingUnits/Names/stockdemo.stockAnalyticsMirror");
 		URL stockAnalyticsSpacePuAdminUrl = new URL(restUrl + "/admin/ProcessingUnits/Names/stockdemo.stockAnalyticsSpace");
@@ -124,13 +126,35 @@ private void assertUninstallWasSuccessful() throws Exception{
 		URL stockDemoPuAdminUrl = new URL(restUrl + "/admin/ProcessingUnits/Names/stockdemo.StockDemo");
 		URL stockAnalyticsPuAdminUrl = new URL(restUrl + "/admin/ProcessingUnits/Names/stockdemo.stockAnalytics");
 		URL stockAnalyticsFeederPuAdminUrl = new URL(restUrl + "/admin/ProcessingUnits/Names/stockdemo.stockAnalyticsFeeder");
-		
-		assertTrue(!WebUtils.isURLAvailable(cassandraPuAdminUrl));
-		assertTrue(!WebUtils.isURLAvailable(stockAnalyticsMirrorPuAdminUrl));
-		assertTrue(!WebUtils.isURLAvailable(stockAnalyticsSpacePuAdminUrl));
-		assertTrue(!WebUtils.isURLAvailable(stockAnalyticsProcessorPuAdminUrl));
-		assertTrue(!WebUtils.isURLAvailable(stockDemoPuAdminUrl));
-		assertTrue(!WebUtils.isURLAvailable(stockAnalyticsPuAdminUrl));
-		assertTrue(!WebUtils.isURLAvailable(stockAnalyticsFeederPuAdminUrl));
+
+		repetitiveAssertUrlIsNotAvailable(cassandraPuAdminUrl);
+		repetitiveAssertUrlIsNotAvailable(stockAnalyticsMirrorPuAdminUrl);
+		repetitiveAssertUrlIsNotAvailable(stockAnalyticsSpacePuAdminUrl);
+		repetitiveAssertUrlIsNotAvailable(stockAnalyticsProcessorPuAdminUrl);
+		repetitiveAssertUrlIsNotAvailable(stockDemoPuAdminUrl);
+		repetitiveAssertUrlIsNotAvailable(stockAnalyticsPuAdminUrl);
+		repetitiveAssertUrlIsNotAvailable(stockAnalyticsFeederPuAdminUrl);
 	}
-}
+
+	private void repetitiveAssertUrlIsNotAvailable(final URL url) {
+		
+		RepetitiveConditionProvider conditionProvider = new RepetitiveConditionProvider() {
+			
+			@Override
+			public boolean getCondition() {
+				try {
+					LogUtils.log("Checking if url " + url + " is available.");
+					boolean urlAvailable = WebUtils.isURLAvailable(url);
+					LogUtils.log("result = " + urlAvailable);
+					return (!urlAvailable);
+				} catch (Exception e) {
+					LogUtils.log("Caught an exception while polling url : " + e.getMessage());
+					return false;
+				}
+			}
+		};
+		AssertUtils.repetitiveAssertTrue("URL = " + url + " is still available. waited for 10 seconds", conditionProvider, 10 * 1000);
+	}
+		
+	}
+

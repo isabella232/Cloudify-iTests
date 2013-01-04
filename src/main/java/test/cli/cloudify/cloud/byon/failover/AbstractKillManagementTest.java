@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import org.cloudifysource.dsl.utils.ServiceUtils;
-import org.junit.Assert;
 import org.openspaces.admin.gsm.GridServiceManager;
 import org.openspaces.admin.machine.Machine;
 import org.openspaces.admin.pu.ProcessingUnit;
@@ -42,7 +41,40 @@ public abstract class AbstractKillManagementTest extends AbstractByonCloudTest {
 	
 	public void testKillMachine() throws Exception {
 		
-		LogUtils.log("before restart, checking for liveness of tomcat pu");
+		LogUtils.log("before restart, checking for liveness of petclinic application");
+		repetitiveAssertPetclinicUrlIsAvailable();
+		
+		
+		Machine machine = getMachineToKill();
+		
+		String machineAddress = machine.getHostAddress();
+		
+		GridServiceManager otherManager = getManagerInOtherHostThen(machineAddress);
+		
+		LogUtils.log("restarting machine with ip " + machine.getHostAddress());
+		restartMachineAndWait(machineAddress);
+		LogUtils.log("restart was susccefull");
+		LogUtils.log("waiting for backup GSM to manage the tomcat processing unit");
+		ProcessingUnitUtils.waitForManaged(tomcat, otherManager);
+		LogUtils.log("managing gsm of tomcat pu is now " + otherManager);
+		LogUtils.log("after restart, checking for liveness of petclinic application");
+		repetitiveAssertPetclinicUrlIsAvailable();		
+		LogUtils.log("starting management services on machine " + machineAddress);
+		startManagement(machineAddress);
+		
+		AssertUtils.assertTrue("could not find " + numOManagementMachines + " gsm's after failover", 
+				admin.getGridServiceManagers().waitFor(numOManagementMachines, OPERATION_TIMEOUT, TimeUnit.MILLISECONDS));
+		AssertUtils.assertTrue("could not find " + numOManagementMachines + " gsm's after failover", 
+				admin.getLookupServices().waitFor(numOManagementMachines, OPERATION_TIMEOUT, TimeUnit.MILLISECONDS));
+		
+		AssertUtils.assertTrue("could not find " + numOManagementMachines + " webui instances after failover", admin.getProcessingUnits().getProcessingUnit("webui").waitFor(numOManagementMachines, OPERATION_TIMEOUT, TimeUnit.MILLISECONDS));
+		AssertUtils.assertTrue("could not find " + numOManagementMachines + " rest after failover", admin.getProcessingUnits().getProcessingUnit("rest").waitFor(numOManagementMachines, OPERATION_TIMEOUT, TimeUnit.MILLISECONDS));
+		AssertUtils.assertTrue("could not find " + numOManagementMachines + " space after failover", admin.getProcessingUnits().getProcessingUnit("cloudifyManagementSpace").waitFor(numOManagementMachines, OPERATION_TIMEOUT, TimeUnit.MILLISECONDS));
+		
+		uninstallApplicationAndWait("petclinic");
+	}
+
+	protected void repetitiveAssertPetclinicUrlIsAvailable() {
 		RepetitiveConditionProvider condition = new RepetitiveConditionProvider() {
 			
 			@Override
@@ -61,50 +93,6 @@ public abstract class AbstractKillManagementTest extends AbstractByonCloudTest {
 			}
 		};
 		AssertUtils.repetitiveAssertTrue("petclinic url is not available! waited for 10 seconds", condition, TEN_SECONDS);
-		
-		
-		Machine machine = getMachineToKill();
-		
-		String machineAddress = machine.getHostAddress();
-		
-		GridServiceManager otherManager = getManagerInOtherHostThen(machineAddress);
-		
-		LogUtils.log("restarting machine with ip " + machine.getHostAddress());
-		restartMachineAndWait(machineAddress);
-		LogUtils.log("restart was susccefull");
-		LogUtils.log("waiting for backup GSM to manage the tomcat processing unit");
-		ProcessingUnitUtils.waitForManaged(tomcat, otherManager);
-		
-		condition = new RepetitiveConditionProvider() {
-			
-			@Override
-			public boolean getCondition() {
-				String spec = null;
-				try {
-					String hostAddress = tomcat.getInstances()[0].getGridServiceContainer().getMachine().getHostAddress();
-					spec = "http://" + hostAddress + ":8080/petclinic/";
-					LogUtils.log("checking that url : " + spec + " is available");
-					return ServiceUtils.isHttpURLAvailable(spec);
-				} catch (final Exception e) {
-					throw new RuntimeException("Error polling to URL : " + spec + " . Reason --> " + e.getMessage());
-				} 
-			}
-		};
-		AssertUtils.repetitiveAssertConditionHolds("petclinic url is not available!", condition, TEN_SECONDS, 1000);
-		
-		LogUtils.log("starting management services on machine " + machineAddress);
-		startManagement(machineAddress);
-		
-		Assert.assertTrue("could not find " + numOManagementMachines + " gsm's after failover", 
-				admin.getGridServiceManagers().waitFor(numOManagementMachines, OPERATION_TIMEOUT, TimeUnit.MILLISECONDS));
-		Assert.assertTrue("could not find " + numOManagementMachines + " gsm's after failover", 
-				admin.getLookupServices().waitFor(numOManagementMachines, OPERATION_TIMEOUT, TimeUnit.MILLISECONDS));
-		
-		Assert.assertTrue("could not find " + numOManagementMachines + " webui instances after failover", admin.getProcessingUnits().getProcessingUnit("webui").waitFor(numOManagementMachines, OPERATION_TIMEOUT, TimeUnit.MILLISECONDS));
-		Assert.assertTrue("could not find " + numOManagementMachines + " rest after failover", admin.getProcessingUnits().getProcessingUnit("rest").waitFor(numOManagementMachines, OPERATION_TIMEOUT, TimeUnit.MILLISECONDS));
-		Assert.assertTrue("could not find " + numOManagementMachines + " space after failover", admin.getProcessingUnits().getProcessingUnit("cloudifyManagementSpace").waitFor(numOManagementMachines, OPERATION_TIMEOUT, TimeUnit.MILLISECONDS));
-		
-		uninstallApplicationAndWait("petclinic");
 	}
 
 	/**
@@ -139,7 +127,7 @@ public abstract class AbstractKillManagementTest extends AbstractByonCloudTest {
 		
 		for (int i = 0 ; i < 3 ; i++) {
 			try {
-				LogUtils.log(SSHUtils.runCommand(machine1, DEFAULT_TEST_TIMEOUT,  ByonCloudService.BYON_HOME_FOLDER + "/gigaspaces/tools/cli/cloudify.sh start-managemen --verbose", ByonCloudService.BYON_CLOUD_USER, ByonCloudService.BYON_CLOUD_PASSWORD));
+				LogUtils.log(SSHUtils.runCommand(machine1, DEFAULT_TEST_TIMEOUT,  ByonCloudService.BYON_HOME_FOLDER + "/gigaspaces/tools/cli/cloudify.sh start-management --verbose", ByonCloudService.BYON_CLOUD_USER, ByonCloudService.BYON_CLOUD_PASSWORD));
 				return;
 			} catch (Throwable t) {
 				LogUtils.log("Failed to start management on machine " + machine1 + " restarting machine before attempting again. attempt number " + (i + 1), t);

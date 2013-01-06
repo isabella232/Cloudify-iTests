@@ -72,7 +72,7 @@ public class AddRemoveTemplatesTest extends AbstractByonAddRemoveTemplatesTest {
 	public void addZippedTempalteAndInstallService() throws IOException, InterruptedException {
 		TemplatesBatchHandler templatesHandler = new TemplatesBatchHandler();
 		TemplateDetails addedTemplate = templatesHandler.addServiceTemplate();
-		File zippedTemplateFile = new File(templatesHandler.getTemplatesFolder() + "\\..\\zipped-template.zip");
+		File zippedTemplateFile = new File(templatesHandler.getTemplatesFolder() + "/../zipped-template.zip");
 		
 		LogUtils.log("zipping " + templatesHandler.getTemplatesFolder() + " to " + zippedTemplateFile);
 		ZipUtils.zip(templatesHandler.getTemplatesFolder(), zippedTemplateFile);

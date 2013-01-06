@@ -34,8 +34,8 @@ import framework.utils.LogUtils;
 public class AbstractFromXenToByonGSMTest extends AbstractByonCloudTest {
 	
 	public final static long OPERATION_TIMEOUT = 5 * 60 * 1000;
-	public final static String DefaultByonXapMachineMemoryMB = "5000";
-	public final static String standardMachineMemoryMB = "1600";
+	public final static String DEFAULT_BYON_XAP_MACHINE_MEMORY_MB = "5000";
+	public final static String STANDARD_MACHINE_MEMORY_MB = "16000";
 	public final static int NUM_OF_CORES = 2;
 	private static final long RESERVED_MEMORY_PER_MACHINE_MEGABYTES_DISCOVERED = 128;
 	private MachinesEventsCounter machineEventsCounter;
@@ -177,12 +177,13 @@ public class AbstractFromXenToByonGSMTest extends AbstractByonCloudTest {
 	protected DiscoveredMachineProvisioningConfig getDiscoveredMachineProvisioningConfig() {
 		DiscoveredMachineProvisioningConfig config = new DiscoveredMachineProvisioningConfig();
 		config.setReservedMemoryCapacityPerMachineInMB(RESERVED_MEMORY_PER_MACHINE_MEGABYTES_DISCOVERED);
+		config.setReservedMemoryCapacityPerManagementMachineInMB(RESERVED_MEMORY_PER_MACHINE_MEGABYTES_DISCOVERED);
 		return config;
 	}
 	
 	protected void customizeCloud() throws Exception {
-		String oldMemory = "machineMemoryMB " + standardMachineMemoryMB;
-		String newMemory = "machineMemoryMB " + DefaultByonXapMachineMemoryMB;
+		String oldMemory = "machineMemoryMB " + STANDARD_MACHINE_MEMORY_MB;
+		String newMemory = "machineMemoryMB " + DEFAULT_BYON_XAP_MACHINE_MEMORY_MB;
 		String numOfCores = "numberOfCores "+NUM_OF_CORES;
 		// sets number of cores to 2 - can be modified
 		getService().getAdditionalPropsToReplace().put(oldMemory, newMemory +"\n"+numOfCores);					

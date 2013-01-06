@@ -180,9 +180,11 @@ public abstract class AbstractWebUILocalCloudTest extends AbstractLocalCloudTest
     public void stopWebBrowser() throws InterruptedException {
     	LogUtils.log("Killing browser...");
     	
-    	selenium.stop();
-		selenium = null;
-		Thread.sleep(1000);
+    	if(selenium != null){
+	    	selenium.stop();
+			selenium = null;
+			Thread.sleep(1000);
+    	}
 		
 		if (chromeService != null && chromeService.isRunning()) {
 			LogUtils.log("Chrome Driver Server is still running, shutting it down...");

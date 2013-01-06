@@ -31,7 +31,7 @@ public class AddRemoveTemplatesTest extends AbstractByonAddRemoveTemplatesTest {
 	private static final int NUM_OF_THREADS = 3;
 	private ThreadBarrier barrier = new ThreadBarrier(NUM_OF_THREADS + 1);
 
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
 	public void addTempaltesTest() throws IOException {
 		TemplatesBatchHandler templatesHandler1 = new TemplatesBatchHandler();
 		templatesHandler1.addTemplates(5);
@@ -49,7 +49,7 @@ public class AddRemoveTemplatesTest extends AbstractByonAddRemoveTemplatesTest {
 		assertExpectedListTempaltes();
 	}
 
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
 	public void addTempalteAndInstallService() throws IOException, InterruptedException {
 		TemplatesBatchHandler templatesHandler = new TemplatesBatchHandler();
 		TemplateDetails addedTemplate = templatesHandler.addServiceTemplate();
@@ -93,7 +93,7 @@ public class AddRemoveTemplatesTest extends AbstractByonAddRemoveTemplatesTest {
 		}
 	}
 
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
 	public void addTempaltesUsingRestAPI() 
 			throws IllegalStateException, IOException, InterruptedException {
 		TemplatesBatchHandler templatesHandler = new TemplatesBatchHandler();
@@ -125,7 +125,7 @@ public class AddRemoveTemplatesTest extends AbstractByonAddRemoveTemplatesTest {
 		}
 	}
 
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
 	public void templatesWithTheSameUpload() throws IOException, InterruptedException {
 		TemplatesBatchHandler templatesHandler = new TemplatesBatchHandler();
 		TemplateDetails addedTemplate1 = templatesHandler.addServiceTemplate();
@@ -152,7 +152,7 @@ public class AddRemoveTemplatesTest extends AbstractByonAddRemoveTemplatesTest {
 		}
 	}
 
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
 	public void addExistAndNotExistTempaltes() throws IOException {
 		TemplatesBatchHandler templatesHandler1 = new TemplatesBatchHandler();
 		TemplateDetails addedTemplate = templatesHandler1.addTemplates(2).get(0);
@@ -166,7 +166,7 @@ public class AddRemoveTemplatesTest extends AbstractByonAddRemoveTemplatesTest {
 		assertExpectedListTempaltes();
 	}
 
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
 	public void templateNotExists() throws IOException, InterruptedException {
 		String serviceName = "notExistTempalte_service";
 		try {
@@ -176,7 +176,7 @@ public class AddRemoveTemplatesTest extends AbstractByonAddRemoveTemplatesTest {
 		} 
 	}
 
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
 	public void removeTemplateAndTryToInstallService() throws IOException, InterruptedException {
 		TemplatesBatchHandler templatesHandler = new TemplatesBatchHandler();
 		templatesHandler.addTemplate();
@@ -196,13 +196,13 @@ public class AddRemoveTemplatesTest extends AbstractByonAddRemoveTemplatesTest {
 		} 
 	}
 
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
 	public void removeNotExistTemplate() {
 		removeTemplate("error", true, "Failed to remove template [error]");
 		assertListTempaltes(defaultTempaltes);
 	}
 
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
 	public void illegalDuplicateTempaltesInTheSameFolder() throws IOException {
 		TemplatesBatchHandler tempaltesHandler = new TemplatesBatchHandler();
 		TemplateDetails addedTemplate = tempaltesHandler.addExpectedToFailTemplate(new TemplateDetails());
@@ -215,7 +215,7 @@ public class AddRemoveTemplatesTest extends AbstractByonAddRemoveTemplatesTest {
 		assertExpectedListTempaltes();
 	}
 
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
 	public void illegalTempalteWithoutLocalUploadDir() throws IOException {
 		TemplatesBatchHandler tempaltesHandler = new TemplatesBatchHandler();
 		TemplateDetails addedTemplate = tempaltesHandler.addExpectedToFailTempalte();
@@ -227,7 +227,7 @@ public class AddRemoveTemplatesTest extends AbstractByonAddRemoveTemplatesTest {
 		assertListTempaltes(defaultTempaltes);
 	}
 
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
 	public void tryToRemoveUsedTempalte() throws IOException, InterruptedException {
 		TemplatesBatchHandler tempaltesHandler = new TemplatesBatchHandler();
 		final TemplateDetails addedTemplate = tempaltesHandler.addServiceTemplate();
@@ -247,7 +247,7 @@ public class AddRemoveTemplatesTest extends AbstractByonAddRemoveTemplatesTest {
 		}
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
 	public void addRemoveAndAddAgainTemplates() throws IOException {
 		TemplatesBatchHandler handler = new TemplatesBatchHandler();
 		TemplateDetails toRemoveTemplate = handler.addTemplate();
@@ -259,7 +259,7 @@ public class AddRemoveTemplatesTest extends AbstractByonAddRemoveTemplatesTest {
 		assertExpectedListTempaltes();
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
 	public void threadedAddRemoveTemplate() throws Exception {
 		
 		TemplatesBatchHandler handler = new TemplatesBatchHandler();

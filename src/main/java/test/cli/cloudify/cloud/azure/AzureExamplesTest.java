@@ -27,6 +27,7 @@ public class AzureExamplesTest extends NewAbstractCloudTest {
 	public void copyAzureApplicationsToBuildDir() throws IOException {
 		copyApplicationToBuildDir("travel-azure");
 		copyApplicationToBuildDir("petclinic-simple-azure");
+		copyApplicationToBuildDir("helloworld-azure");
 		
 	}
 
@@ -43,7 +44,7 @@ public class AzureExamplesTest extends NewAbstractCloudTest {
 		super.teardown();
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 5, enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 5, enabled = false)
 	public void testTravel() throws IOException, InterruptedException {
 		LogUtils.log("installing application travel on azure");
 		String applicationPath = ScriptUtils.getBuildPath() + "/recipes/apps/travel-azure";
@@ -56,7 +57,7 @@ public class AzureExamplesTest extends NewAbstractCloudTest {
 		super.scanForLeakedAgentNodes();		
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 5, enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 5, enabled = false)
 	public void testPetclinicSimple() throws IOException, InterruptedException {
 		LogUtils.log("installing application petclinic-simple on azure");
 		String applicationPath = ScriptUtils.getBuildPath() + "/recipes/apps/petclinic-simple-azure";
@@ -69,10 +70,25 @@ public class AzureExamplesTest extends NewAbstractCloudTest {
 		super.scanForLeakedAgentNodes();		
 	}
 	
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 5, enabled = true)
+	public void testHelloWorld() throws IOException, InterruptedException {
+		LogUtils.log("installing application helloworld on azure");
+		String applicationPath = ScriptUtils.getBuildPath() + "/recipes/apps/helloworld-azure";
+		ApplicationInstaller applicationInstaller = new ApplicationInstaller(getRestUrl(), "helloworld");
+		applicationInstaller.recipePath(applicationPath);
+		applicationInstaller.waitForFinish(true);
+		applicationInstaller.timeoutInMinutes(45);
+		applicationInstaller.install();		
+		applicationInstaller.uninstall();
+		super.scanForLeakedAgentNodes();		
+	}
+
+	
 	@AfterMethod(alwaysRun = true)
 	public void cleanUp() throws IOException, InterruptedException {
 		super.uninstallApplicationIfFound("travel");
 		super.uninstallApplicationIfFound("petclinic");
+		super.uninstallApplicationIfFound("helloworld");
 		super.scanForLeakedAgentNodes();
 	}
 

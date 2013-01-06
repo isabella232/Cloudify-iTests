@@ -24,7 +24,20 @@ public class AbstractPublicProvisioningByonCloudTest extends AbstractByonCloudTe
 	protected void installManualPublicProvisioningServiceAndWait(final String serviceName,
 			final int numInstances,
 			final int instanceMemoryInMB,
-			final double instanceCpuCores, String templateName) throws IOException, InterruptedException {
+			final double instanceCpuCores, 
+			final String templateName, 
+			final boolean useManagement) throws IOException, InterruptedException {
+		installManualPublicProvisioningServiceAndWait(serviceName, numInstances, instanceMemoryInMB, instanceCpuCores,
+				templateName, useManagement, false);
+	}
+	
+	protected void installManualPublicProvisioningServiceAndWait(final String serviceName,
+			final int numInstances,
+			final int instanceMemoryInMB,
+			final double instanceCpuCores, 
+			final String templateName, 
+			final boolean useManagement,
+			final boolean expectedToFail) throws IOException, InterruptedException {
 		
 		try {			
 			generateServiceToBuildServicesFolder(
@@ -35,8 +48,9 @@ public class AbstractPublicProvisioningByonCloudTest extends AbstractByonCloudTe
 					instanceMemoryInMB, 
 					instanceCpuCores, 
 					true, 
-					templateName);
-			super.installServiceAndWait(BUILD_SERVICES_FOLDER + "/" + serviceName, serviceName);
+					templateName,
+					useManagement);
+			super.installServiceAndWait(BUILD_SERVICES_FOLDER + "/" + serviceName, serviceName, expectedToFail);
 		} finally {			
 			File serviceDir = new File(BUILD_SERVICES_FOLDER + "/" + serviceName);
 			if (serviceDir.exists()) {
@@ -48,7 +62,7 @@ public class AbstractPublicProvisioningByonCloudTest extends AbstractByonCloudTe
 	protected void installAutomaticPublicProvisioningServiceAndWait(final String serviceName,
 			final int numInstances,
 			final int instanceMemoryInMB,
-			final double instanceCpuCores, String templateName) throws IOException, InterruptedException {
+			final double instanceCpuCores, String templateName, boolean useManagement) throws IOException, InterruptedException {
 		
 		try {
 			generateServiceToBuildServicesFolder(
@@ -59,7 +73,8 @@ public class AbstractPublicProvisioningByonCloudTest extends AbstractByonCloudTe
 					instanceMemoryInMB, 
 					instanceCpuCores, 
 					true, 
-					templateName);
+					templateName,
+					useManagement);
 			super.installServiceAndWait(BUILD_SERVICES_FOLDER + "/" + serviceName, serviceName);			
 		} finally {
 			File serviceDir = new File(BUILD_SERVICES_FOLDER + "/" + serviceName);
@@ -76,7 +91,8 @@ public class AbstractPublicProvisioningByonCloudTest extends AbstractByonCloudTe
 			final int instanceMemoryInMB,
 			final double instanceCpuCores,
 			final boolean publicProvisioning, 
-			final String templateName) throws IOException {
+			final String templateName,
+			final boolean useManagement) throws IOException {
 
 		Map<String, String> props = new HashMap<String,String>();
 		
@@ -94,6 +110,7 @@ public class AbstractPublicProvisioningByonCloudTest extends AbstractByonCloudTe
 		props.put("name \"groovy\"", "name " + '"' + serviceName + '"');
 		props.put("numInstances 2", "numInstances " + numInstances);
 		props.put("SMALL_LINUX", templateName);
+		props.put("useManagement false", "useManagement " + useManagement);
 		IOUtils.replaceTextInFile(serviceFile, props);
 		
 	}

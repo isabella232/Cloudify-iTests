@@ -30,8 +30,8 @@ public class MultipleServicesTest extends AbstractPublicProvisioningByonCloudTes
 	public void testTwoServiceOnOneMachine() throws IOException, InterruptedException {
 		
 		// this should install both services on the same machine
-		installManualPublicProvisioningServiceAndWait(GROOVY_ONE, 1, 128, 0, DEFAULT_TEMPLATE_NAME);
-		installManualPublicProvisioningServiceAndWait(GROOVY_TWO, 1, 128, 0, DEFAULT_TEMPLATE_NAME);
+		installManualPublicProvisioningServiceAndWait(GROOVY_ONE, 1, 128, 0, DEFAULT_TEMPLATE_NAME, false);
+		installManualPublicProvisioningServiceAndWait(GROOVY_TWO, 1, 128, 0, DEFAULT_TEMPLATE_NAME, false);
 		
 		// check that it is the case
 		ProcessingUnit groovy1 = admin.getProcessingUnits().waitFor(ServiceUtils.getAbsolutePUName("default", GROOVY_ONE), OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);

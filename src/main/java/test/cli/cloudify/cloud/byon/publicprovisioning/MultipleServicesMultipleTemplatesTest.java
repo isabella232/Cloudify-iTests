@@ -35,8 +35,8 @@ public class MultipleServicesMultipleTemplatesTest extends AbstractPublicProvisi
 		// in byon the temlpate determines which host is used by the template. so if we define different hosts in different templates
 		// different mahcines should be used when deploying using different templates
 		
-		installManualPublicProvisioningServiceAndWait(GROOVY_ONE, 1, 128, 0, groovy1TemplateName);
-		installManualPublicProvisioningServiceAndWait(GROOVY_TWO, 1, 128, 0, groovy2TemplateName);
+		installManualPublicProvisioningServiceAndWait(GROOVY_ONE, 1, 128, 0, groovy1TemplateName, false);
+		installManualPublicProvisioningServiceAndWait(GROOVY_TWO, 1, 128, 0, groovy2TemplateName, false);
 		
 		// check that it is the case
 		ProcessingUnit groovy1 = admin.getProcessingUnits().waitFor(ServiceUtils.getAbsolutePUName("default", GROOVY_ONE), OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);

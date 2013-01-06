@@ -29,7 +29,7 @@ public class MultipleInstancesTest extends AbstractPublicProvisioningByonCloudTe
 	public void testTwoInstancesOfTheSameServiceOnOneMachine() throws IOException, InterruptedException {
 
 		// this should install both service instances on the same machine
-		installManualPublicProvisioningServiceAndWait(GROOVY, 2, 128, 0, DEFAULT_TEMPLATE_NAME);
+		installManualPublicProvisioningServiceAndWait(GROOVY, 2, 128, 0, DEFAULT_TEMPLATE_NAME, false);
 		
 		// check that it is the case
 		ProcessingUnit groovy = admin.getProcessingUnits().waitFor(ServiceUtils.getAbsolutePUName("default", GROOVY), OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);

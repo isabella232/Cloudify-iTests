@@ -6,12 +6,13 @@ service {
 	type "WEB_SERVER"
 	elastic true
 	numInstances 2
-	maxAllowedInstances 2
+	maxAllowedInstances 4
 	
 	isolationSLA {		
 		global {
 			instanceCpuCores 0
 			instanceMemoryMB 128
+			useManagement false
 		}
 	}
 	

@@ -9,13 +9,13 @@ set LOC_BUILD_TEST_DIR=%5
 @cd %LOCAL_SGPATH%\bin
 
 set selenium.browser=Firefox
-if %SUITE_NAME% == webui-Firefox (
+if %SUITE_NAME% == Cloudify_Webui_Firefox (
 	set selenium.browser=Firefox
 )
-if %SUITE_NAME% == webui-Chrome (
+if %SUITE_NAME% == Cloudify_Webui_Chrome (
 	set selenium.browser=Chrome
 )
-if %SUITE_NAME% == webui-IE (
+if %SUITE_NAME% == Cloudify_Webui_IE (
 	set selenium.browser=IE
 )
  

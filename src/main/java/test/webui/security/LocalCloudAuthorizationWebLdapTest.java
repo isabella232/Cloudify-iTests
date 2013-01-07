@@ -1,4 +1,4 @@
-package test.webui;
+package test.webui.security;
 
 import java.net.UnknownHostException;
 import java.util.HashMap;

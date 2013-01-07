@@ -16,7 +16,7 @@ public class LogFetcher {
 	private static final String BUILD_FOLDER_KEY = "sgtest.buildFolder";
 	private static final String REPORT_URL_KEY = "sgtest.url";
     private static final String GIGASPACES_QUALITY_S3 = "http://gigaspaces-quality.s3.amazonaws.com/";
-    boolean isCloudEnabled = Boolean.getBoolean(System.getProperty("sgtest.cloud.enabled", "true"));
+    boolean isCloudEnabled = Boolean.parseBoolean(System.getProperty("sgtest.cloud.enabled", "true"));
 	public LogFetcher() {
 	}
 	

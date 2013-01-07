@@ -44,7 +44,7 @@ public class AzureExamplesTest extends NewAbstractCloudTest {
 		super.teardown();
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 5, enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 5, enabled = true)
 	public void testTravel() throws IOException, InterruptedException {
 		LogUtils.log("installing application travel on azure");
 		String applicationPath = ScriptUtils.getBuildPath() + "/recipes/apps/travel-azure";
@@ -57,7 +57,7 @@ public class AzureExamplesTest extends NewAbstractCloudTest {
 		super.scanForLeakedAgentNodes();		
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 5, enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 5, enabled = true)
 	public void testPetclinicSimple() throws IOException, InterruptedException {
 		LogUtils.log("installing application petclinic-simple on azure");
 		String applicationPath = ScriptUtils.getBuildPath() + "/recipes/apps/petclinic-simple-azure";

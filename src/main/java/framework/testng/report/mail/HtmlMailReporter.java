@@ -1,18 +1,17 @@
 package framework.testng.report.mail;
 
+import com.gigaspaces.dashboard.DashboardDBReporter;
+import framework.report.MailReporterProperties;
+import framework.testng.report.wiki.WikiUtils;
+import framework.testng.report.xml.SummaryReport;
+import framework.tools.SimpleMail;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.StringTokenizer;
-
-import com.gigaspaces.dashboard.DashboardDBReporter;
-
-import framework.report.MailReporterProperties;
-import framework.testng.report.wiki.WikiUtils;
-import framework.testng.report.xml.SummaryReport;
-import framework.tools.SimpleMail;
 
 public class HtmlMailReporter {
 
@@ -72,7 +71,7 @@ public class HtmlMailReporter {
         } catch (Exception e) {
             throw new RuntimeException("failed to send mail - " + e, e);
         }
-        
+        //TODO:write results to DB
         DashboardDBReporter.writeToDB(summaryReport.getSuiteName(), buildNumber.split("_")[1], majorVersion, minorVersion, 
 				summaryReport.getDuration(), buildLogUrl, summaryReport.getTotalTestsRun(), summaryReport.getFailed(),
 				summaryReport.getSuccess(), summaryReport.getSkipped(), summaryReport.getSuspected(), 0/*orphans*/, wikiPageUrl, null);

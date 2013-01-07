@@ -1,13 +1,13 @@
 package framework.testng.report;
 
+import framework.testng.report.xml.TestLog;
+import framework.tools.S3DeployUtil;
+import framework.utils.TestNGUtils;
+import org.testng.ITestResult;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.testng.ITestResult;
-
-import framework.testng.report.xml.TestLog;
-import framework.utils.TestNGUtils;
 
 /**
  * @author moran
@@ -15,16 +15,22 @@ import framework.utils.TestNGUtils;
 public class LogFetcher {
 	private static final String BUILD_FOLDER_KEY = "sgtest.buildFolder";
 	private static final String REPORT_URL_KEY = "sgtest.url";
-
+    private static final String GIGASPACES_QUALITY_S3 = "http://gigaspaces-quality.s3.amazonaws.com/";
+    boolean isCloudEnabled = Boolean.getBoolean(System.getProperty("sgtest.cloud.enabled", "true"));
 	public LogFetcher() {
 	}
 	
 	public List<TestLog> getLogs(ITestResult result) {
 		List<TestLog> logs = new ArrayList<TestLog>();
 		String suiteName = System.getProperty("sgtest.suiteName");
+        String buildNumber = System.getProperty("sgtest.buildNumber");
 		String testName = TestNGUtils.constructTestMethodName(result);
 		File testDir = new File(getBuildFolder() + "/" + suiteName + "/" + testName);
-		return fetchLogs(testDir, logs);
+
+        if(isCloudEnabled){
+            S3DeployUtil.uploadLogFile(testDir, buildNumber, suiteName, testName);
+        }
+        return fetchLogs(testDir, logs);
 	}
 
 	private String getBuildFolder() {
@@ -69,6 +75,10 @@ public class LogFetcher {
 	}
 
 	private String getUrl() {
-		return System.getProperty(REPORT_URL_KEY);
+        if(isCloudEnabled){
+            return System.getProperty(GIGASPACES_QUALITY_S3);
+        }else{
+		    return System.getProperty(REPORT_URL_KEY);
+        }
 	}
 }

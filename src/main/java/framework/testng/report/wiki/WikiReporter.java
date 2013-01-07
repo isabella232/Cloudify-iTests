@@ -4,29 +4,18 @@
  */
 package framework.testng.report.wiki;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Properties;
-import java.util.TreeMap;
-
 import framework.testng.report.TestsReportFileStream;
 import framework.testng.report.mail.HtmlMailReporter;
 import framework.testng.report.xml.SummaryReport;
 import framework.testng.report.xml.TestLog;
 import framework.testng.report.xml.TestReport;
 import framework.testng.report.xml.TestsReport;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.text.NumberFormat;
+import java.util.*;
+import java.util.Map.Entry;
 
 
 /**
@@ -111,7 +100,6 @@ public class WikiReporter {
     	
     	TestsReportFileStream fileStream = new TestsReportFileStream();
     	TestsReport testsReport = fileStream.readFromFile(inputDirectory, fileName);
-    	
     	WikiReporter wikiReporter = new WikiReporter(extProperties, testsReport);
     	wikiReporter.generateReport();
 	}
@@ -127,7 +115,7 @@ public class WikiReporter {
              * main summary page lists all regression for this suite and links to each report page
              */
             String wikiSummaryPage = createMainSummaryPage(summaryPageTitle, buildPageTitle);
-            
+
             /* main report page */
             String wikiReportPage = createReportPage();
 

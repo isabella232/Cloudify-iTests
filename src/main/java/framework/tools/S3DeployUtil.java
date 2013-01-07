@@ -27,7 +27,6 @@ public class S3DeployUtil {
             String target = buildNumber + "/" + suiteName + "/" + testName;
             BlobStoreContext context;
             Set<Module> wiring = new HashSet<Module>();
-            System.out.println("DEBUG user "+ user + " key "+ key);
             context = new BlobStoreContextFactory().createContext("aws-s3", user, key, wiring, new Properties());
             S3Client client = S3Client.class.cast(context.getProviderSpecificContext().getApi());
             BlobStore store = context.getBlobStore();
@@ -39,11 +38,9 @@ public class S3DeployUtil {
         }
     }
     private static void uploadLogFile(File source, String target, String container, S3Client client, BlobStore store){
-        System.out.println("DEBUG source "+source +" target "+ target +" container "+container +" client "+client +" "+store);
         if (source.isDirectory()){
             for (File f : source.listFiles()){
-                if(f.getName().endsWith(".log"))
-                    uploadLogFile(new File(source.getPath() + "/" + f.getName()), target + "/" + f.getName(), container, client, store);
+                uploadLogFile(new File(source.getPath() + "/" + f.getName()), target + "/" + f.getName(), container, client, store);
             }
         }
         else{
@@ -76,7 +73,7 @@ public class S3DeployUtil {
         return properties;
     }
 
-    public static void main(String[] args) {
-        uploadLogFile(new File("D:\\opt\\9.5.0\\gigaspaces-xap-premium-9.5.0-m3\\logs"), "1111", "SG" ,"test");
-    }
+//    public static void main(String[] args) {
+//        uploadLogFile(new File("D:\\Users\\kobi\\Desktop\\tmp"), "1111", "SG" ,"test");
+//    }
 }

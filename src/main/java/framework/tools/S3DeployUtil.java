@@ -19,19 +19,23 @@ import java.util.Set;
 public class S3DeployUtil {
 
     public static void uploadLogFile(File source, String buildNumber, String suiteName, String testName){
-        Properties props = getS3Properties();
-        String container =  props.getProperty("container");
-        String user =  props.getProperty("user");
-        String key =  props.getProperty("key");
-        String target = buildNumber + "/" + suiteName + "/" + testName;
-        BlobStoreContext context;
-        Set<Module> wiring = new HashSet<Module>();
-        context = new BlobStoreContextFactory().createContext("aws-s3", user, key, wiring, new Properties());
-        S3Client client = S3Client.class.cast(context.getProviderSpecificContext().getApi());
-        BlobStore store = context.getBlobStore();
+        try {
+            Properties props = getS3Properties();
+            String container =  props.getProperty("container");
+            String user =  props.getProperty("user");
+            String key =  props.getProperty("key");
+            String target = buildNumber + "/" + suiteName + "/" + testName;
+            BlobStoreContext context;
+            Set<Module> wiring = new HashSet<Module>();
+            context = new BlobStoreContextFactory().createContext("aws-s3", user, key, wiring, new Properties());
+            S3Client client = S3Client.class.cast(context.getProviderSpecificContext().getApi());
+            BlobStore store = context.getBlobStore();
 
-        uploadLogFile(source, target, container, client, store);
-        context.close();
+            uploadLogFile(source, target, container, client, store);
+            context.close();
+        }catch (Exception e){
+            throw new RuntimeException(e);
+        }
     }
     private static void uploadLogFile(File source, String target, String container, S3Client client, BlobStore store){
         if (source.isDirectory()){

@@ -22,6 +22,7 @@ mkdir ${BUILD_DIR}/../${SUITE_NAME}
 cd ${BUILD_DIR}/../SGTest
 
 mvn test -e -X -U -P tgrid-sgtest-cloudify \
+-Dsgtest.cloud.enabled=false \
 -Dsgtest.buildNumber=${BUILD_NUMBER} \
 -Dcloudify.home=${BUILD_DIR} \
 -Dincludes=${INCLUDE} \

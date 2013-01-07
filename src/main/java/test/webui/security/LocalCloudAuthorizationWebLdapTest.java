@@ -6,12 +6,15 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import test.cli.cloudify.AbstractSecuredLocalCloudTest;
 import test.cli.cloudify.security.SecurityConstants;
 import test.webui.WebuiTestUtils;
+import test.webui.cloud.PermittedServicesWrapper;
+import test.webui.cloud.WebSecurityAuthorizationHelper;
 
 import com.gigaspaces.webuitf.LoginPage;
 import com.gigaspaces.webuitf.MainNavigation;
@@ -21,8 +24,6 @@ import com.gigaspaces.webuitf.topology.TopologyTab;
 
 import framework.utils.LocalCloudBootstrapper;
 import framework.utils.LogUtils;
-import test.webui.cloud.PermittedServicesWrapper;
-import test.webui.cloud.WebSecurityAuthorizationHelper;
 
 public class LocalCloudAuthorizationWebLdapTest extends AbstractSecuredLocalCloudTest {
 
@@ -62,6 +63,15 @@ public class LocalCloudAuthorizationWebLdapTest extends AbstractSecuredLocalClou
 		}		
 	}
 
+	@AfterClass(alwaysRun = true)
+	public void cleanup() throws Exception{
+		
+		super.teardown();
+		
+		if(webuiHelper != null){
+			webuiHelper.close();
+		}
+	}
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT)
 	public void basicTest() throws Exception {

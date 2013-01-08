@@ -87,7 +87,7 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 	private static final String[] EXPECTED_MONITORS_FIELDS = {
 		CloudifyConstants.USM_MONITORS_CHILD_PROCESS_ID,
 		CloudifyConstants.USM_MONITORS_ACTUAL_PROCESS_ID, "NumberTwo",
-	"NumberOne" };
+		"NumberOne", "NumberThree" };
 
 	private static final String[] EXPECTED_PROCESS_PRINTOUTS = { "Opening port:" };
 

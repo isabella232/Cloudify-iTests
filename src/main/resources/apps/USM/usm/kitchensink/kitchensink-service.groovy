@@ -5,6 +5,7 @@ import Helper
 @Grab(group='commons-lang', module='commons-lang', version='2.4')
 import org.apache.commons.lang.WordUtils
 
+import static ExternalMonitors.*
 
 service {
 	name "kitchensink-service"
@@ -46,7 +47,9 @@ service {
 		details(["stam":{"HA HA HAAAAAAAAAAAAAAAAAAA"},
 			"SomeKey":{"22222222222222222222222222"}])
 		monitors (["NumberTwo":{return 2},
-			"NumberOne":{return "1"}])
+			"NumberOne":{return "1"},
+			"NumberThree" : {ExternalMonitors.getMetric()}
+			])
 
 	}
 

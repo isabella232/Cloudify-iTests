@@ -29,6 +29,10 @@
 					<artifactId>ant</artifactId>
 					<groupId>ant</groupId>
 				</exclusion>
+				<exclusion>
+					<artifactId>asm</artifactId>
+					<groupId>asm</groupId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
@@ -143,6 +147,12 @@
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-entitymanager</artifactId>
+			<exclusions>
+				<exclusion>
+					<artifactId>asm</artifactId>
+					<groupId>asm</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.sshd</groupId>

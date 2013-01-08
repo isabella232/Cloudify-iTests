@@ -280,13 +280,13 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 		serviceInstaller.install();
 	}
 
-	protected void installServiceAndWait(String servicePath, String serviceName, int timeout , boolean expectToFail) throws IOException, InterruptedException {
+	protected String installServiceAndWait(String servicePath, String serviceName, int timeout , boolean expectToFail) throws IOException, InterruptedException {
 		ServiceInstaller serviceInstaller = new ServiceInstaller(getRestUrl(), serviceName);
 		serviceInstaller.recipePath(servicePath);
 		serviceInstaller.waitForFinish(true);
 		serviceInstaller.expectToFail(expectToFail);
 		serviceInstaller.timeoutInMinutes(timeout);
-		serviceInstaller.install();
+		return serviceInstaller.install();
 	}
 	
 	protected void installServiceAndWait(String servicePath, String serviceName, boolean expectToFail) throws IOException, InterruptedException {

@@ -195,12 +195,13 @@ public abstract class AbstractByonAddRemoveTemplatesTest extends AbstractByonClo
 		return output;
 	}
 	
-	protected void installService(String serviceName, String templateName, boolean expectToFail) {
+	protected String installService(String serviceName, String templateName, boolean expectToFail) {
 		try {
-			installServiceAndWait(createServiceDir(serviceName, templateName), serviceName, 5 , expectToFail);
+			return installServiceAndWait(createServiceDir(serviceName, templateName), serviceName, 5 , expectToFail);
 		} catch (Exception e) {
 			Assert.fail(e.getMessage());
 		}
+		return "no output";
 	}
 
 	protected String createServiceDir(String serviceName, String templateName) throws IOException {

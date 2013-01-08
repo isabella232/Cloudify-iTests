@@ -19,6 +19,7 @@ import org.testng.annotations.Test;
 
 import framework.utils.AssertUtils;
 import framework.utils.LogUtils;
+import framework.utils.SSHUtils;
 import framework.utils.ThreadBarrier;
 
 /**
@@ -27,7 +28,7 @@ import framework.utils.ThreadBarrier;
  *
  */
 public class AddRemoveTemplatesTest extends AbstractByonAddRemoveTemplatesTest {
-	
+
 	private static final int NUM_OF_THREADS = 3;
 	private ThreadBarrier barrier = new ThreadBarrier(NUM_OF_THREADS + 1);
 
@@ -37,7 +38,7 @@ public class AddRemoveTemplatesTest extends AbstractByonAddRemoveTemplatesTest {
 		templatesHandler1.addTemplates(5);
 		addTempaltes(templatesHandler1);
 		assertExpectedListTempaltes();
-		
+
 		TemplatesBatchHandler templatesHandler2 = new TemplatesBatchHandler();
 		templatesHandler2.addTemplates(5);
 		addTempaltes(templatesHandler2);
@@ -50,6 +51,27 @@ public class AddRemoveTemplatesTest extends AbstractByonAddRemoveTemplatesTest {
 	}
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
+	public void failedAddInstallTempaltes() throws Exception {
+
+		TemplatesBatchHandler handler = new TemplatesBatchHandler();
+		TemplateDetails template = handler.addServiceTemplate();
+		String templateName = template.getTemplateName();
+		String output = addTempaltes(handler);
+
+		AssertUtils.assertTrue("Failed to add " + templateName, !output.contains("Failed to add the following templates:"));
+
+		String templateRemotePath = getTemplateRemoteDirFullPath(templateName) + template.getTemplateFile().getName();
+		SSHUtils.runCommand(mngMachinesIP[0], OPERATION_TIMEOUT, "rm -f " + templateRemotePath, USER, PASSWORD);
+		
+		admin.getProcessingUnits().getProcessingUnit("rest").getPartitions()[0].getInstances()[0].getGridServiceContainer().restart();
+
+		String serviceName = templateName + "_service";
+		output = installService(serviceName, templateName, true);
+
+		AssertUtils.assertTrue("installation with non-existent template succeeded", output.contains("Could not find compute template: " + templateName + ": Operation failed."));
+	}
+
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
 	public void addTempalteAndInstallService() throws IOException, InterruptedException {
 		TemplatesBatchHandler templatesHandler = new TemplatesBatchHandler();
 		TemplateDetails addedTemplate = templatesHandler.addServiceTemplate();
@@ -57,7 +79,7 @@ public class AddRemoveTemplatesTest extends AbstractByonAddRemoveTemplatesTest {
 		// add templates
 		addTempaltes(templatesHandler);
 		assertExpectedListTempaltes();
-		
+
 		final String templateName = addedTemplate.getTemplateName();
 		String serviceName = templateName + "_service";
 		try {
@@ -67,23 +89,23 @@ public class AddRemoveTemplatesTest extends AbstractByonAddRemoveTemplatesTest {
 			uninstallServiceIfFound(serviceName);
 		}
 	}
-	
+
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
 	public void addZippedTempalteAndInstallService() throws IOException, InterruptedException {
 		TemplatesBatchHandler templatesHandler = new TemplatesBatchHandler();
 		TemplateDetails addedTemplate = templatesHandler.addServiceTemplate();
 		File zippedTemplateFile = new File(templatesHandler.getTemplatesFolder() + "/../zipped-template.zip");
-		
+
 		LogUtils.log("zipping " + templatesHandler.getTemplatesFolder() + " to " + zippedTemplateFile);
 		ZipUtils.zip(templatesHandler.getTemplatesFolder(), zippedTemplateFile);
 		AssertUtils.assertTrue("zip file not found,  zip failed", zippedTemplateFile.exists());
-		
+
 		templatesHandler.setTemplatesFolder(zippedTemplateFile);
-		
+
 		// add templates
 		addTempaltes(templatesHandler);
 		assertExpectedListTempaltes();
-		
+
 		final String templateName = addedTemplate.getTemplateName();
 		String serviceName = templateName + "_service";
 		try {
@@ -98,7 +120,7 @@ public class AddRemoveTemplatesTest extends AbstractByonAddRemoveTemplatesTest {
 			throws IllegalStateException, IOException, InterruptedException {
 		TemplatesBatchHandler templatesHandler = new TemplatesBatchHandler();
 		TemplateDetails addedTemplate = templatesHandler.addServiceTemplate();
-		
+
 		File zipFile = Packager.createZipFile("templates", templatesHandler.getTemplatesFolder());
 		final FileBody body = new FileBody(zipFile);
 		final MultipartEntity reqEntity = new MultipartEntity();
@@ -162,7 +184,7 @@ public class AddRemoveTemplatesTest extends AbstractByonAddRemoveTemplatesTest {
 		templatesHandler2.addTemplate();
 		templatesHandler2.addExpectedToFailTemplate(addedTemplate);
 		addTempaltes(templatesHandler2);
-		
+
 		assertExpectedListTempaltes();
 	}
 
@@ -183,7 +205,7 @@ public class AddRemoveTemplatesTest extends AbstractByonAddRemoveTemplatesTest {
 		TemplateDetails addedTemplate = templatesHandler.addTemplate();
 		addTempaltes(templatesHandler);
 		assertExpectedListTempaltes();
-		
+
 		final String templateName = addedTemplate.getTemplateName();
 		removeTemplate(templatesHandler, templateName, false, "Template " + templateName + " removed successfully");
 		assertExpectedListTempaltes();
@@ -210,7 +232,7 @@ public class AddRemoveTemplatesTest extends AbstractByonAddRemoveTemplatesTest {
 		TemplateDetails duplicateTemplate = new TemplateDetails(addedTemplate.getTemplateName(), 
 				duplicateTemplateFile, null, addedTemplate.getUploadDirName(), addedTemplate.getMachineIP());
 		tempaltesHandler.addExpectedToFailTemplate(duplicateTemplate);
-		
+
 		addTempaltes(tempaltesHandler, "Template with name [" + addedTemplate.getTemplateName() + "] already exist");
 		assertExpectedListTempaltes();
 	}
@@ -246,7 +268,7 @@ public class AddRemoveTemplatesTest extends AbstractByonAddRemoveTemplatesTest {
 			uninstallServiceIfFound(serviceName);
 		}
 	}
-	
+
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
 	public void addRemoveAndAddAgainTemplates() throws IOException {
 		TemplatesBatchHandler handler = new TemplatesBatchHandler();
@@ -258,10 +280,10 @@ public class AddRemoveTemplatesTest extends AbstractByonAddRemoveTemplatesTest {
 		addTempaltes(handler);
 		assertExpectedListTempaltes();
 	}
-	
+
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
 	public void threadedAddRemoveTemplate() throws Exception {
-		
+
 		TemplatesBatchHandler handler = new TemplatesBatchHandler();
 		TemplateDetails template = handler.addExpectedToFailTempalte();
 		String templateName = template.getTemplateName();
@@ -271,21 +293,21 @@ public class AddRemoveTemplatesTest extends AbstractByonAddRemoveTemplatesTest {
 		for (int i = 0; i < NUM_OF_THREADS; i++) {
 			new Thread(new AddTemplatesThread(handler)).start();
 		}
-		
+
 		barrier.await();
 		barrier.inspect();
-		
+
 		templateRemotePath = getTemplateRemoteDirFullPath(templateName) + template.getTemplateFile().getName();
 		verifyTemplateExistence(mngMachinesIP[0], template, templateRemotePath, true);
-		
+
 		LogUtils.log("starting remover threads");
 		for (int i = 0; i < NUM_OF_THREADS; i++) {
 			new Thread(new RemoveTemplatesThread(handler, templateName)).start();
 		}
-		
+
 		barrier.await();
 		barrier.inspect();
-		
+
 		verifyTemplateExistence(mngMachinesIP[0], template, templateRemotePath, false);
 	}
 
@@ -303,15 +325,15 @@ public class AddRemoveTemplatesTest extends AbstractByonAddRemoveTemplatesTest {
 	public int getNumOfMngMachines() {
 		return 1;
 	}
-	
+
 	class AddTemplatesThread implements Runnable {
 
 		private TemplatesBatchHandler handler;
-		
+
 		public AddTemplatesThread(TemplatesBatchHandler handler) {			
 			this.handler = handler;
 		}
-		
+
 		public void run() {
 			try {				
 				addTempaltes(handler);	
@@ -323,15 +345,15 @@ public class AddRemoveTemplatesTest extends AbstractByonAddRemoveTemplatesTest {
 	}
 
 	class RemoveTemplatesThread implements Runnable {
-		
+
 		private TemplatesBatchHandler handler;
 		private String templateName;
-		
+
 		public RemoveTemplatesThread(TemplatesBatchHandler handler, String templateName) {			
 			this.handler = handler;
 			this.templateName = templateName;
 		}
-		
+
 		public void run() {
 			try {				
 				removeTemplate(handler, templateName, true, null);

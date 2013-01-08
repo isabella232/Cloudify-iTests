@@ -13,8 +13,8 @@ import framework.utils.ServiceInstaller;
 
 public class ByonAddTemplatesWithSecurityTest extends AbstractByonAddRemoveTemplatesTest{
 	
+	private static final String ACCESS_IS_DENIED = "Permission not granted, access is denied.";
 	private static final String ADDED_SUCCESSFULLY_MESSAGE = "added successfully";
-	private static final String REMOVE_FAILED_MESSAGE = "remove failed";
 	private static final String REMOVE_SUCCEEDED_MESSAGE = "removed successfully";
 
 	@Override
@@ -38,7 +38,7 @@ public class ByonAddTemplatesWithSecurityTest extends AbstractByonAddRemoveTempl
 		//super.teardown();
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false, priority=5)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true, priority=5)
 	public void testAddTemplatesAndInstallWithDifferentUsers() throws Exception {
 		
 		CloudBootstrapper bootstrapper = new CloudBootstrapper();
@@ -57,7 +57,7 @@ public class ByonAddTemplatesWithSecurityTest extends AbstractByonAddRemoveTempl
 	
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false, priority=1)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true, priority=1)
 	public void testAddTemplates() throws Exception{
 		
 		verifyAddTemplate(SecurityConstants.USER_PWD_APP_MANAGER, SecurityConstants.USER_PWD_APP_MANAGER, SecurityConstants.APP_MANAGER_DESCRIPTIN, true);
@@ -100,7 +100,7 @@ public class ByonAddTemplatesWithSecurityTest extends AbstractByonAddRemoveTempl
 		bootstrapper.user(SecurityConstants.USER_PWD_CLOUD_ADMIN).password(SecurityConstants.USER_PWD_CLOUD_ADMIN).setRestUrl(getRestUrl());
 		bootstrapper.addTemplate(templatesHandler.getTemplatesFolder().getAbsolutePath(), false);
 		
-		verifyRemoveTemplate(SecurityConstants.USER_PWD_APP_MANAGER, SecurityConstants.USER_PWD_APP_MANAGER, SecurityConstants.APP_MANAGER_DESCRIPTIN, templateName, false);
+		verifyRemoveTemplate(SecurityConstants.USER_PWD_APP_MANAGER, SecurityConstants.USER_PWD_APP_MANAGER, SecurityConstants.APP_MANAGER_DESCRIPTIN, templateName, true);
 		verifyRemoveTemplate(SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, SecurityConstants.APP_MANAGER_AND_VIEWER_DESCRIPTIN, templateName, true);
 		verifyRemoveTemplate(SecurityConstants.USER_PWD_VIEWER, SecurityConstants.USER_PWD_VIEWER, SecurityConstants.VIEWER_DESCRIPTIN, templateName, true);
 		verifyRemoveTemplate(SecurityConstants.USER_PWD_NO_ROLE, SecurityConstants.USER_PWD_NO_ROLE, SecurityConstants.NO_ROLE_DESCRIPTIN, templateName, true);
@@ -108,6 +108,7 @@ public class ByonAddTemplatesWithSecurityTest extends AbstractByonAddRemoveTempl
 		
 		addedTemplate = templatesHandler.addTemplate();
 		templateName = addedTemplate.getTemplateName();
+		bootstrapper.addTemplate(templatesHandler.getTemplatesFolder().getAbsolutePath(), false);
 		
 		verifyRemoveTemplate(SecurityConstants.USER_PWD_CLOUD_ADMIN_AND_APP_MANAGER, SecurityConstants.USER_PWD_CLOUD_ADMIN_AND_APP_MANAGER, SecurityConstants.CLOUD_ADMIN_AND_APP_MANAGER_DESCRIPTION, templateName, false);
 	}
@@ -123,19 +124,20 @@ public class ByonAddTemplatesWithSecurityTest extends AbstractByonAddRemoveTempl
 		TemplateDetails addedTemplate1 = templatesHandler.addTemplate();
 		String templateName1 = addedTemplate1.getTemplateName();
 		
-//		bootstrapper.user(SecurityConstants.USER_PWD_CLOUD_ADMIN).password(SecurityConstants.USER_PWD_CLOUD_ADMIN).setRestUrl(getRestUrl());
-//		bootstrapper.addTemplate(templatesHandler.getTemplatesFolder().getAbsolutePath(), false);
+		bootstrapper.user(SecurityConstants.USER_PWD_CLOUD_ADMIN).password(SecurityConstants.USER_PWD_CLOUD_ADMIN).setRestUrl(getRestUrl());
+		bootstrapper.addTemplate(templatesHandler.getTemplatesFolder().getAbsolutePath(), false);
 		
-		TemplateDetails addedTemplate2 = templatesHandler.addTemplate();
+		TemplatesBatchHandler templatesHandler2 = new TemplatesBatchHandler();
+		TemplateDetails addedTemplate2 = templatesHandler2.addTemplate();
 		String templateName2 = addedTemplate2.getTemplateName();
 		
-		bootstrapper.addTemplate(templatesHandler.getTemplatesFolder().getAbsolutePath(), false);
+		bootstrapper.addTemplate(templatesHandler2.getTemplatesFolder().getAbsolutePath(), false);
 				
-		verifyListTemplates(SecurityConstants.USER_PWD_APP_MANAGER, SecurityConstants.USER_PWD_APP_MANAGER, SecurityConstants.APP_MANAGER_DESCRIPTIN, SecurityConstants.CLOUD_ADMIN_DESCRIPTIN, SecurityConstants.CLOUD_ADMIN_AND_APP_MANAGER_DESCRIPTION, templateName1, templateName2, true, true);
-		verifyListTemplates(SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, SecurityConstants.APP_MANAGER_AND_VIEWER_DESCRIPTIN, SecurityConstants.CLOUD_ADMIN_DESCRIPTIN, SecurityConstants.CLOUD_ADMIN_AND_APP_MANAGER_DESCRIPTION, templateName1, templateName2, true, false);
+		verifyListTemplates(SecurityConstants.USER_PWD_APP_MANAGER, SecurityConstants.USER_PWD_APP_MANAGER, SecurityConstants.APP_MANAGER_DESCRIPTIN, SecurityConstants.CLOUD_ADMIN_DESCRIPTIN, SecurityConstants.CLOUD_ADMIN_AND_APP_MANAGER_DESCRIPTION, templateName1, templateName2, false, false);
+		verifyListTemplates(SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, SecurityConstants.APP_MANAGER_AND_VIEWER_DESCRIPTIN, SecurityConstants.CLOUD_ADMIN_DESCRIPTIN, SecurityConstants.CLOUD_ADMIN_AND_APP_MANAGER_DESCRIPTION, templateName1, templateName2, false, false);
 		verifyListTemplates(SecurityConstants.USER_PWD_CLOUD_ADMIN, SecurityConstants.USER_PWD_CLOUD_ADMIN, SecurityConstants.CLOUD_ADMIN_DESCRIPTIN, SecurityConstants.CLOUD_ADMIN_DESCRIPTIN, SecurityConstants.CLOUD_ADMIN_AND_APP_MANAGER_DESCRIPTION, templateName1, templateName2, true, true);
 		verifyListTemplates(SecurityConstants.USER_PWD_CLOUD_ADMIN_AND_APP_MANAGER, SecurityConstants.USER_PWD_CLOUD_ADMIN_AND_APP_MANAGER, SecurityConstants.CLOUD_ADMIN_AND_APP_MANAGER_DESCRIPTION, SecurityConstants.CLOUD_ADMIN_DESCRIPTIN, SecurityConstants.CLOUD_ADMIN_AND_APP_MANAGER_DESCRIPTION, templateName1, templateName2, true, true);
-		verifyListTemplates(SecurityConstants.USER_PWD_VIEWER, SecurityConstants.USER_PWD_VIEWER, SecurityConstants.VIEWER_DESCRIPTIN, SecurityConstants.CLOUD_ADMIN_DESCRIPTIN, SecurityConstants.CLOUD_ADMIN_AND_APP_MANAGER_DESCRIPTION, templateName1, templateName2, true, false);
+		verifyListTemplates(SecurityConstants.USER_PWD_VIEWER, SecurityConstants.USER_PWD_VIEWER, SecurityConstants.VIEWER_DESCRIPTIN, SecurityConstants.CLOUD_ADMIN_DESCRIPTIN, SecurityConstants.CLOUD_ADMIN_AND_APP_MANAGER_DESCRIPTION, templateName1, templateName2, false, false);
 		verifyListTemplates(SecurityConstants.USER_PWD_NO_ROLE, SecurityConstants.USER_PWD_NO_ROLE, SecurityConstants.NO_ROLE_DESCRIPTIN, SecurityConstants.CLOUD_ADMIN_DESCRIPTIN, SecurityConstants.CLOUD_ADMIN_AND_APP_MANAGER_DESCRIPTION, templateName1, templateName2, false, false);
 		
 		bootstrapper.removeTemplate(addedTemplate1.getTemplateName(), false);
@@ -159,7 +161,7 @@ public class ByonAddTemplatesWithSecurityTest extends AbstractByonAddRemoveTempl
 			AssertUtils.assertTrue(userDescription + " didn't succeed in adding a template", output.contains(addedTemplate.getTemplateName()) && output.contains(ADDED_SUCCESSFULLY_MESSAGE) && !output.contains("Failed"));
 		}
 		
-		bootstrapper.removeTemplate(addedTemplate.getTemplateName(), false);
+		bootstrapper.removeTemplate(addedTemplate.getTemplateName(), true);
 	}
 	
 	public void verifyGetTemplate(String user, String password, String userDescription, String adderDescription, String templateName, boolean isExpectedToFail) throws Exception{
@@ -169,10 +171,10 @@ public class ByonAddTemplatesWithSecurityTest extends AbstractByonAddRemoveTempl
 		String output = bootstrapper.getTemplate(templateName, isExpectedToFail);
 		
 		if(isExpectedToFail){
-			AssertUtils.assertTrue(userDescription + " can see the template " + templateName, output.contains("Permission not granted, access is denied."));
+			AssertUtils.assertTrue(userDescription + " can see the template " + templateName, output.contains(ACCESS_IS_DENIED));
 		}
 		else{
-			AssertUtils.assertTrue(userDescription + " doesn't see the template " + templateName , !output.contains("Permission not granted, access is denied."));		
+			AssertUtils.assertTrue(userDescription + " doesn't see the template " + templateName , !output.contains(ACCESS_IS_DENIED));		
 		}
 		
 	}
@@ -180,7 +182,7 @@ public class ByonAddTemplatesWithSecurityTest extends AbstractByonAddRemoveTempl
 	public void verifyListTemplates(String user, String password, String userDescription, String adderDescription1, String adderDescription2, String templateName1, String templateName2, boolean seesTemplate1, boolean seesTemplate2) throws Exception{
 		CloudBootstrapper bootstrapper = new CloudBootstrapper();	
 		bootstrapper.user(user).password(password).setRestUrl(getRestUrl());
-		String output = bootstrapper.listTemplates(false);
+		String output = bootstrapper.listTemplates(true);
 		
 		if(seesTemplate1){
 			AssertUtils.assertTrue(userDescription + " doesn't see the template added by " + adderDescription1 + "output: " + output, output.contains(templateName1 + ":"));
@@ -204,7 +206,7 @@ public class ByonAddTemplatesWithSecurityTest extends AbstractByonAddRemoveTempl
 		String output = bootstrapper.removeTemplate(templateName, isExpectedToFail);
 		
 		if(isExpectedToFail){
-			AssertUtils.assertTrue(userDescription + " succeeded removing the template " + templateName, output.contains(REMOVE_FAILED_MESSAGE));
+			AssertUtils.assertTrue(userDescription + " succeeded removing the template " + templateName, output.contains(ACCESS_IS_DENIED));
 		}
 		else{
 			AssertUtils.assertTrue(userDescription + " didn't succeed removing the template " + templateName, output.contains(REMOVE_SUCCEEDED_MESSAGE));		

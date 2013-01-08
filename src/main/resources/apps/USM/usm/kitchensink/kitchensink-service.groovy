@@ -1,6 +1,11 @@
 import framework.utils.usm.StringWrapper
 import Helper
 
+// test for grab
+@Grab(group='commons-lang', module='commons-lang', version='2.4')
+import org.apache.commons.lang.WordUtils
+
+
 service {
 	name "kitchensink-service"
 	type "UNDEFINED"
@@ -10,6 +15,8 @@ service {
 	lifecycle{
 		// DO NOT CHANGE THE PRINTOUTS - SGTEST LOOKS FOR THEM!
 		init {
+			println "Hello ${WordUtils.capitalize('grab test')}"
+			
 			 println "init fired ${var1}" 
 			 println new StringWrapper("init external class")
 			 println "init " + new Helper().someField;

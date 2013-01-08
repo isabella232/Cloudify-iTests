@@ -50,7 +50,6 @@ import org.openspaces.pu.service.ServiceDetails;
 import org.openspaces.pu.service.ServiceMonitors;
 import org.testng.annotations.Test;
 
-
 import com.gigaspaces.internal.sigar.SigarHolder;
 import com.gigaspaces.log.AllLogEntryMatcher;
 import com.gigaspaces.log.ContinuousLogEntryMatcher;
@@ -72,28 +71,29 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 	private long actualPid;
 
 	private static final String[] EXPECTED_STARTUP_EVENT_STRINGS = {
-			"init fired Test Property number 1", "init external class",
-			"init Helper Field", "application name is: default",
-			"Instantiated default.kitchensink-service",
-			"preInstall fired Test Property number 2", "install event fired",
-			"postInstall fired Test Property number 1",
-			"preStart fired Test Property number 2", "postStart fired" };
+		"Hello Grab Test", // @Grab test
+		"init fired Test Property number 1", "init external class",
+		"init Helper Field", "application name is: default",
+		"Instantiated default.kitchensink-service",
+		"preInstall fired Test Property number 2", "install event fired",
+		"postInstall fired Test Property number 1",
+		"preStart fired Test Property number 2", "postStart fired" };
 	private static final String[] EXPECTED_SHUTDOWN_EVENT_STRINGS = {
-			"preStop fired", "String_with_Spaces", "postStop fired",
-			"shutdown fired" };
+		"preStop fired", "String_with_Spaces", "postStop fired",
+	"shutdown fired" };
 
 	private static final String[] EXPECTED_DETAILS_FIELDS = { "stam", "SomeKey" };
 
 	private static final String[] EXPECTED_MONITORS_FIELDS = {
-			CloudifyConstants.USM_MONITORS_CHILD_PROCESS_ID,
-			CloudifyConstants.USM_MONITORS_ACTUAL_PROCESS_ID, "NumberTwo",
-			"NumberOne" };
+		CloudifyConstants.USM_MONITORS_CHILD_PROCESS_ID,
+		CloudifyConstants.USM_MONITORS_ACTUAL_PROCESS_ID, "NumberTwo",
+	"NumberOne" };
 
 	private static final String[] EXPECTED_PROCESS_PRINTOUTS = { "Opening port:" };
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
 	public void testKitchenSink() throws IOException, InterruptedException,
-			PackagingException, DSLException, RestException {
+	PackagingException, DSLException, RestException {
 
 		installService();
 
@@ -188,7 +188,7 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 	}
 
 	private void verifyUninstallManagementFails() throws IOException,
-			InterruptedException {
+	InterruptedException {
 		LogUtils.log("Verifing management undeployment fails when excecuted from the CLI");
 		final String commandOUtput = CommandTestUtils
 				.runCommandExpectedFail("connect "
@@ -311,7 +311,8 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 
 		// Test dump for a ll machines
 		final String machinesDumpUri = "/service/dump/machines/";
-		final Map<String, Object> resultsMap = (Map) rc.get(machinesDumpUri);
+		@SuppressWarnings("unchecked")
+		final Map<String, Object> resultsMap = (Map<String, Object>) rc.get(machinesDumpUri);
 		LogUtils.log("Machines dump downloaded successfully");
 
 		for (final String key : resultsMap.keySet()) {
@@ -351,7 +352,7 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 				.toString();
 		assertTrue(
 				"The service type " + kitchensinkServiceType
-						+ " does not match the expected service type.",
+				+ " does not match the expected service type.",
 				ProcessingUnitType.UNIVERSAL.toString().equals(
 						kitchensinkServiceType));
 	}
@@ -360,17 +361,16 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 			.getLogger(USMKitchenSinkTest.class.getName());
 
 	private static class KitchenSinkEventListener implements
-			GridServiceContainerAddedEventListener,
-			GridServiceContainerRemovedEventListener,
-			ProcessingUnitInstanceAddedEventListener,
-			ProcessingUnitInstanceRemovedEventListener {
+	GridServiceContainerAddedEventListener,
+	GridServiceContainerRemovedEventListener,
+	ProcessingUnitInstanceAddedEventListener,
+	ProcessingUnitInstanceRemovedEventListener {
 
 		private GridServiceContainer gscRemoved = null;
 		private GridServiceContainer gscAdded = null;
 		private ProcessingUnitInstance puiRemoved = null;
 		private ProcessingUnitInstance puiAdded = null;
 		private boolean errorEncountered = false;
-		private String errorMessage = null;
 
 		@Override
 		public synchronized void gridServiceContainerRemoved(
@@ -393,8 +393,8 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 			}
 			if (currentObject != null) {
 				this.errorEncountered = true;
-				this.errorMessage = "Message of type " + objectType
-						+ " was encountered twice";
+				//				this.errorMessage = "Message of type " + objectType
+				//						+ " was encountered twice";
 			}
 
 			return true;
@@ -453,13 +453,6 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 			return puiAdded;
 		}
 
-		public boolean isErrorEncountered() {
-			return errorEncountered;
-		}
-
-		public String getErrorMessage() {
-			return errorMessage;
-		}
 
 	}
 
@@ -469,9 +462,9 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 		final KitchenSinkEventListener listener = new KitchenSinkEventListener();
 
 		this.admin.getGridServiceContainers().getGridServiceContainerAdded()
-				.add(listener, false);
+		.add(listener, false);
 		this.admin.getGridServiceContainers().getGridServiceContainerRemoved()
-				.add(listener);
+		.add(listener);
 		pu.getProcessingUnitInstanceAdded().add(listener, false);
 		pu.getProcessingUnitInstanceRemoved().add(listener);
 
@@ -636,7 +629,7 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 
 		if (!invoke2Result.contains("1: FAILED")
 				|| !invoke2Result
-						.contains("This is the cmd2 custom command - This is an error test")) {
+				.contains("This is the cmd2 custom command - This is an error test")) {
 			AssertFail("Custom command cmd2 returned unexpected result: "
 					+ invoke2Result);
 		}
@@ -646,7 +639,7 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 				+ "; invoke kitchensink-service cmd3");
 		if (!invoke3Result.contains("1: OK")
 				|| !invoke3Result
-						.contains("Result: This is the cmd3 custom command. Service Dir is:")) {
+				.contains("Result: This is the cmd3 custom command. Service Dir is:")) {
 			AssertFail("Custom command cmd3 returned unexpected result: "
 					+ invoke3Result);
 		}
@@ -666,7 +659,7 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 
 		if (!invoke5Result.contains("1: OK")
 				|| !invoke5Result
-						.contains("this is the custom parameters command. expecting 123: 123")) {
+				.contains("this is the custom parameters command. expecting 123: 123")) {
 			AssertFail("Custom command cmd5 returned unexpected result: "
 					+ invoke5Result);
 		}
@@ -698,7 +691,7 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 
 		if (!invoke8Result.contains("1: FAILED")
 				|| !invoke8Result
-						.contains("This is the cmd8 custom command - This is an error test")) {
+				.contains("This is the cmd8 custom command - This is an error test")) {
 			AssertFail("Custom command cmd8 returned unexpected result: "
 					+ invoke8Result);
 		}
@@ -808,7 +801,7 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 	}
 
 	private void installService() throws PackagingException, IOException,
-			InterruptedException, DSLException {
+	InterruptedException, DSLException {
 		final File serviceDir = new File(RECIPE_DIR_PATH);
 		ServiceReader.getServiceFromDirectory(serviceDir).getService();
 

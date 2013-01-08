@@ -16,7 +16,7 @@ import org.testng.annotations.Test;
 import framework.utils.AssertUtils;
 
 /**
- * CLOUDIFY-1353 : Enabling service installation on management machines when using global isolationSLA. 
+ * CLOUDIFY-1353 
  * @author elip
  *
  */

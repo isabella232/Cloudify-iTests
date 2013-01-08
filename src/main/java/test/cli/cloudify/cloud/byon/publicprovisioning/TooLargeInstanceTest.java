@@ -6,6 +6,11 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+/**
+ * CLOUDIFY-1414
+ * @author elip
+ *
+ */
 public class TooLargeInstanceTest extends AbstractPublicProvisioningByonCloudTest {
 	
 	private static final String GROOVY_ONE = "groovy-one";

@@ -14,11 +14,19 @@ import org.cloudifysource.esc.driver.provisioning.ElasticMachineProvisioningClou
 import org.openspaces.admin.gsa.GSAReservationId;
 import org.openspaces.admin.gsa.GridServiceAgent;
 import org.openspaces.admin.zone.config.ExactZonesConfig;
+import org.openspaces.admin.zone.config.ExactZonesConfigurer;
 
 public class ByonMachinesUtils {
 
 	public static GridServiceAgent startNewByonMachine (ElasticMachineProvisioningCloudifyAdapter elasticMachineProvisioningCloudifyAdapter, long duration,TimeUnit timeUnit) throws Exception {	
 		ExactZonesConfig zones = new ExactZonesConfig();
+		GSAReservationId reservationId = null;
+		GridServiceAgent agent = elasticMachineProvisioningCloudifyAdapter.startMachine(zones, reservationId, duration, timeUnit);
+		return agent;
+	}
+	
+	public static GridServiceAgent startNewByonMachineWithZones (ElasticMachineProvisioningCloudifyAdapter elasticMachineProvisioningCloudifyAdapter,String[] zoneList, long duration,TimeUnit timeUnit) throws Exception {	
+		ExactZonesConfig zones = new ExactZonesConfigurer().addZones(zoneList).create();
 		GSAReservationId reservationId = null;
 		GridServiceAgent agent = elasticMachineProvisioningCloudifyAdapter.startMachine(zones, reservationId, duration, timeUnit);
 		return agent;
@@ -55,6 +63,8 @@ public class ByonMachinesUtils {
         
         return result;
 	}
+	
+		
 	
 	public static boolean stopByonMachine (ElasticMachineProvisioningCloudifyAdapter elasticMachineProvisioningCloudifyAdapter, GridServiceAgent agent ,long duration,TimeUnit timeUnit) throws Exception {
 		return elasticMachineProvisioningCloudifyAdapter.stopMachine(agent, duration, timeUnit);

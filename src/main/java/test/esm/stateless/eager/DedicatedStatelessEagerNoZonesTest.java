@@ -1,50 +1,68 @@
-package test.gsm.stateless.eager.xen;
+package test.esm.stateless.eager;
 
 import java.io.File;
 import java.util.concurrent.TimeUnit;
-
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.openspaces.admin.pu.elastic.ElasticStatelessProcessingUnitDeployment;
 import org.openspaces.admin.pu.elastic.config.DiscoveredMachineProvisioningConfigurer;
 import org.openspaces.admin.pu.elastic.config.EagerScaleConfig;
 import org.openspaces.core.util.MemoryUnit;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-
-import test.gsm.AbstractXenGSMTest;
+import test.esm.AbstractFromXenToByonGSMTest;
 import framework.utils.DeploymentUtils;
 
-/**
- * This test tries to deploy an Elastic PU with a zone, on a GSA that has no zones.
- * Starting from XAP 9.1.0 this scenario is not supported and the deployment is expected to fail.
- * @see GS-9721
- * @since 9.1.0
- * @author Itai Frenkel
- *
- */
-public class DedicatedStatelessEagerNoZonesTest extends AbstractXenGSMTest {
 
-    @Test(timeOut=DEFAULT_TEST_TIMEOUT, groups="1")
-    public void doTest() {
+public class DedicatedStatelessEagerNoZonesTest extends AbstractFromXenToByonGSMTest{
+	
+	@BeforeMethod
+    public void beforeTest() {
+		super.beforeTestInit();
+	}
+	
+	@BeforeClass
+	protected void bootstrap() throws Exception {
+		super.bootstrapBeforeClass();
+	}
+	
+	@AfterMethod
+    public void afterTest() {
+		super.afterTest();
+	}
+	
+	@AfterClass(alwaysRun = true)
+	protected void teardownAfterClass() throws Exception {
+		super.teardownAfterClass();
+	}
+	
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
+	public void doTest() throws Exception {
+		
+		repetitiveAssertNumberOfGSCsAdded(0, OPERATION_TIMEOUT);
+        repetitiveAssertNumberOfGSAsAdded(1, OPERATION_TIMEOUT);
         
-        startNewVM(OPERATION_TIMEOUT,TimeUnit.MILLISECONDS);
-        
-        File archive = DeploymentUtils.getArchive("servlet.war");
-        
-        final ProcessingUnit pu = super.deploy(
-                new ElasticStatelessProcessingUnitDeployment(archive)
-                .memoryCapacityPerContainer(1, MemoryUnit.GIGABYTES)
- 
-                .dedicatedMachineProvisioning(
-						new DiscoveredMachineProvisioningConfigurer()
-						.reservedMemoryCapacityPerMachine(128, MemoryUnit.MEGABYTES)
-						.addGridServiceAgentZone("myzone")
-						.create())
-				.scale(new EagerScaleConfig())
-        );
-
+        startNewByonMachine(getElasticMachineProvisioningCloudifyAdapter(), OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
         repetitiveAssertNumberOfGSAsAdded(2, OPERATION_TIMEOUT);
-        repetitiveAssertNumberOfGridServiceContainersHolds(0,0, 30, TimeUnit.SECONDS);
         
-        assertUndeployAndWait(pu);
-    }
+		File archive = DeploymentUtils.getArchive("servlet.war");
+
+		final ProcessingUnit pu = deploy ( new ElasticStatelessProcessingUnitDeployment(archive)
+		.memoryCapacityPerContainer(1, MemoryUnit.GIGABYTES)
+
+		.dedicatedMachineProvisioning(
+				new DiscoveredMachineProvisioningConfigurer()
+				.reservedMemoryCapacityPerMachine(128, MemoryUnit.MEGABYTES)
+				.addGridServiceAgentZone("myzone")
+				.create())
+				.scale(new EagerScaleConfig())
+				);
+		
+		repetitiveAssertNumberOfGSAsAdded(2, OPERATION_TIMEOUT);
+		repetitiveAssertNumberOfGridServiceContainersHolds(0,0, 30, TimeUnit.SECONDS);
+
+		assertUndeployAndWait(pu);
+	}
 }

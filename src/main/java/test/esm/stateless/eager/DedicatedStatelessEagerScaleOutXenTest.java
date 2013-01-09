@@ -1,4 +1,4 @@
-package test.gsm.stateless.eager.xen;
+package test.esm.stateless.eager;
 
 import java.io.File;
 import java.util.concurrent.TimeUnit;
@@ -8,22 +8,47 @@ import junit.framework.Assert;
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.openspaces.admin.pu.elastic.ElasticStatelessProcessingUnitDeployment;
 import org.openspaces.admin.pu.elastic.config.DiscoveredMachineProvisioningConfigurer;
-import org.openspaces.admin.pu.elastic.config.EagerScaleConfig;
+import org.openspaces.admin.pu.elastic.config.EagerScaleConfigurer;
 import org.openspaces.core.util.MemoryUnit;
 import org.openspaces.grid.gsm.rebalancing.RebalancingUtils;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import test.esm.AbstractFromXenToByonGSMTest;
 import framework.utils.DeploymentUtils;
 
-import test.gsm.AbstractXenGSMTest;
-
-public class DedicatedStatelessEagerScaleOutXenTest extends AbstractXenGSMTest {
-
+public class DedicatedStatelessEagerScaleOutXenTest extends AbstractFromXenToByonGSMTest {
+	
+	@BeforeMethod
+    public void beforeTest() {
+		super.beforeTestInit();
+	}
+	
+	@BeforeClass
+	protected void bootstrap() throws Exception {
+		super.bootstrapBeforeClass();
+	}
+	
+	@AfterMethod
+    public void afterTest() {
+		super.afterTest();
+	}
+	
+	@AfterClass(alwaysRun = true)
+	protected void teardownAfterClass() throws Exception {
+		super.teardownAfterClass();
+	}
+	
     @Test(timeOut=DEFAULT_TEST_TIMEOUT, groups="1")
-    public void doTest() {
+    public void doTest() throws Exception {
         
-        startNewVM(OPERATION_TIMEOUT,TimeUnit.MILLISECONDS);
-        
+    	repetitiveAssertNumberOfGSCsAdded(0, OPERATION_TIMEOUT);
+        repetitiveAssertNumberOfGSAsAdded(1, OPERATION_TIMEOUT);
+        startNewByonMachine(getElasticMachineProvisioningCloudifyAdapter(), OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
+        repetitiveAssertNumberOfGSAsAdded(2, OPERATION_TIMEOUT);
         File archive = DeploymentUtils.getArchive("servlet.war");
         
         final ProcessingUnit pu = super.deploy(
@@ -34,17 +59,21 @@ public class DedicatedStatelessEagerScaleOutXenTest extends AbstractXenGSMTest {
 						new DiscoveredMachineProvisioningConfigurer()
 						.reservedMemoryCapacityPerMachine(128, MemoryUnit.MEGABYTES)
 						.create())
-				.scale(new EagerScaleConfig())
+				.scale(new EagerScaleConfigurer().atMostOneContainerPerMachine().create())
         );
         
         pu.waitFor(getNumberOfMachines());
         Assert.assertEquals(2,getNumberOfMachinesWithContainers());
         
-        startNewVM(OPERATION_TIMEOUT,TimeUnit.MILLISECONDS);
+        startNewByonMachine(getElasticMachineProvisioningCloudifyAdapter(), OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
+        repetitiveAssertNumberOfGSAsAdded(3, OPERATION_TIMEOUT);
+        
         pu.waitFor(getNumberOfMachines());
         Assert.assertEquals(3,getNumberOfMachinesWithContainers());
         
-        startNewVM(OPERATION_TIMEOUT,TimeUnit.MILLISECONDS);
+        startNewByonMachine(getElasticMachineProvisioningCloudifyAdapter(), OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
+        repetitiveAssertNumberOfGSAsAdded(4, OPERATION_TIMEOUT);
+        
         pu.waitFor(getNumberOfMachines());
         Assert.assertEquals(4,getNumberOfMachinesWithContainers());
         

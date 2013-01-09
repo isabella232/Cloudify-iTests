@@ -83,21 +83,6 @@
 			<type>pom</type>
 		</dependency>
 		<dependency>
-			<groupId>org.jclouds</groupId>
-			<artifactId>jclouds-allcompute</artifactId>
-			<version>1.5.3</version>
-		</dependency>
-        <dependency>
-            <groupId>org.jclouds</groupId>
-            <artifactId>jclouds-blobstore</artifactId>
-            <version>1.5.3</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jclouds.provider</groupId>
-            <artifactId>aws-s3</artifactId>
-            <version>1.5.3</version>
-        </dependency>
-		<dependency>
 			<groupId>org.testng</groupId>
 			<artifactId>testng</artifactId>
 			<version>6.8</version>

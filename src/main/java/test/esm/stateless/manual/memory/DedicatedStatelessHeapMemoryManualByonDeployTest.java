@@ -22,7 +22,7 @@ import framework.utils.DeploymentUtils;
  * 
  * @author itaif
  */
-public class DedicatedStatelessHeapMemoryManualXenDeployTest extends
+public class DedicatedStatelessHeapMemoryManualByonDeployTest extends
 		AbstractFromXenToByonGSMTest {
 	
 	@BeforeMethod

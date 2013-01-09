@@ -15,7 +15,7 @@ import org.testng.annotations.Test;
 import test.esm.AbstractFromXenToByonGSMTest;
 import framework.utils.DeploymentUtils;
 
-public class DedicatedStatelessManualXenDeployTest extends AbstractFromXenToByonGSMTest {
+public class DedicatedStatelessManualByonDeployTest extends AbstractFromXenToByonGSMTest {
 	
 	@BeforeMethod
     public void beforeTest() {

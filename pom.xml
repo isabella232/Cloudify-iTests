@@ -88,6 +88,22 @@
 			<version>6.8</version>
 		</dependency>
 		<dependency>
+			<groupId>org.jclouds</groupId>
+			<artifactId>jclouds-allcompute</artifactId>
+			<version>1.5.3</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jclouds</groupId>
+			<artifactId>jclouds-blobstore</artifactId>
+			<version>1.5.3</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jclouds.provider</groupId>
+			<artifactId>aws-s3</artifactId>
+			<version>1.5.3</version>
+		</dependency>
+
+		<dependency>
 			<groupId>com.sun.jersey.contribs</groupId>
 			<artifactId>jersey-apache-client</artifactId>
 			<version>1.11</version>
@@ -261,7 +277,7 @@
 						</property>
 					</properties>
 					<systemProperties>
-                        <sgtest.buildNumber>${sgtest.buildNumber}</sgtest.buildNumber>
+						<sgtest.buildNumber>${sgtest.buildNumber}</sgtest.buildNumber>
 						<sgtest.suiteId>${sgtest.suiteId}</sgtest.suiteId>
 						<sgtest.numOfSuites>${sgtest.numOfSuites}</sgtest.numOfSuites>
 						<selenium.browser>${selenium.browser}</selenium.browser>

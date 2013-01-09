@@ -49,7 +49,7 @@ public class AbstractByonCloudTest extends NewAbstractCloudTest {
 	protected AdminFactory createAdminFactory() {
 		
 		ByonCloudService cloudService = getService();
-		AdminFactory factory = new AdminFactory();
+		AdminFactory factory = super.createAdminFactory();
 		String[] managementHosts;
 		// if the cloud is using web services 
 		if (!cloudService.getBootstrapper().isNoWebServices()){

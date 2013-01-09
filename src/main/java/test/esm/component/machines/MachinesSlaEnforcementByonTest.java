@@ -12,7 +12,6 @@ import org.openspaces.admin.gsa.GridServiceAgent;
 import org.openspaces.admin.gsa.GridServiceContainerOptions;
 import org.openspaces.admin.gsc.GridServiceContainer;
 import org.openspaces.admin.internal.admin.InternalAdmin;
-import org.openspaces.admin.machine.Machine;
 import org.openspaces.admin.space.SpaceDeployment;
 import org.openspaces.grid.gsm.machines.CapacityMachinesSlaPolicy;
 import org.openspaces.grid.gsm.machines.MachinesSlaEnforcement;
@@ -420,14 +419,4 @@ public class MachinesSlaEnforcementByonTest extends AbstractMachinesSlaEnforceme
 		repetitiveAssertNumberOfGSAsRemoved(2, OPERATION_TIMEOUT);
 	}
 	
-	private void stopMachines() throws Exception {
-		GridServiceAgent[] gsas = admin.getGridServiceAgents().getAgents();
-        Machine managerMachine = admin.getGridServiceManagers().getManagers()[0].getMachine();
-        for (int i = 0; i < gsas.length; i++) {
-            Machine curMachine = gsas[i].getMachine();
-            if (!curMachine.equals(managerMachine)) {
-                stopByonMachine(getElasticMachineProvisioningCloudifyAdapter(), gsas[i], OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
-            }
-        }
-	}
 }

@@ -23,6 +23,7 @@ import java.util.concurrent.TimeoutException;
 
 import org.openspaces.admin.Admin;
 import org.openspaces.admin.AdminFactory;
+import org.openspaces.admin.internal.InternalAdminFactory;
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.openspaces.admin.pu.ProcessingUnitInstance;
 
@@ -74,7 +75,7 @@ public abstract class AbstractTestSupport {
 	}
 	
 	protected AdminFactory createAdminFactory() {
-		return new AdminFactory();
+		return new InternalAdminFactory();
 	}
 	
 	protected boolean isFilteredAdmin() {

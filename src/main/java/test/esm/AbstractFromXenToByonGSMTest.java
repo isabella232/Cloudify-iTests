@@ -80,6 +80,10 @@ public class AbstractFromXenToByonGSMTest extends AbstractByonCloudTest {
     	return ByonMachinesUtils.startNewByonMachine(elasticMachineProvisioningCloudifyAdapter, duration, timeUnit);
     }
     
+    protected GridServiceAgent startNewByonMachineWithZones (ElasticMachineProvisioningCloudifyAdapter elasticMachineProvisioningCloudifyAdapter,String[] zoneList, long duration,TimeUnit timeUnit) throws Exception {
+    	return ByonMachinesUtils.startNewByonMachineWithZones(elasticMachineProvisioningCloudifyAdapter,zoneList, duration, timeUnit);
+    }
+    
     protected GridServiceAgent[] startNewByonMachines(
 			final ElasticMachineProvisioningCloudifyAdapter elasticMachineProvisioningCloudifyAdapter,
 			int numOfMachines, final long duration,final TimeUnit timeUnit) {

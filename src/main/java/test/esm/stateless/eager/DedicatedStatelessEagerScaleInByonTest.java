@@ -23,7 +23,7 @@ import framework.utils.AssertUtils.RepetitiveConditionProvider;
 import framework.utils.DeploymentUtils;
 import framework.utils.LogUtils;
 
-public class DedicatedStatelessEagerScaleInXenTest extends AbstractFromXenToByonGSMTest {
+public class DedicatedStatelessEagerScaleInByonTest extends AbstractFromXenToByonGSMTest {
 	
 	@BeforeMethod
     public void beforeTest() {

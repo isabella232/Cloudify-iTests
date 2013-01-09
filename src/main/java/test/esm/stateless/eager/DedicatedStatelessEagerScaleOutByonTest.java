@@ -20,7 +20,7 @@ import org.testng.annotations.Test;
 import test.esm.AbstractFromXenToByonGSMTest;
 import framework.utils.DeploymentUtils;
 
-public class DedicatedStatelessEagerScaleOutXenTest extends AbstractFromXenToByonGSMTest {
+public class DedicatedStatelessEagerScaleOutByonTest extends AbstractFromXenToByonGSMTest {
 	
 	@BeforeMethod
     public void beforeTest() {

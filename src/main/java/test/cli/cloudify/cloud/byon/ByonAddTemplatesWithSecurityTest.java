@@ -35,7 +35,7 @@ public class ByonAddTemplatesWithSecurityTest extends AbstractByonAddRemoveTempl
 	@Override
 	@AfterClass(alwaysRun = true)
 	protected void teardown() throws Exception {
-		//super.teardown();
+		super.teardown();
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true, priority=5)
@@ -106,9 +106,10 @@ public class ByonAddTemplatesWithSecurityTest extends AbstractByonAddRemoveTempl
 		verifyRemoveTemplate(SecurityConstants.USER_PWD_NO_ROLE, SecurityConstants.USER_PWD_NO_ROLE, SecurityConstants.NO_ROLE_DESCRIPTIN, templateName, true);
 		verifyRemoveTemplate(SecurityConstants.USER_PWD_CLOUD_ADMIN, SecurityConstants.USER_PWD_CLOUD_ADMIN, SecurityConstants.CLOUD_ADMIN_DESCRIPTIN, templateName, false);
 		
-		addedTemplate = templatesHandler.addTemplate();
+		TemplatesBatchHandler templatesHandler2 = new TemplatesBatchHandler();
+		addedTemplate = templatesHandler2.addTemplate();
 		templateName = addedTemplate.getTemplateName();
-		bootstrapper.addTemplate(templatesHandler.getTemplatesFolder().getAbsolutePath(), false);
+		bootstrapper.addTemplate(templatesHandler2.getTemplatesFolder().getAbsolutePath(), false);
 		
 		verifyRemoveTemplate(SecurityConstants.USER_PWD_CLOUD_ADMIN_AND_APP_MANAGER, SecurityConstants.USER_PWD_CLOUD_ADMIN_AND_APP_MANAGER, SecurityConstants.CLOUD_ADMIN_AND_APP_MANAGER_DESCRIPTION, templateName, false);
 	}

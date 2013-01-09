@@ -35,7 +35,10 @@ import com.gigaspaces.security.directory.UserDetails;
 public class AdminUtils {
 	
 	private static final int TIMEOUT = 15 * 60; //default - 15 minutes
-		
+	private static final String DEPLOY_DIR_PROP = "com.gs.deploy";
+	private static final String WORK_DIR_PROP = "com.gs.work";
+	private static final long START_GRID_COMPONENT_TIMEOUT_MILLISECONDS = TimeUnit.MINUTES.toMillis(5);
+	
 	/**
 	 * @return lookup group environment variable value or null if undefined.
 	 */
@@ -188,6 +191,52 @@ public class AdminUtils {
         return loadGSCWithSystemProperty(gsa, systemProperties);
 	}
 	
+	public static String getDeployDirEnvironmentVariable() {
+		String deployDirProperty = System.getProperty(DEPLOY_DIR_PROP);
+        return deployDirProperty;
+	}
+	
+	public static String getWorkDirEnvironmentVariable() {
+		String workDirProperty = System.getProperty(WORK_DIR_PROP);
+        return workDirProperty;
+	}
+	
+	/** loads 1 GSC via this GSA, tagged with the list of comma separated system properties */
+	public static GridServiceContainer loadGSCWithSystemProperty(GridServiceAgent gsa, boolean override, String ... systemProperties) {
+        GridServiceContainerOptions options = new GridServiceContainerOptions();
+        for(String prop : systemProperties){
+            options = options.vmInputArgument(prop);    
+        }
+        if (override) {
+        	if(getDeployDirEnvironmentVariable() != null)
+    			options.vmInputArgument("-Dcom.gs.deploy=" + getDeployDirEnvironmentVariable());
+    		if(getWorkDirEnvironmentVariable() != null)
+    			options.vmInputArgument("-Dcom.gs.work=" +getWorkDirEnvironmentVariable());
+        	options.overrideVmInputArguments();
+        }
+		return startGridServiceAgentAndWait(gsa, options);
+	}
+	
+	private static GridServiceContainer startGridServiceAgentAndWait(GridServiceAgent gsa,
+			GridServiceContainerOptions options) {
+		LogUtils.log("Starting GSC ");
+		GridServiceContainer container = gsa.startGridServiceAndWait(options);
+		
+		//added validation to detect sporadic NPE
+		if (container.getVirtualMachine() == null) {
+			throw new IllegalStateException("container.getVirtualMachine() is null");
+		}
+		if (container.getVirtualMachine().getDetails() == null) {
+			throw new IllegalStateException("container.getVirtualMachine().getDetails() is null");
+		}
+		if (container.getMachine() == null) {
+			throw new IllegalStateException("container.getMachine() us null");
+		}
+		LogUtils.log("GSC [" + container.getVirtualMachine().getDetails().getPid()+"] started on "+ container.getMachine().getHostAddress());
+		return container;
+		
+	}
+	
 	/** loads 1 GSC via this GSA, tagged with the list of comma separated system properties */
 	public static GridServiceContainer loadGSCWithSystemProperty(GridServiceAgent gsa, String ... systemProperties) {
         GridServiceContainerOptions options = new GridServiceContainerOptions();
@@ -197,7 +246,37 @@ public class AdminUtils {
         options.overrideVmInputArguments();
 		return gsa.startGridServiceAndWait(options);
 	}
-
+	
+	/** loads n GSCs simultaneously and returns them */
+	public static GridServiceContainer[] loadGSCsWithSystemProperty(final GridServiceAgent gsa, final boolean override, int nGSCs, final String ... systemProperties) {
+	
+		ExecutorService threadPool = Executors.newFixedThreadPool(nGSCs);
+		Future<GridServiceContainer>[] futures = new Future[nGSCs];
+		for (int i=0; i<nGSCs; ++i) {
+			futures[i] = threadPool.submit(new Callable<GridServiceContainer>() {
+				public GridServiceContainer call() throws Exception {
+					return loadGSCWithSystemProperty(gsa, override, systemProperties);
+				}
+			});
+		}
+		
+		GridServiceContainer[] gscs = new GridServiceContainer[nGSCs]; 
+		for (int i=0; i<nGSCs; ++i) {
+			try {
+				gscs[i] = futures[i].get();
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+		}
+		
+		threadPool.shutdown();
+		try {
+			threadPool.awaitTermination(START_GRID_COMPONENT_TIMEOUT_MILLISECONDS, TimeUnit.MILLISECONDS);
+		} catch (InterruptedException e) {
+			throw new RuntimeException(e);
+		}
+		return gscs;
+	}
 	
 	/** loads 1 GSM on this machine */
 	public static GridServiceManager loadGSM(Machine machine) {

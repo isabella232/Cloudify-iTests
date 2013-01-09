@@ -36,7 +36,11 @@ public class CommandTestUtils {
 	 */
 	public static ProcessResult runCloudifyCommandAndWait(final String cloudifyCommand) throws IOException, InterruptedException {
 		final Process process = startProcess(getCloudifyCommand(cloudifyCommand));
-	    return handleCliOutput(process);
+	    ProcessResult handleCliOutput = handleCliOutput(process);
+	    if (handleCliOutput.getExitcode() != 0) {
+	    	AssertUtils.assertFail("In RunCommand: Process did not complete successfully. " + handleCliOutput);
+	    }
+		return handleCliOutput;
 	}
 
 

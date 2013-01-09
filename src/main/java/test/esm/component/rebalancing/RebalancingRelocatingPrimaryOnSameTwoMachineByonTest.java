@@ -12,7 +12,7 @@ import org.testng.annotations.Test;
 
 import com.gigaspaces.cluster.activeelection.SpaceMode;
 
-public class RebalancingRelocatingPrimaryOnSameTwoMachineXenTest extends AbstractRebalancingSlaEnforcementXenTest{
+public class RebalancingRelocatingPrimaryOnSameTwoMachineByonTest extends AbstractRebalancingSlaEnforcementByonTest{
 	/**
      *  Before Rebalancing:     
      *  Machine1: GSC1{ P1,P2,P3,P4 } , GSC2{ B5,B6 }  , GSC3{ B7,B8 }

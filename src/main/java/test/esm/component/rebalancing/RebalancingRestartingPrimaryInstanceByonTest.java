@@ -14,7 +14,7 @@ import com.gigaspaces.cluster.activeelection.SpaceMode;
 
 import framework.utils.AdminUtils;
 
-public class RebalancingRestartingPrimaryInstanceXenTest extends AbstractRebalancingSlaEnforcementXenTest {
+public class RebalancingRestartingPrimaryInstanceByonTest extends AbstractRebalancingSlaEnforcementByonTest {
 
     /**
      *  Before restarting Primary:     

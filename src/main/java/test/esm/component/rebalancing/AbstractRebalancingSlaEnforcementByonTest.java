@@ -13,7 +13,7 @@ import org.testng.annotations.BeforeMethod;
 import test.esm.AbstractFromXenToByonGSMTest;
 import framework.utils.AdminUtils;
 
-public class AbstractRebalancingSlaEnforcementXenTest extends AbstractFromXenToByonGSMTest {
+public class AbstractRebalancingSlaEnforcementByonTest extends AbstractFromXenToByonGSMTest {
 
     protected static final int NUMBER_OF_OBJECTS = 100;
     protected final static String ZONE = "testzone";

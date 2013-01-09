@@ -1,16 +1,14 @@
-package test.gsm.component.rebalancing.xen;
+package test.esm.component.rebalancing;
 
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import org.openspaces.admin.gsa.GridServiceAgent;
 import org.openspaces.admin.gsc.GridServiceContainer;
+import org.openspaces.admin.gsm.GridServiceManager;
 import org.openspaces.admin.machine.Machine;
 import org.openspaces.admin.pu.ProcessingUnit;
-import org.openspaces.cloud.xenserver.XenServerMachineProvisioningConfig;
 import org.testng.annotations.Test;
-
-import test.gsm.component.rebalancing.RebalancingTestUtils;
 
 import com.gigaspaces.cluster.activeelection.SpaceMode;
 
@@ -31,9 +29,14 @@ public class RebalancingByRelocatingBackupThenPrimaryForwardLookingXenTest exten
     @Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "3")
     public void rebalancingTest() throws InterruptedException, TimeoutException {
         
-    	XenServerMachineProvisioningConfig twoCoreMachineConfig = super.cloneMachineProvisioningConfig();
-    	twoCoreMachineConfig.setNumberOfCpuCores(2);
-    	GridServiceAgent[] agents = startNewVMs(new XenServerMachineProvisioningConfig[]{twoCoreMachineConfig,twoCoreMachineConfig,twoCoreMachineConfig}, OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
+    	/*XenServerMachineProvisioningConfig twoCoreMachineConfig = super.cloneMachineProvisioningConfig();
+    	twoCoreMachineConfig.setNumberOfCpuCores(2);*/
+    	repetitiveAssertNumberOfGSAsAdded(1, OPERATION_TIMEOUT);
+    	repetitiveAssertNumberOfGSCsAdded(0, OPERATION_TIMEOUT);
+    	
+    	GridServiceManager gridServiceManager = admin.getGridServiceManagers().getManagers()[0];
+    	
+    	GridServiceAgent[] agents = startNewByonMachines(getElasticMachineProvisioningCloudifyAdapter(), 3, OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
     	
         Machine[] machines = new Machine[] { 
                 agents[0].getMachine(), 
@@ -45,7 +48,7 @@ public class RebalancingByRelocatingBackupThenPrimaryForwardLookingXenTest exten
         GridServiceContainer[] machine2Containers = loadGSCs(agents[1], 6);
         GridServiceContainer[] machine3Containers = loadGSCs(agents[2], 5);
         
-        ProcessingUnit pu = RebalancingTestUtils.deployProcessingUnitOnTwoMachines(super.getGridServiceManager(), ZONE, 8,1);
+        ProcessingUnit pu = RebalancingTestUtils.deployProcessingUnitOnTwoMachines(gridServiceManager, ZONE, 8,1);
         
         RebalancingTestUtils.relocatePU(pu, 1, SpaceMode.PRIMARY, machine1Containers[0]);
         RebalancingTestUtils.relocatePU(pu, 4, SpaceMode.PRIMARY, machine1Containers[0]);

@@ -1,4 +1,4 @@
-package test.gsm.component.rebalancing;
+package test.esm.component.rebalancing;
 
 import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.assertTrue;
@@ -35,10 +35,11 @@ import org.openspaces.grid.gsm.rebalancing.RebalancingUtils;
 import org.testng.Assert;
 
 import test.data.Person;
-import test.gsm.GsmTestUtils;
-import test.gsm.component.SlaEnforcementTestUtils;
+import test.esm.component.SlaEnforcementTestUtils;
 
 import com.gigaspaces.cluster.activeelection.SpaceMode;
+
+import framework.utils.GsmTestUtils;
 
 public class RebalancingTestUtils {
 

@@ -1,4 +1,4 @@
-package test.gsm.stateless.manual.memory.xen;
+package test.esm.stateless.manual.memory;
 
 import java.io.File;
 
@@ -7,11 +7,14 @@ import org.openspaces.admin.pu.elastic.ElasticStatelessProcessingUnitDeployment;
 import org.openspaces.admin.pu.elastic.config.ManualCapacityScaleConfigurer;
 import org.openspaces.admin.vm.VirtualMachineDetails;
 import org.openspaces.core.util.MemoryUnit;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import test.esm.AbstractFromXenToByonGSMTest;
 import framework.utils.DeploymentUtils;
-
-import test.gsm.AbstractXenGSMTest;
 
 /**
  * Allocate more memory than java heap size used by container.
@@ -20,15 +23,37 @@ import test.gsm.AbstractXenGSMTest;
  * @author itaif
  */
 public class DedicatedStatelessHeapMemoryManualXenDeployTest extends
-		AbstractXenGSMTest {
-
+		AbstractFromXenToByonGSMTest {
+	
+	@BeforeMethod
+    public void beforeTest() {
+		super.beforeTestInit();
+	}
+	
+	@BeforeClass
+	protected void bootstrap() throws Exception {
+		super.bootstrapBeforeClass();
+	}
+	
+	@AfterMethod
+    public void afterTest() {
+		super.afterTest();
+	}
+	
+	@AfterClass(alwaysRun = true)
+	protected void teardownAfterClass() throws Exception {
+		super.teardownAfterClass();
+	}
+	
 	private static final int XMS = 128;
 	private static final int XMX = 256;
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT)
 	public void test() {
 		File archive = DeploymentUtils.getArchive("servlet.war");
-
+		// make sure no gscs yet created
+	    repetitiveAssertNumberOfGSCsAdded(0, OPERATION_TIMEOUT);
+	    repetitiveAssertNumberOfGSAsAdded(1, OPERATION_TIMEOUT);	    
 		final ProcessingUnit pu = super
 				.deploy(new ElasticStatelessProcessingUnitDeployment(archive)
 						.memoryCapacityPerContainer(1, MemoryUnit.GIGABYTES)

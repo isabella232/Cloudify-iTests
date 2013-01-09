@@ -9,6 +9,7 @@ import org.cloudifysource.esc.driver.provisioning.ElasticMachineProvisioningClou
 import org.openspaces.admin.gsa.GridServiceAgent;
 import org.openspaces.admin.gsa.events.ElasticGridServiceAgentProvisioningProgressChangedEvent;
 import org.openspaces.admin.gsa.events.ElasticGridServiceAgentProvisioningProgressChangedEventListener;
+import org.openspaces.admin.machine.Machine;
 import org.openspaces.admin.machine.events.ElasticMachineProvisioningProgressChangedEvent;
 import org.openspaces.admin.machine.events.ElasticMachineProvisioningProgressChangedEventListener;
 import org.openspaces.admin.pu.ProcessingUnit;
@@ -134,6 +135,27 @@ public class AbstractFromXenToByonGSMTest extends AbstractByonCloudTest {
         repetitiveAssertNumberOfMachineEvents(MachineStopRequestedEvent.class, 0, OPERATION_TIMEOUT);
         repetitiveAssertNumberOfMachineEvents(MachineStoppedEvent.class, 0, OPERATION_TIMEOUT);
 	}
+    
+    //assuming first machine is management
+    public double getFirstManagementMachinePhysicalMemoryInMB() {
+    	Machine managementMachine = admin.getMachines().getMachines()[0];
+    	return managementMachine.getOperatingSystem().getDetails().getTotalPhysicalMemorySizeInMB();
+    }
+    
+    /**
+     * Stops all machines except management machines , admin is necessary to apply this method.
+     * @throws Exception
+     */
+    public void stopMachines() throws Exception {
+		GridServiceAgent[] gsas = admin.getGridServiceAgents().getAgents();
+        Machine managerMachine = admin.getGridServiceManagers().getManagers()[0].getMachine();
+        for (int i = 0; i < gsas.length; i++) {
+            Machine curMachine = gsas[i].getMachine();
+            if (!curMachine.equals(managerMachine)) {
+                stopByonMachine(getElasticMachineProvisioningCloudifyAdapter(), gsas[i], OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
+            }
+        }
+	}
 	
     public void afterTest() {
     	if (gscCounter != null) {
@@ -177,7 +199,7 @@ public class AbstractFromXenToByonGSMTest extends AbstractByonCloudTest {
 	protected DiscoveredMachineProvisioningConfig getDiscoveredMachineProvisioningConfig() {
 		DiscoveredMachineProvisioningConfig config = new DiscoveredMachineProvisioningConfig();
 		config.setReservedMemoryCapacityPerMachineInMB(RESERVED_MEMORY_PER_MACHINE_MEGABYTES_DISCOVERED);
-		config.setReservedMemoryCapacityPerManagementMachineInMB(RESERVED_MEMORY_PER_MACHINE_MEGABYTES_DISCOVERED);
+		//config.setReservedMemoryCapacityPerManagementMachineInMB(RESERVED_MEMORY_PER_MACHINE_MEGABYTES_DISCOVERED);
 		return config;
 	}
 	

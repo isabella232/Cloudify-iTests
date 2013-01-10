@@ -221,9 +221,9 @@ public class WikiReporter {
             System.out.println("Uploading page: " + page);
             try {
                 wikiClient.uploadPage(page);
-            } catch (WikiConnectionException wce) {
-                System.err.println("Caught exception while uploading page: " + page + " - " + wce
-                        + "\n" + WikiUtils.getStackTrace(wce));
+            } catch (Exception e) {
+                System.err.println("Caught exception while uploading page: " + page + " - " + e
+                        + "\n" + WikiUtils.getStackTrace(e));
             }
         }
     }

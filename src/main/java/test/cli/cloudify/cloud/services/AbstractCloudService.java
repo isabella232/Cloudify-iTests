@@ -184,8 +184,10 @@ public abstract class AbstractCloudService implements CloudService {
 					LogUtils.log("Failed to create dump for this url - " + url, e);
 				}
 				
-				// this is to connect to the cloud before tearing down.
-				bootstrapper.setRestUrl(restUrls[0]);
+				if (bootstrapper.isForce()) {
+					// this is to connect to the cloud before tearing down.
+					bootstrapper.setRestUrl(restUrls[0]);
+				}
 				bootstrapper.teardown();
 			}
 		} 
@@ -232,8 +234,11 @@ public abstract class AbstractCloudService implements CloudService {
 			bootstrapper.bootstrap();
 		} 
 		else {			
-			String output = bootstrapper.bootstrap().getOutput();	
-			restAdminUrls = extractRestAdminUrls(output, numberOfManagementMachines);
+			String output = bootstrapper.bootstrap().getOutput();
+			if (bootstrapper.isBootstrapExpectedToFail()) {
+				return;
+			}
+			this.restAdminUrls = extractRestAdminUrls(output, numberOfManagementMachines);
 			this.webUIUrls = extractWebuiUrls(output, numberOfManagementMachines);
 			assertBootstrapServicesAreAvailable();
 			

@@ -1,7 +1,6 @@
 package test.rest;
 
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 import junit.framework.Assert;
 import junit.framework.AssertionFailedError;
@@ -20,7 +19,7 @@ public class RestDependencyOnManagementSpaceTest extends AbstractLocalCloudTest{
 	
 	@Override
 	@BeforeMethod
-	public void beforeTest() throws TimeoutException, InterruptedException {	
+	public void beforeTest() throws Exception {	
 		super.beforeTest();
 		gsm = admin.getGridServiceManagers().waitForAtLeastOne(1, TimeUnit.MINUTES);
 		gsm.undeploy("cloudifyManagementSpace");

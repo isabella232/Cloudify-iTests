@@ -1,7 +1,6 @@
 package test.rest;
 
 import java.io.IOException;
-import java.util.concurrent.TimeoutException;
 
 import junit.framework.Assert;
 
@@ -12,10 +11,9 @@ import org.openspaces.admin.space.SpaceDeployment;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import test.AbstractTest;
 import framework.utils.AdminUtils;
 import framework.utils.DeploymentUtils;
-
-import test.AbstractTest;
 
 
 public class AdminAPIControllerConsistencyTest extends AbstractTest {
@@ -26,7 +24,7 @@ public class AdminAPIControllerConsistencyTest extends AbstractTest {
 	GridServiceManager gsm;
 	@Override
 	@BeforeMethod
-	public void beforeTest() throws TimeoutException, InterruptedException {
+	public void beforeTest() throws Exception {
 		super.beforeTest();
 		AdminUtils.loadGSM(admin.getGridServiceAgents().waitForAtLeastOne());
 		AdminUtils.loadGSC(admin.getGridServiceAgents().waitForAtLeastOne());

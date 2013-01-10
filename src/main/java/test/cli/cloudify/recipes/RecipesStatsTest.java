@@ -7,7 +7,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 import org.cloudifysource.dsl.Service;
 import org.cloudifysource.dsl.internal.ServiceReader;
@@ -40,7 +39,7 @@ public class RecipesStatsTest extends AbstractLocalCloudTest {
 
 	@Override
 	@BeforeMethod
-	public void beforeTest() throws TimeoutException, InterruptedException {
+	public void beforeTest() throws Exception {
 		portReleasedBeforTimeout = false;
 		portTakenBeforTimeout = false;
 		super.beforeTest();

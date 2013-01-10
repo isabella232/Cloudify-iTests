@@ -3,7 +3,6 @@ package test.cli.cloudify.recipes;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.concurrent.TimeoutException;
 
 import org.cloudifysource.dsl.Service;
 import org.cloudifysource.dsl.internal.DSLException;
@@ -25,7 +24,7 @@ public class RecipeTest extends AbstractLocalCloudTest {
 
 	@Override
 	@BeforeMethod
-	public void beforeTest() throws TimeoutException, InterruptedException {
+	public void beforeTest() throws Exception {
 		super.beforeTest();
 		portReleasedBeforTimeout = false;
 		portTakenBeforTimeout = false;
@@ -88,7 +87,7 @@ public class RecipeTest extends AbstractLocalCloudTest {
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, groups = "1", enabled = true)
-	public void installTomcat() throws IOException, InterruptedException, TimeoutException{
+	public void installTomcat() throws Exception{
 		super.beforeTest();
 		String tomcatDirPath = recipesDirPath + "/tomcat";
 		runCommand("connect " + restUrl + ";install-service --verbose " + tomcatDirPath);
@@ -104,7 +103,7 @@ public class RecipeTest extends AbstractLocalCloudTest {
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, groups = "1", enabled = false)
-	public void installJboss() throws IOException, InterruptedException, TimeoutException{
+	public void installJboss() throws Exception{
 		super.beforeTest();
 		String jbossDirPath = recipesDirPath + "/jboss";
 		runCommand("connect " + restUrl +  ";install-service --verbose " + jbossDirPath);

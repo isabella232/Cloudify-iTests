@@ -6,6 +6,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.InetAddress;
+import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -14,7 +16,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.http.HttpEntity;
@@ -64,6 +65,7 @@ import framework.utils.ScriptUtils;
 import framework.utils.ServiceInstaller;
 import framework.utils.SetupUtils;
 import framework.utils.TeardownUtils;
+import framework.utils.WebUtils;
 
 public class AbstractLocalCloudTest extends AbstractTest {
 
@@ -132,7 +134,7 @@ public class AbstractLocalCloudTest extends AbstractTest {
 
 	@Override
 	@BeforeMethod
-	public void beforeTest() throws TimeoutException, InterruptedException {
+	public void beforeTest() throws Exception {
 
 		LogUtils.log("Test Configuration Started: " + this.getClass());
 
@@ -231,24 +233,18 @@ public class AbstractLocalCloudTest extends AbstractTest {
 		return false;
 	}
 
-	protected boolean isRequiresBootstrap() {
+	protected boolean isRequiresBootstrap() throws Exception {
 		boolean requiredBootstrap = true;
 		try {
-			final ProcessResult connectResult = CommandTestUtils
-					.runCloudifyCommandAndWait(connectCommand());
+						
 			final boolean leakedProcessesFound = killLeakedProcesses();
-			final boolean restPortResponding;
+			boolean restPortResponding = false;
 			
-			if(isSecured){
-				restPortResponding = PortConnectionUtils.isPortOpen("localhost", securedRestPort);
-			}
-			else{
+			final URL restUrl = new URL("http://" + InetAddress.getLocalHost().getHostAddress() + ":" + CloudifyConstants.DEFAULT_REST_PORT);
+			if (WebUtils.isURLAvailable(restUrl)) {
 				restPortResponding = PortConnectionUtils.isPortOpen("localhost", restPort);
 			}
-			
-			if (connectResult.getExitcode() != 0) {
-				LogUtils.log("connect " + getLocalHostIpAddress() + " failed");
-			}
+
 			if (leakedProcessesFound) {
 				LogUtils.log("Leaked process found");
 			}
@@ -256,8 +252,7 @@ public class AbstractLocalCloudTest extends AbstractTest {
 				LogUtils.log("Rest port is not responding");
 			}
 
-			requiredBootstrap = !restPortResponding || leakedProcessesFound
-					|| connectResult.getExitcode() != 0;
+			requiredBootstrap = !restPortResponding || leakedProcessesFound;
 
 		} catch (final UnknownHostException e) {
 			Assert.fail("Failed to check if requires bootstrap", e);

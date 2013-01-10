@@ -2,7 +2,6 @@ package test.cli.cloudify.recipes.attributes;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 import org.cloudifysource.dsl.utils.ServiceUtils;
 import org.openspaces.admin.pu.ProcessingUnit;
@@ -23,7 +22,7 @@ public class AttributesTest extends AbstractLocalCloudTest {
 
 	@BeforeMethod
 	@Override
-	public void beforeTest() throws TimeoutException, InterruptedException {
+	public void beforeTest() throws Exception {
         super.beforeTest();
 		gigaspace = admin.getSpaces().waitFor("cloudifyManagementSpace", 20, TimeUnit.SECONDS).getGigaSpace();
 	}

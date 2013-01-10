@@ -3,7 +3,6 @@ package framework.utils.xen;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.openspaces.admin.Admin;
@@ -17,11 +16,10 @@ import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 
+import test.AbstractTest;
 import framework.utils.AdminUtils;
 import framework.utils.GridServiceAgentsCounter;
 import framework.utils.GridServiceContainersCounter;
-
-import test.AbstractTest;
 
 
 /**
@@ -45,9 +43,8 @@ public class AbstractGsmTest extends AbstractTest {
     
     @Override 
     @BeforeMethod
-    public void beforeTest() throws TimeoutException, InterruptedException {
+    public void beforeTest() throws Exception {
     	super.beforeTest();
-    	    	
     	LookupService[] lookupServices =  restartLus(); // workaround for admin.close() container discovery leakage from previous test
     	gsa = lookupServices[0].getGridServiceAgent();
     	assertEquals("All containers must be terminated before test starts",false,admin.getGridServiceContainers().waitFor(5,1,TimeUnit.SECONDS));

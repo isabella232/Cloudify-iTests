@@ -12,7 +12,6 @@ import java.net.URLConnection;
 import java.net.UnknownHostException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 import org.apache.http.HttpStatus;
 import org.cloudifysource.dsl.internal.packaging.PackagingException;
@@ -28,7 +27,6 @@ import org.openspaces.pu.service.CustomServiceMonitors;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
@@ -36,10 +34,10 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import framework.tools.SGTestHelper;
 import framework.utils.AssertUtils;
 import framework.utils.AssertUtils.RepetitiveConditionProvider;
-import framework.utils.usm.USMTestUtils;
 import framework.utils.LogUtils;
 import framework.utils.ProcessingUnitUtils;
 import framework.utils.ScriptUtils;
+import framework.utils.usm.USMTestUtils;
 import groovy.util.ConfigObject;
 import groovy.util.ConfigSlurper;
 
@@ -64,7 +62,7 @@ public class RepetitiveActualServiceFailoverTest extends AbstractLocalCloudTest 
 	
 	@Override
 	@BeforeMethod
-	public void beforeTest() throws TimeoutException, InterruptedException {
+	public void beforeTest() throws Exception {
 		super.beforeTest();	
 		client = new WebClient(BrowserVersion.getDefault());
 	}

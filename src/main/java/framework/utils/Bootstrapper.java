@@ -27,6 +27,15 @@ public abstract class Bootstrapper {
 		this.verbose = verbose;
 		return this;
 	}
+	
+	public boolean isVerbose() {
+		return verbose;
+	}
+	
+	public boolean isForce() {
+		return force;
+	}
+	
 	public boolean isTeardownExpectedToFail() {
 		return teardownExpectedToFail;
 	}

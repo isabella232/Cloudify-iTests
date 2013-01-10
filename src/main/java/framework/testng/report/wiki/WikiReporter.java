@@ -73,9 +73,9 @@ public class WikiReporter {
      * args[4] - minorVersion
      */
     public static void main(String[] args) {
-		
+
     	String fileName = "sgtest-results.xml";
-    	
+
     	for(String s : args){
     		System.out.println("%%%%%%%%%%%%%%%%%%% "+ s);
     	}
@@ -87,7 +87,7 @@ public class WikiReporter {
     	String majorVersion = args[3];
     	String minorVersion = args[4];
         String buildLogUrl = args[5];
-    	
+
     	Properties extProperties = new Properties();
     	extProperties.put("fileName", fileName);
     	extProperties.put("inputDirectory", inputDirectory);
@@ -96,8 +96,8 @@ public class WikiReporter {
     	extProperties.put("majorVersion", majorVersion);
     	extProperties.put("minorVersion", minorVersion);
         extProperties.put("buildLogUrl", buildLogUrl);
-    	
-    	
+
+
     	TestsReportFileStream fileStream = new TestsReportFileStream();
     	TestsReport testsReport = fileStream.readFromFile(inputDirectory, fileName);
     	WikiReporter wikiReporter = new WikiReporter(extProperties, testsReport);
@@ -120,9 +120,8 @@ public class WikiReporter {
             String wikiReportPage = createReportPage();
 
             /* upload to wiki-server, NOTE: the order of upload should be unmodified */
-//            wikiPages.add(0, new WikiPage(wikiProperties.getWikiSpace(), null /* parent page */, summaryPageTitle, wikiSummaryPage));
-//            wikiPages.add(1, new WikiPage(wikiProperties.getWikiSpace(), summaryPageTitle, buildPageTitle, wikiReportPage));
-            wikiPages.add(0, new WikiPage(wikiProperties.getWikiSpace(), null, buildPageTitle, wikiReportPage));
+            wikiPages.add(0, new WikiPage(wikiProperties.getWikiSpace(), null /* parent page */, summaryPageTitle, wikiSummaryPage));
+            wikiPages.add(1, new WikiPage(wikiProperties.getWikiSpace(), summaryPageTitle, buildPageTitle, wikiReportPage));
 
             backupWikiPagesToFile();
             uploadWikiPages();
@@ -136,6 +135,15 @@ public class WikiReporter {
         	throw new RuntimeException("Failed to generate report - " + e, e);
         }
     }
+
+//    public static void main(String[] args) throws WikiConnectionException {
+//        String s = "sssssssssssssssssssssssssssssss";
+//        WikiPage page = new WikiPage("QA", null, "CLOUDIFY_SECURITY_kobi build_3985-63 - Regression report", s);
+//        WikiClient wikiClient = WikiClient.login("http://www.openspaces.org", "tgrid", "T@rid456");
+//        wikiClient.removePage(page);
+//        wikiClient.uploadPage(page);
+//        System.out.println("done");
+//    }
     
     /**
      * Create a summary page which contains all main data of all regressions.
@@ -213,6 +221,13 @@ public class WikiReporter {
         for (WikiPage page : wikiPages) {
             if (mainPage == null)
                 mainPage = page;
+            System.out.println("Removing page: " + page);
+            try {
+                wikiClient.removePage(page);
+            } catch (WikiConnectionException wce) {
+                System.err.println("Caught exception while removing page: " + page + " - " + wce
+                        + "\n" + WikiUtils.getStackTrace(wce));
+            }
             System.out.println("Uploading page: " + page);
             try {
                 wikiClient.uploadPage(page);

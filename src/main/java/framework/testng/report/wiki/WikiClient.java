@@ -72,9 +72,11 @@ public class WikiClient
 	   switch( action )
 	   {
 		  case storePage:
-			  org.swift.confluence_soap.SoapClient.main(command);
+              org.swift.confluence_soap.SoapClient.main(command);
+              break;
           case removePage:
               org.swift.confluence_soap.SoapClient.main(command);
+              break;
 	   }
 		  
 		/* so far nothing return */
@@ -93,11 +95,11 @@ public class WikiClient
 		                 						"--user", userName,
 		                 						"--password", password,
 		                 						"--action", action.toString(),
-		                 						"--title", wikiPage.getTitlePage(), 
+		                 						"--title", wikiPage.getTitlePage(),
 		                 						"--space", wikiPage.getWikiSpace(),
 		                 						"--content", wikiPage.getContext(),
-		                 						"--parent", wikiPage.getParentPage(),
-		                 						"-v" /* debug */
+		                 						"--parent", wikiPage.getParentPage()
+//		                 						,"-v" /* debug */
 		                 						};
 		
 		return wikiCommand;

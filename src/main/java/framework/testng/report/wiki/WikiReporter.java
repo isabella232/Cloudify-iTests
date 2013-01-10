@@ -208,8 +208,15 @@ public class WikiReporter {
     private void uploadWikiPages() {
         WikiPage mainPage = null;
         for (WikiPage page : wikiPages) {
-            if (mainPage == null)
+            if (mainPage == null){
                 mainPage = page;
+                try{
+                    wikiClient.removePage(page);
+                }catch (WikiConnectionException wce){
+                    System.err.println("Caught exception while removing page: " + page + " - " + wce
+                            + "\n" + WikiUtils.getStackTrace(wce));
+                }
+            }
             System.out.println("Uploading page: " + page);
             try {
                 wikiClient.uploadPage(page);

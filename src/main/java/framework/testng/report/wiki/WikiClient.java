@@ -54,8 +54,14 @@ public class WikiClient
   public void uploadPage( WikiPage wikiPage ) 
   	 throws WikiConnectionException
   {
-	 onAction( WikiAction.storePage, wikiPage );  
+	 onAction( WikiAction.storePage, wikiPage );
   }
+
+    public void removePage( WikiPage wikiPage )
+            throws WikiConnectionException
+    {
+        onAction( WikiAction.removePage, wikiPage );
+    }
   
   private Object onAction( WikiAction action, WikiPage wikiPage ) 
   	throws WikiConnectionException
@@ -65,9 +71,10 @@ public class WikiClient
 	 {
 	   switch( action )
 	   {
-		  case storePage:  
-				
-			  org.swift.confluence_soap.SoapClient.main(command);	  
+		  case storePage:
+			  org.swift.confluence_soap.SoapClient.main(command);
+          case removePage:
+              org.swift.confluence_soap.SoapClient.main(command);
 	   }
 		  
 		/* so far nothing return */
@@ -85,12 +92,12 @@ public class WikiClient
 		                 				     {"--server", serverAddress,
 		                 						"--user", userName,
 		                 						"--password", password,
-		                 						"--action", WikiAction.storePage.toString(),
+		                 						"--action", action.toString(),
 		                 						"--title", wikiPage.getTitlePage(), 
 		                 						"--space", wikiPage.getWikiSpace(),
 		                 						"--content", wikiPage.getContext(),
-		                 						"--parent", wikiPage.getParentPage()
-		                 						//,"-v" /* debug */ 
+		                 						"--parent", wikiPage.getParentPage(),
+		                 						"-v" /* debug */
 		                 						};
 		
 		return wikiCommand;

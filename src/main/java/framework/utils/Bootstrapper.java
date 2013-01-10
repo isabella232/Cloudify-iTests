@@ -21,7 +21,12 @@ public abstract class Bootstrapper {
 	private String restUrl;
 	private boolean bootstrapExpectedToFail = false;
 	private boolean teardownExpectedToFail = false;
+	private boolean verbose = true;
 	
+	public Bootstrapper verbose(final boolean verbose) {
+		this.verbose = verbose;
+		return this;
+	}
 	public boolean isTeardownExpectedToFail() {
 		return teardownExpectedToFail;
 	}
@@ -147,9 +152,11 @@ public abstract class Bootstrapper {
 		String commandAndOptions = bootstrapCommand + " " + getCustomOptions();
 
 		builder
-		.append(commandAndOptions).append(" ")
-		.append("--verbose").append(" ")
-		.append("-timeout").append(" ")
+		.append(commandAndOptions).append(" ");
+		if (verbose) {
+			builder.append("--verbose").append(" ");
+		}
+		builder.append("-timeout").append(" ")
 		.append(timeoutInMinutes).append(" ");
 
 		if(secured){

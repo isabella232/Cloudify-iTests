@@ -46,6 +46,10 @@ public class MicrosoftAzureCloudService extends AbstractCloudService {
 	private static final long SCAN_INTERVAL = 10 * 1000; // 10 seconds. long time since it takes time to shutdown the machine
 
 	private static final long SCAN_TIMEOUT = 5 * 60 * 1000; // 5 minutes
+	
+	private String password = PFX_PASSWORD;
+	private String addressSpace = ADDRESS_SPACE;
+	private String affinityLocation = "East US";
 
 	public MicrosoftAzureCloudService() {
 		super("azure");
@@ -53,7 +57,22 @@ public class MicrosoftAzureCloudService extends AbstractCloudService {
 				PATH_TO_PFX, PFX_PASSWORD, 
 				null, null, null);
 	}
+	
+	public MicrosoftAzureRestClient getRestClient() {
+		return azureClient;
+	}
+	
+	public void setAffinityLocation(final String affinityLocation) {
+		this.affinityLocation = affinityLocation;
+	}
 
+	public void setAddressSpace(final String addressSpace) {
+		this.addressSpace = addressSpace;
+	}
+	
+	public void setPassword(final String password) {
+		this.password = password;
+	}
 
 	@Override
 	public void injectCloudAuthenticationDetails() throws IOException {
@@ -62,7 +81,7 @@ public class MicrosoftAzureCloudService extends AbstractCloudService {
 		
 		getProperties().put("subscriptionId", AZURE_SUBSCRIPTION_ID);
 		getProperties().put("username", USER_NAME);
-		getProperties().put("password", PFX_PASSWORD);
+		getProperties().put("password", password);
 		getProperties().put("pfxFile", AZURE_CERT_PFX);
 		getProperties().put("pfxPassword", PFX_PASSWORD);
 		
@@ -72,9 +91,9 @@ public class MicrosoftAzureCloudService extends AbstractCloudService {
 		propsToReplace.put("ENTER_AVAILABILITY_SET", USER_NAME);
 		propsToReplace.put("ENTER_DEPLOYMENT_SLOT", "Staging");
 		propsToReplace.put("ENTER_VIRTUAL_NETWORK_SITE_NAME", USER_NAME + "networksite");
-		propsToReplace.put("ENTER_ADDRESS_SPACE", ADDRESS_SPACE);
+		propsToReplace.put("ENTER_ADDRESS_SPACE", addressSpace);
 		propsToReplace.put("ENTER_AFFINITY_GROUP", USER_NAME + "cloudifyaffinity");
-		propsToReplace.put("ENTER_LOCATION", "East US");
+		propsToReplace.put("ENTER_LOCATION", affinityLocation);
 		propsToReplace.put("ENTER_STORAGE_ACCOUNT", USER_NAME + "cloudifystorage");
 		IOUtils.replaceTextInFile(getPathToCloudGroovy(), propsToReplace);	
 	}

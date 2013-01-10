@@ -122,7 +122,7 @@ public class WikiReporter {
             /* upload to wiki-server, NOTE: the order of upload should be unmodified */
 //            wikiPages.add(0, new WikiPage(wikiProperties.getWikiSpace(), null /* parent page */, summaryPageTitle, wikiSummaryPage));
 //            wikiPages.add(1, new WikiPage(wikiProperties.getWikiSpace(), summaryPageTitle, buildPageTitle, wikiReportPage));
-            wikiPages.add(0, new WikiPage(wikiProperties.getWikiSpace(), summaryPageTitle, buildPageTitle, wikiReportPage));
+            wikiPages.add(0, new WikiPage(wikiProperties.getWikiSpace(), null, buildPageTitle, wikiReportPage));
 
             backupWikiPagesToFile();
             uploadWikiPages();

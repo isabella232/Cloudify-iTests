@@ -123,7 +123,11 @@ public class WikiReporter {
             wikiPages.add(0, new WikiPage(wikiProperties.getWikiSpace(), null /* parent page */, summaryPageTitle, wikiSummaryPage));
             wikiPages.add(1, new WikiPage(wikiProperties.getWikiSpace(), summaryPageTitle, buildPageTitle, wikiReportPage));
             backupWikiPagesToFile();
+            try{
             uploadWikiPages();
+            }catch (Throwable t){
+                t.printStackTrace();
+            }
 
             String wikiPageUrl = createReportUrl(wikiPages.get(1));
             HtmlMailReporter mailReporter = new HtmlMailReporter();

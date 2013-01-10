@@ -210,12 +210,13 @@ public class WikiReporter {
         for (WikiPage page : wikiPages) {
             if (mainPage == null){
                 mainPage = page;
-                try{
-                    wikiClient.removePage(page);
-                }catch (Exception e){
-                    System.err.println("Caught exception while trying to remove page: " + page + " - " + e
-                            + "\n" + WikiUtils.getStackTrace(e));
-                }
+            }
+            System.out.println("Removing page: " + page);
+            try{
+                wikiClient.removePage(page);
+            }catch (Exception e){
+                System.err.println("Caught exception while trying to remove page: " + page + " - " + e
+                        + "\n" + WikiUtils.getStackTrace(e));
             }
             System.out.println("Uploading page: " + page);
             try {

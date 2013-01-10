@@ -212,9 +212,9 @@ public class WikiReporter {
                 mainPage = page;
                 try{
                     wikiClient.removePage(page);
-                }catch (WikiConnectionException wce){
-                    System.err.println("Caught exception while removing page: " + page + " - " + wce
-                            + "\n" + WikiUtils.getStackTrace(wce));
+                }catch (Exception e){
+                    System.err.println("Caught exception while trying to remove page: " + page + " - " + e
+                            + "\n" + WikiUtils.getStackTrace(e));
                 }
             }
             System.out.println("Uploading page: " + page);

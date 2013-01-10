@@ -69,12 +69,11 @@ import framework.utils.WebUtils;
 
 public class AbstractLocalCloudTest extends AbstractTest {
 
-	final int BOOTSTRAP_RETRIES_BEFOREMETHOD = 2;
-	protected final int WAIT_FOR_TIMEOUT_SECONDS = 60;
-	private final int HTTP_STATUS_OK = 200;
-	protected final int restPort = 8100;
+	private final static int BOOTSTRAP_RETRIES_BEFOREMETHOD = 2;
+	protected final static int WAIT_FOR_TIMEOUT_SECONDS = 60;
+	private final static int HTTP_STATUS_OK = 200;
 	protected static String restUrl = null;
-	protected static final String MANAGEMENT_APPLICATION_NAME = "management";
+	protected static final String MANAGEMENT_APPLICATION_NAME = CloudifyConstants.MANAGEMENT_APPLICATION_NAME;
 	protected static final String DEFAULT_APPLICATION_NAME = CloudifyConstants.DEFAULT_APPLICATION_NAME;
 
 	protected boolean isDevEnv = false;
@@ -144,7 +143,7 @@ public class AbstractLocalCloudTest extends AbstractTest {
 			admin = null;
 		}
 
-		restUrl = "http://" + getLocalHostIpAddress() + ":" + restPort;
+		restUrl = "http://" + getLocalHostIpAddress() + ":" + CloudifyConstants.DEFAULT_REST_PORT;
 		
 		if (checkIsDevEnv()) {
 			LogUtils.log("Local cloud test running in dev mode, will use existing localcloud");
@@ -155,65 +154,30 @@ public class AbstractLocalCloudTest extends AbstractTest {
 					if (!isRequiresBootstrap()) {
 						break;
 					}
-
 					cleanUpCloudifyLocalDir();
-
-					LogUtils.log("Tearing-down existing localclouds");
-					final ProcessResult teardownResult = CommandTestUtils
-							.runCloudifyCommandAndWait("teardown-localcloud -force -timeout 15");
-					if (teardownResult.getExitcode() != 0) {
-						final String output = teardownResult.getOutput();
-						if (!checkOutputForExceptions(output)) {
-							// we assume that if teardown failed but no
-							// exceptions were found in the output
-							// then the reason was because no cloud was found.
-							LogUtils.log("teardown failed because no cloud was found. proceeding with bootstrap.");
-						} else {
-							Assert.fail("Failed to teardown local cloud. output = "
-									+ output);
-						}
-					}
-
-					final ProcessResult bootstrapResult;
-
-					bootstrapResult = CommandTestUtils
-							.runCloudifyCommandAndWait("bootstrap-localcloud --verbose -timeout 15");
-
-					LogUtils.log(bootstrapResult.getOutput());
-					Assert.assertEquals(bootstrapResult.getExitcode(), 0,
-							"Bootstrap failed");
+					CommandTestUtils.runCloudifyCommandAndWait("bootstrap-localcloud --verbose -timeout 15");
 				} catch (final Throwable t) {
-					LogUtils.log("Failed to bootstrap localcloud. iteration="
-							+ i, t);
-
+					LogUtils.log("Failed to bootstrap localcloud. iteration="+ i, t);
 					if (i >= BOOTSTRAP_RETRIES_BEFOREMETHOD - 1) {
-						Assert.fail("Failed to bootstrap localcloud after "
-								+ BOOTSTRAP_RETRIES_BEFOREMETHOD + " retries.",
-								t);
+						Assert.fail("Failed to bootstrap localcloud after " + BOOTSTRAP_RETRIES_BEFOREMETHOD + " retries.",t);
 					}
 				}
 
 			}
 		}
 
-		Assert.assertFalse(isRequiresBootstrap(),
-				"Cannot establish connection with localcloud");
+		Assert.assertFalse(isRequiresBootstrap(),"Cannot establish connection with localcloud");
 
 		this.admin = super.createAdminAndWaitForManagement();
-		final boolean foundLookupService = admin.getLookupServices().waitFor(1,
-				WAIT_FOR_TIMEOUT_SECONDS, TimeUnit.SECONDS);
-		Assert.assertTrue(foundLookupService,
-				"Failed to discover lookup service after "
-						+ WAIT_FOR_TIMEOUT_SECONDS + " seconds");
+		final boolean foundLookupService = admin.getLookupServices().waitFor(1,WAIT_FOR_TIMEOUT_SECONDS, TimeUnit.SECONDS);
+		Assert.assertTrue(foundLookupService, "Failed to discover lookup service after " + WAIT_FOR_TIMEOUT_SECONDS + " seconds");
 
-		final boolean foundMachine = admin.getMachines().waitFor(1,
-				WAIT_FOR_TIMEOUT_SECONDS, TimeUnit.SECONDS);
-		Assert.assertTrue(foundMachine, "Failed to discover machine after "
-				+ WAIT_FOR_TIMEOUT_SECONDS + " seconds");
+		final boolean foundMachine = admin.getMachines().waitFor(1, WAIT_FOR_TIMEOUT_SECONDS, TimeUnit.SECONDS);
+		Assert.assertTrue(foundMachine, "Failed to discover machine after " + WAIT_FOR_TIMEOUT_SECONDS + " seconds");
 		final Machine[] machines = admin.getMachines().getMachines();
 		Assert.assertTrue(machines.length >= 1, "Expected at least one machine");
 		final Machine machine = machines[0];
-		System.out.println("Machine ["
+		LogUtils.log("Machine ["
 				+ machine.getHostName()
 				+ "], "
 				+ "TotalPhysicalMem ["
@@ -242,7 +206,7 @@ public class AbstractLocalCloudTest extends AbstractTest {
 			
 			final URL restUrl = new URL("http://" + InetAddress.getLocalHost().getHostAddress() + ":" + CloudifyConstants.DEFAULT_REST_PORT);
 			if (WebUtils.isURLAvailable(restUrl)) {
-				restPortResponding = PortConnectionUtils.isPortOpen("localhost", restPort);
+				restPortResponding = PortConnectionUtils.isPortOpen("localhost", CloudifyConstants.DEFAULT_REST_PORT);
 			}
 
 			if (leakedProcessesFound) {

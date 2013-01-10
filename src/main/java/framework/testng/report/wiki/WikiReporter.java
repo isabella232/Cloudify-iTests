@@ -120,14 +120,13 @@ public class WikiReporter {
             String wikiReportPage = createReportPage();
 
             /* upload to wiki-server, NOTE: the order of upload should be unmodified */
-            wikiPages.add(0, new WikiPage(wikiProperties.getWikiSpace(), null /* parent page */, summaryPageTitle, wikiSummaryPage));
-            wikiPages.add(1, new WikiPage(wikiProperties.getWikiSpace(), summaryPageTitle, buildPageTitle, wikiReportPage));
+//            wikiPages.add(0, new WikiPage(wikiProperties.getWikiSpace(), null /* parent page */, summaryPageTitle, wikiSummaryPage));
+//            wikiPages.add(1, new WikiPage(wikiProperties.getWikiSpace(), summaryPageTitle, buildPageTitle, wikiReportPage));
+            wikiPages.add(0, new WikiPage(wikiProperties.getWikiSpace(), summaryPageTitle, buildPageTitle, wikiReportPage));
+
             backupWikiPagesToFile();
-            try{
             uploadWikiPages();
-            }catch (Throwable t){
-                t.printStackTrace();
-            }
+
 
             String wikiPageUrl = createReportUrl(wikiPages.get(1));
             HtmlMailReporter mailReporter = new HtmlMailReporter();
@@ -212,22 +211,14 @@ public class WikiReporter {
     private void uploadWikiPages() {
         WikiPage mainPage = null;
         for (WikiPage page : wikiPages) {
-            if (mainPage == null){
+            if (mainPage == null)
                 mainPage = page;
-            }
-            System.out.println("Removing page: " + page);
-            try{
-                wikiClient.removePage(page);
-            }catch (Exception e){
-                System.err.println("Caught exception while trying to remove page: " + page + " - " + e
-                        + "\n" + WikiUtils.getStackTrace(e));
-            }
             System.out.println("Uploading page: " + page);
             try {
                 wikiClient.uploadPage(page);
-            } catch (Exception e) {
-                System.err.println("Caught exception while uploading page: " + page + " - " + e
-                        + "\n" + WikiUtils.getStackTrace(e));
+            } catch (WikiConnectionException wce) {
+                System.err.println("Caught exception while uploading page: " + page + " - " + wce
+                        + "\n" + WikiUtils.getStackTrace(wce));
             }
         }
     }

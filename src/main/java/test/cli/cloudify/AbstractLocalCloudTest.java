@@ -52,7 +52,6 @@ import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeMethod;
 
 import test.AbstractTest;
-import test.cli.cloudify.CommandTestUtils.ProcessResult;
 
 import com.gigaspaces.internal.sigar.SigarHolder;
 
@@ -361,41 +360,15 @@ public class AbstractLocalCloudTest extends AbstractTest {
 	}
 
 	@AfterSuite(alwaysRun = true)
-	public void afterSuite() {
+	public void afterSuite() throws IOException, InterruptedException {
 		if (checkIsDevEnv()) {
 			LogUtils.log("Running in dev mode - cloud will not be torn down");
 		} else {
-			try {
-				LogUtils.log("Tearing-down localcloud");
-				
-				LocalCloudBootstrapper bootstrapper = new LocalCloudBootstrapper();
-				bootstrapper.timeoutInMinutes(15);
-				bootstrapper.setRestUrl(restUrl);
-				final ProcessResult teardownResult = bootstrapper.teardown();
-				
-				final String output = teardownResult.getOutput();
-				if (!checkOutputForExceptions(output)) {
-					// we assume that if teardown failed but no exceptions were
-					// found in the output
-					// then the reason was because no cloud was found.
-					LogUtils.log("teardown failed because no cloud was found. proceeding with bootstrap.");
-				} else {
-					Assert.fail("Failed to teardown local cloud. output = "
-							+ output);
-				}
-			} catch (final Exception e) {
-				log("Exception during teardown", e);
-			}
-
-			try {
-				TeardownUtils.teardownAll(admin);
-			} catch (final Throwable t) {
-				log("failed to teardown", t);
-			}
-			if (admin != null) {
-				admin.close();
-			}
-			admin = null;
+			LogUtils.log("Tearing-down localcloud");
+			LocalCloudBootstrapper bootstrapper = new LocalCloudBootstrapper();
+			bootstrapper.timeoutInMinutes(15);
+			bootstrapper.setRestUrl(restUrl);
+			bootstrapper.teardown();
 		}
 	}
 	

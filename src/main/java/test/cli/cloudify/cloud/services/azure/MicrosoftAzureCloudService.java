@@ -123,7 +123,7 @@ public class MicrosoftAzureCloudService extends AbstractCloudService {
 	
 	private boolean scanNodesWithPrefix(final String... prefixes) {
 		
-		LogUtils.log("scanning leaking nodes with prefix " + StringUtils.arrayToCommaDelimitedString(prefixes));
+		LogUtils.log("Scanning leaking nodes with prefix " + StringUtils.arrayToCommaDelimitedString(prefixes));
 		
 		long scanEndTime = System.currentTimeMillis() + SCAN_TIMEOUT;
 
@@ -139,7 +139,7 @@ public class MicrosoftAzureCloudService extends AbstractCloudService {
 					throw new TimeoutException("Timed out waiting for deleting nodes to finish. last status was : " + deploymentsBeingDeleted.getDeployments());
 				}
 				Thread.sleep(SCAN_INTERVAL);
-				LogUtils.log("waiting for all deployments to reach a non 'Deleting' state");
+				LogUtils.log("Waiting for all deployments to reach a non 'Deleting' state");
 				for (HostedService hostedService : listHostedServices) {
 					try {
 						List<Deployment> deploymentsForHostedSerice = azureClient.getHostedService(hostedService.getServiceName(), true).getDeployments().getDeployments();
@@ -164,7 +164,7 @@ public class MicrosoftAzureCloudService extends AbstractCloudService {
 			// now all deployment have reached a steady state.
 			// scan again to find out if there are any agents still running
 
-			LogUtils.log("scanning all remaining hosted services for running nodes");
+			LogUtils.log("Scanning all remaining hosted services for running nodes");
 			for (HostedService hostedService : listHostedServices) {
 				List<Deployment> deploymentsForHostedSerice = azureClient.getHostedService(hostedService.getServiceName(), true).getDeployments().getDeployments();
 				if (deploymentsForHostedSerice.size() > 0) {
@@ -184,12 +184,12 @@ public class MicrosoftAzureCloudService extends AbstractCloudService {
 
 			if (!leakingAgentNodesPublicIps.isEmpty()) {
 				for (String ip : leakingAgentNodesPublicIps) {
-					LogUtils.log("attempting to kill node : " + ip);
+					LogUtils.log("Attempting to kill node : " + ip);
 					long endTime = System.currentTimeMillis() + ESTIMATED_SHUTDOWN_TIME;
 					try {
 						azureClient.deleteVirtualMachineByIp(ip, false, endTime);
 					} catch (final Exception e) {
-						LogUtils.log("Failed deleting node with ip : " + ip + ". reason --> " + e.getMessage());
+						LogUtils.log("Failed deleting node with ip : " + ip + ". reason --> " + e.getMessage(), e);
 					}
 				}
 				return false;

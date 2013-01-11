@@ -16,7 +16,7 @@ import test.cli.cloudify.cloud.services.azure.MicrosoftAzureCloudService;
  */
 public class FaultyAzureConfigurationTest extends NewAbstractCloudTest {
 
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 5, enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 5, enabled = true)
 	public void testInvalidPassword() throws Exception {
 		MicrosoftAzureCloudService azureCloudService = (MicrosoftAzureCloudService) CloudServiceManager.getInstance().getCloudService(getCloudName());
 		
@@ -44,7 +44,7 @@ public class FaultyAzureConfigurationTest extends NewAbstractCloudTest {
 		AssertUtils.assertTrue("Bootstrap failed but did not contain the necessary output code : " +  CloudifyErrorMessages.CLOUD_API_ERROR.getName(), bootstrapOutput.contains(CloudifyErrorMessages.CLOUD_API_ERROR.getName()));		
 	}		
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 5, enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 5, enabled = true)
 	public void testInvalidImageId() throws Exception {
 		
 		MicrosoftAzureCloudService azureCloudService = (MicrosoftAzureCloudService) CloudServiceManager.getInstance().getCloudService(getCloudName());
@@ -59,7 +59,7 @@ public class FaultyAzureConfigurationTest extends NewAbstractCloudTest {
 	}
 
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 5, enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 5, enabled = true)
 	public void testInvalidAffinityLocation() throws Exception {
 		
 		MicrosoftAzureCloudService azureCloudService = (MicrosoftAzureCloudService) CloudServiceManager.getInstance().getCloudService(getCloudName());

@@ -37,6 +37,7 @@ public class FaultyAzureConfigurationTest extends NewAbstractCloudTest {
 		
 		// this addressSpace is invalid, obviously
 		azureCloudService.setAddressSpace("invalidAddressSpace");
+		azureCloudService.setVirtualNetworkSiteName(this.getClass().getSimpleName() + "network");
 		azureCloudService.getBootstrapper().setBootstrapExpectedToFail(true);
 		super.bootstrap(azureCloudService);
 		
@@ -66,6 +67,7 @@ public class FaultyAzureConfigurationTest extends NewAbstractCloudTest {
 		
 		// this affinity location is invalid, obviously
 		azureCloudService.setAffinityLocation("invalidLocation");
+		azureCloudService.setAffinityGroup(this.getClass().getSimpleName() + "affinity");
 		azureCloudService.getBootstrapper().setBootstrapExpectedToFail(true);
 		super.bootstrap(azureCloudService);
 		

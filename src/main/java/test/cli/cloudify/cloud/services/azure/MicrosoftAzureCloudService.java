@@ -52,6 +52,17 @@ public class MicrosoftAzureCloudService extends AbstractCloudService {
 	private String password = PFX_PASSWORD;
 	private String addressSpace = ADDRESS_SPACE;
 	private String affinityLocation = "East US";
+	private String affinityGroup = USER_NAME + "cloudifyaffinity";
+	private String virtualNetworkSiteName = USER_NAME + "networksite";
+	private String storageAccountName = USER_NAME + "cloudifystorage";
+
+	public String getStorageAccountName() {
+		return storageAccountName;
+	}
+
+	public void setStorageAccountName(String storageAccountName) {
+		this.storageAccountName = storageAccountName;
+	}
 
 	public MicrosoftAzureCloudService() {
 		super("azure");
@@ -64,6 +75,23 @@ public class MicrosoftAzureCloudService extends AbstractCloudService {
 		return azureClient;
 	}
 	
+	
+	public String getAffinityGroupPrefix() {
+		return affinityGroup;
+	}
+
+	public void setAffinityGroup(String affinityGroup) {
+		this.affinityGroup = affinityGroup;
+	}
+
+	public String getVirtualNetworkSiteNamePrefix() {
+		return virtualNetworkSiteName;
+	}
+
+	public void setVirtualNetworkSiteName(String virtualNetworkSiteName) {
+		this.virtualNetworkSiteName = virtualNetworkSiteName;
+	}
+
 	public void setAffinityLocation(final String affinityLocation) {
 		this.affinityLocation = affinityLocation;
 	}
@@ -92,11 +120,11 @@ public class MicrosoftAzureCloudService extends AbstractCloudService {
 		propsToReplace.put("cloudify_manager", getMachinePrefix().toLowerCase() + "cloudify-manager");
 		propsToReplace.put("ENTER_AVAILABILITY_SET", USER_NAME);
 		propsToReplace.put("ENTER_DEPLOYMENT_SLOT", "Staging");
-		propsToReplace.put("ENTER_VIRTUAL_NETWORK_SITE_NAME", USER_NAME + "networksite");
+		propsToReplace.put("ENTER_VIRTUAL_NETWORK_SITE_NAME", virtualNetworkSiteName);
 		propsToReplace.put("ENTER_ADDRESS_SPACE", addressSpace);
-		propsToReplace.put("ENTER_AFFINITY_GROUP", USER_NAME + "cloudifyaffinity");
+		propsToReplace.put("ENTER_AFFINITY_GROUP", affinityGroup);
 		propsToReplace.put("ENTER_LOCATION", affinityLocation);
-		propsToReplace.put("ENTER_STORAGE_ACCOUNT", USER_NAME + "cloudifystorage");
+		propsToReplace.put("ENTER_STORAGE_ACCOUNT", storageAccountName);
 		IOUtils.replaceTextInFile(getPathToCloudGroovy(), propsToReplace);	
 	}
 

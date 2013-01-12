@@ -86,9 +86,11 @@ public class AzureExamplesTest extends NewAbstractCloudTest {
 	
 	@AfterMethod(alwaysRun = true)
 	public void cleanUp() throws IOException, InterruptedException {
-		super.uninstallApplicationIfFound("travel");
-		super.uninstallApplicationIfFound("petclinic");
-		super.uninstallApplicationIfFound("helloworld");
+		if (getService().getBootstrapper().isBootstraped()) {
+			super.uninstallApplicationIfFound("travel");
+			super.uninstallApplicationIfFound("petclinic");
+			super.uninstallApplicationIfFound("helloworld");			
+		}
 		super.scanForLeakedAgentNodes();
 	}
 

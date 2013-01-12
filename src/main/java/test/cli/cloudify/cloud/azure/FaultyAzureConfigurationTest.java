@@ -50,7 +50,7 @@ public class FaultyAzureConfigurationTest extends NewAbstractCloudTest {
 		MicrosoftAzureCloudService azureCloudService = (MicrosoftAzureCloudService) CloudServiceManager.getInstance().getCloudService(getCloudName());
 		
 		// this image id is invalid, obviously
-		azureCloudService.getAdditionalPropsToReplace().put("imageId", "invalidImageId");
+		azureCloudService.getAdditionalPropsToReplace().put(MicrosoftAzureCloudService.DEFAULT_IMAGE_ID, "invalidImageId");
 		azureCloudService.getBootstrapper().setBootstrapExpectedToFail(true);
 		super.bootstrap(azureCloudService);
 		

@@ -179,7 +179,7 @@ cloud {
 
 		// Enable/Disable Cloud Requests Logging. 
 		
-		"azure.wireLog": "true"
+		"azure.wireLog": "false"
 	])
 }
 

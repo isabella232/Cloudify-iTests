@@ -33,6 +33,8 @@ public class MicrosoftAzureCloudService extends AbstractCloudService {
 	private static final String AZURE_CERT_PFX = "azure-cert.pfx";
 
 	private static final String USER_NAME = System.getProperty("user.name");
+	
+	public static final String DEFAULT_IMAGE_ID = "5112500ae3b842c8b9c604889f8753c3__OpenLogic-CentOS63DEC20121220";
 
 	private final MicrosoftAzureRestClient azureClient;
 	private static final String AZURE_SUBSCRIPTION_ID = "3226dcf0-3130-42f3-b68f-a2019c09431e";

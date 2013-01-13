@@ -1,12 +1,11 @@
 package test.cli.cloudify;
 
-import static org.testng.AssertJUnit.fail;
-
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.UnknownHostException;
@@ -14,7 +13,6 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.http.HttpStatus;
-import org.cloudifysource.dsl.internal.packaging.PackagingException;
 import org.cloudifysource.dsl.utils.ServiceUtils;
 import org.cloudifysource.usm.USMException;
 import org.cloudifysource.usm.shutdown.DefaultProcessKiller;
@@ -27,16 +25,13 @@ import org.openspaces.pu.service.CustomServiceMonitors;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import com.gargoylesoftware.htmlunit.BrowserVersion;
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
-
 import framework.tools.SGTestHelper;
 import framework.utils.AssertUtils;
 import framework.utils.AssertUtils.RepetitiveConditionProvider;
 import framework.utils.LogUtils;
 import framework.utils.ProcessingUnitUtils;
 import framework.utils.ScriptUtils;
+import framework.utils.WebUtils;
 import framework.utils.usm.USMTestUtils;
 import groovy.util.ConfigObject;
 import groovy.util.ConfigSlurper;
@@ -56,7 +51,6 @@ public class RepetitiveActualServiceFailoverTest extends AbstractLocalCloudTest 
 	
 	Long tomcatPId;
 	Machine machineA;
-	WebClient client;
 	private final String TOMCAT_URL = "http://127.0.0.1:8080";
 	private String tomcatServiceDir = ScriptUtils.getBuildPath() + "/recipes/services/tomcat";
 	
@@ -64,11 +58,10 @@ public class RepetitiveActualServiceFailoverTest extends AbstractLocalCloudTest 
 	@BeforeMethod
 	public void beforeTest() throws Exception {
 		super.beforeTest();	
-		client = new WebClient(BrowserVersion.getDefault());
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, groups = "1", enabled = true)
-	public void tomcatServiceDownAndCorruptedTest() throws IOException, InterruptedException, PackagingException {
+	public void tomcatServiceDownAndCorruptedTest() throws Exception {
 		
 		String command = "connect " + this.restUrl + ";" + "install-service " + "--verbose -timeout 10 " + tomcatServiceDir;
 		try {
@@ -129,7 +122,11 @@ public class RepetitiveActualServiceFailoverTest extends AbstractLocalCloudTest 
 				public boolean getCondition() {
 					ProcessingUnit tomcat = admin.getProcessingUnits().waitFor(ServiceUtils.getAbsolutePUName("default", "tomcat"));
 					ProcessingUnitUtils.waitForDeploymentStatus(tomcat, DeploymentStatus.INTACT);
-					return isTomcatPageExists(client);
+					try {
+						return isTomcatPageExists();
+					} catch (final Exception e) {
+						return false;
+					} 
 				}
 			};
 			AssertUtils.repetitiveAssertTrue("cannot connect to tompage", condition, DEFAULT_TEST_TIMEOUT);
@@ -172,7 +169,7 @@ public class RepetitiveActualServiceFailoverTest extends AbstractLocalCloudTest 
 		assertTrue("Processing unit instance did not reach running state in the defined time frame.",
 				USMTestUtils.waitForPuRunningState(ServiceUtils.getAbsolutePUName("default", "tomcat"), 60, TimeUnit.SECONDS, admin));
 		LogUtils.log("verifiying tomcat service in running");
-		isTomcatPageExists(client);	
+		isTomcatPageExists();	
 		LogUtils.log("all's well that ends well :)");
 	}
 	
@@ -203,16 +200,9 @@ public class RepetitiveActualServiceFailoverTest extends AbstractLocalCloudTest 
 		}
 		return lastModifiedTomcatDir;
 	}
-	private boolean isTomcatPageExists(WebClient client) {
+	private boolean isTomcatPageExists() throws MalformedURLException, Exception {
 		
-        HtmlPage page = null;
-        try {
-            page = client.getPage("http://" + machineA.getHostAddress() + ":8080");
-        } catch (IOException e) {
-            fail(e.getMessage());
-        }
-        return "OK".equals(page.getWebResponse().getStatusMessage());
-		
+       return WebUtils.isURLAvailable(new URL("http://" + machineA.getHostAddress() + ":8080"));
 	}
 	
 	private Long getTomcatPId() throws UnknownHostException {

@@ -1,12 +1,11 @@
 package test.cli.cloudify;
 
-import static org.testng.AssertJUnit.fail;
-
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.UnknownHostException;
@@ -27,14 +26,12 @@ import org.openspaces.pu.service.CustomServiceMonitors;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import com.gargoylesoftware.htmlunit.BrowserVersion;
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
-
 import framework.tools.SGTestHelper;
+import framework.utils.AssertUtils;
 import framework.utils.LogUtils;
 import framework.utils.ProcessingUnitUtils;
 import framework.utils.ScriptUtils;
+import framework.utils.WebUtils;
 import framework.utils.usm.USMTestUtils;
 import groovy.util.ConfigObject;
 import groovy.util.ConfigSlurper;
@@ -45,7 +42,6 @@ public class InternalUSMPuServiceDownTest extends AbstractLocalCloudTest {
 
 	private static final int TWO_FAILOVERS = 2;
 	private static final int SINGLE_FAILOVER = 1;
-	WebClient client;
 	private final String TOMCAT_URL = "http://127.0.0.1:8080";
 	private final String tomcatServiceDir = ScriptUtils.getBuildPath() + "/recipes/services/tomcat";
 	private ProcessingUnitInstanceLifecycleEventListener eventListener;
@@ -54,20 +50,19 @@ public class InternalUSMPuServiceDownTest extends AbstractLocalCloudTest {
 	@BeforeMethod
 	public void beforeTest() throws Exception {
 		super.beforeTest();	
-		this.client = new WebClient(BrowserVersion.getDefault());
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
-	public void tomcatServiceDownAndCorruptedTest() throws IOException, InterruptedException {
+	public void tomcatServiceDownAndCorruptedTest() throws Exception {
 		doTest(SINGLE_FAILOVER);
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = SUSPECTED, enabled = true)
-	public void tomcatServiceDownAndCorruptedTwiceTest() throws IOException, InterruptedException {
+	public void tomcatServiceDownAndCorruptedTwiceTest() throws Exception {
 		doTest(TWO_FAILOVERS);
 	}
 	
-	public void doTest(int numRepetitions) throws IOException, InterruptedException {
+	public void doTest(int numRepetitions) throws Exception {
 		
 		installTomcat();
 		
@@ -111,7 +106,7 @@ public class InternalUSMPuServiceDownTest extends AbstractLocalCloudTest {
 	}
 	
 	private void waitForServiceRecovery(final CountDownLatch removed,
-			final CountDownLatch added) throws InterruptedException, UnknownHostException {
+			final CountDownLatch added) throws MalformedURLException, Exception {
 		LogUtils.log("waiting for tomcat pu instances to decrease");
 		assertTrue("Tomcat PU instance was not decresed", removed.await(240, TimeUnit.SECONDS));
 		LogUtils.log("waiting for tomcat pu instances to increase");
@@ -254,18 +249,13 @@ public class InternalUSMPuServiceDownTest extends AbstractLocalCloudTest {
 		return (System.getenv("windir") != null);
 	}
 	
-	private void assertTomcatPageExists() {
+	private void assertTomcatPageExists() throws MalformedURLException, Exception {
 		ProcessingUnitInstance tomcatInstance = getTomcatInstance();
 		GridServiceContainer container = tomcatInstance.getGridServiceContainer();		
 		Machine tomcatMachine = container.getMachine();
 		
-        HtmlPage page = null;
-        try {
-            page = this.client.getPage("http://" + tomcatMachine.getHostAddress() + ":8080");
-        } catch (IOException e) {
-            fail(e.getMessage());
-        }
-        assertEquals("OK", page.getWebResponse().getStatusMessage());
+        AssertUtils.assertTrue("Tomcat is not available",WebUtils.isURLAvailable(new URL("http://" + tomcatMachine.getHostAddress() + ":8080")));
+        
 		
 	}
 	

@@ -33,7 +33,7 @@ public class AddRemoveTemplatesTest extends AbstractByonAddRemoveTemplatesTest {
 	private ThreadBarrier barrier = new ThreadBarrier(NUM_OF_THREADS + 1);
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
-	public void addTempaltesTest() throws IOException {
+	public void addTemplatesTest() throws IOException {
 		TemplatesBatchHandler templatesHandler1 = new TemplatesBatchHandler();
 		templatesHandler1.addTemplates(5);
 		addTempaltes(templatesHandler1);
@@ -72,7 +72,7 @@ public class AddRemoveTemplatesTest extends AbstractByonAddRemoveTemplatesTest {
 	}
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
-	public void addTempalteAndInstallService() throws IOException, InterruptedException {
+	public void addTemplateAndInstallService() throws IOException, InterruptedException {
 		TemplatesBatchHandler templatesHandler = new TemplatesBatchHandler();
 		TemplateDetails addedTemplate = templatesHandler.addServiceTemplate();
 		templatesHandler.addServiceTemplate();
@@ -91,7 +91,7 @@ public class AddRemoveTemplatesTest extends AbstractByonAddRemoveTemplatesTest {
 	}
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
-	public void addZippedTempalteAndInstallService() throws IOException, InterruptedException {
+	public void addZippedTemplateAndInstallService() throws IOException, InterruptedException {
 		TemplatesBatchHandler templatesHandler = new TemplatesBatchHandler();
 		TemplateDetails addedTemplate = templatesHandler.addServiceTemplate();
 		File zippedTemplateFile = new File(templatesHandler.getTemplatesFolder() + "/../zipped-template.zip");
@@ -116,7 +116,7 @@ public class AddRemoveTemplatesTest extends AbstractByonAddRemoveTemplatesTest {
 	}
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
-	public void addTempaltesUsingRestAPI() 
+	public void addTemplatesUsingRestAPI() 
 			throws IllegalStateException, IOException, InterruptedException {
 		TemplatesBatchHandler templatesHandler = new TemplatesBatchHandler();
 		TemplateDetails addedTemplate = templatesHandler.addServiceTemplate();
@@ -175,7 +175,7 @@ public class AddRemoveTemplatesTest extends AbstractByonAddRemoveTemplatesTest {
 	}
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
-	public void addExistAndNotExistTempaltes() throws IOException {
+	public void addExistAndNotExistTemplates() throws IOException {
 		TemplatesBatchHandler templatesHandler1 = new TemplatesBatchHandler();
 		TemplateDetails addedTemplate = templatesHandler1.addTemplates(2).get(0);
 		addTempaltes(templatesHandler1);
@@ -225,7 +225,7 @@ public class AddRemoveTemplatesTest extends AbstractByonAddRemoveTemplatesTest {
 	}
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
-	public void illegalDuplicateTempaltesInTheSameFolder() throws IOException {
+	public void illegalDuplicateTemplatesInTheSameFolder() throws IOException {
 		TemplatesBatchHandler tempaltesHandler = new TemplatesBatchHandler();
 		TemplateDetails addedTemplate = tempaltesHandler.addExpectedToFailTemplate(new TemplateDetails());
 		File duplicateTemplateFile = new File(tempaltesHandler.getTemplatesFolder(), "duplicateTemplate-template.groovy");
@@ -238,7 +238,7 @@ public class AddRemoveTemplatesTest extends AbstractByonAddRemoveTemplatesTest {
 	}
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
-	public void illegalTempalteWithoutLocalUploadDir() throws IOException {
+	public void illegalTemplateWithoutLocalUploadDir() throws IOException {
 		TemplatesBatchHandler tempaltesHandler = new TemplatesBatchHandler();
 		TemplateDetails addedTemplate = tempaltesHandler.addExpectedToFailTempalte();
 		// delete upload directory
@@ -250,7 +250,7 @@ public class AddRemoveTemplatesTest extends AbstractByonAddRemoveTemplatesTest {
 	}
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
-	public void tryToRemoveUsedTempalte() throws IOException, InterruptedException {
+	public void tryToRemoveUsedTemplate() throws IOException, InterruptedException {
 		TemplatesBatchHandler tempaltesHandler = new TemplatesBatchHandler();
 		final TemplateDetails addedTemplate = tempaltesHandler.addServiceTemplate();
 		String templateName = addedTemplate.getTemplateName();

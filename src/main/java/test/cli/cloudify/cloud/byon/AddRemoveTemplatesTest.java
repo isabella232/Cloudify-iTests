@@ -51,7 +51,7 @@ public class AddRemoveTemplatesTest extends AbstractByonAddRemoveTemplatesTest {
 	}
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
-	public void failedAddInstallTempaltes() throws Exception {
+	public void failedAddInstallTemplates() throws Exception {
 
 		TemplatesBatchHandler handler = new TemplatesBatchHandler();
 		TemplateDetails template = handler.addServiceTemplate();

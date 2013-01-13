@@ -11,6 +11,7 @@ import java.util.concurrent.TimeoutException;
 import org.apache.commons.io.FileUtils;
 import org.cloudifysource.esc.driver.provisioning.azure.client.MicrosoftAzureException;
 import org.cloudifysource.esc.driver.provisioning.azure.client.MicrosoftAzureRestClient;
+import org.cloudifysource.esc.driver.provisioning.azure.client.UUIDHelper;
 import org.cloudifysource.esc.driver.provisioning.azure.model.ConfigurationSet;
 import org.cloudifysource.esc.driver.provisioning.azure.model.ConfigurationSets;
 import org.cloudifysource.esc.driver.provisioning.azure.model.Deployment;
@@ -32,7 +33,7 @@ public class MicrosoftAzureCloudService extends AbstractCloudService {
 
 	private static final String AZURE_CERT_PFX = "azure-cert.pfx";
 
-	private static final String USER_NAME = System.getProperty("user.name");
+	private static final String USER_NAME = System.getProperty("user.name") + UUIDHelper.generateRandomUUID(3);
 	
 	public static final String DEFAULT_IMAGE_ID = "5112500ae3b842c8b9c604889f8753c3__OpenLogic-CentOS63DEC20121220";
 

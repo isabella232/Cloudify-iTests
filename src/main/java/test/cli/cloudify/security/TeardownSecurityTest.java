@@ -47,7 +47,7 @@ public class TeardownSecurityTest extends AbstractSecuredLocalCloudTest{
 	}
 
 	private void teardownAndVerify(String user, String password, String userDescription ,boolean isExpectedToFail) throws Exception{
-		bootstrapper.user(user).password(password);
+		bootstrapper.user(user).password(password).teardownExpectedToFail(isExpectedToFail);
 		String output = super.teardown(bootstrapper);
 		
 		if(isExpectedToFail){			

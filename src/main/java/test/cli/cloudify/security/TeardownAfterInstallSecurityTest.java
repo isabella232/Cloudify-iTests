@@ -33,7 +33,7 @@ public class TeardownAfterInstallSecurityTest extends AbstractSecuredLocalCloudT
 		
 		installApplicationAndWait(SIMPLE_APP_PATH, SIMPLE_APP_NAME, TIMEOUT_IN_MINUTES, SecurityConstants.USER_PWD_APP_MANAGER, SecurityConstants.USER_PWD_APP_MANAGER, false, null);
 		
-		bootstrapper.user(SecurityConstants.USER_PWD_APP_MANAGER).password(SecurityConstants.USER_PWD_APP_MANAGER);
+		bootstrapper.user(SecurityConstants.USER_PWD_APP_MANAGER).password(SecurityConstants.USER_PWD_APP_MANAGER).teardownExpectedToFail(true);
 		String output = super.teardown(bootstrapper);
 		
 		AssertUtils.assertTrue(SecurityConstants.APP_MANAGER_DESCRIPTIN + " uninstalled the installed application during teardown", !output.contains("uninstalled"));

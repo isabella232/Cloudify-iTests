@@ -242,6 +242,13 @@ public abstract class Bootstrapper {
 			builder.append("-force").append(" ");
 		}
 		builder.append(provider);
+		if (teardownExpectedToFail) {
+			String output = CommandTestUtils.runCommandExpectedFail(connectCommandBuilder.toString() + builder.toString());
+			ProcessResult result = new ProcessResult(output, 1);
+			bootstrapped = true;
+			lastActionOutput = result.getOutput();
+			return result;
+		}
 		ProcessResult result = CommandTestUtils.runCloudifyCommandAndWait(connectCommandBuilder.toString() + builder.toString());
 		lastActionOutput = result.getOutput();
 		return result;

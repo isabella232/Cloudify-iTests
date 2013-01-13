@@ -24,6 +24,9 @@ public class LeakingCloudServiceTest extends NewAbstractCloudTest {
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 5, enabled = true)
 	public void testLeakingCloudService() throws Exception {
+		
+		String expectedOutput = "The supplied password must be 6-72 characters long and meet password complexity requirements";
+		
 		MicrosoftAzureCloudService azureCloudService = (MicrosoftAzureCloudService) CloudServiceManager.getInstance().getCloudService(getCloudName());
 		
 		// this password is invalid due to azure password restrictions.
@@ -35,7 +38,7 @@ public class LeakingCloudServiceTest extends NewAbstractCloudTest {
 		// created beforehand was not deleted.
 		super.bootstrap(azureCloudService);
 		String bootstrapOutput = azureCloudService.getBootstrapper().getLastActionOutput();
-		AssertUtils.assertTrue("Bootstrap failed but did not contain the necessary output code : " +  "cloud_api_error", bootstrapOutput.contains("cloud_api_error"));
+		AssertUtils.assertTrue("Bootstrap failed but did not contain the necessary output " + expectedOutput, bootstrapOutput.toLowerCase().contains(expectedOutput.toLowerCase()));
 		
 		azureClient = azureCloudService.getRestClient();
 		

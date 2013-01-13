@@ -79,8 +79,8 @@ public class ByonAddTemplatesWithSecurityTest extends AbstractByonAddRemoveTempl
 		bootstrapper.user(SecurityConstants.USER_PWD_CLOUD_ADMIN_AND_APP_MANAGER).password(SecurityConstants.USER_PWD_CLOUD_ADMIN_AND_APP_MANAGER).setRestUrl(getRestUrl());
 		bootstrapper.addTemplate(templatesHandler.getTemplatesFolder().getAbsolutePath(), false);
 		
-		verifyGetTemplate(SecurityConstants.USER_PWD_APP_MANAGER, SecurityConstants.USER_PWD_APP_MANAGER, SecurityConstants.APP_MANAGER_DESCRIPTIN, SecurityConstants.CLOUD_ADMIN_AND_APP_MANAGER_DESCRIPTION, templateName, true);
-		verifyGetTemplate(SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, SecurityConstants.APP_MANAGER_AND_VIEWER_DESCRIPTIN, SecurityConstants.CLOUD_ADMIN_AND_APP_MANAGER_DESCRIPTION, templateName, true);
+		verifyGetTemplate(SecurityConstants.USER_PWD_APP_MANAGER, SecurityConstants.USER_PWD_APP_MANAGER, SecurityConstants.APP_MANAGER_DESCRIPTIN, SecurityConstants.CLOUD_ADMIN_AND_APP_MANAGER_DESCRIPTION, templateName, false);
+		verifyGetTemplate(SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, SecurityConstants.APP_MANAGER_AND_VIEWER_DESCRIPTIN, SecurityConstants.CLOUD_ADMIN_AND_APP_MANAGER_DESCRIPTION, templateName, false);
 		verifyGetTemplate(SecurityConstants.USER_PWD_CLOUD_ADMIN, SecurityConstants.USER_PWD_CLOUD_ADMIN, SecurityConstants.CLOUD_ADMIN_DESCRIPTIN, SecurityConstants.CLOUD_ADMIN_AND_APP_MANAGER_DESCRIPTION, templateName, false);
 		verifyGetTemplate(SecurityConstants.USER_PWD_CLOUD_ADMIN_AND_APP_MANAGER, SecurityConstants.USER_PWD_CLOUD_ADMIN_AND_APP_MANAGER, SecurityConstants.CLOUD_ADMIN_AND_APP_MANAGER_DESCRIPTION, SecurityConstants.CLOUD_ADMIN_AND_APP_MANAGER_DESCRIPTION, templateName, false);
 		verifyGetTemplate(SecurityConstants.USER_PWD_VIEWER, SecurityConstants.USER_PWD_VIEWER, SecurityConstants.VIEWER_DESCRIPTIN, SecurityConstants.CLOUD_ADMIN_AND_APP_MANAGER_DESCRIPTION, templateName, true);
@@ -134,8 +134,8 @@ public class ByonAddTemplatesWithSecurityTest extends AbstractByonAddRemoveTempl
 		
 		bootstrapper.addTemplate(templatesHandler2.getTemplatesFolder().getAbsolutePath(), false);
 				
-		verifyListTemplates(SecurityConstants.USER_PWD_APP_MANAGER, SecurityConstants.USER_PWD_APP_MANAGER, SecurityConstants.APP_MANAGER_DESCRIPTIN, SecurityConstants.CLOUD_ADMIN_DESCRIPTIN, SecurityConstants.CLOUD_ADMIN_AND_APP_MANAGER_DESCRIPTION, templateName1, templateName2, false, false);
-		verifyListTemplates(SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, SecurityConstants.APP_MANAGER_AND_VIEWER_DESCRIPTIN, SecurityConstants.CLOUD_ADMIN_DESCRIPTIN, SecurityConstants.CLOUD_ADMIN_AND_APP_MANAGER_DESCRIPTION, templateName1, templateName2, false, false);
+		verifyListTemplates(SecurityConstants.USER_PWD_APP_MANAGER, SecurityConstants.USER_PWD_APP_MANAGER, SecurityConstants.APP_MANAGER_DESCRIPTIN, SecurityConstants.CLOUD_ADMIN_DESCRIPTIN, SecurityConstants.CLOUD_ADMIN_AND_APP_MANAGER_DESCRIPTION, templateName1, templateName2, true, true);
+		verifyListTemplates(SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, SecurityConstants.APP_MANAGER_AND_VIEWER_DESCRIPTIN, SecurityConstants.CLOUD_ADMIN_DESCRIPTIN, SecurityConstants.CLOUD_ADMIN_AND_APP_MANAGER_DESCRIPTION, templateName1, templateName2, true, true);
 		verifyListTemplates(SecurityConstants.USER_PWD_CLOUD_ADMIN, SecurityConstants.USER_PWD_CLOUD_ADMIN, SecurityConstants.CLOUD_ADMIN_DESCRIPTIN, SecurityConstants.CLOUD_ADMIN_DESCRIPTIN, SecurityConstants.CLOUD_ADMIN_AND_APP_MANAGER_DESCRIPTION, templateName1, templateName2, true, true);
 		verifyListTemplates(SecurityConstants.USER_PWD_CLOUD_ADMIN_AND_APP_MANAGER, SecurityConstants.USER_PWD_CLOUD_ADMIN_AND_APP_MANAGER, SecurityConstants.CLOUD_ADMIN_AND_APP_MANAGER_DESCRIPTION, SecurityConstants.CLOUD_ADMIN_DESCRIPTIN, SecurityConstants.CLOUD_ADMIN_AND_APP_MANAGER_DESCRIPTION, templateName1, templateName2, true, true);
 		verifyListTemplates(SecurityConstants.USER_PWD_VIEWER, SecurityConstants.USER_PWD_VIEWER, SecurityConstants.VIEWER_DESCRIPTIN, SecurityConstants.CLOUD_ADMIN_DESCRIPTIN, SecurityConstants.CLOUD_ADMIN_AND_APP_MANAGER_DESCRIPTION, templateName1, templateName2, false, false);

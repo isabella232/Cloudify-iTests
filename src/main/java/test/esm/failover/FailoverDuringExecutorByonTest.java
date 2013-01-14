@@ -62,7 +62,7 @@ public class FailoverDuringExecutorByonTest extends AbstractFromXenToByonGSMTest
 		super.teardownAfterClass();
 	}
 	
-    @Test(timeOut=DEFAULT_TEST_TIMEOUT, invocationCount=5, enabled=  true)
+    @Test(timeOut=DEFAULT_TEST_TIMEOUT, invocationCount=2, enabled=  true)
     public void test() throws Exception {
     	
     	 // the first GSAs is already started in BeginTest

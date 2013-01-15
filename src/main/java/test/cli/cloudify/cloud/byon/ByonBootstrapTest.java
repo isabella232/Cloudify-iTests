@@ -11,6 +11,7 @@ public class ByonBootstrapTest extends AbstractByonCloudTest {
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
 	public void testBootstrap() throws Exception {
 		super.bootstrap();
+		super.teardown();
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
@@ -20,6 +21,7 @@ public class ByonBootstrapTest extends AbstractByonCloudTest {
 			.keystoreFilePath(SecurityConstants.DEFAULT_KEYSTORE_FILE_PATH).keystorePassword(SecurityConstants.DEFAULT_KEYSTORE_PASSWORD)
 			.user(SecurityConstants.USER_PWD_ALL_ROLES).password(SecurityConstants.USER_PWD_ALL_ROLES);
 		super.bootstrap(bootstrapper);
+		super.teardown();
 	}
 
 }

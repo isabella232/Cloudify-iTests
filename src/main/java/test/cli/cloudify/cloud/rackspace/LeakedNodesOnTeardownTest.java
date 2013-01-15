@@ -1,4 +1,4 @@
-package test.cli.cloudify.cloud.azure;
+package test.cli.cloudify.cloud.rackspace;
 
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -32,7 +32,7 @@ public class LeakedNodesOnTeardownTest extends NewAbstractCloudTest {
 
 	@Override
 	protected String getCloudName() {
-		return "azure";
+		return "rackspace";
 	}
 
 	@Override

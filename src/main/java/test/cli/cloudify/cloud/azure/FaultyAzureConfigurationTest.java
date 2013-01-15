@@ -42,7 +42,6 @@ public class FaultyAzureConfigurationTest extends NewAbstractCloudTest {
 		azureCloudService.setAddressSpace("582.0.0.1/16");
 		String className = this.getClass().getSimpleName().toLowerCase();
 		azureCloudService.setVirtualNetworkSiteName(className + "network");
-		azureCloudService.setAffinityGroup(className + "affinity");
 		azureCloudService.getBootstrapper().verbose(false).setBootstrapExpectedToFail(true);
 		super.bootstrap(azureCloudService);
 		

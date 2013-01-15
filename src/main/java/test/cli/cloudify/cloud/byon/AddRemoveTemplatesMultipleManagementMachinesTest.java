@@ -10,7 +10,7 @@ import framework.utils.SSHUtils;
 public class AddRemoveTemplatesMultipleManagementMachinesTest extends AbstractByonAddRemoveTemplatesTest{
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
-	public void addRemoveTempaltes() throws Exception {
+	public void addRemoveTemplates() throws Exception {
 				
 		TemplatesBatchHandler handler = new TemplatesBatchHandler();
 		TemplateDetails template = handler.addTemplate();
@@ -32,7 +32,7 @@ public class AddRemoveTemplatesMultipleManagementMachinesTest extends AbstractBy
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
-	public void failedAddRemoveTempaltes() throws Exception {
+	public void failedAddRemoveTemplates() throws Exception {
 		
 		TemplatesBatchHandler handler = new TemplatesBatchHandler();
 		TemplateDetails template = handler.addTemplate();
@@ -41,7 +41,7 @@ public class AddRemoveTemplatesMultipleManagementMachinesTest extends AbstractBy
 		
 		String templateRemotePath = getTemplateRemoteDirFullPath(templateName) + template.getTemplateFile().getName();
 		
-		SSHUtils.runCommand(mngMachinesIP[1], OPERATION_TIMEOUT, "rm -f " + templateRemotePath, USER, PASSWORD);
+		LogUtils.log(SSHUtils.runCommand(mngMachinesIP[1], OPERATION_TIMEOUT, "rm -f " + templateRemotePath, USER, PASSWORD));
 		
 		String output = removeTemplate(handler, templateName, true, null);
 		

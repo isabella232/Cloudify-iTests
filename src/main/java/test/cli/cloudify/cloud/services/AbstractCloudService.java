@@ -31,6 +31,7 @@ import framework.utils.WebUtils;
 
 public abstract class AbstractCloudService implements CloudService {
 
+	private static final int MAX_HOSTNAME_LENGTH = 45;
 	protected static final String RELATIVE_ESC_PATH = "/tools/cli/plugins/esc/";
 	protected static final String UPLOAD_FOLDER = "upload";
 	
@@ -94,7 +95,14 @@ public abstract class AbstractCloudService implements CloudService {
 	}
 
 	public void setMachinePrefix(String machinePrefix) {
-		this.machinePrefix = machinePrefix;
+		
+		if (machinePrefix.length() > MAX_HOSTNAME_LENGTH) {
+			String substring = machinePrefix.substring(0, MAX_HOSTNAME_LENGTH - 1);
+			LogUtils.log("machinePrefix " + machinePrefix + " is too long. using " + substring + " as actual machine prefix");
+			this.machinePrefix = substring;
+		} else {
+			this.machinePrefix = machinePrefix;
+		}
 	}
 
 

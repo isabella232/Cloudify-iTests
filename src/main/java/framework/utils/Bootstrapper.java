@@ -17,7 +17,7 @@ public abstract class Bootstrapper {
 	private String securityFilePath;
 	private String keystoreFilePath;
 	private String keystorePassword;
-	private boolean force = true;
+	private boolean force = false;
 	private String restUrl;
 	private boolean bootstrapExpectedToFail = false;
 	private boolean teardownExpectedToFail = false;

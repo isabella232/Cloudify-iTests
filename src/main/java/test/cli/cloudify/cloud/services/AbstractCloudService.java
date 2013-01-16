@@ -450,6 +450,12 @@ public abstract class AbstractCloudService implements CloudService {
 		File uploadLoggsDir = new File(uploadOverrides.getAbsoluteFile() + "/config/");
 		uploadLoggsDir.mkdir();
 		FileUtils.copyFileToDirectory(logging, uploadLoggsDir);
+		
+		File originalGsLogging = new File(SGTestHelper.getBuildDir() + "/config/gs_logging.properties");
+		if (originalGsLogging.exists()) {
+			originalGsLogging.delete();
+		}
+		FileUtils.copyFile(logging, originalGsLogging);
 	}
 
 	private static String stripSlash(String str) {

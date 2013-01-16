@@ -36,18 +36,18 @@ public class AddRemoveTemplatesTest extends AbstractByonAddRemoveTemplatesTest {
 	public void addTemplatesTest() throws IOException {
 		TemplatesBatchHandler templatesHandler1 = new TemplatesBatchHandler();
 		templatesHandler1.addTemplates(5);
-		addTempaltes(templatesHandler1);
-		assertExpectedListTempaltes();
+		addTemplates(templatesHandler1);
+		assertExpectedListTemplates();
 
 		TemplatesBatchHandler templatesHandler2 = new TemplatesBatchHandler();
 		templatesHandler2.addTemplates(5);
-		addTempaltes(templatesHandler2);
-		assertExpectedListTempaltes();
+		addTemplates(templatesHandler2);
+		assertExpectedListTemplates();
 
 		TemplatesBatchHandler templatesHandler3 = new TemplatesBatchHandler();
 		templatesHandler3.addTemplates(5);
-		addTempaltes(templatesHandler3);	
-		assertExpectedListTempaltes();
+		addTemplates(templatesHandler3);	
+		assertExpectedListTemplates();
 	}
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
@@ -56,7 +56,7 @@ public class AddRemoveTemplatesTest extends AbstractByonAddRemoveTemplatesTest {
 		TemplatesBatchHandler handler = new TemplatesBatchHandler();
 		TemplateDetails template = handler.addServiceTemplate();
 		String templateName = template.getTemplateName();
-		String output = addTempaltes(handler);
+		String output = addTemplates(handler);
 
 		AssertUtils.assertTrue("Failed to add " + templateName, !output.contains("Failed to add the following templates:"));
 
@@ -77,8 +77,8 @@ public class AddRemoveTemplatesTest extends AbstractByonAddRemoveTemplatesTest {
 		TemplateDetails addedTemplate = templatesHandler.addServiceTemplate();
 		templatesHandler.addServiceTemplate();
 		// add templates
-		addTempaltes(templatesHandler);
-		assertExpectedListTempaltes();
+		addTemplates(templatesHandler);
+		assertExpectedListTemplates();
 
 		final String templateName = addedTemplate.getTemplateName();
 		String serviceName = templateName + "_service";
@@ -103,8 +103,8 @@ public class AddRemoveTemplatesTest extends AbstractByonAddRemoveTemplatesTest {
 		templatesHandler.setTemplatesFolder(zippedTemplateFile);
 
 		// add templates
-		addTempaltes(templatesHandler);
-		assertExpectedListTempaltes();
+		addTemplates(templatesHandler);
+		assertExpectedListTemplates();
 
 		final String templateName = addedTemplate.getTemplateName();
 		String serviceName = templateName + "_service";
@@ -135,7 +135,7 @@ public class AddRemoveTemplatesTest extends AbstractByonAddRemoveTemplatesTest {
 		String serviceName = templateName + "_service";
 		try {
 			Assert.assertEquals(200, response.getStatusLine().getStatusCode());
-			assertExpectedListTempaltes();
+			assertExpectedListTemplates();
 			installService(serviceName, templateName, false);
 			assertRightUploadDir(serviceName, addedTemplate.getUploadDirName());
 		} finally {
@@ -143,7 +143,7 @@ public class AddRemoveTemplatesTest extends AbstractByonAddRemoveTemplatesTest {
 			String removeUrl = getRestUrl() + "/service/templates/" + templateName;
 			HttpDelete httpDelete = new HttpDelete(removeUrl);
 			response = new DefaultHttpClient().execute(httpDelete);
-			assertListTempaltes(defaultTempaltes);
+			assertListTemplates(defaultTemplates);
 		}
 	}
 
@@ -153,8 +153,8 @@ public class AddRemoveTemplatesTest extends AbstractByonAddRemoveTemplatesTest {
 		TemplateDetails addedTemplate1 = templatesHandler.addServiceTemplate();
 		TemplateDetails addedTemplate2 = templatesHandler.addCustomTemplate(new TemplateDetails(null, null, null, addedTemplate1.getUploadDirName(), null), true, false);
 
-		addTempaltes(templatesHandler);
-		assertExpectedListTempaltes();
+		addTemplates(templatesHandler);
+		assertExpectedListTemplates();
 
 		final String template1Name = addedTemplate1.getTemplateName();
 		String service1Name = template1Name + "_service";
@@ -178,21 +178,21 @@ public class AddRemoveTemplatesTest extends AbstractByonAddRemoveTemplatesTest {
 	public void addExistAndNotExistTemplates() throws IOException {
 		TemplatesBatchHandler templatesHandler1 = new TemplatesBatchHandler();
 		TemplateDetails addedTemplate = templatesHandler1.addTemplates(2).get(0);
-		addTempaltes(templatesHandler1);
+		addTemplates(templatesHandler1);
 
 		TemplatesBatchHandler templatesHandler2 = new TemplatesBatchHandler();
 		templatesHandler2.addTemplate();
 		templatesHandler2.addExpectedToFailTemplate(addedTemplate);
-		addTempaltes(templatesHandler2);
+		addTemplates(templatesHandler2);
 
-		assertExpectedListTempaltes();
+		assertExpectedListTemplates();
 	}
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
 	public void templateNotExists() throws IOException, InterruptedException {
-		String serviceName = "notExistTempalte_service";
+		String serviceName = "notExistTemplate_service";
 		try {
-			installService(serviceName, "notExistTempalte", true);
+			installService(serviceName, "notExistTemplate", true);
 		} finally {
 			uninstallServiceIfFound(serviceName);
 		} 
@@ -203,12 +203,12 @@ public class AddRemoveTemplatesTest extends AbstractByonAddRemoveTemplatesTest {
 		TemplatesBatchHandler templatesHandler = new TemplatesBatchHandler();
 		templatesHandler.addTemplate();
 		TemplateDetails addedTemplate = templatesHandler.addTemplate();
-		addTempaltes(templatesHandler);
-		assertExpectedListTempaltes();
+		addTemplates(templatesHandler);
+		assertExpectedListTemplates();
 
 		final String templateName = addedTemplate.getTemplateName();
 		removeTemplate(templatesHandler, templateName, false, "Template " + templateName + " removed successfully");
-		assertExpectedListTempaltes();
+		assertExpectedListTemplates();
 
 		String serviceName = templateName + "_service";
 		try {
@@ -221,49 +221,49 @@ public class AddRemoveTemplatesTest extends AbstractByonAddRemoveTemplatesTest {
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
 	public void removeNotExistTemplate() {
 		removeTemplate("error", true, "Failed to remove template [error]");
-		assertListTempaltes(defaultTempaltes);
+		assertListTemplates(defaultTemplates);
 	}
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
 	public void illegalDuplicateTemplatesInTheSameFolder() throws IOException {
-		TemplatesBatchHandler tempaltesHandler = new TemplatesBatchHandler();
-		TemplateDetails addedTemplate = tempaltesHandler.addExpectedToFailTemplate(new TemplateDetails());
-		File duplicateTemplateFile = new File(tempaltesHandler.getTemplatesFolder(), "duplicateTemplate-template.groovy");
+		TemplatesBatchHandler TemplatesHandler = new TemplatesBatchHandler();
+		TemplateDetails addedTemplate = TemplatesHandler.addExpectedToFailTemplate(new TemplateDetails());
+		File duplicateTemplateFile = new File(TemplatesHandler.getTemplatesFolder(), "duplicateTemplate-template.groovy");
 		TemplateDetails duplicateTemplate = new TemplateDetails(addedTemplate.getTemplateName(), 
 				duplicateTemplateFile, null, addedTemplate.getUploadDirName(), addedTemplate.getMachineIP());
-		tempaltesHandler.addExpectedToFailTemplate(duplicateTemplate);
+		TemplatesHandler.addExpectedToFailTemplate(duplicateTemplate);
 
-		addTempaltes(tempaltesHandler, "Template with name [" + addedTemplate.getTemplateName() + "] already exist");
-		assertExpectedListTempaltes();
+		addTemplates(TemplatesHandler, "Template with name [" + addedTemplate.getTemplateName() + "] already exist");
+		assertExpectedListTemplates();
 	}
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
 	public void illegalTemplateWithoutLocalUploadDir() throws IOException {
-		TemplatesBatchHandler tempaltesHandler = new TemplatesBatchHandler();
-		TemplateDetails addedTemplate = tempaltesHandler.addExpectedToFailTempalte();
+		TemplatesBatchHandler TemplatesHandler = new TemplatesBatchHandler();
+		TemplateDetails addedTemplate = TemplatesHandler.addExpectedToFailTemplate();
 		// delete upload directory
-		File uploadDir = new File(tempaltesHandler.getTemplatesFolder(), addedTemplate.getUploadDirName());
+		File uploadDir = new File(TemplatesHandler.getTemplatesFolder(), addedTemplate.getUploadDirName());
 		FileUtils.deleteDirectory(uploadDir);
 		// try to add the template
-		addTempaltes(tempaltesHandler, "Could not find upload directory");
-		assertListTempaltes(defaultTempaltes);
+		addTemplates(TemplatesHandler, "Could not find upload directory");
+		assertListTemplates(defaultTemplates);
 	}
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
 	public void tryToRemoveUsedTemplate() throws IOException, InterruptedException {
-		TemplatesBatchHandler tempaltesHandler = new TemplatesBatchHandler();
-		final TemplateDetails addedTemplate = tempaltesHandler.addServiceTemplate();
+		TemplatesBatchHandler TemplatesHandler = new TemplatesBatchHandler();
+		final TemplateDetails addedTemplate = TemplatesHandler.addServiceTemplate();
 		String templateName = addedTemplate.getTemplateName();
-		addTempaltes(tempaltesHandler);
-		assertExpectedListTempaltes();
+		addTemplates(TemplatesHandler);
+		assertExpectedListTemplates();
 
 		String serviceName = templateName + "_service";
 		try {
 			installService(serviceName, templateName, false);
 			assertRightUploadDir(serviceName, addedTemplate.getUploadDirName());
-			removeTemplate(tempaltesHandler, templateName, true, 
+			removeTemplate(TemplatesHandler, templateName, true, 
 					"the template is being used by the following services");
-			assertExpectedListTempaltes();
+			assertExpectedListTemplates();
 		} finally {		
 			uninstallServiceIfFound(serviceName);
 		}
@@ -273,19 +273,19 @@ public class AddRemoveTemplatesTest extends AbstractByonAddRemoveTemplatesTest {
 	public void addRemoveAndAddAgainTemplates() throws IOException {
 		TemplatesBatchHandler handler = new TemplatesBatchHandler();
 		TemplateDetails toRemoveTemplate = handler.addTemplate();
-		addTempaltes(handler);
+		addTemplates(handler);
 		removeTemplate(handler, toRemoveTemplate.getTemplateName(), false, null);
-		assertListTempaltes(defaultTempaltes);
+		assertListTemplates(defaultTemplates);
 		handler.addCustomTemplate(toRemoveTemplate, false, false);		
-		addTempaltes(handler);
-		assertExpectedListTempaltes();
+		addTemplates(handler);
+		assertExpectedListTemplates();
 	}
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
 	public void threadedAddRemoveTemplate() throws Exception {
 
 		TemplatesBatchHandler handler = new TemplatesBatchHandler();
-		TemplateDetails template = handler.addExpectedToFailTempalte();
+		TemplateDetails template = handler.addExpectedToFailTemplate();
 		String templateName = template.getTemplateName();
 		String templateRemotePath;
 
@@ -336,7 +336,7 @@ public class AddRemoveTemplatesTest extends AbstractByonAddRemoveTemplatesTest {
 
 		public void run() {
 			try {				
-				addTempaltes(handler);	
+				addTemplates(handler);	
 				barrier.await();
 			} catch (Exception e) {
 				barrier.reset(e);

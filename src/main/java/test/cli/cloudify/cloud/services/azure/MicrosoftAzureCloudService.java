@@ -33,7 +33,7 @@ public class MicrosoftAzureCloudService extends AbstractCloudService {
 
 	private static final String AZURE_CERT_PFX = "azure-cert.pfx";
 
-	private static final String USER_NAME = System.getProperty("user.name") + UUIDHelper.generateRandomUUID(3);
+	private String userName = System.getProperty("user.name") + UUIDHelper.generateRandomUUID(3);
 	
 	public static final String DEFAULT_IMAGE_ID = "5112500ae3b842c8b9c604889f8753c3__OpenLogic-CentOS63DEC20121220";
 
@@ -53,9 +53,9 @@ public class MicrosoftAzureCloudService extends AbstractCloudService {
 	private String password = PFX_PASSWORD;
 	private String addressSpace = ADDRESS_SPACE;
 	private String affinityLocation = "East US";
-	private String affinityGroup = USER_NAME + "cloudifyaffinity";
-	private String virtualNetworkSiteName = USER_NAME + "networksite";
-	private String storageAccountName = USER_NAME + "cloudifystorage";
+	private String affinityGroup = userName + "cloudifyaffinity";
+	private String virtualNetworkSiteName = userName + "networksite";
+	private String storageAccountName = userName + "cloudifystorage";
 
 	public String getStorageAccountName() {
 		return storageAccountName;
@@ -111,7 +111,7 @@ public class MicrosoftAzureCloudService extends AbstractCloudService {
 		copyPrivateKeyToUploadFolder();
 		
 		getProperties().put("subscriptionId", AZURE_SUBSCRIPTION_ID);
-		getProperties().put("username", USER_NAME);
+		getProperties().put("username", userName);
 		getProperties().put("password", password);
 		getProperties().put("pfxFile", AZURE_CERT_PFX);
 		getProperties().put("pfxPassword", PFX_PASSWORD);
@@ -119,7 +119,7 @@ public class MicrosoftAzureCloudService extends AbstractCloudService {
 		final Map<String, String> propsToReplace = new HashMap<String, String>();
 		propsToReplace.put("cloudify_agent_", getMachinePrefix().toLowerCase() + "cloudify-agent");
 		propsToReplace.put("cloudify_manager", getMachinePrefix().toLowerCase() + "cloudify-manager");
-		propsToReplace.put("ENTER_AVAILABILITY_SET", USER_NAME);
+		propsToReplace.put("ENTER_AVAILABILITY_SET", userName);
 		propsToReplace.put("ENTER_DEPLOYMENT_SLOT", "Staging");
 		propsToReplace.put("ENTER_VIRTUAL_NETWORK_SITE_NAME", virtualNetworkSiteName);
 		propsToReplace.put("ENTER_ADDRESS_SPACE", addressSpace);

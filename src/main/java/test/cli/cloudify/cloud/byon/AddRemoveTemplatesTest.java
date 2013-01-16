@@ -15,6 +15,8 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.cloudifysource.dsl.internal.CloudifyConstants;
 import org.cloudifysource.dsl.internal.packaging.Packager;
 import org.cloudifysource.dsl.internal.packaging.ZipUtils;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import framework.utils.AssertUtils;
@@ -31,6 +33,11 @@ public class AddRemoveTemplatesTest extends AbstractByonAddRemoveTemplatesTest {
 
 	private static final int NUM_OF_THREADS = 3;
 	private ThreadBarrier barrier = new ThreadBarrier(NUM_OF_THREADS + 1);
+	
+	@BeforeClass(alwaysRun = true)
+	protected void bootstrap() throws Exception {		
+		super.bootstrap();
+	}
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
 	public void addTemplatesTest() throws IOException {
@@ -310,15 +317,10 @@ public class AddRemoveTemplatesTest extends AbstractByonAddRemoveTemplatesTest {
 
 		verifyTemplateExistence(mngMachinesIP[0], template, templateRemotePath, false);
 	}
-
-	@Override
-	public boolean isBootstrap() {
-		return true;
-	}
-
-	@Override
-	public boolean isTeardown() {
-		return true;
+	
+	@AfterClass(alwaysRun = true)
+	protected void teardown() throws Exception {
+		super.teardown();
 	}
 
 	@Override

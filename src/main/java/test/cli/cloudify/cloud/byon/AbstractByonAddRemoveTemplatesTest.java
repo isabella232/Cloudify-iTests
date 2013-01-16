@@ -19,20 +19,14 @@ import junit.framework.Assert;
 import org.apache.commons.io.FileUtils;
 import org.cloudifysource.dsl.internal.CloudifyConstants;
 import org.cloudifysource.dsl.internal.DSLUtils;
-import org.openspaces.admin.AdminFactory;
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.openspaces.admin.pu.ProcessingUnitInstance;
 import org.openspaces.admin.pu.ProcessingUnits;
 import org.openspaces.pu.service.ServiceDetails;
-import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 
 import test.cli.cloudify.CommandTestUtils;
-import test.cli.cloudify.cloud.services.CloudService;
-import test.cli.cloudify.cloud.services.CloudServiceManager;
-import test.cli.cloudify.cloud.services.byon.ByonCloudService;
 import framework.utils.AssertUtils;
 import framework.utils.IOUtils;
 import framework.utils.LogUtils;
@@ -72,28 +66,11 @@ public abstract class AbstractByonAddRemoveTemplatesTest extends AbstractByonClo
 	protected final String TEMPLATE_NAME_PROPERTY_NAME = "templateName";
 
 	public abstract int getNumOfMngMachines();
-	public abstract boolean isBootstrap();
-	public abstract boolean isTeardown();
 
 	@Override
-	@BeforeClass(alwaysRun = true)
-	protected void bootstrap() throws Exception {
-		CloudService service = null;
-		bootstrap(service);
-	}
-
-	@Override
-	protected void bootstrap(CloudService service) throws Exception {
-		
-		ByonCloudService byonService;
-		
-		if(service == null){
-			byonService = new ByonCloudService();
-
-		}else{
-			byonService = (ByonCloudService)service;
-		}
-		String[] machines = byonService.getMachines();
+	protected void customizeCloud() throws Exception {
+		super.customizeCloud();
+		String[] machines = getService().getMachines();
 		final int numOfMngMachines = getNumOfMngMachines();
 		if (machines.length < numOfMngMachines) {
 			Assert.fail("Not enough management machines to use.");
@@ -108,45 +85,25 @@ public abstract class AbstractByonAddRemoveTemplatesTest extends AbstractByonClo
 			}
 			ipListBuilder.append(nextMachine);
 		}
-		byonService.setNumberOfManagementMachines(numOfMngMachines);
+		getService().setNumberOfManagementMachines(numOfMngMachines);
 		numOfMachinesInUse.addAndGet(numOfMngMachines);
 		LogUtils.log("Updating MNG machine IPs: " + ipListBuilder);
-		byonService.setIpList(ipListBuilder.toString());
+		getService().setIpList(ipListBuilder.toString());
+	}
 
-		if (isBootstrap()) {
-			super.bootstrap(byonService);
-		} else {
-			this.cloudService = CloudServiceManager.getInstance().getCloudService(this.getCloudName());
-			AdminFactory factory = new AdminFactory();
-			for (String mngMachineIP : mngMachinesIP) {				
-				factory.addLocators(mngMachineIP + ":" + CloudifyConstants.DEFAULT_LUS_PORT);
-			}
-			admin = factory.createAdmin();
-		}
+	@Override
+	protected void afterBootstrap() throws Exception {
+		super.afterBootstrap();
 		defaultTemplates = new LinkedList<String>();
 		for (String templateName : DEFAULT_TEMPLATES) {			
 			defaultTemplates.add(templateName);
 		}
 	}
 	
-	@Override
-	@AfterClass(alwaysRun = true)
-	protected void teardown() throws Exception {
-		if (isTeardown()) {
-			super.teardown();
-		}
-	}
-
-	@Override
-	protected String getRestUrl() {
-		if (!isBootstrap()) {
-			return "http://" + mngMachinesIP[0] + ":8100";
-		}
-		return super.getRestUrl();
-	}
 	protected String addTemplates(TemplatesBatchHandler handler) {
 		return addTemplates(handler, null);
 	}
+	
 	protected String addTemplates(TemplatesBatchHandler handler, String outputContains) {
 		String command = "connect " + getRestUrl() + ";add-templates " + handler.getTemplatesFolder();
 		String output = null;

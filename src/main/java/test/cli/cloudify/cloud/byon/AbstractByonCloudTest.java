@@ -32,13 +32,6 @@ public class AbstractByonCloudTest extends NewAbstractCloudTest {
 		return (ByonCloudService) super.getService();
 	}
 
-
-	@Override
-	protected void bootstrap() throws Exception {
-		super.bootstrap();
-	}
-
-
 	@Override
 	protected void afterBootstrap() throws Exception {
 		super.afterBootstrap();
@@ -91,12 +84,6 @@ public class AbstractByonCloudTest extends NewAbstractCloudTest {
 		return false;
 	}
 
-
-	@Override
-	protected void customizeCloud() throws Exception {
-		// TODO Auto-generated method stub
-
-	}
 
 	protected List<Machine> getManagementMachines() {
 		return getProcessingUnitMachines("rest");

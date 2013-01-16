@@ -119,6 +119,8 @@ public class ByonCloudService extends AbstractCloudService {
 		}
 		
 		propsToReplace.put("numberOfManagementMachines 1", "numberOfManagementMachines "  + getNumberOfManagementMachines());
+		propsToReplace.put("\"clearRemoteDirectoryOnStart\":\"false\"", "\"clearRemoteDirectoryOnStart\":\"true\"");
+		propsToReplace.put("/tmp/gs-files", "/tmp/byon/gs-files");
 		this.getAdditionalPropsToReplace().putAll(propsToReplace);
 
 		replaceCloudifyURL();
@@ -194,7 +196,7 @@ public class ByonCloudService extends AbstractCloudService {
 
 	private void cleanGSFilesOnAllHosts() {
 		
-		String command = "rm -rf /tmp/gs-files";
+		String command = "rm -rf /tmp/byon/gs-files";
 		if (sudo) {
 			command = "sudo " + command;
 		}

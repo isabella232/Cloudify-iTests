@@ -17,7 +17,6 @@ public class ByonAddTemplatesWithSecurityTest extends AbstractByonAddRemoveTempl
 	private static final String ADDED_SUCCESSFULLY_MESSAGE = "added successfully";
 	private static final String REMOVE_SUCCEEDED_MESSAGE = "removed successfully";
 
-	@Override
 	@BeforeClass(alwaysRun = true)
 	protected void bootstrap() throws Exception {
 		
@@ -30,12 +29,6 @@ public class ByonAddTemplatesWithSecurityTest extends AbstractByonAddRemoveTempl
 		CloudService service = CloudServiceManager.getInstance().getCloudService(getCloudName());
 		service.setBootstrapper(bootstrapper);
 		super.bootstrap(service);
-	}
-
-	@Override
-	@AfterClass(alwaysRun = true)
-	protected void teardown() throws Exception {
-		super.teardown();
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true, priority=5)
@@ -146,6 +139,11 @@ public class ByonAddTemplatesWithSecurityTest extends AbstractByonAddRemoveTempl
 
 	}
 	
+	@AfterClass(alwaysRun = true)
+	protected void teardown() throws Exception {
+		super.teardown();
+	}
+	
 	public void verifyAddTemplate(String user, String password, String userDescription, boolean isExpectedToFail) throws Exception{
 		
 		CloudBootstrapper bootstrapper = new CloudBootstrapper();
@@ -229,16 +227,4 @@ public class ByonAddTemplatesWithSecurityTest extends AbstractByonAddRemoveTempl
 	public int getNumOfMngMachines() {
 		return 1;
 	}
-
-	@Override
-	public boolean isBootstrap() {
-		return true;
-		//return false;
-	}
-
-	@Override
-	public boolean isTeardown() {
-		return true;
-	}
-
 }

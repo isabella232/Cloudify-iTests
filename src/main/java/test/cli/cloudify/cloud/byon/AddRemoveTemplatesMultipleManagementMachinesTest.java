@@ -1,5 +1,7 @@
 package test.cli.cloudify.cloud.byon;
 
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import test.cli.cloudify.cloud.services.byon.ByonCloudService;
@@ -9,6 +11,12 @@ import framework.utils.SSHUtils;
 
 public class AddRemoveTemplatesMultipleManagementMachinesTest extends AbstractByonAddRemoveTemplatesTest{
 
+	@BeforeClass(alwaysRun = true)
+	protected void bootstrap() throws Exception {		
+		super.bootstrap();
+	}
+
+	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
 	public void addRemoveTemplates() throws Exception {
 				
@@ -68,6 +76,12 @@ public class AddRemoveTemplatesMultipleManagementMachinesTest extends AbstractBy
 		AssertUtils.assertTrue("failed to add " + templateName + " to " + mngMachinesIP[0], successOutput.contains(templateName));
 		
 	}
+	
+	@AfterClass(alwaysRun = true)
+	protected void teardown() throws Exception {
+		super.teardown();
+	}
+
 
 	protected void startManagement(String machine1) throws Exception {
 		
@@ -81,16 +95,6 @@ public class AddRemoveTemplatesMultipleManagementMachinesTest extends AbstractBy
 		}
 		
 		AssertUtils.assertFail("Failed to start management on machine " + machine1 + ".");
-	}
-	
-	@Override
-	public boolean isBootstrap() {
-		return true;
-	}
-
-	@Override
-	public boolean isTeardown() {
-		return true;
 	}
 
 	@Override

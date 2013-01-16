@@ -45,7 +45,7 @@ public class DedicatedManualByonStatefulMediumDeploymentTest extends AbstractFro
 	    // make sure no gscs yet created
 	    repetitiveAssertNumberOfGSCsAdded(0, OPERATION_TIMEOUT);
 	    repetitiveAssertNumberOfGSAsAdded(1, OPERATION_TIMEOUT);
-	            
+	 
 	    final ProcessingUnit pu = super.deploy(
 	            new ElasticSpaceDeployment("mygrid")
 	            .maxMemoryCapacity(HIGH_MEM_CAPACITY, MemoryUnit.MEGABYTES)
@@ -59,7 +59,7 @@ public class DedicatedManualByonStatefulMediumDeploymentTest extends AbstractFro
 	    );
 	    
 	    int expectedNumberOfContainers = (int) Math.ceil(HIGH_MEM_CAPACITY/(1.0*CONTAINER_CAPACITY));
-		int expectedNumberOfMachines = 5;
+		int expectedNumberOfMachines = 2; // byon machines have approx 5.8gb of ram -> 2 machines for 6gb
 	    GsmTestUtils.waitForScaleToCompleteIgnoreCpuSla(pu, expectedNumberOfContainers, expectedNumberOfMachines, 2*DEFAULT_TEST_TIMEOUT);
 
 	    assertUndeployAndWait(pu);

@@ -15,8 +15,8 @@ public class AddRemoveTemplatesMultipleManagementMachinesTest extends AbstractBy
 		TemplatesBatchHandler handler = new TemplatesBatchHandler();
 		TemplateDetails template = handler.addTemplate();
 		String templateName = template.getTemplateName();
-		addTempaltes(handler);
-		assertExpectedListTempaltes();
+		addTemplates(handler);
+		assertExpectedListTemplates();
 				
 		String templateRemotePath = getTemplateRemoteDirFullPath(templateName) + template.getTemplateFile().getName();	
 
@@ -24,7 +24,7 @@ public class AddRemoveTemplatesMultipleManagementMachinesTest extends AbstractBy
 		verifyTemplateExistence(mngMachinesIP[1], template, templateRemotePath, true);
 							
 		removeTemplate(handler, templateName, false, null);
-		assertExpectedListTempaltes();
+		assertExpectedListTemplates();
 		
 		verifyTemplateExistence(mngMachinesIP[0], template, templateRemotePath, false);
 		verifyTemplateExistence(mngMachinesIP[1], template, templateRemotePath, false);
@@ -37,7 +37,7 @@ public class AddRemoveTemplatesMultipleManagementMachinesTest extends AbstractBy
 		TemplatesBatchHandler handler = new TemplatesBatchHandler();
 		TemplateDetails template = handler.addTemplate();
 		String templateName = template.getTemplateName();
-		addTempaltes(handler);
+		addTemplates(handler);
 		
 		String templateRemotePath = getTemplateRemoteDirFullPath(templateName) + template.getTemplateFile().getName();
 		
@@ -50,7 +50,7 @@ public class AddRemoveTemplatesMultipleManagementMachinesTest extends AbstractBy
 		AssertUtils.assertTrue("successfully removed template from " + mngMachinesIP[1], output.contains(mngMachinesIP[1]));
 		
 		handler.addExpectedToFailTemplate(template);
-		output = addTempaltes(handler);
+		output = addTemplates(handler);
 				
 		int failedIndex = output.indexOf("Failed to add the following templates:");
 		AssertUtils.assertTrue("successfully added " + templateName + " to " + mngMachinesIP[1], failedIndex != -1);

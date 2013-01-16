@@ -44,7 +44,7 @@ public abstract class AbstractByonAddRemoveTemplatesTest extends AbstractByonClo
 	List<TemplatesBatchHandler> templatesHandlers;
 	AtomicInteger numLastTemplateFolder;
 	AtomicInteger numLastAddedTemplate;
-	List<String> defaultTempaltes;
+	List<String> defaultTemplates;
 
 	public static final String USER = "tgrid";
 	public static final String PASSWORD = "tgrid";
@@ -123,9 +123,9 @@ public abstract class AbstractByonAddRemoveTemplatesTest extends AbstractByonClo
 			}
 			admin = factory.createAdmin();
 		}
-		defaultTempaltes = new LinkedList<String>();
+		defaultTemplates = new LinkedList<String>();
 		for (String templateName : DEFAULT_TEMPLATES) {			
-			defaultTempaltes.add(templateName);
+			defaultTemplates.add(templateName);
 		}
 	}
 	
@@ -144,14 +144,14 @@ public abstract class AbstractByonAddRemoveTemplatesTest extends AbstractByonClo
 		}
 		return super.getRestUrl();
 	}
-	protected String addTempaltes(TemplatesBatchHandler handler) {
-		return addTempaltes(handler, null);
+	protected String addTemplates(TemplatesBatchHandler handler) {
+		return addTemplates(handler, null);
 	}
-	protected String addTempaltes(TemplatesBatchHandler handler, String outputContains) {
+	protected String addTemplates(TemplatesBatchHandler handler, String outputContains) {
 		String command = "connect " + getRestUrl() + ";add-templates " + handler.getTemplatesFolder();
 		String output = null;
 		try {
-			List<String> expectedFailedToAddTemplates = handler.getExpectedFailedTempaltes();
+			List<String> expectedFailedToAddTemplates = handler.getExpectedFailedTemplates();
 			if (expectedFailedToAddTemplates != null && !expectedFailedToAddTemplates.isEmpty()) {
 				output = CommandTestUtils.runCommandExpectedFail(command);
 			} else {
@@ -239,15 +239,15 @@ public abstract class AbstractByonAddRemoveTemplatesTest extends AbstractByonClo
 		Assert.assertEquals(expectedUploadDirName, uploadDetail.toString());
 	}
 	
-	protected void assertExpectedListTempaltes() {
-		assertListTempaltes(getExpectedExistTemplateNames());
+	protected void assertExpectedListTemplates() {
+		assertListTemplates(getExpectedExistTemplateNames());
 	}
 	
-	protected void assertListTempaltes(List<String> expectedTemplatesList) {
+	protected void assertListTemplates(List<String> expectedTemplatesList) {
 		try {
 			String output = listTemplates();
 			List<String> templateNames = getTemplateNamesFromOutput(output);
-			assertEquals("Expected tempaltes: " + expectedTemplatesList + ", but was: " 
+			assertEquals("Expected templates: " + expectedTemplatesList + ", but was: " 
 					+ templateNames, expectedTemplatesList.size(), templateNames.size());
 			for (String templateName : expectedTemplatesList) {
 				Assert.assertTrue(templateNames.contains(templateName));
@@ -260,11 +260,11 @@ public abstract class AbstractByonAddRemoveTemplatesTest extends AbstractByonClo
 
 	protected List<String> getExpectedExistTemplateNames() {
 		List<String> names = new LinkedList<String>();
-		names.addAll(defaultTempaltes);
+		names.addAll(defaultTemplates);
 		for (TemplatesBatchHandler handler : templatesHandlers) {
-			final List<String> expectedTempaltesExist = handler.getExpectedTempaltesExist();
-			if (expectedTempaltesExist != null) {
-				names.addAll(expectedTempaltesExist);
+			final List<String> expectedTemplatesExist = handler.getExpectedTemplatesExist();
+			if (expectedTemplatesExist != null) {
+				names.addAll(expectedTemplatesExist);
 			}
 		}
 		return names;
@@ -298,7 +298,7 @@ public abstract class AbstractByonAddRemoveTemplatesTest extends AbstractByonClo
 	
 	private List<String> getTemplateNamesFromOutput(String outputTemplatesList) {
 		List<String> templateNames = new LinkedList<String>();
-		templateNames.addAll(defaultTempaltes);
+		templateNames.addAll(defaultTemplates);
 		String templates = outputTemplatesList;
 		while(true) {
 			int begin = templates.indexOf(TEMPLATE_NAME_PREFIX);
@@ -353,14 +353,14 @@ public abstract class AbstractByonAddRemoveTemplatesTest extends AbstractByonClo
 		
 	}
 	
-	protected void removeAllAddedTempaltes(List<String> templateNames) throws Exception {
+	protected void removeAllAddedTemplates(List<String> templateNames) throws Exception {
 		for (String templateName : templateNames) {
-			if (defaultTempaltes.contains(templateName)) {
+			if (defaultTemplates.contains(templateName)) {
 				continue;
 			}
 			removeTemplate(templateName, false, null);
 		}
-		assertListTempaltes(defaultTempaltes);
+		assertListTemplates(defaultTemplates);
 	}
 	
 	@BeforeMethod(alwaysRun = true) 
@@ -372,13 +372,13 @@ public abstract class AbstractByonAddRemoveTemplatesTest extends AbstractByonClo
 	
 	@AfterMethod(alwaysRun = true)
 	public void clean() throws Exception {
-		File tempalteFolder = new File(TEMP_TEMPLATES_DIR_PATH);
-		FileUtils.deleteQuietly(tempalteFolder);
+		File templateFolder = new File(TEMP_TEMPLATES_DIR_PATH);
+		FileUtils.deleteQuietly(templateFolder);
 		File serviceFolder = new File(TEMP_SERVICES_DIR_PATH);
 		FileUtils.deleteQuietly(serviceFolder);
 		String remoteDir = getService().getCloud().getTemplates().get(DEFAULT_TEMPLATES[0]).getRemoteDirectory();
 		try{
-			removeAllAddedTempaltes(getTemplateNamesFromOutput(listTemplates()));
+			removeAllAddedTemplates(getTemplateNamesFromOutput(listTemplates()));
 		}
 		catch (AssertionError ae){
 			for(String mngMachineIP : mngMachinesIP){
@@ -407,15 +407,15 @@ public abstract class AbstractByonAddRemoveTemplatesTest extends AbstractByonClo
 	public class TemplatesBatchHandler {
 		private File templatesFolder;
 		private Map<String, TemplateDetails> templates;
-		private List<String> expectedTempaltesExist;
-		private List<String> expectedFailedTempaltes;
+		private List<String> expectedTemplatesExist;
+		private List<String> expectedFailedTemplates;
 
 		public TemplatesBatchHandler() {
-			File tempaltesTempFolder = new File(TEMP_TEMPLATES_DIR_PATH);
-			if (!tempaltesTempFolder.exists()) {
-				tempaltesTempFolder.mkdir();
+			File templatesTempFolder = new File(TEMP_TEMPLATES_DIR_PATH);
+			if (!templatesTempFolder.exists()) {
+				templatesTempFolder.mkdir();
 			}
-			File newTemplatesFolder = new File(tempaltesTempFolder, TEMPLATE_NAME_PREFIX + numLastTemplateFolder.getAndIncrement());
+			File newTemplatesFolder = new File(templatesTempFolder, TEMPLATE_NAME_PREFIX + numLastTemplateFolder.getAndIncrement());
 			newTemplatesFolder.mkdir();
 			this.templatesFolder = newTemplatesFolder;
 
@@ -429,8 +429,8 @@ public abstract class AbstractByonAddRemoveTemplatesTest extends AbstractByonClo
 		public List<TemplateDetails> addTemplates(int num) throws IOException {
 			List<TemplateDetails> addedTemplates = new LinkedList<TemplateDetails>();
 			for (int i = 0; i < num; i++) {
-				TemplateDetails addedTempalte = addTemplate();
-				addedTemplates.add(addedTempalte);
+				TemplateDetails addedTemplate = addTemplate();
+				addedTemplates.add(addedTemplate);
 			}
 			return addedTemplates;
 		}
@@ -438,7 +438,7 @@ public abstract class AbstractByonAddRemoveTemplatesTest extends AbstractByonClo
 		public TemplateDetails addTemplate() throws IOException {
 			return addCustomTemplate(new TemplateDetails(), false, false);
 		}
-		public TemplateDetails addExpectedToFailTempalte() throws IOException {
+		public TemplateDetails addExpectedToFailTemplate() throws IOException {
 			return addCustomTemplate(new TemplateDetails(), false, true);
 		}
 		public TemplateDetails addServiceTemplate() throws IOException {
@@ -476,8 +476,8 @@ public abstract class AbstractByonAddRemoveTemplatesTest extends AbstractByonClo
 			File templatePropsFile = template.getTemplatePropertiesFile();
 			if (templatePropsFile == null) {
 				final String templateFileName = addedTemplateFile.getName();
-				final int tempalteFileNamePrefixEndIndex = templateFileName.indexOf(".");
-				final String templateFileNamePrefix = templateFileName.substring(0, tempalteFileNamePrefixEndIndex);
+				final int templateFileNamePrefixEndIndex = templateFileName.indexOf(".");
+				final String templateFileNamePrefix = templateFileName.substring(0, templateFileNamePrefixEndIndex);
 				String proeprtiesFileName =  templateFileNamePrefix + DSLUtils.PROPERTIES_FILE_SUFFIX;				
 				templatePropsFile = new File(templatesFolder, proeprtiesFileName);
 			}
@@ -490,26 +490,26 @@ public abstract class AbstractByonAddRemoveTemplatesTest extends AbstractByonClo
 			final File addedBootstrapManagementFile = new File(uploadFolder, BOOTSTRAP_MANAGEMENT_FILE_NAME);
 			replaceStringInFile(basicBootstrapManagementFile, addedBootstrapManagementFile, UPLOAD_DIR_NAME_STRING, uploadDirName);
 		
-			TemplateDetails tempalteDetails = new TemplateDetails(templateName, addedTemplateFile, templatePropsFile, uploadDirName, nodeIP);
-			templates.put(templateName, tempalteDetails);
+			TemplateDetails templateDetails = new TemplateDetails(templateName, addedTemplateFile, templatePropsFile, uploadDirName, nodeIP);
+			templates.put(templateName, templateDetails);
 			
 			if (expectedToFail) {
-				if (expectedFailedTempaltes == null) {
-					expectedFailedTempaltes = new LinkedList<String>();
+				if (expectedFailedTemplates == null) {
+					expectedFailedTemplates = new LinkedList<String>();
 				}
-				expectedFailedTempaltes.add(templateName);
+				expectedFailedTemplates.add(templateName);
 			} else {
-				if (expectedTempaltesExist == null) {
-					expectedTempaltesExist = new LinkedList<String>();
+				if (expectedTemplatesExist == null) {
+					expectedTemplatesExist = new LinkedList<String>();
 				}
-				expectedTempaltesExist.add(templateName);
+				expectedTemplatesExist.add(templateName);
 			}
 			
-			return tempalteDetails;
+			return templateDetails;
 		}
 
 		public void removeTemplate(String templateName) {
-			expectedTempaltesExist.remove(templateName);
+			expectedTemplatesExist.remove(templateName);
 			TemplateDetails templateDetails = templates.get(templateName);
 			templateDetails.getTemplateFile().delete();
 			templateDetails.getTemplatePropertiesFile().delete();
@@ -526,11 +526,11 @@ public abstract class AbstractByonAddRemoveTemplatesTest extends AbstractByonClo
 		public Map<String, TemplateDetails> getTemplates() {
 			return templates;
 		}
-		public List<String> getExpectedTempaltesExist() {
-			return expectedTempaltesExist;
+		public List<String> getExpectedTemplatesExist() {
+			return expectedTemplatesExist;
 		}
-		public List<String> getExpectedFailedTempaltes() {
-			return expectedFailedTempaltes;
+		public List<String> getExpectedFailedTemplates() {
+			return expectedFailedTemplates;
 		}
 	}
 
@@ -580,8 +580,8 @@ public abstract class AbstractByonAddRemoveTemplatesTest extends AbstractByonClo
 			if(!(obj instanceof TemplateDetails)) {
 				return false;
 			}
-			TemplateDetails tempalteDetails = (TemplateDetails) obj;
-			return this.templateName.equals(tempalteDetails.getTemplateName());
+			TemplateDetails templateDetails = (TemplateDetails) obj;
+			return this.templateName.equals(templateDetails.getTemplateName());
 		}
 
 		public File getTemplatePropertiesFile() {

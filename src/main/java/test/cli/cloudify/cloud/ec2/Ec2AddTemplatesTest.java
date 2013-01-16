@@ -82,7 +82,7 @@ public class Ec2AddTemplatesTest extends NewAbstractCloudTest {
 		command = "connect " + getRestUrl() + ";remove-template " + TEMPLATE_NAME;
 		output = CommandTestUtils.runCommandAndWait(command);
 		Assert.assertTrue(output.contains("Template " + TEMPLATE_NAME + " removed successfully"));
-		assertTempalteRemoved(TEMPLATE_NAME);
+		assertTemplateRemoved(TEMPLATE_NAME);
 	}
 
 	private void assertImageID(String expectedImageID) {
@@ -114,7 +114,7 @@ public class Ec2AddTemplatesTest extends NewAbstractCloudTest {
 	}
 
 
-	private void assertTempalteRemoved(String templateName) {
+	private void assertTemplateRemoved(String templateName) {
 		String command = "connect " + getRestUrl() + ";list-templates";
 		try {
 			String output = CommandTestUtils.runCommandAndWait(command);

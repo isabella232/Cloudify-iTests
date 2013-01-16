@@ -45,9 +45,43 @@ function error_exit_on_level {
 	fi
 }
 
+echo Checking script path
+SCRIPT=`readlink -f $0`
+SCRIPTPATH=`dirname $SCRIPT`
+echo script path is $SCRIPTPATH
 
-JAVA_32_URL="http://repository.cloudifysource.org/com/oracle/java/1.6.0_32/jdk-6u32-linux-i586.bin"
-JAVA_64_URL="http://repository.cloudifysource.org/com/oracle/java/1.6.0_32/jdk-6u32-linux-x64.bin"
+if [ -f ${SCRIPTPATH}/cloudify_env.sh ]; then
+	ENV_FILE_PATH=${SCRIPTPATH}/cloudify_env.sh
+else
+	if [ -f ${SCRIPTPATH}/../cloudify_env.sh ]; then
+		ENV_FILE_PATH=${SCRIPTPATH}/../cloudify_env.sh
+	else
+		echo Cloudify environment file not found! Bootstrapping cannot proceed!
+		exit 105
+	fi
+
+fi
+
+source ${ENV_FILE_PATH}
+JAVA_32_URL="http://tarzan/builds/GigaSpacesBuilds/tools/quality/java/1.6.0_32/jdk-6u32-linux-i586.bin"
+JAVA_64_URL="http://tarzan/builds/GigaSpacesBuilds/tools/quality/java/1.6.0_32/jdk-6u32-linux-x64.bin"
+
+HOME_DIR="/tmp/byon"
+
+if [ -d "$HOME_DIR/gigaspaces" ]; then
+	echo cleaning home directory from gigaspaces installation
+	rm -rf $HOME_DIR/gigaspaces
+fi
+
+if [ -d "$HOME_DIR/java" ]; then
+	echo cleaning home directory from java installation
+	rm -rf $HOME_DIR/java
+fi
+
+# this means it is the first time this machine is being used.
+if [ ! -d "$HOME_DIR" ]; then
+	mkdir $HOME_DIR
+fi
 
 # If not JDK specified, determine which JDK to install based on hardware architecture
 if [ -z "$GIGASPACES_AGENT_ENV_JAVA_URL" ]; then
@@ -74,14 +108,14 @@ else
 	wget -q -O $WORKING_HOME_DIRECTORY/java.bin $GIGASPACES_AGENT_ENV_JAVA_URL
 	chmod +x $WORKING_HOME_DIRECTORY/java.bin
 	echo -e "\n" > $WORKING_HOME_DIRECTORY/input.txt
-	mkdir ~/java
-	cd ~/java
+	mkdir $HOME_DIR/java
+	cd $HOME_DIR/java
 	
 	echo Installing JDK
 	$WORKING_HOME_DIRECTORY/java.bin < $WORKING_HOME_DIRECTORY/input.txt > /dev/null
-	mv ~/java/*/* ~/java || error_exit $? "Failed moving JDK installation"
+	mv $HOME_DIR/java/*/* $HOME_DIR/java || error_exit $? "Failed moving JDK installation"
 	rm -f $WORKING_HOME_DIRECTORY/input.txt
-    export JAVA_HOME=~/java
+    export JAVA_HOME=$HOME_DIR/java
 fi  
 
 export EXT_JAVA_OPTIONS="-Dcom.gs.multicast.enabled=false"
@@ -97,39 +131,44 @@ if [ ! -z "$GIGASPACES_OVERRIDES_LINK" ]; then
 fi
 
 # Todo: Check this condition
-if [ ! -d "~/gigaspaces" -o $WORKING_HOME_DIRECTORY/gigaspaces.tar.gz -nt ~/gigaspaces ]; then
-	rm -rf ~/gigaspaces || error_exit $? "Failed removing old gigaspaces directory"
-	mkdir ~/gigaspaces || error_exit $? "Failed creating gigaspaces directory"
+if [ ! -d "$HOME_DIR/gigaspaces" -o $WORKING_HOME_DIRECTORY/gigaspaces.tar.gz -nt $HOME_DIR/gigaspaces ]; then
+	rm -rf $HOME_DIR/gigaspaces || error_exit $? "Failed removing old gigaspaces directory"
+	mkdir $HOME_DIR/gigaspaces || error_exit $? "Failed creating gigaspaces directory"
 	
 	# 2 is the error level threshold. 1 means only warnings
 	# this is needed for testing purposes on zip files created on the windows platform 
-	tar xfz $WORKING_HOME_DIRECTORY/gigaspaces.tar.gz -C ~/gigaspaces || error_exit_on_level $? "Failed extracting cloudify installation" 2 
+	tar xfz $WORKING_HOME_DIRECTORY/gigaspaces.tar.gz -C $HOME_DIR/gigaspaces || error_exit_on_level $? "Failed extracting cloudify installation" 2 
 
 	# Todo: consider removing this line
-	chmod -R 777 ~/gigaspaces || error_exit $? "Failed changing permissions in cloudify installion"
-	mv ~/gigaspaces/*/* ~/gigaspaces || error_exit $? "Failed moving cloudify installation"
+	chmod -R 777 $HOME_DIR/gigaspaces || error_exit $? "Failed changing permissions in cloudify installion"
+	mv $HOME_DIR/gigaspaces/*/* $HOME_DIR/gigaspaces || error_exit $? "Failed moving cloudify installation"
 	
 	if [ ! -z "$GIGASPACES_OVERRIDES_LINK" ]; then
 		echo Copying overrides into cloudify distribution
-		tar xfz $WORKING_HOME_DIRECTORY/gigaspaces_overrides.tar.gz -C ~/gigaspaces || error_exit_on_level $? "Failed extracting cloudify overrides" 2 		
+		tar xfz $WORKING_HOME_DIRECTORY/gigaspaces_overrides.tar.gz -d $HOME_DIR/gigaspaces || error_exit_on_level $? "Failed extracting cloudify overrides" 2 		
 	fi
 fi
 
 # if an overrides directory exists, copy it into the cloudify distribution
 if [ -d $WORKING_HOME_DIRECTORY/cloudify-overrides ]; then
-	cp -rf $WORKING_HOME_DIRECTORY/cloudify-overrides/* ~/gigaspaces
+	cp -rf $WORKING_HOME_DIRECTORY/cloudify-overrides/* $HOME_DIR/gigaspaces
 fi
 
 # UPDATE SETENV SCRIPT...
 echo Updating environment script
-cd ~/gigaspaces/bin || error_exit $? "Failed changing directory to bin directory"
+cd $HOME_DIR/gigaspaces/bin || error_exit $? "Failed changing directory to bin directory"
 
+sed -i "1i source  ${ENV_FILE_PATH}" setenv.sh || error_exit $? "Failed updating setenv.sh"
 sed -i "1i export NIC_ADDR=$MACHINE_IP_ADDRESS" setenv.sh || error_exit $? "Failed updating setenv.sh"
 sed -i "1i export LOOKUPLOCATORS=$LUS_IP_ADDRESS" setenv.sh || error_exit $? "Failed updating setenv.sh"
-sed -i "1i export GIGASPACES_CLOUD_IMAGE_ID=$GIGASPACES_CLOUD_IMAGE_ID" setenv.sh || error_exit $? "Failed updating setenv.sh"
-sed -i "1i export GIGASPACES_CLOUD_HARDWARE_ID=$GIGASPACES_CLOUD_HARDWARE_ID" setenv.sh || error_exit $? "Failed updating setenv.sh"
+
+
 sed -i "1i export PATH=$JAVA_HOME/bin:$PATH" setenv.sh || error_exit $? "Failed updating setenv.sh"
 sed -i "1i export JAVA_HOME=$JAVA_HOME" setenv.sh || error_exit $? "Failed updating setenv.sh"
+
+# security config properties
+
+cd $HOME_DIR/gigaspaces/tools/cli || error_exit $? "Failed changing directory to cli directory"
 
 # START AGENT ALONE OR WITH MANAGEMENT
 if [ -f nohup.out ]; then
@@ -141,8 +180,9 @@ if [ -f nohup.out ]; then
 fi
 
 # Privileged mode handling
+
 if [ "$GIGASPACES_AGENT_ENV_PRIVILEGED" = "true" ]; then
-	# First check if sudo is allowed for current session
+
 	export GIGASPACES_USER=`whoami`
 	if [ "$GIGASPACES_USER" = "root" ]; then
 		# root is privileged by definition
@@ -150,57 +190,66 @@ if [ "$GIGASPACES_AGENT_ENV_PRIVILEGED" = "true" ]; then
 	else
 		sudo -n ls > /dev/null || error_exit_on_level $? "Current user is not a sudoer, or requires a password for sudo" 1
 	fi
-	
-	# now modify sudoers configuration to allow execution without tty
-	grep -i ubuntu /proc/version > /dev/null
-	if [ "$?" -eq "0" ]; then
-			# ubuntu
-			echo Running on Ubuntu
-			if sudo grep -q -E '[^!]requiretty' /etc/sudoers; then
-				echo creating sudoers user file
-				echo "Defaults:`whoami` !requiretty" | sudo tee /etc/sudoers.d/`whoami` >/dev/null
-				sudo chmod 0440 /etc/sudoers.d/`whoami`
-			else
-				echo No requiretty directive found, nothing to do
-			fi
-	else
-			# other - modify sudoers file
-			if [ ! -f "/etc/sudoers" ]; then
-					error_exit 101 "Could not find sudoers file at expected location (/etc/sudoers)"
-			fi
-			echo Setting privileged mode
-			sudo sed -i 's/^Defaults.*requiretty/#&/g' /etc/sudoers || error_exit_on_level $? "Failed to edit sudoers file to disable requiretty directive" 1
-	fi
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	if [ ! -f "/etc/sudoers" ]; then
+		error_exit 101 "Could not find sudoers file at expected location (/etc/sudoers)"
+	fi	
+	echo Setting privileged mode
+	sudo sed -i 's/^Defaults.*requiretty/#&/g' /etc/sudoers  || error_exit_on_level $? "Failed to edit sudoers file to disable requiretty directive" 1
 
 fi
 
-# Execute per-template command
+
 if [ ! -z "$GIGASPACES_AGENT_ENV_INIT_COMMAND" ]; then
 	echo Executing initialization command
-	cd $WORKING_HOME_DIRECTORY
+
 	$GIGASPACES_AGENT_ENV_INIT_COMMAND
 fi
 
-cd ~/gigaspaces/tools/cli || error_exit $? "Failed changing directory to cli directory"
 
-START_COMMAND_ARGS="-timeout 30 --verbose -auto-shutdown"
+
+
+START_COMMAND_ARGS="start-"
+ERRMSG="Failed Starting"
 if [ "$GSA_MODE" = "agent" ]; then
-	ERRMSG="Failed starting agent"
-	START_COMMAND="start-agent"
+	ERRMSG="${ERRMSG} agent"
+	START_COMMAND_ARGS="${START_COMMAND_ARGS}agent -timeout 30 --verbose -auto-shutdown"
+	export GIGASPACES_MODE="my-agent"
 	# Check if there any zones to start the agent with
 	if [ ! -z "$MACHINE_ZONES" ]; then
 		START_COMMAND_ARGS="${START_COMMAND_ARGS} -zone ${MACHINE_ZONES}"
 	fi	
 else
-	ERRMSG="Failed starting management services"
-	START_COMMAND="start-management"
-	START_COMMAND_ARGS="${START_COMMAND_ARGS} -cloud-file ${CLOUD_FILE}"
+	ERRMSG="${ERRMSG} management services"
+	START_COMMAND_ARGS="${START_COMMAND_ARGS}management -timeout 30 --verbose -auto-shutdown -cloud-file ${CLOUD_FILE}"
+
+	export GIGASPACES_MODE="my-management"
 	if [ "$NO_WEB_SERVICES" = "true" ]; then
 		START_COMMAND_ARGS="${START_COMMAND_ARGS} -no-web-services -no-management-space"
 	fi
 fi	
 
-nohup ./cloudify.sh $START_COMMAND $START_COMMAND_ARGS	
+nohup ./cloudify.sh $START_COMMAND_ARGS
 
 RETVAL=$?
 echo cat nohup.out

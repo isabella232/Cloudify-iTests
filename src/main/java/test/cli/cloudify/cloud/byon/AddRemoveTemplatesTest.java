@@ -2,6 +2,8 @@ package test.cli.cloudify.cloud.byon;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import junit.framework.Assert;
 
@@ -15,11 +17,15 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.cloudifysource.dsl.internal.CloudifyConstants;
 import org.cloudifysource.dsl.internal.packaging.Packager;
 import org.cloudifysource.dsl.internal.packaging.ZipUtils;
+import org.openspaces.admin.pu.ProcessingUnit;
+import org.openspaces.admin.pu.ProcessingUnitInstance;
+import org.openspaces.admin.pu.events.ProcessingUnitInstanceRemovedEventListener;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import framework.utils.AssertUtils;
+import framework.utils.GsmTestUtils;
 import framework.utils.LogUtils;
 import framework.utils.SSHUtils;
 import framework.utils.ThreadBarrier;
@@ -69,8 +75,41 @@ public class AddRemoveTemplatesTest extends AbstractByonAddRemoveTemplatesTest {
 
 		String templateRemotePath = getTemplateRemoteDirFullPath(templateName) + template.getTemplateFile().getName();
 		SSHUtils.runCommand(mngMachinesIP[0], OPERATION_TIMEOUT, "rm -f " + templateRemotePath, USER, PASSWORD);
+
+		int plannedNumberOfRestInstances = getService().getNumberOfManagementMachines();
 		
-		admin.getProcessingUnits().getProcessingUnit("rest").getPartitions()[0].getInstances()[0].getGridServiceContainer().restart();
+		ProcessingUnit restPu = admin.getProcessingUnits().getProcessingUnit("rest");
+		
+		AssertUtils.assertTrue("Failed to discover " + plannedNumberOfRestInstances + " before grid service container restart", restPu.waitFor(plannedNumberOfRestInstances, OPERATION_TIMEOUT, TimeUnit.MILLISECONDS));
+		
+		final ProcessingUnitInstance restInstance = restPu.getInstances()[0];
+		
+		if (restInstance.isDiscovered()) {
+			final CountDownLatch latch = new CountDownLatch(1);
+			ProcessingUnitInstanceRemovedEventListener eventListener = new ProcessingUnitInstanceRemovedEventListener() {
+
+				@Override
+				public void processingUnitInstanceRemoved(
+						ProcessingUnitInstance processingUnitInstance) {
+					if (processingUnitInstance.equals(restInstance)) {
+						latch.countDown();
+					}
+				}
+			};
+			
+			restPu.getProcessingUnitInstanceRemoved().add(eventListener);
+			try {
+				GsmTestUtils.restartContainer(restInstance.getGridServiceContainer(), true);
+				org.testng.Assert.assertTrue(latch.await(OPERATION_TIMEOUT,TimeUnit.MILLISECONDS));
+			} catch (InterruptedException e) {
+				org.testng.Assert.fail("Interrupted while killing container", e);
+			} finally {
+				restPu.getProcessingUnitInstanceRemoved().remove(eventListener);
+			}
+		}
+		
+		AssertUtils.assertTrue("Failed to discover " + plannedNumberOfRestInstances + " after grid service container restart", restPu.waitFor(plannedNumberOfRestInstances, OPERATION_TIMEOUT, TimeUnit.MILLISECONDS));
+		
 
 		String serviceName = templateName + "_service";
 		output = installService(serviceName, templateName, true);

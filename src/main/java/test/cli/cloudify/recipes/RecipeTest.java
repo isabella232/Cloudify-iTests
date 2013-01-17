@@ -1,17 +1,16 @@
 package test.cli.cloudify.recipes;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-
+import framework.utils.ScriptUtils;
 import org.cloudifysource.dsl.Service;
 import org.cloudifysource.dsl.internal.DSLException;
 import org.cloudifysource.dsl.internal.ServiceReader;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-
 import test.cli.cloudify.AbstractLocalCloudTest;
-import framework.utils.ScriptUtils;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
 
 public class RecipeTest extends AbstractLocalCloudTest {
 	private String recipesDirPath = ScriptUtils.getBuildPath() + "/recipes/services";
@@ -66,11 +65,18 @@ public class RecipeTest extends AbstractLocalCloudTest {
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, groups = "1", enabled = false)
-	public void testElasticsearch() throws IOException, InterruptedException{
-		String elasticsearchDirPath = recipesDirPath + "/elasticsearch";
-		String output = runCommand("test-recipe " + elasticsearchDirPath + " " + RecipeTestUtil.DEFAULT_RECIPE_TEST_TIMEOUT + " elasticsearch-service.groovy");
-		assertTrue("test-recipe failed and runCommand didn't throw an Exception as it should !!", output.contains("Recipe test completed"));
-	}
+     public void testElasticsearch() throws IOException, InterruptedException{
+        String elasticsearchDirPath = recipesDirPath + "/elasticsearch";
+        String output = runCommand("test-recipe " + elasticsearchDirPath + " " + RecipeTestUtil.DEFAULT_RECIPE_TEST_TIMEOUT + " elasticsearch-service.groovy");
+        assertTrue("test-recipe failed and runCommand didn't throw an Exception as it should !!", output.contains("Recipe test completed"));
+    }
+
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, groups = "1", enabled = false)
+    public void testApacheLB() throws IOException, InterruptedException{
+        String apacheLBhDirPath = recipesDirPath + "/apacheLB";
+        String output = runCommand("test-recipe " + apacheLBhDirPath + " " + RecipeTestUtil.DEFAULT_RECIPE_TEST_TIMEOUT + " apacheLB-service.groovy");
+        assertTrue("test-recipe failed and runCommand didn't throw an Exception as it should !!", output.contains("Recipe test completed"));
+    }
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, groups = "1", enabled = true)
 	public void testActivemq() throws IOException, InterruptedException{

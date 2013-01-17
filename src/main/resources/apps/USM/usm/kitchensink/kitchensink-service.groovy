@@ -63,7 +63,8 @@ service {
 				"cmd6" : "someScript.groovy",
 				"cmd7" : {x -> "Single parameter test:parameter=" + x},
 				"cmd8" : "errorScript.groovy",
-				"cmd9" : { new AntBuilder().sequential { echo ("Hello World")}; return null }
+				"cmd9" : { new AntBuilder().sequential { echo ("Hello World")}; return null },
+				"cmd10": "sysPropsTest.groovy"
 			])
 
 

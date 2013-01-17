@@ -706,6 +706,21 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 			AssertFail("Custom command cmd9 returned unexpected result: "
 					+ invoke9Result);
 		}
+		
+		final String invoke10Result = runCommand("connect "
+				+ AbstractLocalCloudTest.restUrl
+				+ "; invoke kitchensink-service cmd10");
+
+		if (!invoke10Result.contains("1: OK")
+				|| !invoke10Result.contains("java.rmi.server.hostname")
+				|| !invoke10Result.contains("com.gs.jini_lus.groups")
+				|| !invoke10Result.contains("com.gs.jini_lus.locators")
+				|| !invoke10Result.contains("java.util.logging.config.file")) {
+			AssertFail("Custom command cmd10 returned unexpected result: "
+					+ invoke10Result);
+		}
+
+
 	}
 
 	private void checkMonitors(final ProcessingUnitInstance pui) {

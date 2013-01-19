@@ -1,5 +1,6 @@
 package test.cli.cloudify.cloud.rackspace;
 
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -40,4 +41,8 @@ public class LeakedNodesOnTeardownTest extends NewAbstractCloudTest {
 		return false;
 	}
 
+	@AfterClass(alwaysRun = true)
+	protected void teardown() throws Exception {
+		super.teardown();
+	}
 }

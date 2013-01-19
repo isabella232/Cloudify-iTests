@@ -59,7 +59,7 @@ public class MultipleMachineTemplatesTest extends AbstractByonCloudTest {
 	 * 
 	 * @throws Exception
 	 */
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true, priority = 1)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
 	public void test() throws Exception {
 		
 		String[] temlpateNames = service.getTemlpateNames();

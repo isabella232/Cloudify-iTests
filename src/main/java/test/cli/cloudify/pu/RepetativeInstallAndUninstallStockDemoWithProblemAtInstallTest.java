@@ -12,7 +12,6 @@ import org.testng.annotations.Test;
 
 import test.cli.cloudify.AbstractLocalCloudTest;
 import test.cli.cloudify.CommandTestUtils;
-
 import framework.utils.AssertUtils;
 import framework.utils.AssertUtils.RepetitiveConditionProvider;
 import framework.utils.LogUtils;
@@ -36,12 +35,16 @@ public class RepetativeInstallAndUninstallStockDemoWithProblemAtInstallTest exte
 	private String cassandraPostStartScriptPath = null;
 	private String newPostStartScriptPath = null;
 	private URL stockdemoUrl;
-
+	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * repetitions *2 , groups = "1", enabled = true)
 	public void installAndUninstallTest() throws Exception {
 
 		stockdemoUrl = new URL("http://" + InetAddress.getLocalHost().getHostAddress() + ":8080/stockdemo.StockDemo/");
-		final String stockdemoAppPath = CommandTestUtils.getPath("src/main/resources/apps/USM/usm/applications/stockdemo");	
+		String stockdemoAppPath = CommandTestUtils.getPath("src/main/resources/apps/USM/usm/applications/stockdemo");
+		
+		final File workStockDemoAppFolder = new File(new File(stockdemoAppPath).getParent(), "stockdemo-work");
+		stockdemoAppPath = workStockDemoAppFolder.getAbsolutePath();
+		
 		cassandraPostStartScriptPath = stockdemoAppPath + "/cassandra/cassandra_poststart.groovy";	
 		newPostStartScriptPath = stockdemoAppPath + "/cassandra/cassandra_poststart123.groovy";
 		int secondInstallationSuccessCounter = 0;

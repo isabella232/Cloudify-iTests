@@ -16,7 +16,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.cloudifysource.dsl.internal.CloudifyConstants;
 import org.cloudifysource.dsl.utils.ServiceUtils;
 import org.openspaces.admin.internal.pu.InternalProcessingUnit;
-import org.openspaces.admin.pu.statistics.AverageInstancesStatisticsConfig;
+import org.openspaces.admin.pu.statistics.MaximumInstancesStatisticsConfig;
 import org.openspaces.admin.pu.statistics.ProcessingUnitStatisticsId;
 import org.openspaces.admin.pu.statistics.ProcessingUnitStatisticsIdConfigurer;
 import org.openspaces.admin.pu.statistics.ThroughputTimeWindowStatisticsConfigurer;
@@ -68,7 +68,7 @@ public class ScalingRulesTomcatTotalRequestsTest extends AbstractLocalCloudTest 
 					new ProcessingUnitStatisticsIdConfigurer()
 			.monitor(CloudifyConstants.USM_MONITORS_SERVICE_ID)
 			.metric(COUNTER_METRIC)
-			.instancesStatistics(new AverageInstancesStatisticsConfig())
+			.instancesStatistics(new MaximumInstancesStatisticsConfig())
 			.timeWindowStatistics(new ThroughputTimeWindowStatisticsConfigurer().timeWindow(20, TimeUnit.SECONDS).create())
 			.agentZones(new AnyZonesConfig())
 			.create();

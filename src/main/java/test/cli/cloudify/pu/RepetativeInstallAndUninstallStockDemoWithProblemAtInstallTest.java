@@ -47,7 +47,7 @@ public class RepetativeInstallAndUninstallStockDemoWithProblemAtInstallTest exte
 		
 		final File workStockDemoAppFolder = new File(new File(stockdemoAppPath).getParent(), "stockdemo-work");
 		
-		FileUtils.copyFile(new File(stockdemoAppPath), workStockDemoAppFolder);
+		FileUtils.copyDirectory(new File(stockdemoAppPath), workStockDemoAppFolder);
 		
 		stockdemoAppPath = workStockDemoAppFolder.getAbsolutePath();
 		

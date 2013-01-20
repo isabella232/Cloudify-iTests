@@ -125,7 +125,11 @@ public class AbstractLocalCloudTest extends AbstractTest {
 			if (!userHomeDir.isDirectory()) {
 				LogUtils.log(userHomeDir + " is not a directory!");
 			} else {
-				FileUtils.cleanDirectory(userHomeDir);
+				try {
+					FileUtils.cleanDirectory(userHomeDir);
+				} catch (final Exception e) {
+					LogUtils.log("Failed Cleaning .cloudify directory", e);
+				}
 			}
 		}
 	}

@@ -54,11 +54,14 @@ public class ExceptionDuringStorageAccountCreationTest extends NewAbstractCloudT
 			AssertUtils.assertFail("Found an affinity group " + affinityGroup);
 		}
 		
+		// listVirtualNetworks can return null if there are no networks present
 		VirtualNetworkSites sites = azureClient.listVirtualNetworkSites();
-		boolean networkExists = sites.contains(network);
-		if (networkExists) {
-			leakingNetwork = network;
-			AssertUtils.assertFail("Found a virtual network " + network);
+		if (sites != null) {
+			boolean networkExists = sites.contains(network);
+			if (networkExists) {
+				leakingNetwork = network;
+				AssertUtils.assertFail("Found a virtual network " + network);
+			}
 		}
 		
 	}

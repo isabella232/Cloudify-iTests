@@ -7,11 +7,14 @@ import java.net.URL;
 
 import junit.framework.Assert;
 
+import org.apache.commons.io.FileUtils;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.Test;
 
 import test.cli.cloudify.AbstractLocalCloudTest;
 import test.cli.cloudify.CommandTestUtils;
+import framework.utils.ApplicationInstaller;
 import framework.utils.AssertUtils;
 import framework.utils.AssertUtils.RepetitiveConditionProvider;
 import framework.utils.LogUtils;
@@ -43,7 +46,11 @@ public class RepetativeInstallAndUninstallStockDemoWithProblemAtInstallTest exte
 		String stockdemoAppPath = CommandTestUtils.getPath("src/main/resources/apps/USM/usm/applications/stockdemo");
 		
 		final File workStockDemoAppFolder = new File(new File(stockdemoAppPath).getParent(), "stockdemo-work");
+		
+		FileUtils.copyFile(new File(stockdemoAppPath), workStockDemoAppFolder);
+		
 		stockdemoAppPath = workStockDemoAppFolder.getAbsolutePath();
+		
 		
 		cassandraPostStartScriptPath = stockdemoAppPath + "/cassandra/cassandra_poststart.groovy";	
 		newPostStartScriptPath = stockdemoAppPath + "/cassandra/cassandra_poststart123.groovy";
@@ -102,6 +109,13 @@ public class RepetativeInstallAndUninstallStockDemoWithProblemAtInstallTest exte
 		} catch (IOException e) {
 			LogUtils.log("FAILED FIXING CASSANDRA SERVICE!!!");
 		}
+	}
+	
+	@AfterClass(alwaysRun = true)
+	public void uninstallApplicationIfFound() {
+		ApplicationInstaller uninstaller = new ApplicationInstaller(restUrl, "stockdemo");
+		uninstaller.timeoutInMinutes(5);
+		uninstaller.uninstallIfFound();
 	}
 
 	private void corruptCassandraService(String cassandraPostStartScriptPath , String newPostStartScriptPath) throws IOException {

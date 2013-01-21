@@ -70,7 +70,7 @@ public class RebalancingByRestartingTwoPrimariesByonTest extends AbstractRebalan
 		}
 	}
 
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "boris1")
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1")
 	public void rebalanceTest() throws InterruptedException, TimeoutException {
 
 		repetitiveAssertNumberOfGSAsAdded(1, OPERATION_TIMEOUT);

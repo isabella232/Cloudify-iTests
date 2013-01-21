@@ -71,7 +71,7 @@ public class RebalancingByRelocatingBackupThenPrimaryForwardLookingByonTest exte
 		}
 	}
 
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "boris1")
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1")
 	public void rebalancingTest() throws InterruptedException, TimeoutException {
 
 		/*XenServerMachineProvisioningConfig twoCoreMachineConfig = super.cloneMachineProvisioningConfig();

@@ -81,7 +81,7 @@ public class RebalancingByRestartingTwoPrimaryForwardLookingByonTest extends Abs
 		}
 	}
 
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "boris1")
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1")
 	public void rebalanceByForwardLookingTwoPrimaryRestartsTest() throws InterruptedException, TimeoutException {
 
 		repetitiveAssertNumberOfGSAsAdded(1, OPERATION_TIMEOUT);

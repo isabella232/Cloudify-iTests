@@ -67,7 +67,7 @@ public class RebalancingScaleOutPrimaryRelocationByonTest extends AbstractRebala
 		}
 	}
 
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "boris1")
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1")
 	public void scaleOutRebalancingPrimaryRelocationTest() throws Exception {
 		repetitiveAssertNumberOfGSAsAdded(1, OPERATION_TIMEOUT);
 		repetitiveAssertNumberOfGSCsAdded(0, OPERATION_TIMEOUT);

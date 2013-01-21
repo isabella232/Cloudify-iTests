@@ -73,7 +73,7 @@ public class RebalancingRelocatingPrimaryOnSameTwoMachineByonTest extends Abstra
 		}
 	}
 
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "boris1")
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1")
 	public void rebalanceByRelocatingPrimaryOnSameMachineTest() throws InterruptedException, TimeoutException {
 
 		repetitiveAssertNumberOfGSAsAdded(1, OPERATION_TIMEOUT);

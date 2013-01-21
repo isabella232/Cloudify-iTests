@@ -9,6 +9,7 @@ import org.cloudifysource.esc.driver.provisioning.ElasticMachineProvisioningClou
 import org.openspaces.admin.gsa.GridServiceAgent;
 import org.openspaces.admin.gsa.events.ElasticGridServiceAgentProvisioningProgressChangedEvent;
 import org.openspaces.admin.gsa.events.ElasticGridServiceAgentProvisioningProgressChangedEventListener;
+import org.openspaces.admin.gsm.GridServiceManager;
 import org.openspaces.admin.machine.Machine;
 import org.openspaces.admin.machine.events.ElasticMachineProvisioningProgressChangedEvent;
 import org.openspaces.admin.machine.events.ElasticMachineProvisioningProgressChangedEventListener;
@@ -150,9 +151,14 @@ public class AbstractFromXenToByonGSMTest extends AbstractByonCloudTest {
      * Stops all machines except management machines , admin is necessary to apply this method.
      * @throws Exception
      */
-    public void stopMachines() throws Exception {
+    public void stopMachines() throws Exception {	
 		GridServiceAgent[] gsas = admin.getGridServiceAgents().getAgents();
-        Machine managerMachine = admin.getGridServiceManagers().getManagers()[0].getMachine();
+		if (admin.getGridServiceManagers().getManagers().length == 0){
+			LogUtils.log("NO GSMS!");
+			return;
+		}
+        GridServiceManager gridServiceManager = admin.getGridServiceManagers().getManagers()[0];
+		Machine managerMachine = gridServiceManager.getMachine();
         for (int i = 0; i < gsas.length; i++) {
             Machine curMachine = gsas[i].getMachine();
             if (!curMachine.equals(managerMachine)) {
@@ -174,10 +180,14 @@ public class AbstractFromXenToByonGSMTest extends AbstractByonCloudTest {
         }
         for (ProcessingUnit pu : processingUnits) {
         	//cleanup
-        	if (!pu.undeployAndWait(OPERATION_TIMEOUT,TimeUnit.MILLISECONDS)) {
-        		LogUtils.log(this.getClass() + "#afterTest() failed to undeploy " + pu.getName());
-        	}
+        	pu.undeploy();
         }
+        try {
+			stopMachines();
+		} catch (Exception e) {
+			LogUtils.log(this.getClass() + "stopMachines after test failed");
+			e.printStackTrace();
+		}
 	}
 	
 	protected void teardownAfterClass() throws Exception {

@@ -53,7 +53,7 @@ public class Ec2WinSecurityTest extends NewAbstractSecurityCloudTest {
 		uninstallServiceIfFound(GROOVY2_SERVICE_NAME, SecurityConstants.USER_PWD_ALL_ROLES, SecurityConstants.USER_PWD_ALL_ROLES);
 	}
 
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT*5, enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 6, enabled = true)
 	public void installAndUninstallTest() throws IOException, InterruptedException {
 
 		installAndUninstall(SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, false);
@@ -64,7 +64,7 @@ public class Ec2WinSecurityTest extends NewAbstractSecurityCloudTest {
 		installAndUninstall(SecurityConstants.USER_PWD_NO_ROLE, SecurityConstants.USER_PWD_NO_ROLE, true);
 	}
 
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
 	public void installAndUninstallWithDifferentUsersTest() throws IOException, InterruptedException {
 
 		String output = "no output";
@@ -77,7 +77,7 @@ public class Ec2WinSecurityTest extends NewAbstractSecurityCloudTest {
 		uninstallApplicationAndWait(SIMPLE_APP_PATH, SIMPLE_APP_NAME, TIMEOUT_IN_MINUTES, SecurityConstants.USER_PWD_APP_MANAGER, SecurityConstants.USER_PWD_APP_MANAGER, false, null);
 	}
 
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
 	public void installWithoutCredentialsTest() throws IOException, InterruptedException{
 
 		String output = "no output";
@@ -86,7 +86,7 @@ public class Ec2WinSecurityTest extends NewAbstractSecurityCloudTest {
 		assertTrue("install access granted to an Anonymous user" , output.contains(BAD_CREDENTIALS_MESSAGE));
 	}
 
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
 	public void installingAndViewingTest() throws IOException, InterruptedException{
 
 		installApplicationAndWait(SIMPLE_APP_PATH, SIMPLE_APP_NAME, TIMEOUT_IN_MINUTES, SecurityConstants.USER_PWD_APP_MANAGER, SecurityConstants.USER_PWD_APP_MANAGER, false, null);
@@ -166,7 +166,7 @@ public class Ec2WinSecurityTest extends NewAbstractSecurityCloudTest {
 		assertTrue("login succeeded for password: " + SecurityConstants.USER_PWD_CLOUD_ADMIN + "bad", output.contains(BAD_CREDENTIALS_MESSAGE));
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
 	public void installWithWrongGroup() throws IOException, InterruptedException {
 		
 		String output = "no output";
@@ -176,7 +176,7 @@ public class Ec2WinSecurityTest extends NewAbstractSecurityCloudTest {
 		assertTrue("install succeeded with authGroup ROLE_CLOUDADMINS for: " + SecurityConstants.APP_MANAGER_AND_VIEWER_DESCRIPTIN, output.contains(ACCESS_DENIED_MESSAGE));
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
 	public void installAndUninstallWithDifferentGroup() throws IOException, InterruptedException {
 		
 		String output = "no output";
@@ -187,7 +187,7 @@ public class Ec2WinSecurityTest extends NewAbstractSecurityCloudTest {
 		assertTrue("unseen application uninstall succeeded", output.contains(ACCESS_DENIED_MESSAGE));
 	}
 
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
 	public void tamperWithSecurityFileTest() throws Exception{
 
 		String fakeCloudAdminUserAndPassword = "John";

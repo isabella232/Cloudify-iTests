@@ -170,7 +170,7 @@ public class RepetativeInstallAndUninstallStockDemoWithProblemAtInstallTest exte
 				}
 			}
 		};
-		AssertUtils.repetitiveAssertTrue("URL = " + url + " is still available. waited for 10 seconds", conditionProvider, 10 * 1000);
+		AssertUtils.repetitiveAssertTrue("URL = " + url + " is still available. waited for 10 seconds", conditionProvider, 20 * 1000);
 	}
 		
 	}

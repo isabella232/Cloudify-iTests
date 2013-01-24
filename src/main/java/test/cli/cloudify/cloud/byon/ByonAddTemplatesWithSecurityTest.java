@@ -47,6 +47,10 @@ public class ByonAddTemplatesWithSecurityTest extends AbstractByonAddRemoveTempl
 		ServiceInstaller installer = new ServiceInstaller(getRestUrl(), serviceName);
 		installer.cloudifyUsername(SecurityConstants.USER_PWD_APP_MANAGER).cloudifyPassword(SecurityConstants.USER_PWD_APP_MANAGER).recipePath(createServiceDir(serviceName, templateName)).timeoutInMinutes(OPERATION_TIMEOUT);
 		installer.install();
+		
+		installer.uninstall();
+		
+		bootstrapper.removeTemplate(templateName, false);
 	
 	}
 	

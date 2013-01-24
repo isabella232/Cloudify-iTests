@@ -64,7 +64,7 @@ public class Ec2WinSecurityTest extends NewAbstractSecurityCloudTest {
 		installAndUninstall(SecurityConstants.USER_PWD_NO_ROLE, SecurityConstants.USER_PWD_NO_ROLE, true);
 	}
 
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
 	public void installAndUninstallWithDifferentUsersTest() throws IOException, InterruptedException {
 
 		String output = "no output";
@@ -77,7 +77,7 @@ public class Ec2WinSecurityTest extends NewAbstractSecurityCloudTest {
 		uninstallApplicationAndWait(SIMPLE_APP_PATH, SIMPLE_APP_NAME, TIMEOUT_IN_MINUTES, SecurityConstants.USER_PWD_APP_MANAGER, SecurityConstants.USER_PWD_APP_MANAGER, false, null);
 	}
 
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
 	public void installWithoutCredentialsTest() throws IOException, InterruptedException{
 
 		String output = "no output";
@@ -112,7 +112,7 @@ public class Ec2WinSecurityTest extends NewAbstractSecurityCloudTest {
 
 	}
 
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = false)
 	public void loginTest() throws IOException, InterruptedException {
 
 		String output = "no output";
@@ -122,7 +122,7 @@ public class Ec2WinSecurityTest extends NewAbstractSecurityCloudTest {
 
 	}
 
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = false)
 	public void connectWithNonexistentUserTest() throws IOException, InterruptedException {
 
 		String output = connect(SecurityConstants.USER_PWD_CLOUD_ADMIN + "bad", SecurityConstants.USER_PWD_CLOUD_ADMIN, true);		
@@ -130,7 +130,7 @@ public class Ec2WinSecurityTest extends NewAbstractSecurityCloudTest {
 
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = false)
 	public void connectWithNoPasswordTest() throws IOException, InterruptedException {
 		
 		String output = connect(SecurityConstants.USER_PWD_CLOUD_ADMIN, null, true);		
@@ -138,7 +138,7 @@ public class Ec2WinSecurityTest extends NewAbstractSecurityCloudTest {
 		
 	}
 
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = false)
 	public void loginWithNonexistentUserTest() throws IOException, InterruptedException {
 
 		String output = "no output";
@@ -148,7 +148,7 @@ public class Ec2WinSecurityTest extends NewAbstractSecurityCloudTest {
 		assertTrue("login succeeded for user: " + SecurityConstants.USER_PWD_CLOUD_ADMIN + "bad", output.contains(BAD_CREDENTIALS_MESSAGE));			
 	}
 
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = false)
 	public void connectWithWrongPassword() throws IOException, InterruptedException {
 
 		String output = connect(SecurityConstants.USER_PWD_CLOUD_ADMIN, SecurityConstants.USER_PWD_CLOUD_ADMIN + "bad", true);		
@@ -156,7 +156,7 @@ public class Ec2WinSecurityTest extends NewAbstractSecurityCloudTest {
 
 	}
 
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = false)
 	public void loginWithWrongPassword() throws IOException, InterruptedException {
 
 		String output = "no output";
@@ -166,7 +166,7 @@ public class Ec2WinSecurityTest extends NewAbstractSecurityCloudTest {
 		assertTrue("login succeeded for password: " + SecurityConstants.USER_PWD_CLOUD_ADMIN + "bad", output.contains(BAD_CREDENTIALS_MESSAGE));
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
 	public void installWithWrongGroup() throws IOException, InterruptedException {
 		
 		String output = "no output";
@@ -176,7 +176,7 @@ public class Ec2WinSecurityTest extends NewAbstractSecurityCloudTest {
 		assertTrue("install succeeded with authGroup ROLE_CLOUDADMINS for: " + SecurityConstants.APP_MANAGER_AND_VIEWER_DESCRIPTIN, output.contains(ACCESS_DENIED_MESSAGE));
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
 	public void installAndUninstallWithDifferentGroup() throws IOException, InterruptedException {
 		
 		String output = "no output";
@@ -187,7 +187,7 @@ public class Ec2WinSecurityTest extends NewAbstractSecurityCloudTest {
 		assertTrue("unseen application uninstall succeeded", output.contains(ACCESS_DENIED_MESSAGE));
 	}
 
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
 	public void tamperWithSecurityFileTest() throws Exception{
 
 		String fakeCloudAdminUserAndPassword = "John";

@@ -14,6 +14,8 @@ import framework.utils.ServiceInstaller;
  */
 public class LeakedNodesOnTeardownTest extends NewAbstractCloudTest {
 	
+	private boolean teardown = false;
+	
 	@BeforeClass(alwaysRun = true)
 	protected void bootstrap() throws Exception {
 		super.bootstrap();
@@ -29,6 +31,7 @@ public class LeakedNodesOnTeardownTest extends NewAbstractCloudTest {
 		
 		// this will fail if leaked nodes are found after the teardown.
 		super.teardown();
+		teardown = true;
 	}
 
 	@Override
@@ -43,6 +46,8 @@ public class LeakedNodesOnTeardownTest extends NewAbstractCloudTest {
 
 	@AfterClass(alwaysRun = true)
 	protected void teardown() throws Exception {
-		super.teardown();
+		if (!teardown) {
+			super.teardown();
+		}
 	}
 }

@@ -2,12 +2,13 @@ package test.cli.cloudify.cloud.azure;
 
 import java.net.InetAddress;
 import java.net.URL;
+import java.util.concurrent.TimeoutException;
 
+import org.cloudifysource.esc.driver.provisioning.azure.client.MicrosoftAzureException;
 import org.cloudifysource.esc.driver.provisioning.azure.client.MicrosoftAzureRestClient;
 import org.cloudifysource.esc.driver.provisioning.azure.model.Deployment;
 import org.cloudifysource.esc.driver.provisioning.azure.model.Disk;
 import org.cloudifysource.esc.driver.provisioning.azure.model.Disks;
-import org.cloudifysource.esc.driver.provisioning.azure.model.HostedServices;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -15,6 +16,7 @@ import org.testng.annotations.Test;
 import test.cli.cloudify.cloud.NewAbstractCloudTest;
 import test.cli.cloudify.cloud.services.azure.MicrosoftAzureCloudService;
 import framework.utils.AssertUtils;
+import framework.utils.AssertUtils.RepetitiveConditionProvider;
 import framework.utils.LogUtils;
 
 /**
@@ -46,25 +48,45 @@ public class LeakingOSDiskTest extends NewAbstractCloudTest {
 
 		getService().getBootstrapper().force(true).setRestUrl(null);
 		
-		// this was the bug. teardown should clean everything
+		// wait for the remaining disk to detach
+		
+		RepetitiveConditionProvider condition = new AssertUtils.RepetitiveConditionProvider() {
+			
+			@Override
+			public boolean getCondition() {
+				try {
+					Disk disk = getRemainingDisk();
+					return (disk.getAttachedTo() == null);
+				} catch (final Exception e) {
+					LogUtils.log("Caught an exception while retrieving disk", e);
+					return false;
+				} 
+			}
+		};
+		AssertUtils.repetitiveAssertTrue("Timed out waiting for disk to detach", condition, OPERATION_TIMEOUT);
+		
+		// this was the bug. teardown should delete the zombie disk
 		super.teardown();
 
-		// verify there is no zombi OS disk
+		Disk remainingDIsk = getRemainingDisk();
+		if (remainingDIsk != null) {
+			// leaking disk, teardown did not delete it.
+			leakingOsDiskName = remainingDIsk.getName();
+			AssertUtils.assertFail("Found a leaking os disk with name " + remainingDIsk.getName() + " after teardown"); 
+		}
+
+	}
+
+	private Disk getRemainingDisk() throws MicrosoftAzureException, TimeoutException {
 		Disks osDisks = azureClient.listOSDisks();
 		for (Disk disk : osDisks) {
 			if (disk.getName().contains(getService().getMachinePrefix())) {
-				// disk belongs to current bootstrap.
-				String cloudServiceName = disk.getAttachedTo().getHostedServiceName();
-				HostedServices cloudServices = azureClient.listHostedServices();
-				if (!cloudServices.contains(cloudServiceName)) {
-					// zombi os disk. its attached cloud service is gone.
-					leakingOsDiskName = disk.getName();
-					AssertUtils.assertFail("Found a leaking OS disk : " + disk.getName());
-				}
+				return disk;
 			}
-
 		}
+		return null;
 	}
+
 
 	@AfterClass(alwaysRun = true)
 	protected void teardown() throws Exception {

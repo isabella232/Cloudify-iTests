@@ -66,7 +66,7 @@ public class Ec2WinExamplesTest extends AbstractExamplesTest {
 		super.testPetclinic();
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
 	public void testHelloWorld() throws Exception {
 		super.testHelloWorld();
 	}

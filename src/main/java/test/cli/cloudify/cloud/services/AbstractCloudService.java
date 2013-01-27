@@ -32,7 +32,7 @@ import framework.utils.WebUtils;
 public abstract class AbstractCloudService implements CloudService {
 
 	private static final int MAX_HOSTNAME_LENGTH = 45;
-	protected static final String RELATIVE_ESC_PATH = "/tools/cli/plugins/esc/";
+	protected static final String RELATIVE_ESC_PATH = "/clouds/";
 	protected static final String UPLOAD_FOLDER = "upload";
 	
 	private static final int TEN_SECONDS_IN_MILLIS = 10000;

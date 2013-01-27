@@ -236,7 +236,7 @@ public class ScriptUtils {
             File[] excludeDirectories = new File[]{new File(gigaspacesDirectory,"work"),
                     new File(gigaspacesDirectory,"logs"),
                     new File(gigaspacesDirectory,"deploy"),
-                    new File(gigaspacesDirectory,"tools/cli/plugins/esc/ec2/upload")};
+                    new File(gigaspacesDirectory,"clouds/ec2/upload")};
             File[] includeDirectories = new File[]{new File(gigaspacesDirectory,"deploy/templates")};
             File[] emptyDirectories = new File[]{new File(gigaspacesDirectory,"logs"),
                     new File(gigaspacesDirectory,"lib/platform/esm")};

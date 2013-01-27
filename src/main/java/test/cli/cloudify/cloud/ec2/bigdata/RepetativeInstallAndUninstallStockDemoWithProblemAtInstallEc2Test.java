@@ -43,7 +43,7 @@ public class RepetativeInstallAndUninstallStockDemoWithProblemAtInstallEc2Test e
 	private String restUrl;
 	private final String stockdemoAppPath = CommandTestUtils.getPath("src/main/resources/apps/USM/usm/applications/stockdemo");
 
-	private File cloudPluginDir = new File(ScriptUtils.getBuildPath() + "/tools/cli/plugins/esc/ec2");
+	private File cloudPluginDir = new File(ScriptUtils.getBuildPath() + "/clouds/ec2");
 	private URL stockdemoUrl;
 
 

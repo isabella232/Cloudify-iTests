@@ -64,7 +64,7 @@ import framework.utils.WebUtils;
 
 public class AbstractLocalCloudTest extends AbstractTestSupport {
 
-	protected Admin admin;
+	protected static Admin admin;
 	
 	protected static String restUrl =  "http://127.0.0.1:" + CloudifyConstants.DEFAULT_REST_PORT;;
 	protected static final String MANAGEMENT_APPLICATION_NAME = CloudifyConstants.MANAGEMENT_APPLICATION_NAME;
@@ -78,7 +78,7 @@ public class AbstractLocalCloudTest extends AbstractTestSupport {
 		if (isRestPortResponding()) {
 			LogUtils.log("Detected a localcloud running on the machine. not performing bootstrap");
 				LogUtils.log("Creating admin to connect to existing localcloud");
-				this.admin = super.createAdminAndWaitForManagement();
+				admin = super.createAdminAndWaitForManagement();
 		} else {
 			cleanUpCloudifyLocalDir();
 			
@@ -87,7 +87,7 @@ public class AbstractLocalCloudTest extends AbstractTestSupport {
 			bootstrapper.bootstrap();
 			
 			LogUtils.log("Creating admin");
-			this.admin = super.createAdminAndWaitForManagement();
+			admin = super.createAdminAndWaitForManagement();
 		}
 		
 		LogUtils.log("================ BeforeSuite Ended ===================");
@@ -272,6 +272,8 @@ public class AbstractLocalCloudTest extends AbstractTestSupport {
 			bootstrapper.teardown();
 		}
 		
+		admin.close();
+		
 		LogUtils.log("================ AfterSuite Ended ===================");
 	}
 	
@@ -399,11 +401,13 @@ public class AbstractLocalCloudTest extends AbstractTestSupport {
 		Applications applications = admin.getApplications();
 		for (org.openspaces.admin.application.Application application : applications) {
 			String applicationName = application.getName();
-			ApplicationInstaller installer = new ApplicationInstaller(restUrl, applicationName);
-			try {
-				installer.uninstall();
-			} catch (Throwable t) {
-				LogUtils.log("Failed to uninstall application " + applicationName);
+			if (!applicationName.equals(CloudifyConstants.MANAGEMENT_APPLICATION_NAME)) {
+				ApplicationInstaller installer = new ApplicationInstaller(restUrl, applicationName);
+				try {
+					installer.uninstall();
+				} catch (Throwable t) {
+					LogUtils.log("Failed to uninstall application " + applicationName);
+				}
 			}
 		}
 		ProcessingUnits processingUnits = admin.getProcessingUnits();

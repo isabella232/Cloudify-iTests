@@ -21,9 +21,7 @@ public class AttributesTest extends AbstractLocalCloudTest {
 	private GigaSpace gigaspace;
 
 	@BeforeMethod
-	@Override
-	public void bootstrapIfNeeded() throws Exception {
-        super.bootstrapIfNeeded();
+	public void createSpace() throws Exception {
 		gigaspace = admin.getSpaces().waitFor("cloudifyManagementSpace", 20, TimeUnit.SECONDS).getGigaSpace();
 	}
 		

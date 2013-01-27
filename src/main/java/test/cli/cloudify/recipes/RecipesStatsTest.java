@@ -37,12 +37,10 @@ public class RecipesStatsTest extends AbstractLocalCloudTest {
 		super();
 	}
 
-	@Override
 	@BeforeMethod
-	public void bootstrapIfNeeded() throws Exception {
+	public void init() throws Exception {
 		portReleasedBeforTimeout = false;
 		portTakenBeforTimeout = false;
-		super.bootstrapIfNeeded();
 	}
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, groups = "1", enabled = false)

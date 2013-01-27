@@ -22,7 +22,6 @@ import org.openspaces.admin.pu.ProcessingUnit;
 import org.openspaces.admin.pu.ProcessingUnitInstance;
 import org.openspaces.admin.pu.events.ProcessingUnitInstanceLifecycleEventListener;
 import org.openspaces.pu.service.CustomServiceMonitors;
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import framework.tools.SGTestHelper;
@@ -53,12 +52,6 @@ public class RepetitiveActualServiceFailoverTest extends AbstractLocalCloudTest 
 	Machine machineA;
 	private final String TOMCAT_URL = "http://127.0.0.1:8080";
 	private String tomcatServiceDir = ScriptUtils.getBuildPath() + "/recipes/services/tomcat";
-	
-	@Override
-	@BeforeMethod
-	public void bootstrapIfNeeded() throws Exception {
-		super.bootstrapIfNeeded();	
-	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, groups = "1", enabled = true)
 	public void tomcatServiceDownAndCorruptedTest() throws Exception {

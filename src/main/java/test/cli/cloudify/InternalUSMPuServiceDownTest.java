@@ -23,7 +23,6 @@ import org.openspaces.admin.pu.ProcessingUnit;
 import org.openspaces.admin.pu.ProcessingUnitInstance;
 import org.openspaces.admin.pu.events.ProcessingUnitInstanceLifecycleEventListener;
 import org.openspaces.pu.service.CustomServiceMonitors;
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import framework.tools.SGTestHelper;
@@ -45,12 +44,6 @@ public class InternalUSMPuServiceDownTest extends AbstractLocalCloudTest {
 	private final String TOMCAT_URL = "http://127.0.0.1:8080";
 	private final String tomcatServiceDir = ScriptUtils.getBuildPath() + "/recipes/services/tomcat";
 	private ProcessingUnitInstanceLifecycleEventListener eventListener;
-
-	@Override
-	@BeforeMethod
-	public void bootstrapIfNeeded() throws Exception {
-		super.bootstrapIfNeeded();	
-	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
 	public void tomcatServiceDownAndCorruptedTest() throws Exception {

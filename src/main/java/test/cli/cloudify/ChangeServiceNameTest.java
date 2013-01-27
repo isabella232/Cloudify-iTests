@@ -20,6 +20,6 @@ public class ChangeServiceNameTest extends AbstractLocalCloudTest{
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
 	public void install() throws Exception{
 		
-		installServiceAndWait(SERVICE_PATH, SERVICE_NAME, WAIT_FOR_TIMEOUT_SECONDS, false);
+		installServiceAndWait(SERVICE_PATH, SERVICE_NAME, false);
 	}
 }

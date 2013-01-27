@@ -98,16 +98,10 @@ public class RepetativeInstallAndUninstallStockDemoWithProblemAtInstallTest exte
 			return 3;
 	}
 
-	@Override
 	@AfterMethod
-	public void afterTest() throws Exception {
-		super.afterTest();
-		try {
-			if ((newPostStartScriptPath != null) && (cassandraPostStartScriptPath != null)) {
-				fixCassandraService(cassandraPostStartScriptPath , newPostStartScriptPath);				
-			}
-		} catch (IOException e) {
-			LogUtils.log("FAILED FIXING CASSANDRA SERVICE!!!");
+	public void fixCassandraService() throws Exception {
+		if ((newPostStartScriptPath != null) && (cassandraPostStartScriptPath != null)) {
+			fixCassandraService(cassandraPostStartScriptPath , newPostStartScriptPath);				
 		}
 	}
 	

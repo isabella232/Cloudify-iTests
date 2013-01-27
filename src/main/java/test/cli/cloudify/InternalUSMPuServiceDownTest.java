@@ -48,8 +48,8 @@ public class InternalUSMPuServiceDownTest extends AbstractLocalCloudTest {
 
 	@Override
 	@BeforeMethod
-	public void beforeTest() throws Exception {
-		super.beforeTest();	
+	public void bootstrapIfNeeded() throws Exception {
+		super.bootstrapIfNeeded();	
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)

@@ -22,8 +22,8 @@ public class CustomCommandsOnMultipleInstancesTest extends AbstractLocalCloudTes
 		installService(SERVICE_NAME);
         
 		final String absolutePUName = ServiceUtils.getAbsolutePUName(DEFAULT_APPLICATION_NAME, SERVICE_NAME);
-		final ProcessingUnit pu = admin.getProcessingUnits().waitFor(absolutePUName , WAIT_FOR_TIMEOUT_SECONDS , TimeUnit.SECONDS);
-		assertTrue("USM Service State is NOT RUNNING", USMTestUtils.waitForPuRunningState(absolutePUName, WAIT_FOR_TIMEOUT_SECONDS, TimeUnit.SECONDS, admin));
+		final ProcessingUnit pu = admin.getProcessingUnits().waitFor(absolutePUName , OPERATION_TIMEOUT , TimeUnit.MILLISECONDS);
+		assertTrue("USM Service State is NOT RUNNING", USMTestUtils.waitForPuRunningState(absolutePUName, OPERATION_TIMEOUT , TimeUnit.MILLISECONDS, admin));
 		totalInstances = pu.getTotalNumberOfInstances();
 	}
 

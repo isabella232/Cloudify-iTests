@@ -19,8 +19,8 @@ public class RestDependencyOnManagementSpaceTest extends AbstractLocalCloudTest{
 	
 	@Override
 	@BeforeMethod
-	public void beforeTest() throws Exception {	
-		super.beforeTest();
+	public void bootstrapIfNeeded() throws Exception {	
+		super.bootstrapIfNeeded();
 		gsm = admin.getGridServiceManagers().waitForAtLeastOne(1, TimeUnit.MINUTES);
 		gsm.undeploy("cloudifyManagementSpace");
 		gsm.undeploy("rest");

@@ -16,7 +16,7 @@ import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 
-import test.AbstractTest;
+import test.AbstractTestSupport;
 import framework.utils.AdminUtils;
 import framework.utils.GridServiceAgentsCounter;
 import framework.utils.GridServiceContainersCounter;
@@ -29,8 +29,9 @@ import framework.utils.GridServiceContainersCounter;
  * @author giladh
  *
  */
-public class AbstractGsmTest extends AbstractTest {
+public class AbstractGsmTest extends AbstractTestSupport {
 
+	private Admin admin;
     private ElasticServiceManager esm;
 	
 	private GridServiceContainersCounter gscCounter;
@@ -41,10 +42,8 @@ public class AbstractGsmTest extends AbstractTest {
     protected GridServiceManager gsm;
     
     
-    @Override 
     @BeforeMethod
     public void beforeTest() throws Exception {
-    	super.beforeTest();
     	LookupService[] lookupServices =  restartLus(); // workaround for admin.close() container discovery leakage from previous test
     	gsa = lookupServices[0].getGridServiceAgent();
     	assertEquals("All containers must be terminated before test starts",false,admin.getGridServiceContainers().waitFor(5,1,TimeUnit.SECONDS));
@@ -70,7 +69,7 @@ public class AbstractGsmTest extends AbstractTest {
     		GsmTestUtils.restartLookupService(oldLus);
     	}
     	admin.close();
-    	admin = newAdmin();
+    	admin = super.createAdmin();
     	admin.getLookupServices().waitFor(2);
     	LookupService[] newLookupServices =  admin.getLookupServices().getLookupServices();
     	assertEquals("Expected 2 lookup services",2, newLookupServices.length);
@@ -108,12 +107,10 @@ public class AbstractGsmTest extends AbstractTest {
 		return gsaRef.get();
 	}
     
-    @Override
     @AfterMethod
     public void afterTest() throws Exception {
         gscCounter.close();
         gsaCounter.close();
-       	super.afterTest();
     }
 
     public void repetitiveAssertNumberOfGSAsAdded(int expected, long timeoutMilliseconds) {

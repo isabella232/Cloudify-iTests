@@ -6,9 +6,10 @@ import java.io.IOException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.cloudifysource.dsl.internal.CloudifyConstants;
+import org.openspaces.admin.Admin;
 import org.openspaces.admin.AdminFactory;
 
-import test.AbstractTest;
+import test.AbstractTestSupport;
 import test.cli.cloudify.CommandTestUtils.ProcessResult;
 import test.cli.cloudify.security.SecurityConstants;
 import framework.utils.ApplicationInstaller;
@@ -16,8 +17,10 @@ import framework.utils.LocalCloudBootstrapper;
 import framework.utils.LogUtils;
 import framework.utils.ServiceInstaller;
 
-public class AbstractSecuredLocalCloudTest extends AbstractTest {
+public class AbstractSecuredLocalCloudTest extends AbstractTestSupport {
 
+	protected Admin admin;
+	
 	protected static final String SIMPLE_APP_NAME = "simple";
 	protected static final String SIMPLE_APP_PATH = CommandTestUtils.getPath("/src/main/resources/apps/USM/usm/applications/" + SIMPLE_APP_NAME);
 	protected static final String SIMPLE_SERVICE_NAME = "simple";

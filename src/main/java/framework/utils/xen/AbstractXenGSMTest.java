@@ -43,7 +43,7 @@ import org.openspaces.grid.gsm.machines.plugins.exceptions.ElasticMachineProvisi
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 
-import test.AbstractTest;
+import test.AbstractTestSupport;
 
 import com.j_spaces.kernel.PlatformVersion;
 
@@ -58,7 +58,7 @@ import framework.utils.TeardownUtils;
 import framework.utils.TestUtils;
 
 
-public class AbstractXenGSMTest extends AbstractTest {
+public class AbstractXenGSMTest extends AbstractTestSupport {
 
     protected static final int XENSERVER_ROOT_DRIVE_CAPACITY = 3967;
     protected static final int RESERVED_DRIVE_CAPACITY_PER_MACHINE_MEGABYTES = 2200;
@@ -132,7 +132,6 @@ public class AbstractXenGSMTest extends AbstractTest {
 		return config;
 	}
 	
-    @Override
     @BeforeMethod
     public void beforeTest() {
         try {
@@ -464,7 +463,6 @@ public class AbstractXenGSMTest extends AbstractTest {
         return newGsa;
     }
     
-	@Override
     @AfterMethod
     public void afterTest() {
         if (gscCounter != null) {

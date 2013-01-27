@@ -10,7 +10,6 @@ import org.testng.IMethodInterceptor;
 import org.testng.ITestClass;
 import org.testng.ITestContext;
 
-import test.StartTest;
 import framework.utils.LogUtils;
 
 /**
@@ -57,13 +56,6 @@ public class SGTestNgSuiteSplitter implements IMethodInterceptor {
 			
 			ITestClass methodTestClass = methodInstance.getMethod().getTestClass();
 
-			//add StartTest to all suites
-			if (StartTest.class.getName().equals(methodTestClass.getName())) {
-				for (List<IMethodInstance> list : suites.values()) {
-					list.add(0, methodInstance);
-				}
-				continue;
-			}
 			
 			//include all methods of a certain test
 			if (!methodTestClass.equals(testClass)) {

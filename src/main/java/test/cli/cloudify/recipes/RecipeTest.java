@@ -23,8 +23,8 @@ public class RecipeTest extends AbstractLocalCloudTest {
 
 	@Override
 	@BeforeMethod
-	public void beforeTest() throws Exception {
-		super.beforeTest();
+	public void bootstrapIfNeeded() throws Exception {
+		super.bootstrapIfNeeded();
 		portReleasedBeforTimeout = false;
 		portTakenBeforTimeout = false;
 	}
@@ -94,7 +94,7 @@ public class RecipeTest extends AbstractLocalCloudTest {
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, groups = "1", enabled = true)
 	public void installTomcat() throws Exception{
-		super.beforeTest();
+		super.bootstrapIfNeeded();
 		String tomcatDirPath = recipesDirPath + "/tomcat";
 		runCommand("connect " + restUrl + ";install-service --verbose " + tomcatDirPath);
 		runCommand("connect " + restUrl + ";uninstall-service --verbose tomcat");
@@ -110,7 +110,7 @@ public class RecipeTest extends AbstractLocalCloudTest {
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, groups = "1", enabled = false)
 	public void installJboss() throws Exception{
-		super.beforeTest();
+		super.bootstrapIfNeeded();
 		String jbossDirPath = recipesDirPath + "/jboss";
 		runCommand("connect " + restUrl +  ";install-service --verbose " + jbossDirPath);
 		runCommand("connect " + restUrl +  ";uninstall-service --verbose jboss-service");

@@ -1,22 +1,19 @@
 package test.cli.cloudify;
 
-import static framework.utils.LogUtils.log;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.URL;
-import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.io.FileUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -28,6 +25,7 @@ import org.cloudifysource.dsl.Application;
 import org.cloudifysource.dsl.internal.CloudifyConstants;
 import org.cloudifysource.dsl.internal.DSLException;
 import org.cloudifysource.dsl.internal.ServiceReader;
+import org.cloudifysource.dsl.utils.ServiceUtils;
 import org.cloudifysource.restclient.ErrorStatusException;
 import org.cloudifysource.restclient.StringUtils;
 import org.cloudifysource.shell.commands.CLIException;
@@ -41,71 +39,65 @@ import org.hyperic.sigar.SigarException;
 import org.hyperic.sigar.SigarPermissionDeniedException;
 import org.openspaces.admin.Admin;
 import org.openspaces.admin.AdminFactory;
-import org.openspaces.admin.gsa.GridServiceAgent;
-import org.openspaces.admin.gsc.GridServiceContainer;
-import org.openspaces.admin.gsc.GridServiceContainers;
-import org.openspaces.admin.machine.Machine;
+import org.openspaces.admin.application.Applications;
 import org.openspaces.admin.pu.ProcessingUnit;
+import org.openspaces.admin.pu.ProcessingUnits;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterSuite;
-import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.BeforeSuite;
 
-import test.AbstractTest;
+import test.AbstractTestSupport;
 
 import com.gigaspaces.internal.sigar.SigarHolder;
 
+import framework.tools.SGTestHelper;
 import framework.utils.ApplicationInstaller;
+import framework.utils.AssertUtils;
 import framework.utils.DumpUtils;
 import framework.utils.LocalCloudBootstrapper;
 import framework.utils.LogUtils;
-import framework.utils.PortConnectionUtils;
 import framework.utils.ScriptUtils;
 import framework.utils.ServiceInstaller;
 import framework.utils.SetupUtils;
-import framework.utils.TeardownUtils;
 import framework.utils.WebUtils;
 
-public class AbstractLocalCloudTest extends AbstractTest {
+public class AbstractLocalCloudTest extends AbstractTestSupport {
 
-	private final static int BOOTSTRAP_RETRIES_BEFOREMETHOD = 2;
-	protected final static int WAIT_FOR_TIMEOUT_SECONDS = 60;
-	private final static int HTTP_STATUS_OK = 200;
-	protected static String restUrl = null;
+	protected Admin admin;
+	
+	protected static String restUrl =  "http://127.0.0.1:" + CloudifyConstants.DEFAULT_REST_PORT;;
 	protected static final String MANAGEMENT_APPLICATION_NAME = CloudifyConstants.MANAGEMENT_APPLICATION_NAME;
 	protected static final String DEFAULT_APPLICATION_NAME = CloudifyConstants.DEFAULT_APPLICATION_NAME;
-
-	protected boolean isDevEnv = false;
-
-	protected boolean isSecured = false;
-	protected String user = null;
-	protected String password = null;
-	protected final int securedRestPort = 8100;
-	protected static String securedRestUrl = null;
 	
-	protected boolean checkIsDevEnv() {
-		if (this.isDevEnv) {
-			return true;
+	@BeforeSuite(alwaysRun = true)
+	public void bootstrapIfNeeded() throws Exception {
+		
+		if (isRestPortResponding()) {
+			LogUtils.log("Detected a localcloud running on the machine. not performing bootstrap");
+				LogUtils.log("Creating admin to connect to existing localcloud");
+				this.admin = super.createAdminAndWaitForManagement();
+		} else {
+			cleanUpCloudifyLocalDir();
+			
+			LocalCloudBootstrapper bootstrapper = new LocalCloudBootstrapper();
+			bootstrapper.verbose(true).timeoutInMinutes(5);
+			bootstrapper.bootstrap();
+			
+			LogUtils.log("Creating admin");
+			this.admin = super.createAdminAndWaitForManagement();
 		}
-
-		final String val = System.getenv("DEV_ENV");
-		if (val != null) {
-			if (val.equalsIgnoreCase("true")) {
-				return true;
-			}
-		}
-
-		final String propVal = System.getProperty("localcloud.DEV_ENV");
-		if (propVal != null) {
-			if (propVal.equalsIgnoreCase("true")) {
-				return true;
-			}
-		}
-
-		return false;
-
 	}
+	
+	@AfterMethod(alwaysRun = true)
+	public void cleanup() throws Exception {
 
+		uninstallAll();
+		
+		LogUtils.log("Scanning for leaked processes...");
+		AssertUtils.assertTrue("Found leaking processes after test ended.", killLeakedProcesses() == false);
+	}
+	
 	protected void cleanUpCloudifyLocalDir() throws IOException {
 		String userHomeProp = null;
 		if (ScriptUtils.isLinuxMachine()) {
@@ -133,105 +125,23 @@ public class AbstractLocalCloudTest extends AbstractTest {
 			}
 		}
 	}
+	
 
-	@Override
-	@BeforeMethod
-	public void beforeTest() throws Exception {
+	protected boolean isRestPortResponding() throws Exception {
 
-		LogUtils.log("Test Configuration Started: " + this.getClass());
+		boolean restPortResponding = false;
 
-		if (admin != null) {
-			LogUtils.log("Admin has not been closed properly in the previous test. Closing old admin");
-			admin.close();
-			admin = null;
+		final URL restUrl = new URL("http://" + InetAddress.getLocalHost().getHostAddress() + ":" + CloudifyConstants.DEFAULT_REST_PORT);
+		if (WebUtils.isURLAvailable(restUrl)) {
+			restPortResponding = ServiceUtils.isPortOccupied("localhost", CloudifyConstants.DEFAULT_REST_PORT);
 		}
 
-		restUrl = "http://" + getLocalHostIpAddress() + ":" + CloudifyConstants.DEFAULT_REST_PORT;
-		
-		if (checkIsDevEnv()) {
-			LogUtils.log("Local cloud test running in dev mode, will use existing localcloud");
-		} else {
-			for (int i = 0; i < BOOTSTRAP_RETRIES_BEFOREMETHOD; i++) {
-
-				try {
-					if (!isRequiresBootstrap()) {
-						break;
-					}
-					cleanUpCloudifyLocalDir();
-					CommandTestUtils.runCloudifyCommandAndWait("bootstrap-localcloud --verbose -timeout 15");
-				} catch (final Throwable t) {
-					LogUtils.log("Failed to bootstrap localcloud. iteration="+ i, t);
-					if (i >= BOOTSTRAP_RETRIES_BEFOREMETHOD - 1) {
-						Assert.fail("Failed to bootstrap localcloud after " + BOOTSTRAP_RETRIES_BEFOREMETHOD + " retries.",t);
-					}
-				}
-
-			}
-		}
-
-		Assert.assertFalse(isRequiresBootstrap(),"Cannot establish connection with localcloud");
-
-		this.admin = super.createAdminAndWaitForManagement();
-		final boolean foundLookupService = admin.getLookupServices().waitFor(1,WAIT_FOR_TIMEOUT_SECONDS, TimeUnit.SECONDS);
-		Assert.assertTrue(foundLookupService, "Failed to discover lookup service after " + WAIT_FOR_TIMEOUT_SECONDS + " seconds");
-
-		final boolean foundMachine = admin.getMachines().waitFor(1, WAIT_FOR_TIMEOUT_SECONDS, TimeUnit.SECONDS);
-		Assert.assertTrue(foundMachine, "Failed to discover machine after " + WAIT_FOR_TIMEOUT_SECONDS + " seconds");
-		final Machine[] machines = admin.getMachines().getMachines();
-		Assert.assertTrue(machines.length >= 1, "Expected at least one machine");
-		final Machine machine = machines[0];
-		LogUtils.log("Machine ["
-				+ machine.getHostName()
-				+ "], "
-				+ "TotalPhysicalMem ["
-				+ machine.getOperatingSystem().getDetails()
-				.getTotalPhysicalMemorySizeInGB()
-				+ "GB], "
-				+ "FreePhysicalMem ["
-				+ machine.getOperatingSystem().getStatistics()
-				.getFreePhysicalMemorySizeInGB() + "GB]]");
-
-	}
-
-	protected boolean checkOutputForExceptions(final String output) {
-		if (output.contains("Exception")) {
+		if (!restPortResponding) {
+			LogUtils.log("Rest port is not responding");
 			return true;
+		} else {
+			return false;
 		}
-		return false;
-	}
-
-	protected boolean isRequiresBootstrap() throws Exception {
-		boolean requiredBootstrap = true;
-		try {
-						
-			final boolean leakedProcessesFound = killLeakedProcesses();
-			boolean restPortResponding = false;
-			
-			final URL restUrl = new URL("http://" + InetAddress.getLocalHost().getHostAddress() + ":" + CloudifyConstants.DEFAULT_REST_PORT);
-			if (WebUtils.isURLAvailable(restUrl)) {
-				restPortResponding = PortConnectionUtils.isPortOpen("localhost", CloudifyConstants.DEFAULT_REST_PORT);
-			}
-
-			if (leakedProcessesFound) {
-				LogUtils.log("Leaked process found");
-			}
-			if (!restPortResponding) {
-				LogUtils.log("Rest port is not responding");
-			}
-
-			requiredBootstrap = !restPortResponding || leakedProcessesFound;
-
-		} catch (final UnknownHostException e) {
-			Assert.fail("Failed to check if requires bootstrap", e);
-		} catch (final IOException e) {
-			Assert.fail("Failed to check if requires bootstrap", e);
-		} catch (final InterruptedException e) {
-			Assert.fail("Failed to check if requires bootstrap", e);
-		} catch (final SigarException e) {
-			Assert.fail("Failed to check if requires bootstrap", e);
-		}
-
-		return requiredBootstrap;
 	}
 
 	protected String getLocalHostIpAddress() {
@@ -288,7 +198,7 @@ public class AbstractLocalCloudTest extends AbstractTest {
 						LogUtils.log("Found a leaking java process (" + arg
 								+ "): " + procDetails);
 						failed = true;
-						if (!checkIsDevEnv()) {
+						if (!SGTestHelper.isDevMode()) {
 							SetupUtils.killProcessesByIDs(new HashSet<String>(
 									Arrays.asList("" + pid)));
 						}
@@ -297,7 +207,7 @@ public class AbstractLocalCloudTest extends AbstractTest {
 			} else if (suspectProcessNames.contains(procDetails.baseName)) {
 				LogUtils.log("Found a leaking process: " + procDetails);
 				failed = true;
-				if (!checkIsDevEnv()) {
+				if (!SGTestHelper.isDevMode()) {
 					SetupUtils.killProcessesByIDs(new HashSet<String>(Arrays
 							.asList("" + pid)));
 				}
@@ -341,31 +251,11 @@ public class AbstractLocalCloudTest extends AbstractTest {
 		return processDetailsByPid;
 	}
 
-	@Override
-	@AfterMethod(alwaysRun = true)
-	public void afterTest() throws Exception {
 
-		if (admin != null) {
-			try {
-				try {
-					DumpUtils.dumpLogs(admin);
-				} catch (final Throwable t) {
-					log("failed to dump logs", t);
-				}
-
-				TeardownUtils.snapshot(admin);
-				uninstallAllRunningServices(admin);
-			} finally {
-				admin.close();
-				admin = null;
-			}
-		}
-		LogUtils.log("Test Finished : " + this.getClass());
-	}
 
 	@AfterSuite(alwaysRun = true)
-	public void afterSuite() throws IOException, InterruptedException {
-		if (checkIsDevEnv()) {
+	public void teardownIfNeeded() throws IOException, InterruptedException {
+		if (SGTestHelper.isDevMode()) {
 			LogUtils.log("Running in dev mode - cloud will not be torn down");
 		} else {
 			LogUtils.log("Tearing-down localcloud");
@@ -411,7 +301,7 @@ public class AbstractLocalCloudTest extends AbstractTest {
 		try {
 			final DefaultHttpClient httpClient = new DefaultHttpClient();
 			final HttpResponse response = httpClient.execute(httpMethod);
-			if (response.getStatusLine().getStatusCode() != HTTP_STATUS_OK) {
+			if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
 				LogUtils.log(httpMethod.getURI() + " response code "
 						+ response.getStatusLine().getStatusCode());
 				throw new CLIException(response.getStatusLine().toString());
@@ -475,15 +365,12 @@ public class AbstractLocalCloudTest extends AbstractTest {
 					+ ";uninstall-application --verbose " + applicationName);
 		} catch (final Exception e) {
 			LogUtils.log("Failed to uninstall " + applicationName, e);
-			e.printStackTrace();
 		}
 	}
 	
 	protected void uninstallApplicationIfFound(String applicationName) throws IOException, InterruptedException {
 		ApplicationInstaller applicationInstaller = new ApplicationInstaller(restUrl, applicationName);
 		applicationInstaller.waitForFinish(true);
-		applicationInstaller.cloudifyUsername(user);
-		applicationInstaller.cloudifyPassword(password);
 		applicationInstaller.uninstallIfFound();
 	}
 
@@ -498,42 +385,29 @@ public class AbstractLocalCloudTest extends AbstractTest {
 		}
 	}
 
-	public void uninstallAllRunningServices(final Admin admin) {
-
-		for (final ProcessingUnit pu : admin.getProcessingUnits()
-				.getProcessingUnits()) {
-			if (!pu.getName().equals("webui") && !pu.getName().equals("rest")
-					&& !pu.getName().equals("cloudifyManagementSpace")) {
-				if (!pu.undeployAndWait(90, TimeUnit.SECONDS)) {
-					LogUtils.log("Failed to uninstall " + pu.getName());
-					// kill all GSCs
-					for (final GridServiceAgent gsa : admin
-							.getGridServiceAgents()) {
-						final GridServiceContainers gridServiceContainers = gsa
-								.getMachine().getGridServiceContainers();
-						for (final GridServiceContainer gsc : gridServiceContainers) {
-							if (gsc.getExactZones().isStasfies(
-									pu.getRequiredContainerZones())) {
-								try {
-									log("killing GSC [ID:"
-											+ gsc.getAgentId()
-											+ "] [PID: "
-											+ gsc.getVirtualMachine()
-													.getDetails().getPid()
-											+ " ]");
-									gsc.kill();
-								} catch (final Exception e) {
-									log("GSC kill failed - " + e, e);
-								}
-							}
-						}
-					}
-				} else {
-					LogUtils.log("Uninstalled service: " + pu.getName()
-							+ " Please uninstall-application in test!");
-				}
+	public void uninstallAll() throws IOException, InterruptedException {
+		
+		Applications applications = admin.getApplications();
+		for (org.openspaces.admin.application.Application application : applications) {
+			String applicationName = application.getName();
+			ApplicationInstaller installer = new ApplicationInstaller(restUrl, applicationName);
+			try {
+				installer.uninstall();
+			} catch (Throwable t) {
+				LogUtils.log("Failed to uninstall application " + applicationName);
 			}
 		}
+		ProcessingUnits processingUnits = admin.getProcessingUnits();
+		for (ProcessingUnit processingUnit : processingUnits) {
+			String serviceName = processingUnit.getName();
+			ServiceInstaller installer = new ServiceInstaller(serviceName, serviceName);
+			try {
+				installer.uninstall();
+			} catch (Throwable t) {
+				LogUtils.log("Failed to uninstall service " + serviceName);
+			}			
+		}
+ 
 	}
 
 	protected Application installApplication(final String applicationName) {
@@ -577,7 +451,7 @@ public class AbstractLocalCloudTest extends AbstractTest {
 		}
 	}
 	
-	protected String installServiceAndWait(String servicePath, String serviceName, int timeout, boolean isExpectedToFail) throws IOException, InterruptedException {
+	protected String installServiceAndWait(String servicePath, String serviceName, boolean isExpectedToFail) throws IOException, InterruptedException {
 
 		ServiceInstaller serviceInstaller = new ServiceInstaller(restUrl, serviceName);
 		serviceInstaller.recipePath(servicePath);
@@ -655,26 +529,6 @@ public class AbstractLocalCloudTest extends AbstractTest {
 	}
 
 	protected String connectCommand(){
-
-		if(isSecured){
-			
-			StringBuilder builder = new StringBuilder();
-			
-			builder.append("connect ");
-			
-			if(user != null){
-				builder.append("-user " + user + " ");
-			}
-			
-			if(password != null){
-				builder.append("-password " + password + " ");
-			}
-			
-			builder.append(securedRestUrl);
-			
-			return builder.toString();
-		}
-
-		return("connect " + restUrl);
+		return "connect " + restUrl;
 	}
 }

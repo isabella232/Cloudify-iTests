@@ -22,8 +22,8 @@ public class AttributesTest extends AbstractLocalCloudTest {
 
 	@BeforeMethod
 	@Override
-	public void beforeTest() throws Exception {
-        super.beforeTest();
+	public void bootstrapIfNeeded() throws Exception {
+        super.bootstrapIfNeeded();
 		gigaspace = admin.getSpaces().waitFor("cloudifyManagementSpace", 20, TimeUnit.SECONDS).getGigaSpace();
 	}
 		
@@ -342,12 +342,12 @@ public class AttributesTest extends AbstractLocalCloudTest {
         		
 		final String absolutePUNameSimple1 = ServiceUtils.getAbsolutePUName(MAIN_APPLICATION_NAME, "getter");
 		final String absolutePUNameSimple2 = ServiceUtils.getAbsolutePUName(MAIN_APPLICATION_NAME, "setter");
-		final ProcessingUnit pu1 = admin.getProcessingUnits().waitFor(absolutePUNameSimple1 , WAIT_FOR_TIMEOUT_SECONDS , TimeUnit.SECONDS);
-		final ProcessingUnit pu2 = admin.getProcessingUnits().waitFor(absolutePUNameSimple2, WAIT_FOR_TIMEOUT_SECONDS , TimeUnit.SECONDS);
+		final ProcessingUnit pu1 = admin.getProcessingUnits().waitFor(absolutePUNameSimple1 , OPERATION_TIMEOUT , TimeUnit.MILLISECONDS);
+		final ProcessingUnit pu2 = admin.getProcessingUnits().waitFor(absolutePUNameSimple2, OPERATION_TIMEOUT , TimeUnit.MILLISECONDS);
 		assertNotNull(pu1);
 		assertNotNull(pu2);
-		assertTrue("applications was not installed", pu1.waitFor(pu1.getTotalNumberOfInstances(), WAIT_FOR_TIMEOUT_SECONDS, TimeUnit.SECONDS));
-		assertTrue("applications was not installed", pu2.waitFor(pu2.getTotalNumberOfInstances(), WAIT_FOR_TIMEOUT_SECONDS, TimeUnit.SECONDS));
+		assertTrue("applications was not installed", pu1.waitFor(pu1.getTotalNumberOfInstances(), OPERATION_TIMEOUT , TimeUnit.MILLISECONDS));
+		assertTrue("applications was not installed", pu2.waitFor(pu2.getTotalNumberOfInstances(), OPERATION_TIMEOUT , TimeUnit.MILLISECONDS));
 		assertNotNull("applications was not installed", admin.getApplications().getApplication(MAIN_APPLICATION_NAME));
 		assertTrue("USM Service State is NOT RUNNING", USMTestUtils.waitForPuRunningState(absolutePUNameSimple1, 60, TimeUnit.SECONDS, admin));
 		assertTrue("USM Service State is NOT RUNNING", USMTestUtils.waitForPuRunningState(absolutePUNameSimple2, 60, TimeUnit.SECONDS, admin));

@@ -21,7 +21,7 @@ import org.openspaces.admin.space.events.SpaceModeChangedEventListener;
 import org.openspaces.core.cluster.ClusterInfo;
 import org.openspaces.pu.service.ServiceDetails;
 
-import test.AbstractTest;
+import test.AbstractTestSupport;
 
 import com.gigaspaces.cluster.activeelection.SpaceMode;
 
@@ -190,7 +190,7 @@ public class ProcessingUnitUtils {
 	
 	public static Set<Machine> getMachinesOfApplication(final Admin admin , final String applicationName) {
 		Set<Machine> machines = new HashSet<Machine>();
-		Application app = admin.getApplications().waitFor(applicationName, AbstractTest.OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
+		Application app = admin.getApplications().waitFor(applicationName, AbstractTestSupport.OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
 		for (ProcessingUnit pu : app.getProcessingUnits()) {
 			for (ProcessingUnitInstance puInstance : pu.getInstances()) {
 				machines.add(puInstance.getMachine());
@@ -203,7 +203,7 @@ public class ProcessingUnitUtils {
 	public static Set<Machine> getMachinesOfService(final Admin admin, final String serviceName) {
 		LogUtils.log("Retreiving machines for processing unit " + serviceName);
 		Set<Machine> machines = new HashSet<Machine>();
-		ProcessingUnit pu = admin.getProcessingUnits().waitFor(serviceName, AbstractTest.OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
+		ProcessingUnit pu = admin.getProcessingUnits().waitFor(serviceName, AbstractTestSupport.OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
 		for (ProcessingUnitInstance puInstance : pu.getInstances()) {
 			machines.add(puInstance.getMachine());
 		}

@@ -413,12 +413,14 @@ public class AbstractLocalCloudTest extends AbstractTestSupport {
 		ProcessingUnits processingUnits = admin.getProcessingUnits();
 		for (ProcessingUnit processingUnit : processingUnits) {
 			String serviceName = processingUnit.getName();
-			ServiceInstaller installer = new ServiceInstaller(serviceName, serviceName);
-			try {
-				installer.uninstall();
-			} catch (Throwable t) {
-				LogUtils.log("Failed to uninstall service " + serviceName);
-			}			
+			if (!(serviceName.equals("rest") || serviceName.equals("webui") || serviceName.equals("cloudifyManagementSpace"))) {
+				ServiceInstaller installer = new ServiceInstaller(serviceName, serviceName);
+				try {
+					installer.uninstall();
+				} catch (Throwable t) {
+					LogUtils.log("Failed to uninstall service " + serviceName);
+				}			
+			}
 		}
  
 	}

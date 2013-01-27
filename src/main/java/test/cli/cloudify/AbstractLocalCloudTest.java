@@ -73,6 +73,8 @@ public class AbstractLocalCloudTest extends AbstractTestSupport {
 	@BeforeSuite(alwaysRun = true)
 	public void bootstrapIfNeeded() throws Exception {
 		
+		LogUtils.log("================ BeforeSuite Started ===================");
+		
 		if (isRestPortResponding()) {
 			LogUtils.log("Detected a localcloud running on the machine. not performing bootstrap");
 				LogUtils.log("Creating admin to connect to existing localcloud");
@@ -87,6 +89,8 @@ public class AbstractLocalCloudTest extends AbstractTestSupport {
 			LogUtils.log("Creating admin");
 			this.admin = super.createAdminAndWaitForManagement();
 		}
+		
+		LogUtils.log("================ BeforeSuite Ended ===================");
 	}
 	
 	@AfterMethod(alwaysRun = true)
@@ -138,9 +142,9 @@ public class AbstractLocalCloudTest extends AbstractTestSupport {
 
 		if (!restPortResponding) {
 			LogUtils.log("Rest port is not responding");
-			return true;
-		} else {
 			return false;
+		} else {
+			return true;
 		}
 	}
 
@@ -255,6 +259,9 @@ public class AbstractLocalCloudTest extends AbstractTestSupport {
 
 	@AfterSuite(alwaysRun = true)
 	public void teardownIfNeeded() throws IOException, InterruptedException {
+		
+		LogUtils.log("================ AfterSuite Started ===================");
+		
 		if (SGTestHelper.isDevMode()) {
 			LogUtils.log("Running in dev mode - cloud will not be torn down");
 		} else {
@@ -264,6 +271,8 @@ public class AbstractLocalCloudTest extends AbstractTestSupport {
 			bootstrapper.setRestUrl(restUrl);
 			bootstrapper.teardown();
 		}
+		
+		LogUtils.log("================ AfterSuite Ended ===================");
 	}
 	
 	@Override

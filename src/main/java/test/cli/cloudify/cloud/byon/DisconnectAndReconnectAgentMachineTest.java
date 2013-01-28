@@ -131,7 +131,7 @@ public class DisconnectAndReconnectAgentMachineTest extends AbstractByonCloudTes
 			}
 
 		};
-		AssertUtils.repetitiveAssertTrue("the machine that was disconnected (" + machineToDisconnect.getHostAddress() + ") has leaking java processes", condition, OPERATION_TIMEOUT/3);
+		AssertUtils.repetitiveAssertTrue("the machine that was disconnected (" + machineToDisconnect.getHostAddress() + ") has leaking java processes", condition, 60 * 1000);
 
 	}
 

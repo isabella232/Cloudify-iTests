@@ -3,6 +3,7 @@ package test.cli.cloudify.cloud.byon;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import org.cloudifysource.dsl.utils.ServiceUtils;
 import org.openspaces.admin.machine.Machine;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -18,40 +19,31 @@ import framework.utils.WANemUtils;
 
 public class DisconnectAndReconnectAgentMachineTest extends AbstractByonCloudTest{
 
+	private static final int SERVICE_PORT = 10001;
 	private static final String SERVICE_NAME = "mongod";
 	private static final String USER = "tgrid";
 	private static final String PASSWORD = "tgrid";
+	private static String[] ips = null;
+	private static Machine machineToDisconnect = null;
+	private static List<Machine> machines = null;
 
 	@BeforeClass(alwaysRun = true)
 	protected void bootstrap() throws Exception {
 		
-		super.bootstrap(this.cloudService);
-		super.afterBootstrap();
-		admin = super.createAdminAndWaitForManagement();
-
+		super.bootstrap();
 		WANemUtils.init();
-
 	}
 
 	@BeforeMethod(alwaysRun = true)
 	private void install() throws Exception {
+		
 		installServiceAndWait(SGTestHelper.getBuildDir() + "/recipes/services/mongodb/mongod", SERVICE_NAME);
-	}
-
-	@AfterClass(alwaysRun = true)
-	protected void teardown() throws Exception {
-		super.teardown();
-		WANemUtils.destroy();
-	}
-
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 3, enabled = true)
-	public void testDisconnection() throws Exception {
-
-		List<Machine> machines = getManagementMachines();
+				
+		machines = getManagementMachines();
 		List<Machine> agentMachines = getAgentMachines("default." + SERVICE_NAME);		
 		machines.addAll(agentMachines);
 
-		String[] ips = new String[machines.size()];
+		ips = new String[machines.size()];
 		int i = 0;
 		for(Machine m : machines){
 			ips[i] = m.getHostAddress();
@@ -60,17 +52,40 @@ public class DisconnectAndReconnectAgentMachineTest extends AbstractByonCloudTes
 
 		WANemUtils.addRoutingTableEntries(ips);
 
-		final Machine machineToDisconnect = agentMachines.get(0);
+		machineToDisconnect = agentMachines.get(0);
+	}
+
+	@AfterClass(alwaysRun = true)
+	protected void teardown() throws Exception {
+		
+		if(ips != null){
+			WANemUtils.removeRoutingTableEntries(ips);
+		}
+		
+		if(machineToDisconnect != null){
+			SSHUtils.runCommand(machineToDisconnect.getHostAddress(), OPERATION_TIMEOUT/3, "killall -9 " + SERVICE_NAME, USER, PASSWORD);
+		}
+		
+		WANemUtils.reset();
+		WANemUtils.destroy();
+		super.teardown();
+	}
+
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 3, enabled = true)
+	public void testDisconnection() throws Exception {
 
 		WANemUtils.disconnect(machineToDisconnect, machines);
 
+		LogUtils.log("waiting for machine to disconnect");
 		RepetitiveConditionProvider condition = new RepetitiveConditionProvider(){
 
 			@Override
 			public boolean getCondition() {
 
+				LogUtils.log(admin.getProcessingUnits().getProcessingUnit("default." + SERVICE_NAME).getInstances()[0].getMachine().getHostAddress());
+
 				int activeInstances = admin.getProcessingUnits().getProcessingUnit("default." + SERVICE_NAME).getInstances().length;
-				LogUtils.log("active instances: " + activeInstances);
+//				LogUtils.log("active instances: " + activeInstances);
 				return activeInstances == 1;
 			}
 
@@ -84,7 +99,7 @@ public class DisconnectAndReconnectAgentMachineTest extends AbstractByonCloudTes
 			@Override
 			public boolean getCondition() {
 				int activeInstances = admin.getProcessingUnits().getProcessingUnit("default." + SERVICE_NAME).getInstances().length;
-				LogUtils.log("active instances: " + activeInstances);
+//				LogUtils.log("active instances: " + activeInstances);
 				return activeInstances == 2;			
 			}
 		};
@@ -100,9 +115,7 @@ public class DisconnectAndReconnectAgentMachineTest extends AbstractByonCloudTes
 			@Override
 			public boolean getCondition() {
 				int actualInstances = admin.getProcessingUnits().getProcessingUnit("default." + SERVICE_NAME).getInstances().length;
-				LogUtils.log("active instances: " + actualInstances);
 				int plannedInstances = admin.getProcessingUnits().getProcessingUnit("default." + SERVICE_NAME).getNumberOfInstances();
-				LogUtils.log("planned instances: " + plannedInstances);
 				return ((actualInstances == 2) && (plannedInstances == 2));
 			}
 
@@ -113,17 +126,12 @@ public class DisconnectAndReconnectAgentMachineTest extends AbstractByonCloudTes
 
 			@Override
 			public boolean getCondition() {
-				String output = SSHUtils.runCommand(machineToDisconnect.getHostAddress(), OPERATION_TIMEOUT/3, "jps", USER, PASSWORD);
-				String[] outputSplit = output.split("\n");
-				return outputSplit.length == 1;
+				
+				return ServiceUtils.isPortFree(machineToDisconnect.getHostAddress(), SERVICE_PORT);
 			}
 
 		};
-		AssertUtils.repetitiveAssertTrue("the machine that was disconnected (" + machineToDisconnect + ") has leaking java processes", condition, OPERATION_TIMEOUT/3);
-
-		WANemUtils.removeRoutingTableEntries(ips);
-		
-		SSHUtils.runCommand(machineToDisconnect.getHostAddress(), OPERATION_TIMEOUT/3, "killall -9 " + SERVICE_NAME, USER, PASSWORD);
+		AssertUtils.repetitiveAssertTrue("the machine that was disconnected (" + machineToDisconnect.getHostAddress() + ") has leaking java processes", condition, OPERATION_TIMEOUT/3);
 
 	}
 

@@ -80,7 +80,8 @@ public class HpCloudService extends JCloudsCloudService {
 		propsToReplace.put("cloudify-manager", getMachinePrefix() + "cloudify-manager");
 		propsToReplace.put("numberOfManagementMachines 1", "numberOfManagementMachines "
 				+ getNumberOfManagementMachines());
-
+		propsToReplace.put("fileTransfer org.cloudifysource.dsl.cloud.FileTransferModes.SFTP",
+				"fileTransfer org.cloudifysource.dsl.cloud.FileTransferModes.SCP");
 		IOUtils.replaceTextInFile(getPathToCloudGroovy(), propsToReplace);
 
 		// add a pem file

@@ -7,6 +7,9 @@ service {
 		init {println "This is the MODIFIED init lifecycle phase"}
 		start ([ "Linux": "run.sh -port 7790" ,
 					"Win.*": "run.bat -port 7790" ])
+		startDetection {
+			!ServiceUtils.arePortsFree([7790] )
+		}
 		
 	}
 

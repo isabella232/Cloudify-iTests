@@ -161,7 +161,7 @@ public class ScalingRulesRecipeTest extends AbstractLocalCloudTest {
 	private void repetitiveAssertStatistics(final InternalProcessingUnit pu,
 			final ProcessingUnitStatisticsId statisticsId,
 			final Number expectedResult) {
-		repetitiveAssertTrue("Failed waiting for counter to be "+ expectedResult, new RepetitiveConditionProvider() {
+		repetitiveAssertTrue("Failed waiting for counter to be "+ expectedResult + " This may mean that not all service instances are running as they should. please check the logs!", new RepetitiveConditionProvider() {
 			
 			@Override
 			public boolean getCondition() {

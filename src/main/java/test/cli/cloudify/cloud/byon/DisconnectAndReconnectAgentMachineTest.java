@@ -82,8 +82,6 @@ public class DisconnectAndReconnectAgentMachineTest extends AbstractByonCloudTes
 			@Override
 			public boolean getCondition() {
 
-				LogUtils.log(admin.getProcessingUnits().getProcessingUnit("default." + SERVICE_NAME).getInstances()[0].getMachine().getHostAddress());
-
 				int activeInstances = admin.getProcessingUnits().getProcessingUnit("default." + SERVICE_NAME).getInstances().length;
 //				LogUtils.log("active instances: " + activeInstances);
 				return activeInstances == 1;

@@ -5,9 +5,9 @@ service {
 	lifecycle {
 
 		startDetection {
-			Thread.sleep(5000)
-			return true
-		}
+		  println "running startDetector"
+		  new File(context.serviceDirectory + "/marker.log").exists()
+	  	}
 		preInstall {println "This is the preInstall event" }
 		postInstall {println "This is the postInstall event"}
 		preStart {println "This is the preStart event" }

@@ -18,6 +18,11 @@ service {
 
       //sleep forever
       start "run.groovy"
+	  startDetection {
+		  println "running startDetector"
+		  new File(context.serviceDirectory + "/marker.log").exists()
+	  }
+
 
       // expose counter as a monitor with the name "counter"
       monitors ([

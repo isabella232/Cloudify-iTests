@@ -1,23 +1,25 @@
 package test.cli.cloudify.recipes;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
+import org.cloudifysource.dsl.utils.ServiceUtils;
 import org.openspaces.admin.gsc.GridServiceContainer;
+import org.openspaces.admin.pu.ProcessingUnit;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import org.cloudifysource.dsl.utils.ServiceUtils;
-
-import framework.utils.LogUtils;
-
 import test.cli.cloudify.AbstractLocalCloudTest;
 import test.cli.cloudify.CommandTestUtils;
+import framework.utils.ApplicationInstaller;
+import framework.utils.AssertUtils;
+import framework.utils.LogUtils;
 
 public class CyclicDependencyTest extends AbstractLocalCloudTest{
 
     private void dependencyTest(String ApplicationName) throws IOException, InterruptedException {
         String path = CommandTestUtils.getPath("src/main/resources/apps/cloudify/recipes/" + ApplicationName);
-        CommandTestUtils.runCommandExpectedFail("connect " + this.restUrl + ";install-application " + path + ";exit");
+        CommandTestUtils.runCommandExpectedFail("connect " + restUrl + ";install-application " + path + ";exit");
 
         GridServiceContainer[] gscs = admin.getGridServiceContainers().getContainers();
         boolean foundStringInGscsLogs = false;
@@ -44,21 +46,18 @@ public class CyclicDependencyTest extends AbstractLocalCloudTest{
         dependencyTest("cycle");
     }
 
-    //TODO: Ask Sagi what his intention was. 
     @Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
     public void diamondTest() throws IOException, InterruptedException {
 
         String path = CommandTestUtils.getPath("src/main/resources/apps/cloudify/recipes/diamond");
+        
+        ApplicationInstaller installer = new ApplicationInstaller(restUrl, "diamond");
+        installer.recipePath(path);
+        installer.install();
 
-        //this app is only a mock so the command to install it is not successful
-        CommandTestUtils.runCommand("connect " + this.restUrl + ";install-application " + path + ";exit");
+        AssertUtils.assertTrue("Failed to discover D service after installation", admin.getProcessingUnits().waitFor(ServiceUtils.getAbsolutePUName("diamond", "D"), OPERATION_TIMEOUT, TimeUnit.MILLISECONDS) != null);
 
-        admin.getZones().waitFor(ServiceUtils.getAbsolutePUName("diamond", "D")).getGridServiceContainers().waitFor(1);
-
-        GridServiceContainer[] gscs = admin.getGridServiceContainers().getContainers();
-        for (GridServiceContainer gsc : gscs) {
-            if (gsc.getZones().containsKey("diamond.D"))
-            	LogUtils.scanContainerLogsFor(gsc, "D1 PreStart completed successfully");
-        }
+        ProcessingUnit processingUnit = admin.getProcessingUnits().getProcessingUnit(ServiceUtils.getAbsolutePUName("diamond", "D"));
+        AssertUtils.assertTrue("Failed to discover 1 instance of service D", processingUnit.waitFor(1, OPERATION_TIMEOUT, TimeUnit.MILLISECONDS));        
     }
 }

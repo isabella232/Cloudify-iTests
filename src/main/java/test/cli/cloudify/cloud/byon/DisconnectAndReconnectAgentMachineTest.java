@@ -62,7 +62,7 @@ public class DisconnectAndReconnectAgentMachineTest extends AbstractByonCloudTes
 			WANemUtils.removeRoutingTableEntries(ips);
 		}
 		
-		if(machineToDisconnect != null){
+		if(machineToDisconnect != null && !ServiceUtils.isPortFree(machineToDisconnect.getHostAddress(), SERVICE_PORT)){
 			SSHUtils.runCommand(machineToDisconnect.getHostAddress(), OPERATION_TIMEOUT/3, "killall -9 " + SERVICE_NAME, USER, PASSWORD);
 		}
 		

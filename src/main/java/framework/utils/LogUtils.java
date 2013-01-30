@@ -33,10 +33,14 @@ public class LogUtils {
     
     public static void scanContainerLogsFor(GridServiceContainer container , String error) {
     	
+    	log("Scanning container " + container.getUid() + "for text : " + error);
+    	
     	LogEntryMatcher matcher = LogEntryMatchers.containsString(error);
 
     	LogEntries logEntriesContainer1 = container.logEntries(matcher);
     	if (logEntriesContainer1.getEntries().size() > 1) {
+    		LogUtils.log("Found " + logEntriesContainer1.getEntries().size() 
+    				+ " entries containing " + error);
     		for (LogEntry logEntry : logEntriesContainer1.logEntries()) {
     			log(logEntry.getText());		
     		}

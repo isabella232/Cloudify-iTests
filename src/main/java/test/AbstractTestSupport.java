@@ -36,6 +36,7 @@ import framework.utils.DumpUtils;
 public abstract class AbstractTestSupport {
 
 	public static final long DEFAULT_TEST_TIMEOUT = 15 * 60 * 1000;
+	public static final long EXTENDED_TEST_TIMEOUT = 25 * 60 * 1000;
 	public static final long OPERATION_TIMEOUT = 5 * 60 * 1000;
 	public static final String SUSPECTED = "SUSPECTED";
 	

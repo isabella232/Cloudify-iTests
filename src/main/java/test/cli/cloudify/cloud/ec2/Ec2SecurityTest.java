@@ -86,7 +86,7 @@ public class Ec2SecurityTest extends NewAbstractSecurityCloudTest {
 		assertTrue("install access granted to an Anonymous user" , output.contains(BAD_CREDENTIALS_MESSAGE));
 	}
 
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
+	@Test(timeOut = EXTENDED_TEST_TIMEOUT, enabled = true)
 	public void installingAndViewingTest() throws IOException, InterruptedException{
 
 		installApplicationAndWait(SIMPLE_APP_PATH, SIMPLE_APP_NAME, TIMEOUT_IN_MINUTES, SecurityConstants.USER_PWD_APP_MANAGER, SecurityConstants.USER_PWD_APP_MANAGER, false, null);

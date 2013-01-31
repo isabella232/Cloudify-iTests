@@ -63,6 +63,7 @@ public class DisconnectAndReconnectAgentMachineTest extends AbstractByonCloudTes
 		}
 		
 		if(machineToDisconnect != null && !ServiceUtils.isPortFree(machineToDisconnect.getHostAddress(), SERVICE_PORT)){
+			SSHUtils.runCommand(machineToDisconnect.getHostAddress(), OPERATION_TIMEOUT/3, "killall -9 java", USER, PASSWORD);
 			SSHUtils.runCommand(machineToDisconnect.getHostAddress(), OPERATION_TIMEOUT/3, "killall -9 " + SERVICE_NAME, USER, PASSWORD);
 		}
 		
@@ -83,12 +84,12 @@ public class DisconnectAndReconnectAgentMachineTest extends AbstractByonCloudTes
 			public boolean getCondition() {
 
 				int activeInstances = admin.getProcessingUnits().getProcessingUnit("default." + SERVICE_NAME).getInstances().length;
-//				LogUtils.log("active instances: " + activeInstances);
+				LogUtils.log("active instances: " + activeInstances);
 				return activeInstances == 1;
 			}
 
 		};
-		AssertUtils.repetitiveAssertTrue("number of actual instances has not decreased by 1", condition, OPERATION_TIMEOUT/2);
+		AssertUtils.repetitiveAssertTrue("number of actual instances has not decreased by 1", condition, OPERATION_TIMEOUT*2);
 
 		//waiting for ESM to start a new machine
 		LogUtils.log("waiting for ESM to start a new machine");
@@ -97,13 +98,13 @@ public class DisconnectAndReconnectAgentMachineTest extends AbstractByonCloudTes
 			@Override
 			public boolean getCondition() {
 				int activeInstances = admin.getProcessingUnits().getProcessingUnit("default." + SERVICE_NAME).getInstances().length;
-//				LogUtils.log("active instances: " + activeInstances);
+				LogUtils.log("active instances: " + activeInstances);
 				return activeInstances == 2;			
 			}
 		};
-		AssertUtils.repetitiveAssertTrue("number of actual instances has not increased by 1", condition, OPERATION_TIMEOUT/2);
+		AssertUtils.repetitiveAssertTrue("number of actual instances has not increased by 1", condition, OPERATION_TIMEOUT);
 
-		//reconnecting the network
+		LogUtils.log("reconnecting " + machineToDisconnect.getHostAddress() + " to the network");
 		WANemUtils.reset();
 		TimeUnit.SECONDS.sleep(10);
 
@@ -118,19 +119,31 @@ public class DisconnectAndReconnectAgentMachineTest extends AbstractByonCloudTes
 			}
 
 		};
-		AssertUtils.repetitiveAssertTrue("service failed to stabilize after disconnection", condition, OPERATION_TIMEOUT/3);
+		AssertUtils.repetitiveAssertTrue("service failed to stabilize after disconnection", condition, OPERATION_TIMEOUT);
 
 		condition = new RepetitiveConditionProvider(){
 
 			@Override
 			public boolean getCondition() {
 				
-				return ServiceUtils.isPortFree(machineToDisconnect.getHostAddress(), SERVICE_PORT);
+				int numOfGscs = machineToDisconnect.getGridServiceContainers().getSize();
+				LogUtils.log("num of GSCs on " + machineToDisconnect.getHostAddress() + ": " + numOfGscs);
+				return numOfGscs == 0;
 			}
 
 		};
-		AssertUtils.repetitiveAssertTrue("the machine that was disconnected (" + machineToDisconnect.getHostAddress() + ") has leaking java processes", condition, 60 * 1000);
-
+		AssertUtils.repetitiveAssertTrue("the the GSCs on the machine that was disconnected (" + machineToDisconnect.getHostAddress() + ") weren't shut down", condition, OPERATION_TIMEOUT/2);
+		
+		condition = new RepetitiveConditionProvider(){
+			
+			@Override
+			public boolean getCondition() {
+				
+				return ServiceUtils.isPortFree(machineToDisconnect.getHostAddress(), SERVICE_PORT);
+			}
+			
+		};
+		AssertUtils.repetitiveAssertTrue("the machine that was disconnected (" + machineToDisconnect.getHostAddress() + ") has leaking java processes", condition, OPERATION_TIMEOUT/20);
 	}
 
 	@Override

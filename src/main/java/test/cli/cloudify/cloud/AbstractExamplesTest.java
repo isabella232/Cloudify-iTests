@@ -62,6 +62,7 @@ public abstract class AbstractExamplesTest extends NewAbstractCloudTest {
 		String applicationPath = ScriptUtils.getBuildPath() + "/recipes/apps/" + applicationFolderName;; 
 		if (getCloudName().endsWith("-win")) {
 			applicationPath = applicationPath + "-win";
+			applicationName = applicationName + "-win";
 			installApplicationAndWait(applicationPath, applicationName, WINDOWS_INSTALLATION_TIMEOUT);
 		} else {
 			installApplicationAndWait(applicationPath, applicationName);

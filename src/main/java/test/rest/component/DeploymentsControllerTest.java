@@ -3,6 +3,7 @@ package test.rest.component;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.httpclient.HttpStatus;
 import org.cloudifysource.dsl.internal.CloudifyMessageKeys;
@@ -10,6 +11,7 @@ import org.cloudifysource.dsl.rest.request.SetApplicationAttributesRequest;
 import org.cloudifysource.dsl.rest.response.DeleteServiceInstanceAttributeResponse;
 import org.cloudifysource.dsl.rest.response.Response;
 import org.cloudifysource.dsl.rest.response.ServiceDetails;
+import org.openspaces.admin.application.Application;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -36,6 +38,8 @@ public class DeploymentsControllerTest extends AbstractLocalCloudTest {
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
 	public void testGoodGetServiceDetails() throws Exception {
+		Application app = admin.getApplications().waitFor("helloworld", OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
+		AssertUtils.assertTrue("Failed to discover application helloworld" , app != null);
 		ServiceDetails details = client.getServiceDetails("helloworld", "tomcat");
 		AssertUtils.assertEquals("helloworld", details.getApplicationName());
 		AssertUtils.assertEquals("tomcat", details.getName());

@@ -13,7 +13,7 @@ println "Service Planned Instances: " + service.numberOfPlannedInstances
 println "Service Actual Instances: " + service.numberOfActualInstances
 if (service.numberOfActualInstances > 0) {
     service.instances.each {
-        println "Service Instance ID: " + it.instanceID
+        println "Service Instance ID: " + it.instanceId
         println "Service Instance Host Address: " + it.hostAddress
         println "Service Instance Host Name: " + it.hostName
     }

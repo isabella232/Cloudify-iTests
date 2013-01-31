@@ -2,7 +2,7 @@ import java.util.concurrent.TimeUnit
 
 
 service {
-	name "groovy"
+	name "groovy2"
 	type "UNDEFINED"
 	
 	elastic true
@@ -34,6 +34,9 @@ service {
 		}
 		
 		
+	}
+	compute {
+		template "WIN2"
 	}
 
 }

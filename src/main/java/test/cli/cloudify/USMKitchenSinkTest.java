@@ -461,9 +461,9 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 
 		final KitchenSinkEventListener listener = new KitchenSinkEventListener();
 
-		this.admin.getGridServiceContainers().getGridServiceContainerAdded()
+		admin.getGridServiceContainers().getGridServiceContainerAdded()
 		.add(listener, false);
-		this.admin.getGridServiceContainers().getGridServiceContainerRemoved()
+		admin.getGridServiceContainers().getGridServiceContainerRemoved()
 		.add(listener);
 		pu.getProcessingUnitInstanceAdded().add(listener, false);
 		pu.getProcessingUnitInstanceRemoved().add(listener);

@@ -42,7 +42,7 @@ public abstract class AbstractExamplesTest extends NewAbstractCloudTest {
 	}
 
 	protected void testPetclinicSimple() throws Exception {
-		doTest("petclinic-simple", "petclinic");
+		doTest("petclinic-simple", "petclinic-simple");
 	}
 
 	protected void testHelloWorld() throws Exception {
@@ -50,7 +50,7 @@ public abstract class AbstractExamplesTest extends NewAbstractCloudTest {
 	}
 
 	protected void testTravelChef() throws Exception {
-		doTest("travel-chef", "travel");
+		doTest("travel-chef", "travel-chef");
 	}
 
 	// petclinic-simple is covered by {@link ScalingRulesCloudTest}

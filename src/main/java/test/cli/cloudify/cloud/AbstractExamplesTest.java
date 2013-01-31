@@ -58,11 +58,11 @@ public abstract class AbstractExamplesTest extends NewAbstractCloudTest {
 	protected void doTest(String applicationFolderName, String applicationName)
 			throws Exception {
 		LogUtils.log("installing application " + applicationName + " on " + getCloudName());
-		this.applicationName = applicationName;
 		String applicationPath = ScriptUtils.getBuildPath() + "/recipes/apps/" + applicationFolderName;; 
 		if (getCloudName().endsWith("-win")) {
 			applicationPath = applicationPath + "-win";
 			applicationName = applicationName + "-win";
+			this.applicationName = applicationName;
 			installApplicationAndWait(applicationPath, applicationName, WINDOWS_INSTALLATION_TIMEOUT);
 		} else {
 			installApplicationAndWait(applicationPath, applicationName);

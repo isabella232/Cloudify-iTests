@@ -29,6 +29,9 @@ service {
 		preStart{ println "preStart fired " + var2 }
 		start ([ "Linux": "run.sh -dieOnParentDeath false -port 7777" ,
 					"Win.*": "run.bat -dieOnParentDeath false -port 7777" ])
+		startDetection {
+			!ServiceUtils.arePortsFree([7777] )
+		}
 
 		postStart "post_start.groovy"
 

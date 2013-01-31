@@ -12,6 +12,8 @@ import org.cloudifysource.dsl.rest.response.DeleteServiceInstanceAttributeRespon
 import org.cloudifysource.dsl.rest.response.Response;
 import org.cloudifysource.dsl.rest.response.ServiceDetails;
 import org.openspaces.admin.application.Application;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -72,5 +74,17 @@ public class DeploymentsControllerTest extends AbstractLocalCloudTest {
 		DeleteServiceInstanceAttributeResponse response = client.deleteServiceInstanceAttribute("helloworld", "tomcat", 1, "Key");
 		AssertUtils.assertEquals(response.getAttributeName(), "Key");
 		AssertUtils.assertEquals(response.getAttributeLastValue(), null);
+	}
+
+	@Override
+	@AfterMethod(alwaysRun = true)
+	public void cleanup() throws Exception {
+		// dont uninstall. we need it for other tests
+	}
+	
+	@AfterClass(alwaysRun = true)
+	public void uninstall() throws Exception {
+		// here is where we cleanup
+		super.cleanup();
 	}
 }

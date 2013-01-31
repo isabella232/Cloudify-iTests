@@ -38,8 +38,9 @@ public class CommandTestUtils {
 		final Process process = startProcess(getCloudifyCommand(cloudifyCommand));
 	    ProcessResult handleCliOutput = handleCliOutput(process);
 	    if (handleCliOutput.getExitcode() != 0) {
-	    	AssertUtils.assertFail("CLI execution did not end succesfully, exit code was " + handleCliOutput.getExitcode());
-	    }
+			AssertUtils.assertFail("CLI execution did not end succesfully, exit code was " + handleCliOutput.getExitcode() + 
+					"output is " + handleCliOutput.getOutput());
+		}
 		return handleCliOutput;
 	}
 
@@ -110,7 +111,8 @@ public class CommandTestUtils {
 		ProcessResult result = handleCliOutput(process);
 		
 		if (result.getExitcode() != 0 && !failCommand) {
-			AssertUtils.assertFail("CLI execution did not end succesfully, exit code was " + result.getExitcode());
+			AssertUtils.assertFail("CLI execution did not end succesfully, exit code was " + result.getExitcode() + 
+					"output is " + result.getOutput());
 		}
 		return result.output;
 	}

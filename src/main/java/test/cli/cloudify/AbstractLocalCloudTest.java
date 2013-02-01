@@ -425,26 +425,13 @@ public class AbstractLocalCloudTest extends AbstractTestSupport {
  
 	}
 
-	protected Application installApplication(final String applicationName) {
+	protected Application installApplication(final String applicationName) throws IOException, InterruptedException, DSLException {
 
-		final String applicationDir = CommandTestUtils
-				.getPath("src/main/resources/apps/USM/usm/applications/" + applicationName);
-
-		try {
-			final Application app = ServiceReader.getApplicationFromFile(
-					new File(applicationDir)).getApplication();
-			runCommand(connectCommand() + ";install-application --verbose "
-					+ applicationDir);
-			return app;
-		} catch (final IOException e) {
-			Assert.fail("Failed to install applicaiton", e);
-		} catch (final DSLException e) {
-			Assert.fail("Failed to install applicaiton", e);
-		} catch (final InterruptedException e) {
-			Assert.fail("Failed to install applicaiton", e);
-		}
-
-		return null;
+		final String applicationDir = CommandTestUtils.getPath("src/main/resources/apps/USM/usm/applications/" + applicationName);
+		ApplicationInstaller installer = new ApplicationInstaller(restUrl, applicationName);
+		installer.recipePath(applicationDir);
+		installer.install();
+		return ServiceReader.getApplicationFromFile(new File(applicationDir)).getApplication();
 	}
 
 	protected void installService(final String serviceName) {

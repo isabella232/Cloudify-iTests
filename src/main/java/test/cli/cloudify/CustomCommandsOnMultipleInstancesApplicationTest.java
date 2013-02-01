@@ -3,6 +3,7 @@ package test.cli.cloudify;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
+import org.cloudifysource.dsl.internal.DSLException;
 import org.cloudifysource.dsl.utils.ServiceUtils;
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.testng.Assert;
@@ -201,7 +202,7 @@ public class CustomCommandsOnMultipleInstancesApplicationTest extends AbstractLo
         }
     }
     
-	private void installApplication() {
+	private void installApplication() throws IOException, InterruptedException, DSLException {
 		installApplication(APPLICATION_NAME);
                 
         final String absolutePUNameSimple1 = ServiceUtils.getAbsolutePUName(APPLICATION_NAME, "simpleCustomCommandsMultipleInstances-1");

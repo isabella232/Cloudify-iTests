@@ -3,6 +3,7 @@ package test.cli.cloudify.recipes.attributes;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
+import org.cloudifysource.dsl.internal.DSLException;
 import org.cloudifysource.dsl.utils.ServiceUtils;
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.openspaces.core.GigaSpace;
@@ -334,7 +335,7 @@ public class AttributesTest extends AbstractLocalCloudTest {
 		uninstallApplication();
 	}
 
-	private void installApplication() throws IOException, InterruptedException {
+	private void installApplication() throws IOException, InterruptedException, DSLException {
 		installApplication(MAIN_APPLICATION_NAME);
 		cleanAttributes();
         		

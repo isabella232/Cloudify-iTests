@@ -84,7 +84,7 @@ public class DisconnectAndReconnectAgentMachineTest extends AbstractByonCloudTes
 			public boolean getCondition() {
 
 				int activeInstances = admin.getProcessingUnits().getProcessingUnit("default." + SERVICE_NAME).getInstances().length;
-				LogUtils.log("active instances: " + activeInstances);
+//				LogUtils.log("active instances: " + activeInstances);
 				return activeInstances == 1;
 			}
 
@@ -98,7 +98,7 @@ public class DisconnectAndReconnectAgentMachineTest extends AbstractByonCloudTes
 			@Override
 			public boolean getCondition() {
 				int activeInstances = admin.getProcessingUnits().getProcessingUnit("default." + SERVICE_NAME).getInstances().length;
-				LogUtils.log("active instances: " + activeInstances);
+//				LogUtils.log("active instances: " + activeInstances);
 				return activeInstances == 2;			
 			}
 		};
@@ -139,11 +139,12 @@ public class DisconnectAndReconnectAgentMachineTest extends AbstractByonCloudTes
 			@Override
 			public boolean getCondition() {
 				
+				LogUtils.log("" + ServiceUtils.isPortFree(machineToDisconnect.getHostAddress(), SERVICE_PORT));
 				return ServiceUtils.isPortFree(machineToDisconnect.getHostAddress(), SERVICE_PORT);
 			}
 			
 		};
-		AssertUtils.repetitiveAssertTrue("the machine that was disconnected (" + machineToDisconnect.getHostAddress() + ") has leaking java processes", condition, OPERATION_TIMEOUT/20);
+		AssertUtils.repetitiveAssertTrue("the machine that was disconnected (" + machineToDisconnect.getHostAddress() + ") has leaking java processes", condition, OPERATION_TIMEOUT/10);
 	}
 
 	@Override

@@ -139,7 +139,7 @@ public class DisconnectAndReconnectAgentMachineTest extends AbstractByonCloudTes
 			@Override
 			public boolean getCondition() {
 				
-				LogUtils.log("" + ServiceUtils.isPortFree(machineToDisconnect.getHostAddress(), SERVICE_PORT));
+				LogUtils.log("mongod port is available - " + ServiceUtils.isPortFree(machineToDisconnect.getHostAddress(), SERVICE_PORT));
 				return ServiceUtils.isPortFree(machineToDisconnect.getHostAddress(), SERVICE_PORT);
 			}
 			

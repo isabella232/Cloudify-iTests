@@ -25,7 +25,7 @@ public abstract class AbstractExamplesTest extends NewAbstractCloudTest {
 
 	private static final int WINDOWS_INSTALLATION_TIMEOUT = 50;
 	private String applicationName;
-
+	
 	@AfterMethod
 	public void cleanup() throws IOException, InterruptedException {
 		super.uninstallApplicationIfFound(applicationName);
@@ -52,17 +52,63 @@ public abstract class AbstractExamplesTest extends NewAbstractCloudTest {
 	protected void testTravelChef() throws Exception {
 		doTest("travel-chef", "travel-chef");
 	}
+	
+	protected void testComputers(String localGitAppsPath) throws Exception {
+		doTest(localGitAppsPath, "computers", "computers");
+	}
+	
+	protected void testBabies(String localGitAppsPath) throws Exception {
+		doTest(localGitAppsPath, "drupal-babies", "babies");
+	}
+	
+	protected void testBiginsights(String localGitAppsPath) throws Exception {
+		doTest(localGitAppsPath, "hadoop-biginsights", "biginsights");
+	}
+	
+	protected void testPetclinicJboss(String localGitAppsPath) throws Exception {
+		doTest(localGitAppsPath, "jboss-petclinic", "petclinic-mongo");
+	}
+	
+	protected void testLamp(String localGitAppsPath) throws Exception {
+		doTest(localGitAppsPath, "lamp", "lamp");
+	}
+	
+	protected void testMasterSlave(String localGitAppsPath) throws Exception {
+		doTest(localGitAppsPath, "masterslave", "masterslave");
+	}
+	
+	protected void testPetclinicWas(String localGitAppsPath) throws Exception {
+		doTest(localGitAppsPath, "petclinic-was", "petclinic");
+	}
+	
+	protected void testStorm(String localGitAppsPath) throws Exception {
+		doTest(localGitAppsPath, "storm", "storm");
+	}
+	
+	protected void testTravelLb(String localGitAppsPath) throws Exception {
+		doTest(localGitAppsPath, "travel-lb", "travel");
+	}
 
 	// petclinic-simple is covered by {@link ScalingRulesCloudTest}
 
-	protected void doTest(String applicationFolderName, String applicationName)
-			throws Exception {
+	protected void doTest(String applicationFolderName, String applicationName) throws Exception {
+		doTest(null, applicationFolderName, applicationName);
+	}
+	
+	protected void doTest(String applicationPath, String applicationFolderName, String applicationName) throws Exception {
 		LogUtils.log("installing application " + applicationName + " on " + getCloudName());
-		String applicationPath = ScriptUtils.getBuildPath() + "/recipes/apps/" + applicationFolderName;; 
+		this.applicationName = applicationName;
+		
+		if(applicationPath == null){
+			applicationPath = ScriptUtils.getBuildPath() + "/recipes/apps/" + applicationFolderName;; 			
+		}
+		else{
+			applicationPath = applicationPath + "/" + applicationFolderName;
+		}
+		
 		if (getCloudName().endsWith("-win")) {
 			applicationPath = applicationPath + "-win";
 			applicationName = applicationName + "-win";
-			this.applicationName = applicationName;
 			installApplicationAndWait(applicationPath, applicationName, WINDOWS_INSTALLATION_TIMEOUT);
 		} else {
 			installApplicationAndWait(applicationPath, applicationName);
@@ -129,8 +175,90 @@ public abstract class AbstractExamplesTest extends NewAbstractCloudTest {
 
 			verifyApplicationUrls(applicationName, true);
 		}
-		uninstallApplicationAndWait(applicationName);
-		super.scanForLeakedAgentNodes();
+		
+		if (applicationFolderName.equals("computers")){
+
+			String[] services = {"mysql", "apacheLB", "play"};
+
+			verifyServices(applicationName, services);
+
+			verifyApplicationUrls(applicationName, true);				
+		}
+		
+		if (applicationFolderName.equals("drupal-babies")){
+			
+			String[] services = {"mysql", "drupal"};
+			
+			verifyServices(applicationName, services);
+			
+			verifyApplicationUrls(applicationName, false);				
+		}
+		
+		if (applicationFolderName.equals("hadoop-biginsights")){
+			
+			String[] services = {"master", "data", "dataOnDemand"};
+			
+			verifyServices(applicationName, services);
+			
+			verifyApplicationUrls(applicationName, false);				
+		}
+		
+		if (applicationFolderName.equals("jboss-petclinic")){
+			
+			String[] services = {"mongod", "mongoConfig", "mongos", "apacheLB", "jboss"};
+			
+			verifyServices(applicationName, services);
+			
+			verifyApplicationUrls(applicationName, true);				
+		}
+		
+		if (applicationFolderName.equals("lamp")){
+			
+			String[] services = {"mysql", "apache", "apacheLB"};
+			
+			verifyServices(applicationName, services);
+			
+			verifyApplicationUrls(applicationName, true);				
+		}
+		
+		if (applicationFolderName.equals("masterslave")){
+			
+			String[] services = {"mysql"};
+			
+			verifyServices(applicationName, services);
+			
+			verifyApplicationUrls(applicationName, false);				
+		}
+		
+		if (applicationFolderName.equals("petclinic-was")){
+			
+			String[] services = {"mongod", "mongoConfig", "mongos", "websphere"};
+			
+			verifyServices(applicationName, services);
+			
+			verifyApplicationUrls(applicationName, false);				
+		}
+		
+		if (applicationFolderName.equals("storm")){
+			
+			String[] services = {"zookeeper", "storm-nimbus", "storm-supervisor"};
+			
+			verifyServices(applicationName, services);
+			
+			verifyApplicationUrls(applicationName, false);				
+		}
+		
+		if (applicationFolderName.equals("travel-lb")){
+			
+			String[] services = {"cassandra", "apacheLB", "tomcat"};
+			
+			verifyServices(applicationName, services);
+			
+			verifyApplicationUrls(applicationName, true);				
+		}
+		
+//		uninstallApplicationAndWait(applicationName);
+//		super.scanForLeakedAgentNodes();
 	}
 
 	private void verifyApplicationUrls(String appName, boolean hasApacheLB) {

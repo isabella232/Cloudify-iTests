@@ -50,6 +50,9 @@ import org.testng.annotations.BeforeSuite;
 import test.AbstractTestSupport;
 
 import com.gigaspaces.internal.sigar.SigarHolder;
+import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.WebResource;
+import com.sun.jersey.api.client.config.DefaultClientConfig;
 
 import framework.tools.SGTestHelper;
 import framework.utils.ApplicationInstaller;
@@ -424,7 +427,112 @@ public class AbstractLocalCloudTest extends AbstractTestSupport {
 		}
  
 	}
+	
+	protected void doTest(String applicationPath, String applicationFolderName, String applicationName) throws Exception {
+		
+		LogUtils.log("installing application " + applicationName);
+		
+		if(applicationPath == null){
+			applicationPath = ScriptUtils.getBuildPath() + "/recipes/apps/" + applicationFolderName;; 			
+		}
+		else{
+			applicationPath = applicationPath + "/" + applicationFolderName;
+		}
+		
+		installApplicationAndWait(applicationPath, applicationName, OPERATION_TIMEOUT/1000);
+		
+		if (applicationFolderName.equals("computers")){
 
+			String[] services = {"mysql", "apacheLB", "play"};
+
+			verifyServices(applicationName, services);
+
+			verifyApplicationUrls(applicationName, true);				
+		}
+		
+		if (applicationFolderName.equals("drupal-babies")){
+			
+			String[] services = {"mysql", "drupal"};
+			
+			verifyServices(applicationName, services);
+			
+			verifyApplicationUrls(applicationName, false);				
+		}
+		
+		if (applicationFolderName.equals("hadoop-biginsights")){
+			
+			String[] services = {"master", "data", "dataOnDemand"};
+			
+			verifyServices(applicationName, services);
+			
+			verifyApplicationUrls(applicationName, false);				
+		}
+		
+		if (applicationFolderName.equals("lamp")){
+			
+			String[] services = {"mysql", "apache", "apacheLB"};
+			
+			verifyServices(applicationName, services);
+			
+			verifyApplicationUrls(applicationName, true);				
+		}
+		
+		if (applicationFolderName.equals("masterslave")){
+			
+			String[] services = {"mysql"};
+			
+			verifyServices(applicationName, services);
+			
+			verifyApplicationUrls(applicationName, false);				
+		}
+		
+		if (applicationFolderName.equals("travel-lb")){
+			
+			String[] services = {"cassandra", "apacheLB", "tomcat"};
+			
+			verifyServices(applicationName, services);
+			
+			verifyApplicationUrls(applicationName, true);				
+		}
+	}
+
+	private void verifyApplicationUrls(String appName, boolean hasApacheLB) {
+
+		Client client = Client.create(new DefaultClientConfig());
+		final WebResource service = client.resource(restUrl);
+
+		if(hasApacheLB){
+
+			String restApacheService = service.path("/admin/ProcessingUnits/Names/" + appName + ".apacheLB/ProcessingUnitInstances/0/ServiceDetailsByServiceId/USM/Attributes/Cloud%20Public%20IP").get(String.class);
+			int urlStartIndex = restApacheService.indexOf(":") + 2;
+			int urlEndIndex = restApacheService.indexOf("\"", urlStartIndex);
+
+			String apacheServiceHostURL = restApacheService.substring(urlStartIndex, urlEndIndex);
+			String apachePort = "8090";
+
+			assertPageExists("http://" + apacheServiceHostURL + ":" + apachePort + "/");
+		}
+	}
+
+	private void verifyServices(String applicationName, String[] services) throws IOException, InterruptedException {
+
+		String command = "connect " + restUrl + ";use-application " + applicationName + ";list-services";
+		String output = CommandTestUtils.runCommandAndWait(command);
+
+		for(String singleService : services){
+			AssertUtils.assertTrue("the service " + singleService + " is not running", output.contains(singleService));					
+		}
+	}
+	
+	protected void assertPageExists(String url) {
+
+		try {
+			WebUtils.isURLAvailable(new URL(url));
+		} catch (Exception e) {
+			AssertUtils.assertFail(e.getMessage());
+		}
+	}
+	
 	protected Application installApplication(final String applicationName) throws IOException, InterruptedException, DSLException {
 
 		final String applicationDir = CommandTestUtils.getPath("src/main/resources/apps/USM/usm/applications/" + applicationName);
@@ -432,6 +540,14 @@ public class AbstractLocalCloudTest extends AbstractTestSupport {
 		installer.recipePath(applicationDir);
 		installer.install();
 		return ServiceReader.getApplicationFromFile(new File(applicationDir)).getApplication();
+	}
+	
+	protected void installApplicationAndWait(String applicationPath, String applicationName, long timeout) throws IOException, InterruptedException {
+		ApplicationInstaller applicationInstaller = new ApplicationInstaller(restUrl, applicationName);
+		applicationInstaller.recipePath(applicationPath);
+		applicationInstaller.waitForFinish(true);
+		applicationInstaller.timeoutInMinutes(timeout);
+		applicationInstaller.install();
 	}
 
 	protected void installService(final String serviceName) {

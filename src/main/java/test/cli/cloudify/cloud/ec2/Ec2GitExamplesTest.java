@@ -2,6 +2,7 @@ package test.cli.cloudify.cloud.ec2;
 
 import java.io.File;
 
+import org.apache.commons.io.FileUtils;
 import org.eclipse.jgit.api.Git;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -9,7 +10,6 @@ import org.testng.annotations.Test;
 
 import test.cli.cloudify.cloud.AbstractExamplesTest;
 import framework.utils.LogUtils;
-import framework.utils.SSHUtils;
 import framework.utils.ScriptUtils;
 
 public class Ec2GitExamplesTest extends AbstractExamplesTest{
@@ -42,7 +42,7 @@ public class Ec2GitExamplesTest extends AbstractExamplesTest{
 		super.teardown();
 		
 		LogUtils.log("removing exported git folder");
-		SSHUtils.runCommand("127.0.0.1", OPERATION_TIMEOUT, "rm -rf " + localGitRepoPath, USER, PASSWORD);
+		FileUtils.deleteDirectory(new File(localGitRepoPath));
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = false)

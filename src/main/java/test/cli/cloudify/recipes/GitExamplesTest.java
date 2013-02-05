@@ -2,6 +2,7 @@ package test.cli.cloudify.recipes;
 
 import java.io.File;
 
+import org.apache.commons.io.FileUtils;
 import org.eclipse.jgit.api.Git;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -9,7 +10,6 @@ import org.testng.annotations.Test;
 
 import test.cli.cloudify.AbstractLocalCloudTest;
 import framework.utils.LogUtils;
-import framework.utils.SSHUtils;
 import framework.utils.ScriptUtils;
 
 public class GitExamplesTest extends AbstractLocalCloudTest{
@@ -59,6 +59,6 @@ public class GitExamplesTest extends AbstractLocalCloudTest{
 	@AfterClass(alwaysRun = true)
 	protected void teardown() throws Exception {
 		LogUtils.log("removing exported git folder");
-		SSHUtils.runCommand("127.0.0.1", OPERATION_TIMEOUT, "rm -rf " + localGitRepoPath, USER, PASSWORD);
+		FileUtils.deleteDirectory(new File(localGitRepoPath));
 	}
 }

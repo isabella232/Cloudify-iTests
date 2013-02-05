@@ -1,8 +1,10 @@
 package test.cli.cloudify.cloud.ec2;
 
-import com.j_spaces.kernel.PlatformVersion;
-import framework.utils.AssertUtils;
-import framework.utils.ScriptUtils;
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.util.Map;
+
 import org.apache.commons.io.FileUtils;
 import org.cloudifysource.restclient.GSRestClient;
 import org.cloudifysource.restclient.RestException;
@@ -12,12 +14,14 @@ import org.eclipse.jgit.storage.file.FileRepository;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+
 import test.cli.cloudify.cloud.AbstractServicesTest;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.util.Map;
+import com.j_spaces.kernel.PlatformVersion;
+
+import framework.testng.annotations.TestConfiguration;
+import framework.utils.AssertUtils;
+import framework.utils.ScriptUtils;
 
 
 public class Ec2ExcludedServicesTest extends AbstractServicesTest {
@@ -55,12 +59,121 @@ public class Ec2ExcludedServicesTest extends AbstractServicesTest {
 
     @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
     public void testApache() throws Exception {
-        testService("apache", "apache");
+        testService("apache");
+    }
+    
+    //cant run on localcloud??
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
+    public void testCouchbase() throws Exception{
+    	testService("couchbase");
+    }
+
+    //Recipe is not finish
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
+    public void testCouchDBe() throws Exception{
+        testService("couchdb");
+    }
+    //didnt run it
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
+    public void testBigInsights() throws Exception{
+        testService("biginsights");
+    }
+    //linux only
+    @TestConfiguration(os = {TestConfiguration.VM.MAC, TestConfiguration.VM.UNIX} )
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
+    public void testElasticsearch() throws Exception{
+        testService("elasticsearch");
+    }
+
+    //dont work
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
+    public void testGroovyUtils() throws Exception{
+        testService("groovy-utils");
+    }
+    //dont work
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
+    public void testJboss() throws Exception{
+        testService("jboss");
+    }
+
+    //should work
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
+    public void testMysql() throws Exception{
+        testService("mysql");
+    }
+
+    //dont work
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
+    public void testNginx() throws Exception{
+        testService("nginx");
+    }
+
+    //dont work
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
+    public void testPlay() throws Exception{
+        testService("play");
+    }
+
+    //dont work
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
+    public void testPostgresql() throws Exception{
+        testService("postgresql");
+    }
+
+    //ubuntu only
+    @TestConfiguration(os = TestConfiguration.VM.UNIX)
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
+    public void testPuppet() throws Exception{
+        testService("puppet");
+    }
+
+    //dont work
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
+    public void testRails() throws Exception{
+        testService("rails");
+    }
+
+    //Recipe is not finish
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
+    public void testRedis() throws Exception{
+        testService("redis");
+    }
+
+    //should work
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
+    public void testSolr() throws Exception{
+        testService("solr");
+    }
+
+    //didnt run it
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
+    public void testStorm() throws Exception{
+        testService("storm");
+    }
+    //linux only
+    @TestConfiguration(os = {TestConfiguration.VM.MAC, TestConfiguration.VM.UNIX} )
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
+    public void testVertx() throws Exception{
+        testService("vertx");
+    }
+
+    //linux only
+    @TestConfiguration(os = {TestConfiguration.VM.MAC, TestConfiguration.VM.UNIX})
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
+    public void testWebshere() throws Exception{
+        testService("websphere");
+    }
+
+    //linux only
+    @TestConfiguration(os = {TestConfiguration.VM.MAC, TestConfiguration.VM.UNIX} )
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
+    public void testZookeeper() throws Exception{
+        testService("zookeeper");
     }
 
     @Override
     public void testService(String serviceFolderName, String serviceName) throws IOException, InterruptedException, RestException {
-        installServiceAndWait(excludedRecipesDir.getAbsolutePath() + " /" + serviceName, serviceName);
+        installServiceAndWait(excludedRecipesDir.getAbsolutePath() + "/" + serviceName, serviceName);
 
         String restUrl = getRestUrl();
         GSRestClient client = new GSRestClient("", "", new URL(restUrl), PlatformVersion.getVersionNumber());
@@ -71,6 +184,11 @@ public class Ec2ExcludedServicesTest extends AbstractServicesTest {
 
         uninstallServiceAndWait(serviceName);
     }
+    
+    public void testService(String serviceName) throws IOException, InterruptedException, RestException {
+    	testService(serviceName, serviceName);
+    }
+
 
 }
 

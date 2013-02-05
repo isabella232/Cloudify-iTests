@@ -1,7 +1,8 @@
 package test.cli.cloudify.recipes.excluded;
 
-import framework.testng.annotations.TestConfiguration;
-import framework.utils.ScriptUtils;
+import java.io.File;
+import java.io.IOException;
+
 import org.apache.commons.io.FileUtils;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.lib.Repository;
@@ -10,10 +11,10 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-import test.cli.cloudify.AbstractLocalCloudTest;
 
-import java.io.File;
-import java.io.IOException;
+import test.cli.cloudify.AbstractLocalCloudTest;
+import framework.testng.annotations.TestConfiguration;
+import framework.utils.ScriptUtils;
 
 
 public class ExcludedServicesTest extends AbstractLocalCloudTest {
@@ -52,117 +53,117 @@ public class ExcludedServicesTest extends AbstractLocalCloudTest {
 
     //should work
     @TestConfiguration(os = {TestConfiguration.VM.MAC, TestConfiguration.VM.UNIX} )
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, groups = "1", enabled = false)
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
     public void installApache() throws Exception{
         doTest("apache");
     }
 
 
     //cant run on localcloud??
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, groups = "1", enabled = false)
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
     public void installCouchbase() throws Exception{
         doTest("couchbase");
     }
 
     //Recipe is not finish
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, groups = "1", enabled = false)
-    public void installCouchDBe() throws Exception{
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
+    public void installCouchDB() throws Exception{
         doTest("couchdb");
     }
-    //didnt run it
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, groups = "1", enabled = false)
+    //no groovy file. not a service?
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
     public void installBigInsights() throws Exception{
         doTest("biginsights");
     }
     //linux only
     @TestConfiguration(os = {TestConfiguration.VM.MAC, TestConfiguration.VM.UNIX} )
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, groups = "1", enabled = false)
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
     public void installElasticsearch() throws Exception{
         doTest("elasticsearch");
     }
 
     //dont work
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, groups = "1", enabled = false)
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
     public void installGroovyUtils() throws Exception{
         doTest("groovy-utils");
     }
     //dont work
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, groups = "1", enabled = false)
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
     public void installJboss() throws Exception{
         doTest("jboss");
     }
 
-    //should work
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, groups = "1", enabled = false)
+    //works
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
     public void installMysql() throws Exception{
         doTest("mysql");
     }
 
     //dont work
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, groups = "1", enabled = false)
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
     public void installNginx() throws Exception{
         doTest("nginx");
     }
 
     //dont work
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, groups = "1", enabled = false)
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
     public void installPlay() throws Exception{
         doTest("play");
     }
 
     //dont work
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, groups = "1", enabled = false)
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
     public void installPostgresql() throws Exception{
         doTest("postgresql");
     }
 
     //ubuntu only
     @TestConfiguration(os = TestConfiguration.VM.UNIX)
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, groups = "1", enabled = false)
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
     public void installPuppet() throws Exception{
         doTest("puppet");
     }
 
     //dont work
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, groups = "1", enabled = false)
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
     public void installRails() throws Exception{
         doTest("rails");
     }
 
     //Recipe is not finish
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, groups = "1", enabled = false)
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
     public void installRedis() throws Exception{
         doTest("redis");
     }
 
     //should work
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, groups = "1", enabled = false)
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
     public void installSolr() throws Exception{
         doTest("solr");
     }
 
     //didnt run it
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, groups = "1", enabled = false)
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
     public void installStorm() throws Exception{
         doTest("storm");
     }
     //linux only
     @TestConfiguration(os = {TestConfiguration.VM.MAC, TestConfiguration.VM.UNIX} )
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, groups = "1", enabled = false)
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
     public void installVertx() throws Exception{
         doTest("vertx");
     }
 
     //linux only
     @TestConfiguration(os = {TestConfiguration.VM.MAC, TestConfiguration.VM.UNIX})
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, groups = "1", enabled = false)
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
     public void installWebshere() throws Exception{
         doTest("websphere");
     }
 
     //linux only
     @TestConfiguration(os = {TestConfiguration.VM.MAC, TestConfiguration.VM.UNIX} )
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, groups = "1", enabled = true)
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
     public void installZookeeper() throws Exception{
         doTest("zookeeper");
     }
@@ -176,6 +177,7 @@ public class ExcludedServicesTest extends AbstractLocalCloudTest {
     @AfterClass(alwaysRun = true)
     public void afterClass() throws Exception {
        FileUtils.deleteDirectory(new File(localPath));
+
     }
 
 

@@ -168,6 +168,15 @@ public abstract class AbstractCloudService implements CloudService {
 	public String getPathToCloudGroovy() {
 		return getPathToCloudFolder() + "/" + getCloudName() + "-cloud.groovy";
 	}
+	
+	//This method should be called before bootstrapping in customize cloud
+	public void setCloudGroovy(File cloudFile) throws IOException {
+		File fileToReplace = new File(getPathToCloudFolder() + "/" + getCloudName() + "-cloud.groovy");
+		if (fileToReplace.exists()) {
+			FileUtils.deleteQuietly(fileToReplace);
+		}
+		FileUtils.copyFile(cloudFile, new File(getPathToCloudFolder(), cloudFile.getName()));
+	}
 
 	public String getPathToCloudFolder() {
 		return ScriptUtils.getBuildPath() + RELATIVE_ESC_PATH + cloudFolderName;

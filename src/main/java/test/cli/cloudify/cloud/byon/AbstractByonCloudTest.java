@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import org.cloudifysource.dsl.internal.CloudifyConstants;
 import org.openspaces.admin.Admin;
 import org.openspaces.admin.AdminFactory;
 import org.openspaces.admin.machine.Machine;
@@ -55,14 +54,14 @@ public class AbstractByonCloudTest extends NewAbstractCloudTest {
 					utlNoHttp = host.substring(7); /* remove "http://" */
 				}
 				String ip = utlNoHttp.split(":")[0];
-				factory.addLocators(ip + ":" + CloudifyConstants.DEFAULT_LUS_PORT);
+				factory.addLocators(ip + ":" + cloudService.getCloud().getConfiguration().getComponents().getDiscovery().getDiscoveryPort());
 			}
 		}
 		// if the cloud is not using web services
 		else {
 			managementHosts = cloudService.getMachines();			
 			String host = managementHosts[0];
-			factory.addLocators(host + ":" + CloudifyConstants.DEFAULT_LUS_PORT);
+			factory.addLocators(host + ":" + cloudService.getCloud().getConfiguration().getComponents().getDiscovery().getDiscoveryPort());
 		}
 		return factory;
 	}

@@ -15,7 +15,7 @@
 	</parent>
 
 	<properties>
-		<cloudify.home>${env.CLOUDIFY_HOME}</cloudify.home>
+		<cloudify.home>/D:/opt/cloudify/2.5.0/gigaspaces-cloudify-2.5.0-m6</cloudify.home>
 		<gsVersion>9.5.0-SNAPSHOT</gsVersion>
 	</properties>
 
@@ -197,7 +197,7 @@
 		<profile>
 			<id>tgrid-sgtest-cloudify</id>
 			<activation>
-				<activeByDefault>false</activeByDefault>
+				<activeByDefault>true</activeByDefault>
 			</activation>
 			<dependencies>
 				<dependency>

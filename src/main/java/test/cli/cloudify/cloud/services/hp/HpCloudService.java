@@ -1,27 +1,29 @@
 package test.cli.cloudify.cloud.services.hp;
 
+import framework.tools.SGTestHelper;
+import framework.utils.IOUtils;
+import org.apache.commons.io.FileUtils;
+import test.cli.cloudify.cloud.services.JCloudsCloudService;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-import org.apache.commons.io.FileUtils;
-
-import test.cli.cloudify.cloud.services.JCloudsCloudService;
-import framework.tools.SGTestHelper;
-import framework.utils.IOUtils;
-
 public class HpCloudService extends JCloudsCloudService {
+    private static final String HP_CERT_PROPERTIES = "apps/cloudify/cloud/hp/hp-cert.properties";
 
-	private String tenant = "hpcloud@gigaspaces.com";
-	private String user = "98173213380893";
-	private String apiKey = "C5nobOW90bhnCmE5AQaLaJ0Ubd8UISPxGih";
-	private String keyPair = "sgtest";
+    private static Properties certProperties = getCloudProperties(HP_CERT_PROPERTIES);
+
+	private String tenant = certProperties.getProperty("tenant");
+	private String user = certProperties.getProperty("user");
+	private String apiKey = certProperties.getProperty("apiKey");
+	private String keyPair = certProperties.getProperty("keyPair");
 
 	private final String hardwareId = "az-2.region-a.geo-1/102";
 	private final String linuxImageId = "az-2.region-a.geo-1/221";
-	private final String securityGroup = "test";
+	private final String securityGroup = certProperties.getProperty("securityGroup");
 
 	public HpCloudService() {
 		super("hp");

@@ -1,25 +1,25 @@
 package test.cli.cloudify.cloud.services.rackspace;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
+import framework.utils.IOUtils;
+import framework.utils.LogUtils;
 import org.cloudifysource.esc.driver.provisioning.openstack.Node;
 import org.cloudifysource.esc.driver.provisioning.openstack.OpenstackException;
 import test.cli.cloudify.cloud.services.AbstractCloudService;
 import test.cli.cloudify.cloud.services.tools.openstack.OpenstackClient;
 import test.cli.cloudify.cloud.services.tools.openstack.RackspaceClient;
-import framework.utils.IOUtils;
-import framework.utils.LogUtils;
+
+import java.io.IOException;
+import java.util.*;
 
 public class RackspaceCloudService extends AbstractCloudService {
-
 	private static final int DEFAULT_SERVER_SHUTDOWN_TIMEOUT = 5 * 60000;
-	private String user = "gsrackspace";
-	private String apiKey = "1ee2495897b53409f4643926f1968c0c";
-	private String tenant = "658142";
+    private static final String RACKSPACE_CERT_PROPERTIES = "apps/cloudify/cloud/rackspace/rackspace-cert.properties";
+
+    private static Properties certProperties = getCloudProperties(RACKSPACE_CERT_PROPERTIES);
+	private String user = certProperties.getProperty("user");
+	private String apiKey = certProperties.getProperty("apiKey");
+	private String tenant = certProperties.getProperty("tenant");
+
 	private RackspaceClient rackspaceClient;
 
 	public RackspaceCloudService() {

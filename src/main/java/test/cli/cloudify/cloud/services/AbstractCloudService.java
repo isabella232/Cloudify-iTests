@@ -1,7 +1,20 @@
 package test.cli.cloudify.cloud.services;
 
+import framework.tools.SGTestHelper;
+import framework.utils.*;
+import framework.utils.AssertUtils.RepetitiveConditionProvider;
+import org.apache.commons.io.FileUtils;
+import org.cloudifysource.dsl.cloud.Cloud;
+import org.cloudifysource.dsl.internal.ServiceReader;
+import org.openspaces.admin.Admin;
+import org.testng.Assert;
+import test.cli.cloudify.CloudTestUtils;
+import test.cli.cloudify.CommandTestUtils;
+import test.cli.cloudify.security.SecurityConstants;
+
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
@@ -9,25 +22,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.apache.commons.io.FileUtils;
-import org.cloudifysource.dsl.cloud.Cloud;
-import org.cloudifysource.dsl.internal.ServiceReader;
-import org.openspaces.admin.Admin;
-import org.testng.Assert;
-
-import test.cli.cloudify.CloudTestUtils;
-import test.cli.cloudify.CommandTestUtils;
-import test.cli.cloudify.security.SecurityConstants;
-import framework.tools.SGTestHelper;
-import framework.utils.AssertUtils;
-import framework.utils.AssertUtils.RepetitiveConditionProvider;
-import framework.utils.CloudBootstrapper;
-import framework.utils.DumpUtils;
-import framework.utils.IOUtils;
-import framework.utils.LogUtils;
-import framework.utils.ScriptUtils;
-import framework.utils.WebUtils;
 
 public abstract class AbstractCloudService implements CloudService {
 
@@ -168,7 +162,7 @@ public abstract class AbstractCloudService implements CloudService {
 	public String getPathToCloudGroovy() {
 		return getPathToCloudFolder() + "/" + getCloudName() + "-cloud.groovy";
 	}
-	
+
 	//This method should be called before bootstrapping in customize cloud
 	public void setCloudGroovy(File cloudFile) throws IOException {
 		File fileToReplace = new File(getPathToCloudFolder() + "/" + getCloudName() + "-cloud.groovy");
@@ -473,4 +467,20 @@ public abstract class AbstractCloudService implements CloudService {
 		}
 		return str.substring(0, str.length() - 1);
 	}
+
+    protected static Properties getCloudProperties(String propertiesFileName) {
+        Properties properties = new Properties();
+        InputStream is = AbstractCloudService.class.getClassLoader().getResourceAsStream( propertiesFileName );
+        if ( is != null ) {
+            try {
+                properties.load( is );
+            } catch (IOException e) {
+                throw new RuntimeException("failed to read " + propertiesFileName + " file - " + e, e);
+            }
+        }else{
+            throw new RuntimeException("failed to find " + propertiesFileName + " file - ");
+        }
+
+        return properties;
+    }
 }

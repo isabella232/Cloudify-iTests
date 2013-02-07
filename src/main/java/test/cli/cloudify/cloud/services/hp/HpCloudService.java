@@ -14,7 +14,7 @@ import java.util.Properties;
 public class HpCloudService extends JCloudsCloudService {
     private static final String HP_CERT_PROPERTIES = "apps/cloudify/cloud/hp/hp-cert.properties";
 
-    private static Properties certProperties = getCloudProperties(HP_CERT_PROPERTIES);
+    private Properties certProperties = getCloudProperties(HP_CERT_PROPERTIES);
 
 	private String tenant = certProperties.getProperty("tenant");
 	private String user = certProperties.getProperty("user");

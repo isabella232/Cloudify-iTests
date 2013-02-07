@@ -17,22 +17,22 @@ import java.util.*;
 import java.util.concurrent.TimeoutException;
 
 public class MicrosoftAzureCloudService extends AbstractCloudService {
-    private static final String AZURE_CERT_PROPERTIES = "azure-cert.properties";
+    private static final String AZURE_CERT_PROPERTIES = "apps/cloudify/cloud/azure/azure-cert.properties";
 
-    private static Properties certProperties = getCloudProperties(AZURE_CERT_PROPERTIES);
+    private Properties certProperties = getCloudProperties(AZURE_CERT_PROPERTIES);
 
-	private static final String AZURE_CERT_PFX = certProperties.getProperty("AZURE_CERT_PFX");
+	private final String AZURE_CERT_PFX = certProperties.getProperty("AZURE_CERT_PFX");
 
 	private String userName = System.getProperty("user.name") + UUIDHelper.generateRandomUUID(3);
 	
 	public static final String DEFAULT_IMAGE_ID = "5112500ae3b842c8b9c604889f8753c3__OpenLogic-CentOS63DEC20121220";
 
 	private final MicrosoftAzureRestClient azureClient;
-	private static final String AZURE_SUBSCRIPTION_ID = certProperties.getProperty("AZURE_SUBSCRIPTION_ID");
+	private final String AZURE_SUBSCRIPTION_ID = certProperties.getProperty("AZURE_SUBSCRIPTION_ID");
 	private static final String PATH_TO_PFX = SGTestHelper.getSGTestRootDir() + "/src/main/resources/apps/cloudify/cloud/azure/azure-cert.pfx";
-	private static final String PFX_PASSWORD = certProperties.getProperty("PFX_PASSWORD");
+	private final String PFX_PASSWORD = certProperties.getProperty("PFX_PASSWORD");
 
-	private static final String ADDRESS_SPACE = certProperties.getProperty("ADDRESS_SPACE");
+	private final String ADDRESS_SPACE = certProperties.getProperty("ADDRESS_SPACE");
 
 	private static final long ESTIMATED_SHUTDOWN_TIME = 5 * 60 * 1000;
 

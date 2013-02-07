@@ -22,7 +22,7 @@ public class Ec2CloudService extends JCloudsCloudService {
     public static final String DEFAULT_EC2_LINUX_AMI_USERNAME = "ec2-user";
     public static final String DEFAULT_EC2_UBUNTU_AMI_USERNAME = "ubuntu";
 
-    private static Properties certProperties = getCloudProperties("apps/cloudify/cloud/ec2/" + EC2_CERT_PROPERTIES);
+    private Properties certProperties = getCloudProperties("apps/cloudify/cloud/ec2/" + EC2_CERT_PROPERTIES);
 
     private String user = certProperties.getProperty("user");
     private String apiKey = certProperties.getProperty("apiKey");

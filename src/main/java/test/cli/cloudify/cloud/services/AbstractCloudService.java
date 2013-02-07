@@ -468,7 +468,7 @@ public abstract class AbstractCloudService implements CloudService {
 		return str.substring(0, str.length() - 1);
 	}
 
-    protected static Properties getCloudProperties(String propertiesFileName) {
+    protected Properties getCloudProperties(String propertiesFileName) {
         Properties properties = new Properties();
         InputStream is = AbstractCloudService.class.getClassLoader().getResourceAsStream( propertiesFileName );
         if ( is != null ) {

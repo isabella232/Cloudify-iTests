@@ -15,7 +15,7 @@ public class RackspaceCloudService extends AbstractCloudService {
 	private static final int DEFAULT_SERVER_SHUTDOWN_TIMEOUT = 5 * 60000;
     private static final String RACKSPACE_CERT_PROPERTIES = "apps/cloudify/cloud/rackspace/rackspace-cert.properties";
 
-    private static Properties certProperties = getCloudProperties(RACKSPACE_CERT_PROPERTIES);
+    private Properties certProperties = getCloudProperties(RACKSPACE_CERT_PROPERTIES);
 	private String user = certProperties.getProperty("user");
 	private String apiKey = certProperties.getProperty("apiKey");
 	private String tenant = certProperties.getProperty("tenant");

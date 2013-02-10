@@ -255,7 +255,7 @@ public abstract class Bootstrapper {
 	}
 
 	public String listApplications(boolean expectedToFail) throws IOException, InterruptedException {
-		String command = connectCommand() + ";list-applications";
+		String command = connectCommand() + "list-applications";
 		if (expectedToFail) {
 			lastActionOutput = CommandTestUtils.runCommandExpectedFail(command);
 			return lastActionOutput;
@@ -265,7 +265,7 @@ public abstract class Bootstrapper {
 	}
 
 	public String listServices(final String applicationName, boolean expectedToFail) throws IOException, InterruptedException {
-		String command = connectCommand() + ";use-application " + applicationName + ";list-services";
+		String command = connectCommand() + "use-application " + applicationName + ";list-services";
 		if (expectedToFail) {
 			lastActionOutput = CommandTestUtils.runCommandExpectedFail(command);
 			return lastActionOutput;
@@ -276,7 +276,7 @@ public abstract class Bootstrapper {
 	}
 
 	public String listInstances(final String applicationName, final String serviceName, boolean expectedToFail) throws IOException, InterruptedException {
-		String command = connectCommand() + ";use-application " + applicationName +";list-instances " + serviceName;
+		String command = connectCommand() + "use-application " + applicationName +";list-instances " + serviceName;
 		if (expectedToFail) {
 			lastActionOutput = CommandTestUtils.runCommandExpectedFail(command);
 			return lastActionOutput;
@@ -296,12 +296,12 @@ public abstract class Bootstrapper {
 	}
 
 	public String login(boolean expectedToFail) throws IOException, InterruptedException {
-		lastActionOutput = CommandTestUtils.runCommand(connectCommand() + ";" + "login " + user + " " + password, true, expectedToFail);
+		lastActionOutput = CommandTestUtils.runCommand(connectCommand() + "login " + user + " " + password, true, expectedToFail);
 		return lastActionOutput;
 	}
 	
 	public String login(final String user, final String password, boolean expectedToFail) throws IOException, InterruptedException {
-		lastActionOutput = CommandTestUtils.runCommand(connectCommand() + ";" + "login " + user + " " + password, true, expectedToFail);
+		lastActionOutput = CommandTestUtils.runCommand(connectCommand() + "login " + user + " " + password, true, expectedToFail);
 		return lastActionOutput;
 	}
 

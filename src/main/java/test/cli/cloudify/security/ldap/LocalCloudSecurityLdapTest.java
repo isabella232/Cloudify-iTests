@@ -24,7 +24,7 @@ public class LocalCloudSecurityLdapTest extends AbstractSecuredLocalCloudTest {
 	}
 	
 
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
 	public void installAndUninstallWithDifferentUsersTest() throws IOException, InterruptedException {
 		
 		installApplicationAndWait(SIMPLE_APP_PATH, SIMPLE_APP_NAME, TIMEOUT_IN_MINUTES, SecurityConstants.USER_PWD_CLOUD_ADMIN, SecurityConstants.USER_PWD_CLOUD_ADMIN, false, null);
@@ -36,7 +36,7 @@ public class LocalCloudSecurityLdapTest extends AbstractSecuredLocalCloudTest {
 	
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
 	public void installingAndViewingTest() throws IOException, InterruptedException{
 
 		installApplicationAndWait(SIMPLE_APP_PATH, SIMPLE_APP_NAME, TIMEOUT_IN_MINUTES, SecurityConstants.USER_PWD_APP_MANAGER, SecurityConstants.USER_PWD_APP_MANAGER, false, null);
@@ -62,7 +62,7 @@ public class LocalCloudSecurityLdapTest extends AbstractSecuredLocalCloudTest {
 
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
 	public void installWithWrongGroup() throws IOException, InterruptedException {
 		
 		String output = "no output";
@@ -72,7 +72,7 @@ public class LocalCloudSecurityLdapTest extends AbstractSecuredLocalCloudTest {
 		assertTrue("install succeeded with authGroup " + SecurityConstants.GE_GROUP + " for: " + SecurityConstants.APP_MANAGER_AND_VIEWER_DESCRIPTIN, output.contains(ACCESS_DENIED_MESSAGE));
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
 	public void installAndUninstallWithDifferentGroup() throws IOException, InterruptedException {
 		
 		String output = "no output";
@@ -83,12 +83,12 @@ public class LocalCloudSecurityLdapTest extends AbstractSecuredLocalCloudTest {
 		assertTrue("unseen application uninstall succeeded", output.contains(ACCESS_DENIED_MESSAGE));
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
 	public void testInstallAndUninstall() throws IOException, InterruptedException {
 		super.installAndUninstallTest();
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
 	public void testInstallWithoutCredentials() throws IOException, InterruptedException{
 		super.installWithoutCredentialsTest();
 	}
@@ -99,40 +99,40 @@ public class LocalCloudSecurityLdapTest extends AbstractSecuredLocalCloudTest {
 	}
 
 
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
 	public void connectWithNonexistentUserTest() throws IOException, InterruptedException {
 		super.testConnectWithNonExistingUser();			
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
 	public void connectWithNoPasswordTest() throws IOException, InterruptedException {
 		super.testConnectWithNoPassword();			
 	}
 
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
 	public void loginWithNonexistentUserTest() throws IOException, InterruptedException {
 		super.testLoginWithNonexistingUser();			
 	}
 
 
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
 	public void connectWithWrongPassword() throws IOException, InterruptedException {
 		super.testConnectWithWrongPassword();			
 
 	}
 
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
 	public void loginWithWrongPassword() throws IOException, InterruptedException {
 		super.testLoginWithWrongPassword();
 	}
 
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
 	public void securedUseApplicationTest() throws IOException, InterruptedException {
 		super.testSecuredUseApplication();
 	}
 
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
 	public void tamperWithSecurityFileTest() throws Exception{
 		super.testTamperWithSecurityFile();			
 	}

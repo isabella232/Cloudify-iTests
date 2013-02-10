@@ -57,13 +57,14 @@ public class Ec2ExcludedServicesTest extends AbstractServicesTest {
         super.teardown();
     }
 
+    //works
     @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
     public void testApache() throws Exception {
         testService("apache");
     }
     
     //cant run on localcloud??
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
     public void testCouchbase() throws Exception{
     	testService("couchbase");
     }
@@ -73,15 +74,15 @@ public class Ec2ExcludedServicesTest extends AbstractServicesTest {
     public void testCouchDBe() throws Exception{
         testService("couchdb");
     }
-    //didnt run it
+    //doesn't work
     @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
     public void testBigInsights() throws Exception{
         testService("biginsights");
     }
-    //linux only
+    //works
     @TestConfiguration(os = {TestConfiguration.VM.MAC, TestConfiguration.VM.UNIX} )
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
-    public void testElasticsearch() throws Exception{
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
+    public void testElasticSearch() throws Exception{
         testService("elasticsearch");
     }
 
@@ -96,8 +97,8 @@ public class Ec2ExcludedServicesTest extends AbstractServicesTest {
         testService("jboss");
     }
 
-    //should work
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
+    //works
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
     public void testMysql() throws Exception{
         testService("mysql");
     }
@@ -120,9 +121,9 @@ public class Ec2ExcludedServicesTest extends AbstractServicesTest {
         testService("postgresql");
     }
 
-    //ubuntu only
+    //ubuntu only. works
     @TestConfiguration(os = TestConfiguration.VM.UNIX)
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
     public void testPuppet() throws Exception{
         testService("puppet");
     }
@@ -139,34 +140,34 @@ public class Ec2ExcludedServicesTest extends AbstractServicesTest {
         testService("redis");
     }
 
-    //should work
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
+    //works
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
     public void testSolr() throws Exception{
         testService("solr");
     }
 
-    //didnt run it
+    //doesn't work
     @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
     public void testStorm() throws Exception{
         testService("storm");
     }
-    //linux only
+    //linux only. works
     @TestConfiguration(os = {TestConfiguration.VM.MAC, TestConfiguration.VM.UNIX} )
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
     public void testVertx() throws Exception{
         testService("vertx");
     }
 
-    //linux only
+    //linux only. doesn't work
     @TestConfiguration(os = {TestConfiguration.VM.MAC, TestConfiguration.VM.UNIX})
     @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
     public void testWebshere() throws Exception{
         testService("websphere");
     }
 
-    //linux only
+    //linux only. works
     @TestConfiguration(os = {TestConfiguration.VM.MAC, TestConfiguration.VM.UNIX} )
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
     public void testZookeeper() throws Exception{
         testService("zookeeper");
     }

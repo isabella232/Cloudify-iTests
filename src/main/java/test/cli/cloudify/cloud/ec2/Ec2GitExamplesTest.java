@@ -16,8 +16,6 @@ public class Ec2GitExamplesTest extends AbstractExamplesTest{
 
 	private String localGitAppsPath;
 	private String localGitRepoPath;
-	private static final String USER = "tgrid";
-	private static final String PASSWORD = "tgrid";
 	
 	@Override
 	protected String getCloudName() {
@@ -65,12 +63,12 @@ public class Ec2GitExamplesTest extends AbstractExamplesTest{
 		super.testPetclinicJboss(localGitAppsPath);
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
 	public void testLamp() throws Exception {
 		super.testLamp(localGitAppsPath);
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
 	public void testMasterSlave() throws Exception {
 		super.testMasterSlave(localGitAppsPath);
 	}
@@ -80,7 +78,7 @@ public class Ec2GitExamplesTest extends AbstractExamplesTest{
 		super.testPetclinicWas(localGitAppsPath);
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
 	public void testStorm() throws Exception {
 		super.testStorm(localGitAppsPath);
 	}

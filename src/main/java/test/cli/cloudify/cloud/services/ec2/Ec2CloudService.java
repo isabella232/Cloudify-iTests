@@ -1,6 +1,5 @@
 package test.cli.cloudify.cloud.services.ec2;
 
-import framework.tools.SGTestHelper;
 import framework.utils.IOUtils;
 import framework.utils.LogUtils;
 import org.apache.commons.io.FileUtils;
@@ -13,7 +12,7 @@ import java.util.Map;
 import java.util.Properties;
 
 public class Ec2CloudService extends JCloudsCloudService {
-    private static final String EC2_CERT_PROPERTIES = "credentials/cloud/ec2/ec2-cert.properties";
+    private static final String EC2_CERT_PROPERTIES = CREDENTIALS_FOLDER + "/cloud/ec2/ec2-cert.properties";
     public static final String DEFAULT_US_EAST_LINUX_AMI = "us-east-1/ami-76f0061f";
     public static final String DEFAULT_US_EAST_UBUNTU_AMI = "us-east-1/ami-82fa58eb";
     public static final String DEFAULT_EU_WEST_LINUX_AMI = "eu-west-1/ami-c37474b7";
@@ -109,10 +108,7 @@ public class Ec2CloudService extends JCloudsCloudService {
 
 		// add a pem file
 		final String sshKeyPemName = this.keyPair + ".pem";
-		final File fileToCopy =
-				new File(SGTestHelper.getSGTestRootDir() + "/src/main/resources/credentials/cloud/" + getCloudName()
-						+ "/"
-						+ sshKeyPemName);
+		final File fileToCopy = new File(CREDENTIALS_FOLDER + "/cloud/" + getCloudName() + "/" + sshKeyPemName);
 		final File targetLocation = new File(getPathToCloudFolder() + "/upload/");
 		FileUtils.copyFileToDirectory(fileToCopy, targetLocation);
 	}

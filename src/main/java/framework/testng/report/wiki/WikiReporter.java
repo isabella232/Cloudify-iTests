@@ -10,9 +10,10 @@ import framework.testng.report.xml.SummaryReport;
 import framework.testng.report.xml.TestLog;
 import framework.testng.report.xml.TestReport;
 import framework.testng.report.xml.TestsReport;
+import framework.tools.SGTestHelper;
 
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.text.NumberFormat;
 import java.util.*;
 import java.util.Map.Entry;
@@ -24,8 +25,10 @@ import java.util.Map.Entry;
  * NOTE: Wiki configuration located in wikireporter.properties file under the same package of WikiReporter class.
  */
 public class WikiReporter {
+    protected static final String CREDENTIALS_FOLDER = System.getProperty("com.quality.sgtest.credentialsFolder",
+            SGTestHelper.getSGTestRootDir() + "/src/main/resources/credentials");
 
-	private static final String WIKI_REPORTER_PROPERTIES = "credentials/wikireporter.properties";
+	private static final String WIKI_REPORTER_PROPERTIES = CREDENTIALS_FOLDER + "/wikireporter.properties";
 
     private WikiClient wikiClient;
     private List<WikiPage> wikiPages;
@@ -48,19 +51,13 @@ public class WikiReporter {
     }
     
     private Properties getWikiProperties() {
-    	Properties properties = new Properties();
-    	InputStream is = WikiReporter.class.getClassLoader().getResourceAsStream( WIKI_REPORTER_PROPERTIES );
-    	if ( is != null ) {
-    		try {
-    			properties.load( is );
-    		} catch (IOException e) {
-    			throw new RuntimeException("failed to read wikiproperties.properties file - " + e, e);
-    		}
-    	}else{
-    		throw new RuntimeException("failed to find wikiproperties.properties file - ");
-    	}
-
-    	return properties;
+        Properties properties = new Properties();
+        try {
+            properties.load(new FileInputStream(WIKI_REPORTER_PROPERTIES));
+        } catch (IOException e) {
+            throw new RuntimeException("failed to read " + WIKI_REPORTER_PROPERTIES + " file - " + e, e);
+        }
+        return properties;
     }
 
     /**

@@ -10,13 +10,17 @@ import org.jclouds.s3.domain.AccessControlList;
 import org.jclouds.s3.domain.CannedAccessPolicy;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
 
 public class S3DeployUtil {
+    protected static final String CREDENTIALS_FOLDER = System.getProperty("com.quality.sgtest.credentialsFolder",
+            SGTestHelper.getSGTestRootDir() + "/src/main/resources/credentials");
+
+    private static final String S3_PROPERTIES = CREDENTIALS_FOLDER + "/s3.properties";
 
     public static void uploadLogFile(File source, String buildNumber, String suiteName, String testName){
         try {
@@ -59,15 +63,10 @@ public class S3DeployUtil {
 
     private static Properties getS3Properties() {
         Properties properties = new Properties();
-        InputStream is = S3DeployUtil.class.getClassLoader().getResourceAsStream("credentials/s3.properties");
-        if ( is != null ) {
-            try {
-                properties.load( is );
-            } catch (IOException e) {
-                throw new RuntimeException("failed to read s3.properties file - " + e, e);
-            }
-        }else{
-            throw new RuntimeException("failed to find s3.properties file - ");
+        try {
+            properties.load(new FileInputStream(S3_PROPERTIES));
+        } catch (IOException e) {
+            throw new RuntimeException("failed to read " + S3_PROPERTIES + " file - " + e, e);
         }
 
         return properties;

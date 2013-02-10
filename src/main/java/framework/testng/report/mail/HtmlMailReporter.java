@@ -4,16 +4,22 @@ import com.gigaspaces.dashboard.DashboardDBReporter;
 import framework.report.MailReporterProperties;
 import framework.testng.report.wiki.WikiUtils;
 import framework.testng.report.xml.SummaryReport;
+import framework.tools.SGTestHelper;
 import framework.tools.SimpleMail;
 
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.StringTokenizer;
 
 public class HtmlMailReporter {
+
+    protected static final String CREDENTIALS_FOLDER = System.getProperty("com.quality.sgtest.credentialsFolder",
+            SGTestHelper.getSGTestRootDir() + "/src/main/resources/credentials");
+
+    private static final String MAIL_REPORTER_PROPERTIES = CREDENTIALS_FOLDER + "/mailreporter.properties";
 
     public HtmlMailReporter() {
     }
@@ -28,15 +34,14 @@ public class HtmlMailReporter {
         List<String> mailRecipients = null;
         if (buildNumber == null)
             return;
+
         Properties props = new Properties();
-        InputStream in = HtmlMailReporter.class.getClassLoader().getResourceAsStream("credentials/mailreporter.properties");
         try {
-            props.load(in);
-            in.close();
-            System.out.println("mailreporter.properties: " + props);
+            props.load(new FileInputStream(MAIL_REPORTER_PROPERTIES));
         } catch (IOException e) {
-            throw new RuntimeException("failed to read mailreporter.properties file - " + e, e);
+            throw new RuntimeException("failed to read " + MAIL_REPORTER_PROPERTIES + " file - " + e, e);
         }
+        System.out.println("mailreporter.properties: " + props);
 
         MailReporterProperties mailProperties = new MailReporterProperties(props);
 

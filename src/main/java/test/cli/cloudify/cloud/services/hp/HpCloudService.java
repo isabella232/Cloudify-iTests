@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.Properties;
 
 public class HpCloudService extends JCloudsCloudService {
-    private static final String HP_CERT_PROPERTIES = "apps/cloudify/cloud/hp/hp-cert.properties";
+    private static final String HP_CERT_PROPERTIES = "credentials/cloud/hp/hp-cert.properties";
 
     private Properties certProperties = getCloudProperties(HP_CERT_PROPERTIES);
 
@@ -89,7 +89,7 @@ public class HpCloudService extends JCloudsCloudService {
 		// add a pem file
 		final String sshKeyPemName = this.keyPair + ".pem";
 		final File fileToCopy =
-				new File(SGTestHelper.getSGTestRootDir() + "/src/main/resources/apps/cloudify/cloud/" + getCloudName()
+				new File(SGTestHelper.getSGTestRootDir() + "/src/main/resources/credentials/cloud/" + getCloudName()
 						+ "/"
 						+ sshKeyPemName);
 

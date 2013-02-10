@@ -17,7 +17,7 @@ import java.util.*;
 import java.util.concurrent.TimeoutException;
 
 public class MicrosoftAzureCloudService extends AbstractCloudService {
-    private static final String AZURE_CERT_PROPERTIES = "apps/cloudify/cloud/azure/azure-cert.properties";
+    private static final String AZURE_CERT_PROPERTIES = "credentials/cloud/azure/azure-cert.properties";
 
     private Properties certProperties = getCloudProperties(AZURE_CERT_PROPERTIES);
 

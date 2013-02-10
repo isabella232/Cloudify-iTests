@@ -29,7 +29,7 @@ public class HtmlMailReporter {
         if (buildNumber == null)
             return;
         Properties props = new Properties();
-        InputStream in = HtmlMailReporter.class.getClassLoader().getResourceAsStream("mailreporter.properties");
+        InputStream in = HtmlMailReporter.class.getClassLoader().getResourceAsStream("credentials/mailreporter.properties");
         try {
             props.load(in);
             in.close();

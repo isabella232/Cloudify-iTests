@@ -25,7 +25,7 @@ import java.util.Map.Entry;
  */
 public class WikiReporter {
 
-	private static final String WIKI_REPORTER_PROPERTIES = "wikireporter.properties";
+	private static final String WIKI_REPORTER_PROPERTIES = "credentials/wikireporter.properties";
 
     private WikiClient wikiClient;
     private List<WikiPage> wikiPages;

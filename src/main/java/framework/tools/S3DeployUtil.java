@@ -59,7 +59,7 @@ public class S3DeployUtil {
 
     private static Properties getS3Properties() {
         Properties properties = new Properties();
-        InputStream is = S3DeployUtil.class.getClassLoader().getResourceAsStream("s3.properties");
+        InputStream is = S3DeployUtil.class.getClassLoader().getResourceAsStream("credentials/s3.properties");
         if ( is != null ) {
             try {
                 properties.load( is );

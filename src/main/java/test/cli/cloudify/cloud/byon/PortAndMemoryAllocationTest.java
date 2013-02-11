@@ -116,6 +116,7 @@ public class PortAndMemoryAllocationTest extends AbstractByonCloudTest {
 		String componentCommandlineArgs = getComponentCommandlineArgs(host, componentName);
 		int maxMemoryIndex = componentCommandlineArgs.lastIndexOf("-Xmx");
 		int minMemoryIndex = componentCommandlineArgs.lastIndexOf("-Xms");
+		LogUtils.log("component " + componentName + " commandline args are " + componentCommandlineArgs);
 		String componentMaxMemory = componentCommandlineArgs.substring(maxMemoryIndex, maxMemoryIndex + "-Xmx".length() + maxMemory.length());
 		String componentMinMemory = componentCommandlineArgs.substring(minMemoryIndex, minMemoryIndex + "-Xms".length() + minMemory.length());
 		assertTrue("component " + componentName + " was not allocated with the expected max memory of " + maxMemory + " Instead found " + componentMaxMemory

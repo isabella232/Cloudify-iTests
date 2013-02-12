@@ -3,7 +3,9 @@ package test.cli.cloudify.security;
 import framework.tools.SGTestHelper;
 
 public class SecurityConstants {
-	
+    protected static final String CREDENTIALS_FOLDER = System.getProperty("com.quality.sgtest.credentialsFolder",
+            SGTestHelper.getSGTestRootDir() + "/src/main/resources/credentials");
+
 	public static final String USER_PWD_ALL_ROLES = "Superuser";
 	public static final String USER_PWD_CLOUD_ADMIN = "Amanda";
 	public static final String USER_PWD_CLOUD_ADMIN_AND_APP_MANAGER = "Dana";
@@ -30,10 +32,9 @@ public class SecurityConstants {
 
 	public static final String SGTEST_ROOT_DIR = SGTestHelper.getSGTestRootDir().replace('\\', '/');
 	public static final String BUILD_SECURITY_FILE_PATH = SGTestHelper.getBuildDir().replace('\\', '/') + "/config/security/spring-security.xml";
-	public static final String BUILD_SECURITY_BACKUP_FILE_PATH = SGTestHelper.getBuildDir().replace('\\', '/') + "/config/security/spring-security.xml.backup";
-	public static final String DEFAULT_KEYSTORE_FILE_PATH = SGTestHelper.getSGTestRootDir().replace('\\', '/') + "/src/main/config/security/keystore";
+	public static final String DEFAULT_KEYSTORE_FILE_PATH = CREDENTIALS_FOLDER + "/security/keystore";
 	public static final String DEFAULT_KEYSTORE_PASSWORD = "sgtest";
-	public static final String LDAP_SECURITY_FILE_PATH = SGTEST_ROOT_DIR + "/src/main/config/security/ldap-spring-security.xml";
+	public static final String LDAP_SECURITY_FILE_PATH = CREDENTIALS_FOLDER + "/security/ldap-spring-security.xml";
 
 	public static final String ACCESS_DENIED_MESSAGE = "access is denied";
 

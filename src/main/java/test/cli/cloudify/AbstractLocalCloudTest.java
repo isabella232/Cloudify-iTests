@@ -1,18 +1,11 @@
 package test.cli.cloudify;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.InetAddress;
-import java.net.URL;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-
+import com.gigaspaces.internal.sigar.SigarHolder;
+import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.WebResource;
+import com.sun.jersey.api.client.config.DefaultClientConfig;
+import framework.tools.SGTestHelper;
+import framework.utils.*;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.io.FileUtils;
 import org.apache.http.HttpEntity;
@@ -32,11 +25,7 @@ import org.cloudifysource.shell.commands.CLIException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.type.TypeFactory;
 import org.codehaus.jackson.type.JavaType;
-import org.hyperic.sigar.ProcExe;
-import org.hyperic.sigar.ProcState;
-import org.hyperic.sigar.Sigar;
-import org.hyperic.sigar.SigarException;
-import org.hyperic.sigar.SigarPermissionDeniedException;
+import org.hyperic.sigar.*;
 import org.openspaces.admin.Admin;
 import org.openspaces.admin.AdminFactory;
 import org.openspaces.admin.application.Applications;
@@ -46,24 +35,16 @@ import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
-
 import test.AbstractTestSupport;
 
-import com.gigaspaces.internal.sigar.SigarHolder;
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.api.client.config.DefaultClientConfig;
-
-import framework.tools.SGTestHelper;
-import framework.utils.ApplicationInstaller;
-import framework.utils.AssertUtils;
-import framework.utils.DumpUtils;
-import framework.utils.LocalCloudBootstrapper;
-import framework.utils.LogUtils;
-import framework.utils.ScriptUtils;
-import framework.utils.ServiceInstaller;
-import framework.utils.SetupUtils;
-import framework.utils.WebUtils;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.InetAddress;
+import java.net.URL;
+import java.util.*;
+import java.util.Map.Entry;
 
 public class AbstractLocalCloudTest extends AbstractTestSupport {
 
@@ -400,7 +381,10 @@ public class AbstractLocalCloudTest extends AbstractTestSupport {
 	}
 
 	public void uninstallAll() throws IOException, InterruptedException {
-		
+		if(admin == null){
+            LogUtils.log("Admin is null ,cant uninstall applications");
+            return;
+        }
 		Applications applications = admin.getApplications();
 		for (org.openspaces.admin.application.Application application : applications) {
 			String applicationName = application.getName();

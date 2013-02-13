@@ -21,7 +21,7 @@ fi
 
 svn export ${SVN_SGTEST_REPOSITORY} ${SGTEST_HOME}
 
-mvn scm:export
+mvn scm:export -DconnectionUrl=scm:svn:svn://svn-srv/SVN/cloudify/trunk/quality/frameworks/SGTest-credentials -DexportDirectory=${BUILD_DIR}/../SGTest/src/main/resources/credentials
 
 dos2unix ${SGTEST_HOME}/src/main/resources/apps/cloudify/cloud/**/*.sh
 

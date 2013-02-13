@@ -53,7 +53,7 @@ xcopy %REMOTE_BUILD_DIR%\cloudify\1.5\gigaspaces-cloudify-%VERSION%-%MILESTONE%-
 @mkdir %WEBUI_TMP_DIR%
 svn export --force %SVN_SGTEST_REPOSITORY% %SGTEST_HOME% 
 
-mvn scm:export -DconnectionUrl=scm:svn:svn://svn-srv/SVN/cloudify/trunk/quality/frameworks/SGTest-credentials -DexportDirectory=${BUILD_DIR}/../SGTest/src/main/resources/credentials
+call mvn scm:export -DconnectionUrl=scm:svn:svn://svn-srv/SVN/cloudify/trunk/quality/frameworks/SGTest-credentials -DexportDirectory=${BUILD_DIR}/../SGTest/src/main/resources/credentials
 
 @call %SGTEST_HOME%\src\main\scripts\deploy\bin\windows\set-deploy-env.bat
 

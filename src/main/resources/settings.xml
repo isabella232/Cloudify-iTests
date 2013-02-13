@@ -9,6 +9,8 @@
 				<user>USER</user>
 				<key>KEY</key>
 				<container>gigaspaces-maven-repository-eu</container>
+                <svn-key>svn-key</svn-key>
+                <svn-password>svn-passsword</svn-password>
 			</properties>
 		</profile>
 	</profiles>

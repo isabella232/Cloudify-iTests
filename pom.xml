@@ -64,7 +64,7 @@
 			<artifactId>USM</artifactId>
 			<version>${cloudifyVersion}</version>
 		</dependency>
-		<dependency>
+        <dependency>
 			<groupId>com.gigaspaces.quality</groupId>
 			<artifactId>wanem</artifactId>
 			<version>0.0.2-SNAPSHOT</version>
@@ -339,6 +339,28 @@
 					</execution>
 				</executions>
 			</plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-scm-plugin</artifactId>
+                <version>1.8.1</version>
+                <configuration>
+                    <username>${svn-user}</username>
+                    <password>${svn-password}</password>
+                    <connectionUrl>scm:svn:svn://svn-srv/SVN/cloudify/trunk/quality/frameworks/SGTest-credentials</connectionUrl>
+                    <exportDirectory>${basedir}/src/main/resources/credentials</exportDirectory>
+                    <providerImplementations>
+                        <svn>javasvn</svn>
+                    </providerImplementations>
+                </configuration>
+
+                <dependencies>
+                    <dependency>
+                        <groupId>com.google.code.maven-scm-provider-svnjava</groupId>
+                        <artifactId>maven-scm-provider-svnjava</artifactId>
+                        <version>2.0.5</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
 		</plugins>
 	</build>
 </project>

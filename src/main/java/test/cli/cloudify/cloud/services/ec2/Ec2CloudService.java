@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.Properties;
 
 public class Ec2CloudService extends JCloudsCloudService {
-    private static final String EC2_CERT_PROPERTIES = CREDENTIALS_FOLDER + "/cloud/ec2/ec2-cert.properties";
+    private static final String EC2_CERT_PROPERTIES = CREDENTIALS_FOLDER + "/cloud/ec2/ec2-cred.properties";
     public static final String DEFAULT_US_EAST_LINUX_AMI = "us-east-1/ami-76f0061f";
     public static final String DEFAULT_US_EAST_UBUNTU_AMI = "us-east-1/ami-82fa58eb";
     public static final String DEFAULT_EU_WEST_LINUX_AMI = "eu-west-1/ami-c37474b7";

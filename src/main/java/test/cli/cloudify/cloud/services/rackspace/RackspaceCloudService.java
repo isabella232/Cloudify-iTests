@@ -13,7 +13,7 @@ import java.util.*;
 
 public class RackspaceCloudService extends AbstractCloudService {
 	private static final int DEFAULT_SERVER_SHUTDOWN_TIMEOUT = 5 * 60000;
-    private static final String RACKSPACE_CERT_PROPERTIES = CREDENTIALS_FOLDER + "/cloud/rackspace/rackspace-cert.properties";
+    private static final String RACKSPACE_CERT_PROPERTIES = CREDENTIALS_FOLDER + "/cloud/rackspace/rackspace-cred.properties";
 
     private Properties certProperties = getCloudProperties(RACKSPACE_CERT_PROPERTIES);
 	private String user = certProperties.getProperty("user");

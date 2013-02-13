@@ -1,13 +1,11 @@
 package test.cli.cloudify.cloud.ec2;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
 import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 import org.cloudifysource.restclient.GSRestClient;
-import org.cloudifysource.restclient.RestException;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.storage.file.FileRepository;
@@ -64,12 +62,12 @@ public class Ec2ExcludedServicesTest extends AbstractServicesTest {
     }
     
     //cant run on localcloud??
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
     public void testCouchbase() throws Exception{
     	testService("couchbase");
     }
 
-    //Recipe is not finish
+    //not our recipe. fails.
     @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
     public void testCouchDBe() throws Exception{
         testService("couchdb");
@@ -86,13 +84,13 @@ public class Ec2ExcludedServicesTest extends AbstractServicesTest {
         testService("elasticsearch");
     }
 
-    //dont work
+    //should not be tested.
     @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
     public void testGroovyUtils() throws Exception{
         testService("groovy-utils");
     }
-    //dont work
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
+    //should work
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
     public void testJboss() throws Exception{
         testService("jboss");
     }
@@ -103,19 +101,19 @@ public class Ec2ExcludedServicesTest extends AbstractServicesTest {
         testService("mysql");
     }
 
-    //dont work
+    //not our recipe. fails.
     @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
     public void testNginx() throws Exception{
         testService("nginx");
     }
 
-    //dont work
+    //needs configuration to work.
     @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
     public void testPlay() throws Exception{
         testService("play");
     }
 
-    //dont work
+    //not our recipe. fails.
     @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
     public void testPostgresql() throws Exception{
         testService("postgresql");
@@ -128,7 +126,7 @@ public class Ec2ExcludedServicesTest extends AbstractServicesTest {
         testService("puppet");
     }
 
-    //dont work
+    //dont work. should work as part of an app.
     @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
     public void testRails() throws Exception{
         testService("rails");
@@ -146,8 +144,8 @@ public class Ec2ExcludedServicesTest extends AbstractServicesTest {
         testService("solr");
     }
 
-    //doesn't work
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
+    //should work. takes time to install.
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 3, enabled = true)
     public void testStorm() throws Exception{
         testService("storm");
     }
@@ -158,7 +156,7 @@ public class Ec2ExcludedServicesTest extends AbstractServicesTest {
         testService("vertx");
     }
 
-    //linux only. doesn't work
+    //linux only. doesn't work. needs configuration to work.
     @TestConfiguration(os = {TestConfiguration.VM.MAC, TestConfiguration.VM.UNIX})
     @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
     public void testWebshere() throws Exception{
@@ -173,7 +171,7 @@ public class Ec2ExcludedServicesTest extends AbstractServicesTest {
     }
 
     @Override
-    public void testService(String serviceFolderName, String serviceName) throws IOException, InterruptedException, RestException {
+    public void testService(String serviceFolderName, String serviceName) throws Exception {
         installServiceAndWait(excludedRecipesDir.getAbsolutePath() + "/" + serviceName, serviceName);
 
         String restUrl = getRestUrl();
@@ -186,7 +184,7 @@ public class Ec2ExcludedServicesTest extends AbstractServicesTest {
         uninstallServiceAndWait(serviceName);
     }
     
-    public void testService(String serviceName) throws IOException, InterruptedException, RestException {
+    public void testService(String serviceName) throws Exception {
     	testService(serviceName, serviceName);
     }
 

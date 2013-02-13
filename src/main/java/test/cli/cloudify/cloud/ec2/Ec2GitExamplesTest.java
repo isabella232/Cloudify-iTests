@@ -43,22 +43,26 @@ public class Ec2GitExamplesTest extends AbstractExamplesTest{
 		FileUtils.deleteDirectory(new File(localGitRepoPath));
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = false)
+	//should work
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
 	public void testComputers() throws Exception {
 		super.testComputers(localGitAppsPath);
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = false)
+	//should work
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
 	public void testBabies() throws Exception {
 		super.testBabies(localGitAppsPath);
 	}
 	
+	//fails
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = false)
 	public void testBiginsights() throws Exception {
 		super.testBiginsights(localGitAppsPath);
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = false)
+	//should work
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
 	public void testPetclinicJboss() throws Exception {
 		super.testPetclinicJboss(localGitAppsPath);
 	}
@@ -73,6 +77,7 @@ public class Ec2GitExamplesTest extends AbstractExamplesTest{
 		super.testMasterSlave(localGitAppsPath);
 	}
 	
+	//needs configuration to work.
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = false)
 	public void testPetclinicWas() throws Exception {
 		super.testPetclinicWas(localGitAppsPath);
@@ -83,7 +88,8 @@ public class Ec2GitExamplesTest extends AbstractExamplesTest{
 		super.testStorm(localGitAppsPath);
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = false)
+	//should work
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
 	public void testTravelLb () throws Exception {
 		super.testTravelLb(localGitAppsPath);
 	}

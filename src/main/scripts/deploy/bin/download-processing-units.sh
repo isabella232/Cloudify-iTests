@@ -21,6 +21,8 @@ fi
 
 svn export ${SVN_SGTEST_REPOSITORY} ${SGTEST_HOME}
 
+mvn scm:export
+
 dos2unix ${SGTEST_HOME}/src/main/resources/apps/cloudify/cloud/**/*.sh
 
 USM=${SGTEST_HOME}/src/main/resources/apps/USM

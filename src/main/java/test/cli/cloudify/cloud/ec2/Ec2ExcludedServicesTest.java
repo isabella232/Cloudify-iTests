@@ -1,25 +1,24 @@
 package test.cli.cloudify.cloud.ec2;
 
-import java.io.File;
-import java.net.URL;
-import java.util.Map;
-
+import com.j_spaces.kernel.PlatformVersion;
+import framework.testng.annotations.TestConfiguration;
+import framework.utils.AssertUtils;
+import framework.utils.ScriptUtils;
 import org.apache.commons.io.FileUtils;
 import org.cloudifysource.restclient.GSRestClient;
+import org.cloudifysource.restclient.RestException;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.storage.file.FileRepository;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-
 import test.cli.cloudify.cloud.AbstractServicesTest;
 
-import com.j_spaces.kernel.PlatformVersion;
-
-import framework.testng.annotations.TestConfiguration;
-import framework.utils.AssertUtils;
-import framework.utils.ScriptUtils;
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.util.Map;
 
 
 public class Ec2ExcludedServicesTest extends AbstractServicesTest {
@@ -171,7 +170,7 @@ public class Ec2ExcludedServicesTest extends AbstractServicesTest {
     }
 
     @Override
-    public void testService(String serviceFolderName, String serviceName) throws Exception {
+    public void testService(String serviceFolderName, String serviceName) throws IOException, InterruptedException, RestException {
         installServiceAndWait(excludedRecipesDir.getAbsolutePath() + "/" + serviceName, serviceName);
 
         String restUrl = getRestUrl();

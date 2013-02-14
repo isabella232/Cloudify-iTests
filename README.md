@@ -1,9 +1,11 @@
-SGTest Cloudify
+
+Cloudify-iTests
 ===========================
 
-Service Grid Cloudify test project
+Cloudify tests project
 
 
 Copyright and license
 ----------------------
 Copyright (c) 2012 GigaSpaces Technologies Ltd. All rights reserved.
+===============

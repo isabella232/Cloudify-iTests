@@ -29,7 +29,7 @@ public class MicrosoftAzureCloudService extends AbstractCloudService {
 
 	private final MicrosoftAzureRestClient azureClient;
 	private final String AZURE_SUBSCRIPTION_ID = certProperties.getProperty("AZURE_SUBSCRIPTION_ID");
-	private static final String PATH_TO_PFX = SGTestHelper.getSGTestRootDir() + CREDENTIALS_FOLDER + "/cloud/azure/azure-cert.pfx";
+	private final String PATH_TO_PFX = SGTestHelper.getSGTestRootDir() + CREDENTIALS_FOLDER + "/cloud/azure/" + AZURE_CERT_PFX;
 	private final String PFX_PASSWORD = certProperties.getProperty("PFX_PASSWORD");
 
 	private final String ADDRESS_SPACE = certProperties.getProperty("ADDRESS_SPACE");
@@ -263,7 +263,7 @@ public class MicrosoftAzureCloudService extends AbstractCloudService {
 	}
 
 	private void copyPrivateKeyToUploadFolder() throws IOException {
-		File pfxFilePath = new File(CREDENTIALS_FOLDER + "/cloud/azure/azure-cert.pfx");
+		File pfxFilePath = new File(CREDENTIALS_FOLDER + "/cloud/azure/" + AZURE_CERT_PFX);
 		File uploadDir = new File(getPathToCloudFolder() + "/upload");
 		FileUtils.copyFileToDirectory(pfxFilePath, uploadDir);
 	}

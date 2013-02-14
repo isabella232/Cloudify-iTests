@@ -82,7 +82,7 @@ public class Ec2CloudService extends JCloudsCloudService {
 		if (getRegion().contains("eu")) {
 			LogUtils.log("Working in eu region");
 			getProperties().put("locationId", "eu-west-1");
-			setKeyPair("sgtest-eu");
+			setKeyPair("ec2-sgtest-eu");
 			if (!getCloudName().contains("win")) {
 				getProperties().put("linuxImageId", DEFAULT_EU_WEST_LINUX_AMI);
 				getProperties().put("ubuntuImageId", DEFAULT_EU_WEST_UBUNTU_AMI);

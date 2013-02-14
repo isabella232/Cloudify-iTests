@@ -1,13 +1,12 @@
 package test.cli.cloudify.cloud.ec2;
 
-import java.io.IOException;
-
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-
 import test.cli.cloudify.cloud.NewAbstractCloudTest;
 import test.cli.cloudify.cloud.services.ec2.Ec2CloudService;
+
+import java.io.IOException;
 
 public class EuWestRegionEc2Test extends NewAbstractCloudTest {
 
@@ -42,7 +41,7 @@ public class EuWestRegionEc2Test extends NewAbstractCloudTest {
 	protected void customizeCloud() {
 		service = (Ec2CloudService) getService();
 		service.setRegion("eu");
-		service.setKeyPair("sgtest-eu");
+		service.setKeyPair("ec2-sgtest-eu");
 	} 
 
 }

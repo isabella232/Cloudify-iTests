@@ -120,11 +120,11 @@ public class JCloudsUtils {
 		
 		if(cloudName.equalsIgnoreCase("ec2")){
 			template = getTemplateBuilder().imageId("us-east-1/ami-76f0061f").minRam(1600).hardwareId("m1.small").locationId("us-east-1").build();
-			template.getOptions().as(EC2TemplateOptions.class).keyPair("ec2-sgtest").securityGroups("default");
+			template.getOptions().as(EC2TemplateOptions.class).keyPair("ec2-sgtest-us-east").securityGroups("default");
 		}
 		else if(cloudName.equalsIgnoreCase("ec2-win")){
 			template = getTemplateBuilder().imageId("us-east-1/ami-a6b81ccf").minRam(1600).hardwareId("m1.large").locationId("us-east-1c").build();
-			template.getOptions().as(EC2TemplateOptions.class).keyPair("ec2-sgtest").securityGroups("default");
+			template.getOptions().as(EC2TemplateOptions.class).keyPair("ec2-sgtest-us-east").securityGroups("default");
 		}
 		else if(cloudName.equalsIgnoreCase("rsopenstack"))
 			template = getTemplateBuilder().imageId("118").minRam(1600).hardwareId("4").build();

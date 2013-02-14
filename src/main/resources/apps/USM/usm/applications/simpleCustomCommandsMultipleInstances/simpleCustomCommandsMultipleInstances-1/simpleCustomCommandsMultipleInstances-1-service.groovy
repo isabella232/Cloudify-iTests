@@ -6,7 +6,11 @@ service {
 	type "UNDEFINED"
 	
 	lifecycle {	
-		start (["Win.*":"run.bat", "Linux":"run.sh"])
+		start "run.groovy"
+		startDetection {
+			println "running startDetector"
+			new File(context.serviceDirectory + "/marker.log").exists()
+		}
 	}
 
 	

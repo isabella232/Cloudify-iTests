@@ -29,7 +29,7 @@ public class MicrosoftAzureCloudService extends AbstractCloudService {
 
 	private final MicrosoftAzureRestClient azureClient;
 	private final String AZURE_SUBSCRIPTION_ID = certProperties.getProperty("AZURE_SUBSCRIPTION_ID");
-	private final String PATH_TO_PFX = SGTestHelper.getSGTestRootDir() + CREDENTIALS_FOLDER + "/cloud/azure/" + AZURE_CERT_PFX;
+	private final String PATH_TO_PFX = CREDENTIALS_FOLDER + "/cloud/azure/" + AZURE_CERT_PFX;
 	private final String PFX_PASSWORD = certProperties.getProperty("PFX_PASSWORD");
 
 	private final String ADDRESS_SPACE = certProperties.getProperty("ADDRESS_SPACE");

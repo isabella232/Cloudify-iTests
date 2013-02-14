@@ -2,13 +2,11 @@ package org.cloudifysource.quality.iTests.test.cli.cloudify.security;
 
 import java.io.IOException;
 
+import org.cloudifysource.quality.iTests.framework.utils.LocalCloudBootstrapper;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.AbstractSecuredLocalCloudTest;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
-
-import org.cloudifysource.quality.iTests.test.cli.cloudify.AbstractSecuredLocalCloudTest;
-import org.cloudifysource.quality.iTests.framework.utils.LocalCloudBootstrapper;
 
 /**
  * CLOUDIFY-1298

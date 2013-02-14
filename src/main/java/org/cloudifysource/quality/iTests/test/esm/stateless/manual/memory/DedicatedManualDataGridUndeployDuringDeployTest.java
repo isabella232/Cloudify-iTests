@@ -2,6 +2,9 @@ package org.cloudifysource.quality.iTests.test.esm.stateless.manual.memory;
 
 import java.io.File;
 
+import org.cloudifysource.quality.iTests.framework.utils.DeploymentUtils;
+import org.cloudifysource.quality.iTests.framework.utils.GsmTestUtils;
+import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.cloudifysource.quality.iTests.test.esm.AbstractFromXenToByonGSMTest;
 import org.openspaces.admin.pu.ProcessingUnit;
@@ -13,11 +16,6 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-
-import org.cloudifysource.quality.iTests.test.esm.AbstractFromXenToByonGSMTest;
-import org.cloudifysource.quality.iTests.framework.utils.DeploymentUtils;
-import org.cloudifysource.quality.iTests.framework.utils.GsmTestUtils;
-import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
 
 
 public class DedicatedManualDataGridUndeployDuringDeployTest extends AbstractFromXenToByonGSMTest {

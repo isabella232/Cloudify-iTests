@@ -1,18 +1,13 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.pu;
 
+import org.cloudifysource.dsl.utils.ServiceUtils;
+import org.cloudifysource.quality.iTests.framework.tools.SGTestHelper;
+import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.AbstractLocalCloudTest;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
 import org.openspaces.admin.gsc.GridServiceContainer;
 import org.openspaces.admin.pu.DeploymentStatus;
 import org.testng.annotations.Test;
-
-import org.cloudifysource.dsl.utils.ServiceUtils;
-
-import org.cloudifysource.quality.iTests.test.cli.cloudify.AbstractLocalCloudTest;
-import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
-
-import org.cloudifysource.quality.iTests.framework.tools.SGTestHelper;
-import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
 /**
  * StockDemoApplicationTest verifies the StockDemo application is installed properly.
  * The StockDemo application files are being created and placed in the SG apps folder

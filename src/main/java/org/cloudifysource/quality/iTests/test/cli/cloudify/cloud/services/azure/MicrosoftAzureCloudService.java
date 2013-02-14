@@ -1,21 +1,32 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.azure;
 
-import com.gigaspaces.internal.utils.StringUtils;
-import org.cloudifysource.quality.iTests.framework.tools.SGTestHelper;
-import org.cloudifysource.quality.iTests.framework.utils.IOUtils;
-import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.concurrent.TimeoutException;
+
 import org.apache.commons.io.FileUtils;
 import org.cloudifysource.esc.driver.provisioning.azure.client.MicrosoftAzureException;
 import org.cloudifysource.esc.driver.provisioning.azure.client.MicrosoftAzureRestClient;
 import org.cloudifysource.esc.driver.provisioning.azure.client.UUIDHelper;
-import org.cloudifysource.esc.driver.provisioning.azure.model.*;
-import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.AbstractCloudService;
+import org.cloudifysource.esc.driver.provisioning.azure.model.ConfigurationSet;
+import org.cloudifysource.esc.driver.provisioning.azure.model.ConfigurationSets;
+import org.cloudifysource.esc.driver.provisioning.azure.model.Deployment;
+import org.cloudifysource.esc.driver.provisioning.azure.model.Deployments;
+import org.cloudifysource.esc.driver.provisioning.azure.model.HostedService;
+import org.cloudifysource.esc.driver.provisioning.azure.model.HostedServices;
+import org.cloudifysource.esc.driver.provisioning.azure.model.NetworkConfigurationSet;
+import org.cloudifysource.esc.driver.provisioning.azure.model.Role;
+import org.cloudifysource.quality.iTests.framework.tools.SGTestHelper;
+import org.cloudifysource.quality.iTests.framework.utils.IOUtils;
+import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.AbstractCloudService;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.*;
-import java.util.concurrent.TimeoutException;
+import com.gigaspaces.internal.utils.StringUtils;
 
 public class MicrosoftAzureCloudService extends AbstractCloudService {
     private static final String AZURE_CERT_PROPERTIES = CREDENTIALS_FOLDER + "/cloud/azure/azure-cred.properties";

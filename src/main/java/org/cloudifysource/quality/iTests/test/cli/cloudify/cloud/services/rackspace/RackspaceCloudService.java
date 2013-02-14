@@ -1,18 +1,19 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.rackspace;
 
-import org.cloudifysource.quality.iTests.framework.utils.IOUtils;
-import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+
 import org.cloudifysource.esc.driver.provisioning.openstack.Node;
 import org.cloudifysource.esc.driver.provisioning.openstack.OpenstackException;
+import org.cloudifysource.quality.iTests.framework.utils.IOUtils;
+import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.AbstractCloudService;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.tools.openstack.OpenstackClient;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.tools.openstack.RackspaceClient;
-import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.AbstractCloudService;
-import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.tools.openstack.OpenstackClient;
-import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.tools.openstack.RackspaceClient;
-
-import java.io.IOException;
-import java.util.*;
 
 public class RackspaceCloudService extends AbstractCloudService {
 	private static final int DEFAULT_SERVER_SHUTDOWN_TIMEOUT = 5 * 60000;

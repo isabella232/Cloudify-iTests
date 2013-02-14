@@ -6,7 +6,13 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.cloudifysource.dsl.internal.CloudifyConstants;
+import org.cloudifysource.quality.iTests.framework.utils.ApplicationInstaller;
+import org.cloudifysource.quality.iTests.framework.utils.AssertUtils;
+import org.cloudifysource.quality.iTests.framework.utils.LocalCloudBootstrapper;
+import org.cloudifysource.quality.iTests.framework.utils.ProcessUtils;
+import org.cloudifysource.quality.iTests.framework.utils.ServiceInstaller;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils.ProcessResult;
 import org.hyperic.sigar.SigarException;
 import org.openspaces.admin.Admin;
 import org.openspaces.admin.AdminFactory;
@@ -15,14 +21,6 @@ import org.openspaces.admin.pu.ProcessingUnit;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
-
-import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
-import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils.ProcessResult;
-import org.cloudifysource.quality.iTests.framework.utils.ApplicationInstaller;
-import org.cloudifysource.quality.iTests.framework.utils.AssertUtils;
-import org.cloudifysource.quality.iTests.framework.utils.LocalCloudBootstrapper;
-import org.cloudifysource.quality.iTests.framework.utils.ProcessUtils;
-import org.cloudifysource.quality.iTests.framework.utils.ServiceInstaller;
 
 public class NewAbstractLocalCloudTest extends AbstractTestSupport {
 	

@@ -7,6 +7,10 @@ import java.net.UnknownHostException;
 import java.util.List;
 import java.util.Map;
 
+import org.cloudifysource.quality.iTests.framework.utils.AssertUtils;
+import org.cloudifysource.quality.iTests.framework.utils.AssertUtils.RepetitiveConditionProvider;
+import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
+import org.cloudifysource.quality.iTests.framework.utils.ScriptUtils;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.NewAbstractCloudTest;
 import org.cloudifysource.quality.iTests.test.webui.WebuiTestUtils;
@@ -16,9 +20,6 @@ import org.openspaces.admin.pu.DeploymentStatus;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-
-import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.NewAbstractCloudTest;
-import org.cloudifysource.quality.iTests.test.webui.WebuiTestUtils;
 
 import com.gigaspaces.webuitf.LoginPage;
 import com.gigaspaces.webuitf.MainNavigation;
@@ -47,11 +48,6 @@ import com.gigaspaces.webuitf.topology.physicalpanel.PhysicalPanel;
 import com.gigaspaces.webuitf.topology.recipes.RecipesPanel;
 import com.gigaspaces.webuitf.topology.recipes.selectionpanel.RecipeFolderNode;
 import com.j_spaces.kernel.PlatformVersion;
-
-import org.cloudifysource.quality.iTests.framework.utils.AssertUtils;
-import org.cloudifysource.quality.iTests.framework.utils.AssertUtils.RepetitiveConditionProvider;
-import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
-import org.cloudifysource.quality.iTests.framework.utils.ScriptUtils;
 
 public class Ec2WebuiCloudBasicTest extends NewAbstractCloudTest {
 	

@@ -1,16 +1,15 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.ec2;
 
-import org.cloudifysource.quality.iTests.framework.utils.IOUtils;
-import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
-import org.apache.commons.io.FileUtils;
-import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.JCloudsCloudService;
-import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.JCloudsCloudService;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+
+import org.apache.commons.io.FileUtils;
+import org.cloudifysource.quality.iTests.framework.utils.IOUtils;
+import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.JCloudsCloudService;
 
 public class Ec2CloudService extends JCloudsCloudService {
     private static final String EC2_CERT_PROPERTIES = CREDENTIALS_FOLDER + "/cloud/ec2/ec2-cred.properties";

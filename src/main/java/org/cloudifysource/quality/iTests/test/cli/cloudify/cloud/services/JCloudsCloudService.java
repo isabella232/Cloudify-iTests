@@ -51,7 +51,7 @@ public abstract class JCloudsCloudService extends AbstractCloudService {
 	
 		Properties overrides = new Properties();
 		
-		Set<Entry<String, Object>> entries = getCloud().getTemplates().get(getCloud().getConfiguration().getManagementMachineTemplate()).getOverrides().entrySet();
+		Set<Entry<String, Object>> entries = getCloud().getCloudCompute().getTemplates().get(getCloud().getConfiguration().getManagementMachineTemplate()).getOverrides().entrySet();
 		for (Entry<String, Object> entry : entries) {
 			overrides.setProperty(entry.getKey(), (String)entry.getValue());
 		}

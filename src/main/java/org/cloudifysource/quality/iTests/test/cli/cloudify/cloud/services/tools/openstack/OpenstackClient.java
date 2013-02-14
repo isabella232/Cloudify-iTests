@@ -21,11 +21,12 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.cloudifysource.dsl.cloud.Cloud;
-import org.cloudifysource.dsl.cloud.CloudTemplate;
+import org.cloudifysource.dsl.cloud.compute.ComputeTemplate;
 import org.cloudifysource.esc.driver.provisioning.MachineDetails;
 import org.cloudifysource.esc.driver.provisioning.openstack.FloatingIP;
 import org.cloudifysource.esc.driver.provisioning.openstack.Node;
 import org.cloudifysource.esc.driver.provisioning.openstack.OpenstackException;
+import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
@@ -37,8 +38,6 @@ import com.sun.jersey.api.client.UniformInterfaceException;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.config.ClientConfig;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
-
-import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
 
 /**************
  * A custom cloud driver for OpenStack, using keystone authentication. In order to be able to define a floating IP for a
@@ -362,7 +361,7 @@ public class OpenstackClient {
 	 * @param serverTemplate the cloud template to use for this server
 	 * @return the server id
 	 */
-	private MachineDetails newServer(final String token, final long endTime, final CloudTemplate serverTemplate)
+	private MachineDetails newServer(final String token, final long endTime, final ComputeTemplate serverTemplate)
 			throws Exception {
 
 		final String serverId = createServer(token, serverTemplate);
@@ -399,7 +398,7 @@ public class OpenstackClient {
 
 	}
 
-	private String createServer(final String token, final CloudTemplate serverTemplate)
+	private String createServer(final String token, final ComputeTemplate serverTemplate)
 			throws OpenstackException {
 		final String serverName = this.serverNamePrefix + System.currentTimeMillis();
 		final String securityGroup = getCustomTemplateValue(serverTemplate, OPENSTACK_SECURITYGROUP, null, false);
@@ -445,7 +444,7 @@ public class OpenstackClient {
 		}
 	}
 
-	private String getCustomTemplateValue(final CloudTemplate serverTemplate, final String key,
+	private String getCustomTemplateValue(final ComputeTemplate serverTemplate, final String key,
 			final String defaultValue, final boolean allowNull) {
 		final String value = (String) serverTemplate.getOptions().get(key);
 		if (value == null) {

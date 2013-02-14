@@ -1,3 +1,4 @@
+
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.byon;
 
 import java.io.BufferedReader;
@@ -19,19 +20,18 @@ import junit.framework.Assert;
 import org.apache.commons.io.FileUtils;
 import org.cloudifysource.dsl.internal.CloudifyConstants;
 import org.cloudifysource.dsl.internal.DSLUtils;
+import org.cloudifysource.quality.iTests.framework.utils.AssertUtils;
+import org.cloudifysource.quality.iTests.framework.utils.IOUtils;
+import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
+import org.cloudifysource.quality.iTests.framework.utils.SSHUtils;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.openspaces.admin.pu.ProcessingUnitInstance;
 import org.openspaces.admin.pu.ProcessingUnits;
 import org.openspaces.pu.service.ServiceDetails;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
-
-import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
-import org.cloudifysource.quality.iTests.framework.utils.AssertUtils;
-import org.cloudifysource.quality.iTests.framework.utils.IOUtils;
-import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
-import org.cloudifysource.quality.iTests.framework.utils.SSHUtils;
 
 public abstract class AbstractByonAddRemoveTemplatesTest extends AbstractByonCloudTest {
 	String[] mngMachinesIP;
@@ -334,7 +334,7 @@ public abstract class AbstractByonAddRemoveTemplatesTest extends AbstractByonClo
 		FileUtils.deleteQuietly(templateFolder);
 		File serviceFolder = new File(TEMP_SERVICES_DIR_PATH);
 		FileUtils.deleteQuietly(serviceFolder);
-		String remoteDir = getService().getCloud().getTemplates().get(DEFAULT_TEMPLATES[0]).getRemoteDirectory();
+		String remoteDir = getService().getCloud().getCloudCompute().getTemplates().get(DEFAULT_TEMPLATES[0]).getRemoteDirectory();
 		try{
 			removeAllAddedTemplates(getTemplateNamesFromOutput(listTemplates()));
 		}

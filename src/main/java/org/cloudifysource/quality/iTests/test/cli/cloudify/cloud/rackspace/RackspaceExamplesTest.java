@@ -22,8 +22,6 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.AbstractExamplesTest;
-
 /**
  * This class runs two test on Rackspace cloud.
  * 

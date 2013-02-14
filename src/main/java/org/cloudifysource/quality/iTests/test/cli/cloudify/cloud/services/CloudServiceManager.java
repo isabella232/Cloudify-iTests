@@ -22,12 +22,6 @@ import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.byon.D
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.ec2.Ec2CloudService;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.ec2.Ec2WinCloudService;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.hp.HpCloudService;
-import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.azure.MicrosoftAzureCloudService;
-import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.byon.ByonCloudService;
-import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.byon.DynamicByonCloudService;
-import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.ec2.Ec2CloudService;
-import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.ec2.Ec2WinCloudService;
-import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.hp.HpCloudService;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.rackspace.RackspaceCloudService;
 
 public class CloudServiceManager {

@@ -32,7 +32,7 @@ public class TooLargeInstanceTest extends AbstractPublicProvisioningByonCloudTes
 	public void testFaultyService() throws IOException, InterruptedException {
 			
 		int reservedMemoryCapacityPerManagementMachineInMB = getService().getCloud().getProvider().getReservedMemoryCapacityPerManagementMachineInMB();
-		int machineMemoryMB = getService().getCloud().getTemplates().get(DEFAULT_TEMPLATE_NAME).getMachineMemoryMB();
+		int machineMemoryMB = getService().getCloud().getCloudCompute().getTemplates().get(DEFAULT_TEMPLATE_NAME).getMachineMemoryMB();
 		
 		int memoryForServicesOnManagementMachine = machineMemoryMB - reservedMemoryCapacityPerManagementMachineInMB;
 				
@@ -48,7 +48,7 @@ public class TooLargeInstanceTest extends AbstractPublicProvisioningByonCloudTes
 	public void testFaultyApplication() throws IOException, InterruptedException {
 			
 		int reservedMemoryCapacityPerManagementMachineInMB = getService().getCloud().getProvider().getReservedMemoryCapacityPerManagementMachineInMB();
-		int machineMemoryMB = getService().getCloud().getTemplates().get(DEFAULT_TEMPLATE_NAME).getMachineMemoryMB();
+		int machineMemoryMB = getService().getCloud().getCloudCompute().getTemplates().get(DEFAULT_TEMPLATE_NAME).getMachineMemoryMB();
 		
 		int memoryForServicesOnManagementMachine = machineMemoryMB - reservedMemoryCapacityPerManagementMachineInMB;
 				

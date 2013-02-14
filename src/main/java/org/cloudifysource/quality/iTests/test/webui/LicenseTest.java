@@ -2,16 +2,13 @@ package org.cloudifysource.quality.iTests.test.webui;
 
 import java.net.UnknownHostException;
 
+import org.cloudifysource.quality.iTests.framework.utils.AssertUtils;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.AbstractLocalCloudTest;
 import org.testng.annotations.Test;
 
-import org.cloudifysource.quality.iTests.test.cli.cloudify.AbstractLocalCloudTest;
-
 import com.gigaspaces.webuitf.LoginPage;
 import com.gigaspaces.webuitf.dashboard.DashboardTab;
-
-import org.cloudifysource.quality.iTests.framework.utils.AssertUtils;
 
 public class LicenseTest extends AbstractLocalCloudTest {
 	

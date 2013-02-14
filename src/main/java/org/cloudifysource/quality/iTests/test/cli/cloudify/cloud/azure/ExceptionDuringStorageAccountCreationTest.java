@@ -7,16 +7,13 @@ import org.cloudifysource.esc.driver.provisioning.azure.client.MicrosoftAzureExc
 import org.cloudifysource.esc.driver.provisioning.azure.client.MicrosoftAzureRestClient;
 import org.cloudifysource.esc.driver.provisioning.azure.model.AffinityGroups;
 import org.cloudifysource.esc.driver.provisioning.azure.model.VirtualNetworkSites;
+import org.cloudifysource.quality.iTests.framework.utils.AssertUtils;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
-import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.NewAbstractCloudTest;
-import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.azure.MicrosoftAzureCloudService;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.Test;
-
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.NewAbstractCloudTest;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.CloudServiceManager;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.azure.MicrosoftAzureCloudService;
-import org.cloudifysource.quality.iTests.framework.utils.AssertUtils;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.Test;
 
 public class ExceptionDuringStorageAccountCreationTest extends NewAbstractCloudTest {
 	

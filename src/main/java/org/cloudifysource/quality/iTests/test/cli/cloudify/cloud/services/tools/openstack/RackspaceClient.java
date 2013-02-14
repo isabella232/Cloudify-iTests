@@ -20,11 +20,12 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.cloudifysource.dsl.cloud.Cloud;
-import org.cloudifysource.dsl.cloud.CloudTemplate;
+import org.cloudifysource.dsl.cloud.compute.ComputeTemplate;
 import org.cloudifysource.esc.driver.provisioning.CloudProvisioningException;
 import org.cloudifysource.esc.driver.provisioning.MachineDetails;
 import org.cloudifysource.esc.driver.provisioning.openstack.Node;
 import org.cloudifysource.esc.driver.provisioning.openstack.OpenstackException;
+import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -38,8 +39,6 @@ import com.sun.jersey.api.client.UniformInterfaceException;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.config.ClientConfig;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
-
-import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
 
 /**************
  * A custom cloud driver for RackStack OpenStack, using keystone authentication.
@@ -345,7 +344,7 @@ public class RackspaceClient {
 	 * @param serverTemplate the cloud template to use for this server
 	 * @return the server id
 	 */
-	private MachineDetails newServer(final String token, final long endTime, final CloudTemplate serverTemplate)
+	private MachineDetails newServer(final String token, final long endTime, final ComputeTemplate serverTemplate)
 			throws Exception {
 
 		final MachineDetails md = createServer(
@@ -379,7 +378,7 @@ public class RackspaceClient {
 
 	}
 
-	private MachineDetails createServer(final String token, final CloudTemplate serverTemplate)
+	private MachineDetails createServer(final String token, final ComputeTemplate serverTemplate)
 			throws OpenstackException {
 		final String serverName = this.serverNamePrefix + System.currentTimeMillis();
 		// Start the machine!

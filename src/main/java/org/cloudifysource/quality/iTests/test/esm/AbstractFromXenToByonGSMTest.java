@@ -3,9 +3,14 @@ package org.cloudifysource.quality.iTests.test.esm;
 import java.util.concurrent.TimeUnit;
 
 import org.cloudifysource.dsl.cloud.Cloud;
-import org.cloudifysource.dsl.cloud.CloudTemplate;
+import org.cloudifysource.dsl.cloud.compute.ComputeTemplate;
 import org.cloudifysource.esc.driver.provisioning.CloudifyMachineProvisioningConfig;
 import org.cloudifysource.esc.driver.provisioning.ElasticMachineProvisioningCloudifyAdapter;
+import org.cloudifysource.quality.iTests.framework.utils.AssertUtils;
+import org.cloudifysource.quality.iTests.framework.utils.ByonMachinesUtils;
+import org.cloudifysource.quality.iTests.framework.utils.GridServiceAgentsCounter;
+import org.cloudifysource.quality.iTests.framework.utils.GridServiceContainersCounter;
+import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.byon.AbstractByonCloudTest;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.byon.ByonCloudService;
 import org.openspaces.admin.gsa.GridServiceAgent;
@@ -26,14 +31,6 @@ import org.openspaces.grid.gsm.machines.plugins.events.MachineStartRequestedEven
 import org.openspaces.grid.gsm.machines.plugins.events.MachineStartedEvent;
 import org.openspaces.grid.gsm.machines.plugins.events.MachineStopRequestedEvent;
 import org.openspaces.grid.gsm.machines.plugins.events.MachineStoppedEvent;
-
-import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.byon.AbstractByonCloudTest;
-import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.byon.ByonCloudService;
-import org.cloudifysource.quality.iTests.framework.utils.AssertUtils;
-import org.cloudifysource.quality.iTests.framework.utils.ByonMachinesUtils;
-import org.cloudifysource.quality.iTests.framework.utils.GridServiceAgentsCounter;
-import org.cloudifysource.quality.iTests.framework.utils.GridServiceContainersCounter;
-import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
 
 public class AbstractFromXenToByonGSMTest extends AbstractByonCloudTest {
 	
@@ -238,12 +235,12 @@ public class AbstractFromXenToByonGSMTest extends AbstractByonCloudTest {
 		String templateName = "SMALL_LINUX";
 		ByonCloudService cloudService = getService();
 		Cloud cloud = cloudService.getCloud();
-		final CloudTemplate template = cloud.getTemplates().get(templateName);			
-		CloudTemplate managementTemplate = cloud.getTemplates().get(cloud.getConfiguration().getManagementMachineTemplate());
+		final ComputeTemplate template = cloud.getCloudCompute().getTemplates().get(templateName);			
+		ComputeTemplate managementTemplate = cloud.getCloudCompute().getTemplates().get(cloud.getConfiguration().getManagementMachineTemplate());
 		managementTemplate.getRemoteDirectory();
 		final CloudifyMachineProvisioningConfig config = new CloudifyMachineProvisioningConfig(
 				cloud, template, templateName,
-				managementTemplate.getRemoteDirectory());
+				managementTemplate.getRemoteDirectory(), null);
 		return config;
 	}
 	

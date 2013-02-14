@@ -10,8 +10,6 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.byon.AbstractByonCloudTest;
-
 public class DynamicByonBootstrapWithTwoMngMachinesTest extends AbstractByonCloudTest {
 	private static String MANAGEMENT_MACHINES;
 	

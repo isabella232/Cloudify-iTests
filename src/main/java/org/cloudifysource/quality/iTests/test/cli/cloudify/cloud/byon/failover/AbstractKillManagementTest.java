@@ -4,14 +4,6 @@ import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import org.cloudifysource.dsl.utils.ServiceUtils;
-import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
-import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.byon.AbstractByonCloudTest;
-import org.openspaces.admin.gsm.GridServiceManager;
-import org.openspaces.admin.machine.Machine;
-import org.openspaces.admin.pu.ProcessingUnit;
-
-import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.byon.AbstractByonCloudTest;
-import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.byon.ByonCloudService;
 import org.cloudifysource.quality.iTests.framework.utils.AssertUtils;
 import org.cloudifysource.quality.iTests.framework.utils.AssertUtils.RepetitiveConditionProvider;
 import org.cloudifysource.quality.iTests.framework.utils.IRepetitiveRunnable;
@@ -20,6 +12,12 @@ import org.cloudifysource.quality.iTests.framework.utils.ProcessingUnitUtils;
 import org.cloudifysource.quality.iTests.framework.utils.SSHUtils;
 import org.cloudifysource.quality.iTests.framework.utils.ScriptUtils;
 import org.cloudifysource.quality.iTests.framework.utils.WebUtils;
+import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.byon.AbstractByonCloudTest;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.byon.ByonCloudService;
+import org.openspaces.admin.gsm.GridServiceManager;
+import org.openspaces.admin.machine.Machine;
+import org.openspaces.admin.pu.ProcessingUnit;
 
 public abstract class AbstractKillManagementTest extends AbstractByonCloudTest {
 

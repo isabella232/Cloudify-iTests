@@ -1,17 +1,16 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.recipes;
 
-import org.cloudifysource.quality.iTests.framework.utils.ScriptUtils;
-import org.cloudifysource.dsl.Service;
-import org.cloudifysource.dsl.internal.DSLException;
-import org.cloudifysource.dsl.internal.ServiceReader;
-import org.cloudifysource.quality.iTests.test.cli.cloudify.AbstractLocalCloudTest;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
-import org.cloudifysource.quality.iTests.test.cli.cloudify.AbstractLocalCloudTest;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+
+import org.cloudifysource.dsl.Service;
+import org.cloudifysource.dsl.internal.DSLException;
+import org.cloudifysource.dsl.internal.ServiceReader;
+import org.cloudifysource.quality.iTests.framework.utils.ScriptUtils;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.AbstractLocalCloudTest;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
 public class RecipeTest extends AbstractLocalCloudTest {
 	private String recipesDirPath = ScriptUtils.getBuildPath() + "/recipes/services";

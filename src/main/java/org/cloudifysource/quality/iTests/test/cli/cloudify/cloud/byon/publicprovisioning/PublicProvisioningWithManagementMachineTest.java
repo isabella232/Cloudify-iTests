@@ -49,7 +49,7 @@ public class PublicProvisioningWithManagementMachineTest extends AbstractPublicP
 		int numberOfDesiredInstancesOnManagementMachine = 1;
 		
 		int reservedMemoryCapacityPerManagementMachineInMB = getService().getCloud().getProvider().getReservedMemoryCapacityPerManagementMachineInMB();
-		int machineMemoryMB = getService().getCloud().getTemplates().get(DEFAULT_TEMPLATE_NAME).getMachineMemoryMB();
+		int machineMemoryMB = getService().getCloud().getCloudCompute().getTemplates().get(DEFAULT_TEMPLATE_NAME).getMachineMemoryMB();
 		
 		int memoryForServicesOnManagementMachine = machineMemoryMB - reservedMemoryCapacityPerManagementMachineInMB;
 		int memoryPerServiceInstanceOnManagementMachine = memoryForServicesOnManagementMachine / numberOfDesiredInstancesOnManagementMachine;

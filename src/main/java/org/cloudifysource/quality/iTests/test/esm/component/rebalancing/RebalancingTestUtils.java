@@ -12,6 +12,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import org.cloudifysource.quality.iTests.framework.utils.GsmTestUtils;
 import org.cloudifysource.quality.iTests.test.data.Person;
 import org.cloudifysource.quality.iTests.test.esm.component.SlaEnforcementTestUtils;
 import org.openspaces.admin.Admin;
@@ -36,12 +37,7 @@ import org.openspaces.grid.gsm.rebalancing.RebalancingSlaPolicy;
 import org.openspaces.grid.gsm.rebalancing.RebalancingUtils;
 import org.testng.Assert;
 
-import org.cloudifysource.quality.iTests.test.data.Person;
-import org.cloudifysource.quality.iTests.test.esm.component.SlaEnforcementTestUtils;
-
 import com.gigaspaces.cluster.activeelection.SpaceMode;
-
-import org.cloudifysource.quality.iTests.framework.utils.GsmTestUtils;
 
 public class RebalancingTestUtils {
 

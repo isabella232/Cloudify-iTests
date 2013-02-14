@@ -9,7 +9,7 @@
 	<description>Cloudiy Testing Framework and tests</description>
 
     <properties>
-        <cloudify.home>${env.CLOUDIFY_HOME}7</cloudify.home>
+        <cloudify.home>${env.CLOUDIFY_HOME}</cloudify.home>
         <gsVersion>9.5.0-SNAPSHOT</gsVersion>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <cloudifyVersion>2.5.0-SNAPSHOT</cloudifyVersion>
@@ -25,7 +25,6 @@
     </repositories>
 
     <pluginRepositories>
-        <pluginRepository>
             <id>org.openspaces</id>
             <url>http://maven-repository.openspaces.org</url>
         </pluginRepository>
@@ -219,7 +218,7 @@
 		<profile>
 			<id>tgrid-sgtest-cloudify</id>
 			<activation>
-				<activeByDefault>true</activeByDefault>
+				<activeByDefault>false</activeByDefault>
 			</activation>
 			<dependencies>
 				<dependency>

@@ -80,8 +80,8 @@ echo %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER%
 xcopy %BUILD_LOCATION% X:\%BUILD_NUMBER%\%BUILD_FOLDER% /s /i /y
 xcopy %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER%\%SUITE_NAME% X:\%BUILD_NUMBER%\%SUITE_NAME% /s /i /y
 
-@echo cleaning local build folder
-rmdir %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER% /s /q
+@echo not cleaning local build folder
+@rem rmdir %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER% /s /q
 
 @if exist %USER_HOME%\gigaspaces-cloudify-%VERSION%-%MILESTONE% (
     rmdir %USER_HOME%\gigaspaces-cloudify-%VERSION%-%MILESTONE% /s /q

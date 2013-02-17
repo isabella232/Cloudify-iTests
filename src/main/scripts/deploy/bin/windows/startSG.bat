@@ -1,5 +1,4 @@
 @rem This script is used to run our Selenium Web-UI tests on a windows machine.
-@rem it uses the existing build.xml and run.xml of SGTest with configured run.properties.
 @rem Note: this script is static
 
 @title Executing Selenium tests

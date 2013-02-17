@@ -10,4 +10,5 @@
 /.settings/
 .classpath
 .project
-.idea
+.idea/**
+Cloudify-iTests.iml

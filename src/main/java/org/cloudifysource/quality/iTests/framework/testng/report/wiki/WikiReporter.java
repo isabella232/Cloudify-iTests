@@ -132,15 +132,6 @@ public class WikiReporter {
         	throw new RuntimeException("Failed to generate report - " + e, e);
         }
     }
-
-//    public static void main(String[] args) throws WikiConnectionException {
-//        String s = "sssssssssssssssssssssssssssssss";
-//        WikiPage page = new WikiPage("QA", null, "CLOUDIFY_SECURITY_kobi build_3985-63 - Regression report", s);
-//        WikiClient wikiClient = WikiClient.login("http://www.openspaces.org", "tgrid", "T@rid456");
-//        wikiClient.removePage(page);
-//        wikiClient.uploadPage(page);
-//        System.out.println("done");
-//    }
     
     /**
      * Create a summary page which contains all main data of all regressions.

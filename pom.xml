@@ -218,7 +218,6 @@
 	<profiles>
 		<profile>
 			<id>tgrid-cloudify-iTests</id>
-            <reports/>
 			<activation>
 				<activeByDefault>false</activeByDefault>
 			</activation>

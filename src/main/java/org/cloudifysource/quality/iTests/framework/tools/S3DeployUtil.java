@@ -72,7 +72,4 @@ public class S3DeployUtil {
         return properties;
     }
 
-//    public static void main(String[] args) {
-//        uploadLogFile(new File("D:\\Users\\kobi\\Desktop\\tmp"), "1111", "SG" ,"test");
-//    }
 }

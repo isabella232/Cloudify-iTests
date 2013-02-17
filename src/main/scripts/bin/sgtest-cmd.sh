@@ -19,7 +19,7 @@
 echo clouds=$SUPPORTED_CLOUDS
 
 mkdir ${BUILD_DIR}/../${SUITE_NAME}
-cd ${BUILD_DIR}/../SGTest
+cd ${BUILD_DIR}/../Cloudify-iTests
 
 mvn test -e -X -U -P tgrid-sgtest-cloudify \
 -Dsgtest.cloud.enabled=false \

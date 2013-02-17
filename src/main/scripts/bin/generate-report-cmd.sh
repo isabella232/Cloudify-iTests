@@ -8,7 +8,7 @@
  DEPLOY_ROOT_BIN_DIR=$6
  BUILD_LOG_URL=$7
 
-pushd ../local-builds/${BUILD_NUMBER}/SGTest
+pushd ../local-builds/${BUILD_NUMBER}/Cloudify-iTests
 
 TYPE=cloudify
 

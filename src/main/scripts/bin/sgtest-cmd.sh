@@ -22,22 +22,22 @@ mkdir ${BUILD_DIR}/../${SUITE_NAME}
 cd ${BUILD_DIR}/../Cloudify-iTests
 
 mvn test -e -X -U -P tgrid-cloudify-iTests \
--Dsgtest.cloud.enabled=false \
--Dsgtest.buildNumber=${BUILD_NUMBER} \
+-DiTests.cloud.enabled=false \
+-DiTests.buildNumber=${BUILD_NUMBER} \
 -Dcloudify.home=${BUILD_DIR} \
 -Dincludes=${INCLUDE} \
 -Dexcludes=${EXCLUDE} \
 -Djava.security.policy=policy/policy.all \
 -Djava.awt.headless=true \
--Dsgtest.suiteName=${SUITE_NAME} \
--Dsgtest.suiteId=${SUITE_ID} \
--Dsgtest.summary.dir=${BUILD_DIR}/../${SUITE_NAME} \
--Dsgtest.numOfSuites=${SUITE_NUMBER} \
+-DiTests.suiteName=${SUITE_NAME} \
+-DiTests.suiteId=${SUITE_ID} \
+-DiTests.summary.dir=${BUILD_DIR}/../${SUITE_NAME} \
+-DiTests.numOfSuites=${SUITE_NUMBER} \
 -Dorg.apache.commons.logging.Log=org.apache.commons.logging.impl.Jdk14Logger \
 -Dcom.gs.logging.level.config=true \
 -Djava.util.logging.config.file=/export/tgrid/sgtest3.0-cloudify/bin/..//logging/sgtest_logging.properties \
 -Dsgtest.buildFolder=../ \
--Dsgtest.url=http://192.168.9.121:8087/sgtest3.0-cloudify/ \
+-DiTests.url=http://192.168.9.121:8087/sgtest3.0-cloudify/ \
 -Dcom.gs.work=${SUITE_WORK_DIR} \
 -Dcom.gs.deploy=${SUITE_DEPLOY_DIR} \
 -Dec2.region=${EC2_REGION} \

@@ -23,7 +23,7 @@ public class SGTestNGListener extends TestListenerAdapter {
     
     @Override
     public void onStart(ITestContext iTestContext) {
-    	suiteName = System.getProperty("sgtest.suiteName");
+    	suiteName = System.getProperty("iTests.suiteName");
     }
 
     @Override
@@ -36,7 +36,7 @@ public class SGTestNGListener extends TestListenerAdapter {
         	testName = testMethodName;
         }
         if (suiteName == null) { // this is in case the suite has a @BeforeSuite method. which is invoked before the onStart is.
-        	suiteName = System.getProperty("sgtest.suiteName");
+        	suiteName = System.getProperty("iTests.suiteName");
         }
         LogUtils.log("Configuration Succeeded: " + configurationName);
         ZipUtils.unzipArchive(testMethodName, suiteName);
@@ -53,7 +53,7 @@ public class SGTestNGListener extends TestListenerAdapter {
         	testName = testMethodName;
         }
         if (suiteName == null) { // this is in case the suite has a @BeforeSuite method. which is invoked before the onStart is.
-        	suiteName = System.getProperty("sgtest.suiteName");
+        	suiteName = System.getProperty("iTests.suiteName");
         }
         LogUtils.log("Configuration Failed: " + configurationName, iTestResult.getThrowable());
         ZipUtils.unzipArchive(testMethodName, suiteName);

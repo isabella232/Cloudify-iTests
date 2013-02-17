@@ -14,17 +14,17 @@ import java.util.List;
  */
 public class LogFetcher {
     private static final String BUILD_FOLDER_KEY = "sgtest.buildFolder";
-    private static final String REPORT_URL_KEY = "sgtest.url";
+    private static final String REPORT_URL_KEY = "iTests.url";
     private static final String GIGASPACES_QUALITY_S3 = "http://gigaspaces-quality.s3.amazonaws.com/";
-    boolean isCloudEnabled = Boolean.parseBoolean(System.getProperty("sgtest.cloud.enabled", "false"));
+    boolean isCloudEnabled = Boolean.parseBoolean(System.getProperty("iTests.cloud.enabled", "false"));
 
     public LogFetcher() {
     }
 
     public List<TestLog> getLogs(ITestResult result) {
         List<TestLog> logs = new ArrayList<TestLog>();
-        String suiteName = System.getProperty("sgtest.suiteName");
-        String buildNumber = System.getProperty("sgtest.buildNumber");
+        String suiteName = System.getProperty("iTests.suiteName");
+        String buildNumber = System.getProperty("iTests.buildNumber");
         String testName = TestNGUtils.constructTestMethodName(result);
         File testDir = new File(getBuildFolder() + "/" + suiteName + "/" + testName);
         System.out.println("DEBUG before S3DeployUtil.uploadLogFile");

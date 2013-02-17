@@ -36,7 +36,7 @@ public class StockDemoApplicationTest extends NewAbstractCloudTest {
 	
 	@Override
 	protected void beforeBootstrap() throws Exception {
-		String suiteName = System.getProperty("sgtest.suiteName");
+		String suiteName = System.getProperty("iTests.suiteName");
 		if(suiteName != null && "CLOUDIFY_XAP".equalsIgnoreCase(suiteName)){
 			/* copy premium license to cloudify-overrides in order to run xap pu's */
 			String overridesFolder = getService().getPathToCloudFolder() + "/upload/cloudify-overrides";

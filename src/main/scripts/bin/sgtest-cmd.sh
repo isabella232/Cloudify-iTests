@@ -22,7 +22,7 @@ mkdir ${BUILD_DIR}/../${SUITE_NAME}
 cd ${BUILD_DIR}/../Cloudify-iTests
 
 mvn test -e -X -U -P tgrid-cloudify-iTests \
--Dsgtest.cloud.enabled=false \
+-DiTests.cloud.enabled=false \
 -Dsgtest.buildNumber=${BUILD_NUMBER} \
 -Dcloudify.home=${BUILD_DIR} \
 -Dincludes=${INCLUDE} \

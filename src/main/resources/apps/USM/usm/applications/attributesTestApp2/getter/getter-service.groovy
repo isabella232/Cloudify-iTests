@@ -1,4 +1,3 @@
-import test.data.Data
 service {
 	numInstances 1
 	maxAllowedInstances 1

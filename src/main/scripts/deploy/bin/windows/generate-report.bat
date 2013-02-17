@@ -15,8 +15,8 @@ pushd %SGTEST_HOME%
 
 set CLOUDIFY_HOME=%BUILD_LOCATION%
 
-call mvn exec:java -Dexec.mainClass="framework.testng.report.TestsReportMerger" -Dexec.args="%SUITE_NAME% %SGTEST_HOME%\..\%SUITE_NAME% %SGTEST_HOME%\..\%SUITE_NAME%" -Dcloudify.home=%CLOUDIFY_HOME%
+call mvn exec:java -Dexec.mainClass="org.cloudifysource.quality.iTests.framework.testng.report.TestsReportMerger" -Dexec.args="%SUITE_NAME% %SGTEST_HOME%\..\%SUITE_NAME% %SGTEST_HOME%\..\%SUITE_NAME%" -Dcloudify.home=%CLOUDIFY_HOME%
 
-call mvn exec:java -Dexec.mainClass="framework.testng.report.wiki.WikiReporter" -Dexec.args="%SGTEST_HOME%\..\%SUITE_NAME% %SUITE_TYPE% %BUILD_NUMBER% %MAJOR_VERSION% %MINOR_VERSION% %BUILD_LOG_URL%" -Dcloudify.home=%CLOUDIFY_HOME%
+call mvn exec:java -Dexec.mainClass="org.cloudifysource.quality.iTests.framework.testng.report.wiki.WikiReporter" -Dexec.args="%SGTEST_HOME%\..\%SUITE_NAME% %SUITE_TYPE% %BUILD_NUMBER% %MAJOR_VERSION% %MINOR_VERSION% %BUILD_LOG_URL%" -Dcloudify.home=%CLOUDIFY_HOME%
 
 popd

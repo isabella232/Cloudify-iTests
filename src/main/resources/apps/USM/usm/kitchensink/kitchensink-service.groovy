@@ -1,4 +1,4 @@
-import framework.utils.usm.StringWrapper
+import org.cloudifysource.quality.iTests.framework.utils.usm.StringWrapper
 import Helper
 
 // test for grab

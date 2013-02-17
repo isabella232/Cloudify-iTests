@@ -1,0 +1,17 @@
+<suite name="suite">
+	<test name="Chrome Test">
+		<packages>
+			<package name="test.webui.dashboard.alerts" />
+			<package name="test.webui.dashboard.grid" />
+			<package name="test.webui.dashboard.services" />
+			<package name="test.webui.services.deployment" />
+			<package name="test.webui.services.hosts" />
+			<package name="test.webui.services.pugrid" />
+			<package name="test.webui.topology.applicationmap"/>
+			<package name="test.webui.topology.healthpanel"/>
+			<package name="test.webui.topology.detailspanel"/>
+			<package name="test.webui.loadbalancer"/>
+			<package name="test.webui.topology.physicalpanel"/>
+		</packages>
+	</test>
+</suite>

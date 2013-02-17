@@ -2,22 +2,44 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.gigaspaces.quality.cloudify.sgtest</groupId>
-	<artifactId>SGTest</artifactId>
-	<name>SGTest</name>
-	<description>Service Grid Test project for Cloudify</description>
+	<groupId>org.cloudifysource.quality</groupId>
+	<artifactId>Cloudify-iTests</artifactId>
+	<name>Cloudify-iTests</name>
+    <version>3.0.0-SNAPSHOT</version>
+	<description>Cloudiy Testing Framework and tests</description>
 
-	<parent>
-		<groupId>com.gigaspaces.quality.sgtest</groupId>
-		<artifactId>SGTest-parent</artifactId>
-		<version>3.0.0-SNAPSHOT</version>
-		<relativePath>parent</relativePath>
-	</parent>
+    <properties>
+        <cloudify.home>D:\opt\cloudify\2.5.0\gigaspaces-cloudify-2.5.0-m7</cloudify.home>
+        <gsVersion>9.5.0-SNAPSHOT</gsVersion>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <cloudifyVersion>2.5.0-SNAPSHOT</cloudifyVersion>
+        <springVersion>3.1.3.RELEASE</springVersion>
+        <hibernateVersion>3.6.10.Final</hibernateVersion>
+    </properties>
 
-	<properties>
-		<cloudify.home>${env.CLOUDIFY_HOME}</cloudify.home>
-		<gsVersion>9.5.0-SNAPSHOT</gsVersion>
-	</properties>
+    <repositories>
+        <repository>
+            <id>openspaces</id>
+            <url>http://maven-repository.openspaces.org</url>
+        </repository>
+    </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>org.openspaces</id>
+            <url>http://maven-repository.openspaces.org</url>
+        </pluginRepository>
+    </pluginRepositories>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-entitymanager</artifactId>
+                <version>${hibernateVersion}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
 	<dependencies>
 		<dependency>
@@ -197,7 +219,7 @@
 		<profile>
 			<id>tgrid-sgtest-cloudify</id>
 			<activation>
-				<activeByDefault>false</activeByDefault>
+				<activeByDefault>true</activeByDefault>
 			</activation>
 			<dependencies>
 				<dependency>
@@ -297,7 +319,7 @@
 						</property>
 						<property>
 							<name>listener</name>
-							<value>framework.testng.SGTestNGListener,framework.testng.SGTestNgSuiteSplitter,framework.testng.report.TestNgReporterImpl</value>
+							<value>org.cloudifysource.quality.iTests.org.cloudifysource.quality.iTests.frameorg.cloudifysource.quality.iTests.frameworkng.SGTestNGListener,framework.testng.SGTestNgSuiteSplitter,framework.testng.report.TestNgReporterImpl</value>
 						</property>
 					</properties>
 					<systemProperties>
@@ -352,7 +374,6 @@
                         <svn>javasvn</svn>
                     </providerImplementations>
                 </configuration>
-
                 <dependencies>
                     <dependency>
                         <groupId>com.google.code.maven-scm-provider-svnjava</groupId>
@@ -360,6 +381,62 @@
                         <version>2.0.5</version>
                     </dependency>
                 </dependencies>
+            </plugin>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.3.2</version>
+                <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-install-plugin</artifactId>
+                <version>2.4</version>
+                <configuration>
+                    <createChecksum>true</createChecksum>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <version>2.7</version>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>2.2.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.cloudifysource</groupId>
+                <artifactId>s3client-maven-plugin</artifactId>
+                <version>1.3</version>
+                <configuration>
+                    <user>${user}</user>
+                    <key>${key}</key>
+                    <container>${container}</container>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>s3client</id>
+                        <goals>
+                            <goal>deploy</goal>
+                        </goals>
+                        <phase>deploy</phase>
+                    </execution>
+                </executions>
             </plugin>
 		</plugins>
 	</build>

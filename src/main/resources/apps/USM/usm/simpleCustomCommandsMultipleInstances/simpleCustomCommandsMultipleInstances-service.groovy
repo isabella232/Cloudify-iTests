@@ -1,4 +1,4 @@
-import test.cli.cloudify.MyException;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.MyException;
 
 service {
 	numInstances 1

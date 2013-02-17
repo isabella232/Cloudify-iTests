@@ -6,7 +6,7 @@
 	<artifactId>Cloudify-iTests</artifactId>
 	<name>Cloudify-iTests</name>
     <version>3.0.0-SNAPSHOT</version>
-	<description>Cloudiy Testing Framework and tests</description>
+	<description>Cloudiy Testing Framework and tests.</description>
 
     <properties>
         <cloudify.home>${env.CLOUDIFY_HOME}</cloudify.home>

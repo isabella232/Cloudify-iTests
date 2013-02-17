@@ -25,6 +25,7 @@
     </repositories>
 
     <pluginRepositories>
+        <pluginRepository>
             <id>org.openspaces</id>
             <url>http://maven-repository.openspaces.org</url>
         </pluginRepository>

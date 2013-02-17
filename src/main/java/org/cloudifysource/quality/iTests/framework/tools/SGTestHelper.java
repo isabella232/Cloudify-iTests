@@ -53,18 +53,18 @@ public class SGTestHelper {
 	
 	
 	public static String getSuiteName(){
-		return System.getProperty("sgtest.suiteName", "");
+		return System.getProperty("iTests.suiteName", "");
 	}
 	
 	public static String getSuiteId() {
-		return System.getProperty("sgtest.suiteId", "");
+		return System.getProperty("iTests.suiteId", "");
 	}
 	
 	//each suite has it's own work dir.
 	public static String getWorkDirName() {
 		String suiteDir = getSuiteName();
 		String suiteId = getSuiteId();
-		Integer numberOfSuite = Integer.getInteger("sgtest.numOfSuites",1);
+		Integer numberOfSuite = Integer.getInteger("iTests.numOfSuites",1);
 
 		if (StringUtils.isEmpty(suiteDir) || StringUtils.isEmpty(suiteId) || numberOfSuite == 1) {
 			return "work";

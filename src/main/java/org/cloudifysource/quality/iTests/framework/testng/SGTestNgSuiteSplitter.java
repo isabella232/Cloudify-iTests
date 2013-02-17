@@ -31,13 +31,13 @@ public class SGTestNgSuiteSplitter implements IMethodInterceptor {
         //end of bug
 
 
-        int NUM_OF_SUITES = Integer.getInteger("sgtest.numOfSuites", 1);
-        int SUITE_ID = Integer.getInteger("sgtest.suiteId", 0);
+        int NUM_OF_SUITES = Integer.getInteger("iTests.numOfSuites", 1);
+        int SUITE_ID = Integer.getInteger("iTests.suiteId", 0);
         int totalTests = context.getAllTestMethods().length;
 
 
-        LogUtils.log("SGTestNgSuiteSplitter - sysproperty key=\"sgtest.numOfSuites\" value=" + NUM_OF_SUITES);
-        LogUtils.log("SGTestNgSuiteSplitter - sysproperty key=\"sgtest.suiteId\" value=" + SUITE_ID);
+        LogUtils.log("SGTestNgSuiteSplitter - sysproperty key=\"iTests.numOfSuites\" value=" + NUM_OF_SUITES);
+        LogUtils.log("SGTestNgSuiteSplitter - sysproperty key=\"iTests.suiteId\" value=" + SUITE_ID);
         LogUtils.log("SGTestNgSuiteSplitter - total tests: " + totalTests);
 
         Map<Integer, List<IMethodInstance>> suites = new HashMap<Integer, List<IMethodInstance>>();

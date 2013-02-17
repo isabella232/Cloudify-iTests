@@ -97,8 +97,8 @@ public class HtmlMailReporter {
 //	 */
 //	public static void main(String[] args) {
 //		
-//        System.setProperty("sgtest.buildNumber", "1234-123");
-//        System.setProperty("sgtest.suiteName", "ServiceGrid");
+//        System.setProperty("iTests.buildNumber", "1234-123");
+//        System.setProperty("iTests.suiteName", "ServiceGrid");
 //        System.setProperty("sgtest.majorVersion", "9.0.0");
 //        System.setProperty("sgtest.minorVersion", "m1");
 //		

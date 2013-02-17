@@ -158,7 +158,7 @@ public class TestNgReporterImpl implements IReporter {
 
     private String getSuiteName(List<ISuite> suites) {
         if (!suites.isEmpty()) {
-            return System.getProperty("sgtest.suiteName") + System.getProperty("sgtest.suiteId");
+            return System.getProperty("iTests.suiteName") + System.getProperty("iTests.suiteId");
         } else {
             return "";
         }

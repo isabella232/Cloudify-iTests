@@ -216,7 +216,7 @@
 
 	<profiles>
 		<profile>
-			<id>tgrid-sgtest-cloudify</id>
+			<id>tgrid-cloudify-iTests</id>
 			<activation>
 				<activeByDefault>false</activeByDefault>
 			</activation>

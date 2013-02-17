@@ -42,15 +42,15 @@ xcopy %REMOTE_BUILD_DIR%\cloudify\1.5\gigaspaces-cloudify-%VERSION%-%MILESTONE%-
 @del %USER_HOME%\gigaspaces-cloudify-%VERSION%-%MILESTONE%-b%BUILD_VERSION%.zip
 
 
-@echo exporting SGTest
-@if %BRANCH_NAME%==trunk (
-	set SVN_SGTEST_REPOSITORY=svn://svn-srv/SVN/cloudify/trunk/quality/frameworks/SGTest
-) else ( 
-	set SVN_SGTEST_REPOSITORY=svn://svn-srv/SVN/cloudify/branches/%SVN_BRANCH_DIRECTORY%/%BRANCH_NAME%/quality/frameworks/SGTest
-)
+rem @echo exporting SGTest
+rem @if %BRANCH_NAME%==trunk (
+rem 	set SVN_SGTEST_REPOSITORY=svn://svn-srv/SVN/cloudify/trunk/quality/frameworks/SGTest
+rem ) else (
+rem 	set SVN_SGTEST_REPOSITORY=svn://svn-srv/SVN/cloudify/branches/%SVN_BRANCH_DIRECTORY%/%BRANCH_NAME%/quality/frameworks/SGTest
+rem )
 
 @mkdir %WEBUI_TMP_DIR%
-svn export --force %SVN_SGTEST_REPOSITORY% %SGTEST_HOME% 
+rem svn export --force %SVN_SGTEST_REPOSITORY% %SGTEST_HOME%
 
 call mvn scm:export -DconnectionUrl=scm:svn:svn://svn-srv/SVN/cloudify/trunk/quality/frameworks/SGTest-credentials -DexportDirectory=%BUILD_TEST_DIR%/../SGTest/src/main/resources/credentials
 

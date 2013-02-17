@@ -9,7 +9,7 @@
 	<description>Cloudiy Testing Framework and tests</description>
 
     <properties>
-        <cloudify.home>D:\opt\cloudify\2.5.0\gigaspaces-cloudify-2.5.0-m7</cloudify.home>
+        <cloudify.home>${env.CLOUDIFY_HOME}7</cloudify.home>
         <gsVersion>9.5.0-SNAPSHOT</gsVersion>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <cloudifyVersion>2.5.0-SNAPSHOT</cloudifyVersion>

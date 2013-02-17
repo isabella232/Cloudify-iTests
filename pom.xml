@@ -218,6 +218,7 @@
 	<profiles>
 		<profile>
 			<id>tgrid-cloudify-iTests</id>
+            <reports/>
 			<activation>
 				<activeByDefault>false</activeByDefault>
 			</activation>
@@ -297,7 +298,7 @@
 						<exclude>${excludes}</exclude>
 					</excludes>
 					<disableXmlReport>true</disableXmlReport>
-					<reportsDirectory>${sgtest.summary.dir}</reportsDirectory>
+					<reportsDirectory>${iTests.summary.dir}</reportsDirectory>
 					<reportFormat>brief</reportFormat>
 					<useFile>false</useFile>
 					<properties>
@@ -307,31 +308,31 @@
 						</property>
 						<property>
 							<name>suitename</name>
-							<value>${sgtest.suiteName}${sgtest.suiteId}</value>
+							<value>${iTests.suiteName}${iTests.suiteId}</value>
 						</property>
 						<property>
 							<name>testname</name>
-							<value>${sgtest.suiteName}${sgtest.suiteId}</value>
+							<value>${iTests.suiteName}${iTests.suiteId}</value>
 						</property>
 						<property>
 							<name>outputDir</name>
-							<value>${sgtest.summary.dir}</value>
+							<value>${iTests.summary.dir}</value>
 						</property>
 						<property>
 							<name>listener</name>
-							<value>org.cloudifysource.quality.iTests.org.cloudifysource.quality.iTests.frameorg.cloudifysource.quality.iTests.frameworkng.SGTestNGListener,framework.testng.SGTestNgSuiteSplitter,framework.testng.report.TestNgReporterImpl</value>
+							<value>org.cloudifysource.quality.iTests.framework.testng.SGTestNGListener,org.cloudifysource.quality.iTests.framework.testng.SGTestNgSuiteSplitter,org.cloudifysource.quality.iTests.framework.testng.report.TestNgReporterImpl</value>
 						</property>
 					</properties>
 					<systemProperties>
-						<sgtest.buildNumber>${sgtest.buildNumber}</sgtest.buildNumber>
-						<sgtest.suiteId>${sgtest.suiteId}</sgtest.suiteId>
-						<sgtest.numOfSuites>${sgtest.numOfSuites}</sgtest.numOfSuites>
+						<iTests.buildNumber>${iTests.buildNumber}</iTests.buildNumber>
+						<iTests.suiteId>${iTests.suiteId}</iTests.suiteId>
+						<iTests.numOfSuites>${iTests.numOfSuites}</iTests.numOfSuites>
 						<selenium.browser>${selenium.browser}</selenium.browser>
 						<org.apache.commons.logging.Log>org.apache.commons.logging.impl.Jdk14Logger</org.apache.commons.logging.Log>
 						<com.gs.logging.level.config>true</com.gs.logging.level.config>
 						<java.util.logging.config.file>${basedir}/src/config/sgtest_logging.properties</java.util.logging.config.file>
 						<sgtest.buildFolder>${sgtest.buildFolder}</sgtest.buildFolder>
-						<sgtest.url>http://192.168.9.121:8087/sgtest3.0-cloudify/</sgtest.url>
+						<iTests.url>http://192.168.9.121:8087/sgtest3.0-cloudify/</iTests.url>
 						<com.gs.work>${com.gs.work}</com.gs.work>
 						<com.gs.deploy>${com.gs.deploy}"</com.gs.deploy>
 						<ec2.region>${ec2.region}</ec2.region>

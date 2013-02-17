@@ -1,4 +1,4 @@
-import org.cloudifysource.quality.iTests.test.data.Data
+import test.data.Data
 service {
 	numInstances 2
 	maxAllowedInstances 2

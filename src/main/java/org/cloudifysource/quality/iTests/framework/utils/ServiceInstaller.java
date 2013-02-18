@@ -1,5 +1,7 @@
 package org.cloudifysource.quality.iTests.framework.utils;
 
+import java.io.IOException;
+
 import junit.framework.Assert;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
 
@@ -46,5 +48,13 @@ public class ServiceInstaller extends RecipeInstaller {
 
 	public String getServiceName() {
 		return serviceName;
+	}
+	
+	public String invoke(final String command) throws IOException, InterruptedException {
+		return CommandTestUtils.runCommandAndWait(connectCommand() + "invoke " + serviceName + " " + command);
+	}
+	
+	public String invoke(final String command, int instanceId) throws IOException, InterruptedException {
+		return CommandTestUtils.runCommandAndWait(connectCommand() + "invoke -instanceid " + instanceId + " " + serviceName + " " + command);
 	}
 }

@@ -63,157 +63,159 @@ cloud {
 
 	}
 
-	/***********
-	 * Cloud machine templates available with this cloud. 
-	 */
-	templates ([
-				// Mandatory. Template Name.
-				SMALL_LINUX : template{
-					// Mandatory. Amount of RAM available to machine.
-					machineMemoryMB 5850
-					// Mandatory. Files from the local directory will be copied to this directory on the remote machine.
-					remoteDirectory "/tmp/gs-files"
-					// Optional. template-generic credentials. Can be overridden by specific credentials on each node, in the nodesList section.
-					username username
-					password password
+	cloudCompute {
+		/***********
+		 * Cloud machine templates available with this cloud. 
+		 */
+		templates ([
+					// Mandatory. Template Name.
+					SMALL_LINUX : computeTemplate{
+						// Mandatory. Amount of RAM available to machine.
+						machineMemoryMB 5850
+						// Mandatory. Files from the local directory will be copied to this directory on the remote machine.
+						remoteDirectory "/tmp/gs-files"
+						// Optional. template-generic credentials. Can be overridden by specific credentials on each node, in the nodesList section.
+						username username
+						password password
 
-					// Mandatory. All files from this LOCAL directory will be copied to the remote machine directory.
-					localDirectory "upload"
+						// Mandatory. All files from this LOCAL directory will be copied to the remote machine directory.
+						localDirectory "upload"
 
-					// Mandatory for BYON.
-					custom ([
-								// Mandatory for BYON. The nodesList custom property lists the nodes that compose this cloud-like environment.
-								// For each node required:
-								// An alias for this node. can be static or use a template with an dynamic-index.
-								// The server's private (local) IP. can be a single IP, a list, a range or CIDR.
-								//Optional - user and password for the node. can be taken from general cloud configuration.
-								"nodesList" : ([
-									([
-										"id" : "byon-pc-lab{0}",
-										"host-list" : "SMALL_LINUX_HOSTS"
+						// Mandatory for BYON.
+						custom ([
+									// Mandatory for BYON. The nodesList custom property lists the nodes that compose this cloud-like environment.
+									// For each node required:
+									// An alias for this node. can be static or use a template with an dynamic-index.
+									// The server's private (local) IP. can be a single IP, a list, a range or CIDR.
+									//Optional - user and password for the node. can be taken from general cloud configuration.
+									"nodesList" : ([
+										([
+											"id" : "byon-pc-lab{0}",
+											"host-list" : "SMALL_LINUX_HOSTS"
+										])
 									])
 								])
-							])
 
-					// enable sudo.
-					privileged true
-					
-					env ([
-								"GIGASPACES_TEST_ENV" : myEnvVariable
-						])
+						// enable sudo.
+						privileged true
 
-				},
-				// Mandatory. Template Name.
-				TEMPLATE_1 : template{
-					// Mandatory. Amount of RAM available to machine.
-					machineMemoryMB 5850
-					// Mandatory. Files from the local directory will be copied to this directory on the remote machine.
-					remoteDirectory "/tmp/gs-files"
-					// Optional. template-generic credentials. Can be overridden by specific credentials on each node, in the nodesList section.
-					username username
-					password password
+						env ([
+									"GIGASPACES_TEST_ENV" : myEnvVariable
+								])
 
-					// Mandatory. All files from this LOCAL directory will be copied to the remote machine directory.
-					localDirectory "upload"
+					},
+					// Mandatory. Template Name.
+					TEMPLATE_1 : computeTemplate{
+						// Mandatory. Amount of RAM available to machine.
+						machineMemoryMB 5850
+						// Mandatory. Files from the local directory will be copied to this directory on the remote machine.
+						remoteDirectory "/tmp/gs-files"
+						// Optional. template-generic credentials. Can be overridden by specific credentials on each node, in the nodesList section.
+						username username
+						password password
 
-					// Mandatory for BYON.
-					custom ([
-								// Mandatory for BYON. The nodesList custom property lists the nodes that compose this cloud-like environment.
-								// For each node required:
-								// An alias for this node. can be static or use a template with an dynamic-index.
-								// The server's private (local) IP. can be a single IP, a list, a range or CIDR.
-								//Optional - user and password for the node. can be taken from general cloud configuration.
-								"nodesList" : ([
-									([
-										"id" : "byon-pc-lab{0}",
-										"host-list" : "TEMPLATE_1_HOSTS"
+						// Mandatory. All files from this LOCAL directory will be copied to the remote machine directory.
+						localDirectory "upload"
+
+						// Mandatory for BYON.
+						custom ([
+									// Mandatory for BYON. The nodesList custom property lists the nodes that compose this cloud-like environment.
+									// For each node required:
+									// An alias for this node. can be static or use a template with an dynamic-index.
+									// The server's private (local) IP. can be a single IP, a list, a range or CIDR.
+									//Optional - user and password for the node. can be taken from general cloud configuration.
+									"nodesList" : ([
+										([
+											"id" : "byon-pc-lab{0}",
+											"host-list" : "TEMPLATE_1_HOSTS"
+										])
 									])
 								])
-							])
 
-					// enable sudo.
-					privileged true
-					
-					env ([
-							"GIGASPACES_TEST_ENV" : myEnvVariable
-						])
+						// enable sudo.
+						privileged true
+
+						env ([
+									"GIGASPACES_TEST_ENV" : myEnvVariable
+								])
 
 
-				},
-				// Mandatory. Template Name.
-				TEMPLATE_2 : template{
-					// Mandatory. Amount of RAM available to machine.
-					machineMemoryMB 5850
-					// Mandatory. Files from the local directory will be copied to this directory on the remote machine.
-					remoteDirectory "/tmp/gs-files"
-					// Optional. template-generic credentials. Can be overridden by specific credentials on each node, in the nodesList section.
-					username username
-					password password
+					},
+					// Mandatory. Template Name.
+					TEMPLATE_2 : computeTemplate{
+						// Mandatory. Amount of RAM available to machine.
+						machineMemoryMB 5850
+						// Mandatory. Files from the local directory will be copied to this directory on the remote machine.
+						remoteDirectory "/tmp/gs-files"
+						// Optional. template-generic credentials. Can be overridden by specific credentials on each node, in the nodesList section.
+						username username
+						password password
 
-					// Mandatory. All files from this LOCAL directory will be copied to the remote machine directory.
-					localDirectory "upload"
+						// Mandatory. All files from this LOCAL directory will be copied to the remote machine directory.
+						localDirectory "upload"
 
-					// Mandatory for BYON.
-					custom ([
-								// Mandatory for BYON. The nodesList custom property lists the nodes that compose this cloud-like environment.
-								// For each node required:
-								// An alias for this node. can be static or use a template with an dynamic-index.
-								// The server's private (local) IP. can be a single IP, a list, a range or CIDR.
-								//Optional - user and password for the node. can be taken from general cloud configuration.
-								"nodesList" : ([
-									([
-										"id" : "byon-pc-lab{0}",
-										"host-list" : "TEMPLATE_2_HOSTS"
+						// Mandatory for BYON.
+						custom ([
+									// Mandatory for BYON. The nodesList custom property lists the nodes that compose this cloud-like environment.
+									// For each node required:
+									// An alias for this node. can be static or use a template with an dynamic-index.
+									// The server's private (local) IP. can be a single IP, a list, a range or CIDR.
+									//Optional - user and password for the node. can be taken from general cloud configuration.
+									"nodesList" : ([
+										([
+											"id" : "byon-pc-lab{0}",
+											"host-list" : "TEMPLATE_2_HOSTS"
+										])
 									])
 								])
-							])
 
-					// enable sudo.
-					privileged true
-					
-					env ([
-						"GIGASPACES_TEST_ENV" : myEnvVariable
-					])
+						// enable sudo.
+						privileged true
+
+						env ([
+									"GIGASPACES_TEST_ENV" : myEnvVariable
+								])
 
 
-				},
-				// Mandatory. Template Name.
-				TEMPLATE_3 : template{
-					// Mandatory. Amount of RAM available to machine.
-					machineMemoryMB 5850
-					// Mandatory. Files from the local directory will be copied to this directory on the remote machine.
-					remoteDirectory "/tmp/gs-files"
-					// Optional. template-generic credentials. Can be overridden by specific credentials on each node, in the nodesList section.
-					username username
-					password password
+					},
+					// Mandatory. Template Name.
+					TEMPLATE_3 : computeTemplate{
+						// Mandatory. Amount of RAM available to machine.
+						machineMemoryMB 5850
+						// Mandatory. Files from the local directory will be copied to this directory on the remote machine.
+						remoteDirectory "/tmp/gs-files"
+						// Optional. template-generic credentials. Can be overridden by specific credentials on each node, in the nodesList section.
+						username username
+						password password
 
-					// Mandatory. All files from this LOCAL directory will be copied to the remote machine directory.
-					localDirectory "upload"
+						// Mandatory. All files from this LOCAL directory will be copied to the remote machine directory.
+						localDirectory "upload"
 
-					// Mandatory for BYON.
-					custom ([
-								// Mandatory for BYON. The nodesList custom property lists the nodes that compose this cloud-like environment.
-								// For each node required:
-								// An alias for this node. can be static or use a template with an dynamic-index.
-								// The server's private (local) IP. can be a single IP, a list, a range or CIDR.
-								//Optional - user and password for the node. can be taken from general cloud configuration.
-								"nodesList" : ([
-									([
-										"id" : "byon-pc-lab{0}",
-										"host-list" : "TEMPLATE_3_HOSTS"
+						// Mandatory for BYON.
+						custom ([
+									// Mandatory for BYON. The nodesList custom property lists the nodes that compose this cloud-like environment.
+									// For each node required:
+									// An alias for this node. can be static or use a template with an dynamic-index.
+									// The server's private (local) IP. can be a single IP, a list, a range or CIDR.
+									//Optional - user and password for the node. can be taken from general cloud configuration.
+									"nodesList" : ([
+										([
+											"id" : "byon-pc-lab{0}",
+											"host-list" : "TEMPLATE_3_HOSTS"
+										])
 									])
 								])
-							])
 
-					// enable sudo.
-					privileged true
-					
-					env ([
-						"GIGASPACES_TEST_ENV" : myEnvVariable
-					])
+						// enable sudo.
+						privileged true
 
-				}
-			])
+						env ([
+									"GIGASPACES_TEST_ENV" : myEnvVariable
+								])
+
+					}
+				])
+	}
 
 	/*****************
 	 * Optional. Custom properties used to extend existing drivers or create new ones. 

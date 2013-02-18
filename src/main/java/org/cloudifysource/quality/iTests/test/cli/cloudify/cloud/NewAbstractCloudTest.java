@@ -10,6 +10,7 @@ import org.testng.annotations.BeforeMethod;
 
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils.ProcessResult;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.CloudService;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.CloudServiceManager;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.security.SecurityConstants;
@@ -295,6 +296,13 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 		serviceInstaller.waitForFinish(true);
 		serviceInstaller.expectToFail(expectToFail);
 		return serviceInstaller.install();
+	}
+	
+	protected ProcessResult invokeCommand(String serviceName, String commandName) 
+			throws IOException, InterruptedException {
+		ProcessResult result = 
+				CommandTestUtils.runCloudifyCommandAndWait("connect " + getRestUrl() + "; invoke " + serviceName + " " + commandName);
+		return result;
 	}
 
 	protected String getRestUrl() {

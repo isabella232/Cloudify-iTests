@@ -16,9 +16,9 @@ if [ ! -z `echo ${SUITE_NAME} | grep BigData` ] ; then TYPE=xap-premium; fi
 
 CLOUDIFY_HOME=/export/tgrid/sgtest3.0-cloudify/deploy/local-builds/${BUILD_NUMBER}/gigaspaces-${TYPE}-${MAJOR_VERSION}-${MINOR_VERSION}
 
-mvn exec:java -Dexec.mainClass="org.cloudifysource.quality.iTests.framework.testng.report.TestsReportMerger" -Dexec.args="${SUITE_TYPE} ${BUILD_NUMBER} ${SUITE_NAME} ${MAJOR_VERSION} ${MINOR_VERSION}" -Dcloudify.home=${CLOUDIFY_HOME}
+mvn exec:java -Dexec.mainClass="framework.testng.report.TestsReportMerger" -Dexec.args="${SUITE_NAME} ../${SUITE_NAME} ../${SUITE_NAME}" -Dcloudify.home=${CLOUDIFY_HOME}
 
-mvn exec:java -Dexec.mainClass="org.cloudifysource.quality.iTests.framework.testng.report.wiki.WikiReporter" -Dexec.args="${SUITE_TYPE} ${BUILD_NUMBER} ${SUITE_NAME} ${MAJOR_VERSION} ${MINOR_VERSION} ${BUILD_LOG_URL}" -Dcloudify.home=${CLOUDIFY_HOME}
+mvn exec:java -Dexec.mainClass="framework.testng.report.wiki.WikiReporter" -Dexec.args="../${SUITE_NAME} ${SUITE_TYPE} ${BUILD_NUMBER} ${MAJOR_VERSION} ${MINOR_VERSION} ${BUILD_LOG_URL}" -Dxap.home=${XAP_HOME}
 
 popd
 

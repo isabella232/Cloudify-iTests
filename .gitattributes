@@ -1,0 +1,9 @@
+# Expilicitly specify text file to be stored and normalized using lf line ending
+*.java text eol=lf
+*.groovy text eol=lf
+*.properties text eol=lf
+*.txt eol=lf
+
+# Leave binary files untouched
+*.jar binary
+*.exe binary

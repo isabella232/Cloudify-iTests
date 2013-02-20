@@ -1,4 +1,5 @@
 @rem This script is used to run our Selenium Web-UI tests on a windows machine.
+@rem it uses the existing build.xml and run.xml of SGTest with configured run.properties.
 @rem Note: this script is static
 
 @title Executing Selenium tests
@@ -27,12 +28,12 @@ set EC2_REGION=%9
 @echo setting up enviroment variables
 call set-build-env.bat
 
-@mkdir %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER%
-set SGTEST_HOME=%LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER%\SGTest
-
 @echo cleaning build folder..
 @if exist %BUILD_LOCATION% rmdir %BUILD_LOCATION% /s /q
 @if exist %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER% rmdir %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER% /s /q
+
+mkdir %BUILD_TEST_DIR%
+set SGTEST_HOME=%BUILD_TEST_DIR%\Cloudify-iTests
 
 @echo retrieving build from tarzan...
 @mkdir %BUILD_LOCATION%
@@ -41,18 +42,12 @@ xcopy %REMOTE_BUILD_DIR%\cloudify\1.5\gigaspaces-cloudify-%VERSION%-%MILESTONE%-
 @7z x %USER_HOME%\gigaspaces-cloudify-%VERSION%-%MILESTONE%-b%BUILD_VERSION%.zip -o%USER_HOME%
 @del %USER_HOME%\gigaspaces-cloudify-%VERSION%-%MILESTONE%-b%BUILD_VERSION%.zip
 
+@echo exporting Cloudify-iTests
+cd %BUILD_TEST_DIR%
+set GIT_SSL_NO_VERIFY=true
+call C:\Git\bin\git.exe clone --depth 1 https://github.com/CloudifySource/Cloudify-iTests.git
 
-rem @echo exporting SGTest
-rem @if %BRANCH_NAME%==trunk (
-rem 	set SVN_SGTEST_REPOSITORY=svn://svn-srv/SVN/cloudify/trunk/quality/frameworks/SGTest
-rem ) else (
-rem 	set SVN_SGTEST_REPOSITORY=svn://svn-srv/SVN/cloudify/branches/%SVN_BRANCH_DIRECTORY%/%BRANCH_NAME%/quality/frameworks/SGTest
-rem )
-
-@mkdir %WEBUI_TMP_DIR%
-rem svn export --force %SVN_SGTEST_REPOSITORY% %SGTEST_HOME%
-
-call mvn scm:export -DconnectionUrl=scm:svn:svn://svn-srv/SVN/cloudify/trunk/quality/frameworks/SGTest-credentials -DexportDirectory=%BUILD_TEST_DIR%/../SGTest/src/main/resources/credentials
+call mvn scm:export -DconnectionUrl=scm:svn:svn://svn-srv/SVN/cloudify/trunk/quality/frameworks/SGTest-credentials -DexportDirectory=%BUILD_TEST_DIR%/Cloudify-iTests/src/main/resources/credentials
 
 @call %SGTEST_HOME%\src\main\scripts\deploy\bin\windows\set-deploy-env.bat
 
@@ -79,8 +74,8 @@ echo %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER%
 xcopy %BUILD_LOCATION% X:\%BUILD_NUMBER%\%BUILD_FOLDER% /s /i /y
 xcopy %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER%\%SUITE_NAME% X:\%BUILD_NUMBER%\%SUITE_NAME% /s /i /y
 
-@echo not cleaning local build folder
-@rem rmdir %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER% /s /q
+@echo cleaning local build folder
+rmdir %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER% /s /q
 
 @if exist %USER_HOME%\gigaspaces-cloudify-%VERSION%-%MILESTONE% (
     rmdir %USER_HOME%\gigaspaces-cloudify-%VERSION%-%MILESTONE% /s /q

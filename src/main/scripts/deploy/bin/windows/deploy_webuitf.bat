@@ -2,28 +2,21 @@
 
 @rem - Replace default configuration files with local-machine specific files.
 
-set WEBUI_TMP_DIR=%SGTEST_CHECKOUT_FOLDER%\apps\webuitf
+set WEBUI_TMP_DIR=%SGTEST_CHECKOUT_FOLDER%\apps
 
-@echo exporting webuitf
-
-@if %BRANCH_NAME%==trunk (
-	set SVN_WEBUITF_REPOSITORY=svn://pc-lab14/SVN/xap/trunk/quality/frameworks/webuitf
-) else ( 
-	set SVN_WEBUITF_REPOSITORY=svn://pc-lab14/SVN/xap/branches/%SVN_BRANCH_DIRECTORY%/%BRANCH_NAME%/quality/frameworks/webuitf
-)
-
-@rem for /f "tokens=2" %%i in ('svn info -rHEAD %SVN_WEBUITF_REPOSITORY%^|find "Revision"') do @set REVISION=%%i
-@rem set /p PREV_REVISION=<\\tarzan\tgrid\webuitf.revision
-@rem if %REVISION% == %PREV_REVISION% goto:_skip
-@rem @echo %REVISION% > \\tarzan\tgrid\webuitf.revision
-
+@echo cloning webuitf
 
 @mkdir %WEBUI_TMP_DIR%
-@svn export %SVN_WEBUITF_REPOSITORY% %WEBUI_TMP_DIR% --force
+set GIT_SSL_NO_VERIFY=true
+pushd %WEBUI_TMP_DIR%
+call C:\Git\bin\git.exe clone --depth 1 https://github.com/CloudifySource/Cloudify-iTests-webuitf.git
+popd
+set Cloudify_iTests_webuitf=%WEBUI_TMP_DIR%/Cloudify-iTests-webuitf
 
 @echo deploying webuitf...
 pushd %WEBUI_TMP_DIR%
 mvn clean install s3client:deploy -U
+rmdir /s /q %WEBUI_TMP_DIR%
 popd
 
 

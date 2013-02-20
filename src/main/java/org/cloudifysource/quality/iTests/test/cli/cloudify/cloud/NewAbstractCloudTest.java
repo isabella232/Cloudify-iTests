@@ -1,73 +1,70 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud;
 
-import java.io.File;
-import java.io.IOException;
-
-import org.openspaces.admin.Admin;
-import org.testng.Assert;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeMethod;
-
+import com.gigaspaces.internal.utils.StringUtils;
+import org.cloudifysource.dsl.Service;
+import org.cloudifysource.dsl.internal.DSLException;
+import org.cloudifysource.dsl.internal.ServiceReader;
+import org.cloudifysource.dsl.internal.packaging.PackagingException;
+import org.cloudifysource.quality.iTests.framework.utils.*;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils.ProcessResult;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.CloudService;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.CloudServiceManager;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.security.SecurityConstants;
+import org.openspaces.admin.Admin;
+import org.testng.Assert;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
 
-import com.gigaspaces.internal.utils.StringUtils;
-
-import org.cloudifysource.quality.iTests.framework.utils.ApplicationInstaller;
-import org.cloudifysource.quality.iTests.framework.utils.AssertUtils;
-import org.cloudifysource.quality.iTests.framework.utils.CloudBootstrapper;
-import org.cloudifysource.quality.iTests.framework.utils.DumpUtils;
-import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
-import org.cloudifysource.quality.iTests.framework.utils.ScriptUtils;
-import org.cloudifysource.quality.iTests.framework.utils.ServiceInstaller;
+import java.io.File;
+import java.io.IOException;
 
 public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 
-	private static final int TEN_SECONDS_IN_MILLIS = 10000;
+    private static final int TEN_SECONDS_IN_MILLIS = 10000;
 
-	private static final int MAX_SCAN_RETRY = 3;
+    private static final int SERVICE_INSTALLATION_TIMEOUT_IN_MINUTES = 10;
 
-	protected CloudService cloudService;
+    private static final int MAX_SCAN_RETRY = 3;
 
-	protected void customizeCloud() throws Exception {};
+    protected CloudService cloudService;
 
-	protected void beforeBootstrap() throws Exception {}
+    protected void customizeCloud() throws Exception {}
 
-	protected void afterBootstrap() throws Exception {} 
+    protected void beforeBootstrap() throws Exception {}
 
-	protected void beforeTeardown() throws Exception {}
+    protected void afterBootstrap() throws Exception {}
 
-	protected void afterTeardown() throws Exception {}
+    protected void beforeTeardown() throws Exception {}
+
+    protected void afterTeardown() throws Exception {}
 
 
-	/******
-	 * Returns the name of the cloud, as used in the bootstrap-cloud command.
-	 * 
-	 * @return
-	 */
-	protected abstract String getCloudName();
+    /******
+     * Returns the name of the cloud, as used in the bootstrap-cloud command.
+     *
+     * @return
+     */
+    protected abstract String getCloudName();
 
-	/********
-	 * Indicates if the cloud used in this test is reusable - which means it may have already been bootstrapped and can
-	 * be reused. Non reusable clouds are bootstrapped at the beginning of the class, and torn down at its end. Reusable
-	 * clouds are torn down when the suite ends.
-	 * 
-	 * @return
-	 */
-	protected abstract boolean isReusableCloud();
+    /********
+     * Indicates if the cloud used in this test is reusable - which means it may have already been bootstrapped and can
+     * be reused. Non reusable clouds are bootstrapped at the beginning of the class, and torn down at its end. Reusable
+     * clouds are torn down when the suite ends.
+     *
+     * @return
+     */
+    protected abstract boolean isReusableCloud();
 
-	@BeforeClass(alwaysRun = true)
-    public void overrideCloudifyJars() throws Exception {  
+    @BeforeClass(alwaysRun = true)
+    public void overrideCloudifyJars() throws Exception {
         if(System.getProperty("cloudify.override") != null) {
             buildAndCopyCloudifyJars(getCloudName());
         }
     }
-	
-	private void buildAndCopyCloudifyJars(String cloudName) throws Exception{
+
+    private void buildAndCopyCloudifyJars(String cloudName) throws Exception{
         String cloudifySourceDir = ScriptUtils.getCloudifySourceDir() + "cloudify";
         String prefix = "";
         String extension = "";
@@ -75,12 +72,12 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
             prefix = getPrefix(System.getenv("M2_HOME"));
             extension = ".bat";
         }
-	    ScriptUtils.startLocalProcess(cloudifySourceDir, (prefix + "mvn" + extension + " compile package -DskipTests").split(" "));
-	    if(ScriptUtils.isWindows()) {	        
-	        prefix = getPrefix(System.getenv("ANT_HOME"));
-	    }
-	    ScriptUtils.startLocalProcess(cloudifySourceDir, (prefix + "ant" + extension + " -f copy_jars_local.xml \"Copy Cloudify jars to install dir\"").split(" "));
-	    ScriptUtils.startLocalProcess(cloudifySourceDir, (prefix + "ant" + extension + " -f copy_jars_local.xml \"Copy Cloudify jars to " + getCloudName() + " upload dir\"").split(" "));
+        ScriptUtils.startLocalProcess(cloudifySourceDir, (prefix + "mvn" + extension + " compile package -DskipTests").split(" "));
+        if(ScriptUtils.isWindows()) {
+            prefix = getPrefix(System.getenv("ANT_HOME"));
+        }
+        ScriptUtils.startLocalProcess(cloudifySourceDir, (prefix + "ant" + extension + " -f copy_jars_local.xml \"Copy Cloudify jars to install dir\"").split(" "));
+        ScriptUtils.startLocalProcess(cloudifySourceDir, (prefix + "ant" + extension + " -f copy_jars_local.xml \"Copy Cloudify jars to " + getCloudName() + " upload dir\"").split(" "));
     }
 
     private String getPrefix(String homeVar) {
@@ -88,272 +85,291 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
         return "cmd /c call " + homeVar + s + "bin" + s;
     }
 
-    
+
 
     @BeforeMethod
-	public void beforeTest() {	
-		LogUtils.log("Creating test folder");
-	}
+    public void beforeTest() {
+        LogUtils.log("Creating test folder");
+    }
 
-	public CloudService getService() {
-		return cloudService;
-	}	
+    public CloudService getService() {
+        return cloudService;
+    }
 
-	protected void bootstrap() throws Exception {
-		bootstrap(null, null);
-	}
-	
-	protected void bootstrap(CloudBootstrapper bootstrapper) throws Exception {
-		bootstrap(null, bootstrapper);
-	}
-	
-	protected void bootstrap(CloudService service) throws Exception {
-		bootstrap(service, null);
-	}
+    protected void bootstrap() throws Exception {
+        bootstrap(null, null);
+    }
 
-	protected void bootstrap(CloudService service, CloudBootstrapper bootstrapper) throws Exception {
-		if (this.isReusableCloud()) {
-			throw new UnsupportedOperationException(this.getClass().getName() + "Requires reusable clouds, which are not supported yet");
-		}
+    protected void bootstrap(CloudBootstrapper bootstrapper) throws Exception {
+        bootstrap(null, bootstrapper);
+    }
 
-		if (service == null) { // use the default cloud service if non is specified
-			this.cloudService = CloudServiceManager.getInstance().getCloudService(this.getCloudName());
-		}
-		else {
-			this.cloudService = service; // use the custom service to execute bootstrap and teardown commands
-		}
-		if (bootstrapper != null) { // use the custom bootstrapper
-			this.cloudService.setBootstrapper(bootstrapper);
-		}
+    protected void bootstrap(CloudService service) throws Exception {
+        bootstrap(service, null);
+    }
 
-		this.cloudService.init(this.getClass().getSimpleName().toLowerCase());
+    protected void bootstrap(CloudService service, CloudBootstrapper bootstrapper) throws Exception {
+        if (this.isReusableCloud()) {
+            throw new UnsupportedOperationException(this.getClass().getName() + "Requires reusable clouds, which are not supported yet");
+        }
 
-		LogUtils.log("Customizing cloud");
-		customizeCloud();
+        if (service == null) { // use the default cloud service if non is specified
+            this.cloudService = CloudServiceManager.getInstance().getCloudService(this.getCloudName());
+        }
+        else {
+            this.cloudService = service; // use the custom service to execute bootstrap and teardown commands
+        }
+        if (bootstrapper != null) { // use the custom bootstrapper
+            this.cloudService.setBootstrapper(bootstrapper);
+        }
 
-		beforeBootstrap();
-		this.cloudService.setMachinePrefix(System.getProperty("user.name") + "-" + this.getClass().getSimpleName().toLowerCase() + "-");
-		this.cloudService.bootstrapCloud();
+        this.cloudService.init(this.getClass().getSimpleName().toLowerCase());
 
-		afterBootstrap();
-	}
+        LogUtils.log("Customizing cloud");
+        customizeCloud();
 
-	protected void teardown() throws Exception {
+        beforeBootstrap();
+        this.cloudService.setMachinePrefix(System.getProperty("user.name") + "-" + this.getClass().getSimpleName().toLowerCase() + "-");
+        this.cloudService.bootstrapCloud();
 
-		beforeTeardown();
+        afterBootstrap();
+    }
 
-		if (this.cloudService == null) {
-			LogUtils.log("No teardown was executed as the cloud instance for this class was not created");
-			return;
-		} 
-		this.cloudService.teardownCloud();
-		afterTeardown();
-	}
-	
-	protected void teardown(Admin admin) throws Exception {
+    protected void teardown() throws Exception {
 
-		beforeTeardown();
+        beforeTeardown();
 
-		if (this.cloudService == null) {
-			LogUtils.log("No teardown was executed as the cloud instance for this class was not created");
-		} 
-		this.cloudService.teardownCloud(admin);
-		afterTeardown();
-	}
+        if (this.cloudService == null) {
+            LogUtils.log("No teardown was executed as the cloud instance for this class was not created");
+            return;
+        }
+        this.cloudService.teardownCloud();
+        afterTeardown();
+    }
 
+    protected void teardown(Admin admin) throws Exception {
 
-	protected void doSanityTest(String applicationFolderName, String applicationName) throws IOException, InterruptedException {
-		LogUtils.log("installing application " + applicationName + " on " + cloudService.getCloudName());
-		String applicationPath = ScriptUtils.getBuildPath() + "/recipes/apps/" + applicationFolderName;
-		installApplicationAndWait(applicationPath, applicationName);
-		uninstallApplicationAndWait(applicationName);
-		scanForLeakedAgentNodes();
-	}
+        beforeTeardown();
 
-	protected void doSanityTest(String applicationFolderName, String applicationName, final int timeout) throws IOException, InterruptedException {
-		LogUtils.log("installing application " + applicationName + " on " + cloudService.getCloudName());
-		String applicationPath = ScriptUtils.getBuildPath() + "/recipes/apps/" + applicationFolderName;
-		installApplicationAndWait(applicationPath, applicationName, timeout);
-		uninstallApplicationIfFound(applicationName);
-		scanForLeakedAgentNodes();
-	}
-
-	protected void scanForLeakedAgentNodes() {
-
-		if (cloudService == null) {
-			return;
-		}
-
-		// We will give a short timeout to give the ESM 
-		// time to recognize that he needs to shutdown the machine.
-		try {
-			Thread.sleep(TEN_SECONDS_IN_MILLIS);
-		} catch (InterruptedException e) {
-		}
-
-		Throwable first = null;
-		for (int i = 0 ; i < MAX_SCAN_RETRY ; i++) {
-			try {
-				boolean leakedAgentNodesScanResult = this.cloudService.scanLeakedAgentNodes();
-				if (leakedAgentNodesScanResult == true) {
-					return;
-				} else {
-					Assert.fail("Leaked nodes were found!");
-				}
-				break;
-			} catch (final Exception t) {
-				first = t;
-				LogUtils.log("Failed scaning for leaked nodes. attempt number " + (i + 1) , t);
-			}
-		}
-		if (first != null) {
-			Assert.fail("Failed scanning for leaked nodes after " + MAX_SCAN_RETRY + " attempts. First exception was --> " + first.getMessage(), first);
-		}
-	}
-	
-	protected void installApplicationAndWait(String applicationName) throws IOException, InterruptedException {
-		ApplicationInstaller applicationInstaller = new ApplicationInstaller(getRestUrl(), applicationName);
-		applicationInstaller.waitForFinish(true);
-		applicationInstaller.install();
-	}
-
-	protected void installApplicationAndWait(String applicationPath, String applicationName) throws IOException, InterruptedException {
-		ApplicationInstaller applicationInstaller = new ApplicationInstaller(getRestUrl(), applicationName);
-		applicationInstaller.recipePath(applicationPath);
-		applicationInstaller.waitForFinish(true);
-		applicationInstaller.install();
-	}
-
-	protected void uninstallApplicationAndWait(String applicationName) throws IOException, InterruptedException {
-		ApplicationInstaller applicationInstaller = new ApplicationInstaller(getRestUrl(), applicationName);
-		applicationInstaller.waitForFinish(true);
-		applicationInstaller.uninstall();
-	}
-
-	protected void uninstallApplicationIfFound(String applicationName) throws IOException, InterruptedException {
-		ApplicationInstaller applicationInstaller = new ApplicationInstaller(getRestUrl(), applicationName);
-		applicationInstaller.waitForFinish(true);
-		applicationInstaller.uninstallIfFound();
-	}
-
-	protected void installApplicationAndWait(String applicationPath, String applicationName, int timeout) throws IOException, InterruptedException {
-		ApplicationInstaller applicationInstaller = new ApplicationInstaller(getRestUrl(), applicationName);
-		applicationInstaller.recipePath(applicationPath);
-		applicationInstaller.waitForFinish(true);
-		applicationInstaller.timeoutInMinutes(timeout);
-		applicationInstaller.install();
-	}
-
-	protected void installApplicationAndWait(String applicationPath, String applicationName, int timeout , boolean expectToFail) throws IOException, InterruptedException {
-		ApplicationInstaller applicationInstaller = new ApplicationInstaller(getRestUrl(), applicationName);
-		applicationInstaller.recipePath(applicationPath);
-		applicationInstaller.waitForFinish(true);
-		applicationInstaller.expectToFail(expectToFail);
-		applicationInstaller.timeoutInMinutes(timeout);
-		applicationInstaller.install();		
-	}
+        if (this.cloudService == null) {
+            LogUtils.log("No teardown was executed as the cloud instance for this class was not created");
+        }
+        this.cloudService.teardownCloud(admin);
+        afterTeardown();
+    }
 
 
-	protected void installServiceAndWait(String servicePath, String serviceName) throws IOException, InterruptedException {
-		ServiceInstaller serviceInstaller = new ServiceInstaller(getRestUrl(), serviceName);
-		serviceInstaller.recipePath(servicePath);
-		serviceInstaller.waitForFinish(true);
-		serviceInstaller.install();
-	}
+    protected void doSanityTest(String applicationFolderName, String applicationName) throws IOException, InterruptedException {
+        LogUtils.log("installing application " + applicationName + " on " + cloudService.getCloudName());
+        String applicationPath = ScriptUtils.getBuildPath() + "/recipes/apps/" + applicationFolderName;
+        installApplicationAndWait(applicationPath, applicationName);
+        uninstallApplicationAndWait(applicationName);
+        scanForLeakedAgentNodes();
+    }
 
-	protected void uninstallServiceAndWait(String serviceName) throws IOException, InterruptedException {
-		ServiceInstaller serviceInstaller = new ServiceInstaller(getRestUrl(), serviceName);
-		serviceInstaller.waitForFinish(true);
-		serviceInstaller.uninstall();
-	}
+    protected void doSanityTest(String applicationFolderName, String applicationName, final int timeout) throws IOException, InterruptedException {
+        LogUtils.log("installing application " + applicationName + " on " + cloudService.getCloudName());
+        String applicationPath = ScriptUtils.getBuildPath() + "/recipes/apps/" + applicationFolderName;
+        installApplicationAndWait(applicationPath, applicationName, timeout);
+        uninstallApplicationIfFound(applicationName);
+        scanForLeakedAgentNodes();
+    }
 
-	protected void uninstallServiceIfFound(String serviceName) throws IOException, InterruptedException {
-		ServiceInstaller serviceInstaller = new ServiceInstaller(getRestUrl(), serviceName);
-		serviceInstaller.waitForFinish(true);
-		serviceInstaller.uninstallIfFound();
-	}
+    protected void scanForLeakedAgentNodes() {
 
-	protected void installServiceAndWait(String servicePath, String serviceName, int timeout) throws IOException, InterruptedException {
-		ServiceInstaller serviceInstaller = new ServiceInstaller(getRestUrl(), serviceName);
-		serviceInstaller.recipePath(servicePath);
-		serviceInstaller.waitForFinish(true);
-		serviceInstaller.timeoutInMinutes(timeout);
-		serviceInstaller.install();
-	}
+        if (cloudService == null) {
+            return;
+        }
 
-	protected String installServiceAndWait(String servicePath, String serviceName, int timeout , boolean expectToFail) throws IOException, InterruptedException {
-		ServiceInstaller serviceInstaller = new ServiceInstaller(getRestUrl(), serviceName);
-		serviceInstaller.recipePath(servicePath);
-		serviceInstaller.waitForFinish(true);
-		serviceInstaller.expectToFail(expectToFail);
-		serviceInstaller.timeoutInMinutes(timeout);
-		return serviceInstaller.install();
-	}
-	
-	protected String installServiceAndWait(String servicePath, String serviceName, boolean expectToFail) throws IOException, InterruptedException {
-		ServiceInstaller serviceInstaller = new ServiceInstaller(getRestUrl(), serviceName);
-		serviceInstaller.recipePath(servicePath);
-		serviceInstaller.waitForFinish(true);
-		serviceInstaller.expectToFail(expectToFail);
-		return serviceInstaller.install();
-	}
-	
-	protected ProcessResult invokeCommand(String serviceName, String commandName) 
-			throws IOException, InterruptedException {
-		ProcessResult result = 
-				CommandTestUtils.runCloudifyCommandAndWait("connect " + getRestUrl() + "; invoke " + serviceName + " " + commandName);
-		return result;
-	}
+        // We will give a short timeout to give the ESM
+        // time to recognize that he needs to shutdown the machine.
+        try {
+            Thread.sleep(TEN_SECONDS_IN_MILLIS);
+        } catch (InterruptedException e) {
+        }
 
-	protected String getRestUrl() {
+        Throwable first = null;
+        for (int i = 0 ; i < MAX_SCAN_RETRY ; i++) {
+            try {
+                boolean leakedAgentNodesScanResult = this.cloudService.scanLeakedAgentNodes();
+                if (leakedAgentNodesScanResult == true) {
+                    return;
+                } else {
+                    Assert.fail("Leaked nodes were found!");
+                }
+                break;
+            } catch (final Exception t) {
+                first = t;
+                LogUtils.log("Failed scaning for leaked nodes. attempt number " + (i + 1) , t);
+            }
+        }
+        if (first != null) {
+            Assert.fail("Failed scanning for leaked nodes after " + MAX_SCAN_RETRY + " attempts. First exception was --> " + first.getMessage(), first);
+        }
+    }
 
-		String finalUrl = null;
+    protected void installApplicationAndWait(String applicationName) throws IOException, InterruptedException {
+        ApplicationInstaller applicationInstaller = new ApplicationInstaller(getRestUrl(), applicationName);
+        applicationInstaller.waitForFinish(true);
+        applicationInstaller.install();
+    }
 
-		String[] restUrls = cloudService.getRestUrls();
+    protected void installApplicationAndWait(String applicationPath, String applicationName) throws IOException, InterruptedException {
+        ApplicationInstaller applicationInstaller = new ApplicationInstaller(getRestUrl(), applicationName);
+        applicationInstaller.recipePath(applicationPath);
+        applicationInstaller.waitForFinish(true);
+        applicationInstaller.install();
+    }
 
-		AssertUtils.assertNotNull("No rest URL's found. there was probably a problem with bootstrap", restUrls);
+    protected void uninstallApplicationAndWait(String applicationName) throws IOException, InterruptedException {
+        ApplicationInstaller applicationInstaller = new ApplicationInstaller(getRestUrl(), applicationName);
+        applicationInstaller.waitForFinish(true);
+        applicationInstaller.uninstall();
+    }
 
-		if (restUrls.length == 1) {
-			finalUrl = restUrls[0];
-		} else {
-			for (String url : restUrls) {
-				String command = "connect " + url;
-				try {
-					LogUtils.log("trying to connect to rest with url " + url);
-					CommandTestUtils.runCommandAndWait(command);
-					finalUrl = url;
-					break;
-				} catch (Throwable e) {
-					LogUtils.log("caught an exception while trying to connect to rest server with url " + url, e);
-				}
-			}			
-		}
-		if (finalUrl == null) {
-			Assert.fail("Failed to find a working rest URL. tried : " + StringUtils.arrayToCommaDelimitedString(restUrls));
-		}
-		return finalUrl;
-	}
+    protected void uninstallApplicationIfFound(String applicationName) throws IOException, InterruptedException {
+        ApplicationInstaller applicationInstaller = new ApplicationInstaller(getRestUrl(), applicationName);
+        applicationInstaller.waitForFinish(true);
+        applicationInstaller.uninstallIfFound();
+    }
 
-	protected String getWebuiUrl() {
-		return cloudService.getWebuiUrls()[0];		
-	}
+    protected void installApplicationAndWait(String applicationPath, String applicationName, int timeout) throws IOException, InterruptedException {
+        ApplicationInstaller applicationInstaller = new ApplicationInstaller(getRestUrl(), applicationName);
+        applicationInstaller.recipePath(applicationPath);
+        applicationInstaller.waitForFinish(true);
+        applicationInstaller.timeoutInMinutes(timeout);
+        applicationInstaller.install();
+    }
 
-	protected void dumpMachines() {
-		final String restUrl = getRestUrl();
-		String url = null;
-		try {
-			String cloudifyUser = null;
-			String cloudifyPassword = null;
-			
-			url = restUrl + "/service/dump/machines/?fileSizeLimit=50000000";
-			if (cloudService.getBootstrapper().isSecured()) {
-				cloudifyUser = SecurityConstants.USER_PWD_ALL_ROLES;
-				cloudifyPassword = SecurityConstants.USER_PWD_ALL_ROLES;
-			}
-			DumpUtils.dumpMachines(restUrl, cloudifyUser, cloudifyPassword);
-			
-		} catch (final Exception e) {
-			LogUtils.log("Failed to create dump for this url - " + url, e);
-		}
-	}	
+    protected void installApplicationAndWait(String applicationPath, String applicationName, int timeout , boolean expectToFail) throws IOException, InterruptedException {
+        ApplicationInstaller applicationInstaller = new ApplicationInstaller(getRestUrl(), applicationName);
+        applicationInstaller.recipePath(applicationPath);
+        applicationInstaller.waitForFinish(true);
+        applicationInstaller.expectToFail(expectToFail);
+        applicationInstaller.timeoutInMinutes(timeout);
+        applicationInstaller.install();
+    }
+
+
+    protected void uninstallServiceAndWait(String serviceName) throws IOException, InterruptedException {
+        ServiceInstaller serviceInstaller = new ServiceInstaller(getRestUrl(), serviceName);
+        serviceInstaller.waitForFinish(true);
+        serviceInstaller.uninstall();
+
+        if(StorageUtils.isInitialized()){
+            StorageUtils.afterServiceUninstallation(serviceName);
+        }
+    }
+
+    protected void uninstallServiceIfFound(String serviceName) throws IOException, InterruptedException {
+        ServiceInstaller serviceInstaller = new ServiceInstaller(getRestUrl(), serviceName);
+        serviceInstaller.waitForFinish(true);
+        serviceInstaller.uninstallIfFound();
+
+        if(StorageUtils.isInitialized()){
+            StorageUtils.afterServiceUninstallation(serviceName);
+        }
+    }
+
+
+
+    protected ProcessResult invokeCommand(String serviceName, String commandName)
+            throws IOException, InterruptedException {
+        ProcessResult result =
+                CommandTestUtils.runCloudifyCommandAndWait("connect " + getRestUrl() + "; invoke " + serviceName + " " + commandName);
+        return result;
+    }
+
+    protected String installServiceAndWait(String servicePath, String serviceName) throws IOException, InterruptedException {
+        return installServiceAndWait(servicePath, serviceName, SERVICE_INSTALLATION_TIMEOUT_IN_MINUTES, false);
+    }
+
+    protected String installServiceAndWait(String servicePath, String serviceName, int timeout) throws IOException, InterruptedException {
+        return installServiceAndWait(servicePath, serviceName, timeout, false);
+    }
+
+    protected String installServiceAndWait(String servicePath, String serviceName, int timeout , boolean expectToFail) throws IOException, InterruptedException {
+        ServiceInstaller serviceInstaller = new ServiceInstaller(getRestUrl(), serviceName);
+        serviceInstaller.recipePath(servicePath);
+        serviceInstaller.waitForFinish(true);
+        serviceInstaller.expectToFail(expectToFail);
+        serviceInstaller.timeoutInMinutes(timeout);
+
+        Service service = null;
+        try {
+            service = ServiceReader.readService(new File(servicePath));
+        } catch (PackagingException e) {
+            //TODO
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } catch (DSLException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+        if(service.getStorage() != null){
+            StorageUtils.beforeServiceInstallation();
+        }
+
+        String output = serviceInstaller.install();
+
+        if(service.getStorage() != null){
+            StorageUtils.afterServiceInstallation(serviceName);
+        }
+
+        return output;
+    }
+
+    protected String installServiceAndWait(String servicePath, String serviceName, boolean expectToFail) throws IOException, InterruptedException {
+        return installServiceAndWait(servicePath, serviceName, SERVICE_INSTALLATION_TIMEOUT_IN_MINUTES, expectToFail);
+    }
+
+    protected String getRestUrl() {
+
+        String finalUrl = null;
+
+        String[] restUrls = cloudService.getRestUrls();
+
+        AssertUtils.assertNotNull("No rest URL's found. there was probably a problem with bootstrap", restUrls);
+
+        if (restUrls.length == 1) {
+            finalUrl = restUrls[0];
+        } else {
+            for (String url : restUrls) {
+                String command = "connect " + url;
+                try {
+                    LogUtils.log("trying to connect to rest with url " + url);
+                    CommandTestUtils.runCommandAndWait(command);
+                    finalUrl = url;
+                    break;
+                } catch (Throwable e) {
+                    LogUtils.log("caught an exception while trying to connect to rest server with url " + url, e);
+                }
+            }
+        }
+        if (finalUrl == null) {
+            Assert.fail("Failed to find a working rest URL. tried : " + StringUtils.arrayToCommaDelimitedString(restUrls));
+        }
+        return finalUrl;
+    }
+
+    protected String getWebuiUrl() {
+        return cloudService.getWebuiUrls()[0];
+    }
+
+    protected void dumpMachines() {
+        final String restUrl = getRestUrl();
+        String url = null;
+        try {
+            String cloudifyUser = null;
+            String cloudifyPassword = null;
+
+            url = restUrl + "/service/dump/machines/?fileSizeLimit=50000000";
+            if (cloudService.getBootstrapper().isSecured()) {
+                cloudifyUser = SecurityConstants.USER_PWD_ALL_ROLES;
+                cloudifyPassword = SecurityConstants.USER_PWD_ALL_ROLES;
+            }
+            DumpUtils.dumpMachines(restUrl, cloudifyUser, cloudifyPassword);
+
+        } catch (final Exception e) {
+            LogUtils.log("Failed to create dump for this url - " + url, e);
+        }
+    }
 }

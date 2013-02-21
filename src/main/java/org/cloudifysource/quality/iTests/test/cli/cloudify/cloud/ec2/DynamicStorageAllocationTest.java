@@ -33,7 +33,7 @@ public class DynamicStorageAllocationTest extends NewAbstractCloudTest {
 		super.bootstrap();
 	}
 	
-	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
+	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = false)
 	public void testAllocationInCustomCommnad() throws Exception {
 		
 		// NOTE : this is a mock for now, until we have the implementation ready.

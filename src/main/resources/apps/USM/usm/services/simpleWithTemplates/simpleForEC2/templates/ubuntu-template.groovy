@@ -1,5 +1,5 @@
 [
-				UBUNTU_TEST : template{
+				UBUNTU_TEST : computeTemplate{
 					// Mandatory. Image ID.
 					imageId ubuntuImageId
 

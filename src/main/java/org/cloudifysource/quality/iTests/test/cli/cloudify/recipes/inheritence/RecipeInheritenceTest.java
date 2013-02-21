@@ -4,29 +4,36 @@ import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
-import org.cloudifysource.dsl.utils.ServiceUtils;
-import com.gigaspaces.log.*;
-
-import org.openspaces.admin.pu.ProcessingUnit;
-import org.openspaces.admin.pu.ProcessingUnitInstance;
-import org.testng.annotations.Test;
-
 import org.cloudifysource.dsl.Application;
 import org.cloudifysource.dsl.Service;
 import org.cloudifysource.dsl.internal.DSLException;
 import org.cloudifysource.dsl.internal.ServiceReader;
 import org.cloudifysource.dsl.internal.packaging.PackagingException;
-
+import org.cloudifysource.dsl.utils.ServiceUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.AbstractLocalCloudTest;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
+import org.openspaces.admin.pu.ProcessingUnit;
+import org.openspaces.admin.pu.ProcessingUnitInstance;
+import org.testng.annotations.Test;
+
+import com.gigaspaces.log.AllLogEntryMatcher;
+import com.gigaspaces.log.ContinuousLogEntryMatcher;
+import com.gigaspaces.log.LogEntries;
+import com.gigaspaces.log.LogEntry;
+import com.gigaspaces.log.LogProcessType;
 
 public class RecipeInheritenceTest extends AbstractLocalCloudTest {
 
-    private String tomcatParentPath = CommandTestUtils.getPath("src/main/resources/apps/USM/usm/tomcatHttpLivenessDetectorPlugin");
+	private final String tomcatParentPath = CommandTestUtils.getPath("src/main/resources/apps/USM/usm/tomcatHttpLivenessDetectorPlugin");
     private Application app;
+
+    private String gsHome;
+
+
 
     @Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
     public void simpleInheritenceTest() throws IOException, PackagingException, InterruptedException, DSLException {
+
 
         Service tomcatParent = ServiceReader.readService(new File(tomcatParentPath));
         app = installApplication("travelExtended");
@@ -70,12 +77,12 @@ public class RecipeInheritenceTest extends AbstractLocalCloudTest {
         app = installApplication("travelExtended");
 
         ProcessingUnit processingUnit = admin.getProcessingUnits().getProcessingUnit("travelExtended.cassandra-extend");
-        assertNotNull("Processsing unit not found", processingUnit);        
-		
+        assertNotNull("Processsing unit not found", processingUnit);
+
         boolean found = processingUnit.waitFor(1, 5, TimeUnit.MINUTES);
         assertTrue("PU Instance not found", found);
         ProcessingUnitInstance cassandraInstance = processingUnit.getInstances()[0];
-        
+
         long pid = cassandraInstance.getGridServiceContainer().getVirtualMachine().getDetails().getPid();
 
         ContinuousLogEntryMatcher matcher = new ContinuousLogEntryMatcher(new AllLogEntryMatcher(), new AllLogEntryMatcher());

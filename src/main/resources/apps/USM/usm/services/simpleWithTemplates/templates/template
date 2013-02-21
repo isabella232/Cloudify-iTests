@@ -1,5 +1,5 @@
 [
-				TEMPLATE_NAME : template{
+				TEMPLATE_NAME : computeTemplate{
 				
 				machineMemoryMB 1600
 				remoteDirectory "/tmp/gs-files"

@@ -55,7 +55,7 @@ public class Ec2CloudService extends JCloudsCloudService {
 	}
 
 	public String getRegion() {
-		return System.getProperty("ec2.region", "us-east-1");
+		return System.getProperty("ec2.region", "eu-west-1");
 	}
 
 	public void setRegion(final String region) {

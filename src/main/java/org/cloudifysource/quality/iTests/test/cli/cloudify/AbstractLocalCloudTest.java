@@ -66,43 +66,61 @@ import com.sun.jersey.api.client.config.DefaultClientConfig;
 public class AbstractLocalCloudTest extends AbstractTestSupport {
 
 	protected static Admin admin;
-	
+	private static final String COM_GS_HOME = "com.gs.home";
 	protected static String restUrl =  "http://127.0.0.1:" + CloudifyConstants.DEFAULT_REST_PORT;;
 	protected static final String MANAGEMENT_APPLICATION_NAME = CloudifyConstants.MANAGEMENT_APPLICATION_NAME;
 	protected static final String DEFAULT_APPLICATION_NAME = CloudifyConstants.DEFAULT_APPLICATION_NAME;
-	
+
+
+
 	@BeforeSuite(alwaysRun = true)
 	public void bootstrapIfNeeded() throws Exception {
-		
+
+		setGsHome();
+
 		LogUtils.log("================ BeforeSuite Started ===================");
-		
+
 		if (isRestPortResponding()) {
 			LogUtils.log("Detected a localcloud running on the machine. not performing bootstrap");
 				LogUtils.log("Creating admin to connect to existing localcloud");
 				admin = super.createAdminAndWaitForManagement();
 		} else {
 			cleanUpCloudifyLocalDir();
-			
+
 			LocalCloudBootstrapper bootstrapper = new LocalCloudBootstrapper();
 			bootstrapper.verbose(true).timeoutInMinutes(5);
 			bootstrapper.bootstrap();
-			
+
 			LogUtils.log("Creating admin");
 			admin = super.createAdminAndWaitForManagement();
 		}
-		
+
 		LogUtils.log("================ BeforeSuite Ended ===================");
 	}
-	
+
+	private void setGsHome() {
+    	String buildDir = SGTestHelper.getBuildDir();
+    	File buildDirFile = new File(buildDir);
+    	String canonicalPath = null;
+		try {
+			canonicalPath = buildDirFile.getCanonicalPath();
+		} catch (IOException e) {
+			throw new IllegalStateException("Failed to get canonical path to build dir", e);
+		}
+    	LogUtils.log("Setting GS home to: " + canonicalPath);
+    	//gsHome = System.getProperty(COM_GS_HOME);
+		System.setProperty(COM_GS_HOME, buildDir);
+	}
+
 	@AfterMethod(alwaysRun = true)
 	public void cleanup() throws Exception {
 
 		uninstallAll();
-		
+
 		LogUtils.log("Scanning for leaked processes...");
 		AssertUtils.assertTrue("Found leaking processes after test ended.", killLeakedProcesses() == false);
 	}
-	
+
 	protected void cleanUpCloudifyLocalDir() throws IOException {
 		String userHomeProp = null;
 		if (ScriptUtils.isLinuxMachine()) {
@@ -130,7 +148,7 @@ public class AbstractLocalCloudTest extends AbstractTestSupport {
 			}
 		}
 	}
-	
+
 
 	protected boolean isRestPortResponding() throws Exception {
 
@@ -183,7 +201,7 @@ public class AbstractLocalCloudTest extends AbstractTestSupport {
 
 	/**
 	 * Scans for running processes that are in the suspect list and kills them.
-	 * 
+	 *
 	 * @return true if found and killed leaked processes
 	 */
 	private boolean killLeakedProcesses() throws SigarException {
@@ -260,9 +278,9 @@ public class AbstractLocalCloudTest extends AbstractTestSupport {
 
 	@AfterSuite(alwaysRun = true)
 	public void teardownIfNeeded() throws IOException, InterruptedException {
-		
+
 		LogUtils.log("================ AfterSuite Started ===================");
-		
+
 		if (SGTestHelper.isDevMode()) {
 			LogUtils.log("Running in dev mode - cloud will not be torn down");
 		} else {
@@ -272,15 +290,15 @@ public class AbstractLocalCloudTest extends AbstractTestSupport {
 			bootstrapper.setRestUrl(restUrl);
 			bootstrapper.teardown();
 		}
-		
+
 		admin.close();
-		
+
 		LogUtils.log("================ AfterSuite Ended ===================");
 	}
-	
+
 	@Override
 	protected AdminFactory createAdminFactory() {
-		
+
 		final String nicAddress = getLocalHostIpAddress();
 
 		final AdminFactory factory = new AdminFactory();
@@ -289,7 +307,7 @@ public class AbstractLocalCloudTest extends AbstractTestSupport {
 		LogUtils.log("adding locator to admin : " + locator);
 		factory.addLocator(locator);
 		return factory;
-		
+
 	}
 
 	// This method implementation is used in order to access the admin api
@@ -379,7 +397,7 @@ public class AbstractLocalCloudTest extends AbstractTestSupport {
 			LogUtils.log("Failed to uninstall " + applicationName, e);
 		}
 	}
-	
+
 	protected void uninstallApplicationIfFound(String applicationName) throws IOException, InterruptedException {
 		ApplicationInstaller applicationInstaller = new ApplicationInstaller(restUrl, applicationName);
 		applicationInstaller.waitForFinish(true);
@@ -423,77 +441,77 @@ public class AbstractLocalCloudTest extends AbstractTestSupport {
 					installer.uninstall();
 				} catch (Throwable t) {
 					LogUtils.log("Failed to uninstall service " + serviceName);
-				}			
+				}
 			}
 		}
- 
+
 	}
-	
+
 	protected void doTest(String applicationPath, String applicationFolderName, String applicationName) throws Exception {
-		
+
 		LogUtils.log("installing application " + applicationName);
-		
+
 		if(applicationPath == null){
-			applicationPath = ScriptUtils.getBuildPath() + "/recipes/apps/" + applicationFolderName;; 			
+			applicationPath = ScriptUtils.getBuildPath() + "/recipes/apps/" + applicationFolderName;;
 		}
 		else{
 			applicationPath = applicationPath + "/" + applicationFolderName;
 		}
-		
+
 		installApplicationAndWait(applicationPath, applicationName, OPERATION_TIMEOUT/1000);
-		
+
 		if (applicationFolderName.equals("computers")){
 
 			String[] services = {"mysql", "apacheLB", "play"};
 
 			verifyServices(applicationName, services);
 
-			verifyApplicationUrls(applicationName, true);				
+			verifyApplicationUrls(applicationName, true);
 		}
-		
+
 		if (applicationFolderName.equals("drupal-babies")){
-			
+
 			String[] services = {"mysql", "drupal"};
-			
+
 			verifyServices(applicationName, services);
-			
-			verifyApplicationUrls(applicationName, false);				
+
+			verifyApplicationUrls(applicationName, false);
 		}
-		
+
 		if (applicationFolderName.equals("hadoop-biginsights")){
-			
+
 			String[] services = {"master", "data", "dataOnDemand"};
-			
+
 			verifyServices(applicationName, services);
-			
-			verifyApplicationUrls(applicationName, false);				
+
+			verifyApplicationUrls(applicationName, false);
 		}
-		
+
 		if (applicationFolderName.equals("lamp")){
-			
+
 			String[] services = {"mysql", "apache", "apacheLB"};
-			
+
 			verifyServices(applicationName, services);
-			
-			verifyApplicationUrls(applicationName, true);				
+
+			verifyApplicationUrls(applicationName, true);
 		}
-		
+
 		if (applicationFolderName.equals("masterslave")){
-			
+
 			String[] services = {"mysql"};
-			
+
 			verifyServices(applicationName, services);
-			
-			verifyApplicationUrls(applicationName, false);				
+
+			verifyApplicationUrls(applicationName, false);
 		}
-		
+
 		if (applicationFolderName.equals("travel-lb")){
-			
+
 			String[] services = {"cassandra", "apacheLB", "tomcat"};
-			
+
 			verifyServices(applicationName, services);
-			
-			verifyApplicationUrls(applicationName, true);				
+
+			verifyApplicationUrls(applicationName, true);
 		}
 	}
 
@@ -521,10 +539,10 @@ public class AbstractLocalCloudTest extends AbstractTestSupport {
 		String output = CommandTestUtils.runCommandAndWait(command);
 
 		for(String singleService : services){
-			AssertUtils.assertTrue("the service " + singleService + " is not running", output.contains(singleService));					
+			AssertUtils.assertTrue("the service " + singleService + " is not running", output.contains(singleService));
 		}
 	}
-	
+
 	protected void assertPageExists(String url) {
 
 		try {
@@ -533,7 +551,7 @@ public class AbstractLocalCloudTest extends AbstractTestSupport {
 			AssertUtils.assertFail(e.getMessage());
 		}
 	}
-	
+
 	protected Application installApplication(final String applicationName) throws IOException, InterruptedException, DSLException {
 
 		final String applicationDir = CommandTestUtils.getPath("src/main/resources/apps/USM/usm/applications/" + applicationName);
@@ -542,7 +560,7 @@ public class AbstractLocalCloudTest extends AbstractTestSupport {
 		installer.install();
 		return ServiceReader.getApplicationFromFile(new File(applicationDir)).getApplication();
 	}
-	
+
 	protected void installApplicationAndWait(String applicationPath, String applicationName, long timeout) throws IOException, InterruptedException {
 		ApplicationInstaller applicationInstaller = new ApplicationInstaller(restUrl, applicationName);
 		applicationInstaller.recipePath(applicationPath);
@@ -569,7 +587,7 @@ public class AbstractLocalCloudTest extends AbstractTestSupport {
 			Assert.fail("Failed to install service", e);
 		}
 	}
-	
+
 	protected String installServiceAndWait(String servicePath, String serviceName, boolean isExpectedToFail) throws IOException, InterruptedException {
 
 		ServiceInstaller serviceInstaller = new ServiceInstaller(restUrl, serviceName);
@@ -595,7 +613,7 @@ public class AbstractLocalCloudTest extends AbstractTestSupport {
 
 		return null;
 	}
-	
+
 	protected String listInstances(String applicationName, String serviceName, boolean expectedFail){
 		String command = connectCommand() + ";use-application " + applicationName +";list-instances " + serviceName;
 		try {
@@ -608,28 +626,28 @@ public class AbstractLocalCloudTest extends AbstractTestSupport {
 		} catch (InterruptedException e) {
 			Assert.fail("Failed to list applications", e);
 		}
-		
+
 		return null;
 	}
-	
+
 	protected String listServices(String applicationName, boolean expectedFail){
 		String command = connectCommand() + ";use-application " + applicationName + ";list-services";
 		try {
 			if (expectedFail) {
 				return CommandTestUtils.runCommandExpectedFail(command);
-			} 
+			}
 			return CommandTestUtils.runCommandAndWait(command);
-			
+
 		} catch (IOException e) {
 			Assert.fail("Failed to list applications", e);
 		} catch (InterruptedException e) {
 			Assert.fail("Failed to list applications", e);
 		}
-		
+
 		return null;
 	}
-	
-	protected String connect(boolean failCommand){	
+
+	protected String connect(boolean failCommand){
 
 		String output = "no output";
 		try {

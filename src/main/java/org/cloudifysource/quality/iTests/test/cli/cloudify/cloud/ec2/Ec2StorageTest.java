@@ -1,13 +1,12 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.ec2;
 
-import java.io.IOException;
-
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
-import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.AbstractStorageTest;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+
+import java.io.IOException;
 
 /**
  * 
@@ -19,8 +18,6 @@ import org.testng.annotations.Test;
  */
 public class Ec2StorageTest extends AbstractStorageTest{
 
-	private static final String SERVICE_NAME = "simpleStorage";
-	private static String SERVICE_PATH = CommandTestUtils.getPath("src/main/resources/apps/USM/usm/" + SERVICE_NAME);
 	private static String EXPECTED_LIST_MOUNT_OUTPUT = "/dev/xvdc on /home/ec2-user/storage type ext4 (rw)";
 	
 	@Override

@@ -27,13 +27,13 @@ public class PortAndMemoryAllocationTest extends AbstractByonCloudTest {
 	private final static String SIMPLE_RECIPE_FOLDER = CommandTestUtils.getPath("src/main/resources/apps/USM/usm/simple");
 	private final static String SERVICE_NAME = "simple";
 	
-	private static final String GSA_PROCESS_NAME = "GSA";
-	private static final String GSM_PROCESS_NAME = "GSM";
-	private static final String LUS_PROCESS_NAME = "LH";
-	private static final String ESM_PROCESS_NAME = "ESM";
-	private static final String GSC_PROCESS_NAME = "GSC";
-	private static final String REST_PROCESS_NAME = "-Dcom.gs.zones=rest";
-	private static final String WEBUI_PROCESS_NAME = "-Dcom.gs.zones=webui";
+	private static final String GSA_PROCESS_NAME = "com.gigaspaces.start.services=\\\"GSA\\\""; //"GSA";
+	private static final String GSM_PROCESS_NAME = "com.gigaspaces.start.services=\\\"GSM\\\""; //"GSM";
+	private static final String LUS_PROCESS_NAME = "com.gigaspaces.start.services=\\\"LH\\\"";  //"LH";
+	private static final String ESM_PROCESS_NAME = "com.gigaspaces.start.services=\\\"ESM\\\""; //"ESM";
+	private static final String GSC_PROCESS_NAME = "com.gigaspaces.start.services=\\\"GSC\\\""; //"GSC";
+	private static final String REST_PROCESS_NAME = "com.gs.zones=rest";
+	private static final String WEBUI_PROCESS_NAME = "com.gs.zones=webui";
 	
 	@BeforeClass(alwaysRun = true)
 	protected void bootstrap() throws Exception {

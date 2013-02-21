@@ -32,7 +32,7 @@ public class ByonAddTemplatesWithSecurityTest extends AbstractByonAddRemoveTempl
 		super.bootstrap(service);
 	}
 	
-	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, enabled = true)
+	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, enabled = false)
 	public void testAddTemplatesAndInstallWithDifferentUsers() throws Exception {
 		
 		CloudBootstrapper bootstrapper = new CloudBootstrapper();
@@ -66,7 +66,7 @@ public class ByonAddTemplatesWithSecurityTest extends AbstractByonAddRemoveTempl
 		verifyAddTemplate(SecurityConstants.USER_PWD_NO_ROLE, SecurityConstants.USER_PWD_NO_ROLE, SecurityConstants.NO_ROLE_DESCRIPTIN, true);
 	}
 	
-	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, enabled = true)
+	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, enabled = false)
 	public void testGetTemplate() throws Exception{
 		
 		CloudBootstrapper bootstrapper = new CloudBootstrapper();
@@ -87,7 +87,7 @@ public class ByonAddTemplatesWithSecurityTest extends AbstractByonAddRemoveTempl
 		bootstrapper.removeTemplate(templateName, false);
 	}
 	
-	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, enabled = true)
+	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, enabled = false)
 	public void testRemoveTemplate() throws Exception{
 		
 		CloudBootstrapper bootstrapper = new CloudBootstrapper();
@@ -112,7 +112,7 @@ public class ByonAddTemplatesWithSecurityTest extends AbstractByonAddRemoveTempl
 		verifyRemoveTemplate(SecurityConstants.USER_PWD_CLOUD_ADMIN_AND_APP_MANAGER, SecurityConstants.USER_PWD_CLOUD_ADMIN_AND_APP_MANAGER, SecurityConstants.CLOUD_ADMIN_AND_APP_MANAGER_DESCRIPTION, templateName, false);
 	}
 	
-	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, enabled = true)
+	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, enabled = false)
 	public void testListTemplate() throws Exception{
 		
 		CloudBootstrapper bootstrapper = new CloudBootstrapper();

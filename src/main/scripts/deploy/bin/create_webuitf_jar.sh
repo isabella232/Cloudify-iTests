@@ -1,20 +1,22 @@
 #!/bin/bash
 
 CURRENT_DIR=`pwd`
-WEBUI_TMP_DIR=${SGTEST_CHECKOUT_FOLDER}/apps/webuitf
-
-echo "exporting webuitf"
-
-if [ ${BRANCH_NAME} != "trunk" ]; then
-	SVN_WEBUITF_REPOSITORY=svn://pc-lab14/SVN/xap/branches/${SVN_BRANCH_DIRECTORY}/${BRANCH_NAME}/quality/frameworks/webuitf	
-else
-	SVN_WEBUITF_REPOSITORY=svn://pc-lab14/SVN/xap/trunk/quality/frameworks/webuitf
+WEBUI_TMP_DIR=/tmp/webuitf
+if [ -d "${WEBUI_TMP_DIR}" ]; then
+   rm -rf ${WEBUI_TMP_DIR}
 fi
+mkdir ${WEBUI_TMP_DIR}
+echo "cloning webuitf"
 
-svn export ${SVN_WEBUITF_REPOSITORY} ${WEBUI_TMP_DIR} --force
-
+export GIT_SSL_NO_VERIFY=true
 pushd ${WEBUI_TMP_DIR}
+git clone --depth 1 https://github.com/CloudifySource/Cloudify-iTests-webuitf.git
+popd
+export Cloudify_iTests_webuitf=${WEBUI_TMP_DIR}/Cloudify-iTests-webuitf
+
+pushd ${Cloudify_iTests_webuitf}
 mvn clean install s3client:deploy -U
+rm -rf ${Cloudify_iTests_webuitf}
 rm -rf ${WEBUI_TMP_DIR}
 popd
 

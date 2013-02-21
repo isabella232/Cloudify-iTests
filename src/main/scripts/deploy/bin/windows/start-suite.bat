@@ -27,7 +27,7 @@ mkdir %LOC_BUILD_TEST_DIR%\%SUITE_NAME%
 
 pushd %SGTEST_HOME%
 
-mvn test -e -X -U -P tgrid-cloudify-iTests ^
+mvn test -U -P tgrid-cloudify-iTests ^
 -DiTests.cloud.enabled=false ^
 -DiTests.buildNumber=${BUILD_NUMBER} ^
 -Dcloudify.home=%RUNTIME_BUILD_LOCATION% ^

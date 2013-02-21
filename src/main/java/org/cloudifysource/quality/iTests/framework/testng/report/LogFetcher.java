@@ -27,7 +27,7 @@ public class LogFetcher {
         String buildNumber = System.getProperty("iTests.buildNumber");
         String testName = TestNGUtils.constructTestMethodName(result);
         File testDir = new File(getBuildFolder() + "/" + suiteName + "/" + testName);
-        System.out.println("DEBUG before S3DeployUtil.uploadLogFile");
+
         if(isCloudEnabled){
             S3DeployUtil.uploadLogFile(testDir, buildNumber, suiteName, testName);
         }

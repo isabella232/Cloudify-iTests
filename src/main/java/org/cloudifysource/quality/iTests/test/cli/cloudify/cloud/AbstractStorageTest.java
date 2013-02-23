@@ -43,6 +43,7 @@ public abstract class AbstractStorageTest extends NewAbstractCloudTest{
 
         super.teardown();
         StorageUtils.scanAndDeleteLeakedVolumes();
+        StorageUtils.close();
     }
 
 	public void testWriteToStorage() throws IOException, InterruptedException {

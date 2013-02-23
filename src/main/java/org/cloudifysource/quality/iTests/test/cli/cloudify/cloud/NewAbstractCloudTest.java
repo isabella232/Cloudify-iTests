@@ -1,10 +1,6 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud;
 
 import com.gigaspaces.internal.utils.StringUtils;
-import org.cloudifysource.dsl.Service;
-import org.cloudifysource.dsl.internal.DSLException;
-import org.cloudifysource.dsl.internal.ServiceReader;
-import org.cloudifysource.dsl.internal.packaging.PackagingException;
 import org.cloudifysource.quality.iTests.framework.utils.*;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
@@ -271,8 +267,6 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
         }
     }
 
-
-
     protected ProcessResult invokeCommand(String serviceName, String commandName)
             throws IOException, InterruptedException {
         ProcessResult result =
@@ -295,22 +289,13 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
         serviceInstaller.expectToFail(expectToFail);
         serviceInstaller.timeoutInMinutes(timeout);
 
-        Service service = null;
-        try {
-            service = ServiceReader.readService(new File(servicePath));
-        } catch (PackagingException e) {
-            //TODO
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        } catch (DSLException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
-        if(service.getStorage() != null){
+        if(StorageUtils.isInitialized()){
             StorageUtils.beforeServiceInstallation();
         }
 
         String output = serviceInstaller.install();
 
-        if(service.getStorage() != null){
+        if(StorageUtils.isInitialized()){
             StorageUtils.afterServiceInstallation(serviceName);
         }
 

@@ -47,6 +47,7 @@ public class StorageUtils {
 
     public static void close(){
         JCloudsUtils.closeContext();
+        storageProvisioningDriver = null;
     }
 
     public static boolean isInitialized(){
@@ -89,7 +90,7 @@ public class StorageUtils {
         Set<? extends NodeMetadata> allNodes = JCloudsUtils.getAllRunningNodes();
 
         for(NodeMetadata nm : allNodes){
-            if(nm.getName().toLowerCase().contains(cloudService.getMachinePrefix().toLowerCase())){
+            if((nm.getName() != null) && nm.getName().toLowerCase().contains(cloudService.getMachinePrefix().toLowerCase())){
                 machinesBeforeInstall.add(nm.getPrivateAddresses().iterator().next());
             }
         }
@@ -101,7 +102,7 @@ public class StorageUtils {
         Set<? extends NodeMetadata> allNodes = JCloudsUtils.getAllRunningNodes();
 
         for(NodeMetadata nm : allNodes){
-            if(nm.getName().toLowerCase().contains(cloudService.getMachinePrefix().toLowerCase())){
+            if((nm.getName() != null) && nm.getName().toLowerCase().contains(cloudService.getMachinePrefix().toLowerCase())){
                 machinesAfterInstall.add(nm.getPrivateAddresses().iterator().next());
             }
         }

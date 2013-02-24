@@ -1,14 +1,6 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.ec2;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Properties;
-import java.util.Set;
-
 import junit.framework.Assert;
-
 import org.cloudifysource.quality.iTests.framework.utils.IOUtils;
 import org.cloudifysource.quality.iTests.framework.utils.JCloudsUtils;
 import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
@@ -21,6 +13,13 @@ import org.jclouds.compute.domain.NodeMetadata;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Properties;
+import java.util.Set;
 
 /**
  * 
@@ -36,9 +35,9 @@ public class Ec2AddTemplatesTest extends NewAbstractCloudTest {
 	private final String TEMPLATE_PROPERTIES_FILE_PATH = TEMPLATE_FOLDER_PATH + "/ubuntu-template.properties";
 	private final String UBUNTU_IMAGE_ID = "us-east-1/ami-82fa58eb";
 
+    private static final int SERVICE_INSTALLATION_TIMEOUT_IN_MINUTES = 15;
 
-
-	@Override
+    @Override
 	@BeforeClass(alwaysRun = true)
 	protected void bootstrap() throws Exception {
 		super.bootstrap();
@@ -74,7 +73,7 @@ public class Ec2AddTemplatesTest extends NewAbstractCloudTest {
 		Assert.assertTrue(output.contains(TEMPLATE_NAME));
 
 		//install service
-		installServiceAndWait(SERVICE_FOLDER_PATH, SERVICE_NAME);
+		installServiceAndWait(SERVICE_FOLDER_PATH, SERVICE_NAME, SERVICE_INSTALLATION_TIMEOUT_IN_MINUTES);
 		assertImageID(UBUNTU_IMAGE_ID);
 		
 		uninstallServiceIfFound(SERVICE_NAME);	

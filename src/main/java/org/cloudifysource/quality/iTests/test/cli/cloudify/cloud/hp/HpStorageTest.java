@@ -23,7 +23,7 @@ public class HpStorageTest extends AbstractStorageTest{
 
     @BeforeClass(alwaysRun = true)
     protected void bootstrap() throws Exception {
-        super.bootstrap();
+        super.bootstrapAndInit();
         installServiceAndWait(SERVICE_PATH, SERVICE_NAME);
     }
 
@@ -39,6 +39,7 @@ public class HpStorageTest extends AbstractStorageTest{
 
     @AfterClass(alwaysRun = true)
     protected void teardown() throws Exception {
+    	super.cleanup();
         super.teardown();
     }
 

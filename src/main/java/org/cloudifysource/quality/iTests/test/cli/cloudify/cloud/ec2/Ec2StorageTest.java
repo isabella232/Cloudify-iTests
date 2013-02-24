@@ -1,12 +1,12 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.ec2;
 
+import java.io.IOException;
+
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.AbstractStorageTest;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-
-import java.io.IOException;
 
 /**
  * 
@@ -27,7 +27,7 @@ public class Ec2StorageTest extends AbstractStorageTest{
 	
 	@BeforeClass(alwaysRun = true)
 	protected void bootstrap() throws Exception {
-		super.bootstrap();
+		super.bootstrapAndInit();
 		installServiceAndWait(SERVICE_PATH, SERVICE_NAME);
 	}
 	
@@ -43,6 +43,7 @@ public class Ec2StorageTest extends AbstractStorageTest{
 	
 	@AfterClass(alwaysRun = true)
 	protected void teardown() throws Exception {
+		super.cleanup();
 		super.teardown();
 	}
 

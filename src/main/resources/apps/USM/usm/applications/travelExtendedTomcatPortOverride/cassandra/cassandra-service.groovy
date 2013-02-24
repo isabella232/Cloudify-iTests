@@ -1,6 +1,6 @@
 service {
 
-    extend "/../../recipes/services/cassandra"
+    extend "../../recipes/services/cassandra"
     name "cassandra"
 }
 

@@ -3,7 +3,7 @@ import org.cloudifysource.dsl.utils.ServiceUtils
 service {
     
     
-    extend "/../../recipes/services/tomcat"
+    extend "../../recipes/services/tomcat"
 
     lifecycle{
 

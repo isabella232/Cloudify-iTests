@@ -40,9 +40,13 @@ public abstract class AbstractStorageTest extends NewAbstractCloudTest{
     }
 
     public void cleanup() throws Exception{
+        cleanup(false);
+    }
+
+    public void cleanup(boolean expectedVolumeLeak) throws Exception{
 
         super.teardown();
-        StorageUtils.scanAndDeleteLeakedVolumes();
+        StorageUtils.scanAndDeleteLeakedVolumes(expectedVolumeLeak);
         StorageUtils.close();
     }
 

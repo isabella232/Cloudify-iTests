@@ -19,7 +19,7 @@ public class HpStorageDeleteOnExitTest extends AbstractStorageTest {
 
     @AfterClass(alwaysRun = true)
     public void cleanup() throws Exception{
-        super.cleanup();
+        super.cleanup(true);
     }
 
     @Test(timeOut = DEFAULT_TEST_TIMEOUT * 3, enabled = true)

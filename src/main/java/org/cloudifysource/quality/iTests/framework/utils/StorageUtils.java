@@ -58,7 +58,7 @@ public class StorageUtils {
         storageProvisioningDriver.deleteVolume(location, volumeId, duration, timeUnit);
     }
 
-    public static void scanAndDeleteLeakedVolumes() throws Exception{
+    public static void scanAndDeleteLeakedVolumes(boolean expectedLeak) throws Exception{
 
         List<StorageTemplate> storageTemplates = new ArrayList<StorageTemplate>(cloud.getCloudStorage().getTemplates().values());
         Set<String> namePrefixes = new HashSet<String>();
@@ -73,7 +73,7 @@ public class StorageUtils {
         for(VolumeDetails vd : volumes){
             for(String prefix : namePrefixes){
                 if(vd.getName().startsWith(prefix)){
-                    foundLeak = true;
+                    foundLeak = !expectedLeak;
                     deleteVolume(vd.getLocation(), vd.getId(), DURATION, TimeUnit.SECONDS);
                 }
             }
@@ -82,6 +82,10 @@ public class StorageUtils {
         if(foundLeak){
             AssertUtils.assertFail("found leaking volume(s) and deleted it.");
         }
+    }
+
+    public static void scanAndDeleteLeakedVolumes() throws Exception{
+        scanAndDeleteLeakedVolumes(false);
     }
 
     public static void beforeServiceInstallation(){
@@ -202,11 +206,9 @@ public class StorageUtils {
         StorageTemplate storageTemplate = cloud.getCloudStorage().getTemplates().get(serviceTemplateName);
         String volumeNamePrefix = storageTemplate.getNamePrefix();
 
-        Set<VolumeDetails> serviceNamedVolumes = new HashSet<VolumeDetails>();
-
         Set<VolumeDetails> allVolumes = storageProvisioningDriver.listAllVolumes();
         for(VolumeDetails vd : allVolumes){
-            if(vd.getName().startsWith(volumeNamePrefix))
+            if(vd != null && !vd.getName().isEmpty() && vd.getName().startsWith(volumeNamePrefix))
             {
                 serviceVolumes.add(vd);
             }

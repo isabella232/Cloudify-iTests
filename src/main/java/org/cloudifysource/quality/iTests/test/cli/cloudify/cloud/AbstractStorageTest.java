@@ -28,6 +28,8 @@ public abstract class AbstractStorageTest extends NewAbstractCloudTest{
     protected final static String SERVICE_NAME = "simpleStorage";
     protected final static String SERVICE_PATH = CommandTestUtils.getPath("src/main/resources/apps/USM/usm/" + SERVICE_NAME);
     private final static String SERVICE_FILE_PATH = CommandTestUtils.getPath("src/main/resources/apps/USM/usm/" + SERVICE_NAME + "/simple-service.groovy");
+	private static final long ONE_MINUTE_IN_MILLIS = 60 * 1000;
+	private static final long TWO_SECONDS_IN_MILLIS = 2 * 1000;
 
     public void bootstrapAndInit() throws Exception{
 
@@ -78,6 +80,7 @@ public abstract class AbstractStorageTest extends NewAbstractCloudTest{
 				listMountedResult.getOutput().contains(expectedMountOutput));
 	}
 
+	// deleteOnExit = true
     public void testInstallWithStorage() throws Exception{
 
         installServiceAndWait(SERVICE_PATH, SERVICE_NAME);
@@ -86,11 +89,23 @@ public abstract class AbstractStorageTest extends NewAbstractCloudTest{
 
         uninstallServiceIfFound(SERVICE_NAME);
 
-        AssertUtils.assertTrue("volumes were not deleted", !isVolumeUp());
-
+        assertVolumeDeleted();
     }
 
-    public void testDeleteOnExitFalse() throws Exception{
+    // deleted volumes might still be returned in listAllVolumes. 
+    // Wait for a minute until volume is removed from list. 
+    private void assertVolumeDeleted() throws Exception {
+    	final long end = System.currentTimeMillis() + ONE_MINUTE_IN_MILLIS;
+    	while (System.currentTimeMillis() < end) {
+    		if (!isVolumeUp()) {
+    			return;
+    		}
+    		Thread.sleep(TWO_SECONDS_IN_MILLIS);
+    	}
+    	AssertUtils.assertTrue("volumes were not deleted", !isVolumeUp());
+	}
+
+	public void testDeleteOnExitFalse() throws Exception{
 
         installServiceAndWait(SERVICE_PATH, SERVICE_NAME);
 
@@ -98,10 +113,20 @@ public abstract class AbstractStorageTest extends NewAbstractCloudTest{
 
         uninstallServiceIfFound(SERVICE_NAME);
 
-        AssertUtils.assertTrue("volume was deleted", isVolumeUp());
+        assertVolumeNotDeleted();
     }
 
-    private boolean isVolumeUp() throws Exception {
+    private void assertVolumeNotDeleted() throws Exception {
+    	final long end = System.currentTimeMillis() + ONE_MINUTE_IN_MILLIS;
+    	while (System.currentTimeMillis() < end) {
+    		if (!isVolumeUp()) {
+    			AssertUtils.assertFail("volume was deleted");
+    		}
+    		Thread.sleep(TWO_SECONDS_IN_MILLIS);
+    	}
+	}
+
+	private boolean isVolumeUp() throws Exception {
         return !StorageUtils.getServiceNamedVolumes(SERVICE_FILE_PATH).isEmpty();
     }
 }

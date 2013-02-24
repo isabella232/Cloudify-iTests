@@ -1,17 +1,15 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud;
 
-import java.io.IOException;
-import java.net.URL;
-import java.util.Map;
-
+import com.j_spaces.kernel.PlatformVersion;
+import org.cloudifysource.quality.iTests.framework.utils.AssertUtils;
+import org.cloudifysource.quality.iTests.framework.utils.ScriptUtils;
 import org.cloudifysource.restclient.GSRestClient;
 import org.cloudifysource.restclient.RestException;
 import org.testng.annotations.AfterMethod;
 
-import com.j_spaces.kernel.PlatformVersion;
-
-import org.cloudifysource.quality.iTests.framework.utils.AssertUtils;
-import org.cloudifysource.quality.iTests.framework.utils.ScriptUtils;
+import java.io.IOException;
+import java.net.URL;
+import java.util.Map;
 
 public abstract class AbstractServicesTest extends NewAbstractCloudTest {
 
@@ -29,7 +27,12 @@ public abstract class AbstractServicesTest extends NewAbstractCloudTest {
 	
 	public void testService(String serviceFolderName, String serviceName) throws IOException, InterruptedException, RestException{
 		this.name = serviceName;
-		installServiceAndWait(recipesDirPath + serviceFolderName, serviceName);
+        if(serviceName.equals("apacheLB")){
+            installServiceAndWait(recipesDirPath + serviceFolderName, serviceName, 15);
+        }
+        else{
+            installServiceAndWait(recipesDirPath + serviceFolderName, serviceName);
+        }
 		String restUrl = getRestUrl();
 		GSRestClient client = new GSRestClient("", "", new URL(restUrl), PlatformVersion.getVersionNumber());
 		Map<String, Object> entriesJsonMap  = client.getAdminData("ProcessingUnits/Names/default." + serviceName + "/Status");

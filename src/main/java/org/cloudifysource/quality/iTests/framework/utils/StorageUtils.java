@@ -72,8 +72,9 @@ public class StorageUtils {
 
         for(VolumeDetails vd : volumes){
             for(String prefix : namePrefixes){
-                if(vd.getName().startsWith(prefix)){
+                if(vd.getName() != null && vd.getName().startsWith(prefix)){
                     foundLeak = !expectedLeak;
+                    LogUtils.log("leaked volume found. Name: " + vd.getName() + ", id: " + vd.getId() + ", location: " + vd.getLocation());
                     deleteVolume(vd.getLocation(), vd.getId(), DURATION, TimeUnit.SECONDS);
                 }
             }

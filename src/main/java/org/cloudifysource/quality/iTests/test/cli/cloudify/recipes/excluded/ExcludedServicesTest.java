@@ -5,6 +5,7 @@ import java.io.IOException;
 
 import org.apache.commons.io.FileUtils;
 import org.cloudifysource.quality.iTests.framework.testng.annotations.TestConfiguration;
+import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
 import org.cloudifysource.quality.iTests.framework.utils.ScriptUtils;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.AbstractLocalCloudTest;
@@ -176,7 +177,12 @@ public class ExcludedServicesTest extends AbstractLocalCloudTest {
 
     @AfterClass(alwaysRun = true)
     public void afterClass() throws Exception {
-       FileUtils.deleteDirectory(new File(localPath));
+
+       try {
+           FileUtils.deleteDirectory(new File(localPath));
+       } catch (final Exception e) {
+           LogUtils.log("Failed to delete directory : " + localPath, e);
+       }
 
     }
 

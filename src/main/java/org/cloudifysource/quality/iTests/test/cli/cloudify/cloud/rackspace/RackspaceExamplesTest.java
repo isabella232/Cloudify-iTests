@@ -38,10 +38,16 @@ import org.testng.annotations.Test;
  */
 public class RackspaceExamplesTest extends AbstractExamplesTest {
 	
+	@Override
+	protected String getCloudName() {
+		return "rackspace";
+	}
+
 	@BeforeClass(alwaysRun = true)
 	protected void bootstrap() throws Exception {
 		super.bootstrap();
 	}
+	
 	
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
 	public void testTravel() throws Exception {
@@ -66,10 +72,5 @@ public class RackspaceExamplesTest extends AbstractExamplesTest {
 	@AfterClass(alwaysRun = true)
 	protected void teardown() throws Exception {
 		super.teardown();
-	}
-	
-	@Override
-	protected String getCloudName() {
-		return "rackspace";
-	}
+	}	
 }

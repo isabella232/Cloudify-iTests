@@ -29,12 +29,7 @@ public class HPExamplesTest extends AbstractExamplesTest {
 	protected void bootstrap() throws Exception {
 		super.bootstrap();
 	}
-	
-	@AfterClass(alwaysRun = true)
-	protected void teardown() throws Exception {
-		super.teardown();
-	}
-	
+		
 	@Override
 	protected String getCloudName() {
 		return "hp";
@@ -58,6 +53,11 @@ public class HPExamplesTest extends AbstractExamplesTest {
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
 	public void testHelloWorld() throws Exception {
 		super.testHelloWorld();
+	}
+	
+	@AfterClass(alwaysRun = true)
+	protected void teardown() throws Exception {
+		super.teardown();
 	}
 
 }

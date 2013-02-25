@@ -37,9 +37,11 @@ public class Ec2GitExamplesTest extends AbstractExamplesTest {
 	@AfterClass(alwaysRun = true)
 	protected void teardown() throws Exception {
 		super.teardown();
-		
-		LogUtils.log("removing exported git folder");
-		FileUtils.deleteDirectory(new File(localGitRepoPath));
+		try {
+			FileUtils.deleteDirectory(new File(localGitRepoPath));
+		} catch (final Exception e) {
+			LogUtils.log("Failed deleting directory : " + localGitRepoPath);
+		}
 	}
 	
 	//should work

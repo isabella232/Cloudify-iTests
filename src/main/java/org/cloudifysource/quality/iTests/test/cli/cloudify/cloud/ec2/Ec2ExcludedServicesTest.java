@@ -3,6 +3,7 @@ package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.ec2;
 import com.j_spaces.kernel.PlatformVersion;
 import org.cloudifysource.quality.iTests.framework.testng.annotations.TestConfiguration;
 import org.cloudifysource.quality.iTests.framework.utils.AssertUtils;
+import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
 import org.cloudifysource.quality.iTests.framework.utils.ScriptUtils;
 import org.apache.commons.io.FileUtils;
 import org.cloudifysource.restclient.GSRestClient;
@@ -50,8 +51,12 @@ public class Ec2ExcludedServicesTest extends AbstractServicesTest {
 
     @AfterClass(alwaysRun = true)
     protected void teardown() throws Exception {
-        FileUtils.deleteDirectory(new File(localPath));
         super.teardown();
+        try {
+        	FileUtils.deleteDirectory(new File(localPath));
+        } catch (final Exception e) {
+        	LogUtils.log("Failed deleting directory : " + localPath , e);
+        }
     }
 
     //works
@@ -185,8 +190,6 @@ public class Ec2ExcludedServicesTest extends AbstractServicesTest {
     
     public void testService(String serviceName) throws Exception {
     	testService(serviceName, serviceName);
-    }
-
-
+    }    
 }
 

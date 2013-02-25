@@ -30,6 +30,7 @@ public abstract class AbstractStorageTest extends NewAbstractCloudTest{
     private final static String SERVICE_FILE_PATH = CommandTestUtils.getPath("src/main/resources/apps/USM/usm/" + SERVICE_NAME + "/simple-service.groovy");
 	private static final long ONE_MINUTE_IN_MILLIS = 60 * 1000;
 	private static final long TWO_SECONDS_IN_MILLIS = 2 * 1000;
+	private static final int INSTALL_SERVICE_TIMEOUT = 10;
 
     public void bootstrapAndInit() throws Exception{
 
@@ -116,6 +117,14 @@ public abstract class AbstractStorageTest extends NewAbstractCloudTest{
         assertVolumeNotDeleted();
     }
 
+    public void testFailedInstall() throws Exception {
+
+        installServiceAndWait(SERVICE_PATH, SERVICE_NAME, INSTALL_SERVICE_TIMEOUT, true, true);
+
+        AssertUtils.assertTrue("volume started", !isVolumeUp());
+
+    }
+
     private void assertVolumeNotDeleted() throws Exception {
     	final long end = System.currentTimeMillis() + ONE_MINUTE_IN_MILLIS;
     	while (System.currentTimeMillis() < end) {
@@ -128,5 +137,9 @@ public abstract class AbstractStorageTest extends NewAbstractCloudTest{
 
 	private boolean isVolumeUp() throws Exception {
         return !StorageUtils.getServiceNamedVolumes(SERVICE_FILE_PATH).isEmpty();
+    }
+
+	private boolean isVolumeUp(String serviceFilePath) throws Exception {
+        return !StorageUtils.getServiceNamedVolumes(serviceFilePath).isEmpty();
     }
 }

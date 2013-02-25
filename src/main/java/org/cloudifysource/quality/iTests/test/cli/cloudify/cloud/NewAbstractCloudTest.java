@@ -283,11 +283,16 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
     }
 
     protected String installServiceAndWait(String servicePath, String serviceName, int timeout , boolean expectToFail) throws IOException, InterruptedException {
+        return installServiceAndWait(servicePath, serviceName, timeout, expectToFail, false);
+    }
+
+    protected String installServiceAndWait(String servicePath, String serviceName, int timeout , boolean expectToFail, boolean disableSelfHealing) throws IOException, InterruptedException {
         ServiceInstaller serviceInstaller = new ServiceInstaller(getRestUrl(), serviceName);
         serviceInstaller.recipePath(servicePath);
         serviceInstaller.waitForFinish(true);
         serviceInstaller.expectToFail(expectToFail);
         serviceInstaller.timeoutInMinutes(timeout);
+        serviceInstaller.setDisableSelfHealing(disableSelfHealing);
 
         if(StorageUtils.isInitialized()){
             StorageUtils.beforeServiceInstallation();

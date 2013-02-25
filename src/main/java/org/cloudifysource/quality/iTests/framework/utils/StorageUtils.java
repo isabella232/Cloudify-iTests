@@ -60,6 +60,11 @@ public class StorageUtils {
 
     public static void scanAndDeleteLeakedVolumes(boolean expectedLeak) throws Exception{
 
+        if (cloudService == null) {
+            LogUtils.log("No leaked volume scan was executed as the cloud service for this class was not created");
+            return;
+        }
+
         List<StorageTemplate> storageTemplates = new ArrayList<StorageTemplate>(cloud.getCloudStorage().getTemplates().values());
         Set<String> namePrefixes = new HashSet<String>();
         boolean foundLeak = false;

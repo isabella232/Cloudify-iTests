@@ -40,7 +40,6 @@ public class HpStorageTest extends AbstractStorageTest{
     @AfterClass(alwaysRun = true)
     protected void teardown() throws Exception {
     	super.cleanup();
-        super.teardown();
     }
 
     @Override

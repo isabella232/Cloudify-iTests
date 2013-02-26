@@ -41,7 +41,7 @@ public class TailCommandTest extends AbstractLocalCloudTest {
 		uninstallService();
 	}
 
-	private void uninstallService() {
+	private void uninstallService() throws IOException, InterruptedException {
 		uninstallService(SERVICE_NAME);
 	}
 

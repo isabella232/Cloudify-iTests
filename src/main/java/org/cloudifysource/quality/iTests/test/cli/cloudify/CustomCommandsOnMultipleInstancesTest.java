@@ -28,9 +28,7 @@ public class CustomCommandsOnMultipleInstancesTest extends AbstractLocalCloudTes
 		totalInstances = pu.getTotalNumberOfInstances();
 	}
 
-    
-
-	private void uninstallService() {
+	private void uninstallService() throws IOException, InterruptedException {
 		super.uninstallService(SERVICE_NAME);
 	}
 	

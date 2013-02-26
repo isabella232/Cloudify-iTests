@@ -404,15 +404,10 @@ public class AbstractLocalCloudTest extends AbstractTestSupport {
 		applicationInstaller.uninstallIfFound();
 	}
 
-	protected void uninstallService(final String serviceName) {
-		try {
-			DumpUtils.dumpLogs(admin);
-			runCommand("connect " + restUrl + ";uninstall-service "
-					+ serviceName);
-		} catch (final Exception e) {
-			LogUtils.log("Failed to uninstall " + serviceName, e);
-			e.printStackTrace();
-		}
+	protected void uninstallService(final String serviceName) throws IOException, InterruptedException {		
+        ServiceInstaller serviceInstaller = new ServiceInstaller(restUrl, serviceName);
+        serviceInstaller.waitForFinish(true);
+        serviceInstaller.uninstall();
 	}
 
 	public void uninstallAll() throws IOException, InterruptedException {

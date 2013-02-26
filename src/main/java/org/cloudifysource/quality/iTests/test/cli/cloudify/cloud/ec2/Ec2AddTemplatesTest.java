@@ -33,7 +33,8 @@ public class Ec2AddTemplatesTest extends NewAbstractCloudTest {
 	private final String TEMPLATE_FOLDER_PATH = SERVICE_FOLDER_PATH + "/templates";
 	private final String TEMPLATE_NAME = "UBUNTU_TEST";
 	private final String TEMPLATE_PROPERTIES_FILE_PATH = TEMPLATE_FOLDER_PATH + "/ubuntu-template.properties";
-	private final String UBUNTU_IMAGE_ID = "us-east-1/ami-82fa58eb";
+	private final String UBUNTU_IMAGE_ID_US = "us-east-1/ami-82fa58eb";
+	private final String UBUNTU_IMAGE_ID_EU = "eu-west-1/ami-c37474b7";
 
     private static final int SERVICE_INSTALLATION_TIMEOUT_IN_MINUTES = 15;
 
@@ -76,7 +77,12 @@ public class Ec2AddTemplatesTest extends NewAbstractCloudTest {
 
 		//install service
 		installServiceAndWait(SERVICE_FOLDER_PATH, SERVICE_NAME, SERVICE_INSTALLATION_TIMEOUT_IN_MINUTES);
-		assertImageID(UBUNTU_IMAGE_ID);
+		if (((Ec2CloudService)getService()).getRegion().contains("us")) {
+			assertImageID(UBUNTU_IMAGE_ID_US);
+		} else {
+			assertImageID(UBUNTU_IMAGE_ID_EU);
+		}
+		
 		
 		uninstallServiceIfFound(SERVICE_NAME);	
 		// remove templates

@@ -37,7 +37,7 @@ public class MicrosoftAzureCloudService extends AbstractCloudService {
 
 	private String userName = System.getProperty("user.name") + UUIDHelper.generateRandomUUID(3);
 	
-	public static final String DEFAULT_IMAGE_ID = "5112500ae3b842c8b9c604889f8753c3__OpenLogic-CentOS63DEC20121220";
+	public static final String DEFAULT_IMAGE_ID = "5112500ae3b842c8b9c604889f8753c3__OpenLogic-CentOS63JAN20130122";
 
 	private final MicrosoftAzureRestClient azureClient;
 	private final String AZURE_SUBSCRIPTION_ID = certProperties.getProperty("AZURE_SUBSCRIPTION_ID");

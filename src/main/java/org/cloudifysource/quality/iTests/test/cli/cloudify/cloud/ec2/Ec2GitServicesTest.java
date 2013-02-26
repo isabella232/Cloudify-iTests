@@ -127,21 +127,21 @@ public class Ec2GitServicesTest extends AbstractServicesTest {
         testService("solr");
     }
 
-    //should work. takes time to install.
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 3, enabled = true)
+    //depends on zookeeper??
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 3, enabled = false)
     public void testStormNimbus() throws Exception{
         testService("storm/storm-nimbus");
     }
     
     //should work. takes time to install.
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 3, enabled = true)
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 3, enabled = false)
     public void testStormSupervisor() throws Exception{
         testService("storm/storm-supervisor");
     }
     
     //linux only. works
     @TestConfiguration(os = {TestConfiguration.VM.MAC, TestConfiguration.VM.UNIX} )
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
     public void testVertx() throws Exception{
         testService("vertx");
     }

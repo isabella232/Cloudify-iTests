@@ -63,8 +63,10 @@ public class Ec2AddTemplatesTest extends NewAbstractCloudTest {
 	public void testAddTemplateAndInstallService() 
 			throws IOException, InterruptedException {	
 
-		// update properties
-		updatePropertiesFile();
+		// update properties if working in us region
+		if (((Ec2CloudService)getService()).getRegion().contains("us")) {
+			updatePropertiesFile();			
+		}
 
 		// add templates
 		String command = "connect " + getRestUrl() + ";add-templates " + TEMPLATE_FOLDER_PATH;

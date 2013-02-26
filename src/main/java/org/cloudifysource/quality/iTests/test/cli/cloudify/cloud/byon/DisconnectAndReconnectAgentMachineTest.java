@@ -36,7 +36,7 @@ public class DisconnectAndReconnectAgentMachineTest extends AbstractByonCloudTes
 	}
 
 	@BeforeMethod(alwaysRun = true)
-	private void install() throws Exception {
+	public void install() throws Exception {
 		
 		installServiceAndWait(SGTestHelper.getBuildDir() + "/recipes/services/mongodb/mongod", SERVICE_NAME);
 				
@@ -73,7 +73,7 @@ public class DisconnectAndReconnectAgentMachineTest extends AbstractByonCloudTes
 		super.teardown();
 	}
 
-	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 3, enabled = true)
+	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 3, enabled = false)
 	public void testDisconnection() throws Exception {
 
 		WANemUtils.disconnect(machineToDisconnect, machines);

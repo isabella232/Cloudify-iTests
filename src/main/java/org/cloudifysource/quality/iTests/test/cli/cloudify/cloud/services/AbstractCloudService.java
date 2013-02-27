@@ -52,6 +52,7 @@ public abstract class AbstractCloudService implements CloudService {
     private String cloudFolderName;
     private String cloudUniqueName = this.getClass().getSimpleName();
     private CloudBootstrapper bootstrapper = new CloudBootstrapper();
+	private File customCloudGroovy;
 
     public AbstractCloudService(String cloudName) {
         this.cloudName = cloudName;
@@ -172,13 +173,8 @@ public abstract class AbstractCloudService implements CloudService {
         return getPathToCloudFolder() + "/" + getCloudName() + "-cloud.groovy";
     }
 
-    //This method should be called before bootstrapping in customize cloud
     public void setCloudGroovy(File cloudFile) throws IOException {
-        File fileToReplace = new File(getPathToCloudFolder() + "/" + getCloudName() + "-cloud.groovy");
-        if (fileToReplace.exists()) {
-            FileUtils.deleteQuietly(fileToReplace);
-        }
-        FileUtils.copyFile(cloudFile, new File(getPathToCloudFolder(), cloudFile.getName()));
+    	this.customCloudGroovy = cloudFile;
     }
 
     public String getPathToCloudFolder() {
@@ -233,6 +229,11 @@ public abstract class AbstractCloudService implements CloudService {
     public void bootstrapCloud() throws Exception {
 
         overrideLogsFile();
+        if (customCloudGroovy != null) {
+        	// use a custom grooyv file if defined
+        	File originalCloudGroovy = new File(getPathToCloudFolder(), "byon-cloud.groovy");
+        	IOUtils.replaceFile(originalCloudGroovy, customCloudGroovy);
+        }
         injectCloudAuthenticationDetails();
         replaceProps();
 

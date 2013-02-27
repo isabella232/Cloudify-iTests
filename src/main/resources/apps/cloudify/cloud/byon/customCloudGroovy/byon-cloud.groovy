@@ -146,8 +146,8 @@ cloud {
 									//Optional - user and password for the node. can be taken from general cloud configuration.
 									"nodesList" : ([
 										([
-											"id" : "pc-lab121, pc-lab122",
-											"host-list" : "192.168.9.141, 192.168.9.142"
+											"id" : "byon-pc-lab{0}",
+											"host-list" : "0.0.0.0"
 										])
 									])
 								])

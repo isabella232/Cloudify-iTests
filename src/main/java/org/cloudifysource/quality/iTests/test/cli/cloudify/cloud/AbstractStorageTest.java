@@ -30,7 +30,7 @@ public abstract class AbstractStorageTest extends NewAbstractCloudTest{
     private final static String SERVICE_FILE_PATH = CommandTestUtils.getPath("src/main/resources/apps/USM/usm/" + SERVICE_NAME + "/simple-service.groovy");
 	private static final long ONE_MINUTE_IN_MILLIS = 60 * 1000;
 	private static final long TWO_SECONDS_IN_MILLIS = 2 * 1000;
-	private static final int INSTALL_SERVICE_TIMEOUT = 10;
+	private static final int FAILED_INSTALL_SERVICE_TIMEOUT = 1;
 
     public void bootstrapAndInit() throws Exception{
 
@@ -119,7 +119,7 @@ public abstract class AbstractStorageTest extends NewAbstractCloudTest{
 
     public void testFailedInstall() throws Exception {
 
-        installServiceAndWait(SERVICE_PATH, SERVICE_NAME, INSTALL_SERVICE_TIMEOUT, true, true);
+        installServiceAndWait(SERVICE_PATH, SERVICE_NAME, FAILED_INSTALL_SERVICE_TIMEOUT, true);
 
         AssertUtils.assertTrue("volume started", !isVolumeUp());
 

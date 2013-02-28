@@ -1,6 +1,7 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.ec2;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.AbstractStorageTest;
@@ -43,7 +44,17 @@ public class Ec2StorageTest extends AbstractStorageTest{
 	
 	@AfterClass(alwaysRun = true)
 	protected void teardown() throws Exception {
+		uninstallServiceAssertTime();
 		super.cleanup();
+	}
+
+	void uninstallServiceAssertTime() throws IOException, InterruptedException {
+		long beforeUninstall = System.currentTimeMillis();
+		uninstallServiceAndWait(SERVICE_NAME);
+		long afterUninstall = System.currentTimeMillis();
+		long uninstallDuration = afterUninstall - beforeUninstall;
+		assertTrue("Uninstall process took more then " + MAXIMUM_UNINSTALL_TIME + " minutes to end. ",
+				TimeUnit.MILLISECONDS.toMinutes(uninstallDuration) < MAXIMUM_UNINSTALL_TIME);
 	}
 
 	@Override

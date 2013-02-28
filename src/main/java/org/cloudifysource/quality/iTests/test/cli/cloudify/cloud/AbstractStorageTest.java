@@ -31,6 +31,7 @@ public abstract class AbstractStorageTest extends NewAbstractCloudTest{
 	private static final long ONE_MINUTE_IN_MILLIS = 60 * 1000;
 	private static final long TWO_SECONDS_IN_MILLIS = 2 * 1000;
 	private static final int FAILED_INSTALL_SERVICE_TIMEOUT = 1;
+	protected static final int MAXIMUM_UNINSTALL_TIME = 5;
 
     public void bootstrapAndInit() throws Exception{
 

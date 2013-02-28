@@ -68,7 +68,7 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
             prefix = getPrefix(System.getenv("M2_HOME"));
             extension = ".bat";
         }
-        ScriptUtils.startLocalProcess(cloudifySourceDir, (prefix + "mvn" + extension + " compile package -DskipTests").split(" "));
+        ScriptUtils.startLocalProcess(cloudifySourceDir, (prefix + "mvn" + extension + " clean package -DskipTests").split(" "));
         if(ScriptUtils.isWindows()) {
             prefix = getPrefix(System.getenv("ANT_HOME"));
         }

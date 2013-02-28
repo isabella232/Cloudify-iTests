@@ -27,6 +27,13 @@ public abstract class JCloudsCloudService extends AbstractCloudService {
 
 	protected ComputeServiceContext context;
 	
+	public ComputeServiceContext getComputeServiceContext() {
+		if (context == null) {
+			context = createContext();
+		}
+		return context;
+	}
+	
 	public abstract void addOverrides(Properties overridesProps);
 
 	public JCloudsCloudService(String cloudName) {

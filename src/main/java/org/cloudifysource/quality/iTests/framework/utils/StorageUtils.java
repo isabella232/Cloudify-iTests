@@ -19,9 +19,11 @@ import org.cloudifysource.dsl.cloud.Cloud;
 import org.cloudifysource.dsl.cloud.storage.StorageTemplate;
 import org.cloudifysource.dsl.internal.ServiceReader;
 import org.cloudifysource.esc.driver.provisioning.storage.BaseStorageDriver;
+import org.cloudifysource.esc.driver.provisioning.storage.StorageProvisioningException;
 import org.cloudifysource.esc.driver.provisioning.storage.VolumeDetails;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.CloudService;
 import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.ec2.domain.Volume;
 
 
 public class StorageUtils {
@@ -41,13 +43,17 @@ public class StorageUtils {
         cloud = otherCloud;
         cloudService = otherCloudService;
         storageProvisioningDriver = (BaseStorageDriver) Class.forName(cloud.getConfiguration().getStorageClassName()).newInstance();
-        storageProvisioningDriver.setConfig(otherCloud, computeTemplateName, storageTemplateName);
+        storageProvisioningDriver.setConfig(otherCloud, computeTemplateName);
 
         serviceToMachines = new HashMap<String, Set<String>>();
         machinesBeforeInstall = new HashSet<String>();
         machinesAfterInstall = new HashSet<String>();
 
         JCloudsUtils.createContext(otherCloudService);
+    }
+    
+    public static String getVolumeName(Volume vol) throws StorageProvisioningException {
+    	return storageProvisioningDriver.getVolumeName(vol.getId());
     }
 
     public static void close(){

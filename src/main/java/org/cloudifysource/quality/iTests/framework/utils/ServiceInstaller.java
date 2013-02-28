@@ -51,10 +51,10 @@ public class ServiceInstaller extends RecipeInstaller {
 	}
 	
 	public String invoke(final String command) throws IOException, InterruptedException {
-		return CommandTestUtils.runCommandAndWait(connectCommand() + "invoke " + serviceName + " " + command);
+		return CommandTestUtils.runCommandAndWait(connectCommand() + ";invoke " + serviceName + " " + command);
 	}
 	
 	public String invoke(final String command, int instanceId) throws IOException, InterruptedException {
-		return CommandTestUtils.runCommandAndWait(connectCommand() + "invoke -instanceid " + instanceId + " " + serviceName + " " + command);
+		return CommandTestUtils.runCommandAndWait(connectCommand() + ";invoke -instanceid " + instanceId + " " + serviceName + " " + command);
 	}
 }

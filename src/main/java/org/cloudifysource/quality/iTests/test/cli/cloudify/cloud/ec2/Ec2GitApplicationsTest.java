@@ -41,46 +41,46 @@ public class Ec2GitApplicationsTest extends AbstractExamplesTest {
 	public void testComputers() throws Exception {
 		super.testComputers(localGitRepoPath + "/apps");
 	}
-	
+
 	//should work
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
 	public void testBabies() throws Exception {
 		super.testBabies(localGitRepoPath + "/apps");
 	}
-	
+
 	//fails
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = false)
 	public void testBiginsights() throws Exception {
 		super.testBiginsights(localGitRepoPath + "/apps");
 	}
-	
+
 	//should work
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
 	public void testPetclinicJboss() throws Exception {
 		super.testPetclinicJboss(localGitRepoPath + "/apps");
 	}
-	
+
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
 	public void testLamp() throws Exception {
 		super.testLamp(localGitRepoPath + "/apps");
 	}
-	
+
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
 	public void testMasterSlave() throws Exception {
 		super.testMasterSlave(localGitRepoPath + "/apps");
 	}
-	
+
 	//needs configuration to work.
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = false)
 	public void testPetclinicWas() throws Exception {
 		super.testPetclinicWas(localGitRepoPath + "/apps");
 	}
-	
+
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
 	public void testStorm() throws Exception {
 		super.testStorm(localGitRepoPath + "/apps");
 	}
-	
+
 	//should work
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
 	public void testTravelLb () throws Exception {
@@ -90,10 +90,12 @@ public class Ec2GitApplicationsTest extends AbstractExamplesTest {
 	@AfterClass(alwaysRun = true)
 	protected void teardown() throws Exception {
 		super.teardown();
-		try {
-			FileUtils.deleteDirectory(new File(localGitRepoPath));
-		} catch (final Exception e) {
-			LogUtils.log("Failed deleting directory : " + localGitRepoPath);
-		}
+
+        //not deleting for debug
+//		try {
+//			FileUtils.deleteDirectory(new File(localGitRepoPath));
+//		} catch (final Exception e) {
+//			LogUtils.log("Failed deleting directory : " + localGitRepoPath);
+//		}
 	}
 }

@@ -45,6 +45,7 @@ public abstract class AbstractStorageTest extends NewAbstractCloudTest{
 	private static final int INSTALL_SERVICE_TIMEOUT = 20;
     protected static final int MAXIMUM_UNINSTALL_TIME = 5;
 	private static final long MOUNT_AFTER_ATTACH_TIMEOUT = 10 * 1000;
+	protected static final long POLLING_TIMEOUT = 2 * 1000;
 
     public void bootstrapAndInit() throws Exception{
 
@@ -140,6 +141,7 @@ public abstract class AbstractStorageTest extends NewAbstractCloudTest{
 			public boolean getCondition() {
 				boolean result = false;
 				try {
+					Thread.sleep(POLLING_TIMEOUT);
 					result =  !isVolumeUp();
 				} catch (Exception e) {
 					AssertUtils.assertFail("exception thrown during volume verification", e);
@@ -189,7 +191,7 @@ public abstract class AbstractStorageTest extends NewAbstractCloudTest{
             LogUtils.log("found volume " + volumeDetails.getId());
         }
         ///////debug
-
+        Thread.sleep(MOUNT_AFTER_ATTACH_TIMEOUT);
         StorageUtils.detachVolume(volumeId, machineIp, OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
 
         //asserting the file is not in the mounted directory

@@ -23,7 +23,9 @@ service {
 		customCommands ([
 		"listMount" : "list-mount.sh",
 		"writeToStorage" : "write-storage.sh",
-		"listFilesInStorage" : "list-storage.sh"
+		"listFilesInStorage" : "list-storage.sh",
+		"mount" : "mount.sh",
+		"unmount" : "unmount.sh"
 	])
 		compute {
 		template "SMALL_LINUX"

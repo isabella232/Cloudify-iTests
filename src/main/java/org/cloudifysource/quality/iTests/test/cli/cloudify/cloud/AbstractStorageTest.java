@@ -2,6 +2,7 @@ package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud;
 
 import org.cloudifysource.dsl.Service;
 import org.cloudifysource.dsl.internal.ServiceReader;
+import org.cloudifysource.esc.driver.provisioning.storage.VolumeDetails;
 import org.cloudifysource.quality.iTests.framework.utils.AssertUtils;
 import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
 import org.cloudifysource.quality.iTests.framework.utils.StorageUtils;
@@ -10,6 +11,9 @@ import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils.Proc
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 
@@ -24,13 +28,21 @@ public abstract class AbstractStorageTest extends NewAbstractCloudTest{
 	final static String WRITE_FILE_COMMAND_NAME = "writeToStorage";
 	final static String LIST_FILES_COMMAND_NAME = "listFilesInStorage";
 	final static String LIST_MOUNTED_DEVICES_COMMAND_NAME = "listMount";
+	final static String MOUNT_COMMAND_NAME = "mount";
+	final static String UNMOUNT_COMMAND_NAME = "unmount";
 
     protected final static String SERVICE_NAME = "simpleStorage";
     protected final static String SERVICE_PATH = CommandTestUtils.getPath("src/main/resources/apps/USM/usm/" + SERVICE_NAME);
-    private final static String SERVICE_FILE_PATH = CommandTestUtils.getPath("src/main/resources/apps/USM/usm/" + SERVICE_NAME + "/simple-service.groovy");
+    private final static String SERVICE_FILE_PATH = SERVICE_PATH + "/simple-service.groovy";
+    protected final static String CUSTOM_SERVICE_NAME = "customStorageTemplateService";
+    protected final static String CUSTOM_SERVICE_PATH = CommandTestUtils.getPath("src/main/resources/apps/USM/usm/" + CUSTOM_SERVICE_NAME);
+    private final static String CUSTOM_SERVICE_FILE_PATH = CUSTOM_SERVICE_PATH + "/storage-service.groovy";
+
+    private final static String TESTING_FILE_NAME = "foo.txt";
 	private static final long ONE_MINUTE_IN_MILLIS = 60 * 1000;
 	private static final long TWO_SECONDS_IN_MILLIS = 2 * 1000;
-	private static final int FAILED_INSTALL_SERVICE_TIMEOUT = 1;
+	private static final int FAILED_INSTALL_SERVICE_TIMEOUT = 2;
+	private static final int INSTALL_SERVICE_TIMEOUT = 20;
 
     public void bootstrapAndInit() throws Exception{
 
@@ -125,6 +137,73 @@ public abstract class AbstractStorageTest extends NewAbstractCloudTest{
 
     }
 
+    public void testMount() throws Exception {
+
+        installServiceAndWait(SERVICE_PATH, SERVICE_NAME);
+
+        LogUtils.log("creating a new file called foo.txt in the storage volume. "
+                + "running 'touch ~/storage/foo.txt' command on remote machine.");
+        ProcessResult invokeCommandResult = invokeCommand(SERVICE_NAME, WRITE_FILE_COMMAND_NAME);
+
+        assertTrue("create file command exited with an abnormal exit code. Output was " + invokeCommandResult.getOutput(),
+                invokeCommandResult.getExitcode() == 0);
+
+        LogUtils.log("listing all files inside mounted storage folder. running 'ls ~/storage/' command");
+        ProcessResult listFilesResult = invokeCommand(SERVICE_NAME, LIST_FILES_COMMAND_NAME);
+
+        assertTrue("failed listing files. Output was " + listFilesResult.getOutput(), listFilesResult.getExitcode() == 0);
+        assertTrue("File was not created in storage volume. Output was " + listFilesResult.getOutput(),
+                listFilesResult.getOutput().contains(TESTING_FILE_NAME));
+
+        ///////debug
+        Map<String,Set<String>> servicesToMachines = StorageUtils.getServicesToMachines();
+        for(String service : servicesToMachines.keySet()){
+                 LogUtils.log("found service " + service);
+        }
+        ///////debug
+
+        String machineIp = StorageUtils.getServicesToMachines().get(SERVICE_NAME).iterator().next();
+        String volumeId = StorageUtils.getServiceNamedVolumes(SERVICE_FILE_PATH).iterator().next().getId();
+
+        LogUtils.log("detaching volume from the service machine");
+        invokeCommand(SERVICE_NAME, UNMOUNT_COMMAND_NAME);
+
+        ///////debug
+        Set<VolumeDetails> listVolumes = StorageUtils.listVolumes(machineIp, OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
+        for (VolumeDetails volumeDetails : listVolumes) {
+            LogUtils.log("found volume " + volumeDetails.getId());
+        }
+        ///////debug
+
+        StorageUtils.detachVolume(volumeId, machineIp, OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
+
+        //asserting the file is not in the mounted directory
+        LogUtils.log("listing all files inside mounted storage folder. running 'ls ~/storage/' command");
+        listFilesResult = invokeCommand(SERVICE_NAME, LIST_FILES_COMMAND_NAME);
+        assertTrue("failed listing files. Output was " + listFilesResult.getOutput(), listFilesResult.getExitcode() == 0);
+
+        assertTrue("the newly created file is in the mounted directory after detachment", !listFilesResult.getOutput().contains(TESTING_FILE_NAME));
+
+        LogUtils.log("reattaching the volume to the service machine");
+        StorageUtils.attachVolume(volumeId, machineIp, OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
+        invokeCommand(SERVICE_NAME, MOUNT_COMMAND_NAME);
+
+        //asserting the file is in the mounted directory
+        LogUtils.log("listing all files inside mounted storage folder. running 'ls ~/storage/' command");
+        listFilesResult = invokeCommand(SERVICE_NAME, LIST_FILES_COMMAND_NAME);
+        assertTrue("failed listing files. Output was " + listFilesResult.getOutput(), listFilesResult.getExitcode() == 0);
+
+        assertTrue("the created file is not in the mounted directory after reattachment", listFilesResult.getOutput().contains(TESTING_FILE_NAME));    }
+
+    public void testTwoTemplates() throws Exception {
+
+        installServiceAndWait(CUSTOM_SERVICE_PATH, CUSTOM_SERVICE_NAME, INSTALL_SERVICE_TIMEOUT);
+        installServiceAndWait(SERVICE_PATH, SERVICE_NAME, INSTALL_SERVICE_TIMEOUT);
+
+        StorageUtils.verifyVolumeConfiguration(SERVICE_FILE_PATH);
+        StorageUtils.verifyVolumeConfiguration(CUSTOM_SERVICE_FILE_PATH);
+    }
+
     private void assertVolumeNotDeleted() throws Exception {
     	final long end = System.currentTimeMillis() + ONE_MINUTE_IN_MILLIS;
     	while (System.currentTimeMillis() < end) {
@@ -136,10 +215,16 @@ public abstract class AbstractStorageTest extends NewAbstractCloudTest{
 	}
 
 	private boolean isVolumeUp() throws Exception {
-        return !StorageUtils.getServiceNamedVolumes(SERVICE_FILE_PATH).isEmpty();
+        return isVolumeUp(SERVICE_FILE_PATH);
     }
 
 	private boolean isVolumeUp(String serviceFilePath) throws Exception {
-        return !StorageUtils.getServiceNamedVolumes(serviceFilePath).isEmpty();
+
+        Set<VolumeDetails> serviceNamedVolumes = StorageUtils.getServiceNamedVolumes(serviceFilePath);
+        for(VolumeDetails vd :serviceNamedVolumes){
+            LogUtils.log("in isVolumeUp - found volume " + vd.getName());
+        }
+
+        return !serviceNamedVolumes.isEmpty();
     }
 }

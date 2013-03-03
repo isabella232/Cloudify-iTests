@@ -8,8 +8,11 @@ package org.cloudifysource.quality.iTests.framework.utils;
 import org.cloudifysource.dsl.Service;
 import org.cloudifysource.dsl.cloud.Cloud;
 import org.cloudifysource.dsl.cloud.storage.StorageTemplate;
+import org.cloudifysource.dsl.internal.DSLException;
 import org.cloudifysource.dsl.internal.ServiceReader;
+import org.cloudifysource.dsl.internal.packaging.PackagingException;
 import org.cloudifysource.esc.driver.provisioning.storage.BaseStorageDriver;
+import org.cloudifysource.esc.driver.provisioning.storage.StorageProvisioningException;
 import org.cloudifysource.esc.driver.provisioning.storage.VolumeDetails;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.CloudService;
 import org.jclouds.compute.domain.NodeMetadata;
@@ -17,6 +20,7 @@ import org.jclouds.compute.domain.NodeMetadata;
 import java.io.File;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 
 public class StorageUtils {
@@ -122,6 +126,10 @@ public class StorageUtils {
         Set<String> difference = new HashSet<String>(machinesAfterInstall);
         difference.removeAll(machinesBeforeInstall);
 
+        ///////debug
+        LogUtils.log("inserting " + serviceName + " to map");
+        ///////debug
+
         serviceToMachines.put(serviceName, difference);
         machinesAfterInstall.clear();
         machinesBeforeInstall.clear();
@@ -205,10 +213,7 @@ public class StorageUtils {
 
         Set<VolumeDetails> serviceVolumes = new HashSet<VolumeDetails>();
 
-        File serviceFile = new File(serviceFilePath);
-        Service service = ServiceReader.readService(serviceFile);
-
-        String serviceTemplateName = service.getStorage().getTemplate();
+        String serviceTemplateName = getStorageTemplateName(serviceFilePath);
         StorageTemplate storageTemplate = cloud.getCloudStorage().getTemplates().get(serviceTemplateName);
         String volumeNamePrefix = storageTemplate.getNamePrefix();
 
@@ -221,6 +226,25 @@ public class StorageUtils {
         }
 
         return serviceVolumes;
+    }
+
+    public static String getStorageTemplateName(String serviceFilePath) throws Exception {
+
+        File serviceFile = new File(serviceFilePath);
+        Service service = ServiceReader.readService(serviceFile);
+        return service.getStorage().getTemplate();
+    }
+
+    public static void detachVolume(final String volumeId, final String ip, final long duration, final TimeUnit timeUnit) throws Exception {
+        storageProvisioningDriver.detachVolume(volumeId, ip, duration, timeUnit);
+    }
+
+    public static void attachVolume(final String volumeId, final String machineIp, final long duration, final TimeUnit timeUnit) throws Exception {
+        storageProvisioningDriver.attachVolume(volumeId, machineIp, duration, timeUnit);
+    }
+
+    public static Set<VolumeDetails> listVolumes(final String machineIp, final long duration, final TimeUnit timeUnit) throws Exception {
+        return storageProvisioningDriver.listVolumes(machineIp, duration, timeUnit);
     }
 }
 

@@ -44,6 +44,7 @@ public abstract class AbstractStorageTest extends NewAbstractCloudTest{
 	private static final int FAILED_INSTALL_SERVICE_TIMEOUT = 2;
 	private static final int INSTALL_SERVICE_TIMEOUT = 20;
 
+
     public void bootstrapAndInit() throws Exception{
 
         super.bootstrap();
@@ -129,13 +130,26 @@ public abstract class AbstractStorageTest extends NewAbstractCloudTest{
         assertVolumeNotDeleted();
     }
 
-    public void testFailedInstall() throws Exception {
+	public void testFailedInstall() throws Exception {
 
-        installServiceAndWait(SERVICE_PATH, SERVICE_NAME, FAILED_INSTALL_SERVICE_TIMEOUT, true);
+		installServiceAndWait(SERVICE_PATH, SERVICE_NAME, FAILED_INSTALL_SERVICE_TIMEOUT, true);
 
-        AssertUtils.assertTrue("volume started", !isVolumeUp());
+		AssertUtils.repetitiveAssertTrue("volume started", new AssertUtils.RepetitiveConditionProvider() {
+			@Override
+			public boolean getCondition() {
+				boolean result = false;
+				try {
+					result =  !isVolumeUp();
+				} catch (Exception e) {
+					AssertUtils.assertFail("exception thrown during volume verification", e);
+				}
 
-    }
+				return result;
+			}
+		}, OPERATION_TIMEOUT);
+
+	}
+
 
     public void testMount() throws Exception {
 

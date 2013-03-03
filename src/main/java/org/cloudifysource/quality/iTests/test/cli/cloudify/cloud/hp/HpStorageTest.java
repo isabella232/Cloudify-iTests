@@ -7,6 +7,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Author: nirb
@@ -39,8 +40,18 @@ public class HpStorageTest extends AbstractStorageTest{
 
     @AfterClass(alwaysRun = true)
     protected void teardown() throws Exception {
+    	uninstallServiceAssertTime();
     	super.cleanup();
     }
+    
+	void uninstallServiceAssertTime() throws IOException, InterruptedException {
+		long beforeUninstall = System.currentTimeMillis();
+		uninstallServiceAndWait(SERVICE_NAME);
+		long afterUninstall = System.currentTimeMillis();
+		long uninstallDuration = afterUninstall - beforeUninstall;
+		assertTrue("Uninstall process took more then " + MAXIMUM_UNINSTALL_TIME + " minutes to end. ",
+				TimeUnit.MILLISECONDS.toMinutes(uninstallDuration) < MAXIMUM_UNINSTALL_TIME);
+	}
 
     @Override
     protected boolean isReusableCloud() {

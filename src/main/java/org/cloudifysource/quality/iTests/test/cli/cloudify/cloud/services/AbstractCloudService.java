@@ -32,6 +32,7 @@ import org.testng.Assert;
 public abstract class AbstractCloudService implements CloudService {
 
     private static final int MAX_HOSTNAME_LENGTH = 45;
+    private static final int MAX_VOLUME_NAME_LENGTH = 45;
     protected static final String RELATIVE_ESC_PATH = "/clouds/";
     protected static final String UPLOAD_FOLDER = "upload";
     protected static final String CREDENTIALS_FOLDER = System.getProperty("com.quality.sgtest.credentialsFolder",
@@ -45,6 +46,7 @@ public abstract class AbstractCloudService implements CloudService {
     private URL[] restAdminUrls;
     private URL[] webUIUrls;
     private String machinePrefix;
+    private String volumePrefix;
     private Map<String, String> additionalPropsToReplace = new HashMap<String, String>();
     private Cloud cloud;
     private Map<String, Object> properties = new HashMap<String, Object>();
@@ -109,6 +111,20 @@ public abstract class AbstractCloudService implements CloudService {
         }
     }
 
+    public String getVolumePrefix() {
+        return volumePrefix;
+    }
+
+    public void setVolumePrefix(String volumePrefix) {
+
+        if (volumePrefix.length() > MAX_VOLUME_NAME_LENGTH) {
+            String substring = volumePrefix.substring(0, MAX_VOLUME_NAME_LENGTH - 1);
+            LogUtils.log("volumePrefix " + volumePrefix + " is too long. using " + substring + " as actual volume prefix");
+            this.volumePrefix = substring;
+        } else {
+            this.volumePrefix = volumePrefix;
+        }
+    }
 
     public void setCloudName(String cloudName) {
         this.cloudName = cloudName;

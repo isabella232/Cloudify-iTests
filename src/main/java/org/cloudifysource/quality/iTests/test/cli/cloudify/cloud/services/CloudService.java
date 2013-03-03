@@ -49,19 +49,22 @@ public interface CloudService {
 	String getApiKey();
 
 	void setMachinePrefix(String machinePrefix);
-	
+
+    void setVolumePrefix(String volumePrefix);
+
 	void setNumberOfManagementMachines(int numberOfManagementMachines);
-	
+
 	String getMachinePrefix();
+
+	String getVolumePrefix();
 
 	boolean scanLeakedAgentAndManagementNodes();
 
 	boolean scanLeakedAgentNodes();
-		
-	String getPathToCloudFolder();
-	
-	String getPathToCloudGroovy();
-	
-	Map<String, Object> getProperties();
 
+	String getPathToCloudFolder();
+
+	String getPathToCloudGroovy();
+
+	Map<String, Object> getProperties();
 }

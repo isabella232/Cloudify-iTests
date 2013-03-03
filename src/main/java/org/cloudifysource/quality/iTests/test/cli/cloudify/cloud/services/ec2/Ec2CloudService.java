@@ -104,7 +104,9 @@ public class Ec2CloudService extends JCloudsCloudService {
 		propsToReplace.put("numberOfManagementMachines 1", "numberOfManagementMachines "
 				+ getNumberOfManagementMachines());
 
-		IOUtils.replaceTextInFile(getPathToCloudGroovy(), propsToReplace);
+        propsToReplace.put("namePrefix \"cloudify-", "namePrefix \"" + getVolumePrefix());
+
+        IOUtils.replaceTextInFile(getPathToCloudGroovy(), propsToReplace);
 
 		// add a pem file
 		final String sshKeyPemName = this.keyPair + ".pem";

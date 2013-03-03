@@ -44,6 +44,7 @@ public abstract class AbstractStorageTest extends NewAbstractCloudTest{
 	private static final int FAILED_INSTALL_SERVICE_TIMEOUT = 2;
 	private static final int INSTALL_SERVICE_TIMEOUT = 20;
     protected static final int MAXIMUM_UNINSTALL_TIME = 5;
+	private static final long MOUNT_AFTER_ATTACH_TIMEOUT = 10 * 1000;
 
     public void bootstrapAndInit() throws Exception{
 
@@ -200,6 +201,7 @@ public abstract class AbstractStorageTest extends NewAbstractCloudTest{
 
         LogUtils.log("reattaching the volume to the service machine");
         StorageUtils.attachVolume(volumeId, machineIp, OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
+        Thread.sleep(MOUNT_AFTER_ATTACH_TIMEOUT);
         invokeCommand(SERVICE_NAME, MOUNT_COMMAND_NAME);
 
         //asserting the file is in the mounted directory

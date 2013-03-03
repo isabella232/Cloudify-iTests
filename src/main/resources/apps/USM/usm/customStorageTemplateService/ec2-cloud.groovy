@@ -1,5 +1,3 @@
-import java.lang.System
-
 /***************
  * Cloud configuration file for the Amazon ec2 cloud. Uses the default jclouds-based cloud driver.
  * See org.cloudifysource.dsl.cloud.Cloud for more details.
@@ -84,7 +82,7 @@ cloud {
 						deleteOnExit true
 						size 5
 						path "/storage"
-						namePrefix System.getProperty("user.name") + "-cloudify-storage-volume"
+						namePrefix "cloudify-storage-volume"
 						deviceName "/dev/sdc"
 						fileSystemType "ext4"
 						custom ([:])
@@ -94,12 +92,10 @@ cloud {
 						deleteOnExit true
 						size 7
 						path "/storage"
-						namePrefix System.getProperty("user.name") + "-cloudify-custom-storage-volume"
+						namePrefix "cloudify-custom-storage-volume"
 						deviceName "/dev/sdc"
 						fileSystemType "ext4"
 						custom ([:])
-                        println System.getProperty("user.name")
-
 					}
 				])
 	}

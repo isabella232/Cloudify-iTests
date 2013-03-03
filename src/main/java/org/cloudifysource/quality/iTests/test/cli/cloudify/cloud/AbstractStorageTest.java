@@ -118,13 +118,26 @@ public abstract class AbstractStorageTest extends NewAbstractCloudTest{
         assertVolumeNotDeleted();
     }
 
-    public void testFailedInstall() throws Exception {
+	public void testFailedInstall() throws Exception {
 
-        installServiceAndWait(SERVICE_PATH, SERVICE_NAME, FAILED_INSTALL_SERVICE_TIMEOUT, true);
+		installServiceAndWait(SERVICE_PATH, SERVICE_NAME, FAILED_INSTALL_SERVICE_TIMEOUT, true);
 
-        AssertUtils.assertTrue("volume started", !isVolumeUp());
+		AssertUtils.repetitiveAssertTrue("volume started", new AssertUtils.RepetitiveConditionProvider() {
+			@Override
+			public boolean getCondition() {
+				boolean result = false;
+				try {
+					result =  !isVolumeUp();
+				} catch (Exception e) {
+					AssertUtils.assertFail("exception thrown during volume verification", e);
+				}
 
-    }
+				return result;
+			}
+		}, OPERATION_TIMEOUT);
+
+	}
+
 
     private void assertVolumeNotDeleted() throws Exception {
     	final long end = System.currentTimeMillis() + ONE_MINUTE_IN_MILLIS;

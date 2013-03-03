@@ -40,7 +40,7 @@ public abstract class AbstractStorageTest extends NewAbstractCloudTest{
 
     private final static String TESTING_FILE_NAME = "foo.txt";
 	private static final long ONE_MINUTE_IN_MILLIS = 60 * 1000;
-	private static final long TWO_SECONDS_IN_MILLIS = 2 * 1000;
+	private static final long FIVE_SECONDS_IN_MILLIS = 5 * 1000;
 	private static final int FAILED_INSTALL_SERVICE_TIMEOUT = 2;
 	private static final int INSTALL_SERVICE_TIMEOUT = 20;
     protected static final int MAXIMUM_UNINSTALL_TIME = 5;
@@ -116,7 +116,7 @@ public abstract class AbstractStorageTest extends NewAbstractCloudTest{
     		if (!isVolumeUp()) {
     			return;
     		}
-    		Thread.sleep(TWO_SECONDS_IN_MILLIS);
+    		Thread.sleep(FIVE_SECONDS_IN_MILLIS);
     	}
     	AssertUtils.assertTrue("volumes were not deleted", !isVolumeUp());
 	}
@@ -228,7 +228,7 @@ public abstract class AbstractStorageTest extends NewAbstractCloudTest{
     		if (!isVolumeUp()) {
     			AssertUtils.assertFail("volume was deleted");
     		}
-    		Thread.sleep(TWO_SECONDS_IN_MILLIS);
+    		Thread.sleep(FIVE_SECONDS_IN_MILLIS);
     	}
 	}
 

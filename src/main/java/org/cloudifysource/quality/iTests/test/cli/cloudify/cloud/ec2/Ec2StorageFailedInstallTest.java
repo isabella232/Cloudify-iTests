@@ -22,7 +22,7 @@ public class Ec2StorageFailedInstallTest extends AbstractStorageTest {
         super.cleanup();
     }
 
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = false)
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
     public void testFailedInstall() throws Exception{
          super.testFailedInstall();
     }

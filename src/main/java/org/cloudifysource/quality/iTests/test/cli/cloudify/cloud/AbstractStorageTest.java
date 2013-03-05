@@ -275,7 +275,7 @@ public abstract class AbstractStorageTest extends NewAbstractCloudTest{
                 }
                 return brokenString.equalsIgnoreCase(atomicServiceStatus.get());
             }
-        } , OPERATION_TIMEOUT*2);
+        } , OPERATION_TIMEOUT*4);
 
         LogUtils.log("waiting for service to restart on a new machine");
         AssertUtils.repetitiveAssertTrue("service didn't recover", new AssertUtils.RepetitiveConditionProvider() {

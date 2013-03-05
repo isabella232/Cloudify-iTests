@@ -56,9 +56,13 @@ public abstract class AbstractDynamicStorageTest extends NewAbstractCloudTest {
 		
 	}
 	
+	public void testLinux(final boolean useManagement) throws Exception {
+		setTemplate("SMALL_LINUX", useManagement);
+		doTest();
+	}
+	
 	public void testLinux() throws Exception {
-		setTemplate("SMALL_LINUX", true);
-		doTest();		
+		testLinux(true);
 	}
 	
 	@Override

@@ -7,11 +7,13 @@ import java.util.Set;
 import org.cloudifysource.quality.iTests.framework.tools.SGTestHelper;
 import org.cloudifysource.quality.iTests.framework.utils.AssertUtils;
 import org.cloudifysource.quality.iTests.framework.utils.ServiceInstaller;
+import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.ec2.Ec2CloudService;
 import org.jclouds.ec2.domain.Volume;
 import org.jclouds.ec2.domain.Volume.Status;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
 
 public class ConcurrentStorageAllocationTest extends AbstractDynamicStorageTest {
 
@@ -22,6 +24,11 @@ public class ConcurrentStorageAllocationTest extends AbstractDynamicStorageTest 
 	@BeforeClass(alwaysRun = true)
 	protected void bootstrap() throws Exception {
 		super.bootstrap();
+	}
+	
+	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
+	public void testLinux() throws Exception {
+		super.testLinux(false);
 	}
 	
 	@Override

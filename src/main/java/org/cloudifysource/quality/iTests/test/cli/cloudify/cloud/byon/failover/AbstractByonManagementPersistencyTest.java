@@ -30,7 +30,7 @@ public abstract class AbstractByonManagementPersistencyTest extends AbstractByon
         //teardown
     }
 
-    public abstract void shutdownManagement();
+    public abstract void shutdownManagement() throws Exception;
 
     public void testManagementPersistency() throws Exception{
 

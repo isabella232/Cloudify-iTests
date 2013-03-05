@@ -1,16 +1,15 @@
-package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.hp;
+package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.ec2.storage;
 
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.AbstractStorageTest;
-import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.ec2.Ec2CloudService;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /**
  * Author: nirb
- * Date: 25/02/13
+ * Date: 28/02/13
  */
-public class HpStorageFailedInstallTest extends AbstractStorageTest {
+public class Ec2StorageMountTest extends AbstractStorageTest {
 
     @BeforeMethod(alwaysRun = true)
     public void bootstrapAndInit() throws Exception{
@@ -23,12 +22,8 @@ public class HpStorageFailedInstallTest extends AbstractStorageTest {
     }
 
     @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
-    public void testFailedInstall() throws Exception{
-        super.testFailedInstall();
-    }
-
-    protected void customizeCloud() throws Exception {
-        ((Ec2CloudService)getService()).getAdditionalPropsToReplace().put("deviceName \"/dev/sdc\"", "deviceName \"/dev/falsename\"");
+    public void testMount() throws Exception {
+        super.testMount();
     }
 
     @Override

@@ -2,6 +2,8 @@ package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.ec2;
 
 import java.io.File;
 
+import org.apache.commons.io.FileUtils;
+import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
 import org.cloudifysource.quality.iTests.framework.utils.ScriptUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.AbstractExamplesTest;
 import org.eclipse.jgit.api.Git;
@@ -22,7 +24,7 @@ public class Ec2GitApplicationsTest extends AbstractExamplesTest {
 	protected void bootstrap() throws Exception {
 		super.bootstrap();
 		
-	    localGitRepoPath = ScriptUtils.getBuildPath() + "/git-recipes";
+	    localGitRepoPath = ScriptUtils.getBuildPath() + "/git-recipes-" + this.getClass().getSimpleName() ;
 	    
 	    if (!new File(localGitRepoPath).exists()) {
 	    	String remotePath = "https://github.com/CloudifySource/cloudify-recipes.git";
@@ -90,10 +92,10 @@ public class Ec2GitApplicationsTest extends AbstractExamplesTest {
 		super.teardown();
 
         //not deleting for debug
-//		try {
-//			FileUtils.deleteDirectory(new File(localGitRepoPath));
-//		} catch (final Exception e) {
-//			LogUtils.log("Failed deleting directory : " + localGitRepoPath);
-//		}
+		try {
+			FileUtils.deleteDirectory(new File(localGitRepoPath));
+		} catch (final Exception e) {
+			LogUtils.log("Failed deleting directory : " + localGitRepoPath);
+		}
 	}
 }

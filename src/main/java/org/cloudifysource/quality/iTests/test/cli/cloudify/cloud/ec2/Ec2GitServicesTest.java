@@ -26,7 +26,7 @@ public class Ec2GitServicesTest extends AbstractServicesTest {
     protected void bootstrap() throws Exception {
     	super.bootstrap();
     	
-    	localGitRepoPath = ScriptUtils.getBuildPath() + "/git-recipes";
+    	localGitRepoPath = ScriptUtils.getBuildPath() + "/git-recipes-" + this.getClass().getSimpleName() ;
     	
 	    if (!new File(localGitRepoPath).exists()) {
 	    	String remotePath = "https://github.com/CloudifySource/cloudify-recipes.git";

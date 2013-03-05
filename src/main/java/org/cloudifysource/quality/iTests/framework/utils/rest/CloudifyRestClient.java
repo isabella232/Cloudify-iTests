@@ -10,6 +10,7 @@ import org.cloudifysource.dsl.rest.request.SetApplicationAttributesRequest;
 import org.cloudifysource.dsl.rest.response.DeleteServiceInstanceAttributeResponse;
 import org.cloudifysource.dsl.rest.response.Response;
 import org.cloudifysource.dsl.rest.response.ServiceDetails;
+import org.cloudifysource.dsl.rest.response.ServiceInstanceDetails;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
@@ -63,6 +64,16 @@ public class CloudifyRestClient {
 		ClientResponse clientResponse = doDelete("/" + appName + "/service/" + serviceName + "/instances/" + instanceId + "/attributes/" + attributeName);
 		String responseBody = clientResponse.getEntity(String.class);
 		Response<DeleteServiceInstanceAttributeResponse> response = new ObjectMapper().readValue(responseBody, ResponseTypeReferenceFactory.newDeleteServiceInstanceAttributeResponse());
+		return response.getResponse();
+	}
+	
+	public ServiceInstanceDetails getServiceInstanceDetails(
+			final String appName,
+			final String serviceName,
+			final int instanceId ) throws RestClientException, TimeoutException, JsonParseException, JsonMappingException, IOException {
+		ClientResponse clientResponse = doGet("/" + appName + "/service/" + serviceName + "/instances/" + instanceId + "/metadata");
+		String responseBody = clientResponse.getEntity(String.class);
+		Response<ServiceInstanceDetails> response = new ObjectMapper().readValue(responseBody, ResponseTypeReferenceFactory.newServiceInstanceDetailsResponse());
 		return response.getResponse();
 	}
 

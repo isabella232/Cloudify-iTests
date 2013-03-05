@@ -246,8 +246,8 @@ public class StorageUtils {
         storageProvisioningDriver.detachVolume(volumeId, ip, duration, timeUnit);
     }
 
-    public static void attachVolume(final String volumeId, final String machineIp, final long duration, final TimeUnit timeUnit) throws Exception {
-        storageProvisioningDriver.attachVolume(volumeId, machineIp, duration, timeUnit);
+    public static void attachVolume(final String volumeId, final String device, final String machineIp, final long duration, final TimeUnit timeUnit) throws Exception {
+        storageProvisioningDriver.attachVolume(volumeId, device, machineIp, duration, timeUnit);
     }
 
     public static Set<VolumeDetails> listVolumes(final String machineIp, final long duration, final TimeUnit timeUnit) throws Exception {

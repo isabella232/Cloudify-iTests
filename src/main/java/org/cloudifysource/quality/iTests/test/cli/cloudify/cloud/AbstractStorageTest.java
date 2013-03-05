@@ -211,7 +211,7 @@ public abstract class AbstractStorageTest extends NewAbstractCloudTest{
         assertTrue("the newly created file is in the mounted directory after detachment", !listFilesResult.getOutput().contains(TESTING_FILE_NAME));
 
         LogUtils.log("reattaching the volume to the service machine");
-        StorageUtils.attachVolume(volumeId, machineIp, OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
+        StorageUtils.attachVolume(volumeId, getService().getCloud().getCloudStorage().getTemplates().get("SMALL_BLOCK").getDeviceName(), machineIp, OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
         Thread.sleep(MOUNT_AFTER_ATTACH_TIMEOUT);
         invokeCommand(SERVICE_NAME, MOUNT_COMMAND_NAME);
 

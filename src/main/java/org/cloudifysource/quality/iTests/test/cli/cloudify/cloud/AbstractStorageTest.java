@@ -1,19 +1,27 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud;
 
+import com.j_spaces.kernel.PlatformVersion;
 import org.cloudifysource.dsl.Service;
 import org.cloudifysource.dsl.internal.ServiceReader;
 import org.cloudifysource.esc.driver.provisioning.storage.VolumeDetails;
 import org.cloudifysource.quality.iTests.framework.utils.AssertUtils;
+import org.cloudifysource.quality.iTests.framework.utils.JCloudsUtils;
 import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
 import org.cloudifysource.quality.iTests.framework.utils.StorageUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils.ProcessResult;
+import org.cloudifysource.restclient.GSRestClient;
+import org.cloudifysource.restclient.RestException;
+import org.jclouds.compute.domain.NodeMetadata;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * 
@@ -34,6 +42,7 @@ public abstract class AbstractStorageTest extends NewAbstractCloudTest{
     protected final static String SERVICE_NAME = "simpleStorage";
     protected final static String SERVICE_PATH = CommandTestUtils.getPath("src/main/resources/apps/USM/usm/" + SERVICE_NAME);
     private final static String SERVICE_FILE_PATH = SERVICE_PATH + "/simple-service.groovy";
+    private final static String SERVICE_REST_URL = "ProcessingUnits/Names/default." + SERVICE_NAME;
     protected final static String CUSTOM_SERVICE_NAME = "customStorageTemplateService";
     protected final static String CUSTOM_SERVICE_PATH = CommandTestUtils.getPath("src/main/resources/apps/USM/usm/" + CUSTOM_SERVICE_NAME);
     private final static String CUSTOM_SERVICE_FILE_PATH = CUSTOM_SERVICE_PATH + "/storage-service.groovy";
@@ -42,7 +51,7 @@ public abstract class AbstractStorageTest extends NewAbstractCloudTest{
 	private static final long ONE_MINUTE_IN_MILLIS = 60 * 1000;
 	private static final long FIVE_SECONDS_IN_MILLIS = 5 * 1000;
 	private static final int FAILED_INSTALL_SERVICE_TIMEOUT = 2;
-	private static final int INSTALL_SERVICE_TIMEOUT = 20;
+	private static final int INSTALL_SERVICE_TIMEOUT = 15;
     protected static final int MAXIMUM_UNINSTALL_TIME = 5;
 	private static final long MOUNT_AFTER_ATTACH_TIMEOUT = 10 * 1000;
 	protected static final long POLLING_TIMEOUT = 2 * 1000;
@@ -220,6 +229,74 @@ public abstract class AbstractStorageTest extends NewAbstractCloudTest{
 
         StorageUtils.verifyVolumeConfiguration(SERVICE_FILE_PATH);
         StorageUtils.verifyVolumeConfiguration(CUSTOM_SERVICE_FILE_PATH);
+    }
+
+    public void testFailover() throws Exception {
+
+        JCloudsUtils.createContext(getService());
+
+        installServiceAndWait(SERVICE_PATH, SERVICE_NAME, INSTALL_SERVICE_TIMEOUT);
+        StorageUtils.verifyVolumeConfiguration(SERVICE_FILE_PATH);
+
+        Set<String> machineIps = StorageUtils.getServicesToMachines().get(SERVICE_NAME);
+        Set<? extends NodeMetadata> allRunningNodes = JCloudsUtils.getAllRunningNodes();
+        Set<NodeMetadata> serviceMachines = new HashSet<NodeMetadata>();
+
+        for(NodeMetadata node : allRunningNodes){
+            for(String machineIp : machineIps){
+                if(machineIp.equalsIgnoreCase(node.getPrivateAddresses().iterator().next())){
+                    serviceMachines.add(node);
+                }
+            }
+        }
+
+        //taking a snapshot of the currently running nodes
+        StorageUtils.beforeServiceInstallation();
+
+        for(NodeMetadata machine : serviceMachines){
+            LogUtils.log("shutting down machine " + machine.getId());
+            JCloudsUtils.shutdownServer(machine.getId());
+        }
+
+        StorageUtils.afterServiceUninstallation(SERVICE_NAME);
+
+        final GSRestClient client = new GSRestClient("", "", new URL(getRestUrl()), PlatformVersion.getVersionNumber());
+        final AtomicReference<String> atomicServiceStatus = new AtomicReference<String>();
+
+        LogUtils.log("waiting for service to break due to machine shutdown");
+        AssertUtils.repetitiveAssertTrue("service didn't break", new AssertUtils.RepetitiveConditionProvider() {
+            @Override
+            public boolean getCondition() {
+                String brokenString = "broken";
+                try {
+                    atomicServiceStatus.set((String) client.getAdminData(SERVICE_REST_URL).get("Status-Enumerator"));
+                } catch (RestException e) {
+                    throw new RuntimeException("caught a RestException", e);
+                }
+                return brokenString.equalsIgnoreCase(atomicServiceStatus.get());
+            }
+        } , OPERATION_TIMEOUT*2);
+
+        LogUtils.log("waiting for service to restart on a new machine");
+        AssertUtils.repetitiveAssertTrue("service didn't recover", new AssertUtils.RepetitiveConditionProvider() {
+            @Override
+            public boolean getCondition() {
+                String intactString = "intact";
+                try {
+                    atomicServiceStatus.set((String) client.getAdminData(SERVICE_REST_URL).get("Status-Enumerator"));
+                } catch (RestException e) {
+                    throw new RuntimeException("caught a RestException", e);
+                }
+                return intactString.equalsIgnoreCase(atomicServiceStatus.get());
+            }
+        } , OPERATION_TIMEOUT*3);
+
+        //taking a new snapshot of the machines and updating the service machines
+        StorageUtils.afterServiceInstallation(SERVICE_NAME);
+
+        StorageUtils.verifyVolumeConfiguration(SERVICE_FILE_PATH);
+
+        JCloudsUtils.closeContext();
     }
 
     private void assertVolumeNotDeleted() throws Exception {

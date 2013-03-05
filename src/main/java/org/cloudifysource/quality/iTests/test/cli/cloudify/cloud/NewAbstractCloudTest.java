@@ -20,7 +20,7 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 
     private static final int TEN_SECONDS_IN_MILLIS = 10000;
 
-    private static final int SERVICE_INSTALLATION_TIMEOUT_IN_MINUTES = 10;
+    public static final int SERVICE_INSTALLATION_TIMEOUT_IN_MINUTES = 10;
 
     private static final int MAX_SCAN_RETRY = 3;
 
@@ -279,15 +279,19 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
         return installServiceAndWait(servicePath, serviceName, SERVICE_INSTALLATION_TIMEOUT_IN_MINUTES, false);
     }
 
+    protected String installServiceAndWait(String servicePath, String serviceName, int timeout, int numOfInstances) throws IOException, InterruptedException {
+        return installServiceAndWait(servicePath, serviceName, timeout, false, false, numOfInstances);
+    }
+
     protected String installServiceAndWait(String servicePath, String serviceName, int timeout) throws IOException, InterruptedException {
         return installServiceAndWait(servicePath, serviceName, timeout, false);
     }
 
     protected String installServiceAndWait(String servicePath, String serviceName, int timeout , boolean expectToFail) throws IOException, InterruptedException {
-        return installServiceAndWait(servicePath, serviceName, timeout, expectToFail, false);
+        return installServiceAndWait(servicePath, serviceName, timeout, expectToFail, false, 0);
     }
 
-    protected String installServiceAndWait(String servicePath, String serviceName, int timeout , boolean expectToFail, boolean disableSelfHealing) throws IOException, InterruptedException {
+    protected String installServiceAndWait(String servicePath, String serviceName, int timeout , boolean expectToFail, boolean disableSelfHealing, int numOfInstances) throws IOException, InterruptedException {
         ServiceInstaller serviceInstaller = new ServiceInstaller(getRestUrl(), serviceName);
         serviceInstaller.recipePath(servicePath);
         serviceInstaller.waitForFinish(true);
@@ -303,6 +307,10 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 
         if(StorageUtils.isInitialized()){
             StorageUtils.afterServiceInstallation(serviceName);
+        }
+
+        if(numOfInstances > 0){
+            serviceInstaller.setInstances(numOfInstances);
         }
 
         return output;

@@ -2,6 +2,7 @@ package org.cloudifysource.quality.iTests.framework.utils;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -80,7 +81,24 @@ public class Ec2StorageApiForRegionHelper {
 		return ourVolume;
 	}
 	
-	public Volume getVolume(final String volumeId) {
+	public Set<Volume> getVolumesByName(final String volumeName) {
+
+		Set<Volume> volumes = new HashSet<Volume>();
+		
+		Set<Volume> allVolumes = getAllVolumes();
+		for (Volume vol : allVolumes) {
+			if (vol.getId() != null) {
+				String volName = getVolumeName(vol);
+				if (!StringUtils.isBlank(volName) &&  volName.toLowerCase().contains(volumeName)) {
+					volumes.add(vol);
+				}
+			}
+		}
+		return volumes;
+
+	}
+	
+	public Volume getVolumeById(final String volumeId) {
 		Set<Volume> volumes;
 		try {
 			volumes = client.describeVolumesInRegion(region, volumeId);

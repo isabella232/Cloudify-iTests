@@ -47,7 +47,7 @@ public class DynamicStorageAllocationTest extends AbstractDynamicStorageTest {
 		installer.install();
 		
 		// the install should have created and attached a volume with a name prefix of the class name. see customizeCloud below.
-		Volume ourVolume = storageHelper.getVolumeByName(this.getClass().getSimpleName().toLowerCase());
+		Volume ourVolume = storageHelper.getVolumeByName(System.getProperty("user.name") + "-" + this.getClass().getSimpleName().toLowerCase());
 		
 		AssertUtils.assertNotNull("could not find the required volume after install service", ourVolume);
 		// also check it is attached.
@@ -58,7 +58,7 @@ public class DynamicStorageAllocationTest extends AbstractDynamicStorageTest {
 		final String volId = ourVolume.getId();
 		
 		// after uninstall the volume should be deleted
-		ourVolume = storageHelper.getVolume(ourVolume.getId());
+		ourVolume = storageHelper.getVolumeById(ourVolume.getId());
 		AssertUtils.assertTrue("volume with id " + volId + " was not deleted after uninstall", ourVolume == null || ourVolume.getStatus().equals(Status.DELETING));
 	}	
 	

@@ -96,7 +96,7 @@ public abstract class AbstractDynamicStorageTest extends NewAbstractCloudTest {
 		
 		while (System.currentTimeMillis() < end) {
 			
-			Volume volume = storageHelper.getVolume(vol.getId());
+			Volume volume = storageHelper.getVolumeById(vol.getId());
 			if (volume.getStatus().equals(status)) {
 				return;
 			} else {

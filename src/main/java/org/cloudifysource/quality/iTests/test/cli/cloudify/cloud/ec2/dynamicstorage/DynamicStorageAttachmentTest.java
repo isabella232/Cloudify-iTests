@@ -71,12 +71,12 @@ public class DynamicStorageAttachmentTest extends AbstractDynamicStorageTest {
 		
 		installer.invoke("attachVolume " + details.getId() + " " + "/dev/sdc");
 		
-		Volume volume = storageHelper.getVolume(details.getId());
+		Volume volume = storageHelper.getVolumeById(details.getId());
 		AssertUtils.assertEquals("volume with id " + volume.getId() + " should have one attachement after invoking attachVolume", 1, volume.getAttachments().size());
 		
 		installer.invoke("detachVolume" + " " + details.getId());
 		
-		volume = storageHelper.getVolume(details.getId());
+		volume = storageHelper.getVolumeById(details.getId());
 		// volume should still exist
 		AssertUtils.assertTrue("volume with id " + details.getId() + " should not have been deleted after calling detachVolume(delteOnExit = false)", volume != null);
 		// though it should have no attachments

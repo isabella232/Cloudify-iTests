@@ -6,6 +6,9 @@ import org.openspaces.admin.machine.Machine;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.util.FileSystemUtils;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
 import java.io.File;
 import java.util.HashMap;
@@ -32,6 +35,21 @@ public class ManagmenetHardShutdownAndRecoveryTest extends AbstractByonManagemen
             AbstractKillManagementTest.restartMachineAndWait(machine.getHostAddress());
         }
         prepareManagementPersistencyFile();
+    }
+
+    @BeforeMethod(alwaysRun = true)
+    public void bootstrapAndInit() throws Exception{
+        super.prepareTest();
+    }
+
+    @AfterMethod(alwaysRun = true)
+    public void cleanup() throws Exception{
+//        super.cleanup(true);
+    }
+
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
+    public void testManagementPersistency() throws Exception {
+        super.testManagementPersistency();
     }
 
     public void prepareManagementPersistencyFile() throws Exception{

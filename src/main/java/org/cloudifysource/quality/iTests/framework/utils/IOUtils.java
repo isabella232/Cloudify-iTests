@@ -14,7 +14,6 @@ import java.util.Map.Entry;
 import java.util.Properties;
 
 import org.apache.commons.io.FileUtils;
-
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
 
 import com.google.common.io.Files;
@@ -90,10 +89,11 @@ public class IOUtils {
 
     public static File writePropertiesToFile(final Properties props , final File destinationFile) throws IOException {
 
-        if (destinationFile.exists()) {
-            destinationFile.delete();
-        }
-
+    	String existingProps = null;
+    	if (destinationFile.exists()) {
+    		existingProps = FileUtils.readFileToString(destinationFile);
+    	}
+    	
         Properties properties = new Properties();
         for (Entry<Object, Object> entry : props.entrySet()) {
             properties.setProperty(entry.getKey().toString(), entry.getValue().toString());
@@ -101,9 +101,14 @@ public class IOUtils {
         FileOutputStream fileOut = new FileOutputStream(destinationFile);
         properties.store(fileOut,null);
         fileOut.close();
+        
+        // this part is needed to replace the illegal comment sign '#' in the file
         String readFileToString = FileUtils.readFileToString(destinationFile);
-        destinationFile.delete();
-        FileUtils.writeStringToFile(destinationFile, readFileToString.replaceAll("#", "//"));
+        if (existingProps != null) {
+        	FileUtils.writeStringToFile(destinationFile, existingProps + "\n" + readFileToString.replaceAll("#", "//"));
+        } else {
+        	FileUtils.writeStringToFile(destinationFile, readFileToString.replaceAll("#", "//"));        	
+        }
         return destinationFile;
 
     }

@@ -37,6 +37,7 @@ public class AbstractFromXenToByonGSMTest extends AbstractByonCloudTest {
 	public final static long OPERATION_TIMEOUT = 5 * 60 * 1000;
 	public final static String DEFAULT_BYON_XAP_MACHINE_MEMORY_MB = "5000";
 	public final static String STANDARD_MACHINE_MEMORY_MB = "5850";
+    public final static String LRMI_BIND_PORT_RANGE = "7010-7110";
 	public final static int NUM_OF_CORES = 2;
 	private static final long RESERVED_MEMORY_PER_MACHINE_MEGABYTES_DISCOVERED = 128;
 	private MachinesEventsCounter machineEventsCounter;
@@ -129,7 +130,7 @@ public class AbstractFromXenToByonGSMTest extends AbstractByonCloudTest {
 		elasticMachineProvisioningCloudifyAdapter = new ElasticMachineProvisioningCloudifyAdapter ();
 		super.bootstrap();
 	}
-	
+
     public void beforeTestInit() {
 		gscCounter = new GridServiceContainersCounter(admin); 
         gsaCounter = new GridServiceAgentsCounter(admin);
@@ -255,16 +256,17 @@ public class AbstractFromXenToByonGSMTest extends AbstractByonCloudTest {
 		return config;
 	}
 
-	protected ProcessingUnit deploy(ElasticStatefulProcessingUnitDeployment deployment) {
-		return admin.getGridServiceManagers().getManagers()[0].deploy(deployment);
+    protected ProcessingUnit deploy(ElasticStatefulProcessingUnitDeployment deployment) {
+		return admin.getGridServiceManagers().getManagers()[0].deploy(deployment.addCommandLineArgument("-Dcom.gs.transport_protocol.lrmi.bind-port="+LRMI_BIND_PORT_RANGE));
 	} 
-	
+
+
 	protected ProcessingUnit deploy(ElasticStatelessProcessingUnitDeployment deployment) {
-		return admin.getGridServiceManagers().getManagers()[0].deploy(deployment);
+		return admin.getGridServiceManagers().getManagers()[0].deploy(deployment.addCommandLineArgument("-Dcom.gs.transport_protocol.lrmi.bind-port="+LRMI_BIND_PORT_RANGE));
 	} 
 	
 	protected ProcessingUnit deploy(ElasticSpaceDeployment deployment) {
-		return admin.getGridServiceManagers().getManagers()[0].deploy(deployment);
+		return admin.getGridServiceManagers().getManagers()[0].deploy(deployment.addCommandLineArgument("-Dcom.gs.transport_protocol.lrmi.bind-port="+LRMI_BIND_PORT_RANGE));
 	}
 
 	public ProcessingUnit deploy(SpaceDeployment deployment) {

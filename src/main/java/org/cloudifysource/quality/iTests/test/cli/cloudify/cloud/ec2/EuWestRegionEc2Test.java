@@ -40,7 +40,7 @@ public class EuWestRegionEc2Test extends NewAbstractCloudTest {
 	@Override
 	protected void customizeCloud() {
 		service = (Ec2CloudService) getService();
-		service.setRegion("eu");
+		service.setRegion("eu-west-1");
 		service.setKeyPair("ec2-sgtest-eu");
 	} 
 

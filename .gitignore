@@ -11,4 +11,4 @@ src/main/resources/credentials/
 .classpath
 .project
 .idea/**
-Cloudify-iTests.iml
+*.iml

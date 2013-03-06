@@ -12,22 +12,23 @@ public class RackspaceServicesTest extends AbstractServicesTest{
 	protected String getCloudName() {
 		return "rackspace";
 	}
-	
+
+	@Override
 	@BeforeClass(alwaysRun = true)
 	protected void bootstrap() throws Exception {
 		super.bootstrap();
 	}
-		
+
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
 	public void testSolr() throws Exception {
 		super.testService(ScriptUtils.getBuildRecipesServicesPath() + "/solr", null);
 	}
-	
+
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
 	public void testActivemq() throws Exception{
 		super.testService(ScriptUtils.getBuildRecipesServicesPath() + "/activemq", null);
 	}
-	
+
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
 	public void testHsqldb() throws Exception{
 		super.testService(ScriptUtils.getBuildRecipesServicesPath() + "/hsqldb", null);
@@ -35,9 +36,10 @@ public class RackspaceServicesTest extends AbstractServicesTest{
 
     @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
     public void testApacheLB() throws Exception {
-        super.testService(ScriptUtils.getBuildRecipesServicesPath() + "/apacheLB", null);
+        super.testService(ScriptUtils.getBuildRecipesServicesPath() + "/apacheLB", null, 30);
     }
-    
+
+	@Override
 	@AfterClass(alwaysRun = true)
 	protected void teardown() throws Exception {
 		super.teardown();

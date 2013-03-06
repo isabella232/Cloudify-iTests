@@ -1,4 +1,4 @@
-package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.ec2;
+package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.ec2.storage;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;

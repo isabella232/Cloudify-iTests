@@ -179,7 +179,4 @@ done
 
 ${DEPLOY_ROOT_BIN_DIR}/../../bin/generate-report-cmd.sh Regression ${BUILD_NUMBER} ${SUITE_NAME} ${MAJOR_VERSION} ${MINOR_VERSION} ${DEPLOY_ROOT_BIN_DIR} ${BUILD_LOG_URL}
 
-echo "Deleting ${SUITE_WORK_DIR} ${SUITE_DEPLOY_DIR}"
-rm -rf ${SUITE_WORK_DIR} ${SUITE_DEPLOY_DIR}
-
- exit ${EXIT_CODE}
+ exit 0

@@ -1,4 +1,4 @@
-package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.ec2;
+package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.hp.storage;
 
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.AbstractStorageTest;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.ec2.Ec2CloudService;
@@ -10,7 +10,7 @@ import org.testng.annotations.Test;
  * Author: nirb
  * Date: 25/02/13
  */
-public class Ec2StorageFailedInstallTest extends AbstractStorageTest {
+public class HpStorageFailedInstallTest extends AbstractStorageTest {
 
     @BeforeMethod(alwaysRun = true)
     public void bootstrapAndInit() throws Exception{
@@ -24,7 +24,7 @@ public class Ec2StorageFailedInstallTest extends AbstractStorageTest {
 
     @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
     public void testFailedInstall() throws Exception{
-         super.testFailedInstall();
+        super.testFailedInstall();
     }
 
     protected void customizeCloud() throws Exception {

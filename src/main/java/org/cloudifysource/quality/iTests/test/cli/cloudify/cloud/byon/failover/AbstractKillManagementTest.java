@@ -137,7 +137,7 @@ public abstract class AbstractKillManagementTest extends AbstractByonCloudTest {
 
 	}
 
-	protected void restartMachineAndWait(final String machine) throws Exception {
+	public static void restartMachineAndWait(final String machine) throws Exception {
 		restartMachine(machine);
 		Thread.sleep(TEN_SECONDS);
 		AssertUtils.assertTrue(WebUtils.waitForHost(machine, (int) AbstractTestSupport.OPERATION_TIMEOUT));
@@ -150,7 +150,7 @@ public abstract class AbstractKillManagementTest extends AbstractByonCloudTest {
 		Thread.sleep(TEN_SECONDS * 3);
 	}
 
-	private void restartMachine(String toKill) {
+	private static void restartMachine(String toKill) {
 		LogUtils.log(SSHUtils.runCommand(toKill, TimeUnit.SECONDS.toMillis(30),
 				"sudo shutdown now -r", ByonCloudService.BYON_CLOUD_USER, ByonCloudService.BYON_CLOUD_PASSWORD));
 	}

@@ -1,7 +1,15 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.byon.failover;
 
+import org.cloudifysource.quality.iTests.framework.utils.IOUtils;
 import org.openspaces.admin.gsm.GridServiceManager;
 import org.openspaces.admin.machine.Machine;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+import org.springframework.util.FileSystemUtils;
+
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created with IntelliJ IDEA.
@@ -11,16 +19,33 @@ import org.openspaces.admin.machine.Machine;
  */
 public class ManagmenetHardShutdownAndRecoveryTest extends AbstractByonManagementPersistencyTest {
 
+    private Machine[] gsmMachines;
+
     @Override
     public void shutdownManagement() throws Exception{
         GridServiceManager[] griServiceManagers = admin.getGridServiceManagers().getManagers();
-        Machine[] gsmMachines = new Machine[griServiceManagers.length];
+        gsmMachines = new Machine[griServiceManagers.length];
         for (int i = 0 ; i < griServiceManagers.length ; i++) {
             gsmMachines[i] = griServiceManagers[i].getMachine();
         }
         for (Machine machine : gsmMachines) {
             AbstractKillManagementTest.restartMachineAndWait(machine.getHostAddress());
         }
+        prepareManagementPersistencyFile();
+    }
+
+    public void prepareManagementPersistencyFile() throws Exception{
+        Resource originalFile = new ClassPathResource("apps/cloudify/cloud/boyn/management-persistency.txt");
+        File tempFile = new File("management-persistency.txt");
+        FileSystemUtils.copyRecursively(originalFile.getFile(), tempFile);
+        Map<String, String> props = new HashMap<String, String>();
+        for (int i = 0; i < gsmMachines.length; i++) {
+            props.put("MANAGEMENT" + i, gsmMachines[i].getHostAddress());
+        }
+        IOUtils.replaceTextInFile(tempFile, props);
+
+        backupFilePath = tempFile.getAbsolutePath();
+
     }
 
 

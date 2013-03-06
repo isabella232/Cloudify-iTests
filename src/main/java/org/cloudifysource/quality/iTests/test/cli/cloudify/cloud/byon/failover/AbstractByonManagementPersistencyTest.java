@@ -19,7 +19,7 @@ public abstract class AbstractByonManagementPersistencyTest extends AbstractByon
 
     private static final String TOMCAT_SERVICE_PATH = SGTestHelper.getBuildDir() + "/recipes/services/tomcat";
     private static final String TOMCAT_SERVICE_NAME = "tomcat";
-    protected static final String BACKUP_FILE_PATH = SGTestHelper.getBuildDir() + "/backup-details.txt";
+    protected String backupFilePath = SGTestHelper.getBuildDir() + "/backup-details.txt";
 
     private int numOfManagementMachines = 2;
     private int numOfServiceInstances = 2;
@@ -54,7 +54,7 @@ public abstract class AbstractByonManagementPersistencyTest extends AbstractByon
         //check if the read attribute exist after restart.
         shutdownManagement();
 
-        bootstrapper.useExistingFilePath(BACKUP_FILE_PATH);
+        bootstrapper.useExistingFilePath(backupFilePath);
         bootstrapper.bootstrap();
 
     }

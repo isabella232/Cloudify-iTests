@@ -34,7 +34,7 @@ public class ManagementCleanShutdownAndRecoveryTest extends AbstractByonManageme
         bootstrapper.setRestUrl(getRestUrl());
 
         LogUtils.log("shutting down managers");
-        bootstrapper.shutdownManagers("default", BACKUP_FILE_PATH, false);
+        bootstrapper.shutdownManagers("default", backupFilePath, false);
 
     }
 }

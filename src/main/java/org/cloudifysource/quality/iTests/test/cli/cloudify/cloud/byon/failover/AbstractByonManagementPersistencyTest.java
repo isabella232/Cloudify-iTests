@@ -25,13 +25,13 @@ public abstract class AbstractByonManagementPersistencyTest extends AbstractByon
 
     private static final String TOMCAT_SERVICE_PATH = SGTestHelper.getBuildDir() + "/recipes/services/tomcat";
     private static final String TOMCAT_SERVICE_NAME = "tomcat";
-    protected static final String BACKUP_FILE_PATH = SGTestHelper.getBuildDir() + "/backup-details.txt";
     public static final String BOOTSTRAP_SUCCEEDED_STRING = "Successfully created Cloudify Manager";
     public static final String APPLICATION_NAME = "default";
     private final static String SERVICE_REST_URL = "ProcessingUnits/Names/" + APPLICATION_NAME + "." + TOMCAT_SERVICE_NAME;
+    protected String backupFilePath = SGTestHelper.getBuildDir() + "/backup-details.txt";
 
     private int numOfManagementMachines = 2;
-    private int numOfServiceInstances = 0;
+    private int numOfServiceInstances = 2;
 
     private List<String> attributesList = new LinkedList<String>();
 
@@ -42,6 +42,7 @@ public abstract class AbstractByonManagementPersistencyTest extends AbstractByon
 
         Bootstrapper bootstrapper = new CloudBootstrapper();
         bootstrapper.setRestUrl(getRestUrl());
+        List<String> attributesList = new LinkedList<String>();
 
         for(int i=1; i <= numOfServiceInstances; i++){
             String attributes = bootstrapper.listServiceInstanceAttributes("default", TOMCAT_SERVICE_NAME, i, false);
@@ -110,10 +111,10 @@ public abstract class AbstractByonManagementPersistencyTest extends AbstractByon
 
         shutdownManagement();
 
-        IOUtils.replaceTextInFile(BACKUP_FILE_PATH, "instanceId", "instnceId");
+        IOUtils.replaceTextInFile(backupFilePath, "instanceId", "instnceId");
 
         CloudBootstrapper bootstrapper = new CloudBootstrapper();
-        bootstrapper.useExistingFilePath(BACKUP_FILE_PATH);
+        bootstrapper.useExistingFilePath(backupFilePath);
         bootstrapper.setBootstrapExpectedToFail(true);
         super.bootstrap(bootstrapper);
 
@@ -128,4 +129,6 @@ public abstract class AbstractByonManagementPersistencyTest extends AbstractByon
         super.customizeCloud();
         getService().setNumberOfManagementMachines(numOfManagementMachines);
     }
+
+
 }

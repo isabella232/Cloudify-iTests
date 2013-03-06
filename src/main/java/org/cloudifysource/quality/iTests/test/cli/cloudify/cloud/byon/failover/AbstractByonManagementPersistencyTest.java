@@ -53,7 +53,7 @@ public abstract class AbstractByonManagementPersistencyTest extends AbstractByon
 
     public void afterTest() throws Exception {
         super.teardown();
-        FileUtils.deleteQuietly(new File(BACKUP_FILE_PATH));
+        FileUtils.deleteQuietly(new File(backupFilePath));
     }
 
     public void shutdownManagement() throws Exception{
@@ -62,7 +62,7 @@ public abstract class AbstractByonManagementPersistencyTest extends AbstractByon
         bootstrapper.setRestUrl(getRestUrl());
 
         LogUtils.log("shutting down managers");
-        bootstrapper.shutdownManagers("default", BACKUP_FILE_PATH, false);
+        bootstrapper.shutdownManagers("default", backupFilePath, false);
     }
 
     public void testManagementPersistency() throws Exception{
@@ -70,7 +70,7 @@ public abstract class AbstractByonManagementPersistencyTest extends AbstractByon
         shutdownManagement();
 
         CloudBootstrapper bootstrapper = new CloudBootstrapper();
-        bootstrapper.useExistingFilePath(BACKUP_FILE_PATH);
+        bootstrapper.useExistingFilePath(backupFilePath);
         super.bootstrap(bootstrapper);
 
         List<String> newAttributesList = new LinkedList<String>();

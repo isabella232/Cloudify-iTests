@@ -5,15 +5,6 @@ package org.cloudifysource.quality.iTests.framework.utils;
  * Date: 17/02/13
  */
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
 import org.cloudifysource.dsl.Service;
 import org.cloudifysource.dsl.cloud.Cloud;
 import org.cloudifysource.dsl.cloud.storage.StorageTemplate;
@@ -24,6 +15,10 @@ import org.cloudifysource.esc.driver.provisioning.storage.VolumeDetails;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.CloudService;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.ec2.domain.Volume;
+
+import java.io.File;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 
 public class StorageUtils {
@@ -51,7 +46,7 @@ public class StorageUtils {
 
         JCloudsUtils.createContext(otherCloudService);
     }
-    
+
     public static String getVolumeName(Volume vol) throws StorageProvisioningException {
     	return storageProvisioningDriver.getVolumeName(vol.getId());
     }

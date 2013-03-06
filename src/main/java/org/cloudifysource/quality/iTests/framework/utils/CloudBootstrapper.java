@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
 
 public class CloudBootstrapper extends Bootstrapper {
@@ -12,6 +13,7 @@ public class CloudBootstrapper extends Bootstrapper {
 
 	private String provider;
 	private boolean noWebServices = false;
+	private String useExistingFilePath = "";
 	private Map<String, Object> cloudOverrides;
 	
 	public CloudBootstrapper() {
@@ -54,27 +56,40 @@ public class CloudBootstrapper extends Bootstrapper {
 				.append("-cloud-overrides").append(" ")
 				.append(cloudOverridesFile.getAbsolutePath().replace("\\", "/"));
 		}
+
+        if(StringUtils.isNotBlank(useExistingFilePath)){
+            builder.append("-use-existing " + useExistingFilePath);
+        }
 		
 		return builder.toString();
 	}
-	
+
 	public String addTemplate(String templatePath, boolean isExpectedToFail) throws Exception {
 		lastActionOutput = CommandTestUtils.runCommand(connectCommand() + ";add-templates " + templatePath, true, isExpectedToFail);
 		return lastActionOutput;
 	}
-	
+
 	public String getTemplate(String templateName, boolean isExpectedToFail) throws Exception {
 		lastActionOutput = CommandTestUtils.runCommand(connectCommand() + ";get-template " + templateName, true, isExpectedToFail);
 		return lastActionOutput;
 	}
-	
+
 	public String listTemplates(boolean isExpectedToFail) throws Exception {
 		lastActionOutput = CommandTestUtils.runCommand(connectCommand() + ";list-templates", true, isExpectedToFail);
 		return lastActionOutput;
 	}
-	
+
 	public String removeTemplate(String templateName, boolean isExpectedToFail) throws Exception {
 		lastActionOutput = CommandTestUtils.runCommand(connectCommand() + ";remove-template " + templateName, true, isExpectedToFail);
 		return lastActionOutput;
 	}
+
+    public String getUseExistingFilePath() {
+        return useExistingFilePath;
+    }
+
+    public CloudBootstrapper useExistingFilePath(String useExistingFilePath) {
+        this.useExistingFilePath = useExistingFilePath;
+        return this;
+    }
 }

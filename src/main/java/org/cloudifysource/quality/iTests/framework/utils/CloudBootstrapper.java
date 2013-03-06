@@ -58,7 +58,7 @@ public class CloudBootstrapper extends Bootstrapper {
 		}
 
         if(StringUtils.isNotBlank(useExistingFilePath)){
-            builder.append("-use-existing " + useExistingFilePath);
+            builder.append("-use-existing-from-file " + useExistingFilePath);
         }
 		
 		return builder.toString();

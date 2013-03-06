@@ -23,7 +23,7 @@ import java.util.concurrent.TimeUnit;
  * Date: 3/5/13
  * Time: 5:32 PM
  */
-public class ManagmenetHardShutdownAndRecoveryTest extends AbstractByonManagementPersistencyTest {
+public class ManagementHardShutdownAndRecoveryTest extends AbstractByonManagementPersistencyTest {
 
     private Machine[] gsmMachines;
 

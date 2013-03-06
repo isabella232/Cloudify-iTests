@@ -56,8 +56,8 @@ public class ManagementHardShutdownAndRecoveryTest extends AbstractByonManagemen
     }
 
     @AfterMethod(alwaysRun = true)
-    public void cleanup() throws Exception{
-//        super.cleanup(true);
+    public void afterTest() throws Exception{
+        super.afterTest();
     }
 
     @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
@@ -71,7 +71,7 @@ public class ManagementHardShutdownAndRecoveryTest extends AbstractByonManagemen
         FileSystemUtils.copyRecursively(originalFile.getFile(), tempFile);
         Map<String, String> props = new HashMap<String, String>();
         for (int i = 0; i < gsmMachines.length; i++) {
-            props.put("MANAGEMENT" + i, gsmMachines[i].getHostAddress());
+            props.put("MANAGEMENT" + i, gsmMachines[i].getHostName());
         }
         IOUtils.replaceTextInFile(tempFile, props);
 

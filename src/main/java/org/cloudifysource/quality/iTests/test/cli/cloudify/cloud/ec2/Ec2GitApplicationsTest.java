@@ -76,7 +76,8 @@ public class Ec2GitApplicationsTest extends AbstractExamplesTest {
 		super.testPetclinicWas(localGitRepoPath + "/apps");
 	}
 
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
+	// requires a non existing template
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = false)
 	public void testStorm() throws Exception {
 		super.testStorm(localGitRepoPath + "/apps");
 	}

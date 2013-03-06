@@ -5,6 +5,8 @@ import static org.testng.AssertJUnit.fail;
 import java.io.IOException;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
 import org.cloudifysource.dsl.utils.ServiceUtils;
 import org.openspaces.admin.machine.Machine;
 import org.openspaces.admin.pu.DeploymentStatus;
@@ -194,7 +196,7 @@ public class PetClinicTest extends AbstractSeleniumApplicationRecipeTest {
 		ApplicationNode applicationNodeTomcat = appMap.getApplicationNode(TOMCAT_FULL_SERVICE_NAME);
 		List<Connector> tomcatConnectors = applicationNodeTomcat.getConnectors();
 		
-		ApplicationNode applicationNodeMongos = appMap.getApplicationNode(MONGOS_FULL_SERVICE_NAME);
+		final ApplicationNode applicationNodeMongos = appMap.getApplicationNode(MONGOS_FULL_SERVICE_NAME);
 		List<Connector> mongosConnectors = applicationNodeMongos.getConnectors();
 		
 		ApplicationNode applicationNodeMongod = appMap.getApplicationNode(MONGOD_FULL_SERVICE_NAME);
@@ -210,13 +212,25 @@ public class PetClinicTest extends AbstractSeleniumApplicationRecipeTest {
 		}
 		
 		takeScreenShot(this.getClass(), "petClinicDemoTest", "petClinicDemoTest");
-		assertEquals(2, mongosConnectors.size());
-		for (Connector c : mongosConnectors) {
-			String name = c.getTarget().getName();
-			assertTrue(name.equals(applicationNodeMongod.getName()) ||name.equals(applicationNodeMongoConfig.getName()));
-		}
+		// there are 3 connectors attached to mongos. 2 going out, 1 coming in.
+        // mongos ==> mongoConfig
+        // mongos ==> mongod
+        // tomcat ==> mongos
+        assertEquals( "checking number of mongos connectors (the edges connected to mongos)", 3, mongosConnectors.size() );
 
-		ServicesTab servicesTab = mainNav.switchToServices();
+        // lets filter only the connections going out of mongos.
+        Predicate predicate = new Predicate() {
+            @Override
+            public boolean evaluate( Object o ) {
+                return !applicationNodeMongos.getName().equalsIgnoreCase( ( ( Connector ) o ).getSource().getName() );
+            }
+        };
+
+        // filter only connections going out of mongos
+        CollectionUtils.filter( mongosConnectors, predicate );
+
+
+        ServicesTab servicesTab = mainNav.switchToServices();
 		
 		PuTreeGrid puTreeGrid = servicesTab.getPuTreeGrid();
 		

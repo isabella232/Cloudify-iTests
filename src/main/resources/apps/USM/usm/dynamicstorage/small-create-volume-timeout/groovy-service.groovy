@@ -10,19 +10,20 @@ service {
 	name "groovy"
 	type "WEB_SERVER"
 	elastic true
-	numInstances 2
+	numInstances 1
 	maxAllowedInstances 2
+	
+	isolationSLA {
+		global {
+			instanceCpuCores 0
+			instanceMemoryMB 128
+			useManagement true
+		}
+	}
 	
 	lifecycle { 
 		
 		def volumeId;
-		def device = "/dev/sdc"
-		def path = "/teststorage"
-		def fs = "ext4"
-		
-		// this will assure different instances will use different templates
-		println "instance id = " + context.getInstanceId();
-		def templateName = "INSTANCE_" + context.getInstanceId()
 	
 		init { println "This is the init event" }
 		preInstall {println "This is the preInstall event" }
@@ -34,25 +35,12 @@ service {
 		postStart {
 			
 			println "Creating a new storage volume"
-			volumeId = context.storage.createVolume(templateName)
-			println "Attaching volume to File System"
-			context.storage.attachVolume(volumeId, device)
-			println "Formating volume"
-			context.storage.format(device, fs)
-			println "Mounting volume"
-			context.storage.mount(device, path)
-	
+			volumeId = context.storage.createVolume("SMALL_BLOCK", 1000)	
 		}
 		preStop {println "This is the preStop event" }
 		postStop {println "This is the postStop event" }
 		shutdown {
 			
-			println "Unmounting volume"
-			context.storage.unmount(device)
-			println "Detaching volume with id ${volumeId} from machine."
-			context.storage.detachVolume(volumeId) 
-			println "Deleting volume with id ${volumeId}"
-			context.storage.deleteVolume(volumeId);
 		}
 		
 		startDetection {

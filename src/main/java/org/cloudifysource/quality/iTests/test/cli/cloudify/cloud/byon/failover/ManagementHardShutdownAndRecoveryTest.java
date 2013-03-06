@@ -1,6 +1,8 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.byon.failover;
 
-import org.cloudifysource.quality.iTests.framework.utils.IOUtils;
+import org.cloudifysource.quality.iTests.framework.utils.*;
+import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.byon.ByonCloudService;
 import org.openspaces.admin.gsm.GridServiceManager;
 import org.openspaces.admin.machine.Machine;
 import org.springframework.core.io.ClassPathResource;
@@ -13,6 +15,7 @@ import org.testng.annotations.Test;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created with IntelliJ IDEA.
@@ -20,7 +23,7 @@ import java.util.Map;
  * Date: 3/5/13
  * Time: 5:32 PM
  */
-public class ManagmenetHardShutdownAndRecoveryTest extends AbstractByonManagementPersistencyTest {
+public class ManagementHardShutdownAndRecoveryTest extends AbstractByonManagementPersistencyTest {
 
     private Machine[] gsmMachines;
 
@@ -30,9 +33,19 @@ public class ManagmenetHardShutdownAndRecoveryTest extends AbstractByonManagemen
         gsmMachines = new Machine[griServiceManagers.length];
         for (int i = 0 ; i < griServiceManagers.length ; i++) {
             gsmMachines[i] = griServiceManagers[i].getMachine();
+            LogUtils.log(SSHUtils.runCommand(gsmMachines[i].getHostAddress(), TimeUnit.SECONDS.toMillis(30),
+                    "sudo shutdown now -r", ByonCloudService.BYON_CLOUD_USER, ByonCloudService.BYON_CLOUD_PASSWORD));
         }
-        for (Machine machine : gsmMachines) {
-            AbstractKillManagementTest.restartMachineAndWait(machine.getHostAddress());
+        for (final Machine machine : gsmMachines) {
+            Thread.sleep(TimeUnit.SECONDS.toMillis(10));
+            AssertUtils.assertTrue(WebUtils.waitForHost(machine.getHostAddress(), (int) AbstractTestSupport.OPERATION_TIMEOUT));
+            AssertUtils.repetitive(new IRepetitiveRunnable() {
+                @Override
+                public void run() throws Exception {
+                    SSHUtils.validateSSHUp(machine.getHostAddress(), ByonCloudService.BYON_CLOUD_USER, ByonCloudService.BYON_CLOUD_PASSWORD);
+                }
+            }, (int) AbstractTestSupport.OPERATION_TIMEOUT);
+            Thread.sleep(TimeUnit.SECONDS.toMillis(30));
         }
         prepareManagementPersistencyFile();
     }
@@ -43,8 +56,8 @@ public class ManagmenetHardShutdownAndRecoveryTest extends AbstractByonManagemen
     }
 
     @AfterMethod(alwaysRun = true)
-    public void cleanup() throws Exception{
-//        super.cleanup(true);
+    public void afterTest() throws Exception{
+        super.afterTest();
     }
 
     @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
@@ -53,18 +66,17 @@ public class ManagmenetHardShutdownAndRecoveryTest extends AbstractByonManagemen
     }
 
     public void prepareManagementPersistencyFile() throws Exception{
-        Resource originalFile = new ClassPathResource("apps/cloudify/cloud/boyn/management-persistency.txt");
+        Resource originalFile = new ClassPathResource("apps/cloudify/cloud/byon/management-persistency.txt");
         File tempFile = new File("management-persistency.txt");
         FileSystemUtils.copyRecursively(originalFile.getFile(), tempFile);
         Map<String, String> props = new HashMap<String, String>();
         for (int i = 0; i < gsmMachines.length; i++) {
-            props.put("MANAGEMENT" + i, gsmMachines[i].getHostAddress());
+            props.put("MANAGEMENT" + i, gsmMachines[i].getHostName());
         }
         IOUtils.replaceTextInFile(tempFile, props);
 
         backupFilePath = tempFile.getAbsolutePath();
 
     }
-
 
 }

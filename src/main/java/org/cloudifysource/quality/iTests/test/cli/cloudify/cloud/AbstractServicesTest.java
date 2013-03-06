@@ -22,37 +22,41 @@ public abstract class AbstractServicesTest extends NewAbstractCloudTest {
 	private static final String STATUS_PROPERTY = "DeclaringClass-Enumerator";
 
 	private static String serviceName;
-	
+
 	@AfterMethod
 	public void cleanup() throws IOException, InterruptedException {
 		super.uninstallServiceIfFound(serviceName);
 		super.scanForLeakedAgentNodes();
 	}
-	
-	
+
+
 	public void testService(String serviceFolderPath, String overrideServiceName) throws IOException, InterruptedException, RestException, PackagingException, DSLException{
+		testService(serviceFolderPath, overrideServiceName, 10);
+	}
+	public void testService(String serviceFolderPath, String overrideServiceName, final int timeoutMins) throws IOException, InterruptedException, RestException, PackagingException, DSLException{
 		LogUtils.log("Reading Service from file : " + serviceFolderPath);
 		Service service = ServiceReader.readService(new File(serviceFolderPath));
 		LogUtils.log("Succesfully read Service : " + service);
-		
+
 		serviceName = service.getName();
-		
+
 		if (overrideServiceName != null) {
 			LogUtils.log("Overriding service name with " + overrideServiceName);
 			serviceName = overrideServiceName;
 		}
-		
-        installServiceAndWait(serviceFolderPath, serviceName);
+
+
+        installServiceAndWait(serviceFolderPath, serviceName, timeoutMins);
  		String restUrl = getRestUrl();
 		GSRestClient client = new GSRestClient("", "", new URL(restUrl), PlatformVersion.getVersionNumber());
 		Map<String, Object> entriesJsonMap  = client.getAdminData("ProcessingUnits/Names/default." + serviceName + "/Status");
 		String serviceStatus = (String)entriesJsonMap.get(STATUS_PROPERTY);
-		
-		AssertUtils.assertTrue("service is not intact", serviceStatus.equalsIgnoreCase("INTACT"));	
-		
+
+		AssertUtils.assertTrue("service is not intact", serviceStatus.equalsIgnoreCase("INTACT"));
+
 		uninstallServiceAndWait(serviceName);
-	}	
-	
+	}
+
 	@Override
 	protected boolean isReusableCloud() {
 		return false;

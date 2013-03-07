@@ -23,7 +23,7 @@ import java.util.concurrent.TimeUnit;
  * Date: 3/5/13
  * Time: 5:32 PM
  */
-public class ManagmenetHardShutdownAndRecoveryTest extends AbstractByonManagementPersistencyTest {
+public class ManagementHardShutdownAndRecoveryTest extends AbstractByonManagementPersistencyTest {
 
     private Machine[] gsmMachines;
 
@@ -71,7 +71,7 @@ public class ManagmenetHardShutdownAndRecoveryTest extends AbstractByonManagemen
         FileSystemUtils.copyRecursively(originalFile.getFile(), tempFile);
         Map<String, String> props = new HashMap<String, String>();
         for (int i = 0; i < gsmMachines.length; i++) {
-            props.put("MANAGEMENT" + i, gsmMachines[i].getHostAddress());
+            props.put("MANAGEMENT" + i, gsmMachines[i].getHostName());
         }
         IOUtils.replaceTextInFile(tempFile, props);
 

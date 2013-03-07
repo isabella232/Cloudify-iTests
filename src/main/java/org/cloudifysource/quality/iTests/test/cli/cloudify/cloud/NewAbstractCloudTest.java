@@ -1,10 +1,18 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud;
 
-import com.gigaspaces.internal.utils.StringUtils;
-import org.cloudifysource.quality.iTests.framework.utils.*;
+import java.io.File;
+import java.io.IOException;
+
+import org.cloudifysource.quality.iTests.framework.utils.ApplicationInstaller;
+import org.cloudifysource.quality.iTests.framework.utils.AssertUtils;
+import org.cloudifysource.quality.iTests.framework.utils.CloudBootstrapper;
+import org.cloudifysource.quality.iTests.framework.utils.DumpUtils;
+import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
+import org.cloudifysource.quality.iTests.framework.utils.ScriptUtils;
+import org.cloudifysource.quality.iTests.framework.utils.ServiceInstaller;
+import org.cloudifysource.quality.iTests.framework.utils.StorageUtils;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
-import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils.ProcessResult;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.CloudService;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.CloudServiceManager;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.security.SecurityConstants;
@@ -13,8 +21,7 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 
-import java.io.File;
-import java.io.IOException;
+import com.gigaspaces.internal.utils.StringUtils;
 
 public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 
@@ -270,11 +277,10 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
         }
     }
 
-    protected ProcessResult invokeCommand(String serviceName, String commandName)
+    protected String invokeCommand(String serviceName, String commandName)
             throws IOException, InterruptedException {
-        ProcessResult result =
-                CommandTestUtils.runCloudifyCommandAndWait("connect " + getRestUrl() + "; invoke " + serviceName + " " + commandName);
-        return result;
+    	ServiceInstaller installer = new ServiceInstaller(getRestUrl(), serviceName);
+    	return installer.invoke(commandName);    	
     }
 
     protected String installServiceAndWait(String servicePath, String serviceName) throws IOException, InterruptedException {

@@ -53,7 +53,7 @@ public class TailCommandTest extends AbstractLocalCloudTest {
 	public void testTailByServiceInstanceHostAddress() throws IOException, InterruptedException {
 		installService();
 		String runCommand = runCommand("connect " + this.restUrl + 
-				";tail --verbose -hostAddress 127.0.0.1 simple 30; " + "exit");
+				";tail --verbose -hostAddress " + admin.getMachines().getMachines()[0].getHostAddress() + " simple 30; " + "exit");
 		assertTrue("expected log entries were not found in log tail", runCommand.contains(EXPECTED_SYSTEM_OUT_LOG_ENTRY));
 		assertTrue("expected log entries were not found in log tail", runCommand.contains(EXPECTED_SYSTEM_ERR_LOG_ENTRY));
 		assertTrue("The tail limit was not breached", !runCommand.contains(TAIL_IS_LIMITED_TO_NO_MORE_THAN_1000_LINES));

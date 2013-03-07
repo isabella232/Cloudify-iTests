@@ -5,50 +5,32 @@ import java.io.IOException;
 
 import org.apache.commons.io.FileUtils;
 import org.cloudifysource.quality.iTests.framework.testng.annotations.TestConfiguration;
+import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
 import org.cloudifysource.quality.iTests.framework.utils.ScriptUtils;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.AbstractLocalCloudTest;
 import org.eclipse.jgit.api.Git;
-import org.eclipse.jgit.lib.Repository;
-import org.eclipse.jgit.storage.file.FileRepository;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 
-public class ExcludedServicesTest extends AbstractLocalCloudTest {
-    public static volatile boolean portReleasedBeforTimeout;
-    protected static volatile boolean portTakenBeforTimeout;
-    private static String localPath, remotePath;
-    private static Repository localRepo;
-    private static Git git;
-    private File excludedRecipesDir;
+public class ExcludedServicesTest extends AbstractLocalCloudTest { 
 
-
-    public ExcludedServicesTest(){
-        super();
-    }
-
+	private static String localGitRepoPath ;
+	
     @BeforeClass(alwaysRun = true)
     public void cloneRecipesRepository() throws Exception{
-        super.bootstrapIfNeeded();
-        localPath = ScriptUtils.getBuildPath() + "/excludedRecipes";
-        remotePath = "https://github.com/CloudifySource/cloudify-recipes.git";
-        localRepo = new FileRepository(localPath + "/.git");
-        git = new Git(localRepo);
-        excludedRecipesDir = new File(localPath + "/services");
-        Git.cloneRepository()
-                .setURI(remotePath)
-                .setDirectory(new File(localPath))
-                .call();
-
-    }
-
-    @BeforeMethod(alwaysRun = true)
-    public void beforeTest() throws Exception {
-        portReleasedBeforTimeout = false;
-        portTakenBeforTimeout = false;
+   	localGitRepoPath = ScriptUtils.getBuildPath() + "/git-recipes";
+    	
+	    if (!new File(localGitRepoPath).exists()) {
+	    	String remotePath = "https://github.com/CloudifySource/cloudify-recipes.git";
+	    	
+	    	Git.cloneRepository()
+	    			.setURI(remotePath)
+	    			.setDirectory(new File(localGitRepoPath))
+	    			.call();	    	
+	    }    	
     }
 
     //should work
@@ -169,17 +151,19 @@ public class ExcludedServicesTest extends AbstractLocalCloudTest {
     }
 
     private void doTest(String recipeName) throws IOException, InterruptedException {
-        String recipeDirPath = excludedRecipesDir + "/" + recipeName;
-        runCommand("connect " + restUrl + ";install-service --verbose " + recipeDirPath);
-        runCommand("connect " + restUrl + ";uninstall-service --verbose " + recipeName);
+    	installServiceAndWait(localGitRepoPath + "/services/" + recipeName, recipeName, false);
+    	uninstallService(recipeName);
     }
 
     @AfterClass(alwaysRun = true)
     public void afterClass() throws Exception {
-       FileUtils.deleteDirectory(new File(localPath));
+
+       try {
+           FileUtils.deleteDirectory(new File(localGitRepoPath));
+       } catch (final Exception e) {
+           LogUtils.log("Failed to delete directory : " + localGitRepoPath, e);
+       }
 
     }
-
-
 }
 

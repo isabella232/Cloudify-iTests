@@ -11,10 +11,9 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-public class Ec2GitExamplesTest extends AbstractExamplesTest {
+public class Ec2GitApplicationsTest extends AbstractExamplesTest {
 
-	private String localGitAppsPath;
-	private String localGitRepoPath;
+	private static String localGitRepoPath;
 	
 	@Override
 	protected String getCloudName() {
@@ -25,71 +24,79 @@ public class Ec2GitExamplesTest extends AbstractExamplesTest {
 	protected void bootstrap() throws Exception {
 		super.bootstrap();
 		
-	    localGitRepoPath = ScriptUtils.getBuildPath() + "/git-temp-repo";
-	    String remotePath = "https://github.com/CloudifySource/cloudify-recipes.git";
+	    localGitRepoPath = ScriptUtils.getBuildPath() + "/git-recipes-" + this.getClass().getSimpleName() ;
 	    
-		LogUtils.log("exporting from github");
-        Git.cloneRepository().setURI(remotePath).setDirectory(new File(localGitRepoPath)).call();
-        
-        localGitAppsPath = localGitRepoPath + "/apps";
-	}
-	
-	@AfterClass(alwaysRun = true)
-	protected void teardown() throws Exception {
-		super.teardown();
-		
-		LogUtils.log("removing exported git folder");
-		FileUtils.deleteDirectory(new File(localGitRepoPath));
+	    if (!new File(localGitRepoPath).exists()) {
+	    	String remotePath = "https://github.com/CloudifySource/cloudify-recipes.git";
+	    	
+	    	Git.cloneRepository()
+	    			.setURI(remotePath)
+	    			.setDirectory(new File(localGitRepoPath))
+	    			.call();	    	
+	    }	    
 	}
 	
 	//should work
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
 	public void testComputers() throws Exception {
-		super.testComputers(localGitAppsPath);
+		super.testComputers(localGitRepoPath + "/apps");
 	}
-	
+
 	//should work
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
 	public void testBabies() throws Exception {
-		super.testBabies(localGitAppsPath);
+		super.testBabies(localGitRepoPath + "/apps");
 	}
-	
+
 	//fails
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = false)
 	public void testBiginsights() throws Exception {
-		super.testBiginsights(localGitAppsPath);
+		super.testBiginsights(localGitRepoPath + "/apps");
 	}
-	
+
 	//should work
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
 	public void testPetclinicJboss() throws Exception {
-		super.testPetclinicJboss(localGitAppsPath);
+		super.testPetclinicJboss(localGitRepoPath + "/apps");
 	}
-	
+
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
 	public void testLamp() throws Exception {
-		super.testLamp(localGitAppsPath);
+		super.testLamp(localGitRepoPath + "/apps");
 	}
-	
+
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
 	public void testMasterSlave() throws Exception {
-		super.testMasterSlave(localGitAppsPath);
+		super.testMasterSlave(localGitRepoPath + "/apps");
 	}
-	
+
 	//needs configuration to work.
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = false)
 	public void testPetclinicWas() throws Exception {
-		super.testPetclinicWas(localGitAppsPath);
+		super.testPetclinicWas(localGitRepoPath + "/apps");
 	}
-	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
+
+	// requires a non existing template
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = false)
 	public void testStorm() throws Exception {
-		super.testStorm(localGitAppsPath);
+		super.testStorm(localGitRepoPath + "/apps");
 	}
-	
+
 	//should work
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
 	public void testTravelLb () throws Exception {
-		super.testTravelLb(localGitAppsPath);
+		super.testTravelLb(localGitRepoPath + "/apps");
+	}
+	
+	@AfterClass(alwaysRun = true)
+	protected void teardown() throws Exception {
+		super.teardown();
+
+        //not deleting for debug
+		try {
+			FileUtils.deleteDirectory(new File(localGitRepoPath));
+		} catch (final Exception e) {
+			LogUtils.log("Failed deleting directory : " + localGitRepoPath);
+		}
 	}
 }

@@ -1,30 +1,32 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud;
 
+import groovy.util.ConfigObject;
+import groovy.util.ConfigSlurper;
+
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Map;
+import java.util.List;
 
-import org.cloudifysource.dsl.internal.CloudifyConstants;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.type.TypeFactory;
-import org.codehaus.jackson.type.JavaType;
-import org.testng.annotations.AfterMethod;
-
+import org.cloudifysource.dsl.Application;
+import org.cloudifysource.dsl.Service;
+import org.cloudifysource.dsl.internal.ServiceReader;
+import org.cloudifysource.quality.iTests.framework.utils.AssertUtils;
+import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
+import org.cloudifysource.quality.iTests.framework.utils.ScriptUtils;
+import org.cloudifysource.quality.iTests.framework.utils.WebUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.ec2.Ec2WinCloudService;
+import org.testng.annotations.AfterMethod;
 
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
 
-import org.cloudifysource.quality.iTests.framework.utils.AssertUtils;
-import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
-import org.cloudifysource.quality.iTests.framework.utils.ScriptUtils;
-import org.cloudifysource.quality.iTests.framework.utils.WebUtils;
-
 public abstract class AbstractExamplesTest extends NewAbstractCloudTest {
 
 	private static final int WINDOWS_INSTALLATION_TIMEOUT = 50;
-	private String applicationName;
+	private static String applicationName;
 	
 	@AfterMethod
 	public void cleanup() throws IOException, InterruptedException {
@@ -34,234 +36,103 @@ public abstract class AbstractExamplesTest extends NewAbstractCloudTest {
 	
 	
 	protected void testTravel() throws Exception {
-		doTest("travel", "travel");
+		doTest(ScriptUtils.getBuildRecipesApplicationsPath() + "/travel", null);
 	}
 
 	protected void testPetclinic() throws Exception {
-		doTest("petclinic", "petclinic");
+		doTest(ScriptUtils.getBuildRecipesApplicationsPath() + "/petclinic", null);
 	}
 
 	protected void testPetclinicSimple() throws Exception {
-		doTest("petclinic-simple", "petclinic-simple");
+		doTest(ScriptUtils.getBuildRecipesApplicationsPath() + "/petclinic-simple", null);
 	}
 
 	protected void testHelloWorld() throws Exception {
-		doTest("helloworld", "helloworld");
+		doTest(ScriptUtils.getBuildRecipesApplicationsPath() + "/helloworld", null);
 	}
 
 	protected void testTravelChef() throws Exception {
-		doTest("travel-chef", "travel-chef");
+		doTest(ScriptUtils.getBuildRecipesApplicationsPath() + "/travel-chef", null);
 	}
 	
 	protected void testComputers(String localGitAppsPath) throws Exception {
-		doTest(localGitAppsPath, "computers", "computers");
+		doTest(localGitAppsPath + "/computers", null);
 	}
 	
 	protected void testBabies(String localGitAppsPath) throws Exception {
-		doTest(localGitAppsPath, "drupal-babies", "babies");
+		doTest(localGitAppsPath + "/drupal-babies", null);
 	}
 	
 	protected void testBiginsights(String localGitAppsPath) throws Exception {
-		doTest(localGitAppsPath, "hadoop-biginsights", "biginsights");
+		doTest(localGitAppsPath + "/hadoop-biginsights", null);
 	}
 	
 	protected void testPetclinicJboss(String localGitAppsPath) throws Exception {
-		doTest(localGitAppsPath, "jboss-petclinic", "petclinic-mongo");
+		doTest(localGitAppsPath + "/jboss-petclinic", null);
 	}
 	
 	protected void testLamp(String localGitAppsPath) throws Exception {
-		doTest(localGitAppsPath, "lamp", "lamp");
+		doTest(localGitAppsPath + "/lamp", null);
 	}
 	
 	protected void testMasterSlave(String localGitAppsPath) throws Exception {
-		doTest(localGitAppsPath, "masterslave", "masterslave");
+		doTest(localGitAppsPath + "/masterslave", null);
 	}
 	
 	protected void testPetclinicWas(String localGitAppsPath) throws Exception {
-		doTest(localGitAppsPath, "petclinic-was", "petclinic");
+		doTest(localGitAppsPath + "/petclinic-was", null);
 	}
 	
 	protected void testStorm(String localGitAppsPath) throws Exception {
-		doTest(localGitAppsPath, "storm", "storm");
+		doTest(localGitAppsPath + "/storm", null);
 	}
 	
 	protected void testTravelLb(String localGitAppsPath) throws Exception {
-		doTest(localGitAppsPath, "travel-lb", "travel");
-	}
-
-	// petclinic-simple is covered by {@link ScalingRulesCloudTest}
-
-	protected void doTest(String applicationFolderName, String applicationName) throws Exception {
-		doTest(null, applicationFolderName, applicationName);
+		doTest(localGitAppsPath + "/travel-lb", null);
 	}
 	
-	protected void doTest(String applicationPath, String applicationFolderName, String applicationName) throws Exception {
-		LogUtils.log("installing application " + applicationName + " on " + getCloudName());
-		this.applicationName = applicationName;
+	protected void doTest(String applicationPath, String overrideApplicationName) throws Exception {				
+		LogUtils.log("Reading Application from file : " + applicationPath);
+		Application application = ServiceReader.getApplicationFromFile(new File(applicationPath)).getApplication();
+		LogUtils.log("Succesfully read Application : " + application);
+		applicationName = application.getName();
+		LogUtils.log("Application name is " + applicationName);
 		
-		if(applicationPath == null){
-			applicationPath = ScriptUtils.getBuildPath() + "/recipes/apps/" + applicationFolderName;; 			
-		}
-		else{
-			applicationPath = applicationPath + "/" + applicationFolderName;
+		if (overrideApplicationName != null) {
+			LogUtils.log("Overriding application name with : " + overrideApplicationName);
+			applicationName = overrideApplicationName;
 		}
 		
-		if (getCloudName().endsWith("-win")) {
+		boolean hasApacheLB = false;
+		int apachePort = 0;
+		for (Service service : application.getServices()) {
+			if (service.getName().equals("apacheLB")) {
+				hasApacheLB = true;
+				File propsFile = new File(applicationPath + "/apacheLB", "apacheLB-service.properties");
+				LogUtils.log("Application " + applicationName + " has an apacheLB service. reading properties file from " + propsFile.getAbsolutePath());
+				ConfigObject config = new ConfigSlurper().parse(propsFile.toURI().toURL());
+				apachePort = (Integer) config.get("currentPort");
+				LogUtils.log("apacheLB port is " + apachePort);
+				break;
+			}
+		}
+
+		if (getService() instanceof Ec2WinCloudService) {
 			applicationPath = applicationPath + "-win";
 			applicationName = applicationName + "-win";
 			installApplicationAndWait(applicationPath, applicationName, WINDOWS_INSTALLATION_TIMEOUT);
 		} else {
 			installApplicationAndWait(applicationPath, applicationName);
 		}
-		if (applicationFolderName.equals("travel")) {
-
-			String[] services = {"cassandra", "tomcat"};
-
-			verifyServices(applicationName, services);
-
-			verifyApplicationUrls(applicationName, false);
-
-			// verify image and hardware ID only for travel on EC2
-			if(getCloudName().equals("ec2")){
-
-				Client client = Client.create(new DefaultClientConfig());
-				final WebResource service = client.resource(this.getRestUrl());
-				String hardwareIDResult = service.path( "/admin/ProcessingUnits/Names/travel.tomcat/Instances/0/Statistics/Monitors/USM/Details/Attributes/"
-						+ CloudifyConstants.USM_DETAILS_HARDWARE_ID).get(String.class);
-				assertTrue("error reading hardware id", !hardwareIDResult.contains("error"));
-				assertTrue("Could not find expected hardware ID: m1.small in response", hardwareIDResult.contains("m1.small"));
-
-				String imageIDResult = service.path("/admin/ProcessingUnits/Names/travel.tomcat/Instances/0/Statistics/Monitors/USM/Details/Attributes/" 
-						+ CloudifyConstants.USM_DETAILS_IMAGE_ID).get(String.class);
-				assertTrue("error reading image id", !imageIDResult.toLowerCase().contains("error"));
-			}
-
-		}
-
-		if (applicationFolderName.equals("petclinic")){
-
-			String[] services = {"mongod", "mongoConfig", "mongos", "tomcat", "apacheLB"};
-
-			verifyServices(applicationName, services);
-
-			verifyApplicationUrls(applicationName, true);				
-		}
-
-		if (applicationFolderName.equals("petclinic-simple")){
-
-			String[] services = {"mongod", "tomcat"};
-
-			verifyServices(applicationName, services);
-
-			verifyApplicationUrls(applicationName, false);				
-		}
-
-		if (applicationName.equals("helloworld")){
-
-			String[] services = {"tomcat"};
-
-			verifyServices(applicationName, services);
-
-			verifyApplicationUrls(applicationName, false);				
-		}
-
-		if (applicationFolderName.equals("travel-chef")){
-
-			String[] services = {"chef-server", "apacheLB", "mysql"};
-
-			LogUtils.log("verifing successful installation");
-
-			verifyServices(applicationName, services);
-
-			verifyApplicationUrls(applicationName, true);
-		}
 		
-		if (applicationFolderName.equals("computers")){
-
-			String[] services = {"mysql", "apacheLB", "play"};
-
-			verifyServices(applicationName, services);
-
-			verifyApplicationUrls(applicationName, true);				
-		}
-		
-		if (applicationFolderName.equals("drupal-babies")){
-			
-			String[] services = {"mysql", "drupal"};
-			
-			verifyServices(applicationName, services);
-			
-			verifyApplicationUrls(applicationName, false);				
-		}
-		
-		if (applicationFolderName.equals("hadoop-biginsights")){
-			
-			String[] services = {"master", "data", "dataOnDemand"};
-			
-			verifyServices(applicationName, services);
-			
-			verifyApplicationUrls(applicationName, false);				
-		}
-		
-		if (applicationFolderName.equals("jboss-petclinic")){
-			
-			String[] services = {"mongod", "mongoConfig", "mongos", "apacheLB", "jboss"};
-			
-			verifyServices(applicationName, services);
-			
-			verifyApplicationUrls(applicationName, true);				
-		}
-		
-		if (applicationFolderName.equals("lamp")){
-			
-			String[] services = {"mysql", "apache", "apacheLB"};
-			
-			verifyServices(applicationName, services);
-			
-			verifyApplicationUrls(applicationName, true);				
-		}
-		
-		if (applicationFolderName.equals("masterslave")){
-			
-			String[] services = {"mysql"};
-			
-			verifyServices(applicationName, services);
-			
-			verifyApplicationUrls(applicationName, false);				
-		}
-		
-		if (applicationFolderName.equals("petclinic-was")){
-			
-			String[] services = {"mongod", "mongoConfig", "mongos", "websphere"};
-			
-			verifyServices(applicationName, services);
-			
-			verifyApplicationUrls(applicationName, false);				
-		}
-		
-		if (applicationFolderName.equals("storm")){
-			
-			String[] services = {"zookeeper", "storm-nimbus", "storm-supervisor"};
-			
-			verifyServices(applicationName, services);
-			
-			verifyApplicationUrls(applicationName, false);				
-		}
-		
-		if (applicationFolderName.equals("travel-lb")){
-			
-			String[] services = {"cassandra", "apacheLB", "tomcat"};
-			
-			verifyServices(applicationName, services);
-			
-			verifyApplicationUrls(applicationName, true);				
-		}
-		
-//		uninstallApplicationAndWait(applicationName);
-//		super.scanForLeakedAgentNodes();
+		verifyServices(applicationName, application.getServices());
+		verifyApplicationUrls(applicationName, hasApacheLB, apachePort);
+				
+		uninstallApplicationAndWait(applicationName);
+		super.scanForLeakedAgentNodes();
 	}
 
-	private void verifyApplicationUrls(String appName, boolean hasApacheLB) {
+	private void verifyApplicationUrls(String appName, boolean hasApacheLB, int port) {
 
 		Client client = Client.create(new DefaultClientConfig());
 		final WebResource service = client.resource(this.getRestUrl());
@@ -273,19 +144,18 @@ public abstract class AbstractExamplesTest extends NewAbstractCloudTest {
 			int urlEndIndex = restApacheService.indexOf("\"", urlStartIndex);
 
 			String apacheServiceHostURL = restApacheService.substring(urlStartIndex, urlEndIndex);
-			String apachePort = "8090";
 
-			assertPageExists("http://" + apacheServiceHostURL + ":" + apachePort + "/");
+			assertPageExists("http://" + apacheServiceHostURL + ":" + port + "/");
 		}
 	}
 
-	private void verifyServices(String applicationName, String[] services) throws IOException, InterruptedException {
+	private void verifyServices(String applicationName, List<Service> services) throws IOException, InterruptedException {
 
 		String command = "connect " + getRestUrl() + ";use-application " + applicationName + ";list-services";
 		String output = CommandTestUtils.runCommandAndWait(command);
 
-		for(String singleService : services){
-			AssertUtils.assertTrue("the service " + singleService + " is not running", output.contains(singleService));					
+		for(Service singleService : services){
+			AssertUtils.assertTrue("the service " + singleService.getName() + " is not running", output.contains(singleService.getName()));					
 		}
 	}
 
@@ -301,11 +171,5 @@ public abstract class AbstractExamplesTest extends NewAbstractCloudTest {
 		} catch (Exception e) {
 			AssertUtils.assertFail(e.getMessage());
 		}
-	}
-
-	private static Map<String, Object> jsonToMap(final String response) throws IOException {
-		final JavaType javaType = TypeFactory.type(Map.class);
-		ObjectMapper om = new ObjectMapper();
-		return om.readValue(response, javaType);
 	}
 }

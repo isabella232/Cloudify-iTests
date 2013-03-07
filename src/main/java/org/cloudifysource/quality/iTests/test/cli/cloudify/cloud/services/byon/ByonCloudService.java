@@ -117,7 +117,7 @@ public class ByonCloudService extends AbstractCloudService {
 		}
 		
 		propsToReplace.put("numberOfManagementMachines 1", "numberOfManagementMachines "  + getNumberOfManagementMachines());
-		propsToReplace.put("\"clearRemoteDirectoryOnStart\":\"false\"", "\"clearRemoteDirectoryOnStart\":\"true\"");
+		propsToReplace.put("\"org.cloudifysource.clearRemoteDirectoryOnStart\":\"false\"", "\"org.cloudifysource.clearRemoteDirectoryOnStart\":\"true\"");
 		propsToReplace.put("/tmp/gs-files", "/tmp/byon/gs-files");
 		this.getAdditionalPropsToReplace().putAll(propsToReplace);
 

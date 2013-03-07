@@ -204,15 +204,15 @@ public class ScriptUtils {
     }
 
     public static String getBuildRecipesPath() {
-        return getBuildPath() + File.separator + "recipes";
+        return getBuildPath() + "/recipes";
     }
 
     public static String getBuildRecipesServicesPath() {
-        return getBuildRecipesPath() + File.separator + "services";
+        return getBuildRecipesPath() + "/services";
     }
 
     public static String getBuildRecipesApplicationsPath() {
-        return getBuildRecipesPath() + File.separator + "applications";
+        return getBuildRecipesPath() + "/apps";
     }
 
     private static String getClassLocation(Class<?> clazz) {

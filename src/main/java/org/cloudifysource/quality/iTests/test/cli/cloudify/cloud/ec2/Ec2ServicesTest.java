@@ -1,12 +1,10 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.ec2;
 
-import org.cloudifysource.restclient.RestException;
+import org.cloudifysource.quality.iTests.framework.utils.ScriptUtils;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.AbstractServicesTest;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.AbstractServicesTest;
-
-import java.io.IOException;
 
 public class Ec2ServicesTest extends AbstractServicesTest{
 
@@ -19,30 +17,30 @@ public class Ec2ServicesTest extends AbstractServicesTest{
 	protected void bootstrap() throws Exception {
 		super.bootstrap();
 	}
+		
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
+	public void testSolr() throws Exception {
+		super.testService(ScriptUtils.getBuildRecipesServicesPath() + "/solr", null);
+	}
 	
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
+	public void testActivemq() throws Exception{
+		super.testService(ScriptUtils.getBuildRecipesServicesPath() + "/activemq", null);
+	}
+	
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
+	public void testHsqldb() throws Exception{
+		super.testService(ScriptUtils.getBuildRecipesServicesPath() + "/hsqldb", null);
+	}
+
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
+    public void testApacheLB() throws Exception {
+        super.testService(ScriptUtils.getBuildRecipesServicesPath() + "/apacheLB", null);
+    }
+    
 	@AfterClass(alwaysRun = true)
 	protected void teardown() throws Exception {
 		super.teardown();
 	}
-	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
-	public void testSolr() throws IOException, InterruptedException, RestException{
-		super.testService("solr", "solr");
-	}
-	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
-	public void testActivemq() throws IOException, InterruptedException, RestException{
-		super.testService("activemq", "activemq");
-	}
-	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
-	public void testHsqldb() throws IOException, InterruptedException, RestException{
-		super.testService("hsqldb", "hsqldb");
-	}
-
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
-    public void testApacheLB() throws IOException, InterruptedException, RestException{
-        super.testService("apacheLB", "apacheLB");
-    }
 
 }

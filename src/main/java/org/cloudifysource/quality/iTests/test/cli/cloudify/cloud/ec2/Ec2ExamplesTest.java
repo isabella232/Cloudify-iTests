@@ -34,12 +34,7 @@ public class Ec2ExamplesTest extends AbstractExamplesTest {
 	protected void bootstrap() throws Exception {
 		super.bootstrap();
 	}
-	
-	@AfterClass(alwaysRun = true)
-	protected void teardown() throws Exception {
-		super.teardown();
-	}
-	
+		
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
 	public void testTravel() throws Exception {
 		super.testTravel();
@@ -63,6 +58,11 @@ public class Ec2ExamplesTest extends AbstractExamplesTest {
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
 	public void testTravelChef() throws Exception {
 		super.testTravelChef();
+	}
+	
+	@AfterClass(alwaysRun = true)
+	protected void teardown() throws Exception {
+		super.teardown();
 	}
 
 }

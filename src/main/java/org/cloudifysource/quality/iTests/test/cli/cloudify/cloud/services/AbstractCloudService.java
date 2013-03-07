@@ -32,6 +32,7 @@ import org.testng.Assert;
 public abstract class AbstractCloudService implements CloudService {
 
     private static final int MAX_HOSTNAME_LENGTH = 45;
+    private static final int MAX_VOLUME_NAME_LENGTH = 45;
     protected static final String RELATIVE_ESC_PATH = "/clouds/";
     protected static final String UPLOAD_FOLDER = "upload";
     protected static final String CREDENTIALS_FOLDER = System.getProperty("com.quality.sgtest.credentialsFolder",
@@ -45,6 +46,7 @@ public abstract class AbstractCloudService implements CloudService {
     private URL[] restAdminUrls;
     private URL[] webUIUrls;
     private String machinePrefix;
+    private String volumePrefix;
     private Map<String, String> additionalPropsToReplace = new HashMap<String, String>();
     private Cloud cloud;
     private Map<String, Object> properties = new HashMap<String, Object>();
@@ -52,6 +54,7 @@ public abstract class AbstractCloudService implements CloudService {
     private String cloudFolderName;
     private String cloudUniqueName = this.getClass().getSimpleName();
     private CloudBootstrapper bootstrapper = new CloudBootstrapper();
+	private File customCloudGroovy;
 
     public AbstractCloudService(String cloudName) {
         this.cloudName = cloudName;
@@ -108,6 +111,20 @@ public abstract class AbstractCloudService implements CloudService {
         }
     }
 
+    public String getVolumePrefix() {
+        return volumePrefix;
+    }
+
+    public void setVolumePrefix(String volumePrefix) {
+
+        if (volumePrefix.length() > MAX_VOLUME_NAME_LENGTH) {
+            String substring = volumePrefix.substring(0, MAX_VOLUME_NAME_LENGTH - 1);
+            LogUtils.log("volumePrefix " + volumePrefix + " is too long. using " + substring + " as actual volume prefix");
+            this.volumePrefix = substring;
+        } else {
+            this.volumePrefix = volumePrefix;
+        }
+    }
 
     public void setCloudName(String cloudName) {
         this.cloudName = cloudName;
@@ -172,13 +189,8 @@ public abstract class AbstractCloudService implements CloudService {
         return getPathToCloudFolder() + "/" + getCloudName() + "-cloud.groovy";
     }
 
-    //This method should be called before bootstrapping in customize cloud
     public void setCloudGroovy(File cloudFile) throws IOException {
-        File fileToReplace = new File(getPathToCloudFolder() + "/" + getCloudName() + "-cloud.groovy");
-        if (fileToReplace.exists()) {
-            FileUtils.deleteQuietly(fileToReplace);
-        }
-        FileUtils.copyFile(cloudFile, new File(getPathToCloudFolder(), cloudFile.getName()));
+    	this.customCloudGroovy = cloudFile;
     }
 
     public String getPathToCloudFolder() {
@@ -233,6 +245,11 @@ public abstract class AbstractCloudService implements CloudService {
     public void bootstrapCloud() throws Exception {
 
         overrideLogsFile();
+        if (customCloudGroovy != null) {
+        	// use a custom grooyv file if defined
+        	File originalCloudGroovy = new File(getPathToCloudFolder(), "byon-cloud.groovy");
+        	IOUtils.replaceFile(originalCloudGroovy, customCloudGroovy);
+        }
         injectCloudAuthenticationDetails();
         replaceProps();
 

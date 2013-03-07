@@ -10,9 +10,11 @@ import org.cloudifysource.dsl.cloud.Cloud;
 import org.cloudifysource.dsl.cloud.storage.StorageTemplate;
 import org.cloudifysource.dsl.internal.ServiceReader;
 import org.cloudifysource.esc.driver.provisioning.storage.BaseStorageDriver;
+import org.cloudifysource.esc.driver.provisioning.storage.StorageProvisioningException;
 import org.cloudifysource.esc.driver.provisioning.storage.VolumeDetails;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.CloudService;
 import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.ec2.domain.Volume;
 
 import java.io.File;
 import java.util.*;
@@ -36,13 +38,17 @@ public class StorageUtils {
         cloud = otherCloud;
         cloudService = otherCloudService;
         storageProvisioningDriver = (BaseStorageDriver) Class.forName(cloud.getConfiguration().getStorageClassName()).newInstance();
-        storageProvisioningDriver.setConfig(otherCloud, computeTemplateName, storageTemplateName);
+        storageProvisioningDriver.setConfig(otherCloud, computeTemplateName);
 
         serviceToMachines = new HashMap<String, Set<String>>();
         machinesBeforeInstall = new HashSet<String>();
         machinesAfterInstall = new HashSet<String>();
 
         JCloudsUtils.createContext(otherCloudService);
+    }
+
+    public static String getVolumeName(Volume vol) throws StorageProvisioningException {
+    	return storageProvisioningDriver.getVolumeName(vol.getId());
     }
 
     public static void close(){
@@ -60,6 +66,11 @@ public class StorageUtils {
 
     public static void scanAndDeleteLeakedVolumes(boolean expectedLeak) throws Exception{
 
+        if (cloudService == null) {
+            LogUtils.log("No leaked volume scan was executed as the cloud service for this class was not created");
+            return;
+        }
+
         List<StorageTemplate> storageTemplates = new ArrayList<StorageTemplate>(cloud.getCloudStorage().getTemplates().values());
         Set<String> namePrefixes = new HashSet<String>();
         boolean foundLeak = false;
@@ -72,8 +83,9 @@ public class StorageUtils {
 
         for(VolumeDetails vd : volumes){
             for(String prefix : namePrefixes){
-                if(vd.getName().startsWith(prefix)){
+                if(vd.getName() != null && vd.getName().startsWith(prefix)){
                     foundLeak = !expectedLeak;
+                    LogUtils.log("leaked volume found. Name: " + vd.getName() + ", id: " + vd.getId() + ", location: " + vd.getLocation());
                     deleteVolume(vd.getLocation(), vd.getId(), DURATION, TimeUnit.SECONDS);
                 }
             }
@@ -115,6 +127,10 @@ public class StorageUtils {
 
         Set<String> difference = new HashSet<String>(machinesAfterInstall);
         difference.removeAll(machinesBeforeInstall);
+
+        ///////debug
+        LogUtils.log("inserting " + serviceName + " to map");
+        ///////debug
 
         serviceToMachines.put(serviceName, difference);
         machinesAfterInstall.clear();
@@ -199,10 +215,7 @@ public class StorageUtils {
 
         Set<VolumeDetails> serviceVolumes = new HashSet<VolumeDetails>();
 
-        File serviceFile = new File(serviceFilePath);
-        Service service = ServiceReader.readService(serviceFile);
-
-        String serviceTemplateName = service.getStorage().getTemplate();
+        String serviceTemplateName = getStorageTemplateName(serviceFilePath);
         StorageTemplate storageTemplate = cloud.getCloudStorage().getTemplates().get(serviceTemplateName);
         String volumeNamePrefix = storageTemplate.getNamePrefix();
 
@@ -215,6 +228,25 @@ public class StorageUtils {
         }
 
         return serviceVolumes;
+    }
+
+    public static String getStorageTemplateName(String serviceFilePath) throws Exception {
+
+        File serviceFile = new File(serviceFilePath);
+        Service service = ServiceReader.readService(serviceFile);
+        return service.getStorage().getTemplate();
+    }
+
+    public static void detachVolume(final String volumeId, final String ip, final long duration, final TimeUnit timeUnit) throws Exception {
+        storageProvisioningDriver.detachVolume(volumeId, ip, duration, timeUnit);
+    }
+
+    public static void attachVolume(final String volumeId, final String device, final String machineIp, final long duration, final TimeUnit timeUnit) throws Exception {
+        storageProvisioningDriver.attachVolume(volumeId, device, machineIp, duration, timeUnit);
+    }
+
+    public static Set<VolumeDetails> listVolumes(final String machineIp, final long duration, final TimeUnit timeUnit) throws Exception {
+        return storageProvisioningDriver.listVolumes(machineIp, duration, timeUnit);
     }
 }
 

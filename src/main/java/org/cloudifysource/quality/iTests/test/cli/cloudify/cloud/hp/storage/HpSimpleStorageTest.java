@@ -1,11 +1,15 @@
-package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.ec2;
+package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.hp.storage;
 
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.AbstractStorageTest;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-public class Ec2SimpleStorageTest extends AbstractStorageTest {
+/**
+ * Author: nirb
+ * Date: 21/02/13
+ */
+public class HpSimpleStorageTest extends AbstractStorageTest{
 
     @BeforeMethod(alwaysRun = true)
     public void bootstrapAndInit() throws Exception{
@@ -24,12 +28,11 @@ public class Ec2SimpleStorageTest extends AbstractStorageTest {
 
     @Override
     protected String getCloudName() {
-        return "ec2";
+        return "hp";
     }
 
     @Override
     protected boolean isReusableCloud() {
         return false;
     }
-
 }

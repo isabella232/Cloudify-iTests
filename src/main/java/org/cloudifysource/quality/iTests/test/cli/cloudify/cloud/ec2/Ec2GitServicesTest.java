@@ -1,33 +1,21 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.ec2;
 
-import com.j_spaces.kernel.PlatformVersion;
-import org.cloudifysource.quality.iTests.framework.testng.annotations.TestConfiguration;
-import org.cloudifysource.quality.iTests.framework.utils.AssertUtils;
-import org.cloudifysource.quality.iTests.framework.utils.ScriptUtils;
+import java.io.File;
+
 import org.apache.commons.io.FileUtils;
-import org.cloudifysource.restclient.GSRestClient;
-import org.cloudifysource.restclient.RestException;
+import org.cloudifysource.quality.iTests.framework.testng.annotations.TestConfiguration;
+import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
+import org.cloudifysource.quality.iTests.framework.utils.ScriptUtils;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.AbstractServicesTest;
 import org.eclipse.jgit.api.Git;
-import org.eclipse.jgit.lib.Repository;
-import org.eclipse.jgit.storage.file.FileRepository;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.AbstractServicesTest;
-
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.util.Map;
 
 
-public class Ec2ExcludedServicesTest extends AbstractServicesTest {
+public class Ec2GitServicesTest extends AbstractServicesTest {
 
-    private static String localPath, remotePath;
-    private static Repository localRepo;
-    private static Git git;
-    private File excludedRecipesDir;
-    private static final String STATUS_PROPERTY = "DeclaringClass-Enumerator";
+	private static String localGitRepoPath;
     
     @Override
     protected String getCloudName() {
@@ -36,25 +24,20 @@ public class Ec2ExcludedServicesTest extends AbstractServicesTest {
 
     @BeforeClass(alwaysRun = true)
     protected void bootstrap() throws Exception {
-        localPath = ScriptUtils.getBuildPath() + "/excludedRecipes";
-        remotePath = "https://github.com/CloudifySource/cloudify-recipes.git";
-        localRepo = new FileRepository(localPath + "/.git");
-        git = new Git(localRepo);
-        excludedRecipesDir = new File(localPath + "/services");
-        Git.cloneRepository()
-                .setURI(remotePath)
-                .setDirectory(new File(localPath))
-                .call();
-        super.bootstrap();
+    	super.bootstrap();
+    	
+    	localGitRepoPath = ScriptUtils.getBuildPath() + "/git-recipes-" + this.getClass().getSimpleName() ;
+    	
+	    if (!new File(localGitRepoPath).exists()) {
+	    	String remotePath = "https://github.com/CloudifySource/cloudify-recipes.git";
+	    	
+	    	Git.cloneRepository()
+	    			.setURI(remotePath)
+	    			.setDirectory(new File(localGitRepoPath))
+	    			.call();	    	
+	    }    	
     }
 
-    @AfterClass(alwaysRun = true)
-    protected void teardown() throws Exception {
-        FileUtils.deleteDirectory(new File(localPath));
-        super.teardown();
-    }
-
-    //works
     @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
     public void testApache() throws Exception {
         testService("apache");
@@ -76,6 +59,7 @@ public class Ec2ExcludedServicesTest extends AbstractServicesTest {
     public void testBigInsights() throws Exception{
         testService("biginsights");
     }
+    
     //works
     @TestConfiguration(os = {TestConfiguration.VM.MAC, TestConfiguration.VM.UNIX} )
     @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
@@ -143,14 +127,21 @@ public class Ec2ExcludedServicesTest extends AbstractServicesTest {
         testService("solr");
     }
 
-    //should work. takes time to install.
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 3, enabled = true)
-    public void testStorm() throws Exception{
-        testService("storm");
+    //depends on zookeeper??
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 3, enabled = false)
+    public void testStormNimbus() throws Exception{
+        testService("storm/storm-nimbus");
     }
+    
+    //should work. takes time to install.
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 3, enabled = false)
+    public void testStormSupervisor() throws Exception{
+        testService("storm/storm-supervisor");
+    }
+    
     //linux only. works
     @TestConfiguration(os = {TestConfiguration.VM.MAC, TestConfiguration.VM.UNIX} )
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
     public void testVertx() throws Exception{
         testService("vertx");
     }
@@ -168,25 +159,19 @@ public class Ec2ExcludedServicesTest extends AbstractServicesTest {
     public void testZookeeper() throws Exception{
         testService("zookeeper");
     }
-
-    @Override
-    public void testService(String serviceFolderName, String serviceName) throws IOException, InterruptedException, RestException {
-        installServiceAndWait(excludedRecipesDir.getAbsolutePath() + "/" + serviceName, serviceName);
-
-        String restUrl = getRestUrl();
-        GSRestClient client = new GSRestClient("", "", new URL(restUrl), PlatformVersion.getVersionNumber());
-        Map<String, Object> entriesJsonMap  = client.getAdminData("ProcessingUnits/Names/default." + serviceName + "/Status");
-        String serviceStatus = (String)entriesJsonMap.get(STATUS_PROPERTY);
-
-        AssertUtils.assertTrue("service is not intact", serviceStatus.equalsIgnoreCase("INTACT"));
-
-        uninstallServiceAndWait(serviceName);
+    
+    @AfterClass(alwaysRun = true)
+    protected void teardown() throws Exception {
+        super.teardown();
+        try {
+        	FileUtils.deleteDirectory(new File(localGitRepoPath));
+        } catch (final Exception e) {
+        	LogUtils.log("Failed deleting directory : " + localGitRepoPath , e);
+        }
     }
     
-    public void testService(String serviceName) throws Exception {
-    	testService(serviceName, serviceName);
-    }
-
-
+    private void testService(String serviceName) throws Exception {
+    	testService(localGitRepoPath + "/services/" + serviceName, null);
+    }    
 }
 

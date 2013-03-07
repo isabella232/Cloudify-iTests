@@ -1,14 +1,28 @@
 import java.util.concurrent.TimeUnit
 
+import org.hyperic.sigar.FileSystem;
+import org.hyperic.sigar.Sigar;
+
+import com.gigaspaces.internal.sigar.SigarHolder;
+
 
 service {
 	name "groovy"
 	type "WEB_SERVER"
 	elastic true
-	numInstances 2
+	numInstances 1
 	maxAllowedInstances 2
-	lifecycle { 
 	
+	isolationSLA {
+		global {
+			instanceCpuCores 0
+			instanceMemoryMB 128
+			useManagement true
+		}
+	}
+	
+	lifecycle { 
+		
 		init { println "This is the init event" }
 		preInstall {println "This is the preInstall event" }
 		postInstall {println "This is the postInstall event"}
@@ -16,10 +30,8 @@ service {
 		
 		start "run.groovy" 
 		
-		postStart {println "This is the postStart event" }
 		preStop {println "This is the preStop event" }
 		postStop {println "This is the postStop event" }
-		shutdown {println "This is the shutdown event" }
 		
 		startDetection {
 			new File(context.serviceDirectory + "/marker.txt").exists()
@@ -37,34 +49,13 @@ service {
 		}
 	}
 	
+	customCommands ([
+		"attachVolume" : {volumeId, device -> return context.storage.attachVolume(volumeId, device)},
+		"detachVolume" : {volumeId -> return context.storage.detachVolume(volumeId)}
+	])
+	
 	compute {
 		
-		template "SMALL_LINUX"	
-	}
-	
-	storage {
-		
-		template "SMALL_BLOCK"
-	}
-
-	customCommands ([
-				"echo" : {x ->
-					return x
-				},
-
-				"contextInvoke": { x ->
-					Object[] results =
-							context.waitForService("groovy", 10, TimeUnit.SECONDS)
-							.invoke("echo", x + " from " + context.instanceId )
-					return java.util.Arrays.toString(results)
-				}
-				"pingStorage" : {
-					
-					return context.pingStorage();
-					
-				}
-
-
-
-			])
+		template "ENTER_TEMPLATE"	
+	}	
 }

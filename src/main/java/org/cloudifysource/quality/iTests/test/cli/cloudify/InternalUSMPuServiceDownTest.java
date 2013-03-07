@@ -1,5 +1,8 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify;
 
+import groovy.util.ConfigObject;
+import groovy.util.ConfigSlurper;
+
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -14,6 +17,13 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.http.HttpStatus;
 import org.cloudifysource.dsl.utils.ServiceUtils;
+import org.cloudifysource.quality.iTests.framework.tools.SGTestHelper;
+import org.cloudifysource.quality.iTests.framework.utils.AssertUtils;
+import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
+import org.cloudifysource.quality.iTests.framework.utils.ProcessingUnitUtils;
+import org.cloudifysource.quality.iTests.framework.utils.ScriptUtils;
+import org.cloudifysource.quality.iTests.framework.utils.WebUtils;
+import org.cloudifysource.quality.iTests.framework.utils.usm.USMTestUtils;
 import org.cloudifysource.usm.USMException;
 import org.cloudifysource.usm.shutdown.DefaultProcessKiller;
 import org.openspaces.admin.gsc.GridServiceContainer;
@@ -24,16 +34,6 @@ import org.openspaces.admin.pu.ProcessingUnitInstance;
 import org.openspaces.admin.pu.events.ProcessingUnitInstanceLifecycleEventListener;
 import org.openspaces.pu.service.CustomServiceMonitors;
 import org.testng.annotations.Test;
-
-import org.cloudifysource.quality.iTests.framework.tools.SGTestHelper;
-import org.cloudifysource.quality.iTests.framework.utils.AssertUtils;
-import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
-import org.cloudifysource.quality.iTests.framework.utils.ProcessingUnitUtils;
-import org.cloudifysource.quality.iTests.framework.utils.ScriptUtils;
-import org.cloudifysource.quality.iTests.framework.utils.WebUtils;
-import org.cloudifysource.quality.iTests.framework.utils.usm.USMTestUtils;
-import groovy.util.ConfigObject;
-import groovy.util.ConfigSlurper;
 
 
 public class InternalUSMPuServiceDownTest extends AbstractLocalCloudTest {

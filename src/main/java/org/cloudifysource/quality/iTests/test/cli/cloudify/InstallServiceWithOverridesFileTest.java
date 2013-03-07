@@ -36,7 +36,7 @@ public class InstallServiceWithOverridesFileTest extends OverridesTest {
 	}
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
-	public void serviceOverridesViaRestApiTest() {
+	public void serviceOverridesViaRestApiTest() throws IOException, InterruptedException {
 
 		final File serviceDir = new File(SERVICE_DIR_PATH);
 		final File overridesFile = new File(OVERRIDES_FILE_PATH);

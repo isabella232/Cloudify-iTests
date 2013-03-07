@@ -11,6 +11,7 @@ import org.cloudifysource.dsl.rest.request.SetApplicationAttributesRequest;
 import org.cloudifysource.dsl.rest.response.DeleteServiceInstanceAttributeResponse;
 import org.cloudifysource.dsl.rest.response.Response;
 import org.cloudifysource.dsl.rest.response.ServiceDetails;
+import org.cloudifysource.dsl.rest.response.ServiceInstanceDetails;
 import org.openspaces.admin.application.Application;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
@@ -74,6 +75,40 @@ public class DeploymentsControllerTest extends AbstractLocalCloudTest {
 		DeleteServiceInstanceAttributeResponse response = client.deleteServiceInstanceAttribute("helloworld", "tomcat", 1, "Key");
 		AssertUtils.assertEquals(response.getAttributeName(), "Key");
 		AssertUtils.assertEquals(response.getAttributeLastValue(), null);
+	}
+	
+	
+	
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
+	public void testGoodGetServiceInstanceDetails() throws Exception {
+		Application app = admin.getApplications().waitFor("helloworld", OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
+		AssertUtils.assertTrue("Failed to discover application helloworld" , app != null);
+		ServiceInstanceDetails details = client.getServiceInstanceDetails("helloworld", "tomcat",1);
+		AssertUtils.assertEquals("helloworld", details.getApplicationName());
+		AssertUtils.assertEquals("tomcat", details.getServiceName());
+		AssertUtils.assertEquals(1, details.getInstanceId());
+		AssertUtils.assertEquals("helloworld.tomcat", details.getServiceInstanceName());
+		AssertUtils.assertEquals("localcloud", details.getHardwareId());
+		AssertUtils.assertEquals("localcloud", details.getImageId());
+		AssertUtils.assertEquals("localcloud", details.getMachineId());
+		AssertUtils.assertEquals("127.0.0.1", details.getPrivateIp());
+		AssertUtils.assertEquals("127.0.0.1", details.getPublicIp());
+		AssertUtils.assertEquals("localcloud", details.getTemplateName());
+		AssertUtils.assertNotNull("missing data ,ProcessDetails object is null",details.getProcessDetails());
+		AssertUtils.assertEquals("127.0.0.1", details.getProcessDetails().get("Cloud Private IP"));
+		AssertUtils.assertEquals("127.0.0.1", details.getProcessDetails().get("Cloud Public IP"));
+		AssertUtils.assertEquals(1, details.getProcessDetails().get("Instance ID"));
+	}  
+	
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
+	public void testBadGetServiceInstanceDetails() throws Exception {
+		try {
+			client.getServiceInstanceDetails("helloworld", "tomcat",100); // Bad instance Id
+			AssertUtils.assertFail("getServiceInstanceDetails request should have thrown an exception due to a wrong instance name");
+		} catch (RestClientException e) {
+			AssertUtils.assertEquals(CloudifyMessageKeys.MISSING_SERVICE_INSTANCE.getName(), e.getMessageId());
+			AssertUtils.assertEquals(HttpStatus.SC_BAD_REQUEST, e.getStatus());
+		}
 	}
 
 	@Override

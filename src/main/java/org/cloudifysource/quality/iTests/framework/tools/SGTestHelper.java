@@ -81,5 +81,9 @@ public class SGTestHelper {
 	public static String getBuildDir() {
 		return ScriptUtils.getBuildPath();
 	}
+
+	public static String getCustomCloudConfigDir(String cloudName) {
+		return getSGTestRootDir() + "/src/main/resources/custom-cloud-configs/" + cloudName;
+	}
 	
 }

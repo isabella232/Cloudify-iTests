@@ -285,6 +285,26 @@ public abstract class Bootstrapper {
 		return lastActionOutput;
 	}
 
+	public String listServiceInstanceAttributes(final String applicationName, final String serviceName, final int instanceNumber, boolean expectedToFail) throws IOException, InterruptedException {
+		String command = connectCommand() + "use-application " + applicationName +";list-attributes -scope service:" + serviceName + ":" + instanceNumber;
+		if (expectedToFail) {
+			lastActionOutput = CommandTestUtils.runCommandExpectedFail(command);
+			return lastActionOutput;
+		}
+		lastActionOutput = CommandTestUtils.runCommandAndWait(command);
+		return lastActionOutput;
+	}
+
+	public String shutdownManagers(final String applicationName, final String backupFilePath, boolean expectedToFail) throws IOException, InterruptedException {
+		String command = connectCommand() + "use-application " + applicationName +";shutdown-managers -file " + backupFilePath;
+		if (expectedToFail) {
+			lastActionOutput = CommandTestUtils.runCommandExpectedFail(command);
+			return lastActionOutput;
+		}
+		lastActionOutput = CommandTestUtils.runCommandAndWait(command);
+		return lastActionOutput;
+	}
+
 	public String connect(boolean expectedToFail) throws IOException, InterruptedException {
 		String command = connectCommand();
 		if (expectedToFail) {

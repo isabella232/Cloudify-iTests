@@ -57,7 +57,7 @@ public class ManagmenetHardShutdownAndRecoveryTest extends AbstractByonManagemen
 
     @AfterMethod(alwaysRun = true)
     public void cleanup() throws Exception{
-//        super.cleanup(true);
+        super.afterTest();
     }
 
     @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)

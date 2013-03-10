@@ -1,19 +1,5 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud;
 
-import com.j_spaces.kernel.PlatformVersion;
-import org.cloudifysource.dsl.Service;
-import org.cloudifysource.dsl.internal.ServiceReader;
-import org.cloudifysource.esc.driver.provisioning.storage.VolumeDetails;
-import org.cloudifysource.quality.iTests.framework.utils.AssertUtils;
-import org.cloudifysource.quality.iTests.framework.utils.JCloudsUtils;
-import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
-import org.cloudifysource.quality.iTests.framework.utils.StorageUtils;
-import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
-import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils.ProcessResult;
-import org.cloudifysource.restclient.GSRestClient;
-import org.cloudifysource.restclient.RestException;
-import org.jclouds.compute.domain.NodeMetadata;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -22,6 +8,20 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
+
+import org.cloudifysource.dsl.Service;
+import org.cloudifysource.dsl.internal.ServiceReader;
+import org.cloudifysource.esc.driver.provisioning.storage.VolumeDetails;
+import org.cloudifysource.quality.iTests.framework.utils.AssertUtils;
+import org.cloudifysource.quality.iTests.framework.utils.JCloudsUtils;
+import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
+import org.cloudifysource.quality.iTests.framework.utils.StorageUtils;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
+import org.cloudifysource.restclient.GSRestClient;
+import org.cloudifysource.restclient.RestException;
+import org.jclouds.compute.domain.NodeMetadata;
+
+import com.j_spaces.kernel.PlatformVersion;
 
 /**
  * 
@@ -81,28 +81,23 @@ public abstract class AbstractStorageTest extends NewAbstractCloudTest{
 		
 		LogUtils.log("creating a new file called foo.txt in the storage volume. " 
 						+ "running 'touch ~/storage/foo.txt' command on remote machine.");
-		ProcessResult invokeCommandResult = invokeCommand(SERVICE_NAME, WRITE_FILE_COMMAND_NAME); 
+		invokeCommand(SERVICE_NAME, WRITE_FILE_COMMAND_NAME); 
 		
-		assertTrue("create file command exited with an abnormal exit code. Output was " + invokeCommandResult.getOutput(),
-				invokeCommandResult.getExitcode() == 0);
 		
 		LogUtils.log("listing all files inside mounted storage folder. running 'ls ~/storage/' command");
-		ProcessResult listFilesResult = invokeCommand(SERVICE_NAME, LIST_FILES_COMMAND_NAME); 
+		String listFilesResult = invokeCommand(SERVICE_NAME, LIST_FILES_COMMAND_NAME); 
 		
-		assertTrue("failed listing files. Output was " + listFilesResult.getOutput(), listFilesResult.getExitcode() == 0);
-		assertTrue("File was not created in storage volume. Output was " + listFilesResult.getOutput(),
-				listFilesResult.getOutput().contains("foo.txt"));
+		assertTrue("File was not created in storage volume. Output was " + listFilesResult,
+				listFilesResult.contains("foo.txt"));
 	}
 	
 	protected void testStorageVolumeMounted(String expectedMountOutput) throws IOException, InterruptedException {
 		
 		LogUtils.log("Listing all mounted devices. running command 'mount -l' on remote machine");
-		ProcessResult listMountedResult = invokeCommand(SERVICE_NAME, LIST_MOUNTED_DEVICES_COMMAND_NAME);
+		String listMountedResult = invokeCommand(SERVICE_NAME, LIST_MOUNTED_DEVICES_COMMAND_NAME);
 		
-		assertTrue("failed listing all mounted devices. Output was " + listMountedResult.getOutput(),
-				listMountedResult.getExitcode() == 0);
-		assertTrue("device is not in the mounted devices list: " + listMountedResult.getOutput(),
-				listMountedResult.getOutput().contains(expectedMountOutput));
+		assertTrue("device is not in the mounted devices list: " + listMountedResult,
+				listMountedResult.contains(expectedMountOutput));
 	}
 
 	// deleteOnExit = true
@@ -169,17 +164,13 @@ public abstract class AbstractStorageTest extends NewAbstractCloudTest{
 
         LogUtils.log("creating a new file called foo.txt in the storage volume. "
                 + "running 'touch ~/storage/foo.txt' command on remote machine.");
-        ProcessResult invokeCommandResult = invokeCommand(SERVICE_NAME, WRITE_FILE_COMMAND_NAME);
-
-        assertTrue("create file command exited with an abnormal exit code. Output was " + invokeCommandResult.getOutput(),
-                invokeCommandResult.getExitcode() == 0);
+        String invokeCommandResult = invokeCommand(SERVICE_NAME, WRITE_FILE_COMMAND_NAME);
 
         LogUtils.log("listing all files inside mounted storage folder. running 'ls ~/storage/' command");
-        ProcessResult listFilesResult = invokeCommand(SERVICE_NAME, LIST_FILES_COMMAND_NAME);
+        String listFilesResult = invokeCommand(SERVICE_NAME, LIST_FILES_COMMAND_NAME);
 
-        assertTrue("failed listing files. Output was " + listFilesResult.getOutput(), listFilesResult.getExitcode() == 0);
-        assertTrue("File was not created in storage volume. Output was " + listFilesResult.getOutput(),
-                listFilesResult.getOutput().contains(TESTING_FILE_NAME));
+        assertTrue("File was not created in storage volume. Output was " + listFilesResult,
+                listFilesResult.contains(TESTING_FILE_NAME));
 
         ///////debug
         Map<String,Set<String>> servicesToMachines = StorageUtils.getServicesToMachines();
@@ -206,9 +197,8 @@ public abstract class AbstractStorageTest extends NewAbstractCloudTest{
         //asserting the file is not in the mounted directory
         LogUtils.log("listing all files inside mounted storage folder. running 'ls ~/storage/' command");
         listFilesResult = invokeCommand(SERVICE_NAME, LIST_FILES_COMMAND_NAME);
-        assertTrue("failed listing files. Output was " + listFilesResult.getOutput(), listFilesResult.getExitcode() == 0);
 
-        assertTrue("the newly created file is in the mounted directory after detachment", !listFilesResult.getOutput().contains(TESTING_FILE_NAME));
+        assertTrue("the newly created file is in the mounted directory after detachment", !listFilesResult.contains(TESTING_FILE_NAME));
 
         LogUtils.log("reattaching the volume to the service machine");
         StorageUtils.attachVolume(volumeId, getService().getCloud().getCloudStorage().getTemplates().get("SMALL_BLOCK").getDeviceName(), machineIp, OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
@@ -218,9 +208,8 @@ public abstract class AbstractStorageTest extends NewAbstractCloudTest{
         //asserting the file is in the mounted directory
         LogUtils.log("listing all files inside mounted storage folder. running 'ls ~/storage/' command");
         listFilesResult = invokeCommand(SERVICE_NAME, LIST_FILES_COMMAND_NAME);
-        assertTrue("failed listing files. Output was " + listFilesResult.getOutput(), listFilesResult.getExitcode() == 0);
 
-        assertTrue("the created file is not in the mounted directory after reattachment", listFilesResult.getOutput().contains(TESTING_FILE_NAME));    }
+        assertTrue("the created file is not in the mounted directory after reattachment", listFilesResult.contains(TESTING_FILE_NAME));    }
 
     public void testTwoTemplates() throws Exception {
 

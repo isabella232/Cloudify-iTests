@@ -22,7 +22,8 @@ public abstract class Bootstrapper {
 	private boolean bootstrapExpectedToFail = false;
 	private boolean teardownExpectedToFail = false;
 	private boolean verbose = true;
-	
+	private boolean freshBootstrap = true;
+
 	public Bootstrapper verbose(final boolean verbose) {
 		this.verbose = verbose;
 		return this;
@@ -338,4 +339,12 @@ public abstract class Bootstrapper {
 		connectCommandBuilder.append(restUrl).append(";");
 		return connectCommandBuilder.toString();
 	}
+
+    public boolean isFreshBootstrap() {
+        return freshBootstrap;
+    }
+
+    public void killJavaProcesses(boolean killJavaProcesses) {
+        this.freshBootstrap = killJavaProcesses;
+    }
 }

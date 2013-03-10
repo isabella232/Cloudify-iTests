@@ -40,16 +40,23 @@ public class LeakingOSDiskTest extends NewAbstractCloudTest {
 	public void testLeakingOSDisk() throws Exception {		
 
 		String managementIp = InetAddress.getByName(new URL(getService().getRestUrls()[0]).getHost()).getHostAddress();
+		LogUtils.log("Management machine ip is " + managementIp);
 
 		// manually kill the virtual machine.
 		Deployment deploymentByIp = azureClient.getDeploymentByIp(managementIp, false);
+		
+		LogUtils.log("Management machine deployment is " + deploymentByIp.getHostedServiceName());
+		
+		LogUtils.log("Manually shutting the management machine down...");
 		azureClient.deleteDeployment(deploymentByIp.getHostedServiceName(), deploymentByIp.getName(), System.currentTimeMillis() + AbstractTestSupport.OPERATION_TIMEOUT);
+		LogUtils.log("Manually deleting the cloud service...");
 		azureClient.deleteCloudService(deploymentByIp.getHostedServiceName(), System.currentTimeMillis() + AbstractTestSupport.OPERATION_TIMEOUT);
 
 		getService().getBootstrapper().force(true).setRestUrl(null);
 		
 		// wait for the remaining disk to detach
 		
+		LogUtils.log("Waiting for the disk to detach...");
 		RepetitiveConditionProvider condition = new AssertUtils.RepetitiveConditionProvider() {
 			
 			@Override

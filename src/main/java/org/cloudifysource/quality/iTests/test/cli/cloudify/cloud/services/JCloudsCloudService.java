@@ -10,6 +10,9 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.cloudifysource.esc.jclouds.WindowsServerEC2ReviseParsedImage;
+import org.cloudifysource.quality.iTests.framework.utils.DumpUtils;
+import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.security.SecurityConstants;
 import org.jclouds.aws.ec2.compute.strategy.AWSEC2ReviseParsedImage;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
@@ -21,10 +24,10 @@ import org.jclouds.logging.jdk.config.JDKLoggingModule;
 import com.google.inject.AbstractModule;
 import com.google.inject.Module;
 
-import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
-
 public abstract class JCloudsCloudService extends AbstractCloudService {
 
+	private static final String DEFAULT_REST_PORT = "8100";
+	private static final String MANAGER_ID = "-manager";
 	protected ComputeServiceContext context;
 	
 	public ComputeServiceContext getComputeServiceContext() {
@@ -141,7 +144,20 @@ public abstract class JCloudsCloudService extends AbstractCloudService {
 		if (leakedNodes.size() > 0) {
 			LogUtils.log("Killing leaked nodes");
 			for (final ComputeMetadata leakedNode : leakedNodes) {
-	
+				if (leakedNode.getName().contains(MANAGER_ID)) {
+					LogUtils.log("found leaking management machine. attempting to dump logs.");
+					try {
+						String managerIp = ((NodeMetadata) leakedNode).getPublicAddresses().iterator().next() + ":" + DEFAULT_REST_PORT;
+						if (getBootstrapper().isSecured()) {
+							DumpUtils.dumpMachines("https://" + managerIp, SecurityConstants.USER_PWD_ALL_ROLES, SecurityConstants.USER_PWD_ALL_ROLES);
+						} else {
+							DumpUtils.dumpMachines("http://" + managerIp, null, null);
+						}
+						LogUtils.log("Leaked management machine logs dumped successfully");
+					} catch (Exception e) {
+						LogUtils.log("Failed getting leaked management machine logs. Reason: " + e.getMessage(), e);
+					}
+				}
 				LogUtils.log("Killing node: " + leakedNode.getName() + ": " + leakedNode);
 				try {
 					this.context.getComputeService().destroyNode(leakedNode.getId());

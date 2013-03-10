@@ -172,7 +172,10 @@ public class ByonCloudService extends AbstractCloudService {
 	}
 	
 	private void cleanMachines() {
-		killAllJavaOnAllHosts();
+        if(getBootstrapper().isFreshBootstrap()){
+            killAllJavaOnAllHosts();
+            removePersistencyFolder();
+        }
 		cleanGSFilesOnAllHosts();
 		cleanCloudifyTempDir();
 	}
@@ -208,7 +211,24 @@ public class ByonCloudService extends AbstractCloudService {
 			}
 		}				
 	}
-	
+
+	private void removePersistencyFolder() {
+
+		String command = "rm -rf /tmp/byon/persistency";
+		if (sudo) {
+			command = "sudo " + command;
+		}
+
+		String[] hosts = this.getMachines();
+		for (String host : hosts) {
+			try {
+				LogUtils.log(SSHUtils.runCommand(host, AbstractTestSupport.OPERATION_TIMEOUT, command, "tgrid", "tgrid"));
+			} catch (AssertionError e) {
+				LogUtils.log("Failed to clean files on host " + host + " .Reason --> " + e.getMessage());
+			}
+		}
+	}
+
 	private void killAllJavaOnAllHosts() {
 		
 		String command = "killall -9 java";

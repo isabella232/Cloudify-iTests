@@ -129,7 +129,7 @@ public class StorageUtils {
         difference.removeAll(machinesBeforeInstall);
 
         ///////debug
-        LogUtils.log("inserting " + serviceName + " to map");
+        LogUtils.log("inserting " + serviceName + " to map with value " + difference.toString());
         ///////debug
 
         serviceToMachines.put(serviceName, difference);

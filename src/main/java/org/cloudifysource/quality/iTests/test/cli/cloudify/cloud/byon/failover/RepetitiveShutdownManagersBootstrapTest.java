@@ -8,7 +8,7 @@ import org.testng.annotations.Test;
  * User: nirb
  * Date: 06/03/13
  */
-public class BadPersistencyFileTest extends AbstractByonManagementPersistencyTest {
+public class RepetitiveShutdownManagersBootstrapTest extends AbstractByonManagementPersistencyTest{
 
     @BeforeMethod(alwaysRun = true)
     public void bootstrapAndInit() throws Exception{
@@ -21,7 +21,8 @@ public class BadPersistencyFileTest extends AbstractByonManagementPersistencyTes
     }
 
     @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
-    public void testBadPersistencyFile() throws Exception {
-        super.testBadPersistencyFile();
+    public void testRepetitiveShutdownManagersBootstrap() throws Exception {
+        super.testRepetitiveShutdownManagersBootstrap();
     }
+
 }

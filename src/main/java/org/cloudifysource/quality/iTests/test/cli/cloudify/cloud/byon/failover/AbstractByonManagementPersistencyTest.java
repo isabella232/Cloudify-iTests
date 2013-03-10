@@ -1,18 +1,14 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.byon.failover;
 
-import com.j_spaces.kernel.PlatformVersion;
 import org.apache.commons.io.FileUtils;
 import org.cloudifysource.quality.iTests.framework.tools.SGTestHelper;
 import org.cloudifysource.quality.iTests.framework.utils.*;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.byon.AbstractByonCloudTest;
-import org.cloudifysource.restclient.GSRestClient;
-import org.cloudifysource.restclient.RestException;
+import org.openspaces.admin.pu.ProcessingUnit;
 
 import java.io.File;
-import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
  *
@@ -31,22 +27,23 @@ public abstract class AbstractByonManagementPersistencyTest extends AbstractByon
     protected String backupFilePath = SGTestHelper.getBuildDir() + "/backup-details.txt";
 
     private int numOfManagementMachines = 2;
-    private int numOfServiceInstances = 2;
+    private int numOfServiceInstances = 3;
 
     private List<String> attributesList = new LinkedList<String>();
 
     public void prepareTest() throws Exception {
+
 
         super.bootstrap();
         super.installServiceAndWait(TOMCAT_SERVICE_PATH, TOMCAT_SERVICE_NAME, SERVICE_INSTALLATION_TIMEOUT_IN_MINUTES, numOfServiceInstances);
 
         Bootstrapper bootstrapper = new CloudBootstrapper();
         bootstrapper.setRestUrl(getRestUrl());
-        List<String> attributesList = new LinkedList<String>();
+        attributesList = new LinkedList<String>();
 
         for(int i=1; i <= numOfServiceInstances; i++){
-            String attributes = bootstrapper.listServiceInstanceAttributes("default", TOMCAT_SERVICE_NAME, i, false);
-            attributesList.add(attributes);
+            String attributes = bootstrapper.listServiceInstanceAttributes(APPLICATION_NAME, TOMCAT_SERVICE_NAME, i, false);
+            attributesList.add(attributes.substring(attributes.indexOf("home")));
         }
 
     }
@@ -71,13 +68,15 @@ public abstract class AbstractByonManagementPersistencyTest extends AbstractByon
 
         CloudBootstrapper bootstrapper = new CloudBootstrapper();
         bootstrapper.useExistingFilePath(backupFilePath);
+        bootstrapper.killJavaProcesses(false);
         super.bootstrap(bootstrapper);
+        bootstrapper.setRestUrl(getRestUrl());
 
         List<String> newAttributesList = new LinkedList<String>();
 
         for(int i=1; i <= numOfServiceInstances; i++){
             String attributes = bootstrapper.listServiceInstanceAttributes(APPLICATION_NAME, TOMCAT_SERVICE_NAME, i, false);
-            newAttributesList.add(attributes);
+            newAttributesList.add(attributes.substring(attributes.indexOf("home")));
         }
 
         List<String> differenceAttributesList = new LinkedList<String>(attributesList);
@@ -86,23 +85,27 @@ public abstract class AbstractByonManagementPersistencyTest extends AbstractByon
         AssertUtils.assertTrue("the service attributes post management restart are not the same as the attributes pre restart", differenceAttributesList.isEmpty());
 
         LogUtils.log("shutting down one of the service's GSAs");
-        admin.getProcessingUnits().waitFor(APPLICATION_NAME + "." + TOMCAT_SERVICE_NAME);
-        admin.getProcessingUnits().getProcessingUnit(APPLICATION_NAME + "." + TOMCAT_SERVICE_NAME).getInstances()[0].getGridServiceContainer().getGridServiceAgent().shutdown();
+        ProcessingUnit processingUnit = admin.getProcessingUnits().waitFor(APPLICATION_NAME + "." + TOMCAT_SERVICE_NAME);
+        processingUnit.waitFor(numOfServiceInstances);
+        processingUnit.getInstances()[0].getGridServiceContainer().getGridServiceAgent().shutdown();
 
         LogUtils.log("waiting for service to restart on a new machine");
-        final GSRestClient client = new GSRestClient("", "", new URL(getRestUrl()), PlatformVersion.getVersionNumber());
-        final AtomicReference<String> atomicServiceStatus = new AtomicReference<String>();
+
+        AssertUtils.repetitiveAssertTrue("service didn't break", new AssertUtils.RepetitiveConditionProvider() {
+            @Override
+            public boolean getCondition() {
+                return admin.getProcessingUnits().getProcessingUnit(APPLICATION_NAME + "." + TOMCAT_SERVICE_NAME).getTotalNumberOfInstances() < numOfServiceInstances;
+            }
+        } , OPERATION_TIMEOUT*4);
 
         AssertUtils.repetitiveAssertTrue("service didn't recover", new AssertUtils.RepetitiveConditionProvider() {
             @Override
             public boolean getCondition() {
-                String intactString = "intact";
-                try {
-                    atomicServiceStatus.set((String) client.getAdminData(SERVICE_REST_URL).get("Status-Enumerator"));
-                } catch (RestException e) {
-                    throw new RuntimeException("caught a RestException", e);
-                }
-                return intactString.equalsIgnoreCase(atomicServiceStatus.get());
+                ProcessingUnit processingUnit = admin.getProcessingUnits().getProcessingUnit(APPLICATION_NAME + "." + TOMCAT_SERVICE_NAME);
+                LogUtils.log("total instances after break: " + processingUnit.getTotalNumberOfInstances());
+                LogUtils.log("planned instances after break: " + processingUnit.getPlannedNumberOfInstances());
+                return processingUnit.getTotalNumberOfInstances() == numOfServiceInstances &&
+                        processingUnit.getPlannedNumberOfInstances() == numOfServiceInstances;
             }
         } , OPERATION_TIMEOUT*3);
     }
@@ -124,11 +127,32 @@ public abstract class AbstractByonManagementPersistencyTest extends AbstractByon
     }
 
 
+    public void testRepetitiveShutdownManagersBootstrap() throws Exception {
+
+        int repetitions = 4;
+        String output = "";
+
+        for(int i=0; i < repetitions; i++){
+
+            shutdownManagement();
+
+            CloudBootstrapper bootstrapper = new CloudBootstrapper();
+            bootstrapper.useExistingFilePath(backupFilePath);
+            bootstrapper.killJavaProcesses(false);
+            super.bootstrap(bootstrapper);
+
+            output = bootstrapper.getLastActionOutput();
+
+            AssertUtils.assertTrue("bootstrap failed", output.contains("Successfully created Cloudify Manager"));
+
+        }
+    }
+
     @Override
     protected void customizeCloud() throws Exception {
         super.customizeCloud();
         getService().setNumberOfManagementMachines(numOfManagementMachines);
+        getService().getProperties().put("persistencePath", "/tmp/byon/persistency");
+
     }
-
-
 }

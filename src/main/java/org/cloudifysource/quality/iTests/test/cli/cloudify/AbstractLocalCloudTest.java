@@ -70,7 +70,7 @@ public class AbstractLocalCloudTest extends AbstractTestSupport {
 	protected static String restUrl =  "http://127.0.0.1:" + CloudifyConstants.DEFAULT_REST_PORT;;
 	protected static final String MANAGEMENT_APPLICATION_NAME = CloudifyConstants.MANAGEMENT_APPLICATION_NAME;
 	protected static final String DEFAULT_APPLICATION_NAME = CloudifyConstants.DEFAULT_APPLICATION_NAME;
-
+    private static final int BOOTSTRAP_LOCAL_CLOUD_TIMEOUT = 10;
 
 
 	@BeforeSuite(alwaysRun = true)
@@ -88,7 +88,7 @@ public class AbstractLocalCloudTest extends AbstractTestSupport {
 			cleanUpCloudifyLocalDir();
 
 			LocalCloudBootstrapper bootstrapper = new LocalCloudBootstrapper();
-			bootstrapper.verbose(true).timeoutInMinutes(5);
+			bootstrapper.verbose(true).timeoutInMinutes(BOOTSTRAP_LOCAL_CLOUD_TIMEOUT);
 			bootstrapper.bootstrap();
 
 			LogUtils.log("Creating admin");

@@ -88,7 +88,7 @@ public class AbstractLocalCloudTest extends AbstractTestSupport {
 			cleanUpCloudifyLocalDir();
 
 			LocalCloudBootstrapper bootstrapper = new LocalCloudBootstrapper();
-			bootstrapper.verbose(true).timeoutInMinutes(5);
+			bootstrapper.verbose(true).timeoutInMinutes(10);
 			bootstrapper.bootstrap();
 
 			LogUtils.log("Creating admin");

@@ -1,18 +1,14 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.byon.failover;
 
-import com.j_spaces.kernel.PlatformVersion;
 import org.apache.commons.io.FileUtils;
 import org.cloudifysource.quality.iTests.framework.tools.SGTestHelper;
 import org.cloudifysource.quality.iTests.framework.utils.*;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.byon.AbstractByonCloudTest;
-import org.cloudifysource.restclient.GSRestClient;
-import org.cloudifysource.restclient.RestException;
+import org.openspaces.admin.pu.ProcessingUnit;
 
 import java.io.File;
-import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
  *
@@ -89,37 +85,27 @@ public abstract class AbstractByonManagementPersistencyTest extends AbstractByon
         AssertUtils.assertTrue("the service attributes post management restart are not the same as the attributes pre restart", differenceAttributesList.isEmpty());
 
         LogUtils.log("shutting down one of the service's GSAs");
-        admin.getProcessingUnits().waitFor(APPLICATION_NAME + "." + TOMCAT_SERVICE_NAME);
-        admin.getProcessingUnits().getProcessingUnit(APPLICATION_NAME + "." + TOMCAT_SERVICE_NAME).getInstances()[0].getGridServiceContainer().getGridServiceAgent().shutdown();
+        ProcessingUnit processingUnit = admin.getProcessingUnits().waitFor(APPLICATION_NAME + "." + TOMCAT_SERVICE_NAME);
+        processingUnit.waitFor(numOfServiceInstances);
+        processingUnit.getInstances()[0].getGridServiceContainer().getGridServiceAgent().shutdown();
 
         LogUtils.log("waiting for service to restart on a new machine");
-        final GSRestClient client = new GSRestClient("", "", new URL(getRestUrl()), PlatformVersion.getVersionNumber());
-        final AtomicReference<String> atomicServiceStatus = new AtomicReference<String>();
 
-        LogUtils.log("waiting for service to break due to machine shutdown");
         AssertUtils.repetitiveAssertTrue("service didn't break", new AssertUtils.RepetitiveConditionProvider() {
             @Override
             public boolean getCondition() {
-                String brokenString = "broken";
-                try {
-                    atomicServiceStatus.set((String) client.getAdminData(SERVICE_REST_URL).get("Status-Enumerator"));
-                } catch (RestException e) {
-                    throw new RuntimeException("caught a RestException", e);
-                }
-                return brokenString.equalsIgnoreCase(atomicServiceStatus.get());
+                return admin.getProcessingUnits().getProcessingUnit(APPLICATION_NAME + "." + TOMCAT_SERVICE_NAME).getTotalNumberOfInstances() < numOfServiceInstances;
             }
         } , OPERATION_TIMEOUT*4);
 
         AssertUtils.repetitiveAssertTrue("service didn't recover", new AssertUtils.RepetitiveConditionProvider() {
             @Override
             public boolean getCondition() {
-                String intactString = "intact";
-                try {
-                    atomicServiceStatus.set((String) client.getAdminData(SERVICE_REST_URL).get("Status-Enumerator"));
-                } catch (RestException e) {
-                    throw new RuntimeException("caught a RestException", e);
-                }
-                return intactString.equalsIgnoreCase(atomicServiceStatus.get());
+                ProcessingUnit processingUnit = admin.getProcessingUnits().getProcessingUnit(APPLICATION_NAME + "." + TOMCAT_SERVICE_NAME);
+                LogUtils.log("total instances after break: " + processingUnit.getTotalNumberOfInstances());
+                LogUtils.log("planned instances after break: " + processingUnit.getPlannedNumberOfInstances());
+                return processingUnit.getTotalNumberOfInstances() == numOfServiceInstances &&
+                        processingUnit.getPlannedNumberOfInstances() == numOfServiceInstances;
             }
         } , OPERATION_TIMEOUT*3);
     }

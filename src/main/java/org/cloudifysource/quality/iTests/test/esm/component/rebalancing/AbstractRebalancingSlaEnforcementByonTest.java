@@ -14,6 +14,6 @@ public class AbstractRebalancingSlaEnforcementByonTest extends AbstractFromXenTo
     protected RebalancingSlaEnforcement rebalancing;
            
     protected GridServiceContainer[] loadGSCs(GridServiceAgent agent, int number) {
-    	return AdminUtils.loadGSCsWithSystemProperty(agent, false, number, "-Dcom.gs.zones="+ZONE);
+    	return AdminUtils.loadGSCsWithSystemProperty(agent, false, number, "-Dcom.gs.zones="+ZONE, "-Dcom.gs.transport_protocol.lrmi.bind-port="+LRMI_BIND_PORT_RANGE);
     }
 }

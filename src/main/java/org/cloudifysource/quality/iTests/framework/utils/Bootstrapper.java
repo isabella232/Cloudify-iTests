@@ -23,6 +23,7 @@ public abstract class Bootstrapper {
 	private boolean teardownExpectedToFail = false;
 	private boolean verbose = true;
 	private boolean freshBootstrap = true;
+	private boolean scanForLeakedNodes = true;
 
 	public Bootstrapper verbose(final boolean verbose) {
 		this.verbose = verbose;
@@ -306,6 +307,16 @@ public abstract class Bootstrapper {
 		return lastActionOutput;
 	}
 
+	public String shutdownManagers(final String applicationName, boolean expectedToFail) throws IOException, InterruptedException {
+		String command = connectCommand() + "use-application " + applicationName +";shutdown-managers";
+		if (expectedToFail) {
+			lastActionOutput = CommandTestUtils.runCommandExpectedFail(command);
+			return lastActionOutput;
+		}
+		lastActionOutput = CommandTestUtils.runCommandAndWait(command);
+		return lastActionOutput;
+	}
+
 	public String connect(boolean expectedToFail) throws IOException, InterruptedException {
 		String command = connectCommand();
 		if (expectedToFail) {
@@ -344,7 +355,17 @@ public abstract class Bootstrapper {
         return freshBootstrap;
     }
 
-    public void killJavaProcesses(boolean killJavaProcesses) {
+    public Bootstrapper killJavaProcesses(boolean killJavaProcesses) {
         this.freshBootstrap = killJavaProcesses;
+        return this;
+    }
+
+    public boolean isScanForLeakedNodes() {
+        return scanForLeakedNodes;
+    }
+
+    public Bootstrapper scanForLeakedNodes(boolean scanForLeakedNodes) {
+        this.scanForLeakedNodes = scanForLeakedNodes;
+        return this;
     }
 }

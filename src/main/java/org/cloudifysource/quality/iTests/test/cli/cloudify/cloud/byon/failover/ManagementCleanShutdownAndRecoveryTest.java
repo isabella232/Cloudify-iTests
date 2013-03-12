@@ -20,7 +20,7 @@ public class ManagementCleanShutdownAndRecoveryTest extends AbstractByonManageme
         super.afterTest();
     }
 
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true, groups = SUSPECTED)
     public void testManagementPersistency() throws Exception {
         super.testManagementPersistency();
     }

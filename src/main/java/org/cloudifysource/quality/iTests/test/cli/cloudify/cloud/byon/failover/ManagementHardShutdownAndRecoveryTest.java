@@ -33,19 +33,7 @@ public class ManagementHardShutdownAndRecoveryTest extends AbstractByonManagemen
         gsmMachines = new Machine[griServiceManagers.length];
         for (int i = 0 ; i < griServiceManagers.length ; i++) {
             gsmMachines[i] = griServiceManagers[i].getMachine();
-            LogUtils.log(SSHUtils.runCommand(gsmMachines[i].getHostAddress(), TimeUnit.SECONDS.toMillis(30),
-                    "sudo shutdown now -r", ByonCloudService.BYON_CLOUD_USER, ByonCloudService.BYON_CLOUD_PASSWORD));
-        }
-        for (final Machine machine : gsmMachines) {
-            Thread.sleep(TimeUnit.SECONDS.toMillis(10));
-            AssertUtils.assertTrue(WebUtils.waitForHost(machine.getHostAddress(), (int) AbstractTestSupport.OPERATION_TIMEOUT));
-            AssertUtils.repetitive(new IRepetitiveRunnable() {
-                @Override
-                public void run() throws Exception {
-                    SSHUtils.validateSSHUp(machine.getHostAddress(), ByonCloudService.BYON_CLOUD_USER, ByonCloudService.BYON_CLOUD_PASSWORD);
-                }
-            }, (int) AbstractTestSupport.OPERATION_TIMEOUT);
-            Thread.sleep(TimeUnit.SECONDS.toMillis(30));
+            DisconnectionUtils.restartMachineAndWait(gsmMachines[i].getHostAddress());
         }
         prepareManagementPersistencyFile();
     }

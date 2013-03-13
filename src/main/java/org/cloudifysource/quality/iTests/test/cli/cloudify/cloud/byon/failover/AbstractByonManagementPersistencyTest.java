@@ -9,6 +9,7 @@ import org.openspaces.admin.pu.ProcessingUnit;
 import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  *
@@ -27,7 +28,7 @@ public abstract class AbstractByonManagementPersistencyTest extends AbstractByon
     protected String backupFilePath = SGTestHelper.getBuildDir() + "/backup-details.txt";
 
     private int numOfManagementMachines = 2;
-    private int numOfServiceInstances = 3;
+    private int numOfServiceInstances = 2;
 
     private List<String> attributesList = new LinkedList<String>();
 
@@ -89,25 +90,20 @@ public abstract class AbstractByonManagementPersistencyTest extends AbstractByon
         processingUnit.waitFor(numOfServiceInstances);
         processingUnit.getInstances()[0].getGridServiceContainer().getGridServiceAgent().shutdown();
 
-        LogUtils.log("waiting for service to restart on a new machine");
+
 
         AssertUtils.repetitiveAssertTrue("service didn't break", new AssertUtils.RepetitiveConditionProvider() {
             @Override
             public boolean getCondition() {
-                return admin.getProcessingUnits().getProcessingUnit(APPLICATION_NAME + "." + TOMCAT_SERVICE_NAME).getTotalNumberOfInstances() < numOfServiceInstances;
+                int totalNumberOfInstances = admin.getProcessingUnits().getProcessingUnit(APPLICATION_NAME + "." + TOMCAT_SERVICE_NAME).getTotalNumberOfInstances();
+                LogUtils.log("Total number of instances after gsa shutdown : " + totalNumberOfInstances);
+                return totalNumberOfInstances < numOfServiceInstances;
             }
         } , OPERATION_TIMEOUT*4);
 
-        AssertUtils.repetitiveAssertTrue("service didn't recover", new AssertUtils.RepetitiveConditionProvider() {
-            @Override
-            public boolean getCondition() {
-                ProcessingUnit processingUnit = admin.getProcessingUnits().getProcessingUnit(APPLICATION_NAME + "." + TOMCAT_SERVICE_NAME);
-                LogUtils.log("total instances after break: " + processingUnit.getTotalNumberOfInstances());
-                LogUtils.log("planned instances after break: " + processingUnit.getPlannedNumberOfInstances());
-                return processingUnit.getTotalNumberOfInstances() == numOfServiceInstances &&
-                        processingUnit.getPlannedNumberOfInstances() == numOfServiceInstances;
-            }
-        } , OPERATION_TIMEOUT*3);
+        LogUtils.log("waiting for service to restart on a new machine");
+        ProcessingUnit tomcat = admin.getProcessingUnits().getProcessingUnit(APPLICATION_NAME + "." + TOMCAT_SERVICE_NAME);
+        AssertUtils.assertTrue("Timed out waiting for " + numOfServiceInstances + " instances of tomcat", tomcat.waitFor(numOfServiceInstances, OPERATION_TIMEOUT, TimeUnit.MILLISECONDS));
     }
 
     public void testBadPersistencyFile() throws Exception {

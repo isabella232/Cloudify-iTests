@@ -71,7 +71,7 @@ public class ManagementHardShutdownAndRecoveryTest extends AbstractByonManagemen
         FileSystemUtils.copyRecursively(originalFile.getFile(), tempFile);
         Map<String, String> props = new HashMap<String, String>();
         for (int i = 0; i < gsmMachines.length; i++) {
-            props.put("MANAGEMENT" + i, gsmMachines[i].getHostName());
+            props.put("MANAGEMENT" + i, gsmMachines[i].getHostAddress());
         }
         IOUtils.replaceTextInFile(tempFile, props);
 

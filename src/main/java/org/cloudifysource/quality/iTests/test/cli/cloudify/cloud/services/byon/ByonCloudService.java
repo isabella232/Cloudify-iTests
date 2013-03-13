@@ -33,13 +33,13 @@ import com.j_spaces.kernel.PlatformVersion;
 
 public class ByonCloudService extends AbstractCloudService {
 
-	public static final String BYON_CLOUD_USER= "tgrid";
-	public static final String BYON_CLOUD_PASSWORD = "tgrid";
+	public static final String BYON_CLOUD_USER= "root";
+	public static final String BYON_CLOUD_PASSWORD = "1408Rokk";
 	
 	public static final String IP_LIST_PROPERTY = "ipList";
 	
-	protected static final String NEW_URL_PREFIX = "http://tarzan/builds/GigaSpacesBuilds/cloudify";
-	protected static final String NEW_XAP_URL_PREFIX = "http://tarzan/builds/GigaSpacesBuilds";
+	protected static final String NEW_URL_PREFIX = "http://192.168.10.13/builds/GigaSpacesBuilds/cloudify";
+	protected static final String NEW_XAP_URL_PREFIX = "http://192.168.10.13/builds/GigaSpacesBuilds";
 	
 	public static final String ENV_VARIABLE_NAME = "GIGASPACES_TEST_ENV";
 	public static final String ENV_VARIABLE_VALUE = "DEFAULT_ENV_VARIABLE";
@@ -188,7 +188,7 @@ public class ByonCloudService extends AbstractCloudService {
 		}
 		
 		try {
-			LogUtils.log(SSHUtils.runCommand(this.getMachines()[0], AbstractTestSupport.OPERATION_TIMEOUT, command, "tgrid", "tgrid"));
+			LogUtils.log(SSHUtils.runCommand(this.getMachines()[0], AbstractTestSupport.OPERATION_TIMEOUT, command, BYON_CLOUD_USER, BYON_CLOUD_PASSWORD));
 		} catch (AssertionError e) {
 			LogUtils.log("Failed to clean files .cloudify folder Reason --> " + e.getMessage());
 		}
@@ -205,7 +205,7 @@ public class ByonCloudService extends AbstractCloudService {
 		String[] hosts = this.getMachines();			
 		for (String host : hosts) {
 			try {
-				LogUtils.log(SSHUtils.runCommand(host, AbstractTestSupport.OPERATION_TIMEOUT, command, "tgrid", "tgrid"));
+				LogUtils.log(SSHUtils.runCommand(host, AbstractTestSupport.OPERATION_TIMEOUT, command, BYON_CLOUD_USER, BYON_CLOUD_PASSWORD));
 			} catch (AssertionError e) {
 				LogUtils.log("Failed to clean files on host " + host + " .Reason --> " + e.getMessage());
 			}
@@ -222,7 +222,7 @@ public class ByonCloudService extends AbstractCloudService {
 		String[] hosts = this.getMachines();
 		for (String host : hosts) {
 			try {
-				LogUtils.log(SSHUtils.runCommand(host, AbstractTestSupport.OPERATION_TIMEOUT, command, "tgrid", "tgrid"));
+				LogUtils.log(SSHUtils.runCommand(host, AbstractTestSupport.OPERATION_TIMEOUT, command, BYON_CLOUD_USER, BYON_CLOUD_PASSWORD));
 			} catch (AssertionError e) {
 				LogUtils.log("Failed to clean files on host " + host + " .Reason --> " + e.getMessage());
 			}
@@ -239,7 +239,7 @@ public class ByonCloudService extends AbstractCloudService {
 		String[] hosts = this.getMachines();
 		for (String host : hosts) {
 			try {
-				LogUtils.log(SSHUtils.runCommand(host, AbstractTestSupport.OPERATION_TIMEOUT, command, "tgrid", "tgrid"));
+				LogUtils.log(SSHUtils.runCommand(host, AbstractTestSupport.OPERATION_TIMEOUT, command, BYON_CLOUD_USER, BYON_CLOUD_PASSWORD));
 			} catch (AssertionError e) {
 				LogUtils.log("Failed to kill java processes on host " + host + " .Reason --> " + e.getMessage());
 			}

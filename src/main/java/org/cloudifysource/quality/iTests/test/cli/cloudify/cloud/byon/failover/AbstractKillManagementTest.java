@@ -4,14 +4,8 @@ import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import org.cloudifysource.dsl.utils.ServiceUtils;
-import org.cloudifysource.quality.iTests.framework.utils.AssertUtils;
+import org.cloudifysource.quality.iTests.framework.utils.*;
 import org.cloudifysource.quality.iTests.framework.utils.AssertUtils.RepetitiveConditionProvider;
-import org.cloudifysource.quality.iTests.framework.utils.IRepetitiveRunnable;
-import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
-import org.cloudifysource.quality.iTests.framework.utils.ProcessingUnitUtils;
-import org.cloudifysource.quality.iTests.framework.utils.SSHUtils;
-import org.cloudifysource.quality.iTests.framework.utils.ScriptUtils;
-import org.cloudifysource.quality.iTests.framework.utils.WebUtils;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.byon.AbstractByonCloudTest;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.byon.ByonCloudService;
@@ -170,20 +164,10 @@ public abstract class AbstractKillManagementTest extends AbstractByonCloudTest {
 	}
 
 	public static void restartMachineAndWait(final String machine) throws Exception {
-		restartMachine(machine);
-		Thread.sleep(TEN_SECONDS);
-		AssertUtils.assertTrue(WebUtils.waitForHost(machine, (int) AbstractTestSupport.OPERATION_TIMEOUT));
-		AssertUtils.repetitive(new IRepetitiveRunnable() {
-			@Override
-			public void run() throws Exception {
-				SSHUtils.validateSSHUp(machine, ByonCloudService.BYON_CLOUD_USER, ByonCloudService.BYON_CLOUD_PASSWORD);
-			}
-		}, (int) AbstractTestSupport.OPERATION_TIMEOUT);
-		Thread.sleep(TEN_SECONDS * 3);
+        DisconnectionUtils.restartMachineAndWait(machine);
 	}
 
 	private static void restartMachine(String toKill) {
-		LogUtils.log(SSHUtils.runCommand(toKill, TimeUnit.SECONDS.toMillis(30),
-				"sudo shutdown now -r", ByonCloudService.BYON_CLOUD_USER, ByonCloudService.BYON_CLOUD_PASSWORD));
+        DisconnectionUtils.restartMachine(toKill);
 	}
 }

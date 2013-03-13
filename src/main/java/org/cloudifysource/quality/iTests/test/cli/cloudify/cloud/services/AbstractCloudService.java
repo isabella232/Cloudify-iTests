@@ -257,7 +257,9 @@ public abstract class AbstractCloudService implements CloudService {
         // Load updated configuration file into POJO
         this.cloud = ServiceReader.readCloud(new File(getPathToCloudGroovy()));
 
-        scanForLeakedAgentAndManagementNodes();
+        if(bootstrapper.isScanForLeakedNodes()){
+            scanForLeakedAgentAndManagementNodes();
+        }
 
         beforeBootstrap();
 

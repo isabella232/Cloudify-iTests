@@ -6,9 +6,9 @@ import org.testng.annotations.Test;
 
 /**
  * User: nirb
- * Date: 05/03/13
+ * Date: 06/03/13
  */
-public class ManagementCleanShutdownAndRecoveryTest extends AbstractByonManagementPersistencyTest{
+public class BadPersistencyFileTest extends AbstractByonManagementPersistencyTest {
 
     @BeforeMethod(alwaysRun = true)
     public void bootstrapAndInit() throws Exception{
@@ -20,9 +20,8 @@ public class ManagementCleanShutdownAndRecoveryTest extends AbstractByonManageme
         super.afterTest();
     }
 
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true, groups = SUSPECTED)
-    public void testManagementPersistency() throws Exception {
-        super.testManagementPersistency();
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
+    public void testBadPersistencyFile() throws Exception {
+        super.testBadPersistencyFile();
     }
-
 }

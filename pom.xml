@@ -264,6 +264,16 @@
 					<scope>system</scope>
 					<systemPath>${cloudify.home}/lib/platform/usm/usm.jar</systemPath>
 				</dependency>
+                <dependency>
+                    <groupId>net.schmizz</groupId>
+                    <artifactId>sshj</artifactId>
+                    <version>0.8.1</version>
+                </dependency>
+                <dependency>
+                    <groupId>xml-apis</groupId>
+                    <artifactId>xml-apis</artifactId>
+                    <version>1.4.01</version>
+                </dependency>
 			</dependencies>
 		</profile>
 		<profile>

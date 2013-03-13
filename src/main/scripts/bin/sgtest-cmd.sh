@@ -21,7 +21,7 @@ echo clouds=$SUPPORTED_CLOUDS
 mkdir ${BUILD_DIR}/../${SUITE_NAME}
 cd ${BUILD_DIR}/../Cloudify-iTests
 
-mvn test -e -X -U -P tgrid-cloudify-iTests \
+mvn test -e -U -P tgrid-cloudify-iTests \
 -DiTests.cloud.enabled=false \
 -DiTests.buildNumber=${BUILD_NUMBER} \
 -Dcloudify.home=${BUILD_DIR} \

@@ -19,12 +19,19 @@ import org.openspaces.admin.gsm.GridServiceManager;
 import org.openspaces.admin.machine.Machine;
 import org.openspaces.admin.pu.ProcessingUnit;
 
+import com.gigaspaces.log.LogEntries;
+import com.gigaspaces.log.LogEntryMatcher;
+import com.gigaspaces.log.LogEntryMatchers;
+
 public abstract class AbstractKillManagementTest extends AbstractByonCloudTest {
+	
+	private static final String GSM_BACKUP_RECOVERED_PU = "Completed recovery of processing units from GSM";
 
 	private int numOManagementMachines = 2;
 
 	private GridServiceManager[] managers;
 	private ProcessingUnit tomcat;
+	private ProcessingUnit mongod;
 	
 	private static final long TEN_SECONDS = 10 * 1000;
 	
@@ -36,6 +43,7 @@ public abstract class AbstractKillManagementTest extends AbstractByonCloudTest {
 		admin.getGridServiceManagers().waitFor(2, AbstractTestSupport.OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
 		managers = admin.getGridServiceManagers().getManagers();
 		tomcat = admin.getProcessingUnits().waitFor("petclinic.tomcat", AbstractTestSupport.OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
+		mongod = admin.getProcessingUnits().waitFor("petclinic.tomcat", AbstractTestSupport.OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
 	}
 
 	
@@ -55,7 +63,8 @@ public abstract class AbstractKillManagementTest extends AbstractByonCloudTest {
 		restartMachineAndWait(machineAddress);
 		LogUtils.log("restart was susccefull");
 		LogUtils.log("waiting for backup GSM to manage the tomcat processing unit");
-		ProcessingUnitUtils.waitForManaged(tomcat, otherManager);
+		AssertUtils.assertEquals("Wrong managing gsm for tomcat pu", otherManager, ProcessingUnitUtils.waitForManaged(tomcat, otherManager));
+		AssertUtils.assertEquals("Wrong managing gsm for tomcat pu", otherManager, ProcessingUnitUtils.waitForManaged(mongod, otherManager));
 		LogUtils.log("managing gsm of tomcat pu is now " + otherManager);
 		LogUtils.log("after restart, checking for liveness of petclinic application");
 		repetitiveAssertPetclinicUrlIsAvailable();		
@@ -70,6 +79,9 @@ public abstract class AbstractKillManagementTest extends AbstractByonCloudTest {
 		AssertUtils.assertTrue("could not find " + numOManagementMachines + " webui instances after failover", admin.getProcessingUnits().getProcessingUnit("webui").waitFor(numOManagementMachines, AbstractTestSupport.OPERATION_TIMEOUT, TimeUnit.MILLISECONDS));
 		AssertUtils.assertTrue("could not find " + numOManagementMachines + " rest after failover", admin.getProcessingUnits().getProcessingUnit("rest").waitFor(numOManagementMachines, AbstractTestSupport.OPERATION_TIMEOUT, TimeUnit.MILLISECONDS));
 		AssertUtils.assertTrue("could not find " + numOManagementMachines + " space after failover", admin.getProcessingUnits().getProcessingUnit("cloudifyManagementSpace").waitFor(numOManagementMachines, AbstractTestSupport.OPERATION_TIMEOUT, TimeUnit.MILLISECONDS));
+		
+		repetitiveAssertBackupGsmRecoveredPu(tomcat); // see CLOUDIFY-1585
+		repetitiveAssertBackupGsmRecoveredPu(mongod); // see CLOUDIFY-1585
 		
 		uninstallApplicationAndWait("petclinic");
 	}
@@ -94,6 +106,24 @@ public abstract class AbstractKillManagementTest extends AbstractByonCloudTest {
 		};
 		AssertUtils.repetitiveAssertTrue("petclinic url is not available! waited for 10 seconds", condition, TEN_SECONDS);
 	}
+	
+	 private void repetitiveAssertBackupGsmRecoveredPu(final ProcessingUnit pu) {
+	        final GridServiceManager[] backupGridServiceManagers = pu.getBackupGridServiceManagers();
+	        assertEquals(1,backupGridServiceManagers.length);
+	        LogUtils.log("Waiting for 1 "+ GSM_BACKUP_RECOVERED_PU + " log entry before undeploying PU");
+	        final LogEntryMatcher logMatcher = LogEntryMatchers.containsString(GSM_BACKUP_RECOVERED_PU);
+	        repetitiveAssertTrue("Expected " + GSM_BACKUP_RECOVERED_PU +" log", new RepetitiveConditionProvider() {
+	            
+	            @Override
+	            public boolean getCondition() {
+
+	                final LogEntries logEntries = backupGridServiceManagers[0].logEntries(logMatcher);
+	                final int count = logEntries.logEntries().size();
+	                LogUtils.log("Exepcted at least one "+ GSM_BACKUP_RECOVERED_PU + " log entries. Actual :" + count);
+	                return count > 0;
+	            }
+	        } , OPERATION_TIMEOUT);
+	    }
 
 	/**
 	 * this method accepts a host address and return a GridServiceManager that is not located at the given address.
@@ -127,7 +157,9 @@ public abstract class AbstractKillManagementTest extends AbstractByonCloudTest {
 		
 		for (int i = 0 ; i < 3 ; i++) {
 			try {
-				LogUtils.log(SSHUtils.runCommand(machine1, AbstractTestSupport.DEFAULT_TEST_TIMEOUT,  ByonCloudService.BYON_HOME_FOLDER + "/gigaspaces/tools/cli/cloudify.sh start-management --verbose", ByonCloudService.BYON_CLOUD_USER, ByonCloudService.BYON_CLOUD_PASSWORD));
+				String managementMachineTemplate = getService().getCloud().getConfiguration().getManagementMachineTemplate();
+				String cloudFile = getService().getCloud().getCloudCompute().getTemplates().get(managementMachineTemplate).getRemoteDirectory() + "/byon-cloud.groovy";
+				LogUtils.log(SSHUtils.runCommand(machine1, AbstractTestSupport.DEFAULT_TEST_TIMEOUT,  ByonCloudService.BYON_HOME_FOLDER + "/gigaspaces/tools/cli/cloudify.sh start-management --verbose -cloud-file "  + cloudFile, ByonCloudService.BYON_CLOUD_USER, ByonCloudService.BYON_CLOUD_PASSWORD));
 				return;
 			} catch (Throwable t) {
 				LogUtils.log("Failed to start management on machine " + machine1 + " restarting machine before attempting again. attempt number " + (i + 1), t);

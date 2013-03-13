@@ -1,13 +1,12 @@
 package org.cloudifysource.quality.iTests.test.esm.failover;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.rmi.RemoteException;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-
+import com.gigaspaces.async.AsyncFuture;
+import org.cloudifysource.quality.iTests.framework.utils.AssertUtils;
+import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
+import org.cloudifysource.quality.iTests.test.esm.AbstractFromXenToByonGSMTest;
 import org.openspaces.admin.gsa.GridServiceAgent;
+import org.openspaces.admin.gsa.GridServiceContainerOptions;
+import org.openspaces.admin.gsc.GridServiceContainer;
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.openspaces.admin.space.Space;
 import org.openspaces.admin.space.SpaceDeployment;
@@ -15,24 +14,18 @@ import org.openspaces.core.GigaSpace;
 import org.openspaces.core.executor.Task;
 import org.openspaces.grid.gsm.machines.MachinesSlaEnforcementEndpoint;
 import org.testng.Assert;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import org.testng.annotations.*;
 
-import org.cloudifysource.quality.iTests.test.esm.AbstractFromXenToByonGSMTest;
-
-import com.gigaspaces.async.AsyncFuture;
-
-import org.cloudifysource.quality.iTests.framework.utils.AdminUtils;
-import org.cloudifysource.quality.iTests.framework.utils.AssertUtils;
-import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.rmi.RemoteException;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 public class FailoverDuringExecutorByonTest extends AbstractFromXenToByonGSMTest {
 
     private static final String PU_NAME = "testspace";
-	protected final static long CONTAINER_MEGABYTES = 250;
 	protected static final long FOREVER_MILLIS = DEFAULT_TEST_TIMEOUT*10;
 	// more than find active member timeout ~20 secs and watchdog 30 secs
 	private static final long EXEC_OPERATION_TIMEOUT = 2*60*1000; 
@@ -70,7 +63,7 @@ public class FailoverDuringExecutorByonTest extends AbstractFromXenToByonGSMTest
 		pu = super.deploy(new SpaceDeployment(PU_NAME).partitioned(1,0));
 		
 		gsa2 = startNewByonMachine(getElasticMachineProvisioningCloudifyAdapter(), OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
-        AdminUtils.loadGSC(gsa2);
+        loadGSCWithVmInputArgument(gsa2);
         Assert.assertTrue(pu.waitFor(pu.getTotalNumberOfInstances(), OPERATION_TIMEOUT, TimeUnit.MILLISECONDS));
         
         Space space = pu.waitForSpace(OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
@@ -110,8 +103,14 @@ public class FailoverDuringExecutorByonTest extends AbstractFromXenToByonGSMTest
 			Assert.assertEquals(RemoteException.class, cause.getClass());
 		}
     	pu.undeployAndWait();
-    }  
-    
+    }
+
+    private GridServiceContainer loadGSCWithVmInputArgument(GridServiceAgent gsa) {
+        GridServiceContainerOptions options = new GridServiceContainerOptions();
+        options.vmInputArgument("-Dcom.gs.transport_protocol.lrmi.bind-port="+LRMI_BIND_PORT_RANGE);
+        return gsa.startGridServiceAndWait(options);
+    }
+
     static class ExecuteForeverTask implements Task<Integer> {
 
 		private static final long serialVersionUID = 1L;

@@ -22,7 +22,9 @@ public abstract class Bootstrapper {
 	private boolean bootstrapExpectedToFail = false;
 	private boolean teardownExpectedToFail = false;
 	private boolean verbose = true;
-	
+	private boolean freshBootstrap = true;
+	private boolean scanForLeakedNodes = true;
+
 	public Bootstrapper verbose(final boolean verbose) {
 		this.verbose = verbose;
 		return this;
@@ -285,6 +287,36 @@ public abstract class Bootstrapper {
 		return lastActionOutput;
 	}
 
+	public String listServiceInstanceAttributes(final String applicationName, final String serviceName, final int instanceNumber, boolean expectedToFail) throws IOException, InterruptedException {
+		String command = connectCommand() + "use-application " + applicationName +";list-attributes -scope service:" + serviceName + ":" + instanceNumber;
+		if (expectedToFail) {
+			lastActionOutput = CommandTestUtils.runCommandExpectedFail(command);
+			return lastActionOutput;
+		}
+		lastActionOutput = CommandTestUtils.runCommandAndWait(command);
+		return lastActionOutput;
+	}
+
+	public String shutdownManagers(final String applicationName, final String backupFilePath, boolean expectedToFail) throws IOException, InterruptedException {
+		String command = connectCommand() + "use-application " + applicationName +";shutdown-managers -file " + backupFilePath;
+		if (expectedToFail) {
+			lastActionOutput = CommandTestUtils.runCommandExpectedFail(command);
+			return lastActionOutput;
+		}
+		lastActionOutput = CommandTestUtils.runCommandAndWait(command);
+		return lastActionOutput;
+	}
+
+	public String shutdownManagers(final String applicationName, boolean expectedToFail) throws IOException, InterruptedException {
+		String command = connectCommand() + "use-application " + applicationName +";shutdown-managers";
+		if (expectedToFail) {
+			lastActionOutput = CommandTestUtils.runCommandExpectedFail(command);
+			return lastActionOutput;
+		}
+		lastActionOutput = CommandTestUtils.runCommandAndWait(command);
+		return lastActionOutput;
+	}
+
 	public String connect(boolean expectedToFail) throws IOException, InterruptedException {
 		String command = connectCommand();
 		if (expectedToFail) {
@@ -318,4 +350,22 @@ public abstract class Bootstrapper {
 		connectCommandBuilder.append(restUrl).append(";");
 		return connectCommandBuilder.toString();
 	}
+
+    public boolean isFreshBootstrap() {
+        return freshBootstrap;
+    }
+
+    public Bootstrapper killJavaProcesses(boolean killJavaProcesses) {
+        this.freshBootstrap = killJavaProcesses;
+        return this;
+    }
+
+    public boolean isScanForLeakedNodes() {
+        return scanForLeakedNodes;
+    }
+
+    public Bootstrapper scanForLeakedNodes(boolean scanForLeakedNodes) {
+        this.scanForLeakedNodes = scanForLeakedNodes;
+        return this;
+    }
 }

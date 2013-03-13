@@ -1,18 +1,14 @@
 package org.cloudifysource.quality.iTests.test.esm.component.machines;
 
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.atomic.AtomicReference;
-
 import org.cloudifysource.esc.driver.provisioning.CloudifyMachineProvisioningConfig;
 import org.cloudifysource.esc.driver.provisioning.ElasticMachineProvisioningCloudifyAdapter;
+import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
+import org.cloudifysource.quality.iTests.test.esm.AbstractFromXenToByonGSMTest;
+import org.cloudifysource.quality.iTests.test.esm.component.SlaEnforcementTestUtils;
 import org.openspaces.admin.gsa.GridServiceAgent;
 import org.openspaces.admin.gsa.GridServiceContainerOptions;
-import org.openspaces.admin.gsa.events.ElasticGridServiceAgentProvisioningProgressChangedEvent;
-import org.openspaces.admin.gsa.events.ElasticGridServiceAgentProvisioningProgressChangedEventListener;
 import org.openspaces.admin.gsc.GridServiceContainer;
 import org.openspaces.admin.internal.admin.InternalAdmin;
-import org.openspaces.admin.machine.events.ElasticMachineProvisioningProgressChangedEvent;
-import org.openspaces.admin.machine.events.ElasticMachineProvisioningProgressChangedEventListener;
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.openspaces.admin.zone.config.AnyZonesConfig;
 import org.openspaces.grid.gsm.capacity.CapacityRequirements;
@@ -26,15 +22,13 @@ import org.openspaces.grid.gsm.machines.plugins.ElasticMachineProvisioning;
 import org.openspaces.grid.gsm.machines.plugins.NonBlockingElasticMachineProvisioningAdapterFactory;
 import org.testng.Assert;
 
-import org.cloudifysource.quality.iTests.test.esm.AbstractFromXenToByonGSMTest;
-import org.cloudifysource.quality.iTests.test.esm.component.SlaEnforcementTestUtils;
-import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicReference;
 
 public abstract class AbstractMachinesSlaEnforcementTest extends AbstractFromXenToByonGSMTest {
 
     protected static final String PU_NAME = "testspace";
 	protected final static long CONTAINER_MEGABYTES = 250;
-	private final static int MACHINE_MEMORY_CAPACITY_MB = 5000;
 	protected MachinesSlaEnforcement machinesSlaEnforcement;
     protected MachinesSlaEnforcementEndpoint endpoint;
     protected ProcessingUnit pu;
@@ -66,23 +60,9 @@ public abstract class AbstractMachinesSlaEnforcementTest extends AbstractFromXen
 	        machineProvisioning.setProperties(config.getProperties());
 	        ElasticProcessingUnitMachineIsolation isolation = new DedicatedMachineIsolation(PU_NAME);
 	        machineProvisioning.setElasticProcessingUnitMachineIsolation(isolation);
-	        ElasticGridServiceAgentProvisioningProgressChangedEventListener agentEventListener = new ElasticGridServiceAgentProvisioningProgressChangedEventListener() {
-	    		
-	    		@Override
-	    		public void elasticGridServiceAgentProvisioningProgressChanged(
-	    				ElasticGridServiceAgentProvisioningProgressChangedEvent event) {
-	    			LogUtils.log(event.toString());
-	    		}
-	    	};
+
 	        machineProvisioning.setElasticGridServiceAgentProvisioningProgressEventListener(agentEventListener);
-	        ElasticMachineProvisioningProgressChangedEventListener machineEventListener = new ElasticMachineProvisioningProgressChangedEventListener() {
-	    		
-	    		@Override
-	    		public void elasticMachineProvisioningProgressChanged(
-	    				ElasticMachineProvisioningProgressChangedEvent event) {
-	    			LogUtils.log(event.toString());
-	    		}
-	    	};
+
 	        machineProvisioning.setElasticMachineProvisioningProgressChangedEventListener(machineEventListener);
 	        try {
 	            machineProvisioning.afterPropertiesSet();
@@ -102,6 +82,7 @@ public abstract class AbstractMachinesSlaEnforcementTest extends AbstractFromXen
     }
 
     protected CapacityMachinesSlaPolicy createSla(int numberOfMachines) {
+        long MACHINE_MEMORY_CAPACITY_MB = (long)getFirstManagementMachinePhysicalMemoryInMB();
         long minimumMemoryInMB = Math.min(numberOfMachines,2) * CONTAINER_MEGABYTES;
 		long maximumMemoryInMB = pu.getTotalNumberOfInstances() * CONTAINER_MEGABYTES;
 		long memoryCapacityPerMachineInMB = MACHINE_MEMORY_CAPACITY_MB - super.getMachineProvisioningConfig().getReservedMemoryCapacityPerMachineInMB();
@@ -164,7 +145,9 @@ public abstract class AbstractMachinesSlaEnforcementTest extends AbstractFromXen
 
 	protected GridServiceContainer startContainerOnAgent(GridServiceAgent gsa) {
 		final String containerZone = pu.getRequiredZones()[0];
-		return gsa.startGridServiceAndWait(new GridServiceContainerOptions().vmInputArgument("-Dcom.gs.zones="+containerZone));
+		return gsa.startGridServiceAndWait(new GridServiceContainerOptions()
+                .vmInputArgument("-Dcom.gs.zones="+containerZone)
+                .vmInputArgument("-Dcom.gs.transport_protocol.lrmi.bind-port="+LRMI_BIND_PORT_RANGE));
 	}
 
 }

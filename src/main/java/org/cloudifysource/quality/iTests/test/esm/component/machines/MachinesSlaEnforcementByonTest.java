@@ -71,7 +71,7 @@ public class MachinesSlaEnforcementByonTest extends AbstractMachinesSlaEnforceme
 		super.teardownAfterClass();
 	}
 
-	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT , enabled = false)
+	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT , enabled = true)
 	public void oneMachineTest() throws InterruptedException  {
 		repetitiveAssertNumberOfGSAsAdded(1, AbstractFromXenToByonGSMTest.OPERATION_TIMEOUT);
 		repetitiveAssertNumberOfGSAsRemoved(0, AbstractFromXenToByonGSMTest.OPERATION_TIMEOUT);
@@ -100,7 +100,7 @@ public class MachinesSlaEnforcementByonTest extends AbstractMachinesSlaEnforceme
 		repetitiveAssertNumberOfGSAsRemoved(1, AbstractFromXenToByonGSMTest.OPERATION_TIMEOUT);
 	}
 
-	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT , enabled = false)
+	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT , enabled = true)
 	public void oneMachineNonDedicatedManagementMachinesTest() throws InterruptedException  {
 		repetitiveAssertNumberOfGSAsAdded(1, AbstractFromXenToByonGSMTest.OPERATION_TIMEOUT);
 		repetitiveAssertNumberOfGSAsRemoved(0, AbstractFromXenToByonGSMTest.OPERATION_TIMEOUT);
@@ -166,7 +166,7 @@ public class MachinesSlaEnforcementByonTest extends AbstractMachinesSlaEnforceme
 
 	}
 
-	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT , enabled = false)
+	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT , enabled = true)
 	public void oneMachineTestWithContainerWithZone() throws Exception  {
 		repetitiveAssertNumberOfGSAsAdded(1, AbstractFromXenToByonGSMTest.OPERATION_TIMEOUT);
 		repetitiveAssertNumberOfGSAsRemoved(0, AbstractFromXenToByonGSMTest.OPERATION_TIMEOUT);
@@ -230,7 +230,7 @@ public class MachinesSlaEnforcementByonTest extends AbstractMachinesSlaEnforceme
 	}
 
 
-	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT , enabled = false)
+	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT , enabled = true)
 	public void twoMachinesTest() throws InterruptedException  {
 		repetitiveAssertNumberOfGSAsAdded(1, AbstractFromXenToByonGSMTest.OPERATION_TIMEOUT);
     	repetitiveAssertNumberOfGSAsRemoved(0, AbstractFromXenToByonGSMTest.OPERATION_TIMEOUT);
@@ -285,7 +285,7 @@ public class MachinesSlaEnforcementByonTest extends AbstractMachinesSlaEnforceme
 		repetitiveAssertNumberOfGSAsRemoved(3, AbstractFromXenToByonGSMTest.OPERATION_TIMEOUT);
 	}
 
-	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT , enabled = false)
+	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT , enabled = true)
 	public void scaleInMachinesTest() throws InterruptedException, TimeoutException {
 		repetitiveAssertNumberOfGSAsAdded(1, AbstractFromXenToByonGSMTest.OPERATION_TIMEOUT);
     	repetitiveAssertNumberOfGSAsRemoved(0, AbstractFromXenToByonGSMTest.OPERATION_TIMEOUT);
@@ -318,7 +318,7 @@ public class MachinesSlaEnforcementByonTest extends AbstractMachinesSlaEnforceme
 
 
 
-	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT , enabled = false)
+	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT , enabled = true)
 	public void scaleInMachinesWithContainersTest() throws InterruptedException, TimeoutException {
 		repetitiveAssertNumberOfGSAsAdded(1, AbstractFromXenToByonGSMTest.OPERATION_TIMEOUT);
     	repetitiveAssertNumberOfGSAsRemoved(0, AbstractFromXenToByonGSMTest.OPERATION_TIMEOUT);

@@ -21,7 +21,7 @@ public class Ec2RepetitiveShutdownManagersBootstrapTest extends AbstractCloudMan
         super.afterTest();
     }
 
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = false)
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
     public void testRepetitiveShutdownManagersBootstrap() throws Exception {
         super.testRepetitiveShutdownManagersBootstrap();
     }

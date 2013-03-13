@@ -33,13 +33,13 @@ import com.j_spaces.kernel.PlatformVersion;
 
 public class ByonCloudService extends AbstractCloudService {
 
-	public static final String BYON_CLOUD_USER= "root";
-	public static final String BYON_CLOUD_PASSWORD = "1408Rokk";
+	public static final String BYON_CLOUD_USER= "tgrid";
+	public static final String BYON_CLOUD_PASSWORD = "tgrid";
 	
 	public static final String IP_LIST_PROPERTY = "ipList";
 	
-	protected static final String NEW_URL_PREFIX = "http://192.168.10.13/builds/GigaSpacesBuilds/cloudify";
-	protected static final String NEW_XAP_URL_PREFIX = "http://192.168.10.13/builds/GigaSpacesBuilds";
+	protected static final String NEW_URL_PREFIX = "http://tarzan/builds/GigaSpacesBuilds/cloudify";
+	protected static final String NEW_XAP_URL_PREFIX = "http://tarzan/builds/GigaSpacesBuilds";
 	
 	public static final String ENV_VARIABLE_NAME = "GIGASPACES_TEST_ENV";
 	public static final String ENV_VARIABLE_VALUE = "DEFAULT_ENV_VARIABLE";

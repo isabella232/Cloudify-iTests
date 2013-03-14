@@ -132,13 +132,17 @@ not for GA
         } , OPERATION_TIMEOUT*3);
     }
 
-    public void testRepetitiveShutdownManagersBootstrap() throws Exception {
+    /**
+     * 1. Shutdown management machines.
+     * 2. Bootstrap without persistence file. (Only for DefaultProvisioningDriver)
+     * 3. Check management machines are the same.
+     * 4. repeat 1-3, 4 times.
+     * @throws Exception
+     */
+    protected void testRepetitiveShutdownManagersBootstrap() throws Exception {
 
         // retrieve the rest url's before we start the chaos.
-        final Set<String> originalRestUrls = new HashSet<String>();
-        for (String url : getService().getRestUrls()) {
-            originalRestUrls.add(url);
-        }
+        final Set<String> originalRestUrls = toSet(getService().getRestUrls());
 
         int repetitions = 4;
 
@@ -155,14 +159,21 @@ not for GA
 
             AssertUtils.assertTrue("bootstrap failed", output.contains("Successfully created Cloudify Manager"));
 
-            // check the new rest urls are the same;
+            // check the rest urls are the same;
             final Set<String> newRestUrls = new HashSet<String>();
             for (URL url : getService().getBootstrapper().getRestAdminUrls()) {
                 newRestUrls.add(url.toString());
             }
             AssertUtils.assertEquals("Expected rest url's not to change after re-bootstrapping", originalRestUrls, newRestUrls);
-
         }
+    }
+
+    private Set<String> toSet(final String[] array) {
+        final Set<String> set = new HashSet<String>();
+        for (String s : array) {
+            set.add(s);
+        }
+        return set;
     }
 
     @Override

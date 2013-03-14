@@ -1,8 +1,6 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.byon.failover;
 
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import org.testng.annotations.*;
 
 /**
  * User: nirb
@@ -10,14 +8,9 @@ import org.testng.annotations.Test;
  */
 public class BadPersistencyFileTest extends AbstractByonManagementPersistencyTest {
 
-    @BeforeMethod(alwaysRun = true)
+    @BeforeClass(alwaysRun = true)
     public void bootstrapAndInit() throws Exception{
-        super.prepareTest();
-    }
-
-    @AfterMethod(alwaysRun = true)
-    public void afterTest() throws Exception{
-        super.afterTest();
+        super.bootstrapAndInstallService();
     }
 
     @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)

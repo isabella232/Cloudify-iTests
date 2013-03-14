@@ -1,21 +1,19 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.byon.failover;
 
-import org.cloudifysource.quality.iTests.framework.utils.*;
-import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
-import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.byon.ByonCloudService;
+import org.cloudifysource.quality.iTests.framework.utils.DisconnectionUtils;
+import org.cloudifysource.quality.iTests.framework.utils.IOUtils;
 import org.openspaces.admin.gsm.GridServiceManager;
 import org.openspaces.admin.machine.Machine;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.util.FileSystemUtils;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created with IntelliJ IDEA.
@@ -27,25 +25,20 @@ public class ManagementHardShutdownAndRecoveryTest extends AbstractByonManagemen
 
     private Machine[] gsmMachines;
 
+    /**
+     * Override since we want to shutdown the machine manually.
+     * @throws Exception
+     */
     @Override
     public void shutdownManagement() throws Exception{
-        GridServiceManager[] griServiceManagers = admin.getGridServiceManagers().getManagers();
-        gsmMachines = new Machine[griServiceManagers.length];
-        for (int i = 0 ; i < griServiceManagers.length ; i++) {
-            gsmMachines[i] = griServiceManagers[i].getMachine();
-            DisconnectionUtils.restartMachineAndWait(gsmMachines[i].getHostAddress());
+        for (Machine manager : gsmMachines) {
+            DisconnectionUtils.restartMachineAndWait(manager.getHostAddress());
         }
-        prepareManagementPersistencyFile();
     }
 
-    @BeforeMethod(alwaysRun = true)
+    @BeforeClass(alwaysRun = true)
     public void bootstrapAndInit() throws Exception{
-        super.prepareTest();
-    }
-
-    @AfterMethod(alwaysRun = true)
-    public void afterTest() throws Exception{
-        super.afterTest();
+        super.bootstrapAndInstallService();
     }
 
     @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true, groups = SUSPECTED)
@@ -53,18 +46,36 @@ public class ManagementHardShutdownAndRecoveryTest extends AbstractByonManagemen
         super.testManagementPersistency();
     }
 
-    public void prepareManagementPersistencyFile() throws Exception{
+    @AfterClass(alwaysRun = true)
+    public void teardown() throws Exception{
+        super.teardownAndDeleteBackupFile();
+    }
+
+
+    @Override
+    protected void afterBootstrap() throws Exception {
+
+        super.afterBootstrap();
+
+        // when bootstrap is done. we save the management machines ip to a persistence file.
+        prepareManagementPersistencyFile();
+    }
+
+    private void prepareManagementPersistencyFile() throws Exception{
+
         Resource originalFile = new ClassPathResource("apps/cloudify/cloud/byon/management-persistency.txt");
         File tempFile = new File("management-persistency.txt");
         FileSystemUtils.copyRecursively(originalFile.getFile(), tempFile);
         Map<String, String> props = new HashMap<String, String>();
-        for (int i = 0; i < gsmMachines.length; i++) {
+
+        GridServiceManager[] griServiceManagers = admin.getGridServiceManagers().getManagers();
+        gsmMachines = new Machine[griServiceManagers.length];
+        for (int i = 0 ; i < griServiceManagers.length ; i++) {
+            gsmMachines[i] = griServiceManagers[i].getMachine();
             props.put("MANAGEMENT" + i, gsmMachines[i].getHostAddress());
         }
         IOUtils.replaceTextInFile(tempFile, props);
-
         backupFilePath = tempFile.getAbsolutePath();
-
     }
 
 }

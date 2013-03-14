@@ -1,9 +1,7 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.ec2;
 
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.AbstractCloudManagementPersistencyTest;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import org.testng.annotations.*;
 
 /**
  * User: nirb
@@ -11,14 +9,9 @@ import org.testng.annotations.Test;
  */
 public class Ec2PersistencyWithTwoManagersTest extends AbstractCloudManagementPersistencyTest {
 
-    @BeforeMethod(alwaysRun = true)
+    @BeforeClass(alwaysRun = true)
     public void bootstrapAndInit() throws Exception{
-        super.bootstrapAndInit();
-    }
-
-    @AfterMethod(alwaysRun = true)
-    public void afterTest() throws Exception{
-        super.afterTest();
+        super.boostrapAndInstallService();
     }
 
     @Override
@@ -31,6 +24,12 @@ public class Ec2PersistencyWithTwoManagersTest extends AbstractCloudManagementPe
     public void testManagementPersistency() throws Exception {
         super.testManagementPersistency();
     }
+
+    @AfterClass(alwaysRun = true)
+    public void teardown() throws Exception{
+        super.teardown();
+    }
+
 
     @Override
     protected String getCloudName() {

@@ -32,32 +32,13 @@ public abstract class AbstractCloudManagementPersistencyTest extends NewAbstract
 
     private List<String> attributesList = new LinkedList<String>();
 
-    public void bootstrapAndInit() throws Exception{
-        super.bootstrap();
-        super.installServiceAndWait(TOMCAT_SERVICE_PATH, TOMCAT_SERVICE_NAME, SERVICE_INSTALLATION_TIMEOUT_IN_MINUTES, numOfServiceInstances);
-
-        Bootstrapper bootstrapper = new CloudBootstrapper();
-        bootstrapper.setRestUrl(getRestUrl());
-
-        for(int i=1; i <= numOfServiceInstances; i++){
-            String attributes = bootstrapper.listServiceInstanceAttributes(APPLICATION_NAME, TOMCAT_SERVICE_NAME, i, false);
-            attributesList.add(attributes.substring(attributes.indexOf("home")));
-        }
-    }
-
-    public void afterTest() throws Exception{
-        super.teardown();
-    }
-
-    protected void shutdownManagement() throws Exception{
-
-        CloudBootstrapper bootstrapper = new CloudBootstrapper();
-        bootstrapper.setRestUrl(getRestUrl());
-
-        LogUtils.log("shutting down managers");
-        bootstrapper.shutdownManagers(APPLICATION_NAME, false);
-    }
-
+    /**
+     * 1. Shutdown management machines.
+     * 2. Bootstrap using the persistence file.
+     * 3. Retrieve attributes from space and compare with the ones before the shutdown.
+     * 4. Shutdown an instance agent and wait for recovery.
+     * @throws Exception
+     */
     public void testManagementPersistency() throws Exception {
 
         shutdownManagement();
@@ -166,6 +147,28 @@ not for GA
             }
             AssertUtils.assertEquals("Expected rest url's not to change after re-bootstrapping", originalRestUrls, newRestUrls);
         }
+    }
+
+    public void boostrapAndInstallService() throws Exception{
+        super.bootstrap();
+        super.installServiceAndWait(TOMCAT_SERVICE_PATH, TOMCAT_SERVICE_NAME, SERVICE_INSTALLATION_TIMEOUT_IN_MINUTES, numOfServiceInstances);
+
+        Bootstrapper bootstrapper = new CloudBootstrapper();
+        bootstrapper.setRestUrl(getRestUrl());
+
+        for(int i=1; i <= numOfServiceInstances; i++){
+            String attributes = bootstrapper.listServiceInstanceAttributes(APPLICATION_NAME, TOMCAT_SERVICE_NAME, i, false);
+            attributesList.add(attributes.substring(attributes.indexOf("home")));
+        }
+    }
+
+    protected void shutdownManagement() throws Exception{
+
+        CloudBootstrapper bootstrapper = new CloudBootstrapper();
+        bootstrapper.setRestUrl(getRestUrl());
+
+        LogUtils.log("shutting down managers");
+        bootstrapper.shutdownManagers(APPLICATION_NAME, false);
     }
 
     private Set<String> toSet(final String[] array) {

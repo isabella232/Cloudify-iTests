@@ -1,4 +1,4 @@
-package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.byon.failover;
+package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.byon.persistence;
 
 import org.cloudifysource.quality.iTests.framework.utils.DisconnectionUtils;
 import org.cloudifysource.quality.iTests.framework.utils.IOUtils;

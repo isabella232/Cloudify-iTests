@@ -8,7 +8,7 @@ import org.testng.annotations.Test;
  * User: nirb
  * Date: 13/03/13
  */
-public class managementRecoveryWithMultipleServicesTest extends AbstractByonManagementPersistencyTest {
+public class ManagementRecoveryWithMultipleServicesTest extends AbstractByonManagementPersistencyTest {
 
     @BeforeMethod(alwaysRun = true)
     public void bootstrapAndInit() throws Exception{

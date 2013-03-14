@@ -220,7 +220,13 @@ public abstract class Bootstrapper {
 		}
 		ProcessResult result = CommandTestUtils.runCloudifyCommandAndWait(builder.toString());
 		lastActionOutput = result.getOutput();
-        restAdminUrls = extractRestAdminUrls(result.getOutput(), numberOfManagementMachines);
+        if (this instanceof CloudBootstrapper) {
+            if (!((CloudBootstrapper) this).isNoWebServices()) {
+                restAdminUrls = extractRestAdminUrls(result.getOutput(), numberOfManagementMachines);
+            }  else {
+                LogUtils.log("Not retrveing rest urls since there are no web services");
+            }
+        }
 		bootstrapped = true;
 		return result;	
 	}

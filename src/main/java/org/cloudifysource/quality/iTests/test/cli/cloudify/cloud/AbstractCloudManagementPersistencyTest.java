@@ -1,13 +1,16 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud;
 
 import com.j_spaces.kernel.PlatformVersion;
+import org.apache.commons.io.FileUtils;
 import org.cloudifysource.quality.iTests.framework.tools.SGTestHelper;
 import org.cloudifysource.quality.iTests.framework.utils.*;
 import org.cloudifysource.restclient.GSRestClient;
 import org.cloudifysource.restclient.RestException;
 import org.jclouds.compute.domain.NodeMetadata;
 
+import java.io.File;
 import java.net.URL;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -25,7 +28,7 @@ public abstract class AbstractCloudManagementPersistencyTest extends NewAbstract
     protected final static String SERVICE_REST_URL = "ProcessingUnits/Names/" + APPLICATION_NAME + "." + TOMCAT_SERVICE_NAME;
 
     private int numOfManagementMachines = 2;
-    private int numOfServiceInstances = 3;
+    private final int numOfServiceInstances = 3;
 
     private List<String> attributesList = new LinkedList<String>();
 
@@ -44,7 +47,6 @@ public abstract class AbstractCloudManagementPersistencyTest extends NewAbstract
 
     public void afterTest() throws Exception{
         super.teardown();
-//        FileUtils.deleteQuietly(new File(backupFilePath));
     }
 
     protected void shutdownManagement() throws Exception{
@@ -58,25 +60,25 @@ public abstract class AbstractCloudManagementPersistencyTest extends NewAbstract
 
     public void testManagementPersistency() throws Exception {
 
-//        shutdownManagement();
-//
-//        CloudBootstrapper bootstrapper = new CloudBootstrapper();
-//        bootstrapper.scanForLeakedNodes(false);
-//        bootstrapper.useExisting(true);
-//        super.bootstrap(bootstrapper);
-//        bootstrapper.setRestUrl(getRestUrl());
-//
-//        List<String> newAttributesList = new LinkedList<String>();
-//
-//        for(int i=1; i <= numOfServiceInstances; i++){
-//            String attributes = bootstrapper.listServiceInstanceAttributes(APPLICATION_NAME, TOMCAT_SERVICE_NAME, i, false);
-//            newAttributesList.add(attributes.substring(attributes.indexOf("home")));
-//        }
-//
-//        List<String> differenceAttributesList = new LinkedList<String>(attributesList);
-//        differenceAttributesList.removeAll(newAttributesList);
-//
-//        AssertUtils.assertTrue("the service attributes post management restart are not the same as the attributes pre restart", differenceAttributesList.isEmpty());
+        shutdownManagement();
+
+        CloudBootstrapper bootstrapper = new CloudBootstrapper();
+        bootstrapper.scanForLeakedNodes(false);
+        bootstrapper.useExisting(true);
+        super.bootstrap(bootstrapper);
+        bootstrapper.setRestUrl(getRestUrl());
+
+        List<String> newAttributesList = new LinkedList<String>();
+
+        for(int i=1; i <= numOfServiceInstances; i++){
+            String attributes = bootstrapper.listServiceInstanceAttributes(APPLICATION_NAME, TOMCAT_SERVICE_NAME, i, false);
+            newAttributesList.add(attributes.substring(attributes.indexOf("home")));
+        }
+
+        List<String> differenceAttributesList = new LinkedList<String>(attributesList);
+        differenceAttributesList.removeAll(newAttributesList);
+
+        AssertUtils.assertTrue("the service attributes post management restart are not the same as the attributes pre restart", differenceAttributesList.isEmpty());
 
         LogUtils.log("shutting down one of the service's GSAs");
 
@@ -96,45 +98,49 @@ public abstract class AbstractCloudManagementPersistencyTest extends NewAbstract
 
         LogUtils.log("waiting for service to restart on a new machine");
         final GSRestClient client = new GSRestClient("", "", new URL(getRestUrl()), PlatformVersion.getVersionNumber());
-        final AtomicReference<Integer> atomicNumOfInstances = new AtomicReference<Integer>();
 
         LogUtils.log("waiting for service to break due to machine shutdown");
         AssertUtils.repetitiveAssertTrue("service didn't break", new AssertUtils.RepetitiveConditionProvider() {
             @Override
             public boolean getCondition() {
                 try {
-                    String numOfInstString = (String) client.getAdminData(SERVICE_REST_URL).get("NumberOfInstances");
-                    atomicNumOfInstances.set(Integer.parseInt(numOfInstString));
+                    int numOfInst = Integer.parseInt((String) client.getAdminData(SERVICE_REST_URL).get("NumberOfInstances"));
+                    return numOfServiceInstances > numOfInst;
                 } catch (RestException e) {
                     throw new RuntimeException("caught a RestException", e);
                 }
-                return numOfServiceInstances > atomicNumOfInstances.get();
+
             }
         } , OPERATION_TIMEOUT*4);
 
         AssertUtils.repetitiveAssertTrue("service didn't recover", new AssertUtils.RepetitiveConditionProvider() {
             @Override
             public boolean getCondition() {
-                boolean result = false;
                 try {
-                    String numOfInstString = (String) client.getAdminData(SERVICE_REST_URL).get("NumberOfInstances");
-                    atomicNumOfInstances.set(Integer.parseInt(numOfInstString));
-                    result = numOfServiceInstances == atomicNumOfInstances.get();
-                    numOfInstString = (String) client.getAdminData(SERVICE_REST_URL).get("PlannedNumberOfInstances");
-                    atomicNumOfInstances.set(Integer.parseInt(numOfInstString));
-                    result = result && numOfServiceInstances == atomicNumOfInstances.get();
+                    int numOfInst = Integer.parseInt((String) client.getAdminData(SERVICE_REST_URL).get("NumberOfInstances"));
+                    return numOfServiceInstances == numOfInst;
+/*
+
+not for GA
+                    int numOfPlannedInst = Integer.parseInt((String) client.getAdminData(SERVICE_REST_URL).get("PlannedNumberOfInstances"));
+                    result = result && numOfServiceInstances == numOfPlannedInst;
+*/
                 } catch (RestException e) {
                     throw new RuntimeException("caught a RestException", e);
                 }
-                return result;
             }
         } , OPERATION_TIMEOUT*3);
     }
 
     public void testRepetitiveShutdownManagersBootstrap() throws Exception {
 
+        // retrieve the rest url's before we start the chaos.
+        final Set<String> originalRestUrls = new HashSet<String>();
+        for (String url : getService().getRestUrls()) {
+            originalRestUrls.add(url);
+        }
+
         int repetitions = 4;
-        String output = "";
 
         for(int i=0; i < repetitions; i++){
 
@@ -145,9 +151,16 @@ public abstract class AbstractCloudManagementPersistencyTest extends NewAbstract
             bootstrapper.useExisting(true);
             super.bootstrap(bootstrapper);
 
-            output = bootstrapper.getLastActionOutput();
+            String output = bootstrapper.getLastActionOutput();
 
             AssertUtils.assertTrue("bootstrap failed", output.contains("Successfully created Cloudify Manager"));
+
+            // check the rest urls are the same;
+            final Set<String> newRestUrls = new HashSet<String>();
+            for (String url : getService().getRestUrls()) {
+                newRestUrls.add(url);
+            }
+            AssertUtils.assertEquals("Expected rest url's not to change after re-bootstrapping", originalRestUrls, newRestUrls);
 
         }
     }

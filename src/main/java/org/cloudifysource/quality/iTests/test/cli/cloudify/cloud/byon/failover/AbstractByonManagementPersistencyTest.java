@@ -139,10 +139,10 @@ public abstract class AbstractByonManagementPersistencyTest extends AbstractByon
 
             shutdownManagement();
 
-            CloudBootstrapper bootstrapper = new CloudBootstrapper();
+            CloudBootstrapper bootstrapper = getService().getBootstrapper();
             bootstrapper.scanForLeakedNodes(false);
             bootstrapper.useExisting(true);
-            super.bootstrap(bootstrapper);
+            bootstrapper.bootstrap();
 
             String output = bootstrapper.getLastActionOutput();
 

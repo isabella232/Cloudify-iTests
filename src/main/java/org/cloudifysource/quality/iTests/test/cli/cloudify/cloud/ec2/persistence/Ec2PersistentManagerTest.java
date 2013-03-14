@@ -1,4 +1,4 @@
-package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.ec2.Persistency;
+package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.ec2.persistence;
 
 import org.apache.commons.io.FileUtils;
 import org.cloudifysource.dsl.internal.CloudifyConstants;

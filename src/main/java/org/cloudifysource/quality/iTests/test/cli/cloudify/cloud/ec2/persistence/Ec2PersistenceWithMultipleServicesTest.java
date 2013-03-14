@@ -1,4 +1,4 @@
-package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.ec2.Persistency;
+package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.ec2.persistence;
 
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.AbstractCloudManagementPersistencyTest;
 import org.testng.annotations.AfterMethod;
@@ -7,24 +7,18 @@ import org.testng.annotations.Test;
 
 /**
  * User: nirb
- * Date: 06/03/13
+ * Date: 13/03/13
  */
-public class Ec2PersistencyWithTwoManagersTest extends AbstractCloudManagementPersistencyTest {
+public class Ec2PersistenceWithMultipleServicesTest extends AbstractCloudManagementPersistencyTest{
 
     @BeforeMethod(alwaysRun = true)
     public void bootstrapAndInit() throws Exception{
-        super.bootstrapAndInit();
+        super.bootstrapAndInit(true, true);
     }
 
     @AfterMethod(alwaysRun = true)
     public void afterTest() throws Exception{
         super.afterTest();
-    }
-
-    @Override
-    protected void customizeCloud() throws Exception {
-        super.customizeCloud();
-        getService().setNumberOfManagementMachines(getNumOfManagementMachines());
     }
 
     @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)

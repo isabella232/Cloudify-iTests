@@ -1,12 +1,6 @@
-package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.ec2;
-
-import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
+package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.ec2.Persistency;
 
 import org.apache.commons.io.FileUtils;
-import org.cloudifysource.dsl.cloud.compute.ComputeTemplate;
 import org.cloudifysource.dsl.internal.CloudifyConstants;
 import org.cloudifysource.dsl.utils.ServiceUtils;
 import org.cloudifysource.quality.iTests.framework.utils.SSHUtils;
@@ -17,6 +11,11 @@ import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 public class Ec2PersistentManagerTest extends NewAbstractCloudTest {
 
@@ -128,23 +127,6 @@ public class Ec2PersistentManagerTest extends NewAbstractCloudTest {
 		return restPath;
 	}
 
-	private File getPemFile() {
-		String cloudFolderPath = this.cloudService.getPathToCloudFolder();
-		ComputeTemplate managementTemplate = this.cloudService.getCloud().getCloudCompute().getTemplates().get(this.cloudService.getCloud().getConfiguration().getManagementMachineTemplate());
-		String keyFileName = managementTemplate.getKeyFile();
-		String localDirectory = managementTemplate.getLocalDirectory();
-		String keyFilePath = cloudFolderPath + "/" + localDirectory + "/" + keyFileName;
-		final File keyFile = new File(keyFilePath);
-		if(!keyFile.exists()) {
-			throw new IllegalStateException("Could not find key file at expected location: " + keyFilePath);
-		}
-
-		if(!keyFile.isFile()) {
-			throw new IllegalStateException("Expected key file: " + keyFile + " is not a file");
-		}
-		return keyFile;
-
-	}
 	private void writeGlobalAttribute(final String connect) throws IOException, InterruptedException {
 		// need this cause trying to pass all the single and double quotes on the command line is a pain on multiple OS.
 		final File tempFile = File.createTempFile("testcommands", "txt");

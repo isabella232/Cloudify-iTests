@@ -26,7 +26,7 @@ public abstract class AbstractByonManagementPersistencyTest extends AbstractByon
     public static final String BOOTSTRAP_SUCCEEDED_STRING = "Successfully created Cloudify Manager";
     public static final String APPLICATION_NAME = "default";
 
-    protected String backupFilePath = SGTestHelper.getBuildDir() + "/backup-details.txt";
+    protected String backupFilePath = SGTestHelper.getBuildDir() + "/backup-details" + System.currentTimeMillis() + ".txt";
 
     private static final String TOMCAT_SERVICE_PATH = SGTestHelper.getBuildDir() + "/recipes/services/tomcat";
     private static final String TOMCAT_SERVICE_NAME = "tomcat";

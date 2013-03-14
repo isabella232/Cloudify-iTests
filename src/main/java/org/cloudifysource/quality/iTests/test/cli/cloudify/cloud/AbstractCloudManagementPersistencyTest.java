@@ -62,10 +62,10 @@ public abstract class AbstractCloudManagementPersistencyTest extends NewAbstract
 
         shutdownManagement();
 
-        CloudBootstrapper bootstrapper = new CloudBootstrapper();
+        CloudBootstrapper bootstrapper = getService().getBootstrapper();
         bootstrapper.scanForLeakedNodes(false);
         bootstrapper.useExisting(true);
-        super.bootstrap(bootstrapper);
+        bootstrapper.bootstrap();
         bootstrapper.setRestUrl(getRestUrl());
 
         List<String> newAttributesList = new LinkedList<String>();
@@ -155,10 +155,10 @@ not for GA
 
             AssertUtils.assertTrue("bootstrap failed", output.contains("Successfully created Cloudify Manager"));
 
-            // check the rest urls are the same;
+            // check the new rest urls are the same;
             final Set<String> newRestUrls = new HashSet<String>();
-            for (String url : getService().getRestUrls()) {
-                newRestUrls.add(url);
+            for (URL url : getService().getBootstrapper().getRestAdminUrls()) {
+                newRestUrls.add(url.toString());
             }
             AssertUtils.assertEquals("Expected rest url's not to change after re-bootstrapping", originalRestUrls, newRestUrls);
 

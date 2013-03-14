@@ -7,6 +7,7 @@ import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.byon.AbstractBy
 import org.openspaces.admin.pu.ProcessingUnit;
 
 import java.io.File;
+import java.net.URL;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -114,10 +115,10 @@ public abstract class AbstractByonManagementPersistencyTest extends AbstractByon
 
         IOUtils.replaceTextInFile(backupFilePath, "instanceId", "instnceId");
 
-        CloudBootstrapper bootstrapper = new CloudBootstrapper();
+        CloudBootstrapper bootstrapper = getService().getBootstrapper();
         bootstrapper.useExistingFilePath(backupFilePath);
         bootstrapper.setBootstrapExpectedToFail(true);
-        super.bootstrap(bootstrapper);
+        bootstrapper.bootstrap();
 
         String output = bootstrapper.getLastActionOutput();
 
@@ -150,8 +151,8 @@ public abstract class AbstractByonManagementPersistencyTest extends AbstractByon
 
             // check the rest urls are the same;
             final Set<String> newRestUrls = new HashSet<String>();
-            for (String url : getService().getRestUrls()) {
-                newRestUrls.add(url);
+            for (URL url : getService().getBootstrapper().getRestAdminUrls()) {
+                newRestUrls.add(url.toString());
             }
             AssertUtils.assertEquals("Expected rest url's not to change after re-bootstrapping", originalRestUrls, newRestUrls);
         }

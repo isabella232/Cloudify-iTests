@@ -1,9 +1,14 @@
 package org.cloudifysource.quality.iTests.framework.utils;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 
+import org.cloudifysource.quality.iTests.test.cli.cloudify.CloudTestUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils.ProcessResult;
 
@@ -24,6 +29,16 @@ public abstract class Bootstrapper {
 	private boolean verbose = true;
 	private boolean freshBootstrap = true;
 	private boolean scanForLeakedNodes = true;
+    private URL[] restAdminUrls;
+    private int numberOfManagementMachines;
+
+    public void setNumberOfManagementMachines(final int numberOfManagementMachines) {
+        this.numberOfManagementMachines = numberOfManagementMachines;
+    }
+
+    public int getNumberOfManagementMachines() {
+        return numberOfManagementMachines;
+    }
 
 	public Bootstrapper verbose(final boolean verbose) {
 		this.verbose = verbose;
@@ -205,6 +220,7 @@ public abstract class Bootstrapper {
 		}
 		ProcessResult result = CommandTestUtils.runCloudifyCommandAndWait(builder.toString());
 		lastActionOutput = result.getOutput();
+        restAdminUrls = extractRestAdminUrls(result.getOutput(), numberOfManagementMachines);
 		bootstrapped = true;
 		return result;	
 	}
@@ -368,4 +384,27 @@ public abstract class Bootstrapper {
         this.scanForLeakedNodes = scanForLeakedNodes;
         return this;
     }
-}
+
+    public URL[] getRestAdminUrls() {
+        return restAdminUrls;
+    }
+
+    private URL[] extractRestAdminUrls(String output, int numberOfManagementMachines)
+            throws MalformedURLException {
+
+        URL[] restAdminUrls = new URL[numberOfManagementMachines];
+
+        Pattern restPattern = Pattern.compile(CloudTestUtils.REST_URL_REGEX);
+        Matcher restMatcher = restPattern.matcher(output);
+
+        // This is sort of hack.. currently we are outputting this over ssh and locally with different results
+        for (int i = 0; i < numberOfManagementMachines; i++) {
+            AssertUtils.assertTrue("Could not find actual rest url", restMatcher.find());
+            String rawRestAdminUrl = restMatcher.group(1);
+            restAdminUrls[i] = new URL(rawRestAdminUrl);
+        }
+
+        return restAdminUrls;
+    }
+
+    }

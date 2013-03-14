@@ -40,12 +40,12 @@ public class DedicatedManualDataGridUndeployDuringDeployTest extends AbstractFro
 		super.teardownAfterClass();
 	}
 	
-	private static final int REDEPLOY_ITERATIONS = 5;
+	private static final int REDEPLOY_ITERATIONS = 3;
 
 	/**
 	 * @see GS-10644
 	 */
-	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT*2, groups = "1", enabled=true)
+	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT*2, groups = "1", enabled=false)
     public void testManualDataGridDeploymentScale() {
         
 		final File archive = DeploymentUtils.getArchive("servlet.war");

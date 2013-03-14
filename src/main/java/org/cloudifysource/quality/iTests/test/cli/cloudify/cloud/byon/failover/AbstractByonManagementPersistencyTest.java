@@ -7,8 +7,10 @@ import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.byon.AbstractBy
 import org.openspaces.admin.pu.ProcessingUnit;
 
 import java.io.File;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -125,22 +127,33 @@ public abstract class AbstractByonManagementPersistencyTest extends AbstractByon
 
     public void testRepetitiveShutdownManagersBootstrap() throws Exception {
 
+        // retrieve the rest url's before we start the chaos.
+        final Set<String> originalRestUrls = new HashSet<String>();
+        for (String url : getService().getRestUrls()) {
+            originalRestUrls.add(url);
+        }
+
         int repetitions = 4;
-        String output = "";
 
         for(int i=0; i < repetitions; i++){
 
             shutdownManagement();
 
             CloudBootstrapper bootstrapper = new CloudBootstrapper();
-            bootstrapper.useExistingFilePath(backupFilePath);
-            bootstrapper.killJavaProcesses(false);
+            bootstrapper.scanForLeakedNodes(false);
+            bootstrapper.useExisting(true);
             super.bootstrap(bootstrapper);
 
-            output = bootstrapper.getLastActionOutput();
+            String output = bootstrapper.getLastActionOutput();
 
             AssertUtils.assertTrue("bootstrap failed", output.contains("Successfully created Cloudify Manager"));
 
+            // check the rest urls are the same;
+            final Set<String> newRestUrls = new HashSet<String>();
+            for (String url : getService().getRestUrls()) {
+                newRestUrls.add(url);
+            }
+            AssertUtils.assertEquals("Expected rest url's not to change after re-bootstrapping", originalRestUrls, newRestUrls);
         }
     }
 

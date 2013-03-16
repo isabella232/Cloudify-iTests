@@ -77,7 +77,7 @@ public class ExcludedServicesTest extends AbstractLocalCloudTest {
     }
 
     //does not work on our linux boxes (File system loop detected - need to investigate)g
-    @Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, enabled = disalbe)
+    @Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, enabled = false)
     public void installMysql() throws Exception{
         doTest("mysql");
     }

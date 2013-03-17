@@ -4,6 +4,7 @@ import org.apache.commons.io.FileUtils;
 import org.cloudifysource.quality.iTests.framework.tools.SGTestHelper;
 import org.cloudifysource.quality.iTests.framework.utils.*;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.byon.AbstractByonCloudTest;
+import org.openspaces.admin.gsa.GridServiceAgent;
 import org.openspaces.admin.pu.ProcessingUnit;
 
 import java.io.File;
@@ -64,10 +65,11 @@ public abstract class AbstractByonManagementPersistencyTest extends AbstractByon
 
         AssertUtils.assertTrue("the service attributes post management restart are not the same as the attributes pre restart", differenceAttributesList.isEmpty());
 
-        LogUtils.log("shutting down one of the service's GSAs");
         ProcessingUnit processingUnit = admin.getProcessingUnits().waitFor(APPLICATION_NAME + "." + TOMCAT_SERVICE_NAME);
         processingUnit.waitFor(numOfServiceInstances);
-        processingUnit.getInstances()[0].getGridServiceContainer().getGridServiceAgent().shutdown();
+        GridServiceAgent gridServiceAgent = processingUnit.getInstances()[0].getGridServiceContainer().getGridServiceAgent();
+        LogUtils.log("Shutting down GSA on host " + gridServiceAgent.getMachine().getHostAddress());
+        gridServiceAgent.shutdown();
 
         AssertUtils.repetitiveAssertTrue("service didn't break", new AssertUtils.RepetitiveConditionProvider() {
             @Override

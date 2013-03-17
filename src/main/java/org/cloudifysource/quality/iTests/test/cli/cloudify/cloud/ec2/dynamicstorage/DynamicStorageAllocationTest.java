@@ -54,13 +54,7 @@ public class DynamicStorageAllocationTest extends AbstractDynamicStorageTest {
 		AssertUtils.assertEquals("the volume should have one attachements", 1, ourVolume.getAttachments().size());
 		
 		installer.uninstall();	
-		
-		final String volId = ourVolume.getId();
-		
-		// after uninstall the volume should be deleted
-		ourVolume = storageHelper.getVolumeById(ourVolume.getId());
-		AssertUtils.assertTrue("volume with id " + volId + " was not deleted after uninstall", ourVolume == null || ourVolume.getStatus().equals(Status.DELETING));
-	}	
+	}
 	
 	@AfterMethod
 	public void scanForLeakes() throws TimeoutException {

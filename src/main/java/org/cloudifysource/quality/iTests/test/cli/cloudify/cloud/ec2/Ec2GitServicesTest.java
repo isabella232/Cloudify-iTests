@@ -172,7 +172,7 @@ public class Ec2GitServicesTest extends AbstractServicesTest {
     }
 
     private void testService(final String serviceName, final int timeoutInMinutes) throws Exception {
-        testService(serviceName, null, timeoutInMinutes);
+        testService(localGitRepoPath + "/services/" + serviceName, null, timeoutInMinutes);
     }
 }
 

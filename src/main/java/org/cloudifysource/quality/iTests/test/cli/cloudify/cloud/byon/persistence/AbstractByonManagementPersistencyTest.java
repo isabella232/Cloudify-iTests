@@ -33,17 +33,17 @@ public abstract class AbstractByonManagementPersistencyTest extends AbstractByon
     protected String backupFilePath = SGTestHelper.getBuildDir() + "/backup-details.txt";
 
     private int numOfManagementMachines = 2;
-    private int numOfServiceInstances = 2;
+    private int numOfServiceInstances = 3;
     private int numOfServices = 2;
     private boolean multipleServices = false;
 
     private List<String> attributesList = new LinkedList<String>();
 
-    public void prepareTest() throws Exception {
-        prepareTest(false);
+    public void bootstrapAndInstallService() throws Exception {
+        bootstrapAndInstallService(false);
     }
 
-    public void prepareTest(boolean multipleServices) throws Exception {
+    protected void bootstrapAndInstallService(boolean multipleServices) throws Exception {
 
         this.multipleServices = multipleServices;
         super.bootstrap();
@@ -80,7 +80,6 @@ public abstract class AbstractByonManagementPersistencyTest extends AbstractByon
                 attributesList.add(attributes.substring(attributes.indexOf("home")));
             }
         }
-
     }
 
     /**
@@ -206,21 +205,6 @@ public abstract class AbstractByonManagementPersistencyTest extends AbstractByon
         String output = bootstrapper.getLastActionOutput();
 
         AssertUtils.assertTrue("bootstrap succeeded with a defective persistence file", !output.contains(BOOTSTRAP_SUCCEEDED_STRING));
-    }
-
-    protected void bootstrapAndInstallService() throws Exception {
-
-        super.bootstrap();
-        super.installServiceAndWait(TOMCAT_SERVICE_PATH, TOMCAT_SERVICE_NAME, SERVICE_INSTALLATION_TIMEOUT_IN_MINUTES, numOfServiceInstances);
-
-        Bootstrapper bootstrapper = getService().getBootstrapper();
-        bootstrapper.setRestUrl(getRestUrl());
-        attributesList = new LinkedList<String>();
-
-        for(int i=1; i <= numOfServiceInstances; i++){
-            String attributes = bootstrapper.listServiceInstanceAttributes(APPLICATION_NAME, TOMCAT_SERVICE_NAME, i, false);
-            attributesList.add(attributes.substring(attributes.indexOf("home")));
-        }
     }
 
     protected void teardownAndDeleteBackupFile() throws Exception {

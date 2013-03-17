@@ -57,12 +57,12 @@ public abstract class AbstractCloudManagementPersistencyTest extends NewAbstract
             bootstrapper.setRestUrl(getRestUrl());
 
             if(this.multipleServices){
-                for(int i=1; i <= numOfServices; i++){
+//                for(int i=1; i <= numOfServices; i++){
 //                    String attributes = bootstrapper.listServiceInstanceAttributes(APPLICATION_NAME, TOMCAT_SERVICE_NAME + "_" + i, 1, false);
 //                    attributesList.add(attributes.substring(attributes.indexOf("home")));
                     String attributes = bootstrapper.listServiceInstanceAttributes(APPLICATION_NAME, TOMCAT_SERVICE_NAME, 1, false);
                     attributesList.add(attributes.substring(attributes.indexOf("home")));
-                }
+//                }
             }
 
             else{
@@ -99,12 +99,12 @@ public abstract class AbstractCloudManagementPersistencyTest extends NewAbstract
         List<String> newAttributesList = new LinkedList<String>();
 
         if(this.multipleServices){
-            for(int i=1; i <= numOfServices; i++){
+//            for(int i=1; i <= numOfServices; i++){
 //                String attributes = bootstrapper.listServiceInstanceAttributes(APPLICATION_NAME, TOMCAT_SERVICE_NAME + "_" + i, 1, false);
 //                attributesList.add(attributes.substring(attributes.indexOf("home")));
                 String attributes = bootstrapper.listServiceInstanceAttributes(APPLICATION_NAME, TOMCAT_SERVICE_NAME, 1, false);
                 newAttributesList.add(attributes.substring(attributes.indexOf("home")));
-            }
+//            }
         }
         else{
             for(int i=1; i <= numOfServiceInstances; i++){
@@ -197,9 +197,11 @@ public abstract class AbstractCloudManagementPersistencyTest extends NewAbstract
                     boolean result = false;
                     try {
                         int numOfInst = Integer.parseInt((String) client.getAdminData(SERVICE_REST_URL).get("NumberOfInstances"));
-                        result = (1 == numOfInst);
+                        LogUtils.log("total instances after break: " + numOfInst);
+                        result = (numOfServiceInstances == numOfInst);
                         numOfInst = Integer.parseInt((String) client.getAdminData(SERVICE_REST_URL).get("PlannedNumberOfInstances"));
-                        result = result && (1 == numOfInst);
+                        LogUtils.log("planned instances after break: " + numOfInst);
+                        result = result && (numOfServiceInstances == numOfInst);
                         return result;
                     } catch (RestException e) {
                         throw new RuntimeException("caught a RestException", e);

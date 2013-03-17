@@ -17,4 +17,9 @@ public class BadPersistencyFileTest extends AbstractByonManagementPersistencyTes
     public void testBadPersistencyFile() throws Exception {
         super.testBadPersistencyFile();
     }
+
+    @AfterClass(alwaysRun = true)
+    public void teardown() throws Exception{
+        super.teardownAndDeleteBackupFile();
+    }
 }

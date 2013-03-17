@@ -30,13 +30,6 @@ public class Ec2PersistentManagerTest extends NewAbstractCloudTest {
 	}
 
 	@Override
-	protected void customizeCloud() throws Exception {
-		super.customizeCloud();
-		getService().getProperties().put("persistencePath", "/home/ec2-user/persistence");
-
-	}
-
-	@Override
 	@BeforeClass(alwaysRun = true)
 	protected void bootstrap() throws Exception {
 		super.bootstrap();

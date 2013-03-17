@@ -74,11 +74,28 @@ public abstract class AbstractMachinesSlaEnforcementTest extends AbstractFromXen
 	}
     
     protected void enforceNumberOfMachines(int numberOfMachines) throws InterruptedException {
-    	CloudifyMachineProvisioningConfig config = getMachineProvisioningConfig();
+        CloudifyMachineProvisioningConfig config = getMachineProvisioningConfig();
         config.setDedicatedManagementMachines(true);
-		updateMachineProvisioningConfig(config);
-		CapacityMachinesSlaPolicy sla = createSla(numberOfMachines);
-		SlaEnforcementTestUtils.enforceSlaAndWait(admin, endpoint, sla, machineProvisioning);
+        updateMachineProvisioningConfig(config);
+        CapacityMachinesSlaPolicy sla = createSla(numberOfMachines);
+        SlaEnforcementTestUtils.enforceSlaAndWait(admin, endpoint, sla, machineProvisioning);
+    }
+
+    protected void enforceNumberOfMachinesOneContainerPerMachine(int numberOfMachines) throws InterruptedException {
+        CloudifyMachineProvisioningConfig config = getMachineProvisioningConfig();
+        config.setDedicatedManagementMachines(true);
+        updateMachineProvisioningConfig(config);
+        CapacityMachinesSlaPolicy sla = createSlaOneContainerPerMachine(numberOfMachines);
+        SlaEnforcementTestUtils.enforceSlaAndWait(admin, endpoint, sla, machineProvisioning);
+    }
+
+    protected CapacityMachinesSlaPolicy createSlaOneContainerPerMachine(int numberOfMachines) {
+        long MACHINE_MEMORY_CAPACITY_MB = (long)getFirstManagementMachinePhysicalMemoryInMB();
+        long memoryCapacityPerMachineInMB = MACHINE_MEMORY_CAPACITY_MB - super.getMachineProvisioningConfig().getReservedMemoryCapacityPerMachineInMB();
+        memoryCapacityPerMachineInMB -= memoryCapacityPerMachineInMB % CONTAINER_MEGABYTES;
+        long memoryCapacityInMB = numberOfMachines * CONTAINER_MEGABYTES;
+
+        return createSlaOneContainerPerMachine(numberOfMachines,machineProvisioning, memoryCapacityInMB);
     }
 
     protected CapacityMachinesSlaPolicy createSla(int numberOfMachines) {
@@ -116,13 +133,26 @@ public abstract class AbstractMachinesSlaEnforcementTest extends AbstractFromXen
         sla.setMinimumNumberOfMachines(Math.min(numberOfMachines,2));
         sla.setMaximumNumberOfMachines(pu.getTotalNumberOfInstances());
         sla.setMaximumNumberOfContainersPerMachine(pu.getTotalNumberOfInstances());
-        sla.setContainerMemoryCapacityInMB(250);
+        sla.setContainerMemoryCapacityInMB(CONTAINER_MEGABYTES);
         sla.setMachineProvisioning(nonblockingAdapterFactory.create(machineProvisioning));
         sla.setMachineIsolation(new DedicatedMachineIsolation(pu.getName()));
         sla.setGridServiceAgentZones(new AnyZonesConfig());
         return sla;
     }
-    
+
+    protected CapacityMachinesSlaPolicy createSlaOneContainerPerMachine(int numberOfMachines, ElasticMachineProvisioning machineProvisioning, long memoryCapacityInMB) {
+        CapacityMachinesSlaPolicy sla = new CapacityMachinesSlaPolicy();
+        sla.setCapacityRequirements(new CapacityRequirements(new MemoryCapacityRequirement(memoryCapacityInMB)));
+        sla.setMinimumNumberOfMachines(Math.min(numberOfMachines,2));
+        sla.setMaximumNumberOfMachines(pu.getTotalNumberOfInstances());
+        sla.setMaximumNumberOfContainersPerMachine(1);
+        sla.setContainerMemoryCapacityInMB(CONTAINER_MEGABYTES);
+        sla.setMachineProvisioning(nonblockingAdapterFactory.create(machineProvisioning));
+        sla.setMachineIsolation(new DedicatedMachineIsolation(pu.getName()));
+        sla.setGridServiceAgentZones(new AnyZonesConfig());
+        return sla;
+    }
+
     protected static MachinesSlaEnforcementEndpoint createEndpoint(final ProcessingUnit pu,
             final MachinesSlaEnforcement machinesSlaEnforcement) {
         final AtomicReference<MachinesSlaEnforcementEndpoint> endpointRef = new AtomicReference<MachinesSlaEnforcementEndpoint>();

@@ -43,7 +43,6 @@ public abstract class AbstractCloudService implements CloudService {
     private static final int MAX_SCAN_RETRY = 3;
 
     private int numberOfManagementMachines = 1;
-    private URL[] restAdminUrls;
     private URL[] webUIUrls;
     private String machinePrefix;
     private String volumePrefix;
@@ -165,6 +164,7 @@ public abstract class AbstractCloudService implements CloudService {
     @Override
     public String[] getRestUrls() {
 
+        URL[] restAdminUrls = getBootstrapper().getRestAdminUrls();
         if (restAdminUrls == null) {
             return null;
         }
@@ -267,6 +267,7 @@ public abstract class AbstractCloudService implements CloudService {
 
         printPropertiesFile();
 
+        bootstrapper.setNumberOfManagementMachines(numberOfManagementMachines);
         if (bootstrapper.isNoWebServices()) {
             bootstrapper.bootstrap();
         } else {
@@ -274,14 +275,13 @@ public abstract class AbstractCloudService implements CloudService {
             if (bootstrapper.isBootstrapExpectedToFail()) {
                 return;
             }
-            this.restAdminUrls = extractRestAdminUrls(output, numberOfManagementMachines);
             this.webUIUrls = extractWebuiUrls(output, numberOfManagementMachines);
             assertBootstrapServicesAreAvailable();
 
             URL machinesURL;
 
             for (int i = 0; i < numberOfManagementMachines; i++) {
-                machinesURL = getMachinesUrl(restAdminUrls[i].toString());
+                machinesURL = getMachinesUrl(getBootstrapper().getRestAdminUrls()[i].toString());
                 LogUtils.log("Expecting " + numberOfManagementMachines + " machines");
                 if (bootstrapper.isSecured()) {
                     LogUtils.log("Found " + CloudTestUtils.getNumberOfMachines(machinesURL, bootstrapper.getUser(), bootstrapper.getPassword()) + " machines");
@@ -405,25 +405,6 @@ public abstract class AbstractCloudService implements CloudService {
         return new URL(stripSlash(url) + "/admin/machines");
     }
 
-    private URL[] extractRestAdminUrls(String output, int numberOfManagementMachines)
-            throws MalformedURLException {
-
-        URL[] restAdminUrls = new URL[numberOfManagementMachines];
-
-        Pattern restPattern = Pattern.compile(CloudTestUtils.REST_URL_REGEX);
-        Matcher restMatcher = restPattern.matcher(output);
-
-        // This is sort of hack.. currently we are outputting this over ssh and locally with different results
-        for (int i = 0; i < numberOfManagementMachines; i++) {
-            AssertUtils.assertTrue("Could not find actual rest url", restMatcher.find());
-            String rawRestAdminUrl = restMatcher.group(1);
-            restAdminUrls[i] = new URL(rawRestAdminUrl);
-        }
-
-        return restAdminUrls;
-
-    }
-
     private URL[] extractWebuiUrls(String cliOutput, int numberOfManagementMachines)
             throws MalformedURLException {
 
@@ -445,6 +426,7 @@ public abstract class AbstractCloudService implements CloudService {
     private void assertBootstrapServicesAreAvailable()
             throws MalformedURLException {
 
+        URL[] restAdminUrls = getBootstrapper().getRestAdminUrls();
         for (int i = 0; i < restAdminUrls.length; i++) {
             // The rest home page is a JSP page, which will fail to compile if there is no JDK installed. So use
             // testrest instead

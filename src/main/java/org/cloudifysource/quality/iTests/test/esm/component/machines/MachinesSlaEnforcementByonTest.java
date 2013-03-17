@@ -262,19 +262,16 @@ public class MachinesSlaEnforcementByonTest extends AbstractMachinesSlaEnforceme
     	pu = super.deploy(new SpaceDeployment(PU_NAME).partitioned(10,1).addZone(ZONE));
 		endpoint = createEndpoint(pu, machinesSlaEnforcement);
 
-		//Assert.assertEquals(admin.getGridServiceAgents().getAgents().length,1);
 		repetitiveAssertNumberOfGSAsAdded(1, AbstractFromXenToByonGSMTest.OPERATION_TIMEOUT);
 		repetitiveAssertNumberOfGSAsRemoved(0, AbstractFromXenToByonGSMTest.OPERATION_TIMEOUT);
 
-		enforceNumberOfMachines(2);
+        enforceNumberOfMachinesOneContainerPerMachine(2);
 
-		//Assert.assertEquals(admin.getGridServiceAgents().getAgents().length,3);
 		repetitiveAssertNumberOfGSAsAdded(3, AbstractFromXenToByonGSMTest.OPERATION_TIMEOUT);
 		repetitiveAssertNumberOfGSAsRemoved(0, AbstractFromXenToByonGSMTest.OPERATION_TIMEOUT);
 
-		enforceNumberOfMachines(3);
+        enforceNumberOfMachinesOneContainerPerMachine(3);
 
-		//Assert.assertEquals(admin.getGridServiceAgents().getAgents().length,4);
 		repetitiveAssertNumberOfGSAsAdded(4, AbstractFromXenToByonGSMTest.OPERATION_TIMEOUT);
 		repetitiveAssertNumberOfGSAsRemoved(0, AbstractFromXenToByonGSMTest.OPERATION_TIMEOUT);
 

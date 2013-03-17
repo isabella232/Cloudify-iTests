@@ -1,4 +1,4 @@
-package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.byon.failover;
+package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.byon.persistence;
 
 import org.apache.commons.io.FileUtils;
 import org.cloudifysource.quality.iTests.framework.tools.SGTestHelper;
@@ -11,6 +11,7 @@ import java.io.File;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+
 
 /**
  *
@@ -82,28 +83,21 @@ public abstract class AbstractByonManagementPersistencyTest extends AbstractByon
 
     }
 
-    public void afterTest() throws Exception {
-        super.teardown();
-        FileUtils.deleteQuietly(new File(backupFilePath));
-    }
-
-    public void shutdownManagement() throws Exception{
-
-        CloudBootstrapper bootstrapper = new CloudBootstrapper();
-        bootstrapper.setRestUrl(getRestUrl());
-
-        LogUtils.log("shutting down managers");
-        bootstrapper.shutdownManagers("default", backupFilePath, false);
-    }
-
+    /**
+     * 1. Shutdown management machines.
+     * 2. Bootstrap using the persistence file.
+     * 3. Retrieve attributes from space and compare with the ones before the shutdown.
+     * 4. Shutdown an instance agent and wait for recovery.
+     * @throws Exception
+     */
     public void testManagementPersistency() throws Exception{
 
         shutdownManagement();
 
-        CloudBootstrapper bootstrapper = new CloudBootstrapper();
+        CloudBootstrapper bootstrapper = getService().getBootstrapper();
         bootstrapper.useExistingFilePath(backupFilePath);
         bootstrapper.killJavaProcesses(false);
-        super.bootstrap(bootstrapper);
+        bootstrapper.bootstrap();
         bootstrapper.setRestUrl(getRestUrl());
 
         List<String> newAttributesList = new LinkedList<String>();
@@ -143,7 +137,9 @@ public abstract class AbstractByonManagementPersistencyTest extends AbstractByon
                 @Override
                 public boolean getCondition() {
 //                    return admin.getProcessingUnits().getProcessingUnit(APPLICATION_NAME + "." + TOMCAT_SERVICE_NAME + "_" + 1).getTotalNumberOfInstances() < 1;
-                    return admin.getProcessingUnits().getProcessingUnit(APPLICATION_NAME + "." + TOMCAT_SERVICE_NAME).getTotalNumberOfInstances() < 1;
+                    int totalNumberOfInstances = admin.getProcessingUnits().getProcessingUnit(APPLICATION_NAME + "." + TOMCAT_SERVICE_NAME).getTotalNumberOfInstances();
+                    LogUtils.log("Total number of instances after gsa shutdown : " + totalNumberOfInstances);
+                    return totalNumberOfInstances < 1;
                 }
             } , OPERATION_TIMEOUT*3);
 
@@ -171,7 +167,9 @@ public abstract class AbstractByonManagementPersistencyTest extends AbstractByon
             AssertUtils.repetitiveAssertTrue("service didn't break", new AssertUtils.RepetitiveConditionProvider() {
                 @Override
                 public boolean getCondition() {
-                    return admin.getProcessingUnits().getProcessingUnit(APPLICATION_NAME + "." + TOMCAT_SERVICE_NAME).getTotalNumberOfInstances() < numOfServiceInstances;
+                    int totalNumberOfInstances = admin.getProcessingUnits().getProcessingUnit(APPLICATION_NAME + "." + TOMCAT_SERVICE_NAME).getTotalNumberOfInstances();
+                    LogUtils.log("Total number of instances after gsa shutdown : " + totalNumberOfInstances);
+                    return totalNumberOfInstances < numOfServiceInstances;
                 }
             } , OPERATION_TIMEOUT*4);
 
@@ -188,42 +186,55 @@ public abstract class AbstractByonManagementPersistencyTest extends AbstractByon
         }
     }
 
-    public void testBadPersistencyFile() throws Exception {
+    /**
+     * 1. Shutdown management machines.
+     * 2. Corrupt the persistence file.
+     * 3. Bootstrap with bad file.
+     * @throws Exception
+     */
+    protected void testBadPersistencyFile() throws Exception {
 
         shutdownManagement();
 
         IOUtils.replaceTextInFile(backupFilePath, "instanceId", "instnceId");
 
-        CloudBootstrapper bootstrapper = new CloudBootstrapper();
+        CloudBootstrapper bootstrapper = getService().getBootstrapper();
         bootstrapper.useExistingFilePath(backupFilePath);
         bootstrapper.setBootstrapExpectedToFail(true);
-        super.bootstrap(bootstrapper);
+        bootstrapper.bootstrap();
 
         String output = bootstrapper.getLastActionOutput();
 
-        AssertUtils.assertTrue("bootstrap succeeded with a defective persistency file", !output.contains(BOOTSTRAP_SUCCEEDED_STRING));
+        AssertUtils.assertTrue("bootstrap succeeded with a defective persistence file", !output.contains(BOOTSTRAP_SUCCEEDED_STRING));
     }
 
+    protected void bootstrapAndInstallService() throws Exception {
 
-    public void testRepetitiveShutdownManagersBootstrap() throws Exception {
+        super.bootstrap();
+        super.installServiceAndWait(TOMCAT_SERVICE_PATH, TOMCAT_SERVICE_NAME, SERVICE_INSTALLATION_TIMEOUT_IN_MINUTES, numOfServiceInstances);
 
-        int repetitions = 4;
-        String output = "";
+        Bootstrapper bootstrapper = getService().getBootstrapper();
+        bootstrapper.setRestUrl(getRestUrl());
+        attributesList = new LinkedList<String>();
 
-        for(int i=0; i < repetitions; i++){
-
-            shutdownManagement();
-
-            CloudBootstrapper bootstrapper = new CloudBootstrapper();
-            bootstrapper.useExistingFilePath(backupFilePath);
-            bootstrapper.killJavaProcesses(false);
-            super.bootstrap(bootstrapper);
-
-            output = bootstrapper.getLastActionOutput();
-
-            AssertUtils.assertTrue("bootstrap failed", output.contains("Successfully created Cloudify Manager"));
-
+        for(int i=1; i <= numOfServiceInstances; i++){
+            String attributes = bootstrapper.listServiceInstanceAttributes(APPLICATION_NAME, TOMCAT_SERVICE_NAME, i, false);
+            attributesList.add(attributes.substring(attributes.indexOf("home")));
         }
+    }
+
+    protected void teardownAndDeleteBackupFile() throws Exception {
+        super.teardown();
+        FileUtils.deleteQuietly(new File(backupFilePath));
+    }
+
+    protected void shutdownManagement() throws Exception{
+
+        CloudBootstrapper bootstrapper = getService().getBootstrapper();
+        bootstrapper.setRestUrl(getRestUrl());
+
+        LogUtils.log("shutting down managers");
+        bootstrapper.shutdownManagers("default", backupFilePath, false);
     }
 
     public void testCorruptedPersistencyDirectory() throws Exception {

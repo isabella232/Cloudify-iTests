@@ -1,5 +1,6 @@
-package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.byon.failover;
+package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.byon.persistence;
 
+import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.byon.persistence.AbstractByonManagementPersistencyTest;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -12,7 +13,7 @@ public class CorruptedPersistencyDirectoryTest extends AbstractByonManagementPer
 
     @BeforeMethod(alwaysRun = true)
     public void bootstrapAndInit() throws Exception{
-        super.prepareTest();
+        super.bootstrapAndInstallService();
     }
 
     @AfterMethod(alwaysRun = true)

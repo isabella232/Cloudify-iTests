@@ -44,6 +44,7 @@ public class DynamicStorageAllocationTest extends AbstractDynamicStorageTest {
 
 		installer = new ServiceInstaller(getRestUrl(), SERVICE_NAME);
 		installer.recipePath(FOLDER_NAME);
+        installer.setDisableSelfHealing(true);
 		installer.install();
 		
 		// the install should have created and attached a volume with a name prefix of the class name. see customizeCloud below.

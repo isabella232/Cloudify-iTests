@@ -54,6 +54,7 @@ public class DynamicStorageAttachmentTest extends AbstractDynamicStorageTest {
 		
 		installer = new ServiceInstaller(getRestUrl(), SERVICE_NAME);
 		installer.recipePath(FOLDER_NAME);
+        installer.setDisableSelfHealing(true);
 		installer.install();
 		
 		String machinePrefix = null;

@@ -1,4 +1,4 @@
-package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.ec2;
+package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.ec2.persistence;
 
 import java.io.File;
 import java.io.IOException;

@@ -7,6 +7,7 @@ import org.apache.commons.io.FileUtils;
 import org.cloudifysource.quality.iTests.framework.testng.annotations.TestConfiguration;
 import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
 import org.cloudifysource.quality.iTests.framework.utils.ScriptUtils;
+import org.cloudifysource.quality.iTests.framework.utils.ServiceInstaller;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.AbstractLocalCloudTest;
 import org.eclipse.jgit.api.Git;
@@ -75,8 +76,8 @@ public class ExcludedServicesTest extends AbstractLocalCloudTest {
         doTest("jboss");
     }
 
-    //works
-    @Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, enabled = true)
+    //does not work on our linux boxes (File system loop detected - need to investigate)g
+    @Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, enabled = false)
     public void installMysql() throws Exception{
         doTest("mysql");
     }
@@ -153,6 +154,11 @@ public class ExcludedServicesTest extends AbstractLocalCloudTest {
     private void doTest(String recipeName) throws IOException, InterruptedException {
     	installServiceAndWait(localGitRepoPath + "/services/" + recipeName, recipeName, false);
     	uninstallService(recipeName);
+    }
+
+    private void doTest(final String recipeName, final int timeoutInMinutes) throws IOException, InterruptedException {
+        installServiceAndWait(localGitRepoPath + "/services/" + recipeName, recipeName, false, timeoutInMinutes);
+        uninstallService(recipeName);
     }
 
     @AfterClass(alwaysRun = true)

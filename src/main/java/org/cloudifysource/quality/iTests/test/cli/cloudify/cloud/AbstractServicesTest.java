@@ -33,7 +33,8 @@ public abstract class AbstractServicesTest extends NewAbstractCloudTest {
 	public void testService(String serviceFolderPath, String overrideServiceName) throws IOException, InterruptedException, RestException, PackagingException, DSLException{
 		testService(serviceFolderPath, overrideServiceName, 10);
 	}
-	public void testService(String serviceFolderPath, String overrideServiceName, final int timeoutMins) throws IOException, InterruptedException, RestException, PackagingException, DSLException{
+
+ 	public void testService(String serviceFolderPath, String overrideServiceName, final int timeoutMins) throws IOException, InterruptedException, RestException, PackagingException, DSLException{
 		LogUtils.log("Reading Service from file : " + serviceFolderPath);
 		Service service = ServiceReader.readService(new File(serviceFolderPath));
 		LogUtils.log("Succesfully read Service : " + service);

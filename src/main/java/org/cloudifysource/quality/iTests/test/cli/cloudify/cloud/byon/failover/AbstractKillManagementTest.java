@@ -160,6 +160,7 @@ public abstract class AbstractKillManagementTest extends AbstractByonCloudTest {
 				restartMachineAndWait(machine1);
 			}
 		}
+        AssertUtils.assertFail("Failed starting management on host " + machine1);
 
 	}
 

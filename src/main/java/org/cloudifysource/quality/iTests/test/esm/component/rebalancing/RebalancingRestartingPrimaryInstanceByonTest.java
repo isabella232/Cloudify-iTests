@@ -1,8 +1,6 @@
 package org.cloudifysource.quality.iTests.test.esm.component.rebalancing;
 
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-
+import com.gigaspaces.cluster.activeelection.SpaceMode;
 import org.openspaces.admin.AdminFactory;
 import org.openspaces.admin.gsa.GridServiceAgent;
 import org.openspaces.admin.gsc.GridServiceContainer;
@@ -11,15 +9,10 @@ import org.openspaces.admin.internal.InternalAdminFactory;
 import org.openspaces.admin.machine.Machine;
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.openspaces.grid.gsm.rebalancing.RebalancingSlaEnforcement;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import org.testng.annotations.*;
 
-import com.gigaspaces.cluster.activeelection.SpaceMode;
-
-import org.cloudifysource.quality.iTests.framework.utils.AdminUtils;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 public class RebalancingRestartingPrimaryInstanceByonTest extends AbstractRebalancingSlaEnforcementByonTest {
 
@@ -83,8 +76,8 @@ public class RebalancingRestartingPrimaryInstanceByonTest extends AbstractRebala
 
 		Machine[] machines = new Machine[] { agents[0].getMachine(), agents[1].getMachine() };
 
-		GridServiceContainer[] machine1Containers = AdminUtils.loadGSCs(agents[0], 1, ZONE);
-		GridServiceContainer[] machine2Containers = AdminUtils.loadGSCs(agents[1], 1, ZONE);
+		GridServiceContainer[] machine1Containers = loadGSCs(agents[0], 1);
+		GridServiceContainer[] machine2Containers = loadGSCs(agents[1], 1);
 
 		ProcessingUnit pu = RebalancingTestUtils.deployProcessingUnitOnTwoMachines(gridServiceManager, ZONE, 2,1);
 

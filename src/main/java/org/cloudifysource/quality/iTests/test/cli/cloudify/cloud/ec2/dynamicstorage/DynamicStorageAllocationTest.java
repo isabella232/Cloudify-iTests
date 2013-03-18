@@ -34,7 +34,7 @@ public class DynamicStorageAllocationTest extends AbstractDynamicStorageTest {
 	}
 	
 
-	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = false)
+	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
 	public void testUbuntu() throws Exception  {
 		super.testUbuntu();
 	}	
@@ -44,6 +44,7 @@ public class DynamicStorageAllocationTest extends AbstractDynamicStorageTest {
 
 		installer = new ServiceInstaller(getRestUrl(), SERVICE_NAME);
 		installer.recipePath(FOLDER_NAME);
+        installer.setDisableSelfHealing(true);
 		installer.install();
 		
 		// the install should have created and attached a volume with a name prefix of the class name. see customizeCloud below.
@@ -54,13 +55,7 @@ public class DynamicStorageAllocationTest extends AbstractDynamicStorageTest {
 		AssertUtils.assertEquals("the volume should have one attachements", 1, ourVolume.getAttachments().size());
 		
 		installer.uninstall();	
-		
-		final String volId = ourVolume.getId();
-		
-		// after uninstall the volume should be deleted
-		ourVolume = storageHelper.getVolumeById(ourVolume.getId());
-		AssertUtils.assertTrue("volume with id " + volId + " was not deleted after uninstall", ourVolume == null || ourVolume.getStatus().equals(Status.DELETING));
-	}	
+	}
 	
 	@AfterMethod
 	public void scanForLeakes() throws TimeoutException {

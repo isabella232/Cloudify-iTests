@@ -44,7 +44,7 @@ public class DynamicStorageAttachmentTest extends AbstractDynamicStorageTest {
 		super.testLinux();
 	}
 	
-	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = false)
+	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
 	public void testUbuntu() throws Exception  {
 		super.testUbuntu();
 	}
@@ -54,6 +54,7 @@ public class DynamicStorageAttachmentTest extends AbstractDynamicStorageTest {
 		
 		installer = new ServiceInstaller(getRestUrl(), SERVICE_NAME);
 		installer.recipePath(FOLDER_NAME);
+        installer.setDisableSelfHealing(true);
 		installer.install();
 		
 		String machinePrefix = null;

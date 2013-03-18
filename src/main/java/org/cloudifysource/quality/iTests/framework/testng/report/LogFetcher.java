@@ -67,12 +67,20 @@ public class LogFetcher {
     }
 
     private String getFileUrl(String path) {
-        System.out.println("####################################################");
-        System.out.println(path);
-        System.out.println("####################################################");
-
         int index = path.indexOf("build_");
-        return getUrl() + path.substring(index);
+        String ans;
+        if(index == -1){
+            index = path.indexOf("cloudify-itests-service");
+            String s = System.getProperty("file.separator");
+            ans = getUrl() + s + System.getProperty("iTests.buildNumber") + s + path.substring(index);
+        }
+        else{
+            ans = getUrl() + path.substring(index);
+        }
+        System.out.println("####################################################################");
+        System.out.println(ans);
+        System.out.println("####################################################################");
+        return ans;
     }
 
     private String getUrl() {

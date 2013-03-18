@@ -24,7 +24,7 @@ service {
 	lifecycle { 
 		
 		def volumeId;
-		def device = "/dev/sdc"
+		def device = "/dev/xvdc"
 		def path = "/teststorage"
 		def fs = "foo"
 	

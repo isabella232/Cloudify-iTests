@@ -67,6 +67,10 @@ public class LogFetcher {
     }
 
     private String getFileUrl(String path) {
+        System.out.println("####################################################");
+        System.out.println(path);
+        System.out.println("####################################################");
+
         int index = path.indexOf("build_");
         return getUrl() + path.substring(index);
     }

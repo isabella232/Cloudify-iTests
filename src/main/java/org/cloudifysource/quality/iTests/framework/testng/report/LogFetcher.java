@@ -76,9 +76,6 @@ public class LogFetcher {
         else{
             ans = getUrl() + path.substring(index);
         }
-        System.out.println("####################################################################");
-        System.out.println(ans);
-        System.out.println("####################################################################");
         return ans;
     }
 

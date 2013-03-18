@@ -51,7 +51,7 @@ public class IOUtils {
     }
 
     public static void replaceTextInFile(String filePath, Map<String, String> map) throws IOException {
-        LogUtils.log("replacing props is file : " + filePath);
+        LogUtils.log("replacing props in file : " + filePath);
         File file = new File(filePath);
         BufferedReader reader = new BufferedReader(new FileReader(file));
         String line = "", oldtext = "";

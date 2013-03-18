@@ -14,6 +14,8 @@ public class CloudBootstrapper extends Bootstrapper {
 	private String provider;
 	private boolean noWebServices = false;
 	private String useExistingFilePath = "";
+	private String cloudFolderPath = "";
+	private boolean useExisting = false;
 	private Map<String, Object> cloudOverrides;
 	
 	public CloudBootstrapper() {
@@ -60,7 +62,11 @@ public class CloudBootstrapper extends Bootstrapper {
         if(StringUtils.isNotBlank(useExistingFilePath)){
             builder.append("-use-existing-from-file " + useExistingFilePath);
         }
-		
+
+        if(useExisting){
+            builder.append("-use-existing");
+        }
+
 		return builder.toString();
 	}
 
@@ -91,5 +97,22 @@ public class CloudBootstrapper extends Bootstrapper {
     public CloudBootstrapper useExistingFilePath(String useExistingFilePath) {
         this.useExistingFilePath = useExistingFilePath;
         return this;
+    }
+
+    public boolean isUseExisting() {
+        return useExisting;
+    }
+
+    public CloudBootstrapper useExisting(boolean useExisting) {
+        this.useExisting = useExisting;
+        return this;
+    }
+
+    public String getCloudFolderPath() {
+        return cloudFolderPath;
+    }
+
+    public void setCloudFolderPath(String cloudFolderPath) {
+        this.cloudFolderPath = cloudFolderPath;
     }
 }

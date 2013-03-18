@@ -88,7 +88,7 @@ public class AbstractLocalCloudTest extends AbstractTestSupport {
 			cleanUpCloudifyLocalDir();
 
 			LocalCloudBootstrapper bootstrapper = new LocalCloudBootstrapper();
-			bootstrapper.verbose(true).timeoutInMinutes(10);
+			bootstrapper.verbose(true).timeoutInMinutes(5);
 			bootstrapper.bootstrap();
 
 			LogUtils.log("Creating admin");
@@ -593,7 +593,23 @@ public class AbstractLocalCloudTest extends AbstractTestSupport {
 		return serviceInstaller.install();
 	}
 
-	protected String listApplications(boolean expectedFail) {
+    protected String installServiceAndWait(
+            final String servicePath,
+            final String serviceName,
+            final boolean isExpectedToFail,
+            final int timeoutInMinutes) throws IOException, InterruptedException {
+
+        ServiceInstaller serviceInstaller = new ServiceInstaller(restUrl, serviceName);
+        serviceInstaller.recipePath(servicePath);
+        serviceInstaller.waitForFinish(true);
+        serviceInstaller.expectToFail(isExpectedToFail);
+        serviceInstaller.timeoutInMinutes(timeoutInMinutes);
+
+        return serviceInstaller.install();
+    }
+
+
+    protected String listApplications(boolean expectedFail) {
 		String command = connectCommand() + ";list-applications";
 		try {
 			if (expectedFail) {

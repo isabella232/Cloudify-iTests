@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeoutException;
 
 import org.apache.commons.io.FileUtils;
@@ -74,19 +75,25 @@ public abstract class AbstractDynamicStorageTest extends NewAbstractCloudTest {
 	
 	public void scanForLeakedVolumes(final String name) throws TimeoutException {
 		
-		Volume volumeByName = storageHelper.getVolumeByName(name);
-		if (volumeByName != null && !volumeByName.getStatus().equals(Status.DELETING)) {
-			LogUtils.log("Found a leaking volume " + volumeByName);
-			if (volumeByName.getAttachments() != null && !volumeByName.getAttachments().isEmpty()) {
-				LogUtils.log("Detaching attachment before deletion");
-				storageHelper.detachVolume(volumeByName.getId());
-				waitForVolumeStatus(volumeByName, Status.AVAILABLE);
-			}
-			LogUtils.log("Deleting volume " + volumeByName.getId());
-			storageHelper.deleteVolume(volumeByName.getId());
-			AssertUtils.assertFail("Found leaking volume after test ended :" + volumeByName);
-		}
-		
+		Set<Volume> volumesByName = storageHelper.getVolumesByName(name);
+
+        for (Volume volumeByName : volumesByName) {
+            if (volumeByName != null && !volumeByName.getStatus().equals(Status.DELETING)) {
+                LogUtils.log("Found a leaking volume " + volumeByName);
+                if (volumeByName.getAttachments() != null && !volumeByName.getAttachments().isEmpty()) {
+                    LogUtils.log("Detaching attachment before deletion");
+                    storageHelper.detachVolume(volumeByName.getId());
+                    waitForVolumeStatus(volumeByName, Status.AVAILABLE);
+                }
+                LogUtils.log("Deleting volume " + volumeByName.getId());
+                storageHelper.deleteVolume(volumeByName.getId());
+            }
+        }
+        if (!volumesByName.isEmpty()) {
+            AssertUtils.assertFail("Found leaking volumes after test ended :" + volumesByName);
+        }
+
+
 	}
 	
 	public void scanForLeakedVolumesCreatedViaTemplate(final String templateName) throws TimeoutException {

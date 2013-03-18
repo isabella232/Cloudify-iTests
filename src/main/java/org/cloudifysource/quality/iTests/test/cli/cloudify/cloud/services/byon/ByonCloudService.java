@@ -188,7 +188,7 @@ public class ByonCloudService extends AbstractCloudService {
 		}
 		
 		try {
-			LogUtils.log(SSHUtils.runCommand(this.getMachines()[0], AbstractTestSupport.OPERATION_TIMEOUT, command, "tgrid", "tgrid"));
+			LogUtils.log(SSHUtils.runCommand(this.getMachines()[0], AbstractTestSupport.OPERATION_TIMEOUT, command, BYON_CLOUD_USER, BYON_CLOUD_PASSWORD));
 		} catch (AssertionError e) {
 			LogUtils.log("Failed to clean files .cloudify folder Reason --> " + e.getMessage());
 		}
@@ -205,7 +205,7 @@ public class ByonCloudService extends AbstractCloudService {
 		String[] hosts = this.getMachines();			
 		for (String host : hosts) {
 			try {
-				LogUtils.log(SSHUtils.runCommand(host, AbstractTestSupport.OPERATION_TIMEOUT, command, "tgrid", "tgrid"));
+				LogUtils.log(SSHUtils.runCommand(host, AbstractTestSupport.OPERATION_TIMEOUT, command, BYON_CLOUD_USER, BYON_CLOUD_PASSWORD));
 			} catch (AssertionError e) {
 				LogUtils.log("Failed to clean files on host " + host + " .Reason --> " + e.getMessage());
 			}
@@ -222,7 +222,7 @@ public class ByonCloudService extends AbstractCloudService {
 		String[] hosts = this.getMachines();
 		for (String host : hosts) {
 			try {
-				LogUtils.log(SSHUtils.runCommand(host, AbstractTestSupport.OPERATION_TIMEOUT, command, "tgrid", "tgrid"));
+				LogUtils.log(SSHUtils.runCommand(host, AbstractTestSupport.OPERATION_TIMEOUT, command, BYON_CLOUD_USER, BYON_CLOUD_PASSWORD));
 			} catch (AssertionError e) {
 				LogUtils.log("Failed to clean files on host " + host + " .Reason --> " + e.getMessage());
 			}
@@ -239,7 +239,7 @@ public class ByonCloudService extends AbstractCloudService {
 		String[] hosts = this.getMachines();
 		for (String host : hosts) {
 			try {
-				LogUtils.log(SSHUtils.runCommand(host, AbstractTestSupport.OPERATION_TIMEOUT, command, "tgrid", "tgrid"));
+				LogUtils.log(SSHUtils.runCommand(host, AbstractTestSupport.OPERATION_TIMEOUT, command, BYON_CLOUD_USER, BYON_CLOUD_PASSWORD));
 			} catch (AssertionError e) {
 				LogUtils.log("Failed to kill java processes on host " + host + " .Reason --> " + e.getMessage());
 			}

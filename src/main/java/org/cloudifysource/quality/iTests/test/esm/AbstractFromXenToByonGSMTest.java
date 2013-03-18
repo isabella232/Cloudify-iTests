@@ -44,6 +44,8 @@ public class AbstractFromXenToByonGSMTest extends AbstractByonCloudTest {
 	private ElasticMachineProvisioningCloudifyAdapter elasticMachineProvisioningCloudifyAdapter;
 	private GridServiceContainersCounter gscCounter;
     private GridServiceAgentsCounter gsaCounter;
+    protected ElasticGridServiceAgentProvisioningProgressChangedEventListener agentEventListener;
+    protected  ElasticMachineProvisioningProgressChangedEventListener machineEventListener;
 	
     public void repetitiveAssertNumberOfGSAsHolds(int expectedAdded, int expectedRemoved, long timeoutMilliseconds) {
     	gsaCounter.repetitiveAssertNumberOfGSAsHolds(expectedAdded, expectedRemoved, timeoutMilliseconds);
@@ -132,6 +134,24 @@ public class AbstractFromXenToByonGSMTest extends AbstractByonCloudTest {
 	}
 
     public void beforeTestInit() {
+        agentEventListener = new ElasticGridServiceAgentProvisioningProgressChangedEventListener() {
+
+            @Override
+            public void elasticGridServiceAgentProvisioningProgressChanged(
+                    ElasticGridServiceAgentProvisioningProgressChangedEvent event) {
+                LogUtils.log(event.toString());
+            }
+        };
+
+         machineEventListener = new ElasticMachineProvisioningProgressChangedEventListener() {
+
+            @Override
+            public void elasticMachineProvisioningProgressChanged(
+                    ElasticMachineProvisioningProgressChangedEvent event) {
+                LogUtils.log(event.toString());
+            }
+        };
+
 		gscCounter = new GridServiceContainersCounter(admin); 
         gsaCounter = new GridServiceAgentsCounter(admin);
         machineEventsCounter = new MachinesEventsCounter(admin);
@@ -154,8 +174,7 @@ public class AbstractFromXenToByonGSMTest extends AbstractByonCloudTest {
     public void stopMachines() throws Exception {	
 		GridServiceAgent[] gsas = admin.getGridServiceAgents().getAgents();
 		if (admin.getGridServiceManagers().getManagers().length == 0){
-			LogUtils.log("NO GSMS!");
-			return;
+            AssertUtils.assertFail("NO GSMS!");
 		}
         GridServiceManager gridServiceManager = admin.getGridServiceManagers().getManagers()[0];
 		Machine managerMachine = gridServiceManager.getMachine();

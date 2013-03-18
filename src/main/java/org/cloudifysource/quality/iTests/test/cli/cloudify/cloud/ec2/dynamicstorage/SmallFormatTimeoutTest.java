@@ -32,7 +32,7 @@ public class SmallFormatTimeoutTest extends AbstractDynamicStorageTest {
 	}
 	
 
-	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = false)
+	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
 	public void testUbuntu() throws Exception  {
 		super.testUbuntu();
 	}

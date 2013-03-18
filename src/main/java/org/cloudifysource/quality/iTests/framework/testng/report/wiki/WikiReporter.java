@@ -77,22 +77,27 @@ public class WikiReporter {
     		System.out.println("%%%%%%%%%%%%%%%%%%% "+ s);
     	}
 
-    	//args
-    	String inputDirectory = args[0];
-    	String suiteType = args[1];
-    	String buildVersion = args[2];
-    	String majorVersion = args[3];
-    	String minorVersion = args[4];
-        String buildLogUrl = args[5];
+        Properties extProperties = new Properties();
 
-    	Properties extProperties = new Properties();
-    	extProperties.put("fileName", fileName);
-    	extProperties.put("inputDirectory", inputDirectory);
-    	extProperties.put("suiteType", suiteType);
-    	extProperties.put("buildVersion", buildVersion);
-    	extProperties.put("majorVersion", majorVersion);
-    	extProperties.put("minorVersion", minorVersion);
-        extProperties.put("buildLogUrl", buildLogUrl);
+        //args
+        String inputDirectory = args[0];
+        String suiteType = args[1];
+        String buildVersion = args[2];
+        String majorVersion = args[3];
+        String minorVersion = args[4];
+
+        String isCloudMode = System.getProperty("iTests.cloud.enabled");
+        if(isCloudMode != null && !Boolean.valueOf(isCloudMode)) {
+            String buildLogUrl = args[5];
+            extProperties.put("buildLogUrl", buildLogUrl);
+        }
+
+        extProperties.put("fileName", fileName);
+        extProperties.put("inputDirectory", inputDirectory);
+        extProperties.put("suiteType", suiteType);
+        extProperties.put("buildVersion", buildVersion);
+        extProperties.put("majorVersion", majorVersion);
+        extProperties.put("minorVersion", minorVersion);
 
 
     	TestsReportFileStream fileStream = new TestsReportFileStream();

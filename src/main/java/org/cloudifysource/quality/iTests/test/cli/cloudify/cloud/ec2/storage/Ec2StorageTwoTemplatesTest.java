@@ -1,13 +1,15 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.ec2.storage;
 
-import java.io.File;
-
+import org.apache.commons.io.FileUtils;
 import org.cloudifysource.quality.iTests.framework.tools.SGTestHelper;
+import org.cloudifysource.quality.iTests.framework.utils.IOUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.AbstractStorageTest;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.ec2.Ec2CloudService;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import java.io.File;
 
 /**
  * Author: nirb

@@ -7,6 +7,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.cloudifysource.dsl.internal.CloudifyConstants;
 import org.cloudifysource.dsl.rest.response.Response;
+import org.cloudifysource.dsl.rest.response.ServiceDetails;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;

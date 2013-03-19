@@ -5,7 +5,14 @@ import java.util.Map;
 
 import org.cloudifysource.dsl.internal.CloudifyMessageKeys;
 import org.cloudifysource.dsl.rest.request.SetApplicationAttributesRequest;
+import org.cloudifysource.dsl.rest.request.SetServiceAttributesRequest;
+import org.cloudifysource.dsl.rest.request.SetServiceInstanceAttributesRequest;
+import org.cloudifysource.dsl.rest.response.DeleteApplicationAttributeResponse;
+import org.cloudifysource.dsl.rest.response.DeleteServiceAttributeResponse;
 import org.cloudifysource.dsl.rest.response.DeleteServiceInstanceAttributeResponse;
+import org.cloudifysource.dsl.rest.response.GetApplicationAttributesResponse;
+import org.cloudifysource.dsl.rest.response.GetServiceAttributesResponse;
+import org.cloudifysource.dsl.rest.response.GetServiceInstanceAttributesResponse;
 import org.cloudifysource.dsl.rest.response.Response;
 import org.cloudifysource.quality.iTests.framework.utils.AssertUtils;
 import org.codehaus.jackson.type.TypeReference;

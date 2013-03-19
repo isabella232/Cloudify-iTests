@@ -16,7 +16,7 @@ public class Ec2CorruptedPersistencyDirectoryTest extends AbstractCloudManagemen
         super.bootstrap();
     }
 
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = false)
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
     public void testCorruptedPersistencyDirectory() throws Exception {
         super.testCorruptedPersistencyDirectory();
     }

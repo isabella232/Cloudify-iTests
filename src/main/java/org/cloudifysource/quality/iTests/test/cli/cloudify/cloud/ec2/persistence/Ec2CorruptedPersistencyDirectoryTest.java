@@ -13,7 +13,7 @@ public class Ec2CorruptedPersistencyDirectoryTest extends AbstractCloudManagemen
 
     @BeforeClass(alwaysRun = true)
     public void bootstrapAndInit() throws Exception{
-        super.bootstrapAndInstallService(false, false);
+        super.bootstrap();
     }
 
     @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = false)

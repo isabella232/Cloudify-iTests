@@ -11,7 +11,8 @@ public class Ec2PersistencyWithTwoManagersTest extends AbstractCloudManagementPe
 
     @BeforeClass(alwaysRun = true)
     public void bootstrapAndInit() throws Exception{
-        super.bootstrapAndInstallService();
+        super.bootstrap();
+        super.installTomcatService();
     }
 
     @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)

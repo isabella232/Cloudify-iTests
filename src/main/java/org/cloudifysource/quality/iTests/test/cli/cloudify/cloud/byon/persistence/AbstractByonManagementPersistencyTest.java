@@ -27,15 +27,15 @@ public abstract class AbstractByonManagementPersistencyTest extends AbstractByon
     private static final String TOMCAT_SERVICE_NAME = "tomcat";
     private static final String ACTIVEMQ_SERVICE_PATH = SGTestHelper.getBuildDir() + "/recipes/services/activemq";
     private static final String ACTIVEMQ_SERVICE_NAME = "activemq";
-    public static final String BOOTSTRAP_SUCCEEDED_STRING = "Successfully created Cloudify Manager";
-    public static final String APPLICATION_NAME = "default";
-    public static final String USER_NAME = "tgrid";
-    public static final String PASSWORD = "tgrid";
+    private static final String BOOTSTRAP_SUCCEEDED_STRING = "Successfully created Cloudify Manager";
+    private static final String APPLICATION_NAME = "default";
+    private static final String USER_NAME = "tgrid";
+    private static final String PASSWORD = "tgrid";
+
     protected String backupFilePath = SGTestHelper.getBuildDir() + "/backup-details.txt";
 
     private int numOfManagementMachines = 2;
     private int numOfServiceInstances = 3;
-    private int numOfServices = 2;
     private boolean multipleServices = false;
 
     private List<String> attributesList = new LinkedList<String>();

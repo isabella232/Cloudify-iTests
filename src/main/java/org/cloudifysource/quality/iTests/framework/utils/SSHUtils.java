@@ -363,12 +363,13 @@ public class SSHUtils {
     			task.setTimeout(timeoutMilliseconds);
     			task.execute();
     			String response = readFileAsString(output);
+                LogUtils.log(response);
     			return response;
     		} catch(Exception e) {
     			String failResponse = readFileAsString(output);
-    			Assert.fail("Failed running ssh command: '" + command + "' on " + ipAddress +": " + e.getMessage() +
-    					". SSH output was: " + failResponse, e);
-    		}
+    			Assert.fail("Failed running ssh command: '" + command + "' on " + ipAddress +": " + e.getMessage());
+                LogUtils.log(failResponse);
+            }
     	}catch (IOException e){
     		Assert.fail("Failed creating temp file.", e);
     	}

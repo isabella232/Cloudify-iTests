@@ -382,8 +382,8 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
     }
 
     protected File getPemFile() {
-        String cloudFolderPath = this.cloudService.getPathToCloudFolder();
-        ComputeTemplate managementTemplate = this.cloudService.getCloud().getCloudCompute().getTemplates().get(this.cloudService.getCloud().getConfiguration().getManagementMachineTemplate());
+        String cloudFolderPath = getService().getPathToCloudFolder();
+        ComputeTemplate managementTemplate = getService().getCloud().getCloudCompute().getTemplates().get(getService().getCloud().getConfiguration().getManagementMachineTemplate());
         String keyFileName = managementTemplate.getKeyFile();
         String localDirectory = managementTemplate.getLocalDirectory();
         String keyFilePath = cloudFolderPath + "/" + localDirectory + "/" + keyFileName;

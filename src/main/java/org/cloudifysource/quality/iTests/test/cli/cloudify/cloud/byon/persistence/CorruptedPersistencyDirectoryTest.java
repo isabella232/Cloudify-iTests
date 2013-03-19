@@ -1,6 +1,7 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.byon.persistence;
 
 import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -10,9 +11,9 @@ import org.testng.annotations.Test;
  */
 public class CorruptedPersistencyDirectoryTest extends AbstractByonManagementPersistencyTest {
 
-    @BeforeMethod(alwaysRun = true)
+    @BeforeClass(alwaysRun = true)
     public void bootstrapAndInit() throws Exception{
-        super.bootstrapAndInstallService();
+        super.bootstrap();
     }
 
     @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
@@ -22,6 +23,6 @@ public class CorruptedPersistencyDirectoryTest extends AbstractByonManagementPer
 
     @AfterClass(alwaysRun = true)
     public void teardown() throws Exception{
-        super.teardownAndDeleteBackupFile();
+        super.teardown();
     }
 }

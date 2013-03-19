@@ -14,8 +14,8 @@ public class Ec2PersistenceWithMultipleServicesTest extends AbstractCloudManagem
     @BeforeClass(alwaysRun = true)
     public void bootstrapAndInit() throws Exception{
         super.bootstrap();
-        super.installTomcatService();
-        super.installActiveMqService();
+        super.installTomcatService(1, "tomcat-1");
+        super.installTomcatService(1, "tomcat-2");
     }
 
     @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)

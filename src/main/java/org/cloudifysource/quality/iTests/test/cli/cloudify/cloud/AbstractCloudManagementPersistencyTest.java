@@ -1,12 +1,14 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud;
 
 import com.j_spaces.kernel.PlatformVersion;
-import org.cloudifysource.quality.iTests.framework.tools.SGTestHelper;
+import org.apache.commons.io.FileUtils;
 import org.cloudifysource.quality.iTests.framework.utils.*;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
 import org.cloudifysource.restclient.GSRestClient;
 import org.cloudifysource.restclient.RestException;
 import org.jclouds.compute.domain.NodeMetadata;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
@@ -18,37 +20,66 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 public abstract class AbstractCloudManagementPersistencyTest extends NewAbstractCloudTest{
 
+    private static final String PATH_TO_SERVICE = CommandTestUtils.getPath("/src/main/resources/apps/USM/usm/custom-tomcat");;
+
     private static final String BOOTSTRAP_SUCCEEDED_STRING = "Successfully created Cloudify Manager";
 
-    private static final String TOMCAT_SERVICE_PATH = SGTestHelper.getBuildDir() + "/recipes/services/tomcat";
-    private static final String TOMCAT_SERVICE_NAME = "tomcat";
     private static final String APPLICATION_NAME = "default";
     private static final String EC2_USER = "ec2-user";
 
-    private static final String ACTIVEMQ_SERVICE_PATH = SGTestHelper.getBuildDir() + "/recipes/services/activemq";
-    private static final String ACTIVEMQ_SERVICE_NAME = "activemq";
-
-
     private int numOfManagementMachines = 2;
 
-    private List<String> installedServices = new ArrayList<String>();
+    private Map<String, Integer> installedServices = new HashMap<String, Integer>();
 
     private List<String> attributesList = new LinkedList<String>();
 
-    protected void installTomcatService() throws IOException, InterruptedException {
-        super.installServiceAndWait(TOMCAT_SERVICE_PATH, TOMCAT_SERVICE_NAME, SERVICE_INSTALLATION_TIMEOUT_IN_MINUTES);
-        installedServices.add(TOMCAT_SERVICE_NAME);
-        CloudBootstrapper bootstrapper = getService().getBootstrapper();
-        String attributes = bootstrapper.listServiceInstanceAttributes(APPLICATION_NAME, ACTIVEMQ_SERVICE_NAME, 1, false);
-        attributesList.add(attributes.substring(attributes.indexOf("home")));
+    protected void installTomcatService(final int numberOfInstances, final String overrideName) throws IOException, InterruptedException {
+
+        copyCustomTomcatToBuild();
+
+        try {
+
+            // replace number of instances
+            File customTomcatGroovy = new File(ScriptUtils.getBuildRecipesServicesPath() + "/custom-tomcat", "tomcat-service.groovy");
+            IOUtils.replaceTextInFile(customTomcatGroovy.getAbsolutePath(), "ENTER_NUMBER_OF_INSTANCES", "" + numberOfInstances + "");
+
+            // TODO - Once CLOUDIFY-1591 is fixed, use -name option to override a service installation name.
+            // replace name if needed
+            String actualServiceName;
+            if (overrideName != null) {
+                actualServiceName = overrideName;
+            } else {
+                actualServiceName = "tomcat";
+            }
+            IOUtils.replaceTextInFile(customTomcatGroovy.getAbsolutePath(), "ENTER_NAME", actualServiceName);
+
+            // install the custom tomcat
+            ServiceInstaller tomcatInstaller = new ServiceInstaller(getRestUrl(), actualServiceName);
+            tomcatInstaller.recipePath("custom-tomcat");
+            tomcatInstaller.timeoutInMinutes(5 * numberOfInstances);
+            tomcatInstaller.install();
+
+            installedServices.put(actualServiceName, numberOfInstances);
+            CloudBootstrapper bootstrapper = getService().getBootstrapper();
+            String attributes = bootstrapper.listServiceInstanceAttributes(APPLICATION_NAME, actualServiceName, 1, false);
+            attributesList.add(attributes.substring(attributes.indexOf("home")));
+
+        } finally  {
+            deleteCustomTomcatFromBuild();
+        }
+
     }
 
-    protected void installActiveMqService() throws IOException, InterruptedException {
-        super.installServiceAndWait(ACTIVEMQ_SERVICE_PATH, ACTIVEMQ_SERVICE_NAME, SERVICE_INSTALLATION_TIMEOUT_IN_MINUTES);
-        installedServices.add(ACTIVEMQ_SERVICE_NAME);
-        CloudBootstrapper bootstrapper = getService().getBootstrapper();
-        String attributes = bootstrapper.listServiceInstanceAttributes(APPLICATION_NAME, TOMCAT_SERVICE_NAME, 1, false);
-        attributesList.add(attributes.substring(attributes.indexOf("home")));
+    private void copyCustomTomcatToBuild() throws IOException {
+        deleteCustomTomcatFromBuild();;
+        FileUtils.copyDirectoryToDirectory(new File(PATH_TO_SERVICE), new File(ScriptUtils.getBuildRecipesServicesPath()));
+    }
+
+    private void deleteCustomTomcatFromBuild() throws IOException {
+        File customTomcat = new File(ScriptUtils.getBuildRecipesServicesPath(), "custom-tomcat");
+        if (customTomcat.exists()) {
+            FileUtils.deleteDirectory(customTomcat);
+        }
     }
 
 
@@ -72,7 +103,7 @@ public abstract class AbstractCloudManagementPersistencyTest extends NewAbstract
 
         List<String> newAttributesList = new LinkedList<String>();
 
-        for (String serviceName : installedServices) {
+        for (String serviceName : installedServices.keySet()) {
             String attributes = bootstrapper.listServiceInstanceAttributes(APPLICATION_NAME, serviceName, 1, false);
             newAttributesList.add(attributes.substring(attributes.indexOf("home")));
         }
@@ -109,12 +140,12 @@ public abstract class AbstractCloudManagementPersistencyTest extends NewAbstract
 
                     // we don't know which service the agent we shutdown belonged to.
                     // query all installed services to find out.
-                    for (String serviceName : installedServices) {
+                    for (String serviceName : installedServices.keySet()) {
                         String serviceRestUrl = "ProcessingUnits/Names/" + APPLICATION_NAME + "." + serviceName;
                         int numberOfInstances = Integer.parseInt((String) client.getAdminData(serviceRestUrl).get("NumberOfInstances"));
                         LogUtils.log("Number of " + serviceName + " instances is " + numberOfInstances);
-                        if (numberOfInstances < 1) {
-                            LogUtils.log(serviceName + " service broke.");
+                        if (numberOfInstances < installedServices.get(serviceName)) {
+                            LogUtils.log(serviceName + " service broke. it now has only " + numberOfInstances + " instances");
                             brokenService.set(serviceName);
                         }
                     }
@@ -135,6 +166,12 @@ public abstract class AbstractCloudManagementPersistencyTest extends NewAbstract
                 try {
                     int numOfInst = Integer.parseInt((String) client.getAdminData(brokenServiceRestUrl).get("NumberOfInstances"));
                     return (1 == numOfInst);
+
+/* CLOUDIFY-
+                    int numOfPlannedInstances = Integer.parseInt((String) client.getAdminData(brokenServiceRestUrl).get("PlannedNumberOfInstances"));
+                    return (1 == numOfPlannedInstances);
+*/
+
                 } catch (RestException e) {
                     throw new RuntimeException("caught a RestException", e);
                 }

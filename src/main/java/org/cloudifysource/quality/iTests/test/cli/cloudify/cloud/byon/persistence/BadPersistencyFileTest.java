@@ -10,7 +10,8 @@ public class BadPersistencyFileTest extends AbstractByonManagementPersistencyTes
 
     @BeforeClass(alwaysRun = true)
     public void bootstrapAndInit() throws Exception{
-        super.bootstrapAndInstallService();
+        super.bootstrap();
+        super.installTomcatService(1, null);
     }
 
     @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
@@ -20,6 +21,6 @@ public class BadPersistencyFileTest extends AbstractByonManagementPersistencyTes
 
     @AfterClass(alwaysRun = true)
     public void teardown() throws Exception{
-        super.teardownAndDeleteBackupFile();
+        super.teardown();
     }
 }

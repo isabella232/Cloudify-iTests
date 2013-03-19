@@ -99,7 +99,14 @@ public class Ec2PersistentManagerTest extends NewAbstractCloudTest {
 
 	}
 
-	private String createServerIpAddress() {
+    @Override
+    protected void customizeCloud() throws Exception {
+        super.customizeCloud();
+        getService().getProperties().put("persistencePath", "/home/ec2-user/persistence");
+    }
+
+
+    private String createServerIpAddress() {
 		String restUrl  = this.cloudService.getRestUrls()[0];
 		URL url;
 		try {

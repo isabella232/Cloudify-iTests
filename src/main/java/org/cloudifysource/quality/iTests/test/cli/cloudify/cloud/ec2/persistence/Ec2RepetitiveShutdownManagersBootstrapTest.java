@@ -12,7 +12,7 @@ public class Ec2RepetitiveShutdownManagersBootstrapTest extends AbstractCloudMan
     @BeforeClass(alwaysRun = true)
     public void bootstrapAndInit() throws Exception{
         super.bootstrap();
-        super.installTomcatService();
+        super.installTomcatService(1, null);
     }
 
     @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)

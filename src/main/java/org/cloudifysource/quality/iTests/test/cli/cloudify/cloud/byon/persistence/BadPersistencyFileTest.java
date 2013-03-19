@@ -18,7 +18,10 @@ public class BadPersistencyFileTest extends AbstractByonManagementPersistencyTes
         super.testBadPersistencyFile();
     }
 
-    /*
-    No need to teardown, we are not expecting any agents to be alive after the test finishes.
-     */
+    @AfterClass(alwaysRun = true)
+    public void closeAdmin() {
+        // no need to teardown. if the test passed, no agents are up. if the test failed, the next one will
+        // de a cleanup anyway.
+        super.closeAdmin();
+    }
 }

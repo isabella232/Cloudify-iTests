@@ -123,18 +123,15 @@ public abstract class AbstractByonManagementPersistencyTest extends AbstractByon
 
         AssertUtils.assertTrue("the service attributes post management restart are not the same as the attributes pre restart", differenceAttributesList.isEmpty());
 
-        ProcessingUnit processingUnit = admin.getProcessingUnits().waitFor(APPLICATION_NAME + "." + TOMCAT_SERVICE_NAME);
-        processingUnit.waitFor(numOfServiceInstances);
-        GridServiceAgent gridServiceAgent = processingUnit.getInstances()[0].getGridServiceContainer().getGridServiceAgent();
-        LogUtils.log("Shutting down GSA on host " + gridServiceAgent.getMachine().getHostAddress());
-        gridServiceAgent.shutdown();
         if(multipleServices){
 
             LogUtils.log("shutting down one of the services");
 //            ProcessingUnit processingUnit = admin.getProcessingUnits().waitFor(APPLICATION_NAME + "." + TOMCAT_SERVICE_NAME + "_" + 1);
             ProcessingUnit processingUnit = admin.getProcessingUnits().waitFor(APPLICATION_NAME + "." + TOMCAT_SERVICE_NAME);
             processingUnit.waitFor(1);
-            processingUnit.getInstances()[0].getGridServiceContainer().getGridServiceAgent().shutdown();
+            GridServiceAgent gridServiceAgent = processingUnit.getInstances()[0].getGridServiceContainer().getGridServiceAgent();
+            LogUtils.log("Shutting down GSA on host " + gridServiceAgent.getMachine().getHostAddress());
+            gridServiceAgent.shutdown();
 
             LogUtils.log("waiting for service to restart on a new machine");
 
@@ -165,7 +162,9 @@ public abstract class AbstractByonManagementPersistencyTest extends AbstractByon
             LogUtils.log("shutting down one of the service's GSAs");
             ProcessingUnit processingUnit = admin.getProcessingUnits().waitFor(APPLICATION_NAME + "." + TOMCAT_SERVICE_NAME);
             processingUnit.waitFor(numOfServiceInstances);
-            processingUnit.getInstances()[0].getGridServiceContainer().getGridServiceAgent().shutdown();
+            GridServiceAgent gridServiceAgent = processingUnit.getInstances()[0].getGridServiceContainer().getGridServiceAgent();
+            LogUtils.log("Shutting down GSA on host " + gridServiceAgent.getMachine().getHostAddress());
+            gridServiceAgent.shutdown();
 
             LogUtils.log("waiting for service to restart on a new machine");
 

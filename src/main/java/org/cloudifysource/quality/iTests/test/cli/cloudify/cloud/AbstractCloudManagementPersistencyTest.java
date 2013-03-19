@@ -63,7 +63,8 @@ public abstract class AbstractCloudManagementPersistencyTest extends NewAbstract
 
         shutdownManagement();
 
-        CloudBootstrapper bootstrapper = getService().getBootstrapper();
+        CloudBootstrapper bootstrapper = new CloudBootstrapper();
+        bootstrapper.provider(getService().getBootstrapper().getProvider());
         bootstrapper.scanForLeakedNodes(false);
         bootstrapper.useExisting(true);
         bootstrapper.bootstrap();
@@ -159,7 +160,8 @@ public abstract class AbstractCloudManagementPersistencyTest extends NewAbstract
 
             shutdownManagement();
 
-            CloudBootstrapper bootstrapper = getService().getBootstrapper();
+            CloudBootstrapper bootstrapper = new CloudBootstrapper();
+            bootstrapper.provider(getService().getBootstrapper().getProvider());
             bootstrapper.scanForLeakedNodes(false);
             bootstrapper.useExisting(true);
             bootstrapper.bootstrap();
@@ -213,9 +215,10 @@ public abstract class AbstractCloudManagementPersistencyTest extends NewAbstract
         shutdownManagement();
 
         CloudBootstrapper bootstrapper = new CloudBootstrapper();
+        bootstrapper.provider(getService().getBootstrapper().getProvider());
         bootstrapper.setBootstrapExpectedToFail(true);
         bootstrapper.timeoutInMinutes(15);
-        super.bootstrap(bootstrapper);
+        bootstrapper.bootstrap();
 
         String output = bootstrapper.getLastActionOutput();
         AssertUtils.assertTrue("bootstrap succeeded with a corrupted persistency folder", !output.contains(BOOTSTRAP_SUCCEEDED_STRING));

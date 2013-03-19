@@ -11,7 +11,6 @@ public class BadPersistencyFileTest extends AbstractByonManagementPersistencyTes
     @BeforeClass(alwaysRun = true)
     public void bootstrapAndInit() throws Exception{
         super.bootstrap();
-        super.installTomcatService(3, null);
     }
 
     @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
@@ -19,8 +18,7 @@ public class BadPersistencyFileTest extends AbstractByonManagementPersistencyTes
         super.testBadPersistencyFile();
     }
 
-    @AfterClass(alwaysRun = true)
-    public void teardown() throws Exception{
-        super.teardown();
-    }
+    /*
+    No need to teardown, we are not expecting any agents to be alive after the test finishes.
+     */
 }

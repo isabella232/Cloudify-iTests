@@ -149,7 +149,7 @@ public abstract class AbstractCloudManagementPersistencyTest extends NewAbstract
                             brokenService.set(serviceName);
                         }
                     }
-                    return (brokenService != null);
+                    return (brokenService.get() != null);
                 } catch (RestException e) {
                     throw new RuntimeException(e);
                 }

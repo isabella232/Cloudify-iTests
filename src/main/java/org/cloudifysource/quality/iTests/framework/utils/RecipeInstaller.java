@@ -134,7 +134,7 @@ public abstract class RecipeInstaller {
 		String recipeName = null;
 		if (this instanceof ServiceInstaller) {
 			installCommand = "install-service";
-			recipeName = ((ServiceInstaller)this).getServiceName();
+			recipeName = null; // TODO change to ((ServiceInstaller)this).getServiceName(). pending CLOUDIFY-1591
 			excpectedResult = "Service \"" + recipeName + "\" successfully installed";
 		} else if (this instanceof ApplicationInstaller) {
 			installCommand = "install-application";

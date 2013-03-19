@@ -1,5 +1,7 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.ec2;
 
+import java.io.File;
+
 import org.cloudifysource.quality.iTests.framework.testng.annotations.TestConfiguration;
 import org.cloudifysource.quality.iTests.framework.utils.ScriptUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.AbstractServicesTest;
@@ -7,8 +9,6 @@ import org.eclipse.jgit.api.Git;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-
-import java.io.File;
 
 
 public class Ec2GitServicesTest extends AbstractServicesTest {

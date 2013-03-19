@@ -1,18 +1,20 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.byon.persistence;
 
-import org.apache.commons.io.FileUtils;
-import org.cloudifysource.quality.iTests.framework.tools.SGTestHelper;
-import org.cloudifysource.quality.iTests.framework.utils.*;
-import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.byon.AbstractByonCloudTest;
-import org.openspaces.admin.gsm.GridServiceManager;
-import org.openspaces.admin.gsa.GridServiceAgent;
-import org.openspaces.admin.pu.ProcessingUnit;
-
 import java.io.File;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.io.FileUtils;
+import org.cloudifysource.quality.iTests.framework.tools.SGTestHelper;
+import org.cloudifysource.quality.iTests.framework.utils.AssertUtils;
+import org.cloudifysource.quality.iTests.framework.utils.Bootstrapper;
+import org.cloudifysource.quality.iTests.framework.utils.CloudBootstrapper;
+import org.cloudifysource.quality.iTests.framework.utils.IOUtils;
+import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.byon.AbstractByonCloudTest;
+import org.openspaces.admin.gsa.GridServiceAgent;
+import org.openspaces.admin.pu.ProcessingUnit;
 
 /**
  *
@@ -23,65 +25,17 @@ import java.util.List;
 
 public abstract class AbstractByonManagementPersistencyTest extends AbstractByonCloudTest{
 
-    private static final String TOMCAT_SERVICE_PATH = SGTestHelper.getBuildDir() + "/recipes/services/tomcat";
-    private static final String TOMCAT_SERVICE_NAME = "tomcat";
-    private static final String ACTIVEMQ_SERVICE_PATH = SGTestHelper.getBuildDir() + "/recipes/services/activemq";
-    private static final String ACTIVEMQ_SERVICE_NAME = "activemq";
     public static final String BOOTSTRAP_SUCCEEDED_STRING = "Successfully created Cloudify Manager";
     public static final String APPLICATION_NAME = "default";
-    public static final String USER_NAME = "tgrid";
-    public static final String PASSWORD = "tgrid";
-    protected String backupFilePath = SGTestHelper.getBuildDir() + "/backup-details.txt";
+
+    protected String backupFilePath = SGTestHelper.getBuildDir() + "/backup-details" + System.currentTimeMillis() + ".txt";
+
+    private static final String TOMCAT_SERVICE_PATH = SGTestHelper.getBuildDir() + "/recipes/services/tomcat";
+    private static final String TOMCAT_SERVICE_NAME = "tomcat";
 
     private int numOfManagementMachines = 2;
-    private int numOfServiceInstances = 3;
-    private int numOfServices = 2;
-    private boolean multipleServices = false;
-
+    private int numOfServiceInstances = 2;
     private List<String> attributesList = new LinkedList<String>();
-
-    public void bootstrapAndInstallService() throws Exception {
-        bootstrapAndInstallService(false);
-    }
-
-    protected void bootstrapAndInstallService(boolean multipleServices) throws Exception {
-
-        this.multipleServices = multipleServices;
-        super.bootstrap();
-        if(multipleServices){
-            //TODO waiting for CLOUDIFY-1591
-//            for(int i=1; i <= numOfServices; i++){
-//                super.installServiceAndWait(TOMCAT_SERVICE_PATH, TOMCAT_SERVICE_NAME + "_" + i);
-//            }
-            super.installServiceAndWait(ACTIVEMQ_SERVICE_PATH, ACTIVEMQ_SERVICE_NAME, SERVICE_INSTALLATION_TIMEOUT_IN_MINUTES);
-            super.installServiceAndWait(TOMCAT_SERVICE_PATH, TOMCAT_SERVICE_NAME, SERVICE_INSTALLATION_TIMEOUT_IN_MINUTES);
-
-        }
-        else{
-            super.installServiceAndWait(TOMCAT_SERVICE_PATH, TOMCAT_SERVICE_NAME, SERVICE_INSTALLATION_TIMEOUT_IN_MINUTES, numOfServiceInstances);
-        }
-
-        Bootstrapper bootstrapper = new CloudBootstrapper();
-        bootstrapper.setRestUrl(getRestUrl());
-        attributesList = new LinkedList<String>();
-
-        if(this.multipleServices){
-//            for(int i=1; i <= numOfServices; i++){
-//                String attributes = bootstrapper.listServiceInstanceAttributes(APPLICATION_NAME, TOMCAT_SERVICE_NAME + "_" + i, 1, false);
-//                attributesList.add(attributes.substring(attributes.indexOf("home")));
-//            }
-            String attributes = bootstrapper.listServiceInstanceAttributes(APPLICATION_NAME, TOMCAT_SERVICE_NAME, 1, false);
-            attributesList.add(attributes.substring(attributes.indexOf("home")));
-
-        }
-
-        else{
-            for(int i=1; i <= numOfServiceInstances; i++){
-                String attributes = bootstrapper.listServiceInstanceAttributes(APPLICATION_NAME, TOMCAT_SERVICE_NAME, i, false);
-                attributesList.add(attributes.substring(attributes.indexOf("home")));
-            }
-        }
-    }
 
     /**
      * 1. Shutdown management machines.
@@ -102,20 +56,9 @@ public abstract class AbstractByonManagementPersistencyTest extends AbstractByon
 
         List<String> newAttributesList = new LinkedList<String>();
 
-        if(this.multipleServices){
-//            for(int i=1; i <= numOfServices; i++){
-//                String attributes = bootstrapper.listServiceInstanceAttributes(APPLICATION_NAME, TOMCAT_SERVICE_NAME + "_" + i, 1, false);
-//                newAttributesList.add(attributes.substring(attributes.indexOf("home")));
-//            }
-            String attributes = bootstrapper.listServiceInstanceAttributes(APPLICATION_NAME, TOMCAT_SERVICE_NAME, 1, false);
+        for(int i=1; i <= numOfServiceInstances; i++){
+            String attributes = bootstrapper.listServiceInstanceAttributes(APPLICATION_NAME, TOMCAT_SERVICE_NAME, i, false);
             newAttributesList.add(attributes.substring(attributes.indexOf("home")));
-
-        }
-        else{
-            for(int i=1; i <= numOfServiceInstances; i++){
-                String attributes = bootstrapper.listServiceInstanceAttributes(APPLICATION_NAME, TOMCAT_SERVICE_NAME, i, false);
-                newAttributesList.add(attributes.substring(attributes.indexOf("home")));
-            }
         }
 
         List<String> differenceAttributesList = new LinkedList<String>(attributesList);
@@ -123,71 +66,24 @@ public abstract class AbstractByonManagementPersistencyTest extends AbstractByon
 
         AssertUtils.assertTrue("the service attributes post management restart are not the same as the attributes pre restart", differenceAttributesList.isEmpty());
 
-        if(multipleServices){
+        ProcessingUnit processingUnit = admin.getProcessingUnits().waitFor(APPLICATION_NAME + "." + TOMCAT_SERVICE_NAME);
+        processingUnit.waitFor(numOfServiceInstances);
+        GridServiceAgent gridServiceAgent = processingUnit.getInstances()[0].getGridServiceContainer().getGridServiceAgent();
+        LogUtils.log("Shutting down GSA on host " + gridServiceAgent.getMachine().getHostAddress());
+        gridServiceAgent.shutdown();
 
-            LogUtils.log("shutting down one of the services");
-//            ProcessingUnit processingUnit = admin.getProcessingUnits().waitFor(APPLICATION_NAME + "." + TOMCAT_SERVICE_NAME + "_" + 1);
-            ProcessingUnit processingUnit = admin.getProcessingUnits().waitFor(APPLICATION_NAME + "." + TOMCAT_SERVICE_NAME);
-            processingUnit.waitFor(1);
-            GridServiceAgent gridServiceAgent = processingUnit.getInstances()[0].getGridServiceContainer().getGridServiceAgent();
-            LogUtils.log("Shutting down GSA on host " + gridServiceAgent.getMachine().getHostAddress());
-            gridServiceAgent.shutdown();
+        AssertUtils.repetitiveAssertTrue("service didn't break", new AssertUtils.RepetitiveConditionProvider() {
+            @Override
+            public boolean getCondition() {
+                int totalNumberOfInstances = admin.getProcessingUnits().getProcessingUnit(APPLICATION_NAME + "." + TOMCAT_SERVICE_NAME).getTotalNumberOfInstances();
+                LogUtils.log("Total number of instances after gsa shutdown : " + totalNumberOfInstances);
+                return totalNumberOfInstances < numOfServiceInstances;
+            }
+        } , OPERATION_TIMEOUT*4);
 
-            LogUtils.log("waiting for service to restart on a new machine");
-
-            AssertUtils.repetitiveAssertTrue("service didn't break", new AssertUtils.RepetitiveConditionProvider() {
-                @Override
-                public boolean getCondition() {
-//                    return admin.getProcessingUnits().getProcessingUnit(APPLICATION_NAME + "." + TOMCAT_SERVICE_NAME + "_" + 1).getTotalNumberOfInstances() < 1;
-                    int totalNumberOfInstances = admin.getProcessingUnits().getProcessingUnit(APPLICATION_NAME + "." + TOMCAT_SERVICE_NAME).getTotalNumberOfInstances();
-                    LogUtils.log("Total number of instances after gsa shutdown : " + totalNumberOfInstances);
-                    return totalNumberOfInstances < 1;
-                }
-            } , OPERATION_TIMEOUT*3);
-
-            AssertUtils.repetitiveAssertTrue("service didn't recover", new AssertUtils.RepetitiveConditionProvider() {
-                @Override
-                public boolean getCondition() {
-//                    ProcessingUnit processingUnit = admin.getProcessingUnits().getProcessingUnit(APPLICATION_NAME + "." + TOMCAT_SERVICE_NAME + "_" + 1);
-                    ProcessingUnit processingUnit = admin.getProcessingUnits().getProcessingUnit(APPLICATION_NAME + "." + TOMCAT_SERVICE_NAME);
-                    LogUtils.log("total instances after break: " + processingUnit.getTotalNumberOfInstances());
-                    LogUtils.log("planned instances after break: " + processingUnit.getPlannedNumberOfInstances());
-                    return processingUnit.getTotalNumberOfInstances() == 1 &&
-                            processingUnit.getPlannedNumberOfInstances() == 1;
-                }
-            } , OPERATION_TIMEOUT*3);
-        }
-        else{
-
-            LogUtils.log("shutting down one of the service's GSAs");
-            ProcessingUnit processingUnit = admin.getProcessingUnits().waitFor(APPLICATION_NAME + "." + TOMCAT_SERVICE_NAME);
-            processingUnit.waitFor(numOfServiceInstances);
-            GridServiceAgent gridServiceAgent = processingUnit.getInstances()[0].getGridServiceContainer().getGridServiceAgent();
-            LogUtils.log("Shutting down GSA on host " + gridServiceAgent.getMachine().getHostAddress());
-            gridServiceAgent.shutdown();
-
-            LogUtils.log("waiting for service to restart on a new machine");
-
-            AssertUtils.repetitiveAssertTrue("service didn't break", new AssertUtils.RepetitiveConditionProvider() {
-                @Override
-                public boolean getCondition() {
-                    int totalNumberOfInstances = admin.getProcessingUnits().getProcessingUnit(APPLICATION_NAME + "." + TOMCAT_SERVICE_NAME).getTotalNumberOfInstances();
-                    LogUtils.log("Total number of instances after gsa shutdown : " + totalNumberOfInstances);
-                    return totalNumberOfInstances < numOfServiceInstances;
-                }
-            } , OPERATION_TIMEOUT*4);
-
-            AssertUtils.repetitiveAssertTrue("service didn't recover", new AssertUtils.RepetitiveConditionProvider() {
-                @Override
-                public boolean getCondition() {
-                    ProcessingUnit processingUnit = admin.getProcessingUnits().getProcessingUnit(APPLICATION_NAME + "." + TOMCAT_SERVICE_NAME);
-                    LogUtils.log("total instances after break: " + processingUnit.getTotalNumberOfInstances());
-                    LogUtils.log("planned instances after break: " + processingUnit.getPlannedNumberOfInstances());
-                    return processingUnit.getTotalNumberOfInstances() == numOfServiceInstances &&
-                            processingUnit.getPlannedNumberOfInstances() == numOfServiceInstances;
-                }
-            } , OPERATION_TIMEOUT*3);
-        }
+        LogUtils.log("waiting for service to restart on a new machine");
+        ProcessingUnit tomcat = admin.getProcessingUnits().getProcessingUnit(APPLICATION_NAME + "." + TOMCAT_SERVICE_NAME);
+        AssertUtils.assertTrue("Timed out waiting for " + numOfServiceInstances + " instances of tomcat", tomcat.waitFor(numOfServiceInstances, OPERATION_TIMEOUT, TimeUnit.MILLISECONDS));
     }
 
     /**
@@ -212,6 +108,21 @@ public abstract class AbstractByonManagementPersistencyTest extends AbstractByon
         AssertUtils.assertTrue("bootstrap succeeded with a defective persistence file", !output.contains(BOOTSTRAP_SUCCEEDED_STRING));
     }
 
+    protected void bootstrapAndInstallService() throws Exception {
+
+        super.bootstrap();
+        super.installServiceAndWait(TOMCAT_SERVICE_PATH, TOMCAT_SERVICE_NAME, SERVICE_INSTALLATION_TIMEOUT_IN_MINUTES, numOfServiceInstances);
+
+        Bootstrapper bootstrapper = getService().getBootstrapper();
+        bootstrapper.setRestUrl(getRestUrl());
+        attributesList = new LinkedList<String>();
+
+        for(int i=1; i <= numOfServiceInstances; i++){
+            String attributes = bootstrapper.listServiceInstanceAttributes(APPLICATION_NAME, TOMCAT_SERVICE_NAME, i, false);
+            attributesList.add(attributes.substring(attributes.indexOf("home")));
+        }
+    }
+
     protected void teardownAndDeleteBackupFile() throws Exception {
         super.teardown();
         FileUtils.deleteQuietly(new File(backupFilePath));
@@ -226,35 +137,12 @@ public abstract class AbstractByonManagementPersistencyTest extends AbstractByon
         bootstrapper.shutdownManagers("default", backupFilePath, false);
     }
 
-    public void testCorruptedPersistencyDirectory() throws Exception {
-
-        String persistencyFolderPath = getService().getCloud().getConfiguration().getPersistentStoragePath();
-        String fileToDeletePath = persistencyFolderPath + "/deploy/management-space";
-
-        admin.getGridServiceManagers().waitFor(numOfManagementMachines);
-        Iterator<GridServiceManager> GsmIterator = admin.getGridServiceManagers().iterator();
-        String machineIp1 = GsmIterator.next().getMachine().getHostAddress();
-        String machineIp2 = GsmIterator.next().getMachine().getHostAddress();
-        SSHUtils.runCommand(machineIp1, OPERATION_TIMEOUT, "rm -rf " + fileToDeletePath, USER_NAME, PASSWORD);
-        SSHUtils.runCommand(machineIp2, OPERATION_TIMEOUT, "rm -rf " + fileToDeletePath, USER_NAME, PASSWORD);
-
-        shutdownManagement();
-
-        CloudBootstrapper bootstrapper = new CloudBootstrapper();
-        bootstrapper.useExistingFilePath(backupFilePath);
-        bootstrapper.killJavaProcesses(false);
-        bootstrapper.setBootstrapExpectedToFail(true);
-        bootstrapper.timeoutInMinutes(7);
-        super.bootstrap(bootstrapper);
-
-        String output = bootstrapper.getLastActionOutput();
-        AssertUtils.assertTrue("bootstrap succeeded with a corrupted persistency folder", !output.contains(BOOTSTRAP_SUCCEEDED_STRING));
-    }
 
     @Override
     protected void customizeCloud() throws Exception {
         super.customizeCloud();
         getService().setNumberOfManagementMachines(numOfManagementMachines);
         getService().getProperties().put("persistencePath", "/tmp/byon/persistency");
+
     }
 }

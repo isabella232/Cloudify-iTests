@@ -68,7 +68,15 @@ public class LogFetcher {
 
     private String getFileUrl(String path) {
         int index = path.indexOf("build_");
-        return getUrl() + path.substring(index);
+        String ans;
+        if(index == -1){
+            String[] split = path.split("cloudify-itests-service");
+            ans = getUrl() + System.getProperty("iTests.buildNumber") + split[1];
+        }
+        else{
+            ans = getUrl() + path.substring(index);
+        }
+        return ans;
     }
 
     private String getUrl() {

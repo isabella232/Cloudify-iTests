@@ -6,15 +6,13 @@ import java.util.concurrent.TimeoutException;
 import javax.ws.rs.core.MediaType;
 
 import org.cloudifysource.dsl.internal.CloudifyConstants;
-import org.cloudifysource.dsl.rest.request.SetApplicationAttributesRequest;
-import org.cloudifysource.dsl.rest.response.DeleteServiceInstanceAttributeResponse;
 import org.cloudifysource.dsl.rest.response.Response;
 import org.cloudifysource.dsl.rest.response.ServiceDetails;
-import org.cloudifysource.dsl.rest.response.ServiceInstanceDetails;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.type.TypeReference;
 
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
@@ -31,6 +29,8 @@ public class CloudifyRestClient {
 	private static final String CONTENT_TYPE_HEADER_NAME = "Content-Type";
 	private static final String CONTENT_TYPE_HEADER_VALUE = "application/json";
 
+
+	
 	public CloudifyRestClient(final String endpoint) {
 		ClientConfig config = new DefaultClientConfig();
 		config.getFeatures().put(JSONConfiguration.FEATURE_POJO_MAPPING, Boolean.TRUE);
@@ -39,44 +39,43 @@ public class CloudifyRestClient {
 		httpClient.setReadTimeout(CloudifyConstants.DEFAULT_HTTP_READ_TIMEOUT);
 		resource = httpClient.resource(endpoint);
 	}
-
-	public ServiceDetails getServiceDetails(
-			final String appName,
-			final String serviceName) throws RestClientException, TimeoutException, JsonParseException, JsonMappingException, IOException {
-		ClientResponse clientResponse = doGet("/" + appName + "/service/" + serviceName + "/metadata");
-		String responseBody = clientResponse.getEntity(String.class);
-		Response<ServiceDetails> response = new ObjectMapper().readValue(responseBody, ResponseTypeReferenceFactory.newServiceDetailsResponse());
-		return response.getResponse();
-	}
 	
-	public Response<Void> setApplicationAttributes(final String applicationName, SetApplicationAttributesRequest request) throws JsonGenerationException, JsonMappingException, UniformInterfaceException, IOException, RestClientException {
-		ClientResponse clientResponse = doPost("/" + applicationName + "/attributes", request);
+	
+	public <T> T  responseGetMethod(final String url,TypeReference<Response<T>> typeReference)
+					throws RestClientException, TimeoutException, JsonParseException, JsonMappingException, IOException {
+		ClientResponse clientResponse = doGet(url);
+		return responseObject(typeReference, clientResponse);
+	}
+
+	public Response<Void> postVoidResponse(final String url, Object request) throws JsonGenerationException, JsonMappingException, UniformInterfaceException, IOException, RestClientException {
+		ClientResponse clientResponse = doPost(url, request);
 		String responseBody = clientResponse.getEntity(String.class);
 		Response<Void> response = new ObjectMapper().readValue(responseBody, ResponseTypeReferenceFactory.newVoidResponse());
 		return response;
 	}
 	
-	public DeleteServiceInstanceAttributeResponse deleteServiceInstanceAttribute(
-			final String appName,
-			final String serviceName,
-			final int instanceId,
-			final String attributeName) throws JsonParseException, JsonMappingException, RestClientException, IOException {
-		ClientResponse clientResponse = doDelete("/" + appName + "/service/" + serviceName + "/instances/" + instanceId + "/attributes/" + attributeName);
-		String responseBody = clientResponse.getEntity(String.class);
-		Response<DeleteServiceInstanceAttributeResponse> response = new ObjectMapper().readValue(responseBody, ResponseTypeReferenceFactory.newDeleteServiceInstanceAttributeResponse());
-		return response.getResponse();
+	
+	public <T> T responsePostMethod(final String url,final Object requestBody,
+			final TypeReference<Response<T>> typeReference)
+			throws RestClientException, TimeoutException, JsonParseException,
+			JsonMappingException, IOException {
+		ClientResponse clientResponse = doPost(url, requestBody);
+		return responseObject(typeReference, clientResponse);
 	}
 	
-	public ServiceInstanceDetails getServiceInstanceDetails(
-			final String appName,
-			final String serviceName,
-			final int instanceId ) throws RestClientException, TimeoutException, JsonParseException, JsonMappingException, IOException {
-		ClientResponse clientResponse = doGet("/" + appName + "/service/" + serviceName + "/instances/" + instanceId + "/metadata");
-		String responseBody = clientResponse.getEntity(String.class);
-		Response<ServiceInstanceDetails> response = new ObjectMapper().readValue(responseBody, ResponseTypeReferenceFactory.newServiceInstanceDetailsResponse());
-		return response.getResponse();
+	
+	public <T> T responseDeleteMethod(final String url,
+			TypeReference<Response<T>> typeReference)
+			throws RestClientException, TimeoutException, JsonParseException,
+			JsonMappingException, IOException {
+		ClientResponse clientResponse = doDelete(url);
+		return responseObject(typeReference, clientResponse);
 	}
 
+	
+	
+	
+	
 	
 	private ClientResponse doDelete(final String url) throws JsonParseException, JsonMappingException, RestClientException, IOException {
 		ClientResponse response = resource.path(url)
@@ -84,6 +83,14 @@ public class CloudifyRestClient {
 				.delete(ClientResponse.class);
 		checkForError(response);
 		return response;
+	}
+	
+	private <T> T responseObject(final TypeReference<Response<T>> typeReference,
+			final ClientResponse clientResponse) throws IOException,
+			JsonParseException, JsonMappingException {
+		String responseBody = clientResponse.getEntity(String.class);
+		Response<T> response = new ObjectMapper().readValue(responseBody, typeReference);
+		return response.getResponse();
 	}
 
 
@@ -109,5 +116,7 @@ public class CloudifyRestClient {
 			throw new RestClientException(response.getStatus(),entity.getMessageId(), entity.getMessage());
 		}
 	}
+
+
 
 }

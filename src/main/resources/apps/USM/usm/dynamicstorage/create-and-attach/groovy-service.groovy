@@ -23,8 +23,8 @@ service {
 	
 	lifecycle { 
 		
-		def volumeId;
-		def device = "/dev/sdc"
+		def volumeId = null;
+		def device = "/dev/xvdc"
 		def path = "/teststorage"
 		def fs = "ext4"
 	

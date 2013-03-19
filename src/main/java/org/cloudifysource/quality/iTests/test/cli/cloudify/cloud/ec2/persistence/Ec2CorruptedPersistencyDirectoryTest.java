@@ -23,6 +23,8 @@ public class Ec2CorruptedPersistencyDirectoryTest extends AbstractCloudManagemen
 
     @AfterClass(alwaysRun = true)
     public void teardown() throws Exception{
+        getService().getBootstrapper().setRestUrl(null);
+        getService().getBootstrapper().force(true);
         super.teardown();
     }
 

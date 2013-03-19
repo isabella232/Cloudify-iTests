@@ -20,8 +20,7 @@ public class CorruptedPersistencyDirectoryTest extends AbstractByonManagementPer
         super.testCorruptedPersistencyDirectory();
     }
 
-    @AfterClass(alwaysRun = true)
-    public void teardown() throws Exception{
-        super.teardown();
-    }
+    /*
+    No need to teardown, we are not expecting any agents to be alive after the test finishes.
+     */
 }

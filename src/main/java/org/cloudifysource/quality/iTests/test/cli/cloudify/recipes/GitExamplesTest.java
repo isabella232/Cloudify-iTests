@@ -30,27 +30,27 @@ public class GitExamplesTest extends AbstractLocalCloudTest {
         localGitAppsPath = localGitRepoPath + "/apps";
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
 	public void testComputers() throws Exception {
 		super.doTest(localGitAppsPath, "computers", "computers");
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
 	public void testBabies() throws Exception {
 		super.doTest(localGitAppsPath, "drupal-babies", "babies");
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
 	public void testBiginsights() throws Exception {
 		super.doTest(localGitAppsPath, "hadoop-biginsights", "biginsights");
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
 	public void testLamp() throws Exception {
 		super.doTest(localGitAppsPath, "lamp", "lamp");
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
 	public void testMasterSlave() throws Exception {
 		super.doTest(localGitAppsPath, "masterslave", "masterslave");
 	}

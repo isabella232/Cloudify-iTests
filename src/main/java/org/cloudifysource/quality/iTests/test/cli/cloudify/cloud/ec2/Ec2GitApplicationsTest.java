@@ -47,7 +47,7 @@ public class Ec2GitApplicationsTest extends AbstractExamplesTest {
 	}
 
 	//fails
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
 	public void testBiginsights() throws Exception {
 		super.testBiginsights(localGitRepoPath + "/apps");
 	}
@@ -75,7 +75,7 @@ public class Ec2GitApplicationsTest extends AbstractExamplesTest {
 	}
 
 	// requires a non existing template
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
 	public void testStorm() throws Exception {
 		super.testStorm(localGitRepoPath + "/apps");
 	}

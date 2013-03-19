@@ -53,7 +53,7 @@ public class Ec2GitServicesTest extends AbstractServicesTest {
         testService("couchdb");
     }
     //doesn't work
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
     public void testBigInsights() throws Exception{
         testService("biginsights");
     }
@@ -139,7 +139,7 @@ public class Ec2GitServicesTest extends AbstractServicesTest {
     
     //linux only. works
     @TestConfiguration(os = {TestConfiguration.VM.MAC, TestConfiguration.VM.UNIX} )
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
     public void testVertx() throws Exception{
         testService("vertx");
     }

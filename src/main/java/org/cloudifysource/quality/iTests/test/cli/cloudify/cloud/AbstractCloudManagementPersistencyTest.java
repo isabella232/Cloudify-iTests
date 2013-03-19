@@ -56,7 +56,7 @@ public abstract class AbstractCloudManagementPersistencyTest extends NewAbstract
             // install the custom tomcat
             ServiceInstaller tomcatInstaller = new ServiceInstaller(getRestUrl(), actualServiceName);
             tomcatInstaller.recipePath("custom-tomcat");
-            tomcatInstaller.timeoutInMinutes(5 * numberOfInstances);
+            tomcatInstaller.timeoutInMinutes(10 * numberOfInstances);
             tomcatInstaller.install();
 
             installedServices.put(actualServiceName, numberOfInstances);

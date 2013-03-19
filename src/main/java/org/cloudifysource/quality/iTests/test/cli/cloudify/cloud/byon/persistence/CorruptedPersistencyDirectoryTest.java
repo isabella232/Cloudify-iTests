@@ -2,7 +2,6 @@ package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.byon.persisten
 
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /**

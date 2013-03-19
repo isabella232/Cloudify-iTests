@@ -71,7 +71,7 @@ public abstract class AbstractCloudManagementPersistencyTest extends NewAbstract
     }
 
     private void copyCustomTomcatToBuild() throws IOException {
-        deleteCustomTomcatFromBuild();;
+        deleteCustomTomcatFromBuild();
         FileUtils.copyDirectoryToDirectory(new File(PATH_TO_SERVICE), new File(ScriptUtils.getBuildRecipesServicesPath()));
     }
 
@@ -167,7 +167,7 @@ public abstract class AbstractCloudManagementPersistencyTest extends NewAbstract
                     int numOfInst = Integer.parseInt((String) client.getAdminData(brokenServiceRestUrl).get("NumberOfInstances"));
                     return (1 == numOfInst);
 
-/* CLOUDIFY-
+/* CLOUDIFY-1602
                     int numOfPlannedInstances = Integer.parseInt((String) client.getAdminData(brokenServiceRestUrl).get("PlannedNumberOfInstances"));
                     return (1 == numOfPlannedInstances);
 */
@@ -243,8 +243,8 @@ public abstract class AbstractCloudManagementPersistencyTest extends NewAbstract
         JCloudsUtils.closeContext();
 
         Iterator<? extends NodeMetadata> managementNodesIterator = managementMachines.iterator();
-        String machineIp1 = managementNodesIterator.next().getPrivateAddresses().iterator().next();
-        String machineIp2 = managementNodesIterator.next().getPrivateAddresses().iterator().next();
+        String machineIp1 = managementNodesIterator.next().getPublicAddresses().iterator().next();
+        String machineIp2 = managementNodesIterator.next().getPublicAddresses().iterator().next();
 
         SSHUtils.runCommand(machineIp1, OPERATION_TIMEOUT, "rm -rf " + fileToDeletePath, EC2_USER, getPemFile());
         SSHUtils.runCommand(machineIp2, OPERATION_TIMEOUT, "rm -rf " + fileToDeletePath, EC2_USER, getPemFile());
@@ -255,6 +255,7 @@ public abstract class AbstractCloudManagementPersistencyTest extends NewAbstract
         bootstrapper.provider(getService().getBootstrapper().getProvider());
         bootstrapper.setBootstrapExpectedToFail(true);
         bootstrapper.timeoutInMinutes(15);
+        bootstrapper.useExisting(true);
         bootstrapper.bootstrap();
 
         String output = bootstrapper.getLastActionOutput();

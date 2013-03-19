@@ -11,7 +11,7 @@ public class ManagementCleanShutdownAndRecoveryTest extends AbstractByonManageme
     @BeforeClass(alwaysRun = true)
     public void bootstrapAndInit() throws Exception{
         super.bootstrap();
-        super.installTomcatService(2, null);
+        super.installTomcatService(3, null);
     }
 
     @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)

@@ -10,7 +10,6 @@ import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.byon.AbstractBy
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.byon.ByonCloudService;
 import org.cloudifysource.restclient.GSRestClient;
 import org.cloudifysource.restclient.RestException;
-import org.jclouds.compute.domain.NodeMetadata;
 import org.openspaces.admin.gsm.GridServiceManager;
 
 import java.io.File;
@@ -258,7 +257,7 @@ public abstract class AbstractByonManagementPersistencyTest extends AbstractByon
     public void testCorruptedPersistencyDirectory() throws Exception {
 
         String persistencyFolderPath = getService().getCloud().getConfiguration().getPersistentStoragePath();
-        String fileToDeletePath = persistencyFolderPath + "/deploy/management-space";
+        String fileToDeletePath = persistencyFolderPath + "/management-space/db.h2.h2.db";
 
         admin.getGridServiceManagers().waitFor(numOfManagementMachines);
         Iterator<GridServiceManager> gsmIterator = admin.getGridServiceManagers().iterator();

@@ -7,9 +7,11 @@ import org.cloudifysource.quality.iTests.framework.tools.SGTestHelper;
 import org.cloudifysource.quality.iTests.framework.utils.*;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.byon.AbstractByonCloudTest;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.byon.ByonCloudService;
 import org.cloudifysource.restclient.GSRestClient;
 import org.cloudifysource.restclient.RestException;
 import org.jclouds.compute.domain.NodeMetadata;
+import org.openspaces.admin.gsm.GridServiceManager;
 
 import java.io.File;
 import java.io.IOException;
@@ -61,7 +63,7 @@ public abstract class AbstractByonManagementPersistencyTest extends AbstractByon
             // install the custom tomcat
             ServiceInstaller tomcatInstaller = new ServiceInstaller(getRestUrl(), actualServiceName);
             tomcatInstaller.recipePath("custom-tomcat");
-            tomcatInstaller.timeoutInMinutes(5 * numberOfInstances);
+            tomcatInstaller.timeoutInMinutes(10 * numberOfInstances);
             tomcatInstaller.install();
 
             installedServices.put(actualServiceName, numberOfInstances);
@@ -99,8 +101,7 @@ public abstract class AbstractByonManagementPersistencyTest extends AbstractByon
 
         shutdownManagement();
 
-        CloudBootstrapper bootstrapper = new CloudBootstrapper();
-        bootstrapper.provider(getService().getBootstrapper().getProvider());
+        CloudBootstrapper bootstrapper = getService().getBootstrapper();
         bootstrapper.scanForLeakedNodes(false);
         bootstrapper.useExistingFilePath(backupFilePath);
         bootstrapper.bootstrap();
@@ -214,8 +215,7 @@ public abstract class AbstractByonManagementPersistencyTest extends AbstractByon
 
             shutdownManagement();
 
-            CloudBootstrapper bootstrapper = new CloudBootstrapper();
-            bootstrapper.provider(getService().getBootstrapper().getProvider());
+            CloudBootstrapper bootstrapper = getService().getBootstrapper();
             bootstrapper.scanForLeakedNodes(false);
             bootstrapper.useExistingFilePath(backupFilePath);
             bootstrapper.bootstrap();
@@ -259,34 +259,31 @@ public abstract class AbstractByonManagementPersistencyTest extends AbstractByon
 
         String persistencyFolderPath = getService().getCloud().getConfiguration().getPersistentStoragePath();
         String fileToDeletePath = persistencyFolderPath + "/deploy/management-space";
-        JCloudsUtils.createContext(getService());
-        Set<? extends NodeMetadata> managementMachines = JCloudsUtils.getServersByName(getService().getMachinePrefix() + "cloudify-manager");
-        JCloudsUtils.closeContext();
 
-        Iterator<? extends NodeMetadata> managementNodesIterator = managementMachines.iterator();
-        String machineIp1 = managementNodesIterator.next().getPrivateAddresses().iterator().next();
-        String machineIp2 = managementNodesIterator.next().getPrivateAddresses().iterator().next();
-
-        SSHUtils.runCommand(machineIp1, OPERATION_TIMEOUT, "rm -rf " + fileToDeletePath, EC2_USER, getPemFile());
-        SSHUtils.runCommand(machineIp2, OPERATION_TIMEOUT, "rm -rf " + fileToDeletePath, EC2_USER, getPemFile());
+        admin.getGridServiceManagers().waitFor(numOfManagementMachines);
+        Iterator<GridServiceManager> gsmIterator = admin.getGridServiceManagers().iterator();
+        String machineIp1 = gsmIterator.next().getMachine().getHostAddress();
+        String machineIp2 = gsmIterator.next().getMachine().getHostAddress();
+        SSHUtils.runCommand(machineIp1, OPERATION_TIMEOUT, "rm -rf " + fileToDeletePath, ByonCloudService.BYON_CLOUD_USER, ByonCloudService.BYON_CLOUD_PASSWORD);
+        SSHUtils.runCommand(machineIp2, OPERATION_TIMEOUT, "rm -rf " + fileToDeletePath, ByonCloudService.BYON_CLOUD_USER, ByonCloudService.BYON_CLOUD_PASSWORD);
 
         shutdownManagement();
 
-        CloudBootstrapper bootstrapper = new CloudBootstrapper();
-        bootstrapper.provider(getService().getBootstrapper().getProvider());
+        CloudBootstrapper bootstrapper = getService().getBootstrapper();
+        bootstrapper.useExistingFilePath(backupFilePath);
+        bootstrapper.killJavaProcesses(false);
         bootstrapper.setBootstrapExpectedToFail(true);
-        bootstrapper.timeoutInMinutes(15);
+        bootstrapper.timeoutInMinutes(7);
         bootstrapper.bootstrap();
 
         String output = bootstrapper.getLastActionOutput();
         AssertUtils.assertTrue("bootstrap succeeded with a corrupted persistency folder", !output.contains(BOOTSTRAP_SUCCEEDED_STRING));
-
     }
 
     @Override
     protected void customizeCloud() throws Exception {
         super.customizeCloud();
         getService().setNumberOfManagementMachines(numOfManagementMachines);
-        getService().getProperties().put("persistencePath", "/home/ec2-user/persistence");
+        getService().getProperties().put("persistencePath", "/tmp/byon/persistency");
     }
 }

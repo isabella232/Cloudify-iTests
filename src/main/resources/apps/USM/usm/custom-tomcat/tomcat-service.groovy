@@ -17,5 +17,6 @@ package apps.USM.usm.custom
 service {
 	extend "tomcat"
     numInstances ENTER_NUMBER_OF_INSTANCES
+    maxAllowedInstances ENTER_NUMBER_OF_INSTANCES
     name "ENTER_NAME"
 }

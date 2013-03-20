@@ -21,7 +21,10 @@ public class CorruptedPersistencyDirectoryTest extends AbstractByonManagementPer
     }
 
     @AfterClass(alwaysRun = true)
-    public void teardown() throws Exception{
-        super.teardown();
+    public void closeAdmin() {
+        // no need to teardown. if the test passed, no agents are up. if the test failed, the next one will
+        // de a cleanup anyway.
+        super.closeAdmin();
     }
+
 }

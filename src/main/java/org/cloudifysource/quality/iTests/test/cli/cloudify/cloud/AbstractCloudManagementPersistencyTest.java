@@ -94,8 +94,7 @@ public abstract class AbstractCloudManagementPersistencyTest extends NewAbstract
 
         shutdownManagement();
 
-        CloudBootstrapper bootstrapper = new CloudBootstrapper();
-        bootstrapper.provider(getService().getBootstrapper().getProvider());
+        CloudBootstrapper bootstrapper = getService().getBootstrapper();
         bootstrapper.scanForLeakedNodes(false);
         bootstrapper.useExisting(true);
         bootstrapper.bootstrap();
@@ -197,8 +196,7 @@ public abstract class AbstractCloudManagementPersistencyTest extends NewAbstract
 
             shutdownManagement();
 
-            CloudBootstrapper bootstrapper = new CloudBootstrapper();
-            bootstrapper.provider(getService().getBootstrapper().getProvider());
+            CloudBootstrapper bootstrapper = getService().getBootstrapper();
             bootstrapper.scanForLeakedNodes(false);
             bootstrapper.useExisting(true);
             bootstrapper.bootstrap();
@@ -219,7 +217,7 @@ public abstract class AbstractCloudManagementPersistencyTest extends NewAbstract
 
     protected void shutdownManagement() throws Exception{
 
-        CloudBootstrapper bootstrapper = new CloudBootstrapper();
+        CloudBootstrapper bootstrapper = getService().getBootstrapper();
         bootstrapper.setRestUrl(getRestUrl());
 
         LogUtils.log("shutting down managers");
@@ -251,8 +249,7 @@ public abstract class AbstractCloudManagementPersistencyTest extends NewAbstract
 
         shutdownManagement();
 
-        CloudBootstrapper bootstrapper = new CloudBootstrapper();
-        bootstrapper.provider(getService().getBootstrapper().getProvider());
+        CloudBootstrapper bootstrapper = getService().getBootstrapper();
         bootstrapper.setBootstrapExpectedToFail(true);
         bootstrapper.timeoutInMinutes(15);
         bootstrapper.useExisting(true);

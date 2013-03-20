@@ -101,8 +101,7 @@ public abstract class AbstractByonManagementPersistencyTest extends AbstractByon
 
         shutdownManagement();
 
-        CloudBootstrapper bootstrapper = new CloudBootstrapper();
-        bootstrapper.provider(getService().getBootstrapper().getProvider());
+        CloudBootstrapper bootstrapper = getService().getBootstrapper();
         bootstrapper.scanForLeakedNodes(false);
         bootstrapper.useExistingFilePath(backupFilePath);
         bootstrapper.bootstrap();
@@ -188,8 +187,7 @@ public abstract class AbstractByonManagementPersistencyTest extends AbstractByon
 
         IOUtils.replaceTextInFile(backupFilePath, "instanceId", "instnceId");
 
-        CloudBootstrapper bootstrapper = new CloudBootstrapper();
-        bootstrapper.provider(getService().getBootstrapper().getProvider());
+        CloudBootstrapper bootstrapper = getService().getBootstrapper();
         bootstrapper.useExistingFilePath(backupFilePath);
         bootstrapper.setBootstrapExpectedToFail(true);
         bootstrapper.bootstrap();
@@ -217,8 +215,7 @@ public abstract class AbstractByonManagementPersistencyTest extends AbstractByon
 
             shutdownManagement();
 
-            CloudBootstrapper bootstrapper = new CloudBootstrapper();
-            bootstrapper.provider(getService().getBootstrapper().getProvider());
+            CloudBootstrapper bootstrapper = getService().getBootstrapper();
             bootstrapper.scanForLeakedNodes(false);
             bootstrapper.useExistingFilePath(backupFilePath);
             bootstrapper.bootstrap();
@@ -272,8 +269,7 @@ public abstract class AbstractByonManagementPersistencyTest extends AbstractByon
 
         shutdownManagement();
 
-        CloudBootstrapper bootstrapper = new CloudBootstrapper();
-        bootstrapper.provider(getService().getBootstrapper().getProvider());
+        CloudBootstrapper bootstrapper = getService().getBootstrapper();
         bootstrapper.useExistingFilePath(backupFilePath);
         bootstrapper.killJavaProcesses(false);
         bootstrapper.setBootstrapExpectedToFail(true);

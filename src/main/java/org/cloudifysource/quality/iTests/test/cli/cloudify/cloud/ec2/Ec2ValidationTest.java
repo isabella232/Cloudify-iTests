@@ -32,7 +32,7 @@ public class Ec2ValidationTest  extends NewAbstractCloudTest {
 			assertTrue("The provider is wrong yet no error was thrown", false);
 		} catch (Throwable ae) {
 			assertTrue("The provider is wrong but the wrong error was thrown. Error was: " + ae.getMessage(),
-					ae.getMessage().contains("Invalid template configuration: could not get imageId"));
+					ae.getMessage().contains("Provider not supported: wrong-ec2"));
 		}
 	}
 
@@ -50,7 +50,7 @@ public class Ec2ValidationTest  extends NewAbstractCloudTest {
 	}
 
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
 	public void wrongImageTest() throws IOException, InterruptedException {
 		try {
 			groovyFileName = "wrongimage-ec2-cloud.groovy";
@@ -63,7 +63,7 @@ public class Ec2ValidationTest  extends NewAbstractCloudTest {
 	}
 	
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
 	public void wrongHardwareTest() throws IOException, InterruptedException {
 		try {
 			groovyFileName = "wronghardware-ec2-cloud.groovy";
@@ -76,7 +76,7 @@ public class Ec2ValidationTest  extends NewAbstractCloudTest {
 	}
 	
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
 	public void wrongSecurityGroupTest() throws IOException, InterruptedException {
 		try {
 			groovyFileName = "wrongsecuritygroup-ec2-cloud.groovy";
@@ -90,7 +90,7 @@ public class Ec2ValidationTest  extends NewAbstractCloudTest {
 	}
 	
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
 	public void wrongKeyPairTest() throws IOException, InterruptedException {
 		try {
 			groovyFileName = "wrongkeypair-ec2-cloud.groovy";
@@ -103,7 +103,7 @@ public class Ec2ValidationTest  extends NewAbstractCloudTest {
 	}
 	
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
 	public void wrongCloudifyUrlTest() throws IOException, InterruptedException {
 		try {
 			groovyFileName = "wrongcloudifyurl-ec2-cloud.groovy";

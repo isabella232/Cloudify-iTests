@@ -12,6 +12,7 @@ import org.cloudifysource.quality.iTests.framework.testng.report.xml.TestReport;
 import org.cloudifysource.quality.iTests.framework.testng.report.xml.TestsReport;
 import org.cloudifysource.quality.iTests.framework.tools.SGTestHelper;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.text.NumberFormat;
@@ -162,7 +163,8 @@ public class WikiReporter {
         " | " + summaryReport.getSuspected() + " | " + getSuccessRate() + "%  | " + getDate() + " | ";
 
         /* append to history file */
-        WikiUtils.writeToFile(summaryHistory, summaryHistoryFile, true /* append */);
+        if(new File(summaryHistoryFile).exists())
+            WikiUtils.writeToFile(summaryHistory, summaryHistoryFile, true /* append */);
 
         StringBuilder sb = new StringBuilder();
         sb.append("h1. Regression Results: \n");

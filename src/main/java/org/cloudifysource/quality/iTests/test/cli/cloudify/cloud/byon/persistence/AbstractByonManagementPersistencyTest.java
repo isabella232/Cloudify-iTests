@@ -161,11 +161,11 @@ public abstract class AbstractByonManagementPersistencyTest extends AbstractByon
                 final String brokenServiceRestUrl = "ProcessingUnits/Names/" + APPLICATION_NAME + "." + brokenService.get();
                 try {
                     int numOfInst = Integer.parseInt((String) client.getAdminData(brokenServiceRestUrl).get("NumberOfInstances"));
-                    return (1 == numOfInst);
+                    return (installedServices.get(brokenService.get()) == numOfInst);
 
 /* CLOUDIFY-1602
                     int numOfPlannedInstances = Integer.parseInt((String) client.getAdminData(brokenServiceRestUrl).get("PlannedNumberOfInstances"));
-                    return (1 == numOfPlannedInstances);
+                    return (installedServices.get(brokenService.get()) == numOfPlannedInstances);
 */
 
                 } catch (RestException e) {

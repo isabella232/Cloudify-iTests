@@ -141,7 +141,7 @@ public abstract class AbstractCloudManagementPersistencyTest extends NewAbstract
                     // query all installed services to find out.
                     for (String serviceName : installedServices.keySet()) {
                         String serviceRestUrl = "ProcessingUnits/Names/" + APPLICATION_NAME + "." + serviceName;
-                        int numberOfInstances = Integer.parseInt((String) client.getAdminData(serviceRestUrl).get("NumberOfInstances"));
+                        int numberOfInstances = Integer.parseInt((String) client.getAdminData(serviceRestUrl).get("Instances-Size"));
                         LogUtils.log("Number of " + serviceName + " instances is " + numberOfInstances);
                         if (numberOfInstances < installedServices.get(serviceName)) {
                             LogUtils.log(serviceName + " service broke. it now has only " + numberOfInstances + " instances");
@@ -163,7 +163,7 @@ public abstract class AbstractCloudManagementPersistencyTest extends NewAbstract
             public boolean getCondition() {
                 final String brokenServiceRestUrl = "ProcessingUnits/Names/" + APPLICATION_NAME + "." + brokenService.get();
                 try {
-                    int numOfInst = Integer.parseInt((String) client.getAdminData(brokenServiceRestUrl).get("NumberOfInstances"));
+                    int numOfInst = Integer.parseInt((String) client.getAdminData(brokenServiceRestUrl).get("Instances-Size"));
                     return (installedServices.get(brokenService.get()) == numOfInst);
 
 /* CLOUDIFY-1602
@@ -235,7 +235,7 @@ public abstract class AbstractCloudManagementPersistencyTest extends NewAbstract
     public void testCorruptedPersistencyDirectory() throws Exception {
 
         String persistencyFolderPath = getService().getCloud().getConfiguration().getPersistentStoragePath();
-        String fileToDeletePath = persistencyFolderPath + "/deploy/management-space";
+        String fileToDeletePath = persistencyFolderPath + "/management-space/db.h2.h2.db";
         JCloudsUtils.createContext(getService());
         Set<? extends NodeMetadata> managementMachines = JCloudsUtils.getServersByName(getService().getMachinePrefix() + "cloudify-manager");
         JCloudsUtils.closeContext();

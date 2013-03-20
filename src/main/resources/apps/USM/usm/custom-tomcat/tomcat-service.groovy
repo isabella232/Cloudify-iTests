@@ -18,5 +18,6 @@ service {
 	extend "tomcat"
     numInstances ENTER_NUMBER_OF_INSTANCES
     maxAllowedInstances ENTER_NUMBER_OF_INSTANCES
+    minAllowedInstances ENTER_NUMBER_OF_INSTANCES
     name "ENTER_NAME"
 }

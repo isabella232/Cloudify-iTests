@@ -1,10 +1,27 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.byon.persistence;
 
-import com.j_spaces.kernel.PlatformVersion;
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
+
 import org.apache.commons.io.FileUtils;
 import org.cloudifysource.dsl.utils.ServiceUtils;
 import org.cloudifysource.quality.iTests.framework.tools.SGTestHelper;
-import org.cloudifysource.quality.iTests.framework.utils.*;
+import org.cloudifysource.quality.iTests.framework.utils.AssertUtils;
+import org.cloudifysource.quality.iTests.framework.utils.CloudBootstrapper;
+import org.cloudifysource.quality.iTests.framework.utils.IOUtils;
+import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
+import org.cloudifysource.quality.iTests.framework.utils.SSHUtils;
+import org.cloudifysource.quality.iTests.framework.utils.ScriptUtils;
+import org.cloudifysource.quality.iTests.framework.utils.ServiceInstaller;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.byon.AbstractByonCloudTest;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.byon.ByonCloudService;
@@ -12,11 +29,7 @@ import org.cloudifysource.restclient.GSRestClient;
 import org.cloudifysource.restclient.RestException;
 import org.openspaces.admin.gsm.GridServiceManager;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
+import com.j_spaces.kernel.PlatformVersion;
 
 /**
  * User: nirb
@@ -137,7 +150,7 @@ public abstract class AbstractByonManagementPersistencyTest extends AbstractByon
                     // query all installed services to find out.
                     for (String serviceName : installedServices.keySet()) {
                         String serviceRestUrl = "ProcessingUnits/Names/" + APPLICATION_NAME + "." + serviceName;
-                        int numberOfInstances = Integer.parseInt((String) client.getAdminData(serviceRestUrl).get("NumberOfInstances"));
+                        int numberOfInstances = Integer.parseInt((String) client.getAdminData(serviceRestUrl).get("Instances-Size"));
                         LogUtils.log("Number of " + serviceName + " instances is " + numberOfInstances);
                         if (numberOfInstances < installedServices.get(serviceName)) {
                             LogUtils.log(serviceName + " service broke. it now has only " + numberOfInstances + " instances");
@@ -159,12 +172,12 @@ public abstract class AbstractByonManagementPersistencyTest extends AbstractByon
             public boolean getCondition() {
                 final String brokenServiceRestUrl = "ProcessingUnits/Names/" + APPLICATION_NAME + "." + brokenService.get();
                 try {
-                    int numOfInst = Integer.parseInt((String) client.getAdminData(brokenServiceRestUrl).get("NumberOfInstances"));
-                    return (1 == numOfInst);
+                    int numOfInst = Integer.parseInt((String) client.getAdminData(brokenServiceRestUrl).get("Instances-Size"));
+                    return (installedServices.get(brokenService.get()) == numOfInst);
 
 /* CLOUDIFY-1602
                     int numOfPlannedInstances = Integer.parseInt((String) client.getAdminData(brokenServiceRestUrl).get("PlannedNumberOfInstances"));
-                    return (1 == numOfPlannedInstances);
+                    return (installedServices.get(brokenService.get()) == numOfPlannedInstances);
 */
 
                 } catch (RestException e) {

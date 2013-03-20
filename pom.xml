@@ -131,13 +131,19 @@
 		<dependency>
 			<groupId>org.jclouds</groupId>
 			<artifactId>jclouds-allcompute</artifactId>
-			<version>1.5.3</version>
+			<version>1.5.8</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jclouds</groupId>
 			<artifactId>jclouds-blobstore</artifactId>
 			<version>1.5.3</version>
-		</dependency>
+            <exclusions>
+                <exclusion>
+                    <artifactId>jclouds-core</artifactId>
+                    <groupId>org.jclouds</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 		<dependency>
 			<groupId>org.jclouds.provider</groupId>
 			<artifactId>aws-s3</artifactId>

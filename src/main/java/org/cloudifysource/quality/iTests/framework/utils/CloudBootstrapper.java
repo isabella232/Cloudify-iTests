@@ -6,12 +6,15 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.CloudService;
 
 public class CloudBootstrapper extends Bootstrapper {
 
 	private static final int DEFAULT_BOOTSTRAP_CLOUD_TIMEOUT = 30;
 
-	private String provider;
+    private CloudService cloudService;
+
+    private String provider;
 	private boolean noWebServices = false;
 	private String useExistingFilePath = "";
 	private String cloudFolderPath = "";
@@ -26,8 +29,18 @@ public class CloudBootstrapper extends Bootstrapper {
 		this.provider = provider;
 		return this;
 	}
-	
-	public String getProvider() {
+
+    public void setCloudService(CloudService cloudService) {
+        this.cloudService = cloudService;
+    }
+
+    public CloudService getCloudService() {
+
+        return cloudService;
+    }
+
+
+    public String getProvider() {
 		return provider;
 	}
 	

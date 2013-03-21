@@ -5,14 +5,14 @@ import java.util.concurrent.TimeUnit;
 
 import org.cloudifysource.dsl.internal.DSLException;
 import org.cloudifysource.dsl.utils.ServiceUtils;
+import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
+import org.cloudifysource.quality.iTests.framework.utils.usm.USMTestUtils;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.AbstractLocalCloudTest;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.openspaces.core.GigaSpace;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-
-import org.cloudifysource.quality.iTests.test.cli.cloudify.AbstractLocalCloudTest;
-import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
-import org.cloudifysource.quality.iTests.framework.utils.usm.USMTestUtils;
 
 public class AttributesTest extends AbstractLocalCloudTest {
 
@@ -201,6 +201,20 @@ public class AttributesTest extends AbstractLocalCloudTest {
 		uninstallApplication();
 	}
 	
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = true)
+	public void testSetGlobalAttribute() throws Exception {
+		installApplication();
+		LogUtils.log("setting attribute 'GlobalAttribute' using cli");
+		CommandTestUtils.runCommandUsingFile("connect " + restUrl + ";use-application attributesTestApp" 
+				+ "; set-attributes -scope global '{\"GlobalAttribute\":\"GlobalValue\"}';");
+
+		String globalAttributeResult = runCommand("connect " + restUrl + ";use-application attributesTestApp" 
+				+ "; invoke getter getCliGlobalAttribute");
+				
+		assertTrue("command did not execute" , globalAttributeResult.contains("OK"));
+		assertTrue("getter service cannot get the global attribute set by cli", globalAttributeResult.contains("Result: GlobalValue"));
+		uninstallApplication();
+	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = true)
 	public void testInstanceIteration() throws Exception {

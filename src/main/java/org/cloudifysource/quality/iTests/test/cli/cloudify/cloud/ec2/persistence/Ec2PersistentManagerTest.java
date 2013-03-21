@@ -129,10 +129,7 @@ public class Ec2PersistentManagerTest extends NewAbstractCloudTest {
 
 	private void writeGlobalAttribute(final String connect) throws IOException, InterruptedException {
 		// need this cause trying to pass all the single and double quotes on the command line is a pain on multiple OS.
-		final File tempFile = File.createTempFile("testcommands", "txt");
-		tempFile.deleteOnExit();
-		FileUtils.writeStringToFile(tempFile, connect + "set-attributes '{\"PERSISTENT_ATTRIBUTE\":\"YES\"}';");
-		CommandTestUtils.runCommandAndWait("-f=" + tempFile.getAbsolutePath());
+		CommandTestUtils.runCommandUsingFile(connect + "set-attributes '{\"PERSISTENT_ATTRIBUTE\":\"YES\"}';");
 	}
 
 	private String getGlobalAttributes(final String connect) throws IOException, InterruptedException {

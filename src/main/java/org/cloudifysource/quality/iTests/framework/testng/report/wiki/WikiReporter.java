@@ -136,7 +136,7 @@ public class WikiReporter {
             uploadWikiPages();
 
 
-            String wikiPageUrl = createReportUrl(wikiPages.get(1));
+            String wikiPageUrl = createReportUrl(wikiPages.get(reportIndex));
             HtmlMailReporter mailReporter = new HtmlMailReporter();
             mailReporter.sendHtmlMailReport(summaryReport, wikiPageUrl, extProperties);
 

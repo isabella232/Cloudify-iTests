@@ -79,12 +79,14 @@ public abstract class AbstractDynamicStorageTest extends NewAbstractCloudTest {
 
         for (Volume volumeByName : volumesByName) {
             if (volumeByName != null && !volumeByName.getStatus().equals(Status.DELETING)) {
-                LogUtils.log("Found a leaking volume " + volumeByName);
+                LogUtils.log("Found a leaking volume " + volumeByName + ". status is " + volumeByName.getStatus());
+                LogUtils.log("Volume attachments are : " + volumeByName.getAttachments());
                 if (volumeByName.getAttachments() != null && !volumeByName.getAttachments().isEmpty()) {
                     LogUtils.log("Detaching attachment before deletion");
                     storageHelper.detachVolume(volumeByName.getId());
                     waitForVolumeStatus(volumeByName, Status.AVAILABLE);
                 }
+                waitForVolumeStatus(volumeByName, Status.AVAILABLE);
                 LogUtils.log("Deleting volume " + volumeByName.getId());
                 storageHelper.deleteVolume(volumeByName.getId());
             }

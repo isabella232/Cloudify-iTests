@@ -4,17 +4,16 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Set;
 
-import org.cloudifysource.quality.iTests.framework.utils.*;
+import org.cloudifysource.quality.iTests.framework.tools.SGTestHelper;
+import org.cloudifysource.quality.iTests.framework.utils.AssertUtils;
+import org.cloudifysource.quality.iTests.framework.utils.CloudBootstrapper;
+import org.cloudifysource.quality.iTests.framework.utils.IOUtils;
+import org.cloudifysource.quality.iTests.framework.utils.JCloudsUtils;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.NewAbstractCloudTest;
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.NodeState;
-import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-
-import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.NewAbstractCloudTest;
-import org.cloudifysource.quality.iTests.framework.tools.SGTestHelper;
-import org.cloudifysource.quality.iTests.framework.utils.AssertUtils.RepetitiveConditionProvider;
 
 /**
  * This test makes a bootstrap on ec2 fail by changing the JAVA_HOME path to a bad one in the bootstrap-management.sh file.

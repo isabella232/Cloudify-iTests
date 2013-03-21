@@ -15,7 +15,7 @@ public class CorruptedPersistencyDirectoryTest extends AbstractByonManagementPer
         super.bootstrap();
     }
 
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = false)
     public void testCorruptedPersistencyDirectory() throws Exception {
         super.testCorruptedPersistencyDirectory();
     }

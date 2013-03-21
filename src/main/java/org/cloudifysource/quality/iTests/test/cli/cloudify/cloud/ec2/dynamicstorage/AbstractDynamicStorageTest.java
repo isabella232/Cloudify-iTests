@@ -96,7 +96,7 @@ public abstract class AbstractDynamicStorageTest extends NewAbstractCloudTest {
             }
         }
         if (!nonDeletingVolumes.isEmpty()) {
-            AssertUtils.assertFail("Found leaking volumes after test ended :" + volumesByName);
+            AssertUtils.assertFail("Found leaking volumes after test ended :" + nonDeletingVolumes);
         }
 
 

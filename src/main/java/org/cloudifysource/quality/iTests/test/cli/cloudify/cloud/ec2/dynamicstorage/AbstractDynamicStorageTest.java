@@ -3,6 +3,7 @@ package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.ec2.dynamicsto
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeoutException;
@@ -76,6 +77,7 @@ public abstract class AbstractDynamicStorageTest extends NewAbstractCloudTest {
 	public void scanForLeakedVolumes(final String name) throws TimeoutException {
 		
 		Set<Volume> volumesByName = storageHelper.getVolumesByName(name);
+        Set<Volume> nonDeletingVolumes = new HashSet<Volume>();
 
         for (Volume volumeByName : volumesByName) {
             if (volumeByName != null && !volumeByName.getStatus().equals(Status.DELETING)) {
@@ -89,9 +91,11 @@ public abstract class AbstractDynamicStorageTest extends NewAbstractCloudTest {
                 waitForVolumeStatus(volumeByName, Status.AVAILABLE);
                 LogUtils.log("Deleting volume " + volumeByName.getId());
                 storageHelper.deleteVolume(volumeByName.getId());
+            } else {
+                nonDeletingVolumes.add(volumeByName);
             }
         }
-        if (!volumesByName.isEmpty()) {
+        if (!nonDeletingVolumes.isEmpty()) {
             AssertUtils.assertFail("Found leaking volumes after test ended :" + volumesByName);
         }
 

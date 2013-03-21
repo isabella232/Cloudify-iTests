@@ -206,12 +206,14 @@ public class WikiReporter {
         for (WikiPage page : wikiPages) {
             String inputDirectory = extProperties.getProperty("inputDirectory");
             String fileName = inputDirectory + "/../../wiki-backup/" + page.getTitlePage().replaceAll(" ", "_") + ".wiki";
-            System.out.println("Backup page: " + page.getTitlePage() + " to: " + fileName);
-            try {
-                WikiUtils.writeToFile(page.getContext(), fileName, false);
-            } catch (IOException e) {
-                System.err.println("Caught exception while backuping up: " + page + " to: " + fileName + " - " + e
-                        + "\n" + WikiUtils.getStackTrace(e));
+            if(new File(fileName).exists()){
+                System.out.println("Backup page: " + page.getTitlePage() + " to: " + fileName);
+                try {
+                    WikiUtils.writeToFile(page.getContext(), fileName, false);
+                } catch (IOException e) {
+                    System.err.println("Caught exception while backuping up: " + page + " to: " + fileName + " - " + e
+                            + "\n" + WikiUtils.getStackTrace(e));
+                }
             }
         }
     }

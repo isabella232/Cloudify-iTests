@@ -78,7 +78,13 @@ public class HtmlMailReporter {
             throw new RuntimeException("failed to send mail - " + e, e);
         }
         //TODO:write results to DB
-        DashboardDBReporter.writeToDB(summaryReport.getSuiteName(), buildNumber.split("_")[1], majorVersion, minorVersion, 
+        String[] buildeNumberSplit = buildNumber.split("_");
+        String buildNumberForDB;
+        if(buildeNumberSplit.length >= 2)
+            buildNumberForDB = buildeNumberSplit[1];
+        else
+            buildNumberForDB = buildNumber;
+        DashboardDBReporter.writeToDB(summaryReport.getSuiteName(), buildNumberForDB, majorVersion, minorVersion,
 				summaryReport.getDuration(), buildLogUrl, summaryReport.getTotalTestsRun(), summaryReport.getFailed(),
 				summaryReport.getSuccess(), summaryReport.getSkipped(), summaryReport.getSuspected(), 0/*orphans*/, wikiPageUrl, null);
     }

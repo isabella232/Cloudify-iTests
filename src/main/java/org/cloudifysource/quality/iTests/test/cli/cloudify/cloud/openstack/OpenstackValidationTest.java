@@ -34,42 +34,6 @@ public class OpenstackValidationTest  extends NewAbstractCloudTest {
 					ae.getMessage().contains("Provider not supported"));
 		}
 	}
-	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
-	public void missingEndpointTest() throws IOException, InterruptedException {
-		try {
-			groovyFileName = "missingendpoint-openstack-cloud.groovy";
-			super.bootstrap(bootstrapper);
-			assertTrue("The endpoint is missing yet no error was thrown", false);
-		} catch (Throwable ae) {
-			assertTrue("The credentials are wrong but the wrong error was thrown. Reported error: " + ae.getMessage(),
-					ae.getMessage().contains("Endpoint not defined"));
-		}
-	}
-	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
-	public void wrongEndpointTest() throws IOException, InterruptedException {
-		try {
-			groovyFileName = "wrongendpoint-openstack-cloud.groovy";
-			super.bootstrap(bootstrapper);
-			assertTrue("The endpoint is wrong yet no error was thrown", false);
-		} catch (Throwable ae) {
-			assertTrue("The credentials are wrong but the wrong error was thrown. Reported error: " + ae.getMessage(),
-					ae.getMessage().contains("Invalid template configuration: org.jclouds.http.HttpResponseException"));
-		}
-	}
-	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
-	public void wrongCredentialsTest() throws IOException, InterruptedException {
-		try {
-			groovyFileName = "wrongcredentials-openstack-cloud.groovy";
-			super.bootstrap(bootstrapper);
-			assertTrue("The credentials are wrong yet no error was thrown", false);
-		} catch (Throwable ae) {
-			assertTrue("The credentials are wrong but the wrong error was thrown. Reported error: " + ae.getMessage(),
-					ae.getMessage().contains("HTTP/1.1 401 Not Authorized"));											
-		}
-	}
 
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
@@ -141,7 +105,7 @@ public class OpenstackValidationTest  extends NewAbstractCloudTest {
 
 	@Override
 	protected String getCloudName() {
-		return "openstack";
+		return "hp";
 	}
 
 	@Override
@@ -151,7 +115,7 @@ public class OpenstackValidationTest  extends NewAbstractCloudTest {
 
 	protected void customizeCloud() throws IOException {
 		//replace the openstack-cloud.groovy with a wrong version, to fail the validation.
-		File standardGroovyFile = new File(getService().getPathToCloudFolder(), "openstack-cloud.groovy");
+		File standardGroovyFile = new File(getService().getPathToCloudFolder(), "hp-cloud.groovy");
 		File wrongproviderGroovyFile = new File(SGTestHelper.getSGTestRootDir() + "/src/main/resources/apps/cloudify/cloud/openstack/" + groovyFileName);
 		IOUtils.replaceFile(standardGroovyFile, wrongproviderGroovyFile);
 		File newFile = new File(getService().getPathToCloudFolder(), groovyFileName);

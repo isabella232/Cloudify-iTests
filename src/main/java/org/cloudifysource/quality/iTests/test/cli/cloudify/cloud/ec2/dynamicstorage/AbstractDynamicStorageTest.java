@@ -3,6 +3,7 @@ package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.ec2.dynamicsto
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeoutException;
@@ -76,21 +77,26 @@ public abstract class AbstractDynamicStorageTest extends NewAbstractCloudTest {
 	public void scanForLeakedVolumes(final String name) throws TimeoutException {
 		
 		Set<Volume> volumesByName = storageHelper.getVolumesByName(name);
+        Set<Volume> nonDeletingVolumes = new HashSet<Volume>();
 
         for (Volume volumeByName : volumesByName) {
             if (volumeByName != null && !volumeByName.getStatus().equals(Status.DELETING)) {
-                LogUtils.log("Found a leaking volume " + volumeByName);
+                LogUtils.log("Found a leaking volume " + volumeByName + ". status is " + volumeByName.getStatus());
+                LogUtils.log("Volume attachments are : " + volumeByName.getAttachments());
                 if (volumeByName.getAttachments() != null && !volumeByName.getAttachments().isEmpty()) {
                     LogUtils.log("Detaching attachment before deletion");
                     storageHelper.detachVolume(volumeByName.getId());
                     waitForVolumeStatus(volumeByName, Status.AVAILABLE);
                 }
+                waitForVolumeStatus(volumeByName, Status.AVAILABLE);
                 LogUtils.log("Deleting volume " + volumeByName.getId());
                 storageHelper.deleteVolume(volumeByName.getId());
+            } else {
+                nonDeletingVolumes.add(volumeByName);
             }
         }
-        if (!volumesByName.isEmpty()) {
-            AssertUtils.assertFail("Found leaking volumes after test ended :" + volumesByName);
+        if (!nonDeletingVolumes.isEmpty()) {
+            AssertUtils.assertFail("Found leaking volumes after test ended :" + nonDeletingVolumes);
         }
 
 

@@ -4,20 +4,16 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Set;
 
+import org.cloudifysource.quality.iTests.framework.tools.SGTestHelper;
+import org.cloudifysource.quality.iTests.framework.utils.AssertUtils;
+import org.cloudifysource.quality.iTests.framework.utils.CloudBootstrapper;
+import org.cloudifysource.quality.iTests.framework.utils.IOUtils;
+import org.cloudifysource.quality.iTests.framework.utils.JCloudsUtils;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.NewAbstractCloudTest;
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.NodeState;
-import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-
-import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.NewAbstractCloudTest;
-import org.cloudifysource.quality.iTests.framework.tools.SGTestHelper;
-import org.cloudifysource.quality.iTests.framework.utils.AssertUtils;
-import org.cloudifysource.quality.iTests.framework.utils.AssertUtils.RepetitiveConditionProvider;
-import org.cloudifysource.quality.iTests.framework.utils.IOUtils;
-import org.cloudifysource.quality.iTests.framework.utils.JCloudsUtils;
-import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
 
 /**
  * This test makes a bootstrap on ec2 fail by changing the JAVA_HOME path to a bad one in the bootstrap-management.sh file.
@@ -33,13 +29,10 @@ public class BootstrapFailureEc2Test extends NewAbstractCloudTest {
 	private boolean managementMachineTerminated = false;
 
 	@BeforeClass
-	public void bootstrap() {	
-		try {
-			super.bootstrap();
-		} catch (Throwable ae) {
-			LogUtils.log(ae.getMessage());
-		}
-		
+	public void bootstrap() throws Exception {
+        CloudBootstrapper bootstrapper = new CloudBootstrapper();
+        bootstrapper.setBootstrapExpectedToFail(true);
+        super.bootstrap(bootstrapper);
 	}
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
@@ -47,22 +40,7 @@ public class BootstrapFailureEc2Test extends NewAbstractCloudTest {
 		
 		JCloudsUtils.createContext(getService());
 		Set<? extends NodeMetadata> machines = JCloudsUtils.getServersByName(getService().getMachinePrefix());
-		Assert.assertTrue(machines != null);
-		managementMachine = machines.iterator().next();
-
-		RepetitiveConditionProvider condition = new RepetitiveConditionProvider() {
-			@Override
-			public boolean getCondition() {
-				Set<? extends NodeMetadata> machines = JCloudsUtils.getServersByName(getService().getMachinePrefix());
-				managementMachine = machines.iterator().next();
-				if (managementMachine.getState() == NodeState.TERMINATED) {
-					managementMachineTerminated = true;
-				}
-				return managementMachineTerminated;
-			}
-		};
-
-		AssertUtils.repetitiveAssertTrue("management machine was not terminated", condition, TIME_TO_TERMINATE_IN_MILLS);
+		AssertUtils.assertTrue("Found running management instances even though bootstrap failed", machines == null);
 	}
 
 	@AfterClass

@@ -11,13 +11,8 @@ public class Ec2PersistencyWithTwoManagersTest extends AbstractCloudManagementPe
 
     @BeforeClass(alwaysRun = true)
     public void bootstrapAndInit() throws Exception{
-        super.boostrapAndInstallService();
-    }
-
-    @Override
-    protected void customizeCloud() throws Exception {
-        super.customizeCloud();
-        getService().setNumberOfManagementMachines(getNumOfManagementMachines());
+        super.bootstrap();
+        super.installTomcatService(3, null);
     }
 
     @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
@@ -29,7 +24,6 @@ public class Ec2PersistencyWithTwoManagersTest extends AbstractCloudManagementPe
     public void teardown() throws Exception{
         super.teardown();
     }
-
 
     @Override
     protected String getCloudName() {

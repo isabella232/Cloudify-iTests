@@ -168,7 +168,8 @@ public abstract class RecipeInstaller {
 			commandBuilder.append("-authGroups").append(" ").append(authGroups).append(" ");
 		}
 		
-		if (recipeName != null && !recipeName.isEmpty()) {
+		if (this instanceof ApplicationInstaller && recipeName != null && !recipeName.isEmpty()) {
+            // Service installation does not support this option. pending bug CLOUDIFY-1591
 			commandBuilder.append("-name").append(" ").append(recipeName).append(" ");
 		}
 		

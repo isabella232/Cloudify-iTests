@@ -2,18 +2,16 @@ package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud;
 
 import com.j_spaces.kernel.PlatformVersion;
 import org.apache.commons.io.FileUtils;
-import org.cloudifysource.quality.iTests.framework.tools.SGTestHelper;
 import org.cloudifysource.quality.iTests.framework.utils.*;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
 import org.cloudifysource.restclient.GSRestClient;
 import org.cloudifysource.restclient.RestException;
 import org.jclouds.compute.domain.NodeMetadata;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -22,15 +20,68 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 public abstract class AbstractCloudManagementPersistencyTest extends NewAbstractCloudTest{
 
-    protected static final String TOMCAT_SERVICE_PATH = SGTestHelper.getBuildDir() + "/recipes/services/tomcat";
-    protected static final String TOMCAT_SERVICE_NAME = "tomcat";
-    protected static final String APPLICATION_NAME = "default";
-    protected final static String SERVICE_REST_URL = "ProcessingUnits/Names/" + APPLICATION_NAME + "." + TOMCAT_SERVICE_NAME;
+    private static final String PATH_TO_SERVICE = CommandTestUtils.getPath("/src/main/resources/apps/USM/usm/custom-tomcat");;
+
+    private static final String BOOTSTRAP_SUCCEEDED_STRING = "Successfully created Cloudify Manager";
+
+    private static final String APPLICATION_NAME = "default";
+    private static final String EC2_USER = "ec2-user";
 
     private int numOfManagementMachines = 2;
-    private final int numOfServiceInstances = 3;
+
+    private Map<String, Integer> installedServices = new HashMap<String, Integer>();
 
     private List<String> attributesList = new LinkedList<String>();
+
+    protected void installTomcatService(final int numberOfInstances, final String overrideName) throws IOException, InterruptedException {
+
+        copyCustomTomcatToBuild();
+
+        try {
+
+            // replace number of instances
+            File customTomcatGroovy = new File(ScriptUtils.getBuildRecipesServicesPath() + "/custom-tomcat", "tomcat-service.groovy");
+            IOUtils.replaceTextInFile(customTomcatGroovy.getAbsolutePath(), "ENTER_NUMBER_OF_INSTANCES", "" + numberOfInstances + "");
+
+            // TODO - Once CLOUDIFY-1591 is fixed, use -name option to override a service installation name.
+            // replace name if needed
+            String actualServiceName;
+            if (overrideName != null) {
+                actualServiceName = overrideName;
+            } else {
+                actualServiceName = "tomcat";
+            }
+            IOUtils.replaceTextInFile(customTomcatGroovy.getAbsolutePath(), "ENTER_NAME", actualServiceName);
+
+            // install the custom tomcat
+            ServiceInstaller tomcatInstaller = new ServiceInstaller(getRestUrl(), actualServiceName);
+            tomcatInstaller.recipePath("custom-tomcat");
+            tomcatInstaller.timeoutInMinutes(10 * numberOfInstances);
+            tomcatInstaller.install();
+
+            installedServices.put(actualServiceName, numberOfInstances);
+            CloudBootstrapper bootstrapper = getService().getBootstrapper();
+            String attributes = bootstrapper.listServiceInstanceAttributes(APPLICATION_NAME, actualServiceName, 1, false);
+            attributesList.add(attributes.substring(attributes.indexOf("home")));
+
+        } finally  {
+            deleteCustomTomcatFromBuild();
+        }
+
+    }
+
+    private void copyCustomTomcatToBuild() throws IOException {
+        deleteCustomTomcatFromBuild();
+        FileUtils.copyDirectoryToDirectory(new File(PATH_TO_SERVICE), new File(ScriptUtils.getBuildRecipesServicesPath()));
+    }
+
+    private void deleteCustomTomcatFromBuild() throws IOException {
+        File customTomcat = new File(ScriptUtils.getBuildRecipesServicesPath(), "custom-tomcat");
+        if (customTomcat.exists()) {
+            FileUtils.deleteDirectory(customTomcat);
+        }
+    }
+
 
     /**
      * 1. Shutdown management machines.
@@ -51,8 +102,8 @@ public abstract class AbstractCloudManagementPersistencyTest extends NewAbstract
 
         List<String> newAttributesList = new LinkedList<String>();
 
-        for(int i=1; i <= numOfServiceInstances; i++){
-            String attributes = bootstrapper.listServiceInstanceAttributes(APPLICATION_NAME, TOMCAT_SERVICE_NAME, i, false);
+        for (String serviceName : installedServices.keySet()) {
+            String attributes = bootstrapper.listServiceInstanceAttributes(APPLICATION_NAME, serviceName, 1, false);
             newAttributesList.add(attributes.substring(attributes.indexOf("home")));
         }
 
@@ -60,8 +111,6 @@ public abstract class AbstractCloudManagementPersistencyTest extends NewAbstract
         differenceAttributesList.removeAll(newAttributesList);
 
         AssertUtils.assertTrue("the service attributes post management restart are not the same as the attributes pre restart", differenceAttributesList.isEmpty());
-
-        LogUtils.log("shutting down one of the service's GSAs");
 
         JCloudsUtils.createContext(getService());
         Set<? extends NodeMetadata> machines = JCloudsUtils.getAllRunningNodes();
@@ -74,43 +123,59 @@ public abstract class AbstractCloudManagementPersistencyTest extends NewAbstract
             }
         }
 
+        LogUtils.log("Shutting down instance with id " + agentServerId);
         JCloudsUtils.shutdownServer(agentServerId);
         JCloudsUtils.closeContext();
 
-        LogUtils.log("waiting for service to restart on a new machine");
+        LogUtils.log("Waiting for service to restart on a new machine");
         final GSRestClient client = new GSRestClient("", "", new URL(getRestUrl()), PlatformVersion.getVersionNumber());
 
-        LogUtils.log("waiting for service to break due to machine shutdown");
-        AssertUtils.repetitiveAssertTrue("service didn't break", new AssertUtils.RepetitiveConditionProvider() {
+        final AtomicReference<String> brokenService = new AtomicReference<String>();
+
+        AssertUtils.repetitiveAssertTrue("Service didn't break", new AssertUtils.RepetitiveConditionProvider() {
             @Override
             public boolean getCondition() {
                 try {
-                    int numOfInst = Integer.parseInt((String) client.getAdminData(SERVICE_REST_URL).get("NumberOfInstances"));
-                    return numOfServiceInstances > numOfInst;
+
+                    // we don't know which service the agent we shutdown belonged to.
+                    // query all installed services to find out.
+                    for (String serviceName : installedServices.keySet()) {
+                        String serviceRestUrl = "ProcessingUnits/Names/" + APPLICATION_NAME + "." + serviceName;
+                        int numberOfInstances = (Integer)client.getAdminData(serviceRestUrl).get("Instances-Size");
+                        LogUtils.log("Number of " + serviceName + " instances is " + numberOfInstances);
+                        if (numberOfInstances < installedServices.get(serviceName)) {
+                            LogUtils.log(serviceName + " service broke. it now has only " + numberOfInstances + " instances");
+                            brokenService.set(serviceName);
+                        }
+                    }
+                    return (brokenService.get() != null);
                 } catch (RestException e) {
-                    throw new RuntimeException("caught a RestException", e);
+                    throw new RuntimeException(e);
                 }
 
             }
-        } , OPERATION_TIMEOUT*4);
+        } , OPERATION_TIMEOUT * 4);
 
-        AssertUtils.repetitiveAssertTrue("service didn't recover", new AssertUtils.RepetitiveConditionProvider() {
+        // now we already know the service that broke.
+        // so we wait for it to recover.
+        AssertUtils.repetitiveAssertTrue(brokenService.get() + " service did not recover", new AssertUtils.RepetitiveConditionProvider() {
             @Override
             public boolean getCondition() {
+                final String brokenServiceRestUrl = "ProcessingUnits/Names/" + APPLICATION_NAME + "." + brokenService.get();
                 try {
-                    int numOfInst = Integer.parseInt((String) client.getAdminData(SERVICE_REST_URL).get("NumberOfInstances"));
-                    return numOfServiceInstances == numOfInst;
-/*
+                    int numOfInst = (Integer) client.getAdminData(brokenServiceRestUrl).get("Instances-Size");
+                    return (installedServices.get(brokenService.get()) == numOfInst);
 
-not for GA
-                    int numOfPlannedInst = Integer.parseInt((String) client.getAdminData(SERVICE_REST_URL).get("PlannedNumberOfInstances"));
-                    result = result && numOfServiceInstances == numOfPlannedInst;
+/* CLOUDIFY-1602
+                    int numOfPlannedInstances = Integer.parseInt((String) client.getAdminData(brokenServiceRestUrl).get("PlannedNumberOfInstances"));
+                    return (installedServices.get(brokenService.get()) == numOfPlannedInstances);
 */
+
                 } catch (RestException e) {
                     throw new RuntimeException("caught a RestException", e);
                 }
             }
-        } , OPERATION_TIMEOUT*3);
+        } , OPERATION_TIMEOUT * 3);
     }
 
     /**
@@ -149,22 +214,10 @@ not for GA
         }
     }
 
-    public void boostrapAndInstallService() throws Exception{
-        super.bootstrap();
-        super.installServiceAndWait(TOMCAT_SERVICE_PATH, TOMCAT_SERVICE_NAME, SERVICE_INSTALLATION_TIMEOUT_IN_MINUTES, numOfServiceInstances);
-
-        Bootstrapper bootstrapper = new CloudBootstrapper();
-        bootstrapper.setRestUrl(getRestUrl());
-
-        for(int i=1; i <= numOfServiceInstances; i++){
-            String attributes = bootstrapper.listServiceInstanceAttributes(APPLICATION_NAME, TOMCAT_SERVICE_NAME, i, false);
-            attributesList.add(attributes.substring(attributes.indexOf("home")));
-        }
-    }
 
     protected void shutdownManagement() throws Exception{
 
-        CloudBootstrapper bootstrapper = new CloudBootstrapper();
+        CloudBootstrapper bootstrapper = getService().getBootstrapper();
         bootstrapper.setRestUrl(getRestUrl());
 
         LogUtils.log("shutting down managers");
@@ -179,6 +232,34 @@ not for GA
         return set;
     }
 
+    public void testCorruptedPersistencyDirectory() throws Exception {
+
+        String persistencyFolderPath = getService().getCloud().getConfiguration().getPersistentStoragePath();
+        String fileToDeletePath = persistencyFolderPath + "/management-space/db.h2.h2.db";
+        JCloudsUtils.createContext(getService());
+        Set<? extends NodeMetadata> managementMachines = JCloudsUtils.getServersByName(getService().getMachinePrefix() + "cloudify-manager");
+        JCloudsUtils.closeContext();
+
+        Iterator<? extends NodeMetadata> managementNodesIterator = managementMachines.iterator();
+        String machineIp1 = managementNodesIterator.next().getPublicAddresses().iterator().next();
+        String machineIp2 = managementNodesIterator.next().getPublicAddresses().iterator().next();
+
+        SSHUtils.runCommand(machineIp1, OPERATION_TIMEOUT, "rm -rf " + fileToDeletePath, EC2_USER, getPemFile());
+        SSHUtils.runCommand(machineIp2, OPERATION_TIMEOUT, "rm -rf " + fileToDeletePath, EC2_USER, getPemFile());
+
+        shutdownManagement();
+
+        CloudBootstrapper bootstrapper = getService().getBootstrapper();
+        bootstrapper.setBootstrapExpectedToFail(true);
+        bootstrapper.timeoutInMinutes(15);
+        bootstrapper.useExisting(true);
+        bootstrapper.bootstrap();
+
+        String output = bootstrapper.getLastActionOutput();
+        AssertUtils.assertTrue("bootstrap succeeded with a corrupted persistency folder", !output.contains(BOOTSTRAP_SUCCEEDED_STRING));
+
+    }
+
     @Override
     protected void customizeCloud() throws Exception {
         super.customizeCloud();
@@ -191,8 +272,4 @@ not for GA
 
     @Override
     protected abstract boolean isReusableCloud();
-
-    public int getNumOfManagementMachines() {
-        return numOfManagementMachines;
-    }
 }

@@ -105,7 +105,7 @@ public class IOUtils {
         // this part is needed to replace the illegal comment sign '#' in the file
         String readFileToString = FileUtils.readFileToString(destinationFile);
         if (existingProps != null) {
-        	FileUtils.writeStringToFile(destinationFile, existingProps + "\n" + readFileToString.replaceAll("#", "//"));
+        	FileUtils.writeStringToFile(destinationFile, existingProps + "\n" + readFileToString.replaceAll("#", "//").replaceAll("\\\\:", ":"));
         } else {
         	FileUtils.writeStringToFile(destinationFile, readFileToString.replaceAll("#", "//"));        	
         }

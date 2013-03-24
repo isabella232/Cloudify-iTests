@@ -140,6 +140,7 @@ public abstract class AbstractCloudService implements CloudService {
         this.cloudUniqueName = uniqueName;
         this.cloudFolderName = cloudName + "_" + cloudUniqueName;
         bootstrapper.provider(this.cloudFolderName);
+        bootstrapper.setCloudService(this);
         deleteServiceFolders();
         createCloudFolder();
     }

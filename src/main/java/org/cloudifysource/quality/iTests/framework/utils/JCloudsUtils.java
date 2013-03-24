@@ -247,7 +247,7 @@ public class JCloudsUtils {
 				boolean nameFound = false;
 				final NodeMetadata node = (NodeMetadata) input;
 				if (StringUtils.isNotBlank(node.getName())) {
-					nameFound = (node.getName().indexOf(serverName) >= 0);
+					nameFound = (node.getName().indexOf(serverName) >= 0) && (node.getStatus() == NodeMetadata.Status.RUNNING);
 				}
 				return nameFound;
 			}

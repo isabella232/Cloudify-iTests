@@ -3,6 +3,7 @@ package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud;
 import java.io.File;
 import java.io.IOException;
 
+import org.cloudifysource.dsl.cloud.compute.ComputeTemplate;
 import org.cloudifysource.quality.iTests.framework.utils.ApplicationInstaller;
 import org.cloudifysource.quality.iTests.framework.utils.AssertUtils;
 import org.cloudifysource.quality.iTests.framework.utils.CloudBootstrapper;
@@ -378,5 +379,23 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
         } catch (final Exception e) {
             LogUtils.log("Failed to create dump for this url - " + url, e);
         }
+    }
+
+    protected File getPemFile() {
+        String cloudFolderPath = getService().getPathToCloudFolder();
+        ComputeTemplate managementTemplate = getService().getCloud().getCloudCompute().getTemplates().get(getService().getCloud().getConfiguration().getManagementMachineTemplate());
+        String keyFileName = managementTemplate.getKeyFile();
+        String localDirectory = managementTemplate.getLocalDirectory();
+        String keyFilePath = cloudFolderPath + "/" + localDirectory + "/" + keyFileName;
+        final File keyFile = new File(keyFilePath);
+        if(!keyFile.exists()) {
+            throw new IllegalStateException("Could not find key file at expected location: " + keyFilePath);
+        }
+
+        if(!keyFile.isFile()) {
+            throw new IllegalStateException("Expected key file: " + keyFile + " is not a file");
+        }
+        return keyFile;
+
     }
 }

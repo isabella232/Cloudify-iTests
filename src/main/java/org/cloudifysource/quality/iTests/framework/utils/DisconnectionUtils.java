@@ -30,7 +30,7 @@ public class DisconnectionUtils {
     }
 
     public static void restartMachine(String toKill) {
-        LogUtils.log(SSHUtils.runCommand(toKill, TimeUnit.SECONDS.toMillis(30),
-                "sudo shutdown now -r", ByonCloudService.BYON_CLOUD_USER, ByonCloudService.BYON_CLOUD_PASSWORD));
+        SSHUtils.runCommand(toKill, TimeUnit.SECONDS.toMillis(30),
+                "sudo shutdown now -r", ByonCloudService.BYON_CLOUD_USER, ByonCloudService.BYON_CLOUD_PASSWORD);
     }
 }

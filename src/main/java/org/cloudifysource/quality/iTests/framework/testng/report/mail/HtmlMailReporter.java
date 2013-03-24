@@ -54,7 +54,8 @@ public class HtmlMailReporter {
         sb.append("<h2>Suite Name:  " + summaryReport.getSuiteName() + " </h2></br>").append("\n");
         sb.append("<h4>Duration:  " + WikiUtils.formatDuration(summaryReport.getDuration()) + " </h4></br>").append("\n");
         sb.append("<h4>Full Suite Report:  " + link + " </h4></br>").append("\n");
-        sb.append("<h4>Full build log:  <a href=" + getFullBuildLog(buildLogUrl) + ">" + getFullBuildLog(buildLogUrl) + "</a> </h4></br>").append("\n");
+        if(buildLogUrl != null)
+            sb.append("<h4>Full build log:  <a href=" + getFullBuildLog(buildLogUrl) + ">" + getFullBuildLog(buildLogUrl) + "</a> </h4></br>").append("\n");
         sb.append("<h4 style=\"color:blue\">Total run:  " + summaryReport.getTotalTestsRun() + " </h4></br>").append("\n");
         sb.append("<h4 style=\"color:red\">Failed Tests:  " + summaryReport.getFailed() + " </h4></br>").append("\n");
         sb.append("<h4 style=\"color:green\">Passed Tests:  " + summaryReport.getSuccess() + " </h4></br>").append("\n");
@@ -77,7 +78,13 @@ public class HtmlMailReporter {
             throw new RuntimeException("failed to send mail - " + e, e);
         }
         //TODO:write results to DB
-        DashboardDBReporter.writeToDB(summaryReport.getSuiteName(), buildNumber.split("_")[1], majorVersion, minorVersion, 
+        String[] buildeNumberSplit = buildNumber.split("_");
+        String buildNumberForDB;
+        if(buildeNumberSplit.length >= 2)
+            buildNumberForDB = buildeNumberSplit[1];
+        else
+            buildNumberForDB = buildNumber;
+        DashboardDBReporter.writeToDB(summaryReport.getSuiteName(), buildNumberForDB, majorVersion, minorVersion,
 				summaryReport.getDuration(), buildLogUrl, summaryReport.getTotalTestsRun(), summaryReport.getFailed(),
 				summaryReport.getSuccess(), summaryReport.getSkipped(), summaryReport.getSuspected(), 0/*orphans*/, wikiPageUrl, null);
     }

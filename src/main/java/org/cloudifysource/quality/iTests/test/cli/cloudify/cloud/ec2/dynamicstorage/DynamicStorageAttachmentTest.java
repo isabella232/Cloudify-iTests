@@ -70,7 +70,7 @@ public class DynamicStorageAttachmentTest extends AbstractDynamicStorageTest {
 				
 		Volume details = storageHelper.createVolume(node.getLocation().getId(), 5, STORAGE_NAME);
 		
-		installer.invoke("attachVolume " + details.getId() + " " + "/dev/sdc");
+		installer.invoke("attachVolume " + details.getId() + " " + "/dev/xvdc");
 		
 		Volume volume = storageHelper.getVolumeById(details.getId());
 		AssertUtils.assertEquals("volume with id " + volume.getId() + " should have one attachement after invoking attachVolume", 1, volume.getAttachments().size());

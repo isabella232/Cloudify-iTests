@@ -65,6 +65,8 @@ public class CloudServiceManager {
 			cloudService = new MicrosoftAzureCloudService();
 		} else if ("dynamic-byon".equalsIgnoreCase(cloudName)) {
 			cloudService = new DynamicByonCloudService();
+		} else {
+			throw new IllegalArgumentException("Cloud name not supported: " + cloudName);
 		}
 
 		return cloudService;

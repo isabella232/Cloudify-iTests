@@ -15,7 +15,7 @@ import org.testng.annotations.Test;
 
 public class StockDemoApplicationTest extends NewAbstractCloudTest {
 
-	private static final int APPLICATION_INSTALL_TIMEOUT_IN_MINUTES = 60;
+	private static final int APPLICATION_INSTALL_TIMEOUT_IN_MINUTES = 120;
 	
 	@BeforeClass(alwaysRun = true)
 	protected void bootstrap() throws Exception {
@@ -29,7 +29,7 @@ public class StockDemoApplicationTest extends NewAbstractCloudTest {
 		FileUtils.copyDirectory(stockDemoAppSG, appsFolder);
 	}
 	
-	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, groups = "1", enabled = true)
+	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 8, groups = "1", enabled = true)
 	public void testStockDemo() throws IOException, InterruptedException {
 		doSanityTest("stockdemo", "stockdemo", APPLICATION_INSTALL_TIMEOUT_IN_MINUTES);
 	}

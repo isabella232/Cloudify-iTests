@@ -92,6 +92,7 @@ public class AbstractSecuredLocalCloudTest extends AbstractTestSupport {
 	protected void teardown() throws IOException, InterruptedException {
 		LocalCloudBootstrapper bootstrapper = new LocalCloudBootstrapper();
 		bootstrapper.user(SecurityConstants.USER_PWD_ALL_ROLES).password(SecurityConstants.USER_PWD_ALL_ROLES);
+        bootstrapper.force(true);
 		teardown(bootstrapper);
 	}
 

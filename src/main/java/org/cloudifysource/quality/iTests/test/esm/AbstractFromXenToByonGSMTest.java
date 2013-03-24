@@ -1,22 +1,15 @@
 package org.cloudifysource.quality.iTests.test.esm;
 
-import java.util.concurrent.TimeUnit;
-
 import org.cloudifysource.dsl.cloud.Cloud;
 import org.cloudifysource.dsl.cloud.compute.ComputeTemplate;
 import org.cloudifysource.esc.driver.provisioning.CloudifyMachineProvisioningConfig;
 import org.cloudifysource.esc.driver.provisioning.ElasticMachineProvisioningCloudifyAdapter;
-import org.cloudifysource.quality.iTests.framework.utils.AssertUtils;
-import org.cloudifysource.quality.iTests.framework.utils.ByonMachinesUtils;
-import org.cloudifysource.quality.iTests.framework.utils.GridServiceAgentsCounter;
-import org.cloudifysource.quality.iTests.framework.utils.GridServiceContainersCounter;
-import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
+import org.cloudifysource.quality.iTests.framework.utils.*;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.byon.AbstractByonCloudTest;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.byon.ByonCloudService;
 import org.openspaces.admin.gsa.GridServiceAgent;
 import org.openspaces.admin.gsa.events.ElasticGridServiceAgentProvisioningProgressChangedEvent;
 import org.openspaces.admin.gsa.events.ElasticGridServiceAgentProvisioningProgressChangedEventListener;
-import org.openspaces.admin.gsm.GridServiceManager;
 import org.openspaces.admin.machine.Machine;
 import org.openspaces.admin.machine.events.ElasticMachineProvisioningProgressChangedEvent;
 import org.openspaces.admin.machine.events.ElasticMachineProvisioningProgressChangedEventListener;
@@ -32,6 +25,8 @@ import org.openspaces.grid.gsm.machines.plugins.events.MachineStartedEvent;
 import org.openspaces.grid.gsm.machines.plugins.events.MachineStopRequestedEvent;
 import org.openspaces.grid.gsm.machines.plugins.events.MachineStoppedEvent;
 
+import java.util.concurrent.TimeUnit;
+
 public class AbstractFromXenToByonGSMTest extends AbstractByonCloudTest {
 	
 	public final static long OPERATION_TIMEOUT = 5 * 60 * 1000;
@@ -46,6 +41,7 @@ public class AbstractFromXenToByonGSMTest extends AbstractByonCloudTest {
     private GridServiceAgentsCounter gsaCounter;
     protected ElasticGridServiceAgentProvisioningProgressChangedEventListener agentEventListener;
     protected  ElasticMachineProvisioningProgressChangedEventListener machineEventListener;
+    protected Machine firstManagementMachine = null;
 	
     public void repetitiveAssertNumberOfGSAsHolds(int expectedAdded, int expectedRemoved, long timeoutMilliseconds) {
     	gsaCounter.repetitiveAssertNumberOfGSAsHolds(expectedAdded, expectedRemoved, timeoutMilliseconds);
@@ -163,8 +159,7 @@ public class AbstractFromXenToByonGSMTest extends AbstractByonCloudTest {
     
     //assuming first machine is management
     public double getFirstManagementMachinePhysicalMemoryInMB() {
-    	Machine managementMachine = admin.getMachines().getMachines()[0];
-    	return managementMachine.getOperatingSystem().getDetails().getTotalPhysicalMemorySizeInMB();
+    	return firstManagementMachine.getOperatingSystem().getDetails().getTotalPhysicalMemorySizeInMB();
     }
     
     /**
@@ -176,11 +171,9 @@ public class AbstractFromXenToByonGSMTest extends AbstractByonCloudTest {
 		if (admin.getGridServiceManagers().getManagers().length == 0){
             AssertUtils.assertFail("NO GSMS!");
 		}
-        GridServiceManager gridServiceManager = admin.getGridServiceManagers().getManagers()[0];
-		Machine managerMachine = gridServiceManager.getMachine();
         for (int i = 0; i < gsas.length; i++) {
             Machine curMachine = gsas[i].getMachine();
-            if (!curMachine.equals(managerMachine)) {
+            if (!curMachine.equals(firstManagementMachine)) {
                 stopByonMachine(getElasticMachineProvisioningCloudifyAdapter(), gsas[i], OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
             }
         }
@@ -227,7 +220,9 @@ public class AbstractFromXenToByonGSMTest extends AbstractByonCloudTest {
 	protected void afterBootstrap() throws Exception {
 		admin = super.createAdmin();
 		initElasticMachineProvisioningCloudifyAdapter();
-	}
+        admin.getGridServiceManagers().waitFor(1);
+        firstManagementMachine = admin.getGridServiceManagers().getManagers()[0].getMachine();
+    }
 	
 	protected DiscoveredMachineProvisioningConfig getDiscoveredMachineProvisioningConfig() {
 		DiscoveredMachineProvisioningConfig config = new DiscoveredMachineProvisioningConfig();

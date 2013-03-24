@@ -15,7 +15,7 @@ import org.testng.annotations.Test;
 
 public class StockDemoApplicationTest extends NewAbstractCloudTest {
 
-	private static final int APPLICATION_INSTALL_TIMEOUT_IN_MINUTES = 60;
+	private static final int APPLICATION_INSTALL_TIMEOUT_IN_MINUTES = 120;
 	
 	@BeforeClass(alwaysRun = true)
 	protected void bootstrap() throws Exception {

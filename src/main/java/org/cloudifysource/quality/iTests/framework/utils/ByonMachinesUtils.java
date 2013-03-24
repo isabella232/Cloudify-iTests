@@ -20,16 +20,14 @@ public class ByonMachinesUtils {
 
 	public static GridServiceAgent startNewByonMachine (ElasticMachineProvisioningCloudifyAdapter elasticMachineProvisioningCloudifyAdapter, long duration,TimeUnit timeUnit) throws Exception {	
 		ExactZonesConfig zones = new ExactZonesConfig();
-		GSAReservationId reservationId = null;
-		GridServiceAgent agent = elasticMachineProvisioningCloudifyAdapter.startMachine(zones, reservationId, duration, timeUnit);
-		return agent;
+		GSAReservationId reservationId = GSAReservationId.randomGSAReservationId();
+		return elasticMachineProvisioningCloudifyAdapter.startMachine(zones, reservationId, duration, timeUnit);
 	}
 	
 	public static GridServiceAgent startNewByonMachineWithZones (ElasticMachineProvisioningCloudifyAdapter elasticMachineProvisioningCloudifyAdapter,String[] zoneList, long duration,TimeUnit timeUnit) throws Exception {	
 		ExactZonesConfig zones = new ExactZonesConfigurer().addZones(zoneList).create();
-		GSAReservationId reservationId = null;
-		GridServiceAgent agent = elasticMachineProvisioningCloudifyAdapter.startMachine(zones, reservationId, duration, timeUnit);
-		return agent;
+		GSAReservationId reservationId = GSAReservationId.randomGSAReservationId();
+		return elasticMachineProvisioningCloudifyAdapter.startMachine(zones, reservationId, duration, timeUnit);
 	}
 
 	public static GridServiceAgent[] startNewByonMachines(

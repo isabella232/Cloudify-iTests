@@ -37,6 +37,7 @@ import org.cloudifysource.quality.iTests.framework.utils.ServiceInstaller;
 import org.cloudifysource.quality.iTests.framework.utils.SetupUtils;
 import org.cloudifysource.quality.iTests.framework.utils.WebUtils;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.security.SecurityConstants;
 import org.cloudifysource.restclient.ErrorStatusException;
 import org.cloudifysource.restclient.StringUtils;
 import org.cloudifysource.shell.commands.CLIException;
@@ -410,11 +411,13 @@ public class AbstractLocalCloudTest extends AbstractTestSupport {
         serviceInstaller.uninstall();
 	}
 
-	public void uninstallAll() throws IOException, InterruptedException {
+	public void uninstallAll() throws Exception {
 		if(admin == null){
             LogUtils.log("Admin is null ,cant uninstall applications");
             return;
         }
+
+        boolean dumpPerformed = false;
 		Applications applications = admin.getApplications();
 		for (org.openspaces.admin.application.Application application : applications) {
 			String applicationName = application.getName();
@@ -422,6 +425,7 @@ public class AbstractLocalCloudTest extends AbstractTestSupport {
 				ApplicationInstaller installer = new ApplicationInstaller(restUrl, applicationName);
 				try {
 					installer.uninstall();
+                    dumpPerformed = true;
 				} catch (Throwable t) {
 					LogUtils.log("Failed to uninstall application " + applicationName);
 				}
@@ -434,13 +438,18 @@ public class AbstractLocalCloudTest extends AbstractTestSupport {
 				ServiceInstaller installer = new ServiceInstaller(serviceName, serviceName);
 				try {
 					installer.uninstall();
+                    dumpPerformed = true;
 				} catch (Throwable t) {
 					LogUtils.log("Failed to uninstall service " + serviceName);
 				}
 			}
-		}
+        }
+        if (!dumpPerformed) {
+            DumpUtils.dumpMachines(restUrl, SecurityConstants.USER_PWD_ALL_ROLES, SecurityConstants.USER_PWD_ALL_ROLES);
+        }
 
-	}
+
+    }
 
 	protected void doTest(String applicationPath, String applicationFolderName, String applicationName) throws Exception {
 

@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.text.MessageFormat;
 import java.util.concurrent.atomic.AtomicReference;
 
+import org.apache.commons.io.FileUtils;
 import org.cloudifysource.quality.iTests.framework.tools.SGTestHelper;
 import org.cloudifysource.quality.iTests.framework.utils.AssertUtils;
 import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
@@ -178,6 +179,13 @@ public class CommandTestUtils {
 	
 	public static String runCommand(final String command) throws IOException, InterruptedException {
 		return runCommand(command, false, false);
+	}
+	
+	public static String runCommandUsingFile(final String command) throws IOException, InterruptedException {
+		final File tempFile = File.createTempFile("testcommands", "txt");
+		tempFile.deleteOnExit();
+		FileUtils.writeStringToFile(tempFile, command);
+		return runCommandAndWait("-f=" + tempFile.getAbsolutePath());
 	}
 	
 	private static String getCommandExtention() {

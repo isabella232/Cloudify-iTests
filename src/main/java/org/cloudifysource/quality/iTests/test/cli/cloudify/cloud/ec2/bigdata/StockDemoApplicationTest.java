@@ -29,7 +29,7 @@ public class StockDemoApplicationTest extends NewAbstractCloudTest {
 		FileUtils.copyDirectory(stockDemoAppSG, appsFolder);
 	}
 	
-	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, groups = "1", enabled = true)
+	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 8, groups = "1", enabled = true)
 	public void testStockDemo() throws IOException, InterruptedException {
 		doSanityTest("stockdemo", "stockdemo", APPLICATION_INSTALL_TIMEOUT_IN_MINUTES);
 	}

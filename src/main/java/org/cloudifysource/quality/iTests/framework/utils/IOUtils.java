@@ -113,6 +113,15 @@ public class IOUtils {
 
     }
 
+    public static File writePropertiesToFile(final Map<String, Object> props , final File destinationFile) throws IOException {
+
+        Properties properties = new Properties();
+        for (Map.Entry<String, Object> entry : props.entrySet()) {
+            properties.put(entry.getKey(), entry.getValue());
+        }
+        return writePropertiesToFile(properties, destinationFile);
+    }
+
     public static void replaceFile(final File originalFile, final File replaceToReplaceWith) throws IOException {
 
         File parentFolder = originalFile.getParentFile();

@@ -22,13 +22,12 @@ public class SGTestHelper {
 	public static boolean isDevMode() {
 		boolean isDevMode;
 		if (System.getenv().containsKey("DEV_ENV")) {
-			boolean value = Boolean.getBoolean(System.getenv("DEV_ENV"));
-			return value;
+            return Boolean.getBoolean(System.getenv("DEV_ENV"));
 		} else if (System.getProperties().contains("DEV_ENV")) {
-			boolean value = Boolean.getBoolean(System.getProperty("DEV_ENV"));
-			return value;
-		}
-		
+			return Boolean.getBoolean(System.getProperty("DEV_ENV"));
+		} else if (System.getProperties().contains("iTests.cloud.enabled")) {
+            return  !Boolean.getBoolean(System.getProperty("iTests.cloud.enabled"));
+        }
 
 		if (ScriptUtils.isWindows()) {
 			isDevMode = !System.getenv("USERNAME").equals("ca");

@@ -24,30 +24,10 @@ import com.gigaspaces.log.LogProcessType;
 
 public class RecipeInheritenceTest extends AbstractLocalCloudTest {
 
-	private final String tomcatParentPath = CommandTestUtils.getPath("src/main/resources/apps/USM/usm/tomcatHttpLivenessDetectorPlugin");
     private Application app;
 
     private String gsHome;
 
-
-
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
-    public void simpleInheritenceTest() throws IOException, PackagingException, InterruptedException, DSLException {
-
-
-        Service tomcatParent = ServiceReader.readService(new File(tomcatParentPath));
-        app = installApplication("travelExtended");
-        Service s1 = app.getServices().get(0);
-        Service s2 = app.getServices().get(1);
-        Service tomcat = s1.getName().equals("tomcat-extend") ? s1 : s2;
-
-        int tomcatParentPort, tomcatChildPort;
-        tomcatChildPort = tomcat.getNetwork().getPort();
-        tomcatParentPort = tomcatParent.getNetwork().getPort();
-
-        assertEquals("tomcat port isn't equal to the tomcat's parent port", tomcatChildPort, tomcatParentPort);
-        uninstallApplication("travelExtended");
-    }
 
     @Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
     public void overrideTomcatPortTest() throws PackagingException, IOException, InterruptedException, DSLException {

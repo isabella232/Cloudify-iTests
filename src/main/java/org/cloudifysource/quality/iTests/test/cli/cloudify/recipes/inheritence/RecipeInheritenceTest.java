@@ -46,7 +46,7 @@ public class RecipeInheritenceTest extends AbstractLocalCloudTest {
         tomcatParentPort = tomcatParent.getNetwork().getPort();
 
         assertEquals("tomcat port isn't equal to the tomcat's parent port", tomcatChildPort, tomcatParentPort);
-        //uninstallService("tomcatHttpLivenessDetectorPlugin");
+        uninstallService("tomcatHttpLivenessDetectorPlugin");
     }
 
     @Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)

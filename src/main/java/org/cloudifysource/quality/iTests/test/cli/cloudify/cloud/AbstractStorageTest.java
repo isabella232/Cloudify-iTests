@@ -17,6 +17,7 @@ import org.cloudifysource.quality.iTests.framework.utils.JCloudsUtils;
 import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
 import org.cloudifysource.quality.iTests.framework.utils.StorageUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.CloudService;
 import org.cloudifysource.restclient.GSRestClient;
 import org.cloudifysource.restclient.RestException;
 import org.jclouds.compute.domain.NodeMetadata;
@@ -56,14 +57,18 @@ public abstract class AbstractStorageTest extends NewAbstractCloudTest{
 	private static final long MOUNT_AFTER_ATTACH_TIMEOUT = 10 * 1000;
 	protected static final long POLLING_TIMEOUT = 2 * 1000;
 
-    public void bootstrapAndInit() throws Exception{
+    public void bootstrapAndInit(CloudService cloudService) throws Exception{
 
-        super.bootstrap();
+        super.bootstrap(cloudService);
 
         File serviceFile = new File(SERVICE_FILE_PATH);
         Service service = ServiceReader.readService(serviceFile);
 
         StorageUtils.init(getService().getCloud(), service.getCompute().getTemplate(), service.getStorage().getTemplate(), getService());
+    }
+    
+    public void bootstrapAndInit() throws Exception{
+    	bootstrapAndInit(null);
     }
 
     public void cleanup() throws Exception{

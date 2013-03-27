@@ -136,6 +136,11 @@ public abstract class AbstractDynamicStorageTest extends NewAbstractCloudTest {
 		FileUtils.deleteDirectory(new File(ScriptUtils.getBuildRecipesServicesPath() + "/" + getServiceFolder()));
 	}
 
+    @AfterMethod
+    public void uninstallServiceIfFound() throws IOException, InterruptedException {
+        uninstallServiceIfFound(SERVICE_NAME);
+    }
+
 	
 	protected void setTemplate(final String computeTemplateName, boolean useManagement) throws Exception {
 		File serviceFile = new File(ScriptUtils.getBuildRecipesServicesPath() + "/" + getServiceFolder(), SERVICE_NAME + "-service.groovy");

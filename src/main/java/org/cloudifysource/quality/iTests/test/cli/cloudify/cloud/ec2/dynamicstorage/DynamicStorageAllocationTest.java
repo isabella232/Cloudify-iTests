@@ -1,6 +1,7 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.ec2.dynamicstorage;
 
 import org.cloudifysource.quality.iTests.framework.utils.AssertUtils;
+import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
 import org.cloudifysource.quality.iTests.framework.utils.ServiceInstaller;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.jclouds.ec2.domain.Volume;
@@ -45,13 +46,15 @@ public class DynamicStorageAllocationTest extends AbstractDynamicStorageTest {
 		installer.recipePath(FOLDER_NAME);
         installer.setDisableSelfHealing(true);
 		installer.install();
-		
-		// the install should have created and attached a volume with a name prefix of the class name. see customizeCloud below.
+
+        LogUtils.log("Searching for volumes created by the service installation");
+        // the install should have created and attached a volume with a name prefix of the class name. see customizeCloud below.
 		Volume ourVolume = storageHelper.getVolumeByName(System.getProperty("user.name") + "-" + this.getClass().getSimpleName().toLowerCase());
 		
 		AssertUtils.assertNotNull("could not find the required volume after install service", ourVolume);
+        LogUtils.log("Found volume : " + ourVolume);
 		// also check it is attached.
-		AssertUtils.assertEquals("the volume should have one attachements", 1, ourVolume.getAttachments().size());
+		AssertUtils.assertEquals("the volume should have one attachments", 1, ourVolume.getAttachments().size());
 		
 		installer.uninstall();	
 	}

@@ -6,6 +6,7 @@ import java.util.Set;
 
 import org.cloudifysource.quality.iTests.framework.tools.SGTestHelper;
 import org.cloudifysource.quality.iTests.framework.utils.AssertUtils;
+import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
 import org.cloudifysource.quality.iTests.framework.utils.ServiceInstaller;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.ec2.Ec2CloudService;
@@ -36,13 +37,17 @@ public class ConcurrentStorageAllocationTest extends AbstractDynamicStorageTest 
 		
 		installer = new ServiceInstaller(getRestUrl(), SERVICE_NAME);
 		installer.recipePath(FOLDER_NAME);
+        installer.setDisableSelfHealing(true);
 		installer.install();
-		
-		Set<Volume> volumesByName = storageHelper.getVolumesByName(System.getProperty("user.name") + "-" + this.getClass().getSimpleName().toLowerCase());
+
+        LogUtils.log("Retrieving all volumes with prefix " + System.getProperty("user.name") + "-" + this.getClass().getSimpleName().toLowerCase());
+        Set<Volume> volumesByName = storageHelper.getVolumesByName(System.getProperty("user.name") + "-" + this.getClass().getSimpleName().toLowerCase());
+        LogUtils.log("Volumes are : " + volumesByName);
 		
 		// two volumes should have been created since the service has two instances, each creating a volume.
 		AssertUtils.assertEquals("Wrong number of volumes created", 2, volumesByName.size());
-		
+
+        LogUtils.log("Collecting attachments of newly created");
 		Set<String> attachmentIds = new HashSet<String>();
 		
 		for (Volume vol : volumesByName) {
@@ -52,6 +57,7 @@ public class ConcurrentStorageAllocationTest extends AbstractDynamicStorageTest 
 			AssertUtils.assertEquals("the volume should have one attachements", 1, vol.getAttachments().size());
 			attachmentIds.add(vol.getAttachments().iterator().next().getId());
 		}
+        LogUtils.log("Attachments are " + attachmentIds);
 		
 		// the volumes should be attached to different instances
 		AssertUtils.assertEquals("the volumes are not attached to two different instances", 2, attachmentIds.size());

@@ -32,6 +32,8 @@ public abstract class JCloudsCloudService extends AbstractCloudService {
     protected final String KEYFILE_PROP = "keyFile";
     protected final String LINUX_IMAGE_ID_PROP = "linuxImageId";
     protected final String UBUNTU_IMAGE_ID_PROP = "ubuntuImageId";
+    protected final String USER_PROP = "user";
+    protected final String API_KEY_PROP = "apiKey";
 
 	private static final String DEFAULT_REST_PORT = "8100";
 	private static final String MANAGER_ID = "-manager";

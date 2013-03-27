@@ -96,6 +96,8 @@ public class Ec2CloudService extends JCloudsCloudService {
         getProperties().put(LOCATION_ID_PROP, getRegion() + availabilityZone);
 		getProperties().put(KEYPAIR_PROP, this.keyPair);
 		getProperties().put(KEYFILE_PROP, this.keyPair + ".pem");
+        getProperties().put(USER_PROP, user);
+        getProperties().put(API_KEY_PROP, apiKey);
 
 		propsToReplace.put("cloudify-agent-", getMachinePrefix() + "cloudify-agent");
 		propsToReplace.put("cloudify-manager", getMachinePrefix() + "cloudify-manager");

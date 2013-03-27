@@ -1,4 +1,5 @@
 service {
-    extend "../../recipes/services/tomcat"
+    extend "tomcat"
     numInstances 3
+    maxAllowedInstances 3
 }

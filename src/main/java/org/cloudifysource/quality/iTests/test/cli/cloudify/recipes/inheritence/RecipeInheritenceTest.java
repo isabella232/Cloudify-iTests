@@ -46,7 +46,7 @@ public class RecipeInheritenceTest extends AbstractLocalCloudTest {
         tomcatParentPort = tomcatParent.getNetwork().getPort();
 
         assertEquals("tomcat port isn't equal to the tomcat's parent port", tomcatChildPort, tomcatParentPort);
-        uninstallService("tomcatHttpLivenessDetectorPlugin");
+        uninstallApplication("travelExtended");
     }
 
     @Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
@@ -62,7 +62,7 @@ public class RecipeInheritenceTest extends AbstractLocalCloudTest {
         uninstallApplication("travelExtendedTomcatPortOverride");
     }
 
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = false)
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
     public void overrideTomcatNumInstancesTest() throws PackagingException, IOException, InterruptedException, DSLException {
        app=  installApplication("travelExtendedTomcatNumInstancesOverride");
 

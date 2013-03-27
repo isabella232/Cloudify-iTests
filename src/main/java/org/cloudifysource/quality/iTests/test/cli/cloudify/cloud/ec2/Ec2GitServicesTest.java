@@ -52,7 +52,7 @@ public class Ec2GitServicesTest extends AbstractServicesTest {
     public void testCouchDBe() throws Exception{
         testService("couchdb");
     }
-    //doesn't work
+    //tested as part of an app
     @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
     public void testBigInsights() throws Exception{
         testService("biginsights");

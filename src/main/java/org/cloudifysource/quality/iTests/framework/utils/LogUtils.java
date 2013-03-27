@@ -14,6 +14,8 @@ import com.gigaspaces.log.LogEntryMatchers;
 import org.cloudifysource.quality.iTests.framework.testng.SGTestNGReporter;
 import org.cloudifysource.quality.iTests.framework.utils.AssertUtils.RepetitiveConditionProvider;
 
+import java.util.List;
+
 public class LogUtils {
     
     public static void log(String message) {
@@ -38,11 +40,11 @@ public class LogUtils {
     	LogEntryMatcher matcher = LogEntryMatchers.containsString(error);
 
     	LogEntries logEntriesContainer1 = container.logEntries(matcher);
-    	if (logEntriesContainer1.getEntries().size() > 1) {
-    		LogUtils.log("Found " + logEntriesContainer1.getEntries().size() 
-    				+ " entries containing " + error);
-    		for (LogEntry logEntry : logEntriesContainer1.logEntries()) {
-    			log(logEntry.getText());		
+        List<LogEntry> entries = logEntriesContainer1.getEntries();
+        if (entries.size() > 1) {
+    		LogUtils.log("Found " + entries.size() + " entries containing " + error);
+    		for (LogEntry logEntry : entries) {
+    			LogUtils.log(logEntry.getText());
     		}
     		Assert.fail("Severe Errors during Deployment");
     	}

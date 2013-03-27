@@ -90,7 +90,15 @@ public abstract class AbstractExamplesTest extends NewAbstractCloudTest {
 	protected void testTravelLb(String localGitAppsPath) throws Exception {
 		doTest(localGitAppsPath + "/travel-lb", null);
 	}
-	
+
+	protected void testPuppet(String localGitAppsPath) throws Exception {
+		doTest(localGitAppsPath + "/redmine-puppet", null);
+	}
+
+	protected void testMysqlJboss(String localGitAppsPath) throws Exception {
+		doTest(localGitAppsPath + "/jboss-mysql", null);
+	}
+
 	protected void doTest(String applicationPath, String overrideApplicationName) throws Exception {				
 		LogUtils.log("Reading Application from file : " + applicationPath);
 		Application application = ServiceReader.getApplicationFromFile(new File(applicationPath)).getApplication();

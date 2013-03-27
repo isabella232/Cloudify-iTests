@@ -85,7 +85,17 @@ public class Ec2GitApplicationsTest extends AbstractExamplesTest {
 	public void testTravelLb () throws Exception {
 		super.testTravelLb(localGitRepoPath + "/apps");
 	}
-	
+
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
+	public void testPuppet() throws Exception {
+		super.testPuppet(localGitRepoPath + "/apps");
+	}
+
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
+	public void testMysqlJboss() throws Exception {
+		super.testMysqlJboss(localGitRepoPath + "/apps");
+	}
+
 	@AfterClass(alwaysRun = true)
 	protected void teardown() throws Exception {
 		super.teardown();

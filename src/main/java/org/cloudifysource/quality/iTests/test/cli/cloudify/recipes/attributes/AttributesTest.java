@@ -366,7 +366,7 @@ public class AttributesTest extends AbstractLocalCloudTest {
 		assertTrue("USM Service State is NOT RUNNING", USMTestUtils.waitForPuRunningState(absolutePUNameSimple2, 60, TimeUnit.SECONDS, admin));
 	}
 
-	private void uninstallApplication() {
+	private void uninstallApplication() throws IOException, InterruptedException {
 		uninstallApplication(MAIN_APPLICATION_NAME);
 	}
 

@@ -389,15 +389,11 @@ public class AbstractLocalCloudTest extends AbstractTestSupport {
 		return CommandTestUtils.runCommandAndWait(command);
 	}
 
-	protected void uninstallApplication(final String applicationName) {
-		try {
-			DumpUtils.dumpLogs(admin);
-			runCommand(connectCommand()
-					+ ";uninstall-application --verbose " + applicationName);
-		} catch (final Exception e) {
-			LogUtils.log("Failed to uninstall " + applicationName, e);
-		}
-	}
+	protected void uninstallApplication(final String applicationName) throws IOException, InterruptedException {
+        ApplicationInstaller applicationInstaller = new ApplicationInstaller(restUrl, applicationName);
+        applicationInstaller.waitForFinish(true);
+        applicationInstaller.uninstall();
+    }
 
 	protected void uninstallApplicationIfFound(String applicationName) throws IOException, InterruptedException {
 		ApplicationInstaller applicationInstaller = new ApplicationInstaller(restUrl, applicationName);

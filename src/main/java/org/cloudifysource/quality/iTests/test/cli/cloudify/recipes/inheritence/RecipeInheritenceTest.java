@@ -59,7 +59,7 @@ public class RecipeInheritenceTest extends AbstractLocalCloudTest {
         assertEquals("tomcat's child port was not overriden", 9876, tomcatChildPort);
         assertTrue(ServiceUtils.isPortOccupied(9876));
         assertTrue(ServiceUtils.isPortFree(8080));
-        //uninstallApplication("travelExtendedTomcatPortOverride");
+        uninstallApplication("travelExtendedTomcatPortOverride");
     }
 
     @Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = false)
@@ -68,7 +68,7 @@ public class RecipeInheritenceTest extends AbstractLocalCloudTest {
 
         int tomcatInstances = admin.getProcessingUnits().getProcessingUnit("travelExtendedTomcatNumInstancesOverride.tomcat").getInstances().length;
         assertEquals("tomcat instances where overriden to be 3", 3, tomcatInstances);
-        //uninstallApplication("travelExtendedTomcatNumInstancesOverride");
+        uninstallApplication("travelExtendedTomcatNumInstancesOverride");
     }
 
     @Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
@@ -89,7 +89,7 @@ public class RecipeInheritenceTest extends AbstractLocalCloudTest {
 
         sleep(5000);
         assertTrue(checkForOverrideString(cassandraInstance, pid, matcher, EXPECTED_PROCESS_PRINTOUTS));
-        //uninstallApplication("travelExtended");
+        uninstallApplication("travelExtended");
     }
 
     private boolean checkForOverrideString(ProcessingUnitInstance pui,

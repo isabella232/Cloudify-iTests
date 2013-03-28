@@ -239,6 +239,7 @@ public class ByonCloudService extends AbstractCloudService {
 		String[] hosts = this.getMachines();
 		for (String host : hosts) {
 			try {
+                LogUtils.log("Trying to kill: "+host);
 				LogUtils.log(SSHUtils.runCommand(host, AbstractTestSupport.OPERATION_TIMEOUT, command, BYON_CLOUD_USER, BYON_CLOUD_PASSWORD));
 			} catch (AssertionError e) {
 				LogUtils.log("Failed to kill java processes on host " + host + " .Reason --> " + e.getMessage());

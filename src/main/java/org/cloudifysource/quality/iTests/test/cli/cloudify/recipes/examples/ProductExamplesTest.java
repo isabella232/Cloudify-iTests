@@ -1,4 +1,4 @@
-package org.cloudifysource.quality.iTests.test.cli.cloudify.recipes;
+package org.cloudifysource.quality.iTests.test.cli.cloudify.recipes.examples;
 
 import static org.testng.AssertJUnit.fail;
 

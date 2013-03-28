@@ -14,7 +14,7 @@
  * limitations under the License.
  *******************************************************************************/
 
-package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.ec2;
+package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.rackspace.examples;
 
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.AbstractExamplesTest;
@@ -22,19 +22,33 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-
-public class Ec2ExamplesTest extends AbstractExamplesTest {
-
+/**
+ * This class runs two test on Rackspace cloud.
+ * 
+ * 1. bootstrap to cloud
+ * 2. run travel
+ * 3. uninstall travel.
+ * 4. run petclinic
+ * 5. uninstall petclinic
+ * 6. teardown cloud
+ * 7. scan for any leaked machines
+ * 
+ * @author elip
+ *
+ */
+public class RackspaceExamplesTest extends AbstractExamplesTest {
+	
 	@Override
 	protected String getCloudName() {
-		return "ec2";
+		return "rackspace";
 	}
-	
+
 	@BeforeClass(alwaysRun = true)
 	protected void bootstrap() throws Exception {
 		super.bootstrap();
 	}
-		
+	
+	
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
 	public void testTravel() throws Exception {
 		super.testTravel();
@@ -54,21 +68,9 @@ public class Ec2ExamplesTest extends AbstractExamplesTest {
 	public void testHelloWorld() throws Exception {
 		super.testHelloWorld();
 	}
-	
-	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
-	public void testTravelChef() throws Exception {
-		super.testTravelChef();
-	}
-	
-	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
-	public void testStatelessAndStateful() throws Exception {
-		super.testStatelessAndStateful();
-	}
-	
-	
+
 	@AfterClass(alwaysRun = true)
 	protected void teardown() throws Exception {
 		super.teardown();
-	}
-
+	}	
 }

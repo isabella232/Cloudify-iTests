@@ -331,21 +331,8 @@ public abstract class AbstractCloudService implements CloudService {
     }
 
     private void writePropertiesToCloudFolder(Map<String, Object> properties) throws IOException {
-
-        Properties props = new Properties();
-        for (Map.Entry<String, Object> entry : properties.entrySet()) {
-            Object value = entry.getValue();
-            String key = entry.getKey();
-            String actualValue = null;
-            if (value instanceof String) {
-                actualValue = '"' + value.toString() + '"';
-            } else {
-                actualValue = value.toString();
-            }
-            props.setProperty(key, actualValue);
-        }
         // add a properties file to the cloud driver
-        IOUtils.writePropertiesToFile(props, new File(getPathToCloudFolder() + "/" + getCloudName() + "-cloud.properties"));
+        IOUtils.writePropertiesToFile(properties, new File(getPathToCloudFolder() + "/" + getCloudName() + "-cloud.properties"));
     }
 
     private File createCloudFolder() throws IOException {

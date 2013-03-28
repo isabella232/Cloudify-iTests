@@ -96,7 +96,16 @@ public class IOUtils {
     	
         Properties properties = new Properties();
         for (Entry<Object, Object> entry : props.entrySet()) {
-            properties.setProperty(entry.getKey().toString(), entry.getValue().toString());
+
+            Object value = entry.getValue();
+            String key = entry.getKey().toString();
+            String actualValue = null;
+            if (value instanceof String) {
+                actualValue = '"' + value.toString() + '"';
+            } else {
+                actualValue = value.toString();
+            }
+            properties.setProperty(key, actualValue);
         }
         FileOutputStream fileOut = new FileOutputStream(destinationFile);
         properties.store(fileOut,null);
@@ -111,6 +120,15 @@ public class IOUtils {
         }
         return destinationFile;
 
+    }
+
+    public static File writePropertiesToFile(final Map<String, Object> props , final File destinationFile) throws IOException {
+
+        Properties properties = new Properties();
+        for (Map.Entry<String, Object> entry : props.entrySet()) {
+            properties.put(entry.getKey(), entry.getValue());
+        }
+        return writePropertiesToFile(properties, destinationFile);
     }
 
     public static void replaceFile(final File originalFile, final File replaceToReplaceWith) throws IOException {
@@ -138,23 +156,8 @@ public class IOUtils {
     }
 
     public static File createTempOverridesFile(Map<String, Object> overrides) throws IOException {
-
         File createTempFile = File.createTempFile("__sgtest_cloudify", ".overrides");
-
-        Properties props = new Properties();
-        for (Map.Entry<String, Object> entry : overrides.entrySet()) {
-            Object value = entry.getValue();
-            String key = entry.getKey();
-            String actualValue = null;
-            if (value instanceof String) {
-                actualValue = '"' + value.toString() + '"';
-            } else {
-                actualValue = value.toString();
-            }
-            props.setProperty(key, actualValue);
-        }
-
-        File overridePropsFile = writePropertiesToFile(props, createTempFile);
+        File overridePropsFile = writePropertiesToFile(overrides, createTempFile);
         return overridePropsFile;
 
     }

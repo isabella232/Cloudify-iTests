@@ -26,6 +26,16 @@ import com.google.inject.Module;
 
 public abstract class JCloudsCloudService extends AbstractCloudService {
 
+    protected final String LOCATION_ID_PROP = "locationId";
+    protected final String HARDWARE_ID_PROP = "hardwareId";
+    protected final String KEYPAIR_PROP = "keyPair";
+    protected final String KEYFILE_PROP = "keyFile";
+    protected final String LINUX_IMAGE_ID_PROP = "linuxImageId";
+    protected final String UBUNTU_IMAGE_ID_PROP = "ubuntuImageId";
+    protected final String USER_PROP = "user";
+    protected final String API_KEY_PROP = "apiKey";
+    protected final String SECURITY_GROUP_PROP = "securityGroup";
+
 	private static final String DEFAULT_REST_PORT = "8100";
 	private static final String MANAGER_ID = "-manager";
 	protected ComputeServiceContext context;

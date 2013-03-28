@@ -174,8 +174,8 @@ public abstract class AbstractByonAddRemoveTemplatesTest extends AbstractByonClo
 		FileUtils.copyFile(serviceFile, tempServiceFile);
 
 		Properties props = new Properties();
-		props.put(SERVICE_NAME_PROPERTY_NAME, '"' + serviceName + '"');
-		props.put(TEMPLATE_NAME_PROPERTY_NAME, '"' + templateName + '"');
+		props.put(SERVICE_NAME_PROPERTY_NAME, serviceName);
+		props.put(TEMPLATE_NAME_PROPERTY_NAME, templateName);
 		String proeprtiesFileName = serviceName + "-service" + DSLUtils.PROPERTIES_FILE_SUFFIX;
 		File servicePropsFile = new File(serviceFolder, proeprtiesFileName);
 		IOUtils.writePropertiesToFile(props, servicePropsFile);
@@ -424,13 +424,13 @@ public abstract class AbstractByonAddRemoveTemplatesTest extends AbstractByonClo
 			if (uploadDirName == null) {
 				uploadDirName = UPLOAD_DIR_NAME_PREFIX + size;
 			}
-			props.put(UPLOAD_PROPERTY_NAME, '"' + uploadDirName + '"');
+			props.put(UPLOAD_PROPERTY_NAME, uploadDirName);
 			String nodeIP = template.getMachineIP();
 			if (nodeIP == null) {
 				nodeIP = getNextMachineIP(isForService);
 			}
-			props.put(NODE_IP_PROPERTY_NAME, '"' + nodeIP + '"');
-			props.put(NODE_ID_PROPERTY_NAME, "\"byon-pc-lab-" + nodeIP + "{0}\"");
+			props.put(NODE_IP_PROPERTY_NAME, nodeIP);
+			props.put(NODE_ID_PROPERTY_NAME, "byon-pc-lab-" + nodeIP + "{0}");
 			File templatePropsFile = template.getTemplatePropertiesFile();
 			if (templatePropsFile == null) {
 				final String templateFileName = addedTemplateFile.getName();

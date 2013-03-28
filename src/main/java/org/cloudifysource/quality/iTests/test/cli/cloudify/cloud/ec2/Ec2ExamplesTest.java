@@ -61,7 +61,7 @@ public class Ec2ExamplesTest extends AbstractExamplesTest {
 	}
 	
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
-	public void testStatelessPu() throws Exception {
+	public void testStatelessAndStateful() throws Exception {
 		super.testStatelessAndStateful();
 	}
 	

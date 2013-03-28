@@ -40,8 +40,8 @@ public class SmallCreateVolumeTimeoutTest extends AbstractDynamicStorageTest {
 		installer.setDisableSelfHealing(true);
 		installer.install();
 		
-		// this service gives a very small timeout to the createVolume call. so we expect that a WaitForVolumeStatusTimeoutException
-		// to be thrown by the driver, and caught by the service context, which in turn should clean the created volume.
+		// this service gives a very small timeout to the createVolume call. so we expect the StorageDriver to timeout while waiting for the instance status.
+		// which should clean the created volume.
 		super.scanForLeakedVolumesCreatedViaTemplate("SMALL_BLOCK");
 	}
 

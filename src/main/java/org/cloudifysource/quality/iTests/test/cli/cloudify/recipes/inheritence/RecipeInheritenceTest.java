@@ -24,31 +24,17 @@ import com.gigaspaces.log.LogProcessType;
 
 public class RecipeInheritenceTest extends AbstractLocalCloudTest {
 
-	private final String tomcatParentPath = CommandTestUtils.getPath("src/main/resources/apps/USM/usm/tomcatHttpLivenessDetectorPlugin");
     private Application app;
 
-    private String gsHome;
 
-
-
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
-    public void simpleInheritenceTest() throws IOException, PackagingException, InterruptedException, DSLException {
-
-
-        Service tomcatParent = ServiceReader.readService(new File(tomcatParentPath));
-        app = installApplication("travelExtended");
-        Service s1 = app.getServices().get(0);
-        Service s2 = app.getServices().get(1);
-        Service tomcat = s1.getName().equals("tomcat-extend") ? s1 : s2;
-
-        int tomcatParentPort, tomcatChildPort;
-        tomcatChildPort = tomcat.getNetwork().getPort();
-        tomcatParentPort = tomcatParent.getNetwork().getPort();
-
-        assertEquals("tomcat port isn't equal to the tomcat's parent port", tomcatChildPort, tomcatParentPort);
-        //uninstallService("tomcatHttpLivenessDetectorPlugin");
-    }
-
+    /**
+     * Install a version of tomcat where the default port is overridden.
+     * Instead of 8080 we use 9876.
+     * @throws PackagingException
+     * @throws IOException
+     * @throws InterruptedException
+     * @throws DSLException
+     */
     @Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
     public void overrideTomcatPortTest() throws PackagingException, IOException, InterruptedException, DSLException {
     	app =  installApplication("travelExtendedTomcatPortOverride");
@@ -56,21 +42,35 @@ public class RecipeInheritenceTest extends AbstractLocalCloudTest {
         Service s2 = app.getServices().get(1);
         Service tomcat = s1.getName().equals("tomcat") ? s1 : s2;
         int tomcatChildPort = tomcat.getNetwork().getPort();
-        assertEquals("tomcat's child port was not overriden", 9876, tomcatChildPort);
+        assertEquals("tomcat's child port was not overridden", 9876, tomcatChildPort);
         assertTrue(ServiceUtils.isPortOccupied(9876));
         assertTrue(ServiceUtils.isPortFree(8080));
-        //uninstallApplication("travelExtendedTomcatPortOverride");
+        uninstallApplication("travelExtendedTomcatPortOverride");
     }
 
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = false)
+    /**
+     * Install a version of tomcat where the number of instances in overridden.
+     * @throws PackagingException
+     * @throws IOException
+     * @throws InterruptedException
+     * @throws DSLException
+     */
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
     public void overrideTomcatNumInstancesTest() throws PackagingException, IOException, InterruptedException, DSLException {
        app=  installApplication("travelExtendedTomcatNumInstancesOverride");
 
         int tomcatInstances = admin.getProcessingUnits().getProcessingUnit("travelExtendedTomcatNumInstancesOverride.tomcat").getInstances().length;
-        assertEquals("tomcat instances where overriden to be 3", 3, tomcatInstances);
-        //uninstallApplication("travelExtendedTomcatNumInstancesOverride");
+        assertEquals("tomcat instances where overridden to be 3", 3, tomcatInstances);
+        uninstallApplication("travelExtendedTomcatNumInstancesOverride");
     }
 
+    /**
+     * Install a version of cassandra where the poststart script is overridden.
+     * @throws PackagingException
+     * @throws IOException
+     * @throws InterruptedException
+     * @throws DSLException
+     */
     @Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
     public void overrideCassandraInitFileTest() throws PackagingException, IOException, InterruptedException, DSLException {
         String EXPECTED_PROCESS_PRINTOUTS = "THIS IS OVERRIDED CASSANDRA_POSTSTART.GROOVY";
@@ -89,7 +89,7 @@ public class RecipeInheritenceTest extends AbstractLocalCloudTest {
 
         sleep(5000);
         assertTrue(checkForOverrideString(cassandraInstance, pid, matcher, EXPECTED_PROCESS_PRINTOUTS));
-        //uninstallApplication("travelExtended");
+        uninstallApplication("travelExtended");
     }
 
     private boolean checkForOverrideString(ProcessingUnitInstance pui,

@@ -39,7 +39,7 @@ public class RepetativeInstallAndUninstallStockDemoWithProblemAtInstallTest exte
 	private String newPostStartScriptPath = null;
 	private URL stockdemoUrl;
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * repetitions *2 , groups = "1", enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * repetitions *2 , groups = AbstractLocalCloudTest.SUSPECTED, enabled = true)
 	public void installAndUninstallTest() throws Exception {
 
 		stockdemoUrl = new URL("http://" + InetAddress.getLocalHost().getHostAddress() + ":8080/stockdemo.StockDemo/");

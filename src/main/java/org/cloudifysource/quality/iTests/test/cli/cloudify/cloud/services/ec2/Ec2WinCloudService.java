@@ -4,8 +4,10 @@ import java.io.IOException;
 
 public class Ec2WinCloudService extends Ec2CloudService {
 
-    private static final String DEFAULT_EU_WEST_MEDIUM_WIN_AMI = "eu-west-1/ami-d6929fa2";
-    private static final String DEFAULT_US_EAST_MEDIUM_WIN_AMI = "us-east-1/ami-2542c04c";
+    private static final String DEFAULT_EU_WEST_MEDIUM_WIN_AMI = "eu-west-1/ami-403a3034";
+    private static final String DEFAULT_US_EAST_MEDIUM_WIN_AMI = "us-east-1/ami-ceb129a7";
+
+    private static final String IMAGE_ID = "imageId";
 
 	public Ec2WinCloudService() {
 		super("ec2-win");
@@ -21,12 +23,13 @@ public class Ec2WinCloudService extends Ec2CloudService {
 		getAdditionalPropsToReplace().put("cloudifyagent", getMachinePrefix() + "cloudify-agent");
 		getAdditionalPropsToReplace().put("cloudifymanager", getMachinePrefix() + "cloudify-manager");
 		super.injectCloudAuthenticationDetails();
-		getProperties().put("hardwareId", "m1.large");
-		if (getRegion().contains("eu")) {
-			getProperties().put("imageId", DEFAULT_EU_WEST_MEDIUM_WIN_AMI);
+		getProperties().put(HARDWARE_ID_PROP, "m1.large");
+
+        // need to override the imageId with windows AMI's
+		if (isEU()) {
+			getProperties().put(IMAGE_ID, DEFAULT_EU_WEST_MEDIUM_WIN_AMI);
 		} else {
-			getProperties().put("locationId", "us-east-1c");
-			getProperties().put("imageId", DEFAULT_US_EAST_MEDIUM_WIN_AMI);
+			getProperties().put(IMAGE_ID, DEFAULT_US_EAST_MEDIUM_WIN_AMI);
 		}
 	}
 }

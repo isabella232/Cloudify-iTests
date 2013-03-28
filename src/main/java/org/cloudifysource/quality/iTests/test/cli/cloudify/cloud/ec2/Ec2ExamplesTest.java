@@ -60,6 +60,12 @@ public class Ec2ExamplesTest extends AbstractExamplesTest {
 		super.testTravelChef();
 	}
 	
+	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
+	public void testStatelessAndStateful() throws Exception {
+		super.testStatelessAndStateful();
+	}
+	
+	
 	@AfterClass(alwaysRun = true)
 	protected void teardown() throws Exception {
 		super.teardown();

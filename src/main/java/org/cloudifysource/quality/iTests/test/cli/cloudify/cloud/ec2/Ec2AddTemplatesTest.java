@@ -16,10 +16,7 @@ import org.testng.annotations.Test;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
 
 /**
  * 
@@ -33,6 +30,7 @@ public class Ec2AddTemplatesTest extends NewAbstractCloudTest {
 	private final String TEMPLATE_FOLDER_PATH = SERVICE_FOLDER_PATH + "/templates";
 	private final String TEMPLATE_NAME = "UBUNTU_TEST";
 	private final String TEMPLATE_PROPERTIES_FILE_PATH = TEMPLATE_FOLDER_PATH + "/ubuntu-template.properties";
+
 	private final String UBUNTU_IMAGE_ID_US = "us-east-1/ami-82fa58eb";
 	private final String UBUNTU_IMAGE_ID_EU = "eu-west-1/ami-c37474b7";
 
@@ -109,14 +107,19 @@ public class Ec2AddTemplatesTest extends NewAbstractCloudTest {
 	}
 
 	private void updatePropertiesFile() throws IOException {
+
 		Ec2CloudService service = (Ec2CloudService)getService();
-		File propsFile = new File(TEMPLATE_PROPERTIES_FILE_PATH);		
-		Properties props = new Properties();
-		props.put("keyPair", '"' + service.getKeyPair() + '"');
-		props.put("keyFile", '"' + service.getKeyPair() + ".pem" + '"');
-		props.put("hardwareId", '"' + "m1.small" + '"');
-		props.put("locationId", '"' + "us-east-1" + '"');
-		props.put("ubuntuImageId", '"' + "us-east-1/ami-82fa58eb" + '"');
+
+        Map<String, Object> props = service.getProperties();
+
+		File propsFile = new File(TEMPLATE_PROPERTIES_FILE_PATH);
+
+        if (service.getRegion().contains("eu")) {
+            props.put("ubuntuImageId", UBUNTU_IMAGE_ID_EU);
+        } else {
+            props.put("ubuntuImageId", UBUNTU_IMAGE_ID_US);
+        }
+
 		IOUtils.writePropertiesToFile(props, propsFile);
 	}
 

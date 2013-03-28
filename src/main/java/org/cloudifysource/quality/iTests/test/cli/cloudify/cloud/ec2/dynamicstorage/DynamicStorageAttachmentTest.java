@@ -5,10 +5,7 @@ import java.util.concurrent.TimeoutException;
 
 import org.cloudifysource.dsl.Service;
 import org.cloudifysource.dsl.internal.ServiceReader;
-import org.cloudifysource.quality.iTests.framework.utils.AssertUtils;
-import org.cloudifysource.quality.iTests.framework.utils.Ec2ComputeApiHelper;
-import org.cloudifysource.quality.iTests.framework.utils.ScriptUtils;
-import org.cloudifysource.quality.iTests.framework.utils.ServiceInstaller;
+import org.cloudifysource.quality.iTests.framework.utils.*;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.ec2.domain.Volume;
@@ -58,32 +55,43 @@ public class DynamicStorageAttachmentTest extends AbstractDynamicStorageTest {
 		installer.install();
 		
 		String machinePrefix = null;
-		
-		Service service = ServiceReader.getServiceFromFile(new File(ScriptUtils.getBuildRecipesServicesPath() + "/" + getServiceFolder(), SERVICE_NAME + "-service.groovy"));
+
+        LogUtils.log("Retrieving machine prefix for the installed service");
+        Service service = ServiceReader.getServiceFromFile(new File(ScriptUtils.getBuildRecipesServicesPath() + "/" + getServiceFolder(), SERVICE_NAME + "-service.groovy"));
 		if (service.getIsolationSLA().getGlobal().isUseManagement()) {
 			machinePrefix = getService().getCloud().getProvider().getManagementGroup();
 		} else {
 			machinePrefix = getService().getCloud().getProvider().getMachineNamePrefix();			
 		}
-		
+        LogUtils.log("Machine prefix is " + machinePrefix);
+
 		NodeMetadata node = computeHelper.getServerByName(machinePrefix + "1"); // what??
-				
+        LogUtils.log("NodeMetaData for server with prefix " + machinePrefix + " is " + node);
+
+        LogUtils.log("Creating volume in location " + node.getLocation().getId());
 		Volume details = storageHelper.createVolume(node.getLocation().getId(), 5, STORAGE_NAME);
-		
+        LogUtils.log("Volume created : " + details);
+
+        LogUtils.log("Attaching volume with id " + details.getId() + " to service");
 		installer.invoke("attachVolume " + details.getId() + " " + "/dev/xvdc");
-		
+
+        LogUtils.log("Checking volume with id " + details.getId() + " is really attached");
 		Volume volume = storageHelper.getVolumeById(details.getId());
 		AssertUtils.assertEquals("volume with id " + volume.getId() + " should have one attachement after invoking attachVolume", 1, volume.getAttachments().size());
-		
+        LogUtils.log("Volume attachment is " + volume.getAttachments());
+
+        LogUtils.log("Detaching volume with id " + details.getId() + " from service");
 		installer.invoke("detachVolume" + " " + details.getId());
-		
+
+        LogUtils.log("Checking volume with id " + details.getId() + " is really detached");
 		volume = storageHelper.getVolumeById(details.getId());
 		// volume should still exist
 		AssertUtils.assertTrue("volume with id " + details.getId() + " should not have been deleted after calling detachVolume(delteOnExit = false)", volume != null);
 		// though it should have no attachments
-		AssertUtils.assertTrue("volume with id " + details.getId() + " should not have no attachements after calling detachVolume(delteOnExit = false)", 
+		AssertUtils.assertTrue("volume with id " + details.getId() + " should not have no attachments after calling detachVolume(delteOnExit = false)",
 				volume.getAttachments() == null || volume.getAttachments().isEmpty());
-		
+
+        LogUtils.log("Deleting volume with id " + details.getId());
 		storageHelper.deleteVolume(volume.getId());
 		
 		installer.uninstall();

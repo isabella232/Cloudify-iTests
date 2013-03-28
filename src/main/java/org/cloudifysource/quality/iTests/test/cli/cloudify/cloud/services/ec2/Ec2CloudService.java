@@ -8,24 +8,34 @@ import java.util.Properties;
 
 import org.apache.commons.io.FileUtils;
 import org.cloudifysource.quality.iTests.framework.utils.IOUtils;
-import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.JCloudsCloudService;
 
 public class Ec2CloudService extends JCloudsCloudService {
-    private static final String EC2_CERT_PROPERTIES = CREDENTIALS_FOLDER + "/cloud/ec2/ec2-cred.properties";
-    public static final String DEFAULT_US_EAST_LINUX_AMI = "us-east-1/ami-76f0061f";
-    public static final String DEFAULT_US_EAST_UBUNTU_AMI = "us-east-1/ami-82fa58eb";
-    public static final String DEFAULT_EU_WEST_LINUX_AMI = "eu-west-1/ami-c37474b7";
-    public static final String DEFAULT_EU_WEST_UBUNTU_AMI = "eu-west-1/ami-c1aaabb5";
-
-    public static final String DEFAULT_EC2_LINUX_AMI_USERNAME = "ec2-user";
-    public static final String DEFAULT_EC2_UBUNTU_AMI_USERNAME = "ubuntu";
 
     private Properties certProperties = getCloudProperties(EC2_CERT_PROPERTIES);
+
+    private static final String EC2_CERT_PROPERTIES = CREDENTIALS_FOLDER + "/cloud/ec2/ec2-cred.properties";
+
+    protected static final String EU_WEST_REGION = "eu-west-1";
+    protected static final String US_EAST_REGION = "us-east-1";
+
+    public static final String DEFAULT_EU_WEST_LINUX_AMI = EU_WEST_REGION + "/ami-c37474b7";
+    public static final String DEFAULT_EU_WEST_UBUNTU_AMI = EU_WEST_REGION + "/ami-c1aaabb5";
 
     private String user = certProperties.getProperty("user");
     private String apiKey = certProperties.getProperty("apiKey");
     private String keyPair = certProperties.getProperty("keyPair");
+    private String availabilityZone = "";
+
+    public String getAvailabilityZone() {
+        return availabilityZone;
+    }
+
+    public void setAvailabilityZone(String availabilityZone) {
+        this.availabilityZone = availabilityZone;
+    }
+
+
 
 	public Ec2CloudService() {
 		super("ec2");
@@ -55,7 +65,7 @@ public class Ec2CloudService extends JCloudsCloudService {
 	}
 
 	public String getRegion() {
-		return System.getProperty("ec2.region", "eu-west-1");
+		return System.getProperty("ec2.region", EU_WEST_REGION);
 	}
 
 	public void setRegion(final String region) {
@@ -74,30 +84,20 @@ public class Ec2CloudService extends JCloudsCloudService {
 	public void injectCloudAuthenticationDetails()
 			throws IOException {
 
-		getProperties().put("user", this.user);
-		getProperties().put("apiKey", this.apiKey);
-
 		final Map<String, String> propsToReplace = new HashMap<String, String>();
 
-		if (getRegion().contains("eu")) {
-			LogUtils.log("Working in eu region");
-			getProperties().put("locationId", "eu-west-1");
-			setKeyPair("ec2-sgtest-eu");
-			if (!getCloudName().contains("win")) {
-				getProperties().put("linuxImageId", DEFAULT_EU_WEST_LINUX_AMI);
-				getProperties().put("ubuntuImageId", DEFAULT_EU_WEST_UBUNTU_AMI);
-				getProperties().put("hardwareId", "m1.small");
-			}
-		} else {
-			getProperties().put("locationId", "us-east-1");
-			if (!getCloudName().contains("win")) {
-				getProperties().put("linuxImageId", DEFAULT_US_EAST_LINUX_AMI);
-				getProperties().put("ubuntuImageId", DEFAULT_US_EAST_UBUNTU_AMI);
-				getProperties().put("hardwareId", "m1.small");
-			}
+		if (isEU()) {
+            // switch the AMI's. since they are per region.
+            getProperties().put(LINUX_IMAGE_ID_PROP, DEFAULT_EU_WEST_LINUX_AMI);
+            getProperties().put(UBUNTU_IMAGE_ID_PROP, DEFAULT_EU_WEST_UBUNTU_AMI);
+			keyPair = "ec2-sgtest-eu";
 		}
-		getProperties().put("keyPair", this.keyPair);
-		getProperties().put("keyFile", this.keyPair + ".pem");
+        // now we can set the keyPair and keyFile
+        getProperties().put(LOCATION_ID_PROP, getRegion() + availabilityZone);
+		getProperties().put(KEYPAIR_PROP, this.keyPair);
+		getProperties().put(KEYFILE_PROP, this.keyPair + ".pem");
+        getProperties().put(USER_PROP, user);
+        getProperties().put(API_KEY_PROP, apiKey);
 
 		propsToReplace.put("cloudify-agent-", getMachinePrefix() + "cloudify-agent");
 		propsToReplace.put("cloudify-manager", getMachinePrefix() + "cloudify-manager");
@@ -115,10 +115,13 @@ public class Ec2CloudService extends JCloudsCloudService {
 		FileUtils.copyFileToDirectory(fileToCopy, targetLocation);
 	}
 
+    protected boolean isEU() {
+        return getRegion().contains("eu");
+    }
+
 	@Override
 	public void addOverrides(Properties overridesProps) {
 		overridesProps.put("jclouds.ec2.ami-query", "");
 		overridesProps.put("jclouds.ec2.cc-ami-query", "");		
 	}
-
 }

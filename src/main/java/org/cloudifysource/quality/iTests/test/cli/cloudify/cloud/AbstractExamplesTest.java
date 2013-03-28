@@ -94,6 +94,12 @@ public abstract class AbstractExamplesTest extends NewAbstractCloudTest {
 	protected void testPuppet(String localGitAppsPath) throws Exception {
 		doTest(localGitAppsPath + "/redmine-puppet", null);
 	}
+	
+	protected void testStatelessAndStateful() throws Exception {
+		String path = CommandTestUtils.getPath("src/main/resources/apps/USM/usm/applications");
+		doTest(path + "/StatefulAndStatelessApp", null);
+		
+	}
 
 	protected void testMysqlJboss(String localGitAppsPath) throws Exception {
 		doTest(localGitAppsPath + "/jboss-mysql", null);

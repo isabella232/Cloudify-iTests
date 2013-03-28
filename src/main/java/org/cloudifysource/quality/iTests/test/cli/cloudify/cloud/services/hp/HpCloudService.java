@@ -20,8 +20,6 @@ public class HpCloudService extends JCloudsCloudService {
 	private String apiKey = certProperties.getProperty("apiKey");
 	private String keyPair = certProperties.getProperty("keyPair");
 
-	private final String hardwareId = "az-2.region-a.geo-1/102";
-	private final String linuxImageId = "az-2.region-a.geo-1/221";
 	private final String securityGroup = certProperties.getProperty("securityGroup");
 
 	public HpCloudService() {
@@ -66,14 +64,12 @@ public class HpCloudService extends JCloudsCloudService {
 	public void injectCloudAuthenticationDetails()
 			throws IOException {
 
-		getProperties().put("user", this.user);
-		getProperties().put("apiKey", this.apiKey);
-		getProperties().put("keyFile", this.keyPair + ".pem");
-		getProperties().put("keyPair", this.keyPair);
+		getProperties().put(USER_PROP, this.user);
+		getProperties().put(API_KEY_PROP, this.apiKey);
+		getProperties().put(KEYFILE_PROP, this.keyPair + ".pem");
+		getProperties().put(KEYPAIR_PROP, this.keyPair);
 		getProperties().put("tenant", this.tenant);
-		getProperties().put("hardwareId", this.hardwareId);
-		getProperties().put("linuxImageId", this.linuxImageId);
-		getProperties().put("securityGroup", this.securityGroup);
+		getProperties().put(SECURITY_GROUP_PROP, this.securityGroup);
 
 		final Map<String, String> propsToReplace = new HashMap<String, String>();
 		

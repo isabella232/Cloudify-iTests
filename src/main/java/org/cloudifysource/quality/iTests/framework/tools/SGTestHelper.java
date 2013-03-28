@@ -4,6 +4,7 @@ import java.io.File;
 
 import org.apache.commons.lang.StringUtils;
 
+import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
 import org.cloudifysource.quality.iTests.framework.utils.ScriptUtils;
 
 public class SGTestHelper {
@@ -26,10 +27,12 @@ public class SGTestHelper {
 		} else if (System.getProperties().containsKey("DEV_ENV")) {
 			return Boolean.getBoolean("DEV_ENV");
 		} else if (System.getProperties().containsKey("iTests.cloud.enabled")) {
-            return  !Boolean.getBoolean("iTests.cloud.enabled");
+            if   (Boolean.getBoolean("iTests.cloud.enabled")){
+                return false;
+            }
         }
 
-        System.getProperties().list(System.out);
+        LogUtils.log(System.getProperties().toString());
 		if (ScriptUtils.isWindows()) {
 			isDevMode = !System.getenv("USERNAME").equals("ca");
 		}

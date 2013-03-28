@@ -2,6 +2,7 @@ package org.cloudifysource.quality.iTests.framework.testng.report;
 
 import org.cloudifysource.quality.iTests.framework.testng.report.xml.TestLog;
 import org.cloudifysource.quality.iTests.framework.tools.S3DeployUtil;
+import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
 import org.cloudifysource.quality.iTests.framework.utils.TestNGUtils;
 import org.testng.ITestResult;
 
@@ -39,6 +40,7 @@ public class LogFetcher {
     }
 
     private List<TestLog> fetchLogs(File dir, List<TestLog> list) {
+        LogUtils.log("Fetching logs from the parent directory: "+dir.getAbsolutePath());
         File[] children = dir.listFiles();
         if (children == null)
             return list;

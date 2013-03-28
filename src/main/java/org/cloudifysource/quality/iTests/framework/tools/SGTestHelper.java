@@ -22,16 +22,14 @@ public class SGTestHelper {
 	public static boolean isDevMode() {
 		boolean isDevMode;
 		if (System.getenv().containsKey("DEV_ENV")) {
-            System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>got dev env in env!!!!");
-            return Boolean.getBoolean(System.getenv("DEV_ENV"));
-		} else if (System.getProperties().contains("DEV_ENV")) {
-            System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>got dev env in sys prop!!!!");
-			return Boolean.getBoolean(System.getProperty("DEV_ENV"));
-		} else if (System.getProperties().contains("iTests.cloud.enabled")) {
-            System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>cloud enabled ! = " + !Boolean.getBoolean(System.getProperty("iTests.cloud.enabled")));
-            return  !Boolean.getBoolean(System.getProperty("iTests.cloud.enabled"));
+            return Boolean.valueOf(System.getenv("DEV_ENV"));
+		} else if (System.getProperties().containsKey("DEV_ENV")) {
+			return Boolean.getBoolean("DEV_ENV");
+		} else if (System.getProperties().containsKey("iTests.cloud.enabled")) {
+            return  !Boolean.getBoolean("iTests.cloud.enabled");
         }
 
+        System.getProperties().list(System.out);
 		if (ScriptUtils.isWindows()) {
 			isDevMode = !System.getenv("USERNAME").equals("ca");
 		}

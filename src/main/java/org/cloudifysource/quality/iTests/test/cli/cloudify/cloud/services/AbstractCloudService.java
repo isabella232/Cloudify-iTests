@@ -235,7 +235,7 @@ public abstract class AbstractCloudService implements CloudService {
     @Override
     public void teardownCloud(Admin admin) throws IOException, InterruptedException {
         try {
-            DumpUtils.dumpLogs(admin);
+
             CommandTestUtils.runCommandAndWait("teardown-cloud -force --verbose " + this.cloudName + "_" + this.cloudUniqueName);
         } finally {
             scanForLeakedAgentAndManagementNodes();

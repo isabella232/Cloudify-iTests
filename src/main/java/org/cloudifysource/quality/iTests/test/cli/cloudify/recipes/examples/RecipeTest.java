@@ -1,4 +1,4 @@
-package org.cloudifysource.quality.iTests.test.cli.cloudify.recipes;
+package org.cloudifysource.quality.iTests.test.cli.cloudify.recipes.examples;
 
 import java.io.File;
 import java.io.IOException;
@@ -9,13 +9,14 @@ import org.cloudifysource.dsl.internal.DSLException;
 import org.cloudifysource.dsl.internal.ServiceReader;
 import org.cloudifysource.quality.iTests.framework.utils.ScriptUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.AbstractLocalCloudTest;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.recipes.RecipeTestUtil;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 public class RecipeTest extends AbstractLocalCloudTest {
 	private String recipesDirPath = ScriptUtils.getBuildPath() + "/recipes/services";
 	public static volatile boolean portReleasedBeforTimeout;
-	protected static volatile boolean portTakenBeforTimeout;
+    public static volatile boolean portTakenBeforTimeout;
 
 	public RecipeTest(){
 		super();	

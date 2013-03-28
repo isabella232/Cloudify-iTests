@@ -14,7 +14,7 @@
  * limitations under the License.
  *******************************************************************************/
 
-package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.rackspace;
+package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.hp.examples;
 
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.AbstractExamplesTest;
@@ -22,32 +22,18 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-/**
- * This class runs two test on Rackspace cloud.
- * 
- * 1. bootstrap to cloud
- * 2. run travel
- * 3. uninstall travel.
- * 4. run petclinic
- * 5. uninstall petclinic
- * 6. teardown cloud
- * 7. scan for any leaked machines
- * 
- * @author elip
- *
- */
-public class RackspaceExamplesTest extends AbstractExamplesTest {
-	
-	@Override
-	protected String getCloudName() {
-		return "rackspace";
-	}
+
+public class HPExamplesTest extends AbstractExamplesTest {
 
 	@BeforeClass(alwaysRun = true)
 	protected void bootstrap() throws Exception {
 		super.bootstrap();
 	}
-	
+		
+	@Override
+	protected String getCloudName() {
+		return "hp";
+	}
 	
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
 	public void testTravel() throws Exception {
@@ -68,9 +54,10 @@ public class RackspaceExamplesTest extends AbstractExamplesTest {
 	public void testHelloWorld() throws Exception {
 		super.testHelloWorld();
 	}
-
+	
 	@AfterClass(alwaysRun = true)
 	protected void teardown() throws Exception {
 		super.teardown();
-	}	
+	}
+
 }

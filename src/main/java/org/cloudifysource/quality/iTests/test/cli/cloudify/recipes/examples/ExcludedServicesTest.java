@@ -1,4 +1,4 @@
-package org.cloudifysource.quality.iTests.test.cli.cloudify.recipes.excluded;
+package org.cloudifysource.quality.iTests.test.cli.cloudify.recipes.examples;
 
 import org.apache.commons.io.FileUtils;
 import org.cloudifysource.quality.iTests.framework.testng.annotations.TestConfiguration;

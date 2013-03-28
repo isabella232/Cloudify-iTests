@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.DatagramSocket;
 import java.net.ServerSocket;
 
+import org.cloudifysource.quality.iTests.test.cli.cloudify.recipes.examples.RecipeTest;
 import org.junit.Assert;
 
 import org.cloudifysource.quality.iTests.framework.utils.TestUtils;

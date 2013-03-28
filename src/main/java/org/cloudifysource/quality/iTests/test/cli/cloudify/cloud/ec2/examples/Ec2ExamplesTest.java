@@ -14,7 +14,7 @@
  * limitations under the License.
  *******************************************************************************/
 
-package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.hp;
+package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.ec2.examples;
 
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.AbstractExamplesTest;
@@ -23,18 +23,18 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 
-public class HPExamplesTest extends AbstractExamplesTest {
+public class Ec2ExamplesTest extends AbstractExamplesTest {
 
+	@Override
+	protected String getCloudName() {
+		return "ec2";
+	}
+	
 	@BeforeClass(alwaysRun = true)
 	protected void bootstrap() throws Exception {
 		super.bootstrap();
 	}
 		
-	@Override
-	protected String getCloudName() {
-		return "hp";
-	}
-	
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
 	public void testTravel() throws Exception {
 		super.testTravel();
@@ -54,6 +54,17 @@ public class HPExamplesTest extends AbstractExamplesTest {
 	public void testHelloWorld() throws Exception {
 		super.testHelloWorld();
 	}
+	
+	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
+	public void testTravelChef() throws Exception {
+		super.testTravelChef();
+	}
+	
+	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
+	public void testStatelessAndStateful() throws Exception {
+		super.testStatelessAndStateful();
+	}
+	
 	
 	@AfterClass(alwaysRun = true)
 	protected void teardown() throws Exception {

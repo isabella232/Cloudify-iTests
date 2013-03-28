@@ -11,6 +11,7 @@ import org.apache.commons.lang.StringUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CloudTestUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils.ProcessResult;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.security.SecurityConstants;
 
 
 public abstract class Bootstrapper {
@@ -326,7 +327,15 @@ public abstract class Bootstrapper {
 			lastActionOutput = CommandTestUtils.runCommandExpectedFail(command);
 			return lastActionOutput;
 		}
-		lastActionOutput = CommandTestUtils.runCommandAndWait(command);
+        if (restUrl != null) {
+            try {
+                DumpUtils.dumpMachines(restUrl, SecurityConstants.USER_PWD_ALL_ROLES, SecurityConstants.USER_PWD_ALL_ROLES);
+            } catch (Exception e) {
+                LogUtils.log("Failed downloading logs : " + e.getMessage());
+            }
+        }
+
+        lastActionOutput = CommandTestUtils.runCommandAndWait(command);
 		return lastActionOutput;
 	}
 
@@ -336,7 +345,14 @@ public abstract class Bootstrapper {
 			lastActionOutput = CommandTestUtils.runCommandExpectedFail(command);
 			return lastActionOutput;
 		}
-		lastActionOutput = CommandTestUtils.runCommandAndWait(command);
+        if (restUrl != null) {
+            try {
+                DumpUtils.dumpMachines(restUrl, SecurityConstants.USER_PWD_ALL_ROLES, SecurityConstants.USER_PWD_ALL_ROLES);
+            } catch (Exception e) {
+                LogUtils.log("Failed downloading logs : " + e.getMessage());
+            }
+        }
+        lastActionOutput = CommandTestUtils.runCommandAndWait(command);
 		return lastActionOutput;
 	}
 

@@ -186,6 +186,7 @@ public class AbstractFromXenToByonGSMTest extends AbstractByonCloudTest {
         if (gsaCounter != null) {
         	gsaCounter.close();
         }
+        DumpUtils.dumpLogs(admin);
         ProcessingUnits processingUnits = admin.getProcessingUnits();
 		if (processingUnits.getSize() > 0) {
         	LogUtils.log(this.getClass() + " test has not undeployed all processing units !!!");

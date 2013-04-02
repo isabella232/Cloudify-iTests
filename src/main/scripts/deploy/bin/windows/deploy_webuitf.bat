@@ -2,7 +2,7 @@
 
 @rem - Replace default configuration files with local-machine specific files.
 
-set WEBUI_TMP_DIR=%BUILD_DIR%
+set WEBUI_TMP_DIR=%BUILD_TEST_DIR%
 
 @echo cloning webuitf
 set GIT_SSL_NO_VERIFY=true

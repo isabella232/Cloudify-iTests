@@ -71,8 +71,8 @@ if %selenium.browser% == Firefox (
 
 @echo transferring reports to tgrid
 echo %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER%
-xcopy %BUILD_LOCATION% X:\%BUILD_NUMBER%\%BUILD_FOLDER% /s /i /y
-xcopy %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER%\%SUITE_NAME% X:\%BUILD_NUMBER%\%SUITE_NAME% /s /i /y
+xcopy %BUILD_LOCATION% W:\%BUILD_NUMBER%\%BUILD_FOLDER% /s /i /y
+xcopy %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER%\%SUITE_NAME% W:\%BUILD_NUMBER%\%SUITE_NAME% /s /i /y
 
 @echo cleaning local build folder
 rmdir %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER% /s /q

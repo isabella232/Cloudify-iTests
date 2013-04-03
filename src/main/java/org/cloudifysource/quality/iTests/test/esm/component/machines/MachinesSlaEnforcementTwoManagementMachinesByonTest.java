@@ -57,7 +57,7 @@ public class MachinesSlaEnforcementTwoManagementMachinesByonTest extends Abstrac
 		super.teardownAfterClass();
 	}
 	
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = false)
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
     public void oneMachineTest() throws Exception  {
         
         // the first GSAs is already started in BeginTest
@@ -77,7 +77,7 @@ public class MachinesSlaEnforcementTwoManagementMachinesByonTest extends Abstrac
         
         // enforce numberOfMachines SLA
         endpoint = createEndpoint(pu, machinesSlaEnforcement);
-        CapacityMachinesSlaPolicy sla = createSla(1);
+        CapacityMachinesSlaPolicy sla = createSla(1,false);
         
         String firstApprovedAgentUid = null; 
         for (int i = 0 ; i < 3 ; i++) {

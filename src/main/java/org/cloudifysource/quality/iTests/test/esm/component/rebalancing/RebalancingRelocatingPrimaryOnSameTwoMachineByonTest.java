@@ -62,8 +62,7 @@ public class RebalancingRelocatingPrimaryOnSameTwoMachineByonTest extends Abstra
 	}
 
 
-	@Override
-	@AfterMethod
+	@AfterMethod(alwaysRun = true)
 	public void afterTest() {
 		try {
 			rebalancing.destroy();

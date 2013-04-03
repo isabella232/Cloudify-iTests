@@ -61,8 +61,7 @@ public class RebalancingByRestartingTwoPrimariesByonTest extends AbstractRebalan
 	}
 
 
-	@Override
-	@AfterMethod
+	@AfterMethod(alwaysRun = true)
 	public void afterTest() {
 		try {
 			rebalancing.destroy();

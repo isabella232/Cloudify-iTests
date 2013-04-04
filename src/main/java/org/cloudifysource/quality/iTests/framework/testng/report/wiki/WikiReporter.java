@@ -26,7 +26,7 @@ import java.util.Map.Entry;
  * NOTE: Wiki configuration located in wikireporter.properties file under the same package of WikiReporter class.
  */
 public class WikiReporter {
-    protected static final String CREDENTIALS_FOLDER = System.getProperty("com.quality.sgtest.credentialsFolder",
+    protected static final String CREDENTIALS_FOLDER = System.getProperty("iTests.credentialsFolder",
             SGTestHelper.getSGTestRootDir() + "/src/main/resources/credentials");
 
     private static final String WIKI_REPORTER_PROPERTIES = CREDENTIALS_FOLDER + "/wikireporter.properties";

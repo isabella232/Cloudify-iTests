@@ -298,4 +298,9 @@ public abstract class AbstractByonManagementPersistencyTest extends AbstractByon
         getService().setNumberOfManagementMachines(numOfManagementMachines);
         getService().getProperties().put("persistencePath", "/tmp/byon/persistency");
     }
+
+    @Override
+    protected void afterTeardown() throws Exception {
+        getService().removePersistencyFolder();
+    }
 }

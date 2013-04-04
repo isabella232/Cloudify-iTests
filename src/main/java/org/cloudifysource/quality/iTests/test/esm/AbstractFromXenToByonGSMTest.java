@@ -94,7 +94,7 @@ public class AbstractFromXenToByonGSMTest extends AbstractByonCloudTest {
     }
     
     private void initElasticMachineProvisioningCloudifyAdapter () throws Exception {
-	
+        elasticMachineProvisioningCloudifyAdapter = new ElasticMachineProvisioningCloudifyAdapter ();
 		elasticMachineProvisioningCloudifyAdapter.setAdmin(admin);
 		//sets cloudify configuration directory - so the ServiceReader would be able to read the groovy file
 		//the path should be to the DIRECTORY of the groovy file
@@ -125,11 +125,16 @@ public class AbstractFromXenToByonGSMTest extends AbstractByonCloudTest {
 	}
 	
 	protected void bootstrapBeforeClass() throws Exception {
-		elasticMachineProvisioningCloudifyAdapter = new ElasticMachineProvisioningCloudifyAdapter ();
 		super.bootstrap();
 	}
 
     public void beforeTestInit() {
+        try {
+            initElasticMachineProvisioningCloudifyAdapter();
+        }
+        catch (Exception e){
+            AssertUtils.assertFail("Init to Elastic machine provisioning cloudify adapter failed: "+e.getCause());
+        }
         agentEventListener = new ElasticGridServiceAgentProvisioningProgressChangedEventListener() {
 
             @Override
@@ -186,7 +191,7 @@ public class AbstractFromXenToByonGSMTest extends AbstractByonCloudTest {
         if (gsaCounter != null) {
         	gsaCounter.close();
         }
-        DumpUtils.dumpLogs(admin);
+        // undeploy all zombie pu's
         ProcessingUnits processingUnits = admin.getProcessingUnits();
 		if (processingUnits.getSize() > 0) {
         	LogUtils.log(this.getClass() + " test has not undeployed all processing units !!!");
@@ -195,16 +200,26 @@ public class AbstractFromXenToByonGSMTest extends AbstractByonCloudTest {
         	//cleanup
         	pu.undeploy();
         }
+        // stoping all machines and ProvisioningCloudifyAdapter
         try {
+            LogUtils.log("releasing all machines except the first management machine");
 			stopMachines();
 		} catch (Exception e) {
 			LogUtils.log(this.getClass() + "stopMachines after test failed");
 			e.printStackTrace();
 		}
+        LogUtils.log("Machines were released");
+        try {
+            elasticMachineProvisioningCloudifyAdapter.destroy();
+        }
+        catch (Exception e) {
+            AssertUtils.assertFail("destroying elasticMachineProvisioningCloudifyAdapter failed: "+e.getCause());
+        }
+        DumpUtils.dumpLogs(admin);
 	}
-	
+
+
 	protected void teardownAfterClass() throws Exception {
-		elasticMachineProvisioningCloudifyAdapter.destroy();
 		super.teardown(admin);
 	}
 
@@ -220,7 +235,6 @@ public class AbstractFromXenToByonGSMTest extends AbstractByonCloudTest {
 	@Override
 	protected void afterBootstrap() throws Exception {
 		admin = super.createAdmin();
-		initElasticMachineProvisioningCloudifyAdapter();
         admin.getGridServiceManagers().waitFor(1);
         firstManagementMachine = admin.getGridServiceManagers().getManagers()[0].getMachine();
     }
@@ -254,10 +268,9 @@ public class AbstractFromXenToByonGSMTest extends AbstractByonCloudTest {
 		final ComputeTemplate template = cloud.getCloudCompute().getTemplates().get(templateName);			
 		ComputeTemplate managementTemplate = cloud.getCloudCompute().getTemplates().get(cloud.getConfiguration().getManagementMachineTemplate());
 		managementTemplate.getRemoteDirectory();
-		final CloudifyMachineProvisioningConfig config = new CloudifyMachineProvisioningConfig(
+		return  new CloudifyMachineProvisioningConfig(
 				cloud, template, templateName,
 				managementTemplate.getRemoteDirectory(), null);
-		return config;
 	}
 	
 	protected CloudifyMachineProvisioningConfig getMachineProvisioningConfigWithMachineZone(

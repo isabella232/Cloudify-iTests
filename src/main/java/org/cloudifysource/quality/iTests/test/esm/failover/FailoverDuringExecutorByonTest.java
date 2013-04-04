@@ -45,7 +45,7 @@ public class FailoverDuringExecutorByonTest extends AbstractFromXenToByonGSMTest
 		super.bootstrapBeforeClass();
 	}
 	
-	@AfterMethod
+	@AfterMethod(alwaysRun = true)
     public void afterTest() {
 		super.afterTest();
 	}

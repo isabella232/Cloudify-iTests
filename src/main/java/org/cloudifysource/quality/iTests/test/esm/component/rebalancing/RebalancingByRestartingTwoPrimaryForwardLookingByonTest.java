@@ -70,8 +70,7 @@ public class RebalancingByRestartingTwoPrimaryForwardLookingByonTest extends Abs
 	}
 
 
-	@Override
-	@AfterMethod
+	@AfterMethod(alwaysRun = true)
 	public void afterTest() {
 		try {
 			rebalancing.destroy();

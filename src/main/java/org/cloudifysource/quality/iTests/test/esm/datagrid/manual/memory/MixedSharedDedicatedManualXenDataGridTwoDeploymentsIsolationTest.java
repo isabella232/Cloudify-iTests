@@ -47,8 +47,7 @@ public class MixedSharedDedicatedManualXenDataGridTwoDeploymentsIsolationTest ex
         super.bootstrapBeforeClass();
     }
 
-    @Override
-    @AfterMethod
+    @AfterMethod(alwaysRun = true)
     public void afterTest() {
         discoveredMachineProvisioning = false;
         super.afterTest();

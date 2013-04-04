@@ -59,9 +59,7 @@ public class RebalancingByRelocatingBackupThenPrimaryForwardLookingByonTest exte
 		return ((InternalAdminFactory) super.createAdminFactory()).singleThreadedEventListeners();
 	}
 
-
-	@Override
-	@AfterMethod
+	@AfterMethod(alwaysRun = true)
 	public void afterTest() {
 		try {
 			rebalancing.destroy();

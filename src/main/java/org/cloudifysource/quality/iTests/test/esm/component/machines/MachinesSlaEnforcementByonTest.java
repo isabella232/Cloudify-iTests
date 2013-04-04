@@ -30,6 +30,14 @@ import org.cloudifysource.quality.iTests.test.esm.component.SlaEnforcementTestUt
 import org.cloudifysource.quality.iTests.framework.utils.ByonMachinesUtils;
 import org.cloudifysource.quality.iTests.framework.utils.GsmTestUtils;
 
+/**
+ * In order to debug these tests:
+ * 1. edit sgtest_logging.properties and add:
+ * org.openspaces.grid.gsm.machines.DefaultMachinesSlaEnforcementEndpoint.level = ALL
+ * org.cloudifysource.quality.iTests.test.esm.component.SlaEnforcementTestUtils.level = ALL
+ * 2. add vm argument in run configuration:
+ * -Djava.util.logging.config.file=<PATH_TO_LOGGING_FOLDER>/sgtest_logging.properties
+ */
 public class MachinesSlaEnforcementByonTest extends AbstractMachinesSlaEnforcementTest {
 	
 
@@ -73,6 +81,7 @@ public class MachinesSlaEnforcementByonTest extends AbstractMachinesSlaEnforceme
 
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT , enabled = true)
 	public void oneMachineTest() throws InterruptedException  {
+        boolean bigContainer = false ;
 		repetitiveAssertNumberOfGSAsAdded(1, AbstractFromXenToByonGSMTest.OPERATION_TIMEOUT);
 		repetitiveAssertNumberOfGSAsRemoved(0, AbstractFromXenToByonGSMTest.OPERATION_TIMEOUT);
 		pu = super.deploy(new SpaceDeployment(PU_NAME).partitioned(10,1).addZone(ZONE));
@@ -86,14 +95,14 @@ public class MachinesSlaEnforcementByonTest extends AbstractMachinesSlaEnforceme
 				agentsBeforeEnforce[0].getVirtualMachine().getDetails().getEnvironmentVariables().get("GIGASPACES_TEST"));
 		 */
 
-		enforceNumberOfMachines(1);
+		enforceNumberOfMachines(1,bigContainer);
 
 		// there was already one GSA running
 		repetitiveAssertNumberOfGSAsAdded(2, AbstractFromXenToByonGSMTest.OPERATION_TIMEOUT);
 		repetitiveAssertNumberOfGSAsRemoved(0, AbstractFromXenToByonGSMTest.OPERATION_TIMEOUT);
 		Assert.assertEquals(admin.getGridServiceAgents().getAgents().length,2);
 
-		enforceUndeploy();
+		enforceUndeploy(bigContainer);
 
 		repetitiveAssertNumberOfGSAsAdded(2, AbstractFromXenToByonGSMTest.OPERATION_TIMEOUT);
 		// the request to destroy the last GSA was ignored since this GSA runs also the LUS and GSM
@@ -102,10 +111,10 @@ public class MachinesSlaEnforcementByonTest extends AbstractMachinesSlaEnforceme
 
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT , enabled = true)
 	public void oneMachineNonDedicatedManagementMachinesTest() throws InterruptedException  {
+        boolean bigContainer = false ;
 		repetitiveAssertNumberOfGSAsAdded(1, AbstractFromXenToByonGSMTest.OPERATION_TIMEOUT);
 		repetitiveAssertNumberOfGSAsRemoved(0, AbstractFromXenToByonGSMTest.OPERATION_TIMEOUT);
 		pu = super.deploy(new SpaceDeployment(PU_NAME).partitioned(10,1).addZone(ZONE));
-
 		endpoint = createEndpoint(pu, machinesSlaEnforcement);
 
 		// the first GSA is already started in BeginTest
@@ -113,7 +122,7 @@ public class MachinesSlaEnforcementByonTest extends AbstractMachinesSlaEnforceme
 
 
 
-		CapacityMachinesSlaPolicy sla = createSla(1);
+		CapacityMachinesSlaPolicy sla = createSla(1,bigContainer);
 		SlaEnforcementTestUtils.enforceSlaAndWait(admin, endpoint, sla, machineProvisioning);
 
 		// there was already one GSA running
@@ -121,7 +130,7 @@ public class MachinesSlaEnforcementByonTest extends AbstractMachinesSlaEnforceme
 		repetitiveAssertNumberOfGSAsRemoved(0, AbstractFromXenToByonGSMTest.OPERATION_TIMEOUT);
 		Assert.assertEquals(admin.getGridServiceAgents().getAgents().length,1);
 
-		enforceUndeploy();
+		enforceUndeploy(bigContainer);
 
 		repetitiveAssertNumberOfGSAsAdded(1, AbstractFromXenToByonGSMTest.OPERATION_TIMEOUT);
 		// the request to destroy the last GSA was ignored since this GSA runs also the LUS and GSM
@@ -130,6 +139,7 @@ public class MachinesSlaEnforcementByonTest extends AbstractMachinesSlaEnforceme
 
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT , enabled = true)
 	public void oneMachineTestWithContainerWithWrongZone() throws Exception  {
+        boolean bigContainer = false;
 		repetitiveAssertNumberOfGSAsAdded(1, AbstractFromXenToByonGSMTest.OPERATION_TIMEOUT);
 		repetitiveAssertNumberOfGSAsRemoved(0, AbstractFromXenToByonGSMTest.OPERATION_TIMEOUT);
 		pu = super.deploy(new SpaceDeployment(PU_NAME).partitioned(10,1).addZone(ZONE));
@@ -148,7 +158,7 @@ public class MachinesSlaEnforcementByonTest extends AbstractMachinesSlaEnforceme
 		repetitiveAssertNumberOfGSAsAdded(2, AbstractFromXenToByonGSMTest.OPERATION_TIMEOUT);
 		repetitiveAssertNumberOfGSAsRemoved(0, AbstractFromXenToByonGSMTest.OPERATION_TIMEOUT);
 
-		enforceNumberOfMachines(1);
+		enforceNumberOfMachines(1,bigContainer);
 
 		// there was already one non-management GSA running, but its dedicated to management
 		// and one machine with wrong zone
@@ -158,7 +168,7 @@ public class MachinesSlaEnforcementByonTest extends AbstractMachinesSlaEnforceme
 		Assert.assertEquals(admin.getGridServiceAgents().getAgents().length,3);
 
 		GsmTestUtils.killContainer(container2);
-		enforceUndeploy();
+		enforceUndeploy(bigContainer);
 
 		repetitiveAssertNumberOfGSAsAdded(3, AbstractFromXenToByonGSMTest.OPERATION_TIMEOUT);
 		// ESM does not shutdown machines it hasn't started. And it started only one machine
@@ -168,6 +178,7 @@ public class MachinesSlaEnforcementByonTest extends AbstractMachinesSlaEnforceme
 
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT , enabled = true)
 	public void oneMachineTestWithContainerWithZone() throws Exception  {
+        boolean bigContainer = false;
 		repetitiveAssertNumberOfGSAsAdded(1, AbstractFromXenToByonGSMTest.OPERATION_TIMEOUT);
 		repetitiveAssertNumberOfGSAsRemoved(0, AbstractFromXenToByonGSMTest.OPERATION_TIMEOUT);
 		pu = super.deploy(new SpaceDeployment(PU_NAME).partitioned(10,1).addZone(ZONE));
@@ -185,7 +196,7 @@ public class MachinesSlaEnforcementByonTest extends AbstractMachinesSlaEnforceme
 		repetitiveAssertNumberOfGSAsAdded(2, AbstractFromXenToByonGSMTest.OPERATION_TIMEOUT);
 		repetitiveAssertNumberOfGSAsRemoved(0, AbstractFromXenToByonGSMTest.OPERATION_TIMEOUT);
 
-		enforceNumberOfMachines(1);
+		enforceNumberOfMachines(1,bigContainer);
 
 		// there was already one GSA running with a container with the correct zone.
 		repetitiveAssertNumberOfGSAsAdded(2, AbstractFromXenToByonGSMTest.OPERATION_TIMEOUT);
@@ -193,7 +204,7 @@ public class MachinesSlaEnforcementByonTest extends AbstractMachinesSlaEnforceme
 		Assert.assertEquals(admin.getGridServiceAgents().getAgents().length,2);
 
 		GsmTestUtils.killContainer(container);
-		enforceUndeploy();
+		enforceUndeploy(bigContainer);
 
 		repetitiveAssertNumberOfGSAsAdded(2, AbstractFromXenToByonGSMTest.OPERATION_TIMEOUT);
 		// ESM shutdown machines it hasnt started since marked with autoshutdown
@@ -221,7 +232,7 @@ public class MachinesSlaEnforcementByonTest extends AbstractMachinesSlaEnforceme
     	repetitiveAssertNumberOfGSAsAdded(2, OPERATION_TIMEOUT);
     	repetitiveAssertNumberOfGSAsRemoved(0, OPERATION_TIMEOUT);
 		 */
-		enforceUndeploy();
+		enforceUndeploy(false);
 		/*
         repetitiveAssertNumberOfGSAsAdded(2, OPERATION_TIMEOUT);
         // the request to destroy the last GSA was ignored since this GSA runs also the LUS and GSM
@@ -232,6 +243,7 @@ public class MachinesSlaEnforcementByonTest extends AbstractMachinesSlaEnforceme
 
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT , enabled = true)
 	public void twoMachinesTest() throws InterruptedException  {
+        boolean bigContainer = true;
 		repetitiveAssertNumberOfGSAsAdded(1, AbstractFromXenToByonGSMTest.OPERATION_TIMEOUT);
     	repetitiveAssertNumberOfGSAsRemoved(0, AbstractFromXenToByonGSMTest.OPERATION_TIMEOUT);
     	pu = super.deploy(new SpaceDeployment(PU_NAME).partitioned(10,1).addZone(ZONE));
@@ -242,13 +254,13 @@ public class MachinesSlaEnforcementByonTest extends AbstractMachinesSlaEnforceme
 		repetitiveAssertNumberOfGSAsAdded(1, AbstractFromXenToByonGSMTest.OPERATION_TIMEOUT);
 		repetitiveAssertNumberOfGSAsRemoved(0, AbstractFromXenToByonGSMTest.OPERATION_TIMEOUT);
 
-		enforceNumberOfMachines(2);
+		enforceNumberOfMachines(2,bigContainer);
 
 		Assert.assertEquals(admin.getGridServiceAgents().getAgents().length,3);
 		repetitiveAssertNumberOfGSAsAdded(3, AbstractFromXenToByonGSMTest.OPERATION_TIMEOUT);
 		repetitiveAssertNumberOfGSAsRemoved(0, AbstractFromXenToByonGSMTest.OPERATION_TIMEOUT);
 
-		enforceUndeploy();
+		enforceUndeploy(bigContainer);
 
 		repetitiveAssertNumberOfGSAsAdded(3, AbstractFromXenToByonGSMTest.OPERATION_TIMEOUT);
 		// the request to destroy the last GSA was ignored since this GSA runs also the LUS and GSM
@@ -257,6 +269,7 @@ public class MachinesSlaEnforcementByonTest extends AbstractMachinesSlaEnforceme
 
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT , enabled = true)
 	public void scaleOutMachinesTest() throws InterruptedException {
+        boolean bigContainer = true;
 		repetitiveAssertNumberOfGSAsAdded(1, AbstractFromXenToByonGSMTest.OPERATION_TIMEOUT);
     	repetitiveAssertNumberOfGSAsRemoved(0, AbstractFromXenToByonGSMTest.OPERATION_TIMEOUT);
     	pu = super.deploy(new SpaceDeployment(PU_NAME).partitioned(10,1).addZone(ZONE));
@@ -265,17 +278,17 @@ public class MachinesSlaEnforcementByonTest extends AbstractMachinesSlaEnforceme
 		repetitiveAssertNumberOfGSAsAdded(1, AbstractFromXenToByonGSMTest.OPERATION_TIMEOUT);
 		repetitiveAssertNumberOfGSAsRemoved(0, AbstractFromXenToByonGSMTest.OPERATION_TIMEOUT);
 
-        enforceNumberOfMachinesOneContainerPerMachine(2);
+        enforceNumberOfMachinesOneContainerPerMachine(2,bigContainer);
 
 		repetitiveAssertNumberOfGSAsAdded(3, AbstractFromXenToByonGSMTest.OPERATION_TIMEOUT);
 		repetitiveAssertNumberOfGSAsRemoved(0, AbstractFromXenToByonGSMTest.OPERATION_TIMEOUT);
 
-        enforceNumberOfMachinesOneContainerPerMachine(3);
+        enforceNumberOfMachinesOneContainerPerMachine(3,bigContainer);
 
 		repetitiveAssertNumberOfGSAsAdded(4, AbstractFromXenToByonGSMTest.OPERATION_TIMEOUT);
 		repetitiveAssertNumberOfGSAsRemoved(0, AbstractFromXenToByonGSMTest.OPERATION_TIMEOUT);
 
-		enforceUndeploy();
+		enforceUndeploy(bigContainer);
 
 		repetitiveAssertNumberOfGSAsAdded(4, AbstractFromXenToByonGSMTest.OPERATION_TIMEOUT);
 		// the request to destroy the last GSA was ignored since this GSA runs also the LUS and GSM
@@ -284,6 +297,7 @@ public class MachinesSlaEnforcementByonTest extends AbstractMachinesSlaEnforceme
 
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT , enabled = true)
 	public void scaleInMachinesTest() throws InterruptedException, TimeoutException {
+        boolean bigContainer = true;
 		repetitiveAssertNumberOfGSAsAdded(1, AbstractFromXenToByonGSMTest.OPERATION_TIMEOUT);
     	repetitiveAssertNumberOfGSAsRemoved(0, AbstractFromXenToByonGSMTest.OPERATION_TIMEOUT);
     	pu = super.deploy(new SpaceDeployment(PU_NAME).partitioned(10,1).addZone(ZONE));
@@ -291,13 +305,13 @@ public class MachinesSlaEnforcementByonTest extends AbstractMachinesSlaEnforceme
 		endpoint = createEndpoint(pu, machinesSlaEnforcement);
 
 		repetitiveAssertNumberOfGSAsAdded(1, AbstractFromXenToByonGSMTest.OPERATION_TIMEOUT);
-		enforceNumberOfMachines(2);
+		enforceNumberOfMachines(2,bigContainer);
 
 		Assert.assertEquals(admin.getGridServiceAgents().getAgents().length,3);
 		repetitiveAssertNumberOfGSAsAdded(3, AbstractFromXenToByonGSMTest.OPERATION_TIMEOUT);
 		repetitiveAssertNumberOfGSAsRemoved(0, AbstractFromXenToByonGSMTest.OPERATION_TIMEOUT);
 
-		enforceNumberOfMachines(1);
+		enforceNumberOfMachines(1,bigContainer);
 
 		Assert.assertEquals(admin.getGridServiceAgents().getAgents().length,2);
 		repetitiveAssertNumberOfGSAsAdded(3, AbstractFromXenToByonGSMTest.OPERATION_TIMEOUT);
@@ -306,7 +320,7 @@ public class MachinesSlaEnforcementByonTest extends AbstractMachinesSlaEnforceme
 		 GridServiceAgent[] discoveredMachines = machineProvisioning.getDiscoveredMachines(AbstractFromXenToByonGSMTest.OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
 		 Assert.assertEquals(discoveredMachines.length, 2);
 		
-		enforceUndeploy();
+		enforceUndeploy(bigContainer);
 
 		repetitiveAssertNumberOfGSAsAdded(3, AbstractFromXenToByonGSMTest.OPERATION_TIMEOUT);
 		// the request to destroy the last GSA was ignored since this GSA runs also the LUS and GSM
@@ -317,6 +331,7 @@ public class MachinesSlaEnforcementByonTest extends AbstractMachinesSlaEnforceme
 
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT , enabled = true)
 	public void scaleInMachinesWithContainersTest() throws InterruptedException, TimeoutException {
+        boolean bigContainer = true;
 		repetitiveAssertNumberOfGSAsAdded(1, AbstractFromXenToByonGSMTest.OPERATION_TIMEOUT);
     	repetitiveAssertNumberOfGSAsRemoved(0, AbstractFromXenToByonGSMTest.OPERATION_TIMEOUT);
     	pu = super.deploy(new SpaceDeployment(PU_NAME).partitioned(10,1).addZone(ZONE));
@@ -324,7 +339,7 @@ public class MachinesSlaEnforcementByonTest extends AbstractMachinesSlaEnforceme
 		endpoint = createEndpoint(pu, machinesSlaEnforcement);
 
 		repetitiveAssertNumberOfGSAsAdded(1, AbstractFromXenToByonGSMTest.OPERATION_TIMEOUT);
-		enforceNumberOfMachines(2);
+		enforceNumberOfMachines(2,bigContainer);
 
 		repetitiveAssertNumberOfGSAsAdded(3, AbstractFromXenToByonGSMTest.OPERATION_TIMEOUT);
 		repetitiveAssertNumberOfGSAsRemoved(0, AbstractFromXenToByonGSMTest.OPERATION_TIMEOUT);
@@ -336,7 +351,7 @@ public class MachinesSlaEnforcementByonTest extends AbstractMachinesSlaEnforceme
 		}
 
 		//scale in
-		final CapacityMachinesSlaPolicy sla = createSla(1);
+		final CapacityMachinesSlaPolicy sla = createSla(1,bigContainer);
 		final AtomicBoolean evacuated = new AtomicBoolean(false);
 		final AtomicReference<Throwable> ex = new AtomicReference<Throwable>();
 		final CountDownLatch latch = new CountDownLatch(1);
@@ -410,7 +425,7 @@ public class MachinesSlaEnforcementByonTest extends AbstractMachinesSlaEnforceme
 			GsmTestUtils.killContainer(container);
 		}
 
-		enforceUndeploy();
+		enforceUndeploy(bigContainer);
 
 		Assert.assertEquals(admin.getGridServiceAgents().getAgents().length,1);
 

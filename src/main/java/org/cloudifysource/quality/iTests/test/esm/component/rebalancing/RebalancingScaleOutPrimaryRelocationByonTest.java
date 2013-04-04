@@ -58,8 +58,7 @@ public class RebalancingScaleOutPrimaryRelocationByonTest extends AbstractRebala
 	}
 
 
-	@Override
-	@AfterMethod
+	@AfterMethod(alwaysRun = true)
 	public void afterTest() {
 		try {
 			rebalancing.destroy();

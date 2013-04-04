@@ -28,7 +28,8 @@ import java.util.concurrent.atomic.AtomicReference;
 public abstract class AbstractMachinesSlaEnforcementTest extends AbstractFromXenToByonGSMTest {
 
     protected static final String PU_NAME = "testspace";
-	protected final static long CONTAINER_MEGABYTES = 250;
+	protected final static long CONTAINER_MEGABYTES = 128;
+    protected final static long BIG_CONTAINER_MEGABYTES = 250;
 	protected MachinesSlaEnforcement machinesSlaEnforcement;
     protected MachinesSlaEnforcementEndpoint endpoint;
     protected ProcessingUnit pu;
@@ -73,37 +74,56 @@ public abstract class AbstractMachinesSlaEnforcementTest extends AbstractFromXen
 		}
 	}
     
-    protected void enforceNumberOfMachines(int numberOfMachines) throws InterruptedException {
+    protected void enforceNumberOfMachines(int numberOfMachines, boolean bigContainer) throws InterruptedException {
         CloudifyMachineProvisioningConfig config = getMachineProvisioningConfig();
         config.setDedicatedManagementMachines(true);
         updateMachineProvisioningConfig(config);
-        CapacityMachinesSlaPolicy sla = createSla(numberOfMachines);
+        CapacityMachinesSlaPolicy sla =  createSla(numberOfMachines, bigContainer);
         SlaEnforcementTestUtils.enforceSlaAndWait(admin, endpoint, sla, machineProvisioning);
     }
 
-    protected void enforceNumberOfMachinesOneContainerPerMachine(int numberOfMachines) throws InterruptedException {
+
+    protected void enforceNumberOfMachinesOneContainerPerMachine(int numberOfMachines, boolean bigContainer) throws InterruptedException {
         CloudifyMachineProvisioningConfig config = getMachineProvisioningConfig();
         config.setDedicatedManagementMachines(true);
         updateMachineProvisioningConfig(config);
-        CapacityMachinesSlaPolicy sla = createSlaOneContainerPerMachine(numberOfMachines);
+        CapacityMachinesSlaPolicy sla = createSlaOneContainerPerMachine(numberOfMachines,bigContainer);
         SlaEnforcementTestUtils.enforceSlaAndWait(admin, endpoint, sla, machineProvisioning);
     }
 
-    protected CapacityMachinesSlaPolicy createSlaOneContainerPerMachine(int numberOfMachines) {
+    protected CapacityMachinesSlaPolicy createSlaOneContainerPerMachine(int numberOfMachines , boolean bigContainer) {
         long MACHINE_MEMORY_CAPACITY_MB = (long)getFirstManagementMachinePhysicalMemoryInMB();
         long memoryCapacityPerMachineInMB = MACHINE_MEMORY_CAPACITY_MB - super.getMachineProvisioningConfig().getReservedMemoryCapacityPerMachineInMB();
-        memoryCapacityPerMachineInMB -= memoryCapacityPerMachineInMB % CONTAINER_MEGABYTES;
-        long memoryCapacityInMB = numberOfMachines * CONTAINER_MEGABYTES;
-
-        return createSlaOneContainerPerMachine(numberOfMachines,machineProvisioning, memoryCapacityInMB);
+        long memoryCapacityInMB;
+        if (bigContainer){
+            memoryCapacityPerMachineInMB -= memoryCapacityPerMachineInMB % BIG_CONTAINER_MEGABYTES;
+            memoryCapacityInMB = numberOfMachines * BIG_CONTAINER_MEGABYTES;
+        }
+        else {
+            memoryCapacityPerMachineInMB -= memoryCapacityPerMachineInMB % CONTAINER_MEGABYTES;
+            memoryCapacityInMB = numberOfMachines * CONTAINER_MEGABYTES;
+        }
+        return createSlaOneContainerPerMachine(numberOfMachines,machineProvisioning, memoryCapacityInMB,  bigContainer);
     }
 
-    protected CapacityMachinesSlaPolicy createSla(int numberOfMachines) {
+    protected CapacityMachinesSlaPolicy createSla(int numberOfMachines, boolean bigContainer) {
         long MACHINE_MEMORY_CAPACITY_MB = (long)getFirstManagementMachinePhysicalMemoryInMB();
-        long minimumMemoryInMB = Math.min(numberOfMachines,2) * CONTAINER_MEGABYTES;
-		long maximumMemoryInMB = pu.getTotalNumberOfInstances() * CONTAINER_MEGABYTES;
-		long memoryCapacityPerMachineInMB = MACHINE_MEMORY_CAPACITY_MB - super.getMachineProvisioningConfig().getReservedMemoryCapacityPerMachineInMB();
-		memoryCapacityPerMachineInMB -= memoryCapacityPerMachineInMB % CONTAINER_MEGABYTES;
+        long maximumMemoryInMB ;
+        long minimumMemoryInMB ;
+        long memoryCapacityPerMachineInMB ;
+        if (bigContainer){
+             maximumMemoryInMB = pu.getTotalNumberOfInstances() * BIG_CONTAINER_MEGABYTES;
+             minimumMemoryInMB = Math.min(numberOfMachines,2) * BIG_CONTAINER_MEGABYTES;
+            memoryCapacityPerMachineInMB = MACHINE_MEMORY_CAPACITY_MB - super.getMachineProvisioningConfig().getReservedMemoryCapacityPerMachineInMB();
+            memoryCapacityPerMachineInMB -= memoryCapacityPerMachineInMB % BIG_CONTAINER_MEGABYTES;
+        }
+        else {
+            maximumMemoryInMB = pu.getTotalNumberOfInstances() * CONTAINER_MEGABYTES;
+            minimumMemoryInMB = Math.min(numberOfMachines,2) * CONTAINER_MEGABYTES;
+            memoryCapacityPerMachineInMB = MACHINE_MEMORY_CAPACITY_MB - super.getMachineProvisioningConfig().getReservedMemoryCapacityPerMachineInMB();
+            memoryCapacityPerMachineInMB -= memoryCapacityPerMachineInMB % CONTAINER_MEGABYTES;
+        }
+
 		long memoryCapacityInMB = numberOfMachines * memoryCapacityPerMachineInMB;
 		if (memoryCapacityInMB < minimumMemoryInMB) {
 			memoryCapacityInMB = minimumMemoryInMB;
@@ -111,42 +131,57 @@ public abstract class AbstractMachinesSlaEnforcementTest extends AbstractFromXen
 		if (memoryCapacityInMB > maximumMemoryInMB) {
 			memoryCapacityInMB = maximumMemoryInMB;
 		}
-		return createSla(numberOfMachines,machineProvisioning, memoryCapacityInMB);
+		return createSla(numberOfMachines,machineProvisioning, memoryCapacityInMB,bigContainer);
     }
     
-    protected void enforceUndeploy() throws InterruptedException {
+    protected void enforceUndeploy(boolean bigContainer) throws InterruptedException {
         CapacityMachinesSlaPolicy sla = new CapacityMachinesSlaPolicy();
         sla.setCapacityRequirements(new CapacityRequirements());
         sla.setMinimumNumberOfMachines(0);
         sla.setMaximumNumberOfMachines(pu.getTotalNumberOfInstances());
         sla.setMaximumNumberOfContainersPerMachine(pu.getTotalNumberOfInstances());
-        sla.setContainerMemoryCapacityInMB(CONTAINER_MEGABYTES);
+        if (bigContainer){
+            sla.setContainerMemoryCapacityInMB(BIG_CONTAINER_MEGABYTES);
+        }
+        else {
+            sla.setContainerMemoryCapacityInMB(CONTAINER_MEGABYTES);
+        }
         sla.setMachineProvisioning(nonblockingAdapterFactory.create(machineProvisioning));
         sla.setMachineIsolation(new DedicatedMachineIsolation(pu.getName()));
         sla.setGridServiceAgentZones(new AnyZonesConfig());
         SlaEnforcementTestUtils.enforceSlaAndWait(admin, endpoint, sla, machineProvisioning);
     }
     
-    protected CapacityMachinesSlaPolicy createSla(int numberOfMachines, ElasticMachineProvisioning machineProvisioning, long memoryCapacityInMB) {
+    protected CapacityMachinesSlaPolicy createSla(int numberOfMachines, ElasticMachineProvisioning machineProvisioning, long memoryCapacityInMB,boolean bigContainer) {
         CapacityMachinesSlaPolicy sla = new CapacityMachinesSlaPolicy();
         sla.setCapacityRequirements(new CapacityRequirements(new MemoryCapacityRequirement(memoryCapacityInMB)));
         sla.setMinimumNumberOfMachines(Math.min(numberOfMachines,2));
         sla.setMaximumNumberOfMachines(pu.getTotalNumberOfInstances());
         sla.setMaximumNumberOfContainersPerMachine(pu.getTotalNumberOfInstances());
-        sla.setContainerMemoryCapacityInMB(CONTAINER_MEGABYTES);
+        if (bigContainer){
+            sla.setContainerMemoryCapacityInMB(BIG_CONTAINER_MEGABYTES);
+        }
+        else {
+            sla.setContainerMemoryCapacityInMB(CONTAINER_MEGABYTES);
+        }
         sla.setMachineProvisioning(nonblockingAdapterFactory.create(machineProvisioning));
         sla.setMachineIsolation(new DedicatedMachineIsolation(pu.getName()));
         sla.setGridServiceAgentZones(new AnyZonesConfig());
         return sla;
     }
 
-    protected CapacityMachinesSlaPolicy createSlaOneContainerPerMachine(int numberOfMachines, ElasticMachineProvisioning machineProvisioning, long memoryCapacityInMB) {
+    protected CapacityMachinesSlaPolicy createSlaOneContainerPerMachine(int numberOfMachines, ElasticMachineProvisioning machineProvisioning, long memoryCapacityInMB , boolean bigContainer) {
         CapacityMachinesSlaPolicy sla = new CapacityMachinesSlaPolicy();
         sla.setCapacityRequirements(new CapacityRequirements(new MemoryCapacityRequirement(memoryCapacityInMB)));
         sla.setMinimumNumberOfMachines(Math.min(numberOfMachines,2));
         sla.setMaximumNumberOfMachines(pu.getTotalNumberOfInstances());
         sla.setMaximumNumberOfContainersPerMachine(1);
-        sla.setContainerMemoryCapacityInMB(CONTAINER_MEGABYTES);
+        if (bigContainer){
+            sla.setContainerMemoryCapacityInMB(BIG_CONTAINER_MEGABYTES);
+        }
+        else {
+            sla.setContainerMemoryCapacityInMB(CONTAINER_MEGABYTES);
+        }
         sla.setMachineProvisioning(nonblockingAdapterFactory.create(machineProvisioning));
         sla.setMachineIsolation(new DedicatedMachineIsolation(pu.getName()));
         sla.setGridServiceAgentZones(new AnyZonesConfig());

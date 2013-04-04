@@ -1,26 +1,20 @@
 package org.cloudifysource.quality.iTests.test.esm.datagrid.manual.memory;
 
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
+import org.cloudifysource.quality.iTests.framework.utils.GsmTestUtils;
+import org.cloudifysource.quality.iTests.test.esm.AbstractFromXenToByonGSMTest;
 import org.openspaces.admin.machine.Machine;
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.openspaces.admin.pu.elastic.ElasticMachineProvisioningConfig;
-import org.openspaces.admin.pu.elastic.config.DiscoveredMachineProvisioningConfig;
 import org.openspaces.admin.pu.elastic.config.ManualCapacityScaleConfigurer;
 import org.openspaces.admin.space.ElasticSpaceDeployment;
 import org.openspaces.admin.space.Space;
 import org.openspaces.core.util.MemoryUnit;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import org.testng.annotations.*;
 
-import org.cloudifysource.quality.iTests.test.esm.AbstractFromXenToByonGSMTest;
-import org.cloudifysource.quality.iTests.framework.utils.GsmTestUtils;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
 /**
  *
  *  Setup:
@@ -60,8 +54,9 @@ public class MixedSharedDedicatedManualXenDataGridTwoDeploymentsIsolationTest ex
 
     private boolean discoveredMachineProvisioning = false;
 
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = false)
     public void mixedSharedDedicatedManualXenDataGridDeploymentTwoIndenpendentIsolationXenMachineProvisioningTest() throws Exception {
+        repetitiveAssertNumberOfGSAsAdded(1, OPERATION_TIMEOUT);
         mixedSharedDedicatedManualXenDataGridDeploymentTwoIndenpendentIsolationTest(
                 getMachineProvisioningConfig());
     }
@@ -69,20 +64,14 @@ public class MixedSharedDedicatedManualXenDataGridTwoDeploymentsIsolationTest ex
 
     @Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
     public void mixedSharedDedicatedManualXenDataGridDeploymentTwoIndenpendentIsolationDiscoveredsMachineProvisioningTest() throws Exception {
+        setupDiscovereMachineProvisioningEnvironment();
+        repetitiveAssertNumberOfGSAsAdded(4, OPERATION_TIMEOUT);
         mixedSharedDedicatedManualXenDataGridDeploymentTwoIndenpendentIsolationTest(
                 getDiscoveredMachineProvisioningConfig());
     }
 
     public void mixedSharedDedicatedManualXenDataGridDeploymentTwoIndenpendentIsolationTest(
             ElasticMachineProvisioningConfig machineProvisioningConfig) throws Exception {
-
-        if (machineProvisioningConfig instanceof DiscoveredMachineProvisioningConfig) {
-            setupDiscovereMachineProvisioningEnvironment();
-            repetitiveAssertNumberOfGSAsAdded(4, OPERATION_TIMEOUT);
-        }
-        else {
-            repetitiveAssertNumberOfGSAsAdded(1, OPERATION_TIMEOUT);
-        }
 
         repetitiveAssertNumberOfGSCsAdded(0, OPERATION_TIMEOUT);
         final ProcessingUnit pu = super.deploy(new ElasticSpaceDeployment("myGrid")
@@ -138,7 +127,6 @@ public class MixedSharedDedicatedManualXenDataGridTwoDeploymentsIsolationTest ex
         machines.add(space2.getInstances()[1].getMachine());
 
         assertEquals("PUs should be on four different machines", 4, machines.size());
-
         assertUndeployAndWait(pu);
         assertUndeployAndWait(pu2);
     }
@@ -154,9 +142,6 @@ public class MixedSharedDedicatedManualXenDataGridTwoDeploymentsIsolationTest ex
         return discoveredMachineProvisioning;
     }
 
-    public boolean isXenMachineProvisioning() {
-        return !isDiscoveredMachineProvisioning();
-    }
 
 }
 

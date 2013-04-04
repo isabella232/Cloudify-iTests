@@ -35,7 +35,7 @@ public abstract class AbstractCloudService implements CloudService {
     private static final int MAX_VOLUME_NAME_LENGTH = 45;
     protected static final String RELATIVE_ESC_PATH = "/clouds/";
     protected static final String UPLOAD_FOLDER = "upload";
-    protected static final String CREDENTIALS_FOLDER = System.getProperty("com.quality.sgtest.credentialsFolder",
+    protected static final String CREDENTIALS_FOLDER = System.getProperty("iTests.credentialsFolder",
             SGTestHelper.getSGTestRootDir() + "/src/main/resources/credentials");
 
     private static final int TEN_SECONDS_IN_MILLIS = 10000;

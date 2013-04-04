@@ -16,7 +16,7 @@ import java.util.StringTokenizer;
 
 public class HtmlMailReporter {
 
-    protected static final String CREDENTIALS_FOLDER = System.getProperty("com.quality.sgtest.credentialsFolder",
+    protected static final String CREDENTIALS_FOLDER = System.getProperty("iTests.credentialsFolder",
             SGTestHelper.getSGTestRootDir() + "/src/main/resources/credentials");
 
     private static final String MAIL_REPORTER_PROPERTIES = CREDENTIALS_FOLDER + "/mailreporter.properties";

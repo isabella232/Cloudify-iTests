@@ -212,7 +212,7 @@ public class ByonCloudService extends AbstractCloudService {
 		}				
 	}
 
-	private void removePersistencyFolder() {
+	public void removePersistencyFolder() {
 
 		String command = "rm -rf " + getCloud().getConfiguration().getPersistentStoragePath();
 		if (sudo) {

@@ -29,7 +29,7 @@ import java.util.concurrent.TimeUnit;
  *
  * @author dank
  */
-public class MixedSharedDedicatedManualXenDataGridTwoDeploymentsIsolationTest extends AbstractFromXenToByonGSMTest {
+public class MixedSharedDedicatedManualByonDataGridTwoDeploymentsIsolationTest extends AbstractFromXenToByonGSMTest {
 
     @BeforeMethod
     public void beforeTest() {
@@ -43,7 +43,6 @@ public class MixedSharedDedicatedManualXenDataGridTwoDeploymentsIsolationTest ex
 
     @AfterMethod(alwaysRun = true)
     public void afterTest() {
-        discoveredMachineProvisioning = false;
         super.afterTest();
     }
 
@@ -52,7 +51,7 @@ public class MixedSharedDedicatedManualXenDataGridTwoDeploymentsIsolationTest ex
         super.teardownAfterClass();
     }
 
-    private boolean discoveredMachineProvisioning = false;
+
 
     @Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = false)
     public void mixedSharedDedicatedManualXenDataGridDeploymentTwoIndenpendentIsolationXenMachineProvisioningTest() throws Exception {
@@ -132,16 +131,10 @@ public class MixedSharedDedicatedManualXenDataGridTwoDeploymentsIsolationTest ex
     }
 
     public void setupDiscovereMachineProvisioningEnvironment() throws Exception {
-        discoveredMachineProvisioning = true;
         startNewByonMachine(getElasticMachineProvisioningCloudifyAdapter(),OPERATION_TIMEOUT,TimeUnit.MILLISECONDS);
         startNewByonMachine(getElasticMachineProvisioningCloudifyAdapter(),OPERATION_TIMEOUT,TimeUnit.MILLISECONDS);
         startNewByonMachine(getElasticMachineProvisioningCloudifyAdapter(),OPERATION_TIMEOUT,TimeUnit.MILLISECONDS);
     }
-
-    public boolean isDiscoveredMachineProvisioning() {
-        return discoveredMachineProvisioning;
-    }
-
 
 }
 

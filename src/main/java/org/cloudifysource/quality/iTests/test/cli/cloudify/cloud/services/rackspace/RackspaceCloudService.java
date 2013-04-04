@@ -2,33 +2,29 @@ package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.racks
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import org.cloudifysource.esc.driver.provisioning.openstack.Node;
-import org.cloudifysource.esc.driver.provisioning.openstack.OpenstackException;
 import org.cloudifysource.quality.iTests.framework.utils.IOUtils;
-import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
-import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.AbstractCloudService;
-import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.tools.openstack.OpenstackClient;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.JCloudsCloudService;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.tools.openstack.RackspaceClient;
 
-public class RackspaceCloudService extends AbstractCloudService {
+public class RackspaceCloudService extends JCloudsCloudService {
 	private static final int DEFAULT_SERVER_SHUTDOWN_TIMEOUT = 5 * 60000;
     private static final String RACKSPACE_CERT_PROPERTIES = CREDENTIALS_FOLDER + "/cloud/rackspace/rackspace-cred.properties";
 
     private Properties certProperties = getCloudProperties(RACKSPACE_CERT_PROPERTIES);
 	private String user = certProperties.getProperty("user");
 	private String apiKey = certProperties.getProperty("apiKey");
-	private String tenant = certProperties.getProperty("tenant");
+	private String openstackEndpoint = certProperties.getProperty("openstackEndpoint");
+	private String openstackIdentityEndpoint = certProperties.getProperty("openstackIdentityEndpoint");
+	private String hardwareId = certProperties.getProperty("hardwareId");
+	private String linuxImageId = certProperties.getProperty("linuxImageId");
 
 	private RackspaceClient rackspaceClient;
 
 	public RackspaceCloudService() {
-		super("rsopenstack");
-
+		super("rackspace");
 	}
 
 	public String getUser() {
@@ -47,13 +43,6 @@ public class RackspaceCloudService extends AbstractCloudService {
 		this.apiKey = apiKey;
 	}
 
-	public String getTenant() {
-		return tenant;
-	}
-
-	public void setTenant(String tenant) {
-		this.tenant = tenant;
-	}
 
 	@Override
 	public void injectCloudAuthenticationDetails()
@@ -61,7 +50,10 @@ public class RackspaceCloudService extends AbstractCloudService {
 
 		getProperties().put("user", this.user);
 		getProperties().put("apiKey", this.apiKey);
-		getProperties().put("tenant", this.tenant);
+		getProperties().put("openstackEndpoint", this.openstackEndpoint);
+		getProperties().put("openstackIdentityEndpoint", this.openstackIdentityEndpoint);
+		getProperties().put("hardwareId", this.hardwareId);
+		getProperties().put("linuxImageId", this.linuxImageId);
 		
 		Map<String, String> propsToReplace = new HashMap<String, String>();
 		propsToReplace.put("machineNamePrefix " + "\"agent\"", "machineNamePrefix " + '"' + getMachinePrefix()
@@ -80,7 +72,8 @@ public class RackspaceCloudService extends AbstractCloudService {
 		return client;
 	}
 
-	@Override
+	
+	/*@Override
 	public boolean scanLeakedAgentNodes() {
 		
 		if (rackspaceClient == null) {
@@ -94,8 +87,10 @@ public class RackspaceCloudService extends AbstractCloudService {
 		return checkForLeakedNode(token, agentPrefix);
 	
 
-	}
-	@Override
+	}*/
+	
+	
+	/*@Override
 	public boolean scanLeakedAgentAndManagementNodes() {
 		if(rackspaceClient == null) {
 			rackspaceClient = createClient();
@@ -109,9 +104,9 @@ public class RackspaceCloudService extends AbstractCloudService {
 		this.rackspaceClient.close();
 		return result;
 
-	}
+	}*/
 
-	private boolean checkForLeakedNode(String token, final String... prefixes) {
+	/*private boolean checkForLeakedNode(String token, final String... prefixes) {
 		List<Node> nodes;
 		try {
 			nodes = rackspaceClient.listServers(token);
@@ -146,5 +141,12 @@ public class RackspaceCloudService extends AbstractCloudService {
 		}
 		
 		return true;
+	}*/
+	
+
+	@Override
+	public void addOverrides(Properties overridesProps) {
+		overridesProps.put("openstack.endpoint", openstackEndpoint);		
+		overridesProps.put("openstack.identity.endpoint", openstackIdentityEndpoint);
 	}
 }

@@ -68,7 +68,7 @@ public class AbstractLocalCloudTest extends AbstractTestSupport {
 
 	protected static Admin admin;
 	private static final String COM_GS_HOME = "com.gs.home";
-	protected static String restUrl =  "http://127.0.0.1:" + CloudifyConstants.DEFAULT_REST_PORT;;
+	protected static String restUrl =  "http://127.0.0.1:" + CloudifyConstants.DEFAULT_REST_PORT;
 	protected static final String MANAGEMENT_APPLICATION_NAME = CloudifyConstants.MANAGEMENT_APPLICATION_NAME;
 	protected static final String DEFAULT_APPLICATION_NAME = CloudifyConstants.DEFAULT_APPLICATION_NAME;
 

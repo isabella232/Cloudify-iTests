@@ -54,7 +54,7 @@ public class SharedManualByonDataGridTwoDeploymentsTest extends AbstractFromXenT
      * GS-9484
      * @throws Exception
      */
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "2", enabled = false)
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "2", enabled = true)
     public void manualXenDataGridDeploymentTwoIndenpendentXenMachineProvisioningTest() throws Exception {
         repetitiveAssertNumberOfGSAsAdded(1, OPERATION_TIMEOUT);
         manualXenDataGridDeploymentTwoIndenpendentTest(getMachineProvisioningConfig());

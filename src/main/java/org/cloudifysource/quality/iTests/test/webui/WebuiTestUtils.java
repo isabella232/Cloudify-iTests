@@ -49,7 +49,9 @@ import org.cloudifysource.quality.iTests.framework.utils.ProcessingUnitUtils;
 public class WebuiTestUtils{
 
 	private static final String WEBUI_DEFAULT_URL = "http://127.0.0.1:8099";
-	private WebDriver driver;
+	private static final String WEBUI_REVERSE_PROXY_URL = "http://localhost/reverse-proxy-testing/Gs_webui.html";
+
+    private WebDriver driver;
 	private Selenium selenium;
 	private String defaultBrowser;
 	private ChromeDriverService chromeService;
@@ -106,7 +108,9 @@ public class WebuiTestUtils{
 		}
 
 		String webuiUrl = getWebuiUrl(isSecured);
-		startWebBrowser(webuiUrl);
+
+        LogUtils.log("starting web browser with url " + webuiUrl);
+        startWebBrowser(webuiUrl);
 	}
 
 	private void setLocators() throws UnknownHostException {
@@ -270,7 +274,13 @@ public class WebuiTestUtils{
 		}
 		
 		else{
-			webuiUrl = WEBUI_DEFAULT_URL;
+
+            webuiUrl = WEBUI_DEFAULT_URL;
+
+            String isReverseProxy = System.getProperty("reverse.proxy");
+            if(isReverseProxy != null && isReverseProxy.equals("true")){
+                webuiUrl = WEBUI_REVERSE_PROXY_URL;
+            }
 		}
 		
 		return webuiUrl;		

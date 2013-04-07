@@ -25,6 +25,8 @@ if %REVERSE_PROXY% == use-reverse-proxy (
 	set reverse.proxy=true
 )
 
+@echo reverse proxy: %reverse.proxy%
+
 @echo running %selenium.browser% tests...
 set SUITE_ID=0
 
@@ -33,7 +35,7 @@ mkdir %LOC_BUILD_TEST_DIR%\%SUITE_NAME%
 
 pushd %SGTEST_HOME%
 
-mvn test -U -P tgrid-cloudify-iTests ^
+call mvn test -U -P tgrid-cloudify-iTests ^
 -DiTests.cloud.enabled=false ^
 -DiTests.buildNumber=${BUILD_NUMBER} ^
 -Dcloudify.home=%RUNTIME_BUILD_LOCATION% ^

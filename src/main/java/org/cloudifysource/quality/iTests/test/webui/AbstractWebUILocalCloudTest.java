@@ -57,8 +57,9 @@ public abstract class AbstractWebUILocalCloudTest extends AbstractLocalCloudTest
 	protected static final String DEFAULT_HSQLDB_FULL_SERVICE_NAME = ServiceUtils.getAbsolutePUName(DEFAULT_APPLICATION_NAME, "hsqldb");
 	protected static final String DEFAULT_SOLR_FULL_SERVICE_NAME = ServiceUtils.getAbsolutePUName(DEFAULT_APPLICATION_NAME, "solr");
 	protected static final String DEFAULT_TOMCAT_SERVICE_FULL_NAME = ServiceUtils.getAbsolutePUName(DEFAULT_APPLICATION_NAME, "tomcat");
+    private static final String WEBUI_REVERSE_PROXY_URL = "http://localhost/reverse-proxy-testing/Gs_webui.html";
 
-	public static String METRICS_ASSERTION_SUFFIX = " metric that is defined in the dsl is not displayed in the metrics panel";    
+    public static String METRICS_ASSERTION_SUFFIX = " metric that is defined in the dsl is not displayed in the metrics panel";
     
     protected static long waitingTime = 30000;
 
@@ -86,13 +87,23 @@ public abstract class AbstractWebUILocalCloudTest extends AbstractLocalCloudTest
 	}
 	
 	@BeforeMethod
-	protected void startBrowser() throws InterruptedException {	
-		ProcessingUnit webui = admin.getProcessingUnits().waitFor("webui");
-		ProcessingUnitUtils.waitForDeploymentStatus(webui, DeploymentStatus.INTACT);
-		AbstractTestSupport.assertTrue(webui != null);
-		AbstractTestSupport.assertTrue(webui.getInstances().length != 0);
-		String url = ProcessingUnitUtils.getWebProcessingUnitURL(webui, false).toString();	
-		startWebBrowser(url); 
+	protected void startBrowser() throws InterruptedException {
+
+        String isReverseProxy = System.getProperty("reverse.proxy");
+        String url;
+
+        if(isReverseProxy != null && isReverseProxy.equals("true")){
+            url = WEBUI_REVERSE_PROXY_URL;
+        }
+        else{
+            ProcessingUnit webui = admin.getProcessingUnits().waitFor("webui");
+            ProcessingUnitUtils.waitForDeploymentStatus(webui, DeploymentStatus.INTACT);
+            AbstractTestSupport.assertTrue(webui != null);
+            AbstractTestSupport.assertTrue(webui.getInstances().length != 0);
+            url = ProcessingUnitUtils.getWebProcessingUnitURL(webui, false).toString();
+        }
+
+		startWebBrowser(url);
 		
 	}
 	

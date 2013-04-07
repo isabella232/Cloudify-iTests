@@ -5,6 +5,7 @@ set INCLUDE=%TEMP_INCLUDE:_=,%
 set EXCLUDE=%TEMP_EXCLUDE:_=,%
 set EC2_REGION=%4
 set LOC_BUILD_TEST_DIR=%5
+set REVERSE_PROXY=%6
 
 @cd %LOCAL_SGPATH%\bin
 
@@ -18,7 +19,12 @@ if %SUITE_NAME% == Cloudify_Webui_Chrome (
 if %SUITE_NAME% == Cloudify_Webui_IE (
 	set selenium.browser=IE
 )
- 
+
+set reverse.proxy=false
+if %REVERSE_PROXY% == use-reverse-proxy (
+	set reverse.proxy=true
+)
+
 @echo running %selenium.browser% tests...
 set SUITE_ID=0
 
@@ -34,6 +40,7 @@ mvn test -U -P tgrid-cloudify-iTests ^
 -Dincludes="%INCLUDE%" ^
 -Dexcludes="%EXCLUDE%" ^
 -Dselenium.browser=%selenium.browser% ^
+-Dreverse.proxy=%reverse.proxy% ^
 -Djava.security.policy=policy/policy.all ^
 -Djava.awt.headless=true ^
 -DiTests.suiteName=%SUITE_NAME% ^

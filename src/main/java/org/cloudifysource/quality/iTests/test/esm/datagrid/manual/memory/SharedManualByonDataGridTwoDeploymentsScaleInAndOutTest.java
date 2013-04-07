@@ -35,7 +35,7 @@ import java.util.concurrent.TimeUnit;
  *
  *  @author dank
  */
-public class SharedManualXenDataGridTwoDeploymentsScaleInAndOutTest extends AbstractFromXenToByonGSMTest {
+public class SharedManualByonDataGridTwoDeploymentsScaleInAndOutTest extends AbstractFromXenToByonGSMTest {
 
     @BeforeMethod
     public void beforeTest() {

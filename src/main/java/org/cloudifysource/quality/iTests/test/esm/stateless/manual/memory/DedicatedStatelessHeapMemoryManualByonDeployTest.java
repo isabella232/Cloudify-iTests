@@ -50,7 +50,7 @@ public class DedicatedStatelessHeapMemoryManualByonDeployTest extends
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT)
 	public void test() {
-		File archive = DeploymentUtils.getArchive("servlet.war");
+		File archive = DeploymentUtils.getArchive("simpleStatelessPu.jar");
 		// make sure no gscs yet created
 	    repetitiveAssertNumberOfGSCsAdded(0, OPERATION_TIMEOUT);
 	    repetitiveAssertNumberOfGSAsAdded(1, OPERATION_TIMEOUT);	    

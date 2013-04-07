@@ -278,6 +278,8 @@ public class WebuiTestUtils{
             webuiUrl = WEBUI_DEFAULT_URL;
 
             String isReverseProxy = System.getProperty("reverse.proxy");
+            LogUtils.log("isReverseProxy: " + isReverseProxy);
+
             if(isReverseProxy != null && isReverseProxy.equals("true")){
                 webuiUrl = WEBUI_REVERSE_PROXY_URL;
             }

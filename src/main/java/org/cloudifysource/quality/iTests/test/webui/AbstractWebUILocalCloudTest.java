@@ -103,7 +103,8 @@ public abstract class AbstractWebUILocalCloudTest extends AbstractLocalCloudTest
             url = ProcessingUnitUtils.getWebProcessingUnitURL(webui, false).toString();
         }
 
-		startWebBrowser(url);
+        LogUtils.log("starting web browser with url " + url);
+        startWebBrowser(url);
 		
 	}
 	

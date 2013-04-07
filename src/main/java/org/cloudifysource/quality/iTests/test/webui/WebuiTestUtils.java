@@ -108,7 +108,9 @@ public class WebuiTestUtils{
 		}
 
 		String webuiUrl = getWebuiUrl(isSecured);
-		startWebBrowser(webuiUrl);
+
+        LogUtils.log("starting web browser with url " + webuiUrl);
+        startWebBrowser(webuiUrl);
 	}
 
 	private void setLocators() throws UnknownHostException {

@@ -25,6 +25,9 @@ set SVN_BRANCH_DIRECTORY=%9
 shift
 set EC2_REGION=%9
 
+shift
+set REVERSE_PROXY=%9
+
 @echo setting up enviroment variables
 call set-build-env.bat
 
@@ -55,7 +58,7 @@ call mvn scm:export -DconnectionUrl=scm:svn:svn://svn-srv/SVN/cloudify/trunk/qua
 call %SGTEST_HOME%\src\main\scripts\deploy\bin\windows\deploy_webuitf.bat
 
 @echo Running Suite %SUITE_NAME%: 
-call %SGTEST_HOME%\src\main\scripts\deploy\bin\windows\start-suite.bat %SUITE_NAME% %INCLUDE% %EXCLUDE% %EC2_REGION% %BUILD_TEST_DIR%
+call %SGTEST_HOME%\src\main\scripts\deploy\bin\windows\start-suite.bat %SUITE_NAME% %INCLUDE% %EXCLUDE% %EC2_REGION% %BUILD_TEST_DIR% %REVERSE_PROXY%
 
 @echo generating report... 
 call %SGTEST_HOME%\src\main\scripts\deploy\bin\windows\generate-report.bat %BUILD_NUMBER% %SUITE_NAME% %VERSION% %MILESTONE% %BUILD_LOG_URL%

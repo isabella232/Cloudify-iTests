@@ -25,8 +25,6 @@ if %REVERSE_PROXY% == use-reverse-proxy (
 	set reverse.proxy=true
 )
 
-@echo reverse proxy: %reverse.proxy%
-
 @echo running %selenium.browser% tests...
 set SUITE_ID=0
 

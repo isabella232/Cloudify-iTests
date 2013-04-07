@@ -15,10 +15,9 @@ import org.openspaces.core.executor.Task;
 import org.openspaces.grid.gsm.machines.MachinesSlaEnforcementEndpoint;
 import org.testng.Assert;
 import org.testng.annotations.*;
-
+import java.rmi.RemoteException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.rmi.RemoteException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -100,6 +99,7 @@ public class FailoverDuringExecutorByonTest extends AbstractFromXenToByonGSMTest
 		}
 		catch (ExecutionException e) {
 			Throwable cause = e.getCause();
+            // the expected used to be java.rmi.RemoteException but changed and now it throws RemoteDataAccessException - could be changed back again.
 			Assert.assertEquals(RemoteException.class, cause.getClass());
 		}
     	pu.undeployAndWait();

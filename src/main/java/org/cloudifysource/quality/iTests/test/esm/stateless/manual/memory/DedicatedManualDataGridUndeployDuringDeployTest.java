@@ -48,7 +48,7 @@ public class DedicatedManualDataGridUndeployDuringDeployTest extends AbstractFro
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT*2, groups = "1", enabled=false)
     public void testManualDataGridDeploymentScale() {
         
-		final File archive = DeploymentUtils.getArchive("servlet.war");
+		final File archive = DeploymentUtils.getArchive("simpleStatelessPu.jar");
 		// make sure no gscs yet created
 	    repetitiveAssertNumberOfGSCsAdded(0, OPERATION_TIMEOUT);
 	    repetitiveAssertNumberOfGSAsAdded(1, OPERATION_TIMEOUT);	    

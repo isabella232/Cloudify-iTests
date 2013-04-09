@@ -7,7 +7,6 @@ import java.util.Properties;
 
 import org.cloudifysource.quality.iTests.framework.utils.IOUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.JCloudsCloudService;
-import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.tools.openstack.RackspaceClient;
 
 public class RackspaceCloudService extends JCloudsCloudService {
 

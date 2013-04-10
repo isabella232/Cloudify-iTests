@@ -1,23 +1,16 @@
-package apps.USM.usm.staticstorage.groovyApp
+package apps.USM.usm.staticstorage.groovyApp.groovy2
 
 import java.util.concurrent.TimeUnit
 
 
 service {
-	name "groovy1"
+	name "groovy2"
 	type "WEB_SERVER"
 	elastic true
-	numInstances 1
-	maxAllowedInstances 2
+    numInstances 1
+    maxAllowedInstances 2
 
-    isolationSLA {
-        appShared {
-            instanceCpuCores 0
-            instanceMemoryMB 128
-        }
-    }
-
-	lifecycle { 
+    lifecycle {
 	
 		init { println "This is the init event" }
 		preInstall {println "This is the preInstall event" }
@@ -45,7 +38,6 @@ service {
 			println "LOCATORS GOT: " + pids
 			return pids;
 		}
-		
 	}
 
 	customCommands ([
@@ -66,11 +58,12 @@ service {
 
     storage {
 
-        template "GROOVY1"
+        template "GROOVY2"
     }
 
     compute {
 
         template "SMALL_LINUX"
     }
+
 }

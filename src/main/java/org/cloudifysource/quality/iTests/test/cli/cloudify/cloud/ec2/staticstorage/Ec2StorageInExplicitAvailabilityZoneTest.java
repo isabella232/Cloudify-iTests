@@ -1,6 +1,8 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.ec2.staticstorage;
 
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.CloudServiceManager;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.ec2.Ec2CloudService;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
@@ -8,7 +10,7 @@ import org.testng.annotations.Test;
 
 import java.util.concurrent.TimeoutException;
 
-public class Ec2SimpleStorageTest extends AbstractEc2OneServiceStaticStorageTest {
+public class Ec2StorageInExplicitAvailabilityZoneTest extends AbstractEc2OneServiceStaticStorageTest {
 
     private static final String FOLDER_NAME = "simple-storage";
 
@@ -19,7 +21,9 @@ public class Ec2SimpleStorageTest extends AbstractEc2OneServiceStaticStorageTest
 
     @BeforeClass(alwaysRun = true)
     protected void bootstrap() throws Exception {
-        super.bootstrap();
+        Ec2CloudService cloudService = (Ec2CloudService) CloudServiceManager.getInstance().getCloudService(getCloudName());
+        cloudService.setAvailabilityZone("c");
+        super.bootstrap(cloudService);
     }
 
 
@@ -54,5 +58,4 @@ public class Ec2SimpleStorageTest extends AbstractEc2OneServiceStaticStorageTest
     public String getServiceFolder() {
         return FOLDER_NAME;
     }
-
 }

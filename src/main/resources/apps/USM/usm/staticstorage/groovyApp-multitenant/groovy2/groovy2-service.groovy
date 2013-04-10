@@ -7,6 +7,8 @@ service {
 	name "groovy2"
 	type "WEB_SERVER"
 	elastic true
+    numInstances 1
+    maxAllowedInstances 2
 
     isolationSLA {
         appShared {

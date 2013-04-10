@@ -4,8 +4,8 @@ import org.apache.commons.io.FileUtils;
 import org.cloudifysource.dsl.internal.DSLException;
 import org.cloudifysource.dsl.internal.ServiceReader;
 import org.cloudifysource.dsl.internal.packaging.PackagingException;
-import org.cloudifysource.quality.iTests.framework.utils.IOUtils;
-import org.cloudifysource.quality.iTests.framework.utils.ScriptUtils;
+import org.cloudifysource.quality.iTests.framework.utils.*;
+import org.jclouds.ec2.domain.Volume;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 
@@ -66,6 +66,96 @@ public abstract class AbstractEc2OneServiceStorageAllocationTest extends Abstrac
             FileUtils.deleteDirectory(serviceFolder);
         }
         FileUtils.copyDirectoryToDirectory( new File(getPathToServicesFolder() + "/" + getServiceFolder()), new File(buildRecipesServicesPath));
+    }
+
+    public void testWriteToStorage(final String folderName) throws IOException, InterruptedException {
+
+        ServiceInstaller installer = new ServiceInstaller(getRestUrl(), serviceName);
+        installer.recipePath(folderName);
+        installer.setDisableSelfHealing(true);
+        installer.install();
+
+        LogUtils.log("creating a new file called foo.txt in the storage volume. " + "running 'touch ~/storage/foo.txt' command on remote machine.");
+        invokeCommand(serviceName, "writeToStorage");
+
+        LogUtils.log("listing all files inside mounted storage folder. running 'ls ~/storage/' command");
+        String listFilesResult = invokeCommand(serviceName, "listFilesInStorage");
+
+        assertTrue("File was not created in storage volume. Output was " + listFilesResult, listFilesResult.contains("foo.txt"));
+
+        installer.uninstall();
+    }
+
+    public void testStorageVolumeMounted(final String folderName, final String expectedMountOutput) throws IOException, InterruptedException {
+
+        ServiceInstaller installer = new ServiceInstaller(getRestUrl(), serviceName);
+        installer.recipePath(folderName);
+        installer.setDisableSelfHealing(true);
+        installer.install();
+
+        LogUtils.log("Listing all mounted devices. running command 'mount -l' on remote machine");
+        String listMountedResult = invokeCommand(serviceName, "listMount");
+
+        assertTrue("device is not in the mounted devices list: " + listMountedResult,
+                listMountedResult.contains(expectedMountOutput));
+
+        installer.uninstall();
+    }
+
+
+    public void testInstallWithStorage(final String folderName) throws IOException, InterruptedException {
+
+        ServiceInstaller installer = new ServiceInstaller(getRestUrl(), serviceName);
+        installer.recipePath(folderName);
+        installer.setDisableSelfHealing(true);
+        installer.install();
+
+        LogUtils.log("Searching for volumes created by the service installation");
+        // the install should have created and attached a volume with a name prefix of the class name. see customizeCloud below.
+        Volume ourVolume = storageHelper.getVolumeByName(getVolumePrefixForTemplate("SMALL_BLOCK"));
+
+        AssertUtils.assertNotNull("could not find the required volume after install service", ourVolume);
+        LogUtils.log("Found volume : " + ourVolume);
+        // also check it is attached.
+        AssertUtils.assertEquals("the volume should have one attachments", 1, ourVolume.getAttachments().size());
+
+        // TODO elip - assert Volume configuration?
+
+        installer.uninstall();
+    }
+
+    public void testDeleteOnExitFalse(final String folderName) throws IOException, InterruptedException {
+
+        ServiceInstaller installer = new ServiceInstaller(getRestUrl(), serviceName);
+        installer.recipePath(folderName);
+        installer.setDisableSelfHealing(true);
+        installer.install();
+
+        LogUtils.log("Searching for volumes created by the service installation");
+        // the install should have created and attached a volume with a name prefix of the class name. see customizeCloud below.
+        Volume ourVolume = storageHelper.getVolumeByName(getVolumePrefixForTemplate("SMALL_BLOCK"));
+
+        AssertUtils.assertNotNull("could not find the required volume after install service", ourVolume);
+        LogUtils.log("Found volume : " + ourVolume);
+        // also check it is attached.
+        AssertUtils.assertEquals("the volume should have one attachments", 1, ourVolume.getAttachments().size());
+
+        // TODO elip - assert Volume configuration?
+
+        installer.uninstall();
+
+        LogUtils.log("Searching for volumes created by the service after uninstall");
+        // the install should have created and attached a volume with a name prefix of the class name. see customizeCloud below.
+        ourVolume = storageHelper.getVolumeByName(getVolumePrefixForTemplate("SMALL_BLOCK"));
+
+        AssertUtils.assertNotNull("could not find the required volume after install service", ourVolume);
+        LogUtils.log("Found volume : " + ourVolume);
+        storageHelper.deleteVolume(ourVolume.getId());
+
+    }
+
+    private String getVolumePrefixForTemplate(final String templateName) {
+        return getService().getCloud().getCloudStorage().getTemplates().get(templateName).getNamePrefix();
     }
 
     protected void setTemplate(final String computeTemplateName, boolean useManagement) throws Exception {

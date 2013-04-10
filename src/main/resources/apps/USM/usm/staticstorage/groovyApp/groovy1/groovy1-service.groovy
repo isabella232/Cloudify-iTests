@@ -1,4 +1,4 @@
-package apps.USM.usm.staticstorage.groovyApp
+package apps.USM.usm.staticstorage.groovyApp.groovy1
 
 import java.util.concurrent.TimeUnit
 
@@ -9,13 +9,6 @@ service {
 	elastic true
 	numInstances 1
 	maxAllowedInstances 2
-
-    isolationSLA {
-        appShared {
-            instanceCpuCores 0
-            instanceMemoryMB 128
-        }
-    }
 
 	lifecycle { 
 	

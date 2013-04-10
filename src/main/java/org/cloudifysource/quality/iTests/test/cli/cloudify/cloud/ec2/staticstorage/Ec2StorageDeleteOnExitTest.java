@@ -1,14 +1,17 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.ec2.staticstorage;
 
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Test;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.AbstractStorageTest;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.ec2.Ec2CloudService;
+import org.testng.annotations.*;
 
 import java.util.concurrent.TimeoutException;
 
-public class Ec2SimpleStorageTest extends AbstractEc2OneServiceStaticStorageTest {
+/**
+ * Author: nirb
+ * Date: 20/02/13
+ */
+public class Ec2StorageDeleteOnExitTest extends AbstractEc2OneServiceStaticStorageTest {
 
     private static final String FOLDER_NAME = "simple-storage";
 
@@ -31,7 +34,7 @@ public class Ec2SimpleStorageTest extends AbstractEc2OneServiceStaticStorageTest
 
     @Override
     public void doTest() throws Exception {
-        super.testInstallWithStorage(FOLDER_NAME);
+        super.testDeleteOnExitFalse(FOLDER_NAME);
     }
 
     @AfterMethod

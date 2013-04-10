@@ -103,6 +103,7 @@ public abstract class AbstractCloudManagementPersistencyTest extends NewAbstract
     
 	protected void assertServiceInstalled(String applicationName, String serviceName) {
 		try {
+			LogUtils.log("asserting service is installed");
 			String output = CommandTestUtils.runCommandAndWait("connect " + this.defaultManagementMachineUrl +"; list-services");
 			String absolutePUName = ServiceUtils.getAbsolutePUName(applicationName, serviceName);
 			assertTrue("Service " + serviceName + " was not found", output.contains(absolutePUName));
@@ -113,7 +114,8 @@ public abstract class AbstractCloudManagementPersistencyTest extends NewAbstract
 
 	protected void assertApplicationInstalled(String applicationName) {
 		try {
-			String output = CommandTestUtils.runCommandAndWait("connect " + this.defaultManagementMachineUrl +"; list-application");
+			LogUtils.log("asserting application is installed");
+			String output = CommandTestUtils.runCommandAndWait("connect " + this.defaultManagementMachineUrl +"; list-applications");
 			assertTrue("Application " + applicationName + " was not found", output.contains(applicationName));
 		} catch (Exception e) {
 			AssertFail("Could not determin if application is properly installed after restore");

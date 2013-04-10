@@ -22,8 +22,6 @@ public class Ec2WriteToStorageTest extends AbstractEc2OneServiceStaticStorageTes
 
     private static final String FOLDER_NAME = "simple-storage-with-custom-commands";
 
-	private static String EXPECTED_LIST_MOUNT_OUTPUT = "/dev/xvdc on /home/ec2-user/storage type ext4 (rw)";
-
 	@BeforeClass(alwaysRun = true)
 	protected void bootstrap() throws Exception {
 		super.bootstrap();

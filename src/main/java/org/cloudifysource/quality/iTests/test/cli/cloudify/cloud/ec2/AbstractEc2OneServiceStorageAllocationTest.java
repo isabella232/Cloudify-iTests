@@ -4,7 +4,9 @@ import org.apache.commons.io.FileUtils;
 import org.cloudifysource.dsl.internal.DSLException;
 import org.cloudifysource.dsl.internal.ServiceReader;
 import org.cloudifysource.dsl.internal.packaging.PackagingException;
+import org.cloudifysource.esc.driver.provisioning.storage.VolumeDetails;
 import org.cloudifysource.quality.iTests.framework.utils.*;
+import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.ec2.domain.Volume;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -13,6 +15,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 /**
  *
@@ -85,6 +89,49 @@ public abstract class AbstractEc2OneServiceStorageAllocationTest extends Abstrac
 
         installer.uninstall();
     }
+
+    public void testMount(final String folderName) throws Exception {
+
+        ServiceInstaller installer = new ServiceInstaller(getRestUrl(), serviceName);
+        installer.recipePath(folderName);
+        installer.setDisableSelfHealing(true);
+        installer.install();
+
+        LogUtils.log("Creating a new file called foo.txt in the storage volume. " + "running 'touch ~/storage/foo.txt' command on remote machine.");
+        invokeCommand(serviceName, "writeToStorage");
+
+        LogUtils.log("listing all files inside mounted storage folder. running 'ls ~/storage/' command");
+        String listFilesResult = invokeCommand(serviceName, "listFilesInStorage");
+
+        assertTrue("File was not created in storage volume. Output was " + listFilesResult, listFilesResult.contains("foo.txt"));
+
+        LogUtils.log("Unmounting volume from file system");
+        invokeCommand(serviceName, "unmount");
+
+        Volume vol = storageHelper.getVolumeByName(getVolumePrefixForTemplate("SMALL_BLOCK"));
+        storageHelper.detachVolume(vol.getId());
+
+        //asserting the file is not in the mounted directory
+        LogUtils.log("listing all files inside mounted storage folder. running 'ls ~/storage/' command");
+        listFilesResult = invokeCommand(serviceName, "listFilesInStorage");
+
+        assertTrue("The newly created file is in the mounted directory after detachment", !listFilesResult.contains("foo.txt"));
+
+        LogUtils.log("Reattaching the volume to the service machine");
+
+
+        Ec2ComputeApiHelper computeHelper = new Ec2ComputeApiHelper(getService().getCloud());
+
+        NodeMetadata agent = computeHelper.getServerByName(getService().getCloud().getProvider().getMachineNamePrefix());
+        storageHelper.attachVolume(vol.getId(), agent.getId(), getService().getCloud().getCloudStorage().getTemplates().get("SMALL_BLOCK").getDeviceName());
+        invokeCommand(serviceName, "mount");
+
+        //asserting the file is in the mounted directory
+        LogUtils.log("listing all files inside mounted storage folder. running 'ls ~/storage/' command");
+        listFilesResult = invokeCommand(serviceName, "listFilesInStorage");
+
+        assertTrue("the created file is not in the mounted directory after reattachment", listFilesResult.contains("foo.txt"));    }
+
 
     public void testStorageVolumeMounted(final String folderName, final String expectedMountOutput) throws IOException, InterruptedException {
 

@@ -215,23 +215,28 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
         }
     }
 
-    protected void installApplicationAndWait(String applicationName) throws IOException, InterruptedException {
+    protected String installApplicationAndWait(String applicationName) throws IOException, InterruptedException {
         ApplicationInstaller applicationInstaller = new ApplicationInstaller(getRestUrl(), applicationName);
         applicationInstaller.waitForFinish(true);
-        applicationInstaller.install();
+        return applicationInstaller.install();
     }
 
-    protected void installApplicationAndWait(String applicationPath, String applicationName) throws IOException, InterruptedException {
+    protected String installApplicationAndWait(String applicationPath, String applicationName) throws IOException, InterruptedException {
         ApplicationInstaller applicationInstaller = new ApplicationInstaller(getRestUrl(), applicationName);
         applicationInstaller.recipePath(applicationPath);
         applicationInstaller.waitForFinish(true);
-        applicationInstaller.install();
+        return applicationInstaller.install();
     }
 
-    protected void uninstallApplicationAndWait(String applicationName) throws IOException, InterruptedException {
+    protected String uninstallApplicationAndWait(String applicationName) throws IOException, InterruptedException {
+        return uninstallApplicationAndWait(applicationName, false);
+    }
+    
+    protected String uninstallApplicationAndWait(String applicationName, boolean isExpectedFail) throws IOException, InterruptedException {
         ApplicationInstaller applicationInstaller = new ApplicationInstaller(getRestUrl(), applicationName);
         applicationInstaller.waitForFinish(true);
-        applicationInstaller.uninstall();
+        applicationInstaller.expectToFail(isExpectedFail);
+        return applicationInstaller.uninstall();
     }
 
     protected void uninstallApplicationIfFound(String applicationName) throws IOException, InterruptedException {
@@ -240,32 +245,38 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
         applicationInstaller.uninstallIfFound();
     }
 
-    protected void installApplicationAndWait(String applicationPath, String applicationName, int timeout) throws IOException, InterruptedException {
+    protected String installApplicationAndWait(String applicationPath, String applicationName, int timeout) throws IOException, InterruptedException {
         ApplicationInstaller applicationInstaller = new ApplicationInstaller(getRestUrl(), applicationName);
         applicationInstaller.recipePath(applicationPath);
         applicationInstaller.waitForFinish(true);
         applicationInstaller.timeoutInMinutes(timeout);
-        applicationInstaller.install();
+        return applicationInstaller.install();
     }
 
-    protected void installApplicationAndWait(String applicationPath, String applicationName, int timeout , boolean expectToFail) throws IOException, InterruptedException {
+    protected String installApplicationAndWait(String applicationPath, String applicationName, int timeout , boolean expectToFail) throws IOException, InterruptedException {
         ApplicationInstaller applicationInstaller = new ApplicationInstaller(getRestUrl(), applicationName);
         applicationInstaller.recipePath(applicationPath);
         applicationInstaller.waitForFinish(true);
         applicationInstaller.expectToFail(expectToFail);
         applicationInstaller.timeoutInMinutes(timeout);
-        applicationInstaller.install();
+        return applicationInstaller.install();
     }
 
 
-    protected void uninstallServiceAndWait(String serviceName) throws IOException, InterruptedException {
+    protected String uninstallServiceAndWait(String serviceName, boolean isExpectedFail) throws IOException, InterruptedException {
         ServiceInstaller serviceInstaller = new ServiceInstaller(getRestUrl(), serviceName);
         serviceInstaller.waitForFinish(true);
-        serviceInstaller.uninstall();
+        serviceInstaller.expectToFail(isExpectedFail);
+        String output = serviceInstaller.uninstall();
 
         if(StorageUtils.isInitialized()){
             StorageUtils.afterServiceUninstallation(serviceName);
         }
+        return output;
+    }
+    
+    protected String uninstallServiceAndWait(String serviceName) throws IOException, InterruptedException {
+    	return uninstallServiceAndWait(serviceName, false);
     }
 
     protected void uninstallServiceIfFound(String serviceName) throws IOException, InterruptedException {

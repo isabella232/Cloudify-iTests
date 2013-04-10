@@ -1,18 +1,37 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud;
 
-import com.j_spaces.kernel.PlatformVersion;
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
+
 import org.apache.commons.io.FileUtils;
-import org.cloudifysource.quality.iTests.framework.utils.*;
+import org.cloudifysource.dsl.cloud.Cloud;
+import org.cloudifysource.dsl.cloud.compute.ComputeTemplate;
+import org.cloudifysource.dsl.utils.ServiceUtils;
+import org.cloudifysource.quality.iTests.framework.utils.AssertUtils;
+import org.cloudifysource.quality.iTests.framework.utils.CloudBootstrapper;
+import org.cloudifysource.quality.iTests.framework.utils.IOUtils;
+import org.cloudifysource.quality.iTests.framework.utils.JCloudsUtils;
+import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
+import org.cloudifysource.quality.iTests.framework.utils.SSHUtils;
+import org.cloudifysource.quality.iTests.framework.utils.ScriptUtils;
+import org.cloudifysource.quality.iTests.framework.utils.ServiceInstaller;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
 import org.cloudifysource.restclient.GSRestClient;
 import org.cloudifysource.restclient.RestException;
 import org.jclouds.compute.domain.NodeMetadata;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
+import com.j_spaces.kernel.PlatformVersion;
 
 /**
  * User: nirb
@@ -20,11 +39,10 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 public abstract class AbstractCloudManagementPersistencyTest extends NewAbstractCloudTest{
 
-    private static final String PATH_TO_SERVICE = CommandTestUtils.getPath("/src/main/resources/apps/USM/usm/custom-tomcat");;
+    private static final String PATH_TO_TOMCAT_SERVICE = CommandTestUtils.getPath("/src/main/resources/apps/USM/usm/custom-tomcat");;
 
     private static final String BOOTSTRAP_SUCCEEDED_STRING = "Successfully created Cloudify Manager";
 
-    private static final String APPLICATION_NAME = "default";
     private static final String EC2_USER = "ec2-user";
 
     private int numOfManagementMachines = 2;
@@ -32,6 +50,19 @@ public abstract class AbstractCloudManagementPersistencyTest extends NewAbstract
     private Map<String, Integer> installedServices = new HashMap<String, Integer>();
 
     private List<String> attributesList = new LinkedList<String>();
+    
+	protected static final String SCALABLE_SERVICE_NAME = "customServiceMonitor";
+	private static final String SCALABLE_SERVICE_PATH = CommandTestUtils.getPath("/src/main/resources/apps/cloudify/recipes/customServiceMonitorPersistency");
+	protected static final String SIMPLE_APPLICATION_NAME = "simple";
+	private static final String MOCK_APPLICATION_NAME = "mock";
+	private static final String SIMPLE_APPLICATION_PATH = CommandTestUtils.getPath("/src/main/resources/apps/USM/usm/applications/simple");
+	protected static final String DEFAULT_APPLICATION_NAME = "default";
+
+	private static final String MOCK_SERVICE_NAME = "mock";
+
+	private String defaultManagementMachineUrl;
+	private String backupManagementMachineUrl;
+	GSRestClient client;
 
     protected void installTomcatService(final int numberOfInstances, final String overrideName) throws IOException, InterruptedException {
 
@@ -61,7 +92,7 @@ public abstract class AbstractCloudManagementPersistencyTest extends NewAbstract
 
             installedServices.put(actualServiceName, numberOfInstances);
             CloudBootstrapper bootstrapper = getService().getBootstrapper();
-            String attributes = bootstrapper.listServiceInstanceAttributes(APPLICATION_NAME, actualServiceName, 1, false);
+            String attributes = bootstrapper.listServiceInstanceAttributes(DEFAULT_APPLICATION_NAME, actualServiceName, 1, false);
             attributesList.add(attributes.substring(attributes.indexOf("home")));
 
         } finally  {
@@ -69,10 +100,52 @@ public abstract class AbstractCloudManagementPersistencyTest extends NewAbstract
         }
 
     }
+    
+	protected void assertServiceInstalled(String applicationName, String serviceName) {
+		try {
+			String output = CommandTestUtils.runCommandAndWait("connect " + this.defaultManagementMachineUrl +"; list-services");
+			String absolutePUName = ServiceUtils.getAbsolutePUName(applicationName, serviceName);
+			assertTrue("Service " + serviceName + " was not found", output.contains(absolutePUName));
+		} catch (Exception e) {
+			AssertFail("Could not determin if service is properly installed");
+		} 
+	}
+
+	protected void assertApplicationInstalled(String applicationName) {
+		try {
+			String output = CommandTestUtils.runCommandAndWait("connect " + this.defaultManagementMachineUrl +"; list-application");
+			assertTrue("Application " + applicationName + " was not found", output.contains(applicationName));
+		} catch (Exception e) {
+			AssertFail("Could not determin if application is properly installed after restore");
+		} 
+	}
+	
+	protected void restoreManagement() {
+		try {
+			terminateManagementMachineComponents(this.defaultManagementMachineUrl);
+		} catch (Throwable e) {
+			LogUtils.log("failed terminating management machine with ip " + this.defaultManagementMachineUrl);
+		}
+		try {
+			terminateManagementMachineComponents(this.backupManagementMachineUrl);
+		} catch (Throwable e) {
+			LogUtils.log("failed terminating management machine with ip " + this.backupManagementMachineUrl);
+		}
+        CloudBootstrapper bootstrapper = getService().getBootstrapper();
+        bootstrapper.scanForLeakedNodes(false);
+        bootstrapper.useExisting(true);
+        try {
+			bootstrapper.bootstrap();
+		} catch (Exception e) {
+			AssertFail("management restore failed.");
+		}
+        bootstrapper.setRestUrl(getRestUrl());
+		
+	}
 
     private void copyCustomTomcatToBuild() throws IOException {
         deleteCustomTomcatFromBuild();
-        FileUtils.copyDirectoryToDirectory(new File(PATH_TO_SERVICE), new File(ScriptUtils.getBuildRecipesServicesPath()));
+        FileUtils.copyDirectoryToDirectory(new File(PATH_TO_TOMCAT_SERVICE), new File(ScriptUtils.getBuildRecipesServicesPath()));
     }
 
     private void deleteCustomTomcatFromBuild() throws IOException {
@@ -103,7 +176,7 @@ public abstract class AbstractCloudManagementPersistencyTest extends NewAbstract
         List<String> newAttributesList = new LinkedList<String>();
 
         for (String serviceName : installedServices.keySet()) {
-            String attributes = bootstrapper.listServiceInstanceAttributes(APPLICATION_NAME, serviceName, 1, false);
+            String attributes = bootstrapper.listServiceInstanceAttributes(DEFAULT_APPLICATION_NAME, serviceName, 1, false);
             newAttributesList.add(attributes.substring(attributes.indexOf("home")));
         }
 
@@ -140,7 +213,7 @@ public abstract class AbstractCloudManagementPersistencyTest extends NewAbstract
                     // we don't know which service the agent we shutdown belonged to.
                     // query all installed services to find out.
                     for (String serviceName : installedServices.keySet()) {
-                        String serviceRestUrl = "ProcessingUnits/Names/" + APPLICATION_NAME + "." + serviceName;
+                        String serviceRestUrl = "ProcessingUnits/Names/" + DEFAULT_APPLICATION_NAME + "." + serviceName;
                         int numberOfInstances = (Integer)client.getAdminData(serviceRestUrl).get("Instances-Size");
                         LogUtils.log("Number of " + serviceName + " instances is " + numberOfInstances);
                         if (numberOfInstances < installedServices.get(serviceName)) {
@@ -161,7 +234,7 @@ public abstract class AbstractCloudManagementPersistencyTest extends NewAbstract
         AssertUtils.repetitiveAssertTrue(brokenService.get() + " service did not recover", new AssertUtils.RepetitiveConditionProvider() {
             @Override
             public boolean getCondition() {
-                final String brokenServiceRestUrl = "ProcessingUnits/Names/" + APPLICATION_NAME + "." + brokenService.get();
+                final String brokenServiceRestUrl = "ProcessingUnits/Names/" + DEFAULT_APPLICATION_NAME + "." + brokenService.get();
                 try {
                     int numOfInst = (Integer) client.getAdminData(brokenServiceRestUrl).get("Instances-Size");
                     return (installedServices.get(brokenService.get()) == numOfInst);
@@ -176,6 +249,158 @@ public abstract class AbstractCloudManagementPersistencyTest extends NewAbstract
                 }
             }
         } , OPERATION_TIMEOUT * 3);
+    }
+    
+    /**
+     * 1. install a scalable service and a simple application
+     * 2. shut down one of 2 management machines
+     * 3. assert all uninstall, install, and scale attempts fail.
+     * 
+     */
+    public void testInstallServiceAndApplicationOnGsmFailure() throws Exception {
+    	LogUtils.log("Installing service and application required for test");
+    	installServiceAndWait(SCALABLE_SERVICE_PATH, SCALABLE_SERVICE_NAME);
+    	installApplicationAndWait(SIMPLE_APPLICATION_PATH, SIMPLE_APPLICATION_NAME);
+    	
+    	LogUtils.log("Killing one of two management machines");
+    	terminateManagementMachineComponents(this.backupManagementMachineUrl);
+    	boolean result = waitForRestAdminToDetectMachineFailure(this.defaultManagementMachineUrl, 1, 10000 * 6, TimeUnit.SECONDS);
+    	assertTrue("Failed waiting for rest admin to detect machine failure.", result == true );
+    	
+    	LogUtils.log("Attemting to uninstall application. This should fail.");
+    	String uninstallApplicationOutput = uninstallApplicationAndWait(SIMPLE_APPLICATION_NAME, true);
+    	assertGsmFailureOutput(uninstallApplicationOutput);
+    	
+    	LogUtils.log("Attemting to uninstall service. This should fail.");
+    	String uninstallServiceOutput = uninstallServiceAndWait(SCALABLE_SERVICE_NAME, true);
+    	assertGsmFailureOutput(uninstallServiceOutput);
+    	
+    	LogUtils.log("Attempting to install a simple service. This is expected to fail");
+    	String installServiceOutput = installServiceAndWait(SCALABLE_SERVICE_PATH, MOCK_SERVICE_NAME, true);
+    	LogUtils.log("asserting service installation failed due to gsm failure");
+    	assertGsmFailureOutput(installServiceOutput);
+    	
+    	LogUtils.log("Attempting to install a simple application. This is expected to fail.");
+    	String installApplicationOutput = installApplicationAndWait(SIMPLE_APPLICATION_PATH, MOCK_APPLICATION_NAME, 15, true);
+    	assertGsmFailureOutput(installApplicationOutput);
+    	
+    	LogUtils.log("Attempting to manually scale service " + SCALABLE_SERVICE_NAME + ". This should fail");
+    	String manualScaleOutput = scaleServiceUsingCommand(2, true);
+    	assertGsmFailureOutput(manualScaleOutput);
+    	
+    }
+    
+    private boolean waitForRestAdminToDetectMachineFailure(String restUrl, int expectedNumberOfManagement, long timeout, TimeUnit unit)
+    		throws InterruptedException {
+    	LogUtils.log("Waiting for rest admin to detect machine failure");
+    	long end = System.currentTimeMillis() + unit.toMillis(timeout);
+    	while (end > System.currentTimeMillis()) {
+    		int gsmCount = 0;
+    		try {
+    			gsmCount = Integer.parseInt((String)this.client.getAdmin("GridServiceManagers/").get("Size"));
+    		} catch (Exception e) {
+    			//Do nothing.
+    		}
+    		if (gsmCount == expectedNumberOfManagement) {
+    			return true;
+    		}
+    		Thread.sleep(2000);
+    	}
+    	return false;
+    }
+    
+    private String scaleServiceUsingCommand(int numberOfInstances, boolean expectedFail) 
+			throws IOException, InterruptedException {
+		if (expectedFail) {
+			return CommandTestUtils.runCommandExpectedFail("connect " + this.defaultManagementMachineUrl + ";" +
+					";set-instances " + SCALABLE_SERVICE_NAME + " " + numberOfInstances);
+		} else {
+			return CommandTestUtils.runCommandAndWait("connect " + this.defaultManagementMachineUrl + ";" +
+									";set-instances " + SCALABLE_SERVICE_NAME + " " + numberOfInstances);
+		}
+	}
+    
+    protected void terminateManagementMachineComponents(String restUrl) {
+		File pemFile = getPemFile();
+		String command = "killall -9 java";
+		String ipAddress = restUrl.substring(restUrl.indexOf("//") + 2, restUrl.lastIndexOf(":"));
+		Cloud cloud = getService().getCloud();
+		String managementMachineTemplate = cloud.getConfiguration().getManagementMachineTemplate();
+		ComputeTemplate managementTemplate = cloud.getCloudCompute().getTemplates().get(managementMachineTemplate);
+		String userName = managementTemplate.getUsername();
+		SSHUtils.runCommand(ipAddress, 10000, command, userName, pemFile);
+	}
+    
+    
+    void assertGsmFailureOutput(String installServiceOutput) {
+		assertTrue("Expecting install failure output to contain gsm info.",
+    				installServiceOutput.contains("Persistency requires all GSM components be available." +
+    						" Expecting 2, Found 1: Operation failed."));
+	}
+    
+    /**
+     * 1. install a scalable service with one instance. 
+     * 2. scale that service so that it will have two instances.
+     * 3. kill one of the 2 management machines.
+     * 4. assert ESM auto-scale fails both for scale-out and for scale-in. 
+     * 
+     */
+    public void testAutoScaleServiceOnGsmFailure() throws Exception {
+    	LogUtils.log("Installing a scalable service");
+    	installServiceAndWait(SCALABLE_SERVICE_PATH, SCALABLE_SERVICE_NAME);
+    	scaleServiceUsingHook(2);
+    	boolean scaleResult = waitForServiceScale(2, DEFAULT_TEST_TIMEOUT / 2 , TimeUnit.MILLISECONDS);
+    	assertTrue("service did not scale out as expected", scaleResult);
+
+    	LogUtils.log("killing backup management machine");
+    	terminateManagementMachineComponents(this.backupManagementMachineUrl);
+    	boolean waitForAdminResult = waitForRestAdminToDetectMachineFailure(this.defaultManagementMachineUrl, 1, 1, TimeUnit.MINUTES);
+    	assertTrue("Failed waiting for rest admin to detect machine failure.", waitForAdminResult == true);
+
+    	scaleServiceUsingHook(3);
+    	scaleResult = waitForServiceScale(3, DEFAULT_TEST_TIMEOUT / 2, TimeUnit.MILLISECONDS);
+    	assertTrue("Service scale was expected to fail", scaleResult != true);
+
+    	scaleServiceUsingHook(1);
+    	scaleResult = waitForServiceScale(1, DEFAULT_TEST_TIMEOUT / 2, TimeUnit.MILLISECONDS);
+    	assertTrue("Service scale was expected to fail", scaleResult != true);
+    }
+	
+    //This call activates a hook that mocks the service monitors.
+    private void scaleServiceUsingHook(int expectedNumberOfInstances) 
+    		throws IOException, InterruptedException, RestException {
+    	int counterValue = 0;
+    	if (expectedNumberOfInstances == 2) {
+    		counterValue = 100;
+    	} else if (expectedNumberOfInstances == 3) {
+    		counterValue = 1000;
+    	}
+    	int numInstances = (Integer)getServiceProperty(this.defaultManagementMachineUrl, SCALABLE_SERVICE_NAME, DEFAULT_APPLICATION_NAME, "Instances-Size");
+    	for (int i = 0; i < numInstances; i++) {
+    		CommandTestUtils.runCloudifyCommandAndWait("connect  " + this.defaultManagementMachineUrl 
+    				+ ";invoke -instanceid " + (i + 1)  + " --verbose " + SCALABLE_SERVICE_NAME + " set " + counterValue);
+    	}
+    }
+		
+    private Object getServiceProperty(String restUrl, String serviceName, String applicationName, String propertyKey) 
+    		throws MalformedURLException, RestException {
+    	String absolutePUName = ServiceUtils.getAbsolutePUName(applicationName, serviceName);
+    	GSRestClient client = new GSRestClient("", "", new URL(restUrl), "2.5.0-Cloudify-ga");//PlatformVersion.getVersionNumber()
+    	return client.getAdmin("ProcessingUnits/Names/" + absolutePUName).get(propertyKey);
+    }
+
+    private boolean waitForServiceScale(final int expectedNumOfInstances, long timeout, TimeUnit unit) 
+    		throws MalformedURLException, RestException, InterruptedException {
+    	long end = System.currentTimeMillis() + unit.toMillis(timeout);
+    	while (end > System.currentTimeMillis()) {
+    		int instanceSize = ((Integer)getServiceProperty(this.defaultManagementMachineUrl, 
+    				SCALABLE_SERVICE_NAME, DEFAULT_APPLICATION_NAME, "Instances-Size"));
+    		if (instanceSize == expectedNumOfInstances) {
+    			return true;
+    		}
+    		Thread.sleep(2000);
+    	}
+    	return false;
     }
 
     /**
@@ -221,7 +446,7 @@ public abstract class AbstractCloudManagementPersistencyTest extends NewAbstract
         bootstrapper.setRestUrl(getRestUrl());
 
         LogUtils.log("shutting down managers");
-        bootstrapper.shutdownManagers(APPLICATION_NAME, false);
+        bootstrapper.shutdownManagers(DEFAULT_APPLICATION_NAME, false);
     }
 
     private Set<String> toSet(final String[] array) {
@@ -266,6 +491,17 @@ public abstract class AbstractCloudManagementPersistencyTest extends NewAbstract
         getService().setNumberOfManagementMachines(numOfManagementMachines);
         getService().getProperties().put("persistencePath", "/home/ec2-user/persistence");
     }
+    
+	protected void initRestClient() 
+			throws MalformedURLException, RestException {
+		this.client = new GSRestClient("", "", new URL(this.defaultManagementMachineUrl), "2.5.0-Cloudify-ga");//PlatformVersion.getVersionNumber()
+	}
+
+	protected void initManagementUrls() {
+		String[] restUrls = cloudService.getRestUrls();
+    	this.defaultManagementMachineUrl = restUrls[0];
+    	this.backupManagementMachineUrl = restUrls[1];
+	}
 
     @Override
     protected abstract String getCloudName();

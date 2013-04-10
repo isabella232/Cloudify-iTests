@@ -17,9 +17,7 @@ import org.testng.annotations.Test;
 public class DynamicStorageAttachmentTest extends AbstractEc2OneServiceDynamicStorageTest {
 	
 	private static final String FOLDER_NAME = "attach-only";
-	
-	private static final String STORAGE_NAME = System.getProperty("user.name") + "-" + DynamicStorageAttachmentTest.class.getSimpleName();
-	
+
 	private ServiceInstaller installer;
 	private Ec2ComputeApiHelper computeHelper;
 
@@ -64,7 +62,7 @@ public class DynamicStorageAttachmentTest extends AbstractEc2OneServiceDynamicSt
         LogUtils.log("NodeMetaData for server with prefix " + machinePrefix + " is " + node);
 
         LogUtils.log("Creating volume in location " + node.getLocation().getId());
-		Volume details = storageHelper.createVolume(node.getLocation().getId(), 5, STORAGE_NAME);
+		Volume details = storageHelper.createVolume(node.getLocation().getId(), 5, getVolumePrefixForTemplate("SMALL_BLOCK"));
         LogUtils.log("Volume created : " + details);
 
         LogUtils.log("Attaching volume with id " + details.getId() + " to service");
@@ -94,7 +92,7 @@ public class DynamicStorageAttachmentTest extends AbstractEc2OneServiceDynamicSt
 	
 	@AfterMethod
 	public void scanForLeakes() throws TimeoutException {
-		super.scanForLeakedVolumes(STORAGE_NAME);
+		super.scanForLeakedVolumes(getVolumePrefixForTemplate("SMALL_BLOCK"));
 	}
 	
 	@AfterClass(alwaysRun = true)

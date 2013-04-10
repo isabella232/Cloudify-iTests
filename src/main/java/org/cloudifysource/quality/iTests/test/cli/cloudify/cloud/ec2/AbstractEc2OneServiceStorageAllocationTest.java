@@ -154,7 +154,7 @@ public abstract class AbstractEc2OneServiceStorageAllocationTest extends Abstrac
 
     }
 
-    private String getVolumePrefixForTemplate(final String templateName) {
+    public String getVolumePrefixForTemplate(final String templateName) {
         return getService().getCloud().getCloudStorage().getTemplates().get(templateName).getNamePrefix();
     }
 

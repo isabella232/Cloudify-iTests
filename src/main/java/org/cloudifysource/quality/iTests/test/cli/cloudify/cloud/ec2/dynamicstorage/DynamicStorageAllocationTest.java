@@ -44,7 +44,7 @@ public class DynamicStorageAllocationTest extends AbstractEc2OneServiceDynamicSt
 
         LogUtils.log("Searching for volumes created by the service installation");
         // the install should have created and attached a volume with a name prefix of the class name. see customizeCloud below.
-		Volume ourVolume = storageHelper.getVolumeByName(System.getProperty("user.name") + "-" + this.getClass().getSimpleName().toLowerCase());
+		Volume ourVolume = storageHelper.getVolumeByName(getVolumePrefixForTemplate("SMALL_BLOCK"));
 		
 		AssertUtils.assertNotNull("could not find the required volume after install service", ourVolume);
         LogUtils.log("Found volume : " + ourVolume);

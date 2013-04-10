@@ -11,18 +11,13 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-public class UnsupportedFileSystemTest extends AbstractDynamicStorageTest {
+public class UnsupportedFileSystemTest extends AbstractEc2OneServiceDynamicStorageTest {
 
 	// define this so in case of  refactoring the test wont fail.
 	private static final String EXPECTED_EXCEPTION = LocalStorageOperationException.class.getSimpleName();
 
 	private static final String FOLDER_NAME = "unsupported-fs";
 	private ServiceInstaller installer;
-
-	@Override
-	protected String getCloudName() {
-		return "ec2";
-	}
 
 	@BeforeClass(alwaysRun = true)
 	protected void bootstrap() throws Exception {
@@ -43,7 +38,7 @@ public class UnsupportedFileSystemTest extends AbstractDynamicStorageTest {
 	@Override
 	public void doTest() throws Exception {
 
-		installer = new ServiceInstaller(getRestUrl(), SERVICE_NAME);
+		installer = new ServiceInstaller(getRestUrl(), getServiceName());
 		installer.recipePath(FOLDER_NAME);
 		installer.timeoutInMinutes(5);
 		installer.setDisableSelfHealing(true);

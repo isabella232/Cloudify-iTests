@@ -12,15 +12,10 @@ import org.testng.annotations.Test;
 
 import java.util.concurrent.TimeoutException;
 
-public class DynamicStorageAllocationTest extends AbstractDynamicStorageTest {
+public class DynamicStorageAllocationTest extends AbstractEc2OneServiceDynamicStorageTest {
 	
 	private static final String FOLDER_NAME = "create-and-attach";
 	private ServiceInstaller installer;
-		
-	@Override
-	protected String getCloudName() {
-		return "ec2";
-	}
 	
 	@BeforeClass(alwaysRun = true)
 	protected void bootstrap() throws Exception {
@@ -42,7 +37,7 @@ public class DynamicStorageAllocationTest extends AbstractDynamicStorageTest {
 	@Override
 	public void doTest() throws Exception {
 
-		installer = new ServiceInstaller(getRestUrl(), SERVICE_NAME);
+		installer = new ServiceInstaller(getRestUrl(), getServiceName());
 		installer.recipePath(FOLDER_NAME);
         installer.setDisableSelfHealing(true);
 		installer.install();

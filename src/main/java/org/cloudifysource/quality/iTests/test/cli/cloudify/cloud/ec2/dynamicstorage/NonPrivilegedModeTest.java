@@ -8,7 +8,7 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-public class NonPrivilegedModeTest extends AbstractDynamicStorageTest {
+public class NonPrivilegedModeTest extends AbstractEc2OneServiceDynamicStorageTest {
 
 	private static final String FOLDER_NAME = "non-sudo";
 	private ServiceInstaller installer;
@@ -28,7 +28,7 @@ public class NonPrivilegedModeTest extends AbstractDynamicStorageTest {
 	@Override
 	public void doTest() throws Exception {
 		
-		installer = new ServiceInstaller(getRestUrl(), SERVICE_NAME);
+		installer = new ServiceInstaller(getRestUrl(), getServiceName());
 		installer.recipePath(FOLDER_NAME);
 		installer.timeoutInMinutes(5);
 		installer.setDisableSelfHealing(true);
@@ -57,11 +57,6 @@ public class NonPrivilegedModeTest extends AbstractDynamicStorageTest {
 	@Override
 	public String getServiceFolder() {
 		return FOLDER_NAME;
-	}
-
-	@Override
-	protected String getCloudName() {
-		return "ec2";
 	}
 
 	@Override

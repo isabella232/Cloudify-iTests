@@ -16,7 +16,7 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-public class ConcurrentStorageAllocationTest extends AbstractDynamicStorageTest {
+public class ConcurrentStorageAllocationTest extends AbstractEc2OneServiceDynamicStorageTest {
 
 	private ServiceInstaller installer;
 	
@@ -35,7 +35,7 @@ public class ConcurrentStorageAllocationTest extends AbstractDynamicStorageTest 
 	@Override
 	public void doTest() throws Exception {
 		
-		installer = new ServiceInstaller(getRestUrl(), SERVICE_NAME);
+		installer = new ServiceInstaller(getRestUrl(), getServiceName());
 		installer.recipePath(FOLDER_NAME);
         installer.setDisableSelfHealing(true);
 		installer.install();
@@ -83,10 +83,6 @@ public class ConcurrentStorageAllocationTest extends AbstractDynamicStorageTest 
 		return FOLDER_NAME;
 	}
 
-	@Override
-	protected String getCloudName() {
-		return "ec2";
-	}
 
 	@Override
 	protected boolean isReusableCloud() {

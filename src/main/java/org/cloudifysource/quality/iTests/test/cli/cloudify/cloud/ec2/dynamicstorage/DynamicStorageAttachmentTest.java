@@ -14,7 +14,7 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-public class DynamicStorageAttachmentTest extends AbstractDynamicStorageTest {
+public class DynamicStorageAttachmentTest extends AbstractEc2OneServiceDynamicStorageTest {
 	
 	private static final String FOLDER_NAME = "attach-only";
 	
@@ -23,11 +23,6 @@ public class DynamicStorageAttachmentTest extends AbstractDynamicStorageTest {
 	private ServiceInstaller installer;
 	private Ec2ComputeApiHelper computeHelper;
 
-
-	@Override
-	protected String getCloudName() {
-		return "ec2";
-	}
 	
 	@BeforeClass(alwaysRun = true)
 	protected void bootstrap() throws Exception {
@@ -49,7 +44,7 @@ public class DynamicStorageAttachmentTest extends AbstractDynamicStorageTest {
 	@Override
 	public void doTest() throws Exception {
 		
-		installer = new ServiceInstaller(getRestUrl(), SERVICE_NAME);
+		installer = new ServiceInstaller(getRestUrl(), getServiceName());
 		installer.recipePath(FOLDER_NAME);
         installer.setDisableSelfHealing(true);
 		installer.install();
@@ -57,7 +52,7 @@ public class DynamicStorageAttachmentTest extends AbstractDynamicStorageTest {
 		String machinePrefix = null;
 
         LogUtils.log("Retrieving machine prefix for the installed service");
-        Service service = ServiceReader.getServiceFromFile(new File(ScriptUtils.getBuildRecipesServicesPath() + "/" + getServiceFolder(), SERVICE_NAME + "-service.groovy"));
+        Service service = ServiceReader.getServiceFromFile(new File(ScriptUtils.getBuildRecipesServicesPath() + "/" + getServiceFolder(), getServiceName() + "-service.groovy"));
 		if (service.getIsolationSLA().getGlobal().isUseManagement()) {
 			machinePrefix = getService().getCloud().getProvider().getManagementGroup();
 		} else {

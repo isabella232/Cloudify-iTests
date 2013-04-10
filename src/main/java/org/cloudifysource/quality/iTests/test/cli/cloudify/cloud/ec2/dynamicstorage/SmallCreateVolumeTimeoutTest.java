@@ -6,15 +6,11 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-public class SmallCreateVolumeTimeoutTest extends AbstractDynamicStorageTest {
+public class SmallCreateVolumeTimeoutTest extends AbstractEc2OneServiceDynamicStorageTest {
 
 	private ServiceInstaller installer;
 
 	private static final String FOLDER_NAME = "small-create-volume-timeout";
-	@Override
-	protected String getCloudName() {
-		return "ec2";
-	}
 	
 	@BeforeClass(alwaysRun = true)
 	protected void bootstrap() throws Exception {
@@ -35,7 +31,7 @@ public class SmallCreateVolumeTimeoutTest extends AbstractDynamicStorageTest {
 	
 	@Override
 	public void doTest() throws Exception {
-		installer = new ServiceInstaller(getRestUrl(), SERVICE_NAME);
+		installer = new ServiceInstaller(getRestUrl(), getServiceName());
 		installer.recipePath(FOLDER_NAME);
 		installer.setDisableSelfHealing(true);
 		installer.install();

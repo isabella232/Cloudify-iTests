@@ -121,7 +121,7 @@ public class SGTestNGListener extends TestListenerAdapter {
             String parameters = TestNGUtils.extractParameters(iTestResult);
             File testLogFile = new File(testFolder.getAbsolutePath() + "/" + iTestResult.getName() + "(" + parameters + ").log");
             if (!testLogFile.createNewFile()) {
-                new RuntimeException("Failed to create log file [" + testLogFile + "];\n log output: " + Reporter.getOutput());
+                throw new RuntimeException("Failed to create log file [" + testLogFile + "];\n log output: " + Reporter.getOutput());
             }
             FileWriter fstream = new FileWriter(testLogFile);
             BufferedWriter out = new BufferedWriter(fstream);
@@ -129,7 +129,7 @@ public class SGTestNGListener extends TestListenerAdapter {
             out.write(output);
             out.close();
         } catch (Exception e) {
-            new RuntimeException(e);
+            throw new RuntimeException(e);
         } finally {
             SGTestNGReporter.reset();
         }

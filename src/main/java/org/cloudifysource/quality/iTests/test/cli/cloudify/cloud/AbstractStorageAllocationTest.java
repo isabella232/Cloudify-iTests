@@ -38,13 +38,6 @@ public abstract class AbstractStorageAllocationTest extends NewAbstractCloudTest
         storageAllocationTester = new StorageAllocationTester(getRestUrl(), storageApiHelper, getService(), computeApiHelper);
     }
 
-    @Override
-    protected void customizeCloud() throws Exception {
-        super.customizeCloud();
-        getService().getAdditionalPropsToReplace().put("cloudify-storage-volume", System.getProperty("user.name") + "-" + this.getClass().getSimpleName().toLowerCase());
-
-    }
-
     private ComputeApiHelper initComputeHelper() {
         if (getCloudName().equals("ec2") || getCloudName().equals("hp") || getCloudName().equals("rackspace")) {
             return new JcloudsComputeApiHelper(getService().getCloud());

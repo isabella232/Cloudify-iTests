@@ -241,7 +241,7 @@ public class StorageAllocationTester {
         String serviceName = ServiceReader.readService(new File(ScriptUtils.getBuildRecipesServicesPath() + "/" + folderName)).getName();
 
         installer = new ServiceInstaller(restUrl, serviceName);
-        installer.recipePath(CommandTestUtils.getPath("/src/main/resources/apps/USM/usm/dynamicstorage/" + folderName));
+        installer.recipePath(folderName);
         installer.setDisableSelfHealing(true);
         installer.install();
 
@@ -283,17 +283,17 @@ public class StorageAllocationTester {
     }
 
     public void testDynamicStorageAttachmentLinux() throws Exception {
-        final String folderName = "attach-only";
+        String folderName = "attach-only";
         final String servicePath = CommandTestUtils.getPath("/src/main/resources/apps/USM/usm/dynamicstorage/" + folderName);
-        copyServiceToRecipesFolder(servicePath, folderName);
+        folderName = copyServiceToRecipesFolder(servicePath, folderName);
         setTemplate(RECIPES_SERVICES_FOLDER + "/" + folderName, "SMALL_LINUX", true);
         testDynamicStorageAttachment(folderName);
     }
 
     public void testDynamicStorageAttachmentUbuntu() throws Exception {
-        final String folderName = "attach-only";
+        String folderName = "attach-only";
         final String servicePath = CommandTestUtils.getPath("/src/main/resources/apps/USM/usm/dynamicstorage/" + folderName);
-        copyServiceToRecipesFolder(servicePath, folderName);
+        folderName = copyServiceToRecipesFolder(servicePath, folderName);
         setTemplate(RECIPES_SERVICES_FOLDER + "/" + folderName, "SMALL_UBUNTU", false);
         testDynamicStorageAttachment(folderName);
     }
@@ -302,6 +302,7 @@ public class StorageAllocationTester {
 
         String folderName = "non-sudo";
         folderName = copyServiceToRecipesFolder(CommandTestUtils.getPath("/src/main/resources/apps/USM/usm/dynamicstorage/" + folderName), folderName);
+        setTemplate(RECIPES_SERVICES_FOLDER + "/" + folderName, "SMALL_LINUX", true);
         String serviceName = ServiceReader.readService(new File(ScriptUtils.getBuildRecipesServicesPath() + "/" + folderName)).getName();
 
         final String expectedOutput = "Cannot format when not running in privileged mode";
@@ -325,6 +326,7 @@ public class StorageAllocationTester {
 
         String folderName = "small-create-volume-timeout";
         folderName = copyServiceToRecipesFolder(CommandTestUtils.getPath("/src/main/resources/apps/USM/usm/dynamicstorage/" + folderName), folderName);
+        setTemplate(RECIPES_SERVICES_FOLDER + "/" + folderName, "SMALL_LINUX", true);
         String serviceName = ServiceReader.readService(new File(ScriptUtils.getBuildRecipesServicesPath() + "/" + folderName)).getName();
 
         ServiceInstaller installer = new ServiceInstaller(restUrl, serviceName);
@@ -334,33 +336,33 @@ public class StorageAllocationTester {
     }
 
     public void testSmallFormatTimeoutLinux() throws Exception {
-        final String folderName = "small-format-timeout";
+        String folderName = "small-format-timeout";
         final String servicePath = CommandTestUtils.getPath("/src/main/resources/apps/USM/usm/dynamicstorage/" + folderName);
-        copyServiceToRecipesFolder(servicePath, folderName);
+        folderName = copyServiceToRecipesFolder(servicePath, folderName);
         setTemplate(RECIPES_SERVICES_FOLDER + "/" + folderName, "SMALL_LINUX", true);
         testSmallFormatTimeout(folderName);
     }
 
     public void testSmallFormatTimeoutUbuntu() throws Exception {
-        final String folderName = "small-format-timeout";
+        String folderName = "small-format-timeout";
         final String servicePath = CommandTestUtils.getPath("/src/main/resources/apps/USM/usm/dynamicstorage/" + folderName);
-        copyServiceToRecipesFolder(servicePath, folderName);
+        folderName = copyServiceToRecipesFolder(servicePath, folderName);
         setTemplate(RECIPES_SERVICES_FOLDER + "/" + folderName, "SMALL_UBUNTU", false);
         testDynamicStorageAttachment(folderName);
     }
 
     public void testUnsupportedFileSystemLinux() throws Exception {
-        final String folderName = "unsupported-fs";
+        String folderName = "unsupported-fs";
         final String servicePath = CommandTestUtils.getPath("/src/main/resources/apps/USM/usm/dynamicstorage/" + folderName);
-        copyServiceToRecipesFolder(servicePath, folderName);
+        folderName = copyServiceToRecipesFolder(servicePath, folderName);
         setTemplate(RECIPES_SERVICES_FOLDER + "/" + folderName, "SMALL_LINUX", true);
         testUnsupportedFileSystem(folderName);
     }
 
     public void testUnsupportedFileSystemUbuntu() throws Exception {
-        final String folderName = "unsupported-fs";
+        String folderName = "unsupported-fs";
         final String servicePath = CommandTestUtils.getPath("/src/main/resources/apps/USM/usm/dynamicstorage/" + folderName);
-        copyServiceToRecipesFolder(servicePath, folderName);
+        folderName = copyServiceToRecipesFolder(servicePath, folderName);
         setTemplate(RECIPES_SERVICES_FOLDER + "/" + folderName, "SMALL_UBUNTU", false);
         testUnsupportedFileSystem(folderName);
     }

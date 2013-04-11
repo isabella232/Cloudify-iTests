@@ -354,6 +354,7 @@
 						<ec2.region>${ec2.region}</ec2.region>
 						<ipList>${ipList}</ipList>
 						<supported-clouds>${supported-clouds}</supported-clouds>
+                        <branch.name>${branch.name}</branch.name>
 					</systemProperties>
 					<testFailureIgnore>true</testFailureIgnore>
 					<detail>true</detail>

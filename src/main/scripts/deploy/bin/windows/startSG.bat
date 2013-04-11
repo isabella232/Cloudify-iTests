@@ -48,7 +48,13 @@ xcopy %REMOTE_BUILD_DIR%\cloudify\1.5\gigaspaces-cloudify-%VERSION%-%MILESTONE%-
 @echo exporting Cloudify-iTests
 cd %BUILD_TEST_DIR%
 set GIT_SSL_NO_VERIFY=true
-call C:\Git\bin\git.exe clone --depth 1 https://github.com/CloudifySource/Cloudify-iTests.git
+
+if %BRANCH_NAME%==trunk (
+    call C:\Git\bin\git.exe clone --depth 1 https://github.com/CloudifySource/Cloudify-iTests.git
+)
+else (
+    call C:\Git\bin\git.exe clone -b %BRANCH_NAME% --depth 1 https://github.com/CloudifySource/Cloudify-iTests.git
+)
 
 call mvn scm:export -DconnectionUrl=scm:svn:svn://svn-srv/SVN/cloudify/trunk/quality/frameworks/SGTest-credentials -DexportDirectory=%BUILD_TEST_DIR%/Cloudify-iTests/src/main/resources/credentials
 

@@ -387,7 +387,7 @@ public abstract class AbstractCloudManagementPersistencyTest extends NewAbstract
     private Object getServiceProperty(String restUrl, String serviceName, String applicationName, String propertyKey) 
     		throws MalformedURLException, RestException {
     	String absolutePUName = ServiceUtils.getAbsolutePUName(applicationName, serviceName);
-    	GSRestClient client = new GSRestClient("", "", new URL(restUrl), "2.5.0-Cloudify-ga");//PlatformVersion.getVersionNumber()
+    	GSRestClient client = new GSRestClient("", "", new URL(restUrl), PlatformVersion.getVersionNumber());
     	return client.getAdmin("ProcessingUnits/Names/" + absolutePUName).get(propertyKey);
     }
 

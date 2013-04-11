@@ -92,15 +92,21 @@ public class AbstractFromXenToByonGSMTest extends AbstractByonCloudTest {
     protected static boolean stopByonMachine (ElasticMachineProvisioningCloudifyAdapter elasticMachineProvisioningCloudifyAdapter, GridServiceAgent agent ,long duration,TimeUnit timeUnit) throws Exception {
     	return ByonMachinesUtils.stopByonMachine(elasticMachineProvisioningCloudifyAdapter, agent, duration, timeUnit);
     }
-    
+
+    /**
+     * Kills an agent Process in a machine - by killing his pid.
+     */
+    protected static boolean stopByonMachineHard (GridServiceAgent gsa) {
+        String ipAddress = gsa.getMachine().getHostAddress();
+        int pid = ((int) gsa.getVirtualMachine().getDetails().getPid());
+        return SSHUtils.killProcess(ipAddress,pid);
+    }
+
     private void initElasticMachineProvisioningCloudifyAdapter () throws Exception {
         elasticMachineProvisioningCloudifyAdapter = new ElasticMachineProvisioningCloudifyAdapter ();
-
-
         //TODO remove this call with elasticMachineProvisioningCloudifyAdapter.clearContext() when the method will be commited
         ResetElasticMachineProvisioningCloudifyAdapterProvisioningDriverContextMap.ResetProvisioningDriverContextPerDriver();
-
-
+       // elasticMachineProvisioningCloudifyAdapter.clearContext();
 		elasticMachineProvisioningCloudifyAdapter.setAdmin(admin);
 		//sets cloudify configuration directory - so the ServiceReader would be able to read the groovy file
 		//the path should be to the DIRECTORY of the groovy file

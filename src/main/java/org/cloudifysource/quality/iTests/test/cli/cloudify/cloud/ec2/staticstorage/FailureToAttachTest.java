@@ -1,17 +1,16 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.ec2.staticstorage;
 
-import org.cloudifysource.quality.iTests.framework.utils.AssertUtils;
-import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
+import org.cloudifysource.esc.driver.provisioning.storage.StorageProvisioningException;
+import org.cloudifysource.quality.iTests.framework.utils.ApplicationInstaller;
+import org.cloudifysource.quality.iTests.framework.utils.RecipeInstaller;
 import org.cloudifysource.quality.iTests.framework.utils.ServiceInstaller;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
-import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.ec2.Ec2CloudService;
-import org.jclouds.ec2.domain.Volume;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.AbstractStorageAllocationTest;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import java.util.Set;
 import java.util.concurrent.TimeoutException;
 
 /**
@@ -26,10 +25,7 @@ import java.util.concurrent.TimeoutException;
  * Time: 5:41 PM
  * To change this template use File | Settings | File Templates.
  */
-public class FailureToAttachTest extends AbstractEc2OneServiceStaticStorageTest {
-
-    private static final String FOLDER_NAME = "simple-storage";
-    private ServiceInstaller installer;
+public class FailureToAttachTest extends AbstractStorageAllocationTest {
 
     @BeforeClass(alwaysRun = true)
     protected void bootstrap() throws Exception {
@@ -38,49 +34,38 @@ public class FailureToAttachTest extends AbstractEc2OneServiceStaticStorageTest 
 
     @Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
     public void testLinux() throws Exception {
-        super.testLinux();
-    }
-
-    @Override
-    public void doTest() throws Exception {
-
-        installer = new ServiceInstaller(getRestUrl(), getServiceName());
-        installer.recipePath(FOLDER_NAME);
-        installer.timeoutInMinutes(3);
-        installer.expectToFail(true);
-        installer.install();
-
-        LogUtils.log("Searching for volumes created by the service installation");
-        // the install should have created and attached a volume with a name prefix of the class name. see customizeCloud below.
-        Set<Volume> ourVolumes = storageHelper.getVolumesByName(System.getProperty("user.name") + "-" + this.getClass().getSimpleName().toLowerCase());
-
-        AssertUtils.assertEquals("Found leaking volumes created by failed installation", 0, ourVolumes.size());
-
-        installer.expectToFail(false);
-        installer.uninstall();
-
+        storageAllocationTester.testFailedToAttachLinux();
     }
 
     @Override
     protected void customizeCloud() throws Exception {
         super.customizeCloud();
-        ((Ec2CloudService)getService()).getAdditionalPropsToReplace().put("/dev/sdc", "foo");
+        getService().getAdditionalPropsToReplace().put("/dev/sdc", "foo");
+    }
+
+    @Override
+    protected String getCloudName() {
+        return "ec2";
     }
 
     @AfterMethod
-    public void scanForLeakes() throws TimeoutException {
+    public void cleanup() {
+        RecipeInstaller installer = storageAllocationTester.getInstaller();
+        if (installer instanceof ServiceInstaller) {
+            ((ServiceInstaller) installer).uninstallIfFound();
+        } else {
+            ((ApplicationInstaller) installer).uninstallIfFound();
+        }
+    }
+
+    @AfterClass
+    public void scanForLeakes() throws TimeoutException, StorageProvisioningException {
         super.scanForLeakedVolumesCreatedViaTemplate("SMALL_BLOCK");
     }
 
     @AfterClass(alwaysRun = true)
     protected void teardown() throws Exception {
         super.teardown();
-    }
-
-
-    @Override
-    public String getServiceFolder() {
-        return FOLDER_NAME;
     }
 
 

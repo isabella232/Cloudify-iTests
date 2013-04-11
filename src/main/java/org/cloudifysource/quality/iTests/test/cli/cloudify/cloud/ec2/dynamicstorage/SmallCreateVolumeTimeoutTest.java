@@ -1,17 +1,20 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.ec2.dynamicstorage;
 
+import org.cloudifysource.esc.driver.provisioning.storage.StorageProvisioningException;
+import org.cloudifysource.quality.iTests.framework.utils.ApplicationInstaller;
+import org.cloudifysource.quality.iTests.framework.utils.RecipeInstaller;
 import org.cloudifysource.quality.iTests.framework.utils.ServiceInstaller;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.AbstractStorageAllocationTest;
 import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-public class SmallCreateVolumeTimeoutTest extends AbstractEc2OneServiceDynamicStorageTest {
+import java.util.concurrent.TimeoutException;
 
-	private ServiceInstaller installer;
+public class SmallCreateVolumeTimeoutTest extends AbstractStorageAllocationTest {
 
-	private static final String FOLDER_NAME = "small-create-volume-timeout";
-	
 	@BeforeClass(alwaysRun = true)
 	protected void bootstrap() throws Exception {
 		super.bootstrap();
@@ -20,34 +23,35 @@ public class SmallCreateVolumeTimeoutTest extends AbstractEc2OneServiceDynamicSt
 	
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
 	public void testLinux() throws Exception {
-		super.testLinux();
+        storageAllocationTester.testSmallCreateVolumeTimeout();
 	}
-	
+
+    @AfterMethod
+    public void cleanup() {
+        RecipeInstaller installer = storageAllocationTester.getInstaller();
+        if (installer instanceof ServiceInstaller) {
+            ((ServiceInstaller) installer).uninstallIfFound();
+        } else {
+            ((ApplicationInstaller) installer).uninstallIfFound();
+        }
+    }
+
+    @AfterClass
+    public void scanForLeakes() throws TimeoutException, StorageProvisioningException {
+        super.scanForLeakedVolumesCreatedViaTemplate("SMALL_BLOCK");
+    }
 	
 	@AfterClass(alwaysRun = true)
 	protected void teardown() throws Exception {
 		super.teardown();
 	}
-	
-	@Override
-	public void doTest() throws Exception {
-		installer = new ServiceInstaller(getRestUrl(), getServiceName());
-		installer.recipePath(FOLDER_NAME);
-		installer.setDisableSelfHealing(true);
-		installer.install();
-		
-		// this service gives a very small timeout to the createVolume call. so we expect the StorageDriver to timeout while waiting for the instance status.
-		// which should clean the created volume.
-		super.scanForLeakedVolumesCreatedViaTemplate("SMALL_BLOCK");
-	}
 
-	@Override
-	public String getServiceFolder() {
-		return FOLDER_NAME;
-	}
+    @Override
+    protected String getCloudName() {
+        return "ec2";
+    }
 
-
-	@Override
+    @Override
 	protected boolean isReusableCloud() {
 		return false;
 	}

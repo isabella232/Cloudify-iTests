@@ -1,6 +1,11 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.ec2.staticstorage;
 
+import org.cloudifysource.esc.driver.provisioning.storage.StorageProvisioningException;
+import org.cloudifysource.quality.iTests.framework.utils.ApplicationInstaller;
+import org.cloudifysource.quality.iTests.framework.utils.RecipeInstaller;
+import org.cloudifysource.quality.iTests.framework.utils.ServiceInstaller;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.AbstractStorageAllocationTest;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
@@ -8,9 +13,7 @@ import org.testng.annotations.Test;
 
 import java.util.concurrent.TimeoutException;
 
-public class Ec2SimpleStorageTest extends AbstractEc2OneServiceStaticStorageTest {
-
-    private static final String FOLDER_NAME = "simple-storage";
+public class Ec2SimpleStorageTest extends AbstractStorageAllocationTest {
 
     @Override
     protected String getCloudName() {
@@ -25,17 +28,21 @@ public class Ec2SimpleStorageTest extends AbstractEc2OneServiceStaticStorageTest
 
     @Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
     public void testLinux() throws Exception {
-        super.testLinux();
-    }
-
-
-    @Override
-    public void doTest() throws Exception {
-        super.testInstallWithStorage(FOLDER_NAME);
+        storageAllocationTester.testInstallWithStorageLinux();
     }
 
     @AfterMethod
-    public void scanForLeakes() throws TimeoutException {
+    public void cleanup() {
+        RecipeInstaller installer = storageAllocationTester.getInstaller();
+        if (installer instanceof ServiceInstaller) {
+            ((ServiceInstaller) installer).uninstallIfFound();
+        } else {
+            ((ApplicationInstaller) installer).uninstallIfFound();
+        }
+    }
+
+    @AfterClass
+    public void scanForLeakes() throws TimeoutException, StorageProvisioningException {
         super.scanForLeakedVolumesCreatedViaTemplate("SMALL_BLOCK");
     }
 
@@ -49,10 +56,4 @@ public class Ec2SimpleStorageTest extends AbstractEc2OneServiceStaticStorageTest
     protected boolean isReusableCloud() {
         return false;
     }
-
-    @Override
-    public String getServiceFolder() {
-        return FOLDER_NAME;
-    }
-
 }

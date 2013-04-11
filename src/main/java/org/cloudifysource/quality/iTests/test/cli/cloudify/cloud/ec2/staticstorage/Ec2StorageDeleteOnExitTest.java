@@ -1,8 +1,11 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.ec2.staticstorage;
 
+import org.cloudifysource.esc.driver.provisioning.storage.StorageProvisioningException;
+import org.cloudifysource.quality.iTests.framework.utils.ApplicationInstaller;
+import org.cloudifysource.quality.iTests.framework.utils.RecipeInstaller;
+import org.cloudifysource.quality.iTests.framework.utils.ServiceInstaller;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
-import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.AbstractStorageTest;
-import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.ec2.Ec2CloudService;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.AbstractStorageAllocationTest;
 import org.testng.annotations.*;
 
 import java.util.concurrent.TimeoutException;
@@ -11,9 +14,7 @@ import java.util.concurrent.TimeoutException;
  * Author: nirb
  * Date: 20/02/13
  */
-public class Ec2StorageDeleteOnExitTest extends AbstractEc2OneServiceStaticStorageTest {
-
-    private static final String FOLDER_NAME = "simple-storage";
+public class Ec2StorageDeleteOnExitTest extends AbstractStorageAllocationTest {
 
     @Override
     protected String getCloudName() {
@@ -25,20 +26,30 @@ public class Ec2StorageDeleteOnExitTest extends AbstractEc2OneServiceStaticStora
         super.bootstrap();
     }
 
+    @Override
+    protected void customizeCloud() throws Exception {
+        super.customizeCloud();
+        getService().getAdditionalPropsToReplace().put("deleteOnExit true", "deleteOnExit false");
+    }
 
     @Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
     public void testLinux() throws Exception {
-        super.testLinux();
+        storageAllocationTester.testDeleteOnExitFalseLinux();
     }
 
-
-    @Override
-    public void doTest() throws Exception {
-        super.testDeleteOnExitFalse(FOLDER_NAME);
-    }
 
     @AfterMethod
-    public void scanForLeakes() throws TimeoutException {
+    public void cleanup() {
+        RecipeInstaller installer = storageAllocationTester.getInstaller();
+        if (installer instanceof ServiceInstaller) {
+            ((ServiceInstaller) installer).uninstallIfFound();
+        } else {
+            ((ApplicationInstaller) installer).uninstallIfFound();
+        }
+    }
+
+    @AfterClass
+    public void scanForLeakes() throws TimeoutException, StorageProvisioningException {
         super.scanForLeakedVolumesCreatedViaTemplate("SMALL_BLOCK");
     }
 
@@ -52,10 +63,4 @@ public class Ec2StorageDeleteOnExitTest extends AbstractEc2OneServiceStaticStora
     protected boolean isReusableCloud() {
         return false;
     }
-
-    @Override
-    public String getServiceFolder() {
-        return FOLDER_NAME;
-    }
-
 }

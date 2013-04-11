@@ -1,23 +1,19 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.ec2.dynamicstorage;
 
-import java.util.concurrent.TimeoutException;
-
-import org.cloudifysource.dsl.context.blockstorage.LocalStorageOperationException;
-import org.cloudifysource.quality.iTests.framework.utils.AssertUtils;
+import org.cloudifysource.esc.driver.provisioning.storage.StorageProvisioningException;
+import org.cloudifysource.quality.iTests.framework.utils.ApplicationInstaller;
+import org.cloudifysource.quality.iTests.framework.utils.RecipeInstaller;
 import org.cloudifysource.quality.iTests.framework.utils.ServiceInstaller;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.AbstractStorageAllocationTest;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-public class UnsupportedFileSystemTest extends AbstractEc2OneServiceDynamicStorageTest {
+import java.util.concurrent.TimeoutException;
 
-	// define this so in case of  refactoring the test wont fail.
-	private static final String EXPECTED_EXCEPTION = LocalStorageOperationException.class.getSimpleName();
-
-	private static final String FOLDER_NAME = "unsupported-fs";
-	private ServiceInstaller installer;
+public class UnsupportedFileSystemTest extends AbstractStorageAllocationTest {
 
 	@BeforeClass(alwaysRun = true)
 	protected void bootstrap() throws Exception {
@@ -26,53 +22,42 @@ public class UnsupportedFileSystemTest extends AbstractEc2OneServiceDynamicStora
 
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
 	public void testLinux() throws Exception {
-		super.testLinux();
+        storageAllocationTester.testUnsupportedFileSystemLinux();
 	}
 
 
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
 	public void testUbuntu() throws Exception  {
-		super.testUbuntu();
+        storageAllocationTester.testSmallFormatTimeoutUbuntu();
 	}
 
-	@Override
-	public void doTest() throws Exception {
+    @AfterMethod
+    public void cleanup() {
+        RecipeInstaller installer = storageAllocationTester.getInstaller();
+        if (installer instanceof ServiceInstaller) {
+            ((ServiceInstaller) installer).uninstallIfFound();
+        } else {
+            ((ApplicationInstaller) installer).uninstallIfFound();
+        }
+    }
 
-		installer = new ServiceInstaller(getRestUrl(), getServiceName());
-		installer.recipePath(FOLDER_NAME);
-		installer.timeoutInMinutes(5);
-		installer.setDisableSelfHealing(true);
-		String installOutput = installer.install();
-
-		// this installs a service that tries to mount a device onto a non supported file system(foo)
-		// see src/main/resources/apps/USM/usm/dynamicstroage/unsupported-fs/groovy.service
-		// so we except the LocalStorageOperationException to propagate to the CLI.
-
-		AssertUtils.assertTrue("install output should have contained " + EXPECTED_EXCEPTION, installOutput.contains(EXPECTED_EXCEPTION));
-
-		installer.uninstall();
-
-
-	}
-
-	@AfterMethod
-	public void scanForLeakes() throws TimeoutException {
-		super.scanForLeakedVolumesCreatedViaTemplate("SMALL_BLOCK");;
-	}
+    @AfterClass
+    public void scanForLeakes() throws TimeoutException, StorageProvisioningException {
+        super.scanForLeakedVolumesCreatedViaTemplate("SMALL_BLOCK");
+    }
 
 	@AfterClass(alwaysRun = true)
 	protected void teardown() throws Exception {
 		super.teardown();
 	}
 
-	@Override
+    @Override
+    protected String getCloudName() {
+        return "ec2";
+    }
+
+    @Override
 	protected boolean isReusableCloud() {
 		return false;
 	}
-
-	@Override
-	public String getServiceFolder() {
-		return FOLDER_NAME;
-	}
-
 }

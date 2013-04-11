@@ -1,7 +1,11 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.ec2.staticstorage;
 
+import org.cloudifysource.esc.driver.provisioning.storage.StorageProvisioningException;
+import org.cloudifysource.quality.iTests.framework.utils.ApplicationInstaller;
+import org.cloudifysource.quality.iTests.framework.utils.RecipeInstaller;
 import org.cloudifysource.quality.iTests.framework.utils.ServiceInstaller;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.AbstractStorageAllocationTest;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
@@ -19,10 +23,7 @@ import java.util.concurrent.TimeoutException;
  * Time: 7:45 PM
  * To change this template use File | Settings | File Templates.
  */
-public class FailedToInstallTest extends AbstractEc2OneServiceStaticStorageTest {
-
-    private static final String FOLDER_NAME = "faulty-install";
-    private ServiceInstaller installer;
+public class FailedToInstallTest extends AbstractStorageAllocationTest {
 
     @BeforeClass(alwaysRun = true)
     protected void bootstrap() throws Exception {
@@ -31,28 +32,21 @@ public class FailedToInstallTest extends AbstractEc2OneServiceStaticStorageTest 
 
     @Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
     public void testLinux() throws Exception {
-        super.testLinux();
-    }
-
-    @Override
-    public void doTest() throws Exception {
-
-        installer = new ServiceInstaller(getRestUrl(), getServiceName());
-        installer.recipePath(FOLDER_NAME);
-        installer.timeoutInMinutes(3);
-        installer.expectToFail(true);
-
-        // this installation will fail at install event.
-        // causing the USM to shutdown and de-allocate the storage.
-        installer.install();
-
-        installer.expectToFail(false);
-        installer.uninstall();
-
+        storageAllocationTester.testFaultyInstallLinux();
     }
 
     @AfterMethod
-    public void scanForLeakes() throws TimeoutException {
+    public void cleanup() {
+        RecipeInstaller installer = storageAllocationTester.getInstaller();
+        if (installer instanceof ServiceInstaller) {
+            ((ServiceInstaller) installer).uninstallIfFound();
+        } else {
+            ((ApplicationInstaller) installer).uninstallIfFound();
+        }
+    }
+
+    @AfterClass
+    public void scanForLeakes() throws TimeoutException, StorageProvisioningException {
         super.scanForLeakedVolumesCreatedViaTemplate("SMALL_BLOCK");
     }
 
@@ -63,10 +57,9 @@ public class FailedToInstallTest extends AbstractEc2OneServiceStaticStorageTest 
 
 
     @Override
-    public String getServiceFolder() {
-        return FOLDER_NAME;
+    protected String getCloudName() {
+        return "ec2";
     }
-
 
     @Override
     protected boolean isReusableCloud() {

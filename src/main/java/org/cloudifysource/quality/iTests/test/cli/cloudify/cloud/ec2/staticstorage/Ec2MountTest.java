@@ -1,9 +1,17 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.ec2.staticstorage;
 
+import org.cloudifysource.esc.driver.provisioning.storage.StorageProvisioningException;
+import org.cloudifysource.quality.iTests.framework.utils.ApplicationInstaller;
+import org.cloudifysource.quality.iTests.framework.utils.RecipeInstaller;
+import org.cloudifysource.quality.iTests.framework.utils.ServiceInstaller;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.AbstractStorageAllocationTest;
 import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+
+import java.util.concurrent.TimeoutException;
 
 /**
  * Created with IntelliJ IDEA.
@@ -12,25 +20,31 @@ import org.testng.annotations.Test;
  * Time: 3:39 PM
  * To change this template use File | Settings | File Templates.
  */
-public class Ec2MountTest extends AbstractEc2OneServiceStaticStorageTest {
-
-    private static final String FOLDER_NAME = "simple-storage-with-custom-commands";
-
-    private static String EXPECTED_LIST_MOUNT_OUTPUT = "/dev/xvdc on /home/ec2-user/storage type ext4 (rw)";
+public class Ec2MountTest extends AbstractStorageAllocationTest {
 
     @BeforeClass(alwaysRun = true)
     protected void bootstrap() throws Exception {
         super.bootstrap();
     }
 
-    @Override
-    public void doTest() throws Exception {
-        super.testStorageVolumeMounted(FOLDER_NAME, EXPECTED_LIST_MOUNT_OUTPUT);
-    }
-
     @Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
     public void testLinux() throws Exception {
-        super.testLinux();
+        storageAllocationTester.testStorageVolumeMountedLinux();
+    }
+
+    @AfterMethod
+    public void cleanup() {
+        RecipeInstaller installer = storageAllocationTester.getInstaller();
+        if (installer instanceof ServiceInstaller) {
+            ((ServiceInstaller) installer).uninstallIfFound();
+        } else {
+            ((ApplicationInstaller) installer).uninstallIfFound();
+        }
+    }
+
+    @AfterClass
+    public void scanForLeakes() throws TimeoutException, StorageProvisioningException {
+        super.scanForLeakedVolumesCreatedViaTemplate("SMALL_BLOCK");
     }
 
     @AfterClass(alwaysRun = true)
@@ -39,12 +53,12 @@ public class Ec2MountTest extends AbstractEc2OneServiceStaticStorageTest {
     }
 
     @Override
-    protected boolean isReusableCloud() {
-        return false;
+    protected String getCloudName() {
+        return "ec2";
     }
 
     @Override
-    public String getServiceFolder() {
-        return FOLDER_NAME;
+    protected boolean isReusableCloud() {
+        return false;
     }
 }

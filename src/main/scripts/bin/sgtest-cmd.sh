@@ -13,6 +13,7 @@
  EC2_REGION=${11}
  SUITE_WORK_DIR=${12}; export SUITE_WORK_DIR
  SUITE_DEPLOY_DIR=${13}; export SUITE_DEPLOY_DIR
+ BRANCH_NAME=${14}
  EXT_JAVA_OPTIONS="${EXT_JAVA_OPTIONS} -Dcom.gs.work=${SUITE_WORK_DIR} -Dcom.gs.deploy=${SUITE_DEPLOY_DIR}"; export EXT_JAVA_OPTIONS 
  
 
@@ -42,7 +43,8 @@ mvn test -e -U -P tgrid-cloudify-iTests \
 -Dcom.gs.deploy=${SUITE_DEPLOY_DIR} \
 -Dec2.region=${EC2_REGION} \
 -DipList=${BYON_MACHINES} \
--Dsupported-clouds=${SUPPORTED_CLOUDS}
+-Dsupported-clouds=${SUPPORTED_CLOUDS} \
+-Dbranch.name=${BRANCH_NAME}
 
 #return java exit code. 
 exit $?

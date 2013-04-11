@@ -266,7 +266,7 @@ public abstract class AbstractCloudManagementPersistencyTest extends NewAbstract
     	
     	LogUtils.log("Killing one of two management machines");
     	terminateManagementMachineComponents(this.backupManagementMachineUrl);
-    	boolean result = waitForRestAdminToDetectMachineFailure(this.defaultManagementMachineUrl, 1, 10000 * 6, TimeUnit.SECONDS);
+    	boolean result = waitForRestAdminToDetectMachineFailure(this.defaultManagementMachineUrl, 1, 10000 * 6, TimeUnit.MILLISECONDS);
     	assertTrue("Failed waiting for rest admin to detect machine failure.", result == true );
     	
     	LogUtils.log("Attemting to uninstall application. This should fail.");
@@ -496,7 +496,7 @@ public abstract class AbstractCloudManagementPersistencyTest extends NewAbstract
     
 	protected void initRestClient() 
 			throws MalformedURLException, RestException {
-		this.client = new GSRestClient("", "", new URL(this.defaultManagementMachineUrl), "2.5.0-Cloudify-ga");//PlatformVersion.getVersionNumber()
+		this.client = new GSRestClient("", "", new URL(this.defaultManagementMachineUrl), PlatformVersion.getVersionNumber());
 	}
 
 	protected void initManagementUrls() {

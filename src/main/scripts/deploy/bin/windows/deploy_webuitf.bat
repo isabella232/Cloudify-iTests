@@ -10,8 +10,7 @@ pushd %WEBUI_TMP_DIR%
 
 if %BRANCH_NAME%==trunk (
     call C:\Git\bin\git.exe clone --depth 1 https://github.com/CloudifySource/Cloudify-iTests-webuitf.git
-)
-else (
+) else (
     call C:\Git\bin\git.exe clone -b %BRANCH_NAME% --depth 1 https://github.com/CloudifySource/Cloudify-iTests-webuitf.git
 )
 

@@ -51,8 +51,7 @@ set GIT_SSL_NO_VERIFY=true
 
 if %BRANCH_NAME%==trunk (
     call C:\Git\bin\git.exe clone --depth 1 https://github.com/CloudifySource/Cloudify-iTests.git
-)
-else (
+) else (
     call C:\Git\bin\git.exe clone -b %BRANCH_NAME% --depth 1 https://github.com/CloudifySource/Cloudify-iTests.git
 )
 

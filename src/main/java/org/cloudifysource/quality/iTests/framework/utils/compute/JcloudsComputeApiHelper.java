@@ -58,4 +58,13 @@ public class JcloudsComputeApiHelper implements ComputeApiHelper {
         }
         return machineDetailsSet;
     }
+
+    @Override
+    public MachineDetails getServerById(String serverId) {
+        NodeMetadata serverByID = deployer.getServerByID(serverId);
+        MachineDetails machineDetails = new MachineDetails();
+        machineDetails.setPublicAddress(serverByID.getPrivateAddresses().iterator().next());
+        machineDetails.setPrivateAddress(serverByID.getPrivateAddresses().iterator().next());
+        return machineDetails;
+    }
 }

@@ -14,4 +14,6 @@ import java.util.Set;
 public interface ComputeApiHelper {
 
     Set<MachineDetails> getServersByPrefix(String machineNamePrefix);
+
+    MachineDetails getServerById(final String serverId);
 }

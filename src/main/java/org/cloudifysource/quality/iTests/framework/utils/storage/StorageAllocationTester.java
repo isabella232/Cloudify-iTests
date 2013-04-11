@@ -201,8 +201,8 @@ public class StorageAllocationTester {
         Set<VolumeDetails> groovy2Volumes = storageApiHelper.getVolumesByPrefix(groovy2VolumePrefix);
         AssertUtils.assertEquals("Wrong number of volumes detected after installation for service groovy2", 1, groovy2Volumes.size());
 
-        AssertUtils.assertTrue("Both volumes should be attached to different same instance",
-                storageApiHelper.getVolumeAttachments(groovy1Volumes.iterator().next().getId())
+        AssertUtils.assertTrue("Both volumes should not be attached to different same instance",
+                !storageApiHelper.getVolumeAttachments(groovy1Volumes.iterator().next().getId())
                         .equals(storageApiHelper.getVolumeAttachments(groovy2Volumes.iterator().next().getId())));
 
         installer.uninstall();
@@ -329,7 +329,7 @@ public class StorageAllocationTester {
         setTemplate(RECIPES_SERVICES_FOLDER + "/" + folderName, "SMALL_LINUX", true);
         String serviceName = ServiceReader.readService(new File(ScriptUtils.getBuildRecipesServicesPath() + "/" + folderName)).getName();
 
-        ServiceInstaller installer = new ServiceInstaller(restUrl, serviceName);
+        installer = new ServiceInstaller(restUrl, serviceName);
         installer.recipePath(folderName);
         installer.setDisableSelfHealing(true);
         installer.install();
@@ -348,7 +348,7 @@ public class StorageAllocationTester {
         final String servicePath = CommandTestUtils.getPath("/src/main/resources/apps/USM/usm/dynamicstorage/" + folderName);
         folderName = copyServiceToRecipesFolder(servicePath, folderName);
         setTemplate(RECIPES_SERVICES_FOLDER + "/" + folderName, "SMALL_UBUNTU", false);
-        testDynamicStorageAttachment(folderName);
+        testSmallFormatTimeout(folderName);
     }
 
     public void testUnsupportedFileSystemLinux() throws Exception {
@@ -544,7 +544,8 @@ public class StorageAllocationTester {
         invokeCommand(serviceName, "unmount");
 
         VolumeDetails vol = storageApiHelper.getVolumesByPrefix(getVolumePrefixForTemplate("SMALL_BLOCK")).iterator().next();
-        storageApiHelper.detachVolume(vol.getId(), storageApiHelper.getVolumeAttachments(vol.getId()).iterator().next());
+        String attachmentId = storageApiHelper.getVolumeAttachments(vol.getId()).iterator().next();
+        storageApiHelper.detachVolume(vol.getId(), computeApiHelper.getServerById(attachmentId).getPrivateAddress());
 
         //asserting the file is not in the mounted directory
         LogUtils.log("listing all files inside mounted storage folder. running 'ls ~/storage/' command");

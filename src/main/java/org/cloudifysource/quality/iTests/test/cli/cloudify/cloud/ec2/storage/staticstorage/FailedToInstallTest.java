@@ -38,6 +38,7 @@ public class FailedToInstallTest extends AbstractStorageAllocationTest {
     @AfterMethod
     public void cleanup() {
         RecipeInstaller installer = storageAllocationTester.getInstaller();
+        installer.expectToFail(false);
         if (installer instanceof ServiceInstaller) {
             ((ServiceInstaller) installer).uninstallIfFound();
         } else {

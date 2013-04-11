@@ -28,7 +28,7 @@ public class UnsupportedFileSystemTest extends AbstractStorageAllocationTest {
 
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
 	public void testUbuntu() throws Exception  {
-        storageAllocationTester.testSmallFormatTimeoutUbuntu();
+        storageAllocationTester.testUnsupportedFileSystemUbuntu();
 	}
 
     @AfterMethod

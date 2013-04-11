@@ -70,9 +70,4 @@ service {
 			return pids;
 		}
 	}
-	
-	compute {
-		
-		template "ENTER_TEMPLATE"	
-	}	
 }

@@ -109,10 +109,6 @@ public abstract class AbstractStorageAllocationTest extends NewAbstractCloudTest
         throw new TimeoutException("Timed out waiting for volume " + volumeId + " to reach status AVAILABLE");
     }
 
-    public String getVolumePrefixForTemplate(final String templateName) {
-        return getService().getCloud().getCloudStorage().getTemplates().get(templateName).getNamePrefix();
-    }
-
     public void scanForLeakedVolumesCreatedViaTemplate(final String templateName) throws TimeoutException, StorageProvisioningException {
         final String name = getService().getCloud().getCloudStorage().getTemplates().get(templateName).getNamePrefix();
         scanForLeakedVolumes(name);

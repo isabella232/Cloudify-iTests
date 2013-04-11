@@ -1,4 +1,4 @@
-package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.ec2.staticstorage;
+package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.ec2.storage.staticstorage;
 
 import org.cloudifysource.esc.driver.provisioning.storage.StorageProvisioningException;
 import org.cloudifysource.quality.iTests.framework.tools.SGTestHelper;
@@ -17,10 +17,28 @@ import java.io.File;
 import java.util.concurrent.TimeoutException;
 
 /**
- * Author: nirb
- * Date: 28/02/13
+ * CLOUDIFY-1595
+ *
+ * <br>
+ *     1. Installs Multi-tenant application with two services on the same machine.
+ * </br>
+ * <br>
+ *     2. Each service defines a different static storage template
+ * </br>
+ * <br>
+ *     3. Check both volumes are created and attached to the proper machine.
+ * </br>
+ * <br>
+ *     4. Un-install the application and check that all storage volumes are de-allocated.
+ * </br>
+ *
+ *
+ * Created with IntelliJ IDEA.
+ * User: elip
+ * Date: 4/10/13
+ * Time: 12:13 PM
  */
-public class Ec2StorageTwoTemplatesTest extends AbstractStorageAllocationTest {
+public class MultitenantStorageAllocationTest extends AbstractStorageAllocationTest {
 
     @BeforeClass(alwaysRun = true)
     protected void bootstrap() throws Exception {
@@ -28,8 +46,9 @@ public class Ec2StorageTwoTemplatesTest extends AbstractStorageAllocationTest {
     }
 
     @Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
-    protected void testTwoTemplatesAllocation() throws Exception {
-        storageAllocationTester.testTwoTemplates();
+    public void testMultitenantStorageAllocation() throws Exception {
+        storageAllocationTester.testMultitenantStorageAllocation();
+
     }
 
     @Override
@@ -68,7 +87,6 @@ public class Ec2StorageTwoTemplatesTest extends AbstractStorageAllocationTest {
     public void scanForLeakesFromGroovy2() throws TimeoutException, StorageProvisioningException {
         super.scanForLeakedVolumesCreatedViaTemplate("GROOVY2");
     }
-
 
     @AfterClass(alwaysRun = true)
     protected void teardown() throws Exception {

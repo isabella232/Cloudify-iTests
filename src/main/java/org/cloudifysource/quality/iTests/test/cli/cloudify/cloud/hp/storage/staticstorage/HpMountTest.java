@@ -1,4 +1,4 @@
-package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.ec2.staticstorage;
+package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.hp.storage.staticstorage;
 
 import org.cloudifysource.esc.driver.provisioning.storage.StorageProvisioningException;
 import org.cloudifysource.quality.iTests.framework.utils.ApplicationInstaller;
@@ -6,33 +6,30 @@ import org.cloudifysource.quality.iTests.framework.utils.RecipeInstaller;
 import org.cloudifysource.quality.iTests.framework.utils.ServiceInstaller;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.AbstractStorageAllocationTest;
-import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.CloudServiceManager;
-import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.ec2.Ec2CloudService;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.AbstractStorageTest;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-public class Ec2StorageInExplicitAvailabilityZoneTest extends AbstractStorageAllocationTest {
-
-    @Override
-    protected String getCloudName() {
-        return "ec2";
-    }
+/**
+ * Author: nirb
+ * Date: 21/02/13
+ */
+public class HpMountTest extends AbstractStorageAllocationTest {
 
     @BeforeClass(alwaysRun = true)
     protected void bootstrap() throws Exception {
-        Ec2CloudService cloudService = (Ec2CloudService) CloudServiceManager.getInstance().getCloudService(getCloudName());
-        cloudService.setAvailabilityZone("c");
-        super.bootstrap(cloudService);
+        super.bootstrap();
     }
-
 
     @Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
     public void testLinux() throws Exception {
-        storageAllocationTester.testInstallWithStorageLinux();
+        storageAllocationTester.testStorageVolumeMountedLinux();
     }
 
     @AfterMethod
@@ -55,6 +52,10 @@ public class Ec2StorageInExplicitAvailabilityZoneTest extends AbstractStorageAll
         super.teardown();
     }
 
+    @Override
+    protected String getCloudName() {
+        return "hp";
+    }
 
     @Override
     protected boolean isReusableCloud() {

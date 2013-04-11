@@ -1,4 +1,4 @@
-package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.ec2.dynamicstorage;
+package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.ec2.storage.staticstorage;
 
 import org.cloudifysource.esc.driver.provisioning.storage.StorageProvisioningException;
 import org.cloudifysource.quality.iTests.framework.utils.ApplicationInstaller;
@@ -13,27 +13,23 @@ import org.testng.annotations.Test;
 
 import java.util.concurrent.TimeoutException;
 
-public class NonPrivilegedModeTest extends AbstractStorageAllocationTest {
+/**
+ * Created with IntelliJ IDEA.
+ * User: elip
+ * Date: 4/10/13
+ * Time: 3:39 PM
+ * To change this template use File | Settings | File Templates.
+ */
+public class Ec2MountTest extends AbstractStorageAllocationTest {
 
-	@BeforeClass(alwaysRun = true)
-	protected void bootstrap() throws Exception {
-		super.bootstrap();
-	}
-	
-	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
-	public void testLinux() throws Exception {
-        storageAllocationTester.testNonPrivileged();
-	}
-	
-	@Override
-	protected void customizeCloud() throws Exception {
-		getService().getAdditionalPropsToReplace().put("privileged true", "privileged false");
-		
-	}
+    @BeforeClass(alwaysRun = true)
+    protected void bootstrap() throws Exception {
+        super.bootstrap();
+    }
 
-    @Override
-    protected String getCloudName() {
-        return "ec2";
+    @Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
+    public void testLinux() throws Exception {
+        storageAllocationTester.testStorageVolumeMountedLinux();
     }
 
     @AfterMethod
@@ -52,12 +48,17 @@ public class NonPrivilegedModeTest extends AbstractStorageAllocationTest {
     }
 
     @AfterClass(alwaysRun = true)
-	protected void teardown() throws Exception {
-		super.teardown();
-	}
+    protected void teardown() throws Exception {
+        super.teardown();
+    }
 
-	@Override
-	protected boolean isReusableCloud() {
-		return false;
-	}	
+    @Override
+    protected String getCloudName() {
+        return "ec2";
+    }
+
+    @Override
+    protected boolean isReusableCloud() {
+        return false;
+    }
 }

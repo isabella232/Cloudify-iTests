@@ -1,4 +1,4 @@
-package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.ec2.dynamicstorage;
+package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.ec2.storage.staticstorage;
 
 import org.cloudifysource.esc.driver.provisioning.storage.StorageProvisioningException;
 import org.cloudifysource.quality.iTests.framework.utils.ApplicationInstaller;
@@ -6,30 +6,25 @@ import org.cloudifysource.quality.iTests.framework.utils.RecipeInstaller;
 import org.cloudifysource.quality.iTests.framework.utils.ServiceInstaller;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.AbstractStorageAllocationTest;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Test;
+import org.testng.annotations.*;
 
 import java.util.concurrent.TimeoutException;
 
-public class UnsupportedFileSystemTest extends AbstractStorageAllocationTest {
+/**
+ * Author: nirb
+ * Date: 28/02/13
+ */
+public class Ec2StorageMountTest extends AbstractStorageAllocationTest {
 
-	@BeforeClass(alwaysRun = true)
-	protected void bootstrap() throws Exception {
-		super.bootstrap();
-	}
+    @BeforeClass(alwaysRun = true)
+    protected void bootstrap() throws Exception {
+        super.bootstrap();
+    }
 
-	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
-	public void testLinux() throws Exception {
-        storageAllocationTester.testUnsupportedFileSystemLinux();
-	}
-
-
-	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
-	public void testUbuntu() throws Exception  {
-        storageAllocationTester.testSmallFormatTimeoutUbuntu();
-	}
+    @Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
+    public void testLinux() throws Exception {
+        storageAllocationTester.testMountLinux();
+    }
 
     @AfterMethod
     public void cleanup() {
@@ -46,10 +41,10 @@ public class UnsupportedFileSystemTest extends AbstractStorageAllocationTest {
         super.scanForLeakedVolumesCreatedViaTemplate("SMALL_BLOCK");
     }
 
-	@AfterClass(alwaysRun = true)
-	protected void teardown() throws Exception {
-		super.teardown();
-	}
+    @AfterClass(alwaysRun = true)
+    protected void teardown() throws Exception {
+        super.teardown();
+    }
 
     @Override
     protected String getCloudName() {
@@ -57,7 +52,7 @@ public class UnsupportedFileSystemTest extends AbstractStorageAllocationTest {
     }
 
     @Override
-	protected boolean isReusableCloud() {
-		return false;
-	}
+    protected boolean isReusableCloud() {
+        return false;
+    }
 }

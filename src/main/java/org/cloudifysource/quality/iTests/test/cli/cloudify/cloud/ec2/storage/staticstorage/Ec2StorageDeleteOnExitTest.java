@@ -1,4 +1,4 @@
-package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.ec2.dynamicstorage;
+package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.ec2.storage.staticstorage;
 
 import org.cloudifysource.esc.driver.provisioning.storage.StorageProvisioningException;
 import org.cloudifysource.quality.iTests.framework.utils.ApplicationInstaller;
@@ -6,30 +6,37 @@ import org.cloudifysource.quality.iTests.framework.utils.RecipeInstaller;
 import org.cloudifysource.quality.iTests.framework.utils.ServiceInstaller;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.AbstractStorageAllocationTest;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Test;
+import org.testng.annotations.*;
 
 import java.util.concurrent.TimeoutException;
 
-public class DynamicStorageAttachmentTest extends AbstractStorageAllocationTest {
-	
-	@BeforeClass(alwaysRun = true)
-	protected void bootstrap() throws Exception {
-		super.bootstrap();
+/**
+ * Author: nirb
+ * Date: 20/02/13
+ */
+public class Ec2StorageDeleteOnExitTest extends AbstractStorageAllocationTest {
 
-	}
-	
-	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
-	public void testLinux() throws Exception {
-        storageAllocationTester.testDynamicStorageAttachmentLinux();
-	}
-	
-	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
-	public void testUbuntu() throws Exception  {
-        storageAllocationTester.testDynamicStorageAttachmentUbuntu();
-	}
+    @Override
+    protected String getCloudName() {
+        return "ec2";
+    }
+
+    @BeforeClass(alwaysRun = true)
+    protected void bootstrap() throws Exception {
+        super.bootstrap();
+    }
+
+    @Override
+    protected void customizeCloud() throws Exception {
+        super.customizeCloud();
+        getService().getAdditionalPropsToReplace().put("deleteOnExit true", "deleteOnExit false");
+    }
+
+    @Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
+    public void testLinux() throws Exception {
+        storageAllocationTester.testDeleteOnExitFalseLinux();
+    }
+
 
     @AfterMethod
     public void cleanup() {
@@ -45,19 +52,15 @@ public class DynamicStorageAttachmentTest extends AbstractStorageAllocationTest 
     public void scanForLeakes() throws TimeoutException, StorageProvisioningException {
         super.scanForLeakedVolumesCreatedViaTemplate("SMALL_BLOCK");
     }
-	
-	@AfterClass(alwaysRun = true)
-	protected void teardown() throws Exception {
-		super.teardown();
-	}
 
-    @Override
-    protected String getCloudName() {
-        return "ec2";
+    @AfterClass(alwaysRun = true)
+    protected void teardown() throws Exception {
+        super.teardown();
     }
 
+
     @Override
-	protected boolean isReusableCloud() {
-		return false;
-	}
+    protected boolean isReusableCloud() {
+        return false;
+    }
 }

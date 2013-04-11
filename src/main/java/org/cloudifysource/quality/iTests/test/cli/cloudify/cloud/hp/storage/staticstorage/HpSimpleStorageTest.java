@@ -1,4 +1,4 @@
-package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.ec2.staticstorage;
+package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.hp.storage.staticstorage;
 
 import org.cloudifysource.esc.driver.provisioning.storage.StorageProvisioningException;
 import org.cloudifysource.quality.iTests.framework.utils.ApplicationInstaller;
@@ -6,46 +6,31 @@ import org.cloudifysource.quality.iTests.framework.utils.RecipeInstaller;
 import org.cloudifysource.quality.iTests.framework.utils.ServiceInstaller;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.AbstractStorageAllocationTest;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Test;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.AbstractStorageTest;
+import org.testng.annotations.*;
 
 import java.util.concurrent.TimeoutException;
 
 /**
- *
- * Allocate static storage to a service but fail the attachment phase. (by using a faulty device name).
- * this will cause the USM to be stuck in an endless restart loop.
- * make sure that no un-necessary volumes are created during this loop.
- *
- * Created with IntelliJ IDEA.
- * User: elip
- * Date: 4/9/13
- * Time: 5:41 PM
- * To change this template use File | Settings | File Templates.
+ * Author: nirb
+ * Date: 21/02/13
  */
-public class FailureToAttachTest extends AbstractStorageAllocationTest {
+public class HpSimpleStorageTest extends AbstractStorageAllocationTest{
+
+    @Override
+    protected String getCloudName() {
+        return "hp";
+    }
 
     @BeforeClass(alwaysRun = true)
     protected void bootstrap() throws Exception {
         super.bootstrap();
     }
 
+
     @Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
     public void testLinux() throws Exception {
-        storageAllocationTester.testFailedToAttachLinux();
-    }
-
-    @Override
-    protected void customizeCloud() throws Exception {
-        super.customizeCloud();
-        getService().getAdditionalPropsToReplace().put("/dev/sdc", "foo");
-    }
-
-    @Override
-    protected String getCloudName() {
-        return "ec2";
+        storageAllocationTester.testInstallWithStorageLinux();
     }
 
     @AfterMethod

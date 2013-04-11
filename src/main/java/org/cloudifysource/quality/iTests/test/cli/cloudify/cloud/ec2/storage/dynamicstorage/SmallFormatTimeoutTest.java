@@ -1,4 +1,6 @@
-package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.ec2.staticstorage;
+package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.ec2.storage.dynamicstorage;
+
+import java.util.concurrent.TimeoutException;
 
 import org.cloudifysource.esc.driver.provisioning.storage.StorageProvisioningException;
 import org.cloudifysource.quality.iTests.framework.utils.ApplicationInstaller;
@@ -11,26 +13,23 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import java.util.concurrent.TimeoutException;
+public class SmallFormatTimeoutTest extends AbstractStorageAllocationTest {
 
-/**
- * Created with IntelliJ IDEA.
- * User: elip
- * Date: 4/10/13
- * Time: 3:39 PM
- * To change this template use File | Settings | File Templates.
- */
-public class Ec2MountTest extends AbstractStorageAllocationTest {
+	@BeforeClass(alwaysRun = true)
+	protected void bootstrap() throws Exception {
+		super.bootstrap();
+	}
+	
+	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
+	public void testLinux() throws Exception {
+        storageAllocationTester.testSmallFormatTimeoutLinux();
+	}
+	
 
-    @BeforeClass(alwaysRun = true)
-    protected void bootstrap() throws Exception {
-        super.bootstrap();
-    }
-
-    @Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
-    public void testLinux() throws Exception {
-        storageAllocationTester.testStorageVolumeMountedLinux();
-    }
+	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
+	public void testUbuntu() throws Exception  {
+        storageAllocationTester.testSmallFormatTimeoutUbuntu();
+	}
 
     @AfterMethod
     public void cleanup() {
@@ -46,11 +45,11 @@ public class Ec2MountTest extends AbstractStorageAllocationTest {
     public void scanForLeakes() throws TimeoutException, StorageProvisioningException {
         super.scanForLeakedVolumesCreatedViaTemplate("SMALL_BLOCK");
     }
-
-    @AfterClass(alwaysRun = true)
-    protected void teardown() throws Exception {
-        super.teardown();
-    }
+	
+	@AfterClass(alwaysRun = true)
+	protected void teardown() throws Exception {
+		super.teardown();
+	}
 
     @Override
     protected String getCloudName() {
@@ -58,7 +57,7 @@ public class Ec2MountTest extends AbstractStorageAllocationTest {
     }
 
     @Override
-    protected boolean isReusableCloud() {
-        return false;
-    }
+	protected boolean isReusableCloud() {
+		return false;
+	}
 }

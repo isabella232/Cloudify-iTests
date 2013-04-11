@@ -1,4 +1,4 @@
-package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.ec2.staticstorage;
+package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.hp.storage.staticstorage;
 
 import org.cloudifysource.esc.driver.provisioning.storage.StorageProvisioningException;
 import org.cloudifysource.quality.iTests.framework.utils.ApplicationInstaller;
@@ -6,15 +6,17 @@ import org.cloudifysource.quality.iTests.framework.utils.RecipeInstaller;
 import org.cloudifysource.quality.iTests.framework.utils.ServiceInstaller;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.AbstractStorageAllocationTest;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.AbstractStorageTest;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.ec2.Ec2CloudService;
 import org.testng.annotations.*;
 
 import java.util.concurrent.TimeoutException;
 
 /**
  * Author: nirb
- * Date: 28/02/13
+ * Date: 25/02/13
  */
-public class Ec2StorageMountTest extends AbstractStorageAllocationTest {
+public class HpFailedToInstallTest extends AbstractStorageAllocationTest {
 
     @BeforeClass(alwaysRun = true)
     protected void bootstrap() throws Exception {
@@ -23,7 +25,7 @@ public class Ec2StorageMountTest extends AbstractStorageAllocationTest {
 
     @Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
     public void testLinux() throws Exception {
-        storageAllocationTester.testMountLinux();
+        storageAllocationTester.testFaultyInstallLinux();
     }
 
     @AfterMethod
@@ -46,9 +48,10 @@ public class Ec2StorageMountTest extends AbstractStorageAllocationTest {
         super.teardown();
     }
 
+
     @Override
     protected String getCloudName() {
-        return "ec2";
+        return "hp";
     }
 
     @Override

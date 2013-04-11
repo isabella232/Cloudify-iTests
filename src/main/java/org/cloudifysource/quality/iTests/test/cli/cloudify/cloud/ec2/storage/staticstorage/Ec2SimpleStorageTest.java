@@ -1,4 +1,4 @@
-package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.ec2.staticstorage;
+package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.ec2.storage.staticstorage;
 
 import org.cloudifysource.esc.driver.provisioning.storage.StorageProvisioningException;
 import org.cloudifysource.quality.iTests.framework.utils.ApplicationInstaller;
@@ -13,26 +13,22 @@ import org.testng.annotations.Test;
 
 import java.util.concurrent.TimeoutException;
 
-/**
- *
- * Check that there are no leaking volumes after uninstall of a failed installation.
+public class Ec2SimpleStorageTest extends AbstractStorageAllocationTest {
 
- * Created with IntelliJ IDEA.
- * User: elip
- * Date: 4/9/13
- * Time: 7:45 PM
- * To change this template use File | Settings | File Templates.
- */
-public class FailedToInstallTest extends AbstractStorageAllocationTest {
+    @Override
+    protected String getCloudName() {
+        return "ec2";
+    }
 
     @BeforeClass(alwaysRun = true)
     protected void bootstrap() throws Exception {
         super.bootstrap();
     }
 
+
     @Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
     public void testLinux() throws Exception {
-        storageAllocationTester.testFaultyInstallLinux();
+        storageAllocationTester.testInstallWithStorageLinux();
     }
 
     @AfterMethod
@@ -55,11 +51,6 @@ public class FailedToInstallTest extends AbstractStorageAllocationTest {
         super.teardown();
     }
 
-
-    @Override
-    protected String getCloudName() {
-        return "ec2";
-    }
 
     @Override
     protected boolean isReusableCloud() {

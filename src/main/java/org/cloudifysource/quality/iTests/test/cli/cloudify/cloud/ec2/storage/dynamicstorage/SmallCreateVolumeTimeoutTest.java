@@ -1,6 +1,4 @@
-package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.ec2.dynamicstorage;
-
-import java.util.concurrent.TimeoutException;
+package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.ec2.storage.dynamicstorage;
 
 import org.cloudifysource.esc.driver.provisioning.storage.StorageProvisioningException;
 import org.cloudifysource.quality.iTests.framework.utils.ApplicationInstaller;
@@ -13,22 +11,19 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-public class SmallFormatTimeoutTest extends AbstractStorageAllocationTest {
+import java.util.concurrent.TimeoutException;
+
+public class SmallCreateVolumeTimeoutTest extends AbstractStorageAllocationTest {
 
 	@BeforeClass(alwaysRun = true)
 	protected void bootstrap() throws Exception {
 		super.bootstrap();
 	}
 	
+	
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
 	public void testLinux() throws Exception {
-        storageAllocationTester.testSmallFormatTimeoutLinux();
-	}
-	
-
-	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
-	public void testUbuntu() throws Exception  {
-        storageAllocationTester.testSmallFormatTimeoutUbuntu();
+        storageAllocationTester.testSmallCreateVolumeTimeout();
 	}
 
     @AfterMethod

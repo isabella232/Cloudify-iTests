@@ -229,6 +229,11 @@
             <artifactId>xml-apis</artifactId>
             <version>1.4.01</version>
         </dependency>
+        <dependency>
+            <groupId>org.cloudifysource.quality.iTests</groupId>
+            <artifactId>location-aware-provisioning-byon</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
 	</dependencies>
 
 

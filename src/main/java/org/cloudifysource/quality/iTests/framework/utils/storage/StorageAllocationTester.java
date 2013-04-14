@@ -1,5 +1,6 @@
 package org.cloudifysource.quality.iTests.framework.utils.storage;
 
+import com.j_spaces.kernel.PlatformVersion;
 import org.apache.commons.io.FileUtils;
 import org.cloudifysource.dsl.Service;
 import org.cloudifysource.dsl.context.blockstorage.LocalStorageOperationException;
@@ -11,15 +12,21 @@ import org.cloudifysource.esc.driver.provisioning.MachineDetails;
 import org.cloudifysource.esc.driver.provisioning.storage.VolumeDetails;
 import org.cloudifysource.quality.iTests.framework.utils.*;
 import org.cloudifysource.quality.iTests.framework.utils.compute.ComputeApiHelper;
+import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.CloudService;
+import org.cloudifysource.restclient.GSRestClient;
+import org.cloudifysource.restclient.RestException;
+import org.jclouds.compute.domain.NodeMetadata;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  *
@@ -276,6 +283,85 @@ public class StorageAllocationTester {
             AssertUtils.assertTrue("volume with id " + vol.getId() + " was not deleted after uninstall", currentVol == null || storageApiHelper.isVolumeDeleting(currentVol.getId()));
         }
 
+    }
+
+    public void testFailover() throws Exception {
+
+        String folderName = "simple-storage";
+        final String servicePath = CommandTestUtils.getPath("/src/main/resources/apps/USM/usm/staticstorage/" + folderName);
+        folderName = copyServiceToRecipesFolder(servicePath, folderName);
+        setTemplate(RECIPES_SERVICES_FOLDER + "/" + folderName, "SMALL_LINUX", false);
+
+        final String serviceName = ServiceReader.readService(new File(ScriptUtils.getBuildRecipesServicesPath() + "/" + folderName)).getName();
+
+        installer = new ServiceInstaller(restUrl, serviceName);
+        installer.recipePath(folderName);
+        installer.setDisableSelfHealing(true);
+        installer.install();
+
+        LogUtils.log("Searching for volumes created by the service installation");
+        // the install should have created and attached a volume with a name prefix of the class name. see customizeCloud below.
+        VolumeDetails ourVolume = storageApiHelper.getVolumesByPrefix(getVolumePrefixForTemplate("SMALL_BLOCK")).iterator().next();
+
+        AssertUtils.assertNotNull("could not find the required volume after install service", ourVolume);
+        LogUtils.log("Found volume : " + ourVolume);
+        // also check it is attached.
+        AssertUtils.assertEquals("the volume should have one attachments", 1, storageApiHelper.getVolumeAttachments(ourVolume.getId()).size());
+
+        LogUtils.log("Shutting down agent");
+        String attachmentId = storageApiHelper.getVolumeAttachments(ourVolume.getId()).iterator().next();
+        computeApiHelper.shutdownServerByAttachmentId(attachmentId);
+
+
+        final GSRestClient client = new GSRestClient("", "", new URL(restUrl), PlatformVersion.getVersionNumber());
+        final AtomicReference<String> atomicServiceStatus = new AtomicReference<String>();
+
+        LogUtils.log("Waiting for service " + serviceName + " to restart on a new machine");
+
+        AssertUtils.repetitiveAssertTrue("Service " + serviceName + " didn't break", new AssertUtils.RepetitiveConditionProvider() {
+            @Override
+            public boolean getCondition() {
+            try {
+                // we don't know which service the agent we shutdown belonged to.
+                // query all installed services to find out.
+                String serviceRestUrl = "ProcessingUnits/Names/default." + serviceName;
+                int numberOfInstances = (Integer)client.getAdminData(serviceRestUrl).get("Instances-Size");
+                LogUtils.log("Number of " + serviceName + " instances is " + numberOfInstances);
+                if (numberOfInstances < 1) {
+                    LogUtils.log(serviceName + " service broke. it now has only " + numberOfInstances + " instances");
+                    return true;
+                }
+                return false;
+            } catch (RestException e) {
+                throw new RuntimeException(e);
+            }
+
+            }
+        } , AbstractTestSupport.OPERATION_TIMEOUT * 4);
+
+        // now we already know the service that broke.
+        // so we wait for it to recover.
+        AssertUtils.repetitiveAssertTrue(serviceName + " service did not recover", new AssertUtils.RepetitiveConditionProvider() {
+            @Override
+            public boolean getCondition() {
+                final String brokenServiceRestUrl = "ProcessingUnits/Names/default." + serviceName;
+                try {
+                    int numOfInst = (Integer) client.getAdminData(brokenServiceRestUrl).get("Instances-Size");
+                    return (1 == numOfInst);
+                } catch (RestException e) {
+                    throw new RuntimeException("caught a RestException", e);
+                }
+            }
+        } , AbstractTestSupport.OPERATION_TIMEOUT * 3);
+
+        LogUtils.log("Searching for volumes created by the service failover healing");
+        // the install should have created and attached a volume with a name prefix of the class name. see customizeCloud below.
+        ourVolume = storageApiHelper.getVolumesByPrefix(getVolumePrefixForTemplate("SMALL_BLOCK")).iterator().next();
+
+        AssertUtils.assertNotNull("could not find the required volume after install service", ourVolume);
+        LogUtils.log("Found volume : " + ourVolume);
+        // also check it is attached.
+        AssertUtils.assertEquals("the volume should have one attachments", 1, storageApiHelper.getVolumeAttachments(ourVolume.getId()).size());
     }
 
     private String getVolumePrefixForTemplate(final String template) {

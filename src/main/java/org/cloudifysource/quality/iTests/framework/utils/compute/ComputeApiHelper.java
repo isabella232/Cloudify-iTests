@@ -15,5 +15,7 @@ public interface ComputeApiHelper {
 
     Set<MachineDetails> getServersByPrefix(String machineNamePrefix);
 
-    MachineDetails getServerByAttachmentId(final String serverId);
+    MachineDetails getServerByAttachmentId(final String attachmentId);
+
+    void shutdownServerByAttachmentId(final String attachmentId);
 }

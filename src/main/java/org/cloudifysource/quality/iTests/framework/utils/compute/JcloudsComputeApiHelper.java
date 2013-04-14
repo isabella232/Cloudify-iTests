@@ -69,4 +69,9 @@ public class JcloudsComputeApiHelper implements ComputeApiHelper {
         machineDetails.setPrivateAddress(serverByID.getPrivateAddresses().iterator().next());
         return machineDetails;
     }
+
+    @Override
+    public void shutdownServer(String serverId) {
+        deployer.shutdownMachine(serverId);
+    }
 }

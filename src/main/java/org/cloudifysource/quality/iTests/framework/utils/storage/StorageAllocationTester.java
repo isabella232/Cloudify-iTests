@@ -311,9 +311,7 @@ public class StorageAllocationTester {
         String attachmentId = storageApiHelper.getVolumeAttachments(ourVolume.getId()).iterator().next();
         computeApiHelper.shutdownServerByAttachmentId(attachmentId);
 
-
         final GSRestClient client = new GSRestClient("", "", new URL(restUrl), PlatformVersion.getVersionNumber());
-        final AtomicReference<String> atomicServiceStatus = new AtomicReference<String>();
 
         LogUtils.log("Waiting for service " + serviceName + " to restart on a new machine");
 
@@ -338,8 +336,9 @@ public class StorageAllocationTester {
             }
         } , AbstractTestSupport.OPERATION_TIMEOUT * 4);
 
-        // now we already know the service that broke.
-        // so we wait for it to recover.
+        LogUtils.log("Deleting previous volume : " + ourVolume.getId());
+        storageApiHelper.deleteVolume(ourVolume.getId());
+
         AssertUtils.repetitiveAssertTrue(serviceName + " service did not recover", new AssertUtils.RepetitiveConditionProvider() {
             @Override
             public boolean getCondition() {

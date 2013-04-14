@@ -165,8 +165,13 @@ public class ByonCloudService extends AbstractCloudService {
 	public String getApiKey() {
 		return BYON_CLOUD_PASSWORD;
 	}
-	
-	@Override
+
+    @Override
+    public String getRegion() {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
 	public void beforeBootstrap() {
 		cleanMachines();
 	}

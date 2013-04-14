@@ -69,4 +69,6 @@ public interface CloudService {
 	Map<String, Object> getProperties();
 
     Map<String, String> getAdditionalPropsToReplace();
+
+    String getRegion();
 }

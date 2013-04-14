@@ -22,11 +22,13 @@ import java.util.Set;
 public class JcloudsComputeApiHelper implements ComputeApiHelper {
 
     private JCloudsDeployer deployer;
+    private String region;
 
-    public JcloudsComputeApiHelper(final Cloud cloud) {
+    public JcloudsComputeApiHelper(final Cloud cloud, final String region) {
         try {
-            deployer = new JCloudsDeployer(cloud.getProvider().getProvider(), cloud.getUser().getUser(),
+            this.deployer = new JCloudsDeployer(cloud.getProvider().getProvider(), cloud.getUser().getUser(),
                     cloud.getUser().getApiKey(), new Properties());
+            this.region = region;
         } catch (final Exception e) {
             throw new RuntimeException("Failed to initialize compute helper : " + e.getMessage(), e);
         }
@@ -42,7 +44,7 @@ public class JcloudsComputeApiHelper implements ComputeApiHelper {
                 boolean nameFound = false;
                 final NodeMetadata node = (NodeMetadata) input;
                 if (StringUtils.isNotBlank(node.getName())) {
-                    nameFound = (node.getName().indexOf(machineNamePrefix) >= 0) && (node.getStatus() == NodeMetadata.Status.RUNNING);
+                    nameFound = node.getName().contains(machineNamePrefix) && (node.getStatus() == NodeMetadata.Status.RUNNING);
                 }
                 return nameFound;
             }
@@ -60,8 +62,8 @@ public class JcloudsComputeApiHelper implements ComputeApiHelper {
     }
 
     @Override
-    public MachineDetails getServerById(String serverId) {
-        NodeMetadata serverByID = deployer.getServerByID(serverId);
+    public MachineDetails getServerByAttachmentId(String attachmentId) {
+        NodeMetadata serverByID = deployer.getServerByID(region + "/" + attachmentId);
         MachineDetails machineDetails = new MachineDetails();
         machineDetails.setPublicAddress(serverByID.getPrivateAddresses().iterator().next());
         machineDetails.setPrivateAddress(serverByID.getPrivateAddresses().iterator().next());

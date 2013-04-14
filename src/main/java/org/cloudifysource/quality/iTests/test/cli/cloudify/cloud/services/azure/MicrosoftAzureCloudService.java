@@ -148,9 +148,14 @@ public class MicrosoftAzureCloudService extends AbstractCloudService {
 	public boolean scanLeakedAgentNodes() {		
 		final String agentPrefix = getCloud().getProvider().getMachineNamePrefix();		
 		return scanNodesWithPrefix(agentPrefix);
-	} 
-	
-	@Override
+	}
+
+    @Override
+    public String getRegion() {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
 	public boolean scanLeakedAgentAndManagementNodes() {
 		final String agentPrefix = getCloud().getProvider().getMachineNamePrefix();
 		final String mgmtPrefix = getCloud().getProvider().getManagementGroup();

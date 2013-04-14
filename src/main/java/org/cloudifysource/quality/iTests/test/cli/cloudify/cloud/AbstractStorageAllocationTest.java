@@ -40,7 +40,7 @@ public abstract class AbstractStorageAllocationTest extends NewAbstractCloudTest
 
     private ComputeApiHelper initComputeHelper() {
         if (getCloudName().equals("ec2") || getCloudName().equals("hp") || getCloudName().equals("rackspace")) {
-            return new JcloudsComputeApiHelper(getService().getCloud());
+            return new JcloudsComputeApiHelper(getService().getCloud(), getService().getRegion());
         }
         throw new UnsupportedOperationException("Cannot init compute helper for non jclouds providers!");
     }
@@ -75,8 +75,9 @@ public abstract class AbstractStorageAllocationTest extends NewAbstractCloudTest
                 LogUtils.log("Found a leaking volume " + volumeByName + ". status is " + volumeStatus);
                 if (volumeAttachments != null && !volumeAttachments.isEmpty()) {
                     LogUtils.log("Volume attachments are : " + volumeAttachments);
-                    LogUtils.log("Detaching attachment before deletion");
-                    storageApiHelper.detachVolume(volumeByName.getId(), volumeAttachments.iterator().next());
+                    String attachmentId = volumeAttachments.iterator().next();
+                    LogUtils.log("Detaching attachment[" + attachmentId + "] before deletion");
+                    storageApiHelper.detachVolume(volumeByName.getId(), computeApiHelper.getServerByAttachmentId(attachmentId).getPrivateAddress());
                 }
                 waitForVolumeAvailable(volumeByName.getId());
                 LogUtils.log("Deleting volume " + volumeByName.getId());

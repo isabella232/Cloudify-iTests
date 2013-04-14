@@ -51,6 +51,11 @@ public class RackspaceCloudService extends JCloudsCloudService {
     }
 
     @Override
+    public String getRegion() {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
     public void addOverrides(Properties overridesProps) {
 
     }

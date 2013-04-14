@@ -260,7 +260,7 @@ public class StorageAllocationTester {
             AssertUtils.assertNotNull("could not find the required volume after install service", vol);
             // also check it is attached.
             Set<String> volumeAttachments = storageApiHelper.getVolumeAttachments(vol.getId());
-            AssertUtils.assertEquals("the volume should have one attachements", 1, volumeAttachments);
+            AssertUtils.assertEquals("the volume should have one attachements", 1, volumeAttachments.size());
             attachmentIps.add(volumeAttachments.iterator().next());
         }
         LogUtils.log("Attachments are " + attachmentIps);
@@ -545,7 +545,7 @@ public class StorageAllocationTester {
 
         VolumeDetails vol = storageApiHelper.getVolumesByPrefix(getVolumePrefixForTemplate("SMALL_BLOCK")).iterator().next();
         String attachmentId = storageApiHelper.getVolumeAttachments(vol.getId()).iterator().next();
-        storageApiHelper.detachVolume(vol.getId(), computeApiHelper.getServerById(attachmentId).getPrivateAddress());
+        storageApiHelper.detachVolume(vol.getId(), computeApiHelper.getServerByAttachmentId(attachmentId).getPrivateAddress());
 
         //asserting the file is not in the mounted directory
         LogUtils.log("listing all files inside mounted storage folder. running 'ls ~/storage/' command");

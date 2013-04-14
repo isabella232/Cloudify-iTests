@@ -1,1 +1,1 @@
-sudo mount /dev/sdc ~/storage
+sudo mount -t ext4 /dev/sdc ~/storage

@@ -648,16 +648,7 @@ public class StorageAllocationTester {
 
         LogUtils.log("Reattaching the volume to the service machine");
 
-        LogUtils.log("Retrieving machine prefix for the installed service");
-        String machinePrefix;
-        if (service.getIsolationSLA().getGlobal().isUseManagement()) {
-            machinePrefix = cloudService.getCloud().getProvider().getManagementGroup();
-        } else {
-            machinePrefix = cloudService.getCloud().getProvider().getMachineNamePrefix();
-        }
-        LogUtils.log("Machine prefix is " + machinePrefix);
-
-        MachineDetails agent = computeApiHelper.getServersContaining(machinePrefix).iterator().next();
+        MachineDetails agent = computeApiHelper.getServerByAttachmentId(attachmentId);
         storageApiHelper.attachVolume(vol.getId(), cloudService.getCloud().getCloudStorage().getTemplates().get("SMALL_BLOCK").getDeviceName(), agent.getPrivateAddress());
         invokeCommand(serviceName, "mount");
 

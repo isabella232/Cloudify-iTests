@@ -5,6 +5,7 @@ import org.cloudifysource.esc.driver.provisioning.storage.BaseStorageDriver;
 import org.cloudifysource.esc.driver.provisioning.storage.StorageProvisioningDriver;
 import org.cloudifysource.esc.driver.provisioning.storage.StorageProvisioningException;
 import org.cloudifysource.esc.driver.provisioning.storage.VolumeDetails;
+import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
 
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -40,6 +41,11 @@ public abstract class JcloudsStorageApiHelper implements StorageApiHelper {
     @Override
     public void attachVolume(String volumeId, String device, String ip) throws TimeoutException, StorageProvisioningException {
         driver.attachVolume(volumeId, device, ip, DEFAULT_STORAGE_OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
+        try {
+            LogUtils.log("Sleeping for 10 seconds after attachment...");
+            Thread.sleep(10 * 1000);
+        } catch (InterruptedException e) {
+        }
     }
 
     @Override

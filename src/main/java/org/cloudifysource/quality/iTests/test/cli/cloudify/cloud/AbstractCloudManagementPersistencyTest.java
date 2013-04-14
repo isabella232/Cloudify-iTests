@@ -266,30 +266,34 @@ public abstract class AbstractCloudManagementPersistencyTest extends NewAbstract
     	
     	LogUtils.log("Killing one of two management machines");
     	terminateManagementMachineComponents(this.backupManagementMachineUrl);
-    	boolean result = waitForRestAdminToDetectMachineFailure(this.defaultManagementMachineUrl, 1, 10000 * 6, TimeUnit.SECONDS);
-    	assertTrue("Failed waiting for rest admin to detect machine failure.", result == true );
+    	boolean result = waitForRestAdminToDetectMachineFailure(this.defaultManagementMachineUrl, 1, 10000 * 6, TimeUnit.MILLISECONDS);
+    	assertTrue("Failed waiting for rest admin to detect machine failure.", result);
     	
     	LogUtils.log("Attemting to uninstall application. This should fail.");
     	String uninstallApplicationOutput = uninstallApplicationAndWait(SIMPLE_APPLICATION_NAME, true);
     	assertGsmFailureOutput(uninstallApplicationOutput);
-    	
+
     	LogUtils.log("Attemting to uninstall service. This should fail.");
     	String uninstallServiceOutput = uninstallServiceAndWait(SCALABLE_SERVICE_NAME, true);
     	assertGsmFailureOutput(uninstallServiceOutput);
-    	
+
     	LogUtils.log("Attempting to install a simple service. This is expected to fail");
     	String installServiceOutput = installServiceAndWait(SCALABLE_SERVICE_PATH, MOCK_SERVICE_NAME, true);
     	LogUtils.log("asserting service installation failed due to gsm failure");
     	assertGsmFailureOutput(installServiceOutput);
-    	
+
     	LogUtils.log("Attempting to install a simple application. This is expected to fail.");
     	String installApplicationOutput = installApplicationAndWait(SIMPLE_APPLICATION_PATH, MOCK_APPLICATION_NAME, 15, true);
     	assertGsmFailureOutput(installApplicationOutput);
-    	
+
     	LogUtils.log("Attempting to manually scale service " + SCALABLE_SERVICE_NAME + ". This should fail");
     	String manualScaleOutput = scaleServiceUsingCommand(2, true);
     	assertGsmFailureOutput(manualScaleOutput);
-    	
+
+        LogUtils.log("Attempting to list applications. This should succeed");
+        String output = getService().getBootstrapper().listApplications(false);
+        AssertUtils.assertTrue("failed to list applications while one management is down.", output.contains(SIMPLE_APPLICATION_NAME));
+
     }
     
     private boolean waitForRestAdminToDetectMachineFailure(String restUrl, int expectedNumberOfManagement, long timeout, TimeUnit unit)
@@ -496,7 +500,7 @@ public abstract class AbstractCloudManagementPersistencyTest extends NewAbstract
     
 	protected void initRestClient() 
 			throws MalformedURLException, RestException {
-		this.client = new GSRestClient("", "", new URL(this.defaultManagementMachineUrl), "2.5.0-Cloudify-ga");//PlatformVersion.getVersionNumber()
+		this.client = new GSRestClient("", "", new URL(this.defaultManagementMachineUrl), PlatformVersion.getVersionNumber());
 	}
 
 	protected void initManagementUrls() {

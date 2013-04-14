@@ -2,12 +2,6 @@
 
  . set-deploy-env.sh
 
-if [ ${BRANCH_NAME} != "trunk" ]; then
-	SVN_SGTEST_REPOSITORY=svn://pc-lab14/SVN/cloudify/branches/${SVN_BRANCH_DIRECTORY}/${BRANCH_NAME}/quality/frameworks/SGTest	
-else
-	SVN_SGTEST_REPOSITORY=svn://pc-lab14/SVN/cloudify/trunk/quality/frameworks/SGTest
-fi
-
 SVN_STOCKDEMO_REPOSITORY=svn://pc-lab14/SVN/cloudify/trunk/cloudify/recipes/src/main/resources/recipes/apps/stockdemo
 
 # set local build directory with entered build number
@@ -23,7 +17,11 @@ fi
 
 export GIT_SSL_NO_VERIFY=true
 pushd ${BUILD_DIR}/../
-git clone --depth 1 https://github.com/CloudifySource/Cloudify-iTests.git
+if [ ${BRANCH_NAME} != "trunk" ]; then
+	git clone  -b ${BRANCH_NAME} --depth 1 https://github.com/CloudifySource/Cloudify-iTests.git
+else
+	git clone --depth 1 https://github.com/CloudifySource/Cloudify-iTests.git
+fi
 popd
 export Cloudify_iTests_HOME=${BUILD_DIR}/../Cloudify-iTests
 

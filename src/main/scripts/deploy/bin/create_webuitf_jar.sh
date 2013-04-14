@@ -10,7 +10,12 @@ echo "cloning webuitf"
 
 export GIT_SSL_NO_VERIFY=true
 pushd ${WEBUI_TMP_DIR}
-git clone --depth 1 https://github.com/CloudifySource/Cloudify-iTests-webuitf.git
+if [ ${BRANCH_NAME} != "trunk" ]; then
+        git clone  -b ${BRANCH_NAME} --depth 1 https://github.com/CloudifySource/Cloudify-iTests-webuitf.git
+else
+        git clone --depth 1 https://github.com/CloudifySource/Cloudify-iTests-webuitf.git
+fi
+
 popd
 export Cloudify_iTests_webuitf=${WEBUI_TMP_DIR}/Cloudify-iTests-webuitf
 

@@ -611,7 +611,8 @@ public class StorageAllocationTester {
 
     private void testMount(final String folderName) throws Exception {
 
-        String serviceName = ServiceReader.readService(new File(ScriptUtils.getBuildRecipesServicesPath() + "/" + folderName)).getName();
+        Service service = ServiceReader.readService(new File(ScriptUtils.getBuildRecipesServicesPath() + "/" + folderName));
+        String serviceName = service.getName();
 
         installer = new ServiceInstaller(restUrl, serviceName);
         installer.recipePath(folderName);
@@ -641,7 +642,16 @@ public class StorageAllocationTester {
 
         LogUtils.log("Reattaching the volume to the service machine");
 
-        MachineDetails agent = computeApiHelper.getServersByPrefix(cloudService.getCloud().getProvider().getMachineNamePrefix()).iterator().next();
+        LogUtils.log("Retrieving machine prefix for the installed service");
+        String machinePrefix;
+        if (service.getIsolationSLA().getGlobal().isUseManagement()) {
+            machinePrefix = cloudService.getCloud().getProvider().getManagementGroup();
+        } else {
+            machinePrefix = cloudService.getCloud().getProvider().getMachineNamePrefix();
+        }
+        LogUtils.log("Machine prefix is " + machinePrefix);
+
+        MachineDetails agent = computeApiHelper.getServersByPrefix(machinePrefix).iterator().next();
         storageApiHelper.attachVolume(vol.getId(), cloudService.getCloud().getCloudStorage().getTemplates().get("SMALL_BLOCK").getDeviceName(), agent.getPublicAddress());
         invokeCommand(serviceName, "mount");
 

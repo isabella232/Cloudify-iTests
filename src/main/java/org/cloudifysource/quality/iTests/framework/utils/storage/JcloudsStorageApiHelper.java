@@ -44,7 +44,7 @@ public abstract class JcloudsStorageApiHelper implements StorageApiHelper {
 
     @Override
     public void detachVolume(String volumeId, String ip) throws TimeoutException, StorageProvisioningException {
-        driver.detachVolume(volumeId, ip, DEFAULT_STORAGE_OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
+        driver.detachVolume(volumeId, ip, DEFAULT_STORAGE_OPERATION_TIMEOUT * 2, TimeUnit.MILLISECONDS);
     }
 
     @Override

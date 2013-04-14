@@ -64,6 +64,9 @@ public class Ec2StorageApiHelper extends JcloudsStorageApiHelper {
     @Override
     public VolumeDetails getVolumeById(String volumeId) {
         Volume vol = getById(volumeId);
+        if (vol == null) {
+            return null;
+        }
         VolumeDetails volumeDetails = new VolumeDetails();
         volumeDetails.setId(vol.getId());
         return volumeDetails;

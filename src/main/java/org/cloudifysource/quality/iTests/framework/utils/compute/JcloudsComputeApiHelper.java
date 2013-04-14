@@ -71,7 +71,7 @@ public class JcloudsComputeApiHelper implements ComputeApiHelper {
     }
 
     @Override
-    public void shutdownServer(String serverId) {
-        deployer.shutdownMachine(serverId);
+    public void shutdownServerByAttachmentId(String attachmentId) {
+        deployer.shutdownMachine(region + "/" + attachmentId);
     }
 }

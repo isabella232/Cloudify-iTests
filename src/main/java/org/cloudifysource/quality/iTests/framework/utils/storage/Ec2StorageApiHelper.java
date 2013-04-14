@@ -108,10 +108,10 @@ public class Ec2StorageApiHelper extends JcloudsStorageApiHelper {
         try {
             volumes = client.describeVolumesInRegion(region, volumeId);
         } catch (final ResourceNotFoundException e) {
-            throw new RuntimeException("The provided volume id does not match any volume in region " + region);
+            return null;
         }
         if (volumes == null || volumes.isEmpty()) {
-            throw new RuntimeException("The provided volume id does not match any volume in region " + region);
+            return null;
         }
 
         return volumes.iterator().next();

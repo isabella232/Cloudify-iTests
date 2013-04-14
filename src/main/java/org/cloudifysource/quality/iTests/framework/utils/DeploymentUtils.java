@@ -105,6 +105,11 @@ public class DeploymentUtils {
         return getLocalRepository() + "repository" + s + "com" + s + "gigaspaces" + s + "quality" + s + "cloudify" + s + "sgtest" + s + "apps" + s;
     }
 
+    public static String getQualityItestsPath() {
+        String s = System.getProperty("file.separator");
+        return getLocalRepository() + "repository" + s + "org" + s + "cloudifysource" + s + "quality" + s + "iTests" + s;
+    }
+
     private static void copyLibs(File source, File target) throws IOException {
         copyDirectory(source, target);
     }

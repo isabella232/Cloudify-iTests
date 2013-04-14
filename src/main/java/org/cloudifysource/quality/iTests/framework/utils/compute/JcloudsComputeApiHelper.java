@@ -36,7 +36,7 @@ public class JcloudsComputeApiHelper implements ComputeApiHelper {
 
 
     @Override
-    public Set<MachineDetails> getServersByPrefix(final String machineNamePrefix) {
+    public Set<MachineDetails> getServersContaining(final String machineNamePrefix) {
 
         Predicate<ComputeMetadata> predicate = new Predicate<ComputeMetadata>() {
 

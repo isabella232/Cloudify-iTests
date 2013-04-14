@@ -17,7 +17,6 @@ import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.CloudService;
 import org.cloudifysource.restclient.GSRestClient;
 import org.cloudifysource.restclient.RestException;
-import org.jclouds.compute.domain.NodeMetadata;
 
 import java.io.File;
 import java.io.IOException;
@@ -651,7 +650,7 @@ public class StorageAllocationTester {
         }
         LogUtils.log("Machine prefix is " + machinePrefix);
 
-        MachineDetails agent = computeApiHelper.getServersByPrefix(machinePrefix).iterator().next();
+        MachineDetails agent = computeApiHelper.getServersContaining(machinePrefix).iterator().next();
         storageApiHelper.attachVolume(vol.getId(), cloudService.getCloud().getCloudStorage().getTemplates().get("SMALL_BLOCK").getDeviceName(), agent.getPublicAddress());
         invokeCommand(serviceName, "mount");
 

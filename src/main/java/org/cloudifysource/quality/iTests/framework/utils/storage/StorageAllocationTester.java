@@ -563,6 +563,7 @@ public class StorageAllocationTester {
         installer = new ServiceInstaller(restUrl, serviceName);
         installer.recipePath(folderName);
         installer.timeoutInMinutes(3);
+        installer.setDisableSelfHealing(true);
         installer.expectToFail(true);
         installer.install();
 

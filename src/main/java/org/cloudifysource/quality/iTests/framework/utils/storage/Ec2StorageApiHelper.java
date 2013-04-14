@@ -53,6 +53,7 @@ public class Ec2StorageApiHelper extends JcloudsStorageApiHelper {
                 String volName = getVolumeName(vol.getId());
                 if (!StringUtils.isBlank(volName) &&  volName.toLowerCase().contains(prefix)) {
                     VolumeDetails details = new VolumeDetails();
+                    details.setName(volName);
                     details.setId(vol.getId());
                     volumes.add(details);
                 }
@@ -62,13 +63,14 @@ public class Ec2StorageApiHelper extends JcloudsStorageApiHelper {
     }
 
     @Override
-    public VolumeDetails getVolumeById(String volumeId) {
+    public VolumeDetails getVolumeById(String volumeId) throws StorageProvisioningException {
         Volume vol = getById(volumeId);
         if (vol == null) {
             return null;
         }
         VolumeDetails volumeDetails = new VolumeDetails();
         volumeDetails.setId(vol.getId());
+        volumeDetails.setName(getVolumeName(vol.getId()));
         return volumeDetails;
     }
 

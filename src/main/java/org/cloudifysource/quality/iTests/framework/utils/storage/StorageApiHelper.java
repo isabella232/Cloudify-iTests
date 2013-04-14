@@ -26,7 +26,7 @@ public interface StorageApiHelper {
 
     Set<VolumeDetails> getVolumesByPrefix(final String prefix) throws StorageProvisioningException;
 
-    VolumeDetails getVolumeById(final String volumeId);
+    VolumeDetails getVolumeById(final String volumeId) throws StorageProvisioningException;
 
     boolean isVolumeDeleting(final String volumeId);
 

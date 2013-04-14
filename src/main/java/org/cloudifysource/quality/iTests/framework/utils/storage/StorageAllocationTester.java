@@ -337,6 +337,12 @@ public class StorageAllocationTester {
         } , AbstractTestSupport.OPERATION_TIMEOUT * 4);
 
         LogUtils.log("Deleting previous volume : " + ourVolume.getId());
+        Set<String> volumeAttachments = storageApiHelper.getVolumeAttachments(ourVolume.getId());
+        if (volumeAttachments != null && !volumeAttachments.isEmpty()) {
+            String instanceId = volumeAttachments.iterator().next();
+            LogUtils.log("Detaching volume with id " + ourVolume.getId() + " from instance " + instanceId);
+            storageApiHelper.detachVolume(ourVolume.getId(), computeApiHelper.getServerByAttachmentId(instanceId).getPrivateAddress());
+        }
         storageApiHelper.deleteVolume(ourVolume.getId());
 
         AssertUtils.repetitiveAssertTrue(serviceName + " service did not recover", new AssertUtils.RepetitiveConditionProvider() {
@@ -628,6 +634,7 @@ public class StorageAllocationTester {
         LogUtils.log("Unmounting volume from file system");
         invokeCommand(serviceName, "unmount");
 
+        LogUtils.log("Detaching volume");
         VolumeDetails vol = storageApiHelper.getVolumesByPrefix(getVolumePrefixForTemplate("SMALL_BLOCK")).iterator().next();
         String attachmentId = storageApiHelper.getVolumeAttachments(vol.getId()).iterator().next();
         storageApiHelper.detachVolume(vol.getId(), computeApiHelper.getServerByAttachmentId(attachmentId).getPrivateAddress());
@@ -650,7 +657,7 @@ public class StorageAllocationTester {
         LogUtils.log("Machine prefix is " + machinePrefix);
 
         MachineDetails agent = computeApiHelper.getServersContaining(machinePrefix).iterator().next();
-        storageApiHelper.attachVolume(vol.getId(), cloudService.getCloud().getCloudStorage().getTemplates().get("SMALL_BLOCK").getDeviceName(), agent.getPublicAddress());
+        storageApiHelper.attachVolume(vol.getId(), cloudService.getCloud().getCloudStorage().getTemplates().get("SMALL_BLOCK").getDeviceName(), agent.getPrivateAddress());
         invokeCommand(serviceName, "mount");
 
         //asserting the file is in the mounted directory

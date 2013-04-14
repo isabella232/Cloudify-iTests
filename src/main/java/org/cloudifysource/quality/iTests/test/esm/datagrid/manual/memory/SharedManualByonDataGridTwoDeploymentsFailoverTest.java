@@ -22,9 +22,6 @@ import java.util.concurrent.TimeUnit;
  *  Test: killing 1 machine (the one without a GSM on it),
  *  check initial state was restored and that only 1 new machine is up
  *
- *  There are four versions: one with DiscoveredMachineProvisioningConfig and the other with
- *  XenServerMachineProvisioningConfig those two are mixed with one with hard machine shutdown and another with
- *  soft machine shutdown 
  *
  * @author dank
  */
@@ -71,11 +68,8 @@ public class SharedManualByonDataGridTwoDeploymentsFailoverTest extends Abstract
         manualXenDataGridDeploymentTwoIndenpendentDeploymentsFailoverTest(false, getDiscoveredMachineProvisioningConfig());
     }
 
-    /**
-     * Hard shutdown isn't supported in byon , need to check if there is a possible way to simulate this test.
-     * @throws Exception
-     */
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = false)
+
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
     public void manualXenDataGridDeploymentHardShutdownFailoverDiscoveredMachineProvisioningTest()throws Exception {
         setupDiscovereMachineProvisioningEnvironment();
         repetitiveAssertNumberOfGSAsAdded(2, OPERATION_TIMEOUT);
@@ -153,7 +147,7 @@ public class SharedManualByonDataGridTwoDeploymentsFailoverTest extends Abstract
         
         if (hardShutdown) {
             //hardShutdownMachine(machine, getMachineProvisioningConfig(), OPERATION_TIMEOUT);
-            AssertFail("Hard shutdown isn't supported in Byon");
+            stopByonMachineHard(machine.getGridServiceAgent());
         } else {
             stopByonMachine(getElasticMachineProvisioningCloudifyAdapter(),machine.getGridServiceAgent(),OPERATION_TIMEOUT,TimeUnit.MILLISECONDS);
         }
@@ -199,6 +193,7 @@ public class SharedManualByonDataGridTwoDeploymentsFailoverTest extends Abstract
         assertEquals("PUs should be shared on two machines", 2, machines.size());
 
         assertUndeployAndWait(pu);
+        assertUndeployAndWait(pu2);
     }
 
 

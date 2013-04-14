@@ -393,7 +393,7 @@ public class StorageAllocationTester {
 
         installer = new ServiceInstaller(restUrl, serviceName);
         installer.recipePath(folderName);
-        installer.timeoutInMinutes(5);
+        installer.timeoutInMinutes(10);
         installer.setDisableSelfHealing(true);
         String installOutput = installer.install();
 
@@ -461,7 +461,7 @@ public class StorageAllocationTester {
 
         installer = new ServiceInstaller(restUrl, serviceName);
         installer.recipePath(folderName);
-        installer.timeoutInMinutes(5);
+        installer.timeoutInMinutes(10);
         installer.setDisableSelfHealing(true);
         String installOutput = installer.install();
 
@@ -481,7 +481,7 @@ public class StorageAllocationTester {
 
         installer = new ServiceInstaller(restUrl, serviceName);
         installer.recipePath(folderName);
-        installer.timeoutInMinutes(5);
+        installer.timeoutInMinutes(10);
         installer.setDisableSelfHealing(true);
         String installOutput = installer.install();
 

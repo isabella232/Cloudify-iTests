@@ -104,9 +104,8 @@ public class AbstractFromXenToByonGSMTest extends AbstractByonCloudTest {
 
     private void initElasticMachineProvisioningCloudifyAdapter () throws Exception {
         elasticMachineProvisioningCloudifyAdapter = new ElasticMachineProvisioningCloudifyAdapter ();
-        //TODO remove this call with elasticMachineProvisioningCloudifyAdapter.clearContext() when the method will be commited
-        ResetElasticMachineProvisioningCloudifyAdapterProvisioningDriverContextMap.ResetProvisioningDriverContextPerDriver();
-       // elasticMachineProvisioningCloudifyAdapter.clearContext();
+        //clears byon deployer in use machine map in order to free machines in each test
+        ElasticMachineProvisioningCloudifyAdapter.clearContext();
 		elasticMachineProvisioningCloudifyAdapter.setAdmin(admin);
 		//sets cloudify configuration directory - so the ServiceReader would be able to read the groovy file
 		//the path should be to the DIRECTORY of the groovy file

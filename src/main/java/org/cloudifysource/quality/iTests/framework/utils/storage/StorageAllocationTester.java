@@ -4,6 +4,7 @@ import com.j_spaces.kernel.PlatformVersion;
 import org.apache.commons.io.FileUtils;
 import org.cloudifysource.dsl.Service;
 import org.cloudifysource.dsl.context.blockstorage.LocalStorageOperationException;
+import org.cloudifysource.dsl.internal.CloudifyConstants;
 import org.cloudifysource.dsl.internal.DSLException;
 import org.cloudifysource.dsl.internal.DSLReader;
 import org.cloudifysource.dsl.internal.ServiceReader;
@@ -351,7 +352,10 @@ public class StorageAllocationTester {
                 final String brokenServiceRestUrl = "ProcessingUnits/Names/default." + serviceName;
                 try {
                     int numOfInst = (Integer) client.getAdminData(brokenServiceRestUrl).get("Instances-Size");
-                    return (1 == numOfInst);
+                    int usmState = (Integer) client.getAdminData(brokenServiceRestUrl + "/Instances/0/Statistics/Monitors/USM/Monitors/").get("USM_State");
+                    LogUtils.log("Number of " + serviceName + " instances is " + numOfInst);
+                    LogUtils.log("USMState is " + usmState);
+                    return (1 == numOfInst && usmState == CloudifyConstants.USMState.RUNNING.ordinal());
                 } catch (RestException e) {
                     throw new RuntimeException("caught a RestException", e);
                 }

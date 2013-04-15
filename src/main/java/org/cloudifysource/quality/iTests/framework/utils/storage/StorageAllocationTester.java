@@ -352,10 +352,10 @@ public class StorageAllocationTester {
                 final String brokenServiceRestUrl = "ProcessingUnits/Names/default." + serviceName;
                 try {
                     int numOfInst = (Integer) client.getAdminData(brokenServiceRestUrl).get("Instances-Size");
-                    int usmState = (Integer) client.getAdminData(brokenServiceRestUrl + "/Instances/0/Statistics/Monitors/USM/Monitors/").get("USM_State");
+                    String usmState = (String) client.getAdminData(brokenServiceRestUrl + "/Instances/0/Statistics/Monitors/USM/Monitors/USM_State").get("USM_State");
                     LogUtils.log("Number of " + serviceName + " instances is " + numOfInst);
                     LogUtils.log("USMState is " + usmState);
-                    return (1 == numOfInst && usmState == CloudifyConstants.USMState.RUNNING.ordinal());
+                    return (1 == numOfInst && Integer.valueOf(usmState) == CloudifyConstants.USMState.RUNNING.ordinal());
                 } catch (RestException e) {
                     throw new RuntimeException("caught a RestException", e);
                 }

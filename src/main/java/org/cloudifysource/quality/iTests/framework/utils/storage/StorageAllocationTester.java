@@ -308,6 +308,15 @@ public class StorageAllocationTester {
         // also check it is attached.
         AssertUtils.assertEquals("the volume should have one attachments", 1, storageApiHelper.getVolumeAttachments(ourVolume.getId()).size());
 
+        LogUtils.log("Deleting previous volume : " + ourVolume.getId());
+        Set<String> volumeAttachments = storageApiHelper.getVolumeAttachments(ourVolume.getId());
+        if (volumeAttachments != null && !volumeAttachments.isEmpty()) {
+            String instanceId = volumeAttachments.iterator().next();
+            LogUtils.log("Detaching volume with id " + ourVolume.getId() + " from instance " + instanceId);
+            storageApiHelper.detachVolume(ourVolume.getId(), computeApiHelper.getServerByAttachmentId(instanceId).getPrivateAddress());
+        }
+        storageApiHelper.deleteVolume(ourVolume.getId());
+
         LogUtils.log("Shutting down agent");
         String attachmentId = storageApiHelper.getVolumeAttachments(ourVolume.getId()).iterator().next();
         computeApiHelper.shutdownServerByAttachmentId(attachmentId);
@@ -336,15 +345,6 @@ public class StorageAllocationTester {
 
             }
         } , AbstractTestSupport.OPERATION_TIMEOUT * 4);
-
-        LogUtils.log("Deleting previous volume : " + ourVolume.getId());
-        Set<String> volumeAttachments = storageApiHelper.getVolumeAttachments(ourVolume.getId());
-        if (volumeAttachments != null && !volumeAttachments.isEmpty()) {
-            String instanceId = volumeAttachments.iterator().next();
-            LogUtils.log("Detaching volume with id " + ourVolume.getId() + " from instance " + instanceId);
-            storageApiHelper.detachVolume(ourVolume.getId(), computeApiHelper.getServerByAttachmentId(instanceId).getPrivateAddress());
-        }
-        storageApiHelper.deleteVolume(ourVolume.getId());
 
         AssertUtils.repetitiveAssertTrue(serviceName + " service did not recover", new AssertUtils.RepetitiveConditionProvider() {
             @Override

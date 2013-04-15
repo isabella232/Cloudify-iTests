@@ -564,7 +564,6 @@ public class StorageAllocationTester {
         installer.recipePath(folderName);
         installer.timeoutInMinutes(3);
         installer.setDisableSelfHealing(true);
-        installer.expectToFail(true);
         installer.install();
 
         LogUtils.log("Searching for volumes created by the service installation");
@@ -584,7 +583,6 @@ public class StorageAllocationTester {
         installer = new ServiceInstaller(restUrl, serviceName);
         installer.recipePath(folderName);
         installer.timeoutInMinutes(3);
-        installer.setDisableSelfHealing(true);
         installer.expectToFail(true);
 
         // this installation will fail at install event.

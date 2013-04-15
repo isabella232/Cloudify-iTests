@@ -310,16 +310,13 @@ public class StorageAllocationTester {
 
         LogUtils.log("Deleting previous volume : " + ourVolume.getId());
         Set<String> volumeAttachments = storageApiHelper.getVolumeAttachments(ourVolume.getId());
-        if (volumeAttachments != null && !volumeAttachments.isEmpty()) {
-            String instanceId = volumeAttachments.iterator().next();
-            LogUtils.log("Detaching volume with id " + ourVolume.getId() + " from instance " + instanceId);
-            storageApiHelper.detachVolume(ourVolume.getId(), computeApiHelper.getServerByAttachmentId(instanceId).getPrivateAddress());
-        }
+        String instanceId = volumeAttachments.iterator().next();
+        LogUtils.log("Detaching volume with id " + ourVolume.getId() + " from instance " + instanceId);
+        storageApiHelper.detachVolume(ourVolume.getId(), computeApiHelper.getServerByAttachmentId(instanceId).getPrivateAddress());
         storageApiHelper.deleteVolume(ourVolume.getId());
 
         LogUtils.log("Shutting down agent");
-        String attachmentId = storageApiHelper.getVolumeAttachments(ourVolume.getId()).iterator().next();
-        computeApiHelper.shutdownServerByAttachmentId(attachmentId);
+        computeApiHelper.shutdownServerByAttachmentId(instanceId);
 
         final GSRestClient client = new GSRestClient("", "", new URL(restUrl), PlatformVersion.getVersionNumber());
 

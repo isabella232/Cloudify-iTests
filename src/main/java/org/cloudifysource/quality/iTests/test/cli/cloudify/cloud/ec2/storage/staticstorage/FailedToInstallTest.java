@@ -15,6 +15,7 @@ import java.util.concurrent.TimeoutException;
 
 /**
  *
+ * @see https://cloudifysource.atlassian.net/browse/CLOUDIFY-1670
  * Check that there are no leaking volumes after uninstall of a failed installation.
 
  * Created with IntelliJ IDEA.
@@ -30,7 +31,7 @@ public class FailedToInstallTest extends AbstractStorageAllocationTest {
         super.bootstrap();
     }
 
-    @Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
+    @Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true, groups = AbstractTestSupport.SUSPECTED)
     public void testLinux() throws Exception {
         storageAllocationTester.testFaultyInstallLinux();
     }

@@ -15,6 +15,8 @@ import java.util.concurrent.TimeoutException;
 
 /**
  *
+ * @see https://cloudifysource.atlassian.net/browse/CLOUDIFY-1670
+ *
  * Allocate static storage to a service but fail the attachment phase. (by using a faulty device name).
  * this will cause the USM to be stuck in an endless restart loop.
  * make sure that no un-necessary volumes are created during this loop.
@@ -32,7 +34,7 @@ public class FailureToAttachTest extends AbstractStorageAllocationTest {
         super.bootstrap();
     }
 
-    @Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
+    @Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true, groups = AbstractTestSupport.SUSPECTED)
     public void testLinux() throws Exception {
         storageAllocationTester.testFailedToAttachLinux();
     }

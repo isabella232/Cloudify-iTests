@@ -567,14 +567,8 @@ public class StorageAllocationTester {
         installer = new ServiceInstaller(restUrl, serviceName);
         installer.recipePath(folderName);
         installer.timeoutInMinutes(3);
-        installer.setDisableSelfHealing(true);
+        installer.expectToFail(true);
         installer.install();
-
-        LogUtils.log("Searching for volumes created by the service installation");
-        // the install should have created and attached a volume with a name prefix of the class name. see customizeCloud below.
-        Set<VolumeDetails> ourVolumes = storageApiHelper.getVolumesByPrefix(getVolumePrefixForTemplate("SMALL_BLOCK"));
-
-        AssertUtils.assertEquals("Found leaking volumes created by failed installation", 0, ourVolumes.size());
 
         installer.expectToFail(false);
         installer.uninstall();
@@ -589,8 +583,6 @@ public class StorageAllocationTester {
         installer.timeoutInMinutes(3);
         installer.expectToFail(true);
 
-        // this installation will fail at install event.
-        // causing the USM to shutdown and de-allocate the storage.
         installer.install();
 
         installer.expectToFail(false);

@@ -1,15 +1,17 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.hp.storage.staticstorage;
 
+import java.util.concurrent.TimeoutException;
+
 import org.cloudifysource.esc.driver.provisioning.storage.StorageProvisioningException;
 import org.cloudifysource.quality.iTests.framework.utils.ApplicationInstaller;
 import org.cloudifysource.quality.iTests.framework.utils.RecipeInstaller;
 import org.cloudifysource.quality.iTests.framework.utils.ServiceInstaller;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.AbstractStorageAllocationTest;
-import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.AbstractStorageTest;
-import org.testng.annotations.*;
-
-import java.util.concurrent.TimeoutException;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
 
 /**
  * Author: nirb

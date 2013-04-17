@@ -1,10 +1,9 @@
 package org.cloudifysource.quality.iTests.framework.utils.storage;
 
-import org.cloudifysource.dsl.cloud.Cloud;
-import org.cloudifysource.esc.driver.provisioning.storage.StorageProvisioningDriver;
-import org.cloudifysource.esc.driver.provisioning.storage.VolumeDetails;
-
 import java.util.Set;
+
+import org.cloudifysource.dsl.cloud.Cloud;
+import org.cloudifysource.esc.driver.provisioning.storage.VolumeDetails;
 
 /**
  * Created with IntelliJ IDEA.

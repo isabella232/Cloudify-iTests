@@ -133,6 +133,12 @@ public class ByonCloudService extends AbstractCloudService {
 	public void setMachines(final String[] machines) {
 		this.machines = machines;
 	}
+	
+	@Override
+	public String getRegion() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 	@Override
 	public void injectCloudAuthenticationDetails() throws IOException {	
@@ -290,4 +296,5 @@ public class ByonCloudService extends AbstractCloudService {
 		}
 		return props.getProperty(IP_LIST_PROPERTY);
 	}
+
 }

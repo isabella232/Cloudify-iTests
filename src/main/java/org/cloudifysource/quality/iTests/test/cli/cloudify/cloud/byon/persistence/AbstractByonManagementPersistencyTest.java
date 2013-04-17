@@ -24,7 +24,6 @@ import org.cloudifysource.quality.iTests.framework.utils.ScriptUtils;
 import org.cloudifysource.quality.iTests.framework.utils.ServiceInstaller;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.byon.AbstractByonCloudTest;
-import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.byon.ByonCloudService;
 import org.cloudifysource.restclient.GSRestClient;
 import org.cloudifysource.restclient.RestException;
 import org.openspaces.admin.gsm.GridServiceManager;
@@ -276,8 +275,8 @@ public abstract class AbstractByonManagementPersistencyTest extends AbstractByon
         Iterator<GridServiceManager> gsmIterator = admin.getGridServiceManagers().iterator();
         String machineIp1 = gsmIterator.next().getMachine().getHostAddress();
         String machineIp2 = gsmIterator.next().getMachine().getHostAddress();
-        SSHUtils.runCommand(machineIp1, OPERATION_TIMEOUT, "rm -rf " + fileToDeletePath, ByonCloudService.BYON_CLOUD_USER, ByonCloudService.BYON_CLOUD_PASSWORD);
-        SSHUtils.runCommand(machineIp2, OPERATION_TIMEOUT, "rm -rf " + fileToDeletePath, ByonCloudService.BYON_CLOUD_USER, ByonCloudService.BYON_CLOUD_PASSWORD);
+        SSHUtils.runCommand(machineIp1, OPERATION_TIMEOUT, "rm -rf " + fileToDeletePath, getService().getUser(), getService().getApiKey());
+        SSHUtils.runCommand(machineIp2, OPERATION_TIMEOUT, "rm -rf " + fileToDeletePath, getService().getUser(), getService().getApiKey());
 
         shutdownManagement();
 

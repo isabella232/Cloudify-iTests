@@ -33,7 +33,7 @@ public class SecurityConstants {
 	public static final String SGTEST_ROOT_DIR = SGTestHelper.getSGTestRootDir().replace('\\', '/');
 	public static final String BUILD_SECURITY_FILE_PATH = SGTestHelper.getBuildDir().replace('\\', '/') + "/config/security/spring-security.xml";
 	public static final String DEFAULT_KEYSTORE_FILE_PATH = CREDENTIALS_FOLDER + "/security/keystore";
-	public static final String DEFAULT_KEYSTORE_PASSWORD = "sgtest";
+	public static final String DEFAULT_KEYSTORE_PASSWORD = "password";
 	public static final String LDAP_SECURITY_FILE_PATH = CREDENTIALS_FOLDER + "/security/ldap-spring-security.xml";
 
 	public static final String ACCESS_DENIED_MESSAGE = "access is denied";

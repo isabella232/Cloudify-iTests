@@ -16,7 +16,7 @@ import org.cloudifysource.quality.iTests.framework.utils.CloudBootstrapper;
  */
 public interface CloudService {
 
-	void bootstrapCloud() throws Exception;
+	String bootstrapCloud() throws Exception;
 
 	void teardownCloud() throws IOException, InterruptedException;
 	

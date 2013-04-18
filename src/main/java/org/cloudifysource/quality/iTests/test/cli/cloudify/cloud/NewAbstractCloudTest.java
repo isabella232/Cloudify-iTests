@@ -37,6 +37,8 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
     protected void customizeCloud() throws Exception {}
 
     protected void beforeBootstrap() throws Exception {}
+    
+    protected void parseBootstrapOutput(String bootstrapOutput) throws Exception {}
 
     protected void afterBootstrap() throws Exception {}
 
@@ -140,7 +142,8 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 
         this.cloudService.setMachinePrefix(prefix);
         this.cloudService.setVolumePrefix(prefix);
-        this.cloudService.bootstrapCloud();
+        String bootstrapOutput = this.cloudService.bootstrapCloud();
+        parseBootstrapOutput(bootstrapOutput);
 
         if(!cloudService.getBootstrapper().isBootstrapExpectedToFail()) {
             afterBootstrap();

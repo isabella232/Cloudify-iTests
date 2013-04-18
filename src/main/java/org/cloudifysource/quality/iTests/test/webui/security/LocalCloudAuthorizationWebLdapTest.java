@@ -47,6 +47,11 @@ public class LocalCloudAuthorizationWebLdapTest extends AbstractSecuredLocalClou
 	@BeforeClass
 	public void bootstrap() throws Exception {
 
+        if(isRestPortResponding()){
+            //tearing down a previous non-secured bootstrap
+            super.teardown();
+        }
+
 		LocalCloudBootstrapper bootstrapper = new LocalCloudBootstrapper();
 		bootstrapper.secured(true).securityFilePath(SecurityConstants.LDAP_SECURITY_FILE_PATH);
 		bootstrapper.keystoreFilePath(SecurityConstants.DEFAULT_KEYSTORE_FILE_PATH).keystorePassword(SecurityConstants.DEFAULT_KEYSTORE_PASSWORD);

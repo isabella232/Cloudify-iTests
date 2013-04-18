@@ -2,20 +2,20 @@ package org.cloudifysource.quality.iTests.test.cli.cloudify;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.URL;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.cloudifysource.dsl.internal.CloudifyConstants;
+import org.cloudifysource.dsl.utils.ServiceUtils;
+import org.cloudifysource.quality.iTests.framework.utils.*;
 import org.openspaces.admin.Admin;
 import org.openspaces.admin.AdminFactory;
 
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils.ProcessResult;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.security.SecurityConstants;
-import org.cloudifysource.quality.iTests.framework.utils.ApplicationInstaller;
-import org.cloudifysource.quality.iTests.framework.utils.LocalCloudBootstrapper;
-import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
-import org.cloudifysource.quality.iTests.framework.utils.ServiceInstaller;
 
 public class AbstractSecuredLocalCloudTest extends AbstractTestSupport {
 
@@ -52,6 +52,23 @@ public class AbstractSecuredLocalCloudTest extends AbstractTestSupport {
 	protected String getRestUrl() {
 		return "https://127.0.0.1:8100";
 	}
+
+    protected boolean isRestPortResponding() throws Exception {
+
+        boolean restPortResponding = false;
+
+        final URL restUrl = new URL("http://" + InetAddress.getLocalHost().getHostAddress() + ":" + CloudifyConstants.SECURE_REST_PORT);
+        if (WebUtils.isURLAvailable(restUrl)) {
+            restPortResponding = ServiceUtils.isPortOccupied("localhost", CloudifyConstants.SECURE_REST_PORT);
+        }
+
+        if (!restPortResponding) {
+            LogUtils.log("Rest port is not responding");
+            return false;
+        } else {
+            return true;
+        }
+    }
 
 	protected void bootstrap() throws Exception {
 		LocalCloudBootstrapper bootstrapper = new LocalCloudBootstrapper();

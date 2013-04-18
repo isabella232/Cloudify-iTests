@@ -133,6 +133,7 @@ cloud {
 						// Optional. template-generic credentials. Can be overridden by specific credentials on each node, in the nodesList section.
 						username username
 						password password
+						keyFile keyFile
 
 						// Mandatory. All files from this LOCAL directory will be copied to the remote machine directory.
 						localDirectory "upload"

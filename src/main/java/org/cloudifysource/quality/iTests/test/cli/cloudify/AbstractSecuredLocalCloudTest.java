@@ -53,13 +53,13 @@ public class AbstractSecuredLocalCloudTest extends AbstractTestSupport {
 		return "https://127.0.0.1:8100";
 	}
 
-    protected boolean isRestPortResponding() throws Exception {
+    protected boolean isNonSecuredRestPortResponding() throws Exception {
 
         boolean restPortResponding = false;
 
-        final URL restUrl = new URL("http://" + InetAddress.getLocalHost().getHostAddress() + ":" + CloudifyConstants.SECURE_REST_PORT);
+        final URL restUrl = new URL("http://" + InetAddress.getLocalHost().getHostAddress() + ":" + CloudifyConstants.DEFAULT_REST_PORT);
         if (WebUtils.isURLAvailable(restUrl)) {
-            restPortResponding = ServiceUtils.isPortOccupied("localhost", CloudifyConstants.SECURE_REST_PORT);
+            restPortResponding = ServiceUtils.isPortOccupied("localhost", CloudifyConstants.DEFAULT_REST_PORT);
         }
 
         if (!restPortResponding) {

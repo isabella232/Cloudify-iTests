@@ -1,14 +1,14 @@
 /*
  * @(#)WikiPage.java Mar 6, 2007 Copyright 2007 GigaSpaces Technologies Inc.
  */
-package org.cloudifysource.quality.iTests.framework.testng.report.wiki;
+package iTests.framework.testng.report.wiki;
 
 /**
  * This class provides Wiki page information.
  * 
  * @author Igor Goldenberg
  * @since 1.0
- * @see WikiClient
+ * @see iTests.framework.testng.report.wiki.WikiClient
  */
 public class WikiPage
 {

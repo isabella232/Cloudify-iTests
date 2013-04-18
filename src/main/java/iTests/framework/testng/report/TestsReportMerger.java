@@ -1,7 +1,7 @@
-package org.cloudifysource.quality.iTests.framework.testng.report;
+package iTests.framework.testng.report;
 
-import org.cloudifysource.quality.iTests.framework.testng.report.xml.SummaryReport;
-import org.cloudifysource.quality.iTests.framework.testng.report.xml.TestsReport;
+import iTests.framework.testng.report.xml.SummaryReport;
+import iTests.framework.testng.report.xml.TestsReport;
 
 public class TestsReportMerger {
 

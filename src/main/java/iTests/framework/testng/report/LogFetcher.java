@@ -1,6 +1,6 @@
-package org.cloudifysource.quality.iTests.framework.testng.report;
+package iTests.framework.testng.report;
 
-import org.cloudifysource.quality.iTests.framework.testng.report.xml.TestLog;
+import iTests.framework.testng.report.xml.TestLog;
 import org.cloudifysource.quality.iTests.framework.tools.S3DeployUtil;
 import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
 import org.cloudifysource.quality.iTests.framework.utils.TestNGUtils;
@@ -40,30 +40,34 @@ public class LogFetcher {
     }
 
     private List<TestLog> fetchLogs(File dir, List<TestLog> list) {
-        LogUtils.log("Fetching logs from the parent directory: "+dir.getAbsolutePath());
-        File[] children = dir.listFiles();
-        if (children == null)
-            return list;
-        for (int n = 0; n < children.length; n++) {
-            File file = children[n];
-            if (file.getName().endsWith((".log"))) {
-                TestLog testLog = new TestLog(file.getName(),
-                        getFileUrl(file.getAbsolutePath()));
-                list.add(testLog);
-                continue;
-            } else if (file.isDirectory()
-                    && file.getName().equalsIgnoreCase("logs")) {
-                File[] logs = file.listFiles();
-                for (int i = 0; i < logs.length; i++) {
-                    TestLog testLog = new TestLog(logs[i].getName(),
-                            getFileUrl(logs[i].getAbsolutePath()));
+        LogUtils.log("Fetching logs from the parent directory: " + dir.getAbsolutePath());
+        try {
+            File[] children = dir.listFiles();
+            if (children == null)
+                return list;
+            for (int n = 0; n < children.length; n++) {
+                File file = children[n];
+                if (file.getName().endsWith((".log")) || file.getName().endsWith(".png")) {
+                    TestLog testLog = new TestLog(file.getName(),
+                            getFileUrl(file.getAbsolutePath()));
                     list.add(testLog);
+                    continue;
+                } else if (file.isDirectory()
+                        && file.getName().equalsIgnoreCase("logs")) {
+                    File[] logs = file.listFiles();
+                    for (int i = 0; i < logs.length; i++) {
+                        TestLog testLog = new TestLog(logs[i].getName(),
+                                getFileUrl(logs[i].getAbsolutePath()));
+                        list.add(testLog);
+                    }
+                    break;
+                } else if (file.isDirectory()
+                        && !file.getName().contains(".zip")) {
+                    fetchLogs(file, list);
                 }
-                break;
-            } else if (file.isDirectory()
-                    && !file.getName().contains(".zip")) {
-                fetchLogs(file, list);
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return list;
     }

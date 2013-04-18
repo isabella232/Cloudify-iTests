@@ -1,4 +1,4 @@
-package org.cloudifysource.quality.iTests.framework.testng.report;
+package iTests.framework.testng.report;
 
 import java.util.Comparator;
 

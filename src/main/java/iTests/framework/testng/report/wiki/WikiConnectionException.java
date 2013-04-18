@@ -3,10 +3,10 @@
  *
  * Copyright 2007 GigaSpaces Technologies Inc.
  */
-package org.cloudifysource.quality.iTests.framework.testng.report.wiki;
+package iTests.framework.testng.report.wiki;
 
 /**
- * This exception thrown by {@link WikiClient} on wiki operation failure.
+ * This exception thrown by {@link iTests.framework.testng.report.wiki.WikiClient} on wiki operation failure.
  * 
  * @author Igor Goldenberg
  * @since  1.0

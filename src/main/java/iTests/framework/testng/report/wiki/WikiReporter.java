@@ -2,14 +2,14 @@
  * @(#)WikiReporter.java Feb 27, 2007 Copyright 2007 GigaSpaces Technologies
  * Inc.
  */
-package org.cloudifysource.quality.iTests.framework.testng.report.wiki;
+package iTests.framework.testng.report.wiki;
 
-import org.cloudifysource.quality.iTests.framework.testng.report.TestsReportFileStream;
-import org.cloudifysource.quality.iTests.framework.testng.report.mail.HtmlMailReporter;
-import org.cloudifysource.quality.iTests.framework.testng.report.xml.SummaryReport;
-import org.cloudifysource.quality.iTests.framework.testng.report.xml.TestLog;
-import org.cloudifysource.quality.iTests.framework.testng.report.xml.TestReport;
-import org.cloudifysource.quality.iTests.framework.testng.report.xml.TestsReport;
+import iTests.framework.testng.report.TestsReportFileStream;
+import iTests.framework.testng.report.mail.HtmlMailReporter;
+import iTests.framework.testng.report.xml.SummaryReport;
+import iTests.framework.testng.report.xml.TestLog;
+import iTests.framework.testng.report.xml.TestReport;
+import iTests.framework.testng.report.xml.TestsReport;
 import org.cloudifysource.quality.iTests.framework.tools.SGTestHelper;
 
 import java.io.File;
@@ -100,9 +100,9 @@ public class WikiReporter {
         extProperties.put("majorVersion", majorVersion);
         extProperties.put("minorVersion", minorVersion);
 
-
         TestsReportFileStream fileStream = new TestsReportFileStream();
         TestsReport testsReport = fileStream.readFromFile(inputDirectory, fileName);
+
         WikiReporter wikiReporter = new WikiReporter(extProperties, testsReport);
         wikiReporter.generateReport();
     }
@@ -126,6 +126,7 @@ public class WikiReporter {
                 wikiPages.add(0, new WikiPage(wikiProperties.getWikiSpace(), null /* parent page */, summaryPageTitle, wikiSummaryPage));
                 reportIndex++;
             }
+
             /* main report page */
             String wikiReportPage = createReportPage();
 
@@ -134,7 +135,6 @@ public class WikiReporter {
 
             backupWikiPagesToFile();
             uploadWikiPages();
-
 
             String wikiPageUrl = createReportUrl(wikiPages.get(reportIndex));
             HtmlMailReporter mailReporter = new HtmlMailReporter();

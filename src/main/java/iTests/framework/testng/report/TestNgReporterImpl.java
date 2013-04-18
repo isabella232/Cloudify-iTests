@@ -1,4 +1,4 @@
-package org.cloudifysource.quality.iTests.framework.testng.report;
+package iTests.framework.testng.report;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -15,9 +15,9 @@ import org.testng.ISuiteResult;
 import org.testng.ITestResult;
 import org.testng.xml.XmlSuite;
 
-import org.cloudifysource.quality.iTests.framework.testng.report.xml.SummaryReport;
-import org.cloudifysource.quality.iTests.framework.testng.report.xml.TestReport;
-import org.cloudifysource.quality.iTests.framework.testng.report.xml.TestsReport;
+import iTests.framework.testng.report.xml.SummaryReport;
+import iTests.framework.testng.report.xml.TestReport;
+import iTests.framework.testng.report.xml.TestsReport;
 import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
 
 /**

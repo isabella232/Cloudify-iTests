@@ -1,6 +1,6 @@
-package org.cloudifysource.quality.iTests.framework.testng;
+package iTests.framework.testng.report;
 
-import org.cloudifysource.quality.iTests.framework.testng.annotations.TestConfiguration;
+import iTests.framework.testng.annotations.TestConfiguration;
 import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
 import org.testng.IMethodInstance;
 import org.testng.IMethodInterceptor;
@@ -49,7 +49,7 @@ public class SGTestNgSuiteSplitter implements IMethodInterceptor {
         int suiteIndex = -1;
         ITestClass testClass = null;
         for (IMethodInstance methodInstance : methods) {
-            if (context.getExcludedMethods().contains(methodInstance.getMethod())) {
+            if (context.getExcludedMethods().contains(methodInstance.getMethod())){
                 continue; //excluded method
             }
             if (!doRunMethodOnVM(methodInstance.getMethod().getTestClass().getRealClass(), methodInstance)) {
@@ -57,6 +57,13 @@ public class SGTestNgSuiteSplitter implements IMethodInterceptor {
             }
             ITestClass methodTestClass = methodInstance.getMethod().getTestClass();
 
+//            //add StartTest to all suites
+//            if (StartTest.class.getName().equals(methodTestClass.getName())) {
+//                for (List<IMethodInstance> list : suites.values()) {
+//                    list.add(0, methodInstance);
+//                }
+//                continue;
+//            }
 
             //include all methods of a certain test
             if (!methodTestClass.equals(testClass)) {

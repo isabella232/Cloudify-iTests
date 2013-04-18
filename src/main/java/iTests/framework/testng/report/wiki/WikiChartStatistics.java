@@ -1,11 +1,11 @@
-package org.cloudifysource.quality.iTests.framework.testng.report.wiki;
+package iTests.framework.testng.report.wiki;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Set;
 
 /**
- * Provides a WikiChart representation on top of a {@link Statistics} instance.
+ * Provides a WikiChart representation on top of a {@link iTests.framework.testng.report.wiki.Statistics} instance.
  * 
  * @author moran
  */

@@ -1,4 +1,4 @@
-package org.cloudifysource.quality.iTests.framework.testng.report.wiki;
+package iTests.framework.testng.report.wiki;
 
 import java.util.Properties;
 

@@ -1,4 +1,4 @@
-package org.cloudifysource.quality.iTests.framework.testng.report;
+package iTests.framework.testng.report;
 
 import java.io.File;
 import java.io.FileReader;
@@ -9,7 +9,7 @@ import java.io.IOException;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 
-import org.cloudifysource.quality.iTests.framework.testng.report.xml.TestsReport;
+import iTests.framework.testng.report.xml.TestsReport;
 
 /**
  * @author moran

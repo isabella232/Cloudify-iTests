@@ -1,18 +1,19 @@
-package org.cloudifysource.quality.iTests.framework.testng.report.mail;
+package iTests.framework.testng.report.mail;
 
-import com.gigaspaces.dashboard.DashboardDBReporter;
-import org.cloudifysource.quality.iTests.framework.report.MailReporterProperties;
-import org.cloudifysource.quality.iTests.framework.testng.report.wiki.WikiUtils;
-import org.cloudifysource.quality.iTests.framework.testng.report.xml.SummaryReport;
-import org.cloudifysource.quality.iTests.framework.tools.SGTestHelper;
-import org.cloudifysource.quality.iTests.framework.tools.SimpleMail;
-
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.StringTokenizer;
+
+import com.gigaspaces.dashboard.DashboardDBReporter;
+
+import iTests.framework.testng.report.wiki.WikiUtils;
+import iTests.framework.testng.report.xml.SummaryReport;
+import org.cloudifysource.quality.iTests.framework.tools.SGTestHelper;
+import org.cloudifysource.quality.iTests.framework.tools.SimpleMail;
+
+import java.io.FileInputStream;
 
 public class HtmlMailReporter {
 
@@ -32,7 +33,7 @@ public class HtmlMailReporter {
         String suiteName = summaryReport.getSuiteName();
 
         List<String> mailRecipients = null;
-        if (buildNumber == null)
+        if(buildNumber == null)
             return;
 
         Properties props = new Properties();
@@ -61,11 +62,19 @@ public class HtmlMailReporter {
         sb.append("<h4 style=\"color:green\">Passed Tests:  " + summaryReport.getSuccess() + " </h4></br>").append("\n");
         sb.append("<h4 style=\"color:orange\">Skipped:  " + summaryReport.getSkipped() + " </h4></br>").append("\n");
         sb.append("<h4 style=\"color:coral\">Suspected:  " + summaryReport.getSuspected() + " </h4></br>").append("\n");
-        
         sb.append("</html>");
+
         try {
             mailRecipients = mailProperties.getRecipients();
             if (suiteName.contains("webui")) mailRecipients = mailProperties.getWebUIRecipients();
+            if (suiteName.equals("ServiceGrid")) mailRecipients = mailProperties.getSGRecipients();
+            if (suiteName.equals("WAN")) mailRecipients = mailProperties.getWanRecipients();
+            if (suiteName.equals("SECURITY")) mailRecipients = mailProperties.getSecurityRecipients();
+            if (suiteName.equals("CLOUDIFY")) mailRecipients = mailProperties.getCloudifyRecipients();
+            if (suiteName.equals("ESM")) mailRecipients = mailProperties.getESMRecipients();
+            if (suiteName.equals("DISCONNECT")) mailRecipients = mailProperties.getDisconnectRecipients();
+            if (suiteName.equals("CPP_Linux-amd64")) mailRecipients = mailProperties.getCPP_Linux_amd64Recipients();
+            if (suiteName.equals("CPP_Linux32")) mailRecipients = mailProperties.getCPP_Linux32();
             if (suiteName.contains("CLOUDIFY")) mailRecipients = mailProperties.getCloudifyRecipients();
 
             System.out.println("sending mail to recipients: " + mailRecipients);
@@ -77,13 +86,14 @@ public class HtmlMailReporter {
         } catch (Exception e) {
             throw new RuntimeException("failed to send mail - " + e, e);
         }
-        //TODO:write results to DB
+
         String[] buildeNumberSplit = buildNumber.split("_");
         String buildNumberForDB;
         if(buildeNumberSplit.length >= 2)
             buildNumberForDB = buildeNumberSplit[1];
         else
             buildNumberForDB = buildNumber;
+
         DashboardDBReporter.writeToDB(summaryReport.getSuiteName(), buildNumberForDB, majorVersion, minorVersion,
 				summaryReport.getDuration(), buildLogUrl, summaryReport.getTotalTestsRun(), summaryReport.getFailed(),
 				summaryReport.getSuccess(), summaryReport.getSkipped(), summaryReport.getSuspected(), 0/*orphans*/, wikiPageUrl, null);
@@ -98,17 +108,16 @@ public class HtmlMailReporter {
         return tokens.get(0) + "//" + tokens.get(1) + "/download/" + tokens.get(3) + "/" + tokens.get(2);
     }
 
-
 //	/*
 //	 * Test this!
 //	 */
 //	public static void main(String[] args) {
-//		
+//
 //        System.setProperty("iTests.buildNumber", "1234-123");
 //        System.setProperty("iTests.suiteName", "ServiceGrid");
 //        System.setProperty("sgtest.majorVersion", "9.0.0");
 //        System.setProperty("sgtest.minorVersion", "m1");
-//		
+//
 //		HtmlMailReporter mailReporter = new HtmlMailReporter();
 //		TestsReport testsReport = TestsReport.newEmptyReport();
 //		testsReport.setSuiteName("ServiceGrid");

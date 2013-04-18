@@ -1,4 +1,4 @@
-package org.cloudifysource.quality.iTests.framework.testng;
+package iTests.framework.testng.report;
 
 import java.util.ArrayList;
 import java.util.List;

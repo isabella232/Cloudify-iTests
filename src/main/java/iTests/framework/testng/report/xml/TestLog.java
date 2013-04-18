@@ -1,4 +1,4 @@
-package org.cloudifysource.quality.iTests.framework.testng.report.xml;
+package iTests.framework.testng.report.xml;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 

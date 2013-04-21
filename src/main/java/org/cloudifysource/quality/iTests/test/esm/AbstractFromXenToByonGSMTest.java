@@ -283,7 +283,13 @@ public class AbstractFromXenToByonGSMTest extends AbstractByonCloudTest {
 				cloud, template, templateName,
 				managementTemplate.getRemoteDirectory(), null);
 	}
-	
+
+    protected CloudifyMachineProvisioningConfig getMachineProvisioningConfigDedicatedManagement() {
+        CloudifyMachineProvisioningConfig machineProvisioningConfig = getMachineProvisioningConfig();
+        machineProvisioningConfig.setDedicatedManagementMachines(true);
+        return machineProvisioningConfig;
+    }
+
 	protected CloudifyMachineProvisioningConfig getMachineProvisioningConfigWithMachineZone(
 			String[] machineZones) {
 		if (machineZones.length == 0) {

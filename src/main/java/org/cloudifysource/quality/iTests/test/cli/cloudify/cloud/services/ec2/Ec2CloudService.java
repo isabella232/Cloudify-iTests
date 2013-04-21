@@ -104,7 +104,7 @@ public class Ec2CloudService extends JCloudsCloudService {
 		propsToReplace.put("numberOfManagementMachines 1", "numberOfManagementMachines "
 				+ getNumberOfManagementMachines());
 
-        propsToReplace.put("namePrefix \"cloudify-", "namePrefix \"" + getVolumePrefix());
+        propsToReplace.put("cloudify-storage-volume", getVolumePrefix());
 
         IOUtils.replaceTextInFile(getPathToCloudGroovy(), propsToReplace);
 

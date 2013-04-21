@@ -23,11 +23,6 @@ service {
 	
 	lifecycle { 
 		
-		def volumeId;
-		def device = "/dev/xvdc"
-		def path = "/teststorage"
-		def fs = "foo"
-	
 		init { println "This is the init event" }
 		preInstall {println "This is the preInstall event" }
 		postInstall {println "This is the postInstall event"}
@@ -37,26 +32,12 @@ service {
 		
 		postStart {
 			
-			println "Creating a new storage volume"
-			volumeId = context.storage.createVolume("SMALL_BLOCK")
-			println "Attaching volume to File System"
-			context.storage.attachVolume(volumeId, device)
-			println "Formating volume"
-			context.storage.format(device, fs)
-			context.storage.mount(device, path)
-	
+			context.storage.format("foo", "bar")
+
 		}
 		preStop {println "This is the preStop event" }
 		postStop {println "This is the postStop event" }
-		shutdown {
 
-			println "Detaching volume with id ${volumeId} from machine."
-			context.storage.detachVolume(volumeId) 
-			println "Deleting volume with id ${volumeId}"
-			context.storage.deleteVolume(volumeId);
-
-		}
-		
 		startDetection {
 			new File(context.serviceDirectory + "/marker.txt").exists()
 		}

@@ -61,7 +61,7 @@ public class CloudOverridesESMFailoverTest extends AbstractKillManagementTest {
 			
 			// terminate the ESM machine and start it again
 			String hostAddress = getMachineToKill().getHostAddress();
-			restartMachineAndWait(hostAddress);
+			restartMachineAndWait(hostAddress, getService());
 			startManagement(hostAddress);
 			
 			// make sure the management is up

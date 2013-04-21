@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.cloudifysource.quality.iTests.framework.tools.SGTestHelper;
 import org.cloudifysource.quality.iTests.framework.utils.IOUtils;
@@ -32,9 +33,16 @@ import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.Abstra
 import com.j_spaces.kernel.PlatformVersion;
 
 public class ByonCloudService extends AbstractCloudService {
+	
+    private static final String BYON_CERT_PROPERTIES = CREDENTIALS_FOLDER + "/cloud/byon/byon-cred.properties";
+    private Properties certProperties = getCloudProperties(BYON_CERT_PROPERTIES);
 
-	public static final String BYON_CLOUD_USER= "tgrid";
-	public static final String BYON_CLOUD_PASSWORD = "tgrid";
+    private String user = certProperties.getProperty("user");
+    private String password = certProperties.getProperty("password");
+    private String keyFile = certProperties.getProperty("keyFile");
+
+	//public static final String BYON_CLOUD_USER= "tgrid";
+	//public static final String BYON_CLOUD_PASSWORD = "tgrid";
 	
 	public static final String IP_LIST_PROPERTY = "ipList";
 	
@@ -73,7 +81,35 @@ public class ByonCloudService extends AbstractCloudService {
 		}
 		this.machines = ipList.split(",");
 	}
+
+
 	
+	public void setUser(String user) {
+		this.user = user;
+	}	
+	
+	@Override
+	public String getUser() {
+		return user;
+	}
+
+	@Override
+	public String getApiKey() {
+		return password;
+	}
+	
+	public void setApiKey(final String apiKey) {
+		this.password = apiKey;
+	}
+	
+	public String getKeyFile() {
+		return keyFile;
+	}
+
+	public void setKeyFile(String keyFile) {
+		this.keyFile = keyFile;
+	}
+
 	public boolean isSudo() {
 		return sudo;
 	}
@@ -97,11 +133,18 @@ public class ByonCloudService extends AbstractCloudService {
 	public void setMachines(final String[] machines) {
 		this.machines = machines;
 	}
+	
+	@Override
+	public String getRegion() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 	@Override
 	public void injectCloudAuthenticationDetails() throws IOException {	
-		getProperties().put("username", BYON_CLOUD_USER);
-		getProperties().put("password", BYON_CLOUD_PASSWORD);
+		getProperties().put("username", user);
+		getProperties().put("password", password);
+		getProperties().put("keyFile", keyFile);
 		
 		Map<String, String> propsToReplace = new HashMap<String,String>();
 		propsToReplace.put("cloudify_agent_", getMachinePrefix() + "cloudify-agent");
@@ -120,6 +163,11 @@ public class ByonCloudService extends AbstractCloudService {
 		propsToReplace.put("\"org.cloudifysource.clearRemoteDirectoryOnStart\":\"false\"", "\"org.cloudifysource.clearRemoteDirectoryOnStart\":\"true\"");
 		propsToReplace.put("/tmp/gs-files", "/tmp/byon/gs-files");
 		this.getAdditionalPropsToReplace().putAll(propsToReplace);
+		
+		// add a pem file
+		final File fileToCopy = new File(CREDENTIALS_FOLDER + "/cloud/" + getCloudName() + "/" + keyFile);
+		final File targetLocation = new File(getPathToCloudFolder() + "/upload/");
+		FileUtils.copyFileToDirectory(fileToCopy, targetLocation);
 
 		replaceCloudifyURL();
 		replaceBootstrapManagementScript();
@@ -157,16 +205,6 @@ public class ByonCloudService extends AbstractCloudService {
 	}
 	
 	@Override
-	public String getUser() {
-		return BYON_CLOUD_USER;
-	}
-
-	@Override
-	public String getApiKey() {
-		return BYON_CLOUD_PASSWORD;
-	}
-	
-	@Override
 	public void beforeBootstrap() {
 		cleanMachines();
 	}
@@ -188,7 +226,7 @@ public class ByonCloudService extends AbstractCloudService {
 		}
 		
 		try {
-			LogUtils.log(SSHUtils.runCommand(this.getMachines()[0], AbstractTestSupport.OPERATION_TIMEOUT, command, BYON_CLOUD_USER, BYON_CLOUD_PASSWORD));
+			LogUtils.log(SSHUtils.runCommand(this.getMachines()[0], AbstractTestSupport.OPERATION_TIMEOUT, command, user, password));
 		} catch (AssertionError e) {
 			LogUtils.log("Failed to clean files .cloudify folder Reason --> " + e.getMessage());
 		}
@@ -205,7 +243,7 @@ public class ByonCloudService extends AbstractCloudService {
 		String[] hosts = this.getMachines();			
 		for (String host : hosts) {
 			try {
-				LogUtils.log(SSHUtils.runCommand(host, AbstractTestSupport.OPERATION_TIMEOUT, command, BYON_CLOUD_USER, BYON_CLOUD_PASSWORD));
+				LogUtils.log(SSHUtils.runCommand(host, AbstractTestSupport.OPERATION_TIMEOUT, command, user, password));
 			} catch (AssertionError e) {
 				LogUtils.log("Failed to clean files on host " + host + " .Reason --> " + e.getMessage());
 			}
@@ -222,7 +260,7 @@ public class ByonCloudService extends AbstractCloudService {
 		String[] hosts = this.getMachines();
 		for (String host : hosts) {
 			try {
-				LogUtils.log(SSHUtils.runCommand(host, AbstractTestSupport.OPERATION_TIMEOUT, command, BYON_CLOUD_USER, BYON_CLOUD_PASSWORD));
+				LogUtils.log(SSHUtils.runCommand(host, AbstractTestSupport.OPERATION_TIMEOUT, command, user, password));
 			} catch (AssertionError e) {
 				LogUtils.log("Failed to clean files on host " + host + " .Reason --> " + e.getMessage());
 			}
@@ -240,7 +278,7 @@ public class ByonCloudService extends AbstractCloudService {
 		for (String host : hosts) {
 			try {
                 LogUtils.log("Trying to kill: "+host);
-				LogUtils.log(SSHUtils.runCommand(host, AbstractTestSupport.OPERATION_TIMEOUT, command, BYON_CLOUD_USER, BYON_CLOUD_PASSWORD));
+				LogUtils.log(SSHUtils.runCommand(host, AbstractTestSupport.OPERATION_TIMEOUT, command, user, password));
 			} catch (AssertionError e) {
 				LogUtils.log("Failed to kill java processes on host " + host + " .Reason --> " + e.getMessage());
 			}
@@ -258,4 +296,5 @@ public class ByonCloudService extends AbstractCloudService {
 		}
 		return props.getProperty(IP_LIST_PROPERTY);
 	}
+
 }

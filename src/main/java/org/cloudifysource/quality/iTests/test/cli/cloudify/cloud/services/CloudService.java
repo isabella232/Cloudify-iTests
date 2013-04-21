@@ -67,4 +67,8 @@ public interface CloudService {
 	String getPathToCloudGroovy();
 
 	Map<String, Object> getProperties();
+
+    Map<String, String> getAdditionalPropsToReplace();
+
+    String getRegion();
 }

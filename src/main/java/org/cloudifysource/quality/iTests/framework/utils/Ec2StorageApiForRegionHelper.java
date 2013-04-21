@@ -80,6 +80,10 @@ public class Ec2StorageApiForRegionHelper {
 		}
 		return ourVolume;
 	}
+
+    public void attachVolume(final String volumeId, final String instanceId, final String device) {
+        client.attachVolumeInRegion(region, volumeId, instanceId, device);
+    }
 	
 	public Set<Volume> getVolumesByName(final String volumeName) {
 

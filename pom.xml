@@ -341,7 +341,7 @@
 						</property>
 						<property>
 							<name>listener</name>
-							<value>org.cloudifysource.quality.iTests.framework.testng.SGTestNGListener,org.cloudifysource.quality.iTests.framework.testng.SGTestNgSuiteSplitter,org.cloudifysource.quality.iTests.framework.testng.report.TestNgReporterImpl</value>
+							<value>iTests.framework.testng.report.SGTestNGListener,iTests.framework.testng.report.SGTestNgSuiteSplitter,iTests.framework.testng.report.TestNgReporterImpl</value>
 						</property>
 					</properties>
 					<systemProperties>

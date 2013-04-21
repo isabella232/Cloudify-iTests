@@ -8,6 +8,7 @@ import org.cloudifysource.quality.iTests.framework.utils.*;
 import org.cloudifysource.quality.iTests.framework.utils.AssertUtils.RepetitiveConditionProvider;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.byon.AbstractByonCloudTest;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.CloudService;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.byon.ByonCloudService;
 import org.openspaces.admin.gsm.GridServiceManager;
 import org.openspaces.admin.machine.Machine;
@@ -54,7 +55,7 @@ public abstract class AbstractKillManagementTest extends AbstractByonCloudTest {
 		GridServiceManager otherManager = getManagerInOtherHostThen(machineAddress);
 		
 		LogUtils.log("restarting machine with ip " + machine.getHostAddress());
-		restartMachineAndWait(machineAddress);
+		restartMachineAndWait(machineAddress, getService());
 		LogUtils.log("restart was susccefull");
 		LogUtils.log("waiting for backup GSM to manage the tomcat processing unit");
 		AssertUtils.assertEquals("Wrong managing gsm for tomcat pu", otherManager, ProcessingUnitUtils.waitForManaged(tomcat, otherManager));
@@ -153,22 +154,19 @@ public abstract class AbstractKillManagementTest extends AbstractByonCloudTest {
 			try {
 				String managementMachineTemplate = getService().getCloud().getConfiguration().getManagementMachineTemplate();
 				String cloudFile = getService().getCloud().getCloudCompute().getTemplates().get(managementMachineTemplate).getRemoteDirectory() + "/byon-cloud.groovy";
-				SSHUtils.runCommand(machine1, AbstractTestSupport.DEFAULT_TEST_TIMEOUT,  ByonCloudService.BYON_HOME_FOLDER + "/gigaspaces/tools/cli/cloudify.sh start-management --verbose -timeout 10 -cloud-file "  + cloudFile, ByonCloudService.BYON_CLOUD_USER, ByonCloudService.BYON_CLOUD_PASSWORD);
+				SSHUtils.runCommand(machine1, AbstractTestSupport.DEFAULT_TEST_TIMEOUT,  ByonCloudService.BYON_HOME_FOLDER + "/gigaspaces/tools/cli/cloudify.sh start-management --verbose -timeout 10 -cloud-file "  + cloudFile, getService().getUser(), getService().getApiKey());
 				return;
 			} catch (Throwable t) {
 				LogUtils.log("Failed to start management on machine " + machine1 + " restarting machine before attempting again. attempt number " + (i + 1), t);
-				restartMachineAndWait(machine1);
+				restartMachineAndWait(machine1, getService());
 			}
 		}
         AssertUtils.assertFail("Failed starting management on host " + machine1);
 
 	}
 
-	public static void restartMachineAndWait(final String machine) throws Exception {
-        DisconnectionUtils.restartMachineAndWait(machine);
+	public void restartMachineAndWait(final String machine, final CloudService service) throws Exception {
+        DisconnectionUtils.restartMachineAndWait(machine, service);
 	}
 
-	private static void restartMachine(String toKill) {
-        DisconnectionUtils.restartMachine(toKill);
-	}
 }

@@ -32,7 +32,7 @@ public class ManagementHardShutdownAndRecoveryTest extends AbstractByonManagemen
     @Override
     public void shutdownManagement() throws Exception{
         for (Machine manager : gsmMachines) {
-            DisconnectionUtils.restartMachineAndWait(manager.getHostAddress());
+            DisconnectionUtils.restartMachineAndWait(manager.getHostAddress(), getService());
         }
     }
 

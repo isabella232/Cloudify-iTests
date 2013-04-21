@@ -48,6 +48,7 @@ SCRIPT=`readlink -f $0`
 SCRIPTPATH=`dirname $SCRIPT`
 echo script path is $SCRIPTPATH
 
+
 if [ -f ${SCRIPTPATH}/cloudify_env.sh ]; then
 	ENV_FILE_PATH=${SCRIPTPATH}/cloudify_env.sh
 else
@@ -78,6 +79,7 @@ fi
 
 # this means it is the first time this machine is being used.
 if [ ! -d "$HOME_DIR" ]; then
+	echo creating home directory "$HOME_DIR"
 	mkdir $HOME_DIR
 fi
 

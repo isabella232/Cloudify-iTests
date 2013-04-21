@@ -1,29 +1,28 @@
 package org.cloudifysource.quality.iTests.test.webui.security;
 
-import java.net.UnknownHostException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Test;
-
-import org.cloudifysource.quality.iTests.test.cli.cloudify.AbstractSecuredLocalCloudTest;
-import org.cloudifysource.quality.iTests.test.cli.cloudify.security.SecurityConstants;
-import org.cloudifysource.quality.iTests.test.webui.WebuiTestUtils;
-import org.cloudifysource.quality.iTests.test.webui.cloud.PermittedServicesWrapper;
-import org.cloudifysource.quality.iTests.test.webui.cloud.WebSecurityAuthorizationHelper;
-
 import com.gigaspaces.webuitf.LoginPage;
 import com.gigaspaces.webuitf.MainNavigation;
 import com.gigaspaces.webuitf.dashboard.DashboardTab;
 import com.gigaspaces.webuitf.services.ServicesTab;
 import com.gigaspaces.webuitf.topology.TopologyTab;
-
+import org.cloudifysource.dsl.internal.CloudifyConstants;
 import org.cloudifysource.quality.iTests.framework.utils.LocalCloudBootstrapper;
 import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.AbstractSecuredLocalCloudTest;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.security.SecurityConstants;
+import org.cloudifysource.quality.iTests.test.webui.WebuiTestUtils;
+import org.cloudifysource.quality.iTests.test.webui.cloud.PermittedServicesWrapper;
+import org.cloudifysource.quality.iTests.test.webui.cloud.WebSecurityAuthorizationHelper;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
+
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 public class LocalCloudAuthorizationWebLdapTest extends AbstractSecuredLocalCloudTest {
 
@@ -46,6 +45,16 @@ public class LocalCloudAuthorizationWebLdapTest extends AbstractSecuredLocalClou
 	@Override
 	@BeforeClass
 	public void bootstrap() throws Exception {
+
+        final String nonSecuredRestUrl = "http://" + InetAddress.getLocalHost().getHostAddress() + ":" + CloudifyConstants.DEFAULT_REST_PORT;
+
+        if(isNonSecuredRestPortResponding()){
+            LogUtils.log("tearing down a previous non-secured bootstrap");
+            LocalCloudBootstrapper bootstrapper = new LocalCloudBootstrapper();
+            bootstrapper.timeoutInMinutes(15);
+            bootstrapper.setRestUrl(nonSecuredRestUrl);
+            bootstrapper.teardown();
+        }
 
 		LocalCloudBootstrapper bootstrapper = new LocalCloudBootstrapper();
 		bootstrapper.secured(true).securityFilePath(SecurityConstants.LDAP_SECURITY_FILE_PATH);
@@ -73,7 +82,7 @@ public class LocalCloudAuthorizationWebLdapTest extends AbstractSecuredLocalClou
 		}
 	}
 
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = false)
 	public void basicTest() throws Exception {
 		LogUtils.log("Starting test - webui localcloud");
 		

@@ -133,8 +133,13 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
         customizeCloud();
 
         beforeBootstrap();
-        this.cloudService.setMachinePrefix(System.getProperty("user.name") + "-" + this.getClass().getSimpleName().toLowerCase() + "-");
-        this.cloudService.setVolumePrefix(System.getProperty("user.name") + "-" + this.getClass().getSimpleName().toLowerCase() + "-");
+
+        String branchName = System.getProperty("branch.name", "").replace("_","-");
+        LogUtils.log("Branch name is : " + branchName);
+        final String prefix = System.getProperty("user.name") + "-"  + branchName + "-" + this.getClass().getSimpleName().toLowerCase() + "-";
+
+        this.cloudService.setMachinePrefix(prefix);
+        this.cloudService.setVolumePrefix(prefix);
         this.cloudService.bootstrapCloud();
 
         if(!cloudService.getBootstrapper().isBootstrapExpectedToFail()) {

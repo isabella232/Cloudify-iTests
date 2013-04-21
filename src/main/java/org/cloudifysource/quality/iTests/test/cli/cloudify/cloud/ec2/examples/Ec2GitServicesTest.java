@@ -1,6 +1,6 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.ec2.examples;
 
-import org.cloudifysource.quality.iTests.framework.testng.annotations.TestConfiguration;
+import iTests.framework.testng.annotations.TestConfiguration;
 import org.cloudifysource.quality.iTests.framework.utils.ScriptUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.AbstractServicesTest;
 import org.eclipse.jgit.api.Git;

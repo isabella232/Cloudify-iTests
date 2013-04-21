@@ -82,7 +82,7 @@ public class LocalCloudAuthorizationWebLdapTest extends AbstractSecuredLocalClou
 		}
 	}
 
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
 	public void basicTest() throws Exception {
 		LogUtils.log("Starting test - webui localcloud");
 		

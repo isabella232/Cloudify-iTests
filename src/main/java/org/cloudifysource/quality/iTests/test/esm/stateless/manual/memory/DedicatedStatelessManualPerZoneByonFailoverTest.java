@@ -48,8 +48,9 @@ public class DedicatedStatelessManualPerZoneByonFailoverTest extends AbstractFro
     }
 
     private static final long TIME_TO_START_AGENT_MILLIS = TimeUnit.MINUTES.toMillis(3);
-    String ZONE1 = "__cloud.zone.zone1";
-    String ZONE2 = "__cloud.zone.zone2";
+    String ZONE1 = "zone1";
+    String ZONE2 = "zone2";
+    String CLOUD_PREFIX = "__cloud.zone.";
 
     /**
      * @throws Exception
@@ -64,7 +65,7 @@ public class DedicatedStatelessManualPerZoneByonFailoverTest extends AbstractFro
      * @throws Exception
      * @see GS-10576, GS-10577
      */
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled=false)
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled=true)
     public void testNoSpecifyZone() throws Exception {
         twoZoneFailoverTest(false);
     }
@@ -80,11 +81,11 @@ public class DedicatedStatelessManualPerZoneByonFailoverTest extends AbstractFro
         if (specifyZone) {
             deployment.scale(
                     new ManualCapacityPerZonesScaleConfigurer()
-                            .addZone(new String[] {ZONE1},
+                            .addZone(new String[] {CLOUD_PREFIX+ZONE1},
                                     new CapacityRequirementsConfigurer()
                                             .memoryCapacity(1, MemoryUnit.GIGABYTES)
                                             .create())
-                            .addZone(new String[] {ZONE2},
+                            .addZone(new String[] {CLOUD_PREFIX+ZONE2},
                                     new CapacityRequirementsConfigurer()
                                             .memoryCapacity(1, MemoryUnit.GIGABYTES)
                                             .create())
@@ -96,11 +97,11 @@ public class DedicatedStatelessManualPerZoneByonFailoverTest extends AbstractFro
                     new ManualCapacityScaleConfigurer()
                             .memoryCapacity(2, MemoryUnit.GIGABYTES)
                             .enableGridServiceAgentZonesAware()
+                            .atMostOneContainerPerMachine()
                             .create());
-            final String ZONE3 = "zone3";
-            final String ZONE4 = "zone4";
+
             //round robin on 4 zones, we should expect only ZONE1,ZONE2 to start
-            //deployment.dedicatedMachineProvisioning(getMachineProvisioningWithRoundRobinZonesConfig(ZONE1,ZONE2,ZONE3,ZONE4 ));
+            deployment.dedicatedMachineProvisioning(getMachineProvisioningConfigDedicatedManagement());
         }
 
         final ProcessingUnit pu = super.deploy(deployment);
@@ -112,15 +113,18 @@ public class DedicatedStatelessManualPerZoneByonFailoverTest extends AbstractFro
         repetitiveAssertNumberOfGSCsAdded(2, OPERATION_TIMEOUT);
         repetitiveAssertNumberOfGSCsRemoved(0, OPERATION_TIMEOUT);
 
-        GridServiceAgent gsa1 = assertOneGridServiceAgentsInZone(ZONE1);
-        assertOneGridServiceAgentsInZone(ZONE2);
+        // 2 options for zones prefix:
+        // 1. "__cloud.zone." is appended by the ElasticMachineProvisioningCloudifyAdapter when locationId is null
+        // 2. we should manually append the prefix "__cloud.zone." when adding zones explicitly
+        GridServiceAgent gsa1 = assertOneGridServiceAgentsInZone(CLOUD_PREFIX+ZONE1);
+        assertOneGridServiceAgentsInZone(CLOUD_PREFIX+ZONE2);
 
         stopByonMachine(getElasticMachineProvisioningCloudifyAdapter(), gsa1, OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
         repetitiveAssertGridServiceAgentRemoved(gsa1, OPERATION_TIMEOUT);
 
         GsmTestUtils.waitForScaleToCompleteIgnoreCpuSla(pu, 2, OPERATION_TIMEOUT);
-        assertOneGridServiceAgentsInZone(ZONE1);
-        assertOneGridServiceAgentsInZone(ZONE2);
+        assertOneGridServiceAgentsInZone(CLOUD_PREFIX+ZONE1);
+        assertOneGridServiceAgentsInZone(CLOUD_PREFIX+ZONE2);
         repetitiveAssertNumberOfGSAsAdded(4, OPERATION_TIMEOUT);
         repetitiveAssertNumberOfGSAsRemoved(1, OPERATION_TIMEOUT);
 

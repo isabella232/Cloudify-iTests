@@ -12,10 +12,10 @@ public class RackspaceCloudService extends JCloudsCloudService {
 
     private static final String RACKSPACE_CERT_PROPERTIES = CREDENTIALS_FOLDER + "/cloud/rackspace/rackspace-cred.properties";
 
-    private Properties certProperties = getCloudProperties(RACKSPACE_CERT_PROPERTIES);
-	private String user = certProperties.getProperty("user");
-	private String apiKey = certProperties.getProperty("apiKey");
-    private String tenantId = certProperties.getProperty("tenantId");
+    private final Properties certProperties = getCloudProperties(RACKSPACE_CERT_PROPERTIES);
+	private final String user = certProperties.getProperty("user");
+	private final String apiKey = certProperties.getProperty("apiKey");
+    private final String tenantId = certProperties.getProperty("tenantId");
 
 	public RackspaceCloudService() {
 		super("rackspace");

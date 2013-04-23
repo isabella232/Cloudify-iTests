@@ -36,7 +36,7 @@ public class WebSecurityAuthorizationHelper {
 	
 	private static long assertWaitingTime = 10000;
 
-	public static void performLoginAndAllViewsTests( LoginPage loginPage, String username, String password, 
+	public static MainNavigation performLoginAndAllViewsTests( LoginPage loginPage, String username, String password, 
 			PermittedServicesWrapper permittedServicesWrapper ) throws Exception{
 
 		logStartValidationForUser( username );
@@ -58,6 +58,8 @@ public class WebSecurityAuthorizationHelper {
 		checkServicesTab( servicesTab, permittedServicesWrapper ); 		
 
 		logValidationCompletedForUser(username);
+		
+		return mainNav;
 	}
 
 	private static void checkServicesTab(ServicesTab servicesTab, PermittedServicesWrapper permittedServicesWrapper) {

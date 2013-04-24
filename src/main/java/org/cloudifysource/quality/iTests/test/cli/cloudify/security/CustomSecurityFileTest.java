@@ -2,7 +2,7 @@ package org.cloudifysource.quality.iTests.test.cli.cloudify.security;
 
 import java.io.IOException;
 
-import org.cloudifysource.quality.iTests.framework.tools.SGTestHelper;
+import iTests.framework.tools.SGTestHelper;
 import org.cloudifysource.quality.iTests.framework.utils.ApplicationInstaller;
 import org.cloudifysource.quality.iTests.framework.utils.LocalCloudBootstrapper;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.AbstractSecuredLocalCloudTest;

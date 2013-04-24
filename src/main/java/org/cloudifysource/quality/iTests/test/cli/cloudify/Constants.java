@@ -4,7 +4,7 @@ package org.cloudifysource.quality.iTests.test.cli.cloudify;
 import java.io.File;
 import java.text.MessageFormat;
 
-import org.cloudifysource.quality.iTests.framework.tools.SGTestHelper;
+import iTests.framework.tools.SGTestHelper;
 
 public class Constants {
 	//Changing either the service-name will require changing the service name as well.

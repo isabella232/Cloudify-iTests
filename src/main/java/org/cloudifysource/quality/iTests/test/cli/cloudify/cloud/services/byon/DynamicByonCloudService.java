@@ -3,7 +3,7 @@ package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.byon;
 import java.io.File;
 import java.io.IOException;
 
-import org.cloudifysource.quality.iTests.framework.tools.SGTestHelper;
+import iTests.framework.tools.SGTestHelper;
 import org.cloudifysource.quality.iTests.framework.utils.IOUtils;
 
 public class DynamicByonCloudService extends ByonCloudService {

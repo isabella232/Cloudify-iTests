@@ -3,7 +3,7 @@ package org.cloudifysource.quality.iTests.test.cli.cloudify.pu.xen;
 import java.io.IOException;
 
 import org.cloudifysource.dsl.utils.ServiceUtils;
-import org.cloudifysource.quality.iTests.framework.tools.SGTestHelper;
+import iTests.framework.tools.SGTestHelper;
 import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.xen.AbstractApplicationFailOverXenTest;

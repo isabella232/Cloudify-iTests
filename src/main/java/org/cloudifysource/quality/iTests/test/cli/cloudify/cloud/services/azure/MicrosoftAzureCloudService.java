@@ -21,7 +21,7 @@ import org.cloudifysource.esc.driver.provisioning.azure.model.HostedService;
 import org.cloudifysource.esc.driver.provisioning.azure.model.HostedServices;
 import org.cloudifysource.esc.driver.provisioning.azure.model.NetworkConfigurationSet;
 import org.cloudifysource.esc.driver.provisioning.azure.model.Role;
-import org.cloudifysource.quality.iTests.framework.tools.SGTestHelper;
+import iTests.framework.tools.SGTestHelper;
 import org.cloudifysource.quality.iTests.framework.utils.IOUtils;
 import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.AbstractCloudService;

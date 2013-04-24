@@ -1,4 +1,4 @@
-package org.cloudifysource.quality.iTests.framework.testng;
+package iTests.framework.testng.report;
 
 import java.text.DateFormat;
 import java.util.Date;

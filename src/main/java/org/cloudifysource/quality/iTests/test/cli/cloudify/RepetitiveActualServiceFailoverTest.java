@@ -24,7 +24,7 @@ import org.openspaces.admin.pu.events.ProcessingUnitInstanceLifecycleEventListen
 import org.openspaces.pu.service.CustomServiceMonitors;
 import org.testng.annotations.Test;
 
-import org.cloudifysource.quality.iTests.framework.tools.SGTestHelper;
+import iTests.framework.tools.SGTestHelper;
 import org.cloudifysource.quality.iTests.framework.utils.AssertUtils;
 import org.cloudifysource.quality.iTests.framework.utils.AssertUtils.RepetitiveConditionProvider;
 import org.cloudifysource.quality.iTests.framework.utils.LogUtils;

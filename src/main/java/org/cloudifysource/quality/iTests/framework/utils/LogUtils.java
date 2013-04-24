@@ -11,7 +11,7 @@ import com.gigaspaces.log.LogEntry;
 import com.gigaspaces.log.LogEntryMatcher;
 import com.gigaspaces.log.LogEntryMatchers;
 
-import org.cloudifysource.quality.iTests.framework.testng.SGTestNGReporter;
+import iTests.framework.testng.report.SGTestNGReporter;
 import org.cloudifysource.quality.iTests.framework.utils.AssertUtils.RepetitiveConditionProvider;
 
 import java.util.List;
@@ -54,7 +54,7 @@ public class LogUtils {
     /**
      * scans the logs of the GSM for a specific error message
      * prints the corresponding log entries of the error
-     * @param container - the container to scan
+     * @param gsm - the container to scan
      * @param error - witch error to look for
      */
     

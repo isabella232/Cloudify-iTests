@@ -1,6 +1,6 @@
 package org.cloudifysource.quality.iTests.test.rest;
 
-import org.cloudifysource.quality.iTests.framework.tools.SGTestHelper;
+import iTests.framework.tools.SGTestHelper;
 import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
 import junit.framework.Assert;
 import org.codehaus.jackson.map.ObjectMapper;

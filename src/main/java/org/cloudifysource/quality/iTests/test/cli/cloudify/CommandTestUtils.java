@@ -8,7 +8,7 @@ import java.text.MessageFormat;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.commons.io.FileUtils;
-import org.cloudifysource.quality.iTests.framework.tools.SGTestHelper;
+import iTests.framework.tools.SGTestHelper;
 import org.cloudifysource.quality.iTests.framework.utils.AssertUtils;
 import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
 import org.cloudifysource.quality.iTests.framework.utils.ScriptUtils;
@@ -30,7 +30,7 @@ public class CommandTestUtils {
 
 	/**
 	 * Runs the specified cloudify commands and outputs the result log.
-	 * @param command - The actual cloudify commands delimited by ';'.
+	 * @param cloudifyCommand - The actual cloudify commands delimited by ';'.
 	 * @return the cloudify output, and the exitcode 
 	 * @throws IOException
 	 * @throws InterruptedException 

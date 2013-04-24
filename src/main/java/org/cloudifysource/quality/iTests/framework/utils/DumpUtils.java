@@ -32,7 +32,7 @@ import com.gigaspaces.internal.dump.summary.SummaryDumpProcessor;
 import com.gigaspaces.internal.dump.thread.ThreadDumpProcessor;
 import com.j_spaces.kernel.PlatformVersion;
 
-import org.cloudifysource.quality.iTests.framework.tools.SGTestHelper;
+import iTests.framework.tools.SGTestHelper;
 
 
 public class DumpUtils {

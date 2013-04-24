@@ -1,6 +1,6 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.security;
 
-import org.cloudifysource.quality.iTests.framework.tools.SGTestHelper;
+import iTests.framework.tools.SGTestHelper;
 import org.cloudifysource.quality.iTests.framework.utils.AssertUtils;
 import org.cloudifysource.quality.iTests.framework.utils.LocalCloudBootstrapper;
 import org.cloudifysource.quality.iTests.framework.utils.LogUtils;

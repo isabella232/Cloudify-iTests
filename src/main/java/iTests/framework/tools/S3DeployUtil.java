@@ -1,4 +1,4 @@
-package org.cloudifysource.quality.iTests.framework.tools;
+package iTests.framework.tools;
 
 import com.google.inject.Module;
 import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
@@ -20,6 +20,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 public class S3DeployUtil {
+
     protected static final String CREDENTIALS_FOLDER = System.getProperty("iTests.credentialsFolder",
             SGTestHelper.getSGTestRootDir() + "/src/main/resources/credentials");
     protected static final int ITESTS_LOG_EXPIRATION_IN_DAYS = Integer.getInteger("iTests.logExpirationInDays", 10);
@@ -51,6 +52,7 @@ public class S3DeployUtil {
             }
         }
         else{
+
             LogUtils.log("Processing " + source + ", upload size is: " + (source).length() + ". Target: " + target);
 
             Date expires = new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(ITESTS_LOG_EXPIRATION_IN_DAYS));

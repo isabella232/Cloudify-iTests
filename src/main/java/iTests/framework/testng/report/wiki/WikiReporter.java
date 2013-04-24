@@ -10,7 +10,7 @@ import iTests.framework.testng.report.xml.SummaryReport;
 import iTests.framework.testng.report.xml.TestLog;
 import iTests.framework.testng.report.xml.TestReport;
 import iTests.framework.testng.report.xml.TestsReport;
-import org.cloudifysource.quality.iTests.framework.tools.SGTestHelper;
+import iTests.framework.tools.SGTestHelper;
 
 import java.io.File;
 import java.io.FileInputStream;

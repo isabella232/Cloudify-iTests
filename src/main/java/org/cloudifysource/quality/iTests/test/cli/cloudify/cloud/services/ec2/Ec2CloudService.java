@@ -12,7 +12,7 @@ import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.JCloud
 
 public class Ec2CloudService extends JCloudsCloudService {
 
-    private Properties certProperties = getCloudProperties(EC2_CERT_PROPERTIES);
+    private final Properties certProperties = getCloudProperties(EC2_CERT_PROPERTIES);
 
     private static final String EC2_CERT_PROPERTIES = CREDENTIALS_FOLDER + "/cloud/ec2/ec2-cred.properties";
 
@@ -64,6 +64,7 @@ public class Ec2CloudService extends JCloudsCloudService {
 		return apiKey;
 	}
 
+	@Override
 	public String getRegion() {
 		return System.getProperty("ec2.region", EU_WEST_REGION);
 	}
@@ -122,6 +123,10 @@ public class Ec2CloudService extends JCloudsCloudService {
 	@Override
 	public void addOverrides(Properties overridesProps) {
 		overridesProps.put("jclouds.ec2.ami-query", "");
-		overridesProps.put("jclouds.ec2.cc-ami-query", "");		
+		overridesProps.put("jclouds.ec2.cc-ami-query", "");
+	}
+
+	public String getCertProperty(final String key) {
+		return this.certProperties.getProperty(key);
 	}
 }

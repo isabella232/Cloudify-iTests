@@ -1,6 +1,6 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.security;
 
-import org.cloudifysource.quality.iTests.framework.tools.SGTestHelper;
+import iTests.framework.tools.SGTestHelper;
 
 public class SecurityConstants {
     protected static final String CREDENTIALS_FOLDER = System.getProperty("iTests.credentialsFolder",

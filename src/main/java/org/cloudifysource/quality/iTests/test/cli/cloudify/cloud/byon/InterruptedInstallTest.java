@@ -17,7 +17,7 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import org.cloudifysource.quality.iTests.framework.tools.SGTestHelper;
+import iTests.framework.tools.SGTestHelper;
 import org.cloudifysource.quality.iTests.framework.utils.AssertUtils;
 import org.cloudifysource.quality.iTests.framework.utils.IRepetitiveRunnable;
 import org.cloudifysource.quality.iTests.framework.utils.SSHUtils;

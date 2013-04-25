@@ -102,38 +102,40 @@ public class LocalCloudAuthorizationWebLdapTest extends AbstractSecuredLocalClou
 		String userAndPassword = SecurityConstants.USER_PWD_ALL_ROLES;//Superuser
 		PermittedServicesWrapper permittedServicesWrapper =
 										createPemittedServicesWrapperForAllRoles( userAndPassword );
-		WebSecurityAuthorizationHelper.performLoginAndAllViewsTests(
+		mainNav = WebSecurityAuthorizationHelper.performLoginAndAllViewsTests(
                 loginPage, userAndPassword, userAndPassword, permittedServicesWrapper );
 		
 		loginPage = mainNav.logout();
 		userAndPassword = SecurityConstants.USER_PWD_APP_MANAGER;//Dan
 		permittedServicesWrapper = createPemittedServicesWrapperForAppManager( userAndPassword );
-		WebSecurityAuthorizationHelper.performLoginAndAllViewsTests( 
+		mainNav = WebSecurityAuthorizationHelper.performLoginAndAllViewsTests( 
 						loginPage, userAndPassword, userAndPassword, permittedServicesWrapper );
 		
 		loginPage = mainNav.logout();
 		userAndPassword = SecurityConstants.USER_PWD_CLOUD_ADMIN_AND_APP_MANAGER;//Dana
 		permittedServicesWrapper = createPemittedServicesWrapperForCloudAdminAndAppManager( userAndPassword );
-		WebSecurityAuthorizationHelper.performLoginAndAllViewsTests( 
+		mainNav = WebSecurityAuthorizationHelper.performLoginAndAllViewsTests( 
 						loginPage, userAndPassword, userAndPassword, permittedServicesWrapper );
 		
 		loginPage = mainNav.logout();
 		userAndPassword = SecurityConstants.USER_PWD_NO_ROLE;//Jane
 		permittedServicesWrapper = createPemittedServicesWrapperForNoRole( userAndPassword );
-		WebSecurityAuthorizationHelper.performLoginAndAllViewsTests( 
+		mainNav = WebSecurityAuthorizationHelper.performLoginAndAllViewsTests( 
 						loginPage, userAndPassword, userAndPassword, permittedServicesWrapper );
 		
 		loginPage = mainNav.logout();
 		userAndPassword = SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER;//Don
 		permittedServicesWrapper = createPemittedServicesWrapperForManagerAndViewer( userAndPassword );
-		WebSecurityAuthorizationHelper.performLoginAndAllViewsTests( 
+		mainNav = WebSecurityAuthorizationHelper.performLoginAndAllViewsTests( 
 				loginPage, userAndPassword, userAndPassword, permittedServicesWrapper );
 		
 		loginPage = mainNav.logout();
 		userAndPassword = SecurityConstants.USER_PWD_VIEWER;//John
 		permittedServicesWrapper = createPemittedServicesWrapperForViewer( userAndPassword );
-		WebSecurityAuthorizationHelper.performLoginAndAllViewsTests( 
+		mainNav = WebSecurityAuthorizationHelper.performLoginAndAllViewsTests( 
 				loginPage, userAndPassword, userAndPassword, permittedServicesWrapper );
+		
+		loginPage = mainNav.logout();
 		
 		LogUtils.log("End of test - ec2 webui cloud");
 	}
@@ -149,9 +151,9 @@ public class LocalCloudAuthorizationWebLdapTest extends AbstractSecuredLocalClou
 		services.put( "webui", 1 );
 		services.put( "rest", 1 );
 		services.put( APP_NAME_1 + ".groovy", 2 );
-		services.put( APP_NAME_1 + ".groovy2", 2 );
+		services.put( APP_NAME_1 + ".groovy2", 1 );
 		services.put( APP_NAME_2 + ".groovy", 2 );
-		services.put( APP_NAME_2 + ".groovy2", 2 );
+		services.put( APP_NAME_2 + ".groovy2", 1 );
 		
 		Set<String> machineAddresses = new HashSet<String>();
 		machineAddresses.add( "localhost" );

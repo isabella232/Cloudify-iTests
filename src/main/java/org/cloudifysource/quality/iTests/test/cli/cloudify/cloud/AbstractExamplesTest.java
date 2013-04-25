@@ -27,14 +27,14 @@ public abstract class AbstractExamplesTest extends NewAbstractCloudTest {
 
 	private static final int WINDOWS_INSTALLATION_TIMEOUT = 50;
 	private static String applicationName;
-	
+
 	@AfterMethod
 	public void cleanup() throws IOException, InterruptedException {
 		super.uninstallApplicationIfFound(applicationName);
 		super.scanForLeakedAgentNodes();
 	}
-	
-	
+
+
 	protected void testTravel() throws Exception {
 		doTest(ScriptUtils.getBuildRecipesApplicationsPath() + "/travel", null);
 	}
@@ -54,39 +54,39 @@ public abstract class AbstractExamplesTest extends NewAbstractCloudTest {
 	protected void testTravelChef() throws Exception {
 		doTest(ScriptUtils.getBuildRecipesApplicationsPath() + "/travel-chef", null);
 	}
-	
+
 	protected void testComputers(String localGitAppsPath) throws Exception {
 		doTest(localGitAppsPath + "/computers", null);
 	}
-	
+
 	protected void testBabies(String localGitAppsPath) throws Exception {
 		doTest(localGitAppsPath + "/drupal-babies", null);
 	}
-	
+
 	protected void testBiginsights(String localGitAppsPath) throws Exception {
 		doTest(localGitAppsPath + "/hadoop-biginsights", null);
 	}
-	
+
 	protected void testPetclinicJboss(String localGitAppsPath) throws Exception {
 		doTest(localGitAppsPath + "/jboss-petclinic", null);
 	}
-	
+
 	protected void testLamp(String localGitAppsPath) throws Exception {
 		doTest(localGitAppsPath + "/lamp", null);
 	}
-	
+
 	protected void testMasterSlave(String localGitAppsPath) throws Exception {
 		doTest(localGitAppsPath + "/masterslave", null);
 	}
-	
+
 	protected void testPetclinicWas(String localGitAppsPath) throws Exception {
 		doTest(localGitAppsPath + "/petclinic-was", null);
 	}
-	
+
 	protected void testStorm(String localGitAppsPath) throws Exception {
 		doTest(localGitAppsPath + "/storm", null);
 	}
-	
+
 	protected void testTravelLb(String localGitAppsPath) throws Exception {
 		doTest(localGitAppsPath + "/travel-lb", null);
 	}
@@ -94,29 +94,29 @@ public abstract class AbstractExamplesTest extends NewAbstractCloudTest {
 	protected void testPuppet(String localGitAppsPath) throws Exception {
 		doTest(localGitAppsPath + "/redmine-puppet", null);
 	}
-	
+
 	protected void testStatelessAndStateful() throws Exception {
 		String path = CommandTestUtils.getPath("src/main/resources/apps/USM/usm/applications");
 		doTest(path + "/StatefulAndStatelessApp", null);
-		
+
 	}
 
 	protected void testMysqlJboss(String localGitAppsPath) throws Exception {
 		doTest(localGitAppsPath + "/jboss-mysql", null);
 	}
 
-	protected void doTest(String applicationPath, String overrideApplicationName) throws Exception {				
+	protected void doTest(String applicationPath, String overrideApplicationName) throws Exception {
 		LogUtils.log("Reading Application from file : " + applicationPath);
 		Application application = ServiceReader.getApplicationFromFile(new File(applicationPath)).getApplication();
 		LogUtils.log("Succesfully read Application : " + application);
 		applicationName = application.getName();
 		LogUtils.log("Application name is " + applicationName);
-		
+
 		if (overrideApplicationName != null) {
 			LogUtils.log("Overriding application name with : " + overrideApplicationName);
 			applicationName = overrideApplicationName;
 		}
-		
+
 		boolean hasApacheLB = false;
 		int apachePort = 0;
 		for (Service service : application.getServices()) {
@@ -138,10 +138,10 @@ public abstract class AbstractExamplesTest extends NewAbstractCloudTest {
 		} else {
 			installApplicationAndWait(applicationPath, applicationName);
 		}
-		
+
 		verifyServices(applicationName, application.getServices());
 		verifyApplicationUrls(applicationName, hasApacheLB, apachePort);
-				
+
 		uninstallApplicationAndWait(applicationName);
 		super.scanForLeakedAgentNodes();
 	}
@@ -169,7 +169,7 @@ public abstract class AbstractExamplesTest extends NewAbstractCloudTest {
 		String output = CommandTestUtils.runCommandAndWait(command);
 
 		for(Service singleService : services){
-			AssertUtils.assertTrue("the service " + singleService.getName() + " is not running", output.contains(singleService.getName()));					
+			AssertUtils.assertTrue("the service " + singleService.getName() + " is not running", output.contains(singleService.getName()));
 		}
 	}
 

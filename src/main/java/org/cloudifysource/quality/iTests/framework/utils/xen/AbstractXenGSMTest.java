@@ -47,7 +47,7 @@ import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 
 import com.j_spaces.kernel.PlatformVersion;
 
-import org.cloudifysource.quality.iTests.framework.tools.SGTestHelper;
+import iTests.framework.tools.SGTestHelper;
 import org.cloudifysource.quality.iTests.framework.utils.AdminUtils;
 import org.cloudifysource.quality.iTests.framework.utils.DumpUtils;
 import org.cloudifysource.quality.iTests.framework.utils.GridServiceAgentsCounter;

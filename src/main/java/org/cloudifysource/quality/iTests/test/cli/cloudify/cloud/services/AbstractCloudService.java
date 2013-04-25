@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.io.FileUtils;
 import org.cloudifysource.dsl.cloud.Cloud;
 import org.cloudifysource.dsl.internal.ServiceReader;
-import org.cloudifysource.quality.iTests.framework.tools.SGTestHelper;
+import iTests.framework.tools.SGTestHelper;
 import org.cloudifysource.quality.iTests.framework.utils.AssertUtils;
 import org.cloudifysource.quality.iTests.framework.utils.AssertUtils.RepetitiveConditionProvider;
 import org.cloudifysource.quality.iTests.framework.utils.CloudBootstrapper;
@@ -243,8 +243,9 @@ public abstract class AbstractCloudService implements CloudService {
     }
 
     @Override
-    public void bootstrapCloud() throws Exception {
+    public String bootstrapCloud() throws Exception {
 
+    	String output = "";
         overrideLogsFile();
         if (customCloudGroovy != null) {
         	// use a custom grooyv file if defined
@@ -270,11 +271,11 @@ public abstract class AbstractCloudService implements CloudService {
 
         bootstrapper.setNumberOfManagementMachines(numberOfManagementMachines);
         if (bootstrapper.isNoWebServices()) {
-            bootstrapper.bootstrap();
+            output = bootstrapper.bootstrap().getOutput();
         } else {
-            String output = bootstrapper.bootstrap().getOutput();
+            output = bootstrapper.bootstrap().getOutput();
             if (bootstrapper.isBootstrapExpectedToFail()) {
-                return;
+                return output;
             }
             this.webUIUrls = extractWebuiUrls(output, numberOfManagementMachines);
             assertBootstrapServicesAreAvailable();
@@ -291,6 +292,8 @@ public abstract class AbstractCloudService implements CloudService {
                 }
             }
         }
+        
+        return output;
     }
 
     private void printPropertiesFile() throws IOException {

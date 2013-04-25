@@ -1,4 +1,4 @@
-package org.cloudifysource.quality.iTests.framework.testng;
+package iTests.framework.testng.report;
 
 import java.text.DateFormat;
 import java.util.Date;
@@ -31,7 +31,7 @@ public class SGTestNGReporter {
             }
             System.out.println(output.substring(startIdx, output.length()));
         }
-        
+
         output.append("\n");
     }
 

@@ -2,7 +2,7 @@ package org.cloudifysource.quality.iTests.test.cli.cloudify;
 
 import org.testng.annotations.Test;
 
-import org.cloudifysource.quality.iTests.framework.tools.SGTestHelper;
+import iTests.framework.tools.SGTestHelper;
 
 /**
  * GS-1230

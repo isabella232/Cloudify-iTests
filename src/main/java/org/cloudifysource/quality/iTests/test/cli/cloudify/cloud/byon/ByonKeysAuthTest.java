@@ -9,13 +9,18 @@ public class ByonKeysAuthTest extends AbstractByonCloudTest {
 		super.bootstrap();
 		super.teardown();
 	}
-
 	
 	@Override
 	protected void customizeCloud() throws Exception {
 		super.customizeCloud();
 		getService().setSudo(false);
 		getService().getProperties().put("keyFile", "testKey.pem");
+	}
+	
+	@Override
+	protected void parseBootstrapOutput(String bootstrapOutput) throws Exception {
+		assertTrue("Bootstrap did not use the specified key file for authentication", 
+				bootstrapOutput.contains("Authentication succeeded (publickey)"));
 	}
 
 }

@@ -1,4 +1,4 @@
-package org.cloudifysource.quality.iTests.framework.tools;
+package iTests.framework.tools;
 
 import java.io.File;
 
@@ -22,6 +22,7 @@ public class SGTestHelper {
 
 	public static boolean isDevMode() {
 		boolean isDevMode;
+
 		if (System.getenv().containsKey("DEV_ENV")) {
             return Boolean.valueOf(System.getenv("DEV_ENV"));
 		} else if (System.getProperties().containsKey("DEV_ENV")) {
@@ -54,7 +55,6 @@ public class SGTestHelper {
 
 	}
 	
-	
 	public static String getSuiteName(){
 		return System.getProperty("iTests.suiteName", "");
 	}
@@ -81,7 +81,7 @@ public class SGTestHelper {
 		return new File(".").getAbsolutePath();
 	}
 
-	public static String getBuildDir() {
+	public static String getBuildDir(){
 		return ScriptUtils.getBuildPath();
 	}
 

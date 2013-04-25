@@ -10,7 +10,7 @@ import java.util.Map;
 
 import org.apache.commons.exec.util.StringUtils;
 
-import org.cloudifysource.quality.iTests.framework.tools.SGTestHelper;
+import iTests.framework.tools.SGTestHelper;
 import org.cloudifysource.quality.iTests.framework.utils.IOUtils;
 import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
 

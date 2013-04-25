@@ -2,7 +2,7 @@ package org.cloudifysource.quality.iTests.test.esm.stateless.manual.memory;
 
 import org.apache.commons.io.FileUtils;
 import org.cloudifysource.esc.driver.provisioning.byon.ByonProvisioningDriver;
-import org.cloudifysource.quality.iTests.framework.tools.SGTestHelper;
+import iTests.framework.tools.SGTestHelper;
 import org.cloudifysource.quality.iTests.framework.utils.*;
 import org.cloudifysource.quality.iTests.test.esm.AbstractFromXenToByonGSMTest;
 import org.openspaces.admin.esm.ElasticServiceManager;
@@ -54,7 +54,7 @@ public class DedicatedStatelessManualPerZoneByonFailoverTest extends AbstractFro
 
     /**
      * @throws Exception
-     * @see GS-10573, GS-10577
+     * @see "GS-10573", GS-10577
      */
     @Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled=true)
     public void testSpecifyZone() throws Exception {
@@ -63,7 +63,7 @@ public class DedicatedStatelessManualPerZoneByonFailoverTest extends AbstractFro
 
     /**
      * @throws Exception
-     * @see GS-10576, GS-10577
+     * @see "GS-10576", GS-10577
      */
     @Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled=true)
     public void testNoSpecifyZone() throws Exception {

@@ -382,7 +382,7 @@ public class StorageAllocationTester {
         AssertUtils.assertNotNull("could not find the required volume after install service", ourVolumeNew);
         LogUtils.log("Found volume : " + ourVolumeNew);
         // also check it is attached.
-        AssertUtils.assertEquals("the volume should have one attachments", 1, storageApiHelper.getVolumeAttachments(ourVolume.getId()).size());
+        AssertUtils.assertEquals("the volume should have one attachments", 1, storageApiHelper.getVolumeAttachments(ourVolumeNew.getId()).size());
 
         installer.uninstall();
 

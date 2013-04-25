@@ -1,4 +1,4 @@
-package org.cloudifysource.quality.iTests.framework.tools;
+package iTests.framework.tools;
 
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;

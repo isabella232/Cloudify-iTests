@@ -1,7 +1,7 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.ec2.storage.dynamicstorage;
 
 import org.cloudifysource.esc.driver.provisioning.storage.StorageProvisioningException;
-import org.cloudifysource.quality.iTests.framework.tools.SGTestHelper;
+import iTests.framework.tools.SGTestHelper;
 import org.cloudifysource.quality.iTests.framework.utils.ApplicationInstaller;
 import org.cloudifysource.quality.iTests.framework.utils.RecipeInstaller;
 import org.cloudifysource.quality.iTests.framework.utils.ServiceInstaller;

@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.http.HttpStatus;
 import org.cloudifysource.dsl.utils.ServiceUtils;
-import org.cloudifysource.quality.iTests.framework.tools.SGTestHelper;
+import iTests.framework.tools.SGTestHelper;
 import org.cloudifysource.quality.iTests.framework.utils.AssertUtils;
 import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
 import org.cloudifysource.quality.iTests.framework.utils.ProcessingUnitUtils;

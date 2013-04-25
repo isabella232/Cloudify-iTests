@@ -10,8 +10,8 @@ import com.gigaspaces.dashboard.DashboardDBReporter;
 
 import iTests.framework.testng.report.wiki.WikiUtils;
 import iTests.framework.testng.report.xml.SummaryReport;
-import org.cloudifysource.quality.iTests.framework.tools.SGTestHelper;
-import org.cloudifysource.quality.iTests.framework.tools.SimpleMail;
+import iTests.framework.tools.SGTestHelper;
+import iTests.framework.tools.SimpleMail;
 
 import java.io.FileInputStream;
 

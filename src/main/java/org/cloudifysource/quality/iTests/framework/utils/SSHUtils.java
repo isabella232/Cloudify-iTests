@@ -367,8 +367,8 @@ public class SSHUtils {
     			return response;
     		} catch(Exception e) {
     			String failResponse = readFileAsString(output);
-    			Assert.fail("Failed running ssh command: '" + command + "' on " + ipAddress +": " + e.getMessage());
                 LogUtils.log(failResponse);
+                Assert.fail("Failed running ssh command: '" + command + "' on " + ipAddress +": " + e.getMessage());
             }
     	}catch (IOException e){
     		Assert.fail("Failed creating temp file.", e);

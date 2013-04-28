@@ -1,9 +1,9 @@
 package org.cloudifysource.quality.iTests.test.esm.datagrid.eager;
 
+import iTests.framework.tools.SGTestHelper;
 import junit.framework.Assert;
 import org.apache.commons.io.FileUtils;
 import org.cloudifysource.esc.driver.provisioning.byon.ByonProvisioningDriver;
-import iTests.framework.tools.SGTestHelper;
 import org.cloudifysource.quality.iTests.framework.utils.DeploymentUtils;
 import org.cloudifysource.quality.iTests.framework.utils.GsmTestUtils;
 import org.cloudifysource.quality.iTests.framework.utils.IOUtils;
@@ -51,14 +51,8 @@ public class DedicatedEagerDataGridTwoIndependentDeploymentsByonTest extends Abs
     @Test(timeOut=DEFAULT_TEST_TIMEOUT, groups="1")
     public void testElasticSpaceDeployment() throws Exception {
 
-        String[] zones1 = new String[] { CLOUD_PREFIX+ZONE1};
-        String[] zones2 = new String[] { CLOUD_PREFIX+ZONE2};
-        //TODO make start machines with zones be concurrent
-        GridServiceAgent[] agents = new GridServiceAgent[]
-                {startNewByonMachineWithZones(getElasticMachineProvisioningCloudifyAdapter(), zones1, OPERATION_TIMEOUT, TimeUnit.MILLISECONDS),
-                 startNewByonMachineWithZones(getElasticMachineProvisioningCloudifyAdapter(), zones1, OPERATION_TIMEOUT, TimeUnit.MILLISECONDS),
-                 startNewByonMachineWithZones(getElasticMachineProvisioningCloudifyAdapter(), zones2, OPERATION_TIMEOUT,  TimeUnit.MILLISECONDS),
-                 startNewByonMachineWithZones(getElasticMachineProvisioningCloudifyAdapter(), zones2, OPERATION_TIMEOUT,  TimeUnit.MILLISECONDS)};
+        String[] zones = {CLOUD_PREFIX+ZONE1,CLOUD_PREFIX+ZONE1,CLOUD_PREFIX+ZONE2,CLOUD_PREFIX+ZONE2};
+        GridServiceAgent[] agents = startNewByonMachinesWithZones(getElasticMachineProvisioningCloudifyAdapter(), 4, zones, OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
 
         final int containerCapacityInMB = 250;
         ProcessingUnit pu1 = super.deploy(

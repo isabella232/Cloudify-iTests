@@ -130,6 +130,11 @@ public class MicrosoftAzureCloudService extends AbstractCloudService {
 		propsToReplace.put("ENTER_ADDRESS_SPACE", addressSpace);
 		propsToReplace.put("ENTER_AFFINITY_GROUP", affinityGroup);
 		propsToReplace.put("ENTER_LOCATION", affinityLocation);
+        if (storageAccountName.length() > 24) {
+            LogUtils.log("Storage account name is too long. applying length restriction.");
+            storageAccountName = storageAccountName.substring(0,23);
+            LogUtils.log("Actual storage account name to be used is " + storageAccountName);
+        }
 		propsToReplace.put("ENTER_STORAGE_ACCOUNT", storageAccountName);
 		IOUtils.replaceTextInFile(getPathToCloudGroovy(), propsToReplace);	
 	}

@@ -61,8 +61,39 @@ public class ByonMachinesUtils {
         
         return result;
 	}
-	
-		
+
+    public static GridServiceAgent[] startNewByonMachinesWithZones(
+            final ElasticMachineProvisioningCloudifyAdapter elasticMachineProvisioningCloudifyAdapter,
+            int numOfMachines,final String[] zoneList,  final long duration,final TimeUnit timeUnit) {
+        AssertUtils.assertTrue("zone list size should be equal to number of machines to start",zoneList.length == numOfMachines);
+        GridServiceAgent[] result = new GridServiceAgent[numOfMachines];
+        List<Callable<GridServiceAgent>> tasks = new ArrayList<Callable<GridServiceAgent>>();
+        for (int i=0; i<numOfMachines; i++) {
+            final String[] zone = {zoneList[i]};
+            tasks.add(new Callable<GridServiceAgent>() {
+                public GridServiceAgent call() throws Exception {
+                    return startNewByonMachineWithZones (elasticMachineProvisioningCloudifyAdapter,zone, duration,timeUnit);
+                }
+            });
+        }
+        ExecutorService  service = Executors.newFixedThreadPool(tasks.size());
+        try {
+            List<Future<GridServiceAgent>> futures = service.invokeAll(tasks);
+            for (int i = 0 ; i < futures.size() ; i++) {
+                result[i] = futures.get(i).get(duration, TimeUnit.MILLISECONDS);
+            }
+        } catch (InterruptedException e) {
+            AssertUtils.assertFail("Failed starting new VMs", e);
+        } catch (ExecutionException e) {
+            AssertUtils.assertFail("Failed starting new VMs", e);
+        } catch (TimeoutException e) {
+            AssertUtils.assertFail("Failed starting new VMs", e);
+        } finally {
+            service.shutdown();
+        }
+
+        return result;
+    }
 	
 	public static boolean stopByonMachine (ElasticMachineProvisioningCloudifyAdapter elasticMachineProvisioningCloudifyAdapter, GridServiceAgent agent ,long duration,TimeUnit timeUnit) throws Exception {
 		return elasticMachineProvisioningCloudifyAdapter.stopMachine(agent, duration, timeUnit);

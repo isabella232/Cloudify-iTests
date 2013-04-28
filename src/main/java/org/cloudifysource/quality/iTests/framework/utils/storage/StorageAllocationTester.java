@@ -235,10 +235,12 @@ public class StorageAllocationTester {
         LogUtils.log("Retrieving volumes for groovy1");
         Set<VolumeDetails> groovy1Volumes = storageApiHelper.getVolumesByPrefix(groovy1VolumePrefix);
         AssertUtils.assertEquals("Wrong number of volumes detected after installation for service groovy1", 1, groovy1Volumes.size());
+        LogUtils.log("Found volume : " + groovy1Volumes.iterator().next());
 
         LogUtils.log("Retrieving volumes for groovy2");
         Set<VolumeDetails> groovy2Volumes = storageApiHelper.getVolumesByPrefix(groovy2VolumePrefix);
         AssertUtils.assertEquals("Wrong number of volumes detected after installation for service groovy2", 1, groovy2Volumes.size());
+        LogUtils.log("Found volume : " + groovy2Volumes.iterator().next());
 
         AssertUtils.assertEquals("Both volumes should be attached to different same instance",
                 storageApiHelper.getVolumeAttachments(groovy1Volumes.iterator().next().getId()),
@@ -377,15 +379,18 @@ public class StorageAllocationTester {
 
         LogUtils.log("Searching for volumes created by the service failover healing");
         // the install should have created and attached a volume with a name prefix of the class name. see customizeCloud below.
-        VolumeDetails ourVolumeNew = storageApiHelper.getVolumesByPrefix(getVolumePrefixForTemplate("SMALL_BLOCK")).iterator().next();
+        Set<VolumeDetails> allVolumes = storageApiHelper.getVolumesByPrefix(getVolumePrefixForTemplate("SMALL_BLOCK"));
+        allVolumes.remove(ourVolume);
+        VolumeDetails ourVolumeNew = allVolumes.iterator().next();
 
-        AssertUtils.assertNotNull("could not find the required volume after install service", ourVolumeNew);
+        AssertUtils.assertNotNull("could not find the required volume after service failover healing", ourVolumeNew);
         LogUtils.log("Found volume : " + ourVolumeNew);
         // also check it is attached.
         AssertUtils.assertEquals("the volume should have one attachments", 1, storageApiHelper.getVolumeAttachments(ourVolumeNew.getId()).size());
 
         installer.uninstall();
 
+        LogUtils.log("Deleting the original volume created by the service installation");
         storageApiHelper.deleteVolume(ourVolume.getId());
     }
 

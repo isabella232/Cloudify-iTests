@@ -1,17 +1,8 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud;
 
-import java.io.File;
-import java.io.IOException;
-
+import com.gigaspaces.internal.utils.StringUtils;
 import org.cloudifysource.dsl.cloud.compute.ComputeTemplate;
-import org.cloudifysource.quality.iTests.framework.utils.ApplicationInstaller;
-import org.cloudifysource.quality.iTests.framework.utils.AssertUtils;
-import org.cloudifysource.quality.iTests.framework.utils.CloudBootstrapper;
-import org.cloudifysource.quality.iTests.framework.utils.DumpUtils;
-import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
-import org.cloudifysource.quality.iTests.framework.utils.ScriptUtils;
-import org.cloudifysource.quality.iTests.framework.utils.ServiceInstaller;
-import org.cloudifysource.quality.iTests.framework.utils.StorageUtils;
+import org.cloudifysource.quality.iTests.framework.utils.*;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.CloudService;
@@ -22,7 +13,8 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 
-import com.gigaspaces.internal.utils.StringUtils;
+import java.io.File;
+import java.io.IOException;
 
 public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 

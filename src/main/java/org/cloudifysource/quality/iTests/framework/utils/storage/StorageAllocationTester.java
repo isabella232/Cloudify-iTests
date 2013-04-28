@@ -17,6 +17,7 @@ import org.cloudifysource.dsl.internal.DSLReader;
 import org.cloudifysource.dsl.internal.ServiceReader;
 import org.cloudifysource.dsl.internal.packaging.PackagingException;
 import org.cloudifysource.esc.driver.provisioning.MachineDetails;
+import org.cloudifysource.esc.driver.provisioning.storage.StorageProvisioningException;
 import org.cloudifysource.esc.driver.provisioning.storage.VolumeDetails;
 import org.cloudifysource.quality.iTests.framework.utils.ApplicationInstaller;
 import org.cloudifysource.quality.iTests.framework.utils.AssertUtils;
@@ -584,7 +585,8 @@ public class StorageAllocationTester {
 
     private void testFailedToAttach(final String folderName) throws Exception {
 
-        String serviceName = ServiceReader.readService(new File(ScriptUtils.getBuildRecipesServicesPath() + "/" + folderName)).getName();
+        Service service = ServiceReader.readService(new File(ScriptUtils.getBuildRecipesServicesPath() + "/" + folderName));
+        String serviceName = service.getName();
 
         installer = new ServiceInstaller(restUrl, serviceName);
         installer.recipePath(folderName);
@@ -593,12 +595,16 @@ public class StorageAllocationTester {
         installer.install();
 
         installer.expectToFail(false);
+
+        waitForPendingVolumes(service);
+
         installer.uninstall();
     }
 
     private void testFaultyInstall(final String folderName) throws Exception {
 
-        String serviceName = ServiceReader.readService(new File(ScriptUtils.getBuildRecipesServicesPath() + "/" + folderName)).getName();
+        Service service = ServiceReader.readService(new File(ScriptUtils.getBuildRecipesServicesPath() + "/" + folderName));
+        String serviceName = service.getName();
 
         installer = new ServiceInstaller(restUrl, serviceName);
         installer.recipePath(folderName);
@@ -608,6 +614,9 @@ public class StorageAllocationTester {
         installer.install();
 
         installer.expectToFail(false);
+
+        waitForPendingVolumes(service);
+
         installer.uninstall();
     }
 
@@ -779,5 +788,34 @@ public class StorageAllocationTester {
             throws IOException, InterruptedException {
         ServiceInstaller installer = new ServiceInstaller(restUrl, serviceName);
         return installer.invoke(commandName);
+    }
+
+    private void waitForPendingVolumes(final Service service) throws Exception {
+
+        final long endTime = System.currentTimeMillis() + 5 * 60 * 1000;
+
+        while (System.currentTimeMillis() < endTime) {
+            Set<VolumeDetails> creatingVolumes = getCreatingVolumes(service);
+            if (!creatingVolumes.isEmpty()) {
+                LogUtils.log("Found volumes that are still being created : " + creatingVolumes);
+                Thread.sleep(1000 * 5);
+            } else {
+                return;
+            }
+        }
+    }
+
+    private Set<VolumeDetails> getCreatingVolumes(Service service) throws StorageProvisioningException {
+        final String storageTemplateName = service.getStorage().getTemplate();
+        String volumePrefixForTemplate = getVolumePrefixForTemplate(storageTemplateName);
+        Set<VolumeDetails> volumesByPrefix = storageApiHelper.getVolumesByPrefix(volumePrefixForTemplate);
+        Set<VolumeDetails> creatingVolumes = new HashSet<VolumeDetails>();
+        for (VolumeDetails volumeDetails : volumesByPrefix) {
+            if (storageApiHelper.isVolumeCreating(volumeDetails.getId())) {
+                LogUtils.log("Found a volume in status CREATING : " + volumeDetails + " . Sleeping to allow it to reach a new status");
+                creatingVolumes.add(volumeDetails);
+            }
+        }
+        return creatingVolumes;
     }
 }

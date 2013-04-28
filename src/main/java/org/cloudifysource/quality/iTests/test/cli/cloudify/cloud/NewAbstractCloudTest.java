@@ -1,17 +1,8 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud;
 
-import java.io.File;
-import java.io.IOException;
-
+import com.gigaspaces.internal.utils.StringUtils;
 import org.cloudifysource.dsl.cloud.compute.ComputeTemplate;
-import org.cloudifysource.quality.iTests.framework.utils.ApplicationInstaller;
-import org.cloudifysource.quality.iTests.framework.utils.AssertUtils;
-import org.cloudifysource.quality.iTests.framework.utils.CloudBootstrapper;
-import org.cloudifysource.quality.iTests.framework.utils.DumpUtils;
-import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
-import org.cloudifysource.quality.iTests.framework.utils.ScriptUtils;
-import org.cloudifysource.quality.iTests.framework.utils.ServiceInstaller;
-import org.cloudifysource.quality.iTests.framework.utils.StorageUtils;
+import org.cloudifysource.quality.iTests.framework.utils.*;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.CloudService;
@@ -22,7 +13,8 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 
-import com.gigaspaces.internal.utils.StringUtils;
+import java.io.File;
+import java.io.IOException;
 
 public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 
@@ -276,10 +268,6 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
         serviceInstaller.waitForFinish(true);
         serviceInstaller.expectToFail(isExpectedFail);
         String output = serviceInstaller.uninstall();
-
-        if(StorageUtils.isInitialized()){
-            StorageUtils.afterServiceUninstallation(serviceName);
-        }
         return output;
     }
     
@@ -291,16 +279,6 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
         ServiceInstaller serviceInstaller = new ServiceInstaller(getRestUrl(), serviceName);
         serviceInstaller.waitForFinish(true);
         serviceInstaller.uninstallIfFound();
-
-        if(StorageUtils.isInitialized()){
-            StorageUtils.afterServiceUninstallation(serviceName);
-        }
-    }
-
-    protected String invokeCommand(String serviceName, String commandName)
-            throws IOException, InterruptedException {
-    	ServiceInstaller installer = new ServiceInstaller(getRestUrl(), serviceName);
-    	return installer.invoke(commandName);    	
     }
 
     protected String installServiceAndWait(String servicePath, String serviceName) throws IOException, InterruptedException {
@@ -327,15 +305,7 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
         serviceInstaller.timeoutInMinutes(timeout);
         serviceInstaller.setDisableSelfHealing(disableSelfHealing);
 
-        if(StorageUtils.isInitialized()){
-            StorageUtils.beforeServiceInstallation();
-        }
-
         String output = serviceInstaller.install();
-
-        if(StorageUtils.isInitialized()){
-            StorageUtils.afterServiceInstallation(serviceName);
-        }
 
         if(numOfInstances > 0){
             serviceInstaller.setInstances(numOfInstances);

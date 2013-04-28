@@ -85,6 +85,11 @@ public class Ec2StorageApiHelper extends JcloudsStorageApiHelper {
     }
 
     @Override
+    public boolean isVolumeCreating(String volumeId) {
+        return getVolumeStatus(volumeId).equals(Volume.Status.CREATING.toString());
+    }
+
+    @Override
     public String getVolumeStatus(String volumeId) {
         return getById(volumeId).getStatus().toString();
     }

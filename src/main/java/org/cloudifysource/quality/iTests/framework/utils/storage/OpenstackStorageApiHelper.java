@@ -41,6 +41,11 @@ public class OpenstackStorageApiHelper extends JcloudsStorageApiHelper {
     }
 
     @Override
+    public boolean isVolumeCreating(String volumeId) {
+        return false;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
     public String getVolumeStatus(String volumeId) {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }

@@ -276,10 +276,6 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
         serviceInstaller.waitForFinish(true);
         serviceInstaller.expectToFail(isExpectedFail);
         String output = serviceInstaller.uninstall();
-
-        if(StorageUtils.isInitialized()){
-            StorageUtils.afterServiceUninstallation(serviceName);
-        }
         return output;
     }
     
@@ -291,16 +287,6 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
         ServiceInstaller serviceInstaller = new ServiceInstaller(getRestUrl(), serviceName);
         serviceInstaller.waitForFinish(true);
         serviceInstaller.uninstallIfFound();
-
-        if(StorageUtils.isInitialized()){
-            StorageUtils.afterServiceUninstallation(serviceName);
-        }
-    }
-
-    protected String invokeCommand(String serviceName, String commandName)
-            throws IOException, InterruptedException {
-    	ServiceInstaller installer = new ServiceInstaller(getRestUrl(), serviceName);
-    	return installer.invoke(commandName);    	
     }
 
     protected String installServiceAndWait(String servicePath, String serviceName) throws IOException, InterruptedException {
@@ -327,15 +313,7 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
         serviceInstaller.timeoutInMinutes(timeout);
         serviceInstaller.setDisableSelfHealing(disableSelfHealing);
 
-        if(StorageUtils.isInitialized()){
-            StorageUtils.beforeServiceInstallation();
-        }
-
         String output = serviceInstaller.install();
-
-        if(StorageUtils.isInitialized()){
-            StorageUtils.afterServiceInstallation(serviceName);
-        }
 
         if(numOfInstances > 0){
             serviceInstaller.setInstances(numOfInstances);

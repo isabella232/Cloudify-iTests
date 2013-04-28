@@ -31,6 +31,8 @@ public interface StorageApiHelper {
 
     boolean isVolumeAvailable(final String volumeId);
 
+    boolean isVolumeCreating(final String volumeId);
+
     String getVolumeStatus(final String volumeId);
 
     Set<String> getVolumeAttachments(final String volumeId);

@@ -136,9 +136,7 @@ public class SharedManualByonDataGridTwoUnsharedDeploymentsIsolationTest extends
     }
 
     public void setupDiscovereMachineProvisioningEnvironment() throws Exception {
-        startNewByonMachine(getElasticMachineProvisioningCloudifyAdapter(), OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
-        startNewByonMachine(getElasticMachineProvisioningCloudifyAdapter(), OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
-        startNewByonMachine(getElasticMachineProvisioningCloudifyAdapter(), OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
+        startNewByonMachines(getElasticMachineProvisioningCloudifyAdapter(),3,OPERATION_TIMEOUT,TimeUnit.MILLISECONDS);
     }
 
 

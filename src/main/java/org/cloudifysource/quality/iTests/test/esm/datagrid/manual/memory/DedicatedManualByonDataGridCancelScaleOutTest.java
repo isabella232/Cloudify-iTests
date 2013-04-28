@@ -6,7 +6,7 @@ import org.openspaces.admin.pu.ProcessingUnit;
 import org.openspaces.admin.pu.elastic.config.ManualCapacityScaleConfigurer;
 import org.openspaces.admin.space.ElasticSpaceDeployment;
 import org.openspaces.admin.space.Space;
-import org.openspaces.cloud.xenserver.XenServerException;
+
 import org.openspaces.core.util.MemoryUnit;
 import org.openspaces.grid.gsm.machines.plugins.events.MachineStartRequestedEvent;
 import org.openspaces.grid.gsm.machines.plugins.events.MachineStartedEvent;
@@ -54,12 +54,11 @@ public class DedicatedManualByonDataGridCancelScaleOutTest extends AbstractFromX
      * This test should reproduce a case where scale-out is canceled 
      * and then it is re-applied again.
      * @author itaif
-     * @throws InterruptedException 
-     * @throws XenServerException 
+     * @throws InterruptedException
      */
     
     @Test(timeOut = DEFAULT_TEST_TIMEOUT, groups="1", enabled = true, invocationCount=1)
-    public void rebalancingAfterScaleInTest() throws XenServerException, InterruptedException {
+    public void rebalancingAfterScaleInTest() throws InterruptedException {
 
 		repetitiveAssertNumberOfMachineEvents(MachineStartRequestedEvent.class, 0, OPERATION_TIMEOUT);
         repetitiveAssertNumberOfMachineEvents(MachineStartedEvent.class, 0, OPERATION_TIMEOUT);

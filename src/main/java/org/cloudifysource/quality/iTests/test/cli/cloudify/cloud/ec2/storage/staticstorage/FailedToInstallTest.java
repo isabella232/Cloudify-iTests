@@ -17,7 +17,11 @@ import java.util.concurrent.TimeoutException;
  *
  * @see https://cloudifysource.atlassian.net/browse/CLOUDIFY-1670
  * Check that there are no leaking volumes after uninstall of a failed installation.
-
+ *
+ * We see that this test sometimes fails because the timeout from the cli end happens during the volume creation.
+ * immediatly after that an uninstall command is executed, if this uninstall happens before the volume was created and written into the space,
+ * the uninstall will not be aware of it and therfore will not delete it. causing a leak.
+ *
  * Created with IntelliJ IDEA.
  * User: elip
  * Date: 4/9/13

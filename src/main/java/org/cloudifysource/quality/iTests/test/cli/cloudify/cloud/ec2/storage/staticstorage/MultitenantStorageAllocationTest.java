@@ -33,6 +33,11 @@ import java.util.concurrent.TimeoutException;
  * </br>
  *
  *
+ * We see that this test sometimes fails because the detachVolume takes too long.
+ * so a timeout exception is thrown from the storage driver, causing a subsequent call to deleteVolume to never be executed.
+ * look for logs in the CLI indicating a possible leak in this scenario.
+ * @see CLOUDIFY-1700
+ *
  * Created with IntelliJ IDEA.
  * User: elip
  * Date: 4/10/13

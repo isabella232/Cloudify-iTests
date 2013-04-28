@@ -4,7 +4,13 @@ import org.cloudifysource.dsl.cloud.Cloud;
 import org.cloudifysource.dsl.cloud.compute.ComputeTemplate;
 import org.cloudifysource.esc.driver.provisioning.CloudifyMachineProvisioningConfig;
 import org.cloudifysource.esc.driver.provisioning.ElasticMachineProvisioningCloudifyAdapter;
-import org.cloudifysource.quality.iTests.framework.utils.*;
+import org.cloudifysource.quality.iTests.framework.utils.ByonMachinesUtils;
+import org.cloudifysource.quality.iTests.framework.utils.GridServiceAgentsCounter;
+import org.cloudifysource.quality.iTests.framework.utils.GridServiceContainersCounter;
+import org.cloudifysource.quality.iTests.framework.utils.SSHUtils;
+import org.cloudifysource.quality.iTests.framework.utils.DumpUtils;
+import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
+import org.cloudifysource.quality.iTests.framework.utils.AssertUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.byon.AbstractByonCloudTest;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.byon.ByonCloudService;
 import org.openspaces.admin.gsa.GridServiceAgent;
@@ -82,6 +88,12 @@ public class AbstractFromXenToByonGSMTest extends AbstractByonCloudTest {
     protected GridServiceAgent startNewByonMachineWithZones (ElasticMachineProvisioningCloudifyAdapter elasticMachineProvisioningCloudifyAdapter,String[] zoneList, long duration,TimeUnit timeUnit) throws Exception {
     	return ByonMachinesUtils.startNewByonMachineWithZones(elasticMachineProvisioningCloudifyAdapter,zoneList, duration, timeUnit);
     }
+
+    protected static GridServiceAgent[] startNewByonMachinesWithZones(
+            final ElasticMachineProvisioningCloudifyAdapter elasticMachineProvisioningCloudifyAdapter,
+            int numOfMachines,final String[] zoneList,  final long duration,final TimeUnit timeUnit) {
+        return ByonMachinesUtils.startNewByonMachinesWithZones(elasticMachineProvisioningCloudifyAdapter,numOfMachines,zoneList,duration,timeUnit);
+    }
     
     protected GridServiceAgent[] startNewByonMachines(
 			final ElasticMachineProvisioningCloudifyAdapter elasticMachineProvisioningCloudifyAdapter,
@@ -99,7 +111,7 @@ public class AbstractFromXenToByonGSMTest extends AbstractByonCloudTest {
     protected static boolean stopByonMachineHard (GridServiceAgent gsa) {
         String ipAddress = gsa.getMachine().getHostAddress();
         int pid = ((int) gsa.getVirtualMachine().getDetails().getPid());
-        return SSHUtils.killProcess(ipAddress,pid);
+        return SSHUtils.killProcess(ipAddress, pid);
     }
 
     private void initElasticMachineProvisioningCloudifyAdapter () throws Exception {

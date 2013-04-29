@@ -16,6 +16,7 @@ import org.testng.annotations.Test;
 
 public class AttributesTest extends AbstractLocalCloudTest {
 
+	private static final String SETTER_SERVICE_NAME = "setter";
 	private static final String MAIN_APPLICATION_NAME = "attributesTestApp";
 	private static final String SECONDARY_APPLICATION_NAME = "attributesTestApp2";
 	
@@ -50,6 +51,92 @@ public class AttributesTest extends AbstractLocalCloudTest {
 		assertTrue("setter service shouldn't be able to get the application attribute using getService", 
 				   simpleGet3.contains("null"));
 		uninstallApplication();
+	}
+	
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = true)
+	public void testApplicationAttributeRemovalAfterUninstall() throws Exception {
+		installApplication();
+		
+		String appAttributesOutput;
+		String getterAttributesOutput;
+		String setterAttributesOutput;
+		LogUtils.log("setting an attribute in application scope for application " + MAIN_APPLICATION_NAME);
+		CommandTestUtils.runCommandUsingFile("connect " + this.restUrl + "; use-application " + MAIN_APPLICATION_NAME
+				+ "; set-attributes -scope application '{\"AppAttribute\":\"AppValue\"}'");
+		appAttributesOutput = CommandTestUtils.runCommandAndWait("connect " + this.restUrl + "; use-application " + MAIN_APPLICATION_NAME 
+				+ "; list-attributes -scope application");
+		assertTrue("Failed setting application scope attribute. Output was " + appAttributesOutput,
+				appAttributesOutput.contains("AppAttribute") && appAttributesOutput.contains("AppValue"));
+		
+		LogUtils.log("Setting service attributes for the application services 'setter' and 'getter'");
+		CommandTestUtils.runCommandUsingFile("connect " + this.restUrl + "; use-application " + MAIN_APPLICATION_NAME
+				+ "; set-attributes -scope service:setter '{\"SetterAttribute\":\"SetterValue\"}'");
+		setterAttributesOutput = CommandTestUtils.runCommandAndWait("connect " + this.restUrl + "; use-application " + MAIN_APPLICATION_NAME 
+				+ "; list-attributes -scope service:setter");
+		assertTrue("Failed setting service scope attribute. Output was " + setterAttributesOutput,
+				setterAttributesOutput.contains("SetterAttribute") && setterAttributesOutput.contains("SetterValue"));
+		CommandTestUtils.runCommandUsingFile("connect " + this.restUrl + "; use-application " + MAIN_APPLICATION_NAME
+				+ "; set-attributes -scope service:getter '{\"GetterAttribute\":\"GetterValue\"}'");
+		getterAttributesOutput = CommandTestUtils.runCommandAndWait("connect " + this.restUrl + "; use-application " + MAIN_APPLICATION_NAME 
+				+ "; list-attributes -scope service:getter");
+		assertTrue("Failed setting service scope attribute. Output was " + getterAttributesOutput,
+				getterAttributesOutput.contains("GetterAttribute") && getterAttributesOutput.contains("GetterValue"));
+		
+		uninstallApplication();
+		
+		LogUtils.log("asserting all application and service attributes were removed.");
+		appAttributesOutput = CommandTestUtils.runCommandAndWait("connect " + this.restUrl + "; use-application " + MAIN_APPLICATION_NAME 
+				+ "; list-attributes -scope application");
+		assertTrue("Found application attributes in output " + appAttributesOutput, 
+				!appAttributesOutput.contains("AppAttribute") && !appAttributesOutput.contains("AppValue"));
+		setterAttributesOutput = CommandTestUtils.runCommandAndWait("connect " + this.restUrl + "; use-application " + MAIN_APPLICATION_NAME 
+				+ "; list-attributes -scope service:setter");
+		assertTrue("Found setter service attributes in output " + setterAttributesOutput,
+				!setterAttributesOutput.contains("SetterAttribute") && !setterAttributesOutput.contains("SetterValue"));
+		getterAttributesOutput = CommandTestUtils.runCommandAndWait("connect " + this.restUrl + "; use-application " + MAIN_APPLICATION_NAME 
+				+ "; list-attributes -scope service:getter");
+		assertTrue("Found getter service attributes in output " + getterAttributesOutput,
+				!getterAttributesOutput.contains("GetterAttribute") && !getterAttributesOutput.contains("GetterValue"));
+	}
+	
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = true)
+	public void testServiceAttributeRemovalAfterUninstall() throws Exception {
+		String sertterServiceUri = "applications/" + MAIN_APPLICATION_NAME + "/" + SETTER_SERVICE_NAME;
+		installService(sertterServiceUri);
+		
+		String serviceScopeAttributesOutput;
+		String setterInstanceAttributesOutput;
+		LogUtils.log("setting an attribute in service scope for service " + SETTER_SERVICE_NAME);
+		CommandTestUtils.runCommandUsingFile("connect " + this.restUrl
+				+ "; set-attributes -scope service:" + SETTER_SERVICE_NAME + " '{\"serviceAttribute\":\"serviceValue\"}'");
+		serviceScopeAttributesOutput = CommandTestUtils.runCommandAndWait("connect " + this.restUrl
+				+ "; list-attributes -scope service:" + SETTER_SERVICE_NAME);
+		assertTrue("Failed setting service scope attribute. Output was " + serviceScopeAttributesOutput,
+				serviceScopeAttributesOutput.contains("serviceAttribute") && serviceScopeAttributesOutput.contains("serviceValue"));
+		
+		LogUtils.log("Setting service instance attributes for service " + SETTER_SERVICE_NAME);
+		CommandTestUtils.runCommandUsingFile("connect " + this.restUrl
+				+ "; set-attributes -scope service:setter:1 '{\"instanceAttribute\":\"instanceValue\"}'");
+		setterInstanceAttributesOutput = CommandTestUtils.runCommandAndWait("connect " + this.restUrl
+				+ "; list-attributes -scope service:" + SETTER_SERVICE_NAME + ":1");
+		assertTrue("Failed setting service instance scope attribute. Output was " + setterInstanceAttributesOutput,
+				setterInstanceAttributesOutput.contains("instanceAttribute") && setterInstanceAttributesOutput.contains("instanceValue"));
+		
+		LogUtils.log("Uninstalling service " + SETTER_SERVICE_NAME);
+		uninstallService(SETTER_SERVICE_NAME);
+		LogUtils.log("Installing service " + SETTER_SERVICE_NAME + " again in-order to see if attributes were deleted");
+		installService(sertterServiceUri);
+		
+		LogUtils.log("asserting no service attributes exist.");
+		serviceScopeAttributesOutput = CommandTestUtils.runCommandAndWait("connect " + this.restUrl
+				+ "; list-attributes -scope service:" + SETTER_SERVICE_NAME);
+		assertTrue("Found service attributes in output " + serviceScopeAttributesOutput, 
+				!serviceScopeAttributesOutput.contains("serviceAttribute") && !serviceScopeAttributesOutput.contains("serviceValue"));
+		setterInstanceAttributesOutput = CommandTestUtils.runCommandAndWait("connect " + this.restUrl
+				+ "; list-attributes -scope service:" + SETTER_SERVICE_NAME + ":1");
+		assertTrue("Found service instance attributes in output " + setterInstanceAttributesOutput,
+				!setterInstanceAttributesOutput.contains("instanceAttribute") && !setterInstanceAttributesOutput.contains("instanceValue"));
+		uninstallService(SETTER_SERVICE_NAME);
 	}
 
 	private void cleanAttributes() throws IOException, InterruptedException {
@@ -354,7 +441,7 @@ public class AttributesTest extends AbstractLocalCloudTest {
 		cleanAttributes();
         		
 		final String absolutePUNameSimple1 = ServiceUtils.getAbsolutePUName(MAIN_APPLICATION_NAME, "getter");
-		final String absolutePUNameSimple2 = ServiceUtils.getAbsolutePUName(MAIN_APPLICATION_NAME, "setter");
+		final String absolutePUNameSimple2 = ServiceUtils.getAbsolutePUName(MAIN_APPLICATION_NAME, SETTER_SERVICE_NAME);
 		final ProcessingUnit pu1 = admin.getProcessingUnits().waitFor(absolutePUNameSimple1 , OPERATION_TIMEOUT , TimeUnit.MILLISECONDS);
 		final ProcessingUnit pu2 = admin.getProcessingUnits().waitFor(absolutePUNameSimple2, OPERATION_TIMEOUT , TimeUnit.MILLISECONDS);
 		assertNotNull(pu1);

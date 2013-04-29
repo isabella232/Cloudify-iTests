@@ -30,6 +30,17 @@ public class CustomCommandsOnMultipleInstancesApplicationTest extends AbstractLo
         }
         uninstallApplication();
     }
+    
+    @Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
+    public void testInvokeUsingServiceContextOnDifferentService() throws Exception {
+    	installApplication();
+    	long start = System.currentTimeMillis();
+    	LogUtils.log("Invoking a custom command from one service on a different service using the service context.");
+    	CommandTestUtils.runCommandAndWait("connect " + this.restUrl + "; use-application " +APPLICATION_NAME + "; invoke simpleCustomCommandsMultipleInstances-1 remoteInvoke");
+    	long duration = System.currentTimeMillis() - start;
+    	LogUtils.log("Expecting command to run for no less then 70000 milliseconds");
+    	assertTrue(duration >= 70000);
+    }
 
     @Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
     public void testParamsCommand() throws Exception {

@@ -32,7 +32,7 @@ public class Ec2SimpleStorageTest extends AbstractStorageAllocationTest {
 
     @Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
     public void testUbuntu() throws Exception {
-        storageAllocationTester.testInstallWithDynamicStorageUbuntu();
+        storageAllocationTester.testInstallWithStorageUbuntu();
     }
 
     @AfterMethod

@@ -60,4 +60,12 @@ public class Ec2SimpleStorageTest extends AbstractStorageAllocationTest {
     protected boolean isReusableCloud() {
         return false;
     }
+
+    @Override
+    protected void customizeCloud() throws Exception {
+        super.customizeCloud();
+        // this is needed since the sd devices dont work on the latest ubuntu kernel.
+        // and the volume is really attached on xv devices.
+        getService().getAdditionalPropsToReplace().put("/dev/sdc", "/dev/xvdc");
+    }
 }

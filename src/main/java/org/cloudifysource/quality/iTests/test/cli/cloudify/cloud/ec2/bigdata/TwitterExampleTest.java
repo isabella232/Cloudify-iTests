@@ -5,8 +5,6 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
-
 import javax.ws.rs.core.HttpHeaders;
 
 import org.apache.commons.io.FileUtils;
@@ -15,7 +13,6 @@ import org.cloudifysource.dsl.internal.ServiceReader;
 import iTests.framework.tools.SGTestHelper;
 import org.cloudifysource.quality.iTests.framework.utils.AssertUtils;
 import org.cloudifysource.quality.iTests.framework.utils.AssertUtils.RepetitiveConditionProvider;
-import org.cloudifysource.quality.iTests.framework.utils.IOUtils;
 import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
 import org.cloudifysource.quality.iTests.framework.utils.SSHUtils;
 import org.cloudifysource.quality.iTests.framework.utils.WebUtils;
@@ -24,7 +21,6 @@ import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.NewAbstractClou
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.type.TypeFactory;
 import org.codehaus.jackson.type.JavaType;
-import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -40,13 +36,14 @@ public class TwitterExampleTest extends NewAbstractCloudTest {
 	private String restUrl;
 	private String devAppName;
 	private String prodAppName;
-	private final String applicationFolderName = "bigDataApp";
-	private final String prodAppFolderName = "streaming-bigdata";
-	private final String devAppFolderName = prodAppFolderName + "-dev";
-	private final static int REPEATS = 3;
+	private static final String APPLICATION_FOLDER_NAME = "bigDataApp";
+	private static final String PROD_APP_FOLDER_NAME = "streaming-bigdata";
+	private static final String DEV_APP_FOLDER_NAME = PROD_APP_FOLDER_NAME + "-dev";
 	private static final String GLOBAL_COUNTER_PROPERTY = "org.openspaces.bigdata.common.counters.GlobalCounter";
 	private final static String ENTRIES_AMOUNT_REST_URL = "/admin/Spaces/Names/space/Spaces/Names/space/RuntimeDetails/CountPerClassName/" + GLOBAL_COUNTER_PROPERTY;
-	protected static final int EXPECTED_NUMBER_OF_UNIQUE_WORDS_IN_MOCK_TWEETS = 84;
+	private static final int EXPECTED_NUMBER_OF_UNIQUE_WORDS_IN_MOCK_TWEETS = 84;
+	private static final String BIG_DATA_APP_APPLICATION_GROOVY = "bigDataApp-application.groovy";
+	private static final String DEV_APP_OVERRIDE = SGTestHelper.getSGTestRootDir() + "/src/main/resources/apps/cloudify/recipes/"+PROD_APP_FOLDER_NAME+"-dev-override";
 	
 	@BeforeClass(alwaysRun = true)
 	protected void bootstrap() throws Exception {
@@ -61,12 +58,12 @@ public class TwitterExampleTest extends NewAbstractCloudTest {
 	
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
 	public void testTwitterDev() throws Exception {
-		testTwitter(devAppFolderName, devAppName, false);
+		testTwitter(DEV_APP_FOLDER_NAME, devAppName, false);
 	}
 	
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
 	public void testTwitterProd() throws Exception {
-		testTwitter(prodAppFolderName, prodAppName, true);
+		testTwitter(PROD_APP_FOLDER_NAME, prodAppName, true);
 	}
 	
 	private void testTwitter(String appFolderName, String appName, boolean isProduction) throws Exception {
@@ -175,20 +172,17 @@ public class TwitterExampleTest extends NewAbstractCloudTest {
 		final String recipesDir = getRecipesDir();
 		
 		
-		File prodAppFolder = new File(recipesDir+ prodAppFolderName);
+		File prodAppFolder = new File(recipesDir+ PROD_APP_FOLDER_NAME);
 		String hostAddress = "127.0.0.1";
-		
+
 		SSHUtils.runCommand(hostAddress, AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2,
 				"cd " + prodAppFolder + ";" + "mvn install", username, password);
-		
-		final File devAppFolder = new File(recipesDir + devAppFolderName);
+
+		final File devAppFolder = new File(recipesDir + DEV_APP_FOLDER_NAME);
 		
 		FileUtils.copyDirectory(prodAppFolder, devAppFolder);
-		disableCassandraService(devAppFolder);
-		replaceSpringProfilesActive(devAppFolder,"feeder", "twitter-feeder", "list-feeder");
-		replaceSpringProfilesActive(devAppFolder,"processor", "cassandra-archiver,cassandra-discovery", "file-archiver");
-		setNumberOfInstances(devAppFolder,"processor", 4, 1);
-
+		FileUtils.copyDirectory(new File(DEV_APP_OVERRIDE), new File(devAppFolder, APPLICATION_FOLDER_NAME));
+		
 		SSHUtils.runCommand(hostAddress, AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2,
 				"cd " + devAppFolder + ";" + "mvn install", username, password);
 
@@ -198,8 +192,8 @@ public class TwitterExampleTest extends NewAbstractCloudTest {
 	}
 
 	private File getApplicationDslFile(File appFolder) {
-		final String applicationPath = getApplicationPath(devAppFolderName);
-		final File applicationDslFilePath = new File(applicationPath + "/bigDataApp-application.groovy");
+		final String applicationPath = getApplicationPath(DEV_APP_FOLDER_NAME);
+		final File applicationDslFilePath = new File(applicationPath + "/"+ BIG_DATA_APP_APPLICATION_GROOVY);
 		return applicationDslFilePath;
 	}
 
@@ -209,49 +203,6 @@ public class TwitterExampleTest extends NewAbstractCloudTest {
 	}
 
 	private String getApplicationPath(String appFolderName) {
-		return getRecipesDir() + appFolderName + "/" + applicationFolderName;
+		return getRecipesDir() + appFolderName + "/" + APPLICATION_FOLDER_NAME;
 	}
-
-	/**
-	 * Modify the service recipe to use a different spring profile
-	 */
-	private void replaceSpringProfilesActive(File appFolder, String module, String oldProfile, String newProfile) throws IOException {
-		String recipeFile = getRecipeDslFile(appFolder, module);
-		IOUtils.replaceTextInFile(recipeFile,
-				"springProfilesActive \""+oldProfile+"\"", 
-				"springProfilesActive \""+newProfile+"\"");
-	}
-
-	private String getRecipeDslFile(File appFolder, String module) {
-		String recipeFile = appFolder+"/"+applicationFolderName+"/"+module+"/"+module+"-service.groovy";
-		return recipeFile;
-	}
-	
-	/**
-	 * Erase cassandra service from the application recipe 
-	 */
-	private void disableCassandraService(File appFolder) throws IOException {
-		File dsl = getApplicationDslFile(appFolder);
-		FileUtils.write(dsl, "application {\n name=\"big_data_app\"\n service {\n\t name = \"feeder\"\n\tdependsOn = [\"processor\"]\n}\n service {\n\tname = \"processor\"\n} \n}");
-	}
-	
-	private void setNumberOfInstances(File appFolder, String module, int oldNumberOfInstances, int newNumberOfInstances) throws IOException {
-		String recipeFile = getRecipeDslFile(appFolder, module);
-		IOUtils.replaceTextInFile(recipeFile,
-				"numInstances "+oldNumberOfInstances, 
-				"numInstances "+newNumberOfInstances);
-		IOUtils.replaceTextInFile(recipeFile,
-				"maxAllowedInstances "+oldNumberOfInstances, 
-				"maxAllowedInstances "+newNumberOfInstances);
-		IOUtils.replaceTextInFile(recipeFile,
-				"memoryCapacity "+oldNumberOfInstances*128, 
-				"memoryCapacity "+newNumberOfInstances*128);
-		IOUtils.replaceTextInFile(recipeFile,
-				"maxMemoryCapacity "+oldNumberOfInstances*128, 
-				"maxMemoryCapacity "+newNumberOfInstances*128);
-		IOUtils.replaceTextInFile(recipeFile,
-				"highlyAvailable true", 
-				"highlyAvailable false");
-	}
-
 }

@@ -5,9 +5,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -277,7 +275,7 @@ public abstract class AbstractCloudService implements CloudService {
             if (bootstrapper.isBootstrapExpectedToFail()) {
                 return output;
             }
-            this.webUIUrls = extractWebuiUrls(output, numberOfManagementMachines);
+            this.webUIUrls = CloudTestUtils.extractPublicWebuiUrls(output, numberOfManagementMachines);
             assertBootstrapServicesAreAvailable();
 
             URL machinesURL;
@@ -396,27 +394,10 @@ public abstract class AbstractCloudService implements CloudService {
         return new URL(stripSlash(url) + "/admin/machines");
     }
 
-    private URL[] extractWebuiUrls(String cliOutput, int numberOfManagementMachines)
-            throws MalformedURLException {
-
-        URL[] webuiUrls = new URL[numberOfManagementMachines];
-
-        Pattern webUIPattern = Pattern.compile(CloudTestUtils.WEBUI_URL_REGEX);
-        Matcher webUIMatcher = webUIPattern.matcher(cliOutput);
-
-        // This is sort of hack.. currently we are outputting this over ssh and locally with different results
-        for (int i = 0; i < numberOfManagementMachines; i++) {
-            AssertUtils.assertTrue("Could not find actual webui url", webUIMatcher.find());
-            String rawWebUIUrl = webUIMatcher.group(1);
-            webuiUrls[i] = new URL(rawWebUIUrl);
-        }
-
-        return webuiUrls;
-    }
-
     private void assertBootstrapServicesAreAvailable()
             throws MalformedURLException {
 
+        LogUtils.log("Waiting for bootstrap web services to be available");
         URL[] restAdminUrls = getBootstrapper().getRestAdminUrls();
         for (int i = 0; i < restAdminUrls.length; i++) {
             // The rest home page is a JSP page, which will fail to compile if there is no JDK installed. So use
@@ -433,7 +414,8 @@ public abstract class AbstractCloudService implements CloudService {
             public boolean getCondition() {
                 try {
                     return WebUtils.isURLAvailable(url);
-                } catch (Exception e) {
+                } catch (final Exception e) {
+                    LogUtils.log(url + " is not available yet");
                     return false;
                 }
             }

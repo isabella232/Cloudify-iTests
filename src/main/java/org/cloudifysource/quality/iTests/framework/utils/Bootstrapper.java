@@ -223,7 +223,7 @@ public abstract class Bootstrapper {
 		lastActionOutput = result.getOutput();
         if (this instanceof CloudBootstrapper) {
             if (!((CloudBootstrapper) this).isNoWebServices()) {
-                restAdminUrls = extractRestAdminUrls(result.getOutput(), numberOfManagementMachines);
+                restAdminUrls = CloudTestUtils.extractPublicRestUrls(result.getOutput(), numberOfManagementMachines);
                 restUrl = restAdminUrls[0].toString();
             }  else {
                 LogUtils.log("Not retrveing rest urls since there are no web services");
@@ -411,23 +411,4 @@ public abstract class Bootstrapper {
     public URL[] getRestAdminUrls() {
         return restAdminUrls;
     }
-
-    private URL[] extractRestAdminUrls(String output, int numberOfManagementMachines)
-            throws MalformedURLException {
-
-        URL[] restAdminUrls = new URL[numberOfManagementMachines];
-
-        Pattern restPattern = Pattern.compile(CloudTestUtils.REST_URL_REGEX);
-        Matcher restMatcher = restPattern.matcher(output);
-
-        // This is sort of hack.. currently we are outputting this over ssh and locally with different results
-        for (int i = 0; i < numberOfManagementMachines; i++) {
-            AssertUtils.assertTrue("Could not find actual rest url", restMatcher.find());
-            String rawRestAdminUrl = restMatcher.group(1);
-            restAdminUrls[i] = new URL(rawRestAdminUrl);
-        }
-
-        return restAdminUrls;
-    }
-
-    }
+}

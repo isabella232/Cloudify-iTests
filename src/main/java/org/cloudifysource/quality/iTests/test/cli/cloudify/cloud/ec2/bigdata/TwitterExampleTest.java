@@ -2,14 +2,19 @@ package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.ec2.bigdata;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
+import javax.ws.rs.core.HttpHeaders;
 
 import org.apache.commons.io.FileUtils;
 import org.cloudifysource.dsl.internal.DSLException;
 import org.cloudifysource.dsl.internal.ServiceReader;
 import iTests.framework.tools.SGTestHelper;
 import org.cloudifysource.quality.iTests.framework.utils.AssertUtils;
+import org.cloudifysource.quality.iTests.framework.utils.AssertUtils.RepetitiveConditionProvider;
 import org.cloudifysource.quality.iTests.framework.utils.IOUtils;
 import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
 import org.cloudifysource.quality.iTests.framework.utils.SSHUtils;
@@ -19,6 +24,7 @@ import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.NewAbstractClou
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.type.TypeFactory;
 import org.codehaus.jackson.type.JavaType;
+import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -40,6 +46,7 @@ public class TwitterExampleTest extends NewAbstractCloudTest {
 	private final static int REPEATS = 3;
 	private static final String GLOBAL_COUNTER_PROPERTY = "org.openspaces.bigdata.common.counters.GlobalCounter";
 	private final static String ENTRIES_AMOUNT_REST_URL = "/admin/Spaces/Names/space/Spaces/Names/space/RuntimeDetails/CountPerClassName/" + GLOBAL_COUNTER_PROPERTY;
+	protected static final int EXPECTED_NUMBER_OF_UNIQUE_WORDS_IN_MOCK_TWEETS = 84;
 	
 	@BeforeClass(alwaysRun = true)
 	protected void bootstrap() throws Exception {
@@ -54,58 +61,86 @@ public class TwitterExampleTest extends NewAbstractCloudTest {
 	
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
 	public void testTwitterDev() throws Exception {
-		testTwitter(devAppFolderName, devAppName);
+		testTwitter(devAppFolderName, devAppName, false);
 	}
 	
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
 	public void testTwitterProd() throws Exception {
-		testTwitter(prodAppFolderName, prodAppName);
+		testTwitter(prodAppFolderName, prodAppName, true);
 	}
 	
-	private void testTwitter(String appFolderName, String appName) throws Exception {
+	private void testTwitter(String appFolderName, String appName, boolean isProduction) throws Exception {
 		LogUtils.log("installing application " + appFolderName + " on " + this.getCloudName());
 					
 		installApplicationAndWait(getApplicationPath(appFolderName), appName);
 		
-		LogUtils.log("verifing successful installation");
-		restUrl = getRestUrl();
-		URL cassandraPuAdminUrl = new URL(restUrl + "/admin/ProcessingUnits/Names/big_data_app.cassandra");
-		URL processorPuAdminUrl = new URL(restUrl + "/admin/ProcessingUnits/Names/big_data_app.processor");
-		URL feederPuAdminUrl = new URL(restUrl + "/admin/ProcessingUnits/Names/big_data_app.feeder");
-
-		AbstractTestSupport.assertTrue(WebUtils.isURLAvailable(cassandraPuAdminUrl));
-		AbstractTestSupport.assertTrue(WebUtils.isURLAvailable(processorPuAdminUrl));
-		AbstractTestSupport.assertTrue(WebUtils.isURLAvailable(feederPuAdminUrl));
+		verifyApplicationInstallation(appName, isProduction);
 		
-		Client client = Client.create(new DefaultClientConfig());
+		final Client client = Client.create(new DefaultClientConfig());
 		final WebResource service = client.resource(this.getRestUrl());
-		String entriesString = service.path(ENTRIES_AMOUNT_REST_URL).get(String.class);
-		Map<String, Object> entriesAmountJsonMap = jsonToMap(entriesString);
-		String entriesAmountString = (String) entriesAmountJsonMap.get(GLOBAL_COUNTER_PROPERTY);
-		int entriesAmount = Integer.parseInt(entriesAmountString);
 		
-		String newEntriesString;
-		Map<String, Object> newEntriesAmountJsonMap;
-		String newEntriesAmountString;
-		int newEntriesAmount;
-		
-		for(int i = 0; i < REPEATS; i++){
-			
-			Thread.sleep(70000);
-			
-			newEntriesString = service.path(ENTRIES_AMOUNT_REST_URL).get(String.class);
-			newEntriesAmountJsonMap = jsonToMap(newEntriesString);
-			newEntriesAmountString = (String) newEntriesAmountJsonMap.get(GLOBAL_COUNTER_PROPERTY);			
-			newEntriesAmount = Integer.parseInt(newEntriesAmountString);
-			
-			AssertUtils.assertTrue("TokenCounter entries are not written to the space. Entries in space: " + newEntriesAmount, newEntriesAmount > entriesAmount);
-			
-			entriesAmount = newEntriesAmount;
+		if (isProduction) {
+			// weaker assert in production since we cannot rely on tweet feed to be active.
+			AssertUtils.repetitiveAssertTrue("Expected GlobalCounter of at least one word", new RepetitiveConditionProvider() {
+				
+				@Override
+				public boolean getCondition() {
+					final int numberOfGlobalCounters = getGlobalCounter(service);
+					LogUtils.log("Number of global counters is " + numberOfGlobalCounters +". Expected bigger than 0");
+					return numberOfGlobalCounters > 0;
+				}
+			}, OPERATION_TIMEOUT);
+		}
+		else {
+			AssertUtils.repetitiveAssertTrue("Expected GlobalCounter to reach " + EXPECTED_NUMBER_OF_UNIQUE_WORDS_IN_MOCK_TWEETS, new RepetitiveConditionProvider() {
+				
+				int prevNumberOfGlobalCounters = 0;
+								
+				@Override
+				public boolean getCondition() {
+					final int numberOfGlobalCounters = getGlobalCounter(service);
+					LogUtils.log("Number of global counters is " + numberOfGlobalCounters +". Expected " + EXPECTED_NUMBER_OF_UNIQUE_WORDS_IN_MOCK_TWEETS);
+					assertTrue("Number of global counters is not expected to decrease. prevNumberOfGlobalCounters=" + prevNumberOfGlobalCounters + " numberOfGlobalCounters="+numberOfGlobalCounters,
+							   prevNumberOfGlobalCounters < numberOfGlobalCounters);
+					prevNumberOfGlobalCounters = numberOfGlobalCounters;
+					return numberOfGlobalCounters == EXPECTED_NUMBER_OF_UNIQUE_WORDS_IN_MOCK_TWEETS;
+				}
+			}, OPERATION_TIMEOUT);
 		}
 		
 		uninstallApplicationAndWait(appName);
 		
 		super.scanForLeakedAgentNodes();
+	}
+
+	private void verifyApplicationInstallation(String appName, boolean isProduction) throws MalformedURLException,
+			Exception {
+		LogUtils.log("verifing successful installation");
+		restUrl = getRestUrl();
+
+		if (isProduction) {
+			final URL cassandraPuAdminUrl = new URL(restUrl + "/admin/ProcessingUnits/Names/"+appName+".cassandra");
+			AbstractTestSupport.assertTrue(WebUtils.isURLAvailable(cassandraPuAdminUrl));
+		}
+		final URL processorPuAdminUrl = new URL(restUrl + "/admin/ProcessingUnits/Names/"+appName+".processor");
+		AbstractTestSupport.assertTrue(WebUtils.isURLAvailable(processorPuAdminUrl));
+		
+		final URL feederPuAdminUrl = new URL(restUrl + "/admin/ProcessingUnits/Names/"+appName+".feeder");
+		AbstractTestSupport.assertTrue(WebUtils.isURLAvailable(feederPuAdminUrl));
+	}
+
+	private int getGlobalCounter(final WebResource service)  {
+		final String newEntriesString = service.path(ENTRIES_AMOUNT_REST_URL).header(HttpHeaders.CACHE_CONTROL, "no-cache").get(String.class);
+		LogUtils.log("newEntriesString = " + newEntriesString);
+		Map<String, Object> newEntriesAmountJsonMap;
+		try {
+			newEntriesAmountJsonMap = jsonToMap(newEntriesString);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+		final String newEntriesAmountString = (String) newEntriesAmountJsonMap.get(GLOBAL_COUNTER_PROPERTY);			
+		final int newEntriesAmount = Integer.parseInt(newEntriesAmountString);
+		return newEntriesAmount;
 	}
 
 	@Override
@@ -139,23 +174,33 @@ public class TwitterExampleTest extends NewAbstractCloudTest {
 	private void prepareApplication() throws IOException, InterruptedException, DSLException {
 		final String recipesDir = getRecipesDir();
 		
+		
 		File prodAppFolder = new File(recipesDir+ prodAppFolderName);
 		String hostAddress = "127.0.0.1";
+		
 		SSHUtils.runCommand(hostAddress, AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2,
 				"cd " + prodAppFolder + ";" + "mvn install", username, password);
 		
-		File devAppFolder = new File(recipesDir + devAppFolderName);
+		final File devAppFolder = new File(recipesDir + devAppFolderName);
+		
 		FileUtils.copyDirectory(prodAppFolder, devAppFolder);
+		disableCassandraService(devAppFolder);
 		replaceSpringProfilesActive(devAppFolder,"feeder", "twitter-feeder", "list-feeder");
 		replaceSpringProfilesActive(devAppFolder,"processor", "cassandra-archiver,cassandra-discovery", "file-archiver");
+		setNumberOfInstances(devAppFolder,"processor", 4, 1);
+
 		SSHUtils.runCommand(hostAddress, AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2,
 				"cd " + devAppFolder + ";" + "mvn install", username, password);
-		
-		String applicationPath = getApplicationPath(devAppFolderName);
-		File applicationDslFilePath = new File(applicationPath + "/bigDataApp-application.groovy");
-		String appName = ServiceReader.getApplicationFromFile(applicationDslFilePath).getApplication().getName();
+
+		String appName = ServiceReader.getApplicationFromFile(getApplicationDslFile(devAppFolder)).getApplication().getName();
 		devAppName = appName + "-dev";
 		prodAppName = appName + "-prod";
+	}
+
+	private File getApplicationDslFile(File appFolder) {
+		final String applicationPath = getApplicationPath(devAppFolderName);
+		final File applicationDslFilePath = new File(applicationPath + "/bigDataApp-application.groovy");
+		return applicationDslFilePath;
 	}
 
 	private String getRecipesDir() {
@@ -171,10 +216,42 @@ public class TwitterExampleTest extends NewAbstractCloudTest {
 	 * Modify the service recipe to use a different spring profile
 	 */
 	private void replaceSpringProfilesActive(File appFolder, String module, String oldProfile, String newProfile) throws IOException {
-		String recipeFile = appFolder+"/"+applicationFolderName+"/"+module+"/"+module+"-service.groovy";
+		String recipeFile = getRecipeDslFile(appFolder, module);
 		IOUtils.replaceTextInFile(recipeFile,
 				"springProfilesActive \""+oldProfile+"\"", 
 				"springProfilesActive \""+newProfile+"\"");
+	}
+
+	private String getRecipeDslFile(File appFolder, String module) {
+		String recipeFile = appFolder+"/"+applicationFolderName+"/"+module+"/"+module+"-service.groovy";
+		return recipeFile;
+	}
+	
+	/**
+	 * Erase cassandra service from the application recipe 
+	 */
+	private void disableCassandraService(File appFolder) throws IOException {
+		File dsl = getApplicationDslFile(appFolder);
+		FileUtils.write(dsl, "application {\n name=\"big_data_app\"\n service {\n\t name = \"feeder\"\n\tdependsOn = [\"processor\"]\n}\n service {\n\tname = \"processor\"\n} \n}");
+	}
+	
+	private void setNumberOfInstances(File appFolder, String module, int oldNumberOfInstances, int newNumberOfInstances) throws IOException {
+		String recipeFile = getRecipeDslFile(appFolder, module);
+		IOUtils.replaceTextInFile(recipeFile,
+				"numInstances "+oldNumberOfInstances, 
+				"numInstances "+newNumberOfInstances);
+		IOUtils.replaceTextInFile(recipeFile,
+				"maxAllowedInstances "+oldNumberOfInstances, 
+				"maxAllowedInstances "+newNumberOfInstances);
+		IOUtils.replaceTextInFile(recipeFile,
+				"memoryCapacity "+oldNumberOfInstances*128, 
+				"memoryCapacity "+newNumberOfInstances*128);
+		IOUtils.replaceTextInFile(recipeFile,
+				"maxMemoryCapacity "+oldNumberOfInstances*128, 
+				"maxMemoryCapacity "+newNumberOfInstances*128);
+		IOUtils.replaceTextInFile(recipeFile,
+				"highlyAvailable true", 
+				"highlyAvailable false");
 	}
 
 }

@@ -22,9 +22,5 @@ application {
 	}
 	service {
 		name = "processor"
-		dependsOn = ["cassandra"]		
 	}
-//	service {
-//		name = "cassandra"	
-//	}	
 }

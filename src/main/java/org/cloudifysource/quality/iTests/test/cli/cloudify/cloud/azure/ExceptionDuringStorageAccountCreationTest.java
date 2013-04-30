@@ -33,8 +33,8 @@ public class ExceptionDuringStorageAccountCreationTest extends NewAbstractCloudT
 		
 		String affinityGroup = className + "affinity";
 		String network = className + "network";
-		// this name is too long for a valid storage account name
-		String storageAccountName = className + "storage";
+		// storage account names can only be lowercase letters
+		String storageAccountName = "STORAGE";
 		azureCloudService.setAffinityGroup(affinityGroup);
 		azureCloudService.setVirtualNetworkSiteName(network);
 		azureCloudService.setStorageAccountName(storageAccountName);

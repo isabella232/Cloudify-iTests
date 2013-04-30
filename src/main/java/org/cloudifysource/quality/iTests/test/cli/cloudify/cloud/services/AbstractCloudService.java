@@ -29,7 +29,7 @@ import org.testng.Assert;
 
 public abstract class AbstractCloudService implements CloudService {
 
-    private static final int MAX_HOSTNAME_LENGTH = 45;
+    private static final int MAX_HOSTNAME_LENGTH = 35;
     private static final int MAX_VOLUME_NAME_LENGTH = 45;
     protected static final String RELATIVE_ESC_PATH = "/clouds/";
     protected static final String UPLOAD_FOLDER = "upload";

@@ -1,6 +1,8 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.ec2.examples;
 
 import iTests.framework.testng.annotations.TestConfiguration;
+import org.cloudifysource.quality.iTests.framework.utils.JGitUtils;
+import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
 import org.cloudifysource.quality.iTests.framework.utils.ScriptUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.AbstractServicesTest;
 import org.eclipse.jgit.api.CheckoutCommand;
@@ -26,25 +28,9 @@ public class Ec2GitServicesTest extends AbstractServicesTest {
     @BeforeClass(alwaysRun = true)
     protected void bootstrap() throws Exception {
     	super.bootstrap();
-    	
-    	localGitRepoPath = ScriptUtils.getBuildPath() + "/git-recipes-" + this.getClass().getSimpleName() ;
-
-        if (!new File(localGitRepoPath).exists()) {
-            String remotePath = "https://github.com/CloudifySource/cloudify-recipes.git";
-            Git.cloneRepository()
-                    .setURI(remotePath)
-                    .setDirectory(new File(localGitRepoPath))
-                    .call();
-            if (!BRANCH_NAME.equalsIgnoreCase("master")) {
-                Git git = Git.open(new File(localGitRepoPath));
-                CheckoutCommand checkout = git.checkout();
-                checkout.setCreateBranch(true)
-                        .setName(BRANCH_NAME)
-                        .setUpstreamMode(CreateBranchCommand.SetupUpstreamMode.TRACK).
-                        setStartPoint("origin/" + BRANCH_NAME)
-                        .call();
-            }
-        }
+        localGitRepoPath = ScriptUtils.getBuildPath() + "/git-recipes-" + this.getClass().getSimpleName() ;
+        String remotePath = "https://github.com/CloudifySource/cloudify-recipes.git";
+        JGitUtils.clone(localGitRepoPath, remotePath, BRANCH_NAME);
     }
 
     @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)

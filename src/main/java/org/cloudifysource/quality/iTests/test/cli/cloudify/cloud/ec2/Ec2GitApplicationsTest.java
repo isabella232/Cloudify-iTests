@@ -9,8 +9,6 @@ import org.eclipse.jgit.api.CheckoutCommand;
 import org.eclipse.jgit.api.CreateBranchCommand;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
-import org.eclipse.jgit.api.errors.InvalidRemoteException;
-import org.eclipse.jgit.lib.Ref;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -115,34 +113,4 @@ public class Ec2GitApplicationsTest extends AbstractExamplesTest {
     protected void teardown() throws Exception {
         super.teardown();
     }
-
-
-    public static void main(String[] args) throws GitAPIException, IOException {
-        localGitRepoPath = ScriptUtils.getBuildPath() + "/git-recipes-" + "Ec2GitApplicationsTest";
-        BRANCH_NAME = "2_5_1";
-//        if (!new File(localGitRepoPath).exists()) {
-//            String remotePath = "https://github.com/CloudifySource/cloudify-recipes.git";
-
-        if (BRANCH_NAME.equalsIgnoreCase("master")) {
-            Git.cloneRepository()
-//                        .setURI(remotePath)
-                    .setDirectory(new File(localGitRepoPath))
-                    .call();
-        } else {
-//                Git.cloneRepository()
-//                        .setURI(remotePath)
-//                        .setDirectory(new File(localGitRepoPath))
-//                        .call();
-            Git git = Git.open(new File(localGitRepoPath));
-            System.out.println(git.getRepository().getFullBranch());
-            CheckoutCommand checkout = git.checkout();
-            checkout.setCreateBranch(true)
-                    .setName(BRANCH_NAME)
-                    .setUpstreamMode(CreateBranchCommand.SetupUpstreamMode.TRACK).
-                    setStartPoint("origin/" + BRANCH_NAME)
-                    .call();
-            System.out.println(git.getRepository().getFullBranch());
-        }
-    }
-//    }
 }

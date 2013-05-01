@@ -1,59 +1,76 @@
 package org.cloudifysource.quality.iTests.framework.utils;
 
+import org.eclipse.jgit.api.CheckoutCommand;
+import org.eclipse.jgit.api.CreateBranchCommand;
 import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.api.errors.InvalidRemoteException;
+import org.eclipse.jgit.api.errors.TransportException;
 import org.eclipse.jgit.lib.Repository;
 
 import java.io.File;
+import java.io.IOException;
 
 public class JGitUtils {
 
-    public static void clone(String localGitRepoPath, String repositoryUrl) {
-            if (!new File(localGitRepoPath).exists()) {
-                try {
-                    Git.cloneRepository()
-                            .setURI(repositoryUrl)
-                            .setDirectory(new File(localGitRepoPath))
+    public static void clone(String localGitRepoPath, String repositoryUrl, String branchName) throws IOException {
+        if (!new File(localGitRepoPath).exists()) {
+            try {
+                Git.cloneRepository()
+                        .setURI(repositoryUrl)
+                        .setDirectory(new File(localGitRepoPath))
+                        .call();
+
+                if (!branchName.equalsIgnoreCase("master")) {
+                    Git git = null;
+                    git = Git.open(new File(localGitRepoPath));
+                    CheckoutCommand checkout = git.checkout();
+                    checkout.setCreateBranch(true)
+                            .setName(branchName)
+                            .setUpstreamMode(CreateBranchCommand.SetupUpstreamMode.TRACK).
+                            setStartPoint("origin/" + branchName)
                             .call();
-                } catch (Exception e) {
-                    throw new RuntimeException("Failed to clone "+repositoryUrl, e);
                 }
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to clone " + repositoryUrl, e);
             }
+        }
     }
 
     public static void commit(Repository localRepo, String msg) {
         Git git = null;
-        try{
+        try {
             git = new Git(localRepo);
             git.commit()
                     .setMessage(msg)
                     .call();
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new RuntimeException("Failed to commit with messgae " + msg + " to local repository " + localRepo, e);
-        }finally {
+        } finally {
             git = null;
         }
     }
 
     public static void push(Repository localRepo) {
         Git git = null;
-        try{
+        try {
             git = new Git(localRepo);
             git.push().call();
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new RuntimeException("Failed to push to local repository " + localRepo, e);
-        }finally {
+        } finally {
             git = null;
         }
     }
 
     public static void pull(Repository localRepo) {
         Git git = null;
-        try{
+        try {
             git = new Git(localRepo);
             git.pull().call();
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new RuntimeException("Failed to pull to local repository " + localRepo, e);
-        }finally {
+        } finally {
             git = null;
         }
     }

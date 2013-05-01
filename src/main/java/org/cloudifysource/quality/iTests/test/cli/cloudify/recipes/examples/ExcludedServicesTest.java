@@ -1,5 +1,6 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.recipes.examples;
 
+import iTests.framework.tools.SGTestHelper;
 import org.apache.commons.io.FileUtils;
 import iTests.framework.testng.annotations.TestConfiguration;
 import org.cloudifysource.quality.iTests.framework.utils.JGitUtils;
@@ -21,7 +22,7 @@ import java.io.IOException;
 public class ExcludedServicesTest extends AbstractLocalCloudTest { 
 
 	private static String localGitRepoPath ;
-    private static String BRANCH_NAME = System.getProperty("branch.name");
+    private static String BRANCH_NAME = SGTestHelper.getBranchName();
 
     @BeforeClass(alwaysRun = true)
     public void cloneRecipesRepository() throws Exception{

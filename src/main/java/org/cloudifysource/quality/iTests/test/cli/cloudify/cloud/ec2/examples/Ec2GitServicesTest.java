@@ -1,6 +1,7 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.ec2.examples;
 
 import iTests.framework.testng.annotations.TestConfiguration;
+import iTests.framework.tools.SGTestHelper;
 import org.cloudifysource.quality.iTests.framework.utils.JGitUtils;
 import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
 import org.cloudifysource.quality.iTests.framework.utils.ScriptUtils;
@@ -18,7 +19,7 @@ import java.io.File;
 public class Ec2GitServicesTest extends AbstractServicesTest {
 
 	private static String localGitRepoPath;
-    private static String BRANCH_NAME = System.getProperty("branch.name");
+    private static String BRANCH_NAME = SGTestHelper.getBranchName();
 
     @Override
     protected String getCloudName() {

@@ -88,5 +88,9 @@ public class SGTestHelper {
 	public static String getCustomCloudConfigDir(String cloudName) {
 		return getSGTestRootDir() + "/src/main/resources/custom-cloud-configs/" + cloudName;
 	}
+
+    public static String getBranchName() {
+        return System.getProperty("branch.name", "");
+    }
 	
 }

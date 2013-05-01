@@ -224,6 +224,7 @@ public abstract class Bootstrapper {
         if (this instanceof CloudBootstrapper) {
             if (!((CloudBootstrapper) this).isNoWebServices()) {
                 restAdminUrls = CloudTestUtils.extractPublicRestUrls(result.getOutput(), numberOfManagementMachines);
+                LogUtils.log("restAdminUrls = " + restAdminUrls);
                 restUrl = restAdminUrls[0].toString();
             }  else {
                 LogUtils.log("Not retrveing rest urls since there are no web services");

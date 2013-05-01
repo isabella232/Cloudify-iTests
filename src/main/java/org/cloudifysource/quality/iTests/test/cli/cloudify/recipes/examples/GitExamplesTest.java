@@ -2,6 +2,7 @@ package org.cloudifysource.quality.iTests.test.cli.cloudify.recipes.examples;
 
 import java.io.File;
 
+import iTests.framework.tools.SGTestHelper;
 import org.apache.commons.io.FileUtils;
 import org.cloudifysource.quality.iTests.framework.utils.JGitUtils;
 import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
@@ -18,7 +19,7 @@ public class GitExamplesTest extends AbstractLocalCloudTest {
 
 	private String localGitAppsPath;
 	private String localGitRepoPath;
-    private static String BRANCH_NAME = System.getProperty("branch.name");
+    private static String BRANCH_NAME = SGTestHelper.getBranchName();
 
 	@BeforeClass(alwaysRun = true)
 	protected void bootstrap() throws Exception {

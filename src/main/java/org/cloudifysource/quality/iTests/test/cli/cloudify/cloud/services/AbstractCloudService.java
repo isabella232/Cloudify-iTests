@@ -276,6 +276,7 @@ public abstract class AbstractCloudService implements CloudService {
                 return output;
             }
             this.webUIUrls = CloudTestUtils.extractPublicWebuiUrls(output, numberOfManagementMachines);
+            LogUtils.log("webuiUrls = " + webUIUrls);
             assertBootstrapServicesAreAvailable();
 
             URL machinesURL;

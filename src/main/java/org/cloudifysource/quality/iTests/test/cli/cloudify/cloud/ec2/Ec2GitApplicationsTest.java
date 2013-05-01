@@ -3,6 +3,7 @@ package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.ec2;
 import java.io.File;
 import java.io.IOException;
 
+import iTests.framework.tools.SGTestHelper;
 import org.cloudifysource.quality.iTests.framework.utils.JGitUtils;
 import org.cloudifysource.quality.iTests.framework.utils.ScriptUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.AbstractExamplesTest;
@@ -17,7 +18,7 @@ import org.testng.annotations.Test;
 public class Ec2GitApplicationsTest extends AbstractExamplesTest {
 
     private static String localGitRepoPath;
-    private static String BRANCH_NAME = System.getProperty("branch.name");
+    private static String BRANCH_NAME = SGTestHelper.getBranchName();
 
     @Override
     protected String getCloudName() {

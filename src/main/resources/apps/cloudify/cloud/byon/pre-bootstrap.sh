@@ -4,11 +4,11 @@
 echo checking for previous java installation
 if [ -d "/tmp/byon/java" ]; then
 	echo cleaning java installation from home directory
-	rm -rf ~/java
+	rm -rf /tmp/byon/java
 fi
 
 echo checking for previous gigaspaces installation
 if [ -d "/tmp/byon/gigaspaces" ]; then
 	echo cleaning gigaspaces installation from home directory
-	rm -rf ~/gigaspaces
+	rm -rf /tmp/byon/gigaspaces
 fi

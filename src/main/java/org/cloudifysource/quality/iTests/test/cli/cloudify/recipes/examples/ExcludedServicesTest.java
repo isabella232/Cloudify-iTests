@@ -2,6 +2,7 @@ package org.cloudifysource.quality.iTests.test.cli.cloudify.recipes.examples;
 
 import org.apache.commons.io.FileUtils;
 import iTests.framework.testng.annotations.TestConfiguration;
+import org.cloudifysource.quality.iTests.framework.utils.JGitUtils;
 import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
 import org.cloudifysource.quality.iTests.framework.utils.ScriptUtils;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
@@ -24,24 +25,9 @@ public class ExcludedServicesTest extends AbstractLocalCloudTest {
 
     @BeforeClass(alwaysRun = true)
     public void cloneRecipesRepository() throws Exception{
-   	localGitRepoPath = ScriptUtils.getBuildPath() + "/git-recipes";
-
-        if (!new File(localGitRepoPath).exists()) {
-            String remotePath = "https://github.com/CloudifySource/cloudify-recipes.git";
-            Git.cloneRepository()
-                    .setURI(remotePath)
-                    .setDirectory(new File(localGitRepoPath))
-                    .call();
-            if (!BRANCH_NAME.equalsIgnoreCase("master")) {
-                Git git = Git.open(new File(localGitRepoPath));
-                CheckoutCommand checkout = git.checkout();
-                checkout.setCreateBranch(true)
-                        .setName(BRANCH_NAME)
-                        .setUpstreamMode(CreateBranchCommand.SetupUpstreamMode.TRACK).
-                        setStartPoint("origin/" + BRANCH_NAME)
-                        .call();
-            }
-        }
+   	    localGitRepoPath = ScriptUtils.getBuildPath() + "/git-recipes";
+        String remotePath = "https://github.com/CloudifySource/cloudify-recipes.git";
+        JGitUtils.clone(localGitRepoPath, remotePath, BRANCH_NAME);
     }
 
     //should work

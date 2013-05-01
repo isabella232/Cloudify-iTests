@@ -6,9 +6,7 @@ import org.cloudifysource.quality.iTests.framework.utils.WebUtils;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -50,22 +48,24 @@ public class CloudTestUtils {
 
     public static URL[] extractPublicRestUrls(final String cliOutput,
                                               final int numberOfManagementMachines) throws MalformedURLException {
-        Set<URL> privateUrls = asSet(extractPrivateRestUrls(cliOutput, numberOfManagementMachines));
-        Set<URL> allUrls = asSet(extractAllMatchingUrls(cliOutput, numberOfManagementMachines, CloudTestUtils.REST_URL_REGEX));
-        allUrls.removeAll(privateUrls);
+        List<URL> privateUrls = asList(extractPrivateRestUrls(cliOutput, numberOfManagementMachines));
+        List<URL> allUrls = asList(extractAllMatchingUrls(cliOutput, numberOfManagementMachines, CloudTestUtils.REST_URL_REGEX));
+        for (URL url : privateUrls) {
+            allUrls.remove(url);
+        }
         URL[] publicUrls = new URL[numberOfManagementMachines];
         return allUrls.toArray(publicUrls);
     }
 
     public static URL[] extractPublicWebuiUrls(final String cliOutput,
                                                final int numberOfManagementMachines) throws MalformedURLException {
-        Set<URL> privateUrls = asSet(extractPrivateWebuiUrls(cliOutput, numberOfManagementMachines));
-        Set<URL> allUrls = asSet(extractAllMatchingUrls(cliOutput, numberOfManagementMachines, CloudTestUtils.WEBUI_URL_REGEX));
-        allUrls.removeAll(privateUrls);
+        List<URL> privateUrls = asList(extractPrivateWebuiUrls(cliOutput, numberOfManagementMachines));
+        List<URL> allUrls = asList(extractAllMatchingUrls(cliOutput, numberOfManagementMachines, CloudTestUtils.WEBUI_URL_REGEX));
+        for (URL url : privateUrls) {
+            allUrls.remove(url);
+        }
         URL[] publicUrls = new URL[numberOfManagementMachines];
         return allUrls.toArray(publicUrls);
-
-
     }
 
     private static URL[] extractUrls(final String cliOutput, int numberOfManagementMachines, String regex)
@@ -114,8 +114,13 @@ public class CloudTestUtils {
     }
 
 
-    private static Set<URL> asSet(URL[] array) {
-        return new HashSet<URL>(Arrays.asList(array));
+    private static List<URL> asList(URL[] array) {
+
+        List<URL> list = new ArrayList<URL>();
+        for (URL url : array) {
+            list.add(url);
+        }
+        return list;
     }
 
 }

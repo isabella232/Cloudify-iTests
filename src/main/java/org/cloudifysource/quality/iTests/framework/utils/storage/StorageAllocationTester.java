@@ -689,7 +689,7 @@ public class StorageAllocationTester {
 
         String serviceName = ServiceReader.readService(new File(ScriptUtils.getBuildRecipesServicesPath() + "/" + folderName)).getName();
 
-        final String expectedMountOutput = "/dev/xvdc on /home/ec2-user/storage type ext4 (rw)";
+        final String expectedMountOutput = "/dev/xvdc on /storage type ext4 (rw)";
 
         installer = new ServiceInstaller(restUrl, serviceName);
         installer.recipePath(folderName);

@@ -711,12 +711,13 @@ public class StorageAllocationTester {
 
         installer = new ServiceInstaller(restUrl, serviceName);
         installer.recipePath(folderName);
-        installer.setDisableSelfHealing(true);
         installer.install();
 
         LogUtils.log("Searching for volumes created by the service installation");
         // the install should have created and attached a volume with a name prefix of the class name. see customizeCloud below.
-        VolumeDetails ourVolume = storageApiHelper.getVolumesByPrefix(getVolumePrefixForTemplate("SMALL_BLOCK")).iterator().next();
+        Set<VolumeDetails> volumesAfterInstallation = storageApiHelper.getVolumesByPrefix(getVolumePrefixForTemplate("SMALL_BLOCK"));
+        AssertUtils.assertTrue("No volumes were created after the service installation.", !volumesAfterInstallation.isEmpty());
+        VolumeDetails ourVolume = volumesAfterInstallation.iterator().next();
 
         AssertUtils.assertNotNull("could not find the required volume after install service", ourVolume);
         LogUtils.log("Found volume : " + ourVolume);

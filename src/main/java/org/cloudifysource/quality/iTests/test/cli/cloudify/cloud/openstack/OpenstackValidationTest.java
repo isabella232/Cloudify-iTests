@@ -24,19 +24,6 @@ public class OpenstackValidationTest  extends NewAbstractCloudTest {
 	}
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
-	public void wrongProviderTest() throws IOException, InterruptedException {
-		try {
-			groovyFileName = "wrongprovider-openstack-cloud.groovy";
-			super.bootstrap(bootstrapper);
-			assertTrue("The provider name is wrong yet no error was thrown", false);
-		} catch (Throwable ae) {
-			assertTrue("The provider is wrong but the wrong error was thrown. Reported error: " + ae.getMessage(),
-					ae.getMessage().contains("Provider not supported"));
-		}
-	}
-
-	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
 	public void wrongImageTest() throws IOException, InterruptedException {
 		try {
 			groovyFileName = "wrongimage-openstack-cloud.groovy";
@@ -81,7 +68,7 @@ public class OpenstackValidationTest  extends NewAbstractCloudTest {
 			assertTrue("The key-pair name is wrong yet no error was thrown", false);
 		} catch (Throwable ae) {
 			assertTrue("The key-pair name is wrong but the wrong error was thrown. Reported error: " + ae.getMessage(),
-					ae.getMessage().contains("Invalid key-pair configuration"));
+					ae.getMessage().contains("is invalid or in the wrong availability zone"));
 		}
 	}
 	

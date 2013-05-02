@@ -1,1 +1,1 @@
-ls ~/storage/
+ls /storage/

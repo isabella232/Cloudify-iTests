@@ -1,1 +1,1 @@
-sudo mount /dev/sdc ~/storage
+sudo mount /dev/sdc /storage

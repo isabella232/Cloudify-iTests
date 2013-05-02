@@ -629,10 +629,10 @@ public class StorageAllocationTester {
         installer.setDisableSelfHealing(true);
         installer.install();
 
-        LogUtils.log("Creating a new file called foo.txt in the storage volume. " + "running 'touch ~/storage/foo.txt' command on remote machine.");
+        LogUtils.log("Creating a new file called foo.txt in the storage volume. " + "running 'touch /storage/foo.txt' command on remote machine.");
         invokeCommand(service.getName(), "writeToStorage");
 
-        LogUtils.log("listing all files inside mounted storage folder. running 'ls ~/storage/' command");
+        LogUtils.log("listing all files inside mounted storage folder. running 'ls /storage/' command");
         String listFilesResult = invokeCommand(service.getName(), "listFilesInStorage");
 
         AssertUtils.assertTrue("File was not created in storage volume. Output was " + listFilesResult, listFilesResult.contains("foo.txt"));
@@ -650,10 +650,10 @@ public class StorageAllocationTester {
         installer.setDisableSelfHealing(true);
         installer.install();
 
-        LogUtils.log("Creating a new file called foo.txt in the storage volume. " + "running 'touch ~/storage/foo.txt' command on remote machine.");
+        LogUtils.log("Creating a new file called foo.txt in the storage volume. " + "running 'touch /storage/foo.txt' command on remote machine.");
         invokeCommand(serviceName, "writeToStorage");
 
-        LogUtils.log("listing all files inside mounted storage folder. running 'ls ~/storage/' command");
+        LogUtils.log("listing all files inside mounted storage folder. running 'ls /storage/' command");
         String listFilesResult = invokeCommand(serviceName, "listFilesInStorage");
 
         AssertUtils.assertTrue("File was not created in storage volume. Output was " + listFilesResult, listFilesResult.contains("foo.txt"));
@@ -667,7 +667,7 @@ public class StorageAllocationTester {
         storageApiHelper.detachVolume(vol.getId(), computeApiHelper.getServerByAttachmentId(attachmentId).getPrivateAddress());
 
         //asserting the file is not in the mounted directory
-        LogUtils.log("listing all files inside mounted storage folder. running 'ls ~/storage/' command");
+        LogUtils.log("listing all files inside mounted storage folder. running 'ls /storage/' command");
         listFilesResult = invokeCommand(serviceName, "listFilesInStorage");
 
         AssertUtils.assertTrue("The newly created file is in the mounted directory after detachment", !listFilesResult.contains("foo.txt"));
@@ -679,7 +679,7 @@ public class StorageAllocationTester {
         invokeCommand(serviceName, "mount");
 
         //asserting the file is in the mounted directory
-        LogUtils.log("listing all files inside mounted storage folder. running 'ls ~/storage/' command");
+        LogUtils.log("listing all files inside mounted storage folder. running 'ls /storage/' command");
         listFilesResult = invokeCommand(serviceName, "listFilesInStorage");
 
         AssertUtils.assertTrue("the created file is not in the mounted directory after reattachment", listFilesResult.contains("foo.txt"));

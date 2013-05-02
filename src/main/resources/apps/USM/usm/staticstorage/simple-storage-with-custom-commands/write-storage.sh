@@ -1,1 +1,1 @@
-touch ~/storage/foo.txt
+touch /storage/foo.txt

@@ -1,17 +1,13 @@
 package org.cloudifysource.quality.iTests.framework.utils;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.apache.commons.lang.StringUtils;
-
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CloudTestUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils.ProcessResult;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.security.SecurityConstants;
+
+import java.io.IOException;
+import java.net.URL;
 
 
 public abstract class Bootstrapper {
@@ -224,7 +220,7 @@ public abstract class Bootstrapper {
         if (this instanceof CloudBootstrapper) {
             if (!((CloudBootstrapper) this).isNoWebServices()) {
                 restAdminUrls = CloudTestUtils.extractPublicRestUrls(result.getOutput(), numberOfManagementMachines);
-                LogUtils.log("restAdminUrls = " + restAdminUrls);
+                LogUtils.log("restAdminUrls = " + StringUtils.join(restAdminUrls, ","));
                 restUrl = restAdminUrls[0].toString();
             }  else {
                 LogUtils.log("Not retrveing rest urls since there are no web services");

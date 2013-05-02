@@ -21,7 +21,7 @@ public class JGitUtils {
                         .setURI(repositoryUrl)
                         .setDirectory(new File(localGitRepoPath))
                         .call();
-                if (!branchName.equalsIgnoreCase("trunk")) {
+                if (!branchName.equalsIgnoreCase("master")) {
                     LogUtils.log("Branch under test is : " + branchName);
                     Git git = Git.open(new File(localGitRepoPath));
                     LogUtils.log("Current branch is : " + git.getRepository().getFullBranch());

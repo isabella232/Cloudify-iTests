@@ -77,9 +77,12 @@ public class CloudTestUtils {
 
         // This is sort of hack.. currently we are outputting this over ssh and locally with different results
         for (int i = 0; i < numberOfManagementMachines; i++) {
-            AssertUtils.assertTrue("Could not find actual webui url", webUIMatcher.find());
-            String rawWebUIUrl = webUIMatcher.group(1);
-            webuiUrls[i] = new URL(rawWebUIUrl);
+            if (webUIMatcher.find()) {
+                String rawWebUIUrl = webUIMatcher.group(1);
+                webuiUrls[i] = new URL(rawWebUIUrl);
+            } else {
+                LogUtils.log("Could not find Pattern machine regex " + regex);
+            }
         }
 
         return webuiUrls;

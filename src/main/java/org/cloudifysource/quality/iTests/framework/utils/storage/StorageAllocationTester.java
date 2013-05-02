@@ -808,6 +808,7 @@ public class StorageAllocationTester {
     private Set<VolumeDetails> getCreatingVolumes(Service service) throws StorageProvisioningException {
         final String storageTemplateName = service.getStorage().getTemplate();
         String volumePrefixForTemplate = getVolumePrefixForTemplate(storageTemplateName);
+        LogUtils.log("Retrieving volumes that are being created. using prefix : " + volumePrefixForTemplate);
         Set<VolumeDetails> volumesByPrefix = storageApiHelper.getVolumesByPrefix(volumePrefixForTemplate);
         Set<VolumeDetails> creatingVolumes = new HashSet<VolumeDetails>();
         for (VolumeDetails volumeDetails : volumesByPrefix) {
@@ -815,6 +816,9 @@ public class StorageAllocationTester {
                 LogUtils.log("Found a volume in status CREATING : " + volumeDetails + " . Sleeping to allow it to reach a new status");
                 creatingVolumes.add(volumeDetails);
             }
+        }
+        if (creatingVolumes.isEmpty()) {
+            LogUtils.log("Could not find any volumes with prefix " + volumePrefixForTemplate + " that are being created");
         }
         return creatingVolumes;
     }

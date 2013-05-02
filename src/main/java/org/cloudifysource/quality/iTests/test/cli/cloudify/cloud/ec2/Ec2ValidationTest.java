@@ -23,20 +23,6 @@ public class Ec2ValidationTest  extends NewAbstractCloudTest {
 		bootstrapper.scanForLeakedNodes(false);
 	}
 	
-	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
-	public void wrongProviderTest() throws IOException, InterruptedException {
-		try {
-			groovyFileName = "wrongprovider-ec2-cloud.groovy";
-			super.bootstrap(bootstrapper);
-			assertTrue("The provider name is wrong yet no error was thrown", false);
-		} catch (Throwable ae) {
-			assertTrue("The provider is wrong but the wrong error was thrown. Error was: " + ae.getMessage(),
-					ae.getMessage().contains("Provider not supported"));
-		}
-	}
-
-	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
 	public void wrongCredentialsTest() throws IOException, InterruptedException {
 		try {
@@ -98,7 +84,7 @@ public class Ec2ValidationTest  extends NewAbstractCloudTest {
 			assertTrue("The key-pair name is wrong yet no error was thrown", false);
 		} catch (Throwable ae) {
 			assertTrue("The key-pair name is wrong but the wrong error was thrown. Error was: " + ae.getMessage(),
-					ae.getMessage().contains("Invalid key-pair configuration: Invalid key-pair name"));
+					ae.getMessage().contains("is invalid or in the wrong availability zone"));
 		}
 	}
 	
@@ -138,8 +124,8 @@ public class Ec2ValidationTest  extends NewAbstractCloudTest {
 	protected void customizeCloud() throws IOException {
 		//replace the ec2-cloud.groovy with a wrong version, to fail the validation.
 		File standardGroovyFile = new File(getService().getPathToCloudFolder(), "ec2-cloud.groovy");
-		File wrongproviderGroovyFile = new File(SGTestHelper.getSGTestRootDir() + "/src/main/resources/apps/cloudify/cloud/ec2/" + groovyFileName);
-		IOUtils.replaceFile(standardGroovyFile, wrongproviderGroovyFile);
+		File wrongGroovyFile = new File(SGTestHelper.getSGTestRootDir() + "/src/main/resources/apps/cloudify/cloud/ec2/" + groovyFileName);
+		IOUtils.replaceFile(standardGroovyFile, wrongGroovyFile);
 		File newFile = new File(getService().getPathToCloudFolder(), groovyFileName);
 		if (newFile.exists()) {
 			newFile.renameTo(standardGroovyFile);

@@ -81,7 +81,7 @@ public class CloudTestUtils {
                 String rawWebUIUrl = webUIMatcher.group(1);
                 webuiUrls[i] = new URL(rawWebUIUrl);
             } else {
-                LogUtils.log("Could not find Pattern machine regex " + regex);
+                LogUtils.log("Could not find Pattern machine regex : " + regex);
             }
         }
 
@@ -91,19 +91,22 @@ public class CloudTestUtils {
 
     private static URL[] extractAllMatchingUrls(final String cliOutput, int numberOfManagementMachines, String regex) throws MalformedURLException {
 
-        URL[] webuiUrls = new URL[numberOfManagementMachines + 1];
+        URL[] urls = new URL[numberOfManagementMachines + 1];
 
-        Pattern webUIPattern = Pattern.compile(regex);
-        Matcher webUIMatcher = webUIPattern.matcher(cliOutput);
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(cliOutput);
 
         // This is sort of hack.. currently we are outputting this over ssh and locally with different results
         for (int i = 0; i < (numberOfManagementMachines + 1); i++) {
-            AssertUtils.assertTrue("Could not find actual webui url", webUIMatcher.find());
-            String rawWebUIUrl = webUIMatcher.group(1);
-            webuiUrls[i] = new URL(rawWebUIUrl);
+            if (matcher.find()) {
+                String rawWebUIUrl = matcher.group(1);
+                urls[i] = new URL(rawWebUIUrl);
+            } else {
+                LogUtils.log("Could not find Pattern machine regex : " + regex);
+            }
         }
 
-        return webuiUrls;
+        return urls;
     }
 
     private static URL[] extractPrivateWebuiUrls(final String cliOutput, int numberOfManagementMachines)

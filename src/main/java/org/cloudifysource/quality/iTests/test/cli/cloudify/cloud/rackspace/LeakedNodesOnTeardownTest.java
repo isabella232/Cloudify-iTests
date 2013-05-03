@@ -1,11 +1,9 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.rackspace;
 
-import org.testng.annotations.AfterClass;
+import org.cloudifysource.quality.iTests.framework.utils.ServiceInstaller;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.NewAbstractCloudTest;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-
-import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.NewAbstractCloudTest;
-import org.cloudifysource.quality.iTests.framework.utils.ServiceInstaller;
 
 /**
  * CLOUDIFY-1273
@@ -13,8 +11,6 @@ import org.cloudifysource.quality.iTests.framework.utils.ServiceInstaller;
  *
  */
 public class LeakedNodesOnTeardownTest extends NewAbstractCloudTest {
-	
-	private boolean teardown = false;
 	
 	@BeforeClass(alwaysRun = true)
 	protected void bootstrap() throws Exception {
@@ -31,7 +27,6 @@ public class LeakedNodesOnTeardownTest extends NewAbstractCloudTest {
 		
 		// this will fail if leaked nodes are found after the teardown.
 		super.teardown();
-		teardown = true;
 	}
 
 	@Override
@@ -42,12 +37,5 @@ public class LeakedNodesOnTeardownTest extends NewAbstractCloudTest {
 	@Override
 	protected boolean isReusableCloud() {
 		return false;
-	}
-
-	@AfterClass(alwaysRun = true)
-	protected void teardown() throws Exception {
-		if (!teardown) {
-			super.teardown();
-		}
 	}
 }

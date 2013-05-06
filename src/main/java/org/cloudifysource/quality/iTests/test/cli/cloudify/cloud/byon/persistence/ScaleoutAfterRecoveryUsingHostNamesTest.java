@@ -22,7 +22,7 @@ public class ScaleoutAfterRecoveryUsingHostNamesTest extends AbstractByonManagem
     protected void bootstrap() throws Exception {
 
         String[] machines = service.getMachines();
-        LogUtils.log("converting every other address to host name");
+        LogUtils.log("Converting IP Addresses to host names");
         String[] machinesHostNames = NetworkUtils.resolveIpsToHostNames(machines);
         service.setMachines(machinesHostNames);
 

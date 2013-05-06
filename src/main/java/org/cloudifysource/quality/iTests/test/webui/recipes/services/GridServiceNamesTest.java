@@ -5,9 +5,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
-import org.cloudifysource.quality.iTests.framework.utils.AssertUtils;
-import org.cloudifysource.quality.iTests.framework.utils.AssertUtils.RepetitiveConditionProvider;
-import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
+import iTests.framework.utils.AssertUtils;
+import iTests.framework.utils.AssertUtils.RepetitiveConditionProvider;
+import iTests.framework.utils.LogUtils;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.cloudifysource.quality.iTests.test.webui.AbstractWebUILocalCloudTest;
 import org.openspaces.admin.machine.Machine;

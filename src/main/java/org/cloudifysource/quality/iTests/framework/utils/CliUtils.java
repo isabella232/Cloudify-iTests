@@ -1,6 +1,6 @@
 package org.cloudifysource.quality.iTests.framework.utils;
 
-import static org.cloudifysource.quality.iTests.framework.utils.LogUtils.log;
+import static iTests.framework.utils.LogUtils.log;
 import static org.testng.AssertJUnit.assertEquals;
 
 import java.io.File;

@@ -1,6 +1,6 @@
 package org.cloudifysource.quality.iTests.framework.utils;
 
-import static org.cloudifysource.quality.iTests.framework.utils.AssertUtils.sleep;
+import static iTests.framework.utils.AssertUtils.sleep;
 
 import java.util.Arrays;
 import java.util.concurrent.Callable;
@@ -9,6 +9,10 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 
+import iTests.framework.utils.AdminUtils;
+import iTests.framework.utils.AssertUtils;
+import iTests.framework.utils.DumpUtils;
+import iTests.framework.utils.LogUtils;
 import org.openspaces.admin.Admin;
 import org.openspaces.admin.esm.ElasticServiceManager;
 import org.openspaces.admin.esm.ElasticServiceManagers;
@@ -40,7 +44,7 @@ import org.cloudifysource.quality.iTests.test.data.Person;
 
 import com.j_spaces.core.client.ReadModifiers;
 
-import org.cloudifysource.quality.iTests.framework.utils.AssertUtils.RepetitiveConditionProvider;
+import iTests.framework.utils.AssertUtils.RepetitiveConditionProvider;
 
 
 public class GsmTestUtils {
@@ -72,7 +76,7 @@ public class GsmTestUtils {
 		final RepetitiveConditionProvider condition = 
 		    newScaleConditionProvider(pu, expectedNumberOfContainers, expectedNumberOfMachines, validateCpuSla);
 		AssertUtils.repetitiveAssertTrue("Waiting for scale to complete",
-				condition, durationInMilliseconds);
+                condition, durationInMilliseconds);
 		LogUtils.log("Done waiting. Repetitive assert is true");
 	}
 
@@ -187,13 +191,14 @@ public class GsmTestUtils {
 		
 		// adding a thread that will dump threads every 1 minute
 		// this is to debug deadlock or file system lock issues
-		DumpUtils.dumpThreadsEveryMinute(pu.getAdmin(), new Callable<Void>(){
+		DumpUtils.dumpThreadsEveryMinute(pu.getAdmin(), new Callable<Void>() {
 
-			@Override
-			public Void call() throws Exception {
-				writeDataInternal(pu, numberOfObjectsToWrite, totalObjectCountAfter);
-				return null;
-			}});
+            @Override
+            public Void call() throws Exception {
+                writeDataInternal(pu, numberOfObjectsToWrite, totalObjectCountAfter);
+                return null;
+            }
+        });
 	}
 	
 	private static void writeDataInternal(

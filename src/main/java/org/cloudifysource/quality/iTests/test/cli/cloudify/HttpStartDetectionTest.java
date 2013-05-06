@@ -8,7 +8,7 @@ import org.openspaces.admin.machine.Machine;
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.testng.annotations.Test;
 
-import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
+import iTests.framework.utils.LogUtils;
 import org.cloudifysource.quality.iTests.framework.utils.usm.USMTestUtils;
 
 /**

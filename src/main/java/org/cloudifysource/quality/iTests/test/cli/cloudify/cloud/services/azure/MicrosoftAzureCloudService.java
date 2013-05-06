@@ -23,7 +23,7 @@ import org.cloudifysource.esc.driver.provisioning.azure.model.NetworkConfigurati
 import org.cloudifysource.esc.driver.provisioning.azure.model.Role;
 import iTests.framework.tools.SGTestHelper;
 import org.cloudifysource.quality.iTests.framework.utils.IOUtils;
-import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
+import iTests.framework.utils.LogUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.AbstractCloudService;
 
 import com.gigaspaces.internal.utils.StringUtils;

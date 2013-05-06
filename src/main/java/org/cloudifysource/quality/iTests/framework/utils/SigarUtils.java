@@ -20,6 +20,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import iTests.framework.utils.LogUtils;
+import iTests.framework.utils.ScriptUtils;
 import org.hyperic.sigar.ProcState;
 import org.hyperic.sigar.Sigar;
 import org.hyperic.sigar.SigarException;

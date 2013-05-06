@@ -4,7 +4,7 @@ import iTests.framework.tools.SGTestHelper;
 
 import java.io.IOException;
 
-import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
+import iTests.framework.utils.LogUtils;
 import org.testng.annotations.Test;
 
 /**

@@ -6,8 +6,8 @@ import org.testng.annotations.BeforeMethod;
 
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
 import org.cloudifysource.quality.iTests.test.webui.AbstractWebUILocalCloudTest;
-import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
-import org.cloudifysource.quality.iTests.framework.utils.ScriptUtils;
+import iTests.framework.utils.LogUtils;
+import iTests.framework.utils.ScriptUtils;
 
 public class AbstractSeleniumServiceRecipeTest extends AbstractWebUILocalCloudTest {
 	

@@ -11,6 +11,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import iTests.framework.utils.LogUtils;
+import iTests.framework.utils.ScriptUtils;
 import org.apache.tools.ant.taskdefs.optional.ssh.SSHExec;
 import org.openspaces.admin.Admin;
 import org.openspaces.grid.gsm.machines.plugins.exceptions.ElasticMachineProvisioningException;

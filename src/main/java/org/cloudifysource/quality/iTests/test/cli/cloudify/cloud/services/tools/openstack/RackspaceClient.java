@@ -25,7 +25,7 @@ import org.cloudifysource.esc.driver.provisioning.CloudProvisioningException;
 import org.cloudifysource.esc.driver.provisioning.MachineDetails;
 import org.cloudifysource.esc.driver.provisioning.openstack.Node;
 import org.cloudifysource.esc.driver.provisioning.openstack.OpenstackException;
-import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
+import iTests.framework.utils.LogUtils;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;

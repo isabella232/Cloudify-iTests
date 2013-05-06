@@ -27,7 +27,7 @@ import net.jini.core.discovery.LookupLocator;
 
 import org.cloudifysource.dsl.internal.DSLException;
 import org.cloudifysource.dsl.internal.packaging.PackagingException;
-import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
+import iTests.framework.utils.LogUtils;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.openspaces.admin.Admin;
 import org.openspaces.admin.AdminFactory;

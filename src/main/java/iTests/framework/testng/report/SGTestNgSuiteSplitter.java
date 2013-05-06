@@ -1,7 +1,7 @@
 package iTests.framework.testng.report;
 
 import iTests.framework.testng.annotations.TestConfiguration;
-import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
+import iTests.framework.utils.LogUtils;
 import org.testng.IMethodInstance;
 import org.testng.IMethodInterceptor;
 import org.testng.ITestClass;

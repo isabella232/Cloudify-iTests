@@ -1,9 +1,16 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud;
 
 import com.gigaspaces.internal.utils.StringUtils;
+import iTests.framework.utils.AssertUtils;
+import iTests.framework.utils.LogUtils;
+import iTests.framework.utils.ScriptUtils;
 import org.cloudifysource.dsl.cloud.compute.ComputeTemplate;
-import org.cloudifysource.quality.iTests.framework.utils.*;
+import org.cloudifysource.dsl.internal.CloudifyConstants;
+import org.cloudifysource.quality.iTests.framework.utils.ApplicationInstaller;
+import org.cloudifysource.quality.iTests.framework.utils.CloudBootstrapper;
+import org.cloudifysource.quality.iTests.framework.utils.ServiceInstaller;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.CloudTestUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.CloudService;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.CloudServiceManager;
@@ -63,7 +70,7 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
     }
 
     private void buildAndCopyCloudifyJars(String cloudName) throws Exception{
-        String cloudifySourceDir = ScriptUtils.getCloudifySourceDir() + "cloudify";
+        String cloudifySourceDir = getCloudifySourceDir() + "cloudify";
         String prefix = "";
         String extension = "";
         if(ScriptUtils.isWindows()) {
@@ -363,7 +370,7 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
                 cloudifyUser = SecurityConstants.USER_PWD_ALL_ROLES;
                 cloudifyPassword = SecurityConstants.USER_PWD_ALL_ROLES;
             }
-            DumpUtils.dumpMachines(restUrl, cloudifyUser, cloudifyPassword);
+            CloudTestUtils.dumpMachines(restUrl, cloudifyUser, cloudifyPassword);
 
         } catch (final Exception e) {
             LogUtils.log("Failed to create dump for this url - " + url, e);
@@ -386,5 +393,19 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
         }
         return keyFile;
 
+    }
+
+    public static String getCloudifySourceDir() {
+        String referencePath = ScriptUtils.getClassLocation(CloudifyConstants.class);
+        String ans = "";
+        String[] split = referencePath.split("/");
+        String s = File.separator;
+        for (int i = 0; i < split.length - 8; i++) {
+            ans += split[i] + s;
+        }
+        int startIndex = 1;
+        if(ScriptUtils.isLinuxMachine())
+            startIndex = 0;
+        return ans.substring(startIndex, ans.length());
     }
 }

@@ -1,9 +1,9 @@
 package iTests.framework.testng.report;
 
-import iTests.framework.testng.report.xml.TestLog;
 import iTests.framework.tools.S3DeployUtil;
-import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
-import org.cloudifysource.quality.iTests.framework.utils.TestNGUtils;
+import iTests.framework.testng.report.xml.TestLog;
+import iTests.framework.utils.LogUtils;
+import iTests.framework.utils.TestNGUtils;
 import org.testng.ITestResult;
 
 import java.io.File;

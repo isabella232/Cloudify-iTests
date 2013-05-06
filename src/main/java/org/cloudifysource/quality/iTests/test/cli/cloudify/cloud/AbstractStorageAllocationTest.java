@@ -1,5 +1,7 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud;
 
+import iTests.framework.utils.AssertUtils;
+import iTests.framework.utils.LogUtils;
 import org.cloudifysource.esc.driver.provisioning.storage.StorageProvisioningException;
 import org.cloudifysource.esc.driver.provisioning.storage.VolumeDetails;
 import org.cloudifysource.quality.iTests.framework.utils.*;

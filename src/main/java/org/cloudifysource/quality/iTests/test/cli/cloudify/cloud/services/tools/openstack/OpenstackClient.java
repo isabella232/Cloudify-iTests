@@ -26,7 +26,7 @@ import org.cloudifysource.esc.driver.provisioning.MachineDetails;
 import org.cloudifysource.esc.driver.provisioning.openstack.FloatingIP;
 import org.cloudifysource.esc.driver.provisioning.openstack.Node;
 import org.cloudifysource.esc.driver.provisioning.openstack.OpenstackException;
-import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
+import iTests.framework.utils.LogUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;

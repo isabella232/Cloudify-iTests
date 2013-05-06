@@ -20,8 +20,8 @@ import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.List;
 
-import org.cloudifysource.quality.iTests.framework.utils.AssertUtils;
-import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
+import iTests.framework.utils.AssertUtils;
+import iTests.framework.utils.LogUtils;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.scale.AbstractScalingRulesCloudTest;
 import org.cloudifysource.quality.iTests.test.webui.WebuiTestUtils;

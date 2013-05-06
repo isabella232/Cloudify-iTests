@@ -1,6 +1,6 @@
 package org.cloudifysource.quality.iTests.framework.utils;
 
-import static org.cloudifysource.quality.iTests.framework.utils.LogUtils.log;
+import static iTests.framework.utils.LogUtils.log;
 import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.assertTrue;
 
@@ -16,6 +16,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import iTests.framework.utils.LogUtils;
+import iTests.framework.utils.ScriptUtils;
 import org.cloudifysource.usm.shutdown.DefaultProcessKiller;
 import org.openspaces.admin.Admin;
 import org.openspaces.admin.esm.ElasticServiceManager;
@@ -83,7 +85,7 @@ public class SetupUtils {
 					.getElasticServiceManagers().getSize();
 			if (numberOfElasticServiceManagers > 0) {
 				LogUtils.log("Waiting for " + numberOfElasticServiceManagers
-						+ " ElasticServiceManagers to shutdown");
+                        + " ElasticServiceManagers to shutdown");
 				isDone = false;
 			}
 

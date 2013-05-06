@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import org.testng.annotations.Test;
 
-import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
+import iTests.framework.utils.LogUtils;
 /**
  * Validate a Timeout exception is being thrown in the CLI 
  * after the service/application installation timeout has ended.

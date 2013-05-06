@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import org.cloudifysource.dsl.Service;
 import org.cloudifysource.dsl.internal.DSLException;
 import org.cloudifysource.dsl.internal.ServiceReader;
-import org.cloudifysource.quality.iTests.framework.utils.ScriptUtils;
+import iTests.framework.utils.ScriptUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.AbstractLocalCloudTest;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.recipes.RecipeTestUtil;
 import org.testng.annotations.BeforeMethod;

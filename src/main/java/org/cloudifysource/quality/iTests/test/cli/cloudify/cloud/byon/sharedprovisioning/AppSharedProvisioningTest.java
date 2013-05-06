@@ -11,7 +11,7 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import org.cloudifysource.quality.iTests.framework.utils.AssertUtils;
+import iTests.framework.utils.AssertUtils;
 import org.cloudifysource.quality.iTests.framework.utils.ProcessingUnitUtils;
 
 public class AppSharedProvisioningTest extends AbstractSharedProvisioningByonCloudTest {

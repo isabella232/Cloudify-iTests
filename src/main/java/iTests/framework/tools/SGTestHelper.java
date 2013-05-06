@@ -4,8 +4,8 @@ import java.io.File;
 
 import org.apache.commons.lang.StringUtils;
 
-import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
-import org.cloudifysource.quality.iTests.framework.utils.ScriptUtils;
+import iTests.framework.utils.LogUtils;
+import iTests.framework.utils.ScriptUtils;
 
 public class SGTestHelper {
 

@@ -7,6 +7,8 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
+import iTests.framework.utils.AssertUtils;
+import iTests.framework.utils.LogUtils;
 import org.openspaces.admin.Admin;
 import org.openspaces.admin.gsc.GridServiceContainer;
 import org.openspaces.admin.gsc.events.GridServiceContainerAddedEventListener;
@@ -16,7 +18,7 @@ import org.openspaces.admin.pu.ProcessingUnit;
 import org.openspaces.grid.gsm.containers.ContainersSlaUtils;
 import org.testng.log4testng.Logger;
 
-import org.cloudifysource.quality.iTests.framework.utils.AssertUtils.RepetitiveConditionProvider;
+import iTests.framework.utils.AssertUtils.RepetitiveConditionProvider;
 
 public class GridServiceContainersCounter implements GridServiceContainerAddedEventListener, GridServiceContainerRemovedEventListener {
 
@@ -86,7 +88,7 @@ public class GridServiceContainersCounter implements GridServiceContainerAddedEv
 	
 	public void repetitiveAssertNumberOfGridServiceContainersAdded(final int expected, long timeoutMilliseconds) {
 		if (added.size() > expected) {
-			AssertUtils.assertFail("Expected " + expected +" GSCs Added. actual " + added.size() + " : " + ToStringUtils.gscsToString(added));
+			AssertUtils.assertFail("Expected " + expected + " GSCs Added. actual " + added.size() + " : " + ToStringUtils.gscsToString(added));
 		}
 		
 		AssertUtils.repetitiveAssertTrue("Expected " + expected +" GSCs Added.", new RepetitiveConditionProvider() {
@@ -97,7 +99,7 @@ public class GridServiceContainersCounter implements GridServiceContainerAddedEv
 				int actual = copy.size();
 				boolean condition = expected == actual;
 				if (!condition) {
-					LogUtils.log("Expected " + expected +" GSCs Added. actual " + actual + " : " + ToStringUtils.gscsToString(copy));
+					LogUtils.log("Expected " + expected + " GSCs Added. actual " + actual + " : " + ToStringUtils.gscsToString(copy));
 				}
 				return condition;
 			}

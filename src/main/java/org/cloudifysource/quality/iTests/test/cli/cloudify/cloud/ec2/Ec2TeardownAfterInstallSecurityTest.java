@@ -6,7 +6,7 @@ import org.testng.annotations.Test;
 
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.NewAbstractSecurityCloudTest;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.security.SecurityConstants;
-import org.cloudifysource.quality.iTests.framework.utils.AssertUtils;
+import iTests.framework.utils.AssertUtils;
 import org.cloudifysource.quality.iTests.framework.utils.CloudBootstrapper;
 
 public class Ec2TeardownAfterInstallSecurityTest extends NewAbstractSecurityCloudTest{

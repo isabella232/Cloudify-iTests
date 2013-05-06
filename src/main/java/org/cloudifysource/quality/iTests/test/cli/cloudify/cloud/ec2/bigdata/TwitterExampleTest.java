@@ -7,13 +7,12 @@ import java.net.URL;
 import java.util.Map;
 import javax.ws.rs.core.HttpHeaders;
 
+import iTests.framework.utils.AssertUtils;
+import iTests.framework.utils.LogUtils;
 import org.apache.commons.io.FileUtils;
 import org.cloudifysource.dsl.internal.DSLException;
 import org.cloudifysource.dsl.internal.ServiceReader;
 import iTests.framework.tools.SGTestHelper;
-import org.cloudifysource.quality.iTests.framework.utils.AssertUtils;
-import org.cloudifysource.quality.iTests.framework.utils.AssertUtils.RepetitiveConditionProvider;
-import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
 import org.cloudifysource.quality.iTests.framework.utils.SSHUtils;
 import org.cloudifysource.quality.iTests.framework.utils.WebUtils;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
@@ -78,7 +77,7 @@ public class TwitterExampleTest extends NewAbstractCloudTest {
 		
 		if (isProduction) {
 			// weaker assert in production since we cannot rely on tweet feed to be active.
-			AssertUtils.repetitiveAssertTrue("Expected GlobalCounter of at least one word", new RepetitiveConditionProvider() {
+			AssertUtils.repetitiveAssertTrue("Expected GlobalCounter of at least one word", new AssertUtils.RepetitiveConditionProvider() {
 				
 				@Override
 				public boolean getCondition() {
@@ -89,7 +88,7 @@ public class TwitterExampleTest extends NewAbstractCloudTest {
 			}, OPERATION_TIMEOUT);
 		}
 		else {
-			AssertUtils.repetitiveAssertTrue("Expected GlobalCounter to reach " + EXPECTED_NUMBER_OF_UNIQUE_WORDS_IN_MOCK_TWEETS, new RepetitiveConditionProvider() {
+			AssertUtils.repetitiveAssertTrue("Expected GlobalCounter to reach " + EXPECTED_NUMBER_OF_UNIQUE_WORDS_IN_MOCK_TWEETS, new AssertUtils.RepetitiveConditionProvider() {
 				
 				int prevNumberOfGlobalCounters = 0;
 								

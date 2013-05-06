@@ -7,7 +7,7 @@ import java.util.Set;
 
 import org.cloudifysource.dsl.internal.CloudifyConstants;
 import org.cloudifysource.quality.iTests.framework.utils.ApplicationInstaller;
-import org.cloudifysource.quality.iTests.framework.utils.AssertUtils;
+import iTests.framework.utils.AssertUtils;
 import org.cloudifysource.quality.iTests.framework.utils.LocalCloudBootstrapper;
 import org.cloudifysource.quality.iTests.framework.utils.ProcessUtils;
 import org.cloudifysource.quality.iTests.framework.utils.ServiceInstaller;

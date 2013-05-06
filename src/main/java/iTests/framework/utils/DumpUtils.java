@@ -1,16 +1,16 @@
-package org.cloudifysource.quality.iTests.framework.utils;
+package iTests.framework.utils;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
+import java.util.StringTokenizer;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -18,10 +18,7 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.StringUtils;
-import org.cloudifysource.restclient.GSRestClient;
 import org.openspaces.admin.Admin;
 import org.openspaces.admin.dump.DumpResult;
 
@@ -33,7 +30,8 @@ import com.gigaspaces.internal.dump.thread.ThreadDumpProcessor;
 import com.j_spaces.kernel.PlatformVersion;
 
 import iTests.framework.tools.SGTestHelper;
-
+import groovy.lang.GroovyClassLoader;
+import groovy.lang.GroovyObject;
 
 public class DumpUtils {
 
@@ -62,46 +60,35 @@ public class DumpUtils {
     }
 
     public static void dump(Admin admin, String cause, String... dumpOptions) {
+
+        if (SGTestHelper.isDevMode()) {
+            return;
+        }
+
         try {
             DumpResult result = admin.generateDump(cause, null, dumpOptions);
             Date date = new Date();
             DateFormat date1 = new SimpleDateFormat("dd-MM-yyyy");
-            DateFormat hour = new SimpleDateFormat("HH-mm-ss-SSS");
-            zipFile = new File(getTestFolder().getAbsolutePath() + "/" + date1.format(date) + "_" + hour.format(date) + "_dump.zip");
+            DateFormat hour = new SimpleDateFormat("HH-mm-ss.SSS");
+
+            //add suffix so we can distinguish between two separate calls.
+            String fileSuffix;
+            if (dumpOptions.length == 1) {
+                fileSuffix = dumpOptions[0];
+            } else {
+                fileSuffix = "all" + dumpOptions.length;
+            }
+
+            zipFile = new File(getTestFolder().getAbsolutePath() + "/" + date1.format(date) + "_" + hour.format(date) + "_" + fileSuffix + "_dump.zip");
             result.download(zipFile, null);
+            if (!zipFile.exists()) {
+                throw new FileNotFoundException(zipFile.getPath() + " cannot be found. Probably dump download failed.");
+            }
             LogUtils.log("> Logs: " + zipFile.getAbsolutePath() + "\n");
-        } catch (Exception e) {
-            LogUtils.log("Dump Failed", e);
+
+        } catch (Throwable t) {
+            LogUtils.log("Dump Failed", t);
         }
-    }
-
-    public static void dumpMachines(String restUrl) throws Exception {
-    	dumpMachines(restUrl, "", "");
-    }
-    
-    public static void dumpMachines(String restUrl, String username, String password) throws Exception {
-    	LogUtils.log("Downloading machines dump");
-    	String machinesDumpUri = "/service/dump/machines/";
-    	if (StringUtils.isBlank(username)) {
-    		username = "";
-    	}
-    	if (StringUtils.isBlank(password)) {
-    		password = "";
-    	}
-    	
-    	GSRestClient rc = new GSRestClient(username, password, new URL(restUrl), PlatformVersion.getVersionNumber());
-    	DateFormat date1 = new SimpleDateFormat("dd-MM-yyyy");
-    	DateFormat hour = new SimpleDateFormat("HH-mm-ss-SSS");
-    	Map<String, Object> resultsMap = (Map) rc.get(machinesDumpUri);
-    	LogUtils.log("Machines dump downloaded successfully");
-
-    	for (String key : resultsMap.keySet()) {
-    		Date date = new Date();
-    		byte[] result = Base64.decodeBase64(resultsMap.get(key).toString());
-    		zipFile = new File(getTestFolder().getAbsolutePath() + "/" + date1.format(date) + "_" + hour.format(date) + "_ip" + key.toString() + "_dump.zip");
-    		FileUtils.writeByteArrayToFile(zipFile, result);
-    		LogUtils.log("> Logs: " + zipFile.getAbsolutePath() + "\n");
-    	}
     }
 
     private static String[] getAllDumpOptions() {
@@ -127,8 +114,10 @@ public class DumpUtils {
         if (!buildFolder.exists())
             buildFolder.mkdir();
         testFolder = new File(buildFolder.getAbsolutePath() + "/" + suiteName + "/" + testName);
-        if (!testFolder.exists())
+        if (!testFolder.exists()) {
             testFolder.mkdirs();
+            LogUtils.log("Folder created : --> " + testFolder.getAbsolutePath());
+        }
 
         return testFolder;
     }
@@ -168,6 +157,9 @@ public class DumpUtils {
         }
     }
 
+    /**
+     * Calls the specified callable. If it does not return within 1 minute, then a thread dump is generated (every minute)
+     */
 	public static <T> T dumpThreadsEveryMinute(final Admin admin, final Callable<T> callable) {
         final AtomicBoolean completed = new AtomicBoolean(false);
         ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor(new ThreadFactory() {
@@ -213,6 +205,84 @@ public class DumpUtils {
         LogUtils.log("Local Thread Dump:" + sw.toString());
     }
 
+    public static HistoClass getClassCountFromDumpHisto(int pid, String className) {
+        String value = dumpHeapHisto(pid);
+        StringTokenizer tokenizer = new StringTokenizer(value, "\n");
+        tokenizer.nextToken();
+        tokenizer.nextToken();
+        while (tokenizer.hasMoreTokens()) {
+            String itStr = tokenizer.nextToken();
+            if (itStr.contains("Total")) {
+                LogUtils.log("Class: " + className + " is not found on this JVM PID  v [ " + pid + " ]");
+                return null;
+            }
+            StringTokenizer innerTokenizer = new StringTokenizer(itStr, " ");
+            while (innerTokenizer.hasMoreTokens()) {
+                String indexStr = innerTokenizer.nextToken();
+                String index = indexStr.substring(0, indexStr.length() - 1);
+                String instances = innerTokenizer.nextToken();
+                String totalSizeInBytes = innerTokenizer.nextToken();
+                String clazzName = innerTokenizer.nextToken();
+                HistoClass histoClass = new HistoClass(Integer.valueOf(index), Integer.valueOf(instances),
+                        Integer.valueOf(totalSizeInBytes), clazzName);
+                if (histoClass.getClassName().equalsIgnoreCase(className)) {
+                    return histoClass;
+                }
+            }
+        }
+        LogUtils.log("Class: " + className + " is not found on this JVM PID[ " + pid + " ]");
+        return null;
+    }
+
+    public static String dumpHeapHisto(int pid) {
+        try {
+            ClassLoader parent = Thread.currentThread().getContextClassLoader();
+            GroovyClassLoader loader = new GroovyClassLoader(parent);
+
+            Class groovyClass = loader.parseClass(new File("src/main/resources/test/HeapDumpUtils.groovy"));
+            GroovyObject groovyObject = (GroovyObject) groovyClass.newInstance();
+
+            Object[] args = {String.valueOf(pid)};
+            return (String) groovyObject.invokeMethod("heapHisto", args);
+        } catch (Exception e) {
+            LogUtils.log("Failed to generate memory histo heap dump", e);
+        }
+        return null;
+    }
+
+    static class HistoClass {
+        int index;
+        int instances;
+        int totalSizeInBytes;
+        String className;
+
+        HistoClass() {
+        }
+
+        HistoClass(int index, int instances, int totalSizeInBytes, String className) {
+            this.index = index;
+            this.instances = instances;
+            this.totalSizeInBytes = totalSizeInBytes;
+            this.className = className;
+        }
+
+        public void setIndex(int index) {
+            this.index = index;
+        }
+
+        public int getInstances() {
+            return instances;
+        }
+
+        public int getTotalSizeInBytes() {
+            return totalSizeInBytes;
+        }
+
+        public String getClassName() {
+            return className;
+        }
+    }
+
 //    public static void main(String[] args) throws IOException {
 //    	try {
 //			dumpMachines("http://15.185.169.193:8100");
@@ -228,4 +298,5 @@ public class DumpUtils {
 //        zipFile.createNewFile();
 //
 //    }
+
 }

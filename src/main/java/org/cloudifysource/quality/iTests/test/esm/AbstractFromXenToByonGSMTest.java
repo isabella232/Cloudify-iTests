@@ -1,5 +1,8 @@
 package org.cloudifysource.quality.iTests.test.esm;
 
+import iTests.framework.utils.AssertUtils;
+import iTests.framework.utils.DumpUtils;
+import iTests.framework.utils.LogUtils;
 import org.cloudifysource.dsl.cloud.Cloud;
 import org.cloudifysource.dsl.cloud.compute.ComputeTemplate;
 import org.cloudifysource.esc.driver.provisioning.CloudifyMachineProvisioningConfig;
@@ -8,9 +11,6 @@ import org.cloudifysource.quality.iTests.framework.utils.ByonMachinesUtils;
 import org.cloudifysource.quality.iTests.framework.utils.GridServiceAgentsCounter;
 import org.cloudifysource.quality.iTests.framework.utils.GridServiceContainersCounter;
 import org.cloudifysource.quality.iTests.framework.utils.SSHUtils;
-import org.cloudifysource.quality.iTests.framework.utils.DumpUtils;
-import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
-import org.cloudifysource.quality.iTests.framework.utils.AssertUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.byon.AbstractByonCloudTest;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.byon.ByonCloudService;
 import org.openspaces.admin.gsa.GridServiceAgent;
@@ -156,7 +156,7 @@ public class AbstractFromXenToByonGSMTest extends AbstractByonCloudTest {
             initElasticMachineProvisioningCloudifyAdapter();
         }
         catch (Exception e){
-            AssertUtils.assertFail("Init to Elastic machine provisioning cloudify adapter failed: "+e.getCause());
+            AssertUtils.assertFail("Init to Elastic machine provisioning cloudify adapter failed: " + e.getCause());
         }
         agentEventListener = new ElasticGridServiceAgentProvisioningProgressChangedEventListener() {
 

@@ -5,6 +5,7 @@ import java.util.Date;
 
 import com.j_spaces.kernel.JSpaceUtilities;
 
+@Deprecated
 public class SGTestNGReporter {
     /**
      * All output logged in a sequential order.

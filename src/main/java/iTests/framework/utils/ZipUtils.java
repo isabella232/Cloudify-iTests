@@ -1,4 +1,4 @@
-package org.cloudifysource.quality.iTests.framework.utils;
+package iTests.framework.utils;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -30,7 +30,7 @@ public class ZipUtils {
         for (int n = 0; n < children.length; n++) {
             File file = children[n];
             if (file.getName().contains(".zip")) {
-            	LogUtils.log("unzipping file [ "+file.getName() + " ]");
+            	LogUtils.log("unzipping file [ " + file.getName() + " ]");
                 unzipArchive(file, testFolder.getAbsoluteFile());
                 file.delete();
             }

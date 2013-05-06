@@ -5,7 +5,7 @@ import org.openspaces.admin.gsc.GridServiceContainer;
 import org.openspaces.grid.gsm.rebalancing.RebalancingSlaEnforcement;
 
 import org.cloudifysource.quality.iTests.test.esm.AbstractFromXenToByonGSMTest;
-import org.cloudifysource.quality.iTests.framework.utils.AdminUtils;
+import iTests.framework.utils.AdminUtils;
 
 public class AbstractRebalancingSlaEnforcementByonTest extends AbstractFromXenToByonGSMTest {
 

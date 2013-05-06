@@ -12,7 +12,7 @@ import org.testng.annotations.Test;
 
 import org.cloudifysource.dsl.utils.ServiceUtils;
 
-import org.cloudifysource.quality.iTests.framework.utils.AssertUtils.RepetitiveConditionProvider;
+import iTests.framework.utils.AssertUtils.RepetitiveConditionProvider;
 import org.cloudifysource.quality.iTests.framework.utils.usm.USMTestUtils;
 
 public class InstallAndUninstallApplicationTest extends AbstractLocalCloudTest {

@@ -8,7 +8,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.testng.annotations.Test;
 
-import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
+import iTests.framework.utils.LogUtils;
 
 /**
  * Local cloud test to verify rest API is present.

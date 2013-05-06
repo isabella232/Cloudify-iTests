@@ -5,7 +5,7 @@ import java.io.IOException;
 import org.cloudifysource.dsl.internal.CloudifyConstants.DeploymentState;
 import org.testng.annotations.Test;
 
-import org.cloudifysource.quality.iTests.framework.utils.ScriptUtils;
+import iTests.framework.utils.ScriptUtils;
 
 public class ListServicesAndApplicationsCommandsTest extends AbstractLocalCloudTest{
 			

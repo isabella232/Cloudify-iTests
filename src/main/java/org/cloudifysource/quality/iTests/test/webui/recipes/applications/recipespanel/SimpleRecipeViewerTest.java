@@ -6,8 +6,8 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.io.FileUtils;
 import org.cloudifysource.dsl.utils.ServiceUtils;
-import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
-import org.cloudifysource.quality.iTests.framework.utils.ScriptUtils;
+import iTests.framework.utils.LogUtils;
+import iTests.framework.utils.ScriptUtils;
 import org.cloudifysource.quality.iTests.test.webui.recipes.applications.AbstractSeleniumApplicationRecipeTest;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;

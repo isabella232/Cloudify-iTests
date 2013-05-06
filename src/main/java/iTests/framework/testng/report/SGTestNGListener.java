@@ -10,10 +10,10 @@ import org.testng.ITestResult;
 import org.testng.Reporter;
 import org.testng.TestListenerAdapter;
 
-import org.cloudifysource.quality.iTests.framework.utils.DumpUtils;
-import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
-import org.cloudifysource.quality.iTests.framework.utils.TestNGUtils;
-import org.cloudifysource.quality.iTests.framework.utils.ZipUtils;
+import iTests.framework.utils.DumpUtils;
+import iTests.framework.utils.LogUtils;
+import iTests.framework.utils.TestNGUtils;
+import iTests.framework.utils.ZipUtils;
 
 
 public class SGTestNGListener extends TestListenerAdapter {

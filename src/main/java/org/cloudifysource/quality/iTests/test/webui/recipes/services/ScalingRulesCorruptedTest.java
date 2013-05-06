@@ -23,7 +23,7 @@ import com.gigaspaces.webuitf.dashboard.DashboardTab;
 import com.gigaspaces.webuitf.dashboard.alerts.AlertsPanel;
 
 import org.cloudifysource.quality.iTests.framework.utils.IOUtils;
-import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
+import iTests.framework.utils.LogUtils;
 
 public class ScalingRulesCorruptedTest extends AbstractSeleniumServiceRecipeTest {
 

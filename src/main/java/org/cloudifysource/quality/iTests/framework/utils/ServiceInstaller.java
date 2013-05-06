@@ -2,6 +2,7 @@ package org.cloudifysource.quality.iTests.framework.utils;
 
 import java.io.IOException;
 
+import iTests.framework.utils.LogUtils;
 import junit.framework.Assert;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
 

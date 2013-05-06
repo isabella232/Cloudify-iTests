@@ -2,7 +2,7 @@ package org.cloudifysource.quality.iTests.test.esm.component.machines;
 
 import org.cloudifysource.esc.driver.provisioning.CloudifyMachineProvisioningConfig;
 import org.cloudifysource.esc.driver.provisioning.ElasticMachineProvisioningCloudifyAdapter;
-import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
+import iTests.framework.utils.LogUtils;
 import org.cloudifysource.quality.iTests.test.esm.AbstractFromXenToByonGSMTest;
 import org.cloudifysource.quality.iTests.test.esm.component.SlaEnforcementTestUtils;
 import org.openspaces.admin.gsa.GridServiceAgent;

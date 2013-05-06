@@ -3,6 +3,7 @@ package org.cloudifysource.quality.iTests.framework.utils;
 import java.util.ArrayList;
 import java.util.List;
 
+import iTests.framework.utils.LogUtils;
 import org.openqa.selenium.NoSuchElementException;
 import org.openspaces.admin.machine.Machine;
 import org.utils.wanem.Constants;

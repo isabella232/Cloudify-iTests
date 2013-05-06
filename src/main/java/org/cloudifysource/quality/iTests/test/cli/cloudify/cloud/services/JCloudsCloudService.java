@@ -10,8 +10,8 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.cloudifysource.esc.jclouds.WindowsServerEC2ReviseParsedImage;
-import org.cloudifysource.quality.iTests.framework.utils.DumpUtils;
-import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
+import iTests.framework.utils.LogUtils;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.CloudTestUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.security.SecurityConstants;
 import org.jclouds.aws.ec2.compute.strategy.AWSEC2ReviseParsedImage;
 import org.jclouds.compute.ComputeServiceContext;
@@ -159,9 +159,9 @@ public abstract class JCloudsCloudService extends AbstractCloudService {
 					try {
 						String managerIp = ((NodeMetadata) leakedNode).getPublicAddresses().iterator().next() + ":" + DEFAULT_REST_PORT;
 						if (getBootstrapper().isSecured()) {
-							DumpUtils.dumpMachines("https://" + managerIp, SecurityConstants.USER_PWD_ALL_ROLES, SecurityConstants.USER_PWD_ALL_ROLES);
+                            CloudTestUtils.dumpMachines("https://" + managerIp, SecurityConstants.USER_PWD_ALL_ROLES, SecurityConstants.USER_PWD_ALL_ROLES);
 						} else {
-							DumpUtils.dumpMachines("http://" + managerIp, null, null);
+                            CloudTestUtils.dumpMachines("http://" + managerIp, null, null);
 						}
 						LogUtils.log("Leaked management machine logs dumped successfully");
 					} catch (Exception e) {

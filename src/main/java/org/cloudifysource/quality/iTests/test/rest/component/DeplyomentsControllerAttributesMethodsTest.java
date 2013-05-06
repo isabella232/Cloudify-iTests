@@ -14,7 +14,7 @@ import org.cloudifysource.dsl.rest.response.GetApplicationAttributesResponse;
 import org.cloudifysource.dsl.rest.response.GetServiceAttributesResponse;
 import org.cloudifysource.dsl.rest.response.GetServiceInstanceAttributesResponse;
 import org.cloudifysource.dsl.rest.response.Response;
-import org.cloudifysource.quality.iTests.framework.utils.AssertUtils;
+import iTests.framework.utils.AssertUtils;
 import org.codehaus.jackson.type.TypeReference;
 import org.testng.annotations.Test;
 

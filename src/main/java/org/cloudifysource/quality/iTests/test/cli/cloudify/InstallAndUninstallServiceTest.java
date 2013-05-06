@@ -12,9 +12,9 @@ import org.testng.annotations.Test;
 import org.cloudifysource.dsl.utils.ServiceUtils;
 
 import org.cloudifysource.quality.iTests.framework.utils.DeploymentUtils;
-import org.cloudifysource.quality.iTests.framework.utils.DumpUtils;
-import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
-import org.cloudifysource.quality.iTests.framework.utils.AssertUtils.RepetitiveConditionProvider;
+import iTests.framework.utils.DumpUtils;
+import iTests.framework.utils.LogUtils;
+import iTests.framework.utils.AssertUtils.RepetitiveConditionProvider;
 import org.cloudifysource.quality.iTests.framework.utils.usm.USMTestUtils;
 
 public class InstallAndUninstallServiceTest extends AbstractLocalCloudTest {

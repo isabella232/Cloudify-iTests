@@ -30,7 +30,7 @@ import org.openspaces.grid.gsm.sla.exceptions.SlaEnforcementInProgressException;
 import org.openspaces.grid.gsm.strategy.DiscoveredMachinesCache;
 import org.testng.Assert;
 
-import org.cloudifysource.quality.iTests.framework.utils.DumpUtils;
+import iTests.framework.utils.DumpUtils;
 
 public class SlaEnforcementTestUtils {
 

@@ -1,9 +1,10 @@
 package org.cloudifysource.quality.iTests.framework.utils;
 
-import static org.cloudifysource.quality.iTests.framework.utils.ScriptUtils.getBuildPath;
+import static iTests.framework.utils.ScriptUtils.getBuildPath;
 
 import java.io.File;
 
+import iTests.framework.utils.ScriptUtils;
 import org.openspaces.admin.machine.Machine;
 
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;

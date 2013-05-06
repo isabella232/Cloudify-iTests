@@ -9,9 +9,9 @@ import org.openspaces.admin.machine.events.ElasticMachineProvisioningProgressCha
 import org.openspaces.admin.machine.events.ElasticMachineProvisioningProgressChangedEventListener;
 import org.openspaces.admin.pu.elastic.events.ElasticProcessingUnitDecisionEvent;
 
-import org.cloudifysource.quality.iTests.framework.utils.AssertUtils;
-import org.cloudifysource.quality.iTests.framework.utils.AssertUtils.RepetitiveConditionProvider;
-import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
+import iTests.framework.utils.AssertUtils;
+import iTests.framework.utils.AssertUtils.RepetitiveConditionProvider;
+import iTests.framework.utils.LogUtils;
 
 public class MachinesEventsCounter implements AdminEventListener, ElasticMachineProvisioningProgressChangedEventListener {
 	Logger logger = Logger.getLogger(this.getClass().getName());

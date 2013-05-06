@@ -8,6 +8,7 @@ import java.util.StringTokenizer;
 
 import com.gigaspaces.dashboard.DashboardDBReporter;
 
+import com.j_spaces.kernel.PlatformVersion;
 import iTests.framework.testng.report.wiki.WikiUtils;
 import iTests.framework.testng.report.xml.SummaryReport;
 import iTests.framework.tools.SGTestHelper;
@@ -51,7 +52,18 @@ public class HtmlMailReporter {
 
         StringBuilder sb = new StringBuilder();
         sb.append("<html>").append("\n");
-        sb.append("<h1>SGTest Cloudify Results </h1></br></br></br>").append("\n");
+
+        String type;
+
+        if(PlatformVersion.getOfficialVersion().contains("XAP")){
+            sb.append("<h1>SGTest XAP Results </h1></br></br></br>").append("\n");
+            type = "iTests-XAP";
+        }
+        else{
+            sb.append("<h1>Cloudify-iTests Results </h1></br></br></br>").append("\n");
+            type = "iTests-Cloudify";
+        }
+
         sb.append("<h2>Suite Name:  " + summaryReport.getSuiteName() + " </h2></br>").append("\n");
         sb.append("<h4>Duration:  " + WikiUtils.formatDuration(summaryReport.getDuration()) + " </h4></br>").append("\n");
         sb.append("<h4>Full Suite Report:  " + link + " </h4></br>").append("\n");
@@ -96,7 +108,7 @@ public class HtmlMailReporter {
 
         DashboardDBReporter.writeToDB(summaryReport.getSuiteName(), buildNumberForDB, majorVersion, minorVersion,
 				summaryReport.getDuration(), buildLogUrl, summaryReport.getTotalTestsRun(), summaryReport.getFailed(),
-				summaryReport.getSuccess(), summaryReport.getSkipped(), summaryReport.getSuspected(), 0/*orphans*/, wikiPageUrl, null);
+				summaryReport.getSuccess(), summaryReport.getSkipped(), summaryReport.getSuspected(), 0/*orphans*/, wikiPageUrl, null, type);
     }
 
     static String getFullBuildLog(String buildLog) {

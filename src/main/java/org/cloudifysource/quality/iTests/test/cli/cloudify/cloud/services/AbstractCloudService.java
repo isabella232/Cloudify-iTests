@@ -1,23 +1,28 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services;
 
 import iTests.framework.tools.SGTestHelper;
+import iTests.framework.utils.AssertUtils;
+import iTests.framework.utils.AssertUtils.RepetitiveConditionProvider;
+import iTests.framework.utils.LogUtils;
+import iTests.framework.utils.ScriptUtils;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.cloudifysource.dsl.cloud.Cloud;
 import org.cloudifysource.dsl.internal.ServiceReader;
-import org.cloudifysource.quality.iTests.framework.utils.*;
-import org.cloudifysource.quality.iTests.framework.utils.AssertUtils.RepetitiveConditionProvider;
+import org.cloudifysource.quality.iTests.framework.utils.CloudBootstrapper;
+import org.cloudifysource.quality.iTests.framework.utils.IOUtils;
+import org.cloudifysource.quality.iTests.framework.utils.WebUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CloudTestUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.security.SecurityConstants;
 import org.openspaces.admin.Admin;
 import org.testng.Assert;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -202,9 +207,9 @@ public abstract class AbstractCloudService implements CloudService {
                 try {
                     url = restUrls[0] + "/service/dump/machines/?fileSizeLimit=50000000";
                     if (this.bootstrapper.isSecured()) {
-                        DumpUtils.dumpMachines(restUrls[0], SecurityConstants.USER_PWD_ALL_ROLES, SecurityConstants.USER_PWD_ALL_ROLES);
+                        CloudTestUtils.dumpMachines(restUrls[0], SecurityConstants.USER_PWD_ALL_ROLES, SecurityConstants.USER_PWD_ALL_ROLES);
                     } else {
-                        DumpUtils.dumpMachines(restUrls[0], null, null);
+                        CloudTestUtils.dumpMachines(restUrls[0], null, null);
                     }
                 } catch (Exception e) {
                     LogUtils.log("Failed to create dump for this url - " + url, e);

@@ -1,5 +1,7 @@
 package org.cloudifysource.quality.iTests.framework.utils;
 
+import iTests.framework.utils.LogUtils;
+
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 

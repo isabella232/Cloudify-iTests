@@ -2,7 +2,7 @@ package org.cloudifysource.quality.iTests.test.cli.cloudify.pu;
 
 import org.cloudifysource.dsl.utils.ServiceUtils;
 import iTests.framework.tools.SGTestHelper;
-import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
+import iTests.framework.utils.LogUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.AbstractLocalCloudTest;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
 import org.openspaces.admin.gsc.GridServiceContainer;

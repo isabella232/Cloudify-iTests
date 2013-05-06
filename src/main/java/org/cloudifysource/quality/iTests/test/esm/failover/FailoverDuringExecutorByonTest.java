@@ -1,8 +1,8 @@
 package org.cloudifysource.quality.iTests.test.esm.failover;
 
 import com.gigaspaces.async.AsyncFuture;
-import org.cloudifysource.quality.iTests.framework.utils.AssertUtils;
-import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
+import iTests.framework.utils.AssertUtils;
+import iTests.framework.utils.LogUtils;
 import org.cloudifysource.quality.iTests.test.esm.AbstractFromXenToByonGSMTest;
 import org.openspaces.admin.gsa.GridServiceAgent;
 import org.openspaces.admin.gsa.GridServiceContainerOptions;

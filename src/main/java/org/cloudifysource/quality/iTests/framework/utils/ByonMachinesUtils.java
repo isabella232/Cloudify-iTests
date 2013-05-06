@@ -10,6 +10,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import iTests.framework.utils.AssertUtils;
 import org.cloudifysource.esc.driver.provisioning.ElasticMachineProvisioningCloudifyAdapter;
 import org.openspaces.admin.gsa.GSAReservationId;
 import org.openspaces.admin.gsa.GridServiceAgent;

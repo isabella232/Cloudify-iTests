@@ -1,6 +1,8 @@
 package org.cloudifysource.quality.iTests.framework.utils;
 import static org.testng.AssertJUnit.assertTrue;
 
+import iTests.framework.utils.AssertUtils;
+import iTests.framework.utils.LogUtils;
 import org.openspaces.admin.Admin;
 import org.openspaces.admin.gsc.GridServiceContainer;
 import org.openspaces.admin.gsc.GridServiceContainers;
@@ -11,7 +13,7 @@ import org.openspaces.admin.pu.ProcessingUnitInstance;
 
 import com.gigaspaces.cluster.activeelection.SpaceMode;
 
-import org.cloudifysource.quality.iTests.framework.utils.AssertUtils.RepetitiveConditionProvider;
+import iTests.framework.utils.AssertUtils.RepetitiveConditionProvider;
 
 /**
  * Utility methods for asserting distribution after deployment.
@@ -113,6 +115,6 @@ public class DistributionUtils {
 			}
 		};
 		
-		AssertUtils.repetitiveAssertTrue("Expected " + expected +" "+spaceMode +" ", condition, 60*1000);
+		AssertUtils.repetitiveAssertTrue("Expected " + expected + " " + spaceMode + " ", condition, 60 * 1000);
 	}
 }

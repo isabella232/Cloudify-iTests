@@ -14,6 +14,8 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
+import iTests.framework.utils.AssertUtils;
+import iTests.framework.utils.LogUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -26,7 +28,7 @@ import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.openspaces.jee.sessions.jetty.SessionData;
 
-import org.cloudifysource.quality.iTests.framework.utils.AssertUtils.RepetitiveConditionProvider;
+import iTests.framework.utils.AssertUtils.RepetitiveConditionProvider;
 
 public class WebUtils {
 
@@ -65,27 +67,27 @@ public class WebUtils {
 
 		AssertUtils.repetitiveAssertTrue("Cannot access " + applicationUrl, new RepetitiveConditionProvider() {
 
-			@Override
-			public boolean getCondition() {
-				try {
-					try {
-						final HttpGet get = new HttpGet(new URL(applicationUrl).toURI());
+            @Override
+            public boolean getCondition() {
+                try {
+                    try {
+                        final HttpGet get = new HttpGet(new URL(applicationUrl).toURI());
 
-						final HttpResponse response = client.execute(get);
-						if (response.getStatusLine().getStatusCode() != 200) {
-							LogUtils.log("Failed to access " + applicationUrl + " response:"+ response.getStatusLine().getReasonPhrase() + " status code:" + response.getStatusLine().getStatusCode());
-						}
-						return true;
+                        final HttpResponse response = client.execute(get);
+                        if (response.getStatusLine().getStatusCode() != 200) {
+                            LogUtils.log("Failed to access " + applicationUrl + " response:" + response.getStatusLine().getReasonPhrase() + " status code:" + response.getStatusLine().getStatusCode());
+                        }
+                        return true;
 
-					} finally {
-						client.getConnectionManager().shutdown();
-					}
-				} catch (final Exception e) {
-					LogUtils.log("Failed to access " + applicationUrl ,e);
-					return false;
-				}
-			}
-		}, timeUnit.toMillis(timeout));
+                    } finally {
+                        client.getConnectionManager().shutdown();
+                    }
+                } catch (final Exception e) {
+                    LogUtils.log("Failed to access " + applicationUrl, e);
+                    return false;
+                }
+            }
+        }, timeUnit.toMillis(timeout));
 	}
 
 	public static boolean isURLAvailable(URL url) throws Exception{

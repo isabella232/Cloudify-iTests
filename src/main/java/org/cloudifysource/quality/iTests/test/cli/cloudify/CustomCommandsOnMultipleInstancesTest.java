@@ -10,7 +10,7 @@ import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.testng.annotations.Test;
 
-import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
+import iTests.framework.utils.LogUtils;
 import org.cloudifysource.quality.iTests.framework.utils.usm.USMTestUtils;
 
 public class CustomCommandsOnMultipleInstancesTest extends AbstractLocalCloudTest {

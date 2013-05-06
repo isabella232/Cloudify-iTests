@@ -15,7 +15,7 @@ import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.CloudS
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.CloudServiceManager;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.security.SecurityConstants;
 import org.cloudifysource.quality.iTests.framework.utils.ApplicationInstaller;
-import org.cloudifysource.quality.iTests.framework.utils.AssertUtils;
+import iTests.framework.utils.AssertUtils;
 import org.cloudifysource.quality.iTests.framework.utils.CloudBootstrapper;
 import org.cloudifysource.quality.iTests.framework.utils.ProcessingUnitUtils;
 import org.cloudifysource.quality.iTests.framework.utils.ServiceInstaller;

@@ -6,8 +6,8 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import org.cloudifysource.quality.iTests.framework.utils.ApplicationInstaller;
-import org.cloudifysource.quality.iTests.framework.utils.AssertUtils;
-import org.cloudifysource.quality.iTests.framework.utils.ScriptUtils;
+import iTests.framework.utils.AssertUtils;
+import iTests.framework.utils.ScriptUtils;
 
 public class TeardownWithoutUninstallTest extends AbstractByonCloudTest {
 	

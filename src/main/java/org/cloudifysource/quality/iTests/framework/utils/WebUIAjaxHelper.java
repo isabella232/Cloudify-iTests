@@ -2,6 +2,7 @@ package org.cloudifysource.quality.iTests.framework.utils;
 
 import java.util.concurrent.TimeUnit;
 
+import iTests.framework.utils.LogUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.ElementNotVisibleException;
 import org.openqa.selenium.NoSuchElementException;

@@ -3,8 +3,8 @@
  */
 package org.cloudifysource.quality.iTests.framework.utils;
 
-import static org.cloudifysource.quality.iTests.framework.utils.AdminUtils.loadGSCs;
-import static org.cloudifysource.quality.iTests.framework.utils.AdminUtils.loadGSM;
+import static iTests.framework.utils.AdminUtils.loadGSCs;
+import static iTests.framework.utils.AdminUtils.loadGSM;
 
 import java.io.File;
 import java.io.FileWriter;

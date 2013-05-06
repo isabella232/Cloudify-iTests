@@ -9,8 +9,8 @@ import org.testng.annotations.Test;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.NewAbstractCloudTest;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.CloudServiceManager;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.azure.MicrosoftAzureCloudService;
-import org.cloudifysource.quality.iTests.framework.utils.AssertUtils;
-import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
+import iTests.framework.utils.AssertUtils;
+import iTests.framework.utils.LogUtils;
 
 /**
  * CLOUDIFY-1431

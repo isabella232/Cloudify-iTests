@@ -1,14 +1,11 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.ec2win;
 
-import iTests.framework.tools.SGTestHelper;
-
 import java.io.File;
 import java.io.IOException;
 
 import junit.framework.Assert;
 
 import org.apache.commons.io.FileUtils;
-import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.AbstractExamplesTest;
@@ -16,11 +13,13 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import iTests.framework.tools.SGTestHelper;
+import iTests.framework.utils.LogUtils;
 
 public class Ec2WinExamplesTest extends AbstractExamplesTest {
-
+	
 	private static final String WINDOWS_APPS_PATH = CommandTestUtils.getPath("src/main/resources/apps/USM/usm/applications/windows");
-
+	
 	@Override
 	protected String getCloudName() {
 		return "ec2-win";
@@ -48,10 +47,10 @@ public class Ec2WinExamplesTest extends AbstractExamplesTest {
 
 		String applicationSGPath = WINDOWS_APPS_PATH + "/" + applicationName;
 		String applicationBuildPath = SGTestHelper.getBuildDir() + "/recipes/apps/";
-
+		
 		LogUtils.log("copying " + applicationSGPath + " to " + applicationBuildPath);
 		FileUtils.copyDirectoryToDirectory(new File(applicationSGPath), new File(applicationBuildPath));
-
+		
 	}
 
 	@Override

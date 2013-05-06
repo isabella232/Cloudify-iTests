@@ -2,7 +2,7 @@ package org.cloudifysource.quality.iTests.test.webui;
 
 import java.net.UnknownHostException;
 
-import org.cloudifysource.quality.iTests.framework.utils.AssertUtils;
+import iTests.framework.utils.AssertUtils;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.AbstractLocalCloudTest;
 import org.testng.annotations.Test;

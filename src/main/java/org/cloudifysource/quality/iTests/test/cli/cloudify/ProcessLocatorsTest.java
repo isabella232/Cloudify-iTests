@@ -21,7 +21,7 @@ import org.openspaces.admin.pu.ProcessingUnitInstance;
 import org.openspaces.pu.service.ServiceMonitors;
 import org.testng.annotations.Test;
 
-import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
+import iTests.framework.utils.LogUtils;
 import org.cloudifysource.quality.iTests.framework.utils.usm.USMTestUtils;
 
 public class ProcessLocatorsTest extends AbstractLocalCloudTest {

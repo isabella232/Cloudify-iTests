@@ -1,13 +1,15 @@
 package org.cloudifysource.quality.iTests.framework.utils;
 
+import iTests.framework.utils.AssertUtils;
+import iTests.framework.utils.LogUtils;
+import org.apache.commons.lang.StringUtils;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.CloudTestUtils;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.security.SecurityConstants;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
-
-import org.apache.commons.lang.StringUtils;
-
-import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
-import org.cloudifysource.quality.iTests.test.cli.cloudify.security.SecurityConstants;
 
 public abstract class RecipeInstaller {
 	
@@ -208,7 +210,7 @@ public abstract class RecipeInstaller {
 		String url = null;
 		try {
 			url = restUrl + "/service/dump/machines/?fileSizeLimit=50000000";
-			DumpUtils.dumpMachines(restUrl, SecurityConstants.USER_PWD_ALL_ROLES, SecurityConstants.USER_PWD_ALL_ROLES);
+            CloudTestUtils.dumpMachines(restUrl, SecurityConstants.USER_PWD_ALL_ROLES, SecurityConstants.USER_PWD_ALL_ROLES);
 		} catch (final Exception e) {
 			LogUtils.log("Failed to create dump for this url - " + url, e);
 		}

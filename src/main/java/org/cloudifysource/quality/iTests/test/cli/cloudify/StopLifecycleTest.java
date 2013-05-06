@@ -27,7 +27,7 @@ import com.gigaspaces.log.LogEntries;
 import com.gigaspaces.log.LogEntry;
 import com.gigaspaces.log.LogProcessType;
 
-import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
+import iTests.framework.utils.LogUtils;
 import org.cloudifysource.quality.iTests.framework.utils.SigarUtils;
 import org.cloudifysource.quality.iTests.framework.utils.usm.USMTestUtils;
 

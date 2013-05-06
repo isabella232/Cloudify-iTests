@@ -1,16 +1,9 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.ec2;
 
-import java.io.File;
-import java.io.IOException;
-
+import iTests.framework.utils.ScriptUtils;
 import iTests.framework.tools.SGTestHelper;
 import org.cloudifysource.quality.iTests.framework.utils.JGitUtils;
-import org.cloudifysource.quality.iTests.framework.utils.ScriptUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.AbstractExamplesTest;
-import org.eclipse.jgit.api.CheckoutCommand;
-import org.eclipse.jgit.api.CreateBranchCommand;
-import org.eclipse.jgit.api.Git;
-import org.eclipse.jgit.api.errors.GitAPIException;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;

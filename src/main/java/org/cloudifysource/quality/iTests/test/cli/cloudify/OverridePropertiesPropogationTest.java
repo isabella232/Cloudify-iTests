@@ -11,7 +11,7 @@ import org.testng.annotations.Test;
 
 import iTests.framework.tools.SGTestHelper;
 import org.cloudifysource.quality.iTests.framework.utils.ApplicationInstaller;
-import org.cloudifysource.quality.iTests.framework.utils.AssertUtils;
+import iTests.framework.utils.AssertUtils;
 import org.cloudifysource.quality.iTests.framework.utils.ServiceInstaller;
 import groovy.util.ConfigObject;
 import groovy.util.ConfigSlurper;

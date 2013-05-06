@@ -1,5 +1,6 @@
 package org.cloudifysource.quality.iTests.framework.utils;
 
+import iTests.framework.utils.DumpUtils;
 import org.openspaces.admin.Admin;
 import org.openspaces.admin.esm.ElasticServiceManager;
 import org.openspaces.admin.esm.ElasticServiceManagers;
@@ -13,7 +14,7 @@ import org.openspaces.admin.machine.Machine;
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.openspaces.admin.pu.ProcessingUnitInstance;
 
-import static org.cloudifysource.quality.iTests.framework.utils.LogUtils.log;
+import static iTests.framework.utils.LogUtils.log;
 import static org.cloudifysource.quality.iTests.framework.utils.ToStringUtils.gscToString;
 import static org.cloudifysource.quality.iTests.framework.utils.ToStringUtils.puInstanceToString;
 

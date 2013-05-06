@@ -1,11 +1,10 @@
-package org.cloudifysource.quality.iTests.framework.utils;
+package iTests.framework.utils;
 
 import com.j_spaces.kernel.PlatformVersion;
 import groovy.lang.GroovyClassLoader;
 import groovy.lang.GroovyObject;
-import org.cloudifysource.dsl.internal.CloudifyConstants;
 import org.codehaus.groovy.control.CompilationFailedException;
-import org.hyperic.sigar.Sigar;
+import org.testng.Assert;
 
 import javax.xml.stream.*;
 import java.io.*;
@@ -32,7 +31,45 @@ public class ScriptUtils {
         Process process = pb.start();
         int result = process.waitFor();
         return result;
+    }
 
+//	public static void killLinuxProcess(long pid, String hostName) {
+//		SSHUtils.runCommand(hostName, WANemUtils.SSH_TIMEOUT, "kill -9 " + pid , WANemUtils.SSH_USERNAME, WANemUtils.SSH_PASSWORD);
+//	}
+
+    @SuppressWarnings("deprecation")
+    public static String runScriptRelativeToGigaspacesBinDir(String args, long timeout) throws Exception {
+        RunScript runScript = new RunScript(args, true);
+        Thread script = new Thread(runScript);
+        script.start();
+        Thread.sleep(timeout);
+        script.stop();
+
+        runScript.kill();
+        return runScript.getScriptOutput();
+    }
+
+    public static String runScriptWithAbsolutePath(String args, long timeout) throws Exception {
+        RunScript runScript = new RunScript(args, false);
+        Thread script = new Thread(runScript);
+        script.start();
+        script.join(timeout);
+        runScript.kill();
+        return runScript.getScriptOutput();
+    }
+
+    public static RunScript runScriptWithAbsolutePath(String args) {
+        RunScript runScript = new RunScript(args, false);
+        Thread script = new Thread(runScript);
+        script.start();
+        return runScript;
+    }
+
+    public static RunScript runScriptRelativeToGigaspacesBinDir(String args) throws Exception {
+        RunScript runScript = new RunScript(args, true);
+        Thread script = new Thread(runScript);
+        script.start();
+        return runScript;
     }
 
     @SuppressWarnings("deprecation")
@@ -56,10 +93,10 @@ public class ScriptUtils {
 
     public static class RunScript implements Runnable {
 
-        private String[] args;
+        private final String[] args;
         private String scriptFilename;
         private String binPath;
-        private StringBuilder sb = new StringBuilder();
+        private final StringBuilder sb = new StringBuilder();
         private Process process;
 
         public RunScript(String args) {
@@ -70,10 +107,22 @@ public class ScriptUtils {
             this.args[0] = binPath + "/" + scriptFilename;
         }
 
+        public RunScript(String args, boolean relativeToGigaspacesBinDir) {
+            this.args = args.split(" ");
+            if (relativeToGigaspacesBinDir) {
+                scriptFilename = this.args[0];
+                scriptFilename += getScriptSuffix();
+                binPath = getBuildBinPath();
+                this.args[0] = binPath + "/" + scriptFilename;
+            }
+        }
+
         public void run() {
             String line;
             ProcessBuilder pb = new ProcessBuilder(args);
-            pb.directory(new File(binPath));
+            if (binPath != null) {
+                pb.directory(new File(binPath));
+            }
             pb.redirectErrorStream(true);
 
             try {
@@ -95,16 +144,6 @@ public class ScriptUtils {
             return sb.toString();
         }
 
-        public RunScript(String args, boolean relativeToGigaspacesBinDir) {
-            this.args = args.split(" ");
-            if (relativeToGigaspacesBinDir) {
-                scriptFilename = this.args[0];
-                scriptFilename += getScriptSuffix();
-                binPath = getBuildBinPath();
-                this.args[0] = binPath + "/" + scriptFilename;            	            	
-            }
-        }
-
         public void kill() throws IOException, InterruptedException {
             String scriptOutput = sb.toString();
 
@@ -122,14 +161,15 @@ public class ScriptUtils {
                     } else {
                         new ProcessBuilder("taskkill", "/F", "/PID", processIdAsString).start().waitFor();
                     }
-                } catch (IOException e) { }
+                } catch (IOException e) {
+                    LogUtils.log("caught IOException while teminating process", e);
+                }
             }
 
             process.destroy();
         }
-
-
     }
+
     public static void startLocalProcess(String dir, String ... command) throws IOException, InterruptedException {        
         ProcessBuilder pb = new ProcessBuilder(command).directory(new File(URLDecoder.decode(dir, "ISO-8859-1")));
         pb.redirectErrorStream(true);
@@ -151,22 +191,8 @@ public class ScriptUtils {
         return !isWindows();
     }
 
-    public static String getCloudifySourceDir() {
-        String referencePath = getClassLocation(CloudifyConstants.class);
-        String ans = "";
-        String[] split = referencePath.split("/");
-        String s = File.separator;
-        for (int i = 0; i < split.length - 8; i++) {
-            ans += split[i] + s;
-        }
-        int startIndex = 1;
-        if(isLinuxMachine())
-        	startIndex = 0;
-        return ans.substring(startIndex, ans.length());
-    }
-
     public static String getBuildPath() {
-        String referencePath = getClassLocation(Sigar.class);
+        String referencePath = getClassLocation(PlatformVersion.class);
         String jarPath = referencePath.split("!")[0];
         int startOfPathLocation = jarPath.indexOf("/");
         if (isLinuxMachine()) {
@@ -175,9 +201,9 @@ public class ScriptUtils {
         else {
             jarPath = jarPath.substring(startOfPathLocation + 1);
         }
-        int startOfJarFilename = jarPath.indexOf("sigar.jar");
+        int startOfJarFilename = jarPath.indexOf("gs-runtime.jar");
         jarPath = jarPath.substring(0, startOfJarFilename);
-        jarPath += "../../..";
+        jarPath += "../..";
         return jarPath;
     }
 
@@ -197,7 +223,7 @@ public class ScriptUtils {
         return getBuildRecipesPath() + "/apps";
     }
 
-    private static String getClassLocation(Class<?> clazz) {
+    public static String getClassLocation(Class<?> clazz) {
         String clsAsResource = clazz.getName().replace('.', '/').concat(".class");
 
         final ClassLoader clsLoader = clazz.getClassLoader();
@@ -210,7 +236,7 @@ public class ScriptUtils {
     public static File getGigaspacesZipFile() throws IOException {
 
         File gigaspacesDirectory = new File ( ScriptUtils.getBuildPath());
-        String gigaspacesFolderName = "gigaspaces-" + PlatformVersion.getEdition() + "-"+PlatformVersion.getVersion()+"-"+PlatformVersion.getMilestone();
+        String gigaspacesFolderName = "gigaspaces-" + PlatformVersion.getEdition() + "-" + PlatformVersion.getVersion() + "-" + PlatformVersion.getMilestone();
         String gigaspacesZipFilename = gigaspacesFolderName + "-b" + PlatformVersion.getBuildNumber() + ".zip";
         LogUtils.log("zip name: " + gigaspacesZipFilename);
         File gigaspacesZip = new File(gigaspacesDirectory.getAbsoluteFile() +"/../" + gigaspacesZipFilename);		
@@ -222,7 +248,7 @@ public class ScriptUtils {
             File[] includeDirectories = new File[]{new File(gigaspacesDirectory,"deploy/templates")};
             File[] emptyDirectories = new File[]{new File(gigaspacesDirectory,"logs"),
                     new File(gigaspacesDirectory,"lib/platform/esm")};
-            ZipUtils.zipDirectory(gigaspacesZip, gigaspacesDirectory, includeDirectories, excludeDirectories,emptyDirectories,gigaspacesFolderName);
+            ZipUtils.zipDirectory(gigaspacesZip, gigaspacesDirectory, includeDirectories, excludeDirectories, emptyDirectories, gigaspacesFolderName);
         }
 
         if (!ZipUtils.isZipIntact(gigaspacesZip)) {
@@ -236,8 +262,8 @@ public class ScriptUtils {
 
     public static class ScriptPatternIterator implements Iterator<Object[]> {
 
-        private InputStream is;
-        private XMLStreamReader parser;
+        private final InputStream is;
+        private final XMLStreamReader parser;
         private int event;
 
         public ScriptPatternIterator(String xmlPath) throws XMLStreamException, FactoryConfigurationError, IOException {
@@ -356,10 +382,26 @@ public class ScriptUtils {
     public static GroovyObject getGroovyObject(String className) throws CompilationFailedException, IOException, InstantiationException, IllegalAccessException{
         ClassLoader parent = ScriptUtils.class.getClassLoader();
         GroovyClassLoader loader = new GroovyClassLoader(parent);
-        Class<?> groovyClass = loader.parseClass(new File(className));
-        return (GroovyObject) groovyClass.newInstance();
+        InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(className);
+        if (is == null) {
+            Assert.fail("Failed finding " + className);
+        }
+        try {
+            Class<?> groovyClass = loader.parseClass(convertStreamToString(is));
+            return (GroovyObject) groovyClass.newInstance();
+        } finally {
+            is.close();
+        }
     }
 
+    public static String convertStreamToString(InputStream is) {
+        String ans = "";
+        Scanner s = new Scanner(is);
+        s.useDelimiter("\\A");
+        ans = s.hasNext() ? s.next() : "";
+        s.close();
+        return ans;
+    }
 
     /**
      * @param className the name of the .groovy file with path starting from sgtest base dir 
@@ -407,34 +449,6 @@ public class ScriptUtils {
 
     public static boolean isWindows() {
         return (System.getenv("windir") != null);
-    }
-
-    @SuppressWarnings("deprecation")
-    public static String runScriptRelativeToGigaspacesBinDir(String args, long timeout) throws Exception {
-        RunScript runScript = new RunScript(args, true);
-        Thread script = new Thread(runScript);
-        script.start();
-        Thread.sleep(timeout);
-        script.stop();
-
-        runScript.kill();
-        return runScript.getScriptOutput();
-    }
-
-    public static String runScriptWithAbsolutePath(String args, long timeout) throws Exception {
-        RunScript runScript = new RunScript(args, false);
-        Thread script = new Thread(runScript);
-        script.start();
-        script.join(timeout);
-        runScript.kill();
-        return runScript.getScriptOutput();
-    }
-
-    public static RunScript runScriptRelativeToGigaspacesBinDir(String args) throws Exception {
-        RunScript runScript = new RunScript(args, true);
-        Thread script = new Thread(runScript);
-        script.start();
-        return runScript;
     }
 
 }

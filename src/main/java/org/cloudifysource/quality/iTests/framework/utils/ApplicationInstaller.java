@@ -1,5 +1,6 @@
 package org.cloudifysource.quality.iTests.framework.utils;
 
+import iTests.framework.utils.LogUtils;
 import junit.framework.Assert;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
 

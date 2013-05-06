@@ -18,7 +18,7 @@ import org.testng.xml.XmlSuite;
 import iTests.framework.testng.report.xml.SummaryReport;
 import iTests.framework.testng.report.xml.TestReport;
 import iTests.framework.testng.report.xml.TestsReport;
-import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
+import iTests.framework.utils.LogUtils;
 
 /**
  * @author moran

@@ -2,6 +2,7 @@ package org.cloudifysource.quality.iTests.framework.utils;
 
 import java.io.IOException;
 
+import iTests.framework.utils.ScriptUtils;
 import org.codehaus.groovy.control.CompilationFailedException;
 
 /**

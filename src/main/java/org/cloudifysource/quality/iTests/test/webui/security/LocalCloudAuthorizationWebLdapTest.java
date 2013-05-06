@@ -7,7 +7,7 @@ import com.gigaspaces.webuitf.services.ServicesTab;
 import com.gigaspaces.webuitf.topology.TopologyTab;
 import org.cloudifysource.dsl.internal.CloudifyConstants;
 import org.cloudifysource.quality.iTests.framework.utils.LocalCloudBootstrapper;
-import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
+import iTests.framework.utils.LogUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.AbstractSecuredLocalCloudTest;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.security.SecurityConstants;
 import org.cloudifysource.quality.iTests.test.webui.WebuiTestUtils;

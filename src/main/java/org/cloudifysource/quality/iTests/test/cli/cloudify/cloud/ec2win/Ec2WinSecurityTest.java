@@ -12,7 +12,7 @@ import org.testng.annotations.Test;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.NewAbstractSecurityCloudTest;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.security.SecurityConstants;
-import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
+import iTests.framework.utils.LogUtils;
 
 public class Ec2WinSecurityTest extends NewAbstractSecurityCloudTest {
 

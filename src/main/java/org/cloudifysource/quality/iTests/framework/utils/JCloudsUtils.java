@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
 
+import iTests.framework.utils.LogUtils;
 import org.cloudifysource.esc.jclouds.WindowsServerEC2ReviseParsedImage;
 import org.codehaus.plexus.util.StringUtils;
 import org.jclouds.aws.ec2.compute.strategy.AWSEC2ReviseParsedImage;

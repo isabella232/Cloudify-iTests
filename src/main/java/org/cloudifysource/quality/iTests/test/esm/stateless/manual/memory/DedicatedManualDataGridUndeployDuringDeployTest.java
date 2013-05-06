@@ -4,7 +4,7 @@ import java.io.File;
 
 import org.cloudifysource.quality.iTests.framework.utils.DeploymentUtils;
 import org.cloudifysource.quality.iTests.framework.utils.GsmTestUtils;
-import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
+import iTests.framework.utils.LogUtils;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.cloudifysource.quality.iTests.test.esm.AbstractFromXenToByonGSMTest;
 import org.openspaces.admin.pu.ProcessingUnit;

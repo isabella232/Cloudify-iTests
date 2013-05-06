@@ -96,7 +96,7 @@ public class AbstractByonCloudTest extends NewAbstractCloudTest {
 		return Arrays.asList(admin.getMachines().getMachines());
 	}
 
-	private List<Machine> getProcessingUnitMachines(final String processingUnitName) {
+	protected List<Machine> getProcessingUnitMachines(final String processingUnitName) {
 		List<Machine> machines = new ArrayList<Machine>();
 		ProcessingUnit pu = admin.getProcessingUnits().waitFor(processingUnitName, OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
 		for (ProcessingUnitInstance puInstance : pu.getInstances()) {

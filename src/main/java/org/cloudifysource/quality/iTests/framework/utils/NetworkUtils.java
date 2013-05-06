@@ -36,4 +36,9 @@ public class NetworkUtils {
 		}
 		
 	}
+
+    public static String resolveHostNameToIp(String hostName) throws UnknownHostException {
+        InetAddress byName = InetAddress.getByName(hostName);
+        return byName.getHostAddress();
+    }
 }

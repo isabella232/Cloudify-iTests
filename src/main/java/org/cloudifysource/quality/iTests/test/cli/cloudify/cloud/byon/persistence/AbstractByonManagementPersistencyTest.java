@@ -3,25 +3,22 @@ package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.byon.persisten
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.net.UnknownHostException;
+import java.util.*;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.exception.ExceptionUtils;
+import org.bouncycastle.util.IPAddress;
 import org.cloudifysource.dsl.utils.ServiceUtils;
 import iTests.framework.tools.SGTestHelper;
 import iTests.framework.utils.AssertUtils;
-import org.cloudifysource.quality.iTests.framework.utils.CloudBootstrapper;
-import org.cloudifysource.quality.iTests.framework.utils.IOUtils;
+import org.cloudifysource.quality.iTests.framework.utils.*;
 import iTests.framework.utils.LogUtils;
-import org.cloudifysource.quality.iTests.framework.utils.SSHUtils;
 import iTests.framework.utils.ScriptUtils;
-import org.cloudifysource.quality.iTests.framework.utils.ServiceInstaller;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.byon.AbstractByonCloudTest;
 import org.cloudifysource.restclient.GSRestClient;
@@ -29,6 +26,10 @@ import org.cloudifysource.restclient.RestException;
 import org.openspaces.admin.gsm.GridServiceManager;
 
 import com.j_spaces.kernel.PlatformVersion;
+import org.openspaces.admin.machine.Machine;
+import org.openspaces.admin.machine.events.ElasticMachineProvisioningProgressChangedEvent;
+import org.openspaces.admin.machine.events.ElasticMachineProvisioningProgressChangedEventListener;
+import org.openspaces.grid.gsm.machines.plugins.events.MachineStartedEvent;
 
 /**
  * User: nirb
@@ -226,12 +227,9 @@ public abstract class AbstractByonManagementPersistencyTest extends AbstractByon
 
             shutdownManagement();
 
-            CloudBootstrapper bootstrapper = getService().getBootstrapper();
-            bootstrapper.scanForLeakedNodes(false);
-            bootstrapper.useExistingFilePath(backupFilePath);
-            bootstrapper.bootstrap();
+            bootstrapUsingBackupFile();
 
-            String output = bootstrapper.getLastActionOutput();
+            String output = getService().getBootstrapper().getLastActionOutput();
 
             AssertUtils.assertTrue("bootstrap failed", output.contains("Successfully created Cloudify Manager"));
 
@@ -244,6 +242,83 @@ public abstract class AbstractByonManagementPersistencyTest extends AbstractByon
         }
     }
 
+    /**
+     * 1. Shutdown management machines.
+     * 2. Bootstrap using existing file.
+     * 3. Perform manual scale out.
+     * 4. make sure a used machine is not being started again.
+     * @see https://cloudifysource.atlassian.net/browse/CLOUDIFY-1724
+     * @throws Exception
+     */
+    public void testScaleoutAfterRecovery() throws Exception {
+
+        final String FULL_SERVICE_NAME = "default.tomcat";
+        final CountDownLatch machineStartedLatch = new CountDownLatch(1);
+        final AtomicReference<String> machineStarted = new AtomicReference<String>();
+
+        List<String> machinesBeforeRecovery = getAddressesOfService(FULL_SERVICE_NAME);
+
+        shutdownManagement();
+        bootstrapUsingBackupFile();
+
+        List<String> machinesAfterRecovery = getAddressesOfService(FULL_SERVICE_NAME);
+
+        AssertUtils.assertEquals("Machines of service tomcat are not the same before and after recovery",
+                machinesAfterRecovery, machinesBeforeRecovery);
+        LogUtils.log(FULL_SERVICE_NAME + " was installed on : " + StringUtils.join(machinesAfterRecovery, ","));
+
+        // register for machine started events from the ESM
+        admin.getMachines().getElasticMachineProvisioningProgressChanged().add(new ElasticMachineProvisioningProgressChangedEventListener() {
+            @Override
+            public void elasticMachineProvisioningProgressChanged(ElasticMachineProvisioningProgressChangedEvent event) {
+                if (event instanceof MachineStartedEvent) {
+                    MachineStartedEvent machineStartedEvent = (MachineStartedEvent) event;
+                    String puName = machineStartedEvent.getProcessingUnitName();
+                    if (puName.equals(FULL_SERVICE_NAME)) {
+                        String hostAddress = machineStartedEvent.getHostAddress();
+                        if (!IPAddress.isValidIPv4(hostAddress)) {
+                            // hostname and not address
+                            try {
+                                hostAddress = NetworkUtils.resolveHostNameToIp(hostAddress);
+                            } catch (UnknownHostException e) {
+                                LogUtils.log(ExceptionUtils.getFullStackTrace(e));
+                                hostAddress = null;
+                            }
+                        }
+                        LogUtils.log("A new machine was started for service " + FULL_SERVICE_NAME
+                                + " : " + hostAddress);
+
+                        machineStarted.set(hostAddress);
+                        machineStartedLatch.countDown();
+                    }
+                }
+            }
+        }, false);
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                ServiceInstaller installer = new ServiceInstaller(getRestUrl(), "tomcat");
+                installer.recipePath("tomcat");
+                installer.setInstances(2);
+            }
+        }).start();
+
+        machineStartedLatch.await(OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
+        String newlyStartedMachine = machineStarted.get();
+        AssertUtils.assertNotNull("newly started machine is null. this probably means there was an exception", newlyStartedMachine);
+        AssertUtils.assertTrue("Machine " + newlyStartedMachine + " was started again even though it is is use",
+                !machinesBeforeRecovery.contains(newlyStartedMachine));
+
+    }
+
+    protected void bootstrapUsingBackupFile() throws Exception {
+        CloudBootstrapper bootstrapper = getService().getBootstrapper();
+        bootstrapper.scanForLeakedNodes(false);
+        bootstrapper.useExistingFilePath(backupFilePath);
+        bootstrapper.bootstrap();
+        admin = createAdmin();
+    }
 
     protected void shutdownManagement() throws Exception{
 
@@ -255,6 +330,7 @@ public abstract class AbstractByonManagementPersistencyTest extends AbstractByon
         if (persistenceFile.exists()) {
             FileUtils.deleteQuietly(persistenceFile);
         }
+        closeAdmin();
         bootstrapper.shutdownManagers("default", backupFilePath, false);
     }
 
@@ -264,6 +340,14 @@ public abstract class AbstractByonManagementPersistencyTest extends AbstractByon
             set.add(s);
         }
         return set;
+    }
+
+    private List<String> getAddressesOfService(final String fullServiceName) {
+        List<String> existingAddresses = new ArrayList<String>();
+        for (Machine m : getProcessingUnitMachines(fullServiceName)) {
+            existingAddresses.add(m.getHostAddress());
+        }
+        return existingAddresses;
     }
 
     public void testCorruptedPersistencyDirectory() throws Exception {

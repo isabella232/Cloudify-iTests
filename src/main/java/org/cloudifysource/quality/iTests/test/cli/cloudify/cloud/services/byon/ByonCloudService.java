@@ -211,7 +211,7 @@ public class ByonCloudService extends AbstractCloudService {
 	
 	@Override
 	public void beforeBootstrap() {
-		cleanMachines();
+		//cleanMachines();
 	}
 	
 	private void cleanMachines() {

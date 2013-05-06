@@ -30,14 +30,32 @@ public class MultipleTemplatesByonCloudService extends ByonCloudService {
 	protected static final String TEMPLATE_1 = "TEMPLATE_1";
 	protected static final String TEMPLATE_2 = "TEMPLATE_2";
 	protected static final String TEMPLATE_3 = "TEMPLATE_3";
+
+    private String managementMachineTemplate = SMALL_LINUX; // default to "SMALL_LINUX"
 	
 	private Map<String, Integer> numberOfHostsPerTemplate = new HashMap<String, Integer>();
 
-	private static final int NUM_HOSTS_PER_TEMPLATE = 2;
+	private static final int NUM_HOSTS_PER_TEMPLATE = 0;
 	
 	public void setNumberOfHostsForTemplate(final String templateName, int numberOfHosts) {
 		numberOfHostsPerTemplate.put(templateName, numberOfHosts);
 	}
+
+    public String getManagementMachineTemplate() {
+        return managementMachineTemplate;
+    }
+
+    public void setManagementMachineTemplate(String managementMachineTemplate) {
+        this.managementMachineTemplate = managementMachineTemplate;
+    }
+
+    public Map<String, Integer> getNumberOfHostsPerTemplate() {
+        return numberOfHostsPerTemplate;
+    }
+
+    public void setNumberOfHostsPerTemplate(Map<String, Integer> numberOfHostsPerTemplate) {
+        this.numberOfHostsPerTemplate = numberOfHostsPerTemplate;
+    }
 	
 	public void addHostToTemplate(final String host, final String template) {
 		if (hostsPerTemplate.get(template) == null) {
@@ -94,12 +112,22 @@ public class MultipleTemplatesByonCloudService extends ByonCloudService {
 			managementTemplateHosts.add(host);
 		}
 		hostsPerTemplate.put(SMALL_LINUX, managementTemplateHosts);
-		
-		Map<String, String> props = new HashMap<String,String>();
-		for (String template : hostsPerTemplate.keySet()) {
-			props.put(template + "_HOSTS", StringUtils.toString(hostsPerTemplate.get(template).toArray(new String[] {}), ","));			
-		}
-		getAdditionalPropsToReplace().putAll(props);
+
+        // populate templates with no hosts with fake ip's. byon does not allow empty nodes lists.
+        int i = 0;
+        for (String template : getTemlpateNames()) {
+            if (hostsPerTemplate.get(template).size() == 0) {
+                addHostToTemplate("192.168.1." + i++,template);
+            }
+        }
+
+        Map<String, String> props = new HashMap<String,String>();
+        for (String template : hostsPerTemplate.keySet()) {
+            props.put(template + "_HOSTS", StringUtils.toString(hostsPerTemplate.get(template).toArray(new String[] {}), ","));
+        }
+
+        getAdditionalPropsToReplace().putAll(props);
+        getAdditionalPropsToReplace().put("managementMachineTemplate \"SMALL_LINUX\"", "managementMachineTemplate " + '"' + managementMachineTemplate + '"');
 	}
 	
 	public Map<String, List<String>> getHostsPerTemplate() {

@@ -9,9 +9,6 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import java.io.File;
-
-
 public class Ec2GitServicesTest extends AbstractServicesTest {
 
 	private static String localGitRepoPath;

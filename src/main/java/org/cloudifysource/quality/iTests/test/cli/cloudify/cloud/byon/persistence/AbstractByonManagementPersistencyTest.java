@@ -255,6 +255,7 @@ public abstract class AbstractByonManagementPersistencyTest extends AbstractByon
         final String FULL_SERVICE_NAME = "default.tomcat";
         final CountDownLatch machineStartedLatch = new CountDownLatch(1);
         final AtomicReference<String> machineStarted = new AtomicReference<String>();
+        final CountDownLatch installedFinishedLatch = new CountDownLatch(1);
 
         List<String> machinesBeforeRecovery = getAddressesOfService(FULL_SERVICE_NAME);
 
@@ -300,12 +301,19 @@ public abstract class AbstractByonManagementPersistencyTest extends AbstractByon
             public void run() {
                 ServiceInstaller installer = new ServiceInstaller(getRestUrl(), "tomcat");
                 installer.recipePath("tomcat");
+                installer.timeoutInMinutes(1); // no need to actually do the install. we just want to trigger the event.
                 installer.setInstances(2);
+                installedFinishedLatch.countDown();
             }
         }).start();
 
+        LogUtils.log("Waiting for a reuqest to start a new machine.");
         machineStartedLatch.await(OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
         String newlyStartedMachine = machineStarted.get();
+
+        // lets wait for the install thread to terminate.
+        LogUtils.log("Waiting for tomcat installation thread to terminate");
+        installedFinishedLatch.await(90, TimeUnit.SECONDS);
         AssertUtils.assertNotNull("newly started machine is null. this probably means there was an exception", newlyStartedMachine);
         AssertUtils.assertTrue("Machine " + newlyStartedMachine + " was started again even though it is is use",
                 !machinesBeforeRecovery.contains(newlyStartedMachine));

@@ -1,6 +1,6 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.byon.persistence;
 
-import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
+import iTests.framework.utils.LogUtils;
 import org.cloudifysource.quality.iTests.framework.utils.NetworkUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.byon.MultipleTemplatesByonCloudService;
 import org.testng.annotations.AfterClass;

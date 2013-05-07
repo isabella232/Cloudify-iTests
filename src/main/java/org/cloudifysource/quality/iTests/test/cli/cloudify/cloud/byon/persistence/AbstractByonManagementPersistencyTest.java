@@ -81,7 +81,7 @@ public abstract class AbstractByonManagementPersistencyTest extends AbstractByon
             installedServices.put(actualServiceName, numberOfInstances);
             CloudBootstrapper bootstrapper = getService().getBootstrapper();
             String attributes = bootstrapper.listServiceInstanceAttributes(APPLICATION_NAME, actualServiceName, 1, false);
-            attributesList.add(attributes.substring(attributes.indexOf("home")));
+            attributesList.add(attributes.substring(attributes.indexOf("catalinaHome")));
 
         } finally  {
             deleteCustomTomcatFromBuild();
@@ -123,7 +123,7 @@ public abstract class AbstractByonManagementPersistencyTest extends AbstractByon
 
         for (String serviceName : installedServices.keySet()) {
             String attributes = bootstrapper.listServiceInstanceAttributes(APPLICATION_NAME, serviceName, 1, false);
-            newAttributesList.add(attributes.substring(attributes.indexOf("home")));
+            newAttributesList.add(attributes.substring(attributes.indexOf("catalinaHome")));
         }
 
         List<String> differenceAttributesList = new LinkedList<String>(attributesList);
@@ -296,6 +296,8 @@ public abstract class AbstractByonManagementPersistencyTest extends AbstractByon
             }
         }, false);
 
+        LogUtils.log("Waiting for a request to start a new machine.");
+
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -307,7 +309,6 @@ public abstract class AbstractByonManagementPersistencyTest extends AbstractByon
             }
         }).start();
 
-        LogUtils.log("Waiting for a reuqest to start a new machine.");
         machineStartedLatch.await(OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
         String newlyStartedMachine = machineStarted.get();
 

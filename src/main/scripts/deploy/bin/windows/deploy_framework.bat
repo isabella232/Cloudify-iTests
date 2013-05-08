@@ -13,13 +13,13 @@ if %BRANCH_NAME%==trunk (
 )
 
 popd
-set iTests-Framework=%FRAMEWORK_TMP_DIR%\iTests-Framework
+set iTests_Framework=%FRAMEWORK_TMP_DIR%\iTests-Framework
 
 @echo deploying framework...
-pushd %iTests-Framework%
-mvn clean install s3client:deploy -U
+pushd %iTests_Framework%
+mvn clean install s3client:deploy -U -Dbuild.home=%BUILD_DIR%
 popd
 
-rmdir /s /q %iTests-Framework%
+rmdir /s /q %iTests_Framework%
 
 :_skip

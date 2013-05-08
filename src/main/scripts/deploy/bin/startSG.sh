@@ -71,7 +71,9 @@ umask 000
  BUILD_DIR=${BUILD_CACHE_DIR}/${BUILD_INSTALL_DIR}; export BUILD_DIR
  OLD_BUILD_DIR=/export/tgrid/sgtest/deploy/local-builds/build_5000/gigaspaces-xap-premium-8.0.0-ga; export OLD_BUILD_DIR
  
- . create_webuitf_jar.sh 
+ . create_webuitf_jar.sh
+
+ . create_framework_jar.sh
 
  echo "> Downloading jars/wars"
  . download-processing-units.sh

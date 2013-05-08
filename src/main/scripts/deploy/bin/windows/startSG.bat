@@ -62,6 +62,9 @@ call mvn scm:export -DconnectionUrl=scm:svn:svn://svn-srv/SVN/cloudify/trunk/qua
 @echo updating webuitf...
 call %SGTEST_HOME%\src\main\scripts\deploy\bin\windows\deploy_webuitf.bat
 
+@echo updating testing framework...
+call %SGTEST_HOME%\src\main\scripts\deploy\bin\windows\deploy_framework.bat
+
 @echo Running Suite %SUITE_NAME%: 
 call %SGTEST_HOME%\src\main\scripts\deploy\bin\windows\start-suite.bat %SUITE_NAME% %INCLUDE% %EXCLUDE% %EC2_REGION% %BUILD_TEST_DIR% %REVERSE_PROXY%
 

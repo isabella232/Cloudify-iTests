@@ -41,9 +41,6 @@ public class ByonCloudService extends AbstractCloudService {
     private String password = certProperties.getProperty("password");
     private String keyFile = certProperties.getProperty("keyFile");
 
-	//public static final String BYON_CLOUD_USER= "tgrid";
-	//public static final String BYON_CLOUD_PASSWORD = "tgrid";
-	
 	public static final String IP_LIST_PROPERTY = "ipList";
 	
 	protected static final String NEW_URL_PREFIX = "http://tarzan/builds/GigaSpacesBuilds/cloudify";
@@ -171,6 +168,7 @@ public class ByonCloudService extends AbstractCloudService {
 
 		replaceCloudifyURL();
 		replaceBootstrapManagementScript();
+        replacePreBootstrapScript();
 		
 		// byon-cloud.groovy in SGTest has this variable defined for cloud overrides tests.
 		// that why we need to add a properties file with a default value so that bootstrap will work 
@@ -184,6 +182,13 @@ public class ByonCloudService extends AbstractCloudService {
 		File customBootstrapManagement = new File(SGTestHelper.getSGTestRootDir() + "/src/main/resources/apps/cloudify/cloud/byon/bootstrap-management.sh");
 		IOUtils.replaceFile(standardBootstrapManagement, customBootstrapManagement);
 	}
+
+    private void replacePreBootstrapScript() throws IOException {
+        // use a script that does not install java
+        File standardCustomization = new File(this.getPathToCloudFolder() + "/upload", "pre-bootstrap.sh");
+        File customCustomization = new File(SGTestHelper.getSGTestRootDir() + "/src/main/resources/apps/cloudify/cloud/byon/pre-bootstrap.sh");
+        IOUtils.replaceFile(standardCustomization, customCustomization);
+    }
 
 	public void replaceCloudifyURL() throws IOException {
 		String buildNumber = PlatformVersion.getBuildNumber();

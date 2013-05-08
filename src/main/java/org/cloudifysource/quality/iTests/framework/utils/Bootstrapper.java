@@ -1,20 +1,15 @@
 package org.cloudifysource.quality.iTests.framework.utils;
 
-import iTests.framework.utils.AssertUtils;
 import iTests.framework.utils.LogUtils;
+
+import java.io.IOException;
+import java.net.URL;
+
 import org.apache.commons.lang.StringUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CloudTestUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils.ProcessResult;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.security.SecurityConstants;
-
-import java.io.IOException;
-import java.net.URL;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 
 

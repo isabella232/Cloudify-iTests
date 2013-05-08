@@ -20,7 +20,8 @@ service {
 		"exception" : { throw new Exception("This is an error test")},
 		"runScript" : "add.groovy",
 		"context" : {"Service Dir is: " + context.serviceDirectory},
-		"sleep" : {Thread.sleep(70000)}
+		"sleep" : {Thread.sleep(70000)},
+		"shortSleep" : {Thread.sleep(15000)}
 		
 	])
 }

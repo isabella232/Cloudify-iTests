@@ -39,7 +39,7 @@ public class CustomCommandsOnMultipleInstancesApplicationTest extends AbstractLo
     	CommandTestUtils.runCommandAndWait("connect " + this.restUrl + "; use-application " +APPLICATION_NAME + "; invoke simpleCustomCommandsMultipleInstances-1 remoteInvoke");
     	long duration = System.currentTimeMillis() - start;
     	LogUtils.log("Expecting command to run for no less then 70000 milliseconds");
-    	assertTrue(duration >= 70000);
+    	assertTrue(duration >= 85000);
     }
 
     @Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)

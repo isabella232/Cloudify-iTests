@@ -22,6 +22,9 @@ cloud {
 		connectToPrivateIp true
 		//Indicates whether communications with the management servers should use the machine private IP.
 		bootstrapManagementOnPublicIp false
+
+        // Optional. Path to folder where management state will be written. Null indicates state will not be written.
+        persistentStoragePath persistencePath
 	}
 
 	/*************

@@ -13,7 +13,7 @@ import iTests.framework.tools.SGTestHelper;
 import iTests.framework.utils.AssertUtils;
 import iTests.framework.utils.AssertUtils.RepetitiveConditionProvider;
 import iTests.framework.utils.LogUtils;
-import org.cloudifysource.quality.iTests.framework.utils.ProcessingUnitUtils;
+import iTests.framework.utils.ProcessingUnitUtils;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.AbstractLocalCloudTest;
 import org.openqa.selenium.By;

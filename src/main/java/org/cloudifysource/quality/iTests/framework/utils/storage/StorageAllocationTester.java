@@ -21,7 +21,7 @@ import org.cloudifysource.esc.driver.provisioning.storage.StorageProvisioningExc
 import org.cloudifysource.esc.driver.provisioning.storage.VolumeDetails;
 import org.cloudifysource.quality.iTests.framework.utils.ApplicationInstaller;
 import iTests.framework.utils.AssertUtils;
-import org.cloudifysource.quality.iTests.framework.utils.IOUtils;
+import iTests.framework.utils.IOUtils;
 import iTests.framework.utils.LogUtils;
 import org.cloudifysource.quality.iTests.framework.utils.RecipeInstaller;
 import iTests.framework.utils.ScriptUtils;

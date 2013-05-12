@@ -6,6 +6,7 @@ import java.net.InetAddress;
 import java.net.URL;
 
 import iTests.framework.utils.LogUtils;
+import iTests.framework.utils.WebUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.cloudifysource.dsl.internal.CloudifyConstants;

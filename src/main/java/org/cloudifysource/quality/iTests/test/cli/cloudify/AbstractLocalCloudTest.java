@@ -5,9 +5,7 @@ import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
 import iTests.framework.tools.SGTestHelper;
-import iTests.framework.utils.AssertUtils;
-import iTests.framework.utils.LogUtils;
-import iTests.framework.utils.ScriptUtils;
+import iTests.framework.utils.*;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.io.FileUtils;
 import org.apache.http.HttpEntity;
@@ -209,8 +207,8 @@ public class AbstractLocalCloudTest extends AbstractTestSupport {
 								+ "): " + procDetails);
 						failed = true;
 						if (!SGTestHelper.isDevMode()) {
-							SetupUtils.killProcessesByIDs(new HashSet<String>(
-									Arrays.asList("" + pid)));
+							AbstractTestSupport.killProcessesByIDs(new HashSet<String>(
+                                    Arrays.asList("" + pid)));
 						}
 					}
 				}
@@ -218,7 +216,7 @@ public class AbstractLocalCloudTest extends AbstractTestSupport {
 				LogUtils.log("Found a leaking process: " + procDetails);
 				failed = true;
 				if (!SGTestHelper.isDevMode()) {
-					SetupUtils.killProcessesByIDs(new HashSet<String>(Arrays
+                    AbstractTestSupport.killProcessesByIDs(new HashSet<String>(Arrays
 							.asList("" + pid)));
 				}
 			}

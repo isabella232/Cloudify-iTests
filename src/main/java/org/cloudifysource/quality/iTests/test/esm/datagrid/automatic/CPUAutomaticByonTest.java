@@ -2,7 +2,7 @@ package org.cloudifysource.quality.iTests.test.esm.datagrid.automatic;
 
 import com.gigaspaces.internal.utils.concurrent.GSThread;
 import iTests.framework.utils.AssertUtils.RepetitiveConditionProvider;
-import org.cloudifysource.quality.iTests.framework.utils.GsmTestUtils;
+import iTests.framework.utils.GsmTestUtils;
 import iTests.framework.utils.LogUtils;
 import org.cloudifysource.quality.iTests.test.esm.AbstractFromXenToByonGSMTest;
 import org.openspaces.admin.gsc.GridServiceContainer;

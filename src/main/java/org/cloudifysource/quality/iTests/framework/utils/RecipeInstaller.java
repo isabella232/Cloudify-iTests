@@ -1,6 +1,7 @@
 package org.cloudifysource.quality.iTests.framework.utils;
 
 import iTests.framework.utils.AssertUtils;
+import iTests.framework.utils.IOUtils;
 import iTests.framework.utils.LogUtils;
 import org.apache.commons.lang.StringUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CloudTestUtils;

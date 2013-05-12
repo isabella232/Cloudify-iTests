@@ -7,7 +7,7 @@ import java.net.ServerSocket;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.recipes.examples.RecipeTest;
 import org.junit.Assert;
 
-import org.cloudifysource.quality.iTests.framework.utils.TestUtils;
+import iTests.framework.utils.TestUtils;
 
 
 public class RecipeTestUtil {

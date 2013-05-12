@@ -19,7 +19,7 @@ import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.ec2.Ec
 import iTests.framework.tools.SGTestHelper;
 import iTests.framework.utils.LogUtils;
 import iTests.framework.utils.ScriptUtils;
-import org.cloudifysource.quality.iTests.framework.utils.WebUtils;
+import iTests.framework.utils.WebUtils;
 /**
  * runs on ec2<p>
  * loops several times:<p>

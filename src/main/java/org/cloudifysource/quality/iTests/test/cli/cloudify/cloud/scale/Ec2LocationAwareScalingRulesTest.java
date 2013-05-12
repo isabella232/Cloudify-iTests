@@ -23,10 +23,10 @@ import org.testng.annotations.Test;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.ec2.Ec2CloudService;
 
 import iTests.framework.tools.SGTestHelper;
-import org.cloudifysource.quality.iTests.framework.utils.DeploymentUtils;
-import org.cloudifysource.quality.iTests.framework.utils.IOUtils;
+import iTests.framework.utils.DeploymentUtils;
+import iTests.framework.utils.IOUtils;
 import iTests.framework.utils.LogUtils;
-import org.cloudifysource.quality.iTests.framework.utils.TestUtils;
+import iTests.framework.utils.TestUtils;
 
 public class Ec2LocationAwareScalingRulesTest extends AbstractScalingRulesCloudTest {
 	

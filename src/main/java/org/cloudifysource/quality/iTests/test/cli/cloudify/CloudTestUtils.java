@@ -2,7 +2,7 @@ package org.cloudifysource.quality.iTests.test.cli.cloudify;
 
 import java.io.File;
 
-import org.cloudifysource.quality.iTests.framework.utils.WebUtils;
+import iTests.framework.utils.WebUtils;
 
 import java.net.MalformedURLException;
 import java.net.URL;

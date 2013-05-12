@@ -3,8 +3,8 @@ package org.cloudifysource.quality.iTests.test.esm.stateful.manual.memory;
 import java.io.File;
 import java.io.IOException;
 
-import org.cloudifysource.quality.iTests.framework.utils.DeploymentUtils;
-import org.cloudifysource.quality.iTests.framework.utils.GsmTestUtils;
+import iTests.framework.utils.DeploymentUtils;
+import iTests.framework.utils.GsmTestUtils;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.cloudifysource.quality.iTests.test.esm.AbstractFromXenToByonGSMTest;
 import org.openspaces.admin.internal.pu.InternalProcessingUnit;

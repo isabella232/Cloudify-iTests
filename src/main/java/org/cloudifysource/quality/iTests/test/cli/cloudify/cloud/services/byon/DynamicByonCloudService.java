@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.IOException;
 
 import iTests.framework.tools.SGTestHelper;
-import org.cloudifysource.quality.iTests.framework.utils.IOUtils;
+import iTests.framework.utils.IOUtils;
 
 public class DynamicByonCloudService extends ByonCloudService {
 

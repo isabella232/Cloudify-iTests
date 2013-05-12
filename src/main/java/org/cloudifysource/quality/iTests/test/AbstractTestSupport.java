@@ -17,10 +17,24 @@
 package org.cloudifysource.quality.iTests.test;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import iTests.framework.utils.SSHUtils;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
+import org.cloudifysource.quality.iTests.test.data.Person;
+import org.cloudifysource.usm.shutdown.DefaultProcessKiller;
 import org.openspaces.admin.Admin;
 import org.openspaces.admin.AdminFactory;
 import org.openspaces.admin.internal.InternalAdminFactory;
@@ -31,14 +45,22 @@ import iTests.framework.utils.AssertUtils;
 import iTests.framework.utils.LogUtils;
 import iTests.framework.utils.AssertUtils.RepetitiveConditionProvider;
 import iTests.framework.utils.DumpUtils;
+import org.openspaces.core.GigaSpace;
 
 
 public abstract class AbstractTestSupport {
 
-	public static final long DEFAULT_TEST_TIMEOUT = 15 * 60 * 1000;
+    static AtomicLong idGenerator = new AtomicLong();
+
+    public static final long DEFAULT_TEST_TIMEOUT = 15 * 60 * 1000;
 	public static final long EXTENDED_TEST_TIMEOUT = 25 * 60 * 1000;
 	public static final long OPERATION_TIMEOUT = 5 * 60 * 1000;
 	public static final String SUSPECTED = "SUSPECTED";
+    private static final int SSH_TIMEOUT = 60000;
+    private static final String LIST_JAVA_PROCESSES_CMD = "ps -U tgrid | grep java | grep -v PID | awk '{ print $1 }'";
+
+    public static final String USERNAME = "tgrid";
+    public static final String PASSWORD = "tgrid";
 	
 	private static final int CREATE_ADMIN_TIMEOUT = 10 * 60 * 1000;
 
@@ -151,5 +173,68 @@ public abstract class AbstractTestSupport {
 		}
 		return false;		
 	}
+
+    public static void killProcessesByIDs(final Set<String> processesIDs) {
+
+        final DefaultProcessKiller dpk = new DefaultProcessKiller();
+        dpk.setKillRetries(10);
+        for (final String pid : processesIDs) {
+            final long processID = Long.valueOf(pid);
+            try {
+                dpk.killProcess(processID);
+            } catch (final Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public static Set<String> getLocalProcesses() throws IOException, InterruptedException {
+        final Set<String> result = new HashSet<String>();
+
+        if (!isWindows()) {
+            String output = null;
+            try {
+                output = SSHUtils.runCommand(InetAddress.getLocalHost().getHostName(), SSH_TIMEOUT, LIST_JAVA_PROCESSES_CMD, USERNAME, PASSWORD);
+            } catch (final UnknownHostException e) {
+                e.printStackTrace();
+            }
+            final String[] lines = output.split("\n");
+
+            for (final String pid : lines) {
+                result.add(pid);
+            }
+        } else {
+            String s = CommandTestUtils.runLocalCommand("jps", true, false);
+            Pattern p = Pattern.compile("\\d+ Jps");
+            Matcher m = p.matcher(s);
+            if (m.find()) {
+                s = s.replace(m.group(), "");
+            }
+
+            p = Pattern.compile("\\d+");
+            m = p.matcher(s);
+            while (m.find()) {
+                final String pid = m.group();
+                if (pid != null && pid.length() > 0) {
+                    result.add(m.group());
+                }
+            }
+        }
+        return result;
+    }
+
+    public static void writePersonBatch(GigaSpace gigaSpace, int numOfObjects) {
+        List<Person> objList = new ArrayList<Person>(numOfObjects);
+        for (int i = 0; i < numOfObjects; i++) {
+            Person p=new Person();
+            p.setId(idGenerator.getAndIncrement());
+            objList.add(p);
+        }
+        gigaSpace.writeMultiple(objList.toArray());
+    }
+
+    private static boolean isWindows() {
+        return System.getProperty("os.name").toLowerCase().startsWith("win");
+    }
 
 }

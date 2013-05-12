@@ -13,7 +13,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import org.cloudifysource.quality.iTests.test.esm.AbstractFromXenToByonGSMTest;
-import org.cloudifysource.quality.iTests.framework.utils.GsmTestUtils;
+import iTests.framework.utils.GsmTestUtils;
 
 public class DedicatedManualByonCPUScaleInTest extends AbstractFromXenToByonGSMTest {
 	private static final int HIGH_NUM_CPU = 8;

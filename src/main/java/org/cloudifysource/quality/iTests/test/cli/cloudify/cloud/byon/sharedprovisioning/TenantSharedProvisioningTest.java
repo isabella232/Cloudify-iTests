@@ -17,7 +17,7 @@ import org.cloudifysource.quality.iTests.test.cli.cloudify.security.SecurityCons
 import org.cloudifysource.quality.iTests.framework.utils.ApplicationInstaller;
 import iTests.framework.utils.AssertUtils;
 import org.cloudifysource.quality.iTests.framework.utils.CloudBootstrapper;
-import org.cloudifysource.quality.iTests.framework.utils.ProcessingUnitUtils;
+import iTests.framework.utils.ProcessingUnitUtils;
 import org.cloudifysource.quality.iTests.framework.utils.ServiceInstaller;
 
 public class TenantSharedProvisioningTest extends AbstractSharedProvisioningByonCloudTest {

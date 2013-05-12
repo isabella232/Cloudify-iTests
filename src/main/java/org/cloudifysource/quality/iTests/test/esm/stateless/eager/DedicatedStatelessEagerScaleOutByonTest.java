@@ -5,7 +5,7 @@ import java.util.concurrent.TimeUnit;
 
 import junit.framework.Assert;
 
-import org.cloudifysource.quality.iTests.framework.utils.DeploymentUtils;
+import iTests.framework.utils.DeploymentUtils;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.cloudifysource.quality.iTests.test.esm.AbstractFromXenToByonGSMTest;
 import org.openspaces.admin.pu.ProcessingUnit;

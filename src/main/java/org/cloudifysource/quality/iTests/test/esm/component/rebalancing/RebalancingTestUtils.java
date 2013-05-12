@@ -12,7 +12,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import org.cloudifysource.quality.iTests.framework.utils.GsmTestUtils;
+import iTests.framework.utils.GsmTestUtils;
 import org.cloudifysource.quality.iTests.test.data.Person;
 import org.cloudifysource.quality.iTests.test.esm.component.SlaEnforcementTestUtils;
 import org.openspaces.admin.Admin;

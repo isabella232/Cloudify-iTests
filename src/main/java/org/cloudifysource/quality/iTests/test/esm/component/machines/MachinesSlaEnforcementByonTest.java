@@ -28,7 +28,7 @@ import org.testng.annotations.Test;
 
 import org.cloudifysource.quality.iTests.test.esm.component.SlaEnforcementTestUtils;
 import org.cloudifysource.quality.iTests.framework.utils.ByonMachinesUtils;
-import org.cloudifysource.quality.iTests.framework.utils.GsmTestUtils;
+import iTests.framework.utils.GsmTestUtils;
 
 /**
  * In order to debug these tests:

@@ -9,16 +9,15 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
+import iTests.framework.utils.*;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.bouncycastle.util.IPAddress;
 import org.cloudifysource.dsl.utils.ServiceUtils;
 import iTests.framework.tools.SGTestHelper;
-import iTests.framework.utils.AssertUtils;
+import org.cloudifysource.quality.iTests.framework.utils.CloudBootstrapper;
 import org.cloudifysource.quality.iTests.framework.utils.*;
-import iTests.framework.utils.LogUtils;
-import iTests.framework.utils.ScriptUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.byon.AbstractByonCloudTest;
 import org.cloudifysource.restclient.GSRestClient;
@@ -247,7 +246,7 @@ public abstract class AbstractByonManagementPersistencyTest extends AbstractByon
      * 2. Bootstrap using existing file.
      * 3. Perform manual scale out.
      * 4. make sure a used machine is not being started again.
-     * @see https://cloudifysource.atlassian.net/browse/CLOUDIFY-1724
+     * @see "https://cloudifysource.atlassian.net/browse/CLOUDIFY-1724"
      * @throws Exception
      */
     public void testScaleoutAfterRecovery() throws Exception {

@@ -11,7 +11,7 @@ import java.util.Map;
 import org.apache.commons.exec.util.StringUtils;
 
 import iTests.framework.tools.SGTestHelper;
-import org.cloudifysource.quality.iTests.framework.utils.IOUtils;
+import iTests.framework.utils.IOUtils;
 import iTests.framework.utils.LogUtils;
 
 /**

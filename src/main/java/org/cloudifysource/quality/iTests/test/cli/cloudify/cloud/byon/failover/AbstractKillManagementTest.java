@@ -3,9 +3,7 @@ package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.byon.failover;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
-import iTests.framework.utils.AssertUtils;
-import iTests.framework.utils.LogUtils;
-import iTests.framework.utils.ScriptUtils;
+import iTests.framework.utils.*;
 import org.cloudifysource.dsl.utils.ServiceUtils;
 import org.cloudifysource.quality.iTests.framework.utils.*;
 import iTests.framework.utils.AssertUtils.RepetitiveConditionProvider;
@@ -157,7 +155,7 @@ public abstract class AbstractKillManagementTest extends AbstractByonCloudTest {
 			try {
 				String managementMachineTemplate = getService().getCloud().getConfiguration().getManagementMachineTemplate();
 				String cloudFile = getService().getCloud().getCloudCompute().getTemplates().get(managementMachineTemplate).getRemoteDirectory() + "/byon-cloud.groovy";
-				SSHUtils.runCommand(machine1, AbstractTestSupport.DEFAULT_TEST_TIMEOUT,  ByonCloudService.BYON_HOME_FOLDER + "/gigaspaces/tools/cli/cloudify.sh start-management --verbose -timeout 10 -cloud-file "  + cloudFile, getService().getUser(), getService().getApiKey());
+				SSHUtils.runCommand(machine1, AbstractTestSupport.DEFAULT_TEST_TIMEOUT, ByonCloudService.BYON_HOME_FOLDER + "/gigaspaces/tools/cli/cloudify.sh start-management --verbose -timeout 10 -cloud-file " + cloudFile, getService().getUser(), getService().getApiKey());
 				return;
 			} catch (Throwable t) {
 				LogUtils.log("Failed to start management on machine " + machine1 + " restarting machine before attempting again. attempt number " + (i + 1), t);

@@ -9,7 +9,7 @@ import org.testng.annotations.Test;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.AbstractLocalCloudTest;
 import iTests.framework.utils.AssertUtils;
 import iTests.framework.utils.ScriptUtils;
-import org.cloudifysource.quality.iTests.framework.utils.WebUtils;
+import iTests.framework.utils.WebUtils;
 
 public class InstallUninstallPetclinicTest extends AbstractLocalCloudTest {
 	

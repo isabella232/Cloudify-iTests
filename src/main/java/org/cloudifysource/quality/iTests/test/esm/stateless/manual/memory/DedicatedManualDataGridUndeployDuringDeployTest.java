@@ -2,8 +2,8 @@ package org.cloudifysource.quality.iTests.test.esm.stateless.manual.memory;
 
 import java.io.File;
 
-import org.cloudifysource.quality.iTests.framework.utils.DeploymentUtils;
-import org.cloudifysource.quality.iTests.framework.utils.GsmTestUtils;
+import iTests.framework.utils.DeploymentUtils;
+import iTests.framework.utils.GsmTestUtils;
 import iTests.framework.utils.LogUtils;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.cloudifysource.quality.iTests.test.esm.AbstractFromXenToByonGSMTest;
@@ -43,7 +43,7 @@ public class DedicatedManualDataGridUndeployDuringDeployTest extends AbstractFro
 	private static final int REDEPLOY_ITERATIONS = 3;
 
 	/**
-	 * @see GS-10644
+	 * @see "GS-10644"
 	 */
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT*2, groups = "1", enabled=false)
     public void testManualDataGridDeploymentScale() {

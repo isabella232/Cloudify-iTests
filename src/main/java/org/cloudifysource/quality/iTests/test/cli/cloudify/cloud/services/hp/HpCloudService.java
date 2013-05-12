@@ -1,6 +1,6 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.hp;
 
-import org.cloudifysource.quality.iTests.framework.utils.IOUtils;
+import iTests.framework.utils.IOUtils;
 import org.apache.commons.io.FileUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.JCloudsCloudService;
 

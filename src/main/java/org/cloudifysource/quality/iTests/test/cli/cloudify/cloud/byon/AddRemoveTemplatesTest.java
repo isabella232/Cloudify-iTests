@@ -26,10 +26,10 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import iTests.framework.utils.AssertUtils;
-import org.cloudifysource.quality.iTests.framework.utils.GsmTestUtils;
+import iTests.framework.utils.GsmTestUtils;
 import iTests.framework.utils.LogUtils;
-import org.cloudifysource.quality.iTests.framework.utils.SSHUtils;
-import org.cloudifysource.quality.iTests.framework.utils.ThreadBarrier;
+import iTests.framework.utils.SSHUtils;
+import iTests.framework.utils.ThreadBarrier;
 
 /**
  * 

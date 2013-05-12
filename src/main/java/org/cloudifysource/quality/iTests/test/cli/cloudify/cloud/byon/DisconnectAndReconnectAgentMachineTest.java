@@ -15,8 +15,8 @@ import iTests.framework.tools.SGTestHelper;
 import iTests.framework.utils.AssertUtils;
 import iTests.framework.utils.AssertUtils.RepetitiveConditionProvider;
 import iTests.framework.utils.LogUtils;
-import org.cloudifysource.quality.iTests.framework.utils.SSHUtils;
-import org.cloudifysource.quality.iTests.framework.utils.WANemUtils;
+import iTests.framework.utils.SSHUtils;
+import iTests.framework.utils.WANemUtils;
 
 public class DisconnectAndReconnectAgentMachineTest extends AbstractByonCloudTest{
 

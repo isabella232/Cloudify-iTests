@@ -17,7 +17,7 @@ import org.testng.annotations.Test;
 import org.cloudifysource.quality.iTests.test.esm.AbstractFromXenToByonGSMTest;
 import iTests.framework.utils.AssertUtils;
 import iTests.framework.utils.AssertUtils.RepetitiveConditionProvider;
-import org.cloudifysource.quality.iTests.framework.utils.GsmTestUtils;
+import iTests.framework.utils.GsmTestUtils;
 import iTests.framework.utils.LogUtils;
 
 public class DedicatedEagerDataGridScaleOutByonTest extends AbstractFromXenToByonGSMTest {

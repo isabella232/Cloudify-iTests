@@ -5,6 +5,7 @@ import java.util.concurrent.TimeUnit;
 import iTests.framework.utils.AssertUtils;
 import iTests.framework.utils.IRepetitiveRunnable;
 import iTests.framework.utils.LogUtils;
+import iTests.framework.utils.SSHUtils;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.CloudService;
 

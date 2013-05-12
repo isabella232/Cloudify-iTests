@@ -1,7 +1,7 @@
 package org.cloudifysource.quality.iTests.test.esm.stateless.manual.memory;
 
 
-import org.cloudifysource.quality.iTests.framework.utils.DeploymentUtils;
+import iTests.framework.utils.DeploymentUtils;
 import org.cloudifysource.quality.iTests.test.esm.AbstractFromXenToByonGSMTest;
 import org.openspaces.admin.machine.Machine;
 import org.openspaces.admin.pu.ProcessingUnit;

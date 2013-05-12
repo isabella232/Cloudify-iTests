@@ -8,6 +8,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import iTests.framework.utils.LogUtils;
+import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.hyperic.sigar.ProcExe;
 import org.hyperic.sigar.ProcState;
 import org.hyperic.sigar.Sigar;
@@ -29,7 +30,7 @@ public class ProcessUtils {
 			if (baseNames.contains(procDetails.baseName)) {
 				LogUtils.log("Found a leaking process: " + procDetails);
 				failed = true;
-				SetupUtils.killProcessesByIDs(new HashSet<String>(Arrays.asList("" + pid)));
+				AbstractTestSupport.killProcessesByIDs(new HashSet<String>(Arrays.asList("" + pid)));
 			}
 		}
 		return failed;
@@ -49,7 +50,7 @@ public class ProcessUtils {
 					if (processesArgs.contains(arg)) {
 						LogUtils.log("Found a leaking java process (" + arg + "): " + procDetails);
 						failed = true;
-						SetupUtils.killProcessesByIDs(new HashSet<String>(Arrays.asList("" + pid)));
+                        AbstractTestSupport.killProcessesByIDs(new HashSet<String>(Arrays.asList("" + pid)));
 					}
 				}
 			}

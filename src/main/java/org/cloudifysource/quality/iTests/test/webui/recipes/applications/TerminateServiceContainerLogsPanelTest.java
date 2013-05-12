@@ -21,7 +21,7 @@ import com.gigaspaces.webuitf.topology.logspanel.PuLogsPanelService;
 
 import iTests.framework.utils.AssertUtils;
 import iTests.framework.utils.AssertUtils.RepetitiveConditionProvider;
-import org.cloudifysource.quality.iTests.framework.utils.ProcessingUnitUtils;
+import iTests.framework.utils.ProcessingUnitUtils;
 
 public class TerminateServiceContainerLogsPanelTest extends AbstractSeleniumApplicationRecipeTest {
 	

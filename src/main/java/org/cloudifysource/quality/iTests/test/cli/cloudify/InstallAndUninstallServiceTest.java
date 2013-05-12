@@ -11,7 +11,7 @@ import org.testng.annotations.Test;
 
 import org.cloudifysource.dsl.utils.ServiceUtils;
 
-import org.cloudifysource.quality.iTests.framework.utils.DeploymentUtils;
+import iTests.framework.utils.DeploymentUtils;
 import iTests.framework.utils.DumpUtils;
 import iTests.framework.utils.LogUtils;
 import iTests.framework.utils.AssertUtils.RepetitiveConditionProvider;

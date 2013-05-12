@@ -39,7 +39,7 @@ import com.thoughtworks.selenium.Selenium;
 import iTests.framework.tools.SGTestHelper;
 import iTests.framework.utils.AssertUtils;
 import iTests.framework.utils.LogUtils;
-import org.cloudifysource.quality.iTests.framework.utils.ProcessingUnitUtils;
+import iTests.framework.utils.ProcessingUnitUtils;
 
 /**
  * use this class to add webui testing capabilities to a test.

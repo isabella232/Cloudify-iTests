@@ -1,3 +1,4 @@
+package test.groovy
 
 String url
 String destinationFolder

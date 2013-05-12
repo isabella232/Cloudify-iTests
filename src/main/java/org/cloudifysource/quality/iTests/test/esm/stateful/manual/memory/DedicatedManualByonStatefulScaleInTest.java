@@ -13,8 +13,8 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import org.cloudifysource.quality.iTests.test.esm.AbstractFromXenToByonGSMTest;
-import org.cloudifysource.quality.iTests.framework.utils.DeploymentUtils;
-import org.cloudifysource.quality.iTests.framework.utils.GsmTestUtils;
+import iTests.framework.utils.DeploymentUtils;
+import iTests.framework.utils.GsmTestUtils;
 
 public class DedicatedManualByonStatefulScaleInTest extends AbstractFromXenToByonGSMTest {
 	

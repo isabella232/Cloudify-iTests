@@ -18,7 +18,7 @@ import org.cloudifysource.quality.iTests.framework.utils.ApplicationInstaller;
 import iTests.framework.utils.AssertUtils;
 import iTests.framework.utils.AssertUtils.RepetitiveConditionProvider;
 import iTests.framework.utils.LogUtils;
-import org.cloudifysource.quality.iTests.framework.utils.WebUtils;
+import iTests.framework.utils.WebUtils;
 /**
  * runs on localcloud<p>
  * loops several times:<p>

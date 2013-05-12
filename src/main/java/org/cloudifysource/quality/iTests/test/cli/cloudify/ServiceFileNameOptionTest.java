@@ -7,7 +7,7 @@ import org.apache.commons.io.FileUtils;
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.testng.annotations.Test;
 
-import org.cloudifysource.quality.iTests.framework.utils.IOUtils;
+import iTests.framework.utils.IOUtils;
 
 public class ServiceFileNameOptionTest extends AbstractLocalCloudTest {
 	

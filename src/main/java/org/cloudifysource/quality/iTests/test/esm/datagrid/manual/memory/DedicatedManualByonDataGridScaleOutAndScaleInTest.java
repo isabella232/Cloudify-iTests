@@ -2,7 +2,7 @@ package org.cloudifysource.quality.iTests.test.esm.datagrid.manual.memory;
 
 import java.util.concurrent.TimeUnit;
 
-import org.cloudifysource.quality.iTests.framework.utils.GsmTestUtils;
+import iTests.framework.utils.GsmTestUtils;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.cloudifysource.quality.iTests.test.esm.AbstractFromXenToByonGSMTest;
 import org.openspaces.admin.pu.ProcessingUnit;

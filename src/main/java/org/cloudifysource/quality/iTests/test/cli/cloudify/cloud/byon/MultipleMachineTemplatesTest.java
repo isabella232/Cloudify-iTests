@@ -21,7 +21,7 @@ import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.byon.M
 import iTests.framework.tools.SGTestHelper;
 import iTests.framework.utils.AssertUtils;
 import iTests.framework.utils.AssertUtils.RepetitiveConditionProvider;
-import org.cloudifysource.quality.iTests.framework.utils.IOUtils;
+import iTests.framework.utils.IOUtils;
 import iTests.framework.utils.LogUtils;
 
 /**

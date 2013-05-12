@@ -9,7 +9,7 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import org.cloudifysource.quality.iTests.framework.utils.NetworkUtils;
+import iTests.framework.utils.NetworkUtils;
 import iTests.framework.utils.ScriptUtils;
 
 

@@ -7,7 +7,7 @@ import org.testng.annotations.Test;
 
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.byon.MultipleTemplatesByonCloudService;
 import iTests.framework.utils.LogUtils;
-import org.cloudifysource.quality.iTests.framework.utils.NetworkUtils;
+import iTests.framework.utils.NetworkUtils;
 
 
 /**

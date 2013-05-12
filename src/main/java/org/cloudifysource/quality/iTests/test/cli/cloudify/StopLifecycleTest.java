@@ -28,7 +28,7 @@ import com.gigaspaces.log.LogEntry;
 import com.gigaspaces.log.LogProcessType;
 
 import iTests.framework.utils.LogUtils;
-import org.cloudifysource.quality.iTests.framework.utils.SigarUtils;
+import iTests.framework.utils.SigarUtils;
 import org.cloudifysource.quality.iTests.framework.utils.usm.USMTestUtils;
 
 public class StopLifecycleTest extends AbstractLocalCloudTest {

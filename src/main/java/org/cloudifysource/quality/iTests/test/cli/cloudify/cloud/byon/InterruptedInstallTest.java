@@ -20,7 +20,7 @@ import org.testng.annotations.Test;
 import iTests.framework.tools.SGTestHelper;
 import iTests.framework.utils.AssertUtils;
 import iTests.framework.utils.IRepetitiveRunnable;
-import org.cloudifysource.quality.iTests.framework.utils.SSHUtils;
+import iTests.framework.utils.SSHUtils;
 
 public class InterruptedInstallTest extends AbstractByonCloudTest {
 

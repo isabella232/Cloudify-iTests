@@ -1,7 +1,7 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.byon.persistence;
 
 import org.cloudifysource.quality.iTests.framework.utils.DisconnectionUtils;
-import org.cloudifysource.quality.iTests.framework.utils.IOUtils;
+import iTests.framework.utils.IOUtils;
 import org.openspaces.admin.gsm.GridServiceManager;
 import org.openspaces.admin.machine.Machine;
 import org.springframework.core.io.ClassPathResource;

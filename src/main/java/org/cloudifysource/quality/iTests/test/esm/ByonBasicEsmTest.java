@@ -15,7 +15,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import iTests.framework.utils.AssertUtils;
-import org.cloudifysource.quality.iTests.framework.utils.DeploymentUtils;
+import iTests.framework.utils.DeploymentUtils;
 import iTests.framework.utils.LogUtils;
 
 

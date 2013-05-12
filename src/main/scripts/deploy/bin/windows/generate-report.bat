@@ -3,12 +3,12 @@
 @echo setting up enviroment variables
 call set-build-env.bat
 
-set SUITE_TYPE=Cloudify-Regression
 set BUILD_NUMBER=%1
 set SUITE_NAME=%2
 set MAJOR_VERSION=%3
 set MINOR_VERSION=%4
 set BUILD_LOG_URL=%5
+set SUITE_TYPE=%6
 
 
 pushd %SGTEST_HOME%

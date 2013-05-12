@@ -6,6 +6,7 @@ set EXCLUDE=%TEMP_EXCLUDE:_=,%
 set EC2_REGION=%4
 set LOC_BUILD_TEST_DIR=%5
 set REVERSE_PROXY=%6
+set SUITE_TYPE=%7
 
 @cd %LOCAL_SGPATH%\bin
 
@@ -53,5 +54,6 @@ call mvn test -U -P tgrid-cloudify-iTests ^
 -Dsgtest.buildFolder=../ ^
 -DiTests.url=http://192.168.9.121:8087/sgtest3.0-cloudify/ ^
 -Dec2.region=%EC2_REGION%
+-DiTests.suiteType=%SUITE_TYPE%
 
 popd

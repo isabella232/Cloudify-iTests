@@ -45,6 +45,7 @@ mvn test -e -U -P tgrid-cloudify-iTests \
 -DipList=${BYON_MACHINES} \
 -Dsupported-clouds=${SUPPORTED_CLOUDS} \
 -Dbranch.name=${BRANCH_NAME}
+-DiTests.suiteType=${SUITE_TYPE}
 
 #return java exit code. 
 exit $?

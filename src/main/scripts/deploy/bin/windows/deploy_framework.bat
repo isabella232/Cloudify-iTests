@@ -1,6 +1,6 @@
 @echo on
 
-set FRAMEWORK_TMP_DIR=%BUILD_DIR%
+set FRAMEWORK_TMP_DIR=%BUILD_TEST_DIR%
 
 @echo cloning framework
 set GIT_SSL_NO_VERIFY=true

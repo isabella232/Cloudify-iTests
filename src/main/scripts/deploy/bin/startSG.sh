@@ -179,6 +179,6 @@ for ((s=0 ; s < ${SUITE_NUMBER} ; s++ )); do
  clean_machines
 done
 
-${DEPLOY_ROOT_BIN_DIR}/../../bin/generate-report-cmd.sh Regression ${BUILD_NUMBER} ${SUITE_NAME} ${MAJOR_VERSION} ${MINOR_VERSION} ${DEPLOY_ROOT_BIN_DIR} ${BUILD_LOG_URL}
+${DEPLOY_ROOT_BIN_DIR}/../../bin/generate-report-cmd.sh Cloudify-Regression ${BUILD_NUMBER} ${SUITE_NAME} ${MAJOR_VERSION} ${MINOR_VERSION} ${DEPLOY_ROOT_BIN_DIR} ${BUILD_LOG_URL}
 
  exit 0

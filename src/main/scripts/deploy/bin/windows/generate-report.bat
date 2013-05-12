@@ -3,7 +3,7 @@
 @echo setting up enviroment variables
 call set-build-env.bat
 
-set SUITE_TYPE=Regression
+set SUITE_TYPE=Cloudify-Regression
 set BUILD_NUMBER=%1
 set SUITE_NAME=%2
 set MAJOR_VERSION=%3

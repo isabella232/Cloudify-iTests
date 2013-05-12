@@ -1,19 +1,20 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.recipes.examples;
 
-import iTests.framework.tools.SGTestHelper;
-import org.apache.commons.io.FileUtils;
 import iTests.framework.testng.annotations.TestConfiguration;
+import iTests.framework.tools.SGTestHelper;
 import iTests.framework.utils.LogUtils;
 import iTests.framework.utils.ScriptUtils;
+
+import java.io.File;
+import java.io.IOException;
+
+import org.apache.commons.io.FileUtils;
 import org.cloudifysource.quality.iTests.framework.utils.JGitUtils;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.AbstractLocalCloudTest;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-
-import java.io.File;
-import java.io.IOException;
 
 
 public class ExcludedServicesTest extends AbstractLocalCloudTest { 
@@ -70,7 +71,7 @@ public class ExcludedServicesTest extends AbstractLocalCloudTest {
         doTest("jboss");
     }
 
-    //does not work on our linux boxes (File system loop detected - need to investigate)g
+    //does not work on our linux boxes (File system loop detected - need to investigate)
     @Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, enabled = false)
     public void installMysql() throws Exception{
         doTest("mysql");

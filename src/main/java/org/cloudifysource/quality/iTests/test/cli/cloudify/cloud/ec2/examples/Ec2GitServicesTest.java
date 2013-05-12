@@ -1,13 +1,15 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.ec2.examples;
 
 import iTests.framework.testng.annotations.TestConfiguration;
-import iTests.framework.utils.ScriptUtils;
 import iTests.framework.tools.SGTestHelper;
+import iTests.framework.utils.ScriptUtils;
+
 import org.cloudifysource.quality.iTests.framework.utils.JGitUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.AbstractServicesTest;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+
 
 public class Ec2GitServicesTest extends AbstractServicesTest {
 

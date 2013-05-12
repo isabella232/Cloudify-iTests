@@ -1,7 +1,8 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.ec2;
 
-import iTests.framework.utils.ScriptUtils;
 import iTests.framework.tools.SGTestHelper;
+import iTests.framework.utils.ScriptUtils;
+
 import org.cloudifysource.quality.iTests.framework.utils.JGitUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.AbstractExamplesTest;
 import org.testng.annotations.AfterClass;

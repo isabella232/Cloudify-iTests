@@ -53,7 +53,7 @@ call mvn test -U -P tgrid-cloudify-iTests ^
 -Djava.util.logging.config.file=%SGTEST_HOME%/src/main/config/sgtest_logging.properties ^
 -Dsgtest.buildFolder=../ ^
 -DiTests.url=http://192.168.9.121:8087/sgtest3.0-cloudify/ ^
--Dec2.region=%EC2_REGION%
+-Dec2.region=%EC2_REGION% ^
 -DiTests.suiteType=%SUITE_TYPE%
 
 popd

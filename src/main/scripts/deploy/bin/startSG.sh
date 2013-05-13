@@ -149,7 +149,7 @@ done
 #end for
 
 for ((s=0 ; s < ${SUITE_NUMBER} ; s++ )); do
- current_file=${RESULT_INDICATOR_FILE}${s}
+ current_file=${RESULT_INDICATOR_FILE}${SUITE_NAME}${s}
  while [ ! -f ${current_file} ]
  do
  	#sleep 60 seconds and check again...

@@ -1,4 +1,3 @@
-package apps.USM.usm.staticstorage.simple
 
 import java.util.concurrent.TimeUnit
 

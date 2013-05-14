@@ -1,4 +1,3 @@
-package apps.USM.usm.staticstorage.groovyApp.groovy1
 
 import java.util.concurrent.TimeUnit
 

@@ -1,4 +1,3 @@
-package apps.USM.usm.custom
 /*******************************************************************************
 * Copyright (c) 2012 GigaSpaces Technologies Ltd. All rights reserved
 *

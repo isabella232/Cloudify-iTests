@@ -119,7 +119,7 @@ for ((id=0 ; id < ${SUITE_NUMBER} ; id++ )); do
 
 
  #delete result file
- CURRENT_RESULT_INDICATOR_FILE=${RESULT_INDICATOR_FILE}${SUITE_ID}
+ CURRENT_RESULT_INDICATOR_FILE=${RESULT_INDICATOR_FILE}${SUITE_NAME}${SUITE_ID}
  if [ -f ${CURRENT_RESULT_INDICATOR_FILE} ];
  then
  	rm ${CURRENT_RESULT_INDICATOR_FILE}
@@ -149,7 +149,7 @@ done
 #end for
 
 for ((s=0 ; s < ${SUITE_NUMBER} ; s++ )); do
- current_file=${RESULT_INDICATOR_FILE}${s}
+ current_file=${RESULT_INDICATOR_FILE}${SUITE_NAME}${s}
  while [ ! -f ${current_file} ]
  do
  	#sleep 60 seconds and check again...

@@ -1,13 +1,13 @@
 package org.cloudifysource.quality.iTests.framework.utils;
 
 import iTests.framework.utils.LogUtils;
+import java.io.File;
+import java.io.IOException;
+
 import org.eclipse.jgit.api.CheckoutCommand;
 import org.eclipse.jgit.api.CreateBranchCommand;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.lib.Repository;
-
-import java.io.File;
-import java.io.IOException;
 
 public class JGitUtils {
 

@@ -1,8 +1,9 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.recipes.examples;
 
+import iTests.framework.tools.SGTestHelper;
+
 import java.io.File;
 
-import iTests.framework.tools.SGTestHelper;
 import org.apache.commons.io.FileUtils;
 import org.cloudifysource.quality.iTests.framework.utils.JGitUtils;
 import iTests.framework.utils.LogUtils;

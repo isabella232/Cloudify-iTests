@@ -47,7 +47,7 @@
  RESULT=$?
 
  #write a result file
- RESULT_INDICATOR_FILE="${DEPLOY_ROOT_BIN_DIR}/../result_indicator/sgtest_end${SUITE_ID}"
+ RESULT_INDICATOR_FILE="${DEPLOY_ROOT_BIN_DIR}/../result_indicator/sgtest_end${SUITE_NAME}${SUITE_ID}"
 
  touch ${RESULT_INDICATOR_FILE}
  echo "result ${RESULT}" >> ${RESULT_INDICATOR_FILE}

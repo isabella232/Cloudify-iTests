@@ -1,4 +1,3 @@
-package apps.USM.usm.staticstorage.groovyApp
 
 application {
 	name="groovyApp"

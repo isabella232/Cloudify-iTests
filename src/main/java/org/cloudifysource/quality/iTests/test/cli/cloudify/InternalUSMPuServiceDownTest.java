@@ -170,12 +170,23 @@ public class InternalUSMPuServiceDownTest extends AbstractLocalCloudTest {
 		    }
 		});
 		printBuildFolders();
+		printWorkFolder();
+		assertNotNull("Expecting work folder to contain at-least one tomcat pu folder.", foundFiles);
 		if (foundFiles.length == 0) {
 			AssertFail("No tomcat dircetory was found under work directory.");
 		}
 		return getLatestTomcatDir(foundFiles);
 	}
 	
+	private void printWorkFolder() {
+		final File processingUnitsDir = new File(ScriptUtils.getBuildPath(), SGTestHelper.getWorkDirName()  + "/processing-units/");
+		LogUtils.log("Listing all files in directory path: " + processingUnitsDir.getAbsolutePath());
+		final String[] fileList = processingUnitsDir.list();
+		for (String fileName : fileList) {
+			LogUtils.log(fileName);
+		}
+	}
+
 	private void printBuildFolders() {
 		File buildPath = new File(ScriptUtils.getBuildPath());
 		String[] list = buildPath.list();

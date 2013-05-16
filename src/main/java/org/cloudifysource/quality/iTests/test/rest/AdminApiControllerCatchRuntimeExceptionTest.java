@@ -1,13 +1,16 @@
 package org.cloudifysource.quality.iTests.test.rest;
 
+import iTests.framework.utils.AssertUtils;
+
 import java.net.URL;
 
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.HttpResponseException;
-import org.testng.annotations.Test;
-
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.BasicResponseHandler;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.AbstractLocalCloudTest;
-import iTests.framework.utils.AssertUtils;
-import iTests.framework.utils.WebUtils;
+import org.testng.annotations.Test;
 
 public class AdminApiControllerCatchRuntimeExceptionTest extends AbstractLocalCloudTest {
 
@@ -17,10 +20,26 @@ public class AdminApiControllerCatchRuntimeExceptionTest extends AbstractLocalCl
 		String machinesUrl = restUrl + "/admin/Machines/Machines/10";
 			// try to access a none existing url
 		try {
-			WebUtils.getURLContent(new URL(machinesUrl));
+			getURLContent(new URL(machinesUrl));
 			AssertUtils.assertFail("Should be able to run commands on a non existing url = " + machinesUrl);
 		} catch (HttpResponseException e) {
 			AssertUtils.assertTrue("Http exception should be HttpNotFound", e.getMessage().contains("Not Found"));
 		}
 	}
+	
+	public static String getURLContent(final URL url) throws Exception {
+		HttpClient client = null; 
+		try {
+			client = new DefaultHttpClient();
+			HttpGet get = new HttpGet(url.toURI());
+			return client.execute(get, new BasicResponseHandler());
+
+		}
+		finally {
+			if (client != null) {
+				client.getConnectionManager().shutdown();
+			}
+		}        
+	}
+
 }

@@ -1,34 +1,48 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.byon.persistence;
 
+import iTests.framework.tools.SGTestHelper;
+import iTests.framework.utils.AssertUtils;
+import iTests.framework.utils.IOUtils;
+import iTests.framework.utils.LogUtils;
+import iTests.framework.utils.NetworkUtils;
+import iTests.framework.utils.SSHUtils;
+import iTests.framework.utils.ScriptUtils;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.net.UnknownHostException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
-import iTests.framework.utils.*;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.bouncycastle.util.IPAddress;
 import org.cloudifysource.dsl.utils.ServiceUtils;
-import iTests.framework.tools.SGTestHelper;
 import org.cloudifysource.quality.iTests.framework.utils.CloudBootstrapper;
-import org.cloudifysource.quality.iTests.framework.utils.*;
+import org.cloudifysource.quality.iTests.framework.utils.ServiceInstaller;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.byon.AbstractByonCloudTest;
 import org.cloudifysource.restclient.GSRestClient;
 import org.cloudifysource.restclient.RestException;
 import org.openspaces.admin.gsm.GridServiceManager;
-
-import com.j_spaces.kernel.PlatformVersion;
 import org.openspaces.admin.machine.Machine;
 import org.openspaces.admin.machine.events.ElasticMachineProvisioningProgressChangedEvent;
 import org.openspaces.admin.machine.events.ElasticMachineProvisioningProgressChangedEventListener;
+import org.openspaces.admin.pu.ProcessingUnit;
 import org.openspaces.grid.gsm.machines.plugins.events.MachineStartedEvent;
+
+import com.j_spaces.kernel.PlatformVersion;
 
 /**
  * User: nirb
@@ -43,13 +57,13 @@ public abstract class AbstractByonManagementPersistencyTest extends AbstractByon
     private static final String APPLICATION_NAME = "default";
     private static final String EC2_USER = "ec2-user";
 
-    private int numOfManagementMachines = 2;
+    private final int numOfManagementMachines = 2;
 
     protected String backupFilePath = SGTestHelper.getBuildDir() + "/backup-details.txt";
 
-    private Map<String, Integer> installedServices = new HashMap<String, Integer>();
+    private final Map<String, Integer> installedServices = new HashMap<String, Integer>();
 
-    private List<String> attributesList = new LinkedList<String>();
+    private final List<String> attributesList = new LinkedList<String>();
 
     protected void installTomcatService(final int numberOfInstances, final String overrideName) throws IOException, InterruptedException {
 
@@ -132,8 +146,13 @@ public abstract class AbstractByonManagementPersistencyTest extends AbstractByon
 
         String serviceToShutdown = installedServices.keySet().iterator().next();
         LogUtils.log("Shutting down GSA that belonges to " + serviceToShutdown);
-        admin.getProcessingUnits().getProcessingUnit(ServiceUtils.getAbsolutePUName(APPLICATION_NAME, serviceToShutdown))
-                .getInstances()[0].getGridServiceContainer().getGridServiceAgent().shutdown();
+        final String fullPuName = ServiceUtils.getAbsolutePUName(APPLICATION_NAME, serviceToShutdown);
+        ProcessingUnit pu = admin.getProcessingUnits(). waitFor(fullPuName, 20, TimeUnit.SECONDS);
+        AssertUtils.assertNotNull("Could not find PU: " + fullPuName, pu);
+        final boolean foundInstance = pu.waitFor(1, 20, TimeUnit.SECONDS);
+        AssertUtils.assertTrue("Could not find instance of PU: " + fullPuName, foundInstance);
+
+        pu.getInstances()[0].getGridServiceContainer().getGridServiceAgent().shutdown();
 
         LogUtils.log("Waiting for service to restart on a new machine");
         final GSRestClient client = new GSRestClient("", "", new URL(getRestUrl()), PlatformVersion.getVersionNumber());

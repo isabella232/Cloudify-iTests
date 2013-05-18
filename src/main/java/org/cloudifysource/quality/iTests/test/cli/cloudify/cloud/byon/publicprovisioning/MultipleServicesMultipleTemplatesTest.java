@@ -20,7 +20,12 @@ public class MultipleServicesMultipleTemplatesTest extends AbstractPublicProvisi
 	
 	@BeforeClass(alwaysRun = true)
 	protected void bootstrap() throws Exception {
-		super.bootstrap(service);
+        String[] temlpateNames = service.getTemlpateNames();
+        for (String templateName : temlpateNames) {
+            service.setNumberOfHostsForTemplate(templateName, 2);
+        }
+
+        super.bootstrap(service);
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)

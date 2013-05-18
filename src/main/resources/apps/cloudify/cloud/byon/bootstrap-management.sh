@@ -224,10 +224,12 @@ START_COMMAND_ARGS="-timeout 30 --verbose -auto-shutdown"
 if [ "$GSA_MODE" = "agent" ]; then
 	ERRMSG="Failed starting agent"
 	START_COMMAND="start-agent"
+	export GIGASPACES_MODE="my-agent"
 else
 	ERRMSG="Failed starting management services"
 	START_COMMAND="start-management"
 	START_COMMAND_ARGS="${START_COMMAND_ARGS} -cloud-file ${CLOUD_FILE}"
+	export GIGASPACES_MODE="my-management"
 	if [ "$NO_WEB_SERVICES" = "true" ]; then
 		START_COMMAND_ARGS="${START_COMMAND_ARGS} -no-web-services -no-management-space"
 	fi

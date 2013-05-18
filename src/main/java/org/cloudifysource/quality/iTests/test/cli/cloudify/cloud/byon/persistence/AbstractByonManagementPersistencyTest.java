@@ -12,14 +12,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
@@ -40,6 +33,7 @@ import org.openspaces.admin.machine.Machine;
 import org.openspaces.admin.machine.events.ElasticMachineProvisioningProgressChangedEvent;
 import org.openspaces.admin.machine.events.ElasticMachineProvisioningProgressChangedEventListener;
 import org.openspaces.admin.pu.ProcessingUnit;
+import org.openspaces.admin.pu.ProcessingUnits;
 import org.openspaces.grid.gsm.machines.plugins.events.MachineStartedEvent;
 
 import com.j_spaces.kernel.PlatformVersion;
@@ -50,12 +44,11 @@ import com.j_spaces.kernel.PlatformVersion;
  */
 public abstract class AbstractByonManagementPersistencyTest extends AbstractByonCloudTest {
 
-    private static final String PATH_TO_SERVICE = CommandTestUtils.getPath("/src/main/resources/apps/USM/usm/custom-tomcat");;
+    private static final String PATH_TO_SERVICE = CommandTestUtils.getPath("/src/main/resources/apps/USM/usm/custom-tomcat");
 
     private static final String BOOTSTRAP_SUCCEEDED_STRING = "Successfully created Cloudify Manager";
 
     private static final String APPLICATION_NAME = "default";
-    private static final String EC2_USER = "ec2-user";
 
     private final int numOfManagementMachines = 2;
 
@@ -147,7 +140,9 @@ public abstract class AbstractByonManagementPersistencyTest extends AbstractByon
         String serviceToShutdown = installedServices.keySet().iterator().next();
         LogUtils.log("Shutting down GSA that belonges to " + serviceToShutdown);
         final String fullPuName = ServiceUtils.getAbsolutePUName(APPLICATION_NAME, serviceToShutdown);
-        ProcessingUnit pu = admin.getProcessingUnits(). waitFor(fullPuName, 20, TimeUnit.SECONDS);
+        ProcessingUnits processingUnits = admin.getProcessingUnits();
+        AssertUtils.assertNotNull("Admin Failed to discover any processing units after management shutdown", processingUnits);
+        ProcessingUnit pu = processingUnits.waitFor(fullPuName, 20, TimeUnit.SECONDS);
         AssertUtils.assertNotNull("Could not find PU: " + fullPuName, pu);
         final boolean foundInstance = pu.waitFor(1, 20, TimeUnit.SECONDS);
         AssertUtils.assertTrue("Could not find instance of PU: " + fullPuName, foundInstance);
@@ -363,9 +358,7 @@ public abstract class AbstractByonManagementPersistencyTest extends AbstractByon
 
     private Set<String> toSet(final String[] array) {
         final Set<String> set = new HashSet<String>();
-        for (String s : array) {
-            set.add(s);
-        }
+        Collections.addAll(set, array);
         return set;
     }
 

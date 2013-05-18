@@ -46,6 +46,11 @@ public class MultipleMachineTemplatesTest extends AbstractByonCloudTest {
 	
 	@BeforeClass(alwaysRun = true)
 	protected void bootstrap() throws Exception {
+        String[] temlpateNames = service.getTemlpateNames();
+        for (String templateName : temlpateNames) {
+            service.setNumberOfHostsForTemplate(templateName, 2);
+        }
+        service.setNumberOfHostsForTemplate("TEMPLATE_1", 2);
 		super.bootstrap(service);
 	}
 

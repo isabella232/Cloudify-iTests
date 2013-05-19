@@ -50,7 +50,6 @@ public class MultipleMachineTemplatesTest extends AbstractByonCloudTest {
         for (String templateName : temlpateNames) {
             service.setNumberOfHostsForTemplate(templateName, 2);
         }
-        service.setNumberOfHostsForTemplate("TEMPLATE_1", 2);
 		super.bootstrap(service);
 	}
 

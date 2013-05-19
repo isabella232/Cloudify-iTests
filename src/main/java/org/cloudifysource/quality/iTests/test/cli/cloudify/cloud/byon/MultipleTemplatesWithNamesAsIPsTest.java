@@ -22,12 +22,15 @@ public class MultipleTemplatesWithNamesAsIPsTest extends MultipleMachineTemplate
 	@Override
 	@BeforeClass(alwaysRun = true)
 	protected void bootstrap() throws Exception {
-		
 		String[] machines = service.getMachines();
-		LogUtils.log("converting every other address to host name");
+		LogUtils.log("converting every address to host name");
 		String[] machinesHostNames = NetworkUtils.resolveIpsToHostNames(machines);
 		service.setMachines(machinesHostNames);
-		super.bootstrap(service);
+        String[] temlpateNames = service.getTemlpateNames();
+        for (String templateName : temlpateNames) {
+            service.setNumberOfHostsForTemplate(templateName, 2);
+        }
+        super.bootstrap(service);
 	}
 	
 

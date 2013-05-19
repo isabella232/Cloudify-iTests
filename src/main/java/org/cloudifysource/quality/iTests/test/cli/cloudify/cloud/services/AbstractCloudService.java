@@ -247,7 +247,7 @@ public abstract class AbstractCloudService implements CloudService {
         overrideLogsFile();
         if (customCloudGroovy != null) {
         	// use a custom grooyv file if defined
-        	File originalCloudGroovy = new File(getPathToCloudFolder(), "byon-cloud.groovy");
+        	File originalCloudGroovy = new File(getPathToCloudGroovy());
         	IOUtils.replaceFile(originalCloudGroovy, customCloudGroovy);
         }
         injectCloudAuthenticationDetails();

@@ -12,9 +12,9 @@ import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.JCloud
 
 public class Ec2CloudService extends JCloudsCloudService {
 
-    private final Properties certProperties = getCloudProperties(EC2_CERT_PROPERTIES);
-
     private static final String EC2_CERT_PROPERTIES = CREDENTIALS_FOLDER + "/cloud/ec2/ec2-cred.properties";
+
+    private final Properties certProperties = getCloudProperties(EC2_CERT_PROPERTIES);
 
     protected static final String EU_WEST_REGION = "eu-west-1";
     protected static final String US_EAST_REGION = "us-east-1";

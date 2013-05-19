@@ -13,6 +13,7 @@ import iTests.framework.utils.TestUtils;
 public class RecipeTestUtil {
 	
 	public static String DEFAULT_RECIPE_TEST_TIMEOUT = "360";
+	public static String LONG_RECIPE_TEST_TIMEOUT = "1000";
 	
 	public RecipeTestUtil(){
 		

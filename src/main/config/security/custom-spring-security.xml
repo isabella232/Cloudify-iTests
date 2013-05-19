@@ -10,18 +10,18 @@
 		<sec:authentication-provider>
 			<sec:user-service>
 				<sec:user name="Superuser" password="Superuser" authorities="ROLE_CLOUDADMINS, ROLE_APPMANAGERS, ROLE_VIEWERS" />
-				<sec:user name="Amanda" password="Amanda" authorities="ROLE_VIEWERS" />
+				<sec:user name="Amanda" password="Amanda" authorities="ROLE_CLOUDADMINS" />
 				<sec:user name="Dana" password="Dana" authorities="ROLE_CLOUDADMINS, ROLE_APPMANAGERS" />
 				<sec:user name="Dan" password="Dan" authorities="ROLE_APPMANAGERS" />
 				<sec:user name="Don" password="Don" authorities="ROLE_APPMANAGERS, ROLE_VIEWERS" />
-				<sec:user name="John" password="John" authorities="ROLE_CLOUDADMINS" />
+				<sec:user name="John" password="John" authorities="ROLE_VIEWERS" />
 				<sec:user name="Jane" password="Jane" authorities="" />
 			</sec:user-service>
 		</sec:authentication-provider>
 	</sec:authentication-manager>
 	
-	<!-- LDAP connectivity configuration
-	<sec:authentication-manager alias="authenticationManager">
+	<!-- LDAP connectivity configuration -->
+	<!-- sec:authentication-manager alias="authenticationManager">
 		<sec:authentication-provider ref="ldapAuthProvider"/>
 	</sec:authentication-manager>
 	
@@ -31,10 +31,10 @@
 		<property name="password" value="secret"/>
 	</bean>
  
-	<bean id="CustomLdapUserDetailsMapper" class="org.cloudifysource.rest.security.CustomLdapUserDetailsMapper" >
+	<bean id="CustomLdapUserDetailsMapper" class="org.cloudifysource.securityldap.CustomLdapUserDetailsMapper" >
 		<property name="roleAttributes">
 			<list>
-				<value>description</value>
+				<value>cloudifyRole</value>
 			</list>
 		</property>
 	</bean>
@@ -45,7 +45,7 @@
 		<constructor-arg index="2" ref="contextSource" />
 	</bean>
 	
-	<bean id="ldapAuthProvider" class="org.cloudifysource.rest.security.CustomLdapAuthenticationProvider">
+	<bean id="ldapAuthProvider" class="org.cloudifysource.securityldap.CustomLdapAuthenticationProvider">
 		<constructor-arg>
 			<bean class="org.springframework.security.ldap.authentication.BindAuthenticator">
 				<constructor-arg ref="contextSource"/>
@@ -54,21 +54,35 @@
 			</bean>
 		</constructor-arg>
 		<constructor-arg>
-			<bean class="org.cloudifysource.rest.security.CustomLdapAuthoritiesPopulator">
+			<bean class="org.cloudifysource.securityldap.CustomLdapAuthoritiesPopulator">
 			<constructor-arg name="roleAttributes">
 				<list>
-					<value>description</value>
+					<value>cloudifyRole</value>
 				</list>
 			</constructor-arg>
 			</bean>
 		</constructor-arg>
 		<constructor-arg>
-			<bean class="org.cloudifysource.rest.security.CustomLdapAuthGroupsPopulator">
+			<bean class="org.cloudifysource.securityldap.CustomLdapAuthGroupsPopulator">
 				<constructor-arg ref="contextSource"/>
 				<constructor-arg value="ou=groups"/>
 			</bean>
 		</constructor-arg>
 		<property name="UserDetailsContextMapper" ref="CustomLdapUserDetailsMapper"/>
 	</bean-->
+	
+	<beans profile="secure">
+		<bean id="permissionEvaluator" class="org.cloudifysource.security.CustomPermissionEvaluator" />
+		<bean id="expressionHandler" class="org.cloudifysource.security.ExtendedMethodSecurityExpressionHandler">
+			<property name="permissionEvaluator" ref="permissionEvaluator" />
+		</bean>
+	</beans>
+	
+	<beans profile="nonsecure,default">
+		<bean id="permissionEvaluator" class="org.cloudifysource.security.CustomApproveAllPermissionEvaluator" />
+		<bean id="expressionHandler" class="org.cloudifysource.security.ExtendedMethodSecurityExpressionHandler">
+			<property name="permissionEvaluator" ref="permissionEvaluator" />
+		</bean>
+	</beans>
 
 </beans>

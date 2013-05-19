@@ -52,11 +52,11 @@ public class RecipeTest extends AbstractLocalCloudTest {
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, groups = "1", enabled = true)
 	public void testSolr() throws IOException, InterruptedException{
 		String solrDirPath = recipesDirPath + "/solr";
-		String output = runCommand("test-recipe " + solrDirPath + " " + RecipeTestUtil.LONG_RECIPE_TEST_TIMEOUT + " solr-service.groovy");
+		String output = runCommand("test-recipe " + solrDirPath + " " + RecipeTestUtil.LONG_RECIPE_TEST_TIMEOUT + " solr-service.groovy 600");
 		assertTrue("test-recipe failed and runCommand didn't throw an Exception as it should !!", output.contains("Recipe test completed"));
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, groups = "1", enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, groups = "1", enabled = true)
 	public void testHsqldb() throws IOException, InterruptedException{
 		String hsqldbDirPath = recipesDirPath + "/hsqldb";
 		String output = runCommand("test-recipe --verbose " + hsqldbDirPath + " " + RecipeTestUtil.DEFAULT_RECIPE_TEST_TIMEOUT + " hsqldb-service.groovy");
@@ -77,7 +77,7 @@ public class RecipeTest extends AbstractLocalCloudTest {
         assertTrue("test-recipe failed and runCommand didn't throw an Exception as it should !!", output.contains("Recipe test completed"));
     }
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, groups = "1", enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, groups = "1", enabled = true)
 	public void testActivemq() throws IOException, InterruptedException{
 		String activemqDirPath = recipesDirPath + "/activemq";
 		String output = runCommand("test-recipe " + activemqDirPath + " " + RecipeTestUtil.DEFAULT_RECIPE_TEST_TIMEOUT + " activemq-service.groovy");
@@ -91,7 +91,7 @@ public class RecipeTest extends AbstractLocalCloudTest {
 		assertTrue("test-recipe failed and runCommand didn't throw an Exception as it should !!", output.contains("Recipe test completed"));
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, groups = "1", enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, groups = "1", enabled = true)
 	public void installTomcat() throws Exception{
 		String tomcatDirPath = recipesDirPath + "/tomcat";
 		runCommand("connect " + restUrl + ";install-service --verbose " + tomcatDirPath);

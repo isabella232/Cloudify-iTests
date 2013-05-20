@@ -140,6 +140,7 @@ public abstract class AbstractByonManagementPersistencyTest extends AbstractByon
         String serviceToShutdown = installedServices.keySet().iterator().next();
         LogUtils.log("Shutting down GSA that belonges to " + serviceToShutdown);
         final String fullPuName = ServiceUtils.getAbsolutePUName(APPLICATION_NAME, serviceToShutdown);
+        createAdmin();
         ProcessingUnits processingUnits = admin.getProcessingUnits();
         AssertUtils.assertNotNull("Admin Failed to discover any processing units after management shutdown", processingUnits);
         ProcessingUnit pu = processingUnits.waitFor(fullPuName, 20, TimeUnit.SECONDS);

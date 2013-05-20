@@ -1,7 +1,6 @@
 #!/bin/bash
 
-CURRENT_DIR=`pwd`
-FRAMEWORK_TMP_DIR=/tmp/framework
+FRAMEWORK_TMP_DIR=${BUILD_DIR}/..
 if [ -d "${FRAMEWORK_TMP_DIR}" ]; then
    rm -rf ${FRAMEWORK_TMP_DIR}
 fi
@@ -17,13 +16,12 @@ else
 fi
 
 popd
-export iTests_Framework=${FRAMEWORK_TMP_DIR}/iTests-Framework
+iTests_Framework=${FRAMEWORK_TMP_DIR}/iTests-Framework
 
 echo "deploying framework"
 pushd ${iTests_Framework}
 mvn clean install s3client:deploy -U -Dbuild.home=${BUILD_DIR}
-rm -rf ${iTests_Framework}
-rm -rf ${FRAMEWORK_TMP_DIR}
+for ((id=0 ; id < ${SUITE_NUMBER} ; id++ )); do
+ cp -R target target${SUITE_NAME}${id}
+done
 popd
-
-cd ${CURRENT_DIR}

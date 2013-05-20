@@ -16,8 +16,8 @@
         <springVersion>3.1.3.RELEASE</springVersion>
         <hibernateVersion>3.6.10.Final</hibernateVersion>
         <jcloudsVersion>1.5.8</jcloudsVersion>
-        <suiteName>${iTests.suiteId}</suiteName>
-        <suiteId>${iTests.suiteName}</suiteId>
+        <suiteName>${iTests.suiteName}</suiteName>
+        <suiteId>${iTests.suiteId}</suiteId>
     </properties>
 
     <repositories>

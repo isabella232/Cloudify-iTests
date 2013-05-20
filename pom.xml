@@ -16,6 +16,8 @@
         <springVersion>3.1.3.RELEASE</springVersion>
         <hibernateVersion>3.6.10.Final</hibernateVersion>
         <jcloudsVersion>1.5.8</jcloudsVersion>
+        <suiteName>${iTests.suiteId}</suiteName>
+        <suiteId>${iTests.suiteName}</suiteId>
     </properties>
 
     <repositories>
@@ -301,14 +303,14 @@
                     <artifactId>webuitf</artifactId>
                     <version>1.0.1-SNAPSHOT</version>
                     <scope>system</scope>
-                    <systemPath>${cloudify.home}/../webuitf/Cloudify-iTests-webuitf/target${iTests.suiteName}${iTests.suiteId}</systemPath>
+                    <systemPath>${cloudify.home}/../webuitf/Cloudify-iTests-webuitf/target${suiteName}${suiteId}</systemPath>
                 </dependency>
                 <dependency>
                     <groupId>iTests.framework</groupId>
                     <artifactId>iTests-framework</artifactId>
                     <version>1.0.2-SNAPSHOT</version>
                     <scope>system</scope>
-                    <systemPath>${cloudify.home}/../framework/iTests-Framework/target${iTests.suiteName}${iTests.suiteId}</systemPath>
+                    <systemPath>${cloudify.home}/../framework/iTests-Framework/target${suiteName}${suiteId}</systemPath>
                 </dependency>
 			</dependencies>
 		</profile>

@@ -18,6 +18,8 @@
         <jcloudsVersion>1.5.8</jcloudsVersion>
         <suiteName>${iTests.suiteName}</suiteName>
         <suiteId>${iTests.suiteId}</suiteId>
+        <iTestsFrameworkVersion>1.0.2-SNAPSHOT</iTestsFrameworkVersion>
+        <webuiFrameworkVersion>1.0.1-SNAPSHOT</webuiFrameworkVersion>
     </properties>
 
     <repositories>
@@ -353,14 +355,14 @@
                     <artifactId>webuitf</artifactId>
                     <version>1.0.1-SNAPSHOT</version>
                     <scope>system</scope>
-                    <systemPath>${cloudify.home}/../webuitf/Cloudify-iTests-webuitf/target${suiteName}${suiteId}</systemPath>
+                    <systemPath>${cloudify.home}/../webuitf/Cloudify-iTests-webuitf/target${suiteName}${suiteId}/webuitf-${webuiFrameworkVersion}.jar</systemPath>
                 </dependency>
                 <dependency>
                     <groupId>iTests.framework</groupId>
                     <artifactId>iTests-framework</artifactId>
                     <version>1.0.2-SNAPSHOT</version>
                     <scope>system</scope>
-                    <systemPath>${cloudify.home}/../framework/iTests-Framework/target${suiteName}${suiteId}</systemPath>
+                    <systemPath>${cloudify.home}/../framework/iTests-Framework/target${suiteName}${suiteId}/iTests-framework-${iTestsFrameworkVersion}.jar</systemPath>
                 </dependency>
 			</dependencies>
 		</profile>

@@ -39,7 +39,7 @@ public class Ec2LocationAwareScalingRulesTest extends AbstractScalingRulesCloudT
 	public void beforeBootstrap() throws IOException {
 		
 		// copy custom location aware driver to cloudify-overrides
-		File locationAwareDriver = DeploymentUtils.getArchive("location-aware-driver.jar");
+		File locationAwareDriver = new File(DeploymentUtils.getQualityItestsPath("location-aware-driver.jar"));
 		File uploadOverrides =
 				new File(getService().getPathToCloudFolder() + "/upload/cloudify-overrides/");
 		if (!uploadOverrides.exists()) {

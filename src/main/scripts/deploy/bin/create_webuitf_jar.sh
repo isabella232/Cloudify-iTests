@@ -1,6 +1,6 @@
 #!/bin/bash
 
-WEBUI_TMP_DIR=${BUILD_DIR}/..
+WEBUI_TMP_DIR=${BUILD_DIR}/../webuitf
 if [ -d "${WEBUI_TMP_DIR}" ]; then
    rm -rf ${WEBUI_TMP_DIR}
 fi

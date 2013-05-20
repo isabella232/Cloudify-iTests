@@ -296,6 +296,20 @@
 					<scope>system</scope>
 					<systemPath>${cloudify.home}/lib/platform/usm/usm.jar</systemPath>
 				</dependency>
+                <dependency>
+                    <groupId>com.gigaspaces.quality</groupId>
+                    <artifactId>webuitf</artifactId>
+                    <version>1.0.1-SNAPSHOT</version>
+                    <scope>system</scope>
+                    <systemPath>${cloudify.home}/../Cloudify-iTests-webuitf/target${iTests.suiteName}${iTests.suiteId}</systemPath>
+                </dependency>
+                <dependency>
+                    <groupId>iTests.framework</groupId>
+                    <artifactId>iTests-framework</artifactId>
+                    <version>1.0.2-SNAPSHOT</version>
+                    <scope>system</scope>
+                    <systemPath>${cloudify.home}/../iTests-Framework/target${iTests.suiteName}${iTests.suiteId}</systemPath>
+                </dependency>
 			</dependencies>
 		</profile>
 		<profile>

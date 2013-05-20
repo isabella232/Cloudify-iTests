@@ -1,6 +1,6 @@
 #!/bin/bash
 
-FRAMEWORK_TMP_DIR=${BUILD_DIR}/..
+FRAMEWORK_TMP_DIR=${BUILD_DIR}/../framework
 if [ -d "${FRAMEWORK_TMP_DIR}" ]; then
    rm -rf ${FRAMEWORK_TMP_DIR}
 fi

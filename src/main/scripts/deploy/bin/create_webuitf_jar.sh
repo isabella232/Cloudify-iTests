@@ -1,7 +1,6 @@
 #!/bin/bash
 
-CURRENT_DIR=`pwd`
-WEBUI_TMP_DIR=/tmp/webuitf
+WEBUI_TMP_DIR=${BUILD_DIR}/../webuitf
 if [ -d "${WEBUI_TMP_DIR}" ]; then
    rm -rf ${WEBUI_TMP_DIR}
 fi
@@ -17,12 +16,12 @@ else
 fi
 
 popd
-export Cloudify_iTests_webuitf=${WEBUI_TMP_DIR}/Cloudify-iTests-webuitf
+
+Cloudify_iTests_webuitf=${WEBUI_TMP_DIR}/Cloudify-iTests-webuitf
 
 pushd ${Cloudify_iTests_webuitf}
 mvn clean install s3client:deploy -U
-rm -rf ${Cloudify_iTests_webuitf}
-rm -rf ${WEBUI_TMP_DIR}
+for ((id=0 ; id < ${SUITE_NUMBER} ; id++ )); do
+ cp -R target target${SUITE_NAME}${id}
+done
 popd
-
-cd ${CURRENT_DIR}

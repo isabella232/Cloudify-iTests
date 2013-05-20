@@ -162,7 +162,7 @@ done
  echo " So Long, and Thanks for All the Fish..."
  echo ---------------------------------------
 
- EXIT_CODE=`grep "result" ${RESULT_INDICATOR_FILE}${s} | awk '{print $2}'`
+ EXIT_CODE=`grep "result" ${RESULT_INDICATOR_FILE}${SUITE_NAME}${s} | awk '{print $2}'`
 
  # change this to copy junit report!!!
  #copy updated excel file to output dir. add prefix of today's date to copied file name.

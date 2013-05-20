@@ -163,7 +163,7 @@ public abstract class AbstractWebUILocalCloudTest extends AbstractLocalCloudTest
         	Thread.sleep(3000);
         	while (seconds < 30) {
         		try {
-        			helper.waitForElement(By.xpath(WebConstants.Xpath.loginButton), AjaxUtils.ajaxWaitingTime*2);
+        			helper.waitForElement(By.xpath(WebConstants.Xpath.loginButton), AjaxUtils.ajaxWaitingTime*6);
         			LogUtils.log("Web server connection established");
         			break;
         		}

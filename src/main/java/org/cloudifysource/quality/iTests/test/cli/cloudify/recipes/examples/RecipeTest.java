@@ -52,7 +52,7 @@ public class RecipeTest extends AbstractLocalCloudTest {
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, groups = "1", enabled = true)
 	public void testSolr() throws IOException, InterruptedException{
 		String solrDirPath = recipesDirPath + "/solr";
-		String output = runCommand("test-recipe " + solrDirPath + " " + RecipeTestUtil.LONG_RECIPE_TEST_TIMEOUT + " solr-service.groovy 600");
+		String output = runCommand("test-recipe " + solrDirPath + " " + RecipeTestUtil.LONG_RECIPE_TEST_TIMEOUT + " solr-service.groovy");
 		assertTrue("test-recipe failed and runCommand didn't throw an Exception as it should !!", output.contains("Recipe test completed"));
 	}
 	

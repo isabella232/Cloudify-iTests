@@ -8,6 +8,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.cloudifysource.dsl.internal.CloudifyConstants;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
+import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -16,9 +17,9 @@ import com.j_spaces.kernel.PlatformVersion;
 /**
  * Tests that check REST's version validation, which is performed for each
  * request received from the client.
- * 
+ *
  * @author yael
- * 
+ *
  */
 public class ValidateRESTVersionHeaderTest extends AbstractLocalCloudTest {
 
@@ -33,11 +34,21 @@ public class ValidateRESTVersionHeaderTest extends AbstractLocalCloudTest {
 		requestUri = restUrl + "/service/testrest";
 	}
 
+	/************
+	 * Verifies that localcloud runs on 127.0.0.1.
+	 * @throws IOException .
+	 */
+	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
+	public void nicAddressValidationTest() throws IOException {
+		Assert.assertTrue(restUrl.contains("127.0.0.1"), "Local Cloud is not running on 127.0.0.1");
+
+	}
+
 	/**
 	 * Sends a request without the cloudify-api-version header.
-	 * 
+	 *
 	 * @throws IOException
-	 * 
+	 *
 	 */
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
 	public void noVersionHeaderTest() throws IOException {
@@ -47,9 +58,9 @@ public class ValidateRESTVersionHeaderTest extends AbstractLocalCloudTest {
 
 	/**
 	 * Sends a request with the correct version.
-	 * 
+	 *
 	 * @throws IOException
-	 * 
+	 *
 	 */
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
 	public void correctVersionHeaderTest() throws IOException {
@@ -60,7 +71,7 @@ public class ValidateRESTVersionHeaderTest extends AbstractLocalCloudTest {
 
 	/**
 	 * Sends a request with a wrong version.
-	 * 
+	 *
 	 * @throws IOException .
 
 	 */
@@ -74,7 +85,7 @@ public class ValidateRESTVersionHeaderTest extends AbstractLocalCloudTest {
 	/**
 	 * Sends to the rest a request with cloudify-api-header equals to
 	 * headerValue.
-	 * 
+	 *
 	 * @param headerValue
 	 * @return the response
 	 * @throws IOException

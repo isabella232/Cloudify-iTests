@@ -20,8 +20,7 @@ iTests_Framework=${FRAMEWORK_TMP_DIR}/iTests-Framework
 
 echo "deploying framework"
 pushd ${iTests_Framework}
-mvn clean install s3client:deploy -U -Dbuild.home=${BUILD_DIR}
-for ((id=0 ; id < ${SUITE_NUMBER} ; id++ )); do
- cp -R target target${SUITE_NAME}${id}
-done
+mvn clean install s3client:deploy -U -Dbuild.home=${BUILD_DIR} -Dmaven.repo.local=${MAVEN_REPO_LOCAL}
+
+rm -rf ${FRAMEWORK_TMP_DIR}
 popd

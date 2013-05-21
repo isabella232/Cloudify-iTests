@@ -20,8 +20,7 @@ popd
 Cloudify_iTests_webuitf=${WEBUI_TMP_DIR}/Cloudify-iTests-webuitf
 
 pushd ${Cloudify_iTests_webuitf}
-mvn clean install s3client:deploy -U
-for ((id=0 ; id < ${SUITE_NUMBER} ; id++ )); do
- cp -R target target${SUITE_NAME}${id}
-done
+mvn clean install s3client:deploy -U -Dmaven.repo.local=${MAVEN_REPO_LOCAL}
+
+rm -rf ${WEBUI_TMP_DIR}
 popd

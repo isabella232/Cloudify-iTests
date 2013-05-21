@@ -1,8 +1,5 @@
 package org.cloudifysource.quality.iTests.test.webui.cloud;
 
-import java.util.Map;
-import java.util.Set;
-
 import com.gigaspaces.webuitf.LoginPage;
 import com.gigaspaces.webuitf.MainNavigation;
 import com.gigaspaces.webuitf.dashboard.DashboardTab;
@@ -14,12 +11,7 @@ import com.gigaspaces.webuitf.dashboard.ServicesGrid.ApplicationServicesGrid.Web
 import com.gigaspaces.webuitf.dashboard.ServicesGrid.ApplicationServicesGrid.WebServerModule;
 import com.gigaspaces.webuitf.dashboard.ServicesGrid.ApplicationsMenuPanel;
 import com.gigaspaces.webuitf.dashboard.ServicesGrid.InfrastructureServicesGrid;
-import com.gigaspaces.webuitf.dashboard.ServicesGrid.InfrastructureServicesGrid.ESMInst;
-import com.gigaspaces.webuitf.dashboard.ServicesGrid.InfrastructureServicesGrid.GSAInst;
-import com.gigaspaces.webuitf.dashboard.ServicesGrid.InfrastructureServicesGrid.GSCInst;
-import com.gigaspaces.webuitf.dashboard.ServicesGrid.InfrastructureServicesGrid.GSMInst;
-import com.gigaspaces.webuitf.dashboard.ServicesGrid.InfrastructureServicesGrid.Hosts;
-import com.gigaspaces.webuitf.dashboard.ServicesGrid.InfrastructureServicesGrid.LUSInst;
+import com.gigaspaces.webuitf.dashboard.ServicesGrid.InfrastructureServicesGrid.*;
 import com.gigaspaces.webuitf.services.HostsAndServicesGrid;
 import com.gigaspaces.webuitf.services.PuTreeGrid;
 import com.gigaspaces.webuitf.services.PuTreeGrid.WebUIProcessingUnit;
@@ -27,10 +19,13 @@ import com.gigaspaces.webuitf.services.ServicesTab;
 import com.gigaspaces.webuitf.topology.TopologyTab;
 import com.gigaspaces.webuitf.topology.applicationmap.ApplicationMap;
 import com.gigaspaces.webuitf.topology.applicationmap.ApplicationNode;
-
+import com.gigaspaces.webuitf.util.AjaxUtils;
 import iTests.framework.utils.AssertUtils;
 import iTests.framework.utils.AssertUtils.RepetitiveConditionProvider;
 import iTests.framework.utils.LogUtils;
+
+import java.util.Map;
+import java.util.Set;
 
 public class WebSecurityAuthorizationHelper {
 	
@@ -159,21 +154,38 @@ public class WebSecurityAuthorizationHelper {
 	private static void checkDashboardInfrastructure( InfrastructureServicesGrid infrastructureGrid, 
 			PermittedServicesWrapper permittedServicesWrapper ){
 
-		ESMInst esmInst = infrastructureGrid.getESMInst();
-		GSAInst gsaInst = infrastructureGrid.getGSAInst();
-		GSCInst gscInst = infrastructureGrid.getGSCInst();
-		GSMInst gsmInst = infrastructureGrid.getGSMInst();
-		LUSInst lusInst = infrastructureGrid.getLUSInst();
-		Hosts hosts = infrastructureGrid.getHosts();
+		final ESMInst esmInst = infrastructureGrid.getESMInst();
+		final GSAInst gsaInst = infrastructureGrid.getGSAInst();
+		final GSCInst gscInst = infrastructureGrid.getGSCInst();
+		final GSMInst gsmInst = infrastructureGrid.getGSMInst();
+		final LUSInst lusInst = infrastructureGrid.getLUSInst();
+		final Hosts hosts = infrastructureGrid.getHosts();
 
-		int displayedEsmCount = esmInst.getCount();
-		int displayedGsaCount = gsaInst.getCount();
-		int displayedGscCount = gscInst.getCount();
-		int displayedGsmCount = gsmInst.getCount();
-		int displayedLusCount = lusInst.getCount();
-		int displayedHostsCount = hosts.getCount();
 
-		int expectedEsmCount = permittedServicesWrapper.getEsmCount();
+        // we want to wait for significant values as initially values are all '0', so we use repetitive assert
+
+        AjaxUtils.repetitiveAssertTrue("failed to wait for significant values in infrastructure grid",
+                new com.gigaspaces.webuitf.util.RepetitiveConditionProvider() {
+                    @Override
+                    public boolean getCondition() {
+                        return  esmInst.getCount() != 0 &&
+                                gsaInst.getCount() != 0 &&
+                                gscInst.getCount() != 0 &&
+                                gsmInst.getCount() != 0 &&
+                                lusInst.getCount() != 0 &&
+                                hosts.getCount() != 0;
+                    }
+                }, 10 * 1000);
+
+
+        int displayedEsmCount = esmInst.getCount();
+        int displayedGsaCount = gsaInst.getCount();
+        int displayedGscCount = gscInst.getCount();
+        int displayedGsmCount = gsmInst.getCount();
+        int displayedLusCount = lusInst.getCount();
+        int displayedHostsCount = hosts.getCount();
+
+        int expectedEsmCount = permittedServicesWrapper.getEsmCount();
 		int expectedGsaCount = permittedServicesWrapper.getGsaCount();
 		int expectedGscCount = permittedServicesWrapper.getGscCount();
 		int expectedGsmCount = permittedServicesWrapper.getGsmCount();

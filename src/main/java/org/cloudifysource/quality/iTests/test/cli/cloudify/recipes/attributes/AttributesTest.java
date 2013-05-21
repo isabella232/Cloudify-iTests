@@ -1,11 +1,13 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.recipes.attributes;
 
+import iTests.framework.utils.AssertUtils;
+import iTests.framework.utils.LogUtils;
+
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import org.cloudifysource.dsl.internal.DSLException;
 import org.cloudifysource.dsl.utils.ServiceUtils;
-import iTests.framework.utils.LogUtils;
 import org.cloudifysource.quality.iTests.framework.utils.usm.USMTestUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.AbstractLocalCloudTest;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
@@ -19,91 +21,91 @@ public class AttributesTest extends AbstractLocalCloudTest {
 	private static final String SETTER_SERVICE_NAME = "setter";
 	private static final String MAIN_APPLICATION_NAME = "attributesTestApp";
 	private static final String SECONDARY_APPLICATION_NAME = "attributesTestApp2";
-	
+
 	private GigaSpace gigaspace;
 
 	@BeforeMethod
 	public void createSpace() throws Exception {
 		gigaspace = admin.getSpaces().waitFor("cloudifyManagementSpace", 20, TimeUnit.SECONDS).getGigaSpace();
 	}
-		
+
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = true)
 	public void testSimpleApplicationSetAttribute() throws Exception {
 		installApplication();
 		LogUtils.log("setting an application attribute from setter service");
-		runCommand("connect " + restUrl + ";use-application attributesTestApp" 
+		runCommand("connect " + restUrl + ";use-application attributesTestApp"
 				+ "; invoke setter setApp");
 
-		String simpleGet = runCommand("connect " + restUrl + ";use-application attributesTestApp" 
+		String simpleGet = runCommand("connect " + restUrl + ";use-application attributesTestApp"
 				+ "; invoke getter getApp");
-		
-		String simpleGet2 = runCommand("connect " + restUrl + ";use-application attributesTestApp" 
+
+		String simpleGet2 = runCommand("connect " + restUrl + ";use-application attributesTestApp"
 				+ "; invoke setter getApp");
-		
-		String simpleGet3 = runCommand("connect " + restUrl + ";use-application attributesTestApp" 
+
+		String simpleGet3 = runCommand("connect " + restUrl + ";use-application attributesTestApp"
 				+ "; invoke setter getService");
-		
+
 		assertTrue("command did not execute" , simpleGet.contains("OK"));
 		assertTrue("command did not execute" , simpleGet2.contains("OK"));
 		assertTrue("command did not execute" , simpleGet3.contains("OK"));
 		assertTrue("getter service cannot get the application attribute", simpleGet.contains("myValue"));
 		assertTrue("setter service cannot get the application attribute", simpleGet2.contains("myValue"));
-		assertTrue("setter service shouldn't be able to get the application attribute using getService", 
+		assertTrue("setter service shouldn't be able to get the application attribute using getService",
 				   simpleGet3.contains("null"));
 		uninstallApplication();
 	}
-	
+
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = true)
 	public void testApplicationAttributeRemovalAfterUninstall() throws Exception {
 		installApplication();
-		
+
 		String appAttributesOutput;
 		String getterAttributesOutput;
 		String setterAttributesOutput;
 		LogUtils.log("setting an attribute in application scope for application " + MAIN_APPLICATION_NAME);
 		CommandTestUtils.runCommandUsingFile("connect " + this.restUrl + "; use-application " + MAIN_APPLICATION_NAME
 				+ "; set-attributes -scope application '{\"AppAttribute\":\"AppValue\"}'");
-		appAttributesOutput = CommandTestUtils.runCommandAndWait("connect " + this.restUrl + "; use-application " + MAIN_APPLICATION_NAME 
+		appAttributesOutput = CommandTestUtils.runCommandAndWait("connect " + this.restUrl + "; use-application " + MAIN_APPLICATION_NAME
 				+ "; list-attributes -scope application");
 		assertTrue("Failed setting application scope attribute. Output was " + appAttributesOutput,
 				appAttributesOutput.contains("AppAttribute") && appAttributesOutput.contains("AppValue"));
-		
+
 		LogUtils.log("Setting service attributes for the application services 'setter' and 'getter'");
 		CommandTestUtils.runCommandUsingFile("connect " + this.restUrl + "; use-application " + MAIN_APPLICATION_NAME
 				+ "; set-attributes -scope service:setter '{\"SetterAttribute\":\"SetterValue\"}'");
-		setterAttributesOutput = CommandTestUtils.runCommandAndWait("connect " + this.restUrl + "; use-application " + MAIN_APPLICATION_NAME 
+		setterAttributesOutput = CommandTestUtils.runCommandAndWait("connect " + this.restUrl + "; use-application " + MAIN_APPLICATION_NAME
 				+ "; list-attributes -scope service:setter");
 		assertTrue("Failed setting service scope attribute. Output was " + setterAttributesOutput,
 				setterAttributesOutput.contains("SetterAttribute") && setterAttributesOutput.contains("SetterValue"));
 		CommandTestUtils.runCommandUsingFile("connect " + this.restUrl + "; use-application " + MAIN_APPLICATION_NAME
 				+ "; set-attributes -scope service:getter '{\"GetterAttribute\":\"GetterValue\"}'");
-		getterAttributesOutput = CommandTestUtils.runCommandAndWait("connect " + this.restUrl + "; use-application " + MAIN_APPLICATION_NAME 
+		getterAttributesOutput = CommandTestUtils.runCommandAndWait("connect " + this.restUrl + "; use-application " + MAIN_APPLICATION_NAME
 				+ "; list-attributes -scope service:getter");
 		assertTrue("Failed setting service scope attribute. Output was " + getterAttributesOutput,
 				getterAttributesOutput.contains("GetterAttribute") && getterAttributesOutput.contains("GetterValue"));
-		
+
 		uninstallApplication();
-		
+
 		LogUtils.log("asserting all application and service attributes were removed.");
-		appAttributesOutput = CommandTestUtils.runCommandAndWait("connect " + this.restUrl + "; use-application " + MAIN_APPLICATION_NAME 
+		appAttributesOutput = CommandTestUtils.runCommandAndWait("connect " + this.restUrl + "; use-application " + MAIN_APPLICATION_NAME
 				+ "; list-attributes -scope application");
-		assertTrue("Found application attributes in output " + appAttributesOutput, 
+		assertTrue("Found application attributes in output " + appAttributesOutput,
 				!appAttributesOutput.contains("AppAttribute") && !appAttributesOutput.contains("AppValue"));
-		setterAttributesOutput = CommandTestUtils.runCommandAndWait("connect " + this.restUrl + "; use-application " + MAIN_APPLICATION_NAME 
+		setterAttributesOutput = CommandTestUtils.runCommandAndWait("connect " + this.restUrl + "; use-application " + MAIN_APPLICATION_NAME
 				+ "; list-attributes -scope service:setter");
 		assertTrue("Found setter service attributes in output " + setterAttributesOutput,
 				!setterAttributesOutput.contains("SetterAttribute") && !setterAttributesOutput.contains("SetterValue"));
-		getterAttributesOutput = CommandTestUtils.runCommandAndWait("connect " + this.restUrl + "; use-application " + MAIN_APPLICATION_NAME 
+		getterAttributesOutput = CommandTestUtils.runCommandAndWait("connect " + this.restUrl + "; use-application " + MAIN_APPLICATION_NAME
 				+ "; list-attributes -scope service:getter");
 		assertTrue("Found getter service attributes in output " + getterAttributesOutput,
 				!getterAttributesOutput.contains("GetterAttribute") && !getterAttributesOutput.contains("GetterValue"));
 	}
-	
+
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = true)
 	public void testServiceAttributeRemovalAfterUninstall() throws Exception {
 		String sertterServiceUri = "applications/" + MAIN_APPLICATION_NAME + "/" + SETTER_SERVICE_NAME;
 		installService(sertterServiceUri);
-		
+
 		String serviceScopeAttributesOutput;
 		String setterInstanceAttributesOutput;
 		LogUtils.log("setting an attribute in service scope for service " + SETTER_SERVICE_NAME);
@@ -113,7 +115,7 @@ public class AttributesTest extends AbstractLocalCloudTest {
 				+ "; list-attributes -scope service:" + SETTER_SERVICE_NAME);
 		assertTrue("Failed setting service scope attribute. Output was " + serviceScopeAttributesOutput,
 				serviceScopeAttributesOutput.contains("serviceAttribute") && serviceScopeAttributesOutput.contains("serviceValue"));
-		
+
 		LogUtils.log("Setting service instance attributes for service " + SETTER_SERVICE_NAME);
 		CommandTestUtils.runCommandUsingFile("connect " + this.restUrl
 				+ "; set-attributes -scope service:setter:1 '{\"instanceAttribute\":\"instanceValue\"}'");
@@ -121,16 +123,16 @@ public class AttributesTest extends AbstractLocalCloudTest {
 				+ "; list-attributes -scope service:" + SETTER_SERVICE_NAME + ":1");
 		assertTrue("Failed setting service instance scope attribute. Output was " + setterInstanceAttributesOutput,
 				setterInstanceAttributesOutput.contains("instanceAttribute") && setterInstanceAttributesOutput.contains("instanceValue"));
-		
+
 		LogUtils.log("Uninstalling service " + SETTER_SERVICE_NAME);
 		uninstallService(SETTER_SERVICE_NAME);
 		LogUtils.log("Installing service " + SETTER_SERVICE_NAME + " again in-order to see if attributes were deleted");
 		installService(sertterServiceUri);
-		
+
 		LogUtils.log("asserting no service attributes exist.");
 		serviceScopeAttributesOutput = CommandTestUtils.runCommandAndWait("connect " + this.restUrl
 				+ "; list-attributes -scope service:" + SETTER_SERVICE_NAME);
-		assertTrue("Found service attributes in output " + serviceScopeAttributesOutput, 
+		assertTrue("Found service attributes in output " + serviceScopeAttributesOutput,
 				!serviceScopeAttributesOutput.contains("serviceAttribute") && !serviceScopeAttributesOutput.contains("serviceValue"));
 		setterInstanceAttributesOutput = CommandTestUtils.runCommandAndWait("connect " + this.restUrl
 				+ "; list-attributes -scope service:" + SETTER_SERVICE_NAME + ":1");
@@ -142,71 +144,71 @@ public class AttributesTest extends AbstractLocalCloudTest {
 	private void cleanAttributes() throws IOException, InterruptedException {
 		gigaspace.clear(null);
 	}
-	
+
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = true)
 	public void testOverrideInstanceAttribute() throws Exception {
-		
+
 		//assertEquals("wrong number of objects in space", 1, gigaspace.count(null)); //CloudConfigurationHolder
-		installApplication();//installApplication clears all object in the space. 
-		
-		runCommand("connect " + restUrl + ";use-application " + MAIN_APPLICATION_NAME 
+		installApplication();//installApplication clears all object in the space.
+
+		runCommand("connect " + restUrl + ";use-application " + MAIN_APPLICATION_NAME
 				+ "; invoke -instanceid 1 setter setInstanceCustom myKey1 myValue1");
-		
-		String getBeforeOverride = runCommand("connect " + restUrl + ";use-application attributesTestApp" 
+
+		String getBeforeOverride = runCommand("connect " + restUrl + ";use-application attributesTestApp"
 				+ "; invoke -instanceid 1 setter getInstanceCustom myKey1");
 		assertEquals("wrong number of objects in space", 1, gigaspace.count(null));
 		assertTrue("command did not execute" , getBeforeOverride.contains("OK"));
 		assertTrue("service cannot get the instance attribute", getBeforeOverride.contains("myValue1"));
-		
-		runCommand("connect " + restUrl + ";use-application attributesTestApp" 
+
+		runCommand("connect " + restUrl + ";use-application attributesTestApp"
 				+ "; invoke -instanceid 1 setter setInstanceCustom myKey1 myValue2");
-		String getAfterOverride = runCommand("connect " + restUrl + ";use-application attributesTestApp" 
+		String getAfterOverride = runCommand("connect " + restUrl + ";use-application attributesTestApp"
 				+ "; invoke -instanceid 1 setter getInstanceCustom myKey1");
 		assertEquals("wrong number of objects in space", 1, gigaspace.count(null));
 		assertTrue("command did not execute" , getAfterOverride.contains("OK"));
-		assertTrue("instance attribute was not overriden properly", getAfterOverride.contains("myValue2") && 
+		assertTrue("instance attribute was not overriden properly", getAfterOverride.contains("myValue2") &&
 																   !getAfterOverride.contains("myValue1"));
 		uninstallApplication();
 	}
-	
+
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = true)
 	public void testApplicationSetAttributeCustomParams() throws Exception {
 		installApplication();
-		runCommand("connect " + restUrl + ";use-application attributesTestApp" 
+		runCommand("connect " + restUrl + ";use-application attributesTestApp"
 				+ "; invoke setter setAppCustom myKey1 myValue1");
-		
-		String simpleGet = runCommand("connect " + restUrl + ";use-application attributesTestApp" 
+
+		String simpleGet = runCommand("connect " + restUrl + ";use-application attributesTestApp"
 				+ "; invoke getter getAppCustom myKey1");
-		
+
 		assertTrue("command did not execute" , simpleGet.contains("OK"));
 		assertTrue("getter service cannot get the application attribute when using parameters", simpleGet.contains("myValue1"));
 		uninstallApplication();
 	}
-	
+
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = true)
 	public void testServiceSetAttribute() throws Exception {
-		
+
 		installApplication();
-		runCommand("connect " + restUrl + ";use-application attributesTestApp" 
+		runCommand("connect " + restUrl + ";use-application attributesTestApp"
 				+ "; invoke setter setService");
-		
-		String crossServiceGet = runCommand("connect " + restUrl + ";use-application attributesTestApp" 
+
+		String crossServiceGet = runCommand("connect " + restUrl + ";use-application attributesTestApp"
 				+ "; invoke getter getService");
-		
-		String serviceGet = runCommand("connect " + restUrl + ";use-application attributesTestApp" 
+
+		String serviceGet = runCommand("connect " + restUrl + ";use-application attributesTestApp"
 				+ "; invoke setter getService");
-		
-		String appGet = runCommand("connect " + restUrl + ";use-application attributesTestApp" 
+
+		String appGet = runCommand("connect " + restUrl + ";use-application attributesTestApp"
 				+ "; invoke getter getApp");
-		
-		String getInstance1 = runCommand("connect " + restUrl + ";use-application attributesTestApp" 
+
+		String getInstance1 = runCommand("connect " + restUrl + ";use-application attributesTestApp"
 				+ "; invoke -instanceid 1 setter getService");
-		String getInstance2 = runCommand("connect " + restUrl + ";use-application attributesTestApp" 
+		String getInstance2 = runCommand("connect " + restUrl + ";use-application attributesTestApp"
 				+ "; invoke -instanceid 2 setter getService");
-		
-		String instanceGetApp = runCommand("connect " + restUrl + ";use-application attributesTestApp" 
+
+		String instanceGetApp = runCommand("connect " + restUrl + ";use-application attributesTestApp"
 				+ "; invoke -instanceid 1 setter getApp");
-		
+
 		assertTrue("command did not execute" , crossServiceGet.contains("OK"));
 		assertTrue("command did not execute" , serviceGet.contains("OK"));
 		assertTrue("command did not execute" , appGet.contains("OK"));
@@ -218,7 +220,7 @@ public class AttributesTest extends AbstractLocalCloudTest {
 		assertTrue("setService should not be visible to a different service", crossServiceGet.contains("null"));
 		assertTrue("getApp should be able to get a service attribute", appGet.contains("null"));
 		assertTrue("getApp should be able to get a service attribute", instanceGetApp.contains("null"));
-		
+
 		uninstallApplication();
 	}
 
@@ -272,165 +274,165 @@ public class AttributesTest extends AbstractLocalCloudTest {
         assertTrue("getService should be able to get a service attribute", getService.contains("null"));
         uninstallApplication();
     }
-	
+
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = true)
 	public void testSetCustomPojo() throws Exception {
 		installApplication();
 		LogUtils.log("setting a custom pojo on service level");
-		runCommand("connect " + restUrl + ";use-application attributesTestApp" 
+		runCommand("connect " + restUrl + ";use-application attributesTestApp"
 				+ "; invoke setter setAppCustomPojo");
 
-		String getCustomPojo = runCommand("connect " + restUrl + ";use-application attributesTestApp" 
+		String getCustomPojo = runCommand("connect " + restUrl + ";use-application attributesTestApp"
 				+ "; invoke getter getAppCustomPojo");
-				
+
 		assertTrue("command did not execute" , getCustomPojo.contains("OK"));
 		assertTrue("getter service cannot get the data pojo", getCustomPojo.contains("data"));
 		uninstallApplication();
 	}
-	
+
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = true)
 	public void testSetGlobalAttribute() throws Exception {
 		installApplication();
 		LogUtils.log("setting attribute 'GlobalAttribute' using cli");
-		CommandTestUtils.runCommandUsingFile("connect " + restUrl + ";use-application attributesTestApp" 
+		CommandTestUtils.runCommandUsingFile("connect " + restUrl + ";use-application attributesTestApp"
 				+ "; set-attributes -scope global '{\"GlobalAttribute\":\"GlobalValue\"}';");
 
-		String globalAttributeResult = runCommand("connect " + restUrl + ";use-application attributesTestApp" 
+		String globalAttributeResult = runCommand("connect " + restUrl + ";use-application attributesTestApp"
 				+ "; invoke getter getCliGlobalAttribute");
-				
+
 		assertTrue("command did not execute" , globalAttributeResult.contains("OK"));
 		assertTrue("getter service cannot get the global attribute set by cli", globalAttributeResult.contains("Result: GlobalValue"));
 		uninstallApplication();
 	}
-	
+
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = true)
 	public void testInstanceIteration() throws Exception {
 		installApplication();
-		runCommand("connect " + restUrl + ";use-application attributesTestApp" 
+		runCommand("connect " + restUrl + ";use-application attributesTestApp"
 				+ "; invoke -instanceid 1 setter setInstanceCustom myKey myValue1;" +
 				"invoke -instanceid 2 setter setInstanceCustom myKey myValue2");
-		
-		String iterateInstances = runCommand("connect " + restUrl + ";use-application attributesTestApp" 
+
+		String iterateInstances = runCommand("connect " + restUrl + ";use-application attributesTestApp"
 				+ "; invoke -instanceid 1 setter iterateInstances");
-		
+
 		assertTrue("command did not execute" , iterateInstances.contains("OK"));
 		assertTrue("iteratoring over instances", iterateInstances.contains("myValue1") && iterateInstances.contains("myValue2"));
 		uninstallApplication();
 	}
-	
+
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = true )
 	public void testRemoveThisService() throws Exception {
 		installApplication();
-		runCommand("connect " + restUrl + ";use-application attributesTestApp" 
+		runCommand("connect " + restUrl + ";use-application attributesTestApp"
 				+ "; invoke setter setService; invoke setter setService2");
-		String getOutputAfterSet = runCommand("connect " + restUrl + ";use-application attributesTestApp" 
+		String getOutputAfterSet = runCommand("connect " + restUrl + ";use-application attributesTestApp"
 				+ "; invoke setter getService; invoke setter getService2");
 		assertTrue("set command did not execute" , getOutputAfterSet.contains("myValue") && getOutputAfterSet.contains("myValue2"));
-		
-		runCommand("connect " + restUrl + ";use-application attributesTestApp" 
+
+		runCommand("connect " + restUrl + ";use-application attributesTestApp"
 				+ "; invoke setter removeService");
-		String getOutputAfterRemove = runCommand("connect " + restUrl + ";use-application attributesTestApp" 
+		String getOutputAfterRemove = runCommand("connect " + restUrl + ";use-application attributesTestApp"
 				+ "; invoke setter getService ;invoke setter getService2");
 		assertTrue("get myKey command should return null after myKey was removed" , getOutputAfterRemove.contains("null"));
 		assertTrue("myKey2 should not be affected by remove myKey" , getOutputAfterRemove.contains("myValue2"));
 		String getOutputAfterRemoveWrongAtt = runCommand("connect " +restUrl+ ";use-application attributesTestApp; remove-attributes myKey2") ;
 		AssertUtils.assertFalse("remove attribute of unknown attribute (myKey2) should fail", getOutputAfterRemoveWrongAtt.contains("removed successfully"));
 		uninstallApplication();
-		
+
 	}
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = true)
 	public void testRemoveInstance() throws Exception {
 		installApplication();
-		runCommand("connect " + restUrl + ";use-application attributesTestApp" 
-				+ "; invoke setter setInstance"); 
-		String getOutputAfterSet = runCommand("connect " + restUrl + ";use-application attributesTestApp" 
+		runCommand("connect " + restUrl + ";use-application attributesTestApp"
+				+ "; invoke setter setInstance");
+		String getOutputAfterSet = runCommand("connect " + restUrl + ";use-application attributesTestApp"
 				+ "; invoke setter getInstance");
 		assertTrue("set command did not execute" , getOutputAfterSet.contains("myValue"));
-		
-		runCommand("connect " + restUrl + ";use-application attributesTestApp" 
+
+		runCommand("connect " + restUrl + ";use-application attributesTestApp"
 				+ "; invoke setter removeInstance");
-		String getOutputAfterRemove = runCommand("connect " + restUrl + ";use-application attributesTestApp" 
+		String getOutputAfterRemove = runCommand("connect " + restUrl + ";use-application attributesTestApp"
 				+ "; invoke setter getInstance");
 		assertTrue("getInstance command should return null after key was removed" , getOutputAfterRemove.toLowerCase().contains("null"));
 		uninstallApplication();
 	}
-	
-	
-	
+
+
+
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = true)
 	public void testCleanInstanceAfterSetService() throws Exception {
 		installApplication();
-		runCommand("connect " + restUrl + ";use-application attributesTestApp" 
+		runCommand("connect " + restUrl + ";use-application attributesTestApp"
 				+ "; invoke setter setInstance1");
-		runCommand("connect " + restUrl + ";use-application attributesTestApp" 
+		runCommand("connect " + restUrl + ";use-application attributesTestApp"
 				+ "; invoke setter setInstance2");
-		String getInstanceBeforeRemove = runCommand("connect " + restUrl + ";use-application attributesTestApp" 
+		String getInstanceBeforeRemove = runCommand("connect " + restUrl + ";use-application attributesTestApp"
 				+ "; invoke -instanceid 1 setter getInstance");
 		assertTrue("set command did not execute" , getInstanceBeforeRemove.contains("myValue1"));
-		getInstanceBeforeRemove = runCommand("connect " + restUrl + ";use-application attributesTestApp" 
+		getInstanceBeforeRemove = runCommand("connect " + restUrl + ";use-application attributesTestApp"
 				+ "; invoke -instanceid 2 setter getInstance");
 		assertTrue("set command did not execute" , getInstanceBeforeRemove.contains("myValue2"));
-		
-		runCommand("connect " + restUrl + ";use-application attributesTestApp" 
+
+		runCommand("connect " + restUrl + ";use-application attributesTestApp"
 				+ "; invoke -instanceid 1 setter cleanThisInstance");
-		String getInstanceAfterRemove = runCommand("connect " + restUrl + ";use-application attributesTestApp" 
+		String getInstanceAfterRemove = runCommand("connect " + restUrl + ";use-application attributesTestApp"
 				+ "; invoke -instanceid 1 setter getInstance");
 		assertTrue("get command should return null after key was removed" , getInstanceAfterRemove.toLowerCase().contains("null"));
-		getInstanceAfterRemove = runCommand("connect " + restUrl + ";use-application attributesTestApp" 
+		getInstanceAfterRemove = runCommand("connect " + restUrl + ";use-application attributesTestApp"
 				+ "; invoke -instanceid 2 setter getInstance");
 		assertTrue("clear on instance 1 should not affect instance 2" , getInstanceAfterRemove.contains("myValue2"));
 		uninstallApplication();
 	}
-	
+
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = true)
 	public void testCleanAppAfterSetService() throws Exception {
 		installApplication();
-		runCommand("connect " + restUrl + ";use-application attributesTestApp" 
+		runCommand("connect " + restUrl + ";use-application attributesTestApp"
 				+ "; invoke setter setService; invoke setter setService2");
-		String getServiceBeforeClear = runCommand("connect " + restUrl + ";use-application attributesTestApp" 
+		String getServiceBeforeClear = runCommand("connect " + restUrl + ";use-application attributesTestApp"
 				+ "; invoke setter getService; invoke setter getService2");
 		assertTrue("set command did not execute" , getServiceBeforeClear.contains("myValue") && getServiceBeforeClear.contains("myValue2"));
-				
-		runCommand("connect " + restUrl + ";use-application attributesTestApp" 
+
+		runCommand("connect " + restUrl + ";use-application attributesTestApp"
 				+ "; invoke getter cleanThisApp");
-		String getServiceAfterClear = runCommand("connect " + restUrl + ";use-application attributesTestApp" 
+		String getServiceAfterClear = runCommand("connect " + restUrl + ";use-application attributesTestApp"
 				+ "; invoke setter setService ; invoke setter setService2");
-		assertTrue("clear app should not affect service attributes" , 
+		assertTrue("clear app should not affect service attributes" ,
 				getServiceAfterClear.contains("myValue") && getServiceAfterClear.contains("myValue2"));
 		uninstallApplication();
 	}
-	
+
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = true)
 	public void testSimpleSetGlobalAttributesOneApp() throws Exception {
 		installApplication();
-		runCommand("connect " + restUrl + ";use-application attributesTestApp" 
+		runCommand("connect " + restUrl + ";use-application attributesTestApp"
 				+ "; invoke setter setGlobal myGValue");
-		
-		String simpleGet = runCommand("connect " + restUrl + ";use-application attributesTestApp" 
+
+		String simpleGet = runCommand("connect " + restUrl + ";use-application attributesTestApp"
 				+ "; invoke getter getGlobal");
-		
+
 		assertTrue("command did not execute" , simpleGet.contains("OK"));
 		assertTrue("getter service cannot get the global attribute when using parameters", simpleGet.contains("myGValue"));
 		uninstallApplication();
 	}
-	
+
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT , groups="1", enabled = true)
 	public void testGlobalSetAttributeCustomParamsTwoApps() throws Exception {
 		installApplication();
 		LogUtils.log("setting an global attribute from setter service");
-		runCommand("connect " + restUrl + ";use-application attributesTestApp" 
+		runCommand("connect " + restUrl + ";use-application attributesTestApp"
 				+ "; invoke setter setGlobalCustom myGlobalKey myGlobalValue");
 
-		String simpleGet = runCommand("connect " + restUrl + ";use-application attributesTestApp" 
+		String simpleGet = runCommand("connect " + restUrl + ";use-application attributesTestApp"
 				+ "; invoke getter getGlobalCustom myGlobalKey");
-	
+
 		//install a different app
 		installApplication(SECONDARY_APPLICATION_NAME);
-		
+
 		//Get the attribute from a different application
-		String simpleGet2 = runCommand("connect " + restUrl + ";use-application attributesTestApp2" 
+		String simpleGet2 = runCommand("connect " + restUrl + ";use-application attributesTestApp2"
 				+ "; invoke getter getGlobalCustom myGlobalKey");
-		
+
 		assertTrue("command did not execute" , simpleGet.contains("OK"));
 		assertTrue("command did not execute" , simpleGet2.contains("OK"));
 		assertTrue("getter service cannot get the application attribute", simpleGet.contains("myGlobalValue"));
@@ -442,7 +444,7 @@ public class AttributesTest extends AbstractLocalCloudTest {
 	private void installApplication() throws IOException, InterruptedException, DSLException {
 		installApplication(MAIN_APPLICATION_NAME);
 		cleanAttributes();
-        		
+
 		final String absolutePUNameSimple1 = ServiceUtils.getAbsolutePUName(MAIN_APPLICATION_NAME, "getter");
 		final String absolutePUNameSimple2 = ServiceUtils.getAbsolutePUName(MAIN_APPLICATION_NAME, SETTER_SERVICE_NAME);
 		final ProcessingUnit pu1 = admin.getProcessingUnits().waitFor(absolutePUNameSimple1 , OPERATION_TIMEOUT , TimeUnit.MILLISECONDS);

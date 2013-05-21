@@ -38,7 +38,7 @@ umask 000
  EXCLUDE=${14}; export EXCLUDE
  SUITE_NAME=${15}; export SUITE_NAME
  SVN_BRANCH_DIRECTORY=${16}; export SVN_BRANCH_DIRECTORY
- SUITE_NUMBER=${17}; export ${SUITE_NUMBER}
+ SUITE_NUMBER=${17}; export SUITE_NUMBER
  ## total number of init parameters is 25
  
  declare -a target_client_machines=(${18} ${20} ${22} ${24} ${26} ${28} ${30} ${32});

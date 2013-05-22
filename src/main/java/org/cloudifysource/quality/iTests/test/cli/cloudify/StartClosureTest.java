@@ -23,8 +23,8 @@ import junit.framework.Assert;
 
 import org.cloudifysource.dsl.internal.DSLException;
 import org.cloudifysource.dsl.internal.packaging.PackagingException;
-import org.cloudifysource.restclient.ErrorStatusException;
-import org.cloudifysource.shell.commands.CLIException;
+import org.cloudifysource.restclient.exceptions.ErrorStatusException;
+import org.cloudifysource.shell.exceptions.CLIException;
 import org.testng.annotations.Test;
 
 /***************************

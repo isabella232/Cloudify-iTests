@@ -31,7 +31,7 @@ import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.CloudService;
 import org.cloudifysource.restclient.GSRestClient;
-import org.cloudifysource.restclient.RestException;
+import org.cloudifysource.restclient.exceptions.RestException;
 
 import com.j_spaces.kernel.PlatformVersion;
 

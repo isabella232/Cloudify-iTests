@@ -29,6 +29,7 @@ import org.cloudifysource.quality.iTests.framework.utils.ServiceInstaller;
 import org.cloudifysource.quality.iTests.framework.utils.usm.USMTestUtils;
 import org.cloudifysource.restclient.exceptions.ErrorStatusException;
 import org.cloudifysource.restclient.GSRestClient;
+import org.cloudifysource.restclient.exceptions.RestClientException;
 import org.cloudifysource.restclient.exceptions.RestException;
 import org.cloudifysource.shell.exceptions.CLIException;
 import org.cloudifysource.shell.rest.RestAdminFacade;
@@ -105,8 +106,7 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 	}
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
-	public void testKitchenSink() throws IOException, InterruptedException, PackagingException, DSLException,
-			RestException {
+	public void testKitchenSink() throws Exception {
 
 		installer.install();
 
@@ -191,7 +191,7 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 
 	}
 
-	private void verifyUninstallManagementFails() throws IOException, InterruptedException {
+	private void verifyUninstallManagementFails() throws IOException, InterruptedException, RestClientException {
 		LogUtils.log("Verifing management undeployment fails when excecuted from the CLI");
 		final String commandOUtput = CommandTestUtils
 				.runCommandExpectedFail("connect "
@@ -212,12 +212,12 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 			AssertUtils.assertFail("Request to uinstall management should have thrown an exception");
 		} catch (final CLIException e) {
 			assertTrue(
-					"The uninstall management response should contain the proper error message",
-					e.getMessage().contains(
-							"cannot_uninstall_management_application"));
+                    "The uninstall management response should contain the proper error message",
+                    e.getMessage().contains(
+                            "cannot_uninstall_management_application"));
 		}
 
-	}
+    }
 
 	private void checkManagementServicesPidsAreEqual() throws RemoteException {
 		if (!admin

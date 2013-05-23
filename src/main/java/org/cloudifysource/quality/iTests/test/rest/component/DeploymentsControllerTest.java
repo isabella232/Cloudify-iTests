@@ -91,7 +91,7 @@ public class DeploymentsControllerTest extends AbstractLocalCloudTest {
 					.assertFail("getServiceDetails request should have thrown an exception due to a wrong application name");
 		} catch (RestClientException e) {
 			AssertUtils.assertEquals(
-					CloudifyMessageKeys.MISSING_APPLICATION.getName(),
+					CloudifyMessageKeys.MISSING_RESOURCE.getName(),
 					e.getMessageId());
 			AssertUtils.assertEquals(HttpStatus.SC_BAD_REQUEST, e.getStatus());
 		}
@@ -108,7 +108,7 @@ public class DeploymentsControllerTest extends AbstractLocalCloudTest {
 					.assertFail("getServiceInstanceDetails request should have thrown an exception due to a wrong instance name");
 		} catch (RestClientException e) {
 			AssertUtils.assertEquals(
-					CloudifyMessageKeys.MISSING_SERVICE_INSTANCE.getName(),
+					CloudifyMessageKeys.MISSING_RESOURCE.getName(),
 					e.getMessageId());
 			AssertUtils.assertEquals(HttpStatus.SC_BAD_REQUEST, e.getStatus());
 		}

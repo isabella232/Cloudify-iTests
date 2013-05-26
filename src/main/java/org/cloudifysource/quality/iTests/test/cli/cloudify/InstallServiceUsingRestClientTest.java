@@ -28,9 +28,10 @@ import com.j_spaces.kernel.PlatformVersion;
  */
 public class InstallServiceUsingRestClientTest extends AbstractLocalCloudTest {
 	
+	private static final String SERVICE_FILE_NAME = "simple-service.groovy";
 	private static final String SERVICE_NAME = "simple";
 	private static final String SERVICE_DIR_PATH = 
-			CommandTestUtils.getPath("src/main/resources/apps/USM/usm/services/simple");
+			CommandTestUtils.getPath("src/main/resources/apps/USM/usm/simple");
 	private static final int INSTALL_TIMEOUT_MILLIS = 60 * 15 * 1000;
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, groups = "1")
@@ -43,7 +44,7 @@ public class InstallServiceUsingRestClientTest extends AbstractLocalCloudTest {
 		
 		final File serviceFolder = new File(SERVICE_DIR_PATH);
 		final File packedFile = Packager.pack(serviceFolder);
-		final UploadResponse uploadResponse = client.upload(packedFile.getName(), packedFile);
+		final UploadResponse uploadResponse = client.upload(null, packedFile);
 		final String uploadKey = uploadResponse.getUploadKey();
 		
 		InstallServiceRequest request = new InstallServiceRequest();
@@ -54,7 +55,7 @@ public class InstallServiceUsingRestClientTest extends AbstractLocalCloudTest {
 		//no debugging.
 		request.setDebugAll(false);
 		request.setSelfHealing(true);
-		request.setServiceFileName(packedFile.getName());
+		request.setServiceFileName(SERVICE_FILE_NAME);
 		//set timeout
 		request.setTimeoutInMillis(INSTALL_TIMEOUT_MILLIS);
 		
@@ -78,8 +79,10 @@ public class InstallServiceUsingRestClientTest extends AbstractLocalCloudTest {
 					LogUtils.log("USMState is " + usmState);
 					return (Integer.valueOf(usmState) == CloudifyConstants.USMState.RUNNING.ordinal());
 				} catch (RestException e) {
-					throw new RuntimeException("caught a RestException", e);
+					e.printStackTrace();
+					//throw new RuntimeException("caught a RestException", e);
 				}
+				return false;
 			}
 		} , AbstractTestSupport.OPERATION_TIMEOUT * 3);
 	}

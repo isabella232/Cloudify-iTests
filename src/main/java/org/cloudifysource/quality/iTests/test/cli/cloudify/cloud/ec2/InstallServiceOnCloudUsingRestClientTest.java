@@ -30,7 +30,7 @@ public class InstallServiceOnCloudUsingRestClientTest extends NewAbstractCloudTe
 
 	private static final String SERVICE_NAME = "simple";
 	private static final String SERVICE_DIR_PATH = 
-			CommandTestUtils.getPath("src/main/resources/apps/USM/usm/services/simple");
+			CommandTestUtils.getPath("src/main/resources/apps/USM/usm/simple");
 	private static final int INSTALL_TIMEOUT_MILLIS = 60 * 15 * 1000;
 	private static final String DEFAULT_APPLICATION_NAME = "default";
 
@@ -75,7 +75,7 @@ public class InstallServiceOnCloudUsingRestClientTest extends NewAbstractCloudTe
 		//no debugging.
 		request.setDebugAll(false);
 		request.setSelfHealing(true);
-		request.setServiceFileName(packedFile.getName());
+		request.setServiceFileName("simple-service.groovy");
 		//set timeout
 		request.setTimeoutInMillis(INSTALL_TIMEOUT_MILLIS);
 		
@@ -99,8 +99,10 @@ public class InstallServiceOnCloudUsingRestClientTest extends NewAbstractCloudTe
 					LogUtils.log("USMState is " + usmState);
 					return (Integer.valueOf(usmState) == CloudifyConstants.USMState.RUNNING.ordinal());
 				} catch (RestException e) {
-					throw new RuntimeException("caught a RestException", e);
+					e.printStackTrace();
+					//throw new RuntimeException("caught a RestException", e);
 				}
+				return false;
 			}
 		} , AbstractTestSupport.OPERATION_TIMEOUT * 3);
 	}

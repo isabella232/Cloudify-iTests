@@ -81,7 +81,7 @@ public class BootstrapErrorCodesTest extends NewAbstractCloudTest {
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
 	public void failedCloudifyExecutionTest() throws IOException, InterruptedException {
 		badBootstrapScript = "failed-cloudify-execution-bootstrap-management.sh";
-		BootstrapScriptErrors expectedError = BootstrapScriptErrors.CUSTOM;
+		BootstrapScriptErrors expectedError = BootstrapScriptErrors.CUSTOM_ERROR;
 		try {
 			super.bootstrap(bootstrapper);
 			AssertFail("Cloudify execution failed yet no error was thrown. Expected error: " 

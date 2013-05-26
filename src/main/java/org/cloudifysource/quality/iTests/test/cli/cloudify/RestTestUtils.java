@@ -31,7 +31,7 @@ import org.cloudifysource.dsl.internal.ServiceReader;
 import org.cloudifysource.dsl.internal.packaging.Packager;
 import org.cloudifysource.dsl.internal.packaging.PackagingException;
 import org.cloudifysource.restclient.GSRestClient;
-import org.cloudifysource.restclient.exceptions.RestException;
+import org.cloudifysource.restclient.RestException;
 import org.cloudifysource.restclient.StringUtils;
 
 import com.j_spaces.kernel.PlatformVersion;

@@ -5,7 +5,7 @@ import java.net.URL;
 import java.util.Map;
 
 import org.cloudifysource.restclient.GSRestClient;
-import org.cloudifysource.restclient.exceptions.RestException;
+import org.cloudifysource.restclient.RestException;
 import org.junit.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;

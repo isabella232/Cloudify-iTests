@@ -15,7 +15,7 @@ import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.NewAbstractCloudTest;
 import org.cloudifysource.quality.iTests.test.webui.WebuiTestUtils;
 import org.cloudifysource.restclient.GSRestClient;
-import org.cloudifysource.restclient.exceptions.RestException;
+import org.cloudifysource.restclient.RestException;
 import org.openspaces.admin.pu.DeploymentStatus;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;

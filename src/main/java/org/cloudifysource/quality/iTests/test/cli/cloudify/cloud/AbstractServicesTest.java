@@ -12,7 +12,7 @@ import org.cloudifysource.dsl.internal.packaging.PackagingException;
 import iTests.framework.utils.AssertUtils;
 import iTests.framework.utils.LogUtils;
 import org.cloudifysource.restclient.GSRestClient;
-import org.cloudifysource.restclient.exceptions.RestException;
+import org.cloudifysource.restclient.RestException;
 import org.testng.annotations.AfterMethod;
 
 import com.j_spaces.kernel.PlatformVersion;

@@ -28,7 +28,7 @@ import iTests.framework.utils.ScriptUtils;
 import org.cloudifysource.quality.iTests.framework.utils.ServiceInstaller;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
 import org.cloudifysource.restclient.GSRestClient;
-import org.cloudifysource.restclient.exceptions.RestException;
+import org.cloudifysource.restclient.RestException;
 import org.jclouds.compute.domain.NodeMetadata;
 
 import com.j_spaces.kernel.PlatformVersion;

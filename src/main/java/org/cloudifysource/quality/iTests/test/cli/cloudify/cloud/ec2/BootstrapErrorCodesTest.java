@@ -8,9 +8,8 @@ import java.io.IOException;
 
 import org.cloudifysource.esc.installer.remoteExec.BootstrapScriptErrors;
 import org.cloudifysource.quality.iTests.framework.utils.CloudBootstrapper;
-import org.cloudifysource.quality.iTests.framework.utils.JCloudsUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.NewAbstractCloudTest;
-import org.testng.annotations.AfterTest;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -32,72 +31,53 @@ public class BootstrapErrorCodesTest extends NewAbstractCloudTest {
 	public void init() throws Exception {
 		bootstrapper = new CloudBootstrapper();
 		bootstrapper.scanForLeakedNodes(true);
+		bootstrapper.setBootstrapExpectedToFail(true);
 	}
 	
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
-	public void wrongJavaDownloadUrlTest() throws IOException, InterruptedException {
+	public void wrongJavaDownloadUrlTest() throws Exception {
 		badBootstrapScript = "wrong-java-path-bootstrap-management.sh";
-		BootstrapScriptErrors expectedError = BootstrapScriptErrors.JAVA_DOWNLOAD_FAILED;
-		try {
-			super.bootstrap(bootstrapper);
-			AssertFail("Java download URL is wrong yet no error was thrown. Reported error: " 
-					+ expectedError.getErrorMessage() + " (" + expectedError.getErrorCode() + ")");
-		} catch (Throwable ae) {
-			assertTrue("Java download URL is wrong but the wrong error was thrown. Reported error: " + ae.getMessage(),
-					isMessageTextCorrect(ae.getMessage(), expectedError));
-		}
+		super.bootstrap(bootstrapper);
+		String bootstrapOutput = bootstrapper.getLastActionOutput();
+		assertTrue("Java download URL is wrong but the wrong error was thrown. Reported error: " + bootstrapOutput,
+				isBootstrapErrorCorrect(bootstrapOutput, BootstrapScriptErrors.JAVA_DOWNLOAD_FAILED));
 	}
 
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
-	public void wrongCloudifyOverridesUrlTest() throws IOException, InterruptedException {
+	public void wrongCloudifyOverridesUrlTest() throws Exception {
 		badBootstrapScript = "wrong-cloudify-overrides-bootstrap-management.sh";
-		BootstrapScriptErrors expectedError = BootstrapScriptErrors.CLOUDIFY_OVERRIDES_DOWNLOAD_FAILED;
-		try {
-			super.bootstrap(bootstrapper);
-			AssertFail("Cloudify overrides URL is wrong yet no error was thrown. Expected error: " 
-					+ expectedError.getErrorMessage() + " (" + expectedError.getErrorCode() + ")");
-		} catch (Throwable ae) {
-			assertTrue("Cloudify overrides URL is wrong but the wrong error was thrown. Reported error: " + ae.getMessage(),
-					isMessageTextCorrect(ae.getMessage(), expectedError));
-		}
+		super.bootstrap(bootstrapper);
+		String bootstrapOutput = bootstrapper.getLastActionOutput();
+		assertTrue("Cloudify overrides URL is wrong but the wrong error was thrown. Reported error: " + bootstrapOutput,
+				isBootstrapErrorCorrect(bootstrapOutput, BootstrapScriptErrors.CLOUDIFY_OVERRIDES_DOWNLOAD_FAILED));
 	}
 	
+	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
-	public void wrongChmodCommandTest() throws IOException, InterruptedException {
+	public void wrongChmodCommandTest() throws Exception {
 		badBootstrapScript = "wrong-chmod-bootstrap-management.sh";
-		BootstrapScriptErrors expectedError = BootstrapScriptErrors.CLOUDIFY_CHMOD_FAILED;
-		try {
-			super.bootstrap(bootstrapper);
-			AssertFail("The chmod command is wrong yet no error was thrown. Expected error: " 
-					+ expectedError.getErrorMessage() + " (" + expectedError.getErrorCode() + ")");
-		} catch (Throwable ae) {
-			assertTrue("The chmod command is wrong but the wrong error was thrown. Reported error: " + ae.getMessage(),
-					isMessageTextCorrect(ae.getMessage(), expectedError));
-		}
+		super.bootstrap(bootstrapper);
+		String bootstrapOutput = bootstrapper.getLastActionOutput();
+		assertTrue("The chmod command is wrong but the wrong error was thrown. Reported error: " + bootstrapOutput,
+				isBootstrapErrorCorrect(bootstrapOutput, BootstrapScriptErrors.CLOUDIFY_CHMOD_FAILED));
 	}
+	
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
-	public void failedCloudifyExecutionTest() throws IOException, InterruptedException {
+	public void failedCloudifyExecutionTest() throws Exception {
 		badBootstrapScript = "failed-cloudify-execution-bootstrap-management.sh";
-		BootstrapScriptErrors expectedError = BootstrapScriptErrors.CUSTOM_ERROR;
-		try {
-			super.bootstrap(bootstrapper);
-			AssertFail("Cloudify execution failed yet no error was thrown. Expected error: " 
-					+ expectedError.getErrorMessage() + " (" + expectedError.getErrorCode() + ")");
-		} catch (Throwable ae) {
-			assertTrue("Cloudify execution failed but the wrong error was thrown. Reported error: " + ae.getMessage(),
-					isMessageTextCorrect(ae.getMessage(), expectedError));
-		}
+		super.bootstrap(bootstrapper);
+		String bootstrapOutput = bootstrapper.getLastActionOutput();
+		assertTrue("Cloudify execution failed but the wrong error was thrown. Reported error: " + bootstrapOutput,
+				isBootstrapErrorCorrect(bootstrapOutput, BootstrapScriptErrors.CUSTOM));
 	}
 	
 	
-	@AfterTest
+	@AfterMethod
 	public void teardown() throws Exception {
 		super.teardown();
-		assertTrue("Leaked node were found", getService().scanLeakedAgentAndManagementNodes());
-		JCloudsUtils.closeContext();
 	}
 
 	@Override
@@ -124,7 +104,7 @@ public class BootstrapErrorCodesTest extends NewAbstractCloudTest {
 		IOUtils.replaceTextInFile(standardBootstrapFile.getAbsolutePath(), "\r\n", "\n");// DOS2UNIX
 	}
 	
-	private static boolean isMessageTextCorrect(final String messageText, final BootstrapScriptErrors expectedError) {
+	private static boolean isBootstrapErrorCorrect(final String messageText, final BootstrapScriptErrors expectedError) {
 		return (messageText.contains(String.valueOf(expectedError.getErrorCode())) &&
 				messageText.contains(expectedError.getErrorMessage()));
 	}

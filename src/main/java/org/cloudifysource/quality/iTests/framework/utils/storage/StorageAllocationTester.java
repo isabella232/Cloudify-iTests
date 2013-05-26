@@ -380,8 +380,12 @@ public class StorageAllocationTester {
 
         LogUtils.log("Searching for volumes created by the service failover healing");
         // the install should have created and attached a volume with a name prefix of the class name. see customizeCloud below.
+        LogUtils.log("First retrieving all volumes.");
         Set<VolumeDetails> allVolumes = storageApiHelper.getVolumesByPrefix(getVolumePrefixForTemplate("SMALL_BLOCK"));
+        LogUtils.log("All volumes are : " + allVolumes);
+        LogUtils.log("Remeving old volume that was created prior to the failover : " + ourVolume);
         allVolumes.remove(ourVolume);
+        LogUtils.log("All volumes are now : " + allVolumes);
         VolumeDetails ourVolumeNew = allVolumes.iterator().next();
 
         AssertUtils.assertNotNull("could not find the required volume after service failover healing", ourVolumeNew);

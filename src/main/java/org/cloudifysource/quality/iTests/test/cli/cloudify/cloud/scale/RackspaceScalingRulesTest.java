@@ -51,11 +51,11 @@ public class RackspaceScalingRulesTest extends AbstractScalingRulesCloudTest {
 	public void cleanup() throws IOException, InterruptedException {
 		super.cleanup();
 	}
-	
-	@AfterClass(alwaysRun = true)
-	public void cleanUp() throws Exception {
-		super.teardown();
-	}
+
+    @AfterClass(alwaysRun = true)
+    protected void teardown() throws Exception {
+        super.teardown();
+    }
 	
 	@Override
 	protected void beforeTeardown() throws Exception {

@@ -39,7 +39,7 @@ public class InstallServiceUsingRestClientTest extends AbstractLocalCloudTest {
     		throws RestException, IOException, PackagingException, 
     		DSLException, RestClientException {
 		final String version = PlatformVersion.getVersion();
-		final URL url = new URL(this.restUrl);
+		final URL url = new URL(restUrl);
 		final RestClient client = new RestClient(url, "", "", version);
 		
 		final File serviceFolder = new File(SERVICE_DIR_PATH);

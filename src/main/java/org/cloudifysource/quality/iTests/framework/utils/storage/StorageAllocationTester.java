@@ -373,7 +373,7 @@ public class StorageAllocationTester {
                     LogUtils.log("USMState is " + usmState);
                     return (Integer.valueOf(usmState) == CloudifyConstants.USMState.RUNNING.ordinal());
                 } catch (RestException e) {
-                    throw new RuntimeException("caught a RestException", e);
+                    throw new RuntimeException("Failed retrieving usm state : " + e.getMessage(), e);
                 }
             }
         } , AbstractTestSupport.OPERATION_TIMEOUT * 3);
@@ -383,8 +383,15 @@ public class StorageAllocationTester {
         LogUtils.log("First retrieving all volumes.");
         Set<VolumeDetails> allVolumes = storageApiHelper.getVolumesByPrefix(getVolumePrefixForTemplate("SMALL_BLOCK"));
         LogUtils.log("All volumes are : " + allVolumes);
-        LogUtils.log("Remeving old volume that was created prior to the failover : " + ourVolume);
-        allVolumes.remove(ourVolume);
+        LogUtils.log("Removing old volume that was created prior to the failover : " + ourVolume);
+
+        // VolumeDetails does not implement equals(), so this is a must
+        for (VolumeDetails volumeDetails : new HashSet<VolumeDetails>(allVolumes)) {
+            if (volumeDetails.getId().equals(ourVolume.getId())) {
+                allVolumes.remove(volumeDetails);
+                break;
+            }
+        }
         LogUtils.log("All volumes are now : " + allVolumes);
         VolumeDetails ourVolumeNew = allVolumes.iterator().next();
 

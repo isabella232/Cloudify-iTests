@@ -348,6 +348,7 @@ public class StorageAllocationTester {
             }
         } , AbstractTestSupport.OPERATION_TIMEOUT * 4);
 
+
         LogUtils.log("Waiting for service to recover");
         AssertUtils.repetitiveAssertTrue(serviceName + " service did not recover", new AssertUtils.RepetitiveConditionProvider() {
             @Override
@@ -362,6 +363,9 @@ public class StorageAllocationTester {
                 }
             }
         } , AbstractTestSupport.OPERATION_TIMEOUT * 3);
+
+        LogUtils.log("Deleting the original volume created by the service installation");
+        storageApiHelper.deleteVolume(ourVolume.getId());
 
         LogUtils.log("Waiting for USM_State to be " + CloudifyConstants.USMState.RUNNING);
         AssertUtils.repetitiveAssertTrue(serviceName + " service did not reach USM_State of RUNNING", new AssertUtils.RepetitiveConditionProvider() {
@@ -380,19 +384,7 @@ public class StorageAllocationTester {
 
         LogUtils.log("Searching for volumes created by the service failover healing");
         // the install should have created and attached a volume with a name prefix of the class name. see customizeCloud below.
-        LogUtils.log("First retrieving all volumes.");
         Set<VolumeDetails> allVolumes = storageApiHelper.getVolumesByPrefix(getVolumePrefixForTemplate("SMALL_BLOCK"));
-        LogUtils.log("All volumes are : " + allVolumes);
-        LogUtils.log("Removing old volume that was created prior to the failover : " + ourVolume);
-
-        // VolumeDetails does not implement equals(), so this is a must
-        for (VolumeDetails volumeDetails : new HashSet<VolumeDetails>(allVolumes)) {
-            if (volumeDetails.getId().equals(ourVolume.getId())) {
-                allVolumes.remove(volumeDetails);
-                break;
-            }
-        }
-        LogUtils.log("All volumes are now : " + allVolumes);
         VolumeDetails ourVolumeNew = allVolumes.iterator().next();
 
         AssertUtils.assertNotNull("could not find the required volume after service failover healing", ourVolumeNew);
@@ -402,8 +394,6 @@ public class StorageAllocationTester {
 
         installer.uninstall();
 
-        LogUtils.log("Deleting the original volume created by the service installation");
-        storageApiHelper.deleteVolume(ourVolume.getId());
     }
 
     private String getVolumePrefixForTemplate(final String template) {

@@ -1,11 +1,12 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.ec2;
 
+import iTests.framework.tools.SGTestHelper;
+import iTests.framework.utils.IOUtils;
+
 import java.io.File;
 import java.io.IOException;
 
-import iTests.framework.tools.SGTestHelper;
 import org.cloudifysource.quality.iTests.framework.utils.CloudBootstrapper;
-import iTests.framework.utils.IOUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.NewAbstractCloudTest;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -20,92 +21,82 @@ public class Ec2ValidationTest  extends NewAbstractCloudTest {
 	@BeforeClass
 	public void init() throws Exception {
 		bootstrapper = new CloudBootstrapper();
-		bootstrapper.scanForLeakedNodes(false);
+		bootstrapper.scanForLeakedNodes(true);
+		bootstrapper.setBootstrapExpectedToFail(true);
 	}
 	
+	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
-	public void wrongCredentialsTest() throws IOException, InterruptedException {
+	public void wrongCredentialsTest() throws Exception {
 		try {
+			bootstrapper.scanForLeakedNodes(false);
 			groovyFileName = "wrongcredentials-ec2-cloud.groovy";
 			super.bootstrap(bootstrapper);
-			assertTrue("The credentials are wrong yet no error was thrown", false);
-		} catch (Throwable ae) {
-			assertTrue("The credentials are wrong but the wrong error was thrown. Error was: " + ae.getMessage(),
-					ae.getMessage().contains("HTTP/1.1 401 Unauthorized"));
+			String bootstrapOutput = bootstrapper.getLastActionOutput();
+			assertTrue("The credentials are wrong but the wrong error was thrown. Reported error: " + bootstrapOutput,
+					bootstrapOutput.contains("HTTP/1.1 401 Unauthorized"));
+		} catch (Exception e) {
+			throw e;
+		} finally {
+			bootstrapper.scanForLeakedNodes(true);
 		}
 	}
 
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
-	public void wrongImageTest() throws IOException, InterruptedException {
-		try {
-			groovyFileName = "wrongimage-ec2-cloud.groovy";
-			super.bootstrap(bootstrapper);
-			assertTrue("The imageId is invalid yet no error was thrown", false);
-		} catch (Throwable ae) {
-			assertTrue("The imageId is invalid but the wrong error was thrown. Error was: " + ae.getMessage(),
-					ae.getMessage().contains("Invalid template configuration: could not get imageId"));
-		}
+	public void wrongImageTest() throws Exception {
+		groovyFileName = "wrongimage-ec2-cloud.groovy";
+		super.bootstrap(bootstrapper);
+		String bootstrapOutput = bootstrapper.getLastActionOutput();
+		assertTrue("The imageId is invalid but the wrong error was thrown. Reported error: " + bootstrapOutput,
+				bootstrapOutput.contains("Image") && bootstrapOutput.contains("is not valid for location"));
 	}
 	
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
-	public void wrongHardwareTest() throws IOException, InterruptedException {
-		try {
-			groovyFileName = "wronghardware-ec2-cloud.groovy";
-			super.bootstrap(bootstrapper);
-			assertTrue("The hardwareId is invalid yet no error was thrown", false);
-		} catch (Throwable ae) {
-			assertTrue("The hardwareId is invalid but the wrong error was thrown. Error was: " + ae.getMessage(),
-					ae.getMessage().contains("Invalid template configuration: hardwareId"));
-		}
+	public void wrongHardwareTest() throws Exception {
+		groovyFileName = "wronghardware-ec2-cloud.groovy";
+		super.bootstrap(bootstrapper);
+		String bootstrapOutput = bootstrapper.getLastActionOutput();
+		assertTrue("The hardwareId is invalid but the wrong error was thrown. Reported error: " + bootstrapOutput,
+				bootstrapOutput.contains("hardware") && bootstrapOutput.contains("is not valid for location"));
 	}
 	
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
-	public void wrongSecurityGroupTest() throws IOException, InterruptedException {
-		try {
-			groovyFileName = "wrongsecuritygroup-ec2-cloud.groovy";
-			super.bootstrap(bootstrapper);
-			assertTrue("The security group name is wrong yet no error was thrown", false);
-		} catch (Throwable ae) {
-			assertTrue("The security group name is wrong but the wrong error was thrown. "
-					+ "Error was: "	+ ae.getMessage(), 
-					ae.getMessage().contains("Invalid security groups configuration: Invalid security group name"));
-		}
+	public void wrongSecurityGroupTest() throws Exception {
+		groovyFileName = "wrongsecuritygroup-ec2-cloud.groovy";
+		super.bootstrap(bootstrapper);
+		String bootstrapOutput = bootstrapper.getLastActionOutput();
+		assertTrue("The security group name is wrong but the wrong error was thrown. "
+				+ "Reported error: " + bootstrapOutput,
+				bootstrapOutput.contains("Security group") && bootstrapOutput.contains("does not exist"));
 	}
 	
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
-	public void wrongKeyPairTest() throws IOException, InterruptedException {
-		try {
-			groovyFileName = "wrongkeypair-ec2-cloud.groovy";
-			super.bootstrap(bootstrapper);
-			assertTrue("The key-pair name is wrong yet no error was thrown", false);
-		} catch (Throwable ae) {
-			assertTrue("The key-pair name is wrong but the wrong error was thrown. Error was: " + ae.getMessage(),
-					ae.getMessage().contains("is invalid or in the wrong availability zone"));
-		}
+	public void wrongKeyPairTest() throws Exception {
+		groovyFileName = "wrongkeypair-ec2-cloud.groovy";
+		super.bootstrap(bootstrapper);
+		String bootstrapOutput = bootstrapper.getLastActionOutput();
+		assertTrue("The key-pair name is wrong but the wrong error was thrown. Reported error: " + bootstrapOutput,
+				bootstrapOutput.contains("is invalid or in the wrong availability zone"));
 	}
 	
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
-	public void wrongCloudifyUrlTest() throws IOException, InterruptedException {
-		try {
-			groovyFileName = "wrongcloudifyurl-ec2-cloud.groovy";
-			super.bootstrap(bootstrapper);
-			assertTrue("The cloudify URL is wrong yet no error was thrown", false);
-		} catch (Throwable ae) {
-			assertTrue("The cloudify URL is wrong but the wrong error was thrown. Error was: " + ae.getMessage(),
-					ae.getMessage().contains("Invalid cloudify URL"));
-		}
+	public void wrongCloudifyUrlTest() throws Exception {
+		groovyFileName = "wrongcloudifyurl-ec2-cloud.groovy";
+		super.bootstrap(bootstrapper);
+		String bootstrapOutput = bootstrapper.getLastActionOutput();
+		assertTrue("The cloudify URL is wrong but the wrong error was thrown. Reported error: " + bootstrapOutput,
+				bootstrapOutput.contains("Invalid cloudify URL"));
 	}
 	
 
 	@AfterClass
 	public void teardown() throws Exception {
-		//assertTrue("Leaked node were found", !getService().scanLeakedAgentAndManagementNodes());
-		//JCloudsUtils.closeContext();
+		super.teardown();
 	}
 	
 

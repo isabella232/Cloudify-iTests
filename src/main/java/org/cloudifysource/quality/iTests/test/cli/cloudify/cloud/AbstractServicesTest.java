@@ -50,10 +50,11 @@ public abstract class AbstractServicesTest extends NewAbstractCloudTest {
         installServiceAndWait(serviceFolderPath, serviceName, timeoutMins);
  		String restUrl = getRestUrl();
 		GSRestClient client = new GSRestClient("", "", new URL(restUrl), PlatformVersion.getVersionNumber());
+        LogUtils.log("Querying status of service " + serviceName + " from rest");
 		Map<String, Object> entriesJsonMap  = client.getAdminData("ProcessingUnits/Names/default." + serviceName + "/Status");
 		String serviceStatus = (String)entriesJsonMap.get(STATUS_PROPERTY);
 
-		AssertUtils.assertTrue("service is not intact", serviceStatus.equalsIgnoreCase("INTACT"));
+		AssertUtils.assertEquals("intact", serviceStatus.toLowerCase());
 
 		uninstallServiceAndWait(serviceName);
 	}

@@ -20,7 +20,6 @@ import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.NewAbstractCloudTest;
 import org.cloudifysource.restclient.RestClient;
 import org.cloudifysource.restclient.exceptions.RestClientException;
-import org.cloudifysource.restclient.exceptions.RestException;
 import org.cloudifysource.shell.exceptions.CLIException;
 import org.cloudifysource.shell.rest.RestAdminFacade;
 import org.testng.annotations.AfterClass;
@@ -59,7 +58,7 @@ public class InstallServiceOnCloudUsingRestClientTest extends NewAbstractCloudTe
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, groups = "1")
     public void testInstallService() 
-    		throws RestException, IOException, PackagingException, 
+    		throws IOException, PackagingException, 
     		DSLException, RestClientException, CLIException {
 		final String version = PlatformVersion.getVersion();
 		final URL url = new URL(this.getRestUrl());

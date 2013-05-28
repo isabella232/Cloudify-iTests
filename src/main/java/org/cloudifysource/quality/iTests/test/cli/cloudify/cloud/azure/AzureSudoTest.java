@@ -57,6 +57,6 @@ public class AzureSudoTest extends NewAbstractCloudTest {
     @Override
     protected void customizeCloud() throws Exception {
         super.customizeCloud();
-        super.getService().getAdditionalPropsToReplace().put("privileged true", "privileged false");
+        super.getService().getAdditionalPropsToReplace().put("privileged false", "privileged true");
     }
 }

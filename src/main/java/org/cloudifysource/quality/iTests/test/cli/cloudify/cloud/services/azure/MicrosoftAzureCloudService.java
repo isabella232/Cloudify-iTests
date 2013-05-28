@@ -272,7 +272,7 @@ public class MicrosoftAzureCloudService extends AbstractCloudService {
 		String cloudServiceFullPath = this.getPathToCloudFolder();
 
 		File originalCloudDriverConfigFile = new File(cloudServiceFullPath, "azure-cloud.groovy");
-		File customCloudDriverConfigFile = new File(SGTestHelper.getSGTestRootDir() + "/src/main/resources/apps/cloudify/cloud/azure", "azure-cloud.groovy");
+		File customCloudDriverConfigFile = new File(SGTestHelper.getCustomCloudConfigDir("azure") + "/azure-cloud.groovy");
 
 		Map<File, File> filesToReplace = new HashMap<File, File>();
 		filesToReplace.put(originalCloudDriverConfigFile, customCloudDriverConfigFile);

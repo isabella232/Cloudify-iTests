@@ -7,19 +7,22 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
-import org.cloudifysource.dsl.internal.CloudifyConstants;
+import org.cloudifysource.dsl.internal.CloudifyConstants.DeploymentState;
 import org.cloudifysource.dsl.internal.DSLException;
 import org.cloudifysource.dsl.internal.packaging.Packager;
 import org.cloudifysource.dsl.internal.packaging.PackagingException;
+import org.cloudifysource.dsl.rest.ApplicationDescription;
+import org.cloudifysource.dsl.rest.ServiceDescription;
 import org.cloudifysource.dsl.rest.request.InstallServiceRequest;
 import org.cloudifysource.dsl.rest.response.UploadResponse;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.NewAbstractCloudTest;
-import org.cloudifysource.restclient.GSRestClient;
 import org.cloudifysource.restclient.RestClient;
 import org.cloudifysource.restclient.exceptions.RestClientException;
 import org.cloudifysource.restclient.exceptions.RestException;
+import org.cloudifysource.shell.exceptions.CLIException;
+import org.cloudifysource.shell.rest.RestAdminFacade;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -57,7 +60,7 @@ public class InstallServiceOnCloudUsingRestClientTest extends NewAbstractCloudTe
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, groups = "1")
     public void testInstallService() 
     		throws RestException, IOException, PackagingException, 
-    		DSLException, RestClientException {
+    		DSLException, RestClientException, CLIException {
 		final String version = PlatformVersion.getVersion();
 		final URL url = new URL(this.getRestUrl());
 		final RestClient client = new RestClient(url, "", "", version);
@@ -83,24 +86,29 @@ public class InstallServiceOnCloudUsingRestClientTest extends NewAbstractCloudTe
 		client.installService(DEFAULT_APPLICATION_NAME, SERVICE_NAME, request);
 		
 		//Now we wait for the USM service state to become RUNNING.
-		waitForServiceDeployment(version, url);
+		waitForServiceInstall(url);
 	}
-
-	void waitForServiceDeployment(final String version, final URL url)
-			throws RestException {
-		final GSRestClient oldRestClient = new GSRestClient("", "", url, version);
-		LogUtils.log("Waiting for USM_State to be " + CloudifyConstants.USMState.RUNNING);
-		AssertUtils.repetitiveAssertTrue(SERVICE_NAME + " service did not reach USM_State of RUNNING", new AssertUtils.RepetitiveConditionProvider() {
+	
+	void waitForServiceInstall(final URL url)
+			throws CLIException, RestClientException {
+		final RestAdminFacade adminFacade = new RestAdminFacade();
+		adminFacade.connect(null, null, url.toString(), false);
+		
+		LogUtils.log("Waiting for application deployment state to be " + DeploymentState.STARTED) ;
+		AssertUtils.repetitiveAssertTrue(SERVICE_NAME + " service failed to deploy", new AssertUtils.RepetitiveConditionProvider() {
 			@Override
 			public boolean getCondition() {
-				final String brokenServiceRestUrl = "ProcessingUnits/Names/default." + SERVICE_NAME;
 				try {
-					String usmState = (String) oldRestClient.getAdminData(brokenServiceRestUrl + "/Instances/0/Statistics/Monitors/USM/Monitors/USM_State").get("USM_State");
-					LogUtils.log("USMState is " + usmState);
-					return (Integer.valueOf(usmState) == CloudifyConstants.USMState.RUNNING.ordinal());
-				} catch (RestException e) {
-					e.printStackTrace();
-					//throw new RuntimeException("caught a RestException", e);
+					ApplicationDescription servicesDescriptionList = adminFacade.getServicesDescriptionList(DEFAULT_APPLICATION_NAME);
+					for (ServiceDescription description : servicesDescriptionList.getServicesDescription()) {
+						if (description.getServiceName().equals(SERVICE_NAME)) {
+							if (description.getServiceState().equals(DeploymentState.STARTED)) {
+								return true;
+							}
+						}
+					}
+				} catch (final CLIException e) {
+					LogUtils.log("Failed getting service description");
 				}
 				return false;
 			}

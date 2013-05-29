@@ -4,8 +4,8 @@ import java.io.IOException;
 
 public class Ec2WinCloudService extends Ec2CloudService {
 
-    private static final String DEFAULT_EU_WEST_MEDIUM_WIN_AMI = "eu-west-1/ami-403a3034";
-    private static final String DEFAULT_US_EAST_MEDIUM_WIN_AMI = "us-east-1/ami-ceb129a7";
+    private static final String DEFAULT_EU_WEST_MEDIUM_WIN_AMI = "eu-west-1/ami-e3756497";
+    private static final String DEFAULT_US_EAST_MEDIUM_WIN_AMI = "us-east-1/ami-b5bcd2dc";
 
     private static final String IMAGE_ID = "imageId";
 

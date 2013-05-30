@@ -199,7 +199,7 @@ public class AbstractLocalCloudTest extends AbstractTestSupport {
 			final long pid = entry.getKey();
 			final ProcessDetails procDetails = entry.getValue();
 
-			if (procDetails.baseName.contains("java") && !Arrays.asList(procDetails.args).contains("cloudify_itests_start.groovy")) {
+			if (procDetails.baseName.contains("java") && !Arrays.asList(procDetails.args).contains("itests_start.groovy")) {
 				final String[] args = procDetails.args;
 				for (final String arg : args) {
 					if (suspectJavaProcessNames.contains(arg)) {

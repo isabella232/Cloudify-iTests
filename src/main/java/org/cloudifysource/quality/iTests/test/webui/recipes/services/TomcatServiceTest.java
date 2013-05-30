@@ -1,5 +1,8 @@
 package org.cloudifysource.quality.iTests.test.webui.recipes.services;
 
+import iTests.framework.utils.AssertUtils;
+import iTests.framework.utils.AssertUtils.RepetitiveConditionProvider;
+
 import java.io.IOException;
 
 import org.openspaces.admin.pu.DeploymentStatus;
@@ -14,15 +17,11 @@ import com.gigaspaces.webuitf.dashboard.ServicesGrid.ApplicationServicesGrid;
 import com.gigaspaces.webuitf.dashboard.ServicesGrid.ApplicationsMenuPanel;
 import com.gigaspaces.webuitf.dashboard.ServicesGrid.Icon;
 import com.gigaspaces.webuitf.dashboard.ServicesGrid.InfrastructureServicesGrid;
-import com.gigaspaces.webuitf.services.PuTreeGrid;
 import com.gigaspaces.webuitf.services.ServicesTab;
 import com.gigaspaces.webuitf.topology.TopologyTab;
 import com.gigaspaces.webuitf.topology.applicationmap.ApplicationMap;
 import com.gigaspaces.webuitf.topology.applicationmap.ApplicationNode;
 import com.gigaspaces.webuitf.topology.healthpanel.HealthPanel;
-
-import iTests.framework.utils.AssertUtils;
-import iTests.framework.utils.AssertUtils.RepetitiveConditionProvider;
 
 public class TomcatServiceTest extends AbstractSeleniumServiceRecipeTest {
 	
@@ -144,13 +143,6 @@ public class TomcatServiceTest extends AbstractSeleniumServiceRecipeTest {
 
 		ServicesTab servicesTab = mainNav.switchToServices();
 
-		PuTreeGrid puTreeGrid = servicesTab.getPuTreeGrid();
-
-		assertTrue(puTreeGrid.getProcessingUnit("webui") != null);
-		assertTrue(puTreeGrid.getProcessingUnit("rest") != null);
-		assertTrue(puTreeGrid.getProcessingUnit(DEFAULT_TOMCAT_SERVICE_FULL_NAME) != null);
 		uninstallService("tomcat", true);
-
 	}
-
 }

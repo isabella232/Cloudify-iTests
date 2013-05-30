@@ -1,5 +1,8 @@
 package org.cloudifysource.quality.iTests.test.webui.recipes.services;
 
+import iTests.framework.utils.AssertUtils;
+import iTests.framework.utils.AssertUtils.RepetitiveConditionProvider;
+
 import java.io.IOException;
 
 import org.openspaces.admin.pu.DeploymentStatus;
@@ -14,15 +17,10 @@ import com.gigaspaces.webuitf.dashboard.ServicesGrid.ApplicationServicesGrid;
 import com.gigaspaces.webuitf.dashboard.ServicesGrid.ApplicationsMenuPanel;
 import com.gigaspaces.webuitf.dashboard.ServicesGrid.Icon;
 import com.gigaspaces.webuitf.dashboard.ServicesGrid.InfrastructureServicesGrid;
-import com.gigaspaces.webuitf.services.PuTreeGrid;
-import com.gigaspaces.webuitf.services.ServicesTab;
 import com.gigaspaces.webuitf.topology.TopologyTab;
 import com.gigaspaces.webuitf.topology.applicationmap.ApplicationMap;
 import com.gigaspaces.webuitf.topology.applicationmap.ApplicationNode;
 import com.gigaspaces.webuitf.topology.healthpanel.HealthPanel;
-
-import iTests.framework.utils.AssertUtils;
-import iTests.framework.utils.AssertUtils.RepetitiveConditionProvider;
 
 public class CassandraServiceTest extends AbstractSeleniumServiceRecipeTest  {
 		
@@ -132,15 +130,8 @@ public class CassandraServiceTest extends AbstractSeleniumServiceRecipeTest  {
 		assertTrue("Compaction Manager Pending Tasks " + METRICS_ASSERTION_SUFFIX, healthPanel.getMetric(COMPACTION_MANAGER_PENDING_TASKS) != null);
 		assertTrue("Commit Log Active Tasks" + METRICS_ASSERTION_SUFFIX , healthPanel.getMetric(COMMIT_LOG_ACTIVE_TASKS) != null);
 
-		ServicesTab servicesTab = mainNav.switchToServices();
+		mainNav.switchToServices();
 
-		PuTreeGrid puTreeGrid = servicesTab.getPuTreeGrid();
-
-		assertTrue(puTreeGrid.getProcessingUnit("webui") != null);
-		assertTrue(puTreeGrid.getProcessingUnit("rest") != null);
-		assertTrue(puTreeGrid.getProcessingUnit(DEFAULT_CASSANDRA_FULL_SERVICE_NAME) != null);
 		uninstallService("cassandra", true);
-
 	}
-
 }

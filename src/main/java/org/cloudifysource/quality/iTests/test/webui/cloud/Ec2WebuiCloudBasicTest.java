@@ -1,5 +1,10 @@
 package org.cloudifysource.quality.iTests.test.webui.cloud;
 
+import iTests.framework.utils.AssertUtils;
+import iTests.framework.utils.AssertUtils.RepetitiveConditionProvider;
+import iTests.framework.utils.LogUtils;
+import iTests.framework.utils.ScriptUtils;
+
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -7,10 +12,6 @@ import java.net.UnknownHostException;
 import java.util.List;
 import java.util.Map;
 
-import iTests.framework.utils.AssertUtils;
-import iTests.framework.utils.AssertUtils.RepetitiveConditionProvider;
-import iTests.framework.utils.LogUtils;
-import iTests.framework.utils.ScriptUtils;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.NewAbstractCloudTest;
 import org.cloudifysource.quality.iTests.test.webui.WebuiTestUtils;
@@ -30,9 +31,6 @@ import com.gigaspaces.webuitf.dashboard.alerts.AlertsPanel.WebUIAlert;
 import com.gigaspaces.webuitf.dashboard.events.DashboardEventsGrid;
 import com.gigaspaces.webuitf.dashboard.events.EventsPanel;
 import com.gigaspaces.webuitf.events.WebUIAdminEvent;
-import com.gigaspaces.webuitf.services.HostsAndServicesGrid;
-import com.gigaspaces.webuitf.services.PuTreeGrid;
-import com.gigaspaces.webuitf.services.ServicesTab;
 import com.gigaspaces.webuitf.topology.TopologySubPanel;
 import com.gigaspaces.webuitf.topology.TopologyTab;
 import com.gigaspaces.webuitf.topology.applicationmap.ApplicationMap;
@@ -56,7 +54,7 @@ public class Ec2WebuiCloudBasicTest extends NewAbstractCloudTest {
 	private String restUrl;
 	private static final String applicationName = "petclinic";
 	private static final String restApplicationName = "rest";
-	private static final String webUiApplicationName = "webui";	
+	//private static final String webUiApplicationName = "webui";	
 	private static final String APPLICATION_PU_LABEL = applicationName +".tomcat";	
 	private static final String METRICS_ASSERTION_SUFFIX = "No such metric";
 	private static final String SERVICE_NAME = applicationName+".mongod";
@@ -64,7 +62,7 @@ public class Ec2WebuiCloudBasicTest extends NewAbstractCloudTest {
 	private static String applicationPath;
 	private DashboardTab dashboardTab;
 	private TopologyTab topologyTab;
-	private ServicesTab servicesTab;
+//	private ServicesTab servicesTab;
 	private MainNavigation mainNav;
 	private static long assertWaitingTime = 10000;
 	
@@ -123,9 +121,9 @@ public class Ec2WebuiCloudBasicTest extends NewAbstractCloudTest {
 		
 		checkApplicationsTab(); 				
 		
-		servicesTab = mainNav.switchToServices();
+		mainNav.switchToServices();
 		
-		checkServicesTab(); 
+ 
 		////// end tests of webui /////
 			
 		
@@ -134,22 +132,6 @@ public class Ec2WebuiCloudBasicTest extends NewAbstractCloudTest {
 		LogUtils.log("End of test - ec2 webui cloud");
 	}
 
-	
-	private void checkServicesTab() {
-		LogUtils.log("Testing the services tab");
-		HostsAndServicesGrid hostAndServicesGrid = servicesTab.getHostAndServicesGrid();
-		AssertUtils.assertNotNull("Host and Services is null",hostAndServicesGrid);
-		
-		PuTreeGrid servicesTree = servicesTab.getPuTreeGrid();
-		AssertUtils.assertNotNull("Services Tree is null",servicesTree);
-		
-		AssertUtils.assertNotNull("No pu contains the application ",servicesTree.getProcessingUnit(APPLICATION_PU_LABEL));
-		AssertUtils.assertNotNull("No pu contains webui",servicesTree.getProcessingUnit(webUiApplicationName));
-		AssertUtils.assertNotNull("No pu contains rest",servicesTree.getProcessingUnit(restApplicationName));
-		
-		LogUtils.log("services tab is OK");		
-	}
-	
 	
 	@SuppressWarnings("unchecked")
 	private void checkApplicationsTab() throws RestException, MalformedURLException {			

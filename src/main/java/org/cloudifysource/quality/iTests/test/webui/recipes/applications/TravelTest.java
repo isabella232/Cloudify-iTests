@@ -1,5 +1,8 @@
 package org.cloudifysource.quality.iTests.test.webui.recipes.applications;
 
+import iTests.framework.utils.AssertUtils;
+import iTests.framework.utils.AssertUtils.RepetitiveConditionProvider;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -11,8 +14,6 @@ import org.openspaces.admin.pu.DeploymentStatus;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-
-
 import com.gigaspaces.webuitf.LoginPage;
 import com.gigaspaces.webuitf.MainNavigation;
 import com.gigaspaces.webuitf.dashboard.DashboardTab;
@@ -21,16 +22,12 @@ import com.gigaspaces.webuitf.dashboard.ServicesGrid.ApplicationServicesGrid;
 import com.gigaspaces.webuitf.dashboard.ServicesGrid.ApplicationsMenuPanel;
 import com.gigaspaces.webuitf.dashboard.ServicesGrid.Icon;
 import com.gigaspaces.webuitf.dashboard.ServicesGrid.InfrastructureServicesGrid;
-import com.gigaspaces.webuitf.services.PuTreeGrid;
 import com.gigaspaces.webuitf.services.ServicesTab;
 import com.gigaspaces.webuitf.topology.TopologyTab;
 import com.gigaspaces.webuitf.topology.applicationmap.ApplicationMap;
 import com.gigaspaces.webuitf.topology.applicationmap.ApplicationNode;
 import com.gigaspaces.webuitf.topology.applicationmap.Connector;
 import com.gigaspaces.webuitf.topology.healthpanel.HealthPanel;
-
-import iTests.framework.utils.AssertUtils;
-import iTests.framework.utils.AssertUtils.RepetitiveConditionProvider;
 
 public class TravelTest extends AbstractSeleniumApplicationRecipeTest {
 	
@@ -174,14 +171,6 @@ public class TravelTest extends AbstractSeleniumApplicationRecipeTest {
 
 		ServicesTab servicesTab = mainNav.switchToServices();
 
-		PuTreeGrid puTreeGrid = servicesTab.getPuTreeGrid();
-
-		AbstractTestSupport.assertTrue(puTreeGrid.getProcessingUnit("webui") != null);
-		AbstractTestSupport.assertTrue(puTreeGrid.getProcessingUnit("rest") != null);
-		AbstractTestSupport.assertTrue(puTreeGrid.getProcessingUnit(CASSANDRA_SERVICE_FULL_NAME) != null);
-		AbstractTestSupport.assertTrue(puTreeGrid.getProcessingUnit(TOMCAT_SERVICE_FULL_NAME) != null);
 		uninstallApplication(TRAVEL_APPLICATION_NAME, true);
-
 	}
-
 }

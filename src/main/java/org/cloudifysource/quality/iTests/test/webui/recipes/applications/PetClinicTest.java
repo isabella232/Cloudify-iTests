@@ -1,6 +1,8 @@
 package org.cloudifysource.quality.iTests.test.webui.recipes.applications;
 
 import static org.testng.AssertJUnit.fail;
+import iTests.framework.utils.AssertUtils;
+import iTests.framework.utils.AssertUtils.RepetitiveConditionProvider;
 
 import java.io.IOException;
 import java.util.List;
@@ -13,8 +15,6 @@ import org.openspaces.admin.pu.DeploymentStatus;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-
-
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
@@ -25,15 +25,11 @@ import com.gigaspaces.webuitf.dashboard.ServicesGrid.ApplicationServicesGrid;
 import com.gigaspaces.webuitf.dashboard.ServicesGrid.ApplicationsMenuPanel;
 import com.gigaspaces.webuitf.dashboard.ServicesGrid.Icon;
 import com.gigaspaces.webuitf.dashboard.ServicesGrid.InfrastructureServicesGrid;
-import com.gigaspaces.webuitf.services.PuTreeGrid;
 import com.gigaspaces.webuitf.services.ServicesTab;
 import com.gigaspaces.webuitf.topology.TopologyTab;
 import com.gigaspaces.webuitf.topology.applicationmap.ApplicationMap;
 import com.gigaspaces.webuitf.topology.applicationmap.ApplicationNode;
 import com.gigaspaces.webuitf.topology.applicationmap.Connector;
-
-import iTests.framework.utils.AssertUtils;
-import iTests.framework.utils.AssertUtils.RepetitiveConditionProvider;
 
 public class PetClinicTest extends AbstractSeleniumApplicationRecipeTest {
 	
@@ -231,14 +227,6 @@ public class PetClinicTest extends AbstractSeleniumApplicationRecipeTest {
 
 
         ServicesTab servicesTab = mainNav.switchToServices();
-		
-		PuTreeGrid puTreeGrid = servicesTab.getPuTreeGrid();
-		
-		assertTrue(puTreeGrid.getProcessingUnit(TOMCAT_FULL_SERVICE_NAME) != null);
-		assertTrue(puTreeGrid.getProcessingUnit(MONGOD_FULL_SERVICE_NAME) != null);
-		assertTrue(puTreeGrid.getProcessingUnit(MONGOS_FULL_SERVICE_NAME) != null);
-		assertTrue(puTreeGrid.getProcessingUnit(MONGOCFG_FULL_SERVICE_NAME) != null);
-		assertTrue(puTreeGrid.getProcessingUnit(APACHELB_FULL_SERVICE_NAME) != null);
 		
 		takeScreenShot(this.getClass(), "petClinicDemoTest","passed-services");
 		

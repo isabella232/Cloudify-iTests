@@ -1,5 +1,11 @@
 package org.cloudifysource.quality.iTests.test.webui.cloud;
 
+import iTests.framework.utils.AssertUtils;
+import iTests.framework.utils.AssertUtils.RepetitiveConditionProvider;
+import iTests.framework.utils.LogUtils;
+
+import java.util.Set;
+
 import com.gigaspaces.webuitf.LoginPage;
 import com.gigaspaces.webuitf.MainNavigation;
 import com.gigaspaces.webuitf.dashboard.DashboardTab;
@@ -11,21 +17,18 @@ import com.gigaspaces.webuitf.dashboard.ServicesGrid.ApplicationServicesGrid.Web
 import com.gigaspaces.webuitf.dashboard.ServicesGrid.ApplicationServicesGrid.WebServerModule;
 import com.gigaspaces.webuitf.dashboard.ServicesGrid.ApplicationsMenuPanel;
 import com.gigaspaces.webuitf.dashboard.ServicesGrid.InfrastructureServicesGrid;
-import com.gigaspaces.webuitf.dashboard.ServicesGrid.InfrastructureServicesGrid.*;
+import com.gigaspaces.webuitf.dashboard.ServicesGrid.InfrastructureServicesGrid.ESMInst;
+import com.gigaspaces.webuitf.dashboard.ServicesGrid.InfrastructureServicesGrid.GSAInst;
+import com.gigaspaces.webuitf.dashboard.ServicesGrid.InfrastructureServicesGrid.GSCInst;
+import com.gigaspaces.webuitf.dashboard.ServicesGrid.InfrastructureServicesGrid.GSMInst;
+import com.gigaspaces.webuitf.dashboard.ServicesGrid.InfrastructureServicesGrid.Hosts;
+import com.gigaspaces.webuitf.dashboard.ServicesGrid.InfrastructureServicesGrid.LUSInst;
 import com.gigaspaces.webuitf.services.HostsAndServicesGrid;
-import com.gigaspaces.webuitf.services.PuTreeGrid;
-import com.gigaspaces.webuitf.services.PuTreeGrid.WebUIProcessingUnit;
 import com.gigaspaces.webuitf.services.ServicesTab;
 import com.gigaspaces.webuitf.topology.TopologyTab;
 import com.gigaspaces.webuitf.topology.applicationmap.ApplicationMap;
 import com.gigaspaces.webuitf.topology.applicationmap.ApplicationNode;
 import com.gigaspaces.webuitf.util.AjaxUtils;
-import iTests.framework.utils.AssertUtils;
-import iTests.framework.utils.AssertUtils.RepetitiveConditionProvider;
-import iTests.framework.utils.LogUtils;
-
-import java.util.Map;
-import java.util.Set;
 
 public class WebSecurityAuthorizationHelper {
 	
@@ -61,10 +64,8 @@ public class WebSecurityAuthorizationHelper {
 		LogUtils.log("Testing the services tab");
 
 		HostsAndServicesGrid hostAndServicesGrid = servicesTab.getHostAndServicesGrid();
-		PuTreeGrid servicesTree = servicesTab.getPuTreeGrid();
 
 		checkServicesHostsView(hostAndServicesGrid, permittedServicesWrapper);
-		checkServicesProcessingUnitsView( servicesTree, permittedServicesWrapper);
 
 		LogUtils.log("services tab is OK");		
 	}
@@ -77,6 +78,7 @@ public class WebSecurityAuthorizationHelper {
 //		hostAndServicesGrid.countNumberOf(  );
 	}
 
+	/*
 	private static void checkServicesProcessingUnitsView( PuTreeGrid servicesTree, 
 			PermittedServicesWrapper permittedServicesWrapper ) {
 
@@ -101,7 +103,7 @@ public class WebSecurityAuthorizationHelper {
 			}
 		}
 	}
-
+*/
 
 	@SuppressWarnings("unchecked")
 	private static void checkApplicationsTab( TopologyTab topologyTab, 

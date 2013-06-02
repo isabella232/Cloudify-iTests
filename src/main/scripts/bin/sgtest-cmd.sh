@@ -16,6 +16,9 @@
  BRANCH_NAME=${14}
  SUITE_TYPE=${15}
  MAVEN_REPO_LOCAL=${16}
+ MAVEN_PROJECTS_VERSION_XAP=${17}
+ MAVEN_PROJECTS_VERSION_CLOUDIFY=${18}
+
  EXT_JAVA_OPTIONS="${EXT_JAVA_OPTIONS} -Dcom.gs.work=${SUITE_WORK_DIR} -Dcom.gs.deploy=${SUITE_DEPLOY_DIR}"; export EXT_JAVA_OPTIONS
  
 
@@ -48,7 +51,9 @@ mvn test -e -U -P tgrid-cloudify-iTests \
 -Dsupported-clouds=${SUPPORTED_CLOUDS} \
 -Dbranch.name=${BRANCH_NAME} \
 -DiTests.suiteType=${SUITE_TYPE} \
--Dmaven.repo.local=${MAVEN_REPO_LOCAL}
+-Dmaven.repo.local=${MAVEN_REPO_LOCAL} \
+-DgsVersion=${MAVEN_PROJECTS_VERSION_XAP} \
+-DcloudifyVersion=${MAVEN_PROJECTS_VERSION_CLOUDIFY}
 
 #return java exit code. 
 exit $?

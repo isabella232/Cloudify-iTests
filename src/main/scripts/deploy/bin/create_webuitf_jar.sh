@@ -20,7 +20,7 @@ popd
 Cloudify_iTests_webuitf=${WEBUI_TMP_DIR}/Cloudify-iTests-webuitf
 
 pushd ${Cloudify_iTests_webuitf}
-mvn clean install s3client:deploy -U -Dmaven.repo.local=${MAVEN_REPO_LOCAL}
+mvn clean install s3client:deploy -U -Dmaven.repo.local=${MAVEN_REPO_LOCAL} -DgsVersion=${MAVEN_PROJECTS_VERSION_XAP} -DcloudifyVersion=${MAVEN_PROJECTS_VERSION_CLOUDIFY}
 
 rm -rf ${WEBUI_TMP_DIR}
 popd

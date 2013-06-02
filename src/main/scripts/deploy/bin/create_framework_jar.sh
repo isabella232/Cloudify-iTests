@@ -20,7 +20,7 @@ iTests_Framework=${FRAMEWORK_TMP_DIR}/iTests-Framework
 
 echo "deploying framework"
 pushd ${iTests_Framework}
-mvn clean install s3client:deploy -U -Dbuild.home=${BUILD_DIR} -Dmaven.repo.local=${MAVEN_REPO_LOCAL}
+mvn clean install s3client:deploy -U -Dbuild.home=${BUILD_DIR} -Dmaven.repo.local=${MAVEN_REPO_LOCAL} -DgsVersion=${MAVEN_PROJECTS_VERSION_XAP} -DcloudifyVersion=${MAVEN_PROJECTS_VERSION_CLOUDIFY}
 
 rm -rf ${FRAMEWORK_TMP_DIR}
 popd

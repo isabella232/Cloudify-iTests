@@ -2,7 +2,7 @@ import framework.utils.usm.StringWrapper
 import Helper
 
 // test for grab
-@Grab(group='commons-lang', module='commons-lang', version='2.4')
+@Grab(group='commons-lang', module='commons-lang', version='2.6')
 import org.apache.commons.lang.WordUtils
 
 import static ExternalMonitors.*

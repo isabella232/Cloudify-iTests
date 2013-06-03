@@ -19,7 +19,7 @@ set Cloudify_iTests_webuitf=%WEBUI_TMP_DIR%\Cloudify-iTests-webuitf
 
 @echo deploying webuitf...
 pushd %Cloudify_iTests_webuitf%
-mvn clean install s3client:deploy -U
+mvn clean install s3client:deploy -U -DgsVersion=%MAVEN_PROJECTS_VERSION_XAP% -DcloudifyVersion=%MAVEN_PROJECTS_VERSION_CLOUDIFY%
 popd
 
 rmdir /s /q %Cloudify_iTests_webuitf%

@@ -17,7 +17,7 @@ set iTests_Framework=%FRAMEWORK_TMP_DIR%\iTests-Framework
 
 @echo deploying framework...
 pushd %iTests_Framework%
-mvn clean install s3client:deploy -U -Dbuild.home=%BUILD_LOCATION%
+mvn clean install s3client:deploy -U -Dbuild.home=%BUILD_LOCATION% -DgsVersion=%MAVEN_PROJECTS_VERSION_XAP% -DcloudifyVersion=%MAVEN_PROJECTS_VERSION_CLOUDIFY%
 popd
 
 rmdir /s /q %iTests_Framework%

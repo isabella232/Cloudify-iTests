@@ -34,19 +34,19 @@ public class ListServicesAndApplicationsCommandsTest extends AbstractLocalCloudT
 		
 		while (!applicationDeployedWithFailure) {
 			String listApplicationsOutput = CommandTestUtils.runCommandAndWait("connect " + restUrl + ";list-applications");
-			if (listApplicationsOutput.contains("groovyApp.badGroovyService  " + DeploymentState.INSTALLING.toString())) {
+			if (listApplicationsOutput.contains("groovyApp.badGroovyService  " + DeploymentState.IN_PROGRESS.toString())) {
 				badGroovyServiceInstallStateOccurred = true;
 			}
 			if (listApplicationsOutput.contains("groovyApp.badGroovyService  " + DeploymentState.FAILED.toString())) {
 				badGroovyServiceFailedStateOccurred = true;
 			}
-			if (listApplicationsOutput.contains("groovyApp.groovyService  " + DeploymentState.INSTALLING.toString())) {
+			if (listApplicationsOutput.contains("groovyApp.groovyService  " + DeploymentState.IN_PROGRESS.toString())) {
 				groovyServiceInstallStateOccurred = true;
 			}
 			if (listApplicationsOutput.contains("groovyApp.groovyService  " + DeploymentState.STARTED.toString())) {
 				groovyServiceStartStateOccurred = true;
 			}
-			if (listApplicationsOutput.contains("groovyApp  " + DeploymentState.INSTALLING.toString())) {
+			if (listApplicationsOutput.contains("groovyApp  " + DeploymentState.IN_PROGRESS.toString())) {
 				applicationInstallStateOccurred = true;
 			}
 			if (listApplicationsOutput.contains("groovyApp  " + DeploymentState.FAILED.toString())) {
@@ -77,19 +77,19 @@ public class ListServicesAndApplicationsCommandsTest extends AbstractLocalCloudT
 		
 		while (!applicationDeployed) {
 			String listApplicationsOutput = CommandTestUtils.runCommandAndWait("connect " + restUrl + ";list-applications");
-			if (listApplicationsOutput.contains("petclinic.mongod  " + DeploymentState.INSTALLING.toString())) {
+			if (listApplicationsOutput.contains("petclinic.mongod  " + DeploymentState.IN_PROGRESS.toString())) {
 				mongodInstallStateOccurred = true;
 			}
 			if (listApplicationsOutput.contains("petclinic.mongod  " + DeploymentState.STARTED.toString())) {
 				mongodStartedStateOccurred = true;
 			}
-			if (listApplicationsOutput.contains("petclinic.tomcat  " + DeploymentState.INSTALLING.toString())) {
+			if (listApplicationsOutput.contains("petclinic.tomcat  " + DeploymentState.IN_PROGRESS.toString())) {
 				tomcatInstallStateOccurred = true;
 			}
 			if (listApplicationsOutput.contains("petclinic.tomcat  " + DeploymentState.STARTED.toString())) {
 				tomcatStartedStateOccurred = true;
 			}
-			if (listApplicationsOutput.contains("petclinic  " + DeploymentState.INSTALLING.toString())) {
+			if (listApplicationsOutput.contains("petclinic  " + DeploymentState.IN_PROGRESS.toString())) {
 				applicationInstallStateOccurred = true;
 			}
 			if (listApplicationsOutput.contains("petclinic  " + DeploymentState.STARTED.toString())) {

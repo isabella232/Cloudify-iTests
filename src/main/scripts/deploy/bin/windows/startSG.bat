@@ -42,18 +42,17 @@ set MAVEN_PROJECTS_VERSION_CLOUDIFY=%9
 call set-build-env.bat
 
 @echo cleaning build folder..
-@if exist %BUILD_LOCATION% rmdir %BUILD_LOCATION% /s /q
-@if exist %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER% rmdir %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER% /s /q
+@if exist %BUILD_TEST_DIR% rmdir %BUILD_TEST_DIR% /s /q
 
 mkdir %BUILD_TEST_DIR%
 set SGTEST_HOME=%BUILD_TEST_DIR%\Cloudify-iTests
 
 @echo retrieving build from tarzan...
 @mkdir %BUILD_LOCATION%
-xcopy %REMOTE_BUILD_DIR%\cloudify\1.5\gigaspaces-cloudify-%VERSION%-%MILESTONE%-b%BUILD_VERSION%.zip %USER_HOME%
+xcopy %REMOTE_BUILD_DIR%\cloudify\1.5\gigaspaces-cloudify-%VERSION%-%MILESTONE%-b%BUILD_VERSION%.zip %BUILD_TEST_DIR%
 @echo extracting build file to local-builds folder
-@7z x %USER_HOME%\gigaspaces-cloudify-%VERSION%-%MILESTONE%-b%BUILD_VERSION%.zip -o%USER_HOME%
-@del %USER_HOME%\gigaspaces-cloudify-%VERSION%-%MILESTONE%-b%BUILD_VERSION%.zip
+@7z x %BUILD_TEST_DIR%\gigaspaces-cloudify-%VERSION%-%MILESTONE%-b%BUILD_VERSION%.zip -o%BUILD_TEST_DIR%
+@del %BUILD_TEST_DIR%\gigaspaces-cloudify-%VERSION%-%MILESTONE%-b%BUILD_VERSION%.zip
 
 @echo exporting Cloudify-iTests
 cd %BUILD_TEST_DIR%
@@ -91,12 +90,13 @@ if %selenium.browser% == Firefox (
 )
 
 @echo transferring reports to tgrid
-echo %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER%
+echo %BUILD_TEST_DIR%
 xcopy %BUILD_LOCATION% W:\%BUILD_NUMBER%\%BUILD_FOLDER% /s /i /y
-xcopy %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER%\%SUITE_NAME% W:\%BUILD_NUMBER%\%SUITE_NAME% /s /i /y
+xcopy %BUILD_TEST_DIR%\%SUITE_NAME% W:\%BUILD_NUMBER%\%SUITE_NAME% /s /i /y
 
 @echo cleaning local build folder
-rmdir %LOCAL_SGPATH%\deploy\local-builds\%BUILD_NUMBER% /s /q
+cd C:\
+rmdir %BUILD_TEST_DIR% /s /q
 
 @if exist %USER_HOME%\gigaspaces-cloudify-%VERSION%-%MILESTONE% (
     rmdir %USER_HOME%\gigaspaces-cloudify-%VERSION%-%MILESTONE% /s /q

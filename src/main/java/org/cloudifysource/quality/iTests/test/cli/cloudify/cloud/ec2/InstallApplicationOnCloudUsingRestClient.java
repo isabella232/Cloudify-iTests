@@ -42,7 +42,8 @@ public class InstallApplicationOnCloudUsingRestClient extends
 	private static final String APPLICATION_NAME = "simple";
 	private String APPLICATION_FOLDER_PATH = "D:/Users/adaml/Documents/gitWorkspace/Cloudify-iTests/src/" +
 						"main/resources/apps/USM/usm/applications/simple";
-	private static final int INSTALL_TIMEOUT_MILLIS = 60 * 15 * 1000;
+	private static final int INSTALL_TIMEOUT_IN_MINUTES = 15;
+	private static final int INSTALL_TIMEOUT_MILLIS = INSTALL_TIMEOUT_IN_MINUTES * 60 * 1000;
 
 	@BeforeClass(alwaysRun = true)
 	protected void bootstrap() throws Exception {
@@ -97,7 +98,7 @@ public class InstallApplicationOnCloudUsingRestClient extends
 		waitForApplicationInstall(url);
 		
 		//make un-install service API call
-		client.uninstallApplication(APPLICATION_NAME);
+		client.uninstallApplication(APPLICATION_NAME, INSTALL_TIMEOUT_IN_MINUTES);
 		//wait for the application to be removed.
 		waitForApplicationUninstall(url);
 		

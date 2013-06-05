@@ -43,6 +43,7 @@ public class InstallServiceUsingRestClientTest extends AbstractLocalCloudTest {
 		final String version = PlatformVersion.getVersion();
 		final URL url = new URL(restUrl);
 		final RestClient client = new RestClient(url, "", "", version);
+        client.connect();
 		
 		final File serviceFolder = new File(SERVICE_DIR_PATH);
 		final File packedFile = Packager.pack(serviceFolder);

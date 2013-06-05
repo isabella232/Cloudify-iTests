@@ -1,6 +1,7 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify;
 
 import com.j_spaces.kernel.PlatformVersion;
+import iTests.framework.tools.SGTestHelper;
 import iTests.framework.utils.AssertUtils;
 import iTests.framework.utils.LogUtils;
 import org.cloudifysource.dsl.Application;
@@ -34,8 +35,8 @@ import java.util.List;
  */
 public class InstallApplicationUsingRestClientTest extends AbstractLocalCloudTest {
 	private static final String APPLICATION_NAME = "simple";
-	private String APPLICATION_FOLDER_PATH = "D:/Users/adaml/Documents/gitWorkspace/Cloudify-iTests/src/" +
-						"main/resources/apps/USM/usm/applications/simple";
+	private String APPLICATION_FOLDER_PATH = SGTestHelper.getSGTestRootDir() +
+						"/src/main/resources/apps/USM/usm/applications/simple";
 	private static final int INSTALL_TIMEOUT_IN_MINUTES = 15;
 	private static final int INSTALL_TIMEOUT_MILLIS = INSTALL_TIMEOUT_IN_MINUTES * 60 * 1000;
 	
@@ -98,7 +99,7 @@ public class InstallApplicationUsingRestClientTest extends AbstractLocalCloudTes
 						}
 					}
 				} catch (final CLIException e) {
-					e.printStackTrace();
+					LogUtils.log("Failed reading application description : " + e.getMessage());
 				}
 				return false;
 			}

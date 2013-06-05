@@ -3,6 +3,7 @@ package org.cloudifysource.quality.iTests.test.cli.cloudify;
 import com.j_spaces.kernel.PlatformVersion;
 import iTests.framework.utils.AssertUtils;
 import iTests.framework.utils.LogUtils;
+import org.cloudifysource.dsl.internal.CloudifyConstants;
 import org.cloudifysource.dsl.internal.CloudifyConstants.DeploymentState;
 import org.cloudifysource.dsl.internal.DSLException;
 import org.cloudifysource.dsl.internal.packaging.Packager;
@@ -81,7 +82,7 @@ public class InstallServiceUsingRestClientTest extends AbstractLocalCloudTest {
 				try {
 					ApplicationDescription servicesDescriptionList = adminFacade.getServicesDescriptionList(DEFAULT_APPLICATION_NAME);
 					for (ServiceDescription description : servicesDescriptionList.getServicesDescription()) {
-						if (description.getServiceName().equals(SERVICE_NAME)) {
+						if (description.getServiceName().equals(CloudifyConstants.DEFAULT_APPLICATION_NAME + "." + SERVICE_NAME)) {
 							if (description.getServiceState().equals(DeploymentState.STARTED)) {
 								return true;
 							}

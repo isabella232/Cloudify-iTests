@@ -1,5 +1,8 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify;
 
+import iTests.framework.utils.LogUtils;
+import iTests.framework.utils.SigarUtils;
+
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
@@ -13,6 +16,7 @@ import org.cloudifysource.dsl.internal.CloudifyConstants;
 import org.cloudifysource.dsl.internal.DSLException;
 import org.cloudifysource.dsl.internal.packaging.PackagingException;
 import org.cloudifysource.dsl.utils.ServiceUtils;
+import org.cloudifysource.quality.iTests.framework.utils.usm.USMTestUtils;
 import org.cloudifysource.restclient.RestException;
 import org.hyperic.sigar.SigarException;
 import org.openspaces.admin.pu.ProcessingUnit;
@@ -20,16 +24,11 @@ import org.openspaces.admin.pu.ProcessingUnitInstance;
 import org.openspaces.pu.service.ServiceMonitors;
 import org.testng.annotations.Test;
 
-
 import com.gigaspaces.log.AllLogEntryMatcher;
 import com.gigaspaces.log.ContinuousLogEntryMatcher;
 import com.gigaspaces.log.LogEntries;
 import com.gigaspaces.log.LogEntry;
 import com.gigaspaces.log.LogProcessType;
-
-import iTests.framework.utils.LogUtils;
-import iTests.framework.utils.SigarUtils;
-import org.cloudifysource.quality.iTests.framework.utils.usm.USMTestUtils;
 
 public class StopLifecycleTest extends AbstractLocalCloudTest {
 

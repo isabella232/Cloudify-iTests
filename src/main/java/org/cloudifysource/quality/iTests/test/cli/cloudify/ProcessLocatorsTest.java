@@ -1,5 +1,7 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify;
 
+import iTests.framework.utils.LogUtils;
+
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
@@ -14,15 +16,13 @@ import org.cloudifysource.dsl.internal.CloudifyConstants;
 import org.cloudifysource.dsl.internal.DSLException;
 import org.cloudifysource.dsl.internal.packaging.PackagingException;
 import org.cloudifysource.dsl.utils.ServiceUtils;
+import org.cloudifysource.quality.iTests.framework.utils.usm.USMTestUtils;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.cloudifysource.restclient.RestException;
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.openspaces.admin.pu.ProcessingUnitInstance;
 import org.openspaces.pu.service.ServiceMonitors;
 import org.testng.annotations.Test;
-
-import iTests.framework.utils.LogUtils;
-import org.cloudifysource.quality.iTests.framework.utils.usm.USMTestUtils;
 
 public class ProcessLocatorsTest extends AbstractLocalCloudTest {
 

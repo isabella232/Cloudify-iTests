@@ -4,15 +4,14 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Map;
 
+import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.NewAbstractCloudTest;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.ec2.Ec2CloudService;
 import org.cloudifysource.restclient.GSRestClient;
 import org.cloudifysource.restclient.RestException;
 import org.junit.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-
-import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.NewAbstractCloudTest;
-import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.ec2.Ec2CloudService;
 
 import com.j_spaces.kernel.PlatformVersion;
 

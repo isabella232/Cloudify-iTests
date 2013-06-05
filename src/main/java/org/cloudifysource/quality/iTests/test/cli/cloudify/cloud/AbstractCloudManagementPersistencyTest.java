@@ -1,5 +1,11 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud;
 
+import iTests.framework.utils.AssertUtils;
+import iTests.framework.utils.IOUtils;
+import iTests.framework.utils.LogUtils;
+import iTests.framework.utils.SSHUtils;
+import iTests.framework.utils.ScriptUtils;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -18,13 +24,8 @@ import org.apache.commons.io.FileUtils;
 import org.cloudifysource.dsl.cloud.Cloud;
 import org.cloudifysource.dsl.cloud.compute.ComputeTemplate;
 import org.cloudifysource.dsl.utils.ServiceUtils;
-import iTests.framework.utils.AssertUtils;
 import org.cloudifysource.quality.iTests.framework.utils.CloudBootstrapper;
-import iTests.framework.utils.IOUtils;
 import org.cloudifysource.quality.iTests.framework.utils.JCloudsUtils;
-import iTests.framework.utils.LogUtils;
-import iTests.framework.utils.SSHUtils;
-import iTests.framework.utils.ScriptUtils;
 import org.cloudifysource.quality.iTests.framework.utils.ServiceInstaller;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
 import org.cloudifysource.restclient.GSRestClient;

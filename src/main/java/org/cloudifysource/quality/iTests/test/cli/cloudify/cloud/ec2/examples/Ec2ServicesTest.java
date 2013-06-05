@@ -1,6 +1,7 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.ec2.examples;
 
 import iTests.framework.utils.ScriptUtils;
+
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.AbstractServicesTest;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;

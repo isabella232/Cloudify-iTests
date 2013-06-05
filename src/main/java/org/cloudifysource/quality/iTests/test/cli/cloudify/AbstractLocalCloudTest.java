@@ -1,11 +1,24 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify;
 
-import com.gigaspaces.internal.sigar.SigarHolder;
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.api.client.config.DefaultClientConfig;
 import iTests.framework.tools.SGTestHelper;
-import iTests.framework.utils.*;
+import iTests.framework.utils.AssertUtils;
+import iTests.framework.utils.LogUtils;
+import iTests.framework.utils.ScriptUtils;
+import iTests.framework.utils.WebUtils;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.InetAddress;
+import java.net.URL;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.io.FileUtils;
 import org.apache.http.HttpEntity;
@@ -19,7 +32,9 @@ import org.cloudifysource.dsl.internal.CloudifyConstants;
 import org.cloudifysource.dsl.internal.DSLException;
 import org.cloudifysource.dsl.internal.ServiceReader;
 import org.cloudifysource.dsl.utils.ServiceUtils;
-import org.cloudifysource.quality.iTests.framework.utils.*;
+import org.cloudifysource.quality.iTests.framework.utils.ApplicationInstaller;
+import org.cloudifysource.quality.iTests.framework.utils.LocalCloudBootstrapper;
+import org.cloudifysource.quality.iTests.framework.utils.ServiceInstaller;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.security.SecurityConstants;
 import org.cloudifysource.restclient.ErrorStatusException;
@@ -28,7 +43,11 @@ import org.cloudifysource.shell.commands.CLIException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.type.TypeFactory;
 import org.codehaus.jackson.type.JavaType;
-import org.hyperic.sigar.*;
+import org.hyperic.sigar.ProcExe;
+import org.hyperic.sigar.ProcState;
+import org.hyperic.sigar.Sigar;
+import org.hyperic.sigar.SigarException;
+import org.hyperic.sigar.SigarPermissionDeniedException;
 import org.openspaces.admin.Admin;
 import org.openspaces.admin.AdminFactory;
 import org.openspaces.admin.application.Applications;
@@ -39,14 +58,10 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.InetAddress;
-import java.net.URL;
-import java.util.*;
-import java.util.Map.Entry;
+import com.gigaspaces.internal.sigar.SigarHolder;
+import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.WebResource;
+import com.sun.jersey.api.client.config.DefaultClientConfig;
 
 public class AbstractLocalCloudTest extends AbstractTestSupport {
 

@@ -1,5 +1,7 @@
 package org.cloudifysource.quality.iTests.test.rest.component;
 
+import iTests.framework.utils.AssertUtils;
+
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
@@ -11,7 +13,6 @@ import org.cloudifysource.dsl.rest.response.ServiceInstanceDetails;
 import org.cloudifysource.dsl.rest.response.ServiceInstanceMetricsResponse;
 import org.cloudifysource.dsl.rest.response.ServiceMetricsResponse;
 import org.cloudifysource.quality.iTests.framework.utils.ApplicationInstaller;
-import iTests.framework.utils.AssertUtils;
 import org.cloudifysource.quality.iTests.framework.utils.rest.CloudifyRestClient;
 import org.cloudifysource.quality.iTests.framework.utils.rest.RestClientException;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.AbstractLocalCloudTest;

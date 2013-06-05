@@ -71,7 +71,7 @@ public class BootstrapErrorCodesTest extends NewAbstractCloudTest {
 		super.bootstrap(bootstrapper);
 		String bootstrapOutput = bootstrapper.getLastActionOutput();
 		assertTrue("Cloudify execution failed but the wrong error was thrown. Reported error: " + bootstrapOutput,
-				isBootstrapErrorCorrect(bootstrapOutput, BootstrapScriptErrors.CUSTOM_ERROR));
+				isBootstrapErrorCorrect(bootstrapOutput, BootstrapScriptErrors.CUSTOM));
 	}
 	
 	

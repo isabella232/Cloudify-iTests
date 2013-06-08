@@ -44,29 +44,29 @@ public class InstallApplicationUsingRestClientTest extends AbstractLocalCloudTes
 	private static final String APPLICATION_NAME = "groovyApp";
 	private static final String APPLICATION_NAME2 = "simple";
 	private final String APPLICATION_FOLDER_PATH = SGTestHelper.getSGTestRootDir() +
-						"/src/main/resources/apps/USM/usm/applications/groovyApp";
+			"/src/main/resources/apps/USM/usm/applications/groovyApp";
 	private static final int INSTALL_TIMEOUT_IN_MINUTES = 15;
 	private static final int INSTALL_TIMEOUT_MILLIS = INSTALL_TIMEOUT_IN_MINUTES * 60 * 1000;
 
-	@Ignore
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, groups = "1")
-    public void testApplicationInstall()
-    		throws IOException, PackagingException,
-    		DSLException, RestClientException, CLIException {
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false, groups = "1")
+	public void testApplicationInstall()
+			throws IOException, PackagingException,
+			DSLException, RestClientException, CLIException {
 		installAndUninstallApplication(APPLICATION_FOLDER_PATH, APPLICATION_NAME);
 
 	}
 
 	@Ignore
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, groups = "1")
-    public void testApplicationInstallWithModifiedName()
-    		throws IOException, PackagingException,
-    		DSLException, RestClientException, CLIException {
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false, groups = "1")
+	public void testApplicationInstallWithModifiedName()
+			throws IOException, PackagingException,
+			DSLException, RestClientException, CLIException {
 		installAndUninstallApplication(APPLICATION_FOLDER_PATH, APPLICATION_NAME2);
 
 	}
 
-	private void installAndUninstallApplication(String path, String applicationName) throws MalformedURLException, RestClientException, DSLException,
+	private void installAndUninstallApplication(String path, String applicationName) throws MalformedURLException,
+			RestClientException, DSLException,
 			IOException, PackagingException, CLIException {
 		final String version = PlatformVersion.getVersion();
 		final URL url = new URL(restUrl);
@@ -83,27 +83,28 @@ public class InstallApplicationUsingRestClientTest extends AbstractLocalCloudTes
 		InstallApplicationRequest request = new InstallApplicationRequest();
 		request.setApplcationFileUploadKey(uploadKey);
 
-		//Test will run in unsecured mode.
+		// Test will run in unsecured mode.
 		request.setAuthGroups("");
-		//no debugging.
+		// no debugging.
 		request.setDebugAll(false);
 		request.setSelfHealing(true);
 		request.setApplicationName(applicationName);
-		//set timeout
+		// set timeout
 		request.setTimeoutInMillis(INSTALL_TIMEOUT_MILLIS);
 
-		//make install service API call
+		// make install service API call
 		client.installApplication(APPLICATION_NAME, request);
-		//wait for the application to reach STARTED state.
+		// wait for the application to reach STARTED state.
 		waitForApplicationInstall();
 
-		//make un-install service API call
-		UninstallApplicationResponse response = client.uninstallApplication(APPLICATION_NAME, INSTALL_TIMEOUT_IN_MINUTES);
+		// make un-install service API call
+		UninstallApplicationResponse response =
+				client.uninstallApplication(APPLICATION_NAME, INSTALL_TIMEOUT_IN_MINUTES);
 		Assert.assertNotNull(response);
 		Assert.assertTrue("Expected non black operation ID", StringUtils.isNotBlank(response.getDeploymentID()));
 
 		System.out.println(response);
-		//wait for the application to be removed.
+		// wait for the application to be removed.
 		waitForApplicationUninstall();
 	}
 
@@ -112,25 +113,27 @@ public class InstallApplicationUsingRestClientTest extends AbstractLocalCloudTes
 		final RestAdminFacade adminFacade = new RestAdminFacade();
 		adminFacade.connect(null, null, restUrl.toString(), false);
 
-		LogUtils.log("Waiting for application deployment state to be " + DeploymentState.STARTED) ;
-		AssertUtils.repetitiveAssertTrue(APPLICATION_NAME + " application failed to deploy", new AssertUtils.RepetitiveConditionProvider() {
-			@Override
-			public boolean getCondition() {
-				try {
-					final List<ApplicationDescription> applicationDescriptionsList = adminFacade.getApplicationDescriptionsList();
-					for (ApplicationDescription applicationDescription : applicationDescriptionsList) {
-						if (applicationDescription.getApplicationName().equals(APPLICATION_NAME)) {
-							if (applicationDescription.getApplicationState().equals(DeploymentState.STARTED)) {
-								return true;
+		LogUtils.log("Waiting for application deployment state to be " + DeploymentState.STARTED);
+		AssertUtils.repetitiveAssertTrue(APPLICATION_NAME + " application failed to deploy",
+				new AssertUtils.RepetitiveConditionProvider() {
+					@Override
+					public boolean getCondition() {
+						try {
+							final List<ApplicationDescription> applicationDescriptionsList =
+									adminFacade.getApplicationDescriptionsList();
+							for (ApplicationDescription applicationDescription : applicationDescriptionsList) {
+								if (applicationDescription.getApplicationName().equals(APPLICATION_NAME)) {
+									if (applicationDescription.getApplicationState().equals(DeploymentState.STARTED)) {
+										return true;
+									}
+								}
 							}
+						} catch (final CLIException e) {
+							LogUtils.log("Failed reading application description : " + e.getMessage());
 						}
+						return false;
 					}
-				} catch (final CLIException e) {
-					LogUtils.log("Failed reading application description : " + e.getMessage());
-				}
-				return false;
-			}
-		} , AbstractTestSupport.OPERATION_TIMEOUT * 3);
+				}, AbstractTestSupport.OPERATION_TIMEOUT * 3);
 	}
 
 	void waitForApplicationUninstall()
@@ -139,23 +142,25 @@ public class InstallApplicationUsingRestClientTest extends AbstractLocalCloudTes
 		adminFacade.connect(null, null, restUrl.toString(), false);
 
 		LogUtils.log("Waiting for USM_State to be " + CloudifyConstants.USMState.RUNNING);
-		AssertUtils.repetitiveAssertTrue("uninstall failed for application " + APPLICATION_NAME, new AssertUtils.RepetitiveConditionProvider() {
-			@Override
-			public boolean getCondition() {
-				try {
-					final List<ApplicationDescription> applicationDescriptionsList = adminFacade.getApplicationDescriptionsList();
-					for (ApplicationDescription applicationDescription : applicationDescriptionsList) {
-						if (applicationDescription.getApplicationName().equals(APPLICATION_NAME)) {
-							return false;
+		AssertUtils.repetitiveAssertTrue("uninstall failed for application " + APPLICATION_NAME,
+				new AssertUtils.RepetitiveConditionProvider() {
+					@Override
+					public boolean getCondition() {
+						try {
+							final List<ApplicationDescription> applicationDescriptionsList =
+									adminFacade.getApplicationDescriptionsList();
+							for (ApplicationDescription applicationDescription : applicationDescriptionsList) {
+								if (applicationDescription.getApplicationName().equals(APPLICATION_NAME)) {
+									return false;
+								}
+							}
+							return true;
+						} catch (final CLIException e) {
+							LogUtils.log("Failed getting application list.");
 						}
+						return false;
 					}
-					return true;
-				} catch (final CLIException e) {
-					LogUtils.log("Failed getting application list.");
-				}
-				return false;
-			}
-		} , AbstractTestSupport.OPERATION_TIMEOUT * 3);
+				}, AbstractTestSupport.OPERATION_TIMEOUT * 3);
 	}
 
 	private DSLReader createDslReader(final File applicationFile) {

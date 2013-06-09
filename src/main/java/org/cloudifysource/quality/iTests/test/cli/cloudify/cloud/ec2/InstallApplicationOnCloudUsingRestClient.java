@@ -15,6 +15,7 @@ import org.cloudifysource.dsl.rest.request.InstallApplicationRequest;
 import org.cloudifysource.dsl.rest.response.ApplicationDescription;
 import org.cloudifysource.dsl.rest.response.UploadResponse;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.NewAbstractCloudTest;
 import org.cloudifysource.restclient.RestClient;
 import org.cloudifysource.restclient.exceptions.RestClientException;
@@ -38,8 +39,7 @@ import java.util.List;
 public class InstallApplicationOnCloudUsingRestClient extends
 		NewAbstractCloudTest {
 	private static final String APPLICATION_NAME = "simple";
-	private String APPLICATION_FOLDER_PATH = "D:/Users/adaml/Documents/gitWorkspace/Cloudify-iTests/src/" +
-						"main/resources/apps/USM/usm/applications/simple";
+	private String APPLICATION_FOLDER_PATH = CommandTestUtils.getPath("/src/main/resources/apps/USM/usm/applications/simple");
 	private static final int INSTALL_TIMEOUT_IN_MINUTES = 15;
 	private static final int INSTALL_TIMEOUT_MILLIS = INSTALL_TIMEOUT_IN_MINUTES * 60 * 1000;
 

@@ -9,10 +9,10 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.cloudifysource.dsl.Application;
-import org.cloudifysource.dsl.internal.CloudifyConstants;
 import org.cloudifysource.dsl.internal.CloudifyConstants.DeploymentState;
 import org.cloudifysource.dsl.internal.DSLException;
 import org.cloudifysource.dsl.internal.DSLReader;
@@ -24,12 +24,13 @@ import org.cloudifysource.dsl.rest.response.ApplicationDescription;
 import org.cloudifysource.dsl.rest.response.UninstallApplicationResponse;
 import org.cloudifysource.dsl.rest.response.UploadResponse;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
+import org.cloudifysource.restclient.GSRestClient;
 import org.cloudifysource.restclient.RestClient;
+import org.cloudifysource.restclient.RestException;
 import org.cloudifysource.restclient.exceptions.RestClientException;
 import org.cloudifysource.shell.commands.CLIException;
 import org.cloudifysource.shell.rest.RestAdminFacade;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.testng.annotations.Test;
 
 import com.j_spaces.kernel.PlatformVersion;
@@ -48,27 +49,26 @@ public class InstallApplicationUsingRestClientTest extends AbstractLocalCloudTes
 	private static final int INSTALL_TIMEOUT_IN_MINUTES = 15;
 	private static final int INSTALL_TIMEOUT_MILLIS = INSTALL_TIMEOUT_IN_MINUTES * 60 * 1000;
 
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false, groups = "1")
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true, groups = "1")
 	public void testApplicationInstall()
 			throws IOException, PackagingException,
-			DSLException, RestClientException, CLIException {
+			DSLException, RestClientException, CLIException, RestException {
 		installAndUninstallApplication(APPLICATION_FOLDER_PATH, APPLICATION_NAME);
 
 	}
 
-	@Ignore
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false, groups = "1")
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true, groups = "1")
 	public void testApplicationInstallWithModifiedName()
 			throws IOException, PackagingException,
-			DSLException, RestClientException, CLIException {
+			DSLException, RestClientException, CLIException, RestException {
 		installAndUninstallApplication(APPLICATION_FOLDER_PATH, APPLICATION_NAME2);
 
 	}
 
 	private void installAndUninstallApplication(String path, String applicationName) throws MalformedURLException,
 			RestClientException, DSLException,
-			IOException, PackagingException, CLIException {
-		final String version = PlatformVersion.getVersion();
+			IOException, PackagingException, CLIException, RestException {
+		final String version = "2.6.0";
 		final URL url = new URL(restUrl);
 		final RestClient client = new RestClient(url, "", "", version);
 		client.connect();
@@ -93,23 +93,23 @@ public class InstallApplicationUsingRestClientTest extends AbstractLocalCloudTes
 		request.setTimeoutInMillis(INSTALL_TIMEOUT_MILLIS);
 
 		// make install service API call
-		client.installApplication(APPLICATION_NAME, request);
+		client.installApplication(applicationName, request);
 		// wait for the application to reach STARTED state.
-		waitForApplicationInstall();
+		waitForApplicationInstall(applicationName);
 
 		// make un-install service API call
 		UninstallApplicationResponse response =
-				client.uninstallApplication(APPLICATION_NAME, INSTALL_TIMEOUT_IN_MINUTES);
+				client.uninstallApplication(applicationName, INSTALL_TIMEOUT_IN_MINUTES);
 		Assert.assertNotNull(response);
 		Assert.assertTrue("Expected non black operation ID", StringUtils.isNotBlank(response.getDeploymentID()));
 
 		System.out.println(response);
 		// wait for the application to be removed.
-		waitForApplicationUninstall();
+		waitForApplicationUninstall(applicationName);
 	}
 
-	void waitForApplicationInstall()
-			throws CLIException, RestClientException {
+	void waitForApplicationInstall(final String applicationName)
+			throws CLIException {
 		final RestAdminFacade adminFacade = new RestAdminFacade();
 		adminFacade.connect(null, null, restUrl.toString(), false);
 
@@ -122,7 +122,7 @@ public class InstallApplicationUsingRestClientTest extends AbstractLocalCloudTes
 							final List<ApplicationDescription> applicationDescriptionsList =
 									adminFacade.getApplicationDescriptionsList();
 							for (ApplicationDescription applicationDescription : applicationDescriptionsList) {
-								if (applicationDescription.getApplicationName().equals(APPLICATION_NAME)) {
+								if (applicationDescription.getApplicationName().equals(applicationName)) {
 									if (applicationDescription.getApplicationState().equals(DeploymentState.STARTED)) {
 										return true;
 									}
@@ -136,27 +136,28 @@ public class InstallApplicationUsingRestClientTest extends AbstractLocalCloudTes
 				}, AbstractTestSupport.OPERATION_TIMEOUT * 3);
 	}
 
-	void waitForApplicationUninstall()
-			throws CLIException, RestClientException {
-		final RestAdminFacade adminFacade = new RestAdminFacade();
-		adminFacade.connect(null, null, restUrl.toString(), false);
+	void waitForApplicationUninstall(final String applicationName)
+			throws MalformedURLException, RestException {
+		final GSRestClient client = new GSRestClient("","", new URL(restUrl), PlatformVersion.getVersionNumber());
 
-		LogUtils.log("Waiting for USM_State to be " + CloudifyConstants.USMState.RUNNING);
 		AssertUtils.repetitiveAssertTrue("uninstall failed for application " + APPLICATION_NAME,
 				new AssertUtils.RepetitiveConditionProvider() {
 					@Override
 					public boolean getCondition() {
 						try {
-							final List<ApplicationDescription> applicationDescriptionsList =
-									adminFacade.getApplicationDescriptionsList();
-							for (ApplicationDescription applicationDescription : applicationDescriptionsList) {
-								if (applicationDescription.getApplicationName().equals(APPLICATION_NAME)) {
+							Map<String, Object> adminData = client.getAdminData("zones/Names");
+							List<String> names = (List<String>) adminData.get("Names-Elements");
+							for (String string : names) {
+								if (string.contains(applicationName)) {
 									return false;
 								}
 							}
 							return true;
-						} catch (final CLIException e) {
-							LogUtils.log("Failed getting application list.");
+						
+						} catch (RestException e) {
+							// TODO Auto-generated catch block
+							LogUtils.log("Failed getting zones list.");
+							e.printStackTrace();
 						}
 						return false;
 					}

@@ -79,6 +79,4 @@ xcopy %BUILD_TEST_DIR%\%SUITE_NAME% W:\%BUILD_NUMBER%\%SUITE_NAME% /s /i /y
 cd C:\
 rmdir %BUILD_TEST_DIR% /s /q
 
-@if exist %USER_HOME%\gigaspaces-cloudify-%VERSION%-%MILESTONE% (
-    rmdir %USER_HOME%\gigaspaces-cloudify-%VERSION%-%MILESTONE% /s /q
 )

@@ -36,7 +36,7 @@ set MAVEN_PROJECTS_VERSION_CLOUDIFY=%9
 
 
 @echo setting up enviroment variables
-call set-build-env.bat
+call %SGTEST_HOME%\src\main\scripts\deploy\bin\windows\set-build-env.bat
 
 @echo cleaning build folder..
 

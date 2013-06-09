@@ -10,13 +10,10 @@ set VERSION=%1
 set MILESTONE=%2
 set BUILD_NUMBER=%3
 set BUILD_VERSION=%4
-set SGTEST_CHECKOUT_FOLDER=%5
-set SUITE_NAME=%6
-set INCLUDE=%7
-set EXCLUDE=%8
-set BUILD_LOG_URL=%9
-
-shift
+set SUITE_NAME=%5
+set INCLUDE=%6
+set EXCLUDE=%7
+set BUILD_LOG_URL=%8
 set BRANCH_NAME=%9
 
 shift
@@ -42,9 +39,7 @@ set MAVEN_PROJECTS_VERSION_CLOUDIFY=%9
 call set-build-env.bat
 
 @echo cleaning build folder..
-@if exist %BUILD_TEST_DIR% rmdir %BUILD_TEST_DIR% /s /q
 
-mkdir %BUILD_TEST_DIR%
 set SGTEST_HOME=%BUILD_TEST_DIR%\Cloudify-iTests
 
 @echo retrieving build from tarzan...
@@ -53,18 +48,6 @@ xcopy %REMOTE_BUILD_DIR%\cloudify\1.5\gigaspaces-cloudify-%VERSION%-%MILESTONE%-
 @echo extracting build file to local-builds folder
 @7z x %BUILD_TEST_DIR%\gigaspaces-cloudify-%VERSION%-%MILESTONE%-b%BUILD_VERSION%.zip -o%BUILD_TEST_DIR%
 @del %BUILD_TEST_DIR%\gigaspaces-cloudify-%VERSION%-%MILESTONE%-b%BUILD_VERSION%.zip
-
-@echo exporting Cloudify-iTests
-cd %BUILD_TEST_DIR%
-set GIT_SSL_NO_VERIFY=true
-
-if %BRANCH_NAME%==trunk (
-    call C:\Git\bin\git.exe clone --depth 1 https://github.com/CloudifySource/Cloudify-iTests.git
-) else (
-    call C:\Git\bin\git.exe clone -b %BRANCH_NAME% --depth 1 https://github.com/CloudifySource/Cloudify-iTests.git
-)
-
-call mvn scm:export -DconnectionUrl=scm:svn:svn://svn-srv/SVN/cloudify/trunk/quality/frameworks/SGTest-credentials -DexportDirectory=%BUILD_TEST_DIR%/Cloudify-iTests/src/main/resources/credentials
 
 @call %SGTEST_HOME%\src\main\scripts\deploy\bin\windows\set-deploy-env.bat
 

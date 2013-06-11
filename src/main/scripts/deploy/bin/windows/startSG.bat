@@ -75,7 +75,8 @@ echo %BUILD_TEST_DIR%
 xcopy %BUILD_LOCATION% W:\%BUILD_NUMBER%\%BUILD_FOLDER% /s /i /y
 xcopy %BUILD_TEST_DIR%\%SUITE_NAME% W:\%BUILD_NUMBER%\%SUITE_NAME% /s /i /y
 
-@echo cleaning local build folder - %BUILD_TEST_DIR%
+@cd to C:\
 cd C:\
+@echo cleaning local build folder - %BUILD_TEST_DIR%
 if exist %BUILD_TEST_DIR% rmdir %BUILD_TEST_DIR% /s /q
 )

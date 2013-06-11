@@ -1,5 +1,8 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.byon;
 
+import iTests.framework.utils.LogUtils;
+import iTests.framework.utils.SSHUtils;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -7,14 +10,9 @@ import java.net.Socket;
 import java.net.SocketAddress;
 
 import org.cloudifysource.dsl.cloud.GridComponents;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
 import org.openspaces.admin.machine.Machine;
 import org.testng.annotations.AfterClass;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Test;
-
-import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
-import iTests.framework.utils.LogUtils;
-import iTests.framework.utils.SSHUtils;
 /**
  * This test uses a predefined cloud groovy holding all of the service grid port and memory config 
  * and asserts these config properties were indeed used.
@@ -24,8 +22,8 @@ import iTests.framework.utils.SSHUtils;
  */
 public class PortAndMemoryAllocationTest extends AbstractByonCloudTest {
 	private final static String CLOUD_GROOVY_PATH = CommandTestUtils.getPath("src/main/resources/apps/cloudify/cloud/byon/customCloudGroovy/byon-cloud.groovy");
-	private final static String SIMPLE_RECIPE_FOLDER = CommandTestUtils.getPath("src/main/resources/apps/USM/usm/simple");
-	private final static String SERVICE_NAME = "simple";
+	protected final static String SIMPLE_RECIPE_FOLDER = CommandTestUtils.getPath("src/main/resources/apps/USM/usm/simple");
+	protected final static String SERVICE_NAME = "simple";
 	
 	private static final String GSA_PROCESS_NAME = "com.gigaspaces.start.services=\\\"GSA\\\""; //"GSA";
 	private static final String GSM_PROCESS_NAME = "com.gigaspaces.start.services=\\\"GSM\\\""; //"GSM";
@@ -35,15 +33,7 @@ public class PortAndMemoryAllocationTest extends AbstractByonCloudTest {
 	private static final String REST_PROCESS_NAME = "com.gs.zones=rest";
 	private static final String WEBUI_PROCESS_NAME = "com.gs.zones=webui";
 	
-	@BeforeClass(alwaysRun = true)
-	protected void bootstrap() throws Exception {
-		super.bootstrap();
-	}
-
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
-	public void testPortAndMemoryAllocation() throws IOException, InterruptedException {
-		
-		installServiceAndWait(SIMPLE_RECIPE_FOLDER, SERVICE_NAME);
+	public void testPortAndMemoryAllocation() {
 		
 		assertRemotePortsOccupied();
 		

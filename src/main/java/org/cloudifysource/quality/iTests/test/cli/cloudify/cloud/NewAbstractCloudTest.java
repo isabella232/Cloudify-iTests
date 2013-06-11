@@ -303,6 +303,22 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
     protected String installServiceAndWait(String servicePath, String serviceName, int timeout , boolean expectToFail) throws IOException, InterruptedException {
         return installServiceAndWait(servicePath, serviceName, timeout, expectToFail, false, 0);
     }
+    
+	protected String installServiceAndWait(String servicePath, String serviceName, int timeout, final String cloudifyUsername,
+			final String cloudifyPassword, boolean isExpectedToFail, final String authGroups) throws IOException, InterruptedException {
+
+		ServiceInstaller serviceInstaller = new ServiceInstaller(getRestUrl(), serviceName);
+		serviceInstaller.recipePath(servicePath);
+		serviceInstaller.waitForFinish(true);
+		serviceInstaller.cloudifyUsername(cloudifyUsername);
+		serviceInstaller.cloudifyPassword(cloudifyPassword);
+		serviceInstaller.expectToFail(isExpectedToFail);
+		if (org.apache.commons.lang.StringUtils.isNotBlank(authGroups)) {
+			serviceInstaller.authGroups(authGroups);
+		}
+
+		return serviceInstaller.install();
+	}
 
     protected String installServiceAndWait(String servicePath, String serviceName, int timeout , boolean expectToFail, boolean disableSelfHealing, int numOfInstances) throws IOException, InterruptedException {
         ServiceInstaller serviceInstaller = new ServiceInstaller(getRestUrl(), serviceName);

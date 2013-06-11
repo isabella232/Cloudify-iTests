@@ -74,11 +74,12 @@ public class InstallServiceUsingRestClientTest extends AbstractLocalCloudTest {
 		//make install service API call
 		InstallServiceResponse installServiceRespone = client.installService(DEFAULT_APPLICATION_NAME, SERVICE_NAME, request);
 		assertNotNull("install-service response does not contain deploymentID",  installServiceRespone.getDeploymentID());
+		//Now we wait for the USM service state to become RUNNING.
 		waitForServiceInstall(url);
 		UninstallServiceResponse uninstallServiceRespone = client.uninstallService(DEFAULT_APPLICATION_NAME, SERVICE_NAME, 5);
 		assertNotNull("uninstall-service response does not contain deploymentID",  uninstallServiceRespone.getDeploymentID());
+		// wait for zone to disappear. 
 		waitForServiceUninstall();
-		//Now we wait for the USM service state to become RUNNING.
 		
 		
 	}

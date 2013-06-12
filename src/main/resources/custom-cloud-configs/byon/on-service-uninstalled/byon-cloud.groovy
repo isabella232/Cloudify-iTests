@@ -123,7 +123,7 @@ cloud {
 		"itemsToClean": ([
 			"/tmp/gs-files/gigaspaces.tar.gz"
 		]),
-		"release-cloud-resources-failure-injection":"__anything__"
+		"on-service-uninstalled-failure-injection":"__anything__"
 	])
 
 }

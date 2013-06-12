@@ -30,7 +30,7 @@ public class DedicatedStatelessManualByonCleanupFailureTest extends AbstractStat
 	@BeforeClass
 	protected void bootstrap() throws Exception {
 		ByonCloudService customCloudService = (ByonCloudService) CloudServiceManager.getInstance().getCloudService(getCloudName());
-		customCloudService.setCloudGroovy(new File(SGTestHelper.getCustomCloudConfigDir("release-cloud-resources"), "byon-cloud.groovy"));
+		customCloudService.setCloudGroovy(new File(SGTestHelper.getCustomCloudConfigDir("byon/on-service-uninstalled"), "byon-cloud.groovy"));
 		super.bootstrap(customCloudService);
 	}
 	

@@ -61,14 +61,14 @@ call %SGTEST_HOME%\src\main\scripts\deploy\bin\windows\start-suite.bat %SUITE_NA
 @echo generating report... 
 call %SGTEST_HOME%\src\main\scripts\deploy\bin\windows\generate-report.bat %BUILD_NUMBER% %SUITE_NAME% %VERSION% %MILESTONE% %BUILD_LOG_URL% %SUITE_TYPE% %MAVEN_PROJECTS_VERSION_XAP% %MAVEN_PROJECTS_VERSION_CLOUDIFY%
 
-if %selenium.browser% == Chrome (
-	taskkill /im chromedriver.exe /F
-	taskkill /im chrome.exe /F
-)
-
-if %selenium.browser% == Firefox (
-	taskkill /im firefox.exe /F
-)
+rem if %selenium.browser% == Chrome (
+rem 	taskkill /im chromedriver.exe /F
+rem 	taskkill /im chrome.exe /F
+rem )
+rem
+rem if %selenium.browser% == Firefox (
+rem 	taskkill /im firefox.exe /F
+rem )
 
 @echo transferring reports to tgrid
 echo %BUILD_TEST_DIR%

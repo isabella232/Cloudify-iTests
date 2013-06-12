@@ -70,10 +70,9 @@ rem if %selenium.browser% == Firefox (
 rem 	taskkill /im firefox.exe /F
 rem )
 
-rem @echo transferring reports to tgrid
-rem echo %BUILD_TEST_DIR%
-rem xcopy %BUILD_LOCATION% W:\%BUILD_NUMBER%\%BUILD_FOLDER% /s /i /y
-rem xcopy %BUILD_TEST_DIR%\%SUITE_NAME% W:\%BUILD_NUMBER%\%SUITE_NAME% /s /i /y
+@echo transferring reports to tgrid from %BUILD_TEST_DIR%
+xcopy %BUILD_LOCATION% W:\%BUILD_NUMBER%\%BUILD_FOLDER% /s /i /y
+xcopy %BUILD_TEST_DIR%\%SUITE_NAME% W:\%BUILD_NUMBER%\%SUITE_NAME% /s /i /y
 
 rem @echo cd to C:\
 rem cd C:\

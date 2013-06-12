@@ -20,7 +20,7 @@ import org.testng.annotations.Test;
 
 public class DedicatedStatelessManualByonCleanupFailureTest extends AbstractStatelessManualByonCleanupTest {
 
-	private static final String ESM_LOG = "release-cloud-resources-failure-injection";
+	private static final String ESM_LOG = "on-service-uninstalled-failure-injection";
 
 	@BeforeMethod
     public void beforeTest() {
@@ -63,6 +63,6 @@ public class DedicatedStatelessManualByonCleanupFailureTest extends AbstractStat
 		
 	    assertUndeployAndWait(pu);
        
-        repetitiveAssertCleanupCloudInvoked(ESM_LOG);
+        repetitiveAssertOnServiceUninstalledInvoked(ESM_LOG);
     }
 }

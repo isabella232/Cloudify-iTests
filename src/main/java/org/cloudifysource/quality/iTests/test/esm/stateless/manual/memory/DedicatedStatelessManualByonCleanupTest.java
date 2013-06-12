@@ -17,7 +17,7 @@ import org.testng.annotations.Test;
 
 public class DedicatedStatelessManualByonCleanupTest extends AbstractStatelessManualByonCleanupTest {
 
-	private static final String ESM_LOG = "release-cloud-resources-complete";
+	private static final String ESM_LOG = "on-service-uninstalled-resources-complete";
 
 	@BeforeMethod
     public void beforeTest() {
@@ -58,7 +58,7 @@ public class DedicatedStatelessManualByonCleanupTest extends AbstractStatelessMa
 		
 	    assertUndeployAndWait(pu);
        
-        repetitiveAssertCleanupCloudInvoked(ESM_LOG);
+        repetitiveAssertOnServiceUninstalledInvoked(ESM_LOG);
     }
 
 }

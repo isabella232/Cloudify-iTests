@@ -23,7 +23,7 @@ import com.gigaspaces.log.LogEntryMatchers;
 
 public class AbstractStatelessManualByonCleanupTest extends AbstractFromXenToByonGSMTest {
 
-    protected void repetitiveAssertCleanupCloudInvoked(final String expectedLogStatement) {
+    protected void repetitiveAssertOnServiceUninstalledInvoked(final String expectedLogStatement) {
     	final ElasticServiceManager esm = admin.getElasticServiceManagers().waitForAtLeastOne(OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
         LogUtils.log("Waiting for 1 "+ expectedLogStatement + " log entry before undeploying PU");
         final LogEntryMatcher logMatcher = LogEntryMatchers.containsString(expectedLogStatement);
@@ -45,7 +45,7 @@ public class AbstractStatelessManualByonCleanupTest extends AbstractFromXenToByo
         String s = System.getProperty("file.separator");
         String repoQualityItests = DeploymentUtils.getQualityItestsPath(s);
         // copy custom location aware driver to cloudify-overrides
-        File locationAwareDriver = new File (repoQualityItests +s+"location-aware-provisioning-byon"+s+"1.1-SNAPSHOT"+s+"location-aware-provisioning-byon-1.1-SNAPSHOT.jar");
+        File locationAwareDriver = new File (repoQualityItests +s+"location-aware-provisioning-byon"+s+"1.1.1-SNAPSHOT"+s+"location-aware-provisioning-byon-1.1.1-SNAPSHOT.jar");
         File uploadOverrides =
                 new File(getService().getPathToCloudFolder() + "/upload/cloudify-overrides/");
         if (!uploadOverrides.exists()) {
@@ -61,7 +61,7 @@ public class AbstractStatelessManualByonCleanupTest extends AbstractFromXenToByo
         final Map<String, String> propsToReplace = new HashMap<String, String>();
 
         final String oldCloudDriverClazz = ByonProvisioningDriver.class.getName();
-        String newCloudDriverClazz = "org.cloudifysource.quality.iTests.ReleaseCloudResourcesByonProvisioningDriver" ;
+        String newCloudDriverClazz = "org.cloudifysource.quality.iTests.OnServiceUninstalledByonProvisioningDriver" ;
 
         propsToReplace.put(toClassName(oldCloudDriverClazz),toClassName(newCloudDriverClazz));
         IOUtils.replaceTextInFile(getService().getPathToCloudGroovy(), propsToReplace);

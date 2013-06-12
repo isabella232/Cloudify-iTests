@@ -53,7 +53,7 @@ public class Ec2WinSecurityTest extends NewAbstractSecurityCloudTest {
 		uninstallServiceIfFound(GROOVY2_SERVICE_NAME, SecurityConstants.USER_PWD_ALL_ROLES, SecurityConstants.USER_PWD_ALL_ROLES);
 	}
 
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 6, enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 10, enabled = true)
 	public void installAndUninstallTest() throws IOException, InterruptedException {
 
 		installAndUninstall(SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, false);

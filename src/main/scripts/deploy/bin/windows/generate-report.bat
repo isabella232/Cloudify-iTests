@@ -1,7 +1,6 @@
 @echo on
 
-@echo setting up enviroment variables
-call set-build-env.bat
+@echo generating report
 
 set BUILD_NUMBER=%1
 set SUITE_NAME=%2
@@ -11,7 +10,6 @@ set BUILD_LOG_URL=%5
 set SUITE_TYPE=%6
 set MAVEN_PROJECTS_VERSION_XAP=%7
 set MAVEN_PROJECTS_VERSION_CLOUDIFY=%8
-
 
 pushd %SGTEST_HOME%
 

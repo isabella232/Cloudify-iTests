@@ -106,7 +106,7 @@ public class PortAndMemoryAllocationTest extends AbstractByonCloudTest {
 			assertComponentMemory(components.getWebui().getMaxMemory(), components.getWebui().getMinMemory(), host, WEBUI_PROCESS_NAME);
 		}
 		String serviceHostAddress = getServiceHostAddress();
-		assertComponentMemory(components.getUsm().getMaxMemory(), components.getUsm().getMinMemory(), serviceHostAddress, GSA_PROCESS_NAME);
+		assertComponentMemory(components.getAgent().getMaxMemory(), components.getAgent().getMinMemory(), serviceHostAddress, GSA_PROCESS_NAME);
 		assertComponentMemory(components.getUsm().getMaxMemory(), components.getUsm().getMinMemory(), serviceHostAddress, GSC_PROCESS_NAME);
 	}
 

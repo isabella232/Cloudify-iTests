@@ -1,3 +1,5 @@
+// Important: this service does not have start detectors and will 
+// cause a process leak on a local cloud
 service {
 	name "simple"
 	icon "icon.png"

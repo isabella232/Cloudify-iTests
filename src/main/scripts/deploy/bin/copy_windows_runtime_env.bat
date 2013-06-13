@@ -49,3 +49,6 @@ call mvn scm:export -DconnectionUrl=scm:svn:svn://svn-srv/SVN/cloudify/trunk/qua
 
 @echo starting sgtest execution
 @call %ITESTS_HOME%\src\main\scripts\deploy\bin\windows\startSG.bat %VERSION% %MILESTONE% %BUILD_NUMBER% %BUILD_VERSION% %SUITE_NAME% %INCLUDE% %EXCLUDE% %BUILD_LOG_URL% %BRANCH_NAME% %SVN_BRANCH_DIRECTORY% %EC2_REGION% %REVERSE_PROXY% %SUITE_TYPE% %MAVEN_PROJECTS_VERSION_XAP% %MAVEN_PROJECTS_VERSION_CLOUDIFY%
+
+@echo cleaning local build folder - %BUILD_TEST_DIR%
+if exist %BUILD_TEST_DIR% rmdir %BUILD_TEST_DIR% /s /q

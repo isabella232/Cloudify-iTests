@@ -31,7 +31,8 @@ import org.cloudifysource.quality.iTests.framework.utils.usm.USMTestUtils;
 import org.cloudifysource.restclient.ErrorStatusException;
 import org.cloudifysource.restclient.GSRestClient;
 import org.cloudifysource.restclient.RestException;
-import org.cloudifysource.shell.commands.CLIException;
+import org.cloudifysource.restclient.exceptions.RestClientException;
+import org.cloudifysource.shell.exceptions.CLIException;
 import org.cloudifysource.shell.rest.RestAdminFacade;
 import org.cloudifysource.usm.USMException;
 import org.cloudifysource.usm.USMUtils;
@@ -107,7 +108,7 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
 	public void testKitchenSink() throws IOException, InterruptedException, PackagingException, DSLException,
-			RestException {
+			RestException, RestClientException {
 
 		installer.install();
 
@@ -192,7 +193,7 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 
 	}
 
-	private void verifyUninstallManagementFails() throws IOException, InterruptedException {
+	private void verifyUninstallManagementFails() throws IOException, InterruptedException, RestClientException {
 		LogUtils.log("Verifing management undeployment fails when excecuted from the CLI");
 		final String commandOUtput = CommandTestUtils
 				.runCommandExpectedFail("connect "

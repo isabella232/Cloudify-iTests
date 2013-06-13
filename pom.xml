@@ -90,7 +90,7 @@
         <dependency>
 			<groupId>com.gigaspaces.quality</groupId>
 			<artifactId>wanem</artifactId>
-			<version>0.0.2-SNAPSHOT</version>
+			<version>0.0.3-SNAPSHOT</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.apache.httpcomponents</groupId>
@@ -105,7 +105,7 @@
 		<dependency>
 			<groupId>com.gigaspaces.quality</groupId>
 			<artifactId>webuitf</artifactId>
-			<version>1.0.1-SNAPSHOT</version>
+			<version>1.0.2-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>com.gigaspaces.quality</groupId>
@@ -227,7 +227,12 @@
         <dependency>
             <groupId>org.cloudifysource.quality.iTests</groupId>
             <artifactId>location-aware-provisioning-byon</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>1.1.2-SNAPSHOT</version>
+            <!-- Tests that use this jar may require to update the version in the code:
+              AbstractStatelessManualByonCleanupTest,
+              DedicatedEagerDataGridTwoIndependentDeploymentsByonTest,
+              DedicatedStatelessManualPerZoneByonFailoverTest
+            -->
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -242,7 +247,7 @@
         <dependency>
             <groupId>iTests.framework</groupId>
             <artifactId>iTests-framework</artifactId>
-            <version>1.0.2-SNAPSHOT</version>
+            <version>1.0.3-SNAPSHOT</version>
         </dependency>
 	</dependencies>
 

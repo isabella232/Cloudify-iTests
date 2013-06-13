@@ -58,8 +58,8 @@ call %SGTEST_HOME%\src\main\scripts\deploy\bin\windows\deploy_framework.bat
 @echo Running Suite %SUITE_NAME%: 
 call %SGTEST_HOME%\src\main\scripts\deploy\bin\windows\start-suite.bat %SUITE_NAME% %INCLUDE% %EXCLUDE% %EC2_REGION% %BUILD_TEST_DIR% %REVERSE_PROXY% %SUITE_TYPE% %MAVEN_PROJECTS_VERSION_XAP% %MAVEN_PROJECTS_VERSION_CLOUDIFY%
 
-rem @echo generating report...
-rem call %SGTEST_HOME%\src\main\scripts\deploy\bin\windows\generate-report.bat %BUILD_NUMBER% %SUITE_NAME% %VERSION% %MILESTONE% %BUILD_LOG_URL% %SUITE_TYPE% %MAVEN_PROJECTS_VERSION_XAP% %MAVEN_PROJECTS_VERSION_CLOUDIFY%
+@echo generating report...
+call %SGTEST_HOME%\src\main\scripts\deploy\bin\windows\generate-report.bat %BUILD_NUMBER% %SUITE_NAME% %VERSION% %MILESTONE% %BUILD_LOG_URL% %SUITE_TYPE% %MAVEN_PROJECTS_VERSION_XAP% %MAVEN_PROJECTS_VERSION_CLOUDIFY%
 
 if %selenium.browser% == Chrome (
 	taskkill /im chromedriver.exe /F

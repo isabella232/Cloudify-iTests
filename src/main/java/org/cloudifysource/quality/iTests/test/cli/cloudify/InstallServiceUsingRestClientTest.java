@@ -25,7 +25,7 @@ import org.cloudifysource.restclient.GSRestClient;
 import org.cloudifysource.restclient.RestClient;
 import org.cloudifysource.restclient.RestException;
 import org.cloudifysource.restclient.exceptions.RestClientException;
-import org.cloudifysource.shell.commands.CLIException;
+import org.cloudifysource.shell.exceptions.CLIException;
 import org.cloudifysource.shell.rest.RestAdminFacade;
 import org.testng.annotations.Test;
 
@@ -113,7 +113,7 @@ public class InstallServiceUsingRestClientTest extends AbstractLocalCloudTest {
 	}
 
 	void waitForServiceInstall(final URL url)
-			throws CLIException {
+			throws CLIException, RestClientException {
 		final RestAdminFacade adminFacade = new RestAdminFacade();
 		adminFacade.connect(null, null, url.toString(), false);
 		

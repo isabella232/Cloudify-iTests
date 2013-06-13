@@ -1,8 +1,12 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.ec2;
 
-import com.j_spaces.kernel.PlatformVersion;
 import iTests.framework.utils.AssertUtils;
 import iTests.framework.utils.LogUtils;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+
 import org.cloudifysource.dsl.internal.CloudifyConstants.DeploymentState;
 import org.cloudifysource.dsl.internal.DSLException;
 import org.cloudifysource.dsl.internal.packaging.Packager;
@@ -17,15 +21,13 @@ import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.NewAbstractClou
 import org.cloudifysource.restclient.RestClient;
 import org.cloudifysource.restclient.RestException;
 import org.cloudifysource.restclient.exceptions.RestClientException;
-import org.cloudifysource.shell.commands.CLIException;
+import org.cloudifysource.shell.exceptions.CLIException;
 import org.cloudifysource.shell.rest.RestAdminFacade;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
+import com.j_spaces.kernel.PlatformVersion;
 
 public class InstallServiceOnCloudUsingRestClientTest extends NewAbstractCloudTest {
 

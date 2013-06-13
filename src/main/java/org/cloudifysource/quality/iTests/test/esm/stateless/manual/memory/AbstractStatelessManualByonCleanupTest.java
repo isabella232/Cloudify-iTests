@@ -45,7 +45,7 @@ public class AbstractStatelessManualByonCleanupTest extends AbstractFromXenToByo
         String s = System.getProperty("file.separator");
         String repoQualityItests = DeploymentUtils.getQualityItestsPath(s);
         // copy custom location aware driver to cloudify-overrides
-        File locationAwareDriver = new File (repoQualityItests +s+"location-aware-provisioning-byon"+s+"1.1.1-SNAPSHOT"+s+"location-aware-provisioning-byon-1.1.1-SNAPSHOT.jar");
+        File locationAwareDriver = new File (repoQualityItests +s+"location-aware-provisioning-byon"+s+"1.1.2-SNAPSHOT"+s+"location-aware-provisioning-byon-1.1.2-SNAPSHOT.jar");
         File uploadOverrides =
                 new File(getService().getPathToCloudFolder() + "/upload/cloudify-overrides/");
         if (!uploadOverrides.exists()) {

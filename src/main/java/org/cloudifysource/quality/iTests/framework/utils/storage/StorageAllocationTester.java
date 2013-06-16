@@ -378,7 +378,8 @@ public class StorageAllocationTester {
                     LogUtils.log("USMState is " + usmState);
                     return (Integer.valueOf(usmState) == CloudifyConstants.USMState.RUNNING.ordinal());
                 } catch (RestException e) {
-                    throw new RuntimeException("Failed retrieving usm state : " + e.getMessage(), e);
+                	LogUtils.log("Failed retrieving usm state : " + e.getMessage(), e);
+                	return false;
                 }
             }
         } , AbstractTestSupport.OPERATION_TIMEOUT * 3);

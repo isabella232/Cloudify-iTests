@@ -1,7 +1,9 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify;
 
 import java.io.File;
+import java.io.IOException;
 
+import iTests.framework.tools.SGTestHelper;
 import iTests.framework.utils.WebUtils;
 
 import java.net.MalformedURLException;
@@ -13,11 +15,16 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.j_spaces.kernel.PlatformVersion;
+
+import iTests.framework.utils.DeploymentUtils;
+import iTests.framework.utils.IOUtils;
 import iTests.framework.utils.LogUtils;
 import iTests.framework.utils.DumpUtils;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
+import org.cloudifysource.esc.driver.provisioning.byon.ByonProvisioningDriver;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.CloudService;
 import org.cloudifysource.restclient.GSRestClient;
 
 public class CloudTestUtils {
@@ -167,6 +174,33 @@ public class CloudTestUtils {
             FileUtils.writeByteArrayToFile(zipFile, result);
             LogUtils.log("> Logs: " + zipFile.getAbsolutePath() + "\n");
         }
+    }
+    
+    public static void replaceCloudDriverImplementation(CloudService service, String oldClassName, String newClassName, String newJarName, String newJarVersion) throws IOException {
+    	String s = System.getProperty("file.separator");
+        String repoQualityItests = DeploymentUtils.getQualityItestsPath(s);
+        // copy custom location aware driver to cloudify-overrides
+        File locationAwareDriver = new File (repoQualityItests +s+newJarName+s+newJarVersion+s+newJarName+"-"+newJarVersion);
+        File uploadOverrides =
+                new File(service.getPathToCloudFolder() + "/upload/cloudify-overrides/");
+        if (!uploadOverrides.exists()) {
+            uploadOverrides.mkdir();
+        }
+
+        File uploadEsmDir = new File(uploadOverrides.getAbsoluteFile() + "/lib/platform/esm");
+        File localEsmFolder = new File(SGTestHelper.getBuildDir() + "/lib/platform/esm");
+
+        FileUtils.copyFileToDirectory(locationAwareDriver, uploadEsmDir, true);
+        FileUtils.copyFileToDirectory(locationAwareDriver, localEsmFolder, false);
+
+        final Map<String, String> propsToReplace = new HashMap<String, String>();
+
+        propsToReplace.put(appendClassNamePrefix(oldClassName),appendClassNamePrefix(newClassName));
+        IOUtils.replaceTextInFile(service.getPathToCloudGroovy(), propsToReplace);
+    }
+    
+    private static String appendClassNamePrefix(String className) {
+        return "className \""+className+"\"";
     }
 
 }

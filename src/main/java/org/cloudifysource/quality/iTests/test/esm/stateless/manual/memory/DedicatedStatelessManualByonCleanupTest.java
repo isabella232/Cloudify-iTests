@@ -1,14 +1,5 @@
 package org.cloudifysource.quality.iTests.test.esm.stateless.manual.memory;
 
-import iTests.framework.utils.DeploymentUtils;
-import iTests.framework.utils.GsmTestUtils;
-
-import java.io.File;
-
-import org.openspaces.admin.pu.ProcessingUnit;
-import org.openspaces.admin.pu.elastic.ElasticStatelessProcessingUnitDeployment;
-import org.openspaces.admin.pu.elastic.config.ManualCapacityScaleConfigurer;
-import org.openspaces.core.util.MemoryUnit;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
@@ -17,8 +8,13 @@ import org.testng.annotations.Test;
 
 public class DedicatedStatelessManualByonCleanupTest extends AbstractStatelessManualByonCleanupTest {
 
-	private static final String ESM_LOG = "on-service-uninstalled-complete";
-
+	private static final String EXPECTED_ESM_LOG = "on-service-uninstalled-complete";
+	private static final String CLOUD_DRIVER_CLASS_NAME = "org.cloudifysource.quality.iTests.OnServiceUninstalledByonProvisioningDriver";
+	
+	DedicatedStatelessManualByonCleanupTest() {
+		super(EXPECTED_ESM_LOG, CLOUD_DRIVER_CLASS_NAME);
+	}
+	
 	@BeforeMethod
     public void beforeTest() {
 		super.beforeTestInit();
@@ -41,24 +37,6 @@ public class DedicatedStatelessManualByonCleanupTest extends AbstractStatelessMa
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT)
 	public void test() {
-	    File archive = DeploymentUtils.getArchive("simpleStatelessPu.jar");
-	 // make sure no gscs yet created
-	    repetitiveAssertNumberOfGSCsAdded(0, OPERATION_TIMEOUT);
-	    repetitiveAssertNumberOfGSAsAdded(1, OPERATION_TIMEOUT);	    
-		final ProcessingUnit pu = super.deploy(
-				new ElasticStatelessProcessingUnitDeployment(archive)
-	            .memoryCapacityPerContainer(1, MemoryUnit.GIGABYTES)
-	            .dedicatedMachineProvisioning(getMachineProvisioningConfig())
-	            .scale(new ManualCapacityScaleConfigurer()
-	            	  .memoryCapacity(2, MemoryUnit.GIGABYTES)
-                      .create())
-	    );
-	    
-		GsmTestUtils.waitForScaleToCompleteIgnoreCpuSla(pu, 2, OPERATION_TIMEOUT);
-		
-	    assertUndeployAndWait(pu);
-       
-        repetitiveAssertOnServiceUninstalledInvoked(ESM_LOG);
+	    super.testCloudCleanup();
     }
-
 }

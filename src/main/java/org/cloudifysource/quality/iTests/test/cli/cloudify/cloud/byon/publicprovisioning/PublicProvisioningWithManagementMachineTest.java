@@ -7,6 +7,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.cloudifysource.dsl.utils.ServiceUtils;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
 import org.openspaces.admin.machine.Machine;
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.openspaces.admin.pu.ProcessingUnitInstance;
@@ -24,6 +25,7 @@ import iTests.framework.utils.AssertUtils;
 public class PublicProvisioningWithManagementMachineTest extends AbstractPublicProvisioningByonCloudTest {
 	
 	private static final String GROOVY_ONE = "groovy-one";
+	protected static final String INVALID_PUBLIC_PROVISIONING_GROOVY_SERVICE_PATH = CommandTestUtils.getPath("/src/main/resources/apps/USM/usm/groovy-invalid-public-provisioning");
 
 	@Override
 	protected String getCloudName() {
@@ -110,9 +112,24 @@ public class PublicProvisioningWithManagementMachineTest extends AbstractPublicP
 		uninstallServiceAndWait(GROOVY_ONE);		
 		super.scanForLeakedAgentNodes();
 	}
+	
+	/**
+	 * Test the memory validation when using multitenancy. 
+	 * This test tries to install a service that defines in it's SLA 64 MB of memory.
+	 * The USM alone requires 128MB an so the installation is expected to fail.
+	 * @throws IOException
+	 * @throws InterruptedException
+	 */
+	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, enabled = true)
+	public void testIsolationMemoryValidation() throws IOException, InterruptedException {
+		
+		String installOutput = installServiceAndWait(INVALID_PUBLIC_PROVISIONING_GROOVY_SERVICE_PATH, "groovy", 10, true);
+		assertTrue("output does not contain the expected value", installOutput.contains("the usm required memory 128 can not be more then the" +
+				" total memory defined for a service instance 64"));
+	}
 		
 	@AfterClass(alwaysRun = true)
 	protected void teardown() throws Exception {
 		super.teardown();
-	}	
+	}
 }

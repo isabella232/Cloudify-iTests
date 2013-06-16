@@ -6,6 +6,8 @@ import iTests.framework.utils.LogUtils;
 
 import java.util.Set;
 
+import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
+
 import com.gigaspaces.webuitf.LoginPage;
 import com.gigaspaces.webuitf.MainNavigation;
 import com.gigaspaces.webuitf.dashboard.DashboardTab;
@@ -32,7 +34,8 @@ import com.gigaspaces.webuitf.util.AjaxUtils;
 
 public class WebSecurityAuthorizationHelper {
 	
-	private static long assertWaitingTime = 10000;
+	private static long assertWaitingTime = 10 * 1000;
+	private static final int SLEEP_TIMEOUT = 10 * 1000;
 
 	public static MainNavigation performLoginAndAllViewsTests( LoginPage loginPage, String username, String password, 
 			PermittedServicesWrapper permittedServicesWrapper ) throws Exception{
@@ -43,16 +46,40 @@ public class WebSecurityAuthorizationHelper {
 
 		MainNavigation mainNav = loginPage.login();
 
+		boolean invokeSleep = false;
+		
+		if( permittedServicesWrapper.getEsmCount() == 0 ||
+			permittedServicesWrapper.getGsaCount() == 0	||
+			permittedServicesWrapper.getGscCount() == 0	||
+			permittedServicesWrapper.getGsmCount() == 0	||
+			permittedServicesWrapper.getLusCount() == 0 ||
+			permittedServicesWrapper.getHostsCount() == 0 ){
+			
+			invokeSleep = true;
+		}
+
 		DashboardTab dashboardTab = mainNav.switchToDashboard();
 
+		//let to panel time to be initialized if one of expected values is 0
+		if( invokeSleep ){
+			AbstractTestSupport.sleep( SLEEP_TIMEOUT );
+		}
 		checkDashboard( dashboardTab, permittedServicesWrapper );  
 
 		TopologyTab topologyTab = mainNav.switchToTopology();				
-
+		
+		//let to panel time to be initialized if one of expected values is 0
+		if( invokeSleep ){
+			AbstractTestSupport.sleep( SLEEP_TIMEOUT );
+		}
 		checkApplicationsTab( topologyTab, permittedServicesWrapper );
 
 		ServicesTab servicesTab = mainNav.switchToServices();
 
+		//let to panel time to be initialized if one of expected values is 0
+		if( invokeSleep ){
+			AbstractTestSupport.sleep( SLEEP_TIMEOUT );
+		}		
 		checkServicesTab( servicesTab, permittedServicesWrapper ); 		
 
 		logValidationCompletedForUser(username);
@@ -154,7 +181,7 @@ public class WebSecurityAuthorizationHelper {
 
 
 	private static void checkDashboardInfrastructure( InfrastructureServicesGrid infrastructureGrid, 
-			PermittedServicesWrapper permittedServicesWrapper ){
+			final PermittedServicesWrapper permittedServicesWrapper ){
 
 		final ESMInst esmInst = infrastructureGrid.getESMInst();
 		final GSAInst gsaInst = infrastructureGrid.getGSAInst();
@@ -163,73 +190,77 @@ public class WebSecurityAuthorizationHelper {
 		final LUSInst lusInst = infrastructureGrid.getLUSInst();
 		final Hosts hosts = infrastructureGrid.getHosts();
 
+        final int expectedEsmCount = permittedServicesWrapper.getEsmCount();
+		final int expectedGsaCount = permittedServicesWrapper.getGsaCount();
+		final int expectedGscCount = permittedServicesWrapper.getGscCount();
+		final int expectedGsmCount = permittedServicesWrapper.getGsmCount();
+		final int expectedLusCount = permittedServicesWrapper.getLusCount();
+		final int expectedHostsCount = permittedServicesWrapper.getHostsCount();
 
-        // we want to wait for significant values as initially values are all '0', so we use repetitive assert
-
-        AjaxUtils.repetitiveAssertTrue("failed to wait for significant values in infrastructure grid",
+        AjaxUtils.repetitiveAssertTrue("Actual esm count is different from expected value [" +
+        		expectedEsmCount + "]",
                 new com.gigaspaces.webuitf.util.RepetitiveConditionProvider() {
                     @Override
                     public boolean getCondition() {
-                        return  esmInst.getCount() != 0 &&
-                                gsaInst.getCount() != 0 &&
-                                gscInst.getCount() != 0 &&
-                                gsmInst.getCount() != 0 &&
-                                lusInst.getCount() != 0 &&
-                                hosts.getCount() != 0;
+                    	int displayedEsmCount = esmInst.getCount();
+                    	LogUtils.log( "In esm condition, displayedEsmCount=" + displayedEsmCount + ",expectedEsmCount=" + expectedEsmCount );
+                    	return expectedEsmCount == displayedEsmCount;
                     }
-                }, 10 * 1000);
+        }, assertWaitingTime );
+        
+		
+        AjaxUtils.repetitiveAssertTrue("Actual gsa count is different from expected value [" +
+        	expectedGsaCount + "]", new com.gigaspaces.webuitf.util.RepetitiveConditionProvider() {
+                @Override
+                public boolean getCondition() {
+                	int displayedGsaCount = gsaInst.getCount();
+                	LogUtils.log( "In gsa condition, displayedGsaCount=" + displayedGsaCount + ",expectedGsaCount=" + expectedGsaCount );
+                	return expectedGsaCount == displayedGsaCount;
+                }
+        }, assertWaitingTime );
 
+        
+        AjaxUtils.repetitiveAssertTrue("Actual gsc count is different from expected value [" +
+            	expectedGscCount + "]", new com.gigaspaces.webuitf.util.RepetitiveConditionProvider() {
+                    @Override
+                    public boolean getCondition() {
+                    	int displayedGscCount = gscInst.getCount();
+                    	LogUtils.log( "In gsc condition, displayedGscCount=" + displayedGscCount + ",expectedGscCount=" + expectedGscCount );                    	
+                    	return expectedGscCount == displayedGscCount;
+                    }
+            }, assertWaitingTime );
 
-        int displayedEsmCount = esmInst.getCount();
-        int displayedGsaCount = gsaInst.getCount();
-        int displayedGscCount = gscInst.getCount();
-        int displayedGsmCount = gsmInst.getCount();
-        int displayedLusCount = lusInst.getCount();
-        int displayedHostsCount = hosts.getCount();
+        
+        AjaxUtils.repetitiveAssertTrue("Actual gsm count is different from expected value [" +
+            	expectedGsmCount + "]", new com.gigaspaces.webuitf.util.RepetitiveConditionProvider() {
+                    @Override
+                    public boolean getCondition() {
+                    	int displayedGsmCount = gsmInst.getCount();
+                    	LogUtils.log( "In gsm condition, displayedGsmCount=" + displayedGsmCount + ",expectedGsmCount=" + expectedGsmCount );
+                    	return expectedGsmCount == displayedGsmCount;
+                    }
+            }, assertWaitingTime );        
 
-        int expectedEsmCount = permittedServicesWrapper.getEsmCount();
-		int expectedGsaCount = permittedServicesWrapper.getGsaCount();
-		int expectedGscCount = permittedServicesWrapper.getGscCount();
-		int expectedGsmCount = permittedServicesWrapper.getGsmCount();
-		int expectedLusCount = permittedServicesWrapper.getLusCount();
-		int expectedHostsCount = permittedServicesWrapper.getHostsCount();
+        AjaxUtils.repetitiveAssertTrue("Actual lus count is different from expected value [" +
+            	expectedLusCount + "]", new com.gigaspaces.webuitf.util.RepetitiveConditionProvider() {
+                    @Override
+                    public boolean getCondition() {
+                    	int displayedLusCount = lusInst.getCount();
+                    	LogUtils.log( "In lus condition, displayedLusCount=" + displayedLusCount + ",expectedLusCount=" + expectedLusCount );
+                    	return expectedLusCount == displayedLusCount;
+                    }
+            }, assertWaitingTime );               
 
-		LogUtils.log( "> displayed esm count=" + displayedEsmCount + 
-				", expectedEsmCount=" + expectedEsmCount );
-		LogUtils.log( "> displayed gsa count=" + 
-				displayedGsaCount + ", expectedGsaCount=" + expectedGsaCount );
-		LogUtils.log( "> displayed gsc count=" + 
-				displayedGscCount + ", expectedGscCount=" + expectedGscCount );
-		LogUtils.log( "> displayed gsm count=" + 
-				displayedGsmCount + ", expectedGsmCount=" + expectedGsmCount );
-		LogUtils.log( "> displayed lus count=" + 
-				displayedLusCount + ", expectedLusCount=" + expectedLusCount );
-		LogUtils.log( "> displayed hosts count=" + 
-				displayedHostsCount + ", expectedHostsCount=" + expectedHostsCount );
-
-		AssertUtils.assertEquals( "Actual esm count is different from expected value, displayed [" + 
-				displayedEsmCount + "], expected [" + expectedEsmCount + "]", 
-				expectedEsmCount, displayedEsmCount );
-
-		AssertUtils.assertEquals( "Actual gsa count is different from expected value, displayed [" + 
-				displayedGsaCount + "], expected [" + expectedGsaCount + "]", 
-				expectedGsaCount, displayedGsaCount );
-
-		AssertUtils.assertEquals( "Actual gsc count is different from expected value, displayed [" + 
-				displayedGscCount + "], expected [" + expectedGscCount + "]", 
-				expectedGscCount, displayedGscCount );
-
-		AssertUtils.assertEquals( "Actual gsm count is different from expected value, displayed [" + 
-				displayedGsmCount + "], expected [" + expectedGsmCount + "]", 
-				expectedGsmCount, displayedGsmCount );
-
-		AssertUtils.assertEquals( "Actual lus count is different from expected value, displayed [" + 
-				displayedLusCount + "], expected [" + expectedLusCount + "]", 
-				expectedLusCount, displayedLusCount );
-
-		AssertUtils.assertEquals( "Actual machines count is different from expected value, displayed [" + 
-				displayedHostsCount + "], expected [" + expectedHostsCount + "]", 
-				expectedHostsCount, displayedHostsCount );
+        
+        AjaxUtils.repetitiveAssertTrue("Actual hosts count is different from expected value [" +
+            	expectedHostsCount + "]", new com.gigaspaces.webuitf.util.RepetitiveConditionProvider() {
+                    @Override
+                    public boolean getCondition() {
+                    	int displayedHostsCount = hosts.getCount();
+                    	LogUtils.log( "In hosts condition, displayedHostsCount=" + displayedHostsCount + ",expectedHostsCount=" + expectedHostsCount );
+                    	return expectedHostsCount == displayedHostsCount;
+                    }
+            }, assertWaitingTime );           
 	}
 
 	private static void checkDashboardApplicationServices( ApplicationServicesGrid applicationServicesGrid, 

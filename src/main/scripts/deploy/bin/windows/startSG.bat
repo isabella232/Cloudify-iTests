@@ -34,7 +34,7 @@ set MAVEN_PROJECTS_VERSION_XAP=%9
 shift
 set MAVEN_PROJECTS_VERSION_CLOUDIFY=%9
 
-set BUILD_TEST_DIR=C:\build_test_dir
+set BUILD_TEST_DIR=C:\%BUILD_NUMBER%
 set SGTEST_HOME=%BUILD_TEST_DIR%\Cloudify-iTests
 
 @echo setting up enviroment variables

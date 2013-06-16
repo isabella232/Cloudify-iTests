@@ -26,7 +26,7 @@ public class DedicatedStatelessManualByonCleanupTest extends AbstractStatelessMa
 	
 	@BeforeClass
 	protected void bootstrap() throws Exception {
-		super.beforeBootstrap();
+		super.bootstrap();
 	}
 	
 	@AfterMethod

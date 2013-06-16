@@ -15,7 +15,6 @@ package org.cloudifysource.quality.iTests.test.cli.cloudify;
 import iTests.framework.utils.AssertUtils;
 import iTests.framework.utils.LogUtils;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
@@ -77,7 +76,7 @@ public class RetryLimitTest extends AbstractLocalCloudTest {
 	private final String applicationName = "default";
 	private final String absolutePUName = ServiceUtils.getAbsolutePUName(applicationName, serviceName);
 	private final String serviceDir = CommandTestUtils.getPath("/src/main/resources/apps/USM/usm/groovy-error");
-	private final File startDetectionFile = new File(serviceDir, "startDetection.groovy");
+
 	private String installCommand;
 	private String unInstallCommand;
 
@@ -92,7 +91,7 @@ public class RetryLimitTest extends AbstractLocalCloudTest {
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, groups = "1")
 	public void retryLimitTest() throws IOException, InterruptedException, RestClientException {
 
-		Space adminSpace = this.admin.getSpaces().waitFor(CloudifyConstants.MANAGEMENT_SPACE_NAME, 10, TimeUnit.SECONDS);
+		Space adminSpace = admin.getSpaces().waitFor(CloudifyConstants.MANAGEMENT_SPACE_NAME, 10, TimeUnit.SECONDS);
 		assertNotNull(adminSpace);
 		GigaSpace managementSpace = adminSpace.getGigaSpace();
 		ServiceInstanceAttemptData attemptData = managementSpace.read(new ServiceInstanceAttemptData());
@@ -130,6 +129,9 @@ public class RetryLimitTest extends AbstractLocalCloudTest {
 		} finally {
 			admin.getProcessingUnits().removeLifecycleListener(eventListener);
 			CommandTestUtils.runCommandAndWait(unInstallCommand);
+			ServiceInstanceAttemptData attemptDataAfterInstall = managementSpace.read(new ServiceInstanceAttemptData());
+			assertTrue("Found attempt data in space after uninstall", attemptDataAfterInstall == null);
+
 		}
 
 	}

@@ -180,7 +180,7 @@ public class CloudTestUtils {
     	String s = System.getProperty("file.separator");
         String repoQualityItests = DeploymentUtils.getQualityItestsPath(s);
         // copy custom location aware driver to cloudify-overrides
-        File locationAwareDriver = new File (repoQualityItests +s+newJarName+s+newJarVersion+s+newJarName+"-"+newJarVersion);
+        File locationAwareDriver = new File (repoQualityItests +s+newJarName+s+newJarVersion+s+newJarName+"-"+newJarVersion+".jar");
         File uploadOverrides =
                 new File(service.getPathToCloudFolder() + "/upload/cloudify-overrides/");
         if (!uploadOverrides.exists()) {

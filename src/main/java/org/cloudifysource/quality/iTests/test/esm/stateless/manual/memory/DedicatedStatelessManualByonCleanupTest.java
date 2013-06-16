@@ -17,7 +17,7 @@ import org.testng.annotations.Test;
 
 public class DedicatedStatelessManualByonCleanupTest extends AbstractStatelessManualByonCleanupTest {
 
-	private static final String ESM_LOG = "on-service-uninstalled-resources-complete";
+	private static final String ESM_LOG = "on-service-uninstalled-complete";
 
 	@BeforeMethod
     public void beforeTest() {

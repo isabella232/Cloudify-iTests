@@ -33,7 +33,6 @@ public class AbstractSecuredLocalCloudTest extends AbstractTestSupport {
 	protected static final String GROOVY_SERVICE_NAME = "groovy";
 	protected static final String GROOVY2_SERVICE_NAME = "groovy2";	
 	protected static final int TIMEOUT_IN_MINUTES = 30;
-	protected static final String ACCESS_DENIED_MESSAGE = "no_permission_access_is_denied";
 	protected static final String TEARDOWN_ACCESS_DENIED_MESSAGE = "Permission not granted, access is denied.";
 	protected static final String TEARDOWN_SUCCESSFULL_MESSAGE = "SUCCESSFULLY COMPLETED LOCAL-CLOUD TEARDOWN";
 	protected static final String INSTANCE_VERIFICATION_STRING = "instance #1";
@@ -203,7 +202,7 @@ public class AbstractSecuredLocalCloudTest extends AbstractTestSupport {
 		String output = installApplicationAndWait(SIMPLE_APP_PATH, SIMPLE_APP_NAME, TIMEOUT_IN_MINUTES, user, password, isInstallExpectedToFail, null);
 
 		if(isInstallExpectedToFail){
-			assertTrue("application installation access granted to " + user, output.contains(ACCESS_DENIED_MESSAGE));
+			assertTrue("application installation access granted to " + user, output.contains(SecurityConstants.ACCESS_DENIED_MESSAGE));
 		}
 
 		if(output.contains("Application " + SIMPLE_APP_NAME + " installed successfully")){			
@@ -213,7 +212,7 @@ public class AbstractSecuredLocalCloudTest extends AbstractTestSupport {
 		output = installServiceAndWait(SIMPLE_SERVICE_PATH, SIMPLE_SERVICE_NAME, TIMEOUT_IN_MINUTES, user, password, isInstallExpectedToFail, null);
 
 		if(isInstallExpectedToFail){
-			assertTrue("service installation access granted to " + user, output.contains(ACCESS_DENIED_MESSAGE));
+			assertTrue("service installation access granted to " + user, output.contains(SecurityConstants.ACCESS_DENIED_MESSAGE));
 		}
 
 		if(output.contains("Service \"" + SIMPLE_SERVICE_NAME + "\" successfully installed")){			
@@ -454,7 +453,7 @@ public class AbstractSecuredLocalCloudTest extends AbstractTestSupport {
 			}
 		}
 
-		assertTrue("install access granted to viewer " + fakeCloudAdminUserAndPassword, output.contains(ACCESS_DENIED_MESSAGE));
+		assertTrue("install access granted to viewer " + fakeCloudAdminUserAndPassword, output.contains(SecurityConstants.ACCESS_DENIED_MESSAGE));
 	}
 
 

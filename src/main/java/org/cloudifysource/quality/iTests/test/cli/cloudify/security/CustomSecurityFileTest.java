@@ -43,7 +43,7 @@ public class CustomSecurityFileTest extends AbstractSecuredLocalCloudTest {
 		ApplicationInstaller appInstaller = new ApplicationInstaller(getRestUrl(), APP_NAME);
 		String output = appInstaller.cloudifyUsername(VIEWER_USER_AND_PASSWORD).cloudifyPassword(VIEWER_USER_AND_PASSWORD).recipePath(APP_PATH).expectToFail(true).install();
 
-		assertTrue("install access granted to a viewer", output.contains("Access is denied") || output.contains("no_permission_access_is_denied"));
+		assertTrue("install access granted to a viewer", output.contains("Access is denied") || output.contains(SecurityConstants.ACCESS_DENIED_MESSAGE));
 	}
 	
 	@AfterMethod(alwaysRun = true)

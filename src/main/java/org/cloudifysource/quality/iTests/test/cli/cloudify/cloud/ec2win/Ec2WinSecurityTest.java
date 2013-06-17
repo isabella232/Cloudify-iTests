@@ -27,7 +27,6 @@ public class Ec2WinSecurityTest extends NewAbstractSecurityCloudTest {
 	private static final String GROOVY2_SERVICE_NAME = "groovy2";
 	
 	private static final String INSTANCE_VERIFICATION_STRING = "instance #1";
-	private static final String ACCESS_DENIED_MESSAGE = "no_permission_access_is_denied";
 	
 	private static final int TIMEOUT_IN_MINUTES = 60;
 
@@ -71,7 +70,7 @@ public class Ec2WinSecurityTest extends NewAbstractSecurityCloudTest {
 		installApplicationAndWait(SIMPLE_APP_PATH, SIMPLE_APP_NAME, TIMEOUT_IN_MINUTES, SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, false, null);
 
 		output = uninstallApplicationAndWait(SIMPLE_APP_PATH, SIMPLE_APP_NAME, TIMEOUT_IN_MINUTES, SecurityConstants.USER_PWD_VIEWER, SecurityConstants.USER_PWD_VIEWER, true, null);
-		assertTrue("uninstall access granted to " + SecurityConstants.VIEWER_DESCRIPTIN, output.contains(ACCESS_DENIED_MESSAGE));
+		assertTrue("uninstall access granted to " + SecurityConstants.VIEWER_DESCRIPTIN, output.contains(SecurityConstants.ACCESS_DENIED_MESSAGE));
 
 		uninstallApplicationAndWait(SIMPLE_APP_PATH, SIMPLE_APP_NAME, TIMEOUT_IN_MINUTES, SecurityConstants.USER_PWD_APP_MANAGER, SecurityConstants.USER_PWD_APP_MANAGER, false, null);
 	}
@@ -172,7 +171,7 @@ public class Ec2WinSecurityTest extends NewAbstractSecurityCloudTest {
 		
 		output = installApplicationAndWait(SIMPLE_APP_PATH, SIMPLE_APP_NAME, TIMEOUT_IN_MINUTES, SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, true, "ROLE_CLOUDADMINS");
 		
-		assertTrue("install succeeded with authGroup ROLE_CLOUDADMINS for: " + SecurityConstants.APP_MANAGER_AND_VIEWER_DESCRIPTIN, output.contains(ACCESS_DENIED_MESSAGE));
+		assertTrue("install succeeded with authGroup ROLE_CLOUDADMINS for: " + SecurityConstants.APP_MANAGER_AND_VIEWER_DESCRIPTIN, output.contains(SecurityConstants.ACCESS_DENIED_MESSAGE));
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
@@ -183,7 +182,7 @@ public class Ec2WinSecurityTest extends NewAbstractSecurityCloudTest {
 		installApplicationAndWait(SIMPLE_APP_PATH, SIMPLE_APP_NAME, TIMEOUT_IN_MINUTES, SecurityConstants.USER_PWD_CLOUD_ADMIN_AND_APP_MANAGER, SecurityConstants.USER_PWD_CLOUD_ADMIN_AND_APP_MANAGER, false, "ROLE_CLOUDADMINS");
 		output = uninstallApplicationAndWait(SIMPLE_APP_PATH, SIMPLE_APP_NAME, TIMEOUT_IN_MINUTES, SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, true, null);
 		
-		assertTrue("unseen application uninstall succeeded", output.contains(ACCESS_DENIED_MESSAGE));
+		assertTrue("unseen application uninstall succeeded", output.contains(SecurityConstants.ACCESS_DENIED_MESSAGE));
 	}
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
@@ -227,7 +226,7 @@ public class Ec2WinSecurityTest extends NewAbstractSecurityCloudTest {
 			}
 		}
 				
-		assertTrue("install access granted to viewer " + fakeCloudAdminUserAndPassword, output.contains(ACCESS_DENIED_MESSAGE));			
+		assertTrue("install access granted to viewer " + fakeCloudAdminUserAndPassword, output.contains(SecurityConstants.ACCESS_DENIED_MESSAGE));			
 	}
 
 	protected void verifyVisibleLists(String installer, String viewerName, String viewerPassword, String viewerDescription, String appName, boolean isVisible) throws IOException, InterruptedException {
@@ -302,7 +301,7 @@ public class Ec2WinSecurityTest extends NewAbstractSecurityCloudTest {
 		String output = installApplicationAndWait(SIMPLE_APP_PATH, SIMPLE_APP_NAME, TIMEOUT_IN_MINUTES, user, password, isInstallExpectedToFail, null);
 		
 		if(isInstallExpectedToFail){
-			assertTrue("application installation access granted to " + user, output.contains(ACCESS_DENIED_MESSAGE));
+			assertTrue("application installation access granted to " + user, output.contains(SecurityConstants.ACCESS_DENIED_MESSAGE));
 		}
 		
 		if(output.contains("Application " + SIMPLE_APP_NAME + " installed successfully")){			
@@ -312,7 +311,7 @@ public class Ec2WinSecurityTest extends NewAbstractSecurityCloudTest {
 		output = installServiceAndWait(SIMPLE_SERVICE_PATH, SIMPLE_SERVICE_NAME, TIMEOUT_IN_MINUTES, user, password, isInstallExpectedToFail, null);
 		
 		if(isInstallExpectedToFail){
-			assertTrue("service installation access granted to " + user, output.contains(ACCESS_DENIED_MESSAGE));
+			assertTrue("service installation access granted to " + user, output.contains(SecurityConstants.ACCESS_DENIED_MESSAGE));
 		}
 		
 		if(output.contains("Service \"" + SIMPLE_SERVICE_NAME + "\" successfully installed")){			

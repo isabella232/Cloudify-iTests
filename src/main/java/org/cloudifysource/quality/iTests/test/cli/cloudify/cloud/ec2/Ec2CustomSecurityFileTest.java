@@ -23,8 +23,6 @@ public class Ec2CustomSecurityFileTest extends NewAbstractSecurityCloudTest{
 	private static final String CUSTUM_SECURITY_FILE_PATH = CommandTestUtils.getPath("/src/main/config/security/custom-spring-security.xml");
 	private static final String APP_PATH = CommandTestUtils.getPath("/src/main/resources/apps/USM/usm/applications/" + APP_NAME);
 	
-	private static final String ACCESS_DENIED_MESSAGE = "no_permission_access_is_denied";
-	
 	private static final int TIMEOUT_IN_MINUTES = 60;
 	
 	@BeforeClass(alwaysRun = true)
@@ -60,7 +58,7 @@ public class Ec2CustomSecurityFileTest extends NewAbstractSecurityCloudTest{
 		
 		String output = installApplicationAndWait(APP_PATH, APP_NAME, TIMEOUT_IN_MINUTES, VIEWER_USER_AND_PASSWORD, VIEWER_USER_AND_PASSWORD, true, null);
 		
-		assertTrue("install access granted to " + VIEWER_DESCRIPTIN, output.contains(ACCESS_DENIED_MESSAGE));
+		assertTrue("install access granted to " + VIEWER_DESCRIPTIN, output.contains(SecurityConstants.ACCESS_DENIED_MESSAGE));
 	}
 	
 	@Override

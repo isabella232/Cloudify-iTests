@@ -1,12 +1,11 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.ec2;
 
+import iTests.framework.utils.LogUtils;
+
 import java.io.File;
 import java.io.IOException;
 
 import org.apache.commons.io.FileUtils;
-import iTests.framework.utils.LogUtils;
-
-import org.cloudifysource.dsl.internal.CloudifyErrorMessages;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.NewAbstractSecurityCloudTest;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.security.SecurityConstants;
@@ -84,7 +83,7 @@ public class Ec2SecurityTest extends NewAbstractSecurityCloudTest {
 		output = installApplicationAndWait(SIMPLE_APP_PATH, SIMPLE_APP_NAME, TIMEOUT_IN_MINUTES, null, null, true, null);
 
 		assertTrue("install access granted to an Anonymous user" ,
-				output.toLowerCase().contains(CloudifyErrorMessages.UNAUTHORIZED.getName().toLowerCase()) &&
+				output.toLowerCase().contains(SecurityConstants.UNAUTHORIZED.toLowerCase()) &&
 				output.toLowerCase().contains("Full authentication is required to access this resource".toLowerCase()));
 	}
 
@@ -129,7 +128,7 @@ public class Ec2SecurityTest extends NewAbstractSecurityCloudTest {
 
 		String output = connect(SecurityConstants.USER_PWD_CLOUD_ADMIN + "bad", SecurityConstants.USER_PWD_CLOUD_ADMIN, true);		
 		assertTrue("connect succeeded for user: " + SecurityConstants.USER_PWD_CLOUD_ADMIN + "bad", 
-				output.toLowerCase().contains(CloudifyErrorMessages.UNAUTHORIZED.getName().toLowerCase()) &&
+				output.toLowerCase().contains(SecurityConstants.UNAUTHORIZED.toLowerCase()) &&
 				output.toLowerCase().contains("Bad credentials".toLowerCase()));
 
 	}
@@ -139,7 +138,7 @@ public class Ec2SecurityTest extends NewAbstractSecurityCloudTest {
 		
 		String output = connect(SecurityConstants.USER_PWD_CLOUD_ADMIN, null, true);		
 		assertTrue("connect succeeded for: " + SecurityConstants.CLOUD_ADMIN_DESCRIPTIN + " without providing a password", 
-				output.toLowerCase().contains(CloudifyErrorMessages.UNAUTHORIZED.getName().toLowerCase()) &&
+				output.toLowerCase().contains(SecurityConstants.UNAUTHORIZED.toLowerCase()) &&
 				output.toLowerCase().contains("Full authentication is required to access this resource".toLowerCase()));		
 	}
 
@@ -151,7 +150,7 @@ public class Ec2SecurityTest extends NewAbstractSecurityCloudTest {
 		output = login(SecurityConstants.USER_PWD_CLOUD_ADMIN + "bad", SecurityConstants.USER_PWD_CLOUD_ADMIN, true);					
 
 		assertTrue("login succeeded for user: " + SecurityConstants.USER_PWD_CLOUD_ADMIN + "bad", 
-				output.toLowerCase().contains(CloudifyErrorMessages.UNAUTHORIZED.getName().toLowerCase()) &&
+				output.toLowerCase().contains(SecurityConstants.UNAUTHORIZED.toLowerCase()) &&
 				output.toLowerCase().contains("Bad credentials".toLowerCase()));
 	}
 
@@ -160,7 +159,7 @@ public class Ec2SecurityTest extends NewAbstractSecurityCloudTest {
 
 		String output = connect(SecurityConstants.USER_PWD_CLOUD_ADMIN, SecurityConstants.USER_PWD_CLOUD_ADMIN + "bad", true);		
 		assertTrue("connect succeeded for password: " + SecurityConstants.USER_PWD_CLOUD_ADMIN + "bad", 
-				output.toLowerCase().contains(CloudifyErrorMessages.UNAUTHORIZED.getName().toLowerCase()) &&
+				output.toLowerCase().contains(SecurityConstants.UNAUTHORIZED.toLowerCase()) &&
 				output.toLowerCase().contains("Bad credentials".toLowerCase()));
 	}
 
@@ -172,7 +171,7 @@ public class Ec2SecurityTest extends NewAbstractSecurityCloudTest {
 		output = login(SecurityConstants.USER_PWD_CLOUD_ADMIN, SecurityConstants.USER_PWD_CLOUD_ADMIN + "bad", true);
 		
 		assertTrue("login succeeded for password: " + SecurityConstants.USER_PWD_CLOUD_ADMIN + "bad", 
-				output.toLowerCase().contains(CloudifyErrorMessages.UNAUTHORIZED.getName().toLowerCase()) &&
+				output.toLowerCase().contains(SecurityConstants.UNAUTHORIZED.toLowerCase()) &&
 				output.toLowerCase().contains("Bad credentials".toLowerCase()));
 	}
 	

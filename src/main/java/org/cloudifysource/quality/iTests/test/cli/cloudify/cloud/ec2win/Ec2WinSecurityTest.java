@@ -1,19 +1,18 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.ec2win;
 
+import iTests.framework.utils.LogUtils;
+
 import java.io.File;
 import java.io.IOException;
 
 import org.apache.commons.io.FileUtils;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.NewAbstractSecurityCloudTest;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.security.SecurityConstants;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-
-import org.cloudifysource.dsl.internal.CloudifyErrorMessages;
-import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
-import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.NewAbstractSecurityCloudTest;
-import org.cloudifysource.quality.iTests.test.cli.cloudify.security.SecurityConstants;
-import iTests.framework.utils.LogUtils;
 
 public class Ec2WinSecurityTest extends NewAbstractSecurityCloudTest {
 
@@ -28,7 +27,6 @@ public class Ec2WinSecurityTest extends NewAbstractSecurityCloudTest {
 	private static final String GROOVY2_SERVICE_NAME = "groovy2";
 	
 	private static final String INSTANCE_VERIFICATION_STRING = "instance #1";
-	private static final String ACCESS_DENIED_MESSAGE = "no_permission_access_is_denied";
 	
 	private static final int TIMEOUT_IN_MINUTES = 60;
 
@@ -83,7 +81,7 @@ public class Ec2WinSecurityTest extends NewAbstractSecurityCloudTest {
 		String output = "no output";
 		output = installApplicationAndWait(SIMPLE_APP_PATH, SIMPLE_APP_NAME, TIMEOUT_IN_MINUTES, null, null, true, null);
 
-		assertTrue("install access granted to an Anonymous user" , output.contains(CloudifyErrorMessages.UNAUTHORIZED.getName()));
+		assertTrue("install access granted to an Anonymous user" , output.contains(SecurityConstants.UNAUTHORIZED));
 	}
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
@@ -127,7 +125,7 @@ public class Ec2WinSecurityTest extends NewAbstractSecurityCloudTest {
 
 		String output = connect(SecurityConstants.USER_PWD_CLOUD_ADMIN + "bad", SecurityConstants.USER_PWD_CLOUD_ADMIN, true);		
 		assertTrue("connect succeeded for user: " + SecurityConstants.USER_PWD_CLOUD_ADMIN + "bad", 
-				output.contains(CloudifyErrorMessages.UNAUTHORIZED.getName()));			
+				output.contains(SecurityConstants.UNAUTHORIZED));			
 
 	}
 	
@@ -136,7 +134,7 @@ public class Ec2WinSecurityTest extends NewAbstractSecurityCloudTest {
 		
 		String output = connect(SecurityConstants.USER_PWD_CLOUD_ADMIN, null, true);		
 		assertTrue("connect succeeded for: " + SecurityConstants.CLOUD_ADMIN_DESCRIPTIN + " without providing a password", 
-				output.contains(CloudifyErrorMessages.UNAUTHORIZED.getName()));			
+				output.contains(SecurityConstants.UNAUTHORIZED));			
 		
 	}
 
@@ -148,7 +146,7 @@ public class Ec2WinSecurityTest extends NewAbstractSecurityCloudTest {
 		output = login(SecurityConstants.USER_PWD_CLOUD_ADMIN + "bad", SecurityConstants.USER_PWD_CLOUD_ADMIN, true);					
 
 		assertTrue("login succeeded for user: " + SecurityConstants.USER_PWD_CLOUD_ADMIN + "bad", 
-				output.contains(CloudifyErrorMessages.UNAUTHORIZED.getName()));			
+				output.contains(SecurityConstants.UNAUTHORIZED));			
 	}
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
@@ -156,7 +154,7 @@ public class Ec2WinSecurityTest extends NewAbstractSecurityCloudTest {
 
 		String output = connect(SecurityConstants.USER_PWD_CLOUD_ADMIN, SecurityConstants.USER_PWD_CLOUD_ADMIN + "bad", true);		
 		assertTrue("connect succeeded for password: " + SecurityConstants.USER_PWD_CLOUD_ADMIN + "bad", 
-				output.contains(CloudifyErrorMessages.UNAUTHORIZED.getName()));			
+				output.contains(SecurityConstants.UNAUTHORIZED));			
 
 	}
 
@@ -168,7 +166,7 @@ public class Ec2WinSecurityTest extends NewAbstractSecurityCloudTest {
 		output = login(SecurityConstants.USER_PWD_CLOUD_ADMIN, SecurityConstants.USER_PWD_CLOUD_ADMIN + "bad", true);
 		
 		assertTrue("login succeeded for password: " + SecurityConstants.USER_PWD_CLOUD_ADMIN + "bad", 
-				output.contains(CloudifyErrorMessages.UNAUTHORIZED.getName()));
+				output.contains(SecurityConstants.UNAUTHORIZED));
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)

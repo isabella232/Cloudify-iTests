@@ -37,5 +37,6 @@ public class SecurityConstants {
 	public static final String LDAP_SECURITY_FILE_PATH = CREDENTIALS_FOLDER + "/security/ldap-spring-security.xml";
 
 	public static final String ACCESS_DENIED_MESSAGE = "access is denied";
+	public static final String BAD_CREDENTIALS_MESSAGE = "Unauthorized";
 
 }

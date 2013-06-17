@@ -37,7 +37,6 @@ public class AbstractSecuredLocalCloudTest extends AbstractTestSupport {
 	protected static final String TEARDOWN_ACCESS_DENIED_MESSAGE = "Permission not granted, access is denied.";
 	protected static final String TEARDOWN_SUCCESSFULL_MESSAGE = "SUCCESSFULLY COMPLETED LOCAL-CLOUD TEARDOWN";
 	protected static final String INSTANCE_VERIFICATION_STRING = "instance #1";
-	protected static final String BAD_CREDENTIALS_MESSAGE = "Bad credentials";
 	
 	protected static final String MANAGEMENT_APPLICATION_NAME = "management";
 
@@ -97,7 +96,7 @@ public class AbstractSecuredLocalCloudTest extends AbstractTestSupport {
 	protected void testConnectWithNonExistingUser() throws IOException,
 	InterruptedException {
 		String output = connect(SecurityConstants.USER_PWD_CLOUD_ADMIN + "bad", SecurityConstants.USER_PWD_CLOUD_ADMIN, true);		
-		assertTrue("connect succeeded for user: " + SecurityConstants.USER_PWD_CLOUD_ADMIN + "bad", output.contains(BAD_CREDENTIALS_MESSAGE));
+		assertTrue("connect succeeded for user: " + SecurityConstants.USER_PWD_CLOUD_ADMIN + "bad", output.contains(SecurityConstants.BAD_CREDENTIALS_MESSAGE));
 	}
 
 	protected String teardown(LocalCloudBootstrapper bootstrapper) throws IOException, InterruptedException {
@@ -125,7 +124,7 @@ public class AbstractSecuredLocalCloudTest extends AbstractTestSupport {
 	protected void installWithoutCredentialsTest() throws IOException,
 	InterruptedException {
 		String output = installApplicationAndWait(SIMPLE_APP_PATH, SIMPLE_APP_NAME, TIMEOUT_IN_MINUTES, null, null, true, null);
-		assertTrue("install access granted to an Anonymous user" , output.contains(BAD_CREDENTIALS_MESSAGE));
+		assertTrue("install access granted to an Anonymous user" , output.contains(SecurityConstants.BAD_CREDENTIALS_MESSAGE));
 	}
 
 	protected void verifyVisibleLists(String installer, String viewerName, String viewerPassword, String viewerDescription, String appName, boolean isVisible) throws IOException, InterruptedException {
@@ -345,7 +344,7 @@ public class AbstractSecuredLocalCloudTest extends AbstractTestSupport {
 	protected void testConnectWithNoPassword() throws IOException,
 	InterruptedException {
 		String output = connect(SecurityConstants.USER_PWD_CLOUD_ADMIN, null, true);		
-		assertTrue("connect succeeded for: " + SecurityConstants.CLOUD_ADMIN_DESCRIPTIN + " without providing a password", output.contains(BAD_CREDENTIALS_MESSAGE));
+		assertTrue("connect succeeded for: " + SecurityConstants.CLOUD_ADMIN_DESCRIPTIN + " without providing a password", output.contains(SecurityConstants.BAD_CREDENTIALS_MESSAGE));
 	}
 
 	protected void testLoginWithNonexistingUser() throws IOException,
@@ -354,13 +353,13 @@ public class AbstractSecuredLocalCloudTest extends AbstractTestSupport {
 
 		output = login(SecurityConstants.USER_PWD_CLOUD_ADMIN + "bad", SecurityConstants.USER_PWD_CLOUD_ADMIN, true);					
 
-		assertTrue("login succeeded for user: " + SecurityConstants.USER_PWD_CLOUD_ADMIN + "bad", output.contains(BAD_CREDENTIALS_MESSAGE));
+		assertTrue("login succeeded for user: " + SecurityConstants.USER_PWD_CLOUD_ADMIN + "bad", output.contains(SecurityConstants.BAD_CREDENTIALS_MESSAGE));
 	}
 
 	protected void testConnectWithWrongPassword() throws IOException,
 	InterruptedException {
 		String output = connect(SecurityConstants.USER_PWD_CLOUD_ADMIN, SecurityConstants.USER_PWD_CLOUD_ADMIN + "bad", true);		
-		assertTrue("connect succeeded for password: " + SecurityConstants.USER_PWD_CLOUD_ADMIN + "bad", output.contains(BAD_CREDENTIALS_MESSAGE));
+		assertTrue("connect succeeded for password: " + SecurityConstants.USER_PWD_CLOUD_ADMIN + "bad", output.contains(SecurityConstants.BAD_CREDENTIALS_MESSAGE));
 	}
 
 	protected void testLoginWithWrongPassword() throws IOException,
@@ -369,7 +368,7 @@ public class AbstractSecuredLocalCloudTest extends AbstractTestSupport {
 
 		output = login(SecurityConstants.USER_PWD_CLOUD_ADMIN, SecurityConstants.USER_PWD_CLOUD_ADMIN + "bad", true);
 
-		assertTrue("login succeeded for password: " + SecurityConstants.USER_PWD_CLOUD_ADMIN + "bad", output.contains(BAD_CREDENTIALS_MESSAGE));
+		assertTrue("login succeeded for password: " + SecurityConstants.USER_PWD_CLOUD_ADMIN + "bad", output.contains(SecurityConstants.BAD_CREDENTIALS_MESSAGE));
 	}
 
 	protected void testSecuredUseApplication() throws IOException,

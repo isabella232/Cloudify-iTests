@@ -10,6 +10,7 @@ import iTests.framework.utils.WebUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.cloudifysource.dsl.internal.CloudifyConstants;
+import org.cloudifysource.dsl.internal.CloudifyErrorMessages;
 import org.cloudifysource.dsl.utils.ServiceUtils;
 import org.cloudifysource.quality.iTests.framework.utils.*;
 import org.openspaces.admin.Admin;
@@ -95,7 +96,9 @@ public class AbstractSecuredLocalCloudTest extends AbstractTestSupport {
 	protected void testConnectWithNonExistingUser() throws IOException,
 	InterruptedException {
 		String output = connect(SecurityConstants.USER_PWD_CLOUD_ADMIN + "bad", SecurityConstants.USER_PWD_CLOUD_ADMIN, true);		
-		assertTrue("connect succeeded for user: " + SecurityConstants.USER_PWD_CLOUD_ADMIN + "bad", output.contains(SecurityConstants.BAD_CREDENTIALS_MESSAGE));
+		assertTrue("connect succeeded for user: " + SecurityConstants.USER_PWD_CLOUD_ADMIN + "bad", 
+				output.toLowerCase().contains(CloudifyErrorMessages.UNAUTHORIZED.getName().toLowerCase()) &&
+				output.toLowerCase().contains("Bad credentials".toLowerCase()));
 	}
 
 	protected String teardown(LocalCloudBootstrapper bootstrapper) throws IOException, InterruptedException {
@@ -123,7 +126,9 @@ public class AbstractSecuredLocalCloudTest extends AbstractTestSupport {
 	protected void installWithoutCredentialsTest() throws IOException,
 	InterruptedException {
 		String output = installApplicationAndWait(SIMPLE_APP_PATH, SIMPLE_APP_NAME, TIMEOUT_IN_MINUTES, null, null, true, null);
-		assertTrue("install access granted to an Anonymous user" , output.contains(SecurityConstants.BAD_CREDENTIALS_MESSAGE));
+		assertTrue("install access granted to an Anonymous user" ,
+				output.toLowerCase().contains(CloudifyErrorMessages.UNAUTHORIZED.getName().toLowerCase()) &&
+				output.toLowerCase().contains("Full authentication is required to access this resource".toLowerCase()));
 	}
 
 	protected void verifyVisibleLists(String installer, String viewerName, String viewerPassword, String viewerDescription, String appName, boolean isVisible) throws IOException, InterruptedException {
@@ -343,22 +348,28 @@ public class AbstractSecuredLocalCloudTest extends AbstractTestSupport {
 	protected void testConnectWithNoPassword() throws IOException,
 	InterruptedException {
 		String output = connect(SecurityConstants.USER_PWD_CLOUD_ADMIN, null, true);		
-		assertTrue("connect succeeded for: " + SecurityConstants.CLOUD_ADMIN_DESCRIPTIN + " without providing a password", output.contains(SecurityConstants.BAD_CREDENTIALS_MESSAGE));
+		assertTrue("connect succeeded for: " + SecurityConstants.CLOUD_ADMIN_DESCRIPTIN + " without providing a password", 
+				output.toLowerCase().contains(CloudifyErrorMessages.UNAUTHORIZED.getName().toLowerCase()) &&
+				output.toLowerCase().contains("Full authentication is required to access this resource".toLowerCase()));
 	}
 
 	protected void testLoginWithNonexistingUser() throws IOException,
 	InterruptedException {
 		String output = "no output";
 
-		output = login(SecurityConstants.USER_PWD_CLOUD_ADMIN + "bad", SecurityConstants.USER_PWD_CLOUD_ADMIN, true);					
+		output = login(SecurityConstants.USER_PWD_CLOUD_ADMIN + "bad", SecurityConstants.USER_PWD_CLOUD_ADMIN, true);
 
-		assertTrue("login succeeded for user: " + SecurityConstants.USER_PWD_CLOUD_ADMIN + "bad", output.contains(SecurityConstants.BAD_CREDENTIALS_MESSAGE));
+		assertTrue("login succeeded for user: " + SecurityConstants.USER_PWD_CLOUD_ADMIN + "bad", 
+				output.toLowerCase().contains(CloudifyErrorMessages.UNAUTHORIZED.getName().toLowerCase()) &&
+				output.toLowerCase().contains("Bad credentials".toLowerCase()));
 	}
 
 	protected void testConnectWithWrongPassword() throws IOException,
 	InterruptedException {
 		String output = connect(SecurityConstants.USER_PWD_CLOUD_ADMIN, SecurityConstants.USER_PWD_CLOUD_ADMIN + "bad", true);		
-		assertTrue("connect succeeded for password: " + SecurityConstants.USER_PWD_CLOUD_ADMIN + "bad", output.contains(SecurityConstants.BAD_CREDENTIALS_MESSAGE));
+		assertTrue("connect succeeded for password: " + SecurityConstants.USER_PWD_CLOUD_ADMIN + "bad", 
+				output.toLowerCase().contains(CloudifyErrorMessages.UNAUTHORIZED.getName().toLowerCase()) &&
+				output.toLowerCase().contains("Bad credentials".toLowerCase()));
 	}
 
 	protected void testLoginWithWrongPassword() throws IOException,
@@ -367,7 +378,9 @@ public class AbstractSecuredLocalCloudTest extends AbstractTestSupport {
 
 		output = login(SecurityConstants.USER_PWD_CLOUD_ADMIN, SecurityConstants.USER_PWD_CLOUD_ADMIN + "bad", true);
 
-		assertTrue("login succeeded for password: " + SecurityConstants.USER_PWD_CLOUD_ADMIN + "bad", output.contains(SecurityConstants.BAD_CREDENTIALS_MESSAGE));
+		assertTrue("login succeeded for password: " + SecurityConstants.USER_PWD_CLOUD_ADMIN + "bad", 
+				output.toLowerCase().contains(CloudifyErrorMessages.UNAUTHORIZED.getName().toLowerCase()) &&
+				output.toLowerCase().contains("Bad credentials".toLowerCase()));
 	}
 
 	protected void testSecuredUseApplication() throws IOException,

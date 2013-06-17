@@ -5,6 +5,8 @@ import java.io.IOException;
 
 import org.apache.commons.io.FileUtils;
 import iTests.framework.utils.LogUtils;
+
+import org.cloudifysource.dsl.internal.CloudifyErrorMessages;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.NewAbstractSecurityCloudTest;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.security.SecurityConstants;
@@ -26,6 +28,7 @@ public class Ec2SecurityTest extends NewAbstractSecurityCloudTest {
 	private static final String GROOVY2_SERVICE_NAME = "groovy2";
 	
 	private static final String INSTANCE_VERIFICATION_STRING = "instance #1";
+	private static final String ACCESS_DENIED_MESSAGE = "no_permission_access_is_denied";
 	
 	private static final int TIMEOUT_IN_MINUTES = 60;
 
@@ -80,7 +83,9 @@ public class Ec2SecurityTest extends NewAbstractSecurityCloudTest {
 		String output = "no output";
 		output = installApplicationAndWait(SIMPLE_APP_PATH, SIMPLE_APP_NAME, TIMEOUT_IN_MINUTES, null, null, true, null);
 
-		assertTrue("install access granted to an Anonymous user" , output.contains(SecurityConstants.BAD_CREDENTIALS_MESSAGE));
+		assertTrue("install access granted to an Anonymous user" ,
+				output.toLowerCase().contains(CloudifyErrorMessages.UNAUTHORIZED.getName().toLowerCase()) &&
+				output.toLowerCase().contains("Full authentication is required to access this resource".toLowerCase()));
 	}
 
 	@Test(timeOut = EXTENDED_TEST_TIMEOUT, enabled = true)
@@ -123,7 +128,9 @@ public class Ec2SecurityTest extends NewAbstractSecurityCloudTest {
 	public void connectWithNonexistentUserTest() throws IOException, InterruptedException {
 
 		String output = connect(SecurityConstants.USER_PWD_CLOUD_ADMIN + "bad", SecurityConstants.USER_PWD_CLOUD_ADMIN, true);		
-		assertTrue("connect succeeded for user: " + SecurityConstants.USER_PWD_CLOUD_ADMIN + "bad", output.contains(SecurityConstants.BAD_CREDENTIALS_MESSAGE));			
+		assertTrue("connect succeeded for user: " + SecurityConstants.USER_PWD_CLOUD_ADMIN + "bad", 
+				output.toLowerCase().contains(CloudifyErrorMessages.UNAUTHORIZED.getName().toLowerCase()) &&
+				output.toLowerCase().contains("Bad credentials".toLowerCase()));
 
 	}
 	
@@ -131,8 +138,9 @@ public class Ec2SecurityTest extends NewAbstractSecurityCloudTest {
 	public void connectWithNoPasswordTest() throws IOException, InterruptedException {
 		
 		String output = connect(SecurityConstants.USER_PWD_CLOUD_ADMIN, null, true);		
-		assertTrue("connect succeeded for: " + SecurityConstants.CLOUD_ADMIN_DESCRIPTIN + " without providing a password", output.contains(SecurityConstants.BAD_CREDENTIALS_MESSAGE));			
-		
+		assertTrue("connect succeeded for: " + SecurityConstants.CLOUD_ADMIN_DESCRIPTIN + " without providing a password", 
+				output.toLowerCase().contains(CloudifyErrorMessages.UNAUTHORIZED.getName().toLowerCase()) &&
+				output.toLowerCase().contains("Full authentication is required to access this resource".toLowerCase()));		
 	}
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
@@ -142,15 +150,18 @@ public class Ec2SecurityTest extends NewAbstractSecurityCloudTest {
 		
 		output = login(SecurityConstants.USER_PWD_CLOUD_ADMIN + "bad", SecurityConstants.USER_PWD_CLOUD_ADMIN, true);					
 
-		assertTrue("login succeeded for user: " + SecurityConstants.USER_PWD_CLOUD_ADMIN + "bad", output.contains(SecurityConstants.BAD_CREDENTIALS_MESSAGE));			
+		assertTrue("login succeeded for user: " + SecurityConstants.USER_PWD_CLOUD_ADMIN + "bad", 
+				output.toLowerCase().contains(CloudifyErrorMessages.UNAUTHORIZED.getName().toLowerCase()) &&
+				output.toLowerCase().contains("Bad credentials".toLowerCase()));
 	}
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
 	public void connectWithWrongPassword() throws IOException, InterruptedException {
 
 		String output = connect(SecurityConstants.USER_PWD_CLOUD_ADMIN, SecurityConstants.USER_PWD_CLOUD_ADMIN + "bad", true);		
-		assertTrue("connect succeeded for password: " + SecurityConstants.USER_PWD_CLOUD_ADMIN + "bad", output.contains(SecurityConstants.BAD_CREDENTIALS_MESSAGE));			
-
+		assertTrue("connect succeeded for password: " + SecurityConstants.USER_PWD_CLOUD_ADMIN + "bad", 
+				output.toLowerCase().contains(CloudifyErrorMessages.UNAUTHORIZED.getName().toLowerCase()) &&
+				output.toLowerCase().contains("Bad credentials".toLowerCase()));
 	}
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
@@ -160,7 +171,9 @@ public class Ec2SecurityTest extends NewAbstractSecurityCloudTest {
 		
 		output = login(SecurityConstants.USER_PWD_CLOUD_ADMIN, SecurityConstants.USER_PWD_CLOUD_ADMIN + "bad", true);
 		
-		assertTrue("login succeeded for password: " + SecurityConstants.USER_PWD_CLOUD_ADMIN + "bad", output.contains(SecurityConstants.BAD_CREDENTIALS_MESSAGE));
+		assertTrue("login succeeded for password: " + SecurityConstants.USER_PWD_CLOUD_ADMIN + "bad", 
+				output.toLowerCase().contains(CloudifyErrorMessages.UNAUTHORIZED.getName().toLowerCase()) &&
+				output.toLowerCase().contains("Bad credentials".toLowerCase()));
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)

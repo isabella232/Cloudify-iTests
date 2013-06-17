@@ -93,8 +93,7 @@ public class DeploymentsControllerTest extends AbstractLocalCloudTest {
 //            AssertUtils.assertEquals(
 //                    CloudifyMessageKeys.MISSING_RESOURCE.getName(),
 //                    e.getMessageId());
-        	// TODO - change to 404 when CLOUDIFY-1818 is resolved
-            AssertUtils.assertEquals(HttpStatus.SC_INTERNAL_SERVER_ERROR, e.getStatus());
+            AssertUtils.assertEquals(HttpStatus.SC_NOT_FOUND, e.getStatus());
         }
     }
 
@@ -111,7 +110,7 @@ public class DeploymentsControllerTest extends AbstractLocalCloudTest {
 //            AssertUtils.assertEquals(
 //                    CloudifyMessageKeys.MISSING_RESOURCE.getName(),
 //                    e.getMessageId());
-            AssertUtils.assertEquals(HttpStatus.SC_INTERNAL_SERVER_ERROR, e.getStatus());
+            AssertUtils.assertEquals(HttpStatus.SC_NOT_FOUND, e.getStatus());
         }
     }
 

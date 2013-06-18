@@ -38,8 +38,8 @@ public class TooLargeInstanceTest extends AbstractPublicProvisioningByonCloudTes
 				
 		// this installation should fail because there is not machine that can accommodate the instance (memory wise)
 		String output = installManualPublicProvisioningServiceAndWait(GROOVY_ONE, 1, memoryForServicesOnManagementMachine * 2, 0, DEFAULT_TEMPLATE_NAME, true, true);
-		String errorKey = CloudifyErrorMessages.INSUFFICIENT_MEMORY.getName();
-		AssertUtils.assertTrue("Installation output does not contains the error " + errorKey, output.contains(errorKey));
+		String error = "Cannot install service " + GROOVY_ONE + ". The requested memory";
+		AssertUtils.assertTrue("Installation output does not contains the error " + error, output.contains(error));
 		
 		super.scanForLeakedAgentNodes();
 	}
@@ -54,8 +54,8 @@ public class TooLargeInstanceTest extends AbstractPublicProvisioningByonCloudTes
 				
 		// this installation should fail because there is not machine that can accommodate the instance (memory wise)
 		String output = installManualPublicProvisioningApplicationAndWait(GROOVY_ONE, 1, memoryForServicesOnManagementMachine * 2, 0, DEFAULT_TEMPLATE_NAME, true, true);
-		String errorKey = CloudifyErrorMessages.INSUFFICIENT_MEMORY.getName();
-		AssertUtils.assertTrue("Installation output does not contains the error " + errorKey, output.contains(errorKey));
+        String error = "Cannot install service " + GROOVY_ONE + ". The requested memory";
+		AssertUtils.assertTrue("Installation output does not contains the error " + error, output.contains(error));
 		
 		super.scanForLeakedAgentNodes();
 	}

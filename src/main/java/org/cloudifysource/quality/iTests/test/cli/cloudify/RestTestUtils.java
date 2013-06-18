@@ -61,16 +61,6 @@ public class RestTestUtils {
 		return httpClient.execute(post);
 	}
 
-	private static HttpResponse sendRestGetRequest(String uri) 
-			throws ClientProtocolException, IOException, RestException {
-
-		GSRestClient client = new GSRestClient(null, null, null, PlatformVersion.getVersionNumber());
-		HttpGet get = new HttpGet(uri);
-
-		DefaultHttpClient httpClient = new DefaultHttpClient();	
-		return httpClient.execute(get);
-	}
-
 	/**
 	 * 
 	 * @param restUrl

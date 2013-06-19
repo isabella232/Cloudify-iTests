@@ -431,6 +431,7 @@ public class StorageAllocationTester {
         installer.recipePath(folderName);
         installer.timeoutInMinutes(10);
         installer.setDisableSelfHealing(true);
+        installer.expectToFail(true);
         String installOutput = installer.install();
 
         // the installation should not succeed because the user is not sudo
@@ -452,6 +453,7 @@ public class StorageAllocationTester {
         installer = new ServiceInstaller(restUrl, serviceName);
         installer.recipePath(folderName);
         installer.setDisableSelfHealing(true);
+        installer.expectToFail(true);
         installer.install();
     }
 
@@ -499,6 +501,7 @@ public class StorageAllocationTester {
         installer.recipePath(folderName);
         installer.timeoutInMinutes(10);
         installer.setDisableSelfHealing(true);
+        installer.expectToFail(true);
         String installOutput = installer.install();
 
         // this installs a service that tries to mount a device onto a non supported file system(foo)
@@ -519,6 +522,7 @@ public class StorageAllocationTester {
         installer.recipePath(folderName);
         installer.timeoutInMinutes(10);
         installer.setDisableSelfHealing(true);
+        installer.expectToFail(true);
         String installOutput = installer.install();
 
         // the installation should not succeed because the format timeout is extremely small (5 millis)

@@ -25,7 +25,7 @@ fi
 popd
 export Cloudify_iTests_HOME=${BUILD_DIR}/../Cloudify-iTests
 
-mvn scm:export -DconnectionUrl=scm:svn:svn://svn-srv/SVN/cloudify/trunk/quality/frameworks/SGTest-credentials -DexportDirectory=${Cloudify_iTests_HOME}/src/main/resources/credentials
+mvn scm:export -DconnectionUrl=scm:svn:svn://svn-srv/SVN/cloudify/${BRANCH_NAME}/quality/frameworks/SGTest-credentials -DexportDirectory=${Cloudify_iTests_HOME}/src/main/resources/credentials
 
 USM=${Cloudify_iTests_HOME}/src/main/resources/apps/USM
 svn export ${SVN_STOCKDEMO_REPOSITORY} ${USM}/usm/applications/stockdemo --force

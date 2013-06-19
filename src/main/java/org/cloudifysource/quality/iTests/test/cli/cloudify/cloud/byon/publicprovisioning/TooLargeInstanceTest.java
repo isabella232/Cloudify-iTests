@@ -1,13 +1,12 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.byon.publicprovisioning;
 
+import iTests.framework.utils.AssertUtils;
+
 import java.io.IOException;
 
-import org.cloudifysource.dsl.internal.CloudifyErrorMessages;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-
-import iTests.framework.utils.AssertUtils;
 
 /**
  * CLOUDIFY-1414

@@ -68,6 +68,11 @@
 			<version>${gsVersion}</version>
 		</dependency>
 		<dependency>
+            <groupId>com.gigaspaces.quality</groupId>
+            <artifactId>DashboardReporter</artifactId>
+            <version>0.0.3-SNAPSHOT</version>
+        </dependency>
+		<dependency>
 			<groupId>org.cloudifysource</groupId>
 			<artifactId>CLI</artifactId>
 			<version>${cloudifyVersion}</version>

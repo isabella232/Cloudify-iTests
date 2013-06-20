@@ -13,23 +13,23 @@ public class JGitUtils {
         public static void clone(String localGitRepoPath, String repositoryUrl, String branchName) throws IOException {
             if (!new File(localGitRepoPath).exists()) {
                 try {
-                    iTests.framework.utils.LogUtils.log("Cloning cloudify-recipes repo to " + localGitRepoPath);
+                    LogUtils.log("Cloning cloudify-recipes repo to " + localGitRepoPath);
                     Git.cloneRepository()
                             .setURI(repositoryUrl)
                             .setDirectory(new File(localGitRepoPath))
                             .call();
                     if (!branchName.equalsIgnoreCase("master")) {
-                        iTests.framework.utils.LogUtils.log("Branch under test is : " + branchName);
+                        LogUtils.log("Branch under test is : " + branchName);
                         Git git = Git.open(new File(localGitRepoPath));
-                        iTests.framework.utils.LogUtils.log("Current branch is : " + git.getRepository().getFullBranch());
+                        LogUtils.log("Current branch is : " + git.getRepository().getFullBranch());
                         CheckoutCommand checkout = git.checkout();
-                        iTests.framework.utils.LogUtils.log("Checking out to " + branchName);
+                        LogUtils.log("Checking out to " + branchName);
                         checkout.setCreateBranch(true)
                                 .setName(branchName)
                                 .setUpstreamMode(CreateBranchCommand.SetupUpstreamMode.TRACK).
                                 setStartPoint("origin/" + branchName)
                                 .call();
-                        iTests.framework.utils.LogUtils.log("Current branch is : " + git.getRepository().getFullBranch());
+                        LogUtils.log("Current branch is : " + git.getRepository().getFullBranch());
                     }
                 } catch (Exception e) {
                     throw new RuntimeException("Failed to clone " + repositoryUrl, e);

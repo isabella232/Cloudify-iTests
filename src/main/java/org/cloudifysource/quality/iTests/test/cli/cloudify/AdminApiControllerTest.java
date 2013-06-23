@@ -18,7 +18,7 @@ import iTests.framework.utils.LogUtils;
 
 public class AdminApiControllerTest extends AbstractLocalCloudTest {
 
-	private static final int RECURSIVE_ITERATIONS = 5;
+	private static final int RECURSIVE_ITERATIONS = 4;
 	protected static final String REST_ROOT = "/admin";
 	private final String regex = 
 			"\\b(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|\\s\\[]*(]*+)";

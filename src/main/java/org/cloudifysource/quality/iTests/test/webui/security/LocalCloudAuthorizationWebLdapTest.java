@@ -74,7 +74,8 @@ public class LocalCloudAuthorizationWebLdapTest extends AbstractSecuredLocalClou
 
 	@AfterClass(alwaysRun = true)
 	public void cleanup() throws Exception{
-		
+
+        super.uninstallAll();
 		super.teardown();
 		
 		if(webuiHelper != null){

@@ -31,7 +31,7 @@ public class AdminApiControllerTest extends AbstractLocalCloudTest {
 		failedUrls = new ArrayList<String>();
 	}
 
-	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 5, groups = "1", enabled = false)
+	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 5, enabled = true)
 	public void testController() throws IOException {
 		String htmlPage = getHtmlFromURL(AbstractLocalCloudTest.restUrl);
 		System.out.println(htmlPage);

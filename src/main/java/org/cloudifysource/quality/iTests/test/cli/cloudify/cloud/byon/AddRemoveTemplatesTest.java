@@ -115,7 +115,8 @@ public class AddRemoveTemplatesTest extends AbstractByonAddRemoveTemplatesTest {
 		String serviceName = templateName + "_service";
 		output = installService(serviceName, templateName, true);
 
-		AssertUtils.assertTrue("installation with non-existent template succeeded", output.contains("Could not find compute template: " + templateName + ": Operation failed."));
+		AssertUtils.assertTrue("installation with non-existent template [" + templateName + "] succeeded, output was " 
+		+ output, output.contains("Could not find compute template: " + templateName));
 	}
 
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, enabled = true)

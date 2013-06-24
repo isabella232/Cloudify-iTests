@@ -13,7 +13,7 @@ import org.testng.annotations.Test;
 public class LocalCloudSecurityPasswordFailTest extends AbstractSecuredLocalCloudTest {
 
 	private static final String FAKE_PASSWORD = "sgtes";
-	private static final String FAIL_PASSWORD_STRING = "Invalid keystore file: Keystore was tampered with, or password was incorrect: Operation failed. CLIStatusException, reason code: invalid_keystore_file, message arguments: Keystore was tampered with, or password was incorrect";
+	private static final String FAIL_PASSWORD_STRING = "Invalid keystore file: Keystore was tampered with, or password was incorrect";
 
 	private LocalCloudBootstrapper bootstrapper;
 	

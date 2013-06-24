@@ -74,7 +74,8 @@ public class LocalCloudAuthorizationWebLdapTest extends AbstractSecuredLocalClou
 
 	@AfterClass(alwaysRun = true)
 	public void cleanup() throws Exception{
-		
+
+        super.uninstallAll();
 		super.teardown();
 		
 		if(webuiHelper != null){
@@ -98,10 +99,13 @@ public class LocalCloudAuthorizationWebLdapTest extends AbstractSecuredLocalClou
 		
 		// begin tests on the webui 
 		LoginPage loginPage = webuiHelper.getLoginPage();
+		String userAndPassword;
+		PermittedServicesWrapper permittedServicesWrapper;
+
 		
-		String userAndPassword = SecurityConstants.USER_PWD_ALL_ROLES;//Superuser
-		PermittedServicesWrapper permittedServicesWrapper =
-										createPemittedServicesWrapperForAllRoles( userAndPassword );
+	
+		userAndPassword = SecurityConstants.USER_PWD_ALL_ROLES;//Superuser
+		permittedServicesWrapper = createPemittedServicesWrapperForAllRoles( userAndPassword );
 		mainNav = WebSecurityAuthorizationHelper.performLoginAndAllViewsTests(
                 loginPage, userAndPassword, userAndPassword, permittedServicesWrapper );
 		
@@ -128,13 +132,47 @@ public class LocalCloudAuthorizationWebLdapTest extends AbstractSecuredLocalClou
 		permittedServicesWrapper = createPemittedServicesWrapperForManagerAndViewer( userAndPassword );
 		mainNav = WebSecurityAuthorizationHelper.performLoginAndAllViewsTests( 
 				loginPage, userAndPassword, userAndPassword, permittedServicesWrapper );
-		
+
 		loginPage = mainNav.logout();
 		userAndPassword = SecurityConstants.USER_PWD_VIEWER;//John
 		permittedServicesWrapper = createPemittedServicesWrapperForViewer( userAndPassword );
 		mainNav = WebSecurityAuthorizationHelper.performLoginAndAllViewsTests( 
 				loginPage, userAndPassword, userAndPassword, permittedServicesWrapper );
+
+		loginPage = mainNav.logout();
+		//special characters
+		userAndPassword = SecurityConstants.USER_PWD_SPECIAL_CHARACTERS1_VIEWER;
+		permittedServicesWrapper = createPemittedServicesWrapperForViewer( userAndPassword );
+		mainNav = WebSecurityAuthorizationHelper.performLoginAndAllViewsTests( 
+				loginPage, userAndPassword, userAndPassword, permittedServicesWrapper );
 		
+		loginPage = mainNav.logout(); 
+		//special characters
+		userAndPassword = SecurityConstants.USER_PWD_SPECIAL_CHARACTERS2_VIEWER;
+		permittedServicesWrapper = createPemittedServicesWrapperForViewer( userAndPassword );
+		mainNav = WebSecurityAuthorizationHelper.performLoginAndAllViewsTests( 
+				loginPage, userAndPassword, userAndPassword, permittedServicesWrapper );
+		
+		loginPage = mainNav.logout();
+		//special characters
+		userAndPassword = SecurityConstants.USER_PWD_SPECIAL_CHARACTERS3_VIEWER;//John
+		permittedServicesWrapper = createPemittedServicesWrapperForViewer( userAndPassword );
+		mainNav = WebSecurityAuthorizationHelper.performLoginAndAllViewsTests( 
+				loginPage, userAndPassword, userAndPassword, permittedServicesWrapper );
+		
+		loginPage = mainNav.logout();
+		//special characters
+		userAndPassword = SecurityConstants.USER_PWD_SPECIAL_CHARACTERS4_VIEWER;//John
+		permittedServicesWrapper = createPemittedServicesWrapperForViewer( userAndPassword );
+		mainNav = WebSecurityAuthorizationHelper.performLoginAndAllViewsTests( 
+				loginPage, userAndPassword, userAndPassword, permittedServicesWrapper );
+		
+		loginPage = mainNav.logout();
+		//special characters
+		userAndPassword = SecurityConstants.USER_PWD_SPECIAL_CHARACTERS5_VIEWER;//John
+		permittedServicesWrapper = createPemittedServicesWrapperForViewer( userAndPassword );
+		mainNav = WebSecurityAuthorizationHelper.performLoginAndAllViewsTests( 
+				loginPage, userAndPassword, userAndPassword, permittedServicesWrapper );		
 		loginPage = mainNav.logout();
 		
 		LogUtils.log("End of test - ec2 webui cloud");

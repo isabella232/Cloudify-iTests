@@ -64,7 +64,7 @@ public class SelfHealingDisabledTest extends AbstractLocalCloudTest {
 		final File serviceDir = new File(RECIPE_DIR_PATH);
 		ServiceReader.getServiceFromDirectory(serviceDir).getService();
 
-		return runCommand("connect " + restUrl
+		return CommandTestUtils.runCommandExpectedFail("connect " + restUrl
 				+ ";install-service -disableSelfHealing --verbose "
 				+ RECIPE_DIR_PATH);
 	}

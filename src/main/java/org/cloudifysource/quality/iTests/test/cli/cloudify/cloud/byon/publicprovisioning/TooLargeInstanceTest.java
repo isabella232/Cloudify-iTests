@@ -1,13 +1,12 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.byon.publicprovisioning;
 
+import iTests.framework.utils.AssertUtils;
+
 import java.io.IOException;
 
-import org.cloudifysource.dsl.internal.CloudifyErrorMessages;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-
-import iTests.framework.utils.AssertUtils;
 
 /**
  * CLOUDIFY-1414
@@ -38,8 +37,8 @@ public class TooLargeInstanceTest extends AbstractPublicProvisioningByonCloudTes
 				
 		// this installation should fail because there is not machine that can accommodate the instance (memory wise)
 		String output = installManualPublicProvisioningServiceAndWait(GROOVY_ONE, 1, memoryForServicesOnManagementMachine * 2, 0, DEFAULT_TEMPLATE_NAME, true, true);
-		String errorKey = CloudifyErrorMessages.INSUFFICIENT_MEMORY.getName();
-		AssertUtils.assertTrue("Installation output does not contains the error " + errorKey, output.contains(errorKey));
+		String error = "Cannot install service " + GROOVY_ONE + ". The requested memory";
+		AssertUtils.assertTrue("Installation output does not contains the error " + error, output.contains(error));
 		
 		super.scanForLeakedAgentNodes();
 	}
@@ -54,8 +53,8 @@ public class TooLargeInstanceTest extends AbstractPublicProvisioningByonCloudTes
 				
 		// this installation should fail because there is not machine that can accommodate the instance (memory wise)
 		String output = installManualPublicProvisioningApplicationAndWait(GROOVY_ONE, 1, memoryForServicesOnManagementMachine * 2, 0, DEFAULT_TEMPLATE_NAME, true, true);
-		String errorKey = CloudifyErrorMessages.INSUFFICIENT_MEMORY.getName();
-		AssertUtils.assertTrue("Installation output does not contains the error " + errorKey, output.contains(errorKey));
+        String error = "Cannot install service " + GROOVY_ONE + ". The requested memory";
+		AssertUtils.assertTrue("Installation output does not contains the error " + error, output.contains(error));
 		
 		super.scanForLeakedAgentNodes();
 	}

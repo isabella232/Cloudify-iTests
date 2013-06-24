@@ -43,6 +43,7 @@ import org.cloudifysource.shell.exceptions.CLIException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.type.TypeFactory;
 import org.codehaus.jackson.type.JavaType;
+import org.hyperic.sigar.ProcCredName;
 import org.hyperic.sigar.ProcExe;
 import org.hyperic.sigar.ProcState;
 import org.hyperic.sigar.Sigar;
@@ -86,7 +87,8 @@ public class AbstractLocalCloudTest extends AbstractTestSupport {
 				admin = super.createAdminAndWaitForManagement();
 		} else {
 			cleanUpCloudifyLocalDir();
-
+			killLeakedProcesses();
+			
 			LocalCloudBootstrapper bootstrapper = new LocalCloudBootstrapper();
 			bootstrapper.verbose(true).timeoutInMinutes(5);
 			bootstrapper.bootstrap();
@@ -178,12 +180,13 @@ public class AbstractLocalCloudTest extends AbstractTestSupport {
 		private String fullName;
 		private String[] args;
 		private long parentPid;
+		private String processOwner;
 
 		@Override
 		public String toString() {
 			return "ProcessDetails [pid=" + pid + ", baseName=" + baseName
 					+ ", fullName=" + fullName + ", args="
-					+ Arrays.toString(args) + ", parentPid=" + parentPid + "]";
+					+ Arrays.toString(args) + ", parentPid=" + parentPid + ", fullName=" + processOwner + "]";
 		}
 
 	}
@@ -256,6 +259,8 @@ public class AbstractLocalCloudTest extends AbstractTestSupport {
 
 				final ProcExe exe = sigar.getProcExe(pid);
 				details.fullName = exe.getName();
+				ProcCredName procCred = sigar.getProcCredName(pid);
+				details.processOwner = procCred.getUser();
 				details.args = sigar.getProcArgs(pid);
 
 				details.pid = pid;

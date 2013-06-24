@@ -18,7 +18,7 @@ import iTests.framework.utils.LogUtils;
 
 public class AdminApiControllerTest extends AbstractLocalCloudTest {
 
-	private static final int RECURSIVE_ITERATIONS = 5;
+	private static final int RECURSIVE_ITERATIONS = 4;
 	protected static final String REST_ROOT = "/admin";
 	private final String regex = 
 			"\\b(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|\\s\\[]*(]*+)";
@@ -31,7 +31,7 @@ public class AdminApiControllerTest extends AbstractLocalCloudTest {
 		failedUrls = new ArrayList<String>();
 	}
 
-	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 5, groups = "1", enabled = true)
+	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 5, enabled = true)
 	public void testController() throws IOException {
 		String htmlPage = getHtmlFromURL(AbstractLocalCloudTest.restUrl);
 		System.out.println(htmlPage);

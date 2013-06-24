@@ -139,7 +139,7 @@ public abstract class JCloudsCloudService extends AbstractCloudService {
 			boolean foundPendingNodes = scanNodes(leakedNodes, allNodes,
 					prefixes);
 	
-			if (!foundPendingNodes) {
+			if (!foundPendingNodes && leakedNodes.size() == 0) {
 				break; // no need to re-run the scan
 			}
 			try {

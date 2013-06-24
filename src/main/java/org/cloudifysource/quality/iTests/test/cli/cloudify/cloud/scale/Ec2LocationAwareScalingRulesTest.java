@@ -1,16 +1,11 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.scale;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
+import iTests.framework.utils.LogUtils;
+import iTests.framework.utils.TestUtils;
 import org.apache.commons.io.FileUtils;
 import org.cloudifysource.esc.driver.provisioning.jclouds.DefaultProvisioningDriver;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.CloudTestUtils;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.ec2.Ec2CloudService;
 import org.openspaces.admin.zone.config.AnyZonesConfig;
 import org.openspaces.admin.zone.config.ZonesConfig;
 import org.testng.Assert;
@@ -20,13 +15,12 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.ec2.Ec2CloudService;
-
-import iTests.framework.tools.SGTestHelper;
-import iTests.framework.utils.DeploymentUtils;
-import iTests.framework.utils.IOUtils;
-import iTests.framework.utils.LogUtils;
-import iTests.framework.utils.TestUtils;
+import java.io.File;
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 public class Ec2LocationAwareScalingRulesTest extends AbstractScalingRulesCloudTest {
 	
@@ -37,33 +31,21 @@ public class Ec2LocationAwareScalingRulesTest extends AbstractScalingRulesCloudT
 	
 	@Override
 	public void beforeBootstrap() throws IOException {
-		
-		// copy custom location aware driver to cloudify-overrides
-		File locationAwareDriver = DeploymentUtils.getArchive("location-aware-driver.jar");
-		File uploadOverrides =
-				new File(getService().getPathToCloudFolder() + "/upload/cloudify-overrides/");
-		if (!uploadOverrides.exists()) {
-			uploadOverrides.mkdir();
-		}
-		File uploadEsmDir = new File(uploadOverrides.getAbsoluteFile() + "/lib/platform/esm");
-		File localEsmFolder = new File(SGTestHelper.getBuildDir() + "/lib/platform/esm");
-		
-		FileUtils.copyFileToDirectory(locationAwareDriver, uploadEsmDir, true);
-		FileUtils.copyFileToDirectory(locationAwareDriver, localEsmFolder, false);		
-		
-		final Map<String, String> propsToReplace = new HashMap<String, String>();
-		final String oldCloudDriverClazz = DefaultProvisioningDriver.class.getName();
-		String newCloudDriverClazz = null;
-		
-		String region = ((Ec2CloudService) getService()).getRegion();
-		
-		if (region.contains("eu")) {
-			newCloudDriverClazz = "org.cloudifysource.test.EUWestLocationAwareDriver";
-		} else {
-			newCloudDriverClazz = "org.cloudifysource.test.USEastLocationAwareDriver";
-		}
-		propsToReplace.put(toClassName(oldCloudDriverClazz),toClassName(newCloudDriverClazz));
-		IOUtils.replaceTextInFile(getService().getPathToCloudGroovy(), propsToReplace);
+
+        String region = ((Ec2CloudService) getService()).getRegion();
+        String newCloudDriverClazz;
+        if (region.contains("eu")) {
+            newCloudDriverClazz = "org.cloudifysource.quality.iTests.EUWestLocationAwareDriver";
+        } else {
+            newCloudDriverClazz = "org.cloudifysource.quality.iTests.USEastLocationAwareDriver";
+        }
+
+        CloudTestUtils.replaceCloudDriverImplementation(
+                getService(),
+                DefaultProvisioningDriver.class.getName(), // old class
+                newCloudDriverClazz, // new class
+                "ec2-location-aware-driver", // jar
+                "1.0-SNAPSHOT"); // version
 	}
 	
 	@Override
@@ -202,9 +184,4 @@ public class Ec2LocationAwareScalingRulesTest extends AbstractScalingRulesCloudT
 		final File newApplicationPath = new File(applicationPath.getParentFile(), applicationPath.getName() + LOCATION_AWARE_POSTFIX);
 		return newApplicationPath.getAbsolutePath();
 	}
-	
-	public String toClassName(String className) {
-		return "className \""+className+"\"";
-	}
-
 }

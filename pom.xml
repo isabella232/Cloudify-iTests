@@ -381,6 +381,7 @@
 						<iTests.suiteId>${iTests.suiteId}</iTests.suiteId>
 						<iTests.numOfSuites>${iTests.numOfSuites}</iTests.numOfSuites>
 						<selenium.browser>${selenium.browser}</selenium.browser>
+                        <org.cloudifysource.rest-client.enable-new-rest-client>true</org.cloudifysource.rest-client.enable-new-rest-client>
 						<org.apache.commons.logging.Log>org.apache.commons.logging.impl.Jdk14Logger</org.apache.commons.logging.Log>
 						<com.gs.logging.level.config>true</com.gs.logging.level.config>
 						<java.util.logging.config.file>${basedir}/src/config/sgtest_logging.properties</java.util.logging.config.file>

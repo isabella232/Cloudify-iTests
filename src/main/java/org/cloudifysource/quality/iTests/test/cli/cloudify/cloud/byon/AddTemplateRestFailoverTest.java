@@ -93,7 +93,7 @@ public class AddTemplateRestFailoverTest extends AbstractByonAddRemoveTemplatesT
 		LogUtils.log("Rest connection is available.");
 	}
 	
-	private void addTemplate() {
+	protected void addTemplate() {
 		TemplatesBatchHandler templatesHandler = new TemplatesBatchHandler();
 		try {
 			templatesHandler.addTemplates(1);

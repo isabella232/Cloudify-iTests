@@ -7,13 +7,10 @@ import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
 public class ApplicationInstaller extends RecipeInstaller {
 
 	private static final int DEFAULT_INSTALL_APPLICATION_TIMEOUT = 30;
-	
-	private String applicationName; 
-	
-	public ApplicationInstaller(String restUrl, String applicationName) {
-		super(restUrl, DEFAULT_INSTALL_APPLICATION_TIMEOUT);
-		this.applicationName = applicationName;
-	}
+
+    public ApplicationInstaller(String restUrl, String applicationName) {
+		super(restUrl, DEFAULT_INSTALL_APPLICATION_TIMEOUT, applicationName);
+    }
 
 	public ApplicationInstaller setApplicationName(String applicationName) {
 		this.applicationName = applicationName;

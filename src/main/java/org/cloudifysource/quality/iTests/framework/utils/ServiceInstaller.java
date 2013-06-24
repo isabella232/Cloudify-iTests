@@ -16,6 +16,11 @@ public class ServiceInstaller extends RecipeInstaller {
 		super(restUrl, DEFAULT_INSTALL_SERVICE_TIMEOUT);
 		this.serviceName = serviceName;
 	}
+
+    public ServiceInstaller(String restUrl, String serviceName, String applicationName) {
+        super(restUrl, DEFAULT_INSTALL_SERVICE_TIMEOUT, applicationName);
+        this.serviceName = serviceName;
+    }
 	
 	public void uninstallIfFound() {	
 		if (getRestUrl() != null) {

@@ -40,24 +40,55 @@ umask 000
  SVN_BRANCH_DIRECTORY=${16}; export SVN_BRANCH_DIRECTORY
  SUITE_NUMBER=${17}; export SUITE_NUMBER
  ## total number of init parameters is 25
- 
+
  declare -a target_client_machines=(${18} ${20} ${22} ${24} ${26} ${28} ${30} ${32});
  declare -a target_gsa_machines=(${19} ${21} ${23} ${25} ${27} ${29} ${31} ${33});
  BYON_MACHINES=${34}
  SUPPORTED_CLOUDS=${35}
  BUILD_LOG_URL=${36}; export BUILD_LOG_URL
  EC2_REGION=${37}
- SUITE_TYPE=${38}
- MAVEN_REPO_LOCAL=${39}; export MAVEN_REPO_LOCAL
- MAVEN_PROJECTS_VERSION_XAP=${40}; export MAVEN_PROJECTS_VERSION_XAP
- MAVEN_PROJECTS_VERSION_CLOUDIFY=${41}; export MAVEN_PROJECTS_VERSION_CLOUDIFY
+ XAP_MAJOR_VERSION=${38}
+ SUITE_TYPE=${39}
+ if [ "x${SUITE_TYPE}" == "x" ]
+   then
+        SUITE_TYPE="Cloudify-Regression"; export SUITE_TYPE
+ fi
+
+ MAVEN_REPO_LOCAL=${40}; export MAVEN_REPO_LOCAL
+ if [ "x${MAVEN_REPO_LOCAL}" == "x" ]
+   then
+       MAVEN_REPO_LOCAL=/export/tgrid/.local_maven_repos/SGTest-Cloudify; export MAVEN_REPO_LOCAL
+ fi
+
+if [ `echo ${MAJOR_VERSION} | awk '{split($0,a,"."); print a[1]}'` -lt 2 ]
+then
+    MAVEN_PROJECTS_VERSION_XAP=${XAP_MAJOR_VERSION}-SNAPSHOT; export MAVEN_PROJECTS_VERSION_XAP;
+    MAVEN_PROJECTS_VERSION_CLOUDIFY=${MAJOR_VERSION}-SNAPSHOT; export MAVEN_PROJECTS_VERSION_CLOUDIFY;
+elif [ `echo ${MAJOR_VERSION} | awk '{split($0,a,"."); print a[1]}'` -ge 3 ]
+then
+  	MAVEN_PROJECTS_VERSION_XAP=${41}; export MAVEN_PROJECTS_VERSION_XAP;
+        MAVEN_PROJECTS_VERSION_CLOUDIFY=${42}; export MAVEN_PROJECTS_VERSION_CLOUDIFY;
+else
+     if [ `echo ${MAJOR_VERSION} | awk '{split($0,a,"."); print a[2]}'` -lt 6 ]
+     then
+	MAVEN_PROJECTS_VERSION_XAP=${XAP_MAJOR_VERSION}-SNAPSHOT; export MAVEN_PROJECTS_VERSION_XAP;
+        MAVEN_PROJECTS_VERSION_CLOUDIFY=${MAJOR_VERSION}-SNAPSHOT; export MAVEN_PROJECTS_VERSION_CLOUDIFY;
+     else
+	MAVEN_PROJECTS_VERSION_XAP=${41}; export MAVEN_PROJECTS_VERSION_XAP;
+        MAVEN_PROJECTS_VERSION_CLOUDIFY=${42}; export MAVEN_PROJECTS_VERSION_CLOUDIFY;
+     fi
+fi
+
+
+
+
 
 
  . set-deploy-env.sh
 
  #setup lookup group
  if [ "$SG_LOOKUPGROUPS" == "" ]
-  then if [ "${SGTEST_TYPE}" == "${BACKWARDS_SGTEST_TYPE}" ] 
+  then if [ "${SGTEST_TYPE}" == "${BACKWARDS_SGTEST_TYPE}" ]
 	then
 	  SG_LOOKUPGROUPS=backwards-sgtest-cloudify
 	else
@@ -71,10 +102,10 @@ umask 000
 
  echo "> Setup build"
  . setup-build.sh
- 
+
  BUILD_DIR=${BUILD_CACHE_DIR}/${BUILD_INSTALL_DIR}; export BUILD_DIR
  OLD_BUILD_DIR=/export/tgrid/sgtest/deploy/local-builds/build_5000/gigaspaces-xap-premium-8.0.0-ga; export OLD_BUILD_DIR
- 
+
  . create_webuitf_jar.sh
 
  . create_framework_jar.sh
@@ -84,16 +115,16 @@ umask 000
 
 for ((id=0 ; id < ${SUITE_NUMBER} ; id++ )); do
  SUITE_ID=${id}
- LOOKUPGROUPS="${SG_LOOKUPGROUPS}"${SUITE_ID}; export LOOKUPGROUPS 
+ LOOKUPGROUPS="${SG_LOOKUPGROUPS}"${SUITE_ID}; export LOOKUPGROUPS
 
  SUITE_WORK_DIR=${BUILD_DIR}/${SUITE_NAME}${SUITE_ID}_work; export SUITE_WORK_DIR
  rm -rf ${SUITE_WORK_DIR}
- mkdir ${SUITE_WORK_DIR}	
+ mkdir ${SUITE_WORK_DIR}
 
  SUITE_DEPLOY_DIR=${BUILD_DIR}/${SUITE_NAME}${SUITE_ID}_deploy; export SUITE_DEPLOY_DIR
  rm -rf ${SUITE_DEPLOY_DIR}
  mkdir ${SUITE_DEPLOY_DIR}
- cp -R ${BUILD_DIR}/deploy/templates ${SUITE_DEPLOY_DIR}	
+ cp -R ${BUILD_DIR}/deploy/templates ${SUITE_DEPLOY_DIR}
 
  SUITE_JVM_PROPERTIES="-Dcom.gs.work=${SUITE_WORK_DIR} -Dcom.gs.deploy=${SUITE_DEPLOY_DIR} ${JVM_PROPERTIES}"
 
@@ -108,7 +139,7 @@ for ((id=0 ; id < ${SUITE_NUMBER} ; id++ )); do
  if [ "${SUITE_NAME}" == "CLOUDIFY_XAP" ]
   then
        echo copy cloudify premium license ro run cloudify xap suite
-       cp ${DEPLOY_ROOT_BIN_DIR}/../../config/gslicense.xml ${BUILD_DIR}      
+       cp ${DEPLOY_ROOT_BIN_DIR}/../../config/gslicense.xml ${BUILD_DIR}
  fi
 
  echo "participating machines are ${TARGET_MACHINES_ARRAY[@]}"

@@ -1,6 +1,6 @@
 #!/bin/bash
 
- BUILD_NUMBER=$1 
+ BUILD_NUMBER=$1
  INCLUDE=$2
  EXCLUDE=$3
  SUITE_NAME=$4
@@ -18,9 +18,8 @@
  MAVEN_REPO_LOCAL=${16}
  MAVEN_PROJECTS_VERSION_XAP=${17}
  MAVEN_PROJECTS_VERSION_CLOUDIFY=${18}
-
  EXT_JAVA_OPTIONS="${EXT_JAVA_OPTIONS} -Dcom.gs.work=${SUITE_WORK_DIR} -Dcom.gs.deploy=${SUITE_DEPLOY_DIR}"; export EXT_JAVA_OPTIONS
- 
+
 
 echo clouds=$SUPPORTED_CLOUDS
 
@@ -30,15 +29,19 @@ cd ${BUILD_DIR}/../Cloudify-iTests
 mvn test -e -U -P tgrid-cloudify-iTests \
 -DiTests.cloud.enabled=false \
 -DiTests.buildNumber=${BUILD_NUMBER} \
+-Dsgtest.buildNumber=${BUILD_NUMBER} \
 -Dcloudify.home=${BUILD_DIR} \
 -Dincludes=${INCLUDE} \
 -Dexcludes=${EXCLUDE} \
 -Djava.security.policy=policy/policy.all \
 -Djava.awt.headless=true \
 -DiTests.suiteName=${SUITE_NAME} \
+-Dsgtest.suiteName=${SUITE_NAME} \
 -DiTests.suiteId=${SUITE_ID} \
+-Dsgtest.suiteId=${SUITE_ID} \
 -DiTests.summary.dir=${BUILD_DIR}/../${SUITE_NAME} \
 -DiTests.numOfSuites=${SUITE_NUMBER} \
+-Dsgtest.numOfSuites=${SUITE_NUMBER} \
 -Dorg.apache.commons.logging.Log=org.apache.commons.logging.impl.Jdk14Logger \
 -Dcom.gs.logging.level.config=true \
 -Djava.util.logging.config.file=/export/tgrid/sgtest3.0-cloudify/bin/..//logging/sgtest_logging.properties \
@@ -50,10 +53,9 @@ mvn test -e -U -P tgrid-cloudify-iTests \
 -DipList=${BYON_MACHINES} \
 -Dsupported-clouds=${SUPPORTED_CLOUDS} \
 -Dbranch.name=${BRANCH_NAME} \
--DiTests.suiteType=${SUITE_TYPE} \
 -Dmaven.repo.local=${MAVEN_REPO_LOCAL} \
 -DgsVersion=${MAVEN_PROJECTS_VERSION_XAP} \
 -DcloudifyVersion=${MAVEN_PROJECTS_VERSION_CLOUDIFY}
 
-#return java exit code. 
+#return java exit code.
 exit $?

@@ -255,12 +255,10 @@ public abstract class RecipeInstaller {
 
         if (expectToFail) {
             String output = CommandTestUtils.runCommandExpectedFail(connectCommand + ";" + uninstallationCommand);
-            AssertUtils.assertTrue("Uninstallation of " + recipeName + " was expected to fail. but it succeeded", output.toLowerCase().contains("operation failed"));
             return output;
         }
         if (waitForFinish) {
             String output = CommandTestUtils.runCommandAndWait(connectCommand + ";" + uninstallationCommand);
-            AssertUtils.assertTrue("Uninstallation of " + recipeName + " was expected to succeed, but it failed", output.toLowerCase().contains(excpectedResult.toLowerCase()));
             return output;
         } else {
             return CommandTestUtils.runCommand(connectCommand + ";" + uninstallationCommand);

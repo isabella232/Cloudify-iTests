@@ -393,6 +393,9 @@
 						<supported-clouds>${supported-clouds}</supported-clouds>
                         <branch.name>${branch.name}</branch.name>
 					</systemProperties>
+                    <environmentVariables>
+                        <EXT_JAVA_OPTIONS>-Dorg.cloudifysource.rest-client.enable-new-rest-client=true</EXT_JAVA_OPTIONS>
+                    </environmentVariables>
 					<testFailureIgnore>true</testFailureIgnore>
 					<detail>true</detail>
 				</configuration>

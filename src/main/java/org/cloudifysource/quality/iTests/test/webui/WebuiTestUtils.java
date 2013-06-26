@@ -8,6 +8,7 @@ import java.util.Arrays;
 
 import org.apache.commons.io.FileUtils;
 import org.cloudifysource.dsl.internal.CloudifyConstants;
+import org.cloudifysource.dsl.utils.IPUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.NoSuchElementException;
@@ -116,7 +117,7 @@ public class WebuiTestUtils{
 	private void setLocators() throws UnknownHostException {
 		InetAddress localHost = InetAddress.getLocalHost();
 		String hostAddress = localHost.getHostAddress();
-		String locatorUrl = hostAddress + ":" + String.valueOf(CloudifyConstants.DEFAULT_LOCALCLOUD_LUS_PORT);
+		String locatorUrl = IPUtils.getSafeIpAddress(hostAddress) + ":" + String.valueOf(CloudifyConstants.DEFAULT_LOCALCLOUD_LUS_PORT);
 		System.setProperty( SystemProperties.JINI_LUS_LOCATORS, locatorUrl );
 	}
 

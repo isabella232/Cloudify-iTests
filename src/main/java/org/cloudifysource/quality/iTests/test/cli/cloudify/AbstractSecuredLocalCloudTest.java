@@ -11,6 +11,7 @@ import java.net.URL;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.cloudifysource.dsl.internal.CloudifyConstants;
+import org.cloudifysource.dsl.utils.IPUtils;
 import org.cloudifysource.dsl.utils.ServiceUtils;
 import org.cloudifysource.quality.iTests.framework.utils.ApplicationInstaller;
 import org.cloudifysource.quality.iTests.framework.utils.LocalCloudBootstrapper;
@@ -59,7 +60,8 @@ public class AbstractSecuredLocalCloudTest extends AbstractTestSupport {
 
         boolean restPortResponding = false;
 
-        final URL restUrl = new URL("http://" + InetAddress.getLocalHost().getHostAddress() + ":" + CloudifyConstants.DEFAULT_REST_PORT);
+        final URL restUrl = new URL("http://" + IPUtils.getSafeIpAddress(InetAddress.getLocalHost().getHostAddress()) 
+        		+ ":" + CloudifyConstants.DEFAULT_REST_PORT);
         if (WebUtils.isURLAvailable(restUrl)) {
             restPortResponding = ServiceUtils.isPortOccupied("localhost", CloudifyConstants.DEFAULT_REST_PORT);
         }

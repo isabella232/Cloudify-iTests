@@ -11,6 +11,8 @@ import java.util.List;
 import org.cloudifysource.dsl.Application;
 import org.cloudifysource.dsl.Service;
 import org.cloudifysource.dsl.internal.ServiceReader;
+import org.cloudifysource.dsl.utils.IPUtils;
+
 import iTests.framework.utils.AssertUtils;
 import iTests.framework.utils.LogUtils;
 import iTests.framework.utils.ScriptUtils;
@@ -159,7 +161,7 @@ public abstract class AbstractExamplesTest extends NewAbstractCloudTest {
 
 			String apacheServiceHostURL = restApacheService.substring(urlStartIndex, urlEndIndex);
 
-			assertPageExists("http://" + apacheServiceHostURL + ":" + port + "/");
+			assertPageExists("http://" + IPUtils.getSafeIpAddress(apacheServiceHostURL) + ":" + port + "/");
 		}
 	}
 

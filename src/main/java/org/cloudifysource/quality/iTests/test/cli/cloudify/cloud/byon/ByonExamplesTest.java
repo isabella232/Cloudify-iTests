@@ -23,7 +23,7 @@ public class ByonExamplesTest extends AbstractExamplesTest {
 		super.testTravel();
 	}
 	
-	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, enabled = true)
+	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, enabled = false)
 	public void testPetclinic()
 			throws Exception {
 		super.testPetclinic();

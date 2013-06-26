@@ -3,6 +3,8 @@ package org.cloudifysource.quality.iTests.test.rest;
 import iTests.framework.tools.SGTestHelper;
 import iTests.framework.utils.LogUtils;
 import junit.framework.Assert;
+
+import org.cloudifysource.dsl.utils.IPUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.type.TypeFactory;
 import org.codehaus.jackson.type.JavaType;
@@ -205,9 +207,9 @@ public class RestConsistencyTestUtil {
 		ProcessingUnitInstance pui = pu.getInstances()[0];
 		ServiceDetails restServiceDetails = pui.getServiceDetailsByServiceId("jee-container");
 
-		return "http://" + restServiceDetails.getAttributes().get("host") + ":" +
-		restServiceDetails.getAttributes().get("port") + 
-		restServiceDetails.getAttributes().get("context-path");
+		return "http://" + IPUtils.getSafeIpAddress(restServiceDetails.getAttributes().get("host").toString()) 
+				+ ":" + restServiceDetails.getAttributes().get("port")
+				+ restServiceDetails.getAttributes().get("context-path");
 	}
 }
 

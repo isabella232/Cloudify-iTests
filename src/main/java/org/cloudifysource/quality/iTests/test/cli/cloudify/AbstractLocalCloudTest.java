@@ -31,6 +31,7 @@ import org.cloudifysource.dsl.Application;
 import org.cloudifysource.dsl.internal.CloudifyConstants;
 import org.cloudifysource.dsl.internal.DSLException;
 import org.cloudifysource.dsl.internal.ServiceReader;
+import org.cloudifysource.dsl.utils.IPUtils;
 import org.cloudifysource.dsl.utils.ServiceUtils;
 import org.cloudifysource.quality.iTests.framework.utils.ApplicationInstaller;
 import org.cloudifysource.quality.iTests.framework.utils.LocalCloudBootstrapper;
@@ -163,7 +164,8 @@ public class AbstractLocalCloudTest extends AbstractTestSupport {
 
 		boolean restPortResponding = false;
 
-		final URL restUrl = new URL("http://" + InetAddress.getLocalHost().getHostAddress() + ":" + CloudifyConstants.DEFAULT_REST_PORT);
+		final URL restUrl = new URL("http://" + IPUtils.getSafeIpAddress(InetAddress.getLocalHost().getHostAddress()) 
+				+ ":" + CloudifyConstants.DEFAULT_REST_PORT);
 		if (WebUtils.isURLAvailable(restUrl)) {
 			restPortResponding = ServiceUtils.isPortOccupied("localhost", CloudifyConstants.DEFAULT_REST_PORT);
 		}
@@ -314,7 +316,7 @@ public class AbstractLocalCloudTest extends AbstractTestSupport {
 		final String nicAddress = getLocalHostIpAddress();
 
 		final AdminFactory factory = new AdminFactory();
-		final String locator = nicAddress + ":"
+		final String locator = IPUtils.getSafeIpAddress(nicAddress) + ":"
 				+ CloudifyConstants.DEFAULT_LOCALCLOUD_LUS_PORT;
 		LogUtils.log("adding locator to admin : " + locator);
 		factory.addLocator(locator);
@@ -540,7 +542,7 @@ public class AbstractLocalCloudTest extends AbstractTestSupport {
 			String apacheServiceHostURL = restApacheService.substring(urlStartIndex, urlEndIndex);
 			String apachePort = "8090";
 
-			assertPageExists("http://" + apacheServiceHostURL + ":" + apachePort + "/");
+			assertPageExists("http://" + IPUtils.getSafeIpAddress(apacheServiceHostURL) + ":" + apachePort + "/");
 		}
 	}
 

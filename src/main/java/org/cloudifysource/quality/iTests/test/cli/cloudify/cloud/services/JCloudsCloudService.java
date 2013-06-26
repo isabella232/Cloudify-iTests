@@ -9,6 +9,7 @@ import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 
+import org.cloudifysource.dsl.utils.IPUtils;
 import org.cloudifysource.esc.jclouds.WindowsServerEC2ReviseParsedImage;
 import iTests.framework.utils.LogUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CloudTestUtils;
@@ -157,7 +158,8 @@ public abstract class JCloudsCloudService extends AbstractCloudService {
 				if (leakedNode.getName().contains(MANAGER_ID)) {
 					LogUtils.log("found leaking management machine. attempting to dump logs.");
 					try {
-						String managerIp = ((NodeMetadata) leakedNode).getPublicAddresses().iterator().next() + ":" + DEFAULT_REST_PORT;
+						String publicAddress = ((NodeMetadata) leakedNode).getPublicAddresses().iterator().next();
+						String managerIp = IPUtils.getSafeIpAddress(publicAddress) + ":" + DEFAULT_REST_PORT;
 						if (getBootstrapper().isSecured()) {
                             CloudTestUtils.dumpMachines("https://" + managerIp, SecurityConstants.USER_PWD_ALL_ROLES, SecurityConstants.USER_PWD_ALL_ROLES);
 						} else {

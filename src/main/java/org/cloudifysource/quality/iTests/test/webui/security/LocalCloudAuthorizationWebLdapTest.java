@@ -6,6 +6,7 @@ import com.gigaspaces.webuitf.dashboard.DashboardTab;
 import com.gigaspaces.webuitf.services.ServicesTab;
 import com.gigaspaces.webuitf.topology.TopologyTab;
 import org.cloudifysource.dsl.internal.CloudifyConstants;
+import org.cloudifysource.dsl.utils.IPUtils;
 import org.cloudifysource.quality.iTests.framework.utils.LocalCloudBootstrapper;
 import iTests.framework.utils.LogUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.AbstractSecuredLocalCloudTest;
@@ -46,7 +47,8 @@ public class LocalCloudAuthorizationWebLdapTest extends AbstractSecuredLocalClou
 	@BeforeClass
 	public void bootstrap() throws Exception {
 
-        final String nonSecuredRestUrl = "http://" + InetAddress.getLocalHost().getHostAddress() + ":" + CloudifyConstants.DEFAULT_REST_PORT;
+        final String nonSecuredRestUrl = "http://" + IPUtils.getSafeIpAddress(InetAddress.getLocalHost().getHostAddress())
+        		+ ":" + CloudifyConstants.DEFAULT_REST_PORT;
 
         if(isNonSecuredRestPortResponding()){
             LogUtils.log("tearing down a previous non-secured bootstrap");

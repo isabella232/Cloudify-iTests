@@ -11,6 +11,8 @@ import org.openspaces.admin.machine.Machine;
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.openspaces.admin.pu.ProcessingUnitInstance;
 
+import org.apache.commons.lang.StringUtils;
+import org.cloudifysource.dsl.utils.IPUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.NewAbstractCloudTest;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.byon.ByonCloudService;
 
@@ -47,21 +49,22 @@ public class AbstractByonCloudTest extends NewAbstractCloudTest {
 		if (!cloudService.getBootstrapper().isNoWebServices()){
 			managementHosts = cloudService.getRestUrls();		
 			for (String host : managementHosts) {
-				String utlNoHttp = null;
+				String urlNoHttp = null;
 				if (getService().getBootstrapper().isSecured()) {
-					utlNoHttp = host.substring(8); /* remove "https://" */
+					urlNoHttp = host.substring(8); /* remove "https://" */
 				} else {
-					utlNoHttp = host.substring(7); /* remove "http://" */
+					urlNoHttp = host.substring(7); /* remove "http://" */
 				}
-				String ip = utlNoHttp.split(":")[0];
-				factory.addLocators(ip + ":" + cloudService.getCloud().getConfiguration().getComponents().getDiscovery().getDiscoveryPort());
+				//String ip = urlNoHttp.split(":")[0];
+				String ip = StringUtils.substringBeforeLast(urlNoHttp, ":");
+				factory.addLocators(IPUtils.getSafeIpAddress(ip) + ":" + cloudService.getCloud().getConfiguration().getComponents().getDiscovery().getDiscoveryPort());
 			}
 		}
 		// if the cloud is not using web services
 		else {
 			managementHosts = cloudService.getMachines();			
 			String host = managementHosts[0];
-			factory.addLocators(host + ":" + cloudService.getCloud().getConfiguration().getComponents().getDiscovery().getDiscoveryPort());
+			factory.addLocators(IPUtils.getSafeIpAddress(host) + ":" + cloudService.getCloud().getConfiguration().getComponents().getDiscovery().getDiscoveryPort());
 		}
 		return factory;
 	}

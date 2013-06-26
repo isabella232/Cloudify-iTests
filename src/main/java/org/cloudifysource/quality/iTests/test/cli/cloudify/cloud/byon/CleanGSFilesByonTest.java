@@ -27,7 +27,7 @@ import org.apache.commons.vfs2.VFS;
 import org.apache.commons.vfs2.provider.sftp.SftpFileSystemConfigBuilder;
 import org.cloudifysource.dsl.cloud.FileTransferModes;
 import org.cloudifysource.dsl.internal.CloudifyConstants;
-import org.cloudifysource.esc.util.IPUtils;
+import org.cloudifysource.dsl.utils.IPUtils;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;

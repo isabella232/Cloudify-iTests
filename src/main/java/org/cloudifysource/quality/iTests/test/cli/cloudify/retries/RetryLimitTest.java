@@ -79,7 +79,8 @@ public class RetryLimitTest extends AbstractLocalCloudTest {
     private String absolutePUName;
     private final String serviceDir = CommandTestUtils.getPath("/src/main/resources/apps/USM/usm/groovy-error");
     private final String appDir = CommandTestUtils.getPath("/src/main/resources/apps/USM/usm/applications/retryBadApp");
-    private String backupFilePath;
+    private String groovyBackupFilePath;
+    private String propsBackupFilePath;
 
     private String installCommand;
     private String unInstallCommand;
@@ -135,7 +136,7 @@ public class RetryLimitTest extends AbstractLocalCloudTest {
         absolutePUName = ServiceUtils.getAbsolutePUName(applicationName, serviceName);
         NUM_OF_RETRIES = 2;
         EXPECTED_NUM_OF_ATTEMPTS = 1;
-        retryLimitGeneralTest(true, false, false);
+        retryLimitGeneralTest(true, false, false, false);
     }
 
     @Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2)
@@ -145,7 +146,18 @@ public class RetryLimitTest extends AbstractLocalCloudTest {
         applicationName = "default";
         absolutePUName = ServiceUtils.getAbsolutePUName(applicationName, serviceName);
         NUM_OF_RETRIES = 1;
-        retryLimitGeneralTest(false, true, false);
+        retryLimitGeneralTest(false, true, false, false);
+    }
+
+    @Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2)
+    public void testRetryLimitNotElastic() throws Exception {
+
+        serviceName = "groovyError";
+        applicationName = "default";
+        absolutePUName = ServiceUtils.getAbsolutePUName(applicationName, serviceName);
+        NUM_OF_RETRIES = 1;
+        EXPECTED_NUM_OF_ATTEMPTS = NUM_OF_RETRIES + 1;
+        retryLimitGeneralTest(false, false, false, true);
     }
 
     @Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2)
@@ -156,10 +168,10 @@ public class RetryLimitTest extends AbstractLocalCloudTest {
         absolutePUName = ServiceUtils.getAbsolutePUName(applicationName, serviceName);
         NUM_OF_RETRIES = 1;
         EXPECTED_NUM_OF_ATTEMPTS = NUM_OF_RETRIES + 1;
-        retryLimitGeneralTest(false, false, true);
+        retryLimitGeneralTest(false, false, true, false);
     }
 
-    private void initTest(int numOfRetries, boolean disableSelfHealing, boolean deleteRetryField, boolean installApp) throws Exception {
+    private void initTest(int numOfRetries, boolean disableSelfHealing, boolean deleteRetryField, boolean installApp, boolean notElastic) throws Exception {
 
         Space adminSpace = admin.getSpaces().waitFor(CloudifyConstants.MANAGEMENT_SPACE_NAME, 10, TimeUnit.SECONDS);
         assertNotNull(adminSpace);
@@ -170,28 +182,33 @@ public class RetryLimitTest extends AbstractLocalCloudTest {
         initFields(disableSelfHealing, installApp);
         eventListener = new AdminListener();
 
+        String groovyFilePath = serviceDir + "/error-service.groovy";
+        groovyBackupFilePath = IOUtils.backupFile(groovyFilePath);
+
+        String propertiesFilePath = serviceDir + "/error-service.properties";
+        propsBackupFilePath = IOUtils.backupFile(propertiesFilePath);
+
         if(!installApp){
             if(deleteRetryField){
-                String groovyFilePath = serviceDir + "/error-service.groovy";
-                backupFilePath = IOUtils.backupFile(groovyFilePath);
                 IOUtils.replaceTextInFile(groovyFilePath, "retries retriesLimit", "");
             }
+            if(notElastic){
+                IOUtils.replaceTextInFile(groovyFilePath, "elastic true", "elastic false");
+            }
             else{
-                String propertiesFilePath = serviceDir + "/error-service.properties";
-                backupFilePath = IOUtils.backupFile(propertiesFilePath);
                 IOUtils.replaceTextInFile(propertiesFilePath, "retriesLimit = 1", "retriesLimit = " + numOfRetries);
             }
         }
     }
 
     public void retryLimitGeneralTest() throws Exception {
-        retryLimitGeneralTest(false, false, false);
+        retryLimitGeneralTest(false, false, false, false);
     }
 
 
-    public void retryLimitGeneralTest(boolean disableSelfHealing, boolean deleteRetryField, boolean installApp) throws Exception {
+    public void retryLimitGeneralTest(boolean disableSelfHealing, boolean deleteRetryField, boolean installApp, boolean notElastic) throws Exception {
 
-        initTest(NUM_OF_RETRIES, disableSelfHealing, deleteRetryField, installApp);
+        initTest(NUM_OF_RETRIES, disableSelfHealing, deleteRetryField, installApp, notElastic);
 
         try {
 
@@ -236,22 +253,14 @@ public class RetryLimitTest extends AbstractLocalCloudTest {
             }
 
         } finally {
-
-            if(!installApp){
-                if(deleteRetryField){
-                    IOUtils.replaceFileWithMove(new File(serviceDir + "/error-service.groovy"), new File(backupFilePath));
-                }
-                else{
-                    IOUtils.replaceFileWithMove(new File(serviceDir + "/error-service.properties"), new File(backupFilePath));
-                }
-            }
-
-            admin.getProcessingUnits().removeLifecycleListener(eventListener);
-            CommandTestUtils.runCommandAndWait(unInstallCommand);
-            ServiceInstanceAttemptData attemptDataAfterInstall = managementSpace.read(new ServiceInstanceAttemptData());
-            assertTrue("Found attempt data in space after uninstall", attemptDataAfterInstall == null);
-
+            IOUtils.replaceFileWithMove(new File(serviceDir + "/error-service.groovy"), new File(groovyBackupFilePath));
+            IOUtils.replaceFileWithMove(new File(serviceDir + "/error-service.properties"), new File(propsBackupFilePath));
         }
+
+        admin.getProcessingUnits().removeLifecycleListener(eventListener);
+        CommandTestUtils.runCommandAndWait(unInstallCommand);
+        ServiceInstanceAttemptData attemptDataAfterInstall = managementSpace.read(new ServiceInstanceAttemptData());
+        assertTrue("Found attempt data in space after uninstall", attemptDataAfterInstall == null);
 
     }
 

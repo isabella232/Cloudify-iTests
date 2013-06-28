@@ -18,7 +18,7 @@
  MAVEN_REPO_LOCAL=${16}
  MAVEN_PROJECTS_VERSION_XAP=${17}
  MAVEN_PROJECTS_VERSION_CLOUDIFY=${18}
- EXT_JAVA_OPTIONS="${EXT_JAVA_OPTIONS} -Dcom.gs.work=${SUITE_WORK_DIR} -Dcom.gs.deploy=${SUITE_DEPLOY_DIR}"; export EXT_JAVA_OPTIONS
+ EXT_JAVA_OPTIONS="${EXT_JAVA_OPTIONS} -Dcom.gs.work=${SUITE_WORK_DIR} -Dcom.gs.deploy=${SUITE_DEPLOY_DIR} -Dorg.cloudifysource.rest-client.enable-new-rest-client=true"; export EXT_JAVA_OPTIONS
 
 
 echo clouds=$SUPPORTED_CLOUDS
@@ -55,7 +55,8 @@ mvn test -e -U -P tgrid-cloudify-iTests \
 -Dbranch.name=${BRANCH_NAME} \
 -Dmaven.repo.local=${MAVEN_REPO_LOCAL} \
 -DgsVersion=${MAVEN_PROJECTS_VERSION_XAP} \
--DcloudifyVersion=${MAVEN_PROJECTS_VERSION_CLOUDIFY}
+-DcloudifyVersion=${MAVEN_PROJECTS_VERSION_CLOUDIFY} \
+-DiTests.ext.java.options=${EXT_JAVA_OPTIONS}
 
 #return java exit code.
 exit $?

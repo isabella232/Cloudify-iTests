@@ -392,10 +392,8 @@
 						<ipList>${ipList}</ipList>
 						<supported-clouds>${supported-clouds}</supported-clouds>
                         <branch.name>${branch.name}</branch.name>
+                        <org.cloudifysource.rest-client.enable-new-rest-client>true</org.cloudifysource.rest-client.enable-new-rest-client>
 					</systemProperties>
-                    <environmentVariables>
-                        <EXT_JAVA_OPTIONS>-Dorg.cloudifysource.rest-client.enable-new-rest-client=true</EXT_JAVA_OPTIONS>
-                    </environmentVariables>
 					<testFailureIgnore>true</testFailureIgnore>
 					<detail>true</detail>
 				</configuration>

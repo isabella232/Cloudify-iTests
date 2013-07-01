@@ -86,6 +86,7 @@ public class AbstractLocalCloudTest extends AbstractTestSupport {
 				LogUtils.log("Creating admin to connect to existing localcloud");
 				admin = super.createAdminAndWaitForManagement();
 		} else {
+			assertNecessaryPortsAreOpen();
 			cleanUpCloudifyLocalDir();
 			killLeakedProcesses();
 			
@@ -98,6 +99,12 @@ public class AbstractLocalCloudTest extends AbstractTestSupport {
 		}
 
 		LogUtils.log("================ BeforeSuite Ended ===================");
+	}
+
+	private void assertNecessaryPortsAreOpen() {
+		assertTrue("LUS port is occupied.", !ServiceUtils.isPortOccupied(CloudifyConstants.DEFAULT_LUS_PORT));
+		assertTrue("RESTful port is occupied.", !ServiceUtils.isPortOccupied(CloudifyConstants.DEFAULT_REST_PORT));
+		assertTrue("Webui port is occupied.", !ServiceUtils.isPortOccupied(CloudifyConstants.DEFAULT_WEBUI_PORT));
 	}
 
 	private void setGsHome() {

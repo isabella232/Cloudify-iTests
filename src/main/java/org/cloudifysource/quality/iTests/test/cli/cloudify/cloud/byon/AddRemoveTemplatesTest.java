@@ -123,7 +123,6 @@ public class AddRemoveTemplatesTest extends AbstractByonAddRemoveTemplatesTest {
 	public void addTemplateAndInstallService() throws IOException, InterruptedException {
 		TemplatesBatchHandler templatesHandler = new TemplatesBatchHandler();
 		TemplateDetails addedTemplate = templatesHandler.addServiceTemplate();
-		templatesHandler.addServiceTemplate();
 		// add templates
 		addTemplates(templatesHandler);
 		assertExpectedListTemplates();

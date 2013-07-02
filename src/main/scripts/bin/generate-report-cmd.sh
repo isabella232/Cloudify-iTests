@@ -18,19 +18,19 @@ TYPE=cloudify
 TEST_REPORT_CLASS=iTests.framework.testng.report.TestsReportMerger
 WIKI_REPORT_CLASS=iTests.framework.testng.report.wiki.WikiReporter
 
-if [ `echo ${MAJOR_VERSION} | awk '{split($0,a,"."); print a[1]}'` -lt 9 ]
+if [ `echo ${MAJOR_VERSION} | awk '{split($0,a,"."); print a[1]}'` -lt 2 ]
 then
-    TEST_REPORT_CLASS=org.cloudifysource.quality.framework.testng.report.TestsReportMerger; export TEST_REPORT_CLASS;
-    WIKI_REPORT_CLASS=org.cloudifysource.quality.framework.testng.report.wiki.WikiReporter; export WIKI_REPORT_CLASS;
-elif [ `echo ${MAJOR_VERSION} | awk '{split($0,a,"."); print a[1]}'` -ge 10 ]
+    TEST_REPORT_CLASS=org.cloudifysource.quality.iTests.framework.testng.report.TestsReportMerger; export TEST_REPORT_CLASS;
+    WIKI_REPORT_CLASS=org.cloudifysource.quality.iTests.framework.testng.report.wiki.WikiReporter; export WIKI_REPORT_CLASS;
+elif [ `echo ${MAJOR_VERSION} | awk '{split($0,a,"."); print a[1]}'` -ge 3 ]
 then
 	export TEST_REPORT_CLASS;
 	export WIKI_REPORT_CLASS;
 else
      if [ `echo ${MAJOR_VERSION} | awk '{split($0,a,"."); print a[2]}'` -lt 6 ]
      then
-        TEST_REPORT_CLASS=org.cloudifysource.quality.framework.testng.report.TestsReportMerger; export TEST_REPORT_CLASS;
-        WIKI_REPORT_CLASS=org.cloudifysource.quality.framework.testng.report.wiki.WikiReporter; export WIKI_REPORT_CLASS;
+        TEST_REPORT_CLASS=org.cloudifysource.quality.iTests.framework.testng.report.TestsReportMerger; export TEST_REPORT_CLASS;
+        WIKI_REPORT_CLASS=org.cloudifysource.quality.iTests.framework.testng.report.wiki.WikiReporter; export WIKI_REPORT_CLASS;
      else
         export TEST_REPORT_CLASS;
         export WIKI_REPORT_CLASS;

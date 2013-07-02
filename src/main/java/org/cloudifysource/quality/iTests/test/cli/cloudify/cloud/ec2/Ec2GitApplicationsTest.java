@@ -2,6 +2,8 @@ package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.ec2;
 
 import java.io.File;
 
+import org.cloudifysource.quality.iTests.framework.tools.SGTestHelper;
+import org.cloudifysource.quality.iTests.framework.utils.JGitUtils;
 import org.cloudifysource.quality.iTests.framework.utils.ScriptUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.AbstractExamplesTest;
 import org.eclipse.jgit.api.Git;
@@ -12,8 +14,9 @@ import org.testng.annotations.Test;
 public class Ec2GitApplicationsTest extends AbstractExamplesTest {
 
 	private static String localGitRepoPath;
-	
-	@Override
+    private static String BRANCH_NAME = SGTestHelper.getBranchName();
+
+    @Override
 	protected String getCloudName() {
 		return "ec2";
 	}
@@ -23,15 +26,8 @@ public class Ec2GitApplicationsTest extends AbstractExamplesTest {
 		super.bootstrap();
 		
 	    localGitRepoPath = ScriptUtils.getBuildPath() + "/git-recipes-" + this.getClass().getSimpleName() ;
-	    
-	    if (!new File(localGitRepoPath).exists()) {
-	    	String remotePath = "https://github.com/CloudifySource/cloudify-recipes.git";
-	    	
-	    	Git.cloneRepository()
-	    			.setURI(remotePath)
-	    			.setDirectory(new File(localGitRepoPath))
-	    			.call();	    	
-	    }	    
+        String remotePath = "https://github.com/CloudifySource/cloudify-recipes.git";
+        JGitUtils.clone(localGitRepoPath, remotePath, BRANCH_NAME);
 	}
 	
 	//should work

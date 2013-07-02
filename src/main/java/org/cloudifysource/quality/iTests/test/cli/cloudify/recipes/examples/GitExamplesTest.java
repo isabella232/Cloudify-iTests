@@ -3,10 +3,11 @@ package org.cloudifysource.quality.iTests.test.cli.cloudify.recipes.examples;
 import java.io.File;
 
 import org.apache.commons.io.FileUtils;
+import org.cloudifysource.quality.iTests.framework.tools.SGTestHelper;
+import org.cloudifysource.quality.iTests.framework.utils.JGitUtils;
 import org.cloudifysource.quality.iTests.framework.utils.LogUtils;
 import org.cloudifysource.quality.iTests.framework.utils.ScriptUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.AbstractLocalCloudTest;
-import org.eclipse.jgit.api.Git;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -17,16 +18,16 @@ public class GitExamplesTest extends AbstractLocalCloudTest {
 	private String localGitRepoPath;
 	private static final String USER = "tgrid";
 	private static final String PASSWORD = "tgrid";
-	
+    private static String BRANCH_NAME = SGTestHelper.getBranchName();
+
 	@BeforeClass(alwaysRun = true)
 	protected void bootstrap() throws Exception {
-		
+
 	    localGitRepoPath = ScriptUtils.getBuildPath() + "/git-temp-repo";
 	    String remotePath = "https://github.com/CloudifySource/cloudify-recipes.git";
 	    
 		LogUtils.log("exporting recipes from github");
-        Git.cloneRepository().setURI(remotePath).setDirectory(new File(localGitRepoPath)).call();
-        
+        JGitUtils.clone(localGitRepoPath, remotePath, BRANCH_NAME);
         localGitAppsPath = localGitRepoPath + "/apps";
 	}
 	

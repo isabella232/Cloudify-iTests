@@ -14,11 +14,11 @@ public class SecurityConstants {
 	public static final String USER_PWD_VIEWER = "John";
 	public static final String USER_PWD_NO_ROLE = "Jane";
 	
-	public static final String USER_SPECIAL_CHARACTERS1_VIEWER = "TestMinus";
-	public static final String USER_SPECIAL_CHARACTERS2_VIEWER = "TestMinusEquals";
-	public static final String USER_SPECIAL_CHARACTERS3_VIEWER = "TestPercent";
-	public static final String USER_SPECIAL_CHARACTERS4_VIEWER = "TestChars";
-	public static final String USER_SPECIAL_CHARACTERS5_VIEWER = "TestAmpersandTest";
+	public static final String USER_SPECIAL_CHARACTERS1_VIEWER = "Test-";
+	public static final String USER_SPECIAL_CHARACTERS2_VIEWER = "Test-=";
+	public static final String USER_SPECIAL_CHARACTERS3_VIEWER = "Test%";
+	public static final String USER_SPECIAL_CHARACTERS4_VIEWER = "Test!@#^*()";
+	public static final String USER_SPECIAL_CHARACTERS5_VIEWER = "Test&Test";
 
 	public static final String PWD_SPECIAL_CHARACTERS1_VIEWER = "Test-";
 	public static final String PWD_SPECIAL_CHARACTERS2_VIEWER = "Test-=";

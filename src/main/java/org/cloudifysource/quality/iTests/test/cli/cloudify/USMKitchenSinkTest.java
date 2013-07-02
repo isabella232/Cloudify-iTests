@@ -701,8 +701,7 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 		if (!invoke10Result.contains("1: OK")
 				|| !invoke10Result.contains("java.rmi.server.hostname")
 				|| !invoke10Result.contains("com.gs.jini_lus.groups")
-				|| !invoke10Result.contains("com.gs.jini_lus.locators")
-				|| !invoke10Result.contains("java.util.logging.config.file")) {
+				|| !invoke10Result.contains("com.gs.jini_lus.locators")) {
 			AssertUtils.assertFail("Custom command cmd10 returned unexpected result: "
 					+ invoke10Result);
 		}

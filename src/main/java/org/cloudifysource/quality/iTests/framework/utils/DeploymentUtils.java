@@ -102,7 +102,11 @@ public class DeploymentUtils {
     }
     
     public static String getAppsPath(String s) {
-        return getLocalRepository() + "repository" + s + "com" + s + "gigaspaces" + s + "quality" + s + "cloudify" + s + "sgtest" + s + "apps" + s;
+    	String localRepoProp = System.getProperty("maven.repo.local");
+        if(localRepoProp != null)
+            return getLocalRepository() + "com" + s + "gigaspaces" + s + "quality" + s + "sgtest" + s + "apps" + s;
+        else
+        return getLocalRepository() + "repository" + s + "com" + s + "gigaspaces" + s + "quality" + s + "sgtest" + s + "apps" + s;    
     }
 
     public static String getQualityItestsPath(String s) {
@@ -151,6 +155,10 @@ public class DeploymentUtils {
 
     public static String getLocalRepository() {
         String s = System.getProperty("file.separator");
+        String localRepoProp = System.getProperty("maven.repo.local");
+        System.out.println("maven.repo.local="+localRepoProp);
+        if(localRepoProp != null)
+            return localRepoProp  + s;
         return System.getProperty("user.home") + s + ".m2" + s;
     }
 

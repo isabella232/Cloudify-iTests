@@ -68,7 +68,7 @@ public class InstallApplicationUsingRestClientTest extends AbstractLocalCloudTes
 	private void installAndUninstallApplication(String path, String applicationName) throws MalformedURLException,
 			RestClientException, DSLException,
 			IOException, PackagingException, CLIException, RestException {
-		final String version = "2.6.0";
+		final String version = PlatformVersion.getVersion();
 		final URL url = new URL(restUrl);
 		final RestClient client = new RestClient(url, "", "", version);
 		client.connect();

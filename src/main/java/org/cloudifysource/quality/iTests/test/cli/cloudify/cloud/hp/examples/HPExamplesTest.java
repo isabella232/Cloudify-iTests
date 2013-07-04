@@ -54,6 +54,16 @@ public class HPExamplesTest extends AbstractExamplesTest {
 	public void testHelloWorld() throws Exception {
 		super.testHelloWorld();
 	}
+
+    @Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
+    public void testTravelChef() throws Exception {
+        super.testTravelChef();
+    }
+
+    @Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
+    public void testStatelessAndStateful() throws Exception {
+        super.testStatelessAndStateful();
+    }
 	
 	@AfterClass(alwaysRun = true)
 	protected void teardown() throws Exception {

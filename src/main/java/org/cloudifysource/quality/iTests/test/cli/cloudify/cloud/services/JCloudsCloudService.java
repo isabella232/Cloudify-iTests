@@ -131,7 +131,7 @@ public abstract class JCloudsCloudService extends AbstractCloudService {
 	private List<ComputeMetadata> checkForLeakedNodesWithPrefix(final String... prefixes) {
 		List<ComputeMetadata> leakedNodes = null;
 		int iteration = 0;
-		while (iteration < 3) {
+		while (iteration < 5) {
 			leakedNodes = new LinkedList<ComputeMetadata>();
 			LogUtils.log("Checking for leaked nodes with prefix: " + Arrays.toString(prefixes));
 			final Set<? extends ComputeMetadata> allNodes = this.context.getComputeService().listNodes();

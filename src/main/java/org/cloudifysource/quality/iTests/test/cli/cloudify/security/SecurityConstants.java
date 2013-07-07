@@ -14,17 +14,8 @@ public class SecurityConstants {
 	public static final String USER_PWD_VIEWER = "John";
 	public static final String USER_PWD_NO_ROLE = "Jane";
 	
-	public static final String USER_SPECIAL_CHARACTERS1_VIEWER = "Test-";
-	public static final String USER_SPECIAL_CHARACTERS2_VIEWER = "Test-=";
-	public static final String USER_SPECIAL_CHARACTERS3_VIEWER = "Test%";
-	public static final String USER_SPECIAL_CHARACTERS4_VIEWER = "Test!@#^*()";
-	public static final String USER_SPECIAL_CHARACTERS5_VIEWER = "Test&Test";
-
-	public static final String PWD_SPECIAL_CHARACTERS1_VIEWER = "Test-";
-	public static final String PWD_SPECIAL_CHARACTERS2_VIEWER = "Test-=";
-	public static final String PWD_SPECIAL_CHARACTERS3_VIEWER = "Test%";
-	public static final String PWD_SPECIAL_CHARACTERS4_VIEWER = "Test!@#^*()";
-	public static final String PWD_SPECIAL_CHARACTERS5_VIEWER = "Test&Test";
+	public static final String USER_SPECIAL_CHARACTERS_VIEWER = "Test!@#$%^&*()_-=`~:.?'Test";
+	public static final String PWD_SPECIAL_CHARACTERS_VIEWER = "Test!@#$%^&*()_-=`~:.?'Test";
 
 	public static final String ALL_ROLES_DESCRIPTIN = USER_PWD_ALL_ROLES + " (all roles)";
 	public static final String CLOUD_ADMIN_DESCRIPTIN = USER_PWD_CLOUD_ADMIN + " (cloud admin)";

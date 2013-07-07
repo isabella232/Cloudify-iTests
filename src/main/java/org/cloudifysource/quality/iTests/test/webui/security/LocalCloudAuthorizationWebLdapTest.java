@@ -144,45 +144,12 @@ public class LocalCloudAuthorizationWebLdapTest extends AbstractSecuredLocalClou
         String user;
         String password;
 
-		user = SecurityConstants.USER_SPECIAL_CHARACTERS1_VIEWER;
-		password = SecurityConstants.PWD_SPECIAL_CHARACTERS1_VIEWER;
+		user = SecurityConstants.USER_SPECIAL_CHARACTERS_VIEWER;
+		password = SecurityConstants.PWD_SPECIAL_CHARACTERS_VIEWER;
 		permittedServicesWrapper = createPemittedServicesWrapperForViewer( user );
 		mainNav = WebSecurityAuthorizationHelper.performLoginAndAllViewsTests( 
 				loginPage, user, password, permittedServicesWrapper );
-		
-		loginPage = mainNav.logout(); 
-		//special characters
-        user = SecurityConstants.USER_SPECIAL_CHARACTERS2_VIEWER;
-        password = SecurityConstants.PWD_SPECIAL_CHARACTERS2_VIEWER;
-		permittedServicesWrapper = createPemittedServicesWrapperForViewer( user );
-		mainNav = WebSecurityAuthorizationHelper.performLoginAndAllViewsTests( 
-				loginPage, user, password, permittedServicesWrapper );
-		
-		loginPage = mainNav.logout();
-		//special characters
-        user = SecurityConstants.USER_SPECIAL_CHARACTERS3_VIEWER;
-        password = SecurityConstants.PWD_SPECIAL_CHARACTERS3_VIEWER;
-		permittedServicesWrapper = createPemittedServicesWrapperForViewer( user );
-		mainNav = WebSecurityAuthorizationHelper.performLoginAndAllViewsTests( 
-				loginPage, user, password, permittedServicesWrapper );
-		
-		loginPage = mainNav.logout();
-		//special characters
-        user = SecurityConstants.USER_SPECIAL_CHARACTERS4_VIEWER;
-        password = SecurityConstants.PWD_SPECIAL_CHARACTERS4_VIEWER;
-		permittedServicesWrapper = createPemittedServicesWrapperForViewer( user );
-		mainNav = WebSecurityAuthorizationHelper.performLoginAndAllViewsTests( 
-				loginPage, user, password, permittedServicesWrapper );
-		
-		loginPage = mainNav.logout();
-		//special characters
-        user = SecurityConstants.USER_SPECIAL_CHARACTERS5_VIEWER;
-        password = SecurityConstants.PWD_SPECIAL_CHARACTERS5_VIEWER;
-		permittedServicesWrapper = createPemittedServicesWrapperForViewer( user );
-		mainNav = WebSecurityAuthorizationHelper.performLoginAndAllViewsTests( 
-				loginPage, user, password, permittedServicesWrapper );
-		loginPage = mainNav.logout();
-		
+
 		LogUtils.log("End of test - ec2 webui cloud");
 	}
 	

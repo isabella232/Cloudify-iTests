@@ -232,6 +232,7 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
         ApplicationInstaller applicationInstaller = new ApplicationInstaller(getRestUrl(), applicationName);
         applicationInstaller.recipePath(applicationPath);
         applicationInstaller.waitForFinish(true);
+        applicationInstaller.timeoutInMinutes(20);
         return applicationInstaller.install();
     }
 

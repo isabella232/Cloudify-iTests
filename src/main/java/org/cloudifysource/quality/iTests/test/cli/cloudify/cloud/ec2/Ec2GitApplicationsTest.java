@@ -28,13 +28,13 @@ public class Ec2GitApplicationsTest extends AbstractExamplesTest {
     }
 
     //should work
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = false)
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
     public void testComputers() throws Exception {
         super.testComputers(localGitRepoPath + "/apps");
     }
 
     //should work
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = false)
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
     public void testBabies() throws Exception {
         super.testBabies(localGitRepoPath + "/apps");
     }
@@ -46,17 +46,17 @@ public class Ec2GitApplicationsTest extends AbstractExamplesTest {
     }
 
     //should work
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = false)
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
     public void testPetclinicJboss() throws Exception {
         super.testPetclinicJboss(localGitRepoPath + "/apps");
     }
 
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = false)
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
     public void testLamp() throws Exception {
         super.testLamp(localGitRepoPath + "/apps");
     }
 
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = false)
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
     public void testMasterSlave() throws Exception {
         super.testMasterSlave(localGitRepoPath + "/apps");
     }
@@ -79,12 +79,12 @@ public class Ec2GitApplicationsTest extends AbstractExamplesTest {
         super.testTravelLb(localGitRepoPath + "/apps");
     }
 
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = false)
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
     public void testPuppet() throws Exception {
         super.testPuppet(localGitRepoPath + "/apps");
     }
 
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = false)
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
     public void testMysqlJboss() throws Exception {
         super.testMysqlJboss(localGitRepoPath + "/apps");
     }

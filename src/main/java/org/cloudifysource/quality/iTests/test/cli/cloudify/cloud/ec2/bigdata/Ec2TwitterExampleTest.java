@@ -54,7 +54,9 @@ public class Ec2TwitterExampleTest extends NewAbstractCloudTest {
 
     private static boolean isDefaultMode = false;
 
-    private final Properties twitterProperties = SGTestHelper.getPropertiesFromFile(TWITTER_CREDENTIALS_FILE_PATH);
+    // workaround fro compilation error
+    //private final Properties twitterProperties = SGTestHelper.getPropertiesFromFile(TWITTER_CREDENTIALS_FILE_PATH);
+    private final Properties twitterProperties = null;
 
 	@BeforeClass(alwaysRun = true)
 	protected void bootstrap() throws Exception {

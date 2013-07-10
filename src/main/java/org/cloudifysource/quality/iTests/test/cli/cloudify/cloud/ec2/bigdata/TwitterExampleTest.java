@@ -4,17 +4,16 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 import javax.ws.rs.core.HttpHeaders;
 
-import iTests.framework.utils.AssertUtils;
-import iTests.framework.utils.LogUtils;
+import iTests.framework.utils.*;
 import org.apache.commons.io.FileUtils;
 import org.cloudifysource.dsl.internal.DSLException;
 import org.cloudifysource.dsl.internal.ServiceReader;
 import iTests.framework.tools.SGTestHelper;
-import iTests.framework.utils.SSHUtils;
-import iTests.framework.utils.WebUtils;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.NewAbstractCloudTest;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -33,17 +32,30 @@ public class TwitterExampleTest extends NewAbstractCloudTest {
 	private String username = "tgrid";
 	private String password = "tgrid";
 	private String restUrl;
+	private String appName;
 	private String devAppName;
 	private String prodAppName;
 	private static final String APPLICATION_FOLDER_NAME = "bigDataApp";
-	private static final String PROD_APP_FOLDER_NAME = "streaming-bigdata";
-	private static final String DEV_APP_FOLDER_NAME = PROD_APP_FOLDER_NAME + "-dev";
+	private static final String APP_FOLDER_NAME = "streaming-bigdata";
+	private static final String PROD_APP_FOLDER_NAME = APP_FOLDER_NAME + "-prod";
+	private static final String DEV_APP_FOLDER_NAME = APP_FOLDER_NAME + "-dev";
 	private static final String GLOBAL_COUNTER_PROPERTY = "org.openspaces.bigdata.common.counters.GlobalCounter";
 	private final static String ENTRIES_AMOUNT_REST_URL = "/admin/Spaces/Names/space/Spaces/Names/space/RuntimeDetails/CountPerClassName/" + GLOBAL_COUNTER_PROPERTY;
 	private static final int EXPECTED_NUMBER_OF_UNIQUE_WORDS_IN_MOCK_TWEETS = 84;
 	private static final String BIG_DATA_APP_APPLICATION_GROOVY = "bigDataApp-application.groovy";
-	private static final String DEV_APP_OVERRIDE = SGTestHelper.getSGTestRootDir() + "/src/main/resources/apps/cloudify/recipes/"+PROD_APP_FOLDER_NAME+"-dev-override";
-	
+	private static final String DEV_APP_OVERRIDE = SGTestHelper.getSGTestRootDir() + "/src/main/resources/apps/cloudify/recipes/" + APP_FOLDER_NAME + "-dev-override";
+	private static final String PROD_APP_OVERRIDE = SGTestHelper.getSGTestRootDir() + "/src/main/resources/apps/cloudify/recipes/" + APP_FOLDER_NAME + "-prod-override";
+
+    private static final String TWITTER_CREDENTIALS_FILE_PATH = SGTestHelper.getSGTestRootDir() + "/src/main/resources/credentials/twitter/twitter-cred.properties";
+    private static final String FEEDER_PROPERTIES_FILE_PATH = SGTestHelper.getBuildDir() + "/recipes/apps/" + APP_FOLDER_NAME + "/feeder/src/main/resources/META-INF/spring/feeder.properties";
+    private static String backupFeederPropsFilePath;
+    private static File prodAppFolder;
+    private static File devAppFolder;
+
+    private static boolean isDefaultMode = false;
+
+    private final Properties twitterProperties = SGTestHelper.getPropertiesFromFile(TWITTER_CREDENTIALS_FILE_PATH);
+
 	@BeforeClass(alwaysRun = true)
 	protected void bootstrap() throws Exception {
 		super.bootstrap();
@@ -52,23 +64,39 @@ public class TwitterExampleTest extends NewAbstractCloudTest {
 
 	@AfterClass(alwaysRun = true)
 	protected void teardown() throws Exception {
-		super.teardown();
+        try{
+		    super.teardown();
+        }
+        finally {
+            IOUtils.replaceFileWithMove(new File(FEEDER_PROPERTIES_FILE_PATH), new File(backupFeederPropsFilePath));
+            FileUtils.deleteQuietly(prodAppFolder);
+            FileUtils.deleteQuietly(devAppFolder);
+        }
 	}
-	
+
+    // uses list-feeder and writes to file.
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
 	public void testTwitterDev() throws Exception {
 		testTwitter(DEV_APP_FOLDER_NAME, devAppName, false);
 	}
-	
-	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
+
+    // uses twitter-feeder and writes to DB.
+    @Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
 	public void testTwitterProd() throws Exception {
 		testTwitter(PROD_APP_FOLDER_NAME, prodAppName, true);
 	}
-	
+
+    // uses list-feeder and writes to DB.
+    @Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
+	public void testTwitterDefault() throws Exception {
+        isDefaultMode = true;
+		testTwitter(APP_FOLDER_NAME, appName, true);
+	}
+
 	private void testTwitter(String appFolderName, String appName, boolean isProduction) throws Exception {
 		LogUtils.log("installing application " + appFolderName + " on " + this.getCloudName());
 					
-		installApplicationAndWait(getApplicationPath(appFolderName), appName);
+		installApplicationAndWait(getApplicationPath(appFolderName), appName, 30);
 		
 		verifyApplicationInstallation(appName, isProduction);
 		
@@ -114,7 +142,7 @@ public class TwitterExampleTest extends NewAbstractCloudTest {
 		LogUtils.log("verifing successful installation");
 		restUrl = getRestUrl();
 
-		if (isProduction) {
+		if (isProduction || isDefaultMode) {
 			final URL cassandraPuAdminUrl = new URL(restUrl + "/admin/ProcessingUnits/Names/"+appName+".cassandra");
 			AbstractTestSupport.assertTrue(WebUtils.isURLAvailable(cassandraPuAdminUrl));
 		}
@@ -142,10 +170,10 @@ public class TwitterExampleTest extends NewAbstractCloudTest {
 	@Override
 	protected void beforeBootstrap() throws Exception {
 		String suiteName = System.getProperty("iTests.suiteName");
-		if(suiteName != null && "CLOUDIFY_XAP".equalsIgnoreCase(suiteName)){
+		if(SGTestHelper.isDevMode() || (suiteName != null && "CLOUDIFY_XAP".equalsIgnoreCase(suiteName))){
 			/* copy premium license to cloudify-overrides in order to run xap pu's */
 			String overridesFolder = getService().getPathToCloudFolder() + "/upload/cloudify-overrides";
-			File cloudifyPremiumLicenseFile = new File(SGTestHelper.getSGTestRootDir() + "/src/main/config/gslicense.xml");
+			File cloudifyPremiumLicenseFile = new File(SGTestHelper.getBuildDir() + "/gslicense.xml");
 			FileUtils.copyFileToDirectory(cloudifyPremiumLicenseFile, new File(overridesFolder));
 		}				
 	}
@@ -169,23 +197,46 @@ public class TwitterExampleTest extends NewAbstractCloudTest {
 
 	private void prepareApplication() throws IOException, InterruptedException, DSLException {
 		final String recipesDir = getRecipesDir();
-		
-		
-		File prodAppFolder = new File(recipesDir+ PROD_APP_FOLDER_NAME);
-		String hostAddress = "127.0.0.1";
 
-		SSHUtils.runCommand(hostAddress, AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2,
-				"cd " + prodAppFolder + ";" + "mvn install", username, password);
+        File appFolder = new File(recipesDir+ APP_FOLDER_NAME);
+        String hostAddress = "127.0.0.1";
 
-		final File devAppFolder = new File(recipesDir + DEV_APP_FOLDER_NAME);
-		
+        String Consumerkey = twitterProperties.getProperty("Consumerkey");
+        String ConsumerSecret = twitterProperties.getProperty("ConsumerSecret");
+        String AccessToken = twitterProperties.getProperty("AccessToken");
+        String AccessTokenSecret = twitterProperties.getProperty("AccessTokenSecret");
+        String ConsumerkeyProp = "twitter.oauth.consumerKey";
+        String ConsumerSecretProp = "twitter.oauth.consumerSecret";
+        String AccessTokenProp = "twitter.oauth.accessToken";
+        String AccessTokenSecretProp = "twitter.oauth.accessTokenSecret";
+
+        backupFeederPropsFilePath = IOUtils.backupFile(FEEDER_PROPERTIES_FILE_PATH);
+        Map<String, String> replaceMap = new HashMap<String, String>();
+        replaceMap.put(ConsumerkeyProp + "=", ConsumerkeyProp + "=" + Consumerkey);
+        replaceMap.put(ConsumerSecretProp + "=", ConsumerSecretProp + "=" + ConsumerSecret);
+        replaceMap.put(AccessTokenProp + "=", AccessTokenProp + "=" + AccessToken);
+        replaceMap.put(AccessTokenSecretProp + "=", AccessTokenSecretProp + "=" + AccessTokenSecret);
+        IOUtils.replaceTextInFile(new File(FEEDER_PROPERTIES_FILE_PATH), replaceMap);
+
+        prodAppFolder = new File(recipesDir+ PROD_APP_FOLDER_NAME);
+        FileUtils.copyDirectory(appFolder, prodAppFolder);
+        FileUtils.copyDirectory(new File(PROD_APP_OVERRIDE), new File(prodAppFolder, APPLICATION_FOLDER_NAME));
+
+//		SSHUtils.runCommand(hostAddress, AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2,
+//				"cd " + prodAppFolder + ";" + "mvn install", username, password);
+
+		devAppFolder = new File(recipesDir + DEV_APP_FOLDER_NAME);
 		FileUtils.copyDirectory(prodAppFolder, devAppFolder);
 		FileUtils.copyDirectory(new File(DEV_APP_OVERRIDE), new File(devAppFolder, APPLICATION_FOLDER_NAME));
 		
-		SSHUtils.runCommand(hostAddress, AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2,
-				"cd " + devAppFolder + ";" + "mvn install", username, password);
+//		SSHUtils.runCommand(hostAddress, AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2,
+//				"cd " + devAppFolder + ";" + "mvn install", username, password);
+
+//		SSHUtils.runCommand(hostAddress, AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2,
+//				"cd " + appFolder + ";" + "mvn install", username, password);
 
 		String appName = ServiceReader.getApplicationFromFile(getApplicationDslFile(devAppFolder)).getApplication().getName();
+		this.appName = appName;
 		devAppName = appName + "-dev";
 		prodAppName = appName + "-prod";
 	}

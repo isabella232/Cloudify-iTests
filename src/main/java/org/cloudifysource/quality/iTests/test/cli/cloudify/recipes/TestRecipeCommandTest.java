@@ -37,8 +37,8 @@ public class TestRecipeCommandTest extends AbstractLocalCloudTest {
 		String consoleOutput = runCommand("test-recipe --verbose "
 				+ SIMPLE_RECIPE_DIR_PATH
 				+ " 30 simplejava-modifiedservice.groovy");
-		Assert.assertFalse("The command threw an exception - check the log",
-				consoleOutput.contains("Exception"));
+		Assert.assertTrue("The command threw an exception - check the log",
+				consoleOutput.contains("Exiting with status 0"));
 	}
 	
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)

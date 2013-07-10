@@ -27,7 +27,7 @@ import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
 
-public class TwitterExampleTest extends NewAbstractCloudTest {
+public class Ec2TwitterExampleTest extends NewAbstractCloudTest {
 
 	private String username = "tgrid";
 	private String password = "tgrid";
@@ -222,18 +222,18 @@ public class TwitterExampleTest extends NewAbstractCloudTest {
         FileUtils.copyDirectory(appFolder, prodAppFolder);
         FileUtils.copyDirectory(new File(PROD_APP_OVERRIDE), new File(prodAppFolder, APPLICATION_FOLDER_NAME));
 
-//		SSHUtils.runCommand(hostAddress, AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2,
-//				"cd " + prodAppFolder + ";" + "mvn install", username, password);
+		SSHUtils.runCommand(hostAddress, AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2,
+				"cd " + prodAppFolder + ";" + "mvn install", username, password);
 
 		devAppFolder = new File(recipesDir + DEV_APP_FOLDER_NAME);
 		FileUtils.copyDirectory(prodAppFolder, devAppFolder);
 		FileUtils.copyDirectory(new File(DEV_APP_OVERRIDE), new File(devAppFolder, APPLICATION_FOLDER_NAME));
 		
-//		SSHUtils.runCommand(hostAddress, AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2,
-//				"cd " + devAppFolder + ";" + "mvn install", username, password);
+		SSHUtils.runCommand(hostAddress, AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2,
+				"cd " + devAppFolder + ";" + "mvn install", username, password);
 
-//		SSHUtils.runCommand(hostAddress, AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2,
-//				"cd " + appFolder + ";" + "mvn install", username, password);
+		SSHUtils.runCommand(hostAddress, AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2,
+				"cd " + appFolder + ";" + "mvn install", username, password);
 
 		String appName = ServiceReader.getApplicationFromFile(getApplicationDslFile(devAppFolder)).getApplication().getName();
 		this.appName = appName;

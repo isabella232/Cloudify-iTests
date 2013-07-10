@@ -136,13 +136,13 @@ public abstract class AbstractExamplesTest extends NewAbstractCloudTest {
 			applicationName = applicationName + "-win";
 			installApplicationAndWait(applicationPath, applicationName, WINDOWS_INSTALLATION_TIMEOUT);
 		} else {
-			installApplicationAndWait(applicationPath, applicationName);
+			installApplicationAndWait(applicationPath, applicationName, 20);
 		}
 
 		verifyServices(applicationName, application.getServices());
 		verifyApplicationUrls(applicationName, hasApacheLB, apachePort);
 
-		uninstallApplicationAndWait(applicationName);
+		uninstallApplicationAndWait(applicationName, false, 10);
 		super.scanForLeakedAgentNodes();
 	}
 

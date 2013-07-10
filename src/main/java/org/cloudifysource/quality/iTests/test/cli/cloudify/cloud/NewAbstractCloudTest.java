@@ -227,12 +227,11 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
         applicationInstaller.waitForFinish(true);
         return applicationInstaller.install();
     }
-
+    
     protected String installApplicationAndWait(String applicationPath, String applicationName) throws IOException, InterruptedException {
         ApplicationInstaller applicationInstaller = new ApplicationInstaller(getRestUrl(), applicationName);
         applicationInstaller.recipePath(applicationPath);
         applicationInstaller.waitForFinish(true);
-        applicationInstaller.timeoutInMinutes(20);
         return applicationInstaller.install();
     }
 
@@ -241,8 +240,13 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
     }
     
     protected String uninstallApplicationAndWait(String applicationName, boolean isExpectedFail) throws IOException, InterruptedException {
+    	return uninstallApplicationAndWait(applicationName, isExpectedFail, 5);
+    }
+    
+    protected String uninstallApplicationAndWait(String applicationName, boolean isExpectedFail, int timeout) throws IOException, InterruptedException {
         ApplicationInstaller applicationInstaller = new ApplicationInstaller(getRestUrl(), applicationName);
         applicationInstaller.waitForFinish(true);
+        applicationInstaller.timeoutInMinutes(timeout);
         applicationInstaller.expectToFail(isExpectedFail);
         return applicationInstaller.uninstall();
     }

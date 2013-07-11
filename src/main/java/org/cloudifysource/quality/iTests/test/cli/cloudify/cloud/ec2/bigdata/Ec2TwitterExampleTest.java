@@ -54,9 +54,7 @@ public class Ec2TwitterExampleTest extends NewAbstractCloudTest {
 
     private static boolean isDefaultMode = false;
 
-    // workaround fro compilation error
-    //private final Properties twitterProperties = SGTestHelper.getPropertiesFromFile(TWITTER_CREDENTIALS_FILE_PATH);
-    private final Properties twitterProperties = null;
+    private final Properties twitterProperties = SGTestHelper.getPropertiesFromFile(TWITTER_CREDENTIALS_FILE_PATH);
 
 	@BeforeClass(alwaysRun = true)
 	protected void bootstrap() throws Exception {
@@ -150,7 +148,7 @@ public class Ec2TwitterExampleTest extends NewAbstractCloudTest {
 		}
 		final URL processorPuAdminUrl = new URL(restUrl + "/admin/ProcessingUnits/Names/"+appName+".processor");
 		AbstractTestSupport.assertTrue(WebUtils.isURLAvailable(processorPuAdminUrl));
-		
+
 		final URL feederPuAdminUrl = new URL(restUrl + "/admin/ProcessingUnits/Names/"+appName+".feeder");
 		AbstractTestSupport.assertTrue(WebUtils.isURLAvailable(feederPuAdminUrl));
 	}

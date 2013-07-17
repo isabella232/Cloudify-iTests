@@ -201,6 +201,32 @@ public class CloudTestUtils {
         IOUtils.replaceTextInFile(service.getPathToCloudGroovy(), propsToReplace);
     }
     
+    public static void replaceGroovyDriverImplementation(CloudService service, String oldClassName, String newClassName, final File extraContentDirectory) throws IOException {
+    	
+    	final File destination = new File(service.getPathToCloudFolder());
+    	if(!destination.exists() || !destination.isDirectory()) {
+    		throw new IllegalStateException(destination + " does not exist or is not a directory");
+    	}
+    	if(!extraContentDirectory.exists() || !extraContentDirectory.isDirectory()) {
+    		throw new IllegalStateException(extraContentDirectory + " does not exist or is not a directory");
+    	}
+    	File[] filesToAdd = extraContentDirectory.listFiles();
+    	for (File file : filesToAdd) {
+    		if(file.isFile()) {
+    			FileUtils.copyFileToDirectory(file, destination);
+    		} else {
+    			FileUtils.copyDirectoryToDirectory(file, destination);
+    		}
+		}
+    	
+
+
+        final Map<String, String> propsToReplace = new HashMap<String, String>();
+
+        propsToReplace.put(appendClassNamePrefix(oldClassName),appendClassNamePrefix(newClassName));
+        IOUtils.replaceTextInFile(service.getPathToCloudGroovy(), propsToReplace);
+    }
+
     private static String appendClassNamePrefix(String className) {
         return "className \""+className+"\"";
     }

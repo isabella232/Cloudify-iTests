@@ -54,6 +54,7 @@ public class ProvisioningContextByonTest extends AbstractByonCloudTest {
 
 		String newCloudDriverClazz = "CustomCloudDriver";
 
+		getService().setNumberOfManagementMachines(2);
 		CloudTestUtils.replaceGroovyDriverImplementation(
 				getService(),
 				ByonProvisioningDriver.class.getName(), // old class

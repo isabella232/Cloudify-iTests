@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 
-import org.cloudifysource.dsl.Application;
+import org.cloudifysource.domain.Application;
 import org.cloudifysource.dsl.internal.CloudifyConstants;
 import org.cloudifysource.dsl.internal.CloudifyConstants.DeploymentState;
 import org.cloudifysource.dsl.internal.DSLException;

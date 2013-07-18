@@ -2,13 +2,16 @@ package org.cloudifysource.quality.iTests.test.cli.cloudify.recipes;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import org.cloudifysource.dsl.Service;
+import javax.activation.UnsupportedDataTypeException;
+
+import org.cloudifysource.domain.Service;
 import org.cloudifysource.dsl.internal.ServiceReader;
 import org.cloudifysource.dsl.internal.packaging.PackagingException;
 import org.cloudifysource.dsl.utils.ServiceUtils;
@@ -23,6 +26,8 @@ import org.testng.annotations.Test;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.AbstractLocalCloudTest;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.Constants;
+import org.cloudifysource.usm.dsl.UserInterfaceConverter;
+
 import iTests.framework.utils.LogUtils;
 import iTests.framework.utils.ScriptUtils;
 
@@ -45,31 +50,31 @@ public class RecipesStatsTest extends AbstractLocalCloudTest {
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, groups = "1", enabled = false)
 	public void testActivemq() throws IOException, InterruptedException,
-			PackagingException {
+			PackagingException, IllegalAccessException, InvocationTargetException {
 		testServiceMetrics("activemq");
 	}
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, groups = "1", enabled = false)
 	public void testSolr() throws IOException, InterruptedException,
-			PackagingException {
+			PackagingException, IllegalAccessException, InvocationTargetException {
 		testServiceMetrics("solr");
 	}
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, groups = "1", enabled = false)
 	public void testHsqldb() throws IOException, InterruptedException,
-			PackagingException {
+			PackagingException, IllegalAccessException, InvocationTargetException {
 		testServiceMetrics("hsqldb");
 	}
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, groups = "1", enabled = false)
 	public void testElasticSearch() throws IOException, InterruptedException,
-			PackagingException {
+			PackagingException, IllegalAccessException, InvocationTargetException {
 		testServiceMetrics("elasticsearch");
 	}
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, groups = "1", enabled = true)
 	public void testTomcat() throws IOException, InterruptedException,
-			PackagingException {
+			PackagingException, IllegalAccessException, InvocationTargetException {
 		testServiceMetrics("tomcat");
 	}
 
@@ -87,9 +92,11 @@ public class RecipesStatsTest extends AbstractLocalCloudTest {
 	 *             Reporting a failure to install the service
 	 * @throws IOException
 	 *             Reporting a failure to install the service
+	 * @throws InvocationTargetException 
+	 * @throws IllegalAccessException 
 	 */
 	private void testServiceMetrics(final String serviceName)
-			throws PackagingException, InterruptedException, IOException {
+			throws PackagingException, InterruptedException, IOException, IllegalAccessException, InvocationTargetException {
 
 		final String serviceFileName = serviceName + "-service.groovy";
 		final Set<String> missingMonitors = new HashSet<String>();
@@ -176,13 +183,17 @@ public class RecipesStatsTest extends AbstractLocalCloudTest {
 	 * @return A set of metric names
 	 * @throws PackagingException
 	 *             Reporting a failure to parse the service's DSL file
+	 * @throws InvocationTargetException 
+	 * @throws IllegalAccessException 
+	 * @throws UnsupportedDataTypeException 
 	 */
 	private Set<String> getServiceMetrics(final File serviceFile)
-			throws PackagingException {
+			throws PackagingException, UnsupportedDataTypeException, IllegalAccessException, InvocationTargetException {
 		final Set<String> metrics = new HashSet<String>();
 
 		final Service service = ServiceReader.getServiceFromFile(serviceFile);
-		final UserInterface serviceUI = service.getUserInterface();
+		UserInterfaceConverter uiConvertor = new UserInterfaceConverter();
+		final UserInterface serviceUI = uiConvertor.convertUserInterface(service.getUserInterface());
 		if (serviceUI != null) {
 			for (final MetricGroup metricGroup : serviceUI.getMetricGroups()) {
 				List<String> metricsByGroup = metricGroup.getMetrics();

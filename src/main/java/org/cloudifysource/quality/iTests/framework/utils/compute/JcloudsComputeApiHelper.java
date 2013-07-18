@@ -1,7 +1,8 @@
 package org.cloudifysource.quality.iTests.framework.utils.compute;
 
 import com.google.common.base.Predicate;
-import org.cloudifysource.dsl.cloud.Cloud;
+
+import org.cloudifysource.domain.cloud.Cloud;
 import org.cloudifysource.esc.driver.provisioning.MachineDetails;
 import org.cloudifysource.esc.jclouds.JCloudsDeployer;
 import org.codehaus.plexus.util.StringUtils;

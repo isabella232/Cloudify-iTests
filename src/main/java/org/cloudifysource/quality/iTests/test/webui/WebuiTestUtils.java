@@ -28,6 +28,7 @@ import org.openspaces.admin.pu.ProcessingUnit;
 import org.testng.Assert;
 
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.CloudService;
+import org.cloudifysource.utilitydomain.openspaces.OpenspacesConstants;
 
 import com.gigaspaces.webuitf.LoginPage;
 import com.gigaspaces.webuitf.WebConstants;
@@ -117,7 +118,7 @@ public class WebuiTestUtils{
 	private void setLocators() throws UnknownHostException {
 		InetAddress localHost = InetAddress.getLocalHost();
 		String hostAddress = localHost.getHostAddress();
-		String locatorUrl = IPUtils.getSafeIpAddress(hostAddress) + ":" + String.valueOf(CloudifyConstants.DEFAULT_LOCALCLOUD_LUS_PORT);
+		String locatorUrl = IPUtils.getSafeIpAddress(hostAddress) + ":" + String.valueOf(OpenspacesConstants.DEFAULT_LOCALCLOUD_LUS_PORT);
 		System.setProperty( SystemProperties.JINI_LUS_LOCATORS, locatorUrl );
 	}
 

@@ -18,7 +18,7 @@ import org.openspaces.admin.pu.ProcessingUnitInstanceStatistics;
 import org.openspaces.pu.service.ServiceMonitors;
 import org.testng.Assert;
 
-import org.cloudifysource.dsl.Service;
+import org.cloudifysource.domain.Service;
 import org.cloudifysource.dsl.internal.CloudifyConstants;
 import org.cloudifysource.dsl.internal.DSLException;
 import org.cloudifysource.dsl.internal.ServiceReader;

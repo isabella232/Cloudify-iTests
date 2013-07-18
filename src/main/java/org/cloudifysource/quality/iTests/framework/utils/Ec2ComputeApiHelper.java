@@ -3,7 +3,7 @@ package org.cloudifysource.quality.iTests.framework.utils;
 import java.io.IOException;
 import java.util.Properties;
 
-import org.cloudifysource.dsl.cloud.Cloud;
+import org.cloudifysource.domain.cloud.Cloud;
 import org.cloudifysource.esc.jclouds.JCloudsDeployer;
 import org.jclouds.compute.domain.NodeMetadata;
 

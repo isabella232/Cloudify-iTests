@@ -9,7 +9,7 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
 
-import org.cloudifysource.dsl.cloud.GridComponents;
+import org.cloudifysource.domain.cloud.GridComponents;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
 import org.openspaces.admin.machine.Machine;
 import org.testng.annotations.AfterClass;

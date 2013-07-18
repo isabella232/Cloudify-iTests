@@ -22,12 +22,12 @@ import java.util.concurrent.TimeUnit;
 
 import org.cloudifysource.dsl.internal.CloudifyConstants;
 import org.cloudifysource.dsl.internal.CloudifyConstants.USMState;
-import org.cloudifysource.dsl.internal.space.ServiceInstanceAttemptData;
 import org.cloudifysource.dsl.utils.ServiceUtils;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.AbstractLocalCloudTest;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
 import org.cloudifysource.restclient.exceptions.RestClientException;
+import org.cloudifysource.utilitydomain.data.ServiceInstanceAttemptData;
 import org.openspaces.admin.internal.gsc.DefaultGridServiceContainer;
 import org.openspaces.admin.pu.ProcessingUnitInstance;
 import org.openspaces.admin.pu.events.ProcessingUnitInstanceLifecycleEventListener;

@@ -3,8 +3,8 @@ package org.cloudifysource.quality.iTests.test.cli.cloudify.recipes.inheritence;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
-import org.cloudifysource.dsl.Application;
-import org.cloudifysource.dsl.Service;
+import org.cloudifysource.domain.Application;
+import org.cloudifysource.domain.Service;
 import org.cloudifysource.dsl.internal.DSLException;
 import org.cloudifysource.dsl.internal.packaging.PackagingException;
 import org.cloudifysource.dsl.utils.ServiceUtils;

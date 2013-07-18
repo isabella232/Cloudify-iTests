@@ -7,7 +7,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.apache.commons.httpclient.HttpStatus;
-import org.cloudifysource.dsl.Service;
+import org.cloudifysource.domain.Service;
 import org.cloudifysource.dsl.internal.DSLException;
 import org.cloudifysource.dsl.internal.DSLServiceCompilationResult;
 import org.cloudifysource.dsl.internal.ServiceReader;

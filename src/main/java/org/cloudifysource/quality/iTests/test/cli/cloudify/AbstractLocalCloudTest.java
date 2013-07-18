@@ -27,7 +27,7 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.cloudifysource.dsl.Application;
+import org.cloudifysource.domain.Application;
 import org.cloudifysource.dsl.internal.CloudifyConstants;
 import org.cloudifysource.dsl.internal.DSLException;
 import org.cloudifysource.dsl.internal.ServiceReader;
@@ -41,6 +41,7 @@ import org.cloudifysource.quality.iTests.test.cli.cloudify.security.SecurityCons
 import org.cloudifysource.restclient.ErrorStatusException;
 import org.cloudifysource.restclient.StringUtils;
 import org.cloudifysource.shell.exceptions.CLIException;
+import org.cloudifysource.utilitydomain.openspaces.OpenspacesConstants;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.type.TypeFactory;
 import org.codehaus.jackson.type.JavaType;
@@ -103,7 +104,7 @@ public class AbstractLocalCloudTest extends AbstractTestSupport {
 	}
 
 	private void assertNecessaryPortsAreOpen() {
-		assertTrue("LUS port is occupied.", !ServiceUtils.isPortOccupied(CloudifyConstants.DEFAULT_LUS_PORT));
+		assertTrue("LUS port is occupied.", !ServiceUtils.isPortOccupied(OpenspacesConstants.DEFAULT_LUS_PORT));
 		assertTrue("RESTful port is occupied.", !ServiceUtils.isPortOccupied(CloudifyConstants.DEFAULT_REST_PORT));
 		assertTrue("Webui port is occupied.", !ServiceUtils.isPortOccupied(CloudifyConstants.DEFAULT_WEBUI_PORT));
 	}
@@ -317,7 +318,7 @@ public class AbstractLocalCloudTest extends AbstractTestSupport {
 
 		final AdminFactory factory = new AdminFactory();
 		final String locator = IPUtils.getSafeIpAddress(nicAddress) + ":"
-				+ CloudifyConstants.DEFAULT_LOCALCLOUD_LUS_PORT;
+				+ OpenspacesConstants.DEFAULT_LOCALCLOUD_LUS_PORT;
 		LogUtils.log("adding locator to admin : " + locator);
 		factory.addLocator(locator);
 		return factory;

@@ -1,7 +1,7 @@
 package org.cloudifysource.quality.iTests.framework.utils.storage;
 
 import org.apache.commons.lang.StringUtils;
-import org.cloudifysource.dsl.cloud.Cloud;
+import org.cloudifysource.domain.cloud.Cloud;
 import org.cloudifysource.esc.driver.provisioning.storage.StorageProvisioningException;
 import org.cloudifysource.esc.driver.provisioning.storage.VolumeDetails;
 import org.jclouds.compute.ComputeServiceContext;

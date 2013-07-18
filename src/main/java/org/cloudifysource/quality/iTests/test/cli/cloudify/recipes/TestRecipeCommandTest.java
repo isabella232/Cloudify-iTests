@@ -26,7 +26,7 @@ public class TestRecipeCommandTest extends AbstractLocalCloudTest {
 		File serviceDir = new File(SIMPLE_RECIPE_DIR_PATH);
 		File serviceFile = new File(SIMPLE_RECIPE_DIR_PATH,
 				"simplejava-modifiedservice.groovy");
-		org.cloudifysource.dsl.Service service = ServiceReader
+		org.cloudifysource.domain.Service service = ServiceReader
 				.getServiceFromFile(serviceFile, serviceDir)
 				.getService();
 		int port = (Integer) service.getPlugins().get(0).getConfig()

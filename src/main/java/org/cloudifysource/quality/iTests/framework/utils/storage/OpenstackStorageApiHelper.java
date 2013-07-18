@@ -2,7 +2,7 @@ package org.cloudifysource.quality.iTests.framework.utils.storage;
 
 import java.util.Set;
 
-import org.cloudifysource.dsl.cloud.Cloud;
+import org.cloudifysource.domain.cloud.Cloud;
 import org.cloudifysource.esc.driver.provisioning.storage.VolumeDetails;
 
 /**

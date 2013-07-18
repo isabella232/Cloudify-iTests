@@ -3,7 +3,7 @@ package org.cloudifysource.quality.iTests.framework.utils.storage;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import org.cloudifysource.dsl.cloud.Cloud;
+import org.cloudifysource.domain.cloud.Cloud;
 import org.cloudifysource.esc.driver.provisioning.storage.StorageProvisioningDriver;
 import org.cloudifysource.esc.driver.provisioning.storage.StorageProvisioningException;
 import org.cloudifysource.esc.driver.provisioning.storage.VolumeDetails;

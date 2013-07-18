@@ -13,6 +13,7 @@ import org.cloudifysource.quality.iTests.framework.utils.ProcessUtils;
 import org.cloudifysource.quality.iTests.framework.utils.ServiceInstaller;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils.ProcessResult;
+import org.cloudifysource.utilitydomain.openspaces.OpenspacesConstants;
 import org.hyperic.sigar.SigarException;
 import org.openspaces.admin.Admin;
 import org.openspaces.admin.AdminFactory;
@@ -106,7 +107,7 @@ public class NewAbstractLocalCloudTest extends AbstractTestSupport {
     @Override
     protected AdminFactory createAdminFactory() {
 		AdminFactory factory = new AdminFactory();
-		factory.addLocator("127.0.0.1:" + CloudifyConstants.DEFAULT_LOCALCLOUD_LUS_PORT);
+		factory.addLocator("127.0.0.1:" + OpenspacesConstants.DEFAULT_LOCALCLOUD_LUS_PORT);
 		return factory;
     }
     

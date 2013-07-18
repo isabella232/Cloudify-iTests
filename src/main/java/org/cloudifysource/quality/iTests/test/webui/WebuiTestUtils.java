@@ -33,6 +33,9 @@ import org.openspaces.admin.pu.DeploymentStatus;
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.testng.Assert;
 
+import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.CloudService;
+import org.cloudifysource.utilitydomain.openspaces.OpenspacesConstants;
+
 import com.gigaspaces.webuitf.LoginPage;
 import com.gigaspaces.webuitf.WebConstants;
 import com.gigaspaces.webuitf.dashboard.DashboardTab;

@@ -3,8 +3,9 @@ package org.cloudifysource.quality.iTests.test.esm;
 import iTests.framework.utils.AssertUtils;
 import iTests.framework.utils.DumpUtils;
 import iTests.framework.utils.LogUtils;
-import org.cloudifysource.dsl.cloud.Cloud;
-import org.cloudifysource.dsl.cloud.compute.ComputeTemplate;
+
+import org.cloudifysource.domain.cloud.Cloud;
+import org.cloudifysource.domain.cloud.compute.ComputeTemplate;
 import org.cloudifysource.esc.driver.provisioning.CloudifyMachineProvisioningConfig;
 import org.cloudifysource.esc.driver.provisioning.ElasticMachineProvisioningCloudifyAdapter;
 import org.cloudifysource.quality.iTests.framework.utils.ByonMachinesUtils;

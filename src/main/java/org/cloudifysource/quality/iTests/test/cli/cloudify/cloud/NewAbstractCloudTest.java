@@ -4,7 +4,8 @@ import com.gigaspaces.internal.utils.StringUtils;
 import iTests.framework.utils.AssertUtils;
 import iTests.framework.utils.LogUtils;
 import iTests.framework.utils.ScriptUtils;
-import org.cloudifysource.dsl.cloud.compute.ComputeTemplate;
+
+import org.cloudifysource.domain.cloud.compute.ComputeTemplate;
 import org.cloudifysource.dsl.internal.CloudifyConstants;
 import org.cloudifysource.quality.iTests.framework.utils.ApplicationInstaller;
 import org.cloudifysource.quality.iTests.framework.utils.CloudBootstrapper;

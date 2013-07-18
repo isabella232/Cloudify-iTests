@@ -5,7 +5,7 @@ import iTests.framework.utils.AssertUtils;
 import iTests.framework.utils.IOUtils;
 import iTests.framework.utils.LogUtils;
 import org.apache.commons.lang.StringUtils;
-import org.cloudifysource.dsl.Application;
+import org.cloudifysource.domain.Application;
 import org.cloudifysource.dsl.internal.CloudifyConstants;
 import org.cloudifysource.dsl.internal.DSLReader;
 import org.cloudifysource.dsl.internal.packaging.Packager;

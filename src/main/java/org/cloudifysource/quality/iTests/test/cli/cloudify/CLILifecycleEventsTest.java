@@ -18,7 +18,7 @@ package org.cloudifysource.quality.iTests.test.cli.cloudify;
 import java.io.File;
 import java.io.IOException;
 
-import org.cloudifysource.dsl.Service;
+import org.cloudifysource.domain.Service;
 import org.cloudifysource.dsl.internal.DSLApplicationCompilatioResult;
 import org.cloudifysource.dsl.internal.DSLException;
 import org.cloudifysource.dsl.internal.ServiceReader;

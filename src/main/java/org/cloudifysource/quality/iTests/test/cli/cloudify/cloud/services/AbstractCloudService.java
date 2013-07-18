@@ -12,7 +12,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
-import org.cloudifysource.dsl.cloud.Cloud;
+import org.cloudifysource.domain.cloud.Cloud;
 import org.cloudifysource.dsl.internal.ServiceReader;
 import org.cloudifysource.quality.iTests.framework.utils.CloudBootstrapper;
 import iTests.framework.utils.IOUtils;

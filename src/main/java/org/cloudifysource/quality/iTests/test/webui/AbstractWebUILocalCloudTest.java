@@ -17,6 +17,7 @@ import iTests.framework.utils.LogUtils;
 import iTests.framework.utils.ProcessingUnitUtils;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.AbstractLocalCloudTest;
+import org.cloudifysource.utilitydomain.openspaces.OpenspacesConstants;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.NoSuchElementException;
@@ -84,7 +85,7 @@ public abstract class AbstractWebUILocalCloudTest extends AbstractLocalCloudTest
 		InetAddress localHost = InetAddress.getLocalHost();
 		String hostAddress = localHost.getHostAddress();
 		String locatorUrl = IPUtils.getSafeIpAddress(hostAddress) + ":" 
-				+ String.valueOf(CloudifyConstants.DEFAULT_LOCALCLOUD_LUS_PORT);
+				+ String.valueOf(OpenspacesConstants.DEFAULT_LOCALCLOUD_LUS_PORT);
 		System.setProperty( SystemProperties.JINI_LUS_LOCATORS, locatorUrl );
 	}
 	

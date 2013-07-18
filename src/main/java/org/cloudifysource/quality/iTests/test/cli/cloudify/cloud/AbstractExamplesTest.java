@@ -8,8 +8,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 
-import org.cloudifysource.dsl.Application;
-import org.cloudifysource.dsl.Service;
+import org.cloudifysource.domain.Application;
+import org.cloudifysource.domain.Service;
 import org.cloudifysource.dsl.internal.ServiceReader;
 import org.cloudifysource.dsl.utils.IPUtils;
 

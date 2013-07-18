@@ -3,7 +3,7 @@ package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services;
 import java.io.IOException;
 import java.util.Map;
 
-import org.cloudifysource.dsl.cloud.Cloud;
+import org.cloudifysource.domain.cloud.Cloud;
 import org.openspaces.admin.Admin;
 
 import org.cloudifysource.quality.iTests.framework.utils.CloudBootstrapper;

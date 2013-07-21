@@ -19,6 +19,8 @@
 				
 				// enable sudo.
 				privileged false
+				// File transfer mode.
+                fileTransfer org.cloudifysource.dsl.cloud.FileTransferModes.SCP
 				
 				}
 	]

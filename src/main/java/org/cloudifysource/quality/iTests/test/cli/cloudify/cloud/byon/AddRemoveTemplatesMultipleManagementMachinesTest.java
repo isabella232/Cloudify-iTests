@@ -3,11 +3,15 @@ package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.byon;
 import iTests.framework.utils.AssertUtils;
 import iTests.framework.utils.LogUtils;
 import iTests.framework.utils.SSHUtils;
+
+import org.cloudifysource.dsl.utils.IPUtils;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.byon.ByonCloudService;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+
+import com.googlecode.ipv6.IPv6Address;
 
 public class AddRemoveTemplatesMultipleManagementMachinesTest extends AbstractByonAddRemoveTemplatesTest{
 
@@ -17,7 +21,7 @@ public class AddRemoveTemplatesMultipleManagementMachinesTest extends AbstractBy
 	}
 
 	
-	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, enabled = true)
+	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, enabled = false)
 	public void addRemoveTemplates() throws Exception {
 				
 		TemplatesBatchHandler handler = new TemplatesBatchHandler();
@@ -52,10 +56,15 @@ public class AddRemoveTemplatesMultipleManagementMachinesTest extends AbstractBy
 		LogUtils.log(SSHUtils.runCommand(mngMachinesIP[1], AbstractTestSupport.OPERATION_TIMEOUT, "rm -f " + templateRemotePath, USER, PASSWORD));
 		
 		String output = removeTemplate(handler, templateName, true, null);
-		
 		AssertUtils.assertTrue("successfully removed template from " + mngMachinesIP[1], output.contains("Failed to remove"));
 		AssertUtils.assertTrue("successfully removed template from " + mngMachinesIP[1], output.contains(templateName));
-		AssertUtils.assertTrue("successfully removed template from " + mngMachinesIP[1], output.contains(mngMachinesIP[1]));
+		if (IPUtils.isIPv6Address(mngMachinesIP[1])) {
+			AssertUtils.assertTrue("successfully removed template from " + mngMachinesIP[1], 
+					output.contains(IPv6Address.fromString(mngMachinesIP[1]).toInetAddress().toString().replaceAll("/", "")));
+		} else {
+			AssertUtils.assertTrue("successfully removed template from " + mngMachinesIP[1], 
+					output.contains(mngMachinesIP[1]));
+		}
 		
 		handler.addExpectedToFailTemplate(template);
 		output = addTemplates(handler);
@@ -69,10 +78,22 @@ public class AddRemoveTemplatesMultipleManagementMachinesTest extends AbstractBy
 		String failedOutput = output.substring(failedIndex, successIndex);
 		String successOutput = output.substring(successIndex);
 		
-		AssertUtils.assertTrue("successfully added " + templateName + " to " + mngMachinesIP[1], failedOutput.contains(mngMachinesIP[1]));
+		if (IPUtils.isIPv6Address(mngMachinesIP[1])) {
+			AssertUtils.assertTrue("successfully added " + templateName + " to " + mngMachinesIP[1], 
+					failedOutput.contains(IPv6Address.fromString(mngMachinesIP[1]).toInetAddress().toString().replaceAll("/", "")));
+		} else {
+			AssertUtils.assertTrue("successfully added " + templateName + " to " + mngMachinesIP[1], 
+					failedOutput.contains(mngMachinesIP[1]));
+		}
 		AssertUtils.assertTrue("successfully added " + templateName + " to " + mngMachinesIP[1], failedOutput.contains(templateName));
 
-		AssertUtils.assertTrue("failed to add " + templateName + " to " + mngMachinesIP[0], successOutput.contains(mngMachinesIP[0]));
+		if (IPUtils.isIPv6Address(mngMachinesIP[1])) {
+			AssertUtils.assertTrue("failed to add " + templateName + " to " + mngMachinesIP[0], 
+					successOutput.contains(IPv6Address.fromString(mngMachinesIP[0]).toInetAddress().toString().replaceAll("/", "")));
+		} else {
+			AssertUtils.assertTrue("failed to add " + templateName + " to " + mngMachinesIP[0], 
+					successOutput.contains(mngMachinesIP[0]));
+		}
 		AssertUtils.assertTrue("failed to add " + templateName + " to " + mngMachinesIP[0], successOutput.contains(templateName));
 		
 	}

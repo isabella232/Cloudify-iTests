@@ -153,7 +153,7 @@ public class ByonCloudService extends AbstractCloudService {
 		}
 		
 		if (StringUtils.isNotBlank(ipList)) {
-			propsToReplace.put("0.0.0.0", ipList);
+			propsToReplace.put("0\\.0\\.0\\.0", ipList);
 		}
 		
 		propsToReplace.put("numberOfManagementMachines 1", "numberOfManagementMachines "  + getNumberOfManagementMachines());

@@ -17,6 +17,7 @@ import org.testng.annotations.Test;
  */
 public class ProvisioningContextByonTest extends AbstractByonCloudTest {
 
+	@Override
 	@BeforeClass(alwaysRun = true)
 	protected void bootstrap() throws Exception {
 		super.bootstrap();
@@ -25,7 +26,7 @@ public class ProvisioningContextByonTest extends AbstractByonCloudTest {
 	@Override
 	public void beforeBootstrap() throws IOException {
 
-		String newCloudDriverClazz = "CustomCloudDriver";
+		final String newCloudDriverClazz = "CustomCloudDriver";
 
 		getService().setNumberOfManagementMachines(2);
 		CloudTestUtils.replaceGroovyDriverImplementation(
@@ -45,6 +46,7 @@ public class ProvisioningContextByonTest extends AbstractByonCloudTest {
 
 	}
 
+	@Override
 	@AfterClass(alwaysRun = true)
 	protected void teardown() throws Exception {
 		super.teardown();

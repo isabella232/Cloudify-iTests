@@ -68,10 +68,10 @@
 			<version>${gsVersion}</version>
 		</dependency>
 		<dependency>
-            <groupId>com.gigaspaces.quality</groupId>
-            <artifactId>DashboardReporter</artifactId>
-            <version>0.0.3-SNAPSHOT</version>
-        </dependency>
+            		<groupId>com.gigaspaces.quality</groupId>
+            		<artifactId>DashboardReporter</artifactId>
+            		<version>0.0.3-SNAPSHOT</version>
+        	</dependency>
 		<dependency>
 			<groupId>org.cloudifysource</groupId>
 			<artifactId>CLI</artifactId>
@@ -112,17 +112,6 @@
 			<artifactId>webuitf</artifactId>
 			<version>1.0.2-SNAPSHOT</version>
 		</dependency>
-		<dependency>
-			<groupId>com.gigaspaces.quality</groupId>
-			<artifactId>DashboardReporter</artifactId>
-			<version>0.0.3-SNAPSHOT</version>
-			<exclusions>
-				<exclusion>
-					<groupId>slf4j</groupId>
-					<artifactId>slf4j-api</artifactId>
-				</exclusion>
-            		</exclusions>
-         	</dependency>
 		<dependency>
 			<groupId>com.gigaspaces.quality.sgtest.apps</groupId>
 			<artifactId>archives</artifactId>

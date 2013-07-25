@@ -331,7 +331,7 @@
 					<classpathDependencyExcludes>
 						<classpathDependencyScopeExclude>runtime</classpathDependencyScopeExclude>
 					</classpathDependencyExcludes>
-					<argLine>-Xmx2048m -XX:MaxPermSize=512m</argLine>
+					<argLine>-Xmx1024m -XX:MaxPermSize=256m</argLine>
 					<includes>
 						<include>${includes}</include>
 					</includes>

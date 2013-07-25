@@ -12,7 +12,7 @@ service {
 	type "UNDEFINED"
 	
 	url "http://" + InetAddress.localHost.hostName + ":7777"
-	def applicationName = context.applicationName
+	def applicationName = "default"//context.applicationName
 	lifecycle{
 		// DO NOT CHANGE THE PRINTOUTS - SGTEST LOOKS FOR THEM!
 		init {

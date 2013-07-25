@@ -1,5 +1,5 @@
 import java.util.concurrent.TimeUnit
-def context = org.cloudifysource.dsl.context.ServiceContextFactory.getServiceContext()
+def context = org.cloudifysource.utilitydomain.context.ServiceContextFactory.getServiceContext()
 def service = context.waitForService("simpleCustomCommandsMultipleInstances-2", 10, TimeUnit.SECONDS)
 if (service == null) {
 	println("Could not find service simpleCustomCommandsMultipleInstances-2")

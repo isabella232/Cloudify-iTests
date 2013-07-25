@@ -1,4 +1,4 @@
-import org.cloudifysource.dsl.context.ServiceContext
+import org.cloudifysource.domain.context.ServiceContext
 import org.cloudifysource.usm.USMUtils
 
 println "Classpath is: " + System.getenv().get("CLASSPATH");

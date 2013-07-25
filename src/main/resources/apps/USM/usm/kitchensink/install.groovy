@@ -1,9 +1,9 @@
 import java.util.concurrent.TimeUnit;
 
-import org.cloudifysource.dsl.context.Service;
-import org.cloudifysource.dsl.context.ServiceContext;
-import org.cloudifysource.dsl.context.ServiceContextFactory;
-import org.cloudifysource.dsl.context.ServiceInstance;
+import org.cloudifysource.domain.context.Service;
+import org.cloudifysource.domain.context.ServiceContext;
+import org.cloudifysource.utilitydomain.context.ServiceContextFactory;
+import org.cloudifysource.domain.context.ServiceInstance;
 
 println "install event fired"
 

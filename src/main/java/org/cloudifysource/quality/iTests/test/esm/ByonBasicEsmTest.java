@@ -1,22 +1,16 @@
 package org.cloudifysource.quality.iTests.test.esm;
 
-import java.io.File;
-import java.util.concurrent.TimeUnit;
-
+import iTests.framework.utils.AssertUtils;
+import iTests.framework.utils.DeploymentUtils;
+import iTests.framework.utils.LogUtils;
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.openspaces.admin.pu.elastic.ElasticStatefulProcessingUnitDeployment;
 import org.openspaces.admin.pu.elastic.config.ManualCapacityScaleConfig;
 import org.openspaces.admin.pu.elastic.config.ManualCapacityScaleConfigurer;
 import org.openspaces.core.util.MemoryUnit;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import org.testng.annotations.*;
 
-import iTests.framework.utils.AssertUtils;
-import iTests.framework.utils.DeploymentUtils;
-import iTests.framework.utils.LogUtils;
+import java.util.concurrent.TimeUnit;
 
 
 
@@ -50,9 +44,6 @@ public class ByonBasicEsmTest extends AbstractFromXenToByonGSMTest {
 		
 		repetitiveAssertNumberOfGSAsAdded(1, OPERATION_TIMEOUT);
 		repetitiveAssertNumberOfGSCsAdded(0,OPERATION_TIMEOUT);
-		//get pu dir
-        File puDir = DeploymentUtils.getArchive("processorPU.jar");      
-        
 
         ManualCapacityScaleConfig manualCapacityScaleConfig = 
             	new ManualCapacityScaleConfigurer()
@@ -61,7 +52,7 @@ public class ByonBasicEsmTest extends AbstractFromXenToByonGSMTest {
         
      
         ElasticStatefulProcessingUnitDeployment deployment = 
-    			new ElasticStatefulProcessingUnitDeployment(puDir)
+    			new ElasticStatefulProcessingUnitDeployment(DeploymentUtils.getProcessingUnit("simpledata", "processor"))
     			.maxMemoryCapacity(512, MemoryUnit.MEGABYTES)
     			.memoryCapacityPerContainer(256,MemoryUnit.MEGABYTES)
     			.dedicatedMachineProvisioning(getMachineProvisioningConfig());

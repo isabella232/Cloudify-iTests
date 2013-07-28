@@ -1,8 +1,5 @@
 package org.cloudifysource.quality.iTests.test.esm.stateful.manual.memory;
 
-import java.io.File;
-import java.io.IOException;
-
 import iTests.framework.utils.DeploymentUtils;
 import iTests.framework.utils.GsmTestUtils;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
@@ -14,11 +11,9 @@ import org.openspaces.admin.pu.elastic.config.ManualCapacityScaleConfig;
 import org.openspaces.admin.pu.elastic.config.ManualCapacityScaleConfigurer;
 import org.openspaces.admin.pu.elastic.config.ScaleStrategyConfig;
 import org.openspaces.core.util.MemoryUnit;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import org.testng.annotations.*;
+
+import java.io.IOException;
 
 public class DedicatedManualByonStatefulDeploymentTest extends AbstractFromXenToByonGSMTest {
 	
@@ -57,8 +52,6 @@ public class DedicatedManualByonStatefulDeploymentTest extends AbstractFromXenTo
   
         repetitiveAssertNumberOfGSCsAdded(0, OPERATION_TIMEOUT);
         repetitiveAssertNumberOfGSAsAdded(1, OPERATION_TIMEOUT);
-         
-        File puDir = DeploymentUtils.getArchive("processorPU.jar"); 
         
         ManualCapacityScaleConfig manualCapacityScaleConfig = 
         	new ManualCapacityScaleConfigurer()
@@ -66,7 +59,7 @@ public class DedicatedManualByonStatefulDeploymentTest extends AbstractFromXenTo
 			.create();
         
 		ElasticStatefulProcessingUnitDeployment deployment = 
-			new ElasticStatefulProcessingUnitDeployment(puDir)
+			new ElasticStatefulProcessingUnitDeployment(DeploymentUtils.getProcessingUnit("simpledata", "processor"))
 			.maxMemoryCapacity(512, MemoryUnit.MEGABYTES)
 			.memoryCapacityPerContainer(256,MemoryUnit.MEGABYTES)
 			.dedicatedMachineProvisioning(getMachineProvisioningConfig());

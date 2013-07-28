@@ -3,16 +3,10 @@ package org.cloudifysource.quality.iTests.test.esm.stateless.manual.memory;
 import iTests.framework.utils.DeploymentUtils;
 import iTests.framework.utils.GsmTestUtils;
 import iTests.framework.utils.ToStringUtils;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.concurrent.TimeUnit;
-
 import org.cloudifysource.esc.driver.provisioning.byon.ByonProvisioningDriver;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CloudTestUtils;
 import org.cloudifysource.quality.iTests.test.esm.AbstractFromXenToByonGSMTest;
 import org.openspaces.admin.esm.ElasticServiceManager;
-import org.openspaces.admin.gsa.ElasticServiceManagerOptions;
 import org.openspaces.admin.gsa.GridServiceAgent;
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.openspaces.admin.pu.elastic.ElasticStatelessProcessingUnitDeployment;
@@ -23,11 +17,11 @@ import org.openspaces.admin.zone.Zone;
 import org.openspaces.admin.zone.config.ExactZonesConfig;
 import org.openspaces.admin.zone.config.ExactZonesConfigurer;
 import org.openspaces.core.util.MemoryUnit;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import org.testng.annotations.*;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 public class DedicatedStatelessManualPerZoneByonFailoverTest extends AbstractFromXenToByonGSMTest {
 
@@ -134,7 +128,8 @@ public class DedicatedStatelessManualPerZoneByonFailoverTest extends AbstractFro
 
         ElasticServiceManager esm = admin.getElasticServiceManagers().waitForAtLeastOne(OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
         assertNotNull(esm);
-        restartElasticServiceManager(esm);
+        // kills the esm and then automatically revive him
+        GsmTestUtils.killElasticServiceManager(esm);
 
         repetitiveAssertNumberOfGSAsHolds(4,1, TIME_TO_START_AGENT_MILLIS);
 
@@ -167,9 +162,4 @@ public class DedicatedStatelessManualPerZoneByonFailoverTest extends AbstractFro
         return "className \""+className+"\"";
     }
 
-    private ElasticServiceManager restartElasticServiceManager(final ElasticServiceManager esm) {
-        final GridServiceAgent agent = esm.getGridServiceAgent();
-        GsmTestUtils.killElasticServiceManager(esm);
-        return agent.startGridServiceAndWait(new ElasticServiceManagerOptions().vmInputArgument("-Dcom.gs.transport_protocol.lrmi.bind-port="+LRMI_BIND_PORT_RANGE));
-    }
 }

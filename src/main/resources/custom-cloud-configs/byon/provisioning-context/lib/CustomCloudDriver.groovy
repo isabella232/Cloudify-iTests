@@ -76,6 +76,7 @@ public class CustomCloudDriver extends org.cloudifysource.esc.driver.provisionin
 			
 		}
 		executorService.shutdown()
+		executorService.awaitTermination(duration, unit)
 
 		return mds;
 	}

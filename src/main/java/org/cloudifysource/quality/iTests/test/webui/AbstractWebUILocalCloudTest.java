@@ -1,5 +1,11 @@
 package org.cloudifysource.quality.iTests.test.webui;
 
+import iTests.framework.tools.SGTestHelper;
+import iTests.framework.utils.AssertUtils;
+import iTests.framework.utils.AssertUtils.RepetitiveConditionProvider;
+import iTests.framework.utils.LogUtils;
+import iTests.framework.utils.ProcessingUnitUtils;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
@@ -7,14 +13,8 @@ import java.net.UnknownHostException;
 import java.util.Arrays;
 
 import org.apache.commons.io.FileUtils;
-import org.cloudifysource.dsl.internal.CloudifyConstants;
 import org.cloudifysource.dsl.utils.IPUtils;
 import org.cloudifysource.dsl.utils.ServiceUtils;
-import iTests.framework.tools.SGTestHelper;
-import iTests.framework.utils.AssertUtils;
-import iTests.framework.utils.AssertUtils.RepetitiveConditionProvider;
-import iTests.framework.utils.LogUtils;
-import iTests.framework.utils.ProcessingUnitUtils;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.AbstractLocalCloudTest;
 import org.cloudifysource.utilitydomain.openspaces.OpenspacesConstants;

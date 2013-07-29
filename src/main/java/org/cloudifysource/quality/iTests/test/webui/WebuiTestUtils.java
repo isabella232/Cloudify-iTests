@@ -1,5 +1,10 @@
 package org.cloudifysource.quality.iTests.test.webui;
 
+import iTests.framework.tools.SGTestHelper;
+import iTests.framework.utils.AssertUtils;
+import iTests.framework.utils.LogUtils;
+import iTests.framework.utils.ProcessingUnitUtils;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
@@ -7,8 +12,9 @@ import java.net.UnknownHostException;
 import java.util.Arrays;
 
 import org.apache.commons.io.FileUtils;
-import org.cloudifysource.dsl.internal.CloudifyConstants;
 import org.cloudifysource.dsl.utils.IPUtils;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.CloudService;
+import org.cloudifysource.utilitydomain.openspaces.OpenspacesConstants;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.NoSuchElementException;
@@ -27,9 +33,6 @@ import org.openspaces.admin.pu.DeploymentStatus;
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.testng.Assert;
 
-import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.CloudService;
-import org.cloudifysource.utilitydomain.openspaces.OpenspacesConstants;
-
 import com.gigaspaces.webuitf.LoginPage;
 import com.gigaspaces.webuitf.WebConstants;
 import com.gigaspaces.webuitf.dashboard.DashboardTab;
@@ -37,11 +40,6 @@ import com.gigaspaces.webuitf.util.AjaxUtils;
 import com.j_spaces.kernel.PlatformVersion;
 import com.j_spaces.kernel.SystemProperties;
 import com.thoughtworks.selenium.Selenium;
-
-import iTests.framework.tools.SGTestHelper;
-import iTests.framework.utils.AssertUtils;
-import iTests.framework.utils.LogUtils;
-import iTests.framework.utils.ProcessingUnitUtils;
 
 /**
  * use this class to add webui testing capabilities to a test.

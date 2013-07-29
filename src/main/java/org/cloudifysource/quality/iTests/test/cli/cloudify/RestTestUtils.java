@@ -73,7 +73,7 @@ public class RestTestUtils {
 			final File overridesFile) throws IOException, DSLException, PackagingException {
 		
 		// create zip file
-		final Service service = ServiceReader.readService(null, serviceDir, null, null, null, true, overridesFile);
+		final Service service = ServiceReader.readService(null, serviceDir, null, true, overridesFile);
 		File packedFile = Packager.pack(serviceDir, service, new LinkedList<File>());
 
 		// add files to post

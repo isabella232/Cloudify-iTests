@@ -2,16 +2,18 @@ package org.cloudifysource.quality.iTests.test.esm;
 
 import iTests.framework.utils.AssertUtils;
 import iTests.framework.utils.DumpUtils;
+import iTests.framework.utils.GridServiceAgentsCounter;
+import iTests.framework.utils.GridServiceContainersCounter;
 import iTests.framework.utils.LogUtils;
+import iTests.framework.utils.SSHUtils;
+
+import java.util.concurrent.TimeUnit;
 
 import org.cloudifysource.domain.cloud.Cloud;
 import org.cloudifysource.domain.cloud.compute.ComputeTemplate;
 import org.cloudifysource.esc.driver.provisioning.CloudifyMachineProvisioningConfig;
 import org.cloudifysource.esc.driver.provisioning.ElasticMachineProvisioningCloudifyAdapter;
 import org.cloudifysource.quality.iTests.framework.utils.ByonMachinesUtils;
-import iTests.framework.utils.GridServiceAgentsCounter;
-import iTests.framework.utils.GridServiceContainersCounter;
-import iTests.framework.utils.SSHUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.byon.AbstractByonCloudTest;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.byon.ByonCloudService;
 import org.openspaces.admin.gsa.GridServiceAgent;
@@ -31,8 +33,6 @@ import org.openspaces.grid.gsm.machines.plugins.events.MachineStartRequestedEven
 import org.openspaces.grid.gsm.machines.plugins.events.MachineStartedEvent;
 import org.openspaces.grid.gsm.machines.plugins.events.MachineStopRequestedEvent;
 import org.openspaces.grid.gsm.machines.plugins.events.MachineStoppedEvent;
-
-import java.util.concurrent.TimeUnit;
 
 public class AbstractFromXenToByonGSMTest extends AbstractByonCloudTest {
 	

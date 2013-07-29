@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 
 import junit.framework.Assert;
 
-import org.cloudifysource.esc.util.IPUtils;
+import org.cloudifysource.dsl.utils.IPUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.type.TypeFactory;
 import org.codehaus.jackson.type.JavaType;

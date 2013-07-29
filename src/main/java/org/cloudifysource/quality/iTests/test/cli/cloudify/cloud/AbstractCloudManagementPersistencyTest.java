@@ -518,11 +518,11 @@ public abstract class AbstractCloudManagementPersistencyTest extends NewAbstract
     	final String backupGsmHost = getBackupGsmHost();
     	
     	if (restUrls[0].contains(managingGsmHost)) {
-    		this.managingManagementMachineUrl = restUrls[0];
+        	this.managingManagementMachineUrl = restUrls[0];
         	this.backupManagementMachineUrl = restUrls[1];
     	} else {
     		//swap rest urls
-    		this.managingManagementMachineUrl = restUrls[1];
+        	this.managingManagementMachineUrl = restUrls[1];
         	this.backupManagementMachineUrl = restUrls[0];
     	}
     	
@@ -531,13 +531,13 @@ public abstract class AbstractCloudManagementPersistencyTest extends NewAbstract
 	}
 
 	private String getManagingGsmHost() throws RestException {
-		final String managingGsmUrl = "ProcessingUnits/Names/rest/ManagingGridServiceManager";
+    	final String managingGsmUrl = "ProcessingUnits/Names/rest/ManagingGridServiceManager";
     	final String managingGsmHost = getPublicHostName(managingGsmUrl);
 		return managingGsmHost;
 	}
 
 	private String getBackupGsmHost() throws RestException {
-		final String backupGsmUrl = "ProcessingUnits/Names/rest/BackupGridServiceManagers/0";
+    	final String backupGsmUrl = "ProcessingUnits/Names/rest/BackupGridServiceManagers/0";
     	final String backupGsmHost = getPublicHostName(backupGsmUrl);
 		return backupGsmHost;
 	}

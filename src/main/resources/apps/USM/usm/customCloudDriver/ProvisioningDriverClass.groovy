@@ -3,7 +3,7 @@ package org.cloudifysource.esc.util
 import org.cloudifysource.esc.driver.provisioning.ProvisioningDriver
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
-import org.cloudifysource.dsl.cloud.Cloud
+import org.cloudifysource.domain.cloud.Cloud
 import org.openspaces.admin.Admin
 import org.cloudifysource.esc.driver.provisioning.CloudProvisioningException
 import org.cloudifysource.esc.driver.provisioning.MachineDetails

@@ -1,6 +1,6 @@
 import java.util.concurrent.TimeUnit;
 
-import org.cloudifysource.dsl.internal.context.ServiceContextImpl;
+import org.cloudifysource.utilitydomain.context.ServiceContextImpl;
 
 service {
 	name "simple"

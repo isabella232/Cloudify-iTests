@@ -1,6 +1,6 @@
 /***************
  * Cloud configuration file for the Amazon ec2 cloud. Uses the default jclouds-based cloud driver.
- * See org.cloudifysource.dsl.cloud.Cloud for more details.
+ * See org.cloudifysource.domain.cloud.Cloud for more details.
  * @author barakme
  *
  */
@@ -98,11 +98,11 @@ cloud {
 						remoteDirectory "/cygdrive/c/gs-files"
 						
 						// File transfer mode. Optional, defaults to SCP.
-						fileTransfer org.cloudifysource.dsl.cloud.FileTransferModes.SFTP
+						fileTransfer org.cloudifysource.domain.cloud.FileTransferModes.SFTP
 						// Remote execution mode. Options, defaults to SSH.
-						remoteExecution org.cloudifysource.dsl.cloud.RemoteExecutionModes.SSH
+						remoteExecution org.cloudifysource.domain.cloud.RemoteExecutionModes.SSH
 						// Script language for remote execution. Defaults to Linux Shell.
-						scriptLanguage org.cloudifysource.dsl.cloud.ScriptLanguages.WINDOWS_BATCH
+						scriptLanguage org.cloudifysource.domain.cloud.ScriptLanguages.WINDOWS_BATCH
 						// Mandatory. All files from this LOCAL directory will be copied to the remote machine directory.
 						localDirectory "upload"
 						// Optional. Name of key file to use for authenticating to the remot machine. Remove this line if key files

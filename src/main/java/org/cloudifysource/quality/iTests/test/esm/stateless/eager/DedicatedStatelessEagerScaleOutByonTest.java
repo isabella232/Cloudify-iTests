@@ -49,7 +49,7 @@ public class DedicatedStatelessEagerScaleOutByonTest extends AbstractFromXenToBy
         repetitiveAssertNumberOfGSAsAdded(1, OPERATION_TIMEOUT);
         startNewByonMachine(getElasticMachineProvisioningCloudifyAdapter(), OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
         repetitiveAssertNumberOfGSAsAdded(2, OPERATION_TIMEOUT);
-        File archive = DeploymentUtils.getArchive("servlet.war");
+        File archive = DeploymentUtils.getArchive("simpleStatelessPu.jar");
         
         final ProcessingUnit pu = super.deploy(
                 new ElasticStatelessProcessingUnitDeployment(archive)

@@ -55,8 +55,8 @@ public class DedicatedStatelessEagerScaleInByonTest extends AbstractFromXenToByo
         startNewByonMachine(getElasticMachineProvisioningCloudifyAdapter(), OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
         GridServiceAgent gsa3 = startNewByonMachine(getElasticMachineProvisioningCloudifyAdapter(), OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
         GridServiceAgent gsa4 = startNewByonMachine(getElasticMachineProvisioningCloudifyAdapter(), OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
-        
-        File archive = DeploymentUtils.getArchive("servlet.war");
+
+        File archive = DeploymentUtils.getArchive("simpleStatelessPu.jar");
         
         final ProcessingUnit pu = super.deploy(
                 new ElasticStatelessProcessingUnitDeployment(archive)

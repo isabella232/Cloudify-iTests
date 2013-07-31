@@ -8,6 +8,7 @@ import iTests.framework.utils.*;
 import org.cloudifysource.dsl.internal.DSLException;
 import org.cloudifysource.dsl.internal.ServiceReader;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.security.SecurityConstants;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.type.TypeFactory;
 import org.codehaus.jackson.type.JavaType;
@@ -42,7 +43,7 @@ public class TwitterExampleTest extends AbstractLocalCloudTest{
     private static final String FEEDER_PROPERTIES_FILE_PATH = SGTestHelper.getBuildDir() + "/recipes/apps/" + APP_FOLDER_NAME + "/feeder/src/main/resources/META-INF/spring/feeder.properties";
     private static String backupFeederPropsFilePath;
 
-    private static final String TWITTER_CREDENTIALS_FILE_PATH = SGTestHelper.getSGTestRootDir() + "/src/main/resources/credentials/twitter/twitter-cred.properties";
+    private static final String TWITTER_CREDENTIALS_FILE_PATH = SecurityConstants.CREDENTIALS_FOLDER + "/twitter/twitter-cred.properties";
     private final Properties twitterProperties = SGTestHelper.getPropertiesFromFile(TWITTER_CREDENTIALS_FILE_PATH);
 
     @BeforeClass(alwaysRun = true)

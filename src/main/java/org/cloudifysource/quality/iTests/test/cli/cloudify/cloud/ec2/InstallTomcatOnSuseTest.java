@@ -83,7 +83,7 @@ public class InstallTomcatOnSuseTest extends NewAbstractCloudTest {
 		return false;
 	}
 
-	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
+	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = false)
 	public void testInstallCustomTomcatOnSuse() throws IOException, InterruptedException {
 		addSuseTempalte();
 		try {

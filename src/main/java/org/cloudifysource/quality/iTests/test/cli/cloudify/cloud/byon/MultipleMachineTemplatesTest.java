@@ -18,6 +18,8 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.byon.MultipleTemplatesByonCloudService;
+
+import iTests.framework.testng.annotations.TestConfiguration;
 import iTests.framework.tools.SGTestHelper;
 import iTests.framework.utils.AssertUtils;
 import iTests.framework.utils.AssertUtils.RepetitiveConditionProvider;
@@ -65,6 +67,7 @@ public class MultipleMachineTemplatesTest extends AbstractByonCloudTest {
 	 * @throws Exception
 	 */
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, enabled = true)
+	@TestConfiguration(internetProtocol = TestConfiguration.PROTOCOL.IPv4_Only)
 	public void test() throws Exception {
 		
 		String[] temlpateNames = service.getTemlpateNames();

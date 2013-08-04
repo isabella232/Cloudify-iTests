@@ -61,6 +61,8 @@ public interface CloudService {
 	boolean scanLeakedAgentAndManagementNodes();
 
 	boolean scanLeakedAgentNodes();
+	
+	boolean scanLeakedManagementNodes();
 
 	String getPathToCloudFolder();
 

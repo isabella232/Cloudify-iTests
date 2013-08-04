@@ -166,6 +166,12 @@ public class MicrosoftAzureCloudService extends AbstractCloudService {
 		final String mgmtPrefix = getCloud().getProvider().getManagementGroup();
 		return scanNodesWithPrefix(agentPrefix , mgmtPrefix);
 	}
+    
+    @Override
+	public boolean scanLeakedManagementNodes() {
+		final String mgmtPrefix = getCloud().getProvider().getManagementGroup();
+		return scanNodesWithPrefix(mgmtPrefix);
+	}
 	
 	private boolean scanNodesWithPrefix(final String... prefixes) {
 		

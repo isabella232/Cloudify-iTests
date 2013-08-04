@@ -14,13 +14,13 @@ public class Ec2PersistencyWithTwoManagersTwoFailuresTest extends AbstractCloudM
         super.bootstrap();
         super.initManagementUrlsAndRestClient();
     }
-    
+
     @AfterMethod
     public void afterTest() {
-        restoreManagement();
+        terminateManagementNodes();
     }
 
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
     public void testManagementPersistencyTwoFailures() throws Exception {
         super.testManagementPersistencyTwoFailures();
     }

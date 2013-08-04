@@ -178,6 +178,11 @@ public abstract class AbstractCloudService implements CloudService {
     public boolean scanLeakedAgentAndManagementNodes() {
         return true;
     }
+    
+    @Override
+    public boolean scanLeakedManagementNodes() {
+        return true;
+    }
 
     @Override
     public String getCloudName() {

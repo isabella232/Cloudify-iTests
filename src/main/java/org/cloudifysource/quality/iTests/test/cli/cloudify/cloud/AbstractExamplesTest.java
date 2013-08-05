@@ -188,4 +188,15 @@ public abstract class AbstractExamplesTest extends NewAbstractCloudTest {
 			AssertUtils.assertFail(e.getMessage());
 		}
 	}
+
+
+	/**
+	 * Installs and uninstalls a service that uses a linux agent template.
+	 * 
+	 * @throws Exception
+	 */
+	protected void testLinuxAgent() throws Exception {
+		super.installServiceAndWait("tomcat", "tomcat");
+		super.uninstallServiceAndWait("tomcat");
+	}
 }

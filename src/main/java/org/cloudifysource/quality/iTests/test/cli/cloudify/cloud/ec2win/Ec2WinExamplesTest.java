@@ -79,7 +79,7 @@ public class Ec2WinExamplesTest extends AbstractExamplesTest {
 	
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
 	public void testLinuxAgent() throws Exception {
-		super.installServiceAndWait("tomcat", "tomcat");
+		super.testLinuxAgent();
 	}
 
 	@Override

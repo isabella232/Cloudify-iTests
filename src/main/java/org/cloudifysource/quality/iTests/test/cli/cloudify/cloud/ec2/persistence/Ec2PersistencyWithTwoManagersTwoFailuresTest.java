@@ -14,20 +14,19 @@ public class Ec2PersistencyWithTwoManagersTwoFailuresTest extends AbstractCloudM
         super.bootstrap();
         super.initManagementUrlsAndRestClient();
     }
-    
-    @AfterMethod
-    public void afterTest() {
-        terminateManagementNodes();
+
+    /** 
+     * Do not call super.teardown(), since it will detect leaked management machine (that this test caused).
+     * Instead just terminate all management machines.
+     */
+    @AfterClass(alwaysRun = true)
+    public void teardown() throws Exception{
+    	terminateManagementNodes();
     }
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
     public void testManagementPersistencyTwoFailures() throws Exception {
         super.testManagementPersistencyTwoFailures();
-    }
-
-    @AfterClass(alwaysRun = true)
-    public void teardown() throws Exception{
-        super.teardown();
     }
 
     @Override

@@ -588,4 +588,13 @@ public abstract class AbstractCloudManagementPersistencyTest extends NewAbstract
 		AssertUtils.assertFalse("Cannot find rest process id on backup management machine", pid == 0);
 		return pid;
 	}
+	
+
+	/**
+	 * 
+	 */
+    protected void terminateManagementNodes() {
+    	//ignore return value
+    	getService().scanLeakedManagementNodes();
+	}
 }

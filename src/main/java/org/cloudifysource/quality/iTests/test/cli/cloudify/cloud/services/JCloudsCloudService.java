@@ -128,6 +128,21 @@ public abstract class JCloudsCloudService extends AbstractCloudService {
 		return leakedNodes.isEmpty();
 	
 	}
+	
+	@Override
+	public boolean scanLeakedManagementNodes() {
+		
+		if (this.context == null) {
+			this.context = createContext();
+		}
+		
+		final String managerPrefix = getCloud().getProvider().getManagementGroup();
+	
+		final List<ComputeMetadata> leakedNodes = checkForLeakedNodesWithPrefix(managerPrefix);
+	
+		return leakedNodes.isEmpty();
+	
+	}
 
 	private List<ComputeMetadata> checkForLeakedNodesWithPrefix(final String... prefixes) {
 		List<ComputeMetadata> leakedNodes = null;

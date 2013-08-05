@@ -48,8 +48,8 @@ public class DedicatedStatelessEagerNoZonesTest extends AbstractFromXenToByonGSM
         
         startNewByonMachine(getElasticMachineProvisioningCloudifyAdapter(), OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
         repetitiveAssertNumberOfGSAsAdded(2, OPERATION_TIMEOUT);
-        
-		File archive = DeploymentUtils.getArchive("servlet.war");
+
+        File archive = DeploymentUtils.getArchive("simpleStatelessPu.jar");
 
 		final ProcessingUnit pu = deploy ( new ElasticStatelessProcessingUnitDeployment(archive)
 		.memoryCapacityPerContainer(1, MemoryUnit.GIGABYTES)

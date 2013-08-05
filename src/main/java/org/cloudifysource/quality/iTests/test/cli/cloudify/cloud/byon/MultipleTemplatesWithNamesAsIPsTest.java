@@ -6,6 +6,8 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.byon.MultipleTemplatesByonCloudService;
+
+import iTests.framework.testng.annotations.TestConfiguration;
 import iTests.framework.utils.LogUtils;
 import iTests.framework.utils.NetworkUtils;
 
@@ -36,6 +38,7 @@ public class MultipleTemplatesWithNamesAsIPsTest extends MultipleMachineTemplate
 
 	@Override
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
+	@TestConfiguration(internetProtocol = TestConfiguration.PROTOCOL.IPv4_Only)
 	public void test() throws Exception {
 		super.setService(service);
 		super.test();

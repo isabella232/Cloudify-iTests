@@ -53,8 +53,8 @@ public class DedicatedStatelessManualByonCPUFailoverTest extends AbstractFromXen
     		Math.ceil(numberOfCpuCores/super.getMachineProvisioningConfig().getMinimumNumberOfCpuCoresPerMachine());
 
 	    int expectedNumberOfContainers = (int) Math.ceil(numberOfCpuCores/super.getMachineProvisioningConfig().getMinimumNumberOfCpuCoresPerMachine());
-	    
-	    File archive = DeploymentUtils.getArchive("servlet.war");
+
+        File archive = DeploymentUtils.getArchive("simpleStatelessPu.jar");
 	    
 		final ProcessingUnit pu = super.deploy(
 				new ElasticStatelessProcessingUnitDeployment(archive)

@@ -18,13 +18,16 @@ fi
 export GIT_SSL_NO_VERIFY=true
 export Cloudify_iTests_HOME=${BUILD_DIR}/../Cloudify-iTests
 pushd ${BUILD_DIR}/../
+
 if [ ${BRANCH_NAME} != "master" ]; then
 	git clone  -b ${BRANCH_NAME} --depth 1 https://github.com/CloudifySource/Cloudify-iTests.git
-	mvn scm:export -DconnectionUrl=scm:svn:svn://svn-srv/SVN/cloudify/branches/${SVN_BRANCH_DIRECTORY}/${BRANCH_NAME}/quality/frameworks/SGTest-credentials -DexportDirectory=${Cloudify_iTests_HOME}/src/main/resources/credentials
 else
 	git clone --depth 1 https://github.com/CloudifySource/Cloudify-iTests.git
-	mvn scm:export -DconnectionUrl=scm:svn:svn://svn-srv/SVN/cloudify/trunk/quality/frameworks/SGTest-credentials -DexportDirectory=${Cloudify_iTests_HOME}/src/main/resources/credentials
 fi
+popd
+
+mvn scm:export -DconnectionUrl=scm:svn:svn://svn-srv/SVN/cloudify/trunk/quality/frameworks/SGTest-credentials -DexportDirectory=${Cloudify_iTests_HOME}/src/main/resources/credentials
+
 popd
 
 

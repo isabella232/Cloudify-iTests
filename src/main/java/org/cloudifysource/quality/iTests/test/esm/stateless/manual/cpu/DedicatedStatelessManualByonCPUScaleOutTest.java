@@ -46,8 +46,8 @@ public class DedicatedStatelessManualByonCPUScaleOutTest extends AbstractFromXen
 	    repetitiveAssertNumberOfGSAsAdded(1, OPERATION_TIMEOUT);
 	            
 	    int numberOfCpuCores = 4;
-        
-        File archive = DeploymentUtils.getArchive("servlet.war");
+
+        File archive = DeploymentUtils.getArchive("simpleStatelessPu.jar");
         
         final ProcessingUnit pu = super.deploy(
                 new ElasticStatelessProcessingUnitDeployment(archive)

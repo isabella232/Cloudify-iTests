@@ -51,8 +51,8 @@ public class DedicatedStatelessManualByonDriveScaleOutTest extends AbstractFromX
 	    repetitiveAssertNumberOfGSAsAdded(1, OPERATION_TIMEOUT);
 	            
 	    int drivesCapacityInMB = MACHINE_DRIVE_CAPACITY;
-        
-        File archive = DeploymentUtils.getArchive("servlet.war");
+
+        File archive = DeploymentUtils.getArchive("simpleStatelessPu.jar");
         
         final ProcessingUnit pu = super.deploy(
                 new ElasticStatelessProcessingUnitDeployment(archive)

@@ -58,7 +58,7 @@ public class Ec2AddTemplatesTest extends NewAbstractCloudTest {
 		return false;
 	}
 
-	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
+	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = false)
 	public void testAddTemplateAndInstallService() 
 			throws IOException, InterruptedException {	
 

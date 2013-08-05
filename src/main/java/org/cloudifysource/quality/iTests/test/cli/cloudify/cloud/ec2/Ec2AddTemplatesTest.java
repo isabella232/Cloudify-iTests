@@ -1,9 +1,20 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.ec2;
 
-import junit.framework.Assert;
+import iTests.framework.tools.SGTestHelper;
 import iTests.framework.utils.IOUtils;
-import org.cloudifysource.quality.iTests.framework.utils.JCloudsUtils;
 import iTests.framework.utils.LogUtils;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import junit.framework.Assert;
+
+import org.apache.commons.io.FileUtils;
+import org.cloudifysource.quality.iTests.framework.utils.JCloudsUtils;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.NewAbstractCloudTest;
@@ -14,10 +25,6 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.*;
-
 /**
  * 
  * @author yael
@@ -25,15 +32,20 @@ import java.util.*;
  */
 public class Ec2AddTemplatesTest extends NewAbstractCloudTest {
 
-	private final String SERVICE_FOLDER_PATH = CommandTestUtils.getPath("src/main/resources/apps/USM/usm/services/simpleWithTemplates/simpleForEC2");
-	private final String SERVICE_NAME = "simpleForEC2";
-	private final String TEMPLATE_FOLDER_PATH = SERVICE_FOLDER_PATH + "/templates";
-	private final String TEMPLATE_NAME = "UBUNTU_TEST";
-	private final String TEMPLATE_PROPERTIES_FILE_PATH = TEMPLATE_FOLDER_PATH + "/ubuntu-template.properties";
-
-	private final String UBUNTU_IMAGE_ID_US = "us-east-1/ami-82fa58eb";
-	private final String UBUNTU_IMAGE_ID_EU = "eu-west-1/ami-c37474b7";
-
+	private static final String SERVICE_FOLDER_PATH = 
+			CommandTestUtils.getPath("src/main/resources/apps/USM/usm/services/simpleForAddTemplateOnEC2");
+	private static final String CREDENTIALS_FOLDER = System.getProperty("iTests.credentialsFolder",
+            SGTestHelper.getSGTestRootDir() + "/src/main/resources/credentials");
+	private final String PEM_FILE_NAME = "ec2-sgtest-eu.pem";
+	private final String PEM_FILE_PATH = CREDENTIALS_FOLDER + "/cloud/ec2/" + PEM_FILE_NAME;
+	private static final String SERVICE_NAME = "simpleForEC2";
+	private static final String TEMPLATE_FOLDER_PATH =
+			CommandTestUtils.getPath("src/main/resources/templates/ubuntu");
+	private static final String UPLOAD_FOLDER_PATH = TEMPLATE_FOLDER_PATH + "/ubuntu_upload";
+	private static final String TEMPLATE_NAME = "UBUNTU_TEST";
+	private static final String TEMPLATE_PROPERTIES_FILE_PATH = TEMPLATE_FOLDER_PATH + "/ubuntu-template.properties";
+	private static final String UBUNTU_IMAGE_ID_US = "us-east-1/ami-82fa58eb";
+	private static final String UBUNTU_IMAGE_ID_EU = "eu-west-1/ami-c37474b7";
     private static final int SERVICE_INSTALLATION_TIMEOUT_IN_MINUTES = 15;
 
     @Override
@@ -46,6 +58,8 @@ public class Ec2AddTemplatesTest extends NewAbstractCloudTest {
 	@AfterClass(alwaysRun = true)
 	protected void teardown() throws Exception {
 		super.teardown();
+		File pemFile = new File(UPLOAD_FOLDER_PATH, PEM_FILE_NAME);
+		pemFile.delete();
 	}
 
 	@Override
@@ -58,7 +72,7 @@ public class Ec2AddTemplatesTest extends NewAbstractCloudTest {
 		return false;
 	}
 
-	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = false)
+	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
 	public void testAddTemplateAndInstallService() 
 			throws IOException, InterruptedException {	
 
@@ -66,6 +80,7 @@ public class Ec2AddTemplatesTest extends NewAbstractCloudTest {
 		if (((Ec2CloudService)getService()).getRegion().contains("us")) {
 			updatePropertiesFile();			
 		}
+		copyPemFile();
 
 		// add templates
 		String command = "connect " + getRestUrl() + ";add-templates " + TEMPLATE_FOLDER_PATH;
@@ -119,7 +134,6 @@ public class Ec2AddTemplatesTest extends NewAbstractCloudTest {
         } else {
             props.put("ubuntuImageId", UBUNTU_IMAGE_ID_US);
         }
-
 		IOUtils.writePropertiesToFile(props, propsFile);
 	}
 
@@ -134,6 +148,12 @@ public class Ec2AddTemplatesTest extends NewAbstractCloudTest {
 			LogUtils.log(e.getMessage(), e);
 			Assert.fail(e.getMessage());
 		}
+	}
+	
+	private void copyPemFile() throws IOException {
+		File pemFile = new File(PEM_FILE_PATH);
+		File uploadFolder = new File(UPLOAD_FOLDER_PATH);
+		FileUtils.copyFileToDirectory(pemFile, uploadFolder);
 	}
 
 }

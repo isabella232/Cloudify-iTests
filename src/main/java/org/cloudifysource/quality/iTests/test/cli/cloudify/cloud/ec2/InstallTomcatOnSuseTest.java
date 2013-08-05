@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.ec2;
 
+import iTests.framework.tools.SGTestHelper;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -36,15 +38,21 @@ import org.testng.annotations.Test;
  */
 public class InstallTomcatOnSuseTest extends NewAbstractCloudTest {
 
+	private static final String CREDENTIALS_FOLDER = System.getProperty("iTests.credentialsFolder",
+            SGTestHelper.getSGTestRootDir() + "/src/main/resources/credentials");
+	private final String PEM_FILE_NAME = "ec2-sgtest-eu.pem";
+	private final String PEM_FILE_PATH = CREDENTIALS_FOLDER + "/cloud/ec2/" + PEM_FILE_NAME;
+	// template
 	private static final String TEMPLATE_NAME = "SMALL_SUSE";
 	private static final String TEMPLATE_DIR_PATH = CommandTestUtils.getPath("src/main/resources/templates/SMALL_SUSE");
 	private static final String TEMPLATE_PROPERTIES_FILE_PATH = CommandTestUtils.getPath("src/main/resources/templates/SMALL_SUSE/SMALL_SUSE-template.properties");
+	private static final String TEMPLATE_UPLOAD_FOLDER_PATH = TEMPLATE_DIR_PATH + "/suse_upload";
+	// service
 	private static final String SERVICE_NAME = "tomcat";
 	private static final String SERVICE_DIR_PATH = CommandTestUtils.getPath("src/main/resources/apps/USM/usm/tomcatOnSuse");
 	private static final String SUSE_IMAGE_ID = "eu-west-1/ami-60576214";
 	private static final String GET_TEMPLATE_NAME_CUSTOM_COMMAND_NAME = "GetTemplateName";
 	private static final String GET_IMAGE_ID_CUSTOM_COMMAND_NAME = "GetImageID";
-
 	// properties
 	private static final String SUSE_IMAGE_ID_PROPERTY_VALUE = "\"" + SUSE_IMAGE_ID + "\"";
 	private static final String SUSE_IMAGE_ID_PROPERTY_NAME = "suseImageId";
@@ -66,6 +74,8 @@ public class InstallTomcatOnSuseTest extends NewAbstractCloudTest {
 	@AfterClass(alwaysRun = true)
 	protected void teardown() throws Exception {
 		super.teardown();
+		File pemFile = new File(TEMPLATE_UPLOAD_FOLDER_PATH, PEM_FILE_NAME);
+		pemFile.delete();
 	}
 	
 	@Override
@@ -83,8 +93,9 @@ public class InstallTomcatOnSuseTest extends NewAbstractCloudTest {
 		return false;
 	}
 
-	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = false)
+	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
 	public void testInstallCustomTomcatOnSuse() throws IOException, InterruptedException {
+		copyPemFile();
 		addSuseTempalte();
 		try {
 			installServiceAndWait(SERVICE_DIR_PATH, SERVICE_NAME, TOMCAT_INSTALLATION_TIMEOUT_IN_MINUTES);
@@ -139,6 +150,12 @@ public class InstallTomcatOnSuseTest extends NewAbstractCloudTest {
 		Assert.assertTrue(imageIDSplit.length > 1);
 		String imageID = imageIDSplit[0].trim();
 		Assert.assertEquals(SUSE_IMAGE_ID, imageID);
+	}
+	
+	private void copyPemFile() throws IOException {
+		File pemFile = new File(PEM_FILE_PATH);
+		File uploadFolder = new File(TEMPLATE_UPLOAD_FOLDER_PATH);
+		FileUtils.copyFileToDirectory(pemFile, uploadFolder);
 	}
 
 }

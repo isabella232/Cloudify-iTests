@@ -6,7 +6,8 @@ import iTests.framework.utils.SSHUtils;
 
 import org.cloudifysource.dsl.utils.IPUtils;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
-import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.byon.ByonCloudService;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.templates.TemplateDetails;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.templates.TemplatesFolderHandler;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -21,22 +22,23 @@ public class AddRemoveTemplatesMultipleManagementMachinesTest extends AbstractBy
 	}
 
 	
-	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, enabled = false)
+	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, enabled = true)
 	public void addRemoveTemplates() throws Exception {
 				
-		TemplatesBatchHandler handler = new TemplatesBatchHandler();
-		TemplateDetails template = handler.addTemplate();
+		TemplatesFolderHandler folderHandler = templatesHandler.createNewTemplatesFolder();
+		TemplateDetails template = folderHandler.addDefaultTempalte();
 		String templateName = template.getTemplateName();
-		addTemplates(handler);
-		assertExpectedListTemplates();
+		
+		templatesHandler.addTemplatesToCloud(folderHandler);
+		templatesHandler.assertExpectedList();
 				
 		String templateRemotePath = getTemplateRemoteDirFullPath(templateName) + template.getTemplateFile().getName();	
 
 		verifyTemplateExistence(mngMachinesIP[0], template, templateRemotePath, true);
 		verifyTemplateExistence(mngMachinesIP[1], template, templateRemotePath, true);
 							
-		removeTemplate(handler, templateName, false, null);
-		assertExpectedListTemplates();
+		templatesHandler.removeTemplateFromCloud(folderHandler, templateName, false, null);
+		templatesHandler.assertExpectedList();
 		
 		verifyTemplateExistence(mngMachinesIP[0], template, templateRemotePath, false);
 		verifyTemplateExistence(mngMachinesIP[1], template, templateRemotePath, false);
@@ -46,18 +48,18 @@ public class AddRemoveTemplatesMultipleManagementMachinesTest extends AbstractBy
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, enabled = true)
 	public void failedAddRemoveTemplates() throws Exception {
 		
-		TemplatesBatchHandler handler = new TemplatesBatchHandler();
-		TemplateDetails template = handler.addTemplate();
+		TemplatesFolderHandler folderHandler = templatesHandler.createNewTemplatesFolder();
+		TemplateDetails template = folderHandler.addDefaultTempalte();
 		String templateName = template.getTemplateName();
-		addTemplates(handler);
+		templatesHandler.addTemplatesToCloud(folderHandler);
 		
 		String templateRemotePath = getTemplateRemoteDirFullPath(templateName) + template.getTemplateFile().getName();
 		
 		LogUtils.log(SSHUtils.runCommand(mngMachinesIP[1], AbstractTestSupport.OPERATION_TIMEOUT, "rm -f " + templateRemotePath, USER, PASSWORD));
 		
-		String output = removeTemplate(handler, templateName, true, null);
-		AssertUtils.assertTrue("successfully removed template from " + mngMachinesIP[1], output.contains("Failed to remove"));
-		AssertUtils.assertTrue("successfully removed template from " + mngMachinesIP[1], output.contains(templateName));
+		String output = templatesHandler.removeTemplateFromCloud(folderHandler, templateName, true, null);
+		
+		AssertUtils.assertTrue("successfully removed template from " + mngMachinesIP[1], output.contains("Failed to remove template [" + templateName + "]"));
 		if (IPUtils.isIPv6Address(mngMachinesIP[1])) {
 			AssertUtils.assertTrue("successfully removed template from " + mngMachinesIP[1], 
 					output.contains(IPv6Address.fromString(mngMachinesIP[1]).toInetAddress().toString().replaceAll("/", "")));
@@ -66,8 +68,9 @@ public class AddRemoveTemplatesMultipleManagementMachinesTest extends AbstractBy
 					output.contains(mngMachinesIP[1]));
 		}
 		
-		handler.addExpectedToFailTemplate(template);
-		output = addTemplates(handler);
+		template.setExpectedToFail(true);
+		folderHandler.addCustomTemplate(template);
+		output = templatesHandler.addTemplatesToCloud(folderHandler);
 				
 		int failedIndex = output.indexOf("Failed to add the following templates:");
 		AssertUtils.assertTrue("successfully added " + templateName + " to " + mngMachinesIP[1], failedIndex != -1);
@@ -103,20 +106,6 @@ public class AddRemoveTemplatesMultipleManagementMachinesTest extends AbstractBy
 		super.teardown();
 	}
 
-
-	protected void startManagement(String machine1) throws Exception {
-		
-		for (int i = 0 ; i < 3 ; i++) {
-			try {
-				LogUtils.log(SSHUtils.runCommand(machine1, AbstractTestSupport.DEFAULT_TEST_TIMEOUT,  ByonCloudService.BYON_HOME_FOLDER + "/gigaspaces/tools/cli/cloudify.sh start-management", getService().getUser(), getService().getApiKey()));
-				return;
-			} catch (Throwable t) {
-				LogUtils.log("Failed to start management on machine " + machine1 + ". Attempt number " + (i + 1));
-			}
-		}
-		
-		AssertUtils.assertFail("Failed to start management on machine " + machine1 + ".");
-	}
 
 	@Override
 	public int getNumOfMngMachines() {

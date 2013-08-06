@@ -4,10 +4,9 @@ import org.cloudifysource.quality.iTests.framework.utils.ServiceInstaller;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.byon.AddTemplateRestFailoverTest;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.templates.SimpleServiceCreator;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.templates.TemplatesFolderHandler;
 import org.testng.annotations.Test;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * User: Sagi Bernstein
@@ -19,25 +18,23 @@ public class NewRestAddTemplateTest extends AddTemplateRestFailoverTest {
 
     @Override @Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, enabled = false)
     public void addTemplateRestFailoverTest() {
-        addTemplate();
+    	TemplatesFolderHandler templatesFolder = addTemplate();
         doInstall();
-        removeTemplate();
+        removeTemplate(templatesFolder);
     }
 
-    private void removeTemplate() {
-        List<String> templates = new ArrayList<String>();
-        templates.add("template_0_0");
-
+    private void removeTemplate(TemplatesFolderHandler templatesFolder) {
         try {
-            removeAllAddedTemplates(templates);
+        	templatesHandler.removeTemplatesFromCloudUsingRestAPI(templatesFolder, "template_0_0", false, null);
         } catch (Exception e) {
             AssertFail("remove template failed", e);
         }
     }
 
     private void doInstall() {
-        final ServiceInstaller installerWithTemplate = new ServiceInstaller(getRestUrl(), SERVICE_NAME_PROPERTY_NAME);
-        installerWithTemplate.recipePath(SERVICES_ROOT_PATH + "/../");
+        final ServiceInstaller installerWithTemplate = 
+        		new ServiceInstaller(getRestUrl(), SimpleServiceCreator.SERVICE_NAME_PROPERTY_NAME);
+        installerWithTemplate.recipePath(SimpleServiceCreator.SERVICES_ROOT_PATH + "/../");
         final ServiceInstaller installerWithOutTemplate = new ServiceInstaller(getRestUrl(), "tomcat");
         installerWithOutTemplate.recipePath(CommandTestUtils.getBuildApplicationsPath() + "/tomcat");
 

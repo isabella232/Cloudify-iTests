@@ -7,6 +7,8 @@ import org.testng.annotations.Test;
 
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.CloudService;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.CloudServiceManager;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.templates.TemplateDetails;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.templates.TemplatesFolderHandler;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.security.SecurityConstants;
 import iTests.framework.utils.AssertUtils;
 import org.cloudifysource.quality.iTests.framework.utils.CloudBootstrapper;
@@ -30,23 +32,29 @@ public class ByonAddTemplatesWithSecurityTest extends AbstractByonAddRemoveTempl
 		CloudService service = CloudServiceManager.getInstance().getCloudService(getCloudName());
 		service.setBootstrapper(bootstrapper);
 		super.bootstrap(service);
+		username = SecurityConstants.USER_PWD_ALL_ROLES;
+		password = SecurityConstants.USER_PWD_ALL_ROLES;
 	}
 	
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, enabled = true)
 	public void testAddTemplatesAndInstallWithDifferentUsers() throws Exception {
 		
 		CloudBootstrapper bootstrapper = new CloudBootstrapper();
-		TemplatesBatchHandler templatesHandler = new TemplatesBatchHandler();
-		TemplateDetails addedTemplate = templatesHandler.addServiceTemplate();
+		TemplatesFolderHandler folderHandler = templatesHandler.createNewTemplatesFolder();
+		TemplateDetails addedTemplate = folderHandler.addTempalteForServiceInstallation();
 		
 		bootstrapper.user(SecurityConstants.USER_PWD_CLOUD_ADMIN).password(SecurityConstants.USER_PWD_CLOUD_ADMIN).setRestUrl(getRestUrl());
-		bootstrapper.addTemplate(templatesHandler.getTemplatesFolder().getAbsolutePath(), false);
+		bootstrapper.addTemplate(folderHandler.getFolder().getAbsolutePath(), false);
 	
 		final String templateName = addedTemplate.getTemplateName();
 		String serviceName = templateName + "_service";
 		
 		ServiceInstaller installer = new ServiceInstaller(getRestUrl(), serviceName);
-		installer.cloudifyUsername(SecurityConstants.USER_PWD_APP_MANAGER).cloudifyPassword(SecurityConstants.USER_PWD_APP_MANAGER).recipePath(createServiceDir(serviceName, templateName)).timeoutInMinutes(AbstractTestSupport.OPERATION_TIMEOUT);
+		installer
+		.cloudifyUsername(SecurityConstants.USER_PWD_APP_MANAGER)
+		.cloudifyPassword(SecurityConstants.USER_PWD_APP_MANAGER)
+		.recipePath(serviceCreator.createServiceDir(serviceName, templateName).getAbsolutePath())
+		.timeoutInMinutes(AbstractTestSupport.OPERATION_TIMEOUT);
 		installer.install();
 		
 		installer.uninstall();
@@ -70,12 +78,12 @@ public class ByonAddTemplatesWithSecurityTest extends AbstractByonAddRemoveTempl
 	public void testGetTemplate() throws Exception{
 		
 		CloudBootstrapper bootstrapper = new CloudBootstrapper();
-		TemplatesBatchHandler templatesHandler = new TemplatesBatchHandler();
-		TemplateDetails addedTemplate = templatesHandler.addTemplate();
+		TemplatesFolderHandler folderHandler = this.templatesHandler.createNewTemplatesFolder();		
+		TemplateDetails addedTemplate = folderHandler.addDefaultTempalte();
 		String templateName = addedTemplate.getTemplateName();
 		
 		bootstrapper.user(SecurityConstants.USER_PWD_CLOUD_ADMIN_AND_APP_MANAGER).password(SecurityConstants.USER_PWD_CLOUD_ADMIN_AND_APP_MANAGER).setRestUrl(getRestUrl());
-		bootstrapper.addTemplate(templatesHandler.getTemplatesFolder().getAbsolutePath(), false);
+		bootstrapper.addTemplate(folderHandler.getFolder().getAbsolutePath(), false);
 		
 		verifyGetTemplate(SecurityConstants.USER_PWD_APP_MANAGER, SecurityConstants.USER_PWD_APP_MANAGER, SecurityConstants.APP_MANAGER_DESCRIPTIN, SecurityConstants.CLOUD_ADMIN_AND_APP_MANAGER_DESCRIPTION, templateName, false);
 		verifyGetTemplate(SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, SecurityConstants.APP_MANAGER_AND_VIEWER_DESCRIPTIN, SecurityConstants.CLOUD_ADMIN_AND_APP_MANAGER_DESCRIPTION, templateName, false);
@@ -91,12 +99,12 @@ public class ByonAddTemplatesWithSecurityTest extends AbstractByonAddRemoveTempl
 	public void testRemoveTemplate() throws Exception{
 		
 		CloudBootstrapper bootstrapper = new CloudBootstrapper();
-		TemplatesBatchHandler templatesHandler = new TemplatesBatchHandler();
-		TemplateDetails addedTemplate = templatesHandler.addTemplate();
+		TemplatesFolderHandler folderHandler = this.templatesHandler.createNewTemplatesFolder();		
+		TemplateDetails addedTemplate = folderHandler.addDefaultTempalte();
 		String templateName = addedTemplate.getTemplateName();
 		
 		bootstrapper.user(SecurityConstants.USER_PWD_CLOUD_ADMIN).password(SecurityConstants.USER_PWD_CLOUD_ADMIN).setRestUrl(getRestUrl());
-		bootstrapper.addTemplate(templatesHandler.getTemplatesFolder().getAbsolutePath(), false);
+		bootstrapper.addTemplate(folderHandler.getFolder().getAbsolutePath(), false);
 		
 		verifyRemoveTemplate(SecurityConstants.USER_PWD_APP_MANAGER, SecurityConstants.USER_PWD_APP_MANAGER, SecurityConstants.APP_MANAGER_DESCRIPTIN, templateName, true);
 		verifyRemoveTemplate(SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, SecurityConstants.APP_MANAGER_AND_VIEWER_DESCRIPTIN, templateName, true);
@@ -104,10 +112,10 @@ public class ByonAddTemplatesWithSecurityTest extends AbstractByonAddRemoveTempl
 		verifyRemoveTemplate(SecurityConstants.USER_PWD_NO_ROLE, SecurityConstants.USER_PWD_NO_ROLE, SecurityConstants.NO_ROLE_DESCRIPTIN, templateName, true);
 		verifyRemoveTemplate(SecurityConstants.USER_PWD_CLOUD_ADMIN, SecurityConstants.USER_PWD_CLOUD_ADMIN, SecurityConstants.CLOUD_ADMIN_DESCRIPTIN, templateName, false);
 		
-		TemplatesBatchHandler templatesHandler2 = new TemplatesBatchHandler();
-		addedTemplate = templatesHandler2.addTemplate();
+		TemplatesFolderHandler folderHandler2 = this.templatesHandler.createNewTemplatesFolder();		
+		addedTemplate = folderHandler2.addDefaultTempalte();
 		templateName = addedTemplate.getTemplateName();
-		bootstrapper.addTemplate(templatesHandler2.getTemplatesFolder().getAbsolutePath(), false);
+		bootstrapper.addTemplate(folderHandler2.getFolder().getAbsolutePath(), false);
 		
 		verifyRemoveTemplate(SecurityConstants.USER_PWD_CLOUD_ADMIN_AND_APP_MANAGER, SecurityConstants.USER_PWD_CLOUD_ADMIN_AND_APP_MANAGER, SecurityConstants.CLOUD_ADMIN_AND_APP_MANAGER_DESCRIPTION, templateName, false);
 	}
@@ -116,21 +124,21 @@ public class ByonAddTemplatesWithSecurityTest extends AbstractByonAddRemoveTempl
 	public void testListTemplate() throws Exception{
 		
 		CloudBootstrapper bootstrapper = new CloudBootstrapper();
-		TemplatesBatchHandler templatesHandler = new TemplatesBatchHandler();
+		TemplatesFolderHandler folderHandler = templatesHandler.createNewTemplatesFolder();
 
 		bootstrapper.user(SecurityConstants.USER_PWD_CLOUD_ADMIN_AND_APP_MANAGER).password(SecurityConstants.USER_PWD_CLOUD_ADMIN_AND_APP_MANAGER);
 		
-		TemplateDetails addedTemplate1 = templatesHandler.addTemplate();
+		TemplateDetails addedTemplate1 = folderHandler.addDefaultTempalte();
 		String templateName1 = addedTemplate1.getTemplateName();
 		
 		bootstrapper.user(SecurityConstants.USER_PWD_CLOUD_ADMIN).password(SecurityConstants.USER_PWD_CLOUD_ADMIN).setRestUrl(getRestUrl());
-		bootstrapper.addTemplate(templatesHandler.getTemplatesFolder().getAbsolutePath(), false);
+		bootstrapper.addTemplate(folderHandler.getFolder().getAbsolutePath(), false);
 		
-		TemplatesBatchHandler templatesHandler2 = new TemplatesBatchHandler();
-		TemplateDetails addedTemplate2 = templatesHandler2.addTemplate();
+		TemplatesFolderHandler folderHandler2 = templatesHandler.createNewTemplatesFolder();
+		TemplateDetails addedTemplate2 = folderHandler2.addDefaultTempalte();
 		String templateName2 = addedTemplate2.getTemplateName();
 		
-		bootstrapper.addTemplate(templatesHandler2.getTemplatesFolder().getAbsolutePath(), false);
+		bootstrapper.addTemplate(folderHandler2.getFolder().getAbsolutePath(), false);
 				
 		verifyListTemplates(SecurityConstants.USER_PWD_APP_MANAGER, SecurityConstants.USER_PWD_APP_MANAGER, SecurityConstants.APP_MANAGER_DESCRIPTIN, SecurityConstants.CLOUD_ADMIN_DESCRIPTIN, SecurityConstants.CLOUD_ADMIN_AND_APP_MANAGER_DESCRIPTION, templateName1, templateName2, true, true);
 		verifyListTemplates(SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, SecurityConstants.APP_MANAGER_AND_VIEWER_DESCRIPTIN, SecurityConstants.CLOUD_ADMIN_DESCRIPTIN, SecurityConstants.CLOUD_ADMIN_AND_APP_MANAGER_DESCRIPTION, templateName1, templateName2, true, true);
@@ -152,11 +160,11 @@ public class ByonAddTemplatesWithSecurityTest extends AbstractByonAddRemoveTempl
 	public void verifyAddTemplate(String user, String password, String userDescription, boolean isExpectedToFail) throws Exception{
 		
 		CloudBootstrapper bootstrapper = new CloudBootstrapper();
-		TemplatesBatchHandler templatesHandler = new TemplatesBatchHandler();
-		TemplateDetails addedTemplate = templatesHandler.addTemplate();
+		TemplatesFolderHandler folderHandler = templatesHandler.createNewTemplatesFolder();
+		TemplateDetails addedTemplate = folderHandler.addDefaultTempalte();
 		
 		bootstrapper.user(user).password(password).setRestUrl(getRestUrl());
-		String output = bootstrapper.addTemplate(templatesHandler.getTemplatesFolder().getAbsolutePath(), isExpectedToFail);
+		String output = bootstrapper.addTemplate(folderHandler.getFolder().getAbsolutePath(), isExpectedToFail);
 		
 		if(isExpectedToFail){
 			AssertUtils.assertTrue(userDescription + " succeeded in adding a template", output.contains(SecurityConstants.ACCESS_DENIED_MESSAGE));
@@ -217,11 +225,13 @@ public class ByonAddTemplatesWithSecurityTest extends AbstractByonAddRemoveTempl
 		}
 	}
 	
-	@Override
 	public String listTemplates() throws Exception{
 
 		CloudBootstrapper bootstrapper = new CloudBootstrapper();	
-		bootstrapper.user(SecurityConstants.USER_PWD_ALL_ROLES).password(SecurityConstants.USER_PWD_ALL_ROLES).setRestUrl(getRestUrl());
+		bootstrapper
+		.user(SecurityConstants.USER_PWD_ALL_ROLES)
+		.password(SecurityConstants.USER_PWD_ALL_ROLES)
+		.setRestUrl(getRestUrl());
 		
 		String output = bootstrapper.listTemplates(false);
 

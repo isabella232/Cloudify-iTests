@@ -13,7 +13,7 @@ import junit.framework.Assert;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
-import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.templates.TemplatesFolderHandler;
 import org.openspaces.admin.gsc.GridServiceContainer;
 import org.openspaces.admin.machine.Machine;
 import org.openspaces.admin.pu.ProcessingUnit;
@@ -27,7 +27,7 @@ import org.testng.annotations.Test;
 
 public class AddTemplateRestFailoverTest extends AbstractByonAddRemoveTemplatesTest {
 
-	private static final long TIMEOUT_SECONDS = 120;
+	private static final long TIMEOUT_SECONDS = 300;
 	
 	@BeforeClass(alwaysRun = true)
 	protected void bootstrap() throws Exception {		
@@ -93,18 +93,18 @@ public class AddTemplateRestFailoverTest extends AbstractByonAddRemoveTemplatesT
 		LogUtils.log("Rest connection is available.");
 	}
 	
-	protected void addTemplate() {
-		TemplatesBatchHandler templatesHandler = new TemplatesBatchHandler();
+	protected TemplatesFolderHandler addTemplate() {
+		TemplatesFolderHandler folderHandler = null;
 		try {
-			templatesHandler.addTemplates(1);
-			String command = "connect " + getRestUrl() + ";add-templates " + templatesHandler.getTemplatesFolder();
-			String output = CommandTestUtils.runCommandAndWait(command);
+			folderHandler = templatesHandler.createFolderWithTemplates(1);
+			String output = templatesHandler.addTemplatesToCloud(folderHandler);
 			Assert.assertTrue(output.contains("Templates added successfully"));
 		} catch (Exception e) {
 			LogUtils.log(e.getMessage(), e);
 			Assert.fail(e.getMessage());
 		}
-		assertExpectedListTemplates();
+		templatesHandler.assertExpectedList();
+		return folderHandler;
 	}
 	
 	private void killRest(long pid) {

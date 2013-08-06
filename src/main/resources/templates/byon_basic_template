@@ -1,0 +1,24 @@
+[
+				TEMPLATE_NAME : computeTemplate{
+				
+				machineMemoryMB 1600
+				remoteDirectory "/tmp/gs-files"
+				username "tgrid"
+				password "tgrid"
+				
+				localDirectory uploadDir
+				
+				custom ([
+					"nodesList" : ([
+									([
+										"id" : node_id,
+										"host-list" : node_ip
+									])
+					])
+				])
+				
+				// enable sudo.
+				privileged false
+				
+				}
+	]

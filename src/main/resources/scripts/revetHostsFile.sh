@@ -6,8 +6,8 @@
 ## Author: Barak Merimovich
 ###########################################################
 
-hostsFile = /etc/hosts
-backupFile = $hostsFile.sgtest.backup
+hostsFile = $1
+backupFile = $2
 
 echo Verifying passwordless sudo
 

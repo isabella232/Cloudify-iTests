@@ -7,8 +7,8 @@
 ###########################################################
 
 modifiedFile = $1
-hostsFile = /etc/hosts
-backupFile = $hostsFile.sgtest.backup
+hostsFile = $2 
+backupFile = $3
 
 echo Copying $modifiedFile to $hostsFile, saving backup in $backupFile
 

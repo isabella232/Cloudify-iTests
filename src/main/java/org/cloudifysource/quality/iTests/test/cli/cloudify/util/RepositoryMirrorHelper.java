@@ -14,20 +14,21 @@ import iTests.framework.utils.LogUtils;
 
 public class RepositoryMirrorHelper {
 
-	public static final String REPOSITORY_MIRROR = "org.cloudifysource.repository.mirror";
+	public static final String REPOSITORY_MIRROR_SYSPROP = "org.cloudifysource.repository.mirror";
 	public static final String REPOSITORY_DEFAULT = "repository.cloudifysource.org";
 
 	public void revertHostsFile() throws IOException {
-		final String mirror = System.getProperty(REPOSITORY_MIRROR);
+		final String mirror = System.getProperty(REPOSITORY_MIRROR_SYSPROP);
 		if (mirror == null) {
 			LogUtils.log("No repository mirror found in system properties. Hosts file will not be reverted.");
 			return;
 		}
 
+		final RepositoryMirrorHandler handler = createHandler();
 		
 		
-		final File hostsFile = getHostsFile();
-		final File backupHostsFile = new File(hostsFile.getAbsolutePath() + ".sgtest.backup");
+		final File hostsFile = handler.getHostsFile();
+		final File backupHostsFile = getBackupHostsFile(hostsFile);
 
 		if(!backupHostsFile.exists()) {
 			LogUtils.log("backup file does not exist! Did you create one with modifyHostsFile()");
@@ -36,19 +37,40 @@ public class RepositoryMirrorHelper {
 		
 		
 		LogUtils.log("Checking for old hosts file backup");
-		handleOldBackupHostsFile(hostsFile, backupHostsFile, true);
-
+		handler.revertHostsFile(hostsFile, backupHostsFile, true);
 		LogUtils.log("Finished reverting hosts file modification");
 	}
 	
 	public void modifyHostsFile() throws IOException {
-		final String mirror = System.getProperty(REPOSITORY_MIRROR);
+		final String mirror = System.getProperty(REPOSITORY_MIRROR_SYSPROP);
 		if (mirror == null) {
 			LogUtils.log("No repository mirror found in system properties. Resource calls to the repository will go directly to: "
 					+ REPOSITORY_DEFAULT);
 			return;
 		}
 
+		String actualMirror = getActualMirrorIP(mirror);
+
+		final RepositoryMirrorHandler handler = createHandler();
+		
+		final File hostsFile = handler.getHostsFile();
+		final File modifiedHostsFile = createModifiedHostsFile(hostsFile, actualMirror);
+		final File backupHostsFile = getBackupHostsFile(hostsFile);
+		handler.revertHostsFile(hostsFile, backupHostsFile, false);
+		//final File backupHostsFile = new File(hostsFile.getAbsolutePath() + ".sgtest.backup");
+
+		handler.modifyHostsFile(hostsFile, modifiedHostsFile, backupHostsFile);
+		
+		
+	}
+
+	private File getBackupHostsFile(final File hostsFile) {
+		final String backupHostsFileName = hostsFile.getAbsolutePath() + ".sgtest.backup";
+		final File backupHostsFile = new File(backupHostsFileName);
+		return backupHostsFile;
+	}
+
+	private String getActualMirrorIP(final String mirror) throws UnknownHostException {
 		String actualMirror = mirror;
 		try {
 			InetAddress resolvedMirrorAddress = InetAddress.getByName(mirror);
@@ -61,22 +83,20 @@ public class RepositoryMirrorHelper {
 					+ e.getMessage(), e);
 			throw e;
 		}
+		return actualMirror;
+	}
 
-		
-		final File hostsFile = getHostsFile();
-		final File backupHostsFile = new File(hostsFile.getAbsolutePath() + ".sgtest.backup");
-
-		LogUtils.log("Checking for old hosts file backup");
-		handleOldBackupHostsFile(hostsFile, backupHostsFile, false);
-
-		LogUtils.log("Saving a copy of current hosts file in: " + backupHostsFile);
-		try { 
-			backupHostsFile.createNewFile();
-		} catch (final IOException e) {
-			LogUtils.log("Failed to create backup hosts file - you may not be running with the required permissions to modify the hosts file. Please set up the required permissions or remove the mirror setting");
-			throw e;
+	private RepositoryMirrorHandler createHandler() {
+		RepositoryMirrorHandler handler = null;
+		if(ServiceUtils.isWindows()) {
+			handler = new WindowsRepositoryMirrorHandler();
+		} else {
+			// todo
 		}
-		FileUtils.copyFile(hostsFile, backupHostsFile);
+		return handler;
+	}
+
+	private File createModifiedHostsFile(final File hostsFile, final String actualMirror) throws IOException {
 
 		final String newline = System.getProperty("line.separator");
 		// read current hosts file
@@ -89,13 +109,13 @@ public class RepositoryMirrorHelper {
 
 		final String modifiedHostsContent = originalHostsContent + hostsModification;
 
-		FileUtils.writeStringToFile(hostsFile, modifiedHostsContent);
-		LogUtils.log("Finished modifying hosts file for use with repository: " + mirror);
-		LogUtils.log("New hosts file content:");
-		LogUtils.log(modifiedHostsContent);
-
+		final File modifiedFile = File.createTempFile("modifiedHosts", ".tmp");
+		FileUtils.writeStringToFile(modifiedFile, modifiedHostsContent);
+		modifiedFile.deleteOnExit();
+		
+		return modifiedFile;
 	}
-
+	
 	private File getHostsFile() {
 		if (ServiceUtils.isWindows()) {
 			return getWindowsHostsFile();

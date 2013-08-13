@@ -1,4 +1,4 @@
-import org.cloudifysource.dsl.cloud.compute.ComputeTemplate;
+import org.cloudifysource.domain.cloud.compute.ComputeTemplate;
 
 import org.cloudifysource.esc.driver.provisioning.jclouds.DefaultProvisioningDriver
 import org.cloudifysource.esc.driver.provisioning.*

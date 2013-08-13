@@ -119,7 +119,7 @@ cloud {
 						remoteDirectory "/tmp/gs-files"
 						
 						// File transfer mode.
-						fileTransfer org.cloudifysource.dsl.cloud.FileTransferModes.SCP
+						fileTransfer org.cloudifysource.domain.cloud.FileTransferModes.SCP
 						
 						// Optional. template-generic credentials. Can be overridden by specific credentials on each node, in the nodesList section.
 						username username
@@ -160,7 +160,7 @@ cloud {
 						remoteDirectory "/tmp/gs-files"
 						
 						// File transfer mode.
-						fileTransfer org.cloudifysource.dsl.cloud.FileTransferModes.SCP
+						fileTransfer org.cloudifysource.domain.cloud.FileTransferModes.SCP
 						
 						// Optional. template-generic credentials. Can be overridden by specific credentials on each node, in the nodesList section.
 						username username
@@ -201,7 +201,7 @@ cloud {
 						remoteDirectory "/tmp/gs-files"
 						
 						// File transfer mode.
-						fileTransfer org.cloudifysource.dsl.cloud.FileTransferModes.SCP
+						fileTransfer org.cloudifysource.domain.cloud.FileTransferModes.SCP
 						
 						// Optional. template-generic credentials. Can be overridden by specific credentials on each node, in the nodesList section.
 						username username

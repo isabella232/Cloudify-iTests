@@ -31,7 +31,7 @@ public abstract class DefaultBootstrapValidationTest extends NewAbstractCloudTes
 			super.bootstrap(bootstrapper);
 			String bootstrapOutput = bootstrapper.getLastActionOutput();
 			assertTrue("The credentials are wrong but the wrong error was thrown. Reported error: " + bootstrapOutput,
-					bootstrapOutput.contains("HTTP/1.1 401 Unauthorized"));
+					bootstrapOutput.contains("Cloud API credentials not valid"));
 		} catch (Exception e) {
 			throw e;
 		} finally {

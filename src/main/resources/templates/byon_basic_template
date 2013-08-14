@@ -7,7 +7,7 @@
 				password "tgrid"
 				
 				localDirectory uploadDir
-				
+				fileTransfer org.cloudifysource.domain.cloud.FileTransferModes.SCP
 				custom ([
 					"nodesList" : ([
 									([

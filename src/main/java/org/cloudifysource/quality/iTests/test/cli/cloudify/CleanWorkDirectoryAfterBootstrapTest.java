@@ -13,12 +13,14 @@ import java.util.concurrent.TimeUnit;
 
 import org.cloudifysource.quality.iTests.framework.utils.ServiceInstaller;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
+import org.junit.Ignore;
 import org.openspaces.admin.gsa.GridServiceAgent;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import com.gigaspaces.grid.gsa.AgentProcessDetails;
 
+@Ignore
 public class CleanWorkDirectoryAfterBootstrapTest extends AbstractLocalCloudTest {
 
 	/***********

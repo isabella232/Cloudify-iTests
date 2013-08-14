@@ -1,12 +1,16 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify;
 
+import iTests.framework.tools.SGTestHelper;
+import iTests.framework.utils.AssertUtils.RepetitiveConditionProvider;
+import iTests.framework.utils.GridServiceContainersCounter;
+import iTests.framework.utils.LogUtils;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.logging.Logger;
 
 import org.cloudifysource.dsl.internal.CloudifyConstants;
 import org.cloudifysource.dsl.utils.ServiceUtils;
@@ -28,14 +32,7 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import iTests.framework.tools.SGTestHelper;
-import iTests.framework.utils.AssertUtils.RepetitiveConditionProvider;
-import iTests.framework.utils.GridServiceContainersCounter;
-import iTests.framework.utils.LogUtils;
-
 public class ScalingRulesRecipeTest extends AbstractLocalCloudTest {
-
-	private static final Logger logger = Logger.getLogger(ScalingRulesRecipeTest.class.getName());
 	
 	private static final String SERVICE_NAME = "customServiceMonitor";
 	private static final String SERVICE_RELATIVE_PATH = "/src/main/resources/apps/cloudify/recipes/" + SERVICE_NAME;
@@ -71,15 +68,15 @@ public class ScalingRulesRecipeTest extends AbstractLocalCloudTest {
 					if (alert.getStatus().equals(AlertStatus.RAISED)) {
 						boolean equals = EXPECTED_ALERT_DESCRIPTION.equals(alert.getDescription());
 						if (equals) {
-							logger.info("Alert raised: " + EXPECTED_ALERT_DESCRIPTION);
+							LogUtils.log("Alert raised: " + EXPECTED_ALERT_DESCRIPTION);
 							raisedLatch.countDown();
 						} else {
-							logger.warning("unexpected alert raised: " + alert.getDescription());
+							LogUtils.log("unexpected alert raised: " + alert.getDescription());
 						}
 						Assert.assertTrue(equals);
 					}
 					else if(alert.getStatus().equals(AlertStatus.RESOLVED)) {
-						logger.info("Alert resolved: " + alert.getDescription());
+						LogUtils.log("Alert resolved: " + alert.getDescription());
 						numberOfResolvedAlerts.incrementAndGet();
 						resolvedLatch.countDown();
 					}

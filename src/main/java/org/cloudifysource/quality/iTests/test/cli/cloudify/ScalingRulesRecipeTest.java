@@ -1,6 +1,7 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify;
 
 import iTests.framework.tools.SGTestHelper;
+import iTests.framework.utils.AssertUtils;
 import iTests.framework.utils.AssertUtils.RepetitiveConditionProvider;
 import iTests.framework.utils.GridServiceContainersCounter;
 import iTests.framework.utils.LogUtils;
@@ -22,6 +23,7 @@ import org.openspaces.admin.alert.alerts.ElasticAutoScalingAlert;
 import org.openspaces.admin.alert.config.ElasticAutoScalingAlertConfiguration;
 import org.openspaces.admin.alert.events.AlertTriggeredEventListener;
 import org.openspaces.admin.internal.pu.InternalProcessingUnit;
+import org.openspaces.admin.pu.ProcessingUnit;
 import org.openspaces.admin.pu.ProcessingUnitInstance;
 import org.openspaces.admin.pu.statistics.AverageInstancesStatisticsConfig;
 import org.openspaces.admin.pu.statistics.AverageTimeWindowStatisticsConfigurer;
@@ -33,14 +35,14 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 public class ScalingRulesRecipeTest extends AbstractLocalCloudTest {
-	
+
 	private static final String SERVICE_NAME = "customServiceMonitor";
 	private static final String SERVICE_RELATIVE_PATH = "/src/main/resources/apps/cloudify/recipes/" + SERVICE_NAME;
 	
 	private static final String COUNTER_METRIC = "counter";
 	private static final String ABSOLUTE_SERVICE_NAME = ServiceUtils.getAbsolutePUName(DEFAULT_APPLICATION_NAME,SERVICE_NAME);
-	private static final String EXPECTED_ALERT_DESCRIPTION = "default.customServiceMonitor cannot increase from 4 instances to 5 instances, since it breaches maximum of 4 instances";
-	
+	protected static final String EXPECTED_ALERT_DESCRIPTION = 
+			"default.customServiceMonitor cannot increase from 4 instances to 5 instances, since it breaches maximum of 4 instances";
 	private final List<Alert> adminAlerts = new ArrayList<Alert>();
 	
 	@BeforeMethod
@@ -56,9 +58,9 @@ public class ScalingRulesRecipeTest extends AbstractLocalCloudTest {
 		final InternalProcessingUnit pu = (InternalProcessingUnit) admin.getProcessingUnits().waitFor(ABSOLUTE_SERVICE_NAME, AbstractTestSupport.OPERATION_TIMEOUT,TimeUnit.MILLISECONDS);
 		initAlerts();
 		final GridServiceContainersCounter gscCounter = new GridServiceContainersCounter(pu);
+		final AtomicInteger numberOfRaisedAlerts = new AtomicInteger(0);
         final AtomicInteger numberOfResolvedAlerts = new AtomicInteger(0);
 	    final CountDownLatch raisedLatch = new CountDownLatch(1);
-	    final CountDownLatch resolvedLatch = new CountDownLatch(1);
 	    
 	    AlertTriggeredEventListener listener = new AlertTriggeredEventListener() {
 			
@@ -66,19 +68,16 @@ public class ScalingRulesRecipeTest extends AbstractLocalCloudTest {
 			public void alertTriggered(Alert alert) {
 				if (alert instanceof ElasticAutoScalingAlert) {
 					if (alert.getStatus().equals(AlertStatus.RAISED)) {
-						boolean equals = EXPECTED_ALERT_DESCRIPTION.equals(alert.getDescription());
-						if (equals) {
-							LogUtils.log("Alert raised: " + EXPECTED_ALERT_DESCRIPTION);
-							raisedLatch.countDown();
-						} else {
-							LogUtils.log("unexpected alert raised: " + alert.getDescription());
+						String description = alert.getDescription();
+						if (!description.contains("Cannot monitor")) {
+							numberOfRaisedAlerts.incrementAndGet();
 						}
-						Assert.assertTrue(equals);
+						if (description.equals(EXPECTED_ALERT_DESCRIPTION)) {							
+							raisedLatch.countDown();
+						}
 					}
 					else if(alert.getStatus().equals(AlertStatus.RESOLVED)) {
-						LogUtils.log("Alert resolved: " + alert.getDescription());
 						numberOfResolvedAlerts.incrementAndGet();
-						resolvedLatch.countDown();
 					}
 					adminAlerts.add(alert);
 				}
@@ -87,7 +86,7 @@ public class ScalingRulesRecipeTest extends AbstractLocalCloudTest {
 		
 		admin.getAlertManager().getAlertTriggered().add(listener, false);
 		try {
-			AbstractTestSupport.repetitiveAssertNumberOfInstances(pu, 2);
+			repetitiveAssertNumberOfInstances(2);
 			ProcessingUnitInstance instance = pu.getInstances()[0];
 			AbstractTestSupport.assertNotNull(instance);
 			final ProcessingUnitStatisticsId averageStatisticsId = 
@@ -103,7 +102,7 @@ public class ScalingRulesRecipeTest extends AbstractLocalCloudTest {
 			pu.startStatisticsMonitor();
 			try {
 				repetitiveAssertStatistics(pu, averageStatisticsId, 0);
-				Assert.assertEquals(numberOfResolvedAlerts.get(),0);
+				Assert.assertEquals(numberOfRaisedAlerts.get(),0);
 				
 				//automatic scale out test
 				//set metric value of 2 instances to 100
@@ -112,30 +111,27 @@ public class ScalingRulesRecipeTest extends AbstractLocalCloudTest {
 				// the high threshold is 90, and the average value is set to 100.0 - which means auto scale out (from 2 instances to 3 instances)
 				// then the average value would be (100+100+0)/3 = 66 (two instance are 100 and the third one is still 0) which is within thresholds and should stop the scale out process
 				// the maximum #instances is 4, so we do not expect 4 GSCs added at any point.
-				AbstractTestSupport.repetitiveAssertNumberOfInstances(pu, 3);
+				repetitiveAssertNumberOfInstances(3);
 				repetitiveAssertStatistics(pu, averageStatisticsId, 100.0*2/3);
 				gscCounter.repetitiveAssertNumberOfGridServiceContainersAdded(3, AbstractTestSupport.OPERATION_TIMEOUT);
 				gscCounter.repetitiveAssertNumberOfGridServiceContainersRemoved(0, AbstractTestSupport.OPERATION_TIMEOUT);
-				// Next assertion fails once in a while, probably because scaleCooldownInSeconds (declared in the service's groovy file) is set to 30
-				// and that's not enough time for the system to become stable again after scaling, so an unexpected alert is raised (cannot monitor).
-				// It is decided not to increase scaleCooldownInSeconds but to ignore the alert. 
-				// The test still waits to get the expected alert.
+				Assert.assertEquals(numberOfRaisedAlerts.get(),0);				
 				
-				// Assert.assertEquals(numberOfRaisedAlerts.get(),0);
-				// Assert.assertEquals(numberOfResolvedAlerts.get(),0);
 				// set metric value of 3 instances to 1000
 				setStatistics(pu, 3, 1000);
 				
 				// the high threshold is 90, and the average value is set to 100.0 - which means auto scale out (from 3 instances to 4 instances)
 				// then the average value would be (1000+1000+1000+0)/4 = 660 (three instance are 1000 and the fourth one is still 0)
 				// the maximum #instances is 4, so we expect at most 4 GSCs added at any point.
-				AbstractTestSupport.repetitiveAssertNumberOfInstances(pu, 4);
+				repetitiveAssertNumberOfInstances(4);
 				repetitiveAssertStatistics(pu, averageStatisticsId, 1000.0*3/4);
 				gscCounter.repetitiveAssertNumberOfGridServiceContainersAdded(4, AbstractTestSupport.OPERATION_TIMEOUT);
 				gscCounter.repetitiveAssertNumberOfGridServiceContainersRemoved(0, AbstractTestSupport.OPERATION_TIMEOUT);
 				
 				AbstractTestSupport.reptitiveCountdownLatchAwait(raisedLatch, "raisedLatch", AbstractTestSupport.OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
-				// Assert.assertEquals(numberOfResolvedAlerts.get(),0);
+				Assert.assertEquals(numberOfRaisedAlerts.get(),1);
+				
+				int totalResolvedAlerts = numberOfResolvedAlerts.get();
 				
 				// the low threshold is 30, and the average value is set to 0.0 - which means auto scale in (from 3 instances to 2 instances)
 				// the minimum #instances is 2, so we do not expect less than 2 GSCs added at any point.
@@ -143,9 +139,18 @@ public class ScalingRulesRecipeTest extends AbstractLocalCloudTest {
 				repetitiveAssertStatistics(pu, averageStatisticsId, 0);
 				gscCounter.repetitiveAssertNumberOfGridServiceContainersAdded(4, AbstractTestSupport.OPERATION_TIMEOUT);
 				gscCounter.repetitiveAssertNumberOfGridServiceContainersRemoved(2, AbstractTestSupport.OPERATION_TIMEOUT);
-				AbstractTestSupport.reptitiveCountdownLatchAwait(resolvedLatch, "resolvedLatch", AbstractTestSupport.OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
-				Assert.assertEquals(numberOfResolvedAlerts.get(),1);
-				
+				Assert.assertEquals(numberOfRaisedAlerts.get(), 1);
+				// expecting only one more resolved alert since the last scaling
+				final int expectedNumberOfResolvedAlerts = totalResolvedAlerts + 1;
+				AssertUtils.repetitiveAssertTrue("expected " + expectedNumberOfResolvedAlerts + "resolved alerts", 
+						new RepetitiveConditionProvider() {
+					@Override
+					public boolean getCondition() {
+						int numReslovedAlerts = numberOfResolvedAlerts.get();
+						LogUtils.log("expected " + expectedNumberOfResolvedAlerts + " resolved alerts. actual: " + numReslovedAlerts);
+						return (expectedNumberOfResolvedAlerts == numReslovedAlerts);
+					}
+				} , AbstractTestSupport.OPERATION_TIMEOUT);
 			}
 			finally {
 				pu.stopStatisticsMonitor();
@@ -171,11 +176,12 @@ public class ScalingRulesRecipeTest extends AbstractLocalCloudTest {
 	private void repetitiveAssertStatistics(final InternalProcessingUnit pu,
 			final ProcessingUnitStatisticsId statisticsId,
 			final Number expectedResult) {
-		AbstractTestSupport.repetitiveAssertTrue("Failed waiting for counter to be " + expectedResult + " This may mean that not all service instances are running as they should. please check the logs!", new RepetitiveConditionProvider() {
+		AbstractTestSupport.repetitiveAssertTrue(
+				"Failed waiting for counter to be " + expectedResult + " This may mean that not all service instances are running as they should. please check the logs!", 
+				new RepetitiveConditionProvider() {
 
             @Override
             public boolean getCondition() {
-
                 final Object counter = pu.getStatistics().getStatistics().get(statisticsId);
                 if (counter == null) {
                     LogUtils.log("Cannot get statistics " + statisticsId);
@@ -189,7 +195,6 @@ public class ScalingRulesRecipeTest extends AbstractLocalCloudTest {
 
                 boolean equals = ((Number) counter).doubleValue() == expectedResult.doubleValue();
                 if (!equals) {
-                    LogUtils.log("Waiting for value of average(counter), to be " + expectedResult + " current value is " + counter);
                 }
                 return equals;
 
@@ -200,7 +205,7 @@ public class ScalingRulesRecipeTest extends AbstractLocalCloudTest {
 	
 	public void setStatistics(final InternalProcessingUnit pu, final int expectedNumberOfInstances, long value) throws IOException, InterruptedException {
 		
-		ProcessingUnitInstance[] instances = AbstractTestSupport.repetitiveAssertNumberOfInstances(pu, expectedNumberOfInstances);
+		ProcessingUnitInstance[] instances = repetitiveAssertNumberOfInstances(expectedNumberOfInstances);
 		
 		for (ProcessingUnitInstance instance : instances) {
 			String command = "connect localhost;invoke -instanceid " + instance.getInstanceId() + " --verbose " + SERVICE_NAME + " set " + value;
@@ -208,4 +213,37 @@ public class ScalingRulesRecipeTest extends AbstractLocalCloudTest {
 			LogUtils.log(output);
 		}
 	}
+	
+	public ProcessingUnitInstance[] repetitiveAssertNumberOfInstances(final int expectedNumberOfInstances) {
+		for (int i = 0; i < expectedNumberOfInstances; i++) {
+			final int numInstance = i; 
+			AssertUtils.repetitiveAssertTrue(SERVICE_NAME + " service did not reach USM_State of RUNNING", new AssertUtils.RepetitiveConditionProvider() {
+				@Override
+				public boolean getCondition() {
+					ProcessingUnit pu = admin.getProcessingUnits().getNames().get("default." + SERVICE_NAME);
+					ProcessingUnitInstance[] instances = pu.getInstances();
+					if (instances.length <= numInstance) {
+						LogUtils.log("Waiting for "
+								+ expectedNumberOfInstances
+								+ " instances of. " + pu.getName() 
+								+ ". Actual "
+								+ instances.length + " instances.");
+						return false;
+					}
+					ProcessingUnitInstance puInstance = instances[numInstance];
+					Integer usmState = 
+							(Integer) puInstance
+							.getStatistics()
+							.getMonitors()
+							.get("USM")
+							.getMonitors()
+							.get("USM_State");
+					LogUtils.log("USM state of instance " + numInstance + " is " + usmState);
+					return (usmState == CloudifyConstants.USMState.RUNNING.ordinal());
+				}
+			} , AbstractTestSupport.OPERATION_TIMEOUT * 3);
+		}
+		return admin.getProcessingUnits().getProcessingUnit("default." + SERVICE_NAME).getInstances();
+	}
+
 }

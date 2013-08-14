@@ -45,7 +45,8 @@ public abstract class DefaultBootstrapValidationTest extends NewAbstractCloudTes
 		super.bootstrap(bootstrapper);
 		String bootstrapOutput = bootstrapper.getLastActionOutput();
 		assertTrue("The imageId is invalid but the wrong error was thrown. Reported error: " + bootstrapOutput,
-				bootstrapOutput.contains("Image") && bootstrapOutput.contains("is not valid for location"));
+				bootstrapOutput.contains("requested location wrongimage") 
+				&& bootstrapOutput.contains("which is not in the configured locations"));
 	}
 	
 	
@@ -54,7 +55,8 @@ public abstract class DefaultBootstrapValidationTest extends NewAbstractCloudTes
 		super.bootstrap(bootstrapper);
 		String bootstrapOutput = bootstrapper.getLastActionOutput();
 		assertTrue("The hardwareId is invalid but the wrong error was thrown. Reported error: " + bootstrapOutput,
-				bootstrapOutput.contains("hardware") && bootstrapOutput.contains("is not valid for location"));
+				bootstrapOutput.contains("Hardware ID \"wronghardwareid\" is invalid.") 
+				&& bootstrapOutput.contains("Supported hardware flavor IDs are:"));
 	}
 	
 	

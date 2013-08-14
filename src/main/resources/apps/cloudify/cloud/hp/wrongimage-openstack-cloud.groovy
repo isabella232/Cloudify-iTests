@@ -106,7 +106,7 @@ cloud {
 					// Mandatory. Template Name.
 					SMALL_LINUX : computeTemplate{
 						// Mandatory. Image ID.
-						imageId "wrongimageid"
+						imageId "wrongimage/id"
 						
 						// file transfer protocol
 						fileTransfer org.cloudifysource.domain.cloud.FileTransferModes.SFTP

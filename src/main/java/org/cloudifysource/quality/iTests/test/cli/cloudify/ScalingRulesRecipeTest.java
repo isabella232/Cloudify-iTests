@@ -69,6 +69,7 @@ public class ScalingRulesRecipeTest extends AbstractLocalCloudTest {
 				if (alert instanceof ElasticAutoScalingAlert) {
 					if (alert.getStatus().equals(AlertStatus.RAISED)) {
 						String description = alert.getDescription();
+						LogUtils.log("alert raised: " + description);
 						if (!description.contains("Cannot monitor")) {
 							numberOfRaisedAlerts.incrementAndGet();
 						}
@@ -77,6 +78,7 @@ public class ScalingRulesRecipeTest extends AbstractLocalCloudTest {
 						}
 					}
 					else if(alert.getStatus().equals(AlertStatus.RESOLVED)) {
+						LogUtils.log("alert resolved: " + alert.getDescription());
 						numberOfResolvedAlerts.incrementAndGet();
 					}
 					adminAlerts.add(alert);

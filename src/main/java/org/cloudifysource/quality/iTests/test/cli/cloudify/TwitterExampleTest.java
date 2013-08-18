@@ -27,6 +27,8 @@ import java.util.Properties;
 /**
  * User: nirb
  * Date: 7/10/13
+ *
+ * should only run on big-data
  */
 public class TwitterExampleTest extends AbstractLocalCloudTest{
 

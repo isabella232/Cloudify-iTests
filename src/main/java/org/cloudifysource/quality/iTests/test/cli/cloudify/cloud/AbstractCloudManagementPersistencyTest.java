@@ -511,23 +511,29 @@ public abstract class AbstractCloudManagementPersistencyTest extends NewAbstract
 
 	protected void initManagementUrlsAndRestClient() throws MalformedURLException, RestException {
 		final String[] restUrls = cloudService.getRestUrls();
+		assertEquals(numOfManagementMachines, restUrls.length);
 		this.client = new GSRestClient("", "", new URL(restUrls[0]), PlatformVersion.getVersionNumber());
     	assertTrue(managingManagementMachineUrl + " is unavailable", isRestRunning(client));
     	
-    	final String managingGsmHost = getManagingGsmHost();
-    	final String backupGsmHost = getBackupGsmHost();
-    	
-    	if (restUrls[0].contains(managingGsmHost)) {
-        	this.managingManagementMachineUrl = restUrls[0];
-        	this.backupManagementMachineUrl = restUrls[1];
-    	} else {
-    		//swap rest urls
-        	this.managingManagementMachineUrl = restUrls[1];
-        	this.backupManagementMachineUrl = restUrls[0];
+    	if (numOfManagementMachines == 1) {
+    		this.managingManagementMachineUrl = restUrls[0];
     	}
-    	
-    	assertTrue(managingManagementMachineUrl + " does not contain " + managingGsmHost, managingManagementMachineUrl.contains(managingGsmHost));
-    	assertTrue(backupManagementMachineUrl + " does not contain " + backupGsmHost, backupManagementMachineUrl.contains(backupGsmHost));
+    	else {
+    		final String managingGsmHost = getManagingGsmHost();
+	    	final String backupGsmHost = getBackupGsmHost();
+	    	
+	    	if (restUrls[0].contains(managingGsmHost)) {
+	        	this.managingManagementMachineUrl = restUrls[0];
+	        	this.backupManagementMachineUrl = restUrls[1];
+	    	} else {
+	    		//swap rest urls
+	        	this.managingManagementMachineUrl = restUrls[1];
+	        	this.backupManagementMachineUrl = restUrls[0];
+	    	}
+	    	
+	    	assertTrue(managingManagementMachineUrl + " does not contain " + managingGsmHost, managingManagementMachineUrl.contains(managingGsmHost));
+	    	assertTrue(backupManagementMachineUrl + " does not contain " + backupGsmHost, backupManagementMachineUrl.contains(backupGsmHost));
+    	}
 	}
 
 	private String getManagingGsmHost() throws RestException {
@@ -596,5 +602,15 @@ public abstract class AbstractCloudManagementPersistencyTest extends NewAbstract
     protected void terminateManagementNodes() {
     	//ignore return value
     	getService().scanLeakedManagementNodes();
+	}
+
+	protected void setNumOfManagementMachines(int numOfManagementMachines) {
+		this.numOfManagementMachines = numOfManagementMachines;
+	}
+
+	public void testSingleManagerResterted() {
+		//final int gsmPid = getGsmPidOnManagingManagementMachine();
+		//terminateManagementMachineComponent(managingManagementMachineUrl, restPidOnBackupManagement);		
+		
 	}
 }

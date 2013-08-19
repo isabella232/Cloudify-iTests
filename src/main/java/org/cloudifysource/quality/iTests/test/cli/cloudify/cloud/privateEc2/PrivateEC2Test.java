@@ -17,7 +17,7 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-public class PrivateEC2Test extends NewAbstractCloudTest {
+public class PrivateEc2Test extends NewAbstractCloudTest {
 
     @Override
     protected String getCloudName() {
@@ -55,8 +55,6 @@ public class PrivateEC2Test extends NewAbstractCloudTest {
         for (Service singleService : application.getServices()) {
             AssertUtils.assertTrue("the service " + singleService.getName() + " is not running", output.contains(singleService.getName()));
         }
-
-        // doTest(ScriptUtils.getBuildRecipesApplicationsPath() + "/sampleApplication", null);
     }
 
     @AfterClass(alwaysRun = true)

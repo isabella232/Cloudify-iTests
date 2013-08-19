@@ -10,6 +10,7 @@ import java.util.Properties;
 
 import org.apache.commons.io.FileUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.AbstractCloudService;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.security.SecurityConstants;
 
 public class PrivateEc2Service extends AbstractCloudService {
 
@@ -27,9 +28,15 @@ public class PrivateEc2Service extends AbstractCloudService {
     private String user = certProperties.getProperty("user");
     private String apiKey = certProperties.getProperty("apiKey");
     private String keyPair = certProperties.getProperty("keyPair");
+    private boolean securityEnabled = false;
 
     public PrivateEc2Service() {
         super("privateEc2");
+    }
+
+    public PrivateEc2Service(boolean securityEnabled) {
+        super("privateEc2");
+        this.securityEnabled = securityEnabled;
     }
 
     @Override
@@ -56,11 +63,20 @@ public class PrivateEc2Service extends AbstractCloudService {
         propsToReplace.put("numberOfManagementMachines 1", "numberOfManagementMachines "
                 + getNumberOfManagementMachines());
 
+        propsToReplace.put("\"cfnManagerTemplate\":\".*\"", "\"cfnManagerTemplate\":\"" + getPathToCloudFolder() + "/privateEc2-cfn.template\"");
+        propsToReplace.put("\"cloudDirectory\":\".*\"", "\"cloudDirectory\":\"" + getPathToCloudFolder() + "\"");
+
         IOUtils.replaceTextInFile(getPathToCloudGroovy(), propsToReplace);
 
         final File fileToCopy = new File(CREDENTIALS_FOLDER + "/" + sshKeyPemName);
         final File targetLocation = new File(getPathToCloudFolder() + "/upload/");
         FileUtils.copyFileToDirectory(fileToCopy, targetLocation);
+
+        if (securityEnabled) {
+            File keystoreSrc = new File(SecurityConstants.DEFAULT_KEYSTORE_FILE_PATH);
+            File keystoreDest = new File(getPathToCloudFolder());
+            FileUtils.copyFileToDirectory(keystoreSrc, keystoreDest);
+        }
     }
 
     public void setUser(final String user) {

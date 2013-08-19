@@ -24,6 +24,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.apache.commons.io.FileUtils;
 import org.cloudifysource.domain.cloud.Cloud;
 import org.cloudifysource.domain.cloud.compute.ComputeTemplate;
+import org.apache.commons.lang.StringUtils;
 import org.cloudifysource.dsl.utils.ServiceUtils;
 import org.cloudifysource.quality.iTests.framework.utils.CloudBootstrapper;
 import org.cloudifysource.quality.iTests.framework.utils.JCloudsUtils;
@@ -339,6 +340,10 @@ public abstract class AbstractCloudManagementPersistencyTest extends NewAbstract
     protected void terminateManagementMachineComponent(String restUrl, int pid) {
 		runCommand(restUrl, "kill -9 " + pid);
 	}
+    
+    protected void terminateManagementMachineComponents(String restUrl, Integer[] pids) {
+		runCommand(restUrl, "kill -9 " + StringUtils.join(pids, ' '));
+    }
 
 	private void runCommand(String restUrl, String command) {
 		File pemFile = getPemFile();
@@ -586,15 +591,20 @@ public abstract class AbstractCloudManagementPersistencyTest extends NewAbstract
 			final String restUrl = "ProcessingUnits/Names/rest/Instances/" + i; 
 			final String restHost = getPublicHostName(restUrl);
 	    	if (backupManagementMachineUrl.contains(restHost)) {
-	    		Map<String, Object> jvmDetails = (Map<String, Object>) client.getAdminData(restUrl).get("JVMDetails");
-	    		pid = Integer.valueOf(jvmDetails.get("Pid").toString());
+	    		pid = getPid(restUrl);
 	    		break;
 	    	}
 		}
 		AssertUtils.assertFalse("Cannot find rest process id on backup management machine", pid == 0);
 		return pid;
 	}
-	
+
+	private int getPid(final String restUrl) throws RestException {
+		int pid;
+		Map<String, Object> jvmDetails = (Map<String, Object>) client.getAdminData(restUrl).get("JVMDetails");
+		pid = Integer.valueOf(jvmDetails.get("Pid").toString());
+		return pid;
+	}
 
 	/**
 	 * 
@@ -608,9 +618,19 @@ public abstract class AbstractCloudManagementPersistencyTest extends NewAbstract
 		this.numOfManagementMachines = numOfManagementMachines;
 	}
 
-	public void testSingleManagerResterted() {
-		//final int gsmPid = getGsmPidOnManagingManagementMachine();
-		//terminateManagementMachineComponent(managingManagementMachineUrl, restPidOnBackupManagement);		
-		
+	public void testSingleManagerResterted() throws Exception {
+		final int gsmPid = getPid("GridServiceManagers/Managers/0");
+		final int esmPid = getPid("ElasticServiceManagers/Managers/0");
+		final int lusPid = getPid("LookupServices/LookupServices/0");
+		final int gsc0Pid = getPid("GridServiceManagers/Managers/0/Machine/GridServiceContainers/Containers/0");
+		final int gsc1Pid = getPid("GridServiceManagers/Managers/0/Machine/GridServiceContainers/Containers/1");
+		final int gsc2Pid = getPid("GridServiceManagers/Managers/0/Machine/GridServiceContainers/Containers/2");
+		terminateManagementMachineComponents(managingManagementMachineUrl, new Integer[] { gsmPid, esmPid, lusPid, gsc0Pid, gsc1Pid, gsc2Pid} );
+		AssertUtils.repetitiveAssertTrue("Rest PU instance serving " + managingManagementMachineUrl + " has not recovered.", new RepetitiveConditionProvider (){
+
+			@Override
+			public boolean getCondition() {
+				return isRestRunning(client);
+			}}, OPERATION_TIMEOUT);
 	}
 }

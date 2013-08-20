@@ -161,6 +161,33 @@ public class AttributesTest extends AbstractLocalCloudTest {
 						&& !setterInstanceAttributesOutput.contains("instanceValue"));
 		uninstallService(SETTER_SERVICE_NAME);
 	}
+	
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
+	public void testRemoveAttributesBeforeInstallService() throws IOException, InterruptedException {
+		CommandTestUtils.runCommandUsingFile("connect " + this.restUrl
+				+ "; set-attributes -scope service:" + SETTER_SERVICE_NAME +  " '{\"att1\":\"SomeAttribute1\"}'");
+		String sertterServiceUri = "applications/" + MAIN_APPLICATION_NAME + "/" + SETTER_SERVICE_NAME;
+		installService(sertterServiceUri);
+		String setterServiceAttributesOutput = CommandTestUtils.runCommandAndWait("connect " + this.restUrl
+				+ "; list-attributes -scope service:" + SETTER_SERVICE_NAME);
+		assertTrue("setter service attributes still exist after service installation.",
+				!setterServiceAttributesOutput.contains("att1")
+				&& !setterServiceAttributesOutput.contains("SomeAttribute1"));
+		uninstallService(SETTER_SERVICE_NAME);
+	}
+	
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
+	public void testRemoveAttributesBeforeInstallApplication() throws IOException, InterruptedException, DSLException {
+		CommandTestUtils.runCommandUsingFile("connect " + this.restUrl + ";use-application " + MAIN_APPLICATION_NAME
+				+ "; set-attributes -scope application '{\"att1\":\"SomeAttribute1\"}'");
+		installApplication();
+		String applicationAttributesOutput = CommandTestUtils.runCommandAndWait("connect " + this.restUrl
+				+ ";use-application " + MAIN_APPLICATION_NAME + "; list-attributes -scope application");
+		assertTrue("appliction attributes still exist after service installation.",
+				!applicationAttributesOutput.contains("att1")
+				&& !applicationAttributesOutput.contains("SomeAttribute1"));
+		uninstallApplication();
+	}
 
 	private void cleanAttributes() throws IOException, InterruptedException {
 		gigaspace.clear(null);

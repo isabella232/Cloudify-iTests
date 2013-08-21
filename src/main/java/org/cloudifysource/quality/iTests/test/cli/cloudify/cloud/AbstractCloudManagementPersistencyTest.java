@@ -334,20 +334,23 @@ public abstract class AbstractCloudManagementPersistencyTest extends NewAbstract
 	}
     
     protected void terminateManagementMachineComponents(String restUrl) {
-		runCommand(restUrl, "killall -9 java");
+		runCommand(urlToIp(restUrl), "killall -9 java");
 	}
     
     protected void terminateManagementMachineComponent(String restUrl, int pid) {
-		runCommand(restUrl, "kill -9 " + pid);
+		runCommand(urlToIp(restUrl), "kill -9 " + pid);
 	}
     
     protected void terminateManagementMachineComponents(String restUrl, Integer[] pids) {
-		runCommand(restUrl, "kill -9 " + StringUtils.join(pids, ' '));
+		runCommand(urlToIp(restUrl), "kill -9 " + StringUtils.join(pids, ' '));
     }
 
-	private void runCommand(String restUrl, String command) {
+	private String urlToIp(String restUrl) {
+		return restUrl.substring(restUrl.indexOf("//") + 2, restUrl.lastIndexOf(":"));
+	}
+
+	private void runCommand(String ipAddress, String command) {
 		File pemFile = getPemFile();
-		String ipAddress = restUrl.substring(restUrl.indexOf("//") + 2, restUrl.lastIndexOf(":"));
 		Cloud cloud = getService().getCloud();
 		String managementMachineTemplate = cloud.getConfiguration().getManagementMachineTemplate();
 		ComputeTemplate managementTemplate = cloud.getCloudCompute().getTemplates().get(managementMachineTemplate);
@@ -625,12 +628,16 @@ public abstract class AbstractCloudManagementPersistencyTest extends NewAbstract
 		final int gsc0Pid = getPid("GridServiceManagers/Managers/0/Machine/GridServiceContainers/Containers/0");
 		final int gsc1Pid = getPid("GridServiceManagers/Managers/0/Machine/GridServiceContainers/Containers/1");
 		final int gsc2Pid = getPid("GridServiceManagers/Managers/0/Machine/GridServiceContainers/Containers/2");
+		final int tomcatPid = getPid("ProcessingUnits/Names/default.tomcat/Instances/0");
+		final String tomcatIp = getPublicHostName("ProcessingUnits/Names/default.tomcat/Instances/0");
 		terminateManagementMachineComponents(managingManagementMachineUrl, new Integer[] { gsmPid, esmPid, lusPid, gsc0Pid, gsc1Pid, gsc2Pid} );
+		runCommand(tomcatIp, "kill -9 " + tomcatPid);
 		AssertUtils.repetitiveAssertTrue("Rest PU instance serving " + managingManagementMachineUrl + " has not recovered.", new RepetitiveConditionProvider (){
 
 			@Override
 			public boolean getCondition() {
-				return isRestRunning(client);
-			}}, OPERATION_TIMEOUT);
+				//runCommand(urlToIp(managingManagementMachineUrl), "top -n 1");
+				return AbstractCloudManagementPersistencyTest.this.isRestRunning(client);
+			}}, DEFAULT_TEST_TIMEOUT, 10000);
 	}
 }

@@ -13,6 +13,7 @@ import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.Constants;
 import iTests.framework.utils.DumpUtils;
 import iTests.framework.utils.LogUtils;
+import iTests.framework.utils.TeardownUtils;
 import iTests.framework.utils.AssertUtils.RepetitiveConditionProvider;
 import org.cloudifysource.quality.iTests.framework.utils.usm.USMTestUtils;
 
@@ -73,6 +74,7 @@ public class InstallAndUninstallPUTest extends AbstractLocalCloudTest {
 			@Override
 			public boolean getCondition() {
 				LogUtils.log("Trying to debug why PU is not discovered");
+				TeardownUtils.snapshot(admin);
 				DumpUtils.dumpProcessingUnit(admin);
 				return (processingUnit.getProcessingUnits().getProcessingUnit(absolutePUName) != null);
 			}

@@ -129,7 +129,7 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
             this.cloudService.setBootstrapper(bootstrapper);
         }
 
-        this.cloudService.init(this.getClass().getSimpleName().toLowerCase());
+        this.cloudService.init(this.getClass().getSimpleName());
 
         LogUtils.log("Customizing cloud");
         customizeCloud();
@@ -381,6 +381,12 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
     }
 
     protected void dumpMachines() {
+
+        final boolean enableLogstash = Boolean.parseBoolean(System.getProperty("iTests.enableLogstash"));
+        if(enableLogstash){
+            return;
+        }
+
         final String restUrl = getRestUrl();
         String url = null;
         try {

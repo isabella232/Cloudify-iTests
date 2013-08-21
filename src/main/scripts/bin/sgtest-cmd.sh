@@ -18,6 +18,7 @@
  MAVEN_REPO_LOCAL=${16}
  MAVEN_PROJECTS_VERSION_XAP=${17}
  MAVEN_PROJECTS_VERSION_CLOUDIFY=${18}
+ ENABLE_LOGSTASH=${19}
  EXT_JAVA_OPTIONS="${EXT_JAVA_OPTIONS} -Dcom.gs.work=${SUITE_WORK_DIR} -Dcom.gs.deploy=${SUITE_DEPLOY_DIR} -Dorg.cloudifysource.rest-client.enable-new-rest-client=true"; export EXT_JAVA_OPTIONS
 
 
@@ -29,6 +30,7 @@ cd ${BUILD_DIR}/../Cloudify-iTests
 mvn test -e -U -P tgrid-cloudify-iTests \
 -DiTests.cloud.enabled=false \
 -DiTests.buildNumber=${BUILD_NUMBER} \
+-DiTests.enableLogstash=${ENABLE_LOGSTASH} \
 -Dsgtest.buildNumber=${BUILD_NUMBER} \
 -Dcloudify.home=${BUILD_DIR} \
 -Dincludes=${INCLUDE} \

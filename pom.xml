@@ -270,7 +270,12 @@
             <artifactId>iTests-framework</artifactId>
             <version>1.0.4-SNAPSHOT</version>
         </dependency>
-	</dependencies>
+        <dependency>
+            <groupId>net</groupId>
+            <artifactId>logstash</artifactId>
+            <version>1.1.13</version>
+        </dependency>
+    </dependencies>
 
 
 	<profiles>
@@ -397,6 +402,7 @@
 					<systemProperties>
                         <iTests.suiteType>${iTests.suiteType}</iTests.suiteType>
 						<iTests.buildNumber>${iTests.buildNumber}</iTests.buildNumber>
+						<iTests.enableLogstash>${iTests.enableLogstash}</iTests.enableLogstash>
 						<iTests.suiteId>${iTests.suiteId}</iTests.suiteId>
 						<iTests.numOfSuites>${iTests.numOfSuites}</iTests.numOfSuites>
 						<selenium.browser>${selenium.browser}</selenium.browser>

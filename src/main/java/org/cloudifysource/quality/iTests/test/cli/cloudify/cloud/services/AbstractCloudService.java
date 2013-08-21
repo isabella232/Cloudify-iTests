@@ -155,11 +155,12 @@ public abstract class AbstractCloudService implements CloudService {
         String backupFilePath = IOUtils.backupFile(confFilePath);
 
         //TODO fix path to build
-        IOUtils.replaceTextInFile(confFilePath, "<path_to_build>", "/home/ec2-user/gigaspaces");
+        String remoteBuildPath = "/home/ec2-user/gigaspaces";
+        IOUtils.replaceTextInFile(confFilePath, "<path_to_build>", remoteBuildPath);
         IOUtils.replaceTextInFile(confFilePath, "<test_name>", tagClassName);
-        IOUtils.replaceTextInFile(confFilePath, "<build_number>", System.getProperty("iTests.buildNumber", "100-101"));
-        IOUtils.replaceTextInFile(confFilePath, "<version>", System.getProperty("cloudifyVersion", "nirb-version"));
-        IOUtils.replaceTextInFile(confFilePath, "<suite_name>", System.getProperty("iTests.suiteName", "nirb-suite"));
+        IOUtils.replaceTextInFile(confFilePath, "<build_number>", System.getProperty("iTests.buildNumber"));
+        IOUtils.replaceTextInFile(confFilePath, "<version>", System.getProperty("cloudifyVersion"));
+        IOUtils.replaceTextInFile(confFilePath, "<suite_name>", System.getProperty("iTests.suiteName"));
 
         String logstashConfInBuildPath = getPathToCloudFolder() + "/upload/cloudify-overrides/config/logstash";
         FileUtils.forceMkdir(new File(logstashConfInBuildPath));

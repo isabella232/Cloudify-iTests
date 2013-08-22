@@ -27,6 +27,7 @@ import junit.framework.Assert;
 
 import org.apache.commons.io.FileUtils;
 import org.cloudifysource.dsl.internal.packaging.ZipUtils;
+import org.cloudifysource.dsl.rest.AddTemplatesException;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.templates.TemplateDetails;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.templates.TemplatesCommands;
@@ -50,7 +51,7 @@ public class AddRemoveTemplatesTest extends AbstractByonAddRemoveTemplatesTest {
 	private ThreadBarrier barrier = new ThreadBarrier(NUM_OF_THREADS + 1);
 	
 	@BeforeClass(alwaysRun = true)
-	protected void bootstrap() throws Exception {		
+	protected void bootstrap() throws Exception {
 		super.bootstrap();
 	}
 
@@ -161,7 +162,7 @@ public class AddRemoveTemplatesTest extends AbstractByonAddRemoveTemplatesTest {
 
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, enabled = true)
 	public void addTemplatesUsingRestAPI() 
-			throws IllegalStateException, IOException, InterruptedException, RestClientException {
+			throws IllegalStateException, IOException, InterruptedException, RestClientException, AddTemplatesException {
 		TemplatesFolderHandler folderHandler = templatesHandler.createNewTemplatesFolder();
 		TemplateDetails template = folderHandler.addTempalteForServiceInstallation();
 		
@@ -277,9 +278,9 @@ public class AddRemoveTemplatesTest extends AbstractByonAddRemoveTemplatesTest {
 		duplicateTemplate.setMachineIP(addedTemplate.getMachineIP());
 		duplicateTemplate.setExpectedToFail(true);
 		folderHandler.addCustomTemplate(duplicateTemplate);
-		folderHandler.setExpectedAddTemplatesFailureMessage("Template with name [" + tempalteName + "] already exist in folder");
-		templatesHandler.addTemplatesToCloud(folderHandler);
+		String response = templatesHandler.addTemplatesToCloud(folderHandler);
 		templatesHandler.assertExpectedList();
+		Assert.assertTrue(response.contains("Template with name [" + tempalteName + "] already exist in folder"));
 	}
 
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, enabled = true)

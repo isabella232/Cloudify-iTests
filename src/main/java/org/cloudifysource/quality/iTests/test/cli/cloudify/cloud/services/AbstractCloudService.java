@@ -154,10 +154,15 @@ public abstract class AbstractCloudService implements CloudService {
 
         if(cloudName.equalsIgnoreCase("byon")){
             LogUtils.log("pre-bootstrap byon");
+            LogUtils.log("deleting " + preBootstrapScriptPath);
             FileUtils.deleteQuietly(new File(preBootstrapScriptPath));
+
+            LogUtils.log("copying from " + pathToLogstash + "/pre-bootstrap-byon.sh to " + preBootstrapScriptPath);
             IOUtils.copyFile(pathToLogstash + "/pre-bootstrap-byon.sh", preBootstrapScriptPath);
         }
-        IOUtils.copyFile(pathToLogstash + "/pre-bootstrap.sh", preBootstrapScriptPath);
+        else{
+            IOUtils.copyFile(pathToLogstash + "/pre-bootstrap.sh", preBootstrapScriptPath);
+        }
 
         String confFilePath = pathToLogstash + "/logstash-shipper.conf";
         String backupFilePath = IOUtils.backupFile(confFilePath);
@@ -271,7 +276,7 @@ public abstract class AbstractCloudService implements CloudService {
                     LogUtils.log("mng url: " + restUrl);
 
                     int startIndex = restUrl.indexOf("/") + 1;
-                    int endIndex  = restUrl.indexOf(":");
+                    int endIndex  = restUrl.lastIndexOf(":");
 
                     if(startIndex > 0 && endIndex > -1){
 

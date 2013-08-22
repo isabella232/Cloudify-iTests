@@ -2,9 +2,9 @@ service {
 	
 	name "stateful"
 	
-	statefulProcessingUnit {
-	
-		binaries "stateful.jar" //can be a folder, or a war file   
+	//statefulProcessingUnit {
+	dataGrid {
+		//binaries "stateful.jar" //can be a folder, or a war file   
 	
 		sla {
 				memoryCapacity 256

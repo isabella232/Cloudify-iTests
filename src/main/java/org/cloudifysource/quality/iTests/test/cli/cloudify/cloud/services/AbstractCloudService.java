@@ -33,6 +33,7 @@ public abstract class AbstractCloudService implements CloudService {
     protected static final String CREDENTIALS_FOLDER = System.getProperty("iTests.credentialsFolder",
             SGTestHelper.getSGTestRootDir() + "/src/main/resources/credentials");
     private static final boolean enableLogstash = Boolean.parseBoolean(System.getProperty("iTests.enableLogstash"));
+    private static File propsFile = new File(SGTestHelper.getSGTestRootDir() + "/src/main/resources/logstash/logstash.properties");
 
     private static final int TEN_SECONDS_IN_MILLIS = 10000;
 
@@ -149,7 +150,14 @@ public abstract class AbstractCloudService implements CloudService {
     private void prepareLogstash(String tagClassName) throws Exception {
 
         String pathToLogstash = SGTestHelper.getSGTestRootDir() + "/src/main/resources/logstash";
-        IOUtils.copyFile(pathToLogstash + "/pre-bootstrap.sh", getPathToCloudFolder() + "/upload/pre-bootstrap.sh");
+        String preBootstrapScriptPath = getPathToCloudFolder() + "/upload/pre-bootstrap.sh";
+
+        if(cloudName.equalsIgnoreCase("byon")){
+            LogUtils.log("pre-bootstrap byon");
+            FileUtils.deleteQuietly(new File(preBootstrapScriptPath));
+            IOUtils.copyFile(pathToLogstash + "/pre-bootstrap-byon.sh", preBootstrapScriptPath);
+        }
+        IOUtils.copyFile(pathToLogstash + "/pre-bootstrap.sh", preBootstrapScriptPath);
 
         String confFilePath = pathToLogstash + "/logstash-shipper.conf";
         String backupFilePath = IOUtils.backupFile(confFilePath);
@@ -258,8 +266,25 @@ public abstract class AbstractCloudService implements CloudService {
 
         if(enableLogstash){
 
+            if(cloudName.equalsIgnoreCase("byon")){
+                for(String restUrl : this.getRestUrls()){
+                    int startIndex = restUrl.indexOf("/") + 1;
+                    int endIndex  = restUrl.indexOf(":");
+                    String hostIp = restUrl.substring(startIndex, endIndex);
+
+                    LogUtils.log("destroying logstash agent on " + hostIp);
+                    SSHUtils.runCommand(hostIp, SSHUtils.DEFAULT_TIMEOUT, "pkill -9 -f logstash", "tgrid", "tgrid");
+                }
+            }
+
             // killing any remaining logstash agent connections
-            String logstashHost = "ec2-54-226-197-33.compute-1.amazonaws.com";
+            Properties props;
+            try {
+                props = IOUtils.readPropertiesFromFile(propsFile);
+            } catch (final Exception e) {
+                throw new IllegalStateException("Failed reading properties file : " + e.getMessage());
+            }
+            String logstashHost = props.getProperty("logstash_server_host");
             File pemFile = new File(SGTestHelper.getSGTestRootDir() + "/src/main/resources/credentials/cloud/ec2/ec2-sgtest-us-east-logstash.pem");
             String redisSrcDir = "/home/ec2-user/redis-2.6.14/src";
             String user = "ec2-user";

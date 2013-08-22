@@ -14,7 +14,7 @@ import org.cloudifysource.quality.iTests.test.cli.cloudify.security.SecurityCons
 
 public class PrivateEc2Service extends AbstractCloudService {
 
-    private static final String EC2_CERT_PROPERTIES = CREDENTIALS_FOLDER + "/cloud/ec2/ec2-cred.properties";
+    private static final String EC2_CERT_PROPERTIES = CREDENTIALS_FOLDER + "/cloud/privateEc2/ec2-cred.properties";
     private final Properties certProperties = getCloudProperties(EC2_CERT_PROPERTIES);
 
     protected final String ACCESS_KEY_PROP = "accessKey";
@@ -68,7 +68,8 @@ public class PrivateEc2Service extends AbstractCloudService {
 
         IOUtils.replaceTextInFile(getPathToCloudGroovy(), propsToReplace);
 
-        final File fileToCopy = new File(CREDENTIALS_FOLDER + "/" + sshKeyPemName);
+        
+        final File fileToCopy = new File(CREDENTIALS_FOLDER + "/cloud/" + getCloudName() + "/" + sshKeyPemName);//new File(CREDENTIALS_FOLDER + "/" + sshKeyPemName);
         final File targetLocation = new File(getPathToCloudFolder() + "/upload/");
         FileUtils.copyFileToDirectory(fileToCopy, targetLocation);
 

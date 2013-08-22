@@ -18,6 +18,7 @@ import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.CloudS
 import org.cloudifysource.quality.iTests.test.cli.cloudify.security.SecurityConstants;
 import org.openspaces.admin.Admin;
 import org.testng.Assert;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 
@@ -96,6 +97,12 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
     @BeforeMethod
     public void beforeTest() {
         LogUtils.log("Creating test folder");
+    }
+
+    //this is here to notify logstash to kill its test agent
+    @AfterMethod
+    public void aferMethod(){
+        LogUtils.log("after method");
     }
 
     public CloudService getService() {

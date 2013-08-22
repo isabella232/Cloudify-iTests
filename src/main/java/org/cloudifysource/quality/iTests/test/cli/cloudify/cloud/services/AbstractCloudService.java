@@ -32,7 +32,7 @@ public abstract class AbstractCloudService implements CloudService {
     protected static final String UPLOAD_FOLDER = "upload";
     protected static final String CREDENTIALS_FOLDER = System.getProperty("iTests.credentialsFolder",
             SGTestHelper.getSGTestRootDir() + "/src/main/resources/credentials");
-    private static final boolean enableLogstash = Boolean.parseBoolean(System.getProperty("iTests.enableLogstash"));
+    protected static final boolean enableLogstash = Boolean.parseBoolean(System.getProperty("iTests.enableLogstash"));
     private static File propsFile = new File(SGTestHelper.getSGTestRootDir() + "/src/main/resources/logstash/logstash.properties");
 
     private static final int TEN_SECONDS_IN_MILLIS = 10000;
@@ -152,17 +152,7 @@ public abstract class AbstractCloudService implements CloudService {
         String pathToLogstash = SGTestHelper.getSGTestRootDir() + "/src/main/resources/logstash";
         String preBootstrapScriptPath = getPathToCloudFolder() + "/upload/pre-bootstrap.sh";
 
-        if(cloudName.equalsIgnoreCase("byon")){
-            LogUtils.log("pre-bootstrap byon");
-            LogUtils.log("deleting " + preBootstrapScriptPath);
-            FileUtils.deleteQuietly(new File(preBootstrapScriptPath));
-
-            LogUtils.log("copying from " + pathToLogstash + "/pre-bootstrap-byon.sh to " + preBootstrapScriptPath);
-            IOUtils.copyFile(pathToLogstash + "/pre-bootstrap-byon.sh", preBootstrapScriptPath);
-        }
-        else{
-            IOUtils.copyFile(pathToLogstash + "/pre-bootstrap.sh", preBootstrapScriptPath);
-        }
+        IOUtils.copyFile(pathToLogstash + "/pre-bootstrap.sh", preBootstrapScriptPath);
 
         String confFilePath = pathToLogstash + "/logstash-shipper.conf";
         String backupFilePath = IOUtils.backupFile(confFilePath);

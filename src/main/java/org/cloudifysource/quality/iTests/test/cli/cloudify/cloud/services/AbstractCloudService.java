@@ -268,57 +268,64 @@ public abstract class AbstractCloudService implements CloudService {
 
             if(cloudName.equalsIgnoreCase("byon")){
                 for(String restUrl : this.getRestUrls()){
+                    LogUtils.log("mng url: " + restUrl);
+
                     int startIndex = restUrl.indexOf("/") + 1;
                     int endIndex  = restUrl.indexOf(":");
-                    String hostIp = restUrl.substring(startIndex, endIndex);
 
-                    LogUtils.log("destroying logstash agent on " + hostIp);
-                    SSHUtils.runCommand(hostIp, SSHUtils.DEFAULT_TIMEOUT, "pkill -9 -f logstash", "tgrid", "tgrid");
+                    if(startIndex > 0 && endIndex > -1){
+
+                        String hostIp = restUrl.substring(startIndex, endIndex);
+
+                        LogUtils.log("destroying logstash agent on " + hostIp);
+                        SSHUtils.runCommand(hostIp, SSHUtils.DEFAULT_TIMEOUT, "pkill -9 -f logstash", "tgrid", "tgrid");
+                    }
                 }
             }
 
-            // killing any remaining logstash agent connections
-            Properties props;
-            try {
-                props = IOUtils.readPropertiesFromFile(propsFile);
-            } catch (final Exception e) {
-                throw new IllegalStateException("Failed reading properties file : " + e.getMessage());
-            }
-            String logstashHost = props.getProperty("logstash_server_host");
-            File pemFile = new File(SGTestHelper.getSGTestRootDir() + "/src/main/resources/credentials/cloud/ec2/ec2-sgtest-us-east-logstash.pem");
-            String redisSrcDir = "/home/ec2-user/redis-2.6.14/src";
-            String user = "ec2-user";
-            long timeoutMilli = 20 * 1000;
-
-            String output = SSHUtils.runCommand(logstashHost, timeoutMilli, "cd " + redisSrcDir + "; ./redis-cli client list", user, pemFile);
-            int ipAndPortStartIndex;
-            int ipAndPortEndIndex;
-            int currentIndex = 0;
-            String ipAndPort;
-
-            while(true){
-
-                ipAndPortStartIndex = output.indexOf("addr=", currentIndex) + 5;
-
-                if(ipAndPortStartIndex == 4){
-                    break;
+            else{
+                // killing any remaining logstash agent connections
+                Properties props;
+                try {
+                    props = IOUtils.readPropertiesFromFile(propsFile);
+                } catch (final Exception e) {
+                    throw new IllegalStateException("Failed reading properties file : " + e.getMessage());
                 }
+                String logstashHost = props.getProperty("logstash_server_host");
+                File pemFile = new File(SGTestHelper.getSGTestRootDir() + "/src/main/resources/credentials/cloud/ec2/ec2-sgtest-us-east-logstash.pem");
+                String redisSrcDir = "/home/ec2-user/redis-2.6.14/src";
+                String user = "ec2-user";
+                long timeoutMilli = 20 * 1000;
 
-                ipAndPortEndIndex = output.indexOf(" ", ipAndPortStartIndex);
-                ipAndPort = output.substring(ipAndPortStartIndex, ipAndPortEndIndex);
-                currentIndex = ipAndPortEndIndex;
+                String output = SSHUtils.runCommand(logstashHost, timeoutMilli, "cd " + redisSrcDir + "; ./redis-cli client list", user, pemFile);
+                int ipAndPortStartIndex;
+                int ipAndPortEndIndex;
+                int currentIndex = 0;
+                String ipAndPort;
 
-                for(String restUrl : restUrls){
+                while(true){
 
-                    int ipStartIndex = restUrl.indexOf(":") + 3;
-                    String ip = restUrl.substring(ipStartIndex, restUrl.indexOf(":", ipStartIndex));
-                    if(ipAndPort.contains(ip)){
-                        LogUtils.log("shutting down redis client on " + ipAndPort);
-                        SSHUtils.runCommand(logstashHost, timeoutMilli, "cd " + redisSrcDir + "; ./redis-cli client kill " + ipAndPort, user, pemFile);
+                    ipAndPortStartIndex = output.indexOf("addr=", currentIndex) + 5;
+
+                    if(ipAndPortStartIndex == 4){
+                        break;
                     }
 
-                }
+                    ipAndPortEndIndex = output.indexOf(" ", ipAndPortStartIndex);
+                    ipAndPort = output.substring(ipAndPortStartIndex, ipAndPortEndIndex);
+                    currentIndex = ipAndPortEndIndex;
 
+                    for(String restUrl : restUrls){
+
+                        int ipStartIndex = restUrl.indexOf(":") + 3;
+                        String ip = restUrl.substring(ipStartIndex, restUrl.indexOf(":", ipStartIndex));
+                        if(ipAndPort.contains(ip)){
+                            LogUtils.log("shutting down redis client on " + ipAndPort);
+                            SSHUtils.runCommand(logstashHost, timeoutMilli, "cd " + redisSrcDir + "; ./redis-cli client kill " + ipAndPort, user, pemFile);
+                        }
+
+                    }
+                }
             }
         }
     }

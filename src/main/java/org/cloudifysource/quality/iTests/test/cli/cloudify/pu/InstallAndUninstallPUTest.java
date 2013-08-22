@@ -69,20 +69,19 @@ public class InstallAndUninstallPUTest extends AbstractLocalCloudTest {
 		final ProcessingUnit processingUnit = admin.getProcessingUnits().waitFor(absolutePUName, Constants.PROCESSINGUNIT_TIMEOUT_SEC, TimeUnit.SECONDS);
 		
 		assertTrue("Processing unit :" + absolutePUName + " Was not found", processingUnit != null);
+		assertTrue("Instance of '" + absolutePUName + "' service is null", processingUnit != null);
 		repetitiveAssertTrue("No instance of: " + absolutePUName + " is null.", new RepetitiveConditionProvider() {
 			
 			@Override
 			public boolean getCondition() {
-				LogUtils.log("Trying to debug why PU is not discovered");
+				LogUtils.log("Trying to debug why PUI is not discovered");
 				TeardownUtils.snapshot(admin);
-				DumpUtils.dumpProcessingUnit(admin);
-				return (processingUnit.getProcessingUnits().getProcessingUnit(absolutePUName) != null);
+				return (processingUnit.getProcessingUnits().getProcessingUnit(absolutePUName).getInstances().length > 0);
 			}
 		}
-		, 20000);
-		assertTrue("Instance of '" + absolutePUName + "' service is null", processingUnit != null);
-        assertTrue("Instance of '" + absolutePUName + "' service was not found", 
-        		processingUnit.waitFor(1, OPERATION_TIMEOUT, TimeUnit.MILLISECONDS));
+		, 60000);
+//        assertTrue("Instance of '" + absolutePUName + "' service was not found", 
+//        		processingUnit.waitFor(1, OPERATION_TIMEOUT, TimeUnit.MILLISECONDS));
         //assert USM service is in a RUNNING state.
         if (serviceName.equals(USM_SERVICE_NAME)){
         	 LogUtils.log("Verifing USM service state is set to RUNNING");

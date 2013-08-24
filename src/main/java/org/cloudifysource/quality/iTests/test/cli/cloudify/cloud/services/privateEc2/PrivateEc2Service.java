@@ -63,8 +63,7 @@ public class PrivateEc2Service extends AbstractCloudService {
         propsToReplace.put("numberOfManagementMachines 1", "numberOfManagementMachines "
                 + getNumberOfManagementMachines());
 
-        propsToReplace.put("\"cfnManagerTemplate\":\".*\"", "\"cfnManagerTemplate\":\"" + getPathToCloudFolder() + "/privateEc2-cfn.template\"");
-        propsToReplace.put("\"cloudDirectory\":\".*\"", "\"cloudDirectory\":\"" + getPathToCloudFolder() + "\"");
+        propsToReplace.put("\"cfnManagerTemplate\":\".*\"", "\"cfnManagerTemplate\":\"" + "privateEc2-cfn.template\"");
 
         IOUtils.replaceTextInFile(getPathToCloudGroovy(), propsToReplace);
 

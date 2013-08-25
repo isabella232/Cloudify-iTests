@@ -9,8 +9,8 @@ import static org.cloudifysource.quality.iTests.test.cli.cloudify.security.Secur
 import static org.cloudifysource.quality.iTests.test.cli.cloudify.security.SecurityConstants.USER_PWD_CLOUD_ADMIN;
 import static org.cloudifysource.quality.iTests.test.cli.cloudify.security.SecurityConstants.USER_PWD_VIEWER;
 import iTests.framework.utils.AssertUtils;
-import iTests.framework.utils.ScriptUtils;
 
+import java.io.File;
 import java.io.IOException;
 
 import org.cloudifysource.quality.iTests.framework.utils.ApplicationInstaller;
@@ -20,6 +20,7 @@ import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.NewAbstractSecu
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.CloudService;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.privateEc2.PrivateEc2Service;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.security.SecurityConstants;
+import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
@@ -27,7 +28,7 @@ import org.testng.annotations.Test;
 
 public class PrivateEc2SecurityTest extends NewAbstractSecurityCloudTest {
 
-    private static final String APP_PATH = ScriptUtils.getBuildRecipesApplicationsPath() + "/sampleApplication";
+    private static final String APP_PATH = "src/main/resources/private-ec2/recipes/apps/sampleApplication";
     private static final String APP_NAME = "sampleApplication";
 
     @Override
@@ -67,7 +68,10 @@ public class PrivateEc2SecurityTest extends NewAbstractSecurityCloudTest {
             throws IOException, InterruptedException {
         ApplicationInstaller applicationInstaller = new ApplicationInstaller(getRestUrl(), APP_NAME);
         applicationInstaller.recipePath(APP_PATH);
-        applicationInstaller.cloudConfiguration(ScriptUtils.getBuildPath() + "/cfn-templates");
+        final File cfnTemplatesDirectory = new File("src/main/resources/private-ec2/cfn-templates");
+		Assert.assertTrue(cfnTemplatesDirectory.exists() && cfnTemplatesDirectory.isDirectory(),
+				"Expected directory at: " + cfnTemplatesDirectory.getAbsolutePath());
+        applicationInstaller.cloudConfiguration(cfnTemplatesDirectory.getAbsolutePath());
         applicationInstaller.waitForFinish(true);
         applicationInstaller.cloudifyUsername(cloudifyUsername);
         applicationInstaller.cloudifyPassword(cloudifyPassword);

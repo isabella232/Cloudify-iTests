@@ -330,8 +330,8 @@
 					<groupId>org.cloudifysource</groupId>
 					<artifactId>esc</artifactId>
 					<version>${cloudifyVersion}</version>
-					<!--<scope>system</scope> -->
-					<!--<systemPath>${cloudify.home}/lib/platform/esm/esc-${cloudifyVersion}.jar</systemPath> -->
+					<scope>system</scope>
+					<systemPath>${cloudify.home}/lib/platform/esm/esc.jar</systemPath>
 				</dependency>
 				<dependency>
 					<groupId>org.cloudifysource</groupId>

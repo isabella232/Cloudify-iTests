@@ -407,7 +407,8 @@
 						<org.apache.commons.logging.Log>org.apache.commons.logging.impl.Jdk14Logger</org.apache.commons.logging.Log>
 						<com.gs.logging.level.config>true</com.gs.logging.level.config>
 						<java.util.logging.config.file>${basedir}/src/config/sgtest_logging.properties</java.util.logging.config.file>
-						<sgtest.buildFolder>${sgtest.buildFolder}</sgtest.buildFolder>
+                        <webdriver.ie.driver>${basedir}/src/main/resources/webui/IEDriverServer.exe</webdriver.ie.driver>
+                        <sgtest.buildFolder>${sgtest.buildFolder}</sgtest.buildFolder>
 						<iTests.url>http://192.168.9.121:8087/sgtest3.0-cloudify/</iTests.url>
 						<com.gs.work>${com.gs.work}</com.gs.work>
 						<com.gs.deploy>${com.gs.deploy}"</com.gs.deploy>

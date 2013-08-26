@@ -18,7 +18,9 @@
  MAVEN_REPO_LOCAL=${16}
  MAVEN_PROJECTS_VERSION_XAP=${17}
  MAVEN_PROJECTS_VERSION_CLOUDIFY=${18}
- EXT_JAVA_OPTIONS="${EXT_JAVA_OPTIONS} -Dcom.gs.work=${SUITE_WORK_DIR} -Dcom.gs.deploy=${SUITE_DEPLOY_DIR} -Dorg.cloudifysource.rest-client.enable-new-rest-client=true"; export EXT_JAVA_OPTIONS
+ ENABLE_LOGSTASH=${19}
+ S3_MIRROR=${20}
+ EXT_JAVA_OPTIONS="-Dcom.gs.work=${SUITE_WORK_DIR} -Dcom.gs.deploy=${SUITE_DEPLOY_DIR}"; export EXT_JAVA_OPTIONS
 
 
 echo clouds=$SUPPORTED_CLOUDS
@@ -26,10 +28,11 @@ echo clouds=$SUPPORTED_CLOUDS
 mkdir ${BUILD_DIR}/../${SUITE_NAME}
 cd ${BUILD_DIR}/../Cloudify-iTests
 
-mvn test -e -U -P tgrid-cloudify-iTests \
+mvn test -X -e -U -P tgrid-cloudify-iTests \
 -DiTests.cloud.enabled=false \
 -DiTests.buildNumber=${BUILD_NUMBER} \
 -Dsgtest.buildNumber=${BUILD_NUMBER} \
+-DiTests.enableLogstash=${ENABLE_LOGSTASH} \
 -Dcloudify.home=${BUILD_DIR} \
 -Dincludes=${INCLUDE} \
 -Dexcludes=${EXCLUDE} \
@@ -56,7 +59,7 @@ mvn test -e -U -P tgrid-cloudify-iTests \
 -Dmaven.repo.local=${MAVEN_REPO_LOCAL} \
 -DgsVersion=${MAVEN_PROJECTS_VERSION_XAP} \
 -DcloudifyVersion=${MAVEN_PROJECTS_VERSION_CLOUDIFY} \
--DiTests.ext.java.options=${EXT_JAVA_OPTIONS}
+-Dorg.cloudifysource.repository.mirror=${S3_MIRROR}
 
 #return java exit code.
 exit $?

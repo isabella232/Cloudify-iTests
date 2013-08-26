@@ -19,7 +19,7 @@ public class RepositoryMirrorHelper {
 
 	public void revertHostsFile() throws IOException {
 		final String mirror = System.getProperty(REPOSITORY_MIRROR_SYSPROP);
-		if (mirror == null) {
+		if (mirror == null || mirror.equalsIgnoreCase("dummy")) {
 			LogUtils.log("No repository mirror found in system properties. Hosts file will not be reverted.");
 			return;
 		}
@@ -43,7 +43,7 @@ public class RepositoryMirrorHelper {
 	
 	public void modifyHostsFile() throws IOException {
 		final String mirror = System.getProperty(REPOSITORY_MIRROR_SYSPROP);
-		if (mirror == null) {
+		if (mirror == null || mirror.equalsIgnoreCase("dummy")) {
 			LogUtils.log("No repository mirror found in system properties. Resource calls to the repository will go directly to: "
 					+ REPOSITORY_DEFAULT);
 			return;

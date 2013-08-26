@@ -14,22 +14,19 @@ public class Ec2PersistencySingleManagerRestartedTest extends AbstractCloudManag
         super.setNumOfManagementMachines(1);
     	super.bootstrap();
         super.initManagementUrlsAndRestClient();
-        super.installTomcatService(1, null);
+        super.installTomcatService(2, null);
     }
 
-    /** 
-     * Do not call super.teardown(), since it will detect leaked management machine (that this test caused).
-     * Instead just terminate all management machines.
-     */
     @AfterClass(alwaysRun = true)
     public void teardown() throws Exception{
     	super.teardown();
     }
 
     /**
-     * This test is tied to CLOUDIFY-1988 does not actually assert anything significant, we are inspecting the logs looking for the reproduction. 
+     * This test is tied to SF-8188/CLOUDIFY-1988 does not actually assert anything significant, we are inspecting the logs looking for the reproduction.
+     * The ESM should wait until GSM and LUS are running for at least 1 minute (uptime check). 
      */
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true, invocationCount=10)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = false, invocationCount=1)
     public void testSingleManagerResterted() throws Exception {
         super.testSingleManagerResterted();
     }

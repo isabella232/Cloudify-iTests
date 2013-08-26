@@ -16,15 +16,20 @@ import iTests.framework.utils.AssertUtils;
 import java.io.File;
 import java.io.IOException;
 
+import junit.framework.Assert;
+
 import org.apache.commons.io.FileUtils;
 import org.cloudifysource.dsl.internal.CloudifyConstants;
 import org.cloudifysource.dsl.internal.packaging.ZipUtils;
+import org.cloudifysource.dsl.rest.AddTemplatesException;
+import org.cloudifysource.dsl.rest.response.AddTemplatesResponse;
 import org.cloudifysource.dsl.rest.response.InstallServiceResponse;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.RestTestUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.templates.TemplateDetails;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.templates.TemplatesCommandsRestAPI;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.templates.TemplatesFolderHandler;
+import org.cloudifysource.restclient.exceptions.RestClientException;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -41,7 +46,7 @@ public class NewRestClientAddTemplatesTest extends AbstractByonAddRemoveTemplate
 	}
 	
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, enabled = true)
-	public void basicAddTemplatesTest() throws IOException, InterruptedException {
+	public void basicAddTemplatesTest() throws IOException, RestClientException, AddTemplatesException {
 		TemplatesFolderHandler folderHandler1 = templatesHandler.createFolderWithTemplates(5);
 		TemplatesFolderHandler folderHandler2 = templatesHandler.createFolderWithTemplates(5);
 		TemplatesFolderHandler folderHandler3 = templatesHandler.createFolderWithTemplates(5);
@@ -52,7 +57,7 @@ public class NewRestClientAddTemplatesTest extends AbstractByonAddRemoveTemplate
 	}
 	
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, enabled = true)
-	public void addTemplateAndInstallService() throws IOException, InterruptedException {
+	public void addTemplateAndInstallService() throws IOException, RestClientException, AddTemplatesException {
 		TemplatesFolderHandler folderHandler = templatesHandler.createNewTemplatesFolder();
 		TemplateDetails template = folderHandler.addTempalteForServiceInstallation();
 		// add template
@@ -69,7 +74,7 @@ public class NewRestClientAddTemplatesTest extends AbstractByonAddRemoveTemplate
 	}
 
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, enabled = true)
-	public void addZippedTemplateAndInstallService() throws IOException, InterruptedException {
+	public void addZippedTemplateAndInstallService() throws IOException, RestClientException, AddTemplatesException {
 		TemplatesFolderHandler folderHandler = templatesHandler.createNewTemplatesFolder();
 		TemplateDetails template = folderHandler.addTempalteForServiceInstallation();
 		File templateFolder = template.getTemplateFolder();
@@ -84,45 +89,40 @@ public class NewRestClientAddTemplatesTest extends AbstractByonAddRemoveTemplate
 
 		final String templateName = template.getTemplateName();
 		String serviceName = templateName + "_service";
+		
+		installAndUninstall(getRestUrl(), serviceName, templateName, template.getUploadDirName(), 5);
+	}
+
+	private void installAndUninstall(String restUrl, String serviceName, String templateName, String uploadDirName, int timeout) 
+			throws IOException {
+		File serviceDir = serviceCreator.createServiceDir(serviceName, templateName);
+		InstallServiceResponse installServiceResponse = 
+				RestTestUtils.installServiceUsingNewRestAPI(getRestUrl(), serviceDir, CloudifyConstants.DEFAULT_APPLICATION_NAME, serviceName, timeout);
 		try {
-			installServiceWithCoputeTemplate(serviceName, templateName, false);
-		} finally {		
-			uninstallServiceIfFound(serviceName);
+			assertRightUploadDir(serviceName, uploadDirName);
+		} finally {
+			RestTestUtils.uninstallServiceUsingNewRestClient(getRestUrl(), serviceName, installServiceResponse.getDeploymentID(), timeout);
 		}
 	}
 
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, enabled = true)
-	public void templatesWithTheSameUpload() throws IOException, InterruptedException {
+	public void templatesWithTheSameUpload() throws IOException, InterruptedException, RestClientException, AddTemplatesException {
 		TemplatesFolderHandler folderHandler = templatesHandler.createNewTemplatesFolder();
 		TemplateDetails template1 = folderHandler.addTempalteForServiceInstallation();
 		TemplateDetails templateDetails = new TemplateDetails();
 		templateDetails.setUploadDirName(template1.getUploadDirName());
 		templateDetails.setForServiceInstallation(true);
 		TemplateDetails template2 = folderHandler.addCustomTemplate(templateDetails);
-
+		// try to add the templates
 		templatesHandler.addTemplatesToCloudUsingRestAPI(folderHandler);
 		templatesHandler.assertExpectedList();
-
-		final String template1Name = template1.getTemplateName();
-		String service1Name = template1Name + "_service";
-		try {
-			installServiceWithCoputeTemplate(service1Name, template1Name, false);
-			assertRightUploadDir(service1Name, template1.getUploadDirName());
-		} finally {
-			uninstallServiceIfFound(service1Name);
-		}
-		final String template2Name = template2.getTemplateName();
-		String service2Name = template2Name + "_service";
-		try {
-			installServiceWithCoputeTemplate(service2Name, template2Name, false);
-			assertRightUploadDir(service2Name, template2.getUploadDirName());
-		} finally {
-			uninstallServiceIfFound(service2Name);
-		}
+		// install 2 services
+		installAndUninstall(getRestUrl(), template1.getTemplateName() + "_service", template1.getTemplateName(), template1.getUploadDirName(), 5);
+		installAndUninstall(getRestUrl(), template2.getTemplateName() + "_service", template2.getTemplateName(), template2.getUploadDirName(), 5);
 	}
 
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, enabled = true)
-	public void addExistAndNotExistTemplates() throws IOException {
+	public void addExistAndNotExistTemplates() throws IOException, RestClientException, AddTemplatesException {
 		TemplatesFolderHandler templatesFolder1 = templatesHandler.createFolderWithTemplates(2);
 		String templateName = templatesFolder1.getExpectedToBeAddedTempaltes().get(0);
 		TemplateDetails addedTemplate = templatesFolder1.getTemplates().get(templateName);
@@ -134,9 +134,10 @@ public class NewRestClientAddTemplatesTest extends AbstractByonAddRemoveTemplate
 		TemplatesFolderHandler templatesFolder2 = templatesHandler.createNewTemplatesFolder();
 		addedTemplate.setExpectedToFail(true);
 		templatesFolder2.addCustomTemplate(addedTemplate);
-		templatesFolder2.setExpectedAddTemplatesFailureMessage("template already exists");
-		templatesHandler.addTemplatesToCloudUsingRestAPI(templatesFolder2);
+		AddTemplatesResponse response = templatesHandler.addTemplatesToCloudUsingRestAPI(templatesFolder2);
 		templatesHandler.assertExpectedList();
+		String errMsg = response.getTemplates().get(addedTemplate.getTemplateName()).getFailedToAddHosts().get(response.getInstances().get(0));
+		Assert.assertEquals("template already exists", errMsg);
 	}
 
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, enabled = true)
@@ -180,8 +181,8 @@ public class NewRestClientAddTemplatesTest extends AbstractByonAddRemoveTemplate
 		templatesHandler.assertExpectedList();
 	}
 
-	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, enabled = true)
-	public void illegalDuplicateTemplatesInTheSameFolder() throws IOException {
+	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, enabled = false)
+	public void illegalDuplicateTemplatesInTheSameFolder() throws IOException, AddTemplatesException {
 		
 		TemplatesFolderHandler folderHandler = templatesHandler.createNewTemplatesFolder();
 		TemplateDetails addedTemplate = folderHandler.addDefaultTempalte();
@@ -195,28 +196,36 @@ public class NewRestClientAddTemplatesTest extends AbstractByonAddRemoveTemplate
 		duplicateTemplate.setMachineIP(addedTemplate.getMachineIP());
 		duplicateTemplate.setExpectedToFail(true);
 		folderHandler.addCustomTemplate(duplicateTemplate);
-		folderHandler.setExpectedAddTemplatesFailureMessage("Template with name [" + tempalteName + "] already exist in folder");
-		
-		templatesHandler.addTemplatesToCloudUsingRestAPI(folderHandler);
+		// try to add the template
+		try {
+			templatesHandler.addTemplatesToCloudUsingRestAPI(folderHandler);
+			Assert.fail("Expected RestClientException");
+		} catch (RestClientException e) {
+			Assert.assertTrue(e.getMessageFormattedText().contains("Template with name [" + tempalteName + "] already exist in folder"));
+		}
 		
 		templatesHandler.assertExpectedList();
 	}
 
-	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, enabled = true)
-	public void illegalTemplateWithoutLocalUploadDir() throws IOException {
+	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, enabled = false)
+	public void illegalTemplateWithoutLocalUploadDir() throws IOException, AddTemplatesException {
 		TemplatesFolderHandler folderHandler = templatesHandler.createNewTemplatesFolder();
 		TemplateDetails addedTemplate = folderHandler.addExpectedToFailTempalte();
 		// delete upload directory
 		File uploadDir = new File(addedTemplate.getTemplateFolder(), addedTemplate.getUploadDirName());
 		FileUtils.deleteDirectory(uploadDir);
 		// try to add the template
-		folderHandler.setExpectedAddTemplatesFailureMessage("Could not find upload directory");
-		templatesHandler.addTemplatesToCloudUsingRestAPI(folderHandler);
+		try {
+			 templatesHandler.addTemplatesToCloudUsingRestAPI(folderHandler);
+			Assert.fail("Expected RestClientException");
+		} catch (RestClientException e) {
+			Assert.assertTrue(e.getMessageFormattedText().contains("Could not find upload directory"));
+		}
 		templatesHandler.assertExpectedList();
 	}
 
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, enabled = true)
-	public void tryToRemoveUsedTemplate() throws IOException, InterruptedException {
+	public void tryToRemoveUsedTemplate() throws IOException, RestClientException, AddTemplatesException {
 		TemplatesFolderHandler folderHandler = templatesHandler.createNewTemplatesFolder();
 		TemplateDetails addedTemplate = folderHandler.addTempalteForServiceInstallation();
 		String templateName = addedTemplate.getTemplateName();
@@ -237,7 +246,7 @@ public class NewRestClientAddTemplatesTest extends AbstractByonAddRemoveTemplate
 	}
 
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, enabled = true)
-	public void addRemoveAndAddAgainTemplates() throws IOException {
+	public void addRemoveAndAddAgainTemplates() throws IOException, RestClientException, AddTemplatesException {
 	
 		TemplatesFolderHandler folderHandler = templatesHandler.createNewTemplatesFolder();
 		TemplateDetails toRemoveTemplate = folderHandler.addDefaultTempalte();

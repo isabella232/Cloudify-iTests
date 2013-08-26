@@ -29,7 +29,6 @@ public abstract class TemplatesFolderHandler {
 	private List<String> expectedToBeAddedTempaltes;
 	private Map<String, TemplateDetails> templates;
 	private AtomicInteger numLastAddedTemplate;
-	private String expectedAddTemplatesFailureMessage;
 	
 	public TemplatesFolderHandler(final File folder) {
 		super();
@@ -199,7 +198,7 @@ public abstract class TemplatesFolderHandler {
 	}
 
 	public boolean isFailureExpected() {
-		return ((!expectedFailedTemplates.isEmpty() && expectedToBeAddedTempaltes.isEmpty()) || expectedAddTemplatesFailureMessage != null);
+		return (!expectedFailedTemplates.isEmpty() && expectedToBeAddedTempaltes.isEmpty());
 	}
 	public boolean isPartialFailureExpected() {
 		return !expectedFailedTemplates.isEmpty() && !expectedToBeAddedTempaltes.isEmpty();
@@ -207,14 +206,6 @@ public abstract class TemplatesFolderHandler {
 
 	public Map<String, TemplateDetails> getTemplates() {
 		return templates;
-	}
-
-	public String getExpectedAddTemplatesFailureMessage() {
-		return expectedAddTemplatesFailureMessage;
-	}
-	
-	public void setExpectedAddTemplatesFailureMessage(final String expectedAddTemplatesFailureMessage) {
-		this.expectedAddTemplatesFailureMessage = expectedAddTemplatesFailureMessage;
 	}
 
 }

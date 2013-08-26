@@ -15,6 +15,7 @@ package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.templates;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -29,7 +30,11 @@ import junit.framework.Assert;
 import org.apache.commons.collections.ListUtils;
 import org.apache.commons.io.FileUtils;
 import org.cloudifysource.dsl.internal.packaging.Packager;
+import org.cloudifysource.dsl.rest.AddTemplatesException;
+import org.cloudifysource.dsl.rest.response.AddTemplateResponse;
 import org.cloudifysource.dsl.rest.response.AddTemplatesResponse;
+import org.cloudifysource.dsl.rest.response.AddTemplatesStatus;
+import org.cloudifysource.restclient.exceptions.RestClientException;
 import org.testng.AssertJUnit;
 
 public abstract class TemplatesHandler {
@@ -85,11 +90,6 @@ public abstract class TemplatesHandler {
 				restUrl,
 				folder.getAbsolutePath(),
 				templatesFolder.isFailureExpected() || templatesFolder.isPartialFailureExpected());
-		final String expectedFailureMessage = templatesFolder.getExpectedAddTemplatesFailureMessage();
-		if (expectedFailureMessage != null) {
-			Assert.assertTrue("output does not contain " + expectedFailureMessage + " (output = " + output + ")",
-					output.contains(expectedFailureMessage));
-		}
 		afterAddTempaltes(templatesFolder);
 		return output;
 	}
@@ -108,7 +108,8 @@ public abstract class TemplatesHandler {
 
 	}
 
-	public AddTemplatesResponse addTemplatesToCloudUsingRestAPI(final TemplatesFolderHandler templatesFolder) {
+	public AddTemplatesResponse addTemplatesToCloudUsingRestAPI(final TemplatesFolderHandler templatesFolder) 
+			throws RestClientException, AddTemplatesException {
 		File zipFile = templatesFolder.getFolder();
 		try {
 			if (!templatesFolder.getFolder().getName().endsWith(".zip")) {
@@ -118,19 +119,43 @@ public abstract class TemplatesHandler {
 			AssertJUnit.fail("failed to zip templates folder: " + e.getMessage());
 		}
 		final AddTemplatesResponse response =
-				TemplatesCommandsRestAPI.addTemplates(restUrl, zipFile, templatesFolder.isFailureExpected(),
-						templatesFolder.getExpectedAddTemplatesFailureMessage());
-		if (response != null) {
-			// partial failure or success
-			final List<String> successfullyAddedTempaltes = response.getSuccessfullyAddedTempaltes();
-			AssertJUnit.assertTrue(ListUtils.subtract(templatesFolder.getExpectedToBeAddedTempaltes(),
-					successfullyAddedTempaltes).isEmpty());
-			final List<String> failedTemplatesList =
-					new LinkedList<String>(response.getFailedToAddTempaltes().keySet());
-			AssertJUnit.assertTrue(ListUtils
-					.subtract(templatesFolder.getExpectedFailedTemplates(), failedTemplatesList).isEmpty());
-			afterAddTempaltes(templatesFolder);
+				TemplatesCommandsRestAPI.addTemplates(restUrl, zipFile, templatesFolder.isFailureExpected() || templatesFolder.isPartialFailureExpected());
+		Map<String, AddTemplateResponse> templates = response.getTemplates();
+		
+		List<String> successList = new ArrayList<String>(templates.size());
+		List<String> failureList = new ArrayList<String>(templates.size());
+		
+		for (Entry<String, AddTemplateResponse> entry : templates.entrySet()) {
+			AddTemplateResponse templateResponse = entry.getValue();
+			String templateName = entry.getKey();
+			Map<String, String> failedToAddHosts = templateResponse.getFailedToAddHosts();
+			if (failedToAddHosts == null || failedToAddHosts.isEmpty()) {
+				successList.add(templateName);
+			} else {
+				if (AddTemplatesStatus.SUCCESS.equals(response.getStatus())) {
+					Assert.fail("expecting success for all templates. template " + templateName + " failure map: " + failedToAddHosts);
+				}
+				failureList.add(templateName);
+			}
 		}
+		AssertJUnit.assertTrue(ListUtils
+				.subtract(templatesFolder.getExpectedToBeAddedTempaltes(), successList).isEmpty());
+		AssertJUnit.assertTrue(ListUtils
+				.subtract(successList, templatesFolder.getExpectedToBeAddedTempaltes()).isEmpty());
+		AssertJUnit.assertTrue(ListUtils
+				.subtract(templatesFolder.getExpectedFailedTemplates(), failureList).isEmpty());
+		AssertJUnit.assertTrue(ListUtils
+				.subtract(failureList, templatesFolder.getExpectedFailedTemplates()).isEmpty());
+		
+		if (templatesFolder.isFailureExpected()) {
+			Assert.assertEquals(AddTemplatesStatus.FAILURE, response.getStatus());
+		} else if (templatesFolder.isPartialFailureExpected()) {
+			Assert.assertEquals(AddTemplatesStatus.PARTIAL_FAILURE, response.getStatus());
+		} else {
+			Assert.assertEquals(AddTemplatesStatus.SUCCESS, response.getStatus());
+		}
+		
+		afterAddTempaltes(templatesFolder);
 		return response;
 	}
 

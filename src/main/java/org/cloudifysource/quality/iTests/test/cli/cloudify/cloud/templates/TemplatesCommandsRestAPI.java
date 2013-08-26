@@ -22,6 +22,7 @@ import java.util.List;
 import junit.framework.Assert;
 
 import org.apache.commons.collections.ListUtils;
+import org.cloudifysource.dsl.rest.AddTemplatesException;
 import org.cloudifysource.dsl.rest.request.AddTemplatesRequest;
 import org.cloudifysource.dsl.rest.response.AddTemplatesResponse;
 import org.cloudifysource.dsl.rest.response.ListTemplatesResponse;
@@ -45,9 +46,12 @@ public class TemplatesCommandsRestAPI {
 	 * @param restUrl
 	 * @param templatesPackedFile
 	 * @return {@link org.cloudifysource.dsl.rest.response.AddTemplatesResponse}
+	 * @throws RestClientException 
+	 * @throws AddTemplatesException 
 	 */
-	public static AddTemplatesResponse addTemplates(final String restUrl, final File templatesPackedFile) {
-		return addTemplates(restUrl, templatesPackedFile, false, null);
+	public static AddTemplatesResponse addTemplates(final String restUrl, final File templatesPackedFile) 
+			throws RestClientException, AddTemplatesException {
+		return addTemplates(restUrl, templatesPackedFile, false);
 	}
 
 	/**
@@ -55,12 +59,12 @@ public class TemplatesCommandsRestAPI {
 	 * 
 	 * @param restUrl
 	 * @param templatesPackedFile
-	 * @param expectToFail
-	 * @param failureMsgContains
+	 * @param expectToFail true if an AddTemplatesException expected.
 	 * @return {@link org.cloudifysource.dsl.rest.response.AddTemplatesResponse}
+	 * @throws RestClientException 
 	 */
-	public static AddTemplatesResponse addTemplates(final String restUrl, final File templatesPackedFile,
-			final boolean expectToFail, final String failureMsgContains) {
+	public static AddTemplatesResponse addTemplates(final String restUrl, final File templatesPackedFile, final boolean expectToFail) 
+			throws RestClientException {
 		RestClient restClient = null;
 		try {
 			restClient = createRestClient(restUrl, "", "");
@@ -87,14 +91,12 @@ public class TemplatesCommandsRestAPI {
 			if (expectToFail) {
 				Assert.fail("addTemplates expected to failed but seccedded.");
 			}
-		} catch (final RestClientException e) {
+		} catch (final AddTemplatesException e) {
 			if (!expectToFail) {
 				Assert.fail("failed to add templates from folder [" + templatesPackedFile.getAbsolutePath()
-						+ "] error message: " + e.getMessageFormattedText());
+						+ "] error message: " + e.getMessage());
 			} else {
-				if (failureMsgContains != null) {
-					Assert.assertTrue(e.getMessageFormattedText().contains(failureMsgContains));
-				}
+				return e.getAddTemplatesResponse();
 			}
 		}
 		return addTemplatesResponse;

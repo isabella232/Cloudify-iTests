@@ -19,7 +19,12 @@ public class ServiceFileNameOptionTest extends AbstractLocalCloudTest {
 	
 	private final static String APPLICATION_NAME = "default";
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
+	/**
+	 * This option is deprecated and the new rest client doesn't support it.
+	 * @throws IOException
+	 * @throws InterruptedException
+	 */
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = false)
 	public void testServiceFileName() throws IOException, InterruptedException {
 		
 		

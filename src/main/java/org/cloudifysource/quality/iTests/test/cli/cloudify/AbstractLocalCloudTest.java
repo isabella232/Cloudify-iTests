@@ -38,6 +38,7 @@ import org.cloudifysource.quality.iTests.framework.utils.LocalCloudBootstrapper;
 import org.cloudifysource.quality.iTests.framework.utils.ServiceInstaller;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.security.SecurityConstants;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.util.RepositoryMirrorHelper;
 import org.cloudifysource.restclient.ErrorStatusException;
 import org.cloudifysource.restclient.StringUtils;
 import org.cloudifysource.shell.exceptions.CLIException;
@@ -83,9 +84,13 @@ public class AbstractLocalCloudTest extends AbstractTestSupport {
         LogUtils.log("================ Class tests Finished ===================");
     }
 
+	protected RepositoryMirrorHelper mirrorHelper = new RepositoryMirrorHelper();
+
 	@BeforeSuite(alwaysRun = true)
 	public void bootstrapIfNeeded() throws Exception {
 
+		mirrorHelper.modifyHostsFile();
+		
 		setGsHome();
 
 		LogUtils.log("================ BeforeSuite Started ===================");
@@ -302,6 +307,7 @@ public class AbstractLocalCloudTest extends AbstractTestSupport {
 	public void teardownIfNeeded() throws IOException, InterruptedException {
 
 		LogUtils.log("================ AfterSuite Started ===================");
+		mirrorHelper.revertHostsFile();
 
 		if (SGTestHelper.isDevMode()) {
 			LogUtils.log("Running in dev mode - cloud will not be torn down");

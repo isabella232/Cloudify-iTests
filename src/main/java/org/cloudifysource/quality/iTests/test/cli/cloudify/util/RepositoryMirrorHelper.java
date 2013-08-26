@@ -91,7 +91,7 @@ public class RepositoryMirrorHelper {
 		if(ServiceUtils.isWindows()) {
 			handler = new WindowsRepositoryMirrorHandler();
 		} else {
-			// todo
+			handler = new LinuxRepositoryMirrorHelper();
 		}
 		return handler;
 	}

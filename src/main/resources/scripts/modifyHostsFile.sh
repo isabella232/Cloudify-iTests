@@ -6,9 +6,9 @@
 ## Author: Barak Merimovich
 ###########################################################
 
-modifiedFile = $1
-hostsFile = $2 
-backupFile = $3
+export modifiedFile=$1
+export hostsFile=$2 
+export backupFile=$3
 
 echo Copying $modifiedFile to $hostsFile, saving backup in $backupFile
 

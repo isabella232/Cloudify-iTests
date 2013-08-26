@@ -6,8 +6,8 @@
 ## Author: Barak Merimovich
 ###########################################################
 
-hostsFile = $1
-backupFile = $2
+export hostsFile=$1
+export backupFile=$2
 
 echo Verifying passwordless sudo
 

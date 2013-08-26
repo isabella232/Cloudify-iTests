@@ -409,7 +409,8 @@
 						<iTests.enableLogstash>${iTests.enableLogstash}</iTests.enableLogstash>
 						<iTests.suiteId>${iTests.suiteId}</iTests.suiteId>
 						<iTests.numOfSuites>${iTests.numOfSuites}</iTests.numOfSuites>
-						<selenium.browser>${selenium.browser}</selenium.browser>
+                        <org.cloudifysource.repository.mirror>${org.cloudifysource.repository.mirror}</org.cloudifysource.repository.mirror>
+                        <selenium.browser>${selenium.browser}</selenium.browser>
 						<org.apache.commons.logging.Log>org.apache.commons.logging.impl.Jdk14Logger</org.apache.commons.logging.Log>
 						<com.gs.logging.level.config>true</com.gs.logging.level.config>
 						<java.util.logging.config.file>${basedir}/src/config/sgtest_logging.properties</java.util.logging.config.file>

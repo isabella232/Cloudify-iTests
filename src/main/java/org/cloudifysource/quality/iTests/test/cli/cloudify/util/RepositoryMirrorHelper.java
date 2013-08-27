@@ -1,5 +1,7 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.util;
 
+import iTests.framework.utils.LogUtils;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
@@ -7,10 +9,8 @@ import java.net.UnknownHostException;
 import java.util.Date;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
 import org.cloudifysource.dsl.utils.ServiceUtils;
-import org.testng.Assert;
-
-import iTests.framework.utils.LogUtils;
 
 public class RepositoryMirrorHelper {
 
@@ -18,50 +18,55 @@ public class RepositoryMirrorHelper {
 	public static final String REPOSITORY_DEFAULT = "repository.cloudifysource.org";
 
 	public void revertHostsFile() throws IOException {
-		final String mirror = System.getProperty(REPOSITORY_MIRROR_SYSPROP);
-		if (mirror == null || mirror.equalsIgnoreCase("dummy")) {
-			LogUtils.log("No repository mirror found in system properties. Hosts file will not be reverted.");
-			return;
-		}
+//		final String mirror = getMirrorSysProp();
+//		if (mirror == null) {
+//			return;
+//		}
 
 		final RepositoryMirrorHandler handler = createHandler();
-		
-		
+
 		final File hostsFile = handler.getHostsFile();
 		final File backupHostsFile = getBackupHostsFile(hostsFile);
 
-		if(!backupHostsFile.exists()) {
-			LogUtils.log("backup file does not exist! Did you create one with modifyHostsFile()");
+		if (!backupHostsFile.exists()) {
+			LogUtils.log("No repository mirror hosts backup file found! hosts files will not be modified");
 			return;
 		}
-		
-		
-		LogUtils.log("Checking for old hosts file backup");
+
+		LogUtils.log("Revering changes to local hosts file");
 		handler.revertHostsFile(hostsFile, backupHostsFile, true);
 		LogUtils.log("Finished reverting hosts file modification");
 	}
-	
+
 	public void modifyHostsFile() throws IOException {
-		final String mirror = System.getProperty(REPOSITORY_MIRROR_SYSPROP);
-		if (mirror == null || mirror.equalsIgnoreCase("dummy")) {
-			LogUtils.log("No repository mirror found in system properties. Resource calls to the repository will go directly to: "
-					+ REPOSITORY_DEFAULT);
+		revertHostsFile();
+		
+		final String mirror = getMirrorSysProp();
+		if (mirror == null) {
 			return;
 		}
 
-		String actualMirror = getActualMirrorIP(mirror);
+		final String actualMirror = getActualMirrorIP(mirror);
 
 		final RepositoryMirrorHandler handler = createHandler();
-		
+
 		final File hostsFile = handler.getHostsFile();
 		final File modifiedHostsFile = createModifiedHostsFile(hostsFile, actualMirror);
 		final File backupHostsFile = getBackupHostsFile(hostsFile);
 		handler.revertHostsFile(hostsFile, backupHostsFile, false);
-		//final File backupHostsFile = new File(hostsFile.getAbsolutePath() + ".sgtest.backup");
+		// final File backupHostsFile = new File(hostsFile.getAbsolutePath() + ".sgtest.backup");
 
 		handler.modifyHostsFile(hostsFile, modifiedHostsFile, backupHostsFile);
-		
-		
+
+	}
+
+	private String getMirrorSysProp() {
+		final String mirror = System.getProperty(REPOSITORY_MIRROR_SYSPROP);
+		if (StringUtils.isBlank(mirror) || mirror.equalsIgnoreCase("dummy")) {
+			LogUtils.log("No repository mirror found in system properties. Hosts file modification will not be performed.");
+			return null;
+		}
+		return mirror;
 	}
 
 	private File getBackupHostsFile(final File hostsFile) {
@@ -73,22 +78,24 @@ public class RepositoryMirrorHelper {
 	private String getActualMirrorIP(final String mirror) throws UnknownHostException {
 		String actualMirror = mirror;
 		try {
-			InetAddress resolvedMirrorAddress = InetAddress.getByName(mirror);
+			final InetAddress resolvedMirrorAddress = InetAddress.getByName(mirror);
 			LogUtils.log("Successfully resolved mirror address: " + resolvedMirrorAddress);
 			actualMirror = resolvedMirrorAddress.getHostAddress();
 			LogUtils.log("Resolved mirror address is: " + actualMirror);
-		} catch (UnknownHostException e) {
+		} catch (final UnknownHostException e) {
 			LogUtils.log("Unable to resolve repository mirror address: " + mirror
 					+ ". Error was: "
 					+ e.getMessage(), e);
-			throw e;
+			throw new IllegalArgumentException("Unable to resolve repository mirror address: " + mirror
+					+ ". Error was: "
+					+ e.getMessage(), e);
 		}
 		return actualMirror;
 	}
 
 	private RepositoryMirrorHandler createHandler() {
 		RepositoryMirrorHandler handler = null;
-		if(ServiceUtils.isWindows()) {
+		if (ServiceUtils.isWindows()) {
 			handler = new WindowsRepositoryMirrorHandler();
 		} else {
 			handler = new LinuxRepositoryMirrorHelper();
@@ -112,55 +119,8 @@ public class RepositoryMirrorHelper {
 		final File modifiedFile = File.createTempFile("modifiedHosts", ".tmp");
 		FileUtils.writeStringToFile(modifiedFile, modifiedHostsContent);
 		modifiedFile.deleteOnExit();
-		
+
 		return modifiedFile;
 	}
-	
-	private File getHostsFile() {
-		if (ServiceUtils.isWindows()) {
-			return getWindowsHostsFile();
-		}  else if(ServiceUtils.isLinuxOrUnix()) {
-			return getLinuxHostsFile();
-		}
-		Assert.fail("Unsupported operating system: " + System.getProperty("os.name"));
-		return null;// can't happen
-	}
 
-	private File getWindowsHostsFile() {
-		// %systemroot%\system32\drivers\etc\
-		File hostsFile;
-		final String systemRootEnvVar = System.getenv("systemroot");
-		Assert.assertNotNull(systemRootEnvVar, "Missing environment variable on windows: systemroot");
-		final File systemRoot = new File(systemRootEnvVar);
-		Assert.assertTrue(systemRoot.exists(), "System root directory not found");
-		final File system32 = new File(systemRoot, "system32");
-		Assert.assertTrue(system32.exists(), "system32 directory is missing");
-		final File drivers = new File(system32, "drivers");
-		Assert.assertTrue(drivers.exists(), "drivers directory is missing");
-		final File etc = new File(drivers, "etc");
-		Assert.assertTrue(etc.exists(), "etc directory is missing");
-		hostsFile = new File(etc, "hosts");
-		Assert.assertTrue(hostsFile.exists(), "hosts file is missing");
-		return hostsFile;
-	}
-	
-	private File getLinuxHostsFile() {
-		final File hostsFile = new File("/etc/hosts");
-		Assert.assertTrue(hostsFile.exists(), "hosts file is missing");
-		return hostsFile;
-	}
-
-
-	private void handleOldBackupHostsFile(File hostsFile, final File backupHostsFile, final boolean reverting) throws IOException {
-		if (backupHostsFile.exists()) {
-			if(!reverting) {
-				LogUtils.log("Warning - found an old sgtest hosts file backup. This indicates an abnormal termination of a previous suite. hosts file will be reverted to the backup version");
-			}
-			FileUtils.copyFile(backupHostsFile, hostsFile);
-			final boolean deleteResult = FileUtils.deleteQuietly(backupHostsFile);
-			if (!deleteResult) {
-				throw new IOException("Failed to delete old backup hosts file: " + backupHostsFile);
-			}
-		}
-	}
 }

@@ -21,6 +21,7 @@ public class AbstractByonCloudTest extends NewAbstractCloudTest {
 	@Override
 	protected void beforeTeardown() throws Exception {
 		closeAdmin();
+		((ByonCloudService) this.cloudService).cleanCronTasks();
 	}
 	
 	protected boolean isFilteredAdmin() {

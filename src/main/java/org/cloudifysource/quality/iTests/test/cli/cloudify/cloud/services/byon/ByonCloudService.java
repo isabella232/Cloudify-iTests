@@ -189,7 +189,7 @@ public class ByonCloudService extends AbstractCloudService {
         File customCustomization;
         if(enableLogstash){
             String pathToLogstash = SGTestHelper.getSGTestRootDir() + "/src/main/resources/logstash";
-            customCustomization = new File(pathToLogstash + "/pre-bootstrap-byon.sh");
+            customCustomization = new File(pathToLogstash + "/byon/pre-bootstrap.sh");
         }
         else{
             customCustomization = new File(SGTestHelper.getSGTestRootDir() + "/src/main/resources/apps/cloudify/cloud/byon/pre-bootstrap.sh");

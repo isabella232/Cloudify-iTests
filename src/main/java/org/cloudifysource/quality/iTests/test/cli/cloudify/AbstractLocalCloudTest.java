@@ -319,7 +319,9 @@ public class AbstractLocalCloudTest extends AbstractTestSupport {
 			bootstrapper.teardown();
 		}
 
-		admin.close();
+		if(admin != null) {
+			admin.close();
+		}
 
 		LogUtils.log("================ AfterSuite Ended ===================");
 	}

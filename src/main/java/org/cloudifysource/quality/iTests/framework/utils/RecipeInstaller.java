@@ -222,7 +222,7 @@ public abstract class RecipeInstaller {
 
     public String uninstall() throws IOException, InterruptedException {
 
-        final boolean enableLogstash = Boolean.parseBoolean(System.getProperty("iTests.enableLogstash"));
+        final boolean enableLogstash = Boolean.parseBoolean(System.getProperty("iTests.enableLogstash", "false"));
         String uninstallCommand = null;
         String excpectedResult = null;
         String recipeName = null;

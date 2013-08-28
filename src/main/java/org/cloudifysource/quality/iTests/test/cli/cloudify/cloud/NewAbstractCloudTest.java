@@ -389,7 +389,7 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 
     protected void dumpMachines() {
 
-        final boolean enableLogstash = Boolean.parseBoolean(System.getProperty("iTests.enableLogstash"));
+        final boolean enableLogstash = Boolean.parseBoolean(System.getProperty("iTests.enableLogstash", "false"));
         if(enableLogstash){
             return;
         }

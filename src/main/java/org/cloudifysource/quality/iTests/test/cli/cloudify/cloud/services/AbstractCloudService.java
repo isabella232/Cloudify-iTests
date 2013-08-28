@@ -32,7 +32,7 @@ public abstract class AbstractCloudService implements CloudService {
     protected static final String UPLOAD_FOLDER = "upload";
     protected static final String CREDENTIALS_FOLDER = System.getProperty("iTests.credentialsFolder",
             SGTestHelper.getSGTestRootDir() + "/src/main/resources/credentials");
-    protected static final boolean enableLogstash = Boolean.parseBoolean(System.getProperty("iTests.enableLogstash"));
+    protected static final boolean enableLogstash = Boolean.parseBoolean(System.getProperty("iTests.enableLogstash", "false"));
     private static File propsFile = new File(SGTestHelper.getSGTestRootDir() + "/src/main/resources/logstash/logstash.properties");
 
     private static final int TEN_SECONDS_IN_MILLIS = 10000;

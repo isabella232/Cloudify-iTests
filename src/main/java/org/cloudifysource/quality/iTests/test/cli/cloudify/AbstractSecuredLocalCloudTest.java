@@ -45,7 +45,7 @@ public class AbstractSecuredLocalCloudTest extends AbstractTestSupport {
 	protected static final String INSTANCE_VERIFICATION_STRING = "instance #1";
 	
 	protected static final String MANAGEMENT_APPLICATION_NAME = "management";
-    private static final boolean enableLogstash = Boolean.parseBoolean(System.getProperty("iTests.enableLogstash"));
+    private static final boolean enableLogstash = Boolean.parseBoolean(System.getProperty("iTests.enableLogstash", "false"));
 
 	protected void installAndUninstallTest() throws IOException,InterruptedException {
 		installAndUninstall(SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, false);

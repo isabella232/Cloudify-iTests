@@ -21,8 +21,8 @@ public class RestErrorExceptionsTest extends AbstractLocalCloudTest{
                 invokeOutput.contains("Failed to locate service someService"));
 
 		String uninstallOutput = CommandTestUtils.runCommandExpectedFail("connect " + this.restUrl + "; uninstall-application someApplication");
-		AbstractTestSupport.assertTrue("Expecting output to contain \"Application someApplication could not be found or has no services deployed\"",
-                uninstallOutput.contains("Application someApplication could not be found or has no services deployed"));
+		AbstractTestSupport.assertTrue("Expecting output to contain \"Application someApplication could not be found\", but uninstallOutput = " 
+				+ uninstallOutput, uninstallOutput.contains("Application someApplication could not be found"));
 
 		String tailOutput = CommandTestUtils.runCommandExpectedFail("connect " + this.restUrl + "; tail someService 20");
 		AbstractTestSupport.assertTrue("Expecting output to contain \"Failed to locate service someService\"",

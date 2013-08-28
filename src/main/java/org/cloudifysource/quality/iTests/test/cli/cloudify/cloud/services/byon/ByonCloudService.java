@@ -228,8 +228,27 @@ public class ByonCloudService extends AbstractCloudService {
         }
 		cleanGSFilesOnAllHosts();
 		cleanCloudifyTempDir();
+		cleanCronTasks();
 	}
 	
+	public void cleanCronTasks() {
+		String command = "crontab -r";
+		if (sudo) {
+			command = "sudo " + command;
+		}
+		
+		String[] hosts = this.getMachines();
+		for (String host : hosts) {
+			try {
+                LogUtils.log("Removing scheduled task from "+host);
+				LogUtils.log(SSHUtils.runCommand(host, AbstractTestSupport.OPERATION_TIMEOUT, command, user, password));
+			} catch (AssertionError e) {
+				LogUtils.log("Failed to kill java processes on host " + host + " .Reason --> " + e.getMessage());
+			}
+		}
+		
+	}
+
 	private void cleanCloudifyTempDir() {
 		
 		String command = "rm -rf /export/tgrid/.cloudify/";

@@ -41,7 +41,7 @@ public class InstallTomcatOnSuseTest extends NewAbstractCloudTest {
 	private static final String TEMPLATE_PROPERTIES_FILE_PATH = CommandTestUtils.getPath("src/main/resources/templates/SMALL_SUSE/SMALL_SUSE-template.properties");
 	private static final String SERVICE_NAME = "tomcat";
 	private static final String SERVICE_DIR_PATH = CommandTestUtils.getPath("src/main/resources/apps/USM/usm/tomcatOnSuse");
-	private static final String SUSE_IMAGE_ID = "eu-west-1/ami-60576214";
+	private static final String SUSE_IMAGE_ID = "eu-west-1/ami-8d1109f9";
 	private static final String GET_TEMPLATE_NAME_CUSTOM_COMMAND_NAME = "GetTemplateName";
 	private static final String GET_IMAGE_ID_CUSTOM_COMMAND_NAME = "GetImageID";
 

@@ -44,8 +44,15 @@ public abstract class DefaultBootstrapValidationTest extends NewAbstractCloudTes
 		this.groovyFileName = groovyFileName;
 		super.bootstrap(bootstrapper);
 		String bootstrapOutput = bootstrapper.getLastActionOutput();
-		assertTrue("The imageId is invalid but the wrong error was thrown. Reported error: " + bootstrapOutput,
-				bootstrapOutput.contains("Image") && bootstrapOutput.contains("is not valid for location"));
+		if (cloudService.getCloud().getProvider().getProvider().equals("aws-ec2")) {
+			assertTrue("The imageId is invalid but the wrong error was thrown. Reported error: " + bootstrapOutput,
+					bootstrapOutput.contains("Image \"us-east-1/ami-1624987wrong\" or hardware \"m1.small\"") 
+					&& bootstrapOutput.contains(" is not valid for location eu-west-1"));
+		} else {
+			assertTrue("The imageId is invalid but the wrong error was thrown. Reported error: " + bootstrapOutput,
+					bootstrapOutput.contains("requested location wrongimage") 
+					&& bootstrapOutput.contains("which is not in the configured locations"));
+		}
 	}
 	
 	
@@ -53,8 +60,15 @@ public abstract class DefaultBootstrapValidationTest extends NewAbstractCloudTes
 		this.groovyFileName = groovyFileName;
 		super.bootstrap(bootstrapper);
 		String bootstrapOutput = bootstrapper.getLastActionOutput();
-		assertTrue("The hardwareId is invalid but the wrong error was thrown. Reported error: " + bootstrapOutput,
-				bootstrapOutput.contains("hardware") && bootstrapOutput.contains("is not valid for location"));
+		if (cloudService.getCloud().getProvider().getProvider().equals("aws-ec2")) {
+			assertTrue("The hardwareId is invalid but the wrong error was thrown. Reported error: " + bootstrapOutput,
+					bootstrapOutput.contains("Image \"eu-west-1/ami-c37474b7\" or hardware \"m1.wrong\"") 
+					&& bootstrapOutput.contains("is not valid for location eu-west-1"));
+		} else {
+			assertTrue("The hardwareId is invalid but the wrong error was thrown. Reported error: " + bootstrapOutput,
+					bootstrapOutput.contains("Hardware ID \"wronghardwareid\" is invalid.") 
+					&& bootstrapOutput.contains("Supported hardware flavor IDs are:"));
+		}
 	}
 	
 	

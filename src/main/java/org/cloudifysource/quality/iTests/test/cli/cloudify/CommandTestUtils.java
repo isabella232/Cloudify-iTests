@@ -78,7 +78,7 @@ public class CommandTestUtils {
     	final String[] parts = cmdLine.split(" ");
     	final ProcessBuilder pb = new ProcessBuilder(parts);
     	pb.redirectErrorStream(true);
-        if(enableLogstash){
+        if(enableLogstash && command.contains("bootstrap")){
             String suiteId = "suite_" + System.getProperty("iTests.suiteId", "0");
             String systemProperties = System.getProperty("EXT_JAVA_OPTIONS", "");
             LogUtils.log("system properties before addition: " + systemProperties);

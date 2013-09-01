@@ -15,7 +15,9 @@ import iTests.framework.utils.ScriptUtils;
 
 public class CommandTestUtils {
 
-	/**
+    private static final boolean enableLogstash = Boolean.parseBoolean(System.getProperty("iTests.enableLogstash", "false"));
+
+    /**
 	 * Runs the specified cloudify commands and outputs the result log.
 	 * @param command - The actual cloudify commands delimited by ';'.
 	 * @param wait - used for determining if to wait for command 
@@ -76,7 +78,20 @@ public class CommandTestUtils {
     	final String[] parts = cmdLine.split(" ");
     	final ProcessBuilder pb = new ProcessBuilder(parts);
     	pb.redirectErrorStream(true);
-    	
+        if(enableLogstash){
+            String suiteId = "/suite_" + System.getProperty("iTests.suiteId", "0");
+            String systemProperties = System.getProperty("EXT_JAVA_OPTIONS", "");
+            LogUtils.log("system properties before addition: " + systemProperties);
+
+            String logsPatternProperty = "com.gigaspaces.logger.RollingFileHandler.filename-pattern";
+            String logsPatternValue = "{homedir}/logs/" + suiteId + "/{date,yyyy-MM-dd~HH.mm}-gigaspaces-{service}-{host}-{pid}.log";
+            LogUtils.log("adding env variable " + logsPatternProperty + " with value " + logsPatternValue);
+            pb.environment().put("EXT_JAVA_OPTIONS", systemProperties + " -D" + logsPatternProperty + "=" + logsPatternValue);
+
+            systemProperties = System.getProperty("EXT_JAVA_OPTIONS", "");
+            LogUtils.log("system properties after addition: " + systemProperties);
+        }
+
     	LogUtils.log("Executing Command line: " + cmdLine);
     	
     	final Process process = pb.start();

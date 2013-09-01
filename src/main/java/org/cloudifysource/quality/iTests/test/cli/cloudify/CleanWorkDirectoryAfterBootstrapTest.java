@@ -1,5 +1,6 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify;
 
+import iTests.framework.testng.annotations.TestConfiguration;
 import iTests.framework.tools.SGTestHelper;
 import iTests.framework.utils.LogUtils;
 
@@ -25,12 +26,14 @@ public class CleanWorkDirectoryAfterBootstrapTest extends AbstractLocalCloudTest
 	 * Tests that after a teardown and bootstrap, there are only the three expected directories in CLOUDIFY/work/processing-units.
 	 * Any old deployed services should be deleted on bootstrap. Tests CLOUDIFY-1942.
 
-	 * IMPORANT: This test kills the GSA and GSC processes using Sigar. It then run bootstrap-localcloud again. 
+	 * IMPORANT: This test kills the GSA and GSC processes using Sigar. It then run bootstrap-localcloud again.
+	 * ALSO: Test runs on windows only. XAP seems to clean up the work directory when it gets the kill signal. 
 	 * 
 	 * @throws IOException .
 	 * @throws InterruptedException .
 	 */
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT, groups = "1", enabled = false)
+	@TestConfiguration(os = TestConfiguration.VM.WINDOWS)
 	public void testCleanWorkDirectory() throws IOException, InterruptedException {
 
 		final String buildDir = SGTestHelper.getBuildDir();

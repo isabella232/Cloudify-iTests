@@ -45,8 +45,8 @@ public class SelfHealingDisabledTest extends AbstractLocalCloudTest {
 		uninstallService();
 	}
 
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
-    public void testInnerNoSelfHealing() throws IOException, InterruptedException,
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = false)
+    public void testInitNoSelfHealing() throws IOException, InterruptedException,
             PackagingException, DSLException, RestException {
         long timeout = 120000;
         String failMsg = "attribute changed to more than 01 - test failed because service restarted";

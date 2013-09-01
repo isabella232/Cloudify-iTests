@@ -1,10 +1,7 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify;
 
 import iTests.framework.tools.SGTestHelper;
-import iTests.framework.utils.AssertUtils;
-import iTests.framework.utils.LogUtils;
-import iTests.framework.utils.ScriptUtils;
-import iTests.framework.utils.WebUtils;
+import iTests.framework.utils.*;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -93,6 +90,9 @@ public class AbstractLocalCloudTest extends AbstractTestSupport {
 		
 		setGsHome();
 
+        LogUtils.log("replacing log file");
+        overrideLogsFile();
+
 		LogUtils.log("================ BeforeSuite Started ===================");
 
 		if (isRestPortResponding()) {
@@ -134,6 +134,44 @@ public class AbstractLocalCloudTest extends AbstractTestSupport {
     	//gsHome = System.getProperty(COM_GS_HOME);
 		System.setProperty(COM_GS_HOME, buildDir);
 	}
+
+    private void overrideLogsFile()
+            throws IOException {
+        File logging = new File(SGTestHelper.getSGTestRootDir() + "/src/main/config/gs_logging.properties");
+        String backupFilePath = "none";
+
+        if(enableLogstash){
+            LogUtils.log("adding suite number to default logging location");
+            backupFilePath = IOUtils.backupFile(logging.getAbsolutePath());
+            String stringToReplace = "com.gigaspaces.logger.RollingFileHandler.filename-pattern = {homedir}/logs/{date,yyyy-MM-dd~HH.mm}-gigaspaces-{service}-{host}-{pid}.log";
+            String stringToAdd = "/suite_" + System.getProperty("iTests.suiteId", "0");
+            int startIndex = stringToReplace.indexOf("/{date");
+
+            File suiteLogsFolder = new File(SGTestHelper.getBuildDir() + "/logs" + stringToAdd);
+            if(!suiteLogsFolder.exists()){
+                LogUtils.log("creating " + suiteLogsFolder.getAbsolutePath());
+                suiteLogsFolder.mkdir();
+            }
+
+            StringBuilder sb = new StringBuilder(stringToReplace);
+            sb.insert(startIndex, stringToAdd);
+
+            IOUtils.replaceTextInFile(logging.getAbsolutePath(), stringToReplace, sb.toString());
+
+        }
+
+        File originalGsLogging = new File(SGTestHelper.getBuildDir() + "/config/gs_logging.properties");
+        if (originalGsLogging.exists()) {
+            originalGsLogging.delete();
+        }
+        FileUtils.copyFile(logging, originalGsLogging);
+
+        File backupFile = new File(backupFilePath);
+        if(backupFile.exists()){
+            LogUtils.log("restoring logging file");
+            IOUtils.replaceFileWithMove(logging, backupFile);
+        }
+    }
 
 	@AfterMethod(alwaysRun = true)
 	public void cleanup() throws Exception {

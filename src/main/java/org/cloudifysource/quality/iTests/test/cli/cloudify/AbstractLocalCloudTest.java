@@ -156,7 +156,7 @@ public class AbstractLocalCloudTest extends AbstractTestSupport {
             StringBuilder sb = new StringBuilder(stringToReplace);
             sb.insert(startIndex, stringToAdd);
 
-            IOUtils.replaceTextInFile(logging.getAbsolutePath(), stringToReplace, sb.toString());
+            IOUtils.replaceTextInFile(logging.getAbsolutePath(), stringToReplace.replace("{", "\\{"), sb.toString());
 
         }
 

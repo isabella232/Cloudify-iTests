@@ -17,7 +17,7 @@ fi
 
 echo Downloading logstash to ~/
 cd ~/
-wget https://s3-eu-west-1.amazonaws.com/gigaspaces-maven-repository-eu/net/logstash/1.1.13/logstash-1.1.13.jar
+wget https://s3-eu-west-1.amazonaws.com/gigaspaces-maven-repository-eu/net/logstash/1.1.13/logstash-1.1.13.jar --no-check-certificate
 
 echo starting log shipper
 echo java home: $JAVA_HOME

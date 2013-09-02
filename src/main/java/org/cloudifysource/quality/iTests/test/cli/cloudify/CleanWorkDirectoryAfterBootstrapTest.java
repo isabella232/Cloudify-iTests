@@ -30,7 +30,7 @@ public class CleanWorkDirectoryAfterBootstrapTest extends AbstractLocalCloudTest
 	 * @throws IOException .
 	 * @throws InterruptedException .
 	 */
-	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
+	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT, groups = "1", enabled = false)
 	public void testCleanWorkDirectory() throws IOException, InterruptedException {
 
 		final String buildDir = SGTestHelper.getBuildDir();

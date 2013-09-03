@@ -80,16 +80,19 @@ public class CommandTestUtils {
     	pb.redirectErrorStream(true);
         if(enableLogstash && command.contains("bootstrap")){
             String suiteId = "suite_" + System.getProperty("iTests.suiteId", "0");
-            String systemProperties = System.getProperty("EXT_JAVA_OPTIONS", "");
-            LogUtils.log("system properties before addition: " + systemProperties);
+            String systemProperties = System.getenv("EXT_JAVA_OPTIONS");
+            if(systemProperties == null){
+                systemProperties = "";
+            }
+            LogUtils.log("env properties before addition: " + systemProperties);
 
             String logsPatternProperty = "com.gigaspaces.logger.RollingFileHandler.filename-pattern";
             String logsPatternValue = "{homedir}/logs/" + suiteId + "/{date,yyyy-MM-dd~HH.mm}-gigaspaces-{service}-{host}-{pid}.log";
             LogUtils.log("adding env variable " + logsPatternProperty + " with value " + logsPatternValue);
             pb.environment().put("EXT_JAVA_OPTIONS", systemProperties + " -D" + logsPatternProperty + "=" + logsPatternValue);
 
-            systemProperties = System.getProperty("EXT_JAVA_OPTIONS", "");
-            LogUtils.log("system properties after addition: " + systemProperties);
+            systemProperties = System.getenv("EXT_JAVA_OPTIONS");
+            LogUtils.log("env properties after addition: " + systemProperties);
         }
 
     	LogUtils.log("Executing Command line: " + cmdLine);

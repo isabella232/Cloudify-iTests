@@ -152,13 +152,25 @@ public abstract class AbstractCloudService implements CloudService {
         String pathToLogstash = SGTestHelper.getSGTestRootDir() + "/src/main/resources/logstash";
         String preBootstrapScriptPath = getPathToCloudFolder() + "/upload/pre-bootstrap.sh";
 
-        IOUtils.copyFile(pathToLogstash + "/pre-bootstrap.sh", preBootstrapScriptPath);
+        if(cloudName.equalsIgnoreCase("byon")){
+            IOUtils.copyFile(pathToLogstash + "/byon/pre-bootstrap.sh", preBootstrapScriptPath);
+        }
+        else{
+            IOUtils.copyFile(pathToLogstash + "/pre-bootstrap.sh", preBootstrapScriptPath);
+        }
 
         String confFilePath = pathToLogstash + "/logstash-shipper.conf";
         String backupFilePath = IOUtils.backupFile(confFilePath);
 
         //TODO fix path to build
-        String remoteBuildPath = "/home/ec2-user/gigaspaces";
+        String remoteBuildPath;
+        if(cloudName.equalsIgnoreCase("byon")){
+            remoteBuildPath = "/tmp/byon/gigaspaces";
+        }
+        else{
+            remoteBuildPath = "/home/ec2-user/gigaspaces";
+        }
+
         IOUtils.replaceTextInFile(confFilePath, "<path_to_build>", remoteBuildPath);
         IOUtils.replaceTextInFile(confFilePath, "<test_name>", tagClassName);
         IOUtils.replaceTextInFile(confFilePath, "<build_number>", System.getProperty("iTests.buildNumber"));

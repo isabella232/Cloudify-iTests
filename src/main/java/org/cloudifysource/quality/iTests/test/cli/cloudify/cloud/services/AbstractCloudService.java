@@ -276,9 +276,18 @@ public abstract class AbstractCloudService implements CloudService {
             if(cloudName.equalsIgnoreCase("byon")){
                 for(String restUrl : this.getRestUrls()){
                     LogUtils.log("mng url: " + restUrl);
+                    int startIndex;
+                    int endIndex;
 
-                    int startIndex = restUrl.indexOf("/") + 1;
-                    int endIndex  = restUrl.lastIndexOf(":");
+                    if(System.getProperty("iTests.suiteName").contains("ipv6")){
+                        LogUtils.log("using ipv6 address");
+                        startIndex = restUrl.indexOf("[") + 1;
+                        endIndex  = restUrl.lastIndexOf("]");
+                    }
+                    else{
+                        startIndex = restUrl.indexOf(":") + 3;
+                        endIndex = restUrl.lastIndexOf(":");
+                    }
 
                     if(startIndex > 0 && endIndex > -1){
 
@@ -286,6 +295,9 @@ public abstract class AbstractCloudService implements CloudService {
 
                         LogUtils.log("destroying logstash agent on " + hostIp);
                         SSHUtils.runCommand(hostIp, SSHUtils.DEFAULT_TIMEOUT, "pkill -9 -f logstash", "tgrid", "tgrid");
+                    }
+                    else{
+                        throw new IllegalStateException("could not resolve host address from " + restUrl);
                     }
                 }
             }

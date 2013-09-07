@@ -273,6 +273,7 @@ public abstract class AbstractCloudService implements CloudService {
 
         if(enableLogstash){
 
+            LogUtils.log("cloud name: " + cloudName);
             if(cloudName.equalsIgnoreCase("byon")){
                 for(String restUrl : this.getRestUrls()){
                     LogUtils.log("mng url: " + restUrl);

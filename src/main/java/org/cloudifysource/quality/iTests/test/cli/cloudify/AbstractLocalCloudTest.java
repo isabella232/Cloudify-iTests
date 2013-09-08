@@ -135,42 +135,17 @@ public class AbstractLocalCloudTest extends AbstractTestSupport {
 		System.setProperty(COM_GS_HOME, buildDir);
 	}
 
-    private void overrideLogsFile()
-            throws IOException {
-//        File logging = new File(SGTestHelper.getSGTestRootDir() + "/src/main/config/gs_logging.properties");
-//        String backupFilePath = "none";
+    private void overrideLogsFile() throws IOException {
 
         if(enableLogstash){
-//            LogUtils.log("adding suite number to default logging location");
-//            backupFilePath = IOUtils.backupFile(logging.getAbsolutePath());
-//            String stringToReplace = "com.gigaspaces.logger.RollingFileHandler.filename-pattern = {homedir}/logs/{date,yyyy-MM-dd~HH.mm}-gigaspaces-{service}-{host}-{pid}.log";
             String stringToAdd = "/suite_" + System.getProperty("iTests.suiteId", "0");
-//            int startIndex = stringToReplace.indexOf("/{date");
 
             File suiteLogsFolder = new File(SGTestHelper.getBuildDir() + "/logs" + stringToAdd);
             if(!suiteLogsFolder.exists()){
                 LogUtils.log("creating " + suiteLogsFolder.getAbsolutePath());
                 suiteLogsFolder.mkdir();
             }
-
-//            StringBuilder sb = new StringBuilder(stringToReplace);
-//            sb.insert(startIndex, stringToAdd);
-//
-//            IOUtils.replaceTextInFile(logging.getAbsolutePath(), stringToReplace.replace("{", "\\{"), sb.toString());
-
         }
-
-//        File originalGsLogging = new File(SGTestHelper.getBuildDir() + "/config/gs_logging.properties");
-//        if (originalGsLogging.exists()) {
-//            originalGsLogging.delete();
-//        }
-//        FileUtils.copyFile(logging, originalGsLogging);
-
-//        File backupFile = new File(backupFilePath);
-//        if(backupFile.exists()){
-//            LogUtils.log("restoring logging file");
-//            IOUtils.replaceFileWithMove(logging, backupFile);
-//        }
     }
 
 	@AfterMethod(alwaysRun = true)

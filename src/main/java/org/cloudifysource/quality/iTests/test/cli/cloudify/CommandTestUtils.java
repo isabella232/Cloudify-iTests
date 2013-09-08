@@ -85,6 +85,7 @@ public class CommandTestUtils {
                 systemProperties = "";
             }
             LogUtils.log("env properties before addition: " + systemProperties);
+            LogUtils.log("pb properties before addition: " + pb.environment().get("EXT_JAVA_OPTIONS"));
 
             String logsPatternProperty = "com.gigaspaces.logger.RollingFileHandler.filename-pattern";
             String logsPatternValue = "{homedir}/logs/" + suiteId + "/{date,yyyy-MM-dd~HH.mm}-gigaspaces-{service}-{host}-{pid}.log";
@@ -93,6 +94,8 @@ public class CommandTestUtils {
 
             systemProperties = System.getenv("EXT_JAVA_OPTIONS");
             LogUtils.log("env properties after addition: " + systemProperties);
+            LogUtils.log("pb properties after addition: " + pb.environment().get("EXT_JAVA_OPTIONS"));
+
         }
 
     	LogUtils.log("Executing Command line: " + cmdLine);

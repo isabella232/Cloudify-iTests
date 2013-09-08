@@ -519,6 +519,7 @@ public abstract class AbstractCloudManagementPersistencyTest extends NewAbstract
 
 	protected void initManagementUrlsAndRestClient() throws MalformedURLException, RestException {
 		final String[] restUrls = cloudService.getRestUrls();
+
 		assertEquals(numOfManagementMachines, restUrls.length);
 		this.client = new GSRestClient("", "", new URL(restUrls[0]), PlatformVersion.getVersionNumber());
     	assertTrue(managingManagementMachineUrl + " is unavailable", isRestRunning(client));
@@ -617,6 +618,7 @@ public abstract class AbstractCloudManagementPersistencyTest extends NewAbstract
     	getService().scanLeakedManagementNodes();
 	}
 
+
 	protected void setNumOfManagementMachines(int numOfManagementMachines) {
 		this.numOfManagementMachines = numOfManagementMachines;
 	}
@@ -640,4 +642,5 @@ public abstract class AbstractCloudManagementPersistencyTest extends NewAbstract
 				return AbstractCloudManagementPersistencyTest.this.isRestRunning(client);
 			}}, DEFAULT_TEST_TIMEOUT, 10000);
 	}
+
 }

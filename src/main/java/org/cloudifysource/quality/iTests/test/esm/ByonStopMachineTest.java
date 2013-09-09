@@ -48,8 +48,7 @@ public class ByonStopMachineTest extends AbstractFromXenToByonGSMTest {
 		AssertUtils.assertNotNull(agent);
 		repetitiveAssertNumberOfGSAsAdded(2, OPERATION_TIMEOUT);
 		
-		boolean success = stopByonMachine(getElasticMachineProvisioningCloudifyAdapter(), agent, OPERATION_TIMEOUT,TimeUnit.MILLISECONDS);
-		AssertUtils.assertTrue(success);
+		stopByonMachine(getElasticMachineProvisioningCloudifyAdapter(), agent, OPERATION_TIMEOUT,TimeUnit.MILLISECONDS);
 		repetitiveAssertNumberOfGSAsRemoved(1, OPERATION_TIMEOUT);
 		AssertUtils.assertEquals(1, admin.getGridServiceAgents().getSize());
 		

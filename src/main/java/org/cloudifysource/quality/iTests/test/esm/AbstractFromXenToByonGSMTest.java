@@ -102,8 +102,8 @@ public class AbstractFromXenToByonGSMTest extends AbstractByonCloudTest {
     	return ByonMachinesUtils.startNewByonMachines(elasticMachineProvisioningCloudifyAdapter, numOfMachines, duration, timeUnit);
     }
     
-    protected static boolean stopByonMachine (ElasticMachineProvisioningCloudifyAdapter elasticMachineProvisioningCloudifyAdapter, GridServiceAgent agent ,long duration,TimeUnit timeUnit) throws Exception {
-    	return ByonMachinesUtils.stopByonMachine(elasticMachineProvisioningCloudifyAdapter, agent, duration, timeUnit);
+    protected static void stopByonMachine (ElasticMachineProvisioningCloudifyAdapter elasticMachineProvisioningCloudifyAdapter, GridServiceAgent agent ,long duration,TimeUnit timeUnit) throws Exception {
+    	ByonMachinesUtils.stopByonMachine(elasticMachineProvisioningCloudifyAdapter, agent, duration, timeUnit);
     }
 
     /**

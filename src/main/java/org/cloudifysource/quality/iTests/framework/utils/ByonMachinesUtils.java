@@ -96,8 +96,8 @@ public class ByonMachinesUtils {
         return result;
     }
 	
-	public static boolean stopByonMachine (ElasticMachineProvisioningCloudifyAdapter elasticMachineProvisioningCloudifyAdapter, GridServiceAgent agent ,long duration,TimeUnit timeUnit) throws Exception {
-		return elasticMachineProvisioningCloudifyAdapter.stopMachine(agent, duration, timeUnit);
+	public static void stopByonMachine (ElasticMachineProvisioningCloudifyAdapter elasticMachineProvisioningCloudifyAdapter, GridServiceAgent agent ,long duration,TimeUnit timeUnit) throws Exception {
+		elasticMachineProvisioningCloudifyAdapter.stopMachine(agent, duration, timeUnit);
 	}
 
 }

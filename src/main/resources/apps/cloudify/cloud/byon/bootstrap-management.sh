@@ -167,8 +167,9 @@ sed -i "2i export LOOKUPLOCATORS=$LUS_IP_ADDRESS" setenv.sh || error_exit $? "Fa
 sed -i "2i export PATH=$JAVA_HOME/bin:$PATH" setenv.sh || error_exit $? "Failed updating setenv.sh"
 sed -i "2i export JAVA_HOME=$JAVA_HOME" setenv.sh || error_exit $? "Failed updating setenv.sh"
 
-echo Setting NIC_ADDR value to: $NIC_ADDR
-echo Setting LOOKUPLOCATORS value to: $LOOKIPLOCATORS
+echo Setting NIC_ADDR value to: $MACHINE_IP_ADDRESS
+echo Setting LOOKUPLOCATORS value to: $LUS_IP_ADDRESS
+
 
 # START AGENT ALONE OR WITH MANAGEMENT
 if [ -f nohup.out ]; then

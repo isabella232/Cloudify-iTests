@@ -44,12 +44,24 @@ public class CustomCloudDriver extends org.cloudifysource.esc.driver.provisionin
 	CloudProvisioningException {
 		println("In start management")
 		ManagementProvisioningContext ctx =  new ProvisioningContextAccess().getManagementProvisioiningContext()
+
+		// Adding this to scan for a possible NPE reported by user
+		File cloudFile = ctx.getCloudFile()
+		if(cloudFile == null) { 
+			throw new IllegalStateException("Expected to get the cloud file in provisioning context, got null instead")
+		}
+		File cloudDirectory = cloudFile.getParentFile()
+		if(cloudDirectory == null) {
+			throw new IllegalStateException("Expected to get a non-null cloud directory, got null instead")
+		}
+
 		println "Context is: " + ctx
 		MachineDetails[] mds = super.startManagementMachines(duration, unit);
 		for (md in mds) {
 			md.setAgentRunning(true)
 		}
-
+		println("Cloud directory located successfully")
+		
 		ComputeTemplate template = this.cloud.getCloudCompute().getTemplates().get(this.cloudTemplateName)
 		final String[] scripts = ctx.createManagementEnvironmentScript(mds, template);
 		ExecutorService executorService = Executors.newFixedThreadPool(scripts.length);

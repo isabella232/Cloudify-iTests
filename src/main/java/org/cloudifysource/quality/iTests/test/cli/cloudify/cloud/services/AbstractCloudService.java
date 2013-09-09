@@ -1,14 +1,23 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services;
 
 import iTests.framework.tools.SGTestHelper;
-import iTests.framework.utils.*;
+import iTests.framework.utils.AssertUtils;
 import iTests.framework.utils.AssertUtils.RepetitiveConditionProvider;
+import iTests.framework.utils.IOUtils;
+import iTests.framework.utils.LogUtils;
+import iTests.framework.utils.SSHUtils;
+import iTests.framework.utils.ScriptUtils;
+import iTests.framework.utils.WebUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.cloudifysource.domain.cloud.Cloud;
@@ -18,10 +27,6 @@ import org.cloudifysource.quality.iTests.test.cli.cloudify.CloudTestUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
 import org.openspaces.admin.Admin;
 import org.testng.Assert;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
 
 public abstract class AbstractCloudService implements CloudService {
 

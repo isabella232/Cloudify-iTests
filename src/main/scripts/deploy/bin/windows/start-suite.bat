@@ -10,6 +10,9 @@ set SUITE_TYPE=%7
 set MAVEN_PROJECTS_VERSION_XAP=%8
 set MAVEN_PROJECTS_VERSION_CLOUDIFY=%9
 
+shift
+set ENABLE_LOGSTASH=%9
+
 @cd %LOCAL_SGPATH%\bin
 
 set selenium.browser=Firefox
@@ -39,6 +42,7 @@ pushd %SGTEST_HOME%
 call mvn test -U -P tgrid-cloudify-iTests ^
 -DiTests.cloud.enabled=false ^
 -DiTests.buildNumber=${BUILD_NUMBER} ^
+-DiTests.enableLogstash=${ENABLE_LOGSTASH} ^
 -Dcloudify.home=%RUNTIME_BUILD_LOCATION% ^
 -Dincludes="%INCLUDE%" ^
 -Dexcludes="%EXCLUDE%" ^

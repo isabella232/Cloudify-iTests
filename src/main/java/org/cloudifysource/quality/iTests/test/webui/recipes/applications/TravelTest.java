@@ -4,7 +4,7 @@ import iTests.framework.utils.AssertUtils;
 import iTests.framework.utils.AssertUtils.RepetitiveConditionProvider;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.Collection;
 
 import org.cloudifysource.dsl.utils.ServiceUtils;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
@@ -26,7 +26,6 @@ import com.gigaspaces.webuitf.services.ServicesTab;
 import com.gigaspaces.webuitf.topology.TopologyTab;
 import com.gigaspaces.webuitf.topology.applicationmap.ApplicationMap;
 import com.gigaspaces.webuitf.topology.applicationmap.ApplicationNode;
-import com.gigaspaces.webuitf.topology.applicationmap.Connector;
 import com.gigaspaces.webuitf.topology.healthpanel.HealthPanel;
 
 public class TravelTest extends AbstractSeleniumApplicationRecipeTest {
@@ -152,11 +151,20 @@ public class TravelTest extends AbstractSeleniumApplicationRecipeTest {
 		AbstractTestSupport.assertTrue(tomcat != null);
 		AbstractTestSupport.assertTrue(tomcat.getStatus().equals(DeploymentStatus.INTACT));
 
-		List<Connector> connectors = tomcat.getConnectors();
+		
+		Collection<String> connectorSources = appMap.getConnectorSources( TOMCAT_SERVICE_FULL_NAME );
+		Collection<String> connectorTargets = appMap.getConnectorTargets( TOMCAT_SERVICE_FULL_NAME );
+		
+		assertEquals( "Number of [" + TOMCAT_SERVICE_FULL_NAME + "] service sources must be one", 1, connectorSources.size() );
+		assertEquals( "Number of [" + TOMCAT_SERVICE_FULL_NAME + "] service targets must be one", 1, connectorTargets.size() );
+		
+		//TODO CHANGE CONNECTORS TESTS		
+		
+/*		List<Connector> connectors = tomcat.getConnectors();
 		AbstractTestSupport.assertTrue(connectors.size() == 1);
 		List<Connector> targets = tomcat.getTargets();
 		AbstractTestSupport.assertTrue(targets.size() == 1);
-		AbstractTestSupport.assertTrue(targets.get(0).getTarget().getName().equals(cassandra.getName()));
+		AbstractTestSupport.assertTrue(targets.get(0).getTarget().getName().equals(cassandra.getName()));*/
 
 		cassandra.select();
 

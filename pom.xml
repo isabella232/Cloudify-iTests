@@ -20,7 +20,7 @@
 
 	<repositories>
 		<repository>
-			<id>openspaces</id>
+			<id>org.openspaces</id>
 			<url>http://maven-repository.openspaces.org</url>
 		</repository>
 	</repositories>

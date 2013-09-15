@@ -4,12 +4,74 @@ import iTests.framework.utils.ScriptUtils;
 
 import java.io.IOException;
 
+import org.cloudifysource.dsl.internal.CloudifyConstants;
 import org.cloudifysource.dsl.internal.CloudifyConstants.DeploymentState;
 import org.testng.annotations.Test;
 
 public class ListServicesAndApplicationsCommandsTest extends AbstractLocalCloudTest{
 
     private static final int ONE_SEC_IN_MILLI = 1000;
+    
+    private static final String LIST_TWO_SERVICES_TEXT = "\ndefault  STARTED\tAuthorization Groups: \n\tdefault.tomcat  STARTED (1/1)\n\tdefault.solr  STARTED (1/1)\n>>> \n>>>";
+	private static final String LIST_TWO_APPLICATIONS_TEXT = "list-applications \nhelloworld  STARTED\tAuthorization Groups: \n\thelloworld.tomcat  STARTED (1/1)\nsimple  STARTED\tAuthorization Groups: \n\tsimple.simple  STARTED (1/1)\n\n>>>";
+	private static final String LIST_PETCLINIC_SERVICES_TEXT = "\npetclinic  STARTED\tAuthorization Groups: \n\tpetclinic.mongod  STARTED (1/1)\n\tpetclinic.tomcat  STARTED (1/1)\n>>>";
+	private static final String LIST_ZERO_SERVICES_OUTPUT = ">>> list-services \n\n>>> ";
+	private static final String LIST_ZERO_APPLICATIONS_OUTPUT = ">>> list-applications \n\n>>> \n>>>";
+	
+	
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
+    public void listServicesWithMultipleServices() throws Exception {
+    	CommandTestUtils.runCommandAndWait("connect " + restUrl + ";install-service tomcat");
+        CommandTestUtils.runCommandAndWait("connect " + restUrl + ";install-service solr");
+        String listServicesOutput = CommandTestUtils.runCommandAndWait("connect " + restUrl + ";list-services");
+        assertTrue("List services yielded a wrong output: " + listServicesOutput
+        		+ CloudifyConstants.NEW_LINE + "Expected output: " + LIST_TWO_SERVICES_TEXT, 
+        listServicesOutput.contains(LIST_TWO_SERVICES_TEXT));
+        
+        CommandTestUtils.runCommandAndWait("connect " + restUrl + ";uninstall-service tomcat");
+        CommandTestUtils.runCommandAndWait("connect " + restUrl + ";uninstall-service solr");
+    }
+    
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
+    public void listServicesWithinAnApplication() throws Exception {
+    	CommandTestUtils.runCommandAndWait("connect " + restUrl + ";install-application petclinic-simple");
+        String listServicesOutput = CommandTestUtils.runCommandAndWait("connect " + restUrl + ";use-application petclinic;list-services");
+        assertTrue("List services yielded a wrong output: " + listServicesOutput
+        		+ CloudifyConstants.NEW_LINE + "Expected output: " + LIST_PETCLINIC_SERVICES_TEXT, 
+        listServicesOutput.contains(LIST_PETCLINIC_SERVICES_TEXT));
+        
+        CommandTestUtils.runCommandAndWait("connect " + restUrl + ";uninstall-application petclinic");
+    }
+    
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
+    public void listServicesWithZeroServices() throws Exception {
+        String listServicesOutput = CommandTestUtils.runCommandAndWait("connect " + restUrl + ";list-services");
+        assertTrue("List services yielded a wrong output: " + listServicesOutput 
+        		+ CloudifyConstants.NEW_LINE + "Expected output: " + LIST_ZERO_SERVICES_OUTPUT, 
+        		listServicesOutput.contains(LIST_ZERO_SERVICES_OUTPUT));        
+    }
+    
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
+    public void listApplicationsWithMultipleApplications() throws Exception {
+    	CommandTestUtils.runCommandAndWait("connect " + restUrl + ";install-application helloworld");
+        String simpleApplicationPath = CommandTestUtils.getPath("src/main/resources/apps/USM/usm/applications/simple");
+        CommandTestUtils.runCommandAndWait("connect " + restUrl + ";install-application " + simpleApplicationPath);
+        String listApplicationsOutput = CommandTestUtils.runCommandAndWait("connect " + restUrl + ";list-applications");
+        assertTrue("List applications yielded a wrong output: " + listApplicationsOutput
+        		+ CloudifyConstants.NEW_LINE + "Expected output: " + LIST_TWO_APPLICATIONS_TEXT, 
+        		listApplicationsOutput.contains(LIST_TWO_APPLICATIONS_TEXT));
+        
+        CommandTestUtils.runCommandAndWait("connect " + restUrl + ";uninstall-application helloworld");
+        CommandTestUtils.runCommandAndWait("connect " + restUrl + ";uninstall-application simple");
+    }
+    
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
+    public void listApplicationsWithZeroApplications() throws Exception {
+        String listApplicationsOutput = CommandTestUtils.runCommandAndWait("connect " + restUrl + ";list-applications");
+        assertTrue("List applications yielded a wrong output: " + listApplicationsOutput 
+        		+ CloudifyConstants.NEW_LINE + "Expected output: " + LIST_ZERO_APPLICATIONS_OUTPUT, 
+        		listApplicationsOutput.contains(LIST_ZERO_APPLICATIONS_OUTPUT));        
+    }
 
     @Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
     public void checkListApplicationsCommandOnSuccessfulInstallation() throws Exception{

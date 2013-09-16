@@ -5,6 +5,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.text.MessageFormat;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.commons.io.FileUtils;
@@ -28,6 +30,11 @@ public class CommandTestUtils {
 	 */
 	public static String runCommand(final String command, boolean wait, boolean failCommand) throws IOException, InterruptedException {
 		return runLocalCommand( getCloudifyCommand(command), wait, failCommand);
+	}
+
+	public static ProcessOutputPair runCommand(final String command, long timeoutMillis, boolean backgroundConsole, boolean waitForForegroundConsole,
+                                               boolean failCommand, AtomicReference<ThreadSignal> threadSignal, final Map<String, String> additionalProcessVariables, final String... expectedMessages) throws IOException, InterruptedException{
+		return runLocalCommand(getCloudifyCommand(command), ".", timeoutMillis, backgroundConsole, waitForForegroundConsole, failCommand, threadSignal, additionalProcessVariables, expectedMessages);
 	}
 
 	/**
@@ -208,6 +215,154 @@ public class CommandTestUtils {
 		FileUtils.writeStringToFile(tempFile, command);
 		return runCommandAndWait("-f=" + tempFile.getAbsolutePath());
 	}
+
+    /**
+     * General method for running local commands and output the result to the log. Can be used in the following manors: <p>
+     * 1) simply run command<p>
+     * 2) run commands, wait for the output and return it<p>
+     * 3) run commands and inspect the output as the command runs, waiting for some message
+     *
+     * @param command
+     * @param expectedMessages
+     * @param workingDirPath
+     * @param timeoutMillis - timeout for repetitive assert on command's output containing expectedMessage in background console
+     * @param backgroundConsole - If true then the command to be run is expected to not return
+     * and keep the console in the background. Since we can't wait until the command will end to inspect the output
+     * handleOutputOfBlockingCommand() is called to inspect the output on the fly, according to timeoutMillis and expectedMessage.
+     * @param waitForForegroundConsole - If the console is foreground this will indicate if the method waits for the command to return or not.
+     * @param failCommand - used for determining if the command is expected to fail (in foreground case)
+     * @return
+     * @throws java.io.IOException
+     * @throws InterruptedException
+     */
+    public static ProcessOutputPair runLocalCommand(final String command, final String workingDirPath,
+                                                    long timeoutMillis, boolean backgroundConsole, boolean waitForForegroundConsole,
+                                                    boolean failCommand, AtomicReference<ThreadSignal> threadSignal, final Map<String, String> additionalProcessVariables,final String... expectedMessages) throws IOException, InterruptedException{
+
+        if(backgroundConsole && waitForForegroundConsole){
+            throw new IllegalStateException("Usage: The console can't be both background and foreground");
+        }
+
+        String cmdLine = command;
+        if (isWindows()) {
+            cmdLine = "cmd /c call " + cmdLine;
+        }
+
+        final String[] parts = cmdLine.split(" ");
+        final ProcessBuilder pb = new ProcessBuilder(parts);
+
+        if(workingDirPath != null){
+            File workingDir = new File(workingDirPath);
+            if(!workingDir.exists() || !workingDir.isDirectory()){
+                throw new IOException(workingDirPath + " should be a path of a directory");
+            }
+            pb.directory(workingDir);
+        }
+        if(additionalProcessVariables != null){
+            Map<String, String> env = pb.environment();
+            for(Map.Entry<String, String> additinalVar : additionalProcessVariables.entrySet()){
+                env.put(additinalVar.getKey(), additinalVar.getValue());
+            }
+        }
+        pb.redirectErrorStream(true);
+
+        LogUtils.log("Executing Command line: " + cmdLine);
+        final Process process = pb.start();
+
+        if(backgroundConsole){
+            return new ProcessOutputPair(process, handleOutputOfBackgroundCommand(threadSignal, process, command, timeoutMillis, expectedMessages));
+        }
+        if(waitForForegroundConsole){
+            return new ProcessOutputPair(process, handleCliOutput(process, failCommand));
+        }
+        return new ProcessOutputPair(process, null);
+    }
+
+    public static String handleOutputOfBackgroundCommand(final AtomicReference<ThreadSignal> threadSignal ,Process process,
+                                                         final String command , long timeoutMillis, final String... expectedMessages) throws IOException, InterruptedException{
+
+        final BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));
+        final StringBuilder consoleOutput = new StringBuilder("");
+        final AtomicReference<Throwable> exception = new AtomicReference<Throwable>();
+        final AtomicBoolean foundOutputMessages = new AtomicBoolean(false);
+
+        Thread thread = new Thread(new Runnable() {
+
+            String line = null;
+            boolean foundAllExpectedMessages = false;
+
+            @Override
+            public void run() {
+                try {
+                    while (threadSignal.get() == ThreadSignal.RUN_SIGNAL && (br.ready() ? ((line = br.readLine()) != null) : sleepAndReturnTrue())) {
+                        //prevents repetitive logging of the same line
+                        if(line != null){
+                            LogUtils.log(line);
+                            consoleOutput.append(line + "\n");
+                            line = null;
+                        }
+                        foundAllExpectedMessages = stringContainsMultipleStrings(consoleOutput.toString(), expectedMessages);
+                        foundOutputMessages.set(foundAllExpectedMessages);
+                    }
+                    threadSignal.set(ThreadSignal.STOPPED); // signal that the thread finished
+                } catch (Throwable e) {
+                    exception.set(e);
+                }
+            }
+        });
+        thread.setDaemon(true);
+        thread.start();
+
+
+        AssertUtils.repetitiveAssertTrue("The expected messages were not returned by the command " + command
+                , new AssertUtils.RepetitiveConditionProvider() {
+
+            @Override
+            public boolean getCondition() {
+                return foundOutputMessages.get();
+            }
+        }, timeoutMillis);
+
+        AssertUtils.assertTrue(exception.get() == null);
+
+        return consoleOutput.toString();
+    }
+
+    public static enum ThreadSignal{RUN_SIGNAL, STOP_SIGNAL, STOPPED}
+
+    public static class ProcessOutputPair{
+
+        Process process;
+        String output;
+
+        public ProcessOutputPair(Process process, String output){
+            this.process = process;
+            this.output = output;
+        }
+
+        public Process getProcess(){
+            return process;
+        }
+        public String getOutput(){
+            return output;
+        }
+
+    }
+
+    private static boolean sleepAndReturnTrue() throws InterruptedException {
+        AssertUtils.sleep(100);
+        return true;
+    }
+
+    public static boolean stringContainsMultipleStrings(String s, String[] expecteds){
+
+        for(String expected : expecteds){
+            if(!s.contains(expected)){
+                return false;
+            }
+        }
+        return true;
+    }
 	
 	private static String getCommandExtention() {
 		String osExtention;

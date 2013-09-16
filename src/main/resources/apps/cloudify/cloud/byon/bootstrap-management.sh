@@ -241,6 +241,9 @@ fi
 # Execute post-bootstrap customization script if exists
 run_script "post-bootstrap"
 
+# Add agent restart command to scheduled tasks.
+cat <(crontab -l) <(echo "@reboot nohup ~/tmp/gigaspaces/tools/cli/cloudify.sh $START_COMMAND $START_COMMAND_ARGS") | crontab -
+
 nohup ./cloudify.sh $START_COMMAND $START_COMMAND_ARGS
 
 RETVAL=$?

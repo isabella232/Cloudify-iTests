@@ -70,7 +70,7 @@ public class AgentRestartTest extends AbstractAgentMaintenanceModeTest {
 	private void repetativeClusterStable(final long timeout, final TimeUnit unit, CountDownLatch added, CountDownLatch removed) 
 			throws InterruptedException {
 		assertTrue("detected agent added after cluster was stabilized.", !added.await(timeout, unit));
-		assertTrue("detected agent removed after cluster was stabilized.", removed.getCount() != 0);
+		assertTrue("detected agent removed after cluster was stabilized.", removed.getCount() == 1);
 	}
 
 	@Override

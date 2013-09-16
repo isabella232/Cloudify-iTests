@@ -32,7 +32,6 @@ mvn test -X -e -U -P tgrid-cloudify-iTests \
 -DiTests.buildNumber=${BUILD_NUMBER} \
 -DiTests.enableLogstash=${ENABLE_LOGSTASH} \
 -Dsgtest.buildNumber=${BUILD_NUMBER} \
--DiTests.enableLogstash=${ENABLE_LOGSTASH} \
 -Dcloudify.home=${BUILD_DIR} \
 -Dincludes=${INCLUDE} \
 -Dexcludes=${EXCLUDE} \

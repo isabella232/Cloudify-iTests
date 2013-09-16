@@ -7,6 +7,7 @@ import java.util.Map;
 
 import junit.framework.Assert;
 
+import org.cloudifysource.dsl.internal.CloudifyConstants;
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.testng.annotations.Test;
 
@@ -42,8 +43,7 @@ public class InstallServiceWithOverridesFileTest extends OverridesTest {
 		final File overridesFile = new File(OVERRIDES_FILE_PATH);
 
 		try {
-//			restUrl = "http://localhost:8888/rest";
-			RestTestUtils.installServiceUsingRestApi(restUrl, SERVICE_NAME, serviceDir, null, null, overridesFile);
+			RestTestUtils.installServiceUsingNewRestAPI(restUrl, serviceDir, CloudifyConstants.DEFAULT_APPLICATION_NAME, SERVICE_NAME, overridesFile, 5, null);
 
 			// get PU
 			final ProcessingUnit processingUnit = getProcessingUnit("default." + SERVICE_NAME);

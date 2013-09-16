@@ -71,10 +71,10 @@ public class InstallApplicationWithOverridesFileTest extends OverridesTest {
 	 * @throws InterruptedException .
 	 */
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
-	public void applicationWithOverridesFilePostedDirectlyTest()
+	public void applicationWithOverridesFileNewRestApiTest()
 			throws IOException, DSLException, PackagingException, InterruptedException {
 		try {
-			RestTestUtils.installApplicationUsingRestApi(restUrl, APPLICATION_OVERRIDEN_NAME, new File(APPLICATION_DIR_PATH), new File(OVERRIDES_FILE_PATH));
+			RestTestUtils.installApplicationUsingNewRestApi(restUrl, APPLICATION_OVERRIDEN_NAME, new File(APPLICATION_DIR_PATH), new File(OVERRIDES_FILE_PATH), null);
 			// asserts
 			ProcessingUnit processingUnit = getProcessingUnit(PU_NAME);
 			assertProcessingUnit(processingUnit);

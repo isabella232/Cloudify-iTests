@@ -29,8 +29,8 @@ public class AgentRestartTest extends AbstractAgentMaintenanceModeTest {
         final CountDownLatch removed = new CountDownLatch(1);
 		final CountDownLatch added = new CountDownLatch(3);
 		
-		final CountDownLatch removedAfterStabilized = new CountDownLatch((int) removed.getCount());
-		final CountDownLatch addedAfterStabilized = new CountDownLatch((int) added.getCount());
+		final CountDownLatch removedAfterStabilized = new CountDownLatch((int) removed.getCount() + 1);
+		final CountDownLatch addedAfterStabilized = new CountDownLatch((int) added.getCount() + 1);
         final GridServiceAgentAddedEventListener agentListener = new GridServiceAgentLifecycleEventListener() {
 			
 			@Override

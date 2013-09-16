@@ -27,12 +27,11 @@ echo clouds=$SUPPORTED_CLOUDS
 mkdir ${BUILD_DIR}/../${SUITE_NAME}
 cd ${BUILD_DIR}/../Cloudify-iTests
 
-mvn test -X -e -U -P tgrid-cloudify-iTests \
+mvn test -e -U -P tgrid-cloudify-iTests \
 -DiTests.cloud.enabled=false \
 -DiTests.buildNumber=${BUILD_NUMBER} \
 -DiTests.enableLogstash=${ENABLE_LOGSTASH} \
 -Dsgtest.buildNumber=${BUILD_NUMBER} \
--DiTests.enableLogstash=${ENABLE_LOGSTASH} \
 -Dcloudify.home=${BUILD_DIR} \
 -Dincludes=${INCLUDE} \
 -Dexcludes=${EXCLUDE} \

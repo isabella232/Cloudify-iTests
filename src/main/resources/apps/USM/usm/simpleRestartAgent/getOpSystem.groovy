@@ -1,0 +1,1 @@
+return System.getProperty("os.name")

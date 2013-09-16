@@ -1,5 +1,9 @@
 package org.cloudifysource.quality.iTests.test.webui.recipes.services;
 
+import iTests.framework.utils.AssertUtils;
+import iTests.framework.utils.AssertUtils.RepetitiveConditionProvider;
+import iTests.framework.utils.LogUtils;
+
 import java.io.IOException;
 
 import org.junit.Assert;
@@ -16,10 +20,13 @@ import com.gigaspaces.webuitf.topology.applicationmap.ApplicationMap;
 import com.gigaspaces.webuitf.topology.applicationmap.ApplicationNode;
 import com.gigaspaces.webuitf.topology.healthpanel.HealthPanel;
 
+
 public class UsmPuServiceMonitorsInsteadOfDetailsTest extends AbstractSeleniumServiceRecipeTest {
 	
-	private static final String ACTIVEMQ_FULL_SERVICE_NAME = DEFAULT_APPLICATION_NAME + ".activemq";
+	private static final String ACTIVEMQ_SERVICE_NAME = "activemq";
 	private static final String STORE_PERCENT_USAGE = "gs-metric-title-CUSTOM_Store_Percent_Usage";
+	
+	private ApplicationNode activemq;
 	
 	@Override
 	@BeforeMethod
@@ -42,11 +49,20 @@ public class UsmPuServiceMonitorsInsteadOfDetailsTest extends AbstractSeleniumSe
 		
 		TopologyTab topologyTab = mainNav.switchToTopology();
 		
-		ApplicationMap appMap = topologyTab.getApplicationMap();
+		final ApplicationMap appMap = topologyTab.getApplicationMap();
 			
 		topologyTab.selectApplication(DEFAULT_APPLICATION_NAME);
 		
-		ApplicationNode activemq = appMap.getApplicationNode(ACTIVEMQ_FULL_SERVICE_NAME);
+		RepetitiveConditionProvider condition = new RepetitiveConditionProvider() {
+			@Override
+			public boolean getCondition() {
+				activemq = appMap.getApplicationNode( ACTIVEMQ_SERVICE_NAME );
+				LogUtils.log( "Within condition, activemq=" + activemq );
+				return activemq != null;
+			}
+		};
+		
+		AssertUtils.repetitiveAssertTrue( "[" + ACTIVEMQ_SERVICE_NAME + "] must be displayed", condition, waitingTime );		
 		
 		HealthPanel healthPanel = topologyTab.getTopologySubPanel().switchToHealthPanel();
 		

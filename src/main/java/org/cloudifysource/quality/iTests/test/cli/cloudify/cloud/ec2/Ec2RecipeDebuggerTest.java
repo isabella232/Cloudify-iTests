@@ -1,10 +1,13 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.ec2;
 
-import com.j_spaces.kernel.PlatformVersion;
 import iTests.framework.tools.SGTestHelper;
 import iTests.framework.utils.AssertUtils;
 import iTests.framework.utils.LogUtils;
 import iTests.framework.utils.SSHUtils;
+
+import java.net.URL;
+import java.util.concurrent.atomic.AtomicReference;
+
 import org.cloudifysource.quality.iTests.framework.utils.ServiceInstaller;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
@@ -15,10 +18,7 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.concurrent.atomic.AtomicReference;
+import com.j_spaces.kernel.PlatformVersion;
 
 /**
  * User: nirb

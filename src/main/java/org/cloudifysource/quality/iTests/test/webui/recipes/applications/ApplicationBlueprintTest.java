@@ -5,6 +5,7 @@ import iTests.framework.utils.AssertUtils.RepetitiveConditionProvider;
 import iTests.framework.utils.LogUtils;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.concurrent.TimeUnit;
 
@@ -73,6 +74,11 @@ public class ApplicationBlueprintTest extends AbstractSeleniumApplicationRecipeT
 		
 		assertEquals( "Number of [" + checkedServiceName + "] service sources must be one", 1, connectorSources.size() );
 		assertEquals( "Number of [" + checkedServiceName + "] service targets must be one", 1, connectorTargets.size() );
+		
+		LogUtils.log( "Sources for service [" + checkedServiceName + "] are: " + 
+				Arrays.toString( connectorSources.toArray( new String[connectorSources.size()] ) ) );
+		LogUtils.log( "Targets for service [" + checkedServiceName + "] are: " + 
+				Arrays.toString( connectorTargets.toArray( new String[connectorTargets.size()] ) ) );
 		
 		assertTrue( "Target of [" + checkedServiceName + "] service must be [" + 
 				CASSANDRA_SERVICE_NAME + "]", connectorTargets.contains(CASSANDRA_SERVICE_NAME) );

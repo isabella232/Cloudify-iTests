@@ -2,9 +2,11 @@ package org.cloudifysource.quality.iTests.test.webui.recipes.applications;
 
 import static org.testng.AssertJUnit.fail;
 import iTests.framework.utils.AssertUtils;
+import iTests.framework.utils.LogUtils;
 import iTests.framework.utils.AssertUtils.RepetitiveConditionProvider;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collection;
 
 import org.openspaces.admin.machine.Machine;
@@ -212,6 +214,11 @@ public class PetClinicTest extends AbstractSeleniumApplicationRecipeTest {
 		Collection<String> tomcatConnectorTargets = appMap.getConnectorTargets( TOMCAT_SERVICE_NAME );
 		Collection<String> tomcatConnectorSources = appMap.getConnectorSources( TOMCAT_SERVICE_NAME );
 		
+		LogUtils.log( "Sources for service [" + TOMCAT_SERVICE_NAME + "] are: " + 
+				Arrays.toString( tomcatConnectorSources.toArray( new String[tomcatConnectorSources.size()] ) ) );
+		LogUtils.log( "Targets for service [" + TOMCAT_SERVICE_NAME + "] are: " + 
+				Arrays.toString( tomcatConnectorTargets.toArray( new String[tomcatConnectorTargets.size()] ) ) );		
+		
 		assertEquals( "[" + TOMCAT_SERVICE_NAME + "] connector tagets must be 1", tomcatConnectorTargets.size(), 1 );
 		assertEquals( "[" + TOMCAT_SERVICE_NAME + "] connector sources must be 1", tomcatConnectorSources.size(), 1 );
 		
@@ -235,6 +242,11 @@ public class PetClinicTest extends AbstractSeleniumApplicationRecipeTest {
 //		assertEquals( "checking number of mongos connectors (the edges connected to mongos)", 3, mongosConnectors.size() );
 		Collection<String> mongosConnectorTargets = appMap.getConnectorTargets( MONGOS_SERVICE_NAME );
 		Collection<String> mongosConnectorSources = appMap.getConnectorSources( MONGOS_SERVICE_NAME );
+		
+		LogUtils.log( "Sources for service [" + MONGOS_SERVICE_NAME + "] are: " + 
+				Arrays.toString( mongosConnectorSources.toArray( new String[mongosConnectorSources.size()] ) ) );
+		LogUtils.log( "Targets for service [" + MONGOS_SERVICE_NAME + "] are: " + 
+				Arrays.toString( mongosConnectorTargets.toArray( new String[mongosConnectorTargets.size()] ) ) );
 		
 		assertEquals( "[" + MONGOS_SERVICE_NAME + "] connector tagets must be 1", mongosConnectorTargets.size(), 2 );
 		assertEquals( "[" + MONGOS_SERVICE_NAME + "] connector sources must be 1", mongosConnectorSources.size(), 1 );

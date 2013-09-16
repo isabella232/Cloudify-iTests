@@ -1,9 +1,11 @@
 package org.cloudifysource.quality.iTests.test.webui.recipes.applications;
 
 import iTests.framework.utils.AssertUtils;
+import iTests.framework.utils.LogUtils;
 import iTests.framework.utils.AssertUtils.RepetitiveConditionProvider;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collection;
 
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
@@ -170,6 +172,11 @@ public class TravelTest extends AbstractSeleniumApplicationRecipeTest {
 		
 		Collection<String> connectorSources = appMap.getConnectorSources( checkedServiceName );
 		Collection<String> connectorTargets = appMap.getConnectorTargets( checkedServiceName );
+		
+		LogUtils.log( "Sources for service [" + checkedServiceName + "] are: " + 
+				Arrays.toString( connectorSources.toArray( new String[connectorSources.size()] ) ) );
+		LogUtils.log( "Targets for service [" + checkedServiceName + "] are: " + 
+				Arrays.toString( connectorTargets.toArray( new String[connectorTargets.size()] ) ) );			
 		
 		assertEquals( "Number of [" + checkedServiceName + "] service sources must be one", 1, connectorSources.size() );
 		assertEquals( "Number of [" + checkedServiceName + "] service targets must be one", 1, connectorTargets.size() );

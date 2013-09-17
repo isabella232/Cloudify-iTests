@@ -61,7 +61,7 @@ public class AgentRestartTest extends AbstractAgentMaintenanceModeTest {
 		assertTrue("agent machine was not added as expected.",added.await(DEFAULT_WAIT_MINUTES, TimeUnit.MINUTES));
 		
 		assertTrue("detected agent removed after cluster was stabilized.", !removedAfterStabilized.await((long) 5, TimeUnit.MINUTES));
-		assertEquals("detected agent added after cluster was stabilized.", 1,addedAfterStabilized.getCount());
+		assertTrue("detected agent added after cluster was stabilized.", addedAfterStabilized.getCount() == 1);
 		
 		assertNumberOfMachines(2);
 		

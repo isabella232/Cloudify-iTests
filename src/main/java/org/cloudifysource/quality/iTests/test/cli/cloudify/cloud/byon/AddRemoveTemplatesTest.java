@@ -73,6 +73,7 @@ public class AddRemoveTemplatesTest extends AbstractByonAddRemoveTemplatesTest {
 		String templateName = template.getTemplateName();
 		templatesHandler.addTemplatesToCloud(folderHandler);
 
+		// remove template's file from remote machine
 		String templateRemotePath = getTemplateRemoteDirFullPath(templateName) + template.getTemplateFile().getName();
 		SSHUtils.runCommand(mngMachinesIP[0], AbstractTestSupport.OPERATION_TIMEOUT, "rm -f " + templateRemotePath, USER, PASSWORD);
 
@@ -80,7 +81,8 @@ public class AddRemoveTemplatesTest extends AbstractByonAddRemoveTemplatesTest {
 		
 		ProcessingUnit restPu = admin.getProcessingUnits().getProcessingUnit("rest");
 		
-		AssertUtils.assertTrue("Failed to discover " + plannedNumberOfRestInstances + " before grid service container restart", restPu.waitFor(plannedNumberOfRestInstances, AbstractTestSupport.OPERATION_TIMEOUT, TimeUnit.MILLISECONDS));
+		AssertUtils.assertTrue("Failed to discover " + plannedNumberOfRestInstances + " before grid service container restart",
+				restPu.waitFor(plannedNumberOfRestInstances, AbstractTestSupport.OPERATION_TIMEOUT, TimeUnit.MILLISECONDS));
 		
 		final ProcessingUnitInstance restInstance = restPu.getInstances()[0];
 		
@@ -108,15 +110,17 @@ public class AddRemoveTemplatesTest extends AbstractByonAddRemoveTemplatesTest {
 			}
 		}
 		
-		AssertUtils.assertTrue("Failed to discover " + plannedNumberOfRestInstances + " after grid service container restart", restPu.waitFor(plannedNumberOfRestInstances, AbstractTestSupport.OPERATION_TIMEOUT, TimeUnit.MILLISECONDS));
+		AssertUtils.assertTrue("Failed to discover " + plannedNumberOfRestInstances + " after grid service container restart", 
+				restPu.waitFor(plannedNumberOfRestInstances, AbstractTestSupport.OPERATION_TIMEOUT, TimeUnit.MILLISECONDS));
 		
 
+		// trying to install service with the template missing its file.
 		String serviceName = templateName + "_service";
 		String output = installServiceWithCoputeTemplate(serviceName, templateName, true);
 
 		AssertUtils.assertNotNull(output);
 		AssertUtils.assertTrue("installation with non-existent template [" + templateName + "] succeeded, output was " 
-		+ output, output.contains("Could not find compute template: " + templateName));
+		+ output, output.contains("template [" + templateName + "] does not exist at clouds template list"));
 	}
 
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, enabled = true)

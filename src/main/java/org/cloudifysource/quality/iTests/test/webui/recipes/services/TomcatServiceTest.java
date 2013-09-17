@@ -109,13 +109,13 @@ public class TomcatServiceTest extends AbstractSeleniumServiceRecipeTest {
 			
 			@Override
 			public boolean getCondition() {
-				ApplicationNode simple = appMap.getApplicationNode(DEFAULT_TOMCAT_SERVICE_FULL_NAME);
+				ApplicationNode simple = appMap.getApplicationNode(DEFAULT_TOMCAT_SERVICE_NAME);
 				return simple != null;
 			}
 		};
 		AssertUtils.repetitiveAssertTrue("could not find tomcat application node after 10 seconds", condition, 10 * 1000);
 		
-		final ApplicationNode tomcatNode = appMap.getApplicationNode(DEFAULT_TOMCAT_SERVICE_FULL_NAME);
+		final ApplicationNode tomcatNode = appMap.getApplicationNode(DEFAULT_TOMCAT_SERVICE_NAME);
 		
 		takeScreenShot(this.getClass(), "tomcatRecipeTest","topology");
 		
@@ -127,7 +127,7 @@ public class TomcatServiceTest extends AbstractSeleniumServiceRecipeTest {
 			}
 		};
 		repetitiveAssertTrueWithScreenshot(
-				"tomcat service is displayed as " + appMap.getApplicationNode(DEFAULT_TOMCAT_SERVICE_FULL_NAME).getStatus() + 
+				"tomcat service is displayed as " + appMap.getApplicationNode(DEFAULT_TOMCAT_SERVICE_NAME).getStatus() + 
 					"even though it is installed", condition, this.getClass(), "tomcatRecipeTest", "tomcat-service");
 
 		HealthPanel healthPanel = topologyTab.getTopologySubPanel().switchToHealthPanel();

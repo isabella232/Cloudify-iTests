@@ -14,7 +14,6 @@ import java.util.Arrays;
 
 import org.apache.commons.io.FileUtils;
 import org.cloudifysource.dsl.utils.IPUtils;
-import org.cloudifysource.dsl.utils.ServiceUtils;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.AbstractLocalCloudTest;
 import org.cloudifysource.utilitydomain.openspaces.OpenspacesConstants;
@@ -54,11 +53,11 @@ import com.thoughtworks.selenium.Selenium;
 
 public abstract class AbstractWebUILocalCloudTest extends AbstractLocalCloudTest {
 	
-	protected static final String DEFAULT_ACTIVEMQ_FULL_SERVICE_NAME = ServiceUtils.getAbsolutePUName(DEFAULT_APPLICATION_NAME, "activemq");
-	protected static final String DEFAULT_CASSANDRA_FULL_SERVICE_NAME = ServiceUtils.getAbsolutePUName(DEFAULT_APPLICATION_NAME, "cassandra");
-	protected static final String DEFAULT_HSQLDB_FULL_SERVICE_NAME = ServiceUtils.getAbsolutePUName(DEFAULT_APPLICATION_NAME, "hsqldb");
-	protected static final String DEFAULT_SOLR_FULL_SERVICE_NAME = ServiceUtils.getAbsolutePUName(DEFAULT_APPLICATION_NAME, "solr");
-	protected static final String DEFAULT_TOMCAT_SERVICE_FULL_NAME = ServiceUtils.getAbsolutePUName(DEFAULT_APPLICATION_NAME, "tomcat");
+	protected static final String DEFAULT_ACTIVEMQ_SERVICE_NAME = "activemq";
+	protected static final String DEFAULT_CASSANDRA_SERVICE_NAME = "cassandra";
+	protected static final String DEFAULT_HSQLDB_SERVICE_NAME = "hsqldb";
+	protected static final String DEFAULT_SOLR_SERVICE_NAME = "solr";
+	protected static final String DEFAULT_TOMCAT_SERVICE_NAME = "tomcat";
     private static final String WEBUI_REVERSE_PROXY_URL = "http://localhost/reverse-proxy-testing/Gs_webui.html";
 
     public static String METRICS_ASSERTION_SUFFIX = " metric that is defined in the dsl is not displayed in the metrics panel";

@@ -26,9 +26,9 @@ service {
 			GridServiceAgent gridServiceAgent = serviceProcessingUnit.getInstances()[0].getMachine().getGridServiceAgent();
 			gridServiceAgent.shutdown();
 		},
-		"startMaintenanceModeLong" : {context.startMaintenanceMode("default.simpleRestartAgent", 10l, TimeUnit.MINUTES)},
-		"startMaintenanceModeShort" : {context.startMaintenanceMode("default.simpleRestartAgent", 1l, TimeUnit.SECONDS)},
-		"startMaintenanceMode" : {x -> context.startMaintenanceMode("default.simpleRestartAgent", Long.parseLong(x, 10), TimeUnit.SECONDS)},
+		"startMaintenanceModeLong" : {context.startMaintenanceMode(10l, TimeUnit.MINUTES)},
+		"startMaintenanceModeShort" : {context.startMaintenanceMode(1l, TimeUnit.SECONDS)},
+		"startMaintenanceMode" : {x -> context.startMaintenanceMode(Long.parseLong(x, 10), TimeUnit.SECONDS)},
 		"stopMaintenanceMode" : {x -> context.stopMaintenanceMode(x)}
 	])
 }

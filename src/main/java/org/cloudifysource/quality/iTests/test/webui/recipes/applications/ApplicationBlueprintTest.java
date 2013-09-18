@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.concurrent.TimeUnit;
 
+import org.cloudifysource.dsl.utils.ServiceUtils;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -18,10 +19,6 @@ import com.gigaspaces.webuitf.topology.applicationmap.ApplicationMap;
 import com.gigaspaces.webuitf.topology.applicationmap.ApplicationNode;
 
 public class ApplicationBlueprintTest extends AbstractSeleniumApplicationRecipeTest {
-	
-	private static final String TRAVEL_APPLICATION_NAME = "travel";
-	private static final String CASSANDRA_SERVICE_NAME = "cassandra";
-	private static final String TOMCAT_SERVICE_NAME = "tomcat";
 	
 	private ApplicationNode cassandra;
 	private ApplicationNode tomcat;
@@ -48,15 +45,17 @@ public class ApplicationBlueprintTest extends AbstractSeleniumApplicationRecipeT
 		RepetitiveConditionProvider condition = new RepetitiveConditionProvider() {
 			@Override
 			public boolean getCondition() {
-				cassandra = applicationMap.getApplicationNode( CASSANDRA_SERVICE_NAME );
+				cassandra = applicationMap.getApplicationNode( DEFAULT_CASSANDRA_SERVICE_NAME );
 				LogUtils.log( "Within condition, cassandra=" + cassandra );
 				return cassandra != null;
 			}
 		};
 		
-		AssertUtils.repetitiveAssertTrue( "[" + CASSANDRA_SERVICE_NAME + "] must be displayed", condition, waitingTime );		
+		AssertUtils.repetitiveAssertTrue( "[" + DEFAULT_CASSANDRA_SERVICE_NAME + "] must be displayed", condition, waitingTime );		
 		
-		final String checkedServiceName = TOMCAT_SERVICE_NAME;
+		final String checkedServiceName = DEFAULT_TOMCAT_SERVICE_NAME;
+		final String checkedServiceFullName = 
+				ServiceUtils.getAbsolutePUName(TRAVEL_APPLICATION_NAME,  DEFAULT_TOMCAT_SERVICE_NAME);
 		
 		condition = new RepetitiveConditionProvider() {
 			@Override
@@ -69,19 +68,21 @@ public class ApplicationBlueprintTest extends AbstractSeleniumApplicationRecipeT
 		
 		AssertUtils.repetitiveAssertTrue( "[" + checkedServiceName + "] must be displayed", condition, waitingTime );		
 
-		Collection<String> connectorSources = applicationMap.getConnectorSources( checkedServiceName );
-		Collection<String> connectorTargets = applicationMap.getConnectorTargets( checkedServiceName );
+		Collection<String> connectorSources = applicationMap.getConnectorSources( checkedServiceFullName );
+		Collection<String> connectorTargets = applicationMap.getConnectorTargets( checkedServiceFullName );
 		
-		assertEquals( "Number of [" + checkedServiceName + "] service sources must be one", 1, connectorSources.size() );
-		assertEquals( "Number of [" + checkedServiceName + "] service targets must be one", 1, connectorTargets.size() );
+		assertEquals( "Number of [" + checkedServiceFullName + "] service sources must be one", 0, connectorSources.size() );
+		assertEquals( "Number of [" + checkedServiceFullName + "] service targets must be one", 1, connectorTargets.size() );
 		
 		LogUtils.log( "Sources for service [" + checkedServiceName + "] are: " + 
 				Arrays.toString( connectorSources.toArray( new String[connectorSources.size()] ) ) );
 		LogUtils.log( "Targets for service [" + checkedServiceName + "] are: " + 
 				Arrays.toString( connectorTargets.toArray( new String[connectorTargets.size()] ) ) );
 		
-		assertTrue( "Target of [" + checkedServiceName + "] service must be [" + 
-				CASSANDRA_SERVICE_NAME + "]", connectorTargets.contains(CASSANDRA_SERVICE_NAME) );
+		String checkedCassandraFullServiceName = ServiceUtils.getAbsolutePUName(TRAVEL_APPLICATION_NAME, DEFAULT_CASSANDRA_SERVICE_NAME );
+		
+		assertTrue( "Target of [" + checkedServiceFullName + "] service must be [" + 
+				checkedCassandraFullServiceName + "]", connectorTargets.contains(checkedCassandraFullServiceName) );
 		
 		//TODO CHANGE CONNECTORS TESTS		
 		

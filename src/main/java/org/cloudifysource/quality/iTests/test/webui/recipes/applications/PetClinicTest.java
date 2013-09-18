@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 
+import org.cloudifysource.dsl.utils.ServiceUtils;
 import org.openspaces.admin.machine.Machine;
 import org.openspaces.admin.pu.DeploymentStatus;
 import org.testng.annotations.BeforeMethod;
@@ -31,11 +32,10 @@ import com.gigaspaces.webuitf.topology.applicationmap.ApplicationNode;
 
 public class PetClinicTest extends AbstractSeleniumApplicationRecipeTest {
 	
-	private static final String PETCLINIC_APPLICATION_NAME = "petclinic";
 	private static final String MONGOD_SERVICE_NAME = "mongod";
 	private static final String MONGOS_SERVICE_NAME = "mongos";
 	private static final String MONGOCFG_SERVICE_NAME = "mongoConfig";
-	private static final String TOMCAT_SERVICE_NAME = "tomcat";
+	private static final String TOMCAT_SERVICE_NAME = DEFAULT_TOMCAT_SERVICE_NAME;
 	private static final String APACHELB_SERVICE_NAME = "apacheLB";
 
 	@Override
@@ -211,21 +211,29 @@ public class PetClinicTest extends AbstractSeleniumApplicationRecipeTest {
 		ApplicationNode applicationNodeApacheLB = appMap.getApplicationNode(APACHELB_FULL_SERVICE_NAME);
 */
 		
-		Collection<String> tomcatConnectorTargets = appMap.getConnectorTargets( TOMCAT_SERVICE_NAME );
-		Collection<String> tomcatConnectorSources = appMap.getConnectorSources( TOMCAT_SERVICE_NAME );
+		final String checkedServiceFullName = 
+				ServiceUtils.getAbsolutePUName(PETCLINIC_APPLICATION_NAME,  TOMCAT_SERVICE_NAME);
 		
-		LogUtils.log( "Sources for service [" + TOMCAT_SERVICE_NAME + "] are: " + 
+		Collection<String> tomcatConnectorTargets = appMap.getConnectorTargets( checkedServiceFullName );
+		Collection<String> tomcatConnectorSources = appMap.getConnectorSources( checkedServiceFullName );
+		
+		LogUtils.log( "Sources for service [" + checkedServiceFullName + "] are: " + 
 				Arrays.toString( tomcatConnectorSources.toArray( new String[tomcatConnectorSources.size()] ) ) );
-		LogUtils.log( "Targets for service [" + TOMCAT_SERVICE_NAME + "] are: " + 
+		LogUtils.log( "Targets for service [" + checkedServiceFullName + "] are: " + 
 				Arrays.toString( tomcatConnectorTargets.toArray( new String[tomcatConnectorTargets.size()] ) ) );		
 		
-		assertEquals( "[" + TOMCAT_SERVICE_NAME + "] connector tagets must be 1", tomcatConnectorTargets.size(), 1 );
-		assertEquals( "[" + TOMCAT_SERVICE_NAME + "] connector sources must be 1", tomcatConnectorSources.size(), 1 );
+		assertEquals( "[" + checkedServiceFullName + "] connector tagets must be 1", tomcatConnectorTargets.size(), 1 );
+		assertEquals( "[" + checkedServiceFullName + "] connector sources must be 0", tomcatConnectorSources.size(), 0 );
 		
-		assertTrue( "[" + TOMCAT_SERVICE_NAME + "] connector source must be [" + 
-				MONGOS_SERVICE_NAME + "]", tomcatConnectorSources.contains( MONGOS_SERVICE_NAME ) );
-		assertTrue( "[" + TOMCAT_SERVICE_NAME + "] connector target must be [" + 
-				APACHELB_SERVICE_NAME + "]", tomcatConnectorTargets.contains( APACHELB_SERVICE_NAME ) );
+		final String mongosFullServiceName = 
+				ServiceUtils.getAbsolutePUName(PETCLINIC_APPLICATION_NAME,  MONGOS_SERVICE_NAME);
+		assertTrue( "[" + checkedServiceFullName + "] connector target must be [" + 
+				mongosFullServiceName + "]", tomcatConnectorTargets.contains( mongosFullServiceName ) );
+		
+		final String appacheLBFullServiceName = 
+				ServiceUtils.getAbsolutePUName(PETCLINIC_APPLICATION_NAME,  APACHELB_SERVICE_NAME);
+		assertTrue( "[" + checkedServiceFullName + "] connector source must be [" + 
+				appacheLBFullServiceName + "]", tomcatConnectorSources.contains( appacheLBFullServiceName ) );		
 		
 //		for (Connector c : tomcatConnectors) {
 //			String name = c.getTarget().getName();

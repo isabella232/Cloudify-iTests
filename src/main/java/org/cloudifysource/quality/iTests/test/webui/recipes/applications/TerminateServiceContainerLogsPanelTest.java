@@ -1,8 +1,11 @@
 package org.cloudifysource.quality.iTests.test.webui.recipes.applications;
 
+import iTests.framework.utils.AssertUtils;
+import iTests.framework.utils.AssertUtils.RepetitiveConditionProvider;
+import iTests.framework.utils.ProcessingUnitUtils;
+
 import java.io.IOException;
 
-import org.cloudifysource.dsl.utils.ServiceUtils;
 import org.openspaces.admin.gsc.GridServiceContainer;
 import org.openspaces.admin.machine.Machine;
 import org.openspaces.admin.pu.DeploymentStatus;
@@ -19,15 +22,9 @@ import com.gigaspaces.webuitf.topology.logspanel.LogsMachine;
 import com.gigaspaces.webuitf.topology.logspanel.LogsPanel;
 import com.gigaspaces.webuitf.topology.logspanel.PuLogsPanelService;
 
-import iTests.framework.utils.AssertUtils;
-import iTests.framework.utils.AssertUtils.RepetitiveConditionProvider;
-import iTests.framework.utils.ProcessingUnitUtils;
-
 public class TerminateServiceContainerLogsPanelTest extends AbstractSeleniumApplicationRecipeTest {
 	
-	private static final String TRAVEL_APPLICATION_NAME = "travel";
-	private static final String TOMCAT_SERVICE_FULL_NAME = ServiceUtils.getAbsolutePUName(TRAVEL_APPLICATION_NAME, "tomcat");
-
+//	private static final String TOMCAT_SERVICE_FULL_NAME = ServiceUtils.getAbsolutePUName(TRAVEL_APPLICATION_NAME, DEFAULT_TOMCAT_SERVICE_NAME);
 	
 	@Override
 	@BeforeMethod
@@ -50,17 +47,17 @@ public class TerminateServiceContainerLogsPanelTest extends AbstractSeleniumAppl
 		
 		topology.selectApplication(TRAVEL_APPLICATION_NAME);
 		
-		ApplicationNode tomcatNode = appMap.getApplicationNode(TOMCAT_SERVICE_FULL_NAME);
+		ApplicationNode tomcatNode = appMap.getApplicationNode(DEFAULT_TOMCAT_SERVICE_NAME);
 		
 		tomcatNode.select();
 		
-		ProcessingUnit travelPu = admin.getProcessingUnits().getProcessingUnit(TOMCAT_SERVICE_FULL_NAME);
+		ProcessingUnit travelPu = admin.getProcessingUnits().getProcessingUnit(DEFAULT_TOMCAT_SERVICE_NAME);
 		
 		final GridServiceContainer travelContainer = travelPu.getInstances()[0].getGridServiceContainer();
 		
 		LogsPanel logsPanel = topology.getTopologySubPanel().switchToLogsPanel();
 		
-		PuLogsPanelService travelLogsService = logsPanel.getPuLogsPanelService(TOMCAT_SERVICE_FULL_NAME);
+		PuLogsPanelService travelLogsService = logsPanel.getPuLogsPanelService(DEFAULT_TOMCAT_SERVICE_NAME);
 		
 		Machine localHost = travelContainer.getMachine();
 		

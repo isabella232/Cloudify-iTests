@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 
+import org.cloudifysource.dsl.utils.ServiceUtils;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.AbstractLocalCloudTest;
 import org.cloudifysource.quality.iTests.test.webui.AbstractWebUILocalCloudTest;
@@ -30,12 +31,6 @@ import com.gigaspaces.webuitf.topology.healthpanel.HealthPanel;
 
 public class TravelTest extends AbstractSeleniumApplicationRecipeTest {
 	
-	private static final String TRAVEL_APPLICATION_NAME = "travel";
-	private static final String CASSANDRA_SERVICE_NAME = "cassandra";
-	private static final String TOMCAT_SERVICE_NAME = "tomcat";
-	private static final String REST_SERVICE_NAME = "rest";
-	private static final String WEB_UI_SERVICE_NAME = "webui";
-
 	@Override
 	@BeforeMethod(enabled = true)
 	public void install() throws IOException, InterruptedException {
@@ -131,7 +126,7 @@ public class TravelTest extends AbstractSeleniumApplicationRecipeTest {
 		topologyTab.selectApplication(AbstractLocalCloudTest.MANAGEMENT_APPLICATION_NAME);
 
 		//check [rest] service
-		String checkedServiceName = REST_SERVICE_NAME;
+		String checkedServiceName = DEFAULT_REST_SERVICE_NAME;
 		ApplicationNode restful = appMap.getApplicationNode( checkedServiceName );
 
 		AbstractTestSupport.assertTrue(restful != null);
@@ -140,7 +135,7 @@ public class TravelTest extends AbstractSeleniumApplicationRecipeTest {
 				"] service must be 'ok'", status != null && status.equals(ApplicationMap.CONN_STATUS_OK));
 
 		//check [webui] service
-		checkedServiceName = WEB_UI_SERVICE_NAME;
+		checkedServiceName = DEFAULT_WEBUI_SERVICE_NAME;
 		ApplicationNode webui = appMap.getApplicationNode(checkedServiceName);
 
 		AbstractTestSupport.assertTrue(webui != null);
@@ -152,7 +147,7 @@ public class TravelTest extends AbstractSeleniumApplicationRecipeTest {
 		topologyTab.selectApplication(TRAVEL_APPLICATION_NAME);
 
 		//check [cassandra] service
-		checkedServiceName = CASSANDRA_SERVICE_NAME;
+		checkedServiceName = DEFAULT_CASSANDRA_SERVICE_NAME;
 		ApplicationNode cassandra = appMap.getApplicationNode(checkedServiceName);
 
 		AbstractTestSupport.assertTrue(cassandra != null);
@@ -161,7 +156,9 @@ public class TravelTest extends AbstractSeleniumApplicationRecipeTest {
 				"] service must be 'ok'", status != null && status.equals(ApplicationMap.CONN_STATUS_OK));
 
 		//check [tomcat] service
-		checkedServiceName = TOMCAT_SERVICE_NAME;
+		checkedServiceName = DEFAULT_TOMCAT_SERVICE_NAME;
+		String checkedFullServiceName = ServiceUtils.getAbsolutePUName(TRAVEL_APPLICATION_NAME, DEFAULT_TOMCAT_SERVICE_NAME);
+		String checkedCassandraFullServiceName = ServiceUtils.getAbsolutePUName(TRAVEL_APPLICATION_NAME, DEFAULT_CASSANDRA_SERVICE_NAME);
 		ApplicationNode tomcat = appMap.getApplicationNode(checkedServiceName);
 
 		AbstractTestSupport.assertTrue(tomcat != null);
@@ -170,18 +167,18 @@ public class TravelTest extends AbstractSeleniumApplicationRecipeTest {
 				"] service must be 'ok'", status != null && status.equals(ApplicationMap.CONN_STATUS_OK));
 
 		
-		Collection<String> connectorSources = appMap.getConnectorSources( checkedServiceName );
-		Collection<String> connectorTargets = appMap.getConnectorTargets( checkedServiceName );
+		Collection<String> connectorSources = appMap.getConnectorSources( checkedFullServiceName );
+		Collection<String> connectorTargets = appMap.getConnectorTargets( checkedFullServiceName );
 		
-		LogUtils.log( "Sources for service [" + checkedServiceName + "] are: " + 
+		LogUtils.log( "Sources for service [" + checkedFullServiceName + "] are: " + 
 				Arrays.toString( connectorSources.toArray( new String[connectorSources.size()] ) ) );
-		LogUtils.log( "Targets for service [" + checkedServiceName + "] are: " + 
+		LogUtils.log( "Targets for service [" + checkedFullServiceName + "] are: " + 
 				Arrays.toString( connectorTargets.toArray( new String[connectorTargets.size()] ) ) );			
 		
-		assertEquals( "Number of [" + checkedServiceName + "] service sources must be one", 1, connectorSources.size() );
-		assertEquals( "Number of [" + checkedServiceName + "] service targets must be one", 1, connectorTargets.size() );
+		assertEquals( "Number of [" + checkedFullServiceName + "] service sources must be one", 0, connectorSources.size() );
+		assertEquals( "Number of [" + checkedFullServiceName + "] service targets must be one", 1, connectorTargets.size() );
 		
-		assertTrue( "Target of [" + checkedServiceName + "] service must be [" + CASSANDRA_SERVICE_NAME + "]", connectorTargets.contains(CASSANDRA_SERVICE_NAME) );
+		assertTrue( "Target of [" + checkedFullServiceName + "] service must be [" + checkedCassandraFullServiceName + "]", connectorTargets.contains(checkedCassandraFullServiceName) );
 		
 		//TODO CHANGE CONNECTORS TESTS		
 		

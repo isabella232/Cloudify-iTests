@@ -211,8 +211,10 @@ public class PetClinicTest extends AbstractSeleniumApplicationRecipeTest {
 		ApplicationNode applicationNodeApacheLB = appMap.getApplicationNode(APACHELB_FULL_SERVICE_NAME);
 */
 		
-		final String checkedServiceFullName = 
+		final String tomcatFullServiceName = 
 				ServiceUtils.getAbsolutePUName(PETCLINIC_APPLICATION_NAME,  TOMCAT_SERVICE_NAME);
+		
+		String checkedServiceFullName = tomcatFullServiceName; 
 		
 		Collection<String> tomcatConnectorTargets = appMap.getConnectorTargets( checkedServiceFullName );
 		Collection<String> tomcatConnectorSources = appMap.getConnectorSources( checkedServiceFullName );
@@ -222,18 +224,18 @@ public class PetClinicTest extends AbstractSeleniumApplicationRecipeTest {
 		LogUtils.log( "Targets for service [" + checkedServiceFullName + "] are: " + 
 				Arrays.toString( tomcatConnectorTargets.toArray( new String[tomcatConnectorTargets.size()] ) ) );		
 		
-		assertEquals( "[" + checkedServiceFullName + "] connector tagets must be 1", tomcatConnectorTargets.size(), 1 );
+		assertEquals( "[" + checkedServiceFullName + "] connector tagets must be 2", tomcatConnectorTargets.size(), 2 );
 		assertEquals( "[" + checkedServiceFullName + "] connector sources must be 0", tomcatConnectorSources.size(), 0 );
 		
 		final String mongosFullServiceName = 
 				ServiceUtils.getAbsolutePUName(PETCLINIC_APPLICATION_NAME,  MONGOS_SERVICE_NAME);
-		assertTrue( "[" + checkedServiceFullName + "] connector target must be [" + 
+		assertTrue( "One of [" + checkedServiceFullName + "] connector targets must be [" + 
 				mongosFullServiceName + "]", tomcatConnectorTargets.contains( mongosFullServiceName ) );
 		
 		final String appacheLBFullServiceName = 
 				ServiceUtils.getAbsolutePUName(PETCLINIC_APPLICATION_NAME,  APACHELB_SERVICE_NAME);
-		assertTrue( "[" + checkedServiceFullName + "] connector source must be [" + 
-				appacheLBFullServiceName + "]", tomcatConnectorSources.contains( appacheLBFullServiceName ) );		
+		assertTrue( "One of [" + checkedServiceFullName + "] target sources must be [" + 
+				appacheLBFullServiceName + "]", tomcatConnectorTargets.contains( appacheLBFullServiceName ) );		
 		
 //		for (Connector c : tomcatConnectors) {
 //			String name = c.getTarget().getName();
@@ -247,18 +249,32 @@ public class PetClinicTest extends AbstractSeleniumApplicationRecipeTest {
         // mongos ==> mongod
         // tomcat ==> mongos
         
+		checkedServiceFullName = mongosFullServiceName;
 //		assertEquals( "checking number of mongos connectors (the edges connected to mongos)", 3, mongosConnectors.size() );
-		Collection<String> mongosConnectorTargets = appMap.getConnectorTargets( MONGOS_SERVICE_NAME );
-		Collection<String> mongosConnectorSources = appMap.getConnectorSources( MONGOS_SERVICE_NAME );
+		Collection<String> mongosConnectorTargets = appMap.getConnectorTargets( checkedServiceFullName );
+		Collection<String> mongosConnectorSources = appMap.getConnectorSources( checkedServiceFullName );
 		
 		LogUtils.log( "Sources for service [" + MONGOS_SERVICE_NAME + "] are: " + 
 				Arrays.toString( mongosConnectorSources.toArray( new String[mongosConnectorSources.size()] ) ) );
 		LogUtils.log( "Targets for service [" + MONGOS_SERVICE_NAME + "] are: " + 
 				Arrays.toString( mongosConnectorTargets.toArray( new String[mongosConnectorTargets.size()] ) ) );
 		
-		assertEquals( "[" + MONGOS_SERVICE_NAME + "] connector tagets must be 1", mongosConnectorTargets.size(), 2 );
-		assertEquals( "[" + MONGOS_SERVICE_NAME + "] connector sources must be 1", mongosConnectorSources.size(), 1 );
+		assertEquals( "[" + checkedServiceFullName + "] connector tagets must be 2", mongosConnectorTargets.size(), 2 );
+		assertEquals( "[" + checkedServiceFullName + "] connector sources must be 1", mongosConnectorSources.size(), 1 );
 
+		final String mongodFullServiceName = 
+				ServiceUtils.getAbsolutePUName(PETCLINIC_APPLICATION_NAME, MONGOD_SERVICE_NAME);
+		assertTrue( "One of [" + checkedServiceFullName + "] connector targets must be [" + 
+				mongodFullServiceName + "]", mongosConnectorTargets.contains( mongodFullServiceName ) );
+		
+		final String mongoConfigFullServiceName = 
+				ServiceUtils.getAbsolutePUName(PETCLINIC_APPLICATION_NAME, MONGOCFG_SERVICE_NAME);
+		assertTrue( "One of [" + checkedServiceFullName + "] target sources must be [" + 
+				mongoConfigFullServiceName + "]", mongosConnectorTargets.contains( mongoConfigFullServiceName ) );	
+		
+		assertTrue( "[" + checkedServiceFullName + "] target source must be [" + 
+				tomcatFullServiceName + "]", mongosConnectorSources.contains( tomcatFullServiceName ) );
+		
 		//TODO CHANGE CONNECTORS TESTS		
         // lets filter only the connections going out of mongos.
 		/*

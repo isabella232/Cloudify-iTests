@@ -54,11 +54,25 @@ import com.thoughtworks.selenium.Selenium;
 
 public abstract class AbstractWebUILocalCloudTest extends AbstractLocalCloudTest {
 	
-	protected static final String DEFAULT_ACTIVEMQ_FULL_SERVICE_NAME = ServiceUtils.getAbsolutePUName(DEFAULT_APPLICATION_NAME, "activemq");
-	protected static final String DEFAULT_CASSANDRA_FULL_SERVICE_NAME = ServiceUtils.getAbsolutePUName(DEFAULT_APPLICATION_NAME, "cassandra");
-	protected static final String DEFAULT_HSQLDB_FULL_SERVICE_NAME = ServiceUtils.getAbsolutePUName(DEFAULT_APPLICATION_NAME, "hsqldb");
-	protected static final String DEFAULT_SOLR_FULL_SERVICE_NAME = ServiceUtils.getAbsolutePUName(DEFAULT_APPLICATION_NAME, "solr");
-	protected static final String DEFAULT_TOMCAT_SERVICE_FULL_NAME = ServiceUtils.getAbsolutePUName(DEFAULT_APPLICATION_NAME, "tomcat");
+	protected static final String TRAVEL_APPLICATION_NAME = "travel";
+	protected static final String PETCLINIC_APPLICATION_NAME = "petclinic";
+	
+	protected static final String DEFAULT_ACTIVEMQ_SERVICE_NAME = "activemq";
+	protected static final String DEFAULT_CASSANDRA_SERVICE_NAME = "cassandra";
+	protected static final String DEFAULT_HSQLDB_SERVICE_NAME = "hsqldb";
+	protected static final String DEFAULT_SOLR_SERVICE_NAME = "solr";
+	protected static final String DEFAULT_TOMCAT_SERVICE_NAME = "tomcat";
+	protected static final String DEFAULT_REST_SERVICE_NAME = "rest";
+	protected static final String DEFAULT_WEBUI_SERVICE_NAME = "webui";	
+
+	protected static final String DEFAULT_ACTIVEMQ_FULL_SERVICE_NAME = ServiceUtils.getAbsolutePUName(DEFAULT_APPLICATION_NAME, DEFAULT_ACTIVEMQ_SERVICE_NAME);
+	protected static final String DEFAULT_CASSANDRA_FULL_SERVICE_NAME = ServiceUtils.getAbsolutePUName(DEFAULT_APPLICATION_NAME, DEFAULT_CASSANDRA_SERVICE_NAME);
+	protected static final String DEFAULT_HSQLDB_FULL_SERVICE_NAME = ServiceUtils.getAbsolutePUName(DEFAULT_APPLICATION_NAME, DEFAULT_HSQLDB_SERVICE_NAME);
+	protected static final String DEFAULT_SOLR_FULL_SERVICE_NAME = ServiceUtils.getAbsolutePUName(DEFAULT_APPLICATION_NAME, DEFAULT_SOLR_SERVICE_NAME);
+	protected static final String DEFAULT_TOMCAT_SERVICE_FULL_NAME = ServiceUtils.getAbsolutePUName(DEFAULT_APPLICATION_NAME, DEFAULT_TOMCAT_SERVICE_NAME);
+	protected static final String DEFAULT_REST_FULL_SERVICE_NAME = ServiceUtils.getAbsolutePUName(DEFAULT_APPLICATION_NAME, DEFAULT_REST_SERVICE_NAME);
+	protected static final String DEFAULT_WEBUI_SERVICE_FULL_NAME = ServiceUtils.getAbsolutePUName(DEFAULT_APPLICATION_NAME, DEFAULT_WEBUI_SERVICE_NAME);		
+	
     private static final String WEBUI_REVERSE_PROXY_URL = "http://localhost/reverse-proxy-testing/Gs_webui.html";
 
     public static String METRICS_ASSERTION_SUFFIX = " metric that is defined in the dsl is not displayed in the metrics panel";

@@ -104,7 +104,7 @@ public class ActiveMqServiceTest extends AbstractSeleniumServiceRecipeTest {
 
 		takeScreenShot(this.getClass(),"activeMqRecipeTest", "topology");
 		
-		final ApplicationNode simple = appMap.getApplicationNode(DEFAULT_ACTIVEMQ_FULL_SERVICE_NAME);
+		final ApplicationNode simple = appMap.getApplicationNode(DEFAULT_ACTIVEMQ_SERVICE_NAME);
 		
 		assertTrue(simple != null);
 		condition = new RepetitiveConditionProvider() {

@@ -100,7 +100,7 @@ public class HsqlDBServiceTest extends AbstractSeleniumServiceRecipeTest {
 
 		takeScreenShot(this.getClass(),"hsqlRecipeTest", "topology");
 
-		final ApplicationNode simple = appMap.getApplicationNode(DEFAULT_HSQLDB_FULL_SERVICE_NAME);
+		final ApplicationNode simple = appMap.getApplicationNode(DEFAULT_HSQLDB_SERVICE_NAME);
 
 		assertTrue(simple != null);
 		condition = new RepetitiveConditionProvider() {

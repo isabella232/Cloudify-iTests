@@ -42,6 +42,7 @@ public class AbstractAgentMaintenanceModeTest extends AbstractByonCloudTest {
     protected void restartAgentMachine(final String puName) throws IOException {
     	final ProcessingUnit pu = admin.getProcessingUnits()
     			.waitFor(puName, DEFAULT_WAIT_MINUTES, TimeUnit.MINUTES);
+    	pu.waitFor(1);
     	final String hostName = pu.getInstances()[0].getMachine().getHostName();
     	
     	final String ip = IPUtils.resolveHostNameToIp(hostName);

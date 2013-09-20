@@ -106,7 +106,7 @@ public class CassandraServiceTest extends AbstractSeleniumServiceRecipeTest  {
 
 		takeScreenShot(this.getClass(),"cassandraRecipeTest", "topology");
 
-		final ApplicationNode simple = appMap.getApplicationNode(DEFAULT_CASSANDRA_FULL_SERVICE_NAME);
+		final ApplicationNode simple = appMap.getApplicationNode(DEFAULT_CASSANDRA_SERVICE_NAME);
 
 		assertTrue(simple != null);
 		condition = new RepetitiveConditionProvider() {

@@ -14,6 +14,8 @@ import org.testng.annotations.Test;
 
 public class AgentRestartTest extends AbstractAgentMaintenanceModeTest {
 	
+	private static final int INFINITY_MINUTES = 600;
+
 	@BeforeClass(alwaysRun = true)
 	protected void bootstrap() throws Exception {
 		super.bootstrap();
@@ -29,8 +31,8 @@ public class AgentRestartTest extends AbstractAgentMaintenanceModeTest {
         final CountDownLatch removed = new CountDownLatch(1);
 		final CountDownLatch added = new CountDownLatch(3);
 		
-		final CountDownLatch removedAfterStabilized = new CountDownLatch((int) removed.getCount());
-		final CountDownLatch addedAfterStabilized = new CountDownLatch((int) added.getCount());
+		final CountDownLatch removedAfterStabilized = new CountDownLatch((int) removed.getCount() + 1);
+		final CountDownLatch addedAfterStabilized = new CountDownLatch((int) added.getCount() + 1);
         final GridServiceAgentAddedEventListener agentListener = new GridServiceAgentLifecycleEventListener() {
 			
 			@Override
@@ -51,14 +53,15 @@ public class AgentRestartTest extends AbstractAgentMaintenanceModeTest {
 		admin.addEventListener(agentListener);
 		LogUtils.log("Starting maintenance mode for pu with name " + absolutePuName);
 		//set maintenance mode for a long time.
-		startMaintenanceMode(10000);
+		startMaintenanceMode(TimeUnit.MINUTES.toMillis(INFINITY_MINUTES));
 		
 		restartAgentMachine(absolutePuName);
 		
-		assertTrue(removed.await(DEFAULT_WAIT_MINUTES, TimeUnit.MINUTES));
-		assertTrue(added.await(DEFAULT_WAIT_MINUTES, TimeUnit.MINUTES));
+		assertTrue("agent machine did not stop as expected.", removed.await(DEFAULT_WAIT_MINUTES, TimeUnit.MINUTES));
+		assertTrue("agent machine was not added as expected.",added.await(DEFAULT_WAIT_MINUTES, TimeUnit.MINUTES));
 		
-		repetativeClusterStable(5, TimeUnit.MINUTES, removedAfterStabilized, addedAfterStabilized);
+		assertTrue("detected agent removed after cluster was stabilized.", !removedAfterStabilized.await((long) 5, TimeUnit.MINUTES));
+		assertTrue("detected agent added after cluster was stabilized.", addedAfterStabilized.getCount() == 1);
 		
 		assertNumberOfMachines(2);
 		
@@ -67,12 +70,6 @@ public class AgentRestartTest extends AbstractAgentMaintenanceModeTest {
 		uninstallServiceAndWait(SERVICE_NAME);
     }
     
-	private void repetativeClusterStable(final long timeout, final TimeUnit unit, CountDownLatch added, CountDownLatch removed) 
-			throws InterruptedException {
-		assertTrue("detected agent added after cluster was stabilized.", !added.await(timeout, unit));
-		assertTrue("detected agent removed after cluster was stabilized.", removed.getCount() != 0);
-	}
-
 	@Override
 	protected void customizeCloud() throws Exception {
 		super.customizeCloud();

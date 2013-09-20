@@ -102,7 +102,7 @@ public class SolrServiceTest extends AbstractSeleniumServiceRecipeTest {
 		
 		takeScreenShot(this.getClass(),"solrRecipeTest", "topology");
 
-		final ApplicationNode simple = appMap.getApplicationNode(DEFAULT_SOLR_FULL_SERVICE_NAME);
+		final ApplicationNode simple = appMap.getApplicationNode(DEFAULT_SOLR_SERVICE_NAME);
 
 		assertTrue(simple != null);
 		condition = new RepetitiveConditionProvider() {

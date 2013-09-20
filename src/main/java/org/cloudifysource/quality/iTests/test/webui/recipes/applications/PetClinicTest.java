@@ -2,9 +2,12 @@ package org.cloudifysource.quality.iTests.test.webui.recipes.applications;
 
 import static org.testng.AssertJUnit.fail;
 import iTests.framework.utils.AssertUtils;
+import iTests.framework.utils.LogUtils;
 import iTests.framework.utils.AssertUtils.RepetitiveConditionProvider;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collection;
 
 import org.cloudifysource.dsl.utils.ServiceUtils;
 import org.openspaces.admin.machine.Machine;
@@ -22,18 +25,18 @@ import com.gigaspaces.webuitf.dashboard.ServicesGrid.ApplicationServicesGrid;
 import com.gigaspaces.webuitf.dashboard.ServicesGrid.ApplicationsMenuPanel;
 import com.gigaspaces.webuitf.dashboard.ServicesGrid.Icon;
 import com.gigaspaces.webuitf.dashboard.ServicesGrid.InfrastructureServicesGrid;
+import com.gigaspaces.webuitf.services.ServicesTab;
 import com.gigaspaces.webuitf.topology.TopologyTab;
 import com.gigaspaces.webuitf.topology.applicationmap.ApplicationMap;
 import com.gigaspaces.webuitf.topology.applicationmap.ApplicationNode;
 
 public class PetClinicTest extends AbstractSeleniumApplicationRecipeTest {
 	
-	private static final String PETCLINIC_APPLICATION_NAME = "petclinic";
-	private static final String MONGOD_FULL_SERVICE_NAME = ServiceUtils.getAbsolutePUName(PETCLINIC_APPLICATION_NAME, "mongod");
-	private static final String MONGOS_FULL_SERVICE_NAME = ServiceUtils.getAbsolutePUName(PETCLINIC_APPLICATION_NAME, "mongos");
-	private static final String MONGOCFG_FULL_SERVICE_NAME = ServiceUtils.getAbsolutePUName(PETCLINIC_APPLICATION_NAME, "mongoConfig");
-	private static final String TOMCAT_FULL_SERVICE_NAME = ServiceUtils.getAbsolutePUName(PETCLINIC_APPLICATION_NAME, "tomcat");
-	private static final String APACHELB_FULL_SERVICE_NAME = ServiceUtils.getAbsolutePUName(PETCLINIC_APPLICATION_NAME, "apacheLB");
+	private static final String MONGOD_SERVICE_NAME = "mongod";
+	private static final String MONGOS_SERVICE_NAME = "mongos";
+	private static final String MONGOCFG_SERVICE_NAME = "mongoConfig";
+	private static final String TOMCAT_SERVICE_NAME = DEFAULT_TOMCAT_SERVICE_NAME;
+	private static final String APACHELB_SERVICE_NAME = "apacheLB";
 
 	@Override
 	@BeforeMethod
@@ -138,8 +141,10 @@ public class PetClinicTest extends AbstractSeleniumApplicationRecipeTest {
 
 			@Override
 			public boolean getCondition() {
-				ApplicationNode mongodNode = appMap.getApplicationNode(MONGOD_FULL_SERVICE_NAME);
-				return ((mongodNode != null) && (mongodNode.getStatus().equals(DeploymentStatus.INTACT)));
+				ApplicationNode mongodNode = appMap.getApplicationNode(MONGOD_SERVICE_NAME);
+				return mongodNode != null && 
+						appMap.getApplicationNodeStatus( MONGOD_SERVICE_NAME ) != null && 
+						appMap.getApplicationNodeStatus( MONGOD_SERVICE_NAME ).equals( ApplicationMap.CONN_STATUS_OK );
 			}
 		};
 		repetitiveAssertTrueWithScreenshot(null, condition, this.getClass(),"petClinicDemoTest", "failed");
@@ -148,8 +153,10 @@ public class PetClinicTest extends AbstractSeleniumApplicationRecipeTest {
 
 			@Override
 			public boolean getCondition() {
-				ApplicationNode mongosNode = appMap.getApplicationNode(MONGOS_FULL_SERVICE_NAME);
-				return ((mongosNode != null) && (mongosNode.getStatus().equals(DeploymentStatus.INTACT)));
+				ApplicationNode mongosNode = appMap.getApplicationNode(MONGOS_SERVICE_NAME);
+				return mongosNode != null && 
+						appMap.getApplicationNodeStatus( MONGOS_SERVICE_NAME ) != null && 
+						appMap.getApplicationNodeStatus( MONGOS_SERVICE_NAME ).equals( ApplicationMap.CONN_STATUS_OK );
 			}
 		};
 		repetitiveAssertTrueWithScreenshot(null, condition, this.getClass(), "petClinicDemoTest","failed");
@@ -158,8 +165,10 @@ public class PetClinicTest extends AbstractSeleniumApplicationRecipeTest {
 
 			@Override
 			public boolean getCondition() {
-				ApplicationNode mongocfgNode = appMap.getApplicationNode(MONGOCFG_FULL_SERVICE_NAME);
-				return ((mongocfgNode != null) && (mongocfgNode.getStatus().equals(DeploymentStatus.INTACT)));
+				ApplicationNode mongocfgNode = appMap.getApplicationNode(MONGOCFG_SERVICE_NAME);
+				return mongocfgNode != null && 
+						appMap.getApplicationNodeStatus( MONGOCFG_SERVICE_NAME ) != null && 
+						appMap.getApplicationNodeStatus( MONGOCFG_SERVICE_NAME ).equals( ApplicationMap.CONN_STATUS_OK );
 			}
 		};
 		repetitiveAssertTrueWithScreenshot(null, condition, this.getClass(),"petClinicDemoTest", "failed");	
@@ -168,8 +177,10 @@ public class PetClinicTest extends AbstractSeleniumApplicationRecipeTest {
 
 			@Override
 			public boolean getCondition() {
-				ApplicationNode tomcatNode = appMap.getApplicationNode(TOMCAT_FULL_SERVICE_NAME);
-				return ((tomcatNode != null) && (tomcatNode.getStatus().equals(DeploymentStatus.INTACT)));
+				ApplicationNode tomcatNode = appMap.getApplicationNode(TOMCAT_SERVICE_NAME);
+				return tomcatNode != null && 
+						appMap.getApplicationNodeStatus( TOMCAT_SERVICE_NAME ) != null && 
+						appMap.getApplicationNodeStatus( TOMCAT_SERVICE_NAME ).equals( ApplicationMap.CONN_STATUS_OK );
 			}
 		};
 		repetitiveAssertTrueWithScreenshot(null, condition, this.getClass(), "petClinicDemoTest","failed");
@@ -178,16 +189,16 @@ public class PetClinicTest extends AbstractSeleniumApplicationRecipeTest {
 			
 			@Override
 			public boolean getCondition() {
-				ApplicationNode apachelbNode = appMap.getApplicationNode(APACHELB_FULL_SERVICE_NAME);
-				return ((apachelbNode != null) && (apachelbNode.getStatus().equals(DeploymentStatus.INTACT)));
+				ApplicationNode apachelbNode = appMap.getApplicationNode(APACHELB_SERVICE_NAME);
+				return apachelbNode != null && 
+						appMap.getApplicationNodeStatus( APACHELB_SERVICE_NAME ) != null && 
+						appMap.getApplicationNodeStatus( APACHELB_SERVICE_NAME ).equals( ApplicationMap.CONN_STATUS_OK );
 			}
 		};
 		repetitiveAssertTrueWithScreenshot(null, condition, this.getClass(), "petClinicDemoTest","failed");
 		
 		
-		//TODO CHANGE CONNECTORS TESTS	
-		/*
-		ApplicationNode applicationNodeTomcat = appMap.getApplicationNode(TOMCAT_FULL_SERVICE_NAME);
+/*		ApplicationNode applicationNodeTomcat = appMap.getApplicationNode(TOMCAT_FULL_SERVICE_NAME);
 		List<Connector> tomcatConnectors = applicationNodeTomcat.getConnectors();
 		
 		final ApplicationNode applicationNodeMongos = appMap.getApplicationNode(MONGOS_FULL_SERVICE_NAME);
@@ -198,21 +209,75 @@ public class PetClinicTest extends AbstractSeleniumApplicationRecipeTest {
 		ApplicationNode applicationNodeMongoConfig = appMap.getApplicationNode(MONGOCFG_FULL_SERVICE_NAME);
 		
 		ApplicationNode applicationNodeApacheLB = appMap.getApplicationNode(APACHELB_FULL_SERVICE_NAME);
+*/
 		
-		assertTrue(tomcatConnectors.size() == 2);
-		for (Connector c : tomcatConnectors) {
-			String name = c.getTarget().getName();
-			assertTrue(name.equals(applicationNodeMongos.getName()) ||name.equals(applicationNodeApacheLB.getName()));
-		}
+		final String tomcatFullServiceName = 
+				ServiceUtils.getAbsolutePUName(PETCLINIC_APPLICATION_NAME,  TOMCAT_SERVICE_NAME);
+		
+		String checkedServiceFullName = tomcatFullServiceName; 
+		
+		Collection<String> tomcatConnectorTargets = appMap.getConnectorTargets( checkedServiceFullName );
+		Collection<String> tomcatConnectorSources = appMap.getConnectorSources( checkedServiceFullName );
+		
+		LogUtils.log( "Sources for service [" + checkedServiceFullName + "] are: " + 
+				Arrays.toString( tomcatConnectorSources.toArray( new String[tomcatConnectorSources.size()] ) ) );
+		LogUtils.log( "Targets for service [" + checkedServiceFullName + "] are: " + 
+				Arrays.toString( tomcatConnectorTargets.toArray( new String[tomcatConnectorTargets.size()] ) ) );		
+		
+		assertEquals( "[" + checkedServiceFullName + "] connector tagets must be 2", tomcatConnectorTargets.size(), 2 );
+		assertEquals( "[" + checkedServiceFullName + "] connector sources must be 0", tomcatConnectorSources.size(), 0 );
+		
+		final String mongosFullServiceName = 
+				ServiceUtils.getAbsolutePUName(PETCLINIC_APPLICATION_NAME,  MONGOS_SERVICE_NAME);
+		assertTrue( "One of [" + checkedServiceFullName + "] connector targets must be [" + 
+				mongosFullServiceName + "]", tomcatConnectorTargets.contains( mongosFullServiceName ) );
+		
+		final String appacheLBFullServiceName = 
+				ServiceUtils.getAbsolutePUName(PETCLINIC_APPLICATION_NAME,  APACHELB_SERVICE_NAME);
+		assertTrue( "One of [" + checkedServiceFullName + "] target sources must be [" + 
+				appacheLBFullServiceName + "]", tomcatConnectorTargets.contains( appacheLBFullServiceName ) );		
+		
+//		for (Connector c : tomcatConnectors) {
+//			String name = c.getTarget().getName();
+//			assertTrue(name.equals(applicationNodeMongos.getName()) ||name.equals(applicationNodeApacheLB.getName()));
+//		}
 		
 		takeScreenShot(this.getClass(), "petClinicDemoTest", "petClinicDemoTest");
+		
 		// there are 3 connectors attached to mongos. 2 going out, 1 coming in.
         // mongos ==> mongoConfig
         // mongos ==> mongod
         // tomcat ==> mongos
-        assertEquals( "checking number of mongos connectors (the edges connected to mongos)", 3, mongosConnectors.size() );
+        
+		checkedServiceFullName = mongosFullServiceName;
+//		assertEquals( "checking number of mongos connectors (the edges connected to mongos)", 3, mongosConnectors.size() );
+		Collection<String> mongosConnectorTargets = appMap.getConnectorTargets( checkedServiceFullName );
+		Collection<String> mongosConnectorSources = appMap.getConnectorSources( checkedServiceFullName );
+		
+		LogUtils.log( "Sources for service [" + MONGOS_SERVICE_NAME + "] are: " + 
+				Arrays.toString( mongosConnectorSources.toArray( new String[mongosConnectorSources.size()] ) ) );
+		LogUtils.log( "Targets for service [" + MONGOS_SERVICE_NAME + "] are: " + 
+				Arrays.toString( mongosConnectorTargets.toArray( new String[mongosConnectorTargets.size()] ) ) );
+		
+		assertEquals( "[" + checkedServiceFullName + "] connector tagets must be 2", mongosConnectorTargets.size(), 2 );
+		assertEquals( "[" + checkedServiceFullName + "] connector sources must be 1", mongosConnectorSources.size(), 1 );
 
+		final String mongodFullServiceName = 
+				ServiceUtils.getAbsolutePUName(PETCLINIC_APPLICATION_NAME, MONGOD_SERVICE_NAME);
+		assertTrue( "One of [" + checkedServiceFullName + "] connector targets must be [" + 
+				mongodFullServiceName + "]", mongosConnectorTargets.contains( mongodFullServiceName ) );
+		
+		final String mongoConfigFullServiceName = 
+				ServiceUtils.getAbsolutePUName(PETCLINIC_APPLICATION_NAME, MONGOCFG_SERVICE_NAME);
+		assertTrue( "One of [" + checkedServiceFullName + "] target sources must be [" + 
+				mongoConfigFullServiceName + "]", mongosConnectorTargets.contains( mongoConfigFullServiceName ) );	
+		
+		assertTrue( "[" + checkedServiceFullName + "] target source must be [" + 
+				tomcatFullServiceName + "]", mongosConnectorSources.contains( tomcatFullServiceName ) );
+		
+		//TODO CHANGE CONNECTORS TESTS		
         // lets filter only the connections going out of mongos.
+		/*
         Predicate predicate = new Predicate() {
             @Override
             public boolean evaluate( Object o ) {
@@ -223,13 +288,12 @@ public class PetClinicTest extends AbstractSeleniumApplicationRecipeTest {
         // filter only connections going out of mongos
         CollectionUtils.filter( mongosConnectors, predicate );
 
-
+*/
         ServicesTab servicesTab = mainNav.switchToServices();
 		
 		takeScreenShot(this.getClass(), "petClinicDemoTest","passed-services");
 		
 		assertPetclinicPageExists();
-		*/
 		
 		uninstallApplication(PETCLINIC_APPLICATION_NAME, true);
 		

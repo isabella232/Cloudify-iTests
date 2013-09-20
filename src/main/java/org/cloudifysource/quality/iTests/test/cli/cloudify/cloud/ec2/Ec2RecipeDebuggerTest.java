@@ -3,8 +3,10 @@ package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.ec2;
 import com.j_spaces.kernel.PlatformVersion;
 import iTests.framework.tools.SGTestHelper;
 import iTests.framework.utils.AssertUtils;
+import iTests.framework.utils.IOUtils;
 import iTests.framework.utils.LogUtils;
 import iTests.framework.utils.SSHUtils;
+import org.apache.commons.io.FileUtils;
 import org.cloudifysource.quality.iTests.framework.utils.ServiceInstaller;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
@@ -15,8 +17,8 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -43,6 +45,14 @@ public class Ec2RecipeDebuggerTest extends NewAbstractCloudTest {
         super.bootstrap();
     }
 
+    @Override
+    public void beforeBootstrap() throws IOException {
+
+        File debuggerSrcFolder = new File(SGTestHelper.getSGTestRootDir() + "/src/main/resources/scripts/debugger");
+        File debuggerDestFolder = new File(getService().getPathToCloudFolder() + "/upload/cloudify-overrides");
+        FileUtils.copyDirectoryToDirectory(debuggerSrcFolder, debuggerDestFolder);
+    }
+
     @Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = false)
     public void testDebugger() throws Exception {
         ServiceInstaller installer = new ServiceInstaller(getRestUrl(), SERVICE_NAME);
@@ -64,14 +74,15 @@ public class Ec2RecipeDebuggerTest extends NewAbstractCloudTest {
 
         int startIndex = output.indexOf(debugSearchString) + debugSearchString.length() + 1;
         int endIndex = output.indexOf(debugSearchString2) - 1;
-        if(output.indexOf(debugSearchString) == -1 || output.indexOf(debugSearchString2) == -1){
+        if(!output.contains(debugSearchString) || !output.contains(debugSearchString2)){
             AssertUtils.assertFail("unexpected output format. startIndex = " + startIndex + ", endIndex = " + endIndex);
         }
-        String serviceHostIp = output.substring(startIndex, endIndex);
+//        String serviceHostIp = output.substring(startIndex, endIndex);
+        String serviceHostIp = "";
         LogUtils.log("service host ip: " + serviceHostIp);
 
         command = "debug " + SERVICE_NAME + ";run-script";
-        output = SSHUtils.runCommand(serviceHostIp, 10000, command, "ec2-user", getPemFile());
+        output = SSHUtils.runCommand(serviceHostIp, 1000 * 60 * 10, command, "ec2-user", getPemFile());
         LogUtils.log("output of tomcat installation: " + output);
 
         final GSRestClient client = new GSRestClient("", "", new URL(getRestUrl()), PlatformVersion.getVersionNumber());
@@ -115,6 +126,11 @@ public class Ec2RecipeDebuggerTest extends NewAbstractCloudTest {
     @Override
     @AfterClass(alwaysRun = true)
     protected void teardown() throws Exception {
-        super.teardown();
+//        super.teardown();
     }
+
+//    public static void main(String[] args){
+//
+//        SSHUtils.runCommand("54.217.82.230", 1000 * 60 * 10, "./run.exp", "ec2-user", new File("D:\\opt\\cloudify\\clouds\\ec2_ec2recipedebuggertest\\upload\\ec2-sgtest-eu.pem"));
+//    }
 }

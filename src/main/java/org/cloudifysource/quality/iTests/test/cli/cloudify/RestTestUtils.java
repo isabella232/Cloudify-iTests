@@ -39,6 +39,7 @@ import org.cloudifysource.dsl.rest.response.DeploymentEvents;
 import org.cloudifysource.dsl.rest.response.InstallApplicationResponse;
 import org.cloudifysource.dsl.rest.response.InstallServiceResponse;
 import org.cloudifysource.dsl.rest.response.ServiceDescription;
+import org.cloudifysource.dsl.rest.response.UninstallApplicationResponse;
 import org.cloudifysource.dsl.rest.response.UninstallServiceResponse;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.cloudifysource.restclient.RestClient;
@@ -165,7 +166,6 @@ public class RestTestUtils {
 	
 	public static InstallServiceResponse installServiceUsingNewRestAPI(final String restUrl, final File serviceFolder,
 			final String applicationName, final String serviceName, final File serviceOverridesFile, final int timeoutInMinutes, String expectedFailureMsg) {
-
 		File packedFile = null;
 		try {
 			// create zip file
@@ -180,7 +180,6 @@ public class RestTestUtils {
 
 		// upload
 		final InstallServiceRequest request = new InstallServiceRequest();
-		
 		String serviceFolderUploadKey = upload(restClient, packedFile);
 		request.setServiceFolderUploadKey(serviceFolderUploadKey);
 		String serviceOverridesUploadKey = upload(restClient, serviceOverridesFile);
@@ -234,6 +233,22 @@ public class RestTestUtils {
 		}
 		return uninstallService;
 	}
+	
+	public static UninstallApplicationResponse uninstallApplicationUsingNewRestClient(
+			final String restUrl, final String appName, final String deploymentID, final int timeoutInMinutes) {
+		// create rest client and connect
+		final RestClient restClient = createAndConnect(restUrl);
+		// uninstall service and wait
+		UninstallApplicationResponse uninstallResposne = null;
+		try {
+			uninstallResposne = restClient.uninstallApplication(appName, timeoutInMinutes);
+			waitForApplicationUninstall(restUrl, appName, deploymentID);
+		} catch (RestClientException e) {
+			Assert.fail("failed to uninstall application [" + appName
+					+ "], error message: " + e.getMessageFormattedText());
+		}
+		return uninstallResposne;
+	}
 
 	private static void waitForServiceInstallation(final RestClient restClient, final String restUrl, final String appName, final String serviceName, final String deploymentId)
 			throws RestClientException {
@@ -286,6 +301,34 @@ public class RestTestUtils {
 		try {
 		 final RestClient restClient = createAndConnect(restUrl);
 		AssertUtils.repetitiveAssertTrue("uninstall service failed " + serviceName,
+				new AssertUtils.RepetitiveConditionProvider() {
+					@Override
+					public boolean getCondition() {
+						try {
+							DeploymentEvents deploymentEvents = restClient.getDeploymentEvents(deploymentId, 0, -1);
+							List<DeploymentEvent> events = deploymentEvents.getEvents();
+							for (DeploymentEvent deploymentEvent : events) {
+								String description = deploymentEvent.getDescription();
+								if (description.equals(CloudifyConstants.UNDEPLOYED_SUCCESSFULLY_EVENT)) {
+									return true;
+								}
+							}
+						} catch (RestClientException e) {
+							LogUtils.log("Failed getting deployment events with deploymentId " + deploymentId 
+									+ " error message: " + e.getMessageFormattedText());
+						}
+						return false;
+					}
+				}, AbstractTestSupport.OPERATION_TIMEOUT * 3);
+		} catch (Exception e1) {
+			Assert.fail("failed to create GSRestClient with url " + restUrl + " and version " + PlatformVersion.getVersionNumber());
+		}
+	}
+	
+	private static void waitForApplicationUninstall(final String restUrl, final String appName, final String deploymentId) {		
+		try {
+		 final RestClient restClient = createAndConnect(restUrl);
+		AssertUtils.repetitiveAssertTrue("uninstall application failed " + appName,
 				new AssertUtils.RepetitiveConditionProvider() {
 					@Override
 					public boolean getCondition() {

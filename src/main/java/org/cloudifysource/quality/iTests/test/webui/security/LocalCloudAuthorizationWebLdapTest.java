@@ -47,10 +47,11 @@ public class LocalCloudAuthorizationWebLdapTest extends AbstractSecuredLocalClou
 	@BeforeClass
 	public void bootstrap() throws Exception {
 
+		
         final String nonSecuredRestUrl = "http://" + IPUtils.getSafeIpAddress(InetAddress.getLocalHost().getHostAddress())
         		+ ":" + CloudifyConstants.DEFAULT_REST_PORT;
 
-        if(isNonSecuredRestPortResponding()){
+        if( isNonSecuredRestPortResponding() ){
             LogUtils.log("tearing down a previous non-secured bootstrap");
             LocalCloudBootstrapper bootstrapper = new LocalCloudBootstrapper();
             bootstrapper.timeoutInMinutes(15);

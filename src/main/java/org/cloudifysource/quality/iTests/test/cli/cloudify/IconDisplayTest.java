@@ -1,5 +1,7 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify;
 
+import iTests.framework.tools.SGTestHelper;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -15,46 +17,64 @@ import org.cloudifysource.dsl.internal.packaging.PackagingException;
 import org.cloudifysource.dsl.utils.ServiceUtils;
 import org.openspaces.admin.gsm.GridServiceManager;
 import org.openspaces.admin.internal.gsm.InternalGridServiceManager;
+import org.testng.Assert;
 import org.testng.annotations.Test;
+
 /**
  * This test verifies the existence of an icon in the webUI when deploying a service or an application.
+ * 
  * @author adaml
- *
+ * 
  */
 public class IconDisplayTest extends AbstractLocalCloudTest {
-	
+
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
-	public void testServiceIcon() throws PackagingException, DSLException, MalformedURLException, IOException, InterruptedException{
-		
+	public void testServiceIcon() throws PackagingException, DSLException, MalformedURLException, IOException,
+			InterruptedException {
+
 		String serviceDir = CommandTestUtils.getPath("src/main/resources/apps/USM/usm/applications/simple/simple");
 		runCommand("connect " + restUrl + ";install-service " + serviceDir + ";exit");
-		
-		DSLServiceCompilationResult compilationResult = ServiceReader.getServiceFromDirectory(new File(serviceDir));
-		Service service = compilationResult.getService();
-		String iconPath = getIconPath(service, "default");
-		
-		//test icon path
-		int responseCode = getResponseCode(iconPath);
-		assertTrue("Can not find the icon under: " + iconPath, responseCode == HttpStatus.SC_OK);
-		
+
+		try {
+			DSLServiceCompilationResult compilationResult = ServiceReader.getServiceFromDirectory(new File(serviceDir));
+			Service service = compilationResult.getService();
+			String iconPath = getIconPath(service, "default");
+
+			final String deploymentDirectoryName = SGTestHelper.getBuildDir() + "/deploy/default.simple";
+			final File deploymentDirectory = new File(deploymentDirectoryName);
+			Assert.assertTrue(deploymentDirectory.exists() && deploymentDirectory.isDirectory(),
+					"Expected to find deployment directory at: " + deploymentDirectoryName);
+			
+			final File iconFile = new File(deploymentDirectoryName + "/ext/icon.png");
+			Assert.assertTrue(iconFile.exists() && iconFile.isFile(), "expected to find file at: " + iconFile.getAbsolutePath());
+			// test icon path
+			int responseCode = getResponseCode(iconPath);
+			assertTrue("Can not find the icon under: " + iconPath, responseCode == HttpStatus.SC_OK);
+		} finally {
+			runCommand("connect " + restUrl + ";uninstall-service simple;exit");
+		}
+
 	}
-	
+
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
-	public void testApplicationIcon() throws PackagingException, DSLException, MalformedURLException, IOException, InterruptedException{
+	public void testApplicationIcon() throws PackagingException, DSLException, MalformedURLException, IOException,
+			InterruptedException {
 		String applicationDir = CommandTestUtils.getPath("src/main/resources/apps/USM/usm/applications/simple");
-		String applicationServiceDir = CommandTestUtils.getPath("src/main/resources/apps/USM/usm/applications/simple/simple");
-		
+		String applicationServiceDir =
+				CommandTestUtils.getPath("src/main/resources/apps/USM/usm/applications/simple/simple");
+
 		runCommand("connect " + restUrl + ";install-application " + applicationDir + ";exit");
-		
-		DSLServiceCompilationResult compilationResult = ServiceReader.getServiceFromDirectory(new File(applicationServiceDir));
+
+		DSLServiceCompilationResult compilationResult =
+				ServiceReader.getServiceFromDirectory(new File(applicationServiceDir));
 		Service service = compilationResult.getService();
-		
-		//test icon path
+
+		// test icon path
 		String iconPath = getIconPath(service, "simple");
 		int responseCode = getResponseCode(iconPath);
-		
+
 		assertTrue("Can not find the icon under: " + iconPath, responseCode == HttpStatus.SC_OK);
-		
+
 	}
 
 	private String getIconPath(Service service, String applicationName) {
@@ -62,22 +82,22 @@ public class IconDisplayTest extends AbstractLocalCloudTest {
 		String codeBaseUrl = getCodeBaseUrl();
 		String absolutePUName = ServiceUtils.getAbsolutePUName(applicationName, service.getName());
 		return codeBaseUrl + "/" + absolutePUName + "/ext/" + iconURI;
-		
+
 	}
 
-	//returns the webster url.
+	// returns the webster url.
 	private String getCodeBaseUrl() {
 		GridServiceManager gsm = admin.getGridServiceManagers().waitForAtLeastOne();
 		InternalGridServiceManager igsm = InternalGridServiceManager.class.cast(gsm);
 		return igsm.getCodeBaseURL();
 	}
-	
+
 	public static int getResponseCode(String urlString) throws MalformedURLException, IOException {
-	    URL url = new URL(urlString); 
-	    HttpURLConnection huc =  (HttpURLConnection)url.openConnection(); 
-	    huc.setRequestMethod("GET"); 
-	    huc.connect(); 
-	    return huc.getResponseCode();
+		URL url = new URL(urlString);
+		HttpURLConnection huc = (HttpURLConnection) url.openConnection();
+		huc.setRequestMethod("GET");
+		huc.connect();
+		return huc.getResponseCode();
 	}
-	
+
 }

@@ -70,7 +70,7 @@ public class RetryLimitTest extends AbstractLocalCloudTest {
 
         public void assertMultipleRetries() {
             assertTrue("Expected instance added events are missing", instanceAdded > 2);
-            assertTrue("Expected instance removed events are missing", instanceRemoved > 2);
+            assertTrue("Expected instance removed events are missing", instanceRemoved > 1);
         }
     }
 
@@ -255,9 +255,9 @@ public class RetryLimitTest extends AbstractLocalCloudTest {
         } finally {
             IOUtils.replaceFileWithMove(new File(serviceDir + "/error-service.groovy"), new File(groovyBackupFilePath));
             IOUtils.replaceFileWithMove(new File(serviceDir + "/error-service.properties"), new File(propsBackupFilePath));
+            admin.getProcessingUnits().removeLifecycleListener(eventListener);
         }
 
-        admin.getProcessingUnits().removeLifecycleListener(eventListener);
         CommandTestUtils.runCommandAndWait(unInstallCommand);
         ServiceInstanceAttemptData attemptDataAfterInstall = managementSpace.read(new ServiceInstanceAttemptData());
         assertTrue("Found attempt data in space after uninstall", attemptDataAfterInstall == null);

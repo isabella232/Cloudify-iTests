@@ -29,8 +29,8 @@ public class InstallAndUninstallServiceTest extends AbstractLocalCloudTest {
 	public static final String USM_SERVICE_FOLDER_NAME = "simple";
 	public static final String USM_SERVICE_NAME = "simple";
 
-	
-	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
+	// The new REST API doesn't support .war files.
+	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT, groups = "1", enabled = false)
 	public void testServletInstall() throws IOException, InterruptedException {
 		testRestApiInstall(SERVLET_SERVICE_NAME, getArchiveServicePath(SERVLET_WAR_NAME));
 	}

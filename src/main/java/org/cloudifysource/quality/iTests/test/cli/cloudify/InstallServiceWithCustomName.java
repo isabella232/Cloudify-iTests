@@ -53,11 +53,11 @@ public class InstallServiceWithCustomName extends AbstractLocalCloudTest {
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, groups = "1")
 	public void installServiceWithCustomNameRestClientTest() 
 			throws IOException, InterruptedException {
-		InstallServiceResponse response = RestTestUtils.installServiceUsingNewRestAPI(restUrl, new File(SERVICE_DIR_PATH), 
+		InstallServiceResponse response = NewRestTestUtils.installServiceUsingNewRestAPI(restUrl, new File(SERVICE_DIR_PATH), 
 				CloudifyConstants.DEFAULT_APPLICATION_NAME, SERVICE_UPDATED_NAME, INSTALL_TIMEOUT_MILLIS, null);
 		String deploymentID = response.getDeploymentID();
 		UninstallServiceResponse uninstallServiceResponse = 
-				RestTestUtils.uninstallServiceUsingNewRestClient(restUrl, SERVICE_UPDATED_NAME, deploymentID, INSTALL_TIMEOUT_MILLIS);
+				NewRestTestUtils.uninstallServiceUsingNewRestClient(restUrl, SERVICE_UPDATED_NAME, deploymentID, INSTALL_TIMEOUT_MILLIS);
 		Assert.assertEquals(deploymentID, uninstallServiceResponse.getDeploymentID());
 	}
 }

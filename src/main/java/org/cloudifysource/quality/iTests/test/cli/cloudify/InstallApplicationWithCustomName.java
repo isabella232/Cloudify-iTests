@@ -57,13 +57,13 @@ public class InstallApplicationWithCustomName extends AbstractLocalCloudTest {
 	public void installApplicationWithCustomNameRestClientTest() 
 			throws IOException, InterruptedException, DSLException, PackagingException {
 		InstallApplicationResponse response = 
-				RestTestUtils.installApplicationUsingNewRestApi(restUrl, APPLICATION_MODIFIED_NAME, new File(APPLICATION_DIR_PATH), null, null);
+				NewRestTestUtils.installApplicationUsingNewRestApi(restUrl, APPLICATION_MODIFIED_NAME, new File(APPLICATION_DIR_PATH), null, null);
 		Assert.assertNotNull(response);
 		String installDeploymentID = response.getDeploymentID();
 		Assert.assertFalse(StringUtils.isBlank(installDeploymentID));
 		
 		UninstallApplicationResponse uninstallResponse = 
-				RestTestUtils.uninstallApplicationUsingNewRestClient(restUrl, APPLICATION_MODIFIED_NAME, installDeploymentID, INSTALL_TIMEOUT_MILLIS);
+				NewRestTestUtils.uninstallApplicationUsingNewRestClient(restUrl, APPLICATION_MODIFIED_NAME, installDeploymentID, INSTALL_TIMEOUT_MILLIS);
 		Assert.assertNotNull(uninstallResponse);
 		String uninstallDeploymentID = uninstallResponse.getDeploymentID();
 		Assert.assertFalse(StringUtils.isBlank(uninstallDeploymentID));

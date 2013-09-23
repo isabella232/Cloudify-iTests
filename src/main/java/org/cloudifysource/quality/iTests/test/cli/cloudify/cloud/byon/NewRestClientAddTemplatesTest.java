@@ -25,7 +25,7 @@ import org.cloudifysource.dsl.rest.AddTemplatesException;
 import org.cloudifysource.dsl.rest.response.AddTemplatesResponse;
 import org.cloudifysource.dsl.rest.response.InstallServiceResponse;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
-import org.cloudifysource.quality.iTests.test.cli.cloudify.RestTestUtils;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.NewRestTestUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.templates.TemplateDetails;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.templates.TemplatesCommandsRestAPI;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.templates.TemplatesFolderHandler;
@@ -68,9 +68,9 @@ public class NewRestClientAddTemplatesTest extends AbstractByonAddRemoveTemplate
 		String serviceName = templateName + "_service";
 		String restUrl = getRestUrl();
 		File serviceDir = serviceCreator.createServiceDir(serviceName, templateName);
-		InstallServiceResponse installServiceResponse = RestTestUtils.installServiceUsingNewRestAPI(restUrl, serviceDir, CloudifyConstants.DEFAULT_APPLICATION_NAME, serviceName, 5);
+		InstallServiceResponse installServiceResponse = NewRestTestUtils.installServiceUsingNewRestAPI(restUrl, serviceDir, CloudifyConstants.DEFAULT_APPLICATION_NAME, serviceName, 5);
 		assertRightUploadDir(serviceName, template.getUploadDirName());
-		RestTestUtils.uninstallServiceUsingNewRestClient(restUrl, serviceName, installServiceResponse.getDeploymentID(), 5);
+		NewRestTestUtils.uninstallServiceUsingNewRestClient(restUrl, serviceName, installServiceResponse.getDeploymentID(), 5);
 	}
 
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, enabled = true)
@@ -97,11 +97,11 @@ public class NewRestClientAddTemplatesTest extends AbstractByonAddRemoveTemplate
 			throws IOException {
 		File serviceDir = serviceCreator.createServiceDir(serviceName, templateName);
 		InstallServiceResponse installServiceResponse = 
-				RestTestUtils.installServiceUsingNewRestAPI(getRestUrl(), serviceDir, CloudifyConstants.DEFAULT_APPLICATION_NAME, serviceName, timeout);
+				NewRestTestUtils.installServiceUsingNewRestAPI(getRestUrl(), serviceDir, CloudifyConstants.DEFAULT_APPLICATION_NAME, serviceName, timeout);
 		try {
 			assertRightUploadDir(serviceName, uploadDirName);
 		} finally {
-			RestTestUtils.uninstallServiceUsingNewRestClient(getRestUrl(), serviceName, installServiceResponse.getDeploymentID(), timeout);
+			NewRestTestUtils.uninstallServiceUsingNewRestClient(getRestUrl(), serviceName, installServiceResponse.getDeploymentID(), timeout);
 		}
 	}
 
@@ -144,7 +144,7 @@ public class NewRestClientAddTemplatesTest extends AbstractByonAddRemoveTemplate
 	public void templateNotExists() throws IOException, InterruptedException {
 		String serviceName = "notExistTemplate_service";
 		File serviceDir = serviceCreator.createServiceDir(serviceName, "notExistTemplate");
-		RestTestUtils.installServiceUsingNewRestAPI(
+		NewRestTestUtils.installServiceUsingNewRestAPI(
 				getRestUrl(), 
 				serviceDir, 
 				CloudifyConstants.DEFAULT_APPLICATION_NAME, 
@@ -166,7 +166,7 @@ public class NewRestClientAddTemplatesTest extends AbstractByonAddRemoveTemplate
 
 		String serviceName = templateName + "_service";
 		File serviceDir = serviceCreator.createServiceDir(serviceName, templateName);
-		RestTestUtils.installServiceUsingNewRestAPI(
+		NewRestTestUtils.installServiceUsingNewRestAPI(
 				getRestUrl(), 
 				serviceDir, 
 				CloudifyConstants.DEFAULT_APPLICATION_NAME, 
@@ -235,13 +235,13 @@ public class NewRestClientAddTemplatesTest extends AbstractByonAddRemoveTemplate
 		String serviceName = templateName + "_service";
 		String restUrl = getRestUrl();
 		File serviceDir = serviceCreator.createServiceDir(serviceName, templateName);
-		InstallServiceResponse installServiceResponse = RestTestUtils.installServiceUsingNewRestAPI(restUrl, serviceDir, CloudifyConstants.DEFAULT_APPLICATION_NAME, serviceName, 5);
+		InstallServiceResponse installServiceResponse = NewRestTestUtils.installServiceUsingNewRestAPI(restUrl, serviceDir, CloudifyConstants.DEFAULT_APPLICATION_NAME, serviceName, 5);
 		try {
 			assertRightUploadDir(serviceName, addedTemplate.getUploadDirName());
 			templatesHandler.removeTemplatesFromCloudUsingRestAPI(folderHandler, templateName, true, "the template is being used by the following services");
 			templatesHandler.assertExpectedList();
 		} finally {
-			RestTestUtils.uninstallServiceUsingNewRestClient(restUrl, serviceName, installServiceResponse.getDeploymentID(), 5);
+			NewRestTestUtils.uninstallServiceUsingNewRestClient(restUrl, serviceName, installServiceResponse.getDeploymentID(), 5);
 		}
 	}
 

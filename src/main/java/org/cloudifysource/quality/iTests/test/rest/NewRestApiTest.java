@@ -1,6 +1,8 @@
 package org.cloudifysource.quality.iTests.test.rest;
 
 import junit.framework.Assert;
+
+import org.apache.commons.lang.StringUtils;
 import org.cloudifysource.dsl.rest.response.InstallApplicationResponse;
 import org.cloudifysource.dsl.utils.ServiceUtils;
 import org.cloudifysource.quality.iTests.framework.utils.ApplicationInstaller;
@@ -22,6 +24,7 @@ public class NewRestApiTest extends AbstractLocalCloudTest {
         final Object[] responses = installer.restInstall();
         final InstallApplicationResponse response = (InstallApplicationResponse) responses[0];
         final String deploymentID = response.getDeploymentID();
+        Assert.assertTrue(StringUtils.isNotBlank(deploymentID));
 
         Assert.assertTrue(ServiceUtils.isPortOccupied("localhost", 8080));
 

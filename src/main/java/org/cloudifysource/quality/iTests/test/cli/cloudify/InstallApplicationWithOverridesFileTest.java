@@ -74,7 +74,7 @@ public class InstallApplicationWithOverridesFileTest extends OverridesTest {
 	public void applicationWithOverridesFileNewRestApiTest()
 			throws IOException, DSLException, PackagingException, InterruptedException {
 		try {
-			RestTestUtils.installApplicationUsingNewRestApi(restUrl, APPLICATION_OVERRIDEN_NAME, new File(APPLICATION_DIR_PATH), new File(OVERRIDES_FILE_PATH), null);
+			NewRestTestUtils.installApplicationUsingNewRestApi(restUrl, APPLICATION_OVERRIDEN_NAME, new File(APPLICATION_DIR_PATH), new File(OVERRIDES_FILE_PATH), null);
 			// asserts
 			ProcessingUnit processingUnit = getProcessingUnit(PU_NAME);
 			assertProcessingUnit(processingUnit);

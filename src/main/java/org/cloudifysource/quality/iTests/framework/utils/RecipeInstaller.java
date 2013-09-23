@@ -22,8 +22,6 @@ import org.cloudifysource.dsl.rest.response.ApplicationDescription;
 import org.cloudifysource.dsl.rest.response.InstallApplicationResponse;
 import org.cloudifysource.dsl.rest.response.InstallServiceResponse;
 import org.cloudifysource.dsl.rest.response.ServiceDescription;
-import org.cloudifysource.dsl.rest.response.UninstallApplicationResponse;
-import org.cloudifysource.dsl.rest.response.UninstallServiceResponse;
 import org.cloudifysource.dsl.rest.response.UploadResponse;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CloudTestUtils;
@@ -34,7 +32,6 @@ import org.cloudifysource.restclient.RestClient;
 import org.cloudifysource.restclient.RestException;
 import org.cloudifysource.restclient.exceptions.RestClientException;
 import org.cloudifysource.shell.exceptions.CLIException;
-import org.cloudifysource.shell.rest.RestAdminFacade;
 
 import com.j_spaces.kernel.PlatformVersion;
 
@@ -349,14 +346,14 @@ public abstract class RecipeInstaller {
         String recipeName = null;
         if (this instanceof ServiceInstaller) {
             recipeName = ((ServiceInstaller) this).getServiceName();
-            final UninstallServiceResponse response = client.uninstallService(applicationName, recipeName, (int) this.getTimeoutInMinutes());
+            client.uninstallService(applicationName, recipeName, (int) this.getTimeoutInMinutes());
         } else if (this instanceof ApplicationInstaller) {
             recipeName = ((ApplicationInstaller) this).getApplicationName();
-            final UninstallApplicationResponse response = client.uninstallApplication(recipeName, (int) this.getTimeoutInMinutes());
+            client.uninstallApplication(recipeName, (int) this.getTimeoutInMinutes());
         }
 
         if (this.isWaitForFinish()) {
-            waitForUninstall(url);
+        	waitForUninstall(url, client);
         }
 
     }
@@ -421,7 +418,7 @@ public abstract class RecipeInstaller {
         }
         if (isWaitForFinish()) {
             // wait for the application to reach STARTED state
-            waitForInstall(url);
+            waitForInstall(url, client);
         }
         return new Object[] { installApplicationResponse, installServiceResponse };
     }
@@ -435,18 +432,15 @@ public abstract class RecipeInstaller {
         return dslReader;
     }
 
-    public void waitForInstall(final URL url)
+    public void waitForInstall(final URL url, final RestClient restClient)
             throws CLIException, RestClientException {
-        final RestAdminFacade adminFacade = new RestAdminFacade();
-        adminFacade.connect(getCloudifyUsername(), getCloudifyPassword(), url.toString(), false);
-
         LogUtils.log("Waiting for deployment state to be " + CloudifyConstants.DeploymentState.STARTED);
         if (this instanceof ApplicationInstaller) {
             AssertUtils.repetitiveAssertTrue(applicationName + " application failed to deploy", new AssertUtils.RepetitiveConditionProvider() {
                 @Override
                 public boolean getCondition() {
                     try {
-                        final List<ApplicationDescription> applicationDescriptionsList = adminFacade.getApplicationDescriptionsList();
+                        final List<ApplicationDescription> applicationDescriptionsList = restClient.getApplicationDescriptionsList();
                         for (ApplicationDescription applicationDescription : applicationDescriptionsList) {
                             if (applicationDescription.getApplicationName().equals(applicationName)) {
                                 if (applicationDescription.getApplicationState().equals(CloudifyConstants.DeploymentState.STARTED)) {
@@ -454,9 +448,9 @@ public abstract class RecipeInstaller {
                                 }
                             }
                         }
-                    } catch (final CLIException e) {
-                        e.printStackTrace();
-                    }
+                    } catch (RestClientException e) {
+                    	LogUtils.log("Failed getting application description");
+					}
                     return false;
                 }
             }, TimeUnit.MINUTES.toMillis(this.getTimeoutInMinutes()));
@@ -467,41 +461,38 @@ public abstract class RecipeInstaller {
                 @Override
                 public boolean getCondition() {
                     try {
-                        ApplicationDescription servicesDescriptionList = adminFacade.getServicesDescriptionList(CloudifyConstants.DEFAULT_APPLICATION_NAME);
-                        for (ServiceDescription description : servicesDescriptionList.getServicesDescription()) {
+                    	List<ServiceDescription> servicesDescriptionList = restClient.getServicesDescriptionList(CloudifyConstants.DEFAULT_APPLICATION_NAME);
+                        for (ServiceDescription description : servicesDescriptionList) {
                             if (description.getServiceName().equals(serviceName)) {
                                 if (description.getServiceState().equals(CloudifyConstants.DeploymentState.STARTED)) {
                                     return true;
                                 }
                             }
                         }
-                    } catch (final CLIException e) {
-                        LogUtils.log("Failed getting service description");
-                    }
+                    } catch (RestClientException e) {
+                    	LogUtils.log("Failed getting service description");
+					}
                     return false;
                 }
             }, TimeUnit.MINUTES.toMillis(this.getTimeoutInMinutes()));
         }
     }
 
-    public void waitForUninstall(final URL url) throws Exception {
-        final RestAdminFacade adminFacade = new RestAdminFacade();
-        adminFacade.connect(null, null, url.toString(), false);
-
+    public void waitForUninstall(final URL url, final RestClient restClient) throws Exception {
         LogUtils.log("Waiting for USM_State to be " + CloudifyConstants.USMState.RUNNING);
         if (this instanceof ApplicationInstaller) {
             AssertUtils.repetitiveAssertTrue("uninstall failed for application " + applicationName, new AssertUtils.RepetitiveConditionProvider() {
                 @Override
                 public boolean getCondition() {
                     try {
-                        final List<ApplicationDescription> applicationDescriptionsList = adminFacade.getApplicationDescriptionsList();
+                        final List<ApplicationDescription> applicationDescriptionsList = restClient.getApplicationDescriptionsList();
                         for (ApplicationDescription applicationDescription : applicationDescriptionsList) {
                             if (applicationDescription.getApplicationName().equals(applicationName)) {
                                 return false;
                             }
                         }
                         return true;
-                    } catch (final CLIException e) {
+                    } catch (final RestClientException e) {
                         LogUtils.log("Failed getting application list.");
                     }
                     return false;

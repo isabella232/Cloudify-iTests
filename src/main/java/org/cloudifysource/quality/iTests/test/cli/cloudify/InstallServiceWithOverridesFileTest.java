@@ -43,7 +43,7 @@ public class InstallServiceWithOverridesFileTest extends OverridesTest {
 		final File overridesFile = new File(OVERRIDES_FILE_PATH);
 
 		try {
-			RestTestUtils.installServiceUsingNewRestAPI(restUrl, serviceDir, CloudifyConstants.DEFAULT_APPLICATION_NAME, SERVICE_NAME, overridesFile, 5, null);
+			NewRestTestUtils.installServiceUsingNewRestAPI(restUrl, serviceDir, CloudifyConstants.DEFAULT_APPLICATION_NAME, SERVICE_NAME, overridesFile, 5, null);
 
 			// get PU
 			final ProcessingUnit processingUnit = getProcessingUnit("default." + SERVICE_NAME);

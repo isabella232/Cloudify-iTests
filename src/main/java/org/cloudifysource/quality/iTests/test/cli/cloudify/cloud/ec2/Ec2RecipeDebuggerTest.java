@@ -2,10 +2,11 @@ package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.ec2;
 
 import iTests.framework.tools.SGTestHelper;
 import iTests.framework.utils.AssertUtils;
-import iTests.framework.utils.IOUtils;
 import iTests.framework.utils.LogUtils;
 import iTests.framework.utils.SSHUtils;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -20,10 +21,6 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.util.concurrent.atomic.AtomicReference;
 import com.j_spaces.kernel.PlatformVersion;
 
 /**

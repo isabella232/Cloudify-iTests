@@ -1,12 +1,15 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify;
 
 import iTests.framework.tools.SGTestHelper;
+import iTests.framework.utils.LogUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.httpclient.HttpStatus;
 import org.cloudifysource.domain.Service;
@@ -40,13 +43,14 @@ public class IconDisplayTest extends AbstractLocalCloudTest {
 			Service service = compilationResult.getService();
 			String iconPath = getIconPath(service, "default");
 
-			final String deploymentDirectoryName = SGTestHelper.getBuildDir() + "/deploy/default.simple";
+			final String deploymentDirectoryName = getDeploymentDirectoryName() + "/default.simple";
 			final File deploymentDirectory = new File(deploymentDirectoryName);
 			Assert.assertTrue(deploymentDirectory.exists() && deploymentDirectory.isDirectory(),
 					"Expected to find deployment directory at: " + deploymentDirectoryName);
-			
+
 			final File iconFile = new File(deploymentDirectoryName + "/ext/icon.png");
-			Assert.assertTrue(iconFile.exists() && iconFile.isFile(), "expected to find file at: " + iconFile.getAbsolutePath());
+			Assert.assertTrue(iconFile.exists() && iconFile.isFile(),
+					"expected to find file at: " + iconFile.getAbsolutePath());
 			// test icon path
 			int responseCode = getResponseCode(iconPath);
 			assertTrue("Can not find the icon under: " + iconPath, responseCode == HttpStatus.SC_OK);
@@ -54,6 +58,19 @@ public class IconDisplayTest extends AbstractLocalCloudTest {
 			runCommand("connect " + restUrl + ";uninstall-service simple;exit");
 		}
 
+	}
+
+	private String getDeploymentDirectoryName() {
+		GridServiceManager gsm = admin.getGridServiceManagers().waitForAtLeastOne(10, TimeUnit.SECONDS);
+		Map<String, String> sysprops = gsm.getVirtualMachine().getDetails().getSystemProperties();
+		if (sysprops.containsKey("com.gs.deploy")) {
+			final String deploymentDirectoryName = sysprops.get("com.gs.deploy");
+			LogUtils.log("Found deployment directory name: " + deploymentDirectoryName);
+			return deploymentDirectoryName;
+		} else {
+			final String deploymentDirectoryName = SGTestHelper.getBuildDir() + "/deploy";
+			return deploymentDirectoryName;
+		}
 	}
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)

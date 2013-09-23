@@ -12,11 +12,11 @@ public class ListServicesAndApplicationsCommandsTest extends AbstractLocalCloudT
 
     private static final int ONE_SEC_IN_MILLI = 1000;
     
-    private static final String LIST_TWO_SERVICES_TEXT = "\ndefault  STARTED\tAuthorization Groups: \n\tdefault.tomcat  STARTED (1/1)\n\tdefault.solr  STARTED (1/1)\n>>> \n>>>";
+    private static final String LIST_TWO_SERVICES_TEXT = "\ndefault  STARTED\tAuthorization Groups: \n\tdefault.tomcat  STARTED (1/1)\n\tdefault.solr  STARTED (1/1)\n>>>";
 	private static final String LIST_TWO_APPLICATIONS_TEXT = "list-applications \nhelloworld  STARTED\tAuthorization Groups: \n\thelloworld.tomcat  STARTED (1/1)\nsimple  STARTED\tAuthorization Groups: \n\tsimple.simple  STARTED (1/1)\n\n>>>";
 	private static final String LIST_PETCLINIC_SERVICES_TEXT = "\npetclinic  STARTED\tAuthorization Groups: \n\tpetclinic.mongod  STARTED (1/1)\n\tpetclinic.tomcat  STARTED (1/1)\n>>>";
 	private static final String LIST_ZERO_SERVICES_OUTPUT = ">>> list-services \n\n>>> ";
-	private static final String LIST_ZERO_APPLICATIONS_OUTPUT = ">>> list-applications \n\n>>> \n>>>";
+	private static final String LIST_ZERO_APPLICATIONS_OUTPUT = ">>> list-applications \n\n>>>";
 	
 	
     @Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)

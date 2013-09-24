@@ -92,7 +92,7 @@ public class AbstractAgentMaintenanceModeTest extends AbstractByonCloudTest {
 	
 	protected void gracefullyShutdownAgent(final String puName) throws IOException, InterruptedException {
     	final String connectCommand 		= "connect " + this.getRestUrl();
-    	final String shutdownCommand 	= connectCommand + ";invoke simpleRestartAgent shutdownAgent";
+    	final String shutdownCommand 	= connectCommand + ";invoke simpleRestartAgent shutdownAgent default.simpleRestartAgent";
     	String shutdownOut = CommandTestUtils.runCommandAndWait(shutdownCommand);
     	assertTrue(shutdownOut.contains("invocation completed successfully."));
     }

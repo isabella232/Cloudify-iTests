@@ -11,27 +11,13 @@ import org.openspaces.admin.gsa.events.GridServiceAgentLifecycleEventListener;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-/**
- * Sets agent to maintenance mode for a very short period of time and restarts the agent machine.
- * The expected behavior would be that the esm will detect the maintenance mode has expired
- * during the restart and start a new agent. When reboot is over, a new agent will be started 
- * and then removed by the esm for it is no longer needed. 
- *  
- * @author adaml
- *
- */
-class AgentMaintenanceTimeoutExceeded extends AbstractAgentMaintenanceModeTest {
+public class AgentMaintenanceTimeoutExceededTest extends AbstractAgentMaintenanceModeTest {
 
 	private static final long FIVE_SECONDS_MILLIS = 5000;
 
 	@BeforeClass(alwaysRun = true)
 	protected void bootstrap() throws Exception {
-		try {
-			
-			super.bootstrap();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		super.bootstrap();
 	}
 	
 	/**
@@ -75,6 +61,6 @@ class AgentMaintenanceTimeoutExceeded extends AbstractAgentMaintenanceModeTest {
 		assertTrue("agent machine did not stop as expected.", removed.await(DEFAULT_WAIT_MINUTES, TimeUnit.MINUTES));
 		assertTrue("agent machine was not added as expected. esm did not start a machine",added.await(DEFAULT_WAIT_MINUTES, TimeUnit.MINUTES));
 		
-		uninstallServiceAndWait(absolutePuName);
+		uninstallServiceAndWait(SERVICE_NAME);
     }
 }

@@ -12,6 +12,11 @@ import org.openspaces.admin.gsa.events.GridServiceAgentLifecycleEventListener;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+/**
+ * 
+ * @author adaml
+ *
+ */
 public class AgentRestartTest extends AbstractAgentMaintenanceModeTest {
 	
 	private static final int INFINITY_MINUTES = 600;
@@ -57,6 +62,8 @@ public class AgentRestartTest extends AbstractAgentMaintenanceModeTest {
 		
 		restartAgentMachine(absolutePuName);
 		
+		LogUtils.log("Waiting for esm to recover from machine shutdown.");
+		
 		assertTrue("agent machine did not stop as expected.", removed.await(DEFAULT_WAIT_MINUTES, TimeUnit.MINUTES));
 		assertTrue("agent machine was not added as expected.",added.await(DEFAULT_WAIT_MINUTES, TimeUnit.MINUTES));
 		
@@ -64,9 +71,9 @@ public class AgentRestartTest extends AbstractAgentMaintenanceModeTest {
 		assertTrue("detected agent added after cluster was stabilized.", addedAfterStabilized.getCount() == 1);
 		
 		assertNumberOfMachines(2);
-		
 		stopMaintenanceMode(absolutePuName);
 		
+		LogUtils.log("ESM has recovered successfully. uninstalling service " + SERVICE_NAME);
 		uninstallServiceAndWait(SERVICE_NAME);
     }
     

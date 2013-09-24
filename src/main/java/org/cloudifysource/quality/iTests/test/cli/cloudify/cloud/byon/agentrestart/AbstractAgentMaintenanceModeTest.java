@@ -15,6 +15,11 @@ import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.byon.AbstractByonCloudTest;
 import org.openspaces.admin.pu.ProcessingUnit;
 
+/**
+ * 
+ * @author adaml
+ *
+ */
 public class AbstractAgentMaintenanceModeTest extends AbstractByonCloudTest {
 
 	protected static final String SERVICE_NAME = "simpleRestartAgent";
@@ -54,23 +59,6 @@ public class AbstractAgentMaintenanceModeTest extends AbstractByonCloudTest {
     						MavenUtils.password));
     	assertMachineState(ip, false);
     	LogUtils.log("Machine with ip " + ip + " is rebooting...");
-    	
-    	//For some reason, when restarting machine using custom command, the machine stops.
-//    	final String connectCommand 		= "connect " + this.getRestUrl();
-//    	final String getOpSystemCommand 	= connectCommand + ";invoke simpleRestartAgent getOpSystem";
-//    	final String operatingSystem 		= CommandTestUtils.runCommandAndWait(getOpSystemCommand);
-//    	String restartCommand 				= connectCommand;
-//    	
-//    	if (operatingSystem.contains("Linux") || operatingSystem.contains("Mac OS X")) {
-//    		restartCommand 					+= ";invoke simpleRestartAgent restartLinux";
-//    	} else if (operatingSystem.contains("Windows")) {
-//    		restartCommand 					+= ";invoke simpleRestartAgent restartWindows";
-//    	} else {
-//    		throw new RuntimeException("Unsupported operating system.");
-//    	}
-//
-//    	String restartOut = CommandTestUtils.runCommandAndWait(restartCommand);
-//    	assertTrue(restartOut.contains("invocation completed successfully."));
     }
 	
     private void assertMachineState(String ip, boolean isRunningExpected) 

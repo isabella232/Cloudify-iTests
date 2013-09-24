@@ -11,6 +11,11 @@ import org.openspaces.admin.gsa.events.GridServiceAgentLifecycleEventListener;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+/**
+ * 
+ * @author adaml
+ *
+ */
 public class AgentMaintenanceTimeoutExceededTest extends AbstractAgentMaintenanceModeTest {
 
 	private static final long FIVE_SECONDS_MILLIS = 5000;
@@ -55,12 +60,15 @@ public class AgentMaintenanceTimeoutExceededTest extends AbstractAgentMaintenanc
 				
 		admin.addEventListener(agentListener);
     	
-		//Shutdown agent. This machine should not start again.
+		// Shutdown agent. This machine should not start again.
 		gracefullyShutdownAgent(absolutePuName);
-    	
+		
+    	LogUtils.log("Waiting for esm to recover from agent shutdown.");
+    	// The recovery should be as normal meaning a new machine should be allocated.
 		assertTrue("agent machine did not stop as expected.", removed.await(DEFAULT_WAIT_MINUTES, TimeUnit.MINUTES));
 		assertTrue("agent machine was not added as expected. esm did not start a machine",added.await(DEFAULT_WAIT_MINUTES, TimeUnit.MINUTES));
 		
+		LogUtils.log("ESM has recovered successfully. uninstalling service " + SERVICE_NAME);
 		uninstallServiceAndWait(SERVICE_NAME);
     }
 }

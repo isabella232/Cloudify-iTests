@@ -30,6 +30,7 @@ import com.j_spaces.kernel.PlatformVersion;
 public class Ec2RecipeDebuggerTest extends NewAbstractCloudTest {
 
     private String SERVICE_NAME = "tomcat";
+    private static int TIMEOUT_IN_MILLISECONDS = 1000 * 60 * 10;
 
     @Override
     protected String getCloudName() {
@@ -50,11 +51,11 @@ public class Ec2RecipeDebuggerTest extends NewAbstractCloudTest {
     public void beforeBootstrap() throws IOException {
 
         File debuggerSrcFolder = new File(SGTestHelper.getSGTestRootDir() + "/src/main/resources/scripts/debugger");
-        File debuggerDestFolder = new File(getService().getPathToCloudFolder() + "/upload/cloudify-overrides");
-        FileUtils.copyDirectoryToDirectory(debuggerSrcFolder, debuggerDestFolder);
+        File debuggerTestFolder = new File(getService().getPathToCloudFolder() + "/upload/cloudify-overrides");
+        FileUtils.copyDirectoryToDirectory(debuggerSrcFolder, debuggerTestFolder);
     }
 
-    @Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = false)
+    @Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
     public void testDebugger() throws Exception {
         ServiceInstaller installer = new ServiceInstaller(getRestUrl(), SERVICE_NAME);
         String command = installer.recipePath(SGTestHelper.getBuildDir() + "/recipes/services/" + SERVICE_NAME).debugEvent("install").timeoutInMinutes(20).buildCommand(true).install();
@@ -66,7 +67,7 @@ public class Ec2RecipeDebuggerTest extends NewAbstractCloudTest {
         outputReadingThreadSignal.set(CommandTestUtils.ThreadSignal.RUN_SIGNAL);
         String debugSearchString = "A debug environment will be waiting for you on";
         String debugSearchString2 = "after the instance has launched";
-        CommandTestUtils.ProcessOutputPair processOutputPair = CommandTestUtils.runCommand(command, OPERATION_TIMEOUT, true, false, false, outputReadingThreadSignal, null, debugSearchString);
+        CommandTestUtils.ProcessOutputPair processOutputPair = CommandTestUtils.runCommand(command, OPERATION_TIMEOUT*2, true, false, false, outputReadingThreadSignal, null, debugSearchString);
 //        killOutputReadingThread(outputReadingThreadSignal);
 
         String output = processOutputPair.getOutput();
@@ -78,12 +79,23 @@ public class Ec2RecipeDebuggerTest extends NewAbstractCloudTest {
         if(!output.contains(debugSearchString) || !output.contains(debugSearchString2)){
             AssertUtils.assertFail("unexpected output format. startIndex = " + startIndex + ", endIndex = " + endIndex);
         }
-//        String serviceHostIp = output.substring(startIndex, endIndex);
-        String serviceHostIp = "";
+        String serviceHostIp = output.substring(startIndex, endIndex);
+//        String serviceHostIp = "";
         LogUtils.log("service host ip: " + serviceHostIp);
 
-        command = "debug " + SERVICE_NAME + ";run-script";
-        output = SSHUtils.runCommand(serviceHostIp, 1000 * 60 * 10, command, "ec2-user", getPemFile());
+        String managementMachineTemplate = getService().getCloud().getConfiguration().getManagementMachineTemplate();
+        String remoteDirectory = getService().getCloud().getCloudCompute().getTemplates().get(managementMachineTemplate).getRemoteDirectory();
+        String debuggerFolderPath = remoteDirectory + "/cloudify-overrides/debugger";
+
+        //installing "expect" package
+        SSHUtils.runCommand(serviceHostIp, TIMEOUT_IN_MILLISECONDS, "sudo yum -y install expect", "ec2-user", getPemFile());
+
+        //enabling execution
+        SSHUtils.runCommand(serviceHostIp, TIMEOUT_IN_MILLISECONDS, "cd " + debuggerFolderPath + "; chmod +x debugger.sh", "ec2-user", getPemFile());
+
+        //running
+        output = SSHUtils.runCommand(serviceHostIp, TIMEOUT_IN_MILLISECONDS, "cd " + debuggerFolderPath + "; expect run-script.exp", "ec2-user", getPemFile());
+
         LogUtils.log("output of tomcat installation: " + output);
 
         final GSRestClient client = new GSRestClient("", "", new URL(getRestUrl()), PlatformVersion.getVersionNumber());

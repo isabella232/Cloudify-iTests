@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.concurrent.atomic.AtomicReference;
 
+import iTests.framework.utils.WebUtils;
 import org.apache.commons.io.FileUtils;
 import org.cloudifysource.quality.iTests.framework.utils.ServiceInstaller;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
@@ -67,7 +68,7 @@ public class Ec2RecipeDebuggerTest extends NewAbstractCloudTest {
         outputReadingThreadSignal.set(CommandTestUtils.ThreadSignal.RUN_SIGNAL);
         String debugSearchString = "A debug environment will be waiting for you on";
         String debugSearchString2 = "after the instance has launched";
-        CommandTestUtils.ProcessOutputPair processOutputPair = CommandTestUtils.runCommand(command, OPERATION_TIMEOUT*2, true, false, false, outputReadingThreadSignal, null, debugSearchString);
+        CommandTestUtils.ProcessOutputPair processOutputPair = CommandTestUtils.runCommand(command, OPERATION_TIMEOUT*3, true, false, false, outputReadingThreadSignal, null, debugSearchString);
 //        killOutputReadingThread(outputReadingThreadSignal);
 
         String output = processOutputPair.getOutput();
@@ -101,6 +102,19 @@ public class Ec2RecipeDebuggerTest extends NewAbstractCloudTest {
         final GSRestClient client = new GSRestClient("", "", new URL(getRestUrl()), PlatformVersion.getVersionNumber());
 
         final String statusUrl = "ProcessingUnits/Names/default." + SERVICE_NAME + "/Instances/0/ProcessingUnit";
+
+        AssertUtils.repetitiveAssertTrue("service was not installed after debug ended", new AssertUtils.RepetitiveConditionProvider() {
+            @Override
+            public boolean getCondition() {
+                try {
+                    return WebUtils.isURLAvailable(new URL(getRestUrl() + "/admin/" + statusUrl));
+                } catch (Exception e) {
+                    LogUtils.log("still no such url: " + getRestUrl() + "/admin/" + statusUrl);
+                }
+                return false;
+            }
+        }, OPERATION_TIMEOUT * 2);
+
         final AtomicReference<String> status = new AtomicReference<String>((String)client.getAdminData(statusUrl).get("Status-Enumerator"));
 
         AssertUtils.repetitiveAssertTrue("service has not become intact after debugging", new AssertUtils.RepetitiveConditionProvider() {

@@ -56,7 +56,7 @@ public class Ec2RecipeDebuggerTest extends NewAbstractCloudTest {
         FileUtils.copyDirectoryToDirectory(debuggerSrcFolder, debuggerTestFolder);
     }
 
-    @Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
+    @Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = false)
     public void testDebugger() throws Exception {
         ServiceInstaller installer = new ServiceInstaller(getRestUrl(), SERVICE_NAME);
         String command = installer.recipePath(SGTestHelper.getBuildDir() + "/recipes/services/" + SERVICE_NAME).debugEvent("install").timeoutInMinutes(20).buildCommand(true).install();
@@ -69,7 +69,7 @@ public class Ec2RecipeDebuggerTest extends NewAbstractCloudTest {
         String debugSearchString = "A debug environment will be waiting for you on";
         String debugSearchString2 = "after the instance has launched";
         CommandTestUtils.ProcessOutputPair processOutputPair = CommandTestUtils.runCommand(command, OPERATION_TIMEOUT*3, true, false, false, outputReadingThreadSignal, null, debugSearchString);
-//        killOutputReadingThread(outputReadingThreadSignal);
+        killOutputReadingThread(outputReadingThreadSignal);
 
         String output = processOutputPair.getOutput();
         AssertUtils.assertTrue("service was installed although installation was paused in debug mode", !output.contains("successfully installed"));
@@ -81,7 +81,6 @@ public class Ec2RecipeDebuggerTest extends NewAbstractCloudTest {
             AssertUtils.assertFail("unexpected output format. startIndex = " + startIndex + ", endIndex = " + endIndex);
         }
         String serviceHostIp = output.substring(startIndex, endIndex);
-//        String serviceHostIp = "";
         LogUtils.log("service host ip: " + serviceHostIp);
 
         String managementMachineTemplate = getService().getCloud().getConfiguration().getManagementMachineTemplate();
@@ -129,10 +128,6 @@ public class Ec2RecipeDebuggerTest extends NewAbstractCloudTest {
             }
         }, 1000 * 60 * 10);
 
-        output = processOutputPair.getOutput();
-        LogUtils.log("output after debug: " + output);
-        killOutputReadingThread(outputReadingThreadSignal);
-
     }
 
     private void killOutputReadingThread(AtomicReference<CommandTestUtils.ThreadSignal> threadSignal) {
@@ -153,11 +148,7 @@ public class Ec2RecipeDebuggerTest extends NewAbstractCloudTest {
     @Override
     @AfterClass(alwaysRun = true)
     protected void teardown() throws Exception {
-//        super.teardown();
+        super.teardown();
     }
 
-//    public static void main(String[] args){
-//
-//        SSHUtils.runCommand("54.217.82.230", 1000 * 60 * 10, "./run.exp", "ec2-user", new File("D:\\opt\\cloudify\\clouds\\ec2_ec2recipedebuggertest\\upload\\ec2-sgtest-eu.pem"));
-//    }
 }

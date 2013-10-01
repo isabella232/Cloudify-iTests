@@ -1,5 +1,7 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services;
 
+import iTests.framework.utils.LogUtils;
+
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -11,15 +13,14 @@ import java.util.Set;
 
 import org.cloudifysource.dsl.utils.IPUtils;
 import org.cloudifysource.esc.jclouds.WindowsServerEC2ReviseParsedImage;
-import iTests.framework.utils.LogUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CloudTestUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.security.SecurityConstants;
+import org.jclouds.ContextBuilder;
 import org.jclouds.aws.ec2.compute.strategy.AWSEC2ReviseParsedImage;
 import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.NodeState;
+import org.jclouds.compute.domain.NodeMetadata.Status;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
 
 import com.google.inject.AbstractModule;
@@ -84,8 +85,12 @@ public abstract class JCloudsCloudService extends AbstractCloudService {
 		final String user = getCloud().getUser().getUser();
 		final String key = getCloud().getUser().getApiKey();
 		LogUtils.log("Creating jclouds context, this may take a few seconds");
-		return new ComputeServiceContextFactory().createContext(
-				provider, user, key, wiring, overrides);
+
+		return ContextBuilder.newBuilder(provider)
+				.credentials(user, key)
+				.modules(wiring)
+				.overrides(overrides)
+				.buildView(ComputeServiceContext.class);
 	}
 
 	@Override
@@ -204,8 +209,8 @@ public abstract class JCloudsCloudService extends AbstractCloudService {
 		boolean foundPendingNodes = false;
 		for (final ComputeMetadata computeMetadata : allNodes) {
 			final String name = computeMetadata.getName();
-			final NodeState state = ((NodeMetadata) computeMetadata).getState();
-			switch (state) {
+			final Status status = ((NodeMetadata) computeMetadata).getStatus();
+			switch (status) {
 			case TERMINATED:
 				// ignore - node is shut down
 				break;
@@ -222,7 +227,7 @@ public abstract class JCloudsCloudService extends AbstractCloudService {
 				} else {
 					for (String prefix : prefixes) {
 						if (name.startsWith(prefix)) {
-							if (state.equals(NodeState.PENDING)) {
+							if (status.equals(Status.PENDING)) {
 								// node is transitioning from one state to another 
 								// 		- might be shutting down, might be starting up!
 								// Must try again later.

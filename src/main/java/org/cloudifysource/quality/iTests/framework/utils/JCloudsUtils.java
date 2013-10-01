@@ -1,26 +1,26 @@
 package org.cloudifysource.quality.iTests.framework.utils;
 
+import iTests.framework.utils.LogUtils;
+
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
 
-import iTests.framework.utils.LogUtils;
 import org.cloudifysource.esc.jclouds.WindowsServerEC2ReviseParsedImage;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.CloudService;
 import org.codehaus.plexus.util.StringUtils;
+import org.jclouds.ContextBuilder;
 import org.jclouds.aws.ec2.compute.strategy.AWSEC2ReviseParsedImage;
 import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.RunNodesException;
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.NodeState;
+import org.jclouds.compute.domain.NodeMetadata.Status;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.domain.Location;
 import org.jclouds.ec2.compute.options.EC2TemplateOptions;
-
-import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.CloudService;
 
 import com.google.common.base.Predicate;
 import com.google.inject.AbstractModule;
@@ -52,9 +52,12 @@ public class JCloudsUtils {
 		cloudName = service.getCloudName();
 		
 		LogUtils.log("creating context for " + cloudName);
-		if(cloudName.equalsIgnoreCase("ec2"))
-			context = new ComputeServiceContextFactory().createContext("aws-ec2", service.getUser(), service.getApiKey());
-		else if(cloudName.equalsIgnoreCase("ec2-win")){
+		if(cloudName.equalsIgnoreCase("ec2")) {
+			context = ContextBuilder.newBuilder("aws-ec2")
+				.credentials(service.getUser(), service.getApiKey())
+				.buildView(ComputeServiceContext.class);
+	}
+		else if(cloudName.equalsIgnoreCase("ec2-win")) {
 			
 			Properties props = new Properties();
 			props.put("jclouds.ec2.ami-query", "");
@@ -72,14 +75,20 @@ public class JCloudsUtils {
 
 			});
 						
-			context = new ComputeServiceContextFactory()
-				.createContext("aws-ec2", service.getUser(), service.getApiKey(), wiring, props);		
+			context = ContextBuilder.newBuilder("aws-ec2")
+					.credentials(service.getUser(), service.getApiKey())
+					.modules(wiring)
+					.overrides(props)
+					.buildView(ComputeServiceContext.class);
 		}
 
-		else if(cloudName.equalsIgnoreCase("rsopenstack"))
-			context = new ComputeServiceContextFactory().createContext("cloudservers-us", service.getUser(), service.getApiKey());
-		else
+		else if(cloudName.equalsIgnoreCase("rsopenstack")) {
+			context = ContextBuilder.newBuilder("cloudservers-us")
+					.credentials(service.getUser(), service.getApiKey())
+					.buildView(ComputeServiceContext.class);
+		} else {
 			LogUtils.log("Failed to create context: invalid cloud name: " + cloudName);
+		}
 	}
 	
 	/**
@@ -231,7 +240,7 @@ public class JCloudsUtils {
 
 			public boolean apply(final ComputeMetadata input) {
 				final NodeMetadata node = (NodeMetadata) input;
-				return (node.getState() == NodeState.RUNNING);
+				return (node.getStatus() == Status.RUNNING);
 			}
 
 		});

@@ -289,6 +289,16 @@ public abstract class Bootstrapper {
 		lastActionOutput = CommandTestUtils.runCommandAndWait(command);
 		return lastActionOutput;
 	}
+	
+	public String listServices(boolean expectedToFail) throws IOException, InterruptedException {
+		String command = connectCommand() + "list-services";
+		if (expectedToFail) {
+			lastActionOutput = CommandTestUtils.runCommandExpectedFail(command);
+			return lastActionOutput;
+		}
+		lastActionOutput = CommandTestUtils.runCommandAndWait(command);
+		return lastActionOutput;
+	}
 
 	public String listServices(final String applicationName, boolean expectedToFail) throws IOException, InterruptedException {
 		String command = connectCommand() + "use-application " + applicationName + ";list-services";
@@ -298,7 +308,16 @@ public abstract class Bootstrapper {
 		}
 		lastActionOutput = CommandTestUtils.runCommandAndWait(command);
 		return lastActionOutput;
-
+	}
+	
+	public String listInstances(final String serviceName, boolean expectedToFail) throws IOException, InterruptedException {
+		String command = connectCommand() + "list-instances " + serviceName;
+		if (expectedToFail) {
+			lastActionOutput = CommandTestUtils.runCommandExpectedFail(command);
+			return lastActionOutput;
+		}
+		lastActionOutput = CommandTestUtils.runCommandAndWait(command);
+		return lastActionOutput;
 	}
 
 	public String listInstances(final String applicationName, final String serviceName, boolean expectedToFail) throws IOException, InterruptedException {

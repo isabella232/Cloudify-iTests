@@ -120,7 +120,7 @@ public abstract class AbstractByonAddRemoveTemplatesTest extends AbstractByonClo
 		boolean failed = false;
 		for (String templateName : listTemplates) {
 			try {
-				TemplatesCommands.removeTemplate(getRestUrl(), templateName, false);
+				TemplatesCommands.removeTemplateCLI(getRestUrl(), templateName, false);
 			} catch (AssertionError error) {
 				failedTempaltesList.put(templateName, error.getLocalizedMessage());
 				failed = true;
@@ -159,7 +159,7 @@ public abstract class AbstractByonAddRemoveTemplatesTest extends AbstractByonClo
 	
 	public String getTemplateRemoteDirFullPath(final String templateName) throws Exception {
 
-		final String output = TemplatesCommands.getTemplate(getRestUrl(), templateName, false);
+		final String output = TemplatesCommands.getTemplateCLI(getRestUrl(), templateName, false);
 
 		int index = output.indexOf(ABSOLUTE_UPLOAD_DIR_NAME) + ABSOLUTE_UPLOAD_DIR_NAME.length() + 3;
 		final int endIndex = output.indexOf(getUploadDirName(output), index);

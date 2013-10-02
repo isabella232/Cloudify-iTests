@@ -182,8 +182,8 @@ public class TemplatesCommandsRestAPI {
 	public static void assertExpectedList(final String restUrl, final List<String> expectedListTempaltes,
 			final String username, final String password) {
 		final List<String> listTemplates = TemplatesCommandsRestAPI.listTemplates(restUrl, username, password);
-		Assert.assertEquals(expectedListTempaltes.size(), listTemplates.size());
-		Assert.assertTrue(ListUtils.subtract(expectedListTempaltes, listTemplates).isEmpty());
+		Assert.assertEquals("expected: " + expectedListTempaltes + ", but was: " + listTemplates.toString(), expectedListTempaltes.size(), listTemplates.size());
+		Assert.assertTrue("expected: " + expectedListTempaltes + ", but was: " + listTemplates.toString(), ListUtils.subtract(expectedListTempaltes, listTemplates).isEmpty());
 	}
 
 	public static void assertExpectedList(final String restUrl, final List<String> expectedListTempaltes) {

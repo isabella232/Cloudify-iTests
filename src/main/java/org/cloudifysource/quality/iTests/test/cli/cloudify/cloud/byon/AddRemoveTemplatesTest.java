@@ -264,7 +264,7 @@ public class AddRemoveTemplatesTest extends AbstractByonAddRemoveTemplatesTest {
 
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, enabled = true)
 	public void removeNotExistTemplate() {
-		String output = TemplatesCommands.removeTemplate(getRestUrl(), "not_exist", true);
+		String output = TemplatesCommands.removeTemplateCLI(getRestUrl(), "not_exist", true);
 		Assert.assertTrue(output.contains("Failed to remove template [not_exist]"));
 		templatesHandler.assertExpectedList();
 	}

@@ -251,6 +251,11 @@ public abstract class AbstractCloudService implements CloudService {
     public void teardownCloud() throws IOException, InterruptedException {
 
         String[] restUrls = getRestUrls();
+        LogUtils.log("rest urls before teardown: ");
+        for(String url : restUrls){
+            LogUtils.log(url);
+        }
+
         try {
             String url = null;
             if (restUrls != null) {
@@ -338,6 +343,16 @@ public abstract class AbstractCloudService implements CloudService {
                     ipAndPortEndIndex = output.indexOf(" ", ipAndPortStartIndex);
                     ipAndPort = output.substring(ipAndPortStartIndex, ipAndPortEndIndex);
                     currentIndex = ipAndPortEndIndex;
+
+                    LogUtils.log("rest urls after teardown: ");
+                    if(restUrls == null){
+                        LogUtils.log("null");
+                    }
+                    else{
+                        for(String url : restUrls){
+                            LogUtils.log(url);
+                        }
+                    }
 
                     for(String restUrl : restUrls){
 

@@ -251,10 +251,6 @@ public abstract class AbstractCloudService implements CloudService {
     public void teardownCloud() throws IOException, InterruptedException {
 
         String[] restUrls = getRestUrls();
-        LogUtils.log("rest urls before teardown: ");
-        for(String url : restUrls){
-            LogUtils.log(url);
-        }
 
         try {
             String url = null;
@@ -344,25 +340,16 @@ public abstract class AbstractCloudService implements CloudService {
                     ipAndPort = output.substring(ipAndPortStartIndex, ipAndPortEndIndex);
                     currentIndex = ipAndPortEndIndex;
 
-                    LogUtils.log("rest urls after teardown: ");
-                    if(restUrls == null){
-                        LogUtils.log("null");
-                    }
-                    else{
-                        for(String url : restUrls){
-                            LogUtils.log(url);
+                    if(restUrls != null){
+                        for(String restUrl : restUrls){
+
+                            int ipStartIndex = restUrl.indexOf(":") + 3;
+                            String ip = restUrl.substring(ipStartIndex, restUrl.indexOf(":", ipStartIndex));
+                            if(ipAndPort.contains(ip)){
+                                LogUtils.log("shutting down redis client on " + ipAndPort);
+                                SSHUtils.runCommand(logstashHost, timeoutMilli, "cd " + redisSrcDir + "; ./redis-cli client kill " + ipAndPort, user, pemFile);
+                            }
                         }
-                    }
-
-                    for(String restUrl : restUrls){
-
-                        int ipStartIndex = restUrl.indexOf(":") + 3;
-                        String ip = restUrl.substring(ipStartIndex, restUrl.indexOf(":", ipStartIndex));
-                        if(ipAndPort.contains(ip)){
-                            LogUtils.log("shutting down redis client on " + ipAndPort);
-                            SSHUtils.runCommand(logstashHost, timeoutMilli, "cd " + redisSrcDir + "; ./redis-cli client kill " + ipAndPort, user, pemFile);
-                        }
-
                     }
                 }
             }

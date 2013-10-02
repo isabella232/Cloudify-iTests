@@ -223,7 +223,7 @@ fi
 
 cd $HOME_DIR/gigaspaces/tools/cli || error_exit $? "Failed changing directory to cli directory"
 
-START_COMMAND_ARGS="-timeout 30 --verbose -auto-shutdown"
+START_COMMAND_ARGS="-timeout 30 --verbose"
 if [ "$GSA_MODE" = "agent" ]; then
 	ERRMSG="Failed starting agent"
 	START_COMMAND="start-agent"
@@ -244,12 +244,16 @@ run_script "post-bootstrap"
 # Add agent restart command to scheduled tasks.
 cat <(crontab -l) <(echo "@reboot nohup /tmp/byon/gigaspaces/tools/cli/cloudify.sh $START_COMMAND $START_COMMAND_ARGS") | crontab -
 
-nohup ./cloudify.sh $START_COMMAND $START_COMMAND_ARGS
+./cloudify.sh $START_COMMAND $START_COMMAND_ARGS
 
 RETVAL=$?
-echo cat nohup.out
-cat nohup.out
+
 if [ $RETVAL -ne 0 ]; then
-  error_exit $RETVAL $ERRMSG
+	echo start command failed, exit code is: $RETVAL
+	# exit codes that are larger than 200 are not specified by Cloudify. We use the 255 code to indicate a custom error.
+	if [ $RETVAL -gt 200 ]; then
+		RETVAL=255
+	fi
+	error_exit $? $RETVAL "$ERRMSG"
 fi
 exit 0

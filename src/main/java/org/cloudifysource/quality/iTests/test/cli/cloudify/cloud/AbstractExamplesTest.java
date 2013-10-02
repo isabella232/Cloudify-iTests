@@ -2,25 +2,30 @@ package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud;
 
 import groovy.util.ConfigObject;
 import groovy.util.ConfigSlurper;
+import iTests.framework.utils.AssertUtils;
+import iTests.framework.utils.LogUtils;
+import iTests.framework.utils.ScriptUtils;
+import iTests.framework.utils.WebUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
+import java.util.Map;
 
 import org.cloudifysource.domain.Application;
 import org.cloudifysource.domain.Service;
 import org.cloudifysource.dsl.internal.ServiceReader;
 import org.cloudifysource.dsl.utils.IPUtils;
-
-import iTests.framework.utils.AssertUtils;
-import iTests.framework.utils.LogUtils;
-import iTests.framework.utils.ScriptUtils;
-import iTests.framework.utils.WebUtils;
+import org.cloudifysource.dsl.utils.ServiceUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.ec2.Ec2WinCloudService;
+import org.cloudifysource.restclient.GSRestClient;
+import org.cloudifysource.restclient.RestException;
 import org.testng.annotations.AfterMethod;
 
+import com.j_spaces.kernel.PlatformVersion;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
@@ -143,10 +148,34 @@ public abstract class AbstractExamplesTest extends NewAbstractCloudTest {
 
 		verifyServices(applicationName, application.getServices());
 		verifyApplicationUrls(applicationName, hasApacheLB, apachePort);
-
+		verifyApplicationDependencies(application);
 		uninstallApplicationAndWait(applicationName, false, 20);
 		super.scanForLeakedAgentNodes();
 	}
+	
+	private void verifyApplicationDependencies(final Application application) throws MalformedURLException, RestException {
+		final GSRestClient client = new GSRestClient("", "", new URL(getRestUrl()), PlatformVersion.getVersionNumber());
+		
+		for (Service service : application.getServices()) {
+			validateServiceDependency(client, service, application.getName());
+		}
+	}
+	
+	private void validateServiceDependency(final GSRestClient client,
+			final Service service, final String applicationName) throws RestException {
+		String absolutePUName = ServiceUtils.getAbsolutePUName(applicationName, service.getName());
+		Map<String, Object> adminData = (Map<String, Object>) client.getAdminData(
+							"ProcessingUnits/Names/" + absolutePUName + "/ApplicationDependencies");
+
+		String dependencyList = (String) adminData.get("ApplicationDependencies");
+		for (String dependency : service.getDependsOn()) {
+			String absoluteDependencyName = ServiceUtils.getAbsolutePUName(applicationName, dependency);
+			if (!dependencyList.contains(absoluteDependencyName)) {
+				System.out.println("Test should fail");
+			}
+		}
+	}
+
 
 	private void verifyApplicationUrls(String appName, boolean hasApacheLB, int port) {
 

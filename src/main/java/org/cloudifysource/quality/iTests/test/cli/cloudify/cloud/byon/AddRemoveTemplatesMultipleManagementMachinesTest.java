@@ -1,5 +1,7 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.byon;
 
+import java.net.InetAddress;
+
 import iTests.framework.utils.AssertUtils;
 import iTests.framework.utils.LogUtils;
 import iTests.framework.utils.SSHUtils;
@@ -59,45 +61,51 @@ public class AddRemoveTemplatesMultipleManagementMachinesTest extends AbstractBy
 		
 		String output = templatesHandler.removeTemplateFromCloud(folderHandler, templateName, true, null);
 		
-		AssertUtils.assertTrue("successfully removed template from " + mngMachinesIP[1], output.contains("Failed to remove template [" + templateName + "]"));
+		AssertUtils.assertTrue("successfully removed template from " + mngMachinesIP[1], 
+				output.contains("Failed to remove template [" + templateName + "]"));
+		String hostAddress0 = InetAddress.getByName(mngMachinesIP[0]).getHostAddress();
+		String hostAddress1 = InetAddress.getByName(mngMachinesIP[1]).getHostAddress();
+
 		if (IPUtils.isIPv6Address(mngMachinesIP[1])) {
-			AssertUtils.assertTrue("successfully removed template from " + mngMachinesIP[1], 
-					output.contains(IPv6Address.fromString(mngMachinesIP[1]).toInetAddress().toString().replaceAll("/", "")));
+			AssertUtils.assertTrue("successfully removed template from " + hostAddress1 + "(output = " + output + ")", 
+					output.contains(IPv6Address.fromString(hostAddress1).toInetAddress().toString().replaceAll("/", "")));
 		} else {
-			AssertUtils.assertTrue("successfully removed template from " + mngMachinesIP[1], 
-					output.contains(mngMachinesIP[1]));
+			AssertUtils.assertTrue("successfully removed template from " + hostAddress1 + " (output = " + output + ")", 
+					output.contains(hostAddress1));
 		}
 		
 		template.setExpectedToFail(true);
 		folderHandler.addCustomTemplate(template);
 		output = templatesHandler.addTemplatesToCloud(folderHandler);
-				
-		int failedIndex = output.indexOf("Failed to add the following templates:");
-		AssertUtils.assertTrue("successfully added " + templateName + " to " + mngMachinesIP[1], failedIndex != -1);
+		
+		int failedIndex = output.indexOf("failed to add to : ");
+		AssertUtils.assertTrue("successfully added " + templateName + " to " + hostAddress1 + " (output = " + output + ")", 
+				failedIndex != -1);
 
-		int successIndex = output.indexOf("Successfully added the following templates:");
-		AssertUtils.assertTrue("failed to add " + templateName + " to " + mngMachinesIP[0], successIndex != -1);
+		int successIndex = output.indexOf("successfully added to : ");
+		AssertUtils.assertTrue("failed to add " + templateName + " to " + hostAddress0 + " (output = " + output + ")", 
+				successIndex != -1);
 		
-		String failedOutput = output.substring(failedIndex, successIndex);
-		String successOutput = output.substring(successIndex);
+		String failedOutput = output.substring(failedIndex);
+		String successOutput = output.substring(successIndex, failedIndex);
 		
-		if (IPUtils.isIPv6Address(mngMachinesIP[1])) {
-			AssertUtils.assertTrue("successfully added " + templateName + " to " + mngMachinesIP[1], 
-					failedOutput.contains(IPv6Address.fromString(mngMachinesIP[1]).toInetAddress().toString().replaceAll("/", "")));
+		if (IPUtils.isIPv6Address(hostAddress1)) {
+			AssertUtils.assertTrue("successfully added " + templateName + " to " + hostAddress1 + " (output = " + output + ")", 
+					failedOutput.contains(IPv6Address.fromString(hostAddress1).toInetAddress().toString().replaceAll("/", "")));
 		} else {
-			AssertUtils.assertTrue("successfully added " + templateName + " to " + mngMachinesIP[1], 
-					failedOutput.contains(mngMachinesIP[1]));
+			AssertUtils.assertTrue("successfully added " + templateName + " to " + hostAddress1 + " (output = " + output + ")", 
+					failedOutput.contains(hostAddress1));
 		}
-		AssertUtils.assertTrue("successfully added " + templateName + " to " + mngMachinesIP[1], failedOutput.contains(templateName));
 
-		if (IPUtils.isIPv6Address(mngMachinesIP[1])) {
-			AssertUtils.assertTrue("failed to add " + templateName + " to " + mngMachinesIP[0], 
+		if (IPUtils.isIPv6Address(hostAddress1)) {
+			AssertUtils.assertTrue("failed to add " + templateName + " to " + hostAddress0 + " (output = " + output + ")", 
 					successOutput.contains(IPv6Address.fromString(mngMachinesIP[0]).toInetAddress().toString().replaceAll("/", "")));
 		} else {
-			AssertUtils.assertTrue("failed to add " + templateName + " to " + mngMachinesIP[0], 
-					successOutput.contains(mngMachinesIP[0]));
+			AssertUtils.assertTrue("failed to add " + templateName + " to " + hostAddress0 + " (output = " + output + ")", 
+					successOutput.contains(hostAddress0));
 		}
-		AssertUtils.assertTrue("failed to add " + templateName + " to " + mngMachinesIP[0], successOutput.contains(templateName));
+		AssertUtils.assertTrue("failed to add " + templateName + " to " + hostAddress0 + " (output = " + output + ")", 
+				output.contains(templateName));
 		
 	}
 	

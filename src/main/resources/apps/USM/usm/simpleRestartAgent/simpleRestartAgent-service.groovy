@@ -29,6 +29,6 @@ service {
 		"startMaintenanceModeLong" : {context.startMaintenanceMode(10l, TimeUnit.MINUTES)},
 		"startMaintenanceModeShort" : {context.startMaintenanceMode(1l, TimeUnit.SECONDS)},
 		"startMaintenanceMode" : {x -> context.startMaintenanceMode(Long.parseLong(x, 10), TimeUnit.SECONDS)},
-		"stopMaintenanceMode" : {x -> context.stopMaintenanceMode(x)}
+		"stopMaintenanceMode" : {context.stopMaintenanceMode()}
 	])
 }

@@ -86,7 +86,7 @@ public abstract class TemplatesHandler {
 	 */
 	public String addTemplatesToCloud(final TemplatesFolderHandler templatesFolder) {
 		final File folder = templatesFolder.getFolder();
-		final String output = TemplatesCommands.addTemplates(
+		final String output = TemplatesCommands.addTemplatesCLI(
 				restUrl,
 				folder.getAbsolutePath(),
 				templatesFolder.isFailureExpected() || templatesFolder.isPartialFailureExpected());
@@ -172,7 +172,7 @@ public abstract class TemplatesHandler {
 	public String removeTemplateFromCloud(final TemplatesFolderHandler templatesFolder, final String templateName,
 			final boolean expectToFail, final String failedExpectedOutput)
 			throws IOException {
-		final String output = TemplatesCommands.removeTemplate(restUrl, templateName, expectToFail);
+		final String output = TemplatesCommands.removeTemplateCLI(restUrl, templateName, expectToFail);
 
 		if (!expectToFail) {
 			AssertJUnit.assertTrue(output.contains("Template " + templateName + " removed successfully"));

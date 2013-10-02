@@ -56,7 +56,7 @@ public class Ec2RecipeDebuggerTest extends NewAbstractCloudTest {
         FileUtils.copyDirectoryToDirectory(debuggerSrcFolder, debuggerTestFolder);
     }
 
-    @Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = false)
+    @Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
     public void testDebugger() throws Exception {
         ServiceInstaller installer = new ServiceInstaller(getRestUrl(), SERVICE_NAME);
         String command = installer.recipePath(SGTestHelper.getBuildDir() + "/recipes/services/" + SERVICE_NAME).debugEvent("install").timeoutInMinutes(20).buildCommand(true).install();
@@ -83,8 +83,11 @@ public class Ec2RecipeDebuggerTest extends NewAbstractCloudTest {
         String serviceHostIp = output.substring(startIndex, endIndex);
         LogUtils.log("service host ip: " + serviceHostIp);
 
-        String managementMachineTemplate = getService().getCloud().getConfiguration().getManagementMachineTemplate();
-        String remoteDirectory = getService().getCloud().getCloudCompute().getTemplates().get(managementMachineTemplate).getRemoteDirectory();
+        final GSRestClient client = new GSRestClient("", "", new URL(getRestUrl()), PlatformVersion.getVersionNumber());
+        String templateUrl = "ProcessingUnits/Names/default.tomcat/Instances/0/JVMDetails/EnvironmentVariables/GIGASPACES_CLOUD_TEMPLATE_NAME";
+        String serviceTemplate = (String)client.getAdminData(templateUrl).get("GIGASPACES_CLOUD_TEMPLATE_NAME");
+
+        String remoteDirectory = getService().getCloud().getCloudCompute().getTemplates().get(serviceTemplate).getRemoteDirectory();
         String debuggerFolderPath = remoteDirectory + "/cloudify-overrides/debugger";
 
         //installing "expect" package
@@ -95,10 +98,6 @@ public class Ec2RecipeDebuggerTest extends NewAbstractCloudTest {
 
         //running
         output = SSHUtils.runCommand(serviceHostIp, TIMEOUT_IN_MILLISECONDS, "cd " + debuggerFolderPath + "; expect run-script.exp", "ec2-user", getPemFile());
-
-        LogUtils.log("output of tomcat installation: " + output);
-
-        final GSRestClient client = new GSRestClient("", "", new URL(getRestUrl()), PlatformVersion.getVersionNumber());
 
         final String statusUrl = "ProcessingUnits/Names/default." + SERVICE_NAME + "/Instances/0/ProcessingUnit";
 
@@ -126,7 +125,7 @@ public class Ec2RecipeDebuggerTest extends NewAbstractCloudTest {
                 }
                 return status.get().equalsIgnoreCase("intact");
             }
-        }, 1000 * 60 * 10);
+        }, OPERATION_TIMEOUT * 2);
 
     }
 

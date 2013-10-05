@@ -20,13 +20,13 @@ public class BuiltInCommandTest extends AbstractLocalCloudTest{
 				";install-service --verbose " + servicePath);
 
 		String output = CommandTestUtils.runCommandAndWait("connect " + restUrl
-				+ ";invoke " + SERVICE_NAME + "cloudify:start-maintenance-mode 5");
+				+ ";invoke " + SERVICE_NAME + " cloudify:start-maintenance-mode 5");
 		assertTrue("expection sucess status output. instead output was: " + output,
 				output.contains("agent failure detection disabled successfully for a period of 5 minutes"));
 
 
 		output = CommandTestUtils.runCommandAndWait("connect " + restUrl 
-				+ ";invoke " + SERVICE_NAME + "cloudify:stop-maintenance-mode");
+				+ ";invoke " + SERVICE_NAME + " cloudify:stop-maintenance-mode");
 		assertTrue("expection sucess status output. instead output was: " + output,
 				output.contains("agent failure detection enabled successfully"));
 	}

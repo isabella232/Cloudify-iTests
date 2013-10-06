@@ -430,11 +430,11 @@ public class AbstractLocalCloudTest extends AbstractTestSupport {
 			InterruptedException {
 		return CommandTestUtils.runCommandAndWait(command);
 	}
-
-	protected void uninstallApplication(final String applicationName) throws IOException, InterruptedException {
+	
+	protected String uninstallApplication(final String applicationName) throws IOException, InterruptedException {
         ApplicationInstaller applicationInstaller = new ApplicationInstaller(restUrl, applicationName);
         applicationInstaller.waitForFinish(true);
-        applicationInstaller.uninstall();
+        return applicationInstaller.uninstall();
     }
 
 	protected void uninstallApplicationIfFound(String applicationName) throws IOException, InterruptedException {

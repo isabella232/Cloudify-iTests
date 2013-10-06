@@ -53,6 +53,9 @@ public abstract class RecipeInstaller {
     private String cloudifyUsername;
     private String cloudifyPassword;
     private String authGroups;
+    private String debugMode;
+    private String debugEvent;
+    private boolean justBuildCommand = false;
     private boolean debugAll = false;
 
     public RecipeInstaller(final String restUrl, int timeout, String applicationName) {
@@ -175,6 +178,26 @@ public abstract class RecipeInstaller {
         return this;
     }
 
+    public RecipeInstaller debugMode(String debugMode) {
+        this.debugMode = debugMode;
+        return this;
+    }
+
+    public RecipeInstaller debugEvent(String debugEvent) {
+        this.debugEvent = debugEvent;
+        return this;
+    }
+
+    public RecipeInstaller debugAll(boolean debugAll) {
+        this.debugAll = debugAll;
+        return this;
+    }
+
+    public RecipeInstaller buildCommand(boolean justBuildCommand) {
+        this.justBuildCommand = justBuildCommand;
+        return this;
+    }
+
     public String install() throws IOException, InterruptedException {
 
         String installCommand = null;
@@ -218,6 +241,15 @@ public abstract class RecipeInstaller {
         if (authGroups != null && !authGroups.isEmpty()) {
             commandBuilder.append("-authGroups").append(" ").append(authGroups).append(" ");
         }
+        if (debugEvent!= null && !debugEvent.isEmpty()) {
+            commandBuilder.append("-debug-events").append(" ").append(debugEvent).append(" ");
+        }
+        if (debugAll) {
+            commandBuilder.append("-debug-all").append(" ");
+        }
+        if (debugMode != null && !debugMode.isEmpty()) {
+            commandBuilder.append("-debug-mode").append(" ").append(debugMode).append(" ");
+        }
 
         if (this instanceof ApplicationInstaller && recipeName != null && !recipeName.isEmpty()) {
             // Service installation does not support this option. pending bug CLOUDIFY-1591
@@ -227,6 +259,11 @@ public abstract class RecipeInstaller {
         commandBuilder.append(recipePath.replace('\\', '/'));
         final String installationCommand = commandBuilder.toString();
         final String connectCommand = connectCommand();
+
+        if(justBuildCommand){
+            return connectCommand + ";" + installationCommand;
+        }
+
         if (expectToFail) {
             String output = CommandTestUtils.runCommandExpectedFail(connectCommand + ";" + installationCommand);
             return output;
@@ -240,6 +277,8 @@ public abstract class RecipeInstaller {
             return CommandTestUtils.runCommand(connectCommand + ";" + installationCommand);
         }
     }
+
+
 
     public String uninstall() throws IOException, InterruptedException {
 

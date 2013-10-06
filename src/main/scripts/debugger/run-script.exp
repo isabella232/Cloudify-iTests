@@ -1,0 +1,8 @@
+spawn ./debugger.sh
+send -- "run-script"
+send -- "\r"
+expect ":"
+send -- "finish"
+send -- "\r"
+
+interact

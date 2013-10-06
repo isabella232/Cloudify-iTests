@@ -23,6 +23,7 @@ import java.util.Map.Entry;
 
 import junit.framework.Assert;
 
+import org.cloudifysource.dsl.internal.CloudifyConstants;
 import org.cloudifysource.dsl.internal.DSLException;
 import org.cloudifysource.dsl.internal.packaging.PackagingException;
 import org.cloudifysource.dsl.rest.response.InstallApplicationResponse;
@@ -41,9 +42,12 @@ public class UninstallOutputTest extends AbstractLocalCloudTest {
 
 	private static final String APP_NAME = "petclinic";
 	private static final String APP_PATH = ScriptUtils.getBuildPath() + "/recipes/apps/" + APP_NAME;
+	private static final String SERVICE_NAME = "tomcat";
+	private static final String SERVICE_PATH = ScriptUtils.getBuildPath() + "/recipes/services/" + SERVICE_NAME;	
+	
 	
 	/**
-	 * Uninstall application and check if the output contain all services and their number of running instances as expected.
+	 * Uninstall application and check whether the output contains all services and their number of running instances as expected.
 	 * @throws IOException
 	 * @throws InterruptedException
 	 * @throws DSLException
@@ -90,8 +94,39 @@ public class UninstallOutputTest extends AbstractLocalCloudTest {
 			Assert.assertTrue("the output doesn't contain the string \"planned\" after \"installed\" for service [" + serviceName + "], output: " + uninstallOutput, indexOfPlanned != -1);
 
 			String initialInstalledCount = uninstallOutput.substring(indexOfInstalled + 9, indexOfPlanned).trim();
-			System.out.println(serviceName + " installed instances: " + initialInstalledCount);
-			Assert.assertEquals(installed, Integer.valueOf(initialInstalledCount));
+			Assert.assertEquals(serviceName + " installed instances: " + initialInstalledCount, 
+					installed, Integer.valueOf(initialInstalledCount));
 		}
 	}
+
+	/**
+	 * Uninstall 1 instance of a service and check whether the output contains "installed 1 planned 0".
+	 * @throws IOException
+	 * @throws InterruptedException
+	 * @throws RestClientException
+	 */
+	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
+	public void uninstallServiceTest() throws IOException, InterruptedException, RestClientException {
+		// install
+		File serviceFolder = new File(SERVICE_PATH);
+		NewRestTestUtils.installServiceUsingNewRestAPI(restUrl, serviceFolder , CloudifyConstants.DEFAULT_APPLICATION_NAME, SERVICE_NAME, 5);
+		RestClient restClient = NewRestTestUtils.createAndConnect(restUrl);
+		ServiceDescription serviceDescription = restClient.getServiceDescription(CloudifyConstants.DEFAULT_APPLICATION_NAME, SERVICE_NAME);
+		int installed = serviceDescription.getInstanceCount();
+		int planned = serviceDescription.getPlannedInstances();
+		Assert.assertEquals(planned, installed);
+		
+		// un-install
+		final String uninstallOutput = runCommand("connect " + restUrl + ";uninstall-service --verbose " + SERVICE_NAME);
+		AssertUtils.repetitiveAssertConditionHolds("", new AssertUtils.RepetitiveConditionProvider() {
+			@Override
+			public boolean getCondition() {
+				return uninstallOutput.contains("Successfully undeployed " + SERVICE_NAME);
+			}
+		}, 5);
+		
+		// asserts
+		Assert.assertTrue(uninstallOutput, uninstallOutput.contains(SERVICE_NAME + ": installed " + 	installed + " planned 0"));
+		}
+	
 }

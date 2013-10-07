@@ -14,6 +14,8 @@ import org.cloudifysource.quality.iTests.test.cli.cloudify.Constants;
 import iTests.framework.utils.DumpUtils;
 import iTests.framework.utils.LogUtils;
 import iTests.framework.utils.AssertUtils.RepetitiveConditionProvider;
+import iTests.framework.utils.TeardownUtils;
+
 import org.cloudifysource.quality.iTests.framework.utils.usm.USMTestUtils;
 
 public class InstallAndUninstallPUTest extends AbstractLocalCloudTest {
@@ -77,10 +79,20 @@ public class InstallAndUninstallPUTest extends AbstractLocalCloudTest {
 				return (processingUnit.getProcessingUnits().getProcessingUnit(absolutePUName) != null);
 			}
 		}
-		, 20000);
-        assertTrue("Instance of '" + absolutePUName + "' service was not found", 
-        		processingUnit != null && 
-        		processingUnit.waitFor(1, Constants.PROCESSINGUNIT_TIMEOUT_SEC, TimeUnit.SECONDS));
+		, 60000);
+		repetitiveAssertTrue("No instance of: " + absolutePUName + " is null.", new RepetitiveConditionProvider() {
+			
+			@Override
+			public boolean getCondition() {
+				LogUtils.log("Trying to debug why PUI is not discovered");
+				TeardownUtils.snapshot(admin);
+				return (processingUnit.getProcessingUnits().getProcessingUnit(absolutePUName).waitFor(4, 2000, TimeUnit.SECONDS));
+			}
+		}
+		, 60000);
+//        assertTrue("Instance of '" + absolutePUName + "' service was not found", 
+//        		processingUnit != null && 
+//        		processingUnit.waitFor(1, Constants.PROCESSINGUNIT_TIMEOUT_SEC, TimeUnit.SECONDS));
         //assert USM service is in a RUNNING state.
         if (serviceName.equals(USM_SERVICE_NAME)){
         	 LogUtils.log("Verifing USM service state is set to RUNNING");

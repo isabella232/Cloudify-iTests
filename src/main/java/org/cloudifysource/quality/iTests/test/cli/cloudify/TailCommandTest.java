@@ -15,6 +15,8 @@
 ******************************************************************************/
 package org.cloudifysource.quality.iTests.test.cli.cloudify;
 
+import iTests.framework.utils.LogUtils;
+
 import java.io.File;
 import java.io.IOException;
 
@@ -24,6 +26,7 @@ import org.testng.annotations.Test;
 public class TailCommandTest extends AbstractLocalCloudTest {
 	
 	
+	private static final long FIVE_SECONDS_MILLIS = 5000;
 	private static final String SERVICE_FOLDER_NAME = "simpleTail";
 	private static final String SERVICE_NAME = "simple";
 	private static final String TAIL_IS_LIMITED_TO_NO_MORE_THAN_1000_LINES = "tail is limited to no more than 1000 lines.";
@@ -45,8 +48,10 @@ public class TailCommandTest extends AbstractLocalCloudTest {
 		uninstallService(SERVICE_NAME);
 	}
 
-	private void installService() {
+	private void installService() throws InterruptedException {
 		installService(SERVICE_FOLDER_NAME);
+		LogUtils.log("Sleeping for five seconds to allow logs to be written to file.");
+		Thread.sleep(FIVE_SECONDS_MILLIS);
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)

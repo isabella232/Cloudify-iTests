@@ -41,5 +41,7 @@ public class SecurityConstants {
 
 	public static final String ACCESS_DENIED_MESSAGE = "Permission not granted, access is denied.";
 	public static final String UNAUTHORIZED = "Unauthorized";
+	public static final String RESOURCE_NOT_FOUND = "could not be found";
+	public static final String MISSING_RESOURCE = "Missing resource";
 
 }

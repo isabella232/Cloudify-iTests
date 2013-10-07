@@ -30,14 +30,16 @@ public class AbstractSecuredLocalCloudTest extends AbstractTestSupport {
 
 	protected Admin admin;
 	
+	protected static final String DEFAULT_APP_NAME = "default";
 	protected static final String SIMPLE_APP_NAME = "simple";
 	protected static final String SIMPLE_APP_PATH = CommandTestUtils.getPath("/src/main/resources/apps/USM/usm/applications/" + SIMPLE_APP_NAME);
 	protected static final String SIMPLE_SERVICE_NAME = "simple";
 	protected static final String SIMPLE_SERVICE_PATH = CommandTestUtils.getPath("/src/main/resources/apps/USM/usm/" + SIMPLE_SERVICE_NAME);
+	protected static final String GROOVY_SERVICE_NAME = "groovy";
+	protected static final String GROOVY_SERVICE_PATH = CommandTestUtils.getPath("/src/main/resources/apps/USM/usm/" + GROOVY_SERVICE_NAME);
 
 	protected static final String GROOVY_APP_NAME = "groovyApp";
 	protected static final String GROOVY_APP_PATH = CommandTestUtils.getPath("/src/main/resources/apps/USM/usm/applications/" + GROOVY_APP_NAME);
-	protected static final String GROOVY_SERVICE_NAME = "groovy";
 	protected static final String GROOVY2_SERVICE_NAME = "groovy2";	
 	protected static final int TIMEOUT_IN_MINUTES = 30;
 	protected static final String TEARDOWN_ACCESS_DENIED_MESSAGE = "Permission not granted, access is denied.";
@@ -139,7 +141,7 @@ public class AbstractSecuredLocalCloudTest extends AbstractTestSupport {
 				// && output.toLowerCase().contains("Full authentication is required to access this resource".toLowerCase()));
 	}
 
-	protected void verifyVisibleLists(String installer, String viewerName, String viewerPassword, String viewerDescription, String appName, boolean isVisible) throws IOException, InterruptedException {
+	protected void verifyApplicationVisibleLists(String installer, String viewerName, String viewerPassword, String viewerDescription, String appName, boolean isVisible) throws IOException, InterruptedException {
 
 		String output = "no output";
 
@@ -208,6 +210,28 @@ public class AbstractSecuredLocalCloudTest extends AbstractTestSupport {
 				assertTrue(viewerDescription + " sees the instances of " + installer, !output.contains(INSTANCE_VERIFICATION_STRING));							
 			}
 		}
+	}
+	
+	protected void verifyServiceVisibleLists(String serviceName, String installer, String viewerName, String viewerPassword, String viewerDescription, boolean isVisible) throws IOException, InterruptedException {
+
+		String output = "no output";
+
+		if(isVisible) {
+			output = listServices(viewerName, viewerPassword, false);
+			assertTrue(viewerDescription + " doesn't see the services of " + installer, output.contains(DEFAULT_APP_NAME + "." + serviceName));
+		} else {	
+			output = listServices(viewerName, viewerPassword, true);
+			assertTrue(viewerDescription + " sees the services of " + installer, !output.contains(DEFAULT_APP_NAME + "." + serviceName));			
+		}
+
+		if(isVisible) {	
+			output = listInstances(viewerName, viewerPassword, serviceName, false);
+			assertTrue(viewerDescription + " doesn't see the instances of " + installer, output.contains(INSTANCE_VERIFICATION_STRING));
+		} else {
+			output = listInstances(viewerName, viewerPassword, serviceName, true);
+			assertTrue(viewerDescription + " sees the instances of " + installer, !output.contains(INSTANCE_VERIFICATION_STRING));
+		}
+		
 	}
 
 	public void installAndUninstall(String user, String password, boolean isInstallExpectedToFail) throws IOException, InterruptedException{
@@ -324,12 +348,26 @@ public class AbstractSecuredLocalCloudTest extends AbstractTestSupport {
 		bootstrapper.user(user).password(password);
 		return bootstrapper.listApplications(expectedFail);
 	}
+	
+	protected String listInstances(String user, String password, String serviceName, boolean expectedFail) throws IOException, InterruptedException{
+		LocalCloudBootstrapper bootstrapper = new LocalCloudBootstrapper();
+		bootstrapper.setRestUrl(getRestUrl());
+		bootstrapper.user(user).password(password);
+		return bootstrapper.listInstances(serviceName, expectedFail);
+	}
 
 	protected String listInstances(String user, String password, String applicationName, String serviceName, boolean expectedFail) throws IOException, InterruptedException{
 		LocalCloudBootstrapper bootstrapper = new LocalCloudBootstrapper();
 		bootstrapper.setRestUrl(getRestUrl());
 		bootstrapper.user(user).password(password);
 		return bootstrapper.listInstances(applicationName, serviceName, expectedFail);
+	}
+	
+	protected String listServices(String user, String password, boolean expectedFail) throws IOException, InterruptedException {
+		LocalCloudBootstrapper bootstrapper = new LocalCloudBootstrapper();
+		bootstrapper.setRestUrl(getRestUrl());
+		bootstrapper.user(user).password(password);
+		return bootstrapper.listServices(expectedFail);
 	}
 
 	protected String listServices(String user, String password, String applicationName, boolean expectedFail) throws IOException, InterruptedException {

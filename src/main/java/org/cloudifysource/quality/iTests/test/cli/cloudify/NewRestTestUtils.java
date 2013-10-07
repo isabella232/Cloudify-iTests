@@ -51,6 +51,11 @@ import com.j_spaces.kernel.PlatformVersion;
 public class NewRestTestUtils {
 
 	public static InstallApplicationResponse installApplicationUsingNewRestApi(final String restUrl, final String applicationName, 
+			final File applicationFolder) 
+			throws IOException, DSLException, PackagingException {
+		return installApplicationUsingNewRestApi(restUrl, applicationName, applicationFolder, null, null);
+	}
+	public static InstallApplicationResponse installApplicationUsingNewRestApi(final String restUrl, final String applicationName, 
 			final File applicationFolder, final File applicationOverridesFile,
 			final String expectedFailureMsg) 
 			throws IOException, DSLException, PackagingException {

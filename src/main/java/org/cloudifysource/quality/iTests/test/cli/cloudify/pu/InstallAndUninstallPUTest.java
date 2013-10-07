@@ -76,7 +76,7 @@ public class InstallAndUninstallPUTest extends AbstractLocalCloudTest {
 			public boolean getCondition() {
 				LogUtils.log("Trying to debug why PUI is not discovered");
 				TeardownUtils.snapshot(admin);
-				return (processingUnit.getProcessingUnits().getProcessingUnit(absolutePUName).getInstances().length > 0);
+				return (processingUnit.getProcessingUnits().getProcessingUnit(absolutePUName).waitFor(4, 2000, TimeUnit.SECONDS));
 			}
 		}
 		, 60000);

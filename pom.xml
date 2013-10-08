@@ -15,7 +15,7 @@
 		<cloudifyVersion>2.7.0-SNAPSHOT</cloudifyVersion>
 		<springVersion>3.1.3.RELEASE</springVersion>
 		<hibernateVersion>3.6.10.Final</hibernateVersion>
-		<jcloudsVersion>1.6.0</jcloudsVersion>
+		<jcloudsVersion>1.6.2-incubating</jcloudsVersion>
 	</properties>
 
 	<repositories>
@@ -156,23 +156,23 @@
 			<version>14.0</version>
 		</dependency>
 		<dependency>
-			<groupId>org.jclouds</groupId>
+			<groupId>org.apache.jclouds</groupId>
 			<artifactId>jclouds-allcompute</artifactId>
 			<version>${jcloudsVersion}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.jclouds</groupId>
+			<groupId>org.apache.jclouds</groupId>
 			<artifactId>jclouds-blobstore</artifactId>
 			<version>${jcloudsVersion}</version>
 			<exclusions>
 				<exclusion>
 					<artifactId>jclouds-core</artifactId>
-					<groupId>org.jclouds</groupId>
+					<groupId>org.apache.jclouds</groupId>
 				</exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
-			<groupId>org.jclouds.provider</groupId>
+			<groupId>org.apache.jclouds.provider</groupId>
 			<artifactId>aws-s3</artifactId>
 			<version>${jcloudsVersion}</version>
 		</dependency>

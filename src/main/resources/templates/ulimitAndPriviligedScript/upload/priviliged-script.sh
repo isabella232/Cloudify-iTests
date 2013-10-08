@@ -1,0 +1,1 @@
+export PRIVILIGED_TEST_MARKER=on

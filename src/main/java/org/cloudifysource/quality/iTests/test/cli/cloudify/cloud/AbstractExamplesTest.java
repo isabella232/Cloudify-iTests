@@ -66,40 +66,55 @@ public abstract class AbstractExamplesTest extends NewAbstractCloudTest {
 		doTest(localGitAppsPath + "/computers", null);
 	}
 
-	protected void testBabies(String localGitAppsPath) throws Exception {
+	protected void testDrupalBabies(String localGitAppsPath) throws Exception {
 		doTest(localGitAppsPath + "/drupal-babies", null);
 	}
+
+    protected void testDrupalChef(String localGitAppsPath) throws Exception {
+        doTest(localGitAppsPath + "/drupal-chef", null);
+    }
 
 	protected void testBiginsights(String localGitAppsPath) throws Exception {
 		doTest(localGitAppsPath + "/hadoop-biginsights", null);
 	}
 
+    protected void testMasterSlave(String localGitAppsPath) throws Exception {
+        doTest(localGitAppsPath + "/masterslave", null);
+    }
+
+    protected void testLamp(String localGitAppsPath) throws Exception {
+        doTest(localGitAppsPath + "/lamp", null);
+    }
+    protected void testMySQLAdmin(String localGitAppsPath) throws Exception {
+        doTest(localGitAppsPath + "/mysql-admin", null);
+    }
+
+    protected void testRedmine(String localGitAppsPath) throws Exception {
+        doTest(localGitAppsPath + "/redmine", null);
+    }
+
+    protected void testRedminePuppet(String localGitAppsPath) throws Exception {
+        doTest(localGitAppsPath + "/redmine-puppet", null);
+    }
+
+    protected void testStorm(String localGitAppsPath) throws Exception {
+        doTest(localGitAppsPath + "/storm", null);
+    }
+
+    protected void testXAPStream(String localGitAppsPath) throws Exception {
+        doTest(localGitAppsPath + "/xapstream", null);
+    }
+
 	protected void testPetclinicJboss(String localGitAppsPath) throws Exception {
 		doTest(localGitAppsPath + "/jboss-petclinic", null);
-	}
-
-	protected void testLamp(String localGitAppsPath) throws Exception {
-		doTest(localGitAppsPath + "/lamp", null);
-	}
-
-	protected void testMasterSlave(String localGitAppsPath) throws Exception {
-		doTest(localGitAppsPath + "/masterslave", null);
 	}
 
 	protected void testPetclinicWas(String localGitAppsPath) throws Exception {
 		doTest(localGitAppsPath + "/petclinic-was", null);
 	}
 
-	protected void testStorm(String localGitAppsPath) throws Exception {
-		doTest(localGitAppsPath + "/storm", null);
-	}
-
 	protected void testTravelLb(String localGitAppsPath) throws Exception {
 		doTest(localGitAppsPath + "/travel-lb", null);
-	}
-
-	protected void testPuppet(String localGitAppsPath) throws Exception {
-		doTest(localGitAppsPath + "/redmine-puppet", null);
 	}
 
 	protected void testStatelessAndStateful() throws Exception {

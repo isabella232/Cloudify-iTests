@@ -51,7 +51,7 @@ public class Ec2RecipeDebuggerTest extends NewAbstractCloudTest {
     @Override
     public void beforeBootstrap() throws IOException {
 
-        File debuggerSrcFolder = new File(SGTestHelper.getSGTestRootDir() + "/src/main/resources/scripts/debugger");
+        File debuggerSrcFolder = new File(SGTestHelper.getSGTestRootDir() + "/src/main/scripts/debugger");
         File debuggerTestFolder = new File(getService().getPathToCloudFolder() + "/upload/cloudify-overrides");
         FileUtils.copyDirectoryToDirectory(debuggerSrcFolder, debuggerTestFolder);
     }

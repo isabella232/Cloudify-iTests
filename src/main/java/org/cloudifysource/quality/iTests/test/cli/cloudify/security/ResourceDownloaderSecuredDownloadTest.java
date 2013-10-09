@@ -17,6 +17,9 @@ import org.testng.annotations.Test;
 public class ResourceDownloaderSecuredDownloadTest extends
 		AbstractSecuredLocalCloudTest {
 	
+	private final String USER_NAME = "Dana";
+	private final String PASSWORD = "Dana";
+	
 	@BeforeClass
 	public void bootsrap() throws Exception {
 		super.bootstrap();
@@ -25,7 +28,7 @@ public class ResourceDownloaderSecuredDownloadTest extends
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT, enabled = true)
 	public void testSecureDownloadCredsInURLTest() throws IOException, ResourceDownloadException, TimeoutException {
 		final ResourceDownloader downloader = new ResourceDownloader();
-		final URL url = new URL("https://Dana:Dana@localhost:8100/resources/restdoclet/restdoclet.html");
+		final URL url = new URL("https://" + USER_NAME + ":" + PASSWORD + "@localhost:8100/resources/restdoclet/restdoclet.html");
 		downloader.setUrl(url);
 		downloader.setResourceDest(new File(FileUtils.getTempDirectoryPath(), "temp"));
 		downloader.download();
@@ -37,8 +40,8 @@ public class ResourceDownloaderSecuredDownloadTest extends
 		final URL url = new URL("https://localhost:8100/resources/restdoclet/restdoclet.html");
 		downloader.setUrl(url);
 		downloader.setResourceDest(new File(FileUtils.getTempDirectoryPath(), "temp"));
-		downloader.setUserName("Dana");
-		downloader.setPassword("Dana");
+		downloader.setUserName(USER_NAME);
+		downloader.setPassword(PASSWORD);
 		downloader.download();
 	}
 

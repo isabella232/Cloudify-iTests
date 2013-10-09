@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
+import org.cloudifysource.dsl.rest.AddTemplatesException;
 import org.cloudifysource.quality.iTests.framework.utils.JCloudsUtils;
 import org.cloudifysource.quality.iTests.framework.utils.ServiceInstaller;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
@@ -20,6 +21,7 @@ import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.NewAbstractCloudTest;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.ec2.Ec2CloudService;
 import org.cloudifysource.restclient.RestClient;
+import org.cloudifysource.restclient.RestClientFacade;
 import org.cloudifysource.restclient.exceptions.RestClientException;
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.NodeMetadata;
@@ -79,11 +81,12 @@ public class Ec2UlimitTest extends NewAbstractCloudTest {
 
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
 	public void testUlimitAndPriviligedScript()
-			throws IOException, InterruptedException, RestClientException {
+			throws IOException, InterruptedException, RestClientException, AddTemplatesException {
 
 		final RestClient client =
 				new RestClient(new URL(this.cloudService.getRestUrls()[0]), "", "", PlatformVersion.getVersion());
 
+		final RestClientFacade facade = new RestClientFacade(client);
 		// first, create the template folder
 		final File templateDirectory = createTemplateDirectory();
 
@@ -96,15 +99,21 @@ public class Ec2UlimitTest extends NewAbstractCloudTest {
 				new ServiceInstaller(this.cloudService.getRestUrls()[0], serviceDirectory.getAbsolutePath());
 		boolean installed = false;
 		try {
-			final String addTemplatesResult =
-					"connect " + getRestUrl() + ";add-templates " + templateDirectory.getAbsolutePath();
-			CommandTestUtils.runCommandAndWait(addTemplatesResult);
+			facade.addTemplates(templateDirectory);
+//			final String addTemplatesResult =
+//					"connect " + getRestUrl() + ";add-templates " + templateDirectory.getAbsolutePath();
+//			CommandTestUtils.runCommandAndWait(addTemplatesResult);
 
 			Assert.assertTrue(serviceDirectory.exists() && serviceDirectory.isDirectory());
 
 			installer.install();
 
-			final String rest = installer.invoke("eval-script");
+			final String envResult = installer.invoke("eval-script", "env");
+			Assert.assertTrue(envResult.contains("PRIVILIGED_TEST_MARKER"), "Missing env var from priviliged script");
+			
+			final String ulimitResult = installer.invoke("eval-script", "ulimit", "-n");
+			Assert.assertTrue(ulimitResult.contains("12345"), "Expected ulimit to be 12345, was: " + ulimitResult);
+			
 
 			installed = true;
 
@@ -140,7 +149,7 @@ public class Ec2UlimitTest extends NewAbstractCloudTest {
 
 		tempDirectory.deleteOnExit();
 
-		final File originalTemplateDirectory = new File("/src/main/resources/templates/ulimitAndPriviligedScript");
+		final File originalTemplateDirectory = new File("src/main/resources/templates/ulimitAndPriviligedScript");
 		Assert.assertTrue(originalTemplateDirectory.exists());
 		FileUtils.copyDirectory(originalTemplateDirectory, tempDirectory);
 

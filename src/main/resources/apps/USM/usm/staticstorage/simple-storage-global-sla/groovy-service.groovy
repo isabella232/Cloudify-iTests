@@ -13,7 +13,14 @@ service {
 	elastic true
 	numInstances 1
 	maxAllowedInstances 2
-
+	
+	isolationSLA {
+		global {
+			instanceCpuCores 0
+			instanceMemoryMB 128
+			useManagement true
+		}
+	}
 	
 	lifecycle { 
 

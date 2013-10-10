@@ -33,6 +33,17 @@ public class Ec2GitServicesTest extends AbstractServicesTest {
     public void testApache() throws Exception {
         testService("apache");
     }
+
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
+    public void testApacheLB() throws Exception {
+        testService("apacheLB");
+    }
+
+    //tested as part of an app
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
+    public void testBigInsights() throws Exception{
+        testService("biginsights");
+    }
     
     //cant run on localcloud??
     @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
@@ -45,11 +56,7 @@ public class Ec2GitServicesTest extends AbstractServicesTest {
     public void testCouchDBe() throws Exception{
         testService("couchdb");
     }
-    //tested as part of an app
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
-    public void testBigInsights() throws Exception{
-        testService("biginsights");
-    }
+
     
     //works
     @TestConfiguration(os = {TestConfiguration.VM.MAC, TestConfiguration.VM.UNIX} )
@@ -88,7 +95,7 @@ public class Ec2GitServicesTest extends AbstractServicesTest {
     }
 
     //not our recipe. fails.
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
     public void testPostgresql() throws Exception{
         testService("postgresql");
     }

@@ -156,6 +156,14 @@ public class StorageAllocationTester {
         setTemplate(RECIPES_SERVICES_FOLDER + "/" + folderName, "SMALL_LINUX", true);
         testDeleteOnExitFalse(folderName);
     }
+    
+    public void testDeleteOnExitFalseLinuxGlobalSla() throws Exception {
+        String folderName = "simple-storage-global-sla";
+        final String servicePath = CommandTestUtils.getPath("/src/main/resources/apps/USM/usm/staticstorage/" + folderName);
+        folderName = copyServiceToRecipesFolder(servicePath, folderName);
+        setTemplate(RECIPES_SERVICES_FOLDER + "/" + folderName, "SMALL_LINUX", true);
+        testDeleteOnExitFalse(folderName);
+    }
 
     public void testDeleteOnExitFalseUbuntu() throws Exception {
         String folderName = "simple-storage";

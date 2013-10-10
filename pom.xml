@@ -43,6 +43,11 @@
 	</dependencyManagement>
 
 	<dependencies>
+        <dependency>
+            <groupId>org.cloudifysource</groupId>
+            <artifactId>version</artifactId>
+            <version>${cloudifyVersion}</version>
+        </dependency>
 		<dependency>
 			<groupId>com.gigaspaces</groupId>
 			<artifactId>gs-openspaces</artifactId>
@@ -151,23 +156,23 @@
 			<version>14.0</version>
 		</dependency>
 		<dependency>
-			<groupId>org.jclouds</groupId>
+			<groupId>org.apache.jclouds</groupId>
 			<artifactId>jclouds-allcompute</artifactId>
 			<version>${jcloudsVersion}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.jclouds</groupId>
+			<groupId>org.apache.jclouds</groupId>
 			<artifactId>jclouds-blobstore</artifactId>
 			<version>${jcloudsVersion}</version>
 			<exclusions>
 				<exclusion>
 					<artifactId>jclouds-core</artifactId>
-					<groupId>org.jclouds</groupId>
+					<groupId>org.apache.jclouds</groupId>
 				</exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
-			<groupId>org.jclouds.provider</groupId>
+			<groupId>org.apache.jclouds.provider</groupId>
 			<artifactId>aws-s3</artifactId>
 			<version>${jcloudsVersion}</version>
 		</dependency>
@@ -294,6 +299,13 @@
 				<activeByDefault>false</activeByDefault>
 			</activation>
 			<dependencies>
+                <dependency>
+                    <groupId>org.cloudifysource</groupId>
+                    <artifactId>version</artifactId>
+                    <version>${cloudifyVersion}</version>
+                    <scope>system</scope>
+                    <systemPath>${cloudify.home}/lib/required/version.jar</systemPath>
+                </dependency>
 				<dependency>
 					<groupId>com.gigaspaces</groupId>
 					<artifactId>gs-openspaces</artifactId>

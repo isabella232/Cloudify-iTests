@@ -23,7 +23,7 @@ import org.testng.annotations.Test;
  */
 public class AddRemoveTemplatesOnLocalCloudTest extends AbstractLocalCloudTest{
 	
-	private static final String TEMPLATES_FOLDER_PATH = CommandTestUtils.getPath("src/main/resources/templates/ubuntu");
+	private static final String TEMPLATES_FOLDER_PATH = CommandTestUtils.getPath("src/main/resources/templates/SMALL_LINUX");
 	
 	private static final String TEMPLATE_NAME = "template";
 

@@ -32,11 +32,16 @@ public class Ec2StorageDeleteOnExitTest extends AbstractStorageAllocationTest {
         getService().getAdditionalPropsToReplace().put("deleteOnExit true", "deleteOnExit false");
     }
 
-    @Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
+    @Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true, priority=1)
+    public void testLinuxGlobalSla() throws Exception {
+        storageAllocationTester.testDeleteOnExitFalseLinuxGlobalSla();
+    }
+    
+    @Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true, priority=2)
     public void testLinux() throws Exception {
         storageAllocationTester.testDeleteOnExitFalseLinux();
     }
-
+    
 
     @AfterMethod
     public void cleanup() {

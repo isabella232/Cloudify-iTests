@@ -1,4 +1,4 @@
-package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.ec2;
+package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.ec2.examples;
 
 import iTests.framework.tools.SGTestHelper;
 import iTests.framework.utils.ScriptUtils;
@@ -35,14 +35,33 @@ public class Ec2GitApplicationsTest extends AbstractExamplesTest {
 
     //should work
     @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
-    public void testBabies() throws Exception {
-        super.testBabies(localGitRepoPath + "/apps");
+    public void testDrupalBabies() throws Exception {
+        super.testDrupalBabies(localGitRepoPath + "/apps");
     }
 
-    //fails
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = false)
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
+    public void testDrupalChef() throws Exception {
+        super.testDrupalChef(localGitRepoPath + "/apps");
+    }
+
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
     public void testBiginsights() throws Exception {
         super.testBiginsights(localGitRepoPath + "/apps");
+    }
+
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
+    public void testMasterSlave() throws Exception {
+        super.testMasterSlave(localGitRepoPath + "/apps");
+    }
+
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
+    public void testLamp() throws Exception {
+        super.testLamp(localGitRepoPath + "/apps");
+    }
+
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
+    public void tesMysqlAdmin() throws Exception {
+        super.testMySQLAdmin(localGitRepoPath + "/apps");
     }
 
     //should work
@@ -52,19 +71,13 @@ public class Ec2GitApplicationsTest extends AbstractExamplesTest {
     }
 
     @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
-    public void testLamp() throws Exception {
-        super.testLamp(localGitRepoPath + "/apps");
+    public void testRedmine() throws Exception {
+        super.testRedmine(localGitRepoPath + "/apps");
     }
 
     @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
-    public void testMasterSlave() throws Exception {
-        super.testMasterSlave(localGitRepoPath + "/apps");
-    }
-
-    //needs configuration to work.
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = false)
-    public void testPetclinicWas() throws Exception {
-        super.testPetclinicWas(localGitRepoPath + "/apps");
+    public void testRedminePuppet() throws Exception {
+        super.testRedminePuppet(localGitRepoPath + "/apps");
     }
 
     // requires a non existing template
@@ -73,18 +86,25 @@ public class Ec2GitApplicationsTest extends AbstractExamplesTest {
         super.testStorm(localGitRepoPath + "/apps");
     }
 
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = false)
+    public void testXAPStream() throws Exception {
+        super.testXAPStream(localGitRepoPath + "/apps");
+    }
+
+    //needs configuration to work.
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = false)
+    public void testPetclinicWas() throws Exception {
+        super.testPetclinicWas(localGitRepoPath + "/apps");
+    }
+
     //should work
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = false)
     public void testTravelLb() throws Exception {
         super.testTravelLb(localGitRepoPath + "/apps");
     }
 
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
-    public void testPuppet() throws Exception {
-        super.testPuppet(localGitRepoPath + "/apps");
-    }
 
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = false)
     public void testMysqlJboss() throws Exception {
         super.testMysqlJboss(localGitRepoPath + "/apps");
     }

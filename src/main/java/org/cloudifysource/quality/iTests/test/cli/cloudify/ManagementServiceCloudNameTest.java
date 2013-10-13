@@ -30,7 +30,7 @@ public class ManagementServiceCloudNameTest extends AbstractLocalCloudTest {
 		final String cloudName =
 				pu.getBeanLevelProperties().getContextProperties()
 						.getProperty(CloudifyConstants.CONTEXT_PROPERTY_CLOUD_NAME);
-		Assert.assertEquals(cloudName, "local-cloud");
+		Assert.assertEquals(cloudName, CloudifyConstants.LOCAL_CLOUD_NAME);
 	}
 
 }

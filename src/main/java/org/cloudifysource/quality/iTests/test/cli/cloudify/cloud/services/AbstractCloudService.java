@@ -317,7 +317,7 @@ public abstract class AbstractCloudService implements CloudService {
                     throw new IllegalStateException("Failed reading properties file : " + e.getMessage());
                 }
                 String logstashHost = props.getProperty("logstash_server_host");
-                File pemFile = new File(SGTestHelper.getSGTestRootDir() + "/src/main/resources/credentials/cloud/ec2/ec2-sgtest-us-east-logstash.pem");
+                File pemFile = new File(CREDENTIALS_FOLDER + "/cloud/ec2/ec2-sgtest-us-east-logstash.pem");
                 String redisSrcDir = "/home/ec2-user/redis-2.6.14/src";
                 String user = "ec2-user";
                 long timeoutMilli = 20 * 1000;

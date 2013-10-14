@@ -37,7 +37,8 @@ public abstract class AbstractCloudService implements CloudService {
     protected static final String CREDENTIALS_FOLDER = System.getProperty("iTests.credentialsFolder",
             SGTestHelper.getSGTestRootDir() + "/src/main/resources/credentials");
     protected static final boolean enableLogstash = Boolean.parseBoolean(System.getProperty("iTests.enableLogstash", "false"));
-    private static File propsFile = new File(SGTestHelper.getSGTestRootDir() + "/src/main/resources/logstash/logstash.properties");
+    private static File propsFile = new File(CREDENTIALS_FOLDER + "/logstash/logstash.properties");
+    protected String logstashHost;
 
     private static final int TEN_SECONDS_IN_MILLIS = 10000;
 
@@ -153,6 +154,7 @@ public abstract class AbstractCloudService implements CloudService {
 
     private void prepareLogstash(String tagClassName) throws Exception {
 
+        initLogstashHost();
         String pathToLogstash = SGTestHelper.getSGTestRootDir() + "/src/main/resources/logstash";
         String preBootstrapScriptPath = getPathToCloudFolder() + "/upload/pre-bootstrap.sh";
 
@@ -180,6 +182,7 @@ public abstract class AbstractCloudService implements CloudService {
         IOUtils.replaceTextInFile(confFilePath, "<build_number>", System.getProperty("iTests.buildNumber"));
         IOUtils.replaceTextInFile(confFilePath, "<version>", System.getProperty("cloudifyVersion"));
         IOUtils.replaceTextInFile(confFilePath, "<suite_name>", System.getProperty("iTests.suiteName"));
+        IOUtils.replaceTextInFile(confFilePath, "<host>", logstashHost);
 
         String logstashConfInBuildPath = getPathToCloudFolder() + "/upload/cloudify-overrides/config/logstash";
         FileUtils.forceMkdir(new File(logstashConfInBuildPath));
@@ -583,5 +586,20 @@ public abstract class AbstractCloudService implements CloudService {
 
 
         return properties;
+    }
+
+    private void initLogstashHost(){
+
+        if(logstashHost != null){
+            return;
+        }
+
+        Properties props;
+        try {
+            props = IOUtils.readPropertiesFromFile(propsFile);
+        } catch (final Exception e) {
+            throw new IllegalStateException("Failed reading properties file : " + e.getMessage());
+        }
+        logstashHost = props.getProperty("logstash_server_host");
     }
 }

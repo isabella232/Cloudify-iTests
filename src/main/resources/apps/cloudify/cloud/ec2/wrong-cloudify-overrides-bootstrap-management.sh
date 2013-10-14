@@ -215,7 +215,7 @@ fi
 
 cd ~/gigaspaces/tools/cli || error_exit $? 118 "Failed changing directory to cli directory"
 
-START_COMMAND_ARGS="-timeout 30 --verbose -auto-shutdown"
+START_COMMAND_ARGS="-timeout 30 --verbose"
 if [ "$GSA_MODE" = "agent" ]; then
 	ERRMSG="Failed starting agent"
 	START_COMMAND="start-agent"

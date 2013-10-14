@@ -193,7 +193,7 @@ public class Ec2SecurityTest extends NewAbstractSecurityCloudTest {
 		installApplicationAndWait(SIMPLE_APP_PATH, SIMPLE_APP_NAME, TIMEOUT_IN_MINUTES, SecurityConstants.USER_PWD_CLOUD_ADMIN_AND_APP_MANAGER, SecurityConstants.USER_PWD_CLOUD_ADMIN_AND_APP_MANAGER, false, "ROLE_CLOUDADMINS");
 		output = uninstallApplicationAndWait(SIMPLE_APP_PATH, SIMPLE_APP_NAME, TIMEOUT_IN_MINUTES, SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, true, null);
 		
-		assertTrue("unseen application uninstall succeeded", output.contains(SecurityConstants.ACCESS_DENIED_MESSAGE));
+		assertTrue("unseen application uninstall succeeded", output.contains(SecurityConstants.RESOURCE_NOT_FOUND));
 	}
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)

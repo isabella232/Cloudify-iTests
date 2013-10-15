@@ -45,7 +45,7 @@ public class Ec2AddTemplatesTest extends NewAbstractCloudTest {
 	private static final String TEMPLATE_NAME = "UBUNTU_TEST";
 	private static final String TEMPLATE_PROPERTIES_FILE_PATH = TEMPLATE_FOLDER_PATH + "/ubuntu-template.properties";
 	private static final String UBUNTU_IMAGE_ID_US = "us-east-1/ami-82fa58eb";
-	private static final String UBUNTU_IMAGE_ID_EU = "eu-west-1/ami-ce7b6fba";
+	private static final String UBUNTU_IMAGE_ID_EU = "eu-west-1/ami-c1aaabb5";
     private static final int SERVICE_INSTALLATION_TIMEOUT_IN_MINUTES = 15;
 
     @Override

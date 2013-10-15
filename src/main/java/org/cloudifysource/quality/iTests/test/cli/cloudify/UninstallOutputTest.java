@@ -29,8 +29,6 @@ import junit.framework.Assert;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.SystemDefaultHttpClient;
 import org.cloudifysource.dsl.internal.CloudifyConstants;
 import org.cloudifysource.dsl.internal.DSLException;
 import org.cloudifysource.dsl.internal.packaging.PackagingException;
@@ -39,7 +37,9 @@ import org.cloudifysource.dsl.rest.response.ServiceDescription;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.security.SecurityConstants;
 import org.cloudifysource.restclient.RestClient;
+import org.cloudifysource.restclient.RestClientExecutor;
 import org.cloudifysource.restclient.exceptions.RestClientException;
+import org.cloudifysource.restclient.exceptions.RestClientIOException;
 import org.openspaces.admin.pu.ProcessingUnitInstance;
 import org.openspaces.admin.pu.events.ProcessingUnitInstanceAddedEventListener;
 import org.openspaces.admin.pu.events.ProcessingUnitInstanceRemovedEventListener;
@@ -52,11 +52,12 @@ import org.testng.annotations.Test;
  */
 public class UninstallOutputTest extends AbstractLocalCloudTest {
 
-	private static final String APP_NAME = "petclinic";
-	private static final String APP_PATH = ScriptUtils.getBuildPath() + "/recipes/apps/" + APP_NAME;
+	private static final String PETCLINIC_NAME = "petclinic";
+	private static final String APACHE_LB_NAME = "apacheLB";
+	private static final String PETCLINIC_PATH = ScriptUtils.getBuildPath() + "/recipes/apps/" + PETCLINIC_NAME;
 	private static final String SERVICE_NAME = "tomcat";
 	private static final String SERVICE_PATH = ScriptUtils.getBuildPath() + "/recipes/services/" + SERVICE_NAME;	
-	private static final String SERVICE_PORT_NUMBER = "8090";
+	private static final String PETCLINIC_PORT_NUMBER = "8090";
 
 
 	/**
@@ -77,18 +78,18 @@ public class UninstallOutputTest extends AbstractLocalCloudTest {
 
 		try {
 			// install
-			File applicationFolder = new File(APP_PATH);
-			InstallApplicationResponse response = NewRestTestUtils.installApplicationUsingNewRestApi(restUrl, APP_NAME, applicationFolder);
+			File applicationFolder = new File(PETCLINIC_PATH);
+			InstallApplicationResponse response = NewRestTestUtils.installApplicationUsingNewRestApi(restUrl, PETCLINIC_NAME, applicationFolder);
 
 			// get all services planned instances
 			Map<String, Integer> servicesPlannedInstances = new HashMap<String, Integer>();
-			RestClient restClient = NewRestTestUtils.createAndConnect(restUrl);
+			final RestClient restClient = NewRestTestUtils.createAndConnect(restUrl);
 			List<ServiceDescription> serviceDescriptions = restClient.getServiceDescriptions(response.getDeploymentID());
 			for (ServiceDescription serviceDescription : serviceDescriptions) {
 				int instanceCount = serviceDescription.getInstanceCount();
 				String serviceName = serviceDescription.getServiceName();
 				if (instanceCount == 0) {
-					ServiceDescription serviceDescription2 = restClient.getServiceDescription(APP_NAME, serviceName);
+					ServiceDescription serviceDescription2 = restClient.getServiceDescription(PETCLINIC_NAME, serviceName);
 					LogUtils.log("Instances count of " + serviceName + " after installation was 0, got it again from service's description and it was : " 
 							+ serviceDescription2.getInstanceCount());
 				}
@@ -98,19 +99,19 @@ public class UninstallOutputTest extends AbstractLocalCloudTest {
 				servicesPlannedInstances.put(serviceName, instanceCount);
 			}
 			LogUtils.log("Instances count after install: " + servicesPlannedInstances);
-			ServiceDescription apacheLBDescription = restClient.getServiceDescription(APP_NAME, "apacheLB");
+			ServiceDescription apacheLBDescription = restClient.getServiceDescription(PETCLINIC_NAME, APACHE_LB_NAME);
 			LogUtils.log("ApacheLB instance count after install: " + apacheLBDescription.getInstanceCount());
 
-			// wait for apacheLB to restart so the running instances of apacheLB will be 1 - wait until port 8090 is available
-			final String uri = "http://127.0.0.1:" + SERVICE_PORT_NUMBER;
-			RepetitiveConditionProvider condition = new RepetitiveConditionProvider() {
+			// wait for apacheLB to restart so the running instances of apacheLB will be 1 before uninstall:
+			
+			// 1. wait for port 8090 to be available (restart occurred).
+			final String uri = "http://127.0.0.1:" + PETCLINIC_PORT_NUMBER;
+			RepetitiveConditionProvider getCondition = new RepetitiveConditionProvider() {
 				@Override
 				public boolean getCondition() {
-					SystemDefaultHttpClient httpClient = new SystemDefaultHttpClient();
-					HttpGet request = new HttpGet(uri);
 					HttpResponse httpResponse;
 					try {
-						httpResponse = httpClient.execute(request);
+						httpResponse = NewRestTestUtils.sendGetRequest(uri);
 					} catch (Exception e) {
 						LogUtils.log("failed to execute get request to " + uri, e);
 						return false;
@@ -121,12 +122,36 @@ public class UninstallOutputTest extends AbstractLocalCloudTest {
 						LogUtils.log("get request to " + uri + " returned status: " + statusCode + ", reason: " + statusLine.getReasonPhrase());
 						return false;
 					}
+					String responseBody;
+					try {
+						responseBody = RestClientExecutor.getResponseBody(httpResponse);
+					} catch (RestClientIOException e) {
+						LogUtils.log("failed to transform the response into string.", e);
+						return false;
+					}
+					Assert.assertTrue("The response to the GET request to " + uri + "doesn't contain \"welcome\"." + " Response's body: " + responseBody,
+							responseBody.contains("welcome"));
 					return true;
 				}
 			};
-			AssertUtils.repetitiveAssertTrue("failed to execute get request to " + uri + " after 5 minutes", condition, TimeUnit.MINUTES.toMillis(5));
+			AssertUtils.repetitiveAssertTrue("failed to execute get request to " + uri + " after 5 minutes", getCondition, TimeUnit.MINUTES.toMillis(5));
 			
-			
+			// 2. wait for the number of instances to become 1 again (increased from 0).
+			RepetitiveConditionProvider apacheLBRunningCondition = new RepetitiveConditionProvider() {
+				@Override
+				public boolean getCondition() {
+					try {
+						ServiceDescription serviceDescription = restClient.getServiceDescription(PETCLINIC_NAME, APACHE_LB_NAME);
+						return serviceDescription.getInstanceCount() > 0;
+					} catch (RestClientException e) {
+						LogUtils.log("failed to get service description from rest client.", e);
+						return false;
+					}
+				}
+			};
+			AssertUtils.repetitiveAssertTrue("apacheLB number of running instances is still 0 after 5 minutes", apacheLBRunningCondition , TimeUnit.MINUTES.toMillis(5));
+
+			// dump machines before uninstall
 			if (!enableLogstash) {
 				try {
 					CloudTestUtils.dumpMachines(restUrl, SecurityConstants.USER_PWD_ALL_ROLES, SecurityConstants.USER_PWD_ALL_ROLES);
@@ -136,11 +161,11 @@ public class UninstallOutputTest extends AbstractLocalCloudTest {
 			}
 			  
 			// un-install
-			final String uninstallOutput = runCommand("connect " + restUrl + ";uninstall-application --verbose " + APP_NAME);
+			final String uninstallOutput = runCommand("connect " + restUrl + ";uninstall-application --verbose " + PETCLINIC_NAME);
 			AssertUtils.repetitiveAssertConditionHolds("", new AssertUtils.RepetitiveConditionProvider() {
 				@Override
 				public boolean getCondition() {
-					return uninstallOutput.contains("Application " + APP_NAME + " uninstalled successfully");
+					return uninstallOutput.contains("Application " + PETCLINIC_NAME + " uninstalled successfully");
 				}
 			}, 5);
 			LogUtils.log("uninstalled.");		
@@ -173,8 +198,8 @@ public class UninstallOutputTest extends AbstractLocalCloudTest {
 
 			@Override
 			public void processingUnitInstanceAdded(ProcessingUnitInstance processingUnitInstance) {
-				if (processingUnitInstance.getProcessingUnit().getName().contains("apacheLB")) {
-					LogUtils.log(APP_NAME + ".apacheLB instance added.");
+				if (processingUnitInstance.getProcessingUnit().getName().contains(APACHE_LB_NAME)) {
+					LogUtils.log(PETCLINIC_NAME + ".apacheLB instance added.");
 				}
 			}
 		};
@@ -187,8 +212,8 @@ public class UninstallOutputTest extends AbstractLocalCloudTest {
 			
 			@Override
 			public void processingUnitInstanceRemoved(ProcessingUnitInstance processingUnitInstance) {
-				if (processingUnitInstance.getProcessingUnit().getName().contains("apacheLB")) {
-					LogUtils.log(APP_NAME + ".apacheLB instance.");
+				if (processingUnitInstance.getProcessingUnit().getName().contains(APACHE_LB_NAME)) {
+					LogUtils.log(PETCLINIC_NAME + ".apacheLB instance.");
 				}
 				
 			}
@@ -202,7 +227,7 @@ public class UninstallOutputTest extends AbstractLocalCloudTest {
 	 * @throws InterruptedException
 	 * @throws RestClientException
 	 */
-	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
+	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT, groups = "1", enabled = false)
 	public void uninstallServiceTest() throws IOException, InterruptedException, RestClientException {
 		// install
 		File serviceFolder = new File(SERVICE_PATH);

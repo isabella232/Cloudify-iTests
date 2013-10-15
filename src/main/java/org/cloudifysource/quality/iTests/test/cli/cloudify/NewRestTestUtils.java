@@ -23,6 +23,10 @@ import java.util.List;
 import junit.framework.Assert;
 
 import org.apache.commons.lang.time.DateUtils;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.SystemDefaultHttpClient;
 import org.cloudifysource.domain.Application;
 import org.cloudifysource.domain.Service;
 import org.cloudifysource.dsl.internal.CloudifyConstants;
@@ -306,5 +310,14 @@ public class NewRestTestUtils {
 		}
 		return serviceFolderUploadKey;
 	}
+
+	public static HttpResponse sendGetRequest(String uri) throws ClientProtocolException, IOException {
+		SystemDefaultHttpClient httpClient = new SystemDefaultHttpClient();
+		HttpGet request = new HttpGet(uri);
+		HttpResponse response = httpClient.execute(request);
+		return response;
+	}
+	
+	
 
 }

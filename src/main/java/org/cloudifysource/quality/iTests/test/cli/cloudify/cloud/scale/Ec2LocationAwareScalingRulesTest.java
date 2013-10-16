@@ -45,7 +45,7 @@ public class Ec2LocationAwareScalingRulesTest extends AbstractScalingRulesCloudT
                 DefaultProvisioningDriver.class.getName(), // old class
                 newCloudDriverClazz, // new class
                 "ec2-location-aware-driver", // jar
-                "1.0-SNAPSHOT"); // version
+                "2.0-SNAPSHOT"); // version
 	}
 	
 	@Override

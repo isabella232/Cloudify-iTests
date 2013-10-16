@@ -1,19 +1,15 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud;
 
+import com.j_spaces.kernel.PlatformVersion;
+import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.WebResource;
+import com.sun.jersey.api.client.config.DefaultClientConfig;
 import groovy.util.ConfigObject;
 import groovy.util.ConfigSlurper;
 import iTests.framework.utils.AssertUtils;
 import iTests.framework.utils.LogUtils;
 import iTests.framework.utils.ScriptUtils;
 import iTests.framework.utils.WebUtils;
-
-import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.List;
-import java.util.Map;
-
 import org.cloudifysource.domain.Application;
 import org.cloudifysource.domain.Service;
 import org.cloudifysource.dsl.internal.ServiceReader;
@@ -25,10 +21,12 @@ import org.cloudifysource.restclient.GSRestClient;
 import org.cloudifysource.restclient.RestException;
 import org.testng.annotations.AfterMethod;
 
-import com.j_spaces.kernel.PlatformVersion;
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.api.client.config.DefaultClientConfig;
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.List;
+import java.util.Map;
 
 public abstract class AbstractExamplesTest extends NewAbstractCloudTest {
 
@@ -163,16 +161,17 @@ public abstract class AbstractExamplesTest extends NewAbstractCloudTest {
 
 		verifyServices(applicationName, application.getServices());
 		verifyApplicationUrls(applicationName, hasApacheLB, apachePort);
-		verifyApplicationDependencies(application);
+		verifyApplicationDependencies(applicationName, application);
 		uninstallApplicationAndWait(applicationName, false, 20);
 		super.scanForLeakedAgentNodes();
 	}
 	
-	private void verifyApplicationDependencies(final Application application) throws MalformedURLException, RestException {
+	private void verifyApplicationDependencies(final String applicationName, final Application application) throws
+            MalformedURLException, RestException {
 		final GSRestClient client = new GSRestClient("", "", new URL(getRestUrl()), PlatformVersion.getVersionNumber());
 		
 		for (Service service : application.getServices()) {
-			validateServiceDependency(client, service, application.getName());
+			validateServiceDependency(client, service, applicationName);
 		}
 	}
 	
@@ -186,7 +185,8 @@ public abstract class AbstractExamplesTest extends NewAbstractCloudTest {
 		for (String dependency : service.getDependsOn()) {
 			String absoluteDependencyName = ServiceUtils.getAbsolutePUName(applicationName, dependency);
 			if (!dependencyList.contains(absoluteDependencyName)) {
-				System.out.println("Test should fail");
+				AssertUtils.assertFail("Service " + service.getName() + " does not contain the " +
+                        absoluteDependencyName + " dependency");
 			}
 		}
 	}

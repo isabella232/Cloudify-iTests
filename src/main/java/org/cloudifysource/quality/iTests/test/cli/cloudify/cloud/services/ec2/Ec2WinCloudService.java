@@ -11,6 +11,7 @@ public class Ec2WinCloudService extends Ec2CloudService {
 
 	public Ec2WinCloudService() {
 		super("ec2-win");
+        getBootstrapper().timeoutInMinutes(45);
 	}
 
 	@Override

@@ -306,8 +306,8 @@
                     <groupId>org.cloudifysource</groupId>
                     <artifactId>version</artifactId>
                     <version>${cloudifyVersion}</version>
-                    <scope>system</scope>
-                    <systemPath>${cloudify.home}/lib/required/version.jar</systemPath>
+                    <!--scope>system</scope>
+                    <systemPath>${cloudify.home}/lib/required/version.jar</systemPath-->
                 </dependency>
 				<dependency>
 					<groupId>com.gigaspaces</groupId>

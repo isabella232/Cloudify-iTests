@@ -26,7 +26,7 @@ import org.testng.annotations.Test;
 public class TailCommandTest extends AbstractLocalCloudTest {
 	
 	
-	private static final long FIVE_SECONDS_MILLIS = 5000;
+	private static final long TEN_SECONDS_MILLIS = 10000;
 	private static final String SERVICE_FOLDER_NAME = "simpleTail";
 	private static final String SERVICE_NAME = "simple";
 	private static final String TAIL_IS_LIMITED_TO_NO_MORE_THAN_1000_LINES = "tail is limited to no more than 1000 lines.";
@@ -51,7 +51,7 @@ public class TailCommandTest extends AbstractLocalCloudTest {
 	private void installService() throws InterruptedException {
 		installService(SERVICE_FOLDER_NAME);
 		LogUtils.log("Sleeping for five seconds to allow logs to be written to file.");
-		Thread.sleep(FIVE_SECONDS_MILLIS);
+		Thread.sleep(TEN_SECONDS_MILLIS);
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
@@ -85,9 +85,9 @@ public class TailCommandTest extends AbstractLocalCloudTest {
 				";tail --verbose -file " + file.getAbsolutePath().replace('\\', '/') + " simple 30; " + "exit";
 		runCommand(command);
 		String fileoutput = FileUtils.readFileToString(file);
-		assertTrue("expected log entries were not found in log tail", fileoutput.contains(EXPECTED_SYSTEM_OUT_LOG_ENTRY));
-		assertTrue("expected log entries were not found in log tail", fileoutput.contains(EXPECTED_SYSTEM_ERR_LOG_ENTRY));
-		assertTrue("The tail limit was not breached", !fileoutput.contains(TAIL_IS_LIMITED_TO_NO_MORE_THAN_1000_LINES));
+		assertTrue("expected log entries were not found in log tail. output was: " + fileoutput, fileoutput.contains(EXPECTED_SYSTEM_OUT_LOG_ENTRY));
+		assertTrue("expected log entries were not found in log tail. output was: " + fileoutput, fileoutput.contains(EXPECTED_SYSTEM_ERR_LOG_ENTRY));
+		assertTrue("The tail limit was not breached. output was: " + fileoutput, !fileoutput.contains(TAIL_IS_LIMITED_TO_NO_MORE_THAN_1000_LINES));
 		uninstallService();
 	}
 	

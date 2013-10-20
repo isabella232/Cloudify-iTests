@@ -1,7 +1,11 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify;
 
 import iTests.framework.tools.SGTestHelper;
-import iTests.framework.utils.*;
+import iTests.framework.utils.AssertUtils;
+import iTests.framework.utils.LogUtils;
+import iTests.framework.utils.SSHUtils;
+import iTests.framework.utils.ScriptUtils;
+import iTests.framework.utils.WebUtils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -55,7 +59,11 @@ import org.openspaces.admin.application.Applications;
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.openspaces.admin.pu.ProcessingUnits;
 import org.testng.Assert;
-import org.testng.annotations.*;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.AfterSuite;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeSuite;
 
 import com.gigaspaces.internal.sigar.SigarHolder;
 import com.sun.jersey.api.client.Client;
@@ -116,9 +124,17 @@ public class AbstractLocalCloudTest extends AbstractTestSupport {
 	}
 
 	private void assertNecessaryPortsAreOpen() {
-		assertTrue("LUS port is occupied.", !ServiceUtils.isPortOccupied(OpenspacesConstants.DEFAULT_LUS_PORT));
-		assertTrue("RESTful port is occupied.", !ServiceUtils.isPortOccupied(CloudifyConstants.DEFAULT_REST_PORT));
-		assertTrue("Webui port is occupied.", !ServiceUtils.isPortOccupied(CloudifyConstants.DEFAULT_WEBUI_PORT));
+		try {
+			assertTrue("LUS port is occupied.", !ServiceUtils.isPortOccupied(OpenspacesConstants.DEFAULT_LUS_PORT));
+			assertTrue("RESTful port is occupied.", !ServiceUtils.isPortOccupied(CloudifyConstants.DEFAULT_REST_PORT));
+			assertTrue("Webui port is occupied.", !ServiceUtils.isPortOccupied(CloudifyConstants.DEFAULT_WEBUI_PORT));
+		} catch (AssertionError t) {
+			if (!ServiceUtils.isWindows()) {
+				String netstat = SSHUtils.runCommand("127.0.0.1", 20000, "netstat -tlnp", "tgrid", "tgrid");
+				LogUtils.log("netstat for destination machine is: " + netstat);
+			}
+			throw t;
+		}
 	}
 
 	private void setGsHome() {
@@ -184,7 +200,6 @@ public class AbstractLocalCloudTest extends AbstractTestSupport {
 			}
 		}
 	}
-
 
 	protected boolean isRestPortResponding() throws Exception {
 

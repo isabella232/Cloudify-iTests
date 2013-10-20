@@ -20,7 +20,7 @@ public class AdminApiControllerTest extends AbstractLocalCloudTest {
 
 	private static final int RECURSIVE_ITERATIONS = 4;
 	protected static final String REST_ROOT = "/admin";
-	private final String regex = 
+	private final String regex =
 			"\\b(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|\\s\\[]*(]*+)";
 	private Pattern pattern;
 	private List<String> failedUrls;
@@ -52,15 +52,17 @@ public class AdminApiControllerTest extends AbstractLocalCloudTest {
 
 	}
 
-	private void recurseThroughLinks(final List<String> urls, final int rounds) {
 
+	private void recurseThroughLinks(final List<String> urls, final int rounds) {
 		try {
 			if (rounds > 0) {
 
 				for (final String url : urls) {
-					final String html = getHtmlFromURL(url);
-					final List<String> links = getUrlsFromHTML(html);
-					recurseThroughLinks(links, rounds - 1);
+					if (!url.endsWith("user.dir")) {
+						final String html = getHtmlFromURL(url);
+						final List<String> links = getUrlsFromHTML(html);
+						recurseThroughLinks(links, rounds - 1);
+					}
 				}
 			}
 		} catch (final Exception e) {

@@ -262,8 +262,7 @@ public abstract class RecipeInstaller {
         }
 
         if (expectToFail) {
-            String output = CommandTestUtils.runCommandExpectedFail(connectCommand + ";" + installationCommand);
-            return output;
+            return CommandTestUtils.runCommandExpectedFail(connectCommand + ";" + installationCommand);
         }
         if (waitForFinish) {
             String output = CommandTestUtils.runCommandAndWait(connectCommand + ";" + installationCommand);

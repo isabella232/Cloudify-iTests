@@ -38,19 +38,19 @@ public class ServiceInstaller extends RecipeInstaller {
 		}
 	}
 	
-	public void setInstances(int numberOfInstances) {
+	public String setInstances(int numberOfInstances) {
 		
 		if (getRestUrl() != null) {
 			String command = connectCommand() + ";set-instances " + serviceName + " " + numberOfInstances;
 			try {
-				CommandTestUtils.runCommandAndWait(command);
+				return CommandTestUtils.runCommandAndWait(command);
 			} catch (final Exception e) {
 				LogUtils.log(e.getMessage(), e);
 				Assert.fail(e.getMessage());
 			}
 		}
-		
-	}
+        throw new IllegalStateException("rest url is null. cannot set instances");
+    }
 
 	public String getServiceName() {
 		return serviceName;

@@ -208,7 +208,7 @@ public class AbstractLocalCloudTest extends AbstractTestSupport {
 		final URL restUrl = new URL("http://" + IPUtils.getSafeIpAddress(InetAddress.getLocalHost().getHostAddress()) 
 				+ ":" + CloudifyConstants.DEFAULT_REST_PORT);
 		if (WebUtils.isURLAvailable(restUrl)) {
-			restPortResponding = ServiceUtils.isPortOccupied("localhost", CloudifyConstants.DEFAULT_REST_PORT);
+			restPortResponding = ServiceUtils.isPortOccupied(CloudifyConstants.DEFAULT_REST_PORT);
 		}
 
 		if (!restPortResponding) {
@@ -458,10 +458,10 @@ public class AbstractLocalCloudTest extends AbstractTestSupport {
 		applicationInstaller.uninstallIfFound();
 	}
 
-	protected void uninstallService(final String serviceName) throws IOException, InterruptedException {		
+	protected String uninstallService(final String serviceName) throws IOException, InterruptedException {
         ServiceInstaller serviceInstaller = new ServiceInstaller(restUrl, serviceName);
         serviceInstaller.waitForFinish(true);
-        serviceInstaller.uninstall();
+        return serviceInstaller.uninstall();
 	}
 
 	public void uninstallAll() throws Exception {
@@ -618,12 +618,13 @@ public class AbstractLocalCloudTest extends AbstractTestSupport {
 		return ServiceReader.getApplicationFromFile(new File(applicationDir)).getApplication();
 	}
 
-	protected void installApplicationAndWait(String applicationPath, String applicationName, long timeout) throws IOException, InterruptedException {
+	protected String installApplicationAndWait(String applicationPath, String applicationName,
+                                          long timeout) throws IOException, InterruptedException {
 		ApplicationInstaller applicationInstaller = new ApplicationInstaller(restUrl, applicationName);
 		applicationInstaller.recipePath(applicationPath);
 		applicationInstaller.waitForFinish(true);
 		applicationInstaller.timeoutInMinutes(timeout);
-		applicationInstaller.install();
+		return applicationInstaller.install();
 	}
 
 	protected void installService(final String serviceName) {

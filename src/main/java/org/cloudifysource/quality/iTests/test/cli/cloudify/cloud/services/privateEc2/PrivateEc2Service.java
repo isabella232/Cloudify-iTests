@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+import iTests.framework.utils.LogUtils;
 import org.apache.commons.io.FileUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.AbstractCloudService;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.security.SecurityConstants;
@@ -37,10 +38,14 @@ public class PrivateEc2Service extends AbstractCloudService {
 
     public PrivateEc2Service() {
         super("privateEc2");
+        LogUtils.log("credentials folder is at: " + CREDENTIALS_FOLDER);
+        LogUtils.log("ec2-cert-props file is at: " + EC2_CERT_PROPERTIES);
     }
 
     public PrivateEc2Service(boolean securityEnabled) {
         super("privateEc2");
+        LogUtils.log("credentials folder is at: " + CREDENTIALS_FOLDER);
+        LogUtils.log("ec2-cert-props file is at: " + EC2_CERT_PROPERTIES);
         this.securityEnabled = securityEnabled;
     }
 

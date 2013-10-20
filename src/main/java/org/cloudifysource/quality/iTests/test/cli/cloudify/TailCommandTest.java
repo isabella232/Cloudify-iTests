@@ -85,9 +85,9 @@ public class TailCommandTest extends AbstractLocalCloudTest {
 				";tail --verbose -file " + file.getAbsolutePath().replace('\\', '/') + " simple 30; " + "exit";
 		runCommand(command);
 		String fileoutput = FileUtils.readFileToString(file);
-		assertTrue("expected log entries were not found in log tail", fileoutput.contains(EXPECTED_SYSTEM_OUT_LOG_ENTRY));
-		assertTrue("expected log entries were not found in log tail", fileoutput.contains(EXPECTED_SYSTEM_ERR_LOG_ENTRY));
-		assertTrue("The tail limit was not breached", !fileoutput.contains(TAIL_IS_LIMITED_TO_NO_MORE_THAN_1000_LINES));
+		assertTrue("expected log entries were not found in log tail. output was: " + fileoutput, fileoutput.contains(EXPECTED_SYSTEM_OUT_LOG_ENTRY));
+		assertTrue("expected log entries were not found in log tail. output was: " + fileoutput, fileoutput.contains(EXPECTED_SYSTEM_ERR_LOG_ENTRY));
+		assertTrue("The tail limit was not breached. output was: " + fileoutput, !fileoutput.contains(TAIL_IS_LIMITED_TO_NO_MORE_THAN_1000_LINES));
 		uninstallService();
 	}
 	

@@ -182,8 +182,10 @@ public class InternalUSMPuServiceDownTest extends AbstractLocalCloudTest {
 		final File processingUnitsDir = new File(ScriptUtils.getBuildPath(), SGTestHelper.getWorkDirName()  + "/processing-units/");
 		LogUtils.log("Listing all files in directory path: " + processingUnitsDir.getAbsolutePath());
 		final String[] fileList = processingUnitsDir.list();
-		for (String fileName : fileList) {
-			LogUtils.log(fileName);
+		if (fileList != null) {
+			for (String fileName : fileList) {
+				LogUtils.log(fileName);
+			}
 		}
 	}
 

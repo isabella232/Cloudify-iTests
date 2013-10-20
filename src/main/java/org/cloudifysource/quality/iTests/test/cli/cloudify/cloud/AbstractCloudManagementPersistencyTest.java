@@ -360,7 +360,7 @@ public abstract class AbstractCloudManagementPersistencyTest extends NewAbstract
     
     void assertGsmFailureOutput(String installServiceOutput) {
 		assertTrue("Expecting install failure output to contain gsm info.",
-    				installServiceOutput.contains("Persistency requires all GSM components be available. Expecting 2, Found 1"));
+    				installServiceOutput.contains("Not all gsm instances are intact. expected 2, found 1"));
 	}
     
     /**

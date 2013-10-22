@@ -1,10 +1,10 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.byon;
 
-import java.net.InetAddress;
-
 import iTests.framework.utils.AssertUtils;
 import iTests.framework.utils.LogUtils;
 import iTests.framework.utils.SSHUtils;
+
+import java.net.InetAddress;
 
 import org.cloudifysource.dsl.utils.IPUtils;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
@@ -97,9 +97,9 @@ public class AddRemoveTemplatesMultipleManagementMachinesTest extends AbstractBy
 					failedOutput.contains(hostAddress1));
 		}
 
-		if (IPUtils.isIPv6Address(hostAddress1)) {
+		if (IPUtils.isIPv6Address(hostAddress0)) {
 			AssertUtils.assertTrue("failed to add " + templateName + " to " + hostAddress0 + " (output = " + output + ")", 
-					successOutput.contains(IPv6Address.fromString(mngMachinesIP[0]).toInetAddress().toString().replaceAll("/", "")));
+					successOutput.contains(IPv6Address.fromString(hostAddress0).toInetAddress().toString().replaceAll("/", "")));
 		} else {
 			AssertUtils.assertTrue("failed to add " + templateName + " to " + hostAddress0 + " (output = " + output + ")", 
 					successOutput.contains(hostAddress0));

@@ -102,12 +102,14 @@ public abstract class AbstractByonAddRemoveTemplatesTest extends AbstractByonClo
 					getService().getCloud().getCloudCompute().getTemplates().get(DEFAULT_TEMPLATES[0])
 							.getRemoteDirectory();
 			for (final String mngMachineIP : mngMachinesIP) {
-				SSHUtils.runCommand(
+				LogUtils.log("removing folder " + remoteDir + '/' + CloudifyConstants.ADDITIONAL_TEMPLATES_FOLDER_NAME);
+				String commandOutput = SSHUtils.runCommand(
 						mngMachineIP,
 						AbstractTestSupport.OPERATION_TIMEOUT,
 						"rm -f -r " + remoteDir + "/" + CloudifyConstants.ADDITIONAL_TEMPLATES_FOLDER_NAME,
 						USER,
 						PASSWORD);
+				LogUtils.log("templates folder removal output is: " + commandOutput);
 			}
 		}
 		templatesHandler.assertExpectedList(username, password);

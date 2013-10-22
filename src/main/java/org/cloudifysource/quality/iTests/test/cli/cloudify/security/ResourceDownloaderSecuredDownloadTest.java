@@ -1,17 +1,18 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.security;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.util.concurrent.TimeoutException;
-
 import org.apache.commons.io.FileUtils;
 import org.cloudifysource.dsl.internal.tools.download.ResourceDownloadException;
 import org.cloudifysource.dsl.internal.tools.download.ResourceDownloader;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.AbstractSecuredLocalCloudTest;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.util.concurrent.TimeoutException;
 
 
 public class ResourceDownloaderSecuredDownloadTest extends
@@ -44,5 +45,10 @@ public class ResourceDownloaderSecuredDownloadTest extends
 		downloader.setPassword(PASSWORD);
 		downloader.download();
 	}
+
+    @AfterClass
+    public void teardown() throws IOException, InterruptedException {
+        super.teardown();
+    }
 
 }

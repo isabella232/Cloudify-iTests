@@ -35,6 +35,8 @@ public class SelfHealingDisabledTest extends AbstractLocalCloudTest {
 		assertTrue("Could not find expected error message",
 				result.contains("This is a failure test"));
 
+        assertTrue("Could not find expected error message", result.contains("Failed to install service groovy"));
+
 		final ProcessingUnit pu = findPU();
 
 		USMTestUtils.getUSMServiceState("default.groovy", admin);

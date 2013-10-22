@@ -12,12 +12,14 @@
 package org.cloudifysource.quality.iTests.test.rest;
 
 import java.io.IOException;
+import java.util.List;
 
 import junit.framework.Assert;
 
 import org.cloudifysource.dsl.internal.CloudifyMessageKeys;
 import org.cloudifysource.dsl.internal.DSLException;
 import org.cloudifysource.dsl.internal.packaging.PackagingException;
+import org.cloudifysource.dsl.rest.response.ServiceDescription;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.AbstractLocalCloudTest;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.NewRestTestUtils;
@@ -64,8 +66,9 @@ public class VerifyDeploymentIdEventsAPITest extends AbstractLocalCloudTest {
     public void getServiceDescriptionsTest() throws IOException, DSLException, PackagingException{
 	       RestClient restClient = NewRestTestUtils.createAndConnect(restUrl);
 			try {
-				restClient.getServiceDescriptions(NOT_EXIST_DEPLOYMENT_ID);
-				Assert.fail("RestClientException was expected.");
+                List<ServiceDescription> serviceDescriptions =
+                        restClient.getServiceDescriptions(NOT_EXIST_DEPLOYMENT_ID);
+                Assert.fail("RestClientException was expected. but instead got " + serviceDescriptions);
 			} catch (RestClientException e) {
 				Assert.assertEquals(CloudifyMessageKeys.MISSING_RESOURCE.getName(), e.getMessageCode());
 			} 

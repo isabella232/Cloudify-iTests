@@ -177,9 +177,9 @@ public class UninstallOutputTest extends AbstractLocalCloudTest {
 
 				int indexOfService = uninstallOutput.indexOf(serviceName + ":");
 				Assert.assertTrue("the output doesn't contain service name [" + serviceName + "], output: " + uninstallOutput, indexOfService != -1);
-				int indexOfInstalled = uninstallOutput.indexOf("installed", indexOfService);
+				int indexOfInstalled = uninstallOutput.toLowerCase().indexOf("installed", indexOfService);
 				Assert.assertTrue("the output doesn't contain the string \"installed\" after service name [" + serviceName + "], output: " + uninstallOutput, indexOfInstalled != -1);
-				int indexOfPlanned = uninstallOutput.indexOf("planned", indexOfInstalled);
+				int indexOfPlanned = uninstallOutput.toLowerCase().indexOf("planned", indexOfInstalled);
 				Assert.assertTrue("the output doesn't contain the string \"planned\" after \"installed\" for service [" + serviceName + "], output: " + uninstallOutput, indexOfPlanned != -1);
 
 				String initialInstalledCount = uninstallOutput.substring(indexOfInstalled + 9, indexOfPlanned).trim();

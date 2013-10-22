@@ -7,6 +7,7 @@ import org.cloudifysource.dsl.internal.DSLException;
 import org.cloudifysource.dsl.internal.ServiceReader;
 import org.cloudifysource.dsl.internal.packaging.PackagingException;
 import org.cloudifysource.dsl.utils.ServiceUtils;
+import org.cloudifysource.quality.iTests.framework.utils.ApplicationInstaller;
 import org.cloudifysource.quality.iTests.framework.utils.usm.USMTestUtils;
 import org.cloudifysource.restclient.RestException;
 import org.openspaces.admin.pu.ProcessingUnit;
@@ -27,6 +28,9 @@ public class SelfHealingDisabledTest extends AbstractLocalCloudTest {
     final private String RECIPE_DIR_PATH = CommandTestUtils
             .getPath("src/main/resources/apps/USM/usm/failedGroovy");
 
+    final private String APPLICATION_PATH = CommandTestUtils
+            .getPath("src/main/resources/apps/USM/usm/applications/badGroovyApp");
+
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
 	public void testNoSelfHealing() throws IOException, InterruptedException,
 			PackagingException, DSLException, RestException {
@@ -46,6 +50,26 @@ public class SelfHealingDisabledTest extends AbstractLocalCloudTest {
 
 		uninstallService();
 	}
+
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
+    public void testNoSelfHealingApplication() throws IOException, InterruptedException {
+
+        ApplicationInstaller installer = new ApplicationInstaller(restUrl, "groovyApp");
+        installer.setDisableSelfHealing(true);
+        installer.recipePath(APPLICATION_PATH);
+        installer.expectToFail(true);
+
+        String output = installer.install();
+
+        assertTrue("Could not find expected error message", output.contains("This is a failure test"));
+
+        assertTrue("Could not find expected error message", output.contains("Failed to install application groovyApp"));
+
+        installer.expectToFail(false);
+
+        installer.uninstall();
+
+    }
 
     @Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = false)
     public void testInitNoSelfHealing() throws IOException, InterruptedException,

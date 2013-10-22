@@ -60,12 +60,14 @@ public class AddRemoveTemplatesMultipleManagementMachinesTest extends AbstractBy
 		LogUtils.log(SSHUtils.runCommand(mngMachinesIP[1], AbstractTestSupport.OPERATION_TIMEOUT, "rm -f " + templateRemotePath, USER, PASSWORD));
 		
 		String output = templatesHandler.removeTemplateFromCloud(folderHandler, templateName, true, null);
+		LogUtils.log("template removal output is " + output);
 		
 		AssertUtils.assertTrue("successfully removed template from " + mngMachinesIP[1], 
 				output.contains("Failed to remove template [" + templateName + "]"));
 		String hostAddress0 = InetAddress.getByName(mngMachinesIP[0]).getHostAddress();
+		LogUtils.log("first host address is " + hostAddress0);
 		String hostAddress1 = InetAddress.getByName(mngMachinesIP[1]).getHostAddress();
-
+		LogUtils.log("second host address is " + hostAddress1);
 		if (IPUtils.isIPv6Address(mngMachinesIP[1])) {
 			AssertUtils.assertTrue("successfully removed template from " + hostAddress1 + "(output = " + output + ")", 
 					output.contains(IPv6Address.fromString(hostAddress1).toInetAddress().toString().replaceAll("/", "")));
@@ -77,6 +79,7 @@ public class AddRemoveTemplatesMultipleManagementMachinesTest extends AbstractBy
 		template.setExpectedToFail(true);
 		folderHandler.addCustomTemplate(template);
 		output = templatesHandler.addTemplatesToCloud(folderHandler);
+		LogUtils.log("add template output is " + output);
 		
 		int failedIndex = output.indexOf("failed to add to : ");
 		AssertUtils.assertTrue("successfully added " + templateName + " to " + hostAddress1 + " (output = " + output + ")", 

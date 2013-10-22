@@ -605,8 +605,9 @@ public class StorageAllocationTester {
 
         installer = new ServiceInstaller(restUrl, serviceName);
         installer.recipePath(folderName);
-        installer.timeoutInMinutes(3);
+        installer.timeoutInMinutes(5);
         installer.expectToFail(true);
+        installer.setDisableSelfHealing(true); // TODO - remove this once we handle CLOUDIFY-1670
         installer.install();
 
         installer.expectToFail(false);
@@ -623,9 +624,9 @@ public class StorageAllocationTester {
 
         installer = new ServiceInstaller(restUrl, serviceName);
         installer.recipePath(folderName);
-        installer.timeoutInMinutes(3);
+        installer.timeoutInMinutes(5);
         installer.expectToFail(true);
-
+        installer.setDisableSelfHealing(true); // TODO - remove this once we handle CLOUDIFY-1670
         installer.install();
 
         installer.expectToFail(false);

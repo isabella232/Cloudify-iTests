@@ -39,7 +39,12 @@ mkdir %LOC_BUILD_TEST_DIR%\%SUITE_NAME%
 
 pushd %SGTEST_HOME%
 
-call mvn test -U -P tgrid-cloudify-iTests ^
+PROFILE=tgrid-cloudify-iTests
+if %SUITE_NAME% == BigData-LocalCloud (
+    PROFILE=tgrid-cloudify-iTests-bigdata
+)
+
+call mvn test -U -P %PROFILE% ^
 -DiTests.cloud.enabled=false ^
 -DiTests.buildNumber=${BUILD_NUMBER} ^
 -DiTests.enableLogstash=${ENABLE_LOGSTASH} ^

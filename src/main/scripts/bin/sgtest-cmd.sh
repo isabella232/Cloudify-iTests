@@ -27,7 +27,10 @@ echo clouds=$SUPPORTED_CLOUDS
 mkdir ${BUILD_DIR}/../${SUITE_NAME}
 cd ${BUILD_DIR}/../Cloudify-iTests
 
-mvn test -e -U -P tgrid-cloudify-iTests \
+PROFILE=tgrid-cloudify-iTests
+if [ ! -z `echo ${SUITE_NAME} | grep BigData` ] ; then PROFILE=tgrid-cloudify-iTests-bigdata; fi
+
+mvn test -e -U -P ${PROFILE} \
 -DiTests.cloud.enabled=false \
 -DiTests.buildNumber=${BUILD_NUMBER} \
 -DiTests.enableLogstash=${ENABLE_LOGSTASH} \

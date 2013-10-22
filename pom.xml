@@ -301,6 +301,72 @@
     </dependencies>
 
 	<profiles>
+        <profile>
+            <!--The same as the regular profile, except it doesnt have the version.jar in its classpath-->
+            <!--This is so that the big data suite will use xap version instead of cloudify.-->
+            <id>tgrid-cloudify-iTests-bigdata</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>com.gigaspaces</groupId>
+                    <artifactId>gs-openspaces</artifactId>
+                    <version>${gsVersion}</version>
+                    <scope>system</scope>
+                    <systemPath>${cloudify.home}/lib/required/gs-openspaces.jar</systemPath>
+                </dependency>
+                <dependency>
+                    <groupId>com.gigaspaces</groupId>
+                    <artifactId>gs-runtime</artifactId>
+                    <version>${gsVersion}</version>
+                    <scope>system</scope>
+                    <systemPath>${cloudify.home}/lib/required/gs-runtime.jar</systemPath>
+                </dependency>
+                <dependency>
+                    <groupId>org.cloudifysource</groupId>
+                    <artifactId>CLI</artifactId>
+                    <version>${cloudifyVersion}</version>
+                    <scope>system</scope>
+                    <systemPath>${cloudify.home}/tools/cli/cli.jar</systemPath>
+                </dependency>
+                <dependency>
+                    <groupId>org.cloudifysource</groupId>
+                    <artifactId>dsl</artifactId>
+                    <version>${cloudifyVersion}</version>
+                    <scope>system</scope>
+                    <systemPath>${cloudify.home}/lib/platform/cloudify/dsl.jar</systemPath>
+                </dependency>
+                <dependency>
+                    <groupId>org.cloudifysource</groupId>
+                    <artifactId>domain</artifactId>
+                    <version>${cloudifyVersion}</version>
+                    <scope>system</scope>
+                    <systemPath>${cloudify.home}/lib/platform/cloudify/domain.jar</systemPath>
+                </dependency>
+                <dependency>
+                    <groupId>org.cloudifysource</groupId>
+                    <artifactId>utility-domain</artifactId>
+                    <version>${cloudifyVersion}</version>
+                    <scope>system</scope>
+                    <systemPath>${cloudify.home}/lib/platform/cloudify/utility-domain.jar</systemPath>
+                </dependency>
+                <dependency>
+                    <groupId>org.cloudifysource</groupId>
+                    <artifactId>esc</artifactId>
+                    <version>${cloudifyVersion}</version>
+                    <scope>system</scope>
+                    <systemPath>${cloudify.home}/lib/platform/esm/esc.jar</systemPath>
+                </dependency>
+                <dependency>
+                    <groupId>org.cloudifysource</groupId>
+                    <artifactId>USM</artifactId>
+                    <version>${cloudifyVersion}</version>
+                    <scope>system</scope>
+                    <systemPath>${cloudify.home}/lib/platform/usm/usm.jar</systemPath>
+                </dependency>
+            </dependencies>
+        </profile>
 		<profile>
 			<id>tgrid-cloudify-iTests</id>
 			<activation>
@@ -311,8 +377,6 @@
                     <groupId>org.cloudifysource</groupId>
                     <artifactId>version</artifactId>
                     <version>${cloudifyVersion}</version>
-                    <!--scope>system</scope>
-                    <systemPath>${cloudify.home}/lib/required/version.jar</systemPath-->
                 </dependency>
 				<dependency>
 					<groupId>com.gigaspaces</groupId>

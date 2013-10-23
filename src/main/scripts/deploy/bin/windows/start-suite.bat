@@ -39,9 +39,9 @@ mkdir %LOC_BUILD_TEST_DIR%\%SUITE_NAME%
 
 pushd %SGTEST_HOME%
 
-PROFILE=tgrid-cloudify-iTests
+set PROFILE=tgrid-cloudify-iTests
 if %SUITE_NAME% == BigData-LocalCloud (
-    PROFILE=tgrid-cloudify-iTests-bigdata
+    set PROFILE=tgrid-cloudify-iTests-bigdata
 )
 
 call mvn test -U -P %PROFILE% ^

@@ -32,7 +32,7 @@ public class Ec2LocationAwareScalingRulesTest extends AbstractScalingRulesCloudT
 	@Override
 	public void beforeBootstrap() throws IOException {
 
-        String region = ((Ec2CloudService) getService()).getRegion();
+        String region = getService().getRegion();
         String newCloudDriverClazz;
         if (region.contains("eu")) {
             newCloudDriverClazz = "org.cloudifysource.quality.iTests.EUWestLocationAwareDriver";
@@ -45,7 +45,7 @@ public class Ec2LocationAwareScalingRulesTest extends AbstractScalingRulesCloudT
                 DefaultProvisioningDriver.class.getName(), // old class
                 newCloudDriverClazz, // new class
                 "ec2-location-aware-driver", // jar
-                "2.0-SNAPSHOT"); // version
+                "2.1-SNAPSHOT"); // version
 	}
 	
 	@Override
@@ -101,7 +101,7 @@ public class Ec2LocationAwareScalingRulesTest extends AbstractScalingRulesCloudT
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
 	public void testScaleOutCancelation() throws Exception {	
 		
-		LogUtils.log("installing application " + getApplicationName());
+		LogUtils.log("Installing application " + getApplicationName());
 
 		final String applicationPath = getApplicationPath();
 		installApplicationAndWait(applicationPath, getApplicationName());

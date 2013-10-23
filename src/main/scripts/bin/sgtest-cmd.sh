@@ -29,6 +29,7 @@ cd ${BUILD_DIR}/../Cloudify-iTests
 
 PROFILE=tgrid-cloudify-iTests
 if [ ! -z `echo ${SUITE_NAME} | grep BigData` ] ; then PROFILE=tgrid-cloudify-iTests-bigdata; fi
+echo running with profile ${PROFILE}
 
 mvn test -e -U -P ${PROFILE} \
 -DiTests.cloud.enabled=false \

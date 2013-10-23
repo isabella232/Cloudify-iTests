@@ -125,10 +125,10 @@ public abstract class AbstractScalingRulesCloudTest extends NewAbstractCloudTest
 
 	protected void stopThreads() {
 		Iterator<HttpRequest> iterator = threads.iterator();
-		while(iterator.hasNext()) {
+		while (iterator.hasNext()) {
 			iterator.next().close();
-			iterator.remove();
 		}
+        threads.clear();
 	}
 
 	protected void startThreads(InstanceDetails instanceToPing) {

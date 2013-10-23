@@ -27,7 +27,7 @@ public class TooLargeInstanceTest extends AbstractPublicProvisioningByonCloudTes
 		super.bootstrap();
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
 	public void testFaultyService() throws IOException, InterruptedException {
 			
 		int reservedMemoryCapacityPerManagementMachineInMB = getService().getCloud().getProvider().getReservedMemoryCapacityPerManagementMachineInMB();
@@ -37,13 +37,13 @@ public class TooLargeInstanceTest extends AbstractPublicProvisioningByonCloudTes
 				
 		// this installation should fail because there is not machine that can accommodate the instance (memory wise)
 		String output = installManualPublicProvisioningServiceAndWait(GROOVY_ONE, 1, memoryForServicesOnManagementMachine * 2, 0, DEFAULT_TEMPLATE_NAME, true, true);
-		String error = "Cannot install service " + GROOVY_ONE + ". The requested memory";
+		String error = "insufficient memory. service " + GROOVY_ONE;
 		AssertUtils.assertTrue("Installation output does not contains the error " + error, output.contains(error));
 		
 		super.scanForLeakedAgentNodes();
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
 	public void testFaultyApplication() throws IOException, InterruptedException {
 			
 		int reservedMemoryCapacityPerManagementMachineInMB = getService().getCloud().getProvider().getReservedMemoryCapacityPerManagementMachineInMB();
@@ -53,7 +53,7 @@ public class TooLargeInstanceTest extends AbstractPublicProvisioningByonCloudTes
 				
 		// this installation should fail because there is not machine that can accommodate the instance (memory wise)
 		String output = installManualPublicProvisioningApplicationAndWait(GROOVY_ONE, 1, memoryForServicesOnManagementMachine * 2, 0, DEFAULT_TEMPLATE_NAME, true, true);
-        String error = "Cannot install service " + GROOVY_ONE + ". The requested memory";
+        String error = "insufficient memory. service " + GROOVY_ONE;
 		AssertUtils.assertTrue("Installation output does not contains the error " + error, output.contains(error));
 		
 		super.scanForLeakedAgentNodes();

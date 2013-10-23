@@ -5,7 +5,6 @@ import iTests.framework.utils.TestUtils;
 import org.apache.commons.io.FileUtils;
 import org.cloudifysource.esc.driver.provisioning.jclouds.DefaultProvisioningDriver;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CloudTestUtils;
-import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.ec2.Ec2CloudService;
 import org.openspaces.admin.zone.config.AnyZonesConfig;
 import org.openspaces.admin.zone.config.ZonesConfig;
 import org.testng.Assert;

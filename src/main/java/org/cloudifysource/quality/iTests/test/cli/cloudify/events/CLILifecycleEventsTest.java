@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package org.cloudifysource.quality.iTests.test.cli.events;
+package org.cloudifysource.quality.iTests.test.cli.cloudify.events;
 
 import com.google.common.io.Resources;
 import iTests.framework.utils.IOUtils;

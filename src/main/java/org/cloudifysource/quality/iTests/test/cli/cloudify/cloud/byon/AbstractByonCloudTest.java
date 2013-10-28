@@ -43,31 +43,31 @@ public class AbstractByonCloudTest extends NewAbstractCloudTest {
 	@Override
 	protected AdminFactory createAdminFactory() {
 		
-		ByonCloudService cloudService = getService();
+		ByonCloudService byonService = getService();
 		AdminFactory factory = super.createAdminFactory();
 		String[] managementHosts;
-		// if the cloud is using web services 
-		if (!cloudService.getBootstrapper().isNoWebServices()){
-			managementHosts = cloudService.getRestUrls();		
-			for (String host : managementHosts) {
-				String urlNoHttp = null;
-				if (getService().getBootstrapper().isSecured()) {
-					urlNoHttp = host.substring(8); /* remove "https://" */
-				} else {
-					urlNoHttp = host.substring(7); /* remove "http://" */
-				}
-				//String ip = urlNoHttp.split(":")[0];
-				String ip = StringUtils.substringBeforeLast(urlNoHttp, ":");
-				factory.addLocators(IPUtils.getSafeIpAddress(ip) + ":" + cloudService.getCloud().getConfiguration().getComponents().getDiscovery().getDiscoveryPort());
-			}
-		}
-		// if the cloud is not using web services
-		else {
-			managementHosts = cloudService.getMachines();			
-			String host = managementHosts[0];
-			factory.addLocators(IPUtils.getSafeIpAddress(host) + ":" + cloudService.getCloud().getConfiguration().getComponents().getDiscovery().getDiscoveryPort());
-		}
-		return factory;
+
+        if (byonService.getBootstrapper().isNoWebServices()) {
+            managementHosts = byonService.getMachines();
+            String host = managementHosts[0];
+            factory.addLocators(IPUtils.getSafeIpAddress(host) + ":" +
+            byonService.getCloud().getConfiguration().getComponents().getDiscovery().getDiscoveryPort());
+        } else {
+            managementHosts = byonService.getRestUrls();
+            for (String host : managementHosts) {
+                String urlNoHttp;
+                if (getService().getBootstrapper().isSecured()) {
+                    urlNoHttp = host.substring(8); /* remove "https://" */
+                } else {
+                    urlNoHttp = host.substring(7); /* remove "http://" */
+                }
+                String ip = StringUtils.substringBeforeLast(urlNoHttp, ":");
+                factory.addLocators(IPUtils.getSafeIpAddress(ip) + ":" +
+                byonService.getCloud().getConfiguration().getComponents().getDiscovery().getDiscoveryPort());
+            }
+        }
+
+        return factory;
 	}
 
 	protected void closeAdmin() {

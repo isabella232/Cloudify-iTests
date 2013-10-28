@@ -89,7 +89,13 @@ public class DedicatedStatelessEagerScaleInByonTest extends AbstractFromXenToByo
         
         pu.waitFor(admin.getGridServiceAgents().getSize());
         assertEquals(0,removed.get());
-        assertEquals(4,added.get());
+        repetitiveAssertTrue("Expecting 4 pu instances added. actual " + added.get(), new RepetitiveConditionProvider() {
+			
+			@Override
+			public boolean getCondition() {
+				return added.get() == 4;
+			}
+		}, OPERATION_TIMEOUT);
         
         stopByonMachine(getElasticMachineProvisioningCloudifyAdapter(), gsa3, OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
         assertNumberOfInstances(3,pu);

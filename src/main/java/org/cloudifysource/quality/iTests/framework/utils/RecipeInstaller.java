@@ -248,8 +248,7 @@ public abstract class RecipeInstaller {
             commandBuilder.append("-debug-mode").append(" ").append(debugMode).append(" ");
         }
 
-        if (this instanceof ApplicationInstaller && recipeName != null && !recipeName.isEmpty()) {
-            // Service installation does not support this option. pending bug CLOUDIFY-1591
+        if (recipeName != null && !recipeName.isEmpty()) {
             commandBuilder.append("-name").append(" ").append(recipeName).append(" ");
         }
 

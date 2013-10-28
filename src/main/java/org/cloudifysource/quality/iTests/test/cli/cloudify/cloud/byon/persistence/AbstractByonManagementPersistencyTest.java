@@ -120,15 +120,20 @@ public abstract class AbstractByonManagementPersistencyTest extends AbstractByon
      * 4. Shutdown an instance agent and wait for recovery.
      * @throws Exception
      */
-    public void testManagementPersistency() throws Exception {
+    public void testManagementPersistency(boolean rebootstrap) throws Exception {
 
         shutdownManagement();
 
         CloudBootstrapper bootstrapper = getService().getBootstrapper();
-        bootstrapper.scanForLeakedNodes(false);
-        bootstrapper.useExistingFilePath(backupFilePath);
-        bootstrapper.bootstrap();
         bootstrapper.setRestUrl(getRestUrl());
+        if (rebootstrap) {
+            // only rebootstrap if necessary.
+            // for example in case of restart rebootstrapping is not necessary.
+            // see ManagementHardShutdownAndRecoveryTest
+            bootstrapper.scanForLeakedNodes(false);
+            bootstrapper.useExistingFilePath(backupFilePath);
+            bootstrapper.bootstrap();
+        }
 
         List<String> newAttributesList = new LinkedList<String>();
 

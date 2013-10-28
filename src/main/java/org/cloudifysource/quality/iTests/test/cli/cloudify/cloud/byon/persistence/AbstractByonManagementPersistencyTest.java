@@ -32,6 +32,7 @@ import org.bouncycastle.util.IPAddress;
 import org.cloudifysource.dsl.utils.ServiceUtils;
 import org.cloudifysource.quality.iTests.framework.utils.CloudBootstrapper;
 import org.cloudifysource.quality.iTests.framework.utils.ServiceInstaller;
+import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.byon.AbstractByonCloudTest;
 import org.cloudifysource.restclient.GSRestClient;
@@ -125,7 +126,7 @@ public abstract class AbstractByonManagementPersistencyTest extends AbstractByon
         shutdownManagement();
 
         CloudBootstrapper bootstrapper = getService().getBootstrapper();
-        bootstrapper.setRestUrl(getRestUrl());
+
         if (rebootstrap) {
             // only rebootstrap if necessary.
             // for example in case of restart rebootstrapping is not necessary.
@@ -133,6 +134,20 @@ public abstract class AbstractByonManagementPersistencyTest extends AbstractByon
             bootstrapper.scanForLeakedNodes(false);
             bootstrapper.useExistingFilePath(backupFilePath);
             bootstrapper.bootstrap();
+            bootstrapper.setRestUrl(getRestUrl());
+        } else {
+            AssertUtils.assertTrue("Could not find " + numOfManagementMachines + " gsm's after failover",
+                    admin.getGridServiceManagers().waitFor(numOfManagementMachines, AbstractTestSupport.OPERATION_TIMEOUT, TimeUnit.MILLISECONDS));
+            AssertUtils.assertTrue("Could not find " + numOfManagementMachines + " lus's after failover",
+                    admin.getLookupServices().waitFor(numOfManagementMachines, AbstractTestSupport.OPERATION_TIMEOUT, TimeUnit.MILLISECONDS));
+
+            AssertUtils.assertTrue("Could not find " + numOfManagementMachines + " webui instances after failover",
+                    admin.getProcessingUnits().getProcessingUnit("webui").waitFor(numOfManagementMachines, AbstractTestSupport.OPERATION_TIMEOUT, TimeUnit.MILLISECONDS));
+            AssertUtils.assertTrue("Could not find " + numOfManagementMachines + " rest after failover",
+                    admin.getProcessingUnits().getProcessingUnit("rest").waitFor(numOfManagementMachines, AbstractTestSupport.OPERATION_TIMEOUT, TimeUnit.MILLISECONDS));
+            AssertUtils.assertTrue("Could not find " + numOfManagementMachines + " space after failover",
+                    admin.getProcessingUnits().getProcessingUnit("cloudifyManagementSpace").waitFor(numOfManagementMachines, AbstractTestSupport.OPERATION_TIMEOUT, TimeUnit.MILLISECONDS));
+            bootstrapper.setRestUrl(getRestUrl());
         }
 
         List<String> newAttributesList = new LinkedList<String>();

@@ -76,7 +76,6 @@ public abstract class AbstractByonManagementPersistencyTest extends AbstractByon
             File customTomcatGroovy = new File(ScriptUtils.getBuildRecipesServicesPath() + "/custom-tomcat", "tomcat-service.groovy");
             IOUtils.replaceTextInFile(customTomcatGroovy.getAbsolutePath(), "ENTER_NUMBER_OF_INSTANCES", "" + numberOfInstances + "");
 
-            // TODO - Once CLOUDIFY-1591 is fixed, use -name option to override a service installation name.
             // replace name if needed
             String actualServiceName;
             if (overrideName != null) {
@@ -84,8 +83,6 @@ public abstract class AbstractByonManagementPersistencyTest extends AbstractByon
             } else {
                 actualServiceName = "tomcat";
             }
-            IOUtils.replaceTextInFile(customTomcatGroovy.getAbsolutePath(), "ENTER_NAME", actualServiceName);
-
             // install the custom tomcat
             ServiceInstaller tomcatInstaller = new ServiceInstaller(getRestUrl(), actualServiceName);
             tomcatInstaller.recipePath("custom-tomcat");

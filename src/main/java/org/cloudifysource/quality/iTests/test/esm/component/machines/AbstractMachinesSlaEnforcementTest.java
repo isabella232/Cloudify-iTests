@@ -9,6 +9,7 @@ import org.openspaces.admin.gsa.GridServiceAgent;
 import org.openspaces.admin.gsa.GridServiceContainerOptions;
 import org.openspaces.admin.gsc.GridServiceContainer;
 import org.openspaces.admin.internal.admin.InternalAdmin;
+import org.openspaces.admin.internal.pu.elastic.GridServiceAgentFailureDetectionConfig;
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.openspaces.admin.zone.config.AnyZonesConfig;
 import org.openspaces.grid.gsm.capacity.CapacityRequirements;
@@ -22,6 +23,7 @@ import org.openspaces.grid.gsm.machines.plugins.ElasticMachineProvisioning;
 import org.openspaces.grid.gsm.machines.plugins.NonBlockingElasticMachineProvisioningAdapterFactory;
 import org.testng.Assert;
 
+import java.util.HashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -167,6 +169,7 @@ public abstract class AbstractMachinesSlaEnforcementTest extends AbstractFromXen
         sla.setMachineProvisioning(nonblockingAdapterFactory.create(machineProvisioning));
         sla.setMachineIsolation(new DedicatedMachineIsolation(pu.getName()));
         sla.setGridServiceAgentZones(new AnyZonesConfig());
+        sla.setAgentFailureDetectionConfig(new GridServiceAgentFailureDetectionConfig(new HashMap<String,String>()));
         return sla;
     }
 

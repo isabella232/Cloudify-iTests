@@ -87,7 +87,7 @@ public class DedicatedStatelessEagerScaleInByonTest extends AbstractFromXenToByo
 			}
 		});
         
-        pu.waitFor(admin.getGridServiceAgents().getSize());
+        assertNumberOfInstances(4,pu);
         assertEquals(0,removed.get());
         repetitiveAssertTrue("Expecting 4 pu instances added. actual " + added.get(), new RepetitiveConditionProvider() {
 			

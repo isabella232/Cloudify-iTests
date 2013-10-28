@@ -151,6 +151,7 @@ public abstract class AbstractMachinesSlaEnforcementTest extends AbstractFromXen
         sla.setMachineProvisioning(nonblockingAdapterFactory.create(machineProvisioning));
         sla.setMachineIsolation(new DedicatedMachineIsolation(pu.getName()));
         sla.setGridServiceAgentZones(new AnyZonesConfig());
+        sla.setAgentFailureDetectionConfig(new GridServiceAgentFailureDetectionConfig(new HashMap<String,String>()));
         SlaEnforcementTestUtils.enforceSlaAndWait(admin, endpoint, sla, machineProvisioning);
     }
     
@@ -188,6 +189,7 @@ public abstract class AbstractMachinesSlaEnforcementTest extends AbstractFromXen
         sla.setMachineProvisioning(nonblockingAdapterFactory.create(machineProvisioning));
         sla.setMachineIsolation(new DedicatedMachineIsolation(pu.getName()));
         sla.setGridServiceAgentZones(new AnyZonesConfig());
+        sla.setAgentFailureDetectionConfig(new GridServiceAgentFailureDetectionConfig(new HashMap<String,String>()));
         return sla;
     }
 

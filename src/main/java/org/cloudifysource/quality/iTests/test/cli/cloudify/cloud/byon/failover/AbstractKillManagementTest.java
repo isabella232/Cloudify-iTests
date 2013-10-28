@@ -45,7 +45,7 @@ public abstract class AbstractKillManagementTest extends AbstractByonCloudTest {
 	
 	public void testKillMachine() throws Exception {
 		
-		LogUtils.log("before restart, checking for liveness of petclinic application");
+		LogUtils.log("Before restart, checking for liveness of petclinic application");
 		repetitiveAssertPetclinicUrlIsAvailable();
 		
 		
@@ -55,26 +55,28 @@ public abstract class AbstractKillManagementTest extends AbstractByonCloudTest {
 		
 		GridServiceManager otherManager = getManagerInOtherHostThen(machineAddress);
 		
-		LogUtils.log("restarting machine with ip " + machine.getHostAddress());
+		LogUtils.log("Restarting machine with ip " + machine.getHostAddress());
 		restartMachineAndWait(machineAddress, getService());
-		LogUtils.log("restart was susccefull");
+		LogUtils.log("Restart was successfully");
 		LogUtils.log("waiting for backup GSM to manage the tomcat processing unit");
 		AssertUtils.assertEquals("Wrong managing gsm for tomcat pu", otherManager, ProcessingUnitUtils.waitForManaged(tomcat, otherManager));
 		AssertUtils.assertEquals("Wrong managing gsm for tomcat pu", otherManager, ProcessingUnitUtils.waitForManaged(mongod, otherManager));
-		LogUtils.log("managing gsm of tomcat pu is now " + otherManager);
-		LogUtils.log("after restart, checking for liveness of petclinic application");
-		repetitiveAssertPetclinicUrlIsAvailable();		
-		LogUtils.log("starting management services on machine " + machineAddress);
-		startManagement(machineAddress);
-		
-		AssertUtils.assertTrue("could not find " + numOManagementMachines + " gsm's after failover", 
+		LogUtils.log("Managing gsm of tomcat pu is now " + otherManager);
+		LogUtils.log("After restart, checking for liveness of petclinic application");
+		repetitiveAssertPetclinicUrlIsAvailable();
+        LogUtils.log("Petclinic application is alive.");
+
+		AssertUtils.assertTrue("Could not find " + numOManagementMachines + " gsm's after failover",
 				admin.getGridServiceManagers().waitFor(numOManagementMachines, AbstractTestSupport.OPERATION_TIMEOUT, TimeUnit.MILLISECONDS));
-		AssertUtils.assertTrue("could not find " + numOManagementMachines + " gsm's after failover", 
+		AssertUtils.assertTrue("Could not find " + numOManagementMachines + " gsm's after failover",
 				admin.getLookupServices().waitFor(numOManagementMachines, AbstractTestSupport.OPERATION_TIMEOUT, TimeUnit.MILLISECONDS));
 		
-		AssertUtils.assertTrue("could not find " + numOManagementMachines + " webui instances after failover", admin.getProcessingUnits().getProcessingUnit("webui").waitFor(numOManagementMachines, AbstractTestSupport.OPERATION_TIMEOUT, TimeUnit.MILLISECONDS));
-		AssertUtils.assertTrue("could not find " + numOManagementMachines + " rest after failover", admin.getProcessingUnits().getProcessingUnit("rest").waitFor(numOManagementMachines, AbstractTestSupport.OPERATION_TIMEOUT, TimeUnit.MILLISECONDS));
-		AssertUtils.assertTrue("could not find " + numOManagementMachines + " space after failover", admin.getProcessingUnits().getProcessingUnit("cloudifyManagementSpace").waitFor(numOManagementMachines, AbstractTestSupport.OPERATION_TIMEOUT, TimeUnit.MILLISECONDS));
+		AssertUtils.assertTrue("Could not find " + numOManagementMachines + " webui instances after failover",
+                admin.getProcessingUnits().getProcessingUnit("webui").waitFor(numOManagementMachines, AbstractTestSupport.OPERATION_TIMEOUT, TimeUnit.MILLISECONDS));
+		AssertUtils.assertTrue("Could not find " + numOManagementMachines + " rest after failover",
+                admin.getProcessingUnits().getProcessingUnit("rest").waitFor(numOManagementMachines, AbstractTestSupport.OPERATION_TIMEOUT, TimeUnit.MILLISECONDS));
+		AssertUtils.assertTrue("Could not find " + numOManagementMachines + " space after failover",
+                admin.getProcessingUnits().getProcessingUnit("cloudifyManagementSpace").waitFor(numOManagementMachines, AbstractTestSupport.OPERATION_TIMEOUT, TimeUnit.MILLISECONDS));
 		
 		repetitiveAssertBackupGsmRecoveredPu(tomcat); // see CLOUDIFY-1585
 		repetitiveAssertBackupGsmRecoveredPu(mongod); // see CLOUDIFY-1585
@@ -91,16 +93,14 @@ public abstract class AbstractKillManagementTest extends AbstractByonCloudTest {
 				try {
 					String hostAddress = tomcat.getInstances()[0].getGridServiceContainer().getMachine().getHostAddress();
 					spec = "http://" + hostAddress + ":8080/petclinic/";
-					LogUtils.log("Checking that url : " + spec + " is available");
-					boolean httpURLAvailable = ServiceUtils.isHttpURLAvailable(spec);
-					LogUtils.log(spec + " available = " + httpURLAvailable);
-					return httpURLAvailable;
+                    return ServiceUtils.isHttpURLAvailable(spec);
 				} catch (final Exception e) {
 					throw new RuntimeException("Error polling to URL : " + spec + " . Reason --> " + e.getMessage());
 				} 
 			}
 		};
-		AssertUtils.repetitiveAssertTrue("petclinic url is not available! waited for 10 seconds", condition, TEN_SECONDS);
+		AssertUtils.repetitiveAssertTrue("petclinic url is not available! waited for 5 minutes", condition,
+                OPERATION_TIMEOUT);
 	}
 	
 	 private void repetitiveAssertBackupGsmRecoveredPu(final ProcessingUnit pu) {

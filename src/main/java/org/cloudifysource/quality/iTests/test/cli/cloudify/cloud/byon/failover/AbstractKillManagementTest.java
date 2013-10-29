@@ -66,11 +66,11 @@ public abstract class AbstractKillManagementTest extends AbstractByonCloudTest {
 		repetitiveAssertPetclinicUrlIsAvailable();
         LogUtils.log("Petclinic application is alive.");
 
-		AssertUtils.assertTrue("Could not find " + numOManagementMachines + " gsm's after failover",
+        AssertUtils.assertTrue("Could not find " + numOManagementMachines + " lus's after failover",
+                admin.getLookupServices().waitFor(numOManagementMachines, AbstractTestSupport.OPERATION_TIMEOUT, TimeUnit.MILLISECONDS));
+        AssertUtils.assertTrue("Could not find " + numOManagementMachines + " gsm's after failover",
 				admin.getGridServiceManagers().waitFor(numOManagementMachines, AbstractTestSupport.OPERATION_TIMEOUT, TimeUnit.MILLISECONDS));
-		AssertUtils.assertTrue("Could not find " + numOManagementMachines + " lus's after failover",
-				admin.getLookupServices().waitFor(numOManagementMachines, AbstractTestSupport.OPERATION_TIMEOUT, TimeUnit.MILLISECONDS));
-		
+
 		AssertUtils.assertTrue("Could not find " + numOManagementMachines + " webui instances after failover",
                 admin.getProcessingUnits().getProcessingUnit("webui").waitFor(numOManagementMachines, AbstractTestSupport.OPERATION_TIMEOUT, TimeUnit.MILLISECONDS));
 		AssertUtils.assertTrue("Could not find " + numOManagementMachines + " rest after failover",

@@ -136,10 +136,10 @@ public abstract class AbstractByonManagementPersistencyTest extends AbstractByon
             bootstrapper.bootstrap();
             bootstrapper.setRestUrl(getRestUrl());
         } else {
-            AssertUtils.assertTrue("Could not find " + numOfManagementMachines + " gsm's after failover",
-                    admin.getGridServiceManagers().waitFor(numOfManagementMachines, AbstractTestSupport.OPERATION_TIMEOUT, TimeUnit.MILLISECONDS));
             AssertUtils.assertTrue("Could not find " + numOfManagementMachines + " lus's after failover",
                     admin.getLookupServices().waitFor(numOfManagementMachines, AbstractTestSupport.OPERATION_TIMEOUT, TimeUnit.MILLISECONDS));
+            AssertUtils.assertTrue("Could not find " + numOfManagementMachines + " gsm's after failover",
+                    admin.getGridServiceManagers().waitFor(numOfManagementMachines, AbstractTestSupport.OPERATION_TIMEOUT, TimeUnit.MILLISECONDS));
 
             AssertUtils.assertTrue("Could not find " + numOfManagementMachines + " webui instances after failover",
                     admin.getProcessingUnits().getProcessingUnit("webui").waitFor(numOfManagementMachines, AbstractTestSupport.OPERATION_TIMEOUT, TimeUnit.MILLISECONDS));

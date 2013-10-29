@@ -15,18 +15,21 @@
 ******************************************************************************/
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.byon;
 
+import iTests.framework.tools.SGTestHelper;
+import iTests.framework.utils.IOUtils;
+import iTests.framework.utils.LogUtils;
+import iTests.framework.utils.SSHUtils;
+
 import java.io.File;
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
-import iTests.framework.tools.SGTestHelper;
-import iTests.framework.utils.IOUtils;
-import iTests.framework.utils.LogUtils;
-import iTests.framework.utils.SSHUtils;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.AbstractCloudService;
 
@@ -210,7 +213,12 @@ public class ByonCloudService extends AbstractCloudService {
 	
 		// TODO : replace hard coded 'cloudify' string with method to determine weather or no we are running xap or cloudify
 		String newCloudifyURL;
-		if(getBootstrapper().isNoWebServices()){
+		//running byon on ec2 env
+		if (user.equals("ec2-user")) {
+			createCompressedDestribution();
+			newCloudifyURL = createEc2CloudifyURL();
+		}
+		else if(getBootstrapper().isNoWebServices()){
 			newCloudifyURL =NEW_XAP_URL_PREFIX+ "/" +version +"/build_" + buildNumber + "/xap-bigdata/1.5/gigaspaces-xap-premium-" + version + "-" + milestone + "-b" + buildNumber;
 		}
 		else {
@@ -222,6 +230,26 @@ public class ByonCloudService extends AbstractCloudService {
 		this.getAdditionalPropsToReplace().putAll(propsToReplace);
 	}
 	
+	//used for byon running on ec2
+	public void createCompressedDestribution() throws UnknownHostException {
+		final File pemFile = new File("/home/cloudify/workspace/Cloudify-iTests/src/main/resources/credentials/cloud/byon/adaml_env"); 
+		File destFile = new File("/var/www/gigaspaces-" + PlatformVersion.getBuildNumber() + ".tar.gz");
+		final File buildDir = new File(SGTestHelper.getBuildDir());
+		if (!destFile.exists()) {
+			final String tarCommand = "sudo tar -cvzf /var/www/gigaspaces-" + PlatformVersion.getBuildNumber() + ".tar.gz --directory=" + SGTestHelper.getBuildDir() + " " + buildDir.getName();
+			SSHUtils.runCommand(InetAddress.getLocalHost().getHostAddress(), 60000, tarCommand, "ubuntu", pemFile);
+			//change permissions
+			final String chmodCommand = "sudo chmod 777 gigaspaces-" + PlatformVersion.getBuildNumber() + ".tar.gz";
+			SSHUtils.runCommand(InetAddress.getLocalHost().getHostAddress(), 60000, chmodCommand, "ubuntu", pemFile);
+		}
+	}
+
+	//used for byon running on ec2
+	private String createEc2CloudifyURL() throws UnknownHostException {
+		String privateIP = InetAddress.getLocalHost().getHostAddress();
+		return "http://" + privateIP + "/gigaspaces-" + PlatformVersion.getBuildNumber();
+	}
+
 	@Override
 	public void beforeBootstrap() {
 		cleanMachines();

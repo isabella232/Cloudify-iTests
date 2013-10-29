@@ -110,7 +110,7 @@ public abstract class JCloudsCloudService extends AbstractCloudService {
 	}
 
 	@Override
-	public void teardownCloud() throws IOException, InterruptedException {
+	public void teardownCloud() throws Exception {
 		super.teardownCloud();
 		
 		if(!getBootstrapper().isTeardownExpectedToFail()){		

@@ -75,6 +75,10 @@ public abstract class AbstractCloudService implements CloudService {
     public void beforeBootstrap() throws Exception {
     }
 
+    @Override
+    public void afterTeardown() throws Exception  {
+
+    }
 
     public Map<String, Object> getProperties() {
         return properties;
@@ -251,7 +255,7 @@ public abstract class AbstractCloudService implements CloudService {
     }
 
     @Override
-    public void teardownCloud() throws IOException, InterruptedException {
+    public void teardownCloud() throws Exception {
 
         String[] restUrls = getRestUrls();
 
@@ -270,6 +274,7 @@ public abstract class AbstractCloudService implements CloudService {
                     bootstrapper.setRestUrl(restUrls[0]);
                 }
                 bootstrapper.teardown();
+                afterTeardown();
             }
         } finally {
             if (!bootstrapper.isTeardownExpectedToFail()) {

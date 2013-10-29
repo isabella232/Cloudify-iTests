@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import iTests.framework.utils.LogUtils;
 import org.openspaces.admin.Admin;
 import org.openspaces.admin.AdminFactory;
 import org.openspaces.admin.machine.Machine;
@@ -42,7 +43,8 @@ public class AbstractByonCloudTest extends NewAbstractCloudTest {
 	
 	@Override
 	protected AdminFactory createAdminFactory() {
-		
+
+        LogUtils.log("Creating admin factory");
 		ByonCloudService byonService = getService();
 		AdminFactory factory = super.createAdminFactory();
 		String[] managementHosts;
@@ -62,8 +64,10 @@ public class AbstractByonCloudTest extends NewAbstractCloudTest {
                     urlNoHttp = host.substring(7); /* remove "http://" */
                 }
                 String ip = StringUtils.substringBeforeLast(urlNoHttp, ":");
-                factory.addLocators(IPUtils.getSafeIpAddress(ip) + ":" +
-                byonService.getCloud().getConfiguration().getComponents().getDiscovery().getDiscoveryPort());
+                String locator = IPUtils.getSafeIpAddress(ip) + ":" +
+                        byonService.getCloud().getConfiguration().getComponents().getDiscovery().getDiscoveryPort();
+                LogUtils.log("Adding locator " + locator);
+                factory.addLocators(locator);
             }
         }
 

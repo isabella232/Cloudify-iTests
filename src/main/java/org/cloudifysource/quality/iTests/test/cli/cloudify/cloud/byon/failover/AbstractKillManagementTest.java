@@ -28,9 +28,7 @@ public abstract class AbstractKillManagementTest extends AbstractByonCloudTest {
 	private GridServiceManager[] managers;
 	private ProcessingUnit tomcat;
 	private ProcessingUnit mongod;
-	
-	private static final long TEN_SECONDS = 10 * 1000;
-	
+
 	protected abstract Machine getMachineToKill();
 
 	public void installApplication() throws IOException, InterruptedException {
@@ -115,7 +113,8 @@ public abstract class AbstractKillManagementTest extends AbstractByonCloudTest {
 
 	                final LogEntries logEntries = backupGridServiceManagers[0].logEntries(logMatcher);
 	                final int count = logEntries.logEntries().size();
-	                LogUtils.log("Exepcted at least one "+ GSM_BACKUP_RECOVERED_PU + " log entries. Actual :" + count);
+	                LogUtils.log("Expected at least one "+ GSM_BACKUP_RECOVERED_PU + " log entries. Actual :" +
+                            count);
 	                return count > 0;
 	            }
 	        } , OPERATION_TIMEOUT);
@@ -167,7 +166,9 @@ public abstract class AbstractKillManagementTest extends AbstractByonCloudTest {
 	}
 
 	public void restartMachineAndWait(final String machine, final CloudService service) throws Exception {
+        closeAdmin();
         DisconnectionUtils.restartMachineAndWait(machine, service);
+        createAdmin();
 	}
 
 }

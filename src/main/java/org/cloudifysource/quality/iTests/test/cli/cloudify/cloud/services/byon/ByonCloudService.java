@@ -137,7 +137,13 @@ public class ByonCloudService extends AbstractCloudService {
 		return null;
 	}
 
-	@Override
+    @Override
+    public void afterTeardown() throws Exception {
+        super.afterTeardown();
+        cleanCronTasks();
+    }
+
+    @Override
 	public void injectCloudAuthenticationDetails() throws IOException {	
 		getProperties().put("username", user);
 		getProperties().put("password", password);
@@ -233,10 +239,7 @@ public class ByonCloudService extends AbstractCloudService {
 	
 	public void cleanCronTasks() {
 		String command = "crontab -r";
-		if (sudo) {
-			command = "sudo " + command;
-		}
-		
+
 		String[] hosts = this.getMachines();
 		for (String host : hosts) {
 			try {

@@ -23,12 +23,12 @@ public class AdminApiControllerTest extends AbstractLocalCloudTest {
 	private final String regex =
 			"\\b(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|\\s\\[]*(]*+)";
 	private Pattern pattern;
-	private List<String> failedUrls;
+	private List<String> failedUrls = new ArrayList<String>();
+	private final String[] excludedExtensions = {"user.dir",".class"};
 
 	@BeforeTest
 	public void beforeMethod() {
 		this.pattern = Pattern.compile(regex);
-		failedUrls = new ArrayList<String>();
 	}
 
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 5, enabled = true)
@@ -58,7 +58,7 @@ public class AdminApiControllerTest extends AbstractLocalCloudTest {
 			if (rounds > 0) {
 
 				for (final String url : urls) {
-					if (!url.endsWith("user.dir")) {
+					if (!isURLExcluded(url)) {
 						final String html = getHtmlFromURL(url);
 						final List<String> links = getUrlsFromHTML(html);
 						recurseThroughLinks(links, rounds - 1);
@@ -69,6 +69,15 @@ public class AdminApiControllerTest extends AbstractLocalCloudTest {
 			LogUtils.log("FAILED " + e.getMessage());
 			failedUrls.add(e.getMessage());
 		}
+	}
+	
+	private boolean isURLExcluded(final String url) {
+		for (String ext : excludedExtensions) {
+			if (url.endsWith(ext)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private List<String> getUrlsFromHTML(final String htmlPage) {

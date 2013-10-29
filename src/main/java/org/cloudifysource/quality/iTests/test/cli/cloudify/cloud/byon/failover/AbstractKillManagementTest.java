@@ -44,8 +44,8 @@ public abstract class AbstractKillManagementTest extends AbstractByonCloudTest {
 	public void testKillMachine() throws Exception {
 		
 		LogUtils.log("Before restart, checking for liveness of petclinic application");
+
 		repetitiveAssertPetclinicUrlIsAvailable();
-		
 		
 		Machine machine = getMachineToKill();
 		
@@ -55,10 +55,12 @@ public abstract class AbstractKillManagementTest extends AbstractByonCloudTest {
 		
 		LogUtils.log("Restarting machine with ip " + machine.getHostAddress());
 		restartMachineAndWait(machineAddress, getService());
-		LogUtils.log("Restart was successfully");
+		LogUtils.log("Restart was successfull");
 		LogUtils.log("waiting for backup GSM to manage the tomcat processing unit");
-		AssertUtils.assertEquals("Wrong managing gsm for tomcat pu", otherManager, ProcessingUnitUtils.waitForManaged(tomcat, otherManager));
-		AssertUtils.assertEquals("Wrong managing gsm for tomcat pu", otherManager, ProcessingUnitUtils.waitForManaged(mongod, otherManager));
+		AssertUtils.assertEquals("Wrong managing gsm for tomcat pu", otherManager,
+                ProcessingUnitUtils.waitForManaged(tomcat, otherManager));
+		AssertUtils.assertEquals("Wrong managing gsm for mongod pu", otherManager,
+                ProcessingUnitUtils.waitForManaged(mongod, otherManager));
 		LogUtils.log("Managing gsm of tomcat pu is now " + otherManager);
 		LogUtils.log("After restart, checking for liveness of petclinic application");
 		repetitiveAssertPetclinicUrlIsAvailable();
@@ -166,9 +168,7 @@ public abstract class AbstractKillManagementTest extends AbstractByonCloudTest {
 	}
 
 	public void restartMachineAndWait(final String machine, final CloudService service) throws Exception {
-        closeAdmin();
         DisconnectionUtils.restartMachineAndWait(machine, service);
-        createAdmin();
 	}
 
 }

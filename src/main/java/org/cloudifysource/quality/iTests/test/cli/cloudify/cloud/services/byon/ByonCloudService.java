@@ -214,7 +214,7 @@ public class ByonCloudService extends AbstractCloudService {
 		// TODO : replace hard coded 'cloudify' string with method to determine weather or no we are running xap or cloudify
 		String newCloudifyURL;
 		//running byon on ec2 env
-		if (user.equals("ec2-user")) {
+		if ("ec2-user".equals(user)) {
 			createCompressedDestribution();
 			newCloudifyURL = createEc2CloudifyURL();
 		}

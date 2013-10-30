@@ -15,7 +15,7 @@ import org.testng.annotations.Test;
 public class KillNonElasticServiceManagerMachineTest extends AbstractKillManagementTest {
 
 	@BeforeClass(alwaysRun = true)
-	protected void bootstrap() throws Exception {
+	public void bootstrap() throws Exception {
 		super.bootstrap();
 	}
 	
@@ -36,7 +36,7 @@ public class KillNonElasticServiceManagerMachineTest extends AbstractKillManagem
 	}
 	
 	@AfterClass(alwaysRun = true)
-	protected void teardown() throws Exception {
+	public void teardown() throws Exception {
 		super.teardown();
 	}
 	

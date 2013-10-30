@@ -55,7 +55,7 @@ public abstract class AbstractKillManagementTest extends AbstractByonCloudTest {
 		
 		LogUtils.log("Restarting machine with ip " + machine.getHostAddress());
 		restartMachineAndWait(machineAddress, getService());
-		LogUtils.log("Restart was successfull");
+		LogUtils.log("Restart was successful");
 		LogUtils.log("waiting for backup GSM to manage the tomcat processing unit");
 		AssertUtils.assertEquals("Wrong managing gsm for tomcat pu", otherManager,
                 ProcessingUnitUtils.waitForManaged(tomcat, otherManager));

@@ -36,14 +36,28 @@ public class InstallServiceWithOverridesFileTest extends OverridesTest {
 		EXPECTED_SERVICE_FIELDS.put("url", SERVICE_URL);
 	}
 
+	/**
+	 * Tests overrides properties of service.
+	 * Uses the REST API to install the service.
+	 * Uploads the overrides file before the REST API call.
+	 * @throws IOException
+	 * @throws InterruptedException
+	 */
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
-	public void serviceOverridesViaRestApiTest() throws IOException, InterruptedException {
+	public void serviceWithExternalOverridesFileViaRestApiTest() throws IOException, InterruptedException {
 
 		final File serviceDir = new File(SERVICE_DIR_PATH);
 		final File overridesFile = new File(OVERRIDES_FILE_PATH);
 
 		try {
-			NewRestTestUtils.installServiceUsingNewRestAPI(restUrl, serviceDir, CloudifyConstants.DEFAULT_APPLICATION_NAME, SERVICE_NAME, overridesFile, 5, null);
+			NewRestTestUtils.installServiceUsingNewRestAPI(
+					restUrl, 
+					serviceDir, 
+					CloudifyConstants.DEFAULT_APPLICATION_NAME, 
+					SERVICE_NAME, 
+					overridesFile, 
+					5, 
+					null);
 
 			// get PU
 			final ProcessingUnit processingUnit = getProcessingUnit("default." + SERVICE_NAME);
@@ -59,10 +73,45 @@ public class InstallServiceWithOverridesFileTest extends OverridesTest {
 			uninstallService(SERVICE_NAME);
 		}
 	}
+	
+	/**
+	 * Tests overrides properties of service.
+	 * The overrides file located in the service folder.
+	 * Uses the REST API to install the service.
+	 * @throws IOException
+	 * @throws InterruptedException
+	 */
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
+	public void serviceWithOverridesFileViaRestApiTest() throws IOException, InterruptedException {
+
+		final File serviceDir = new File(SERVICE_WITH_OVERRIDES_FILE_DIR_PATH);
+
+		try {
+			NewRestTestUtils.installServiceUsingNewRestAPI(
+					restUrl, 
+					serviceDir, 
+					CloudifyConstants.DEFAULT_APPLICATION_NAME, 
+					SERVICE_WITH_OVERRIDES_NAME, 
+					5);
+
+			// get PU
+			final ProcessingUnit processingUnit = getProcessingUnit("default." + SERVICE_WITH_OVERRIDES_NAME);
+			// asserts
+			assertProcessingUnit(processingUnit);
+			assertService("default", SERVICE_WITH_OVERRIDES_NAME);
+			assertServiceOverridenFields(processingUnit);
+
+		} catch (Exception e) {
+			Assert.fail(e.getMessage());
+		} finally {
+			// un-install
+			uninstallService(SERVICE_WITH_OVERRIDES_NAME);
+		}
+	}	
 
 	/**
-	 * Tests overrides properties of service that has overrides file in addition to properties file.
-	 * Using 'install-service -overrides &ltoverrides file path&gt &ltservice directory path&gt' CLI command. 
+	 * Tests overrides properties of service.
+	 * Using CLI command with the -overrides option to install the service. 
 	 * @throws InterruptedException .
 	 * @throws IOException .
 	 */
@@ -73,9 +122,9 @@ public class InstallServiceWithOverridesFileTest extends OverridesTest {
 	}
   
 	/**
-	 * Tests overrides properties of service that has overrides file in addition to properties file.
+	 * Tests overrides properties of service.
 	 * The overrides file located in the service directory.
-	 * Using 'install-service &ltservice directory path&gt' CLI command.
+	 * Using CLI command (without the -overrides option) to install the service. 
 	 * @throws InterruptedException .
 	 * @throws IOException .
 	 */

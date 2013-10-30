@@ -29,13 +29,13 @@ public abstract class OverridesTest extends AbstractLocalCloudTest {
 	 * @param url the rest URL.
 	 * @param dslTypeName the name of the DSL type (application or service).
 	 * @param dslDirPath the path to the DSL directory.
-	 * @param overridesFilePath the path to the overrides file.
+	 * @param externalOverridesFilePath the path to the overrides file.
 	 */
 	protected void install(final String url, final String dslTypeName,
-			final String dslDirPath, final String overridesFilePath) {
+			final String dslDirPath, final String externalOverridesFilePath) {
 		String command = "connect " + url + ";install-" + dslTypeName + " --verbose";
-		if (overridesFilePath != null) {
-			command += " -overrides " + overridesFilePath;
+		if (externalOverridesFilePath != null) {
+			command += " -overrides " + externalOverridesFilePath;
 		} 
 		try {
 			runCommand(command + " " + dslDirPath);

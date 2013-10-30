@@ -17,17 +17,17 @@ import org.testng.annotations.Test;
  */
 public class InstallApplicationWithOverridesFileTest extends OverridesTest {
 
-	private static final String APPLICATION_OVERRIDEN_NAME = "simpleOverridesApplicationOverriden";
+	private static final String APPLICATION_OVERRIDEN_NAME = "simpleOverridesApplicationNameFromOverridesFile_1";
 	private static final String SERVICE_OVERRIDEN_NAME = "simpleOverridesService";
 	private static final String PU_NAME = APPLICATION_OVERRIDEN_NAME + "." + SERVICE_OVERRIDEN_NAME;
 
 	private static final String SERVICE_ICON = "simpleOverridesApplicationIcon.png";
-	private static final String SERVICE_URL = APPLICATION_OVERRIDEN_NAME;
+	private static final String SERVICE_URL = "simpleOverridesApplicationNameFromOverridesFile";
 
-	private static final String APPLICATION_DIR_PATH = 
+	private static final String APPLICATION_NO_OVERRIDES_FILE_DIR_PATH = 
 			CommandTestUtils.getPath("src/main/resources/apps/USM/usm/applications/simpleOverridesApplication");
 	private static final String OVERRIDES_FILE_PATH = 
-			APPLICATION_DIR_PATH + "/overridesFile/simpleOverrides-application.overrides";
+			APPLICATION_NO_OVERRIDES_FILE_DIR_PATH + "/overridesFile/simpleOverrides-application.overrides";
 	private static final String APPLICATION_WITH_OVERRIDES_FILE_DIR_PATH = 
 			CommandTestUtils.getPath("src/main/resources/apps/USM/usm/applications/simpleOverridesApplicationWithOverrideFile");
 
@@ -38,33 +38,50 @@ public class InstallApplicationWithOverridesFileTest extends OverridesTest {
 	}
 
 	/**
-	 * Tests overrides properties of application that has overrides file in addition to properties file.
-	 * Using 'install-application -overrides &ltoverrides file path&gt &ltapplication directory path&gt' CLI command. 
+	 * Tests overrides properties of application.
+	 * Using the CLI command with the -overrides option to install the application. 
 	 * @throws InterruptedException .
 	 * @throws IOException .
 	 */
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
 	public void applicationWithExternalOverridesFileTest()
 			throws InterruptedException, IOException {
-		applicationOverridesTest(APPLICATION_DIR_PATH, OVERRIDES_FILE_PATH);
+		try {
+			// install
+			install(restUrl, "application", APPLICATION_NO_OVERRIDES_FILE_DIR_PATH, OVERRIDES_FILE_PATH);
+			// asserts
+			performAsserts();
+		} finally {
+			// un-install
+			uninstallApplicationIfFound(APPLICATION_OVERRIDEN_NAME);
+		}
 	}
 
 	/**
-	 * Tests overrides properties of application that has overrides file in addition to properties file.
-	 * The overrides file located in the application directory.
-	 * Using 'install-application &ltapplication directory path&gt' CLI command.
+	 * Tests overrides properties of application. 
+	 * The overrides file is located in the application folder.
+	 * Uses CLI command (without the -overrides option) to install the service. 
 	 * @throws InterruptedException .
 	 * @throws IOException .
 	 */
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
 	public void applicationWithOverridesFileTest() throws InterruptedException,
 	IOException {
-		applicationOverridesTest(APPLICATION_WITH_OVERRIDES_FILE_DIR_PATH, null);
+		try {
+			// install
+			install(restUrl, "application", APPLICATION_WITH_OVERRIDES_FILE_DIR_PATH, null);
+			// asserts
+			performAsserts();
+		} finally {
+			// un-install
+			uninstallApplicationIfFound(APPLICATION_OVERRIDEN_NAME);
+		}		
 	}
 
 	/**
-	 * Tests overrides properties of application that has overrides file in addition to properties file.
-	 * Using the REST API directly to invoke deployApplication, post the overrides file as part of the HTTP request.
+	 * Tests overrides properties of application. 
+	 * The overrides file is located in the application folder.
+	 * Uses the REST API to install the application.
 	 * @throws IOException .
 	 * @throws DSLException .
 	 * @throws PackagingException .
@@ -74,36 +91,53 @@ public class InstallApplicationWithOverridesFileTest extends OverridesTest {
 	public void applicationWithOverridesFileNewRestApiTest()
 			throws IOException, DSLException, PackagingException, InterruptedException {
 		try {
-			NewRestTestUtils.installApplicationUsingNewRestApi(restUrl, APPLICATION_OVERRIDEN_NAME, new File(APPLICATION_DIR_PATH), new File(OVERRIDES_FILE_PATH), null);
+			NewRestTestUtils.installApplicationUsingNewRestApi(
+					restUrl, 
+					APPLICATION_OVERRIDEN_NAME, 
+					new File(APPLICATION_WITH_OVERRIDES_FILE_DIR_PATH));
 			// asserts
-			ProcessingUnit processingUnit = getProcessingUnit(PU_NAME);
-			assertProcessingUnit(processingUnit);
-			assertApplication(APPLICATION_OVERRIDEN_NAME);
-			assertService(APPLICATION_OVERRIDEN_NAME, SERVICE_OVERRIDEN_NAME);
-			assertOverrides(processingUnit);
+			performAsserts();
 		} finally {
 			// un-install
 			uninstallApplicationIfFound(APPLICATION_OVERRIDEN_NAME);
 		}
 	}
-
-	private void applicationOverridesTest(final String applicationDirName,
-			final String overridesFilePath) throws IOException, InterruptedException {
+	
+	/**
+	 * Tests overrides properties of application.
+	 * Uploads the overrides file before executing the REST API call.
+	 * Uses the REST API to install the application.
+	 * @throws IOException
+	 * @throws DSLException
+	 * @throws PackagingException
+	 * @throws InterruptedException
+	 */
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
+	public void applicationWithExternalOverridesFileNewRestApiTest()
+			throws IOException, DSLException, PackagingException, InterruptedException {
 		try {
-			// install
-			install(restUrl, "application", applicationDirName, overridesFilePath);
+			NewRestTestUtils.installApplicationUsingNewRestApi(
+					restUrl, 
+					APPLICATION_OVERRIDEN_NAME, 
+					new File(APPLICATION_NO_OVERRIDES_FILE_DIR_PATH), 
+					new File(OVERRIDES_FILE_PATH), 
+					null);
 			// asserts
-			final ProcessingUnit processingUnit = getProcessingUnit(PU_NAME);
-			assertProcessingUnit(processingUnit);
-			assertApplication(APPLICATION_OVERRIDEN_NAME);
-			assertService(APPLICATION_OVERRIDEN_NAME, SERVICE_OVERRIDEN_NAME);
-			assertOverrides(processingUnit);
+			performAsserts();
 		} finally {
 			// un-install
 			uninstallApplicationIfFound(APPLICATION_OVERRIDEN_NAME);
 		}
 	}
 
+	private void performAsserts() {
+		ProcessingUnit processingUnit = getProcessingUnit(PU_NAME);
+		assertProcessingUnit(processingUnit);
+		assertApplication(APPLICATION_OVERRIDEN_NAME);
+		assertService(APPLICATION_OVERRIDEN_NAME, SERVICE_OVERRIDEN_NAME);
+		assertOverrides(processingUnit);
+	}
+	
 	private void assertOverrides(final ProcessingUnit processingUnit) {
 		// application's name was overridden.
 		assertEquals(APPLICATION_OVERRIDEN_NAME, processingUnit.getApplication().getName());

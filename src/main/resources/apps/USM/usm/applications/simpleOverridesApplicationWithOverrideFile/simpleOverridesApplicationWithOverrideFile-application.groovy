@@ -1,6 +1,6 @@
 
 application {
-	name = applicationName
+	name = "${applicationName}_${applicationNameSuffix}"
 	
 	service {
 		name = serviceName	

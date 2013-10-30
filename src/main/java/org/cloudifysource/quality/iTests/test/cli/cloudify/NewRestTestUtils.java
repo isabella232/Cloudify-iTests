@@ -81,12 +81,15 @@ public class NewRestTestUtils {
 		InstallApplicationResponse installationResponse = null;
 		try {
 			installationResponse = restClient.installApplication(applicationName, request);
+			if (expectedFailureMsg != null) {
+				Assert.fail("expectedFailureMsg: " + expectedFailureMsg);
+			}
 			String deploymentID = installationResponse.getDeploymentID();
 			NewRestTestUtils.waitForApplicationInstallation(restClient, restUrl, applicationName, deploymentID);
 		} catch (final RestClientException e) {
 			String actualMsg = e.getMessageFormattedText();
 			if (expectedFailureMsg != null) {
-				Assert.assertTrue("error message " + actualMsg + " doesn't contain the expected failure messgae [" + expectedFailureMsg + "]", 
+				Assert.assertTrue("error message [" + actualMsg + "] doesn't contain the expected failure messgae [" + expectedFailureMsg + "]", 
 						actualMsg.contains(expectedFailureMsg));
 			} else {
 				Assert.fail("failed to install application [" + applicationFolder.getAbsolutePath()

@@ -15,12 +15,15 @@
  *******************************************************************************/
 package org.cloudifysource.quality.iTests.test.cli.cloudify.events;
 
-import com.google.common.io.Resources;
 import iTests.framework.utils.IOUtils;
 import iTests.framework.utils.ScriptUtils;
+
+import java.io.File;
+import java.io.IOException;
+
 import org.apache.commons.io.FileUtils;
 import org.cloudifysource.domain.Service;
-import org.cloudifysource.dsl.internal.DSLApplicationCompilatioResult;
+import org.cloudifysource.dsl.internal.DSLApplicationCompilationResult;
 import org.cloudifysource.dsl.internal.DSLException;
 import org.cloudifysource.dsl.internal.ServiceReader;
 import org.cloudifysource.dsl.internal.packaging.PackagingException;
@@ -30,8 +33,7 @@ import org.cloudifysource.quality.iTests.test.cli.cloudify.AbstractLocalCloudTes
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
 import org.testng.annotations.Test;
 
-import java.io.File;
-import java.io.IOException;
+import com.google.common.io.Resources;
 
 /**
  * Test events are displayed correctly during install and uninstall operations.
@@ -111,7 +113,7 @@ public class CLILifecycleEventsTest extends AbstractLocalCloudTest {
 		String usmApplicationPath = getUsmApplicationPath("groovyApp");
 		File applicationFile = new File(usmApplicationPath, "groovyApp-application.groovy");
 
-		DSLApplicationCompilatioResult application = ServiceReader.getApplicationFromFile(applicationFile);
+		DSLApplicationCompilationResult application = ServiceReader.getApplicationFromFile(applicationFile);
 
         String output = installApplicationAndWait(usmApplicationPath, "groovyApp",
                 AbstractTestSupport.OPERATION_TIMEOUT);
@@ -145,7 +147,7 @@ public class CLILifecycleEventsTest extends AbstractLocalCloudTest {
 		String usmApplicationPath = getUsmApplicationPath("groovyApp");
 		File applicationFile = new File(usmApplicationPath, "groovyApp-application.groovy");
 
-        DSLApplicationCompilatioResult application = ServiceReader.getApplicationFromFile(applicationFile);
+        DSLApplicationCompilationResult application = ServiceReader.getApplicationFromFile(applicationFile);
 
         String applicationName = application.getApplication().getName();
 

@@ -27,7 +27,7 @@ public class TooLargeInstanceTest extends AbstractPublicProvisioningByonCloudTes
 		super.bootstrap();
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
 	public void testFaultyService() throws IOException, InterruptedException {
 			
 		int reservedMemoryCapacityPerManagementMachineInMB = getService().getCloud().getProvider().getReservedMemoryCapacityPerManagementMachineInMB();
@@ -43,7 +43,7 @@ public class TooLargeInstanceTest extends AbstractPublicProvisioningByonCloudTes
 		super.scanForLeakedAgentNodes();
 	}
 	
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
 	public void testFaultyApplication() throws IOException, InterruptedException {
 			
 		int reservedMemoryCapacityPerManagementMachineInMB = getService().getCloud().getProvider().getReservedMemoryCapacityPerManagementMachineInMB();

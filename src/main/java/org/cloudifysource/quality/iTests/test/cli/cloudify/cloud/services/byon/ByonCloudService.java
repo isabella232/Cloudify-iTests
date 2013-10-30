@@ -274,7 +274,7 @@ public class ByonCloudService extends AbstractCloudService {
                 LogUtils.log("Removing scheduled task from "+host);
 				LogUtils.log(SSHUtils.runCommand(host, AbstractTestSupport.OPERATION_TIMEOUT, command, user, password));
 			} catch (AssertionError e) {
-				LogUtils.log("Failed to kill java processes on host " + host + " .Reason --> " + e.getMessage());
+				LogUtils.log("Failed to clean cron tasks on host " + host + " .Reason --> " + e.getMessage());
 			}
 		}
 		

@@ -75,6 +75,7 @@ public class AbstractByonCloudTest extends NewAbstractCloudTest {
 	}
 
 	protected void closeAdmin() {
+        LogUtils.log("Closing admin");
 		if (admin != null) {
 			admin.close();
 			admin = null;

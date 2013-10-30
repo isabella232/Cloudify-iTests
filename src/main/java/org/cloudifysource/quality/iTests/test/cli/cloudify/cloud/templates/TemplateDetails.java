@@ -23,7 +23,7 @@ public class TemplateDetails {
 	private String uploadDirName;
 	private String machineIP;
 	private boolean isForServiceInstallation;
-	private boolean expectedToFail;
+	private boolean expectedToFailOnAdd;
 
 	public final String getTemplateName() {
 		return templateName;
@@ -81,12 +81,12 @@ public class TemplateDetails {
 		this.isForServiceInstallation = isForServiceInstallation;
 	}
 
-	public final boolean isExpectedToFail() {
-		return expectedToFail;
+	public final boolean isExpectedToFailOnAdd() {
+		return expectedToFailOnAdd;
 	}
 
-	public final void setExpectedToFail(final boolean expectedToFail) {
-		this.expectedToFail = expectedToFail;
+	public final void setExpectedToFailOnAdd(final boolean expectedToFailOnAdd) {
+		this.expectedToFailOnAdd = expectedToFailOnAdd;
 	}
 
 	@Override

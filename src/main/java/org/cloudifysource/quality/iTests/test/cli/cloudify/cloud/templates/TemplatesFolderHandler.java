@@ -1,12 +1,7 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.templates;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -16,14 +11,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import junit.framework.Assert;
 
 import org.apache.commons.io.FileUtils;
-import org.cloudifysource.dsl.internal.DSLUtils;
 
 public abstract class TemplatesFolderHandler {
-	private final String TEMPLATE_NAME_STRING = "TEMPLATE_NAME";
-	private final String UPLOAD_DIR_NAME_STRING = "UPLOAD_DIR_NAME";
-	private final String UPLOAD_DIR_NAME_PREFIX = "upload";
-	private final String BOOTSTRAP_MANAGEMENT_FILE_NAME = "bootstrap-management.sh";
-		
 	protected File folder;
 	private List<String> expectedFailedTemplates;
 	private List<String> expectedToBeAddedTempaltes;
@@ -60,101 +49,48 @@ public abstract class TemplatesFolderHandler {
 	public TemplateDetails addExpectedToFailTempalte() 
 			throws IOException {
 		TemplateDetails templateDetails = new TemplateDetails();
-		templateDetails.setExpectedToFail(true);
+		templateDetails.setExpectedToFailOnAdd(true);
 		return addCustomTemplate(templateDetails);
 	}
 	
-	public TemplateDetails addDefaultTempalte() 
+	public TemplateDetails createAndAddDefaultTempalte() 
 			throws IOException {
 		TemplateDetails templateDetails = new TemplateDetails();
 		return addCustomTemplate(templateDetails);
 	}
 	
-	public TemplateDetails addCustomTemplate(final TemplateDetails template) {
-		template.setTemplateFolder(folder);
+	public TemplateDetails createTemplate(final String templateName, final File templateFile, final String uploadDirName) {
+		// get and set template name
 		final int suffix = numLastAddedTemplate.getAndIncrement();
-		String templateName = template.getTemplateName();
-		if (templateName == null) {
-			templateName = folder.getName() + "_" + suffix;
-			template.setTemplateName(templateName);
+		String updatedTemplateName = templateName;
+		if (updatedTemplateName == null) {
+			updatedTemplateName = folder.getName() + "_" + suffix;
 		}
-		File templateFile = template.getTemplateFile();
-		if (templateFile == null) {
-			templateFile = new File(folder, templateName + DSLUtils.TEMPLATE_DSL_FILE_NAME_SUFFIX);
-			template.setTemplateFile(templateFile);
-		} else {
-			if (!templateFile.exists()) {
-				templateFile = new File(folder, templateFile.getName()); 
-			} else {
-				if (!folder.equals(templateFile.getParentFile())) {
-				try {
-					FileUtils.copyFileToDirectory(templateFile, folder);
-				} catch (IOException e) {
-					Assert.fail("caught IOException while tried to copy template's file [" 
-							+ templateFile.getAbsolutePath() + "] to folder [" + folder.getAbsolutePath() + "]. error was: " + e.getMessage());
-				}
-				}
-			}
-		}
-		replaceStringInFile(getBasicTemplateFile(), templateFile, TEMPLATE_NAME_STRING, templateName);
-
-		String uploadDirName = template.getUploadDirName();
-		if (uploadDirName == null) {
-			uploadDirName = UPLOAD_DIR_NAME_PREFIX + suffix;
-			template.setUploadDirName(uploadDirName);
-		}
-		final File uploadFolder = new File(folder, uploadDirName);
-		uploadFolder.mkdir();
-		final File updatedBootstrapManagementFile = new File(uploadFolder, BOOTSTRAP_MANAGEMENT_FILE_NAME);
-		replaceStringInFile(getBasicBootstrapManagementFile(), updatedBootstrapManagementFile,
-				UPLOAD_DIR_NAME_STRING, uploadDirName);
-
-		updatePropertiesFile(template);
-		templates.put(templateName, template);
-		if (template.isExpectedToFail()) {
+		// create the template
+		TemplateDetails createdTemplate = TemplatesUtils.createTemplate(updatedTemplateName, templateFile, folder, uploadDirName);
+		
+		// updates if needed
+		updateTemplateFile(createdTemplate);
+		updatePropertiesFile(createdTemplate);
+		
+		return createdTemplate;
+	}
+	
+	public TemplateDetails addCustomTemplate(final TemplateDetails template) {
+		TemplateDetails createTemplate = 
+				createTemplate(template.getTemplateName(), template.getTemplateFile(), template.getUploadDirName());
+		String templateName = createTemplate.getTemplateName();
+		templates.put(templateName, createTemplate);
+		if (template.isExpectedToFailOnAdd()) {
 			expectedFailedTemplates.add(templateName);
 		} else {
 			expectedToBeAddedTempaltes.add(templateName);
 		}
-		return template;
+		return createTemplate;
 	}
 
-	public abstract File getBasicTemplateFile();
-	public abstract File getBasicBootstrapManagementFile();
+	public abstract File updateTemplateFile(final TemplateDetails templateFile);
 	public abstract void updatePropertiesFile(final TemplateDetails template);
-
-	private void replaceStringInFile(final File readFrom, final File writeTo, final String stringToReplace,
-			final String replacement) {
-		BufferedReader reader = null;
-		try {
-			reader = new BufferedReader(new FileReader(readFrom));
-		} catch (FileNotFoundException e2) {
-			Assert.fail("failed to create reader from " + readFrom.getAbsolutePath());
-		}
-		PrintWriter writer = null;
-		try {
-			writer = new PrintWriter(new FileWriter(writeTo));
-		} catch (IOException e1) {
-			Assert.fail("failed to create writer from " + writeTo.getAbsolutePath());
-		}
-		try {
-		String line = null;
-		while ((line = reader.readLine()) != null) {
-			writer.print(line.replace(stringToReplace, replacement));
-			writer.print("\n");
-		}
-		} catch (IOException e) {
-			Assert.fail("caught IOException while tring to write to " 
-					+ writeTo.getAbsolutePath() + ". error was: " + e.getMessage());
-		} finally {
-			try {
-				reader.close();
-			} catch (IOException e) {
-
-			}
-			writer.close();
-		}
-	}
 
 	public File getFolder() {
 		return folder;
@@ -177,7 +113,7 @@ public abstract class TemplatesFolderHandler {
 				Assert.fail("failed to delete upload directory: " + uploudDirFile.getAbsolutePath() + ", error was: " + e.getMessage());
 			}
 			// remove from lists
-			if (templateDetails.isExpectedToFail()) {
+			if (templateDetails.isExpectedToFailOnAdd()) {
 				expectedFailedTemplates.remove(templateName);
 			} else {
 				expectedToBeAddedTempaltes.remove(templateName);

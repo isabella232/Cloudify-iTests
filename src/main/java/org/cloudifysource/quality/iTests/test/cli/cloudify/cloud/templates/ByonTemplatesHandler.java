@@ -30,7 +30,7 @@ public class ByonTemplatesHandler extends TemplatesHandler {
 	}
 
 	@Override
-	public TemplatesFolderHandler createNewTemplatesFolder() {
+	public TemplatesFolderHandler createNewTemplatesFolderHandler() {
 		final File folder = createNewFolder();
 		final ByonTemplatesFolderHandler templatesFolder =
 				new ByonTemplatesFolderHandler(

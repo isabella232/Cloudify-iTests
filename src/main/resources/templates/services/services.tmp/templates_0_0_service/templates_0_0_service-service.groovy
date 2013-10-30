@@ -1,23 +1,30 @@
 service {
-	name "simple"
-	icon "icon.png"
+	name serviceName
 	type "UNDEFINED"
-	elastic true
-	
-	compute {
-		template "TEMPLATE_1"
-	}
 	
 	lifecycle {
-		init { println "This is the init event" }
+
 		preInstall {println "This is the preInstall event" }
-		postInstall {println "This is the postInstall event"}	
+		postInstall {println "This is the postInstall event"}
 		preStart {println "This is the preStart event" }
-		start (["Win.*":"run.bat", "Linux":"run.sh"])
+		start {println "This is the start event" }
 		postStart {println "This is the postStart event" }
 		preStop {println "This is the preStop event" }
 		postStop {println "This is the postStop event" }
 		shutdown {println "This is the shutdown event" }
+		
+		details {
+			def uploadName = System.getenv("UPLOAD_NAME")
+			if(uploadName != null)
+				return (["UPLOAD_NAME": uploadName])
+			else	
+				return (["UPLOAD_NAME": "not found"])
+		}
 	}
+
+	compute {
+		template templateName
+	}
+
 	
 }

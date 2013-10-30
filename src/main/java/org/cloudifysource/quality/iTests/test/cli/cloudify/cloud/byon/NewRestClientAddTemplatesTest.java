@@ -19,7 +19,9 @@ import java.io.IOException;
 import junit.framework.Assert;
 
 import org.apache.commons.io.FileUtils;
+import org.cloudifysource.domain.cloud.compute.ComputeTemplate;
 import org.cloudifysource.dsl.internal.CloudifyConstants;
+import org.cloudifysource.dsl.internal.DSLUtils;
 import org.cloudifysource.dsl.internal.packaging.ZipUtils;
 import org.cloudifysource.dsl.rest.AddTemplatesException;
 import org.cloudifysource.dsl.rest.response.AddTemplatesResponse;
@@ -29,6 +31,7 @@ import org.cloudifysource.quality.iTests.test.cli.cloudify.NewRestTestUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.templates.TemplateDetails;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.templates.TemplatesCommandsRestAPI;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.templates.TemplatesFolderHandler;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.templates.TemplatesUtils;
 import org.cloudifysource.restclient.exceptions.RestClientException;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -58,7 +61,7 @@ public class NewRestClientAddTemplatesTest extends AbstractByonAddRemoveTemplate
 	
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, enabled = true)
 	public void addTemplateAndInstallService() throws IOException, RestClientException, AddTemplatesException {
-		TemplatesFolderHandler folderHandler = templatesHandler.createNewTemplatesFolder();
+		TemplatesFolderHandler folderHandler = templatesHandler.createNewTemplatesFolderHandler();
 		TemplateDetails template = folderHandler.addTempalteForServiceInstallation();
 		// add template
 		templatesHandler.addTemplatesToCloudUsingRestAPI(folderHandler);
@@ -75,7 +78,7 @@ public class NewRestClientAddTemplatesTest extends AbstractByonAddRemoveTemplate
 
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, enabled = true)
 	public void addZippedTemplateAndInstallService() throws IOException, RestClientException, AddTemplatesException {
-		TemplatesFolderHandler folderHandler = templatesHandler.createNewTemplatesFolder();
+		TemplatesFolderHandler folderHandler = templatesHandler.createNewTemplatesFolderHandler();
 		TemplateDetails template = folderHandler.addTempalteForServiceInstallation();
 		File templateFolder = template.getTemplateFolder();
 		File zippedTemplateFile = new File(templateFolder + File.separator + ".."  + File.separator + "zipped-template.zip");
@@ -107,7 +110,7 @@ public class NewRestClientAddTemplatesTest extends AbstractByonAddRemoveTemplate
 
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, enabled = true)
 	public void templatesWithTheSameUpload() throws IOException, InterruptedException, RestClientException, AddTemplatesException {
-		TemplatesFolderHandler folderHandler = templatesHandler.createNewTemplatesFolder();
+		TemplatesFolderHandler folderHandler = templatesHandler.createNewTemplatesFolderHandler();
 		TemplateDetails template1 = folderHandler.addTempalteForServiceInstallation();
 		TemplateDetails templateDetails = new TemplateDetails();
 		templateDetails.setUploadDirName(template1.getUploadDirName());
@@ -131,8 +134,8 @@ public class NewRestClientAddTemplatesTest extends AbstractByonAddRemoveTemplate
 		templatesHandler.assertExpectedList();
 
 		addedTemplate.setTemplateFolder(null);
-		TemplatesFolderHandler templatesFolder2 = templatesHandler.createNewTemplatesFolder();
-		addedTemplate.setExpectedToFail(true);
+		TemplatesFolderHandler templatesFolder2 = templatesHandler.createNewTemplatesFolderHandler();
+		addedTemplate.setExpectedToFailOnAdd(true);
 		templatesFolder2.addCustomTemplate(addedTemplate);
 		AddTemplatesResponse response = templatesHandler.addTemplatesToCloudUsingRestAPI(templatesFolder2);
 		templatesHandler.assertExpectedList();
@@ -155,8 +158,8 @@ public class NewRestClientAddTemplatesTest extends AbstractByonAddRemoveTemplate
 
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, enabled = true)
 	public void removeTemplateAndTryToInstallService() throws IOException, InterruptedException {
-		TemplatesFolderHandler folderHandler = templatesHandler.createNewTemplatesFolder();
-		TemplateDetails tempalte = folderHandler.addDefaultTempalte();
+		TemplatesFolderHandler folderHandler = templatesHandler.createNewTemplatesFolderHandler();
+		TemplateDetails tempalte = folderHandler.createAndAddDefaultTempalte();
 		templatesHandler.addTemplatesToCloud(folderHandler);
 		templatesHandler.assertExpectedList();
 
@@ -184,8 +187,8 @@ public class NewRestClientAddTemplatesTest extends AbstractByonAddRemoveTemplate
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, enabled = false)
 	public void illegalDuplicateTemplatesInTheSameFolder() throws IOException, AddTemplatesException {
 		
-		TemplatesFolderHandler folderHandler = templatesHandler.createNewTemplatesFolder();
-		TemplateDetails addedTemplate = folderHandler.addDefaultTempalte();
+		TemplatesFolderHandler folderHandler = templatesHandler.createNewTemplatesFolderHandler();
+		TemplateDetails addedTemplate = folderHandler.createAndAddDefaultTempalte();
 
 		TemplateDetails duplicateTemplate = new TemplateDetails();
 		String tempalteName = addedTemplate.getTemplateName();
@@ -194,7 +197,7 @@ public class NewRestClientAddTemplatesTest extends AbstractByonAddRemoveTemplate
 		duplicateTemplate.setTemplateFile(duplicateTemplateFile);
 		duplicateTemplate.setUploadDirName(addedTemplate.getUploadDirName());
 		duplicateTemplate.setMachineIP(addedTemplate.getMachineIP());
-		duplicateTemplate.setExpectedToFail(true);
+		duplicateTemplate.setExpectedToFailOnAdd(true);
 		folderHandler.addCustomTemplate(duplicateTemplate);
 		// try to add the template
 		try {
@@ -209,7 +212,7 @@ public class NewRestClientAddTemplatesTest extends AbstractByonAddRemoveTemplate
 
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, enabled = false)
 	public void illegalTemplateWithoutLocalUploadDir() throws IOException, AddTemplatesException {
-		TemplatesFolderHandler folderHandler = templatesHandler.createNewTemplatesFolder();
+		TemplatesFolderHandler folderHandler = templatesHandler.createNewTemplatesFolderHandler();
 		TemplateDetails addedTemplate = folderHandler.addExpectedToFailTempalte();
 		// delete upload directory
 		File uploadDir = new File(addedTemplate.getTemplateFolder(), addedTemplate.getUploadDirName());
@@ -226,7 +229,7 @@ public class NewRestClientAddTemplatesTest extends AbstractByonAddRemoveTemplate
 
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, enabled = true)
 	public void tryToRemoveUsedTemplate() throws IOException, RestClientException, AddTemplatesException {
-		TemplatesFolderHandler folderHandler = templatesHandler.createNewTemplatesFolder();
+		TemplatesFolderHandler folderHandler = templatesHandler.createNewTemplatesFolderHandler();
 		TemplateDetails addedTemplate = folderHandler.addTempalteForServiceInstallation();
 		String templateName = addedTemplate.getTemplateName();
 		templatesHandler.addTemplatesToCloudUsingRestAPI(folderHandler);
@@ -248,8 +251,8 @@ public class NewRestClientAddTemplatesTest extends AbstractByonAddRemoveTemplate
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, enabled = true)
 	public void addRemoveAndAddAgainTemplates() throws IOException, RestClientException, AddTemplatesException {
 	
-		TemplatesFolderHandler folderHandler = templatesHandler.createNewTemplatesFolder();
-		TemplateDetails toRemoveTemplate = folderHandler.addDefaultTempalte();
+		TemplatesFolderHandler folderHandler = templatesHandler.createNewTemplatesFolderHandler();
+		TemplateDetails toRemoveTemplate = folderHandler.createAndAddDefaultTempalte();
 		templatesHandler.addTemplatesToCloudUsingRestAPI(folderHandler);
 		templatesHandler.removeTemplatesFromCloudUsingRestAPI(folderHandler, toRemoveTemplate.getTemplateName(), false, null);
 		
@@ -258,6 +261,66 @@ public class NewRestClientAddTemplatesTest extends AbstractByonAddRemoveTemplate
 		folderHandler.addCustomTemplate(toRemoveTemplate);
 		templatesHandler.addTemplatesToCloudUsingRestAPI(folderHandler);
 		
+		templatesHandler.assertExpectedList();
+	}
+	
+	/**
+	 * Creates template with name templateName and with file name other than "templateName-template.groovy".
+	 * Add and remove this template.
+	 * @throws AddTemplatesException .
+	 * @throws RestClientException .
+	 * @throws IOException .
+	 * @throws InterruptedException .
+	 */
+	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, enabled = true)
+	public void addRemoveTemplateWithWrongFileNameTest() throws IOException, InterruptedException, RestClientException, AddTemplatesException {
+		
+		// create folder with one template
+		TemplatesFolderHandler folderHandler = templatesHandler.createNewTemplatesFolderHandler();
+		TemplateDetails template = folderHandler.createAndAddDefaultTempalte();
+		
+		// rename template file
+		File templateFile = template.getTemplateFile();
+		File parent = templateFile.getParentFile();
+		File newNameGroovyFile = new File(parent, "myTemplate-template.groovy");
+		templateFile.renameTo(newNameGroovyFile);
+		
+		// rename properties file
+		File templatePropertiesFile = template.getTemplatePropertiesFile();
+		File newNamePropertiesFile = new File(parent, "myTemplate-template.properties");
+		templatePropertiesFile.renameTo(newNamePropertiesFile);
+		
+		// add tempalte
+		templatesHandler.addTemplatesToCloudUsingRestAPI(folderHandler);
+		templatesHandler.assertExpectedList();
+		
+		// getTempalte
+		ComputeTemplate computeTemplate = TemplatesCommandsRestAPI.getTemplate(getRestUrl(), template.getTemplateName());
+		String absoluteUploadDir = computeTemplate.getAbsoluteUploadDir();
+		String uploadDirName = template.getUploadDirName();
+		
+		// remove template
+		templatesHandler.removeTemplatesFromCloudUsingRestAPI(folderHandler, template.getTemplateName(), false, null);
+		templatesHandler.assertExpectedList();
+	}
+	
+	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, enabled = true)
+	public void IllegalAddTemplatesSameNamesDifferentFileNames() throws IOException {
+		
+		// create 2 folders with one template each
+		TemplatesFolderHandler folderHandler1 = templatesHandler.createNewTemplatesFolderHandler();
+		TemplateDetails template = folderHandler1.createAndAddDefaultTempalte();		
+		TemplatesFolderHandler folderHandler2 = templatesHandler.createNewTemplatesFolderHandler();
+		File folder2 = folderHandler2.getFolder();
+
+		// add template with the same name but different file name
+		File duplicateFile = new File(folder2, "duplicate" + DSLUtils.TEMPLATE_DSL_FILE_NAME_SUFFIX);
+		FileUtils.copyFile(template.getTemplateFile(), duplicateFile);
+		TemplateDetails duplicateTemplate = 
+				TemplatesUtils.createTemplate(template.getTemplateName(), duplicateFile , folder2, null);
+		duplicateTemplate.setExpectedToFailOnAdd(true);		
+		folderHandler2.addCustomTemplate(duplicateTemplate);
+
 		templatesHandler.assertExpectedList();
 	}
 

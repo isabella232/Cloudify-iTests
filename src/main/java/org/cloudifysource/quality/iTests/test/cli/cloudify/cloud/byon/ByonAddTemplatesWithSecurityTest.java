@@ -40,7 +40,7 @@ public class ByonAddTemplatesWithSecurityTest extends AbstractByonAddRemoveTempl
 	public void testAddTemplatesAndInstallWithDifferentUsers() throws Exception {
 		
 		CloudBootstrapper bootstrapper = new CloudBootstrapper();
-		TemplatesFolderHandler folderHandler = templatesHandler.createNewTemplatesFolder();
+		TemplatesFolderHandler folderHandler = templatesHandler.createNewTemplatesFolderHandler();
 		TemplateDetails addedTemplate = folderHandler.addTempalteForServiceInstallation();
 		
 		bootstrapper.user(SecurityConstants.USER_PWD_CLOUD_ADMIN).password(SecurityConstants.USER_PWD_CLOUD_ADMIN).setRestUrl(getRestUrl());
@@ -78,8 +78,8 @@ public class ByonAddTemplatesWithSecurityTest extends AbstractByonAddRemoveTempl
 	public void testGetTemplate() throws Exception{
 		
 		CloudBootstrapper bootstrapper = new CloudBootstrapper();
-		TemplatesFolderHandler folderHandler = this.templatesHandler.createNewTemplatesFolder();		
-		TemplateDetails addedTemplate = folderHandler.addDefaultTempalte();
+		TemplatesFolderHandler folderHandler = this.templatesHandler.createNewTemplatesFolderHandler();		
+		TemplateDetails addedTemplate = folderHandler.createAndAddDefaultTempalte();
 		String templateName = addedTemplate.getTemplateName();
 		
 		bootstrapper.user(SecurityConstants.USER_PWD_CLOUD_ADMIN_AND_APP_MANAGER).password(SecurityConstants.USER_PWD_CLOUD_ADMIN_AND_APP_MANAGER).setRestUrl(getRestUrl());
@@ -99,8 +99,8 @@ public class ByonAddTemplatesWithSecurityTest extends AbstractByonAddRemoveTempl
 	public void testRemoveTemplate() throws Exception{
 		
 		CloudBootstrapper bootstrapper = new CloudBootstrapper();
-		TemplatesFolderHandler folderHandler = this.templatesHandler.createNewTemplatesFolder();		
-		TemplateDetails addedTemplate = folderHandler.addDefaultTempalte();
+		TemplatesFolderHandler folderHandler = this.templatesHandler.createNewTemplatesFolderHandler();		
+		TemplateDetails addedTemplate = folderHandler.createAndAddDefaultTempalte();
 		String templateName = addedTemplate.getTemplateName();
 		
 		bootstrapper.user(SecurityConstants.USER_PWD_CLOUD_ADMIN).password(SecurityConstants.USER_PWD_CLOUD_ADMIN).setRestUrl(getRestUrl());
@@ -112,8 +112,8 @@ public class ByonAddTemplatesWithSecurityTest extends AbstractByonAddRemoveTempl
 		verifyRemoveTemplate(SecurityConstants.USER_PWD_NO_ROLE, SecurityConstants.USER_PWD_NO_ROLE, SecurityConstants.NO_ROLE_DESCRIPTIN, templateName, true);
 		verifyRemoveTemplate(SecurityConstants.USER_PWD_CLOUD_ADMIN, SecurityConstants.USER_PWD_CLOUD_ADMIN, SecurityConstants.CLOUD_ADMIN_DESCRIPTIN, templateName, false);
 		
-		TemplatesFolderHandler folderHandler2 = this.templatesHandler.createNewTemplatesFolder();		
-		addedTemplate = folderHandler2.addDefaultTempalte();
+		TemplatesFolderHandler folderHandler2 = this.templatesHandler.createNewTemplatesFolderHandler();		
+		addedTemplate = folderHandler2.createAndAddDefaultTempalte();
 		templateName = addedTemplate.getTemplateName();
 		bootstrapper.addTemplate(folderHandler2.getFolder().getAbsolutePath(), false);
 		
@@ -124,18 +124,18 @@ public class ByonAddTemplatesWithSecurityTest extends AbstractByonAddRemoveTempl
 	public void testListTemplate() throws Exception{
 		
 		CloudBootstrapper bootstrapper = new CloudBootstrapper();
-		TemplatesFolderHandler folderHandler = templatesHandler.createNewTemplatesFolder();
+		TemplatesFolderHandler folderHandler = templatesHandler.createNewTemplatesFolderHandler();
 
 		bootstrapper.user(SecurityConstants.USER_PWD_CLOUD_ADMIN_AND_APP_MANAGER).password(SecurityConstants.USER_PWD_CLOUD_ADMIN_AND_APP_MANAGER);
 		
-		TemplateDetails addedTemplate1 = folderHandler.addDefaultTempalte();
+		TemplateDetails addedTemplate1 = folderHandler.createAndAddDefaultTempalte();
 		String templateName1 = addedTemplate1.getTemplateName();
 		
 		bootstrapper.user(SecurityConstants.USER_PWD_CLOUD_ADMIN).password(SecurityConstants.USER_PWD_CLOUD_ADMIN).setRestUrl(getRestUrl());
 		bootstrapper.addTemplate(folderHandler.getFolder().getAbsolutePath(), false);
 		
-		TemplatesFolderHandler folderHandler2 = templatesHandler.createNewTemplatesFolder();
-		TemplateDetails addedTemplate2 = folderHandler2.addDefaultTempalte();
+		TemplatesFolderHandler folderHandler2 = templatesHandler.createNewTemplatesFolderHandler();
+		TemplateDetails addedTemplate2 = folderHandler2.createAndAddDefaultTempalte();
 		String templateName2 = addedTemplate2.getTemplateName();
 		
 		bootstrapper.addTemplate(folderHandler2.getFolder().getAbsolutePath(), false);
@@ -160,8 +160,8 @@ public class ByonAddTemplatesWithSecurityTest extends AbstractByonAddRemoveTempl
 	public void verifyAddTemplate(String user, String password, String userDescription, boolean isExpectedToFail) throws Exception{
 		
 		CloudBootstrapper bootstrapper = new CloudBootstrapper();
-		TemplatesFolderHandler folderHandler = templatesHandler.createNewTemplatesFolder();
-		TemplateDetails addedTemplate = folderHandler.addDefaultTempalte();
+		TemplatesFolderHandler folderHandler = templatesHandler.createNewTemplatesFolderHandler();
+		TemplateDetails addedTemplate = folderHandler.createAndAddDefaultTempalte();
 		
 		bootstrapper.user(user).password(password).setRestUrl(getRestUrl());
 		String output = bootstrapper.addTemplate(folderHandler.getFolder().getAbsolutePath(), isExpectedToFail);

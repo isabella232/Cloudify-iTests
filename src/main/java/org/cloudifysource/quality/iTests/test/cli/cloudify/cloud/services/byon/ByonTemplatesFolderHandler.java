@@ -22,17 +22,16 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import junit.framework.Assert;
 
-import org.apache.commons.io.FileUtils;
-import org.cloudifysource.dsl.internal.DSLUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.templates.TemplateDetails;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.templates.TemplatesFolderHandler;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.templates.TemplatesUtils;
 
 public class ByonTemplatesFolderHandler extends TemplatesFolderHandler {
 	private final String TEMPLATES_ROOT_PATH = CommandTestUtils.getPath("src/main/resources/templates");
 	private final String BASIC_TEMPLATE_FILE_NAME = "byon_basic_template";
-	private final String BOOTSTRAP_MANAGEMENT_FILE_NAME = "byon-bootstrap-management.sh";
-	
+	private final String TEMPLATE_NAME_STRING = "TEMPLATE_NAME";
+
 	private static final String UPLOAD_PROPERTY_NAME = "uploadDir";
 	private static final String NODE_IP_PROPERTY_NAME = "node_ip";
 	private static final String NODE_ID_PROPERTY_NAME = "node_id";
@@ -49,9 +48,8 @@ public class ByonTemplatesFolderHandler extends TemplatesFolderHandler {
 	@Override
 	public void updatePropertiesFile(final TemplateDetails template) {
 		final Properties props = new Properties();
-		if (template.getUploadDirName() != null) {
-			props.put(UPLOAD_PROPERTY_NAME, template.getUploadDirName());
-		}
+		
+		
 		String machineIP = template.getMachineIP();
 		if (machineIP == null) {
 			machineIP = getNextMachineIP(template.isForServiceInstallation());
@@ -59,30 +57,12 @@ public class ByonTemplatesFolderHandler extends TemplatesFolderHandler {
 		}
 		props.put(NODE_IP_PROPERTY_NAME, machineIP);
 		props.put(NODE_ID_PROPERTY_NAME, "byon-pc-lab-" + template.getMachineIP() + "{0}");
-		File templatePropsFile = template.getTemplatePropertiesFile();
-		if (templatePropsFile == null) {
-			final String templateFileName = template.getTemplateFile().getName();
-			final int templateFileNamePrefixEndIndex = templateFileName.indexOf(".");
-			final String templateFileNamePrefix = templateFileName.substring(0, templateFileNamePrefixEndIndex);
-			final String proeprtiesFileName = templateFileNamePrefix + DSLUtils.PROPERTIES_FILE_SUFFIX;
-			templatePropsFile = new File(folder, proeprtiesFileName);
-			template.setTemplatePropertiesFile(templatePropsFile);
-		} else {
-			if (!templatePropsFile.exists()) {
-				templatePropsFile = new File(getFolder(), templatePropsFile.getName());
-			} else if (!folder.equals(templatePropsFile.getParentFile())){
-				try {
-					FileUtils.copyFileToDirectory(templatePropsFile, folder);
-				} catch (IOException e) {
-					Assert.fail("failed to copy properties file [" + templatePropsFile.getAbsolutePath() + "] to directory [" 
-							+ getFolder().getAbsolutePath() + "]. error was: " + e.getMessage());
-				}
-			}
-		}
+		File templatePropertiesFile = template.getTemplatePropertiesFile();
+		
 		try {
-			IOUtils.writePropertiesToFile(props, templatePropsFile);
+			IOUtils.writePropertiesToFile(props, templatePropertiesFile);
 		} catch (IOException e) {
-			Assert.fail("failed to write properties to file [" + templatePropsFile.getAbsolutePath());
+			Assert.fail("failed to write properties to file [" + templatePropertiesFile.getAbsolutePath());
 		}
 	}
 
@@ -99,12 +79,11 @@ public class ByonTemplatesFolderHandler extends TemplatesFolderHandler {
 	}
 
 	@Override
-	public File getBasicTemplateFile() {
-		return new File(TEMPLATES_ROOT_PATH, BASIC_TEMPLATE_FILE_NAME);
+	public File updateTemplateFile(final TemplateDetails template) {
+		File templateFile = template.getTemplateFile();
+		TemplatesUtils.replaceStringInFile(new File(TEMPLATES_ROOT_PATH, BASIC_TEMPLATE_FILE_NAME), 
+				templateFile, TEMPLATE_NAME_STRING, template.getTemplateName());
+		return null;
 	}
 
-	@Override
-	public File getBasicBootstrapManagementFile() {
-		return new File(TEMPLATES_ROOT_PATH, BOOTSTRAP_MANAGEMENT_FILE_NAME);
-	}
 }

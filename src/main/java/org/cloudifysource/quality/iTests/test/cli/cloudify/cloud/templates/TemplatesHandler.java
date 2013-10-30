@@ -64,12 +64,12 @@ public abstract class TemplatesHandler {
 	 */
 	public TemplatesFolderHandler createFolderWithTemplates(final int numTemplates)
 			throws IOException {
-		final TemplatesFolderHandler handler = createNewTemplatesFolder();
+		final TemplatesFolderHandler handler = createNewTemplatesFolderHandler();
 		handler.addTempaltes(numTemplates);
 		return handler;
 	}
 
-	public abstract TemplatesFolderHandler createNewTemplatesFolder();
+	public abstract TemplatesFolderHandler createNewTemplatesFolderHandler();
 
 	protected File createNewFolder() {
 		final int suffix = numLastTemplateFolder.getAndIncrement();

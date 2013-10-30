@@ -22,9 +22,11 @@ import java.util.List;
 import junit.framework.Assert;
 
 import org.apache.commons.collections.ListUtils;
+import org.cloudifysource.domain.cloud.compute.ComputeTemplate;
 import org.cloudifysource.dsl.rest.AddTemplatesException;
 import org.cloudifysource.dsl.rest.request.AddTemplatesRequest;
 import org.cloudifysource.dsl.rest.response.AddTemplatesResponse;
+import org.cloudifysource.dsl.rest.response.GetTemplateResponse;
 import org.cloudifysource.dsl.rest.response.ListTemplatesResponse;
 import org.cloudifysource.dsl.rest.response.UploadResponse;
 import org.cloudifysource.restclient.RestClient;
@@ -170,6 +172,29 @@ public class TemplatesCommandsRestAPI {
 			Assert.fail("failed to get list templates from rest client, error was: " + e.getMessageFormattedText());
 		}
 		return new LinkedList<String>(listTemplatesResponse.getTemplates().keySet());
+	}
+	
+	
+	public static ComputeTemplate getTemplate(final String restUrl, final String templateName) {
+		RestClient restClient = null;
+		try {
+			restClient = createRestClient(restUrl, "", "");
+		} catch (final Exception e) {
+			Assert.fail("failed to create rest client with rest url: " + restUrl + ", error was: " + e.getMessage());
+		}
+		try {
+			restClient.connect();
+		} catch (final RestClientException e) {
+			Assert.fail("failed to connect: " + e.getMessageFormattedText());
+		}
+		ComputeTemplate template = null;
+		try {
+			GetTemplateResponse response = restClient.getTemplate(templateName);
+			template = response.getTemplate();
+		} catch (final RestClientException e) {
+			Assert.fail("failed to get list templates from rest client, error was: " + e.getMessageFormattedText());
+		}
+		return template; 
 	}
 
 	/**

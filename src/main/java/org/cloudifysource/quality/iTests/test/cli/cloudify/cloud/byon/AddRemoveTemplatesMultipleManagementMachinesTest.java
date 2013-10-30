@@ -27,8 +27,8 @@ public class AddRemoveTemplatesMultipleManagementMachinesTest extends AbstractBy
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, enabled = true)
 	public void addRemoveTemplates() throws Exception {
 				
-		TemplatesFolderHandler folderHandler = templatesHandler.createNewTemplatesFolder();
-		TemplateDetails template = folderHandler.addDefaultTempalte();
+		TemplatesFolderHandler folderHandler = templatesHandler.createNewTemplatesFolderHandler();
+		TemplateDetails template = folderHandler.createAndAddDefaultTempalte();
 		String templateName = template.getTemplateName();
 		
 		templatesHandler.addTemplatesToCloud(folderHandler);
@@ -50,8 +50,8 @@ public class AddRemoveTemplatesMultipleManagementMachinesTest extends AbstractBy
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, enabled = true)
 	public void failedAddRemoveTemplates() throws Exception {
 		
-		TemplatesFolderHandler folderHandler = templatesHandler.createNewTemplatesFolder();
-		TemplateDetails template = folderHandler.addDefaultTempalte();
+		TemplatesFolderHandler folderHandler = templatesHandler.createNewTemplatesFolderHandler();
+		TemplateDetails template = folderHandler.createAndAddDefaultTempalte();
 		String templateName = template.getTemplateName();
 		templatesHandler.addTemplatesToCloud(folderHandler);
 		
@@ -76,7 +76,7 @@ public class AddRemoveTemplatesMultipleManagementMachinesTest extends AbstractBy
 					output.contains(hostAddress1));
 		}
 		
-		template.setExpectedToFail(true);
+		template.setExpectedToFailOnAdd(true);
 		folderHandler.addCustomTemplate(template);
 		output = templatesHandler.addTemplatesToCloud(folderHandler);
 		LogUtils.log("add template output is " + output);

@@ -45,7 +45,7 @@ public abstract class AbstractCloudManagementPersistencyTest extends NewAbstract
 
     private static final String PUBLIC_IP_ADDRESS_REST_POSTFIX = "/Machine/GridServiceAgent/JVMDetails/EnvironmentVariables/GIGASPACES_AGENT_ENV_PUBLIC_IP";
 
-	private static final String PATH_TO_TOMCAT_SERVICE = CommandTestUtils.getPath("/src/main/resources/apps/USM/usm/custom-tomcat");;
+	private static final String PATH_TO_TOMCAT_SERVICE = CommandTestUtils.getPath("/src/main/resources/apps/USM/usm/custom-tomcat");
 
     private static final String BOOTSTRAP_SUCCEEDED_STRING = "Successfully created Cloudify Manager";
 
@@ -515,6 +515,35 @@ public abstract class AbstractCloudManagementPersistencyTest extends NewAbstract
         super.customizeCloud();
         getService().setNumberOfManagementMachines(numOfManagementMachines);
         getService().getProperties().put("persistencePath", "/home/ec2-user/persistence");
+
+        //change management template into LARGE_LINUX
+        String oldMgtTemplate = "managementMachineTemplate \"SMALL_LINUX\"";
+        String newMgtTemplate = "managementMachineTemplate \"LARGE_LINUX\"";
+        getService().getAdditionalPropsToReplace().put(oldMgtTemplate, newMgtTemplate);
+
+        String oldTemplate = "MEDIUM_UBUNTU";
+        String newTemplate = "LARGE_LINUX";
+        getService().getAdditionalPropsToReplace().put(oldTemplate, newTemplate);
+
+        String oldImageId = "imageId ubuntuImageId";
+        String newImageId = "imageId linuxImageId";
+        getService().getAdditionalPropsToReplace().put(oldImageId, newImageId);
+
+        String oldRemoteDirectory = "remoteDirectory \"/home/ubuntu/gs-files\"";
+        String newRemoteDirectory = "remoteDirectory \"/home/ec2-user/gs-files\"";
+        getService().getAdditionalPropsToReplace().put(oldRemoteDirectory, newRemoteDirectory);
+
+        String oldMemory = "machineMemoryMB 3500";
+        String newMemory = "machineMemoryMB 7400";
+        getService().getAdditionalPropsToReplace().put(oldMemory, newMemory);
+
+        String oldHardwareId = "hardwareId mediumHardwareId";
+        String newHardwareId = "hardwareId \"m1.large\"";
+        getService().getAdditionalPropsToReplace().put(oldHardwareId, newHardwareId);
+
+        String oldUserName= "username \"ubuntu\"";
+        String newUserName = "username \"ec2-user\"";
+        getService().getAdditionalPropsToReplace().put(oldUserName, newUserName);
     }
 
 	protected void initManagementUrlsAndRestClient() throws MalformedURLException, RestException {

@@ -102,6 +102,34 @@ public class Ec2PersistentManagerTest extends NewAbstractCloudTest {
     protected void customizeCloud() throws Exception {
         super.customizeCloud();
         getService().getProperties().put("persistencePath", "/home/ec2-user/persistence");
+        //change management template into LARGE_LINUX
+        String oldMgtTemplate = "managementMachineTemplate \"SMALL_LINUX\"";
+        String newMgtTemplate = "managementMachineTemplate \"LARGE_LINUX\"";
+        getService().getAdditionalPropsToReplace().put(oldMgtTemplate, newMgtTemplate);
+
+        String oldTemplate = "MEDIUM_UBUNTU";
+        String newTemplate = "LARGE_LINUX";
+        getService().getAdditionalPropsToReplace().put(oldTemplate, newTemplate);
+
+        String oldImageId = "imageId ubuntuImageId";
+        String newImageId = "imageId linuxImageId";
+        getService().getAdditionalPropsToReplace().put(oldImageId, newImageId);
+
+        String oldRemoteDirectory = "remoteDirectory \"/home/ubuntu/gs-files\"";
+        String newRemoteDirectory = "remoteDirectory \"/home/ec2-user/gs-files\"";
+        getService().getAdditionalPropsToReplace().put(oldRemoteDirectory, newRemoteDirectory);
+
+        String oldMemory = "machineMemoryMB 3500";
+        String newMemory = "machineMemoryMB 7400";
+        getService().getAdditionalPropsToReplace().put(oldMemory, newMemory);
+
+        String oldHardwareId = "hardwareId mediumHardwareId";
+        String newHardwareId = "hardwareId \"m1.large\"";
+        getService().getAdditionalPropsToReplace().put(oldHardwareId, newHardwareId);
+
+        String oldUserName= "username \"ubuntu\"";
+        String newUserName = "username \"ec2-user\"";
+        getService().getAdditionalPropsToReplace().put(oldUserName, newUserName);
     }
 
 

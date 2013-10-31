@@ -27,6 +27,7 @@ public class NonPrivilegedModeTest extends AbstractStorageAllocationTest {
 	
 	@Override
 	protected void customizeCloud() throws Exception {
+        super.customizeCloud();
 		getService().getAdditionalPropsToReplace().put("privileged true", "privileged false");
 		
 	}

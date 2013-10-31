@@ -4,8 +4,8 @@ import iTests.framework.utils.AssertUtils;
 import iTests.framework.utils.LogUtils;
 import org.cloudifysource.esc.driver.provisioning.storage.StorageProvisioningException;
 import org.cloudifysource.esc.driver.provisioning.storage.VolumeDetails;
-import org.cloudifysource.quality.iTests.framework.utils.*;
-import org.cloudifysource.quality.iTests.framework.utils.compute.*;
+import org.cloudifysource.quality.iTests.framework.utils.CloudBootstrapper;
+import org.cloudifysource.quality.iTests.framework.utils.compute.ComputeApiHelper;
 import org.cloudifysource.quality.iTests.framework.utils.compute.JcloudsComputeApiHelper;
 import org.cloudifysource.quality.iTests.framework.utils.storage.Ec2StorageApiHelper;
 import org.cloudifysource.quality.iTests.framework.utils.storage.StorageAllocationTester;
@@ -31,6 +31,41 @@ public abstract class AbstractStorageAllocationTest extends NewAbstractCloudTest
     protected StorageApiHelper storageApiHelper;
     protected ComputeApiHelper computeApiHelper;
     protected StorageAllocationTester storageAllocationTester;
+
+    @Override
+    protected void customizeCloud() throws Exception {
+        super.customizeCloud();
+        //change management template into LARGE_LINUX in ec2 tests
+        if (getCloudName().equals("ec2")) {
+            String oldMgtTemplate = "managementMachineTemplate \"SMALL_LINUX\"";
+            String newMgtTemplate = "managementMachineTemplate \"LARGE_LINUX\"";
+            getService().getAdditionalPropsToReplace().put(oldMgtTemplate, newMgtTemplate);
+
+            String oldTemplate = "MEDIUM_UBUNTU";
+            String newTemplate = "LARGE_LINUX";
+            getService().getAdditionalPropsToReplace().put(oldTemplate, newTemplate);
+
+            String oldImageId = "imageId ubuntuImageId";
+            String newImageId = "imageId linuxImageId";
+            getService().getAdditionalPropsToReplace().put(oldImageId, newImageId);
+
+            String oldRemoteDirectory = "remoteDirectory \"/home/ubuntu/gs-files\"";
+            String newRemoteDirectory = "remoteDirectory \"/home/ec2-user/gs-files\"";
+            getService().getAdditionalPropsToReplace().put(oldRemoteDirectory, newRemoteDirectory);
+
+            String oldMemory = "machineMemoryMB 3500";
+            String newMemory = "machineMemoryMB 7400";
+            getService().getAdditionalPropsToReplace().put(oldMemory, newMemory);
+
+            String oldHardwareId = "hardwareId mediumHardwareId";
+            String newHardwareId = "hardwareId \"m1.large\"";
+            getService().getAdditionalPropsToReplace().put(oldHardwareId, newHardwareId);
+
+            String oldUserName= "username \"ubuntu\"";
+            String newUserName = "username \"ec2-user\"";
+            getService().getAdditionalPropsToReplace().put(oldUserName, newUserName);
+        }
+    }
 
     @Override
     protected void bootstrap(CloudService service, CloudBootstrapper bootstrapper) throws Exception {

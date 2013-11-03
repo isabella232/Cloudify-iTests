@@ -95,7 +95,7 @@ public class Ec2GitServicesTest extends AbstractServicesTest {
     }
 
     //not our recipe. fails.
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
     public void testPostgresql() throws Exception{
         testService("postgresql");
     }

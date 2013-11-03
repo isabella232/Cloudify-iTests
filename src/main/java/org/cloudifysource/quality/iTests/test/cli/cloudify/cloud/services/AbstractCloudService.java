@@ -17,6 +17,7 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Random;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
@@ -106,9 +107,11 @@ public abstract class AbstractCloudService implements CloudService {
     }
 
     public void setMachinePrefix(String machinePrefix) {
-
         if (machinePrefix.length() > MAX_HOSTNAME_LENGTH) {
-            String substring = machinePrefix.substring(0, MAX_HOSTNAME_LENGTH - 1);
+            Random random = new Random();
+            String rand = Integer.toString(random.nextInt(99999));
+            String substring = machinePrefix.substring(0, MAX_HOSTNAME_LENGTH - 6);
+            substring = substring + rand;
             LogUtils.log("machinePrefix " + machinePrefix + " is too long. using " + substring + " as actual machine prefix");
             this.machinePrefix = substring;
         } else {
@@ -123,7 +126,10 @@ public abstract class AbstractCloudService implements CloudService {
     public void setVolumePrefix(String volumePrefix) {
 
         if (volumePrefix.length() > MAX_VOLUME_NAME_LENGTH) {
-            String substring = volumePrefix.substring(0, MAX_VOLUME_NAME_LENGTH - 1);
+            Random random = new Random();
+            String rand = Integer.toString(random.nextInt(99999));
+            String substring = volumePrefix.substring(0, MAX_VOLUME_NAME_LENGTH - 6);
+            substring = substring + rand;
             LogUtils.log("volumePrefix " + volumePrefix + " is too long. using " + substring + " as actual volume prefix");
             this.volumePrefix = substring;
         } else {

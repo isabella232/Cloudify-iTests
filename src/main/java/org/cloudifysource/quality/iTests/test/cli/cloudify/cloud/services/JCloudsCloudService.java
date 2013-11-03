@@ -1,16 +1,8 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services;
 
+import com.google.inject.AbstractModule;
+import com.google.inject.Module;
 import iTests.framework.utils.LogUtils;
-
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.Properties;
-import java.util.Set;
-
 import org.cloudifysource.dsl.utils.IPUtils;
 import org.cloudifysource.esc.jclouds.WindowsServerEC2ReviseParsedImage;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CloudTestUtils;
@@ -23,8 +15,8 @@ import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadata.Status;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Module;
+import java.util.*;
+import java.util.Map.Entry;
 
 public abstract class JCloudsCloudService extends AbstractCloudService {
 
@@ -205,6 +197,23 @@ public abstract class JCloudsCloudService extends AbstractCloudService {
 		return leakedNodes;
 	}
 
+    private boolean isNodeFitsTestPrefix(ComputeMetadata computeMetadata, String prefix){
+        String name = computeMetadata.getName();
+        // case1: name exists (not null and length>0) and the name starts with the prefix of the test
+        boolean hasNameAndFitsPrefix = name != null && name.length() > 0 && name.startsWith(prefix);
+        // case2: name does not exists because of a bug (name is null or length is 0), in this case
+        // check if the group of the node starts with the prefix of the test
+        boolean noNameAndGroupFitsPrefix =
+                ((name == null || name.length() == 0)
+                &&((NodeMetadata) computeMetadata).getGroup() != null
+                &&((NodeMetadata) computeMetadata).getGroup().startsWith(prefix));
+
+        if (hasNameAndFitsPrefix || noNameAndGroupFitsPrefix){
+            return true;
+        }
+        return false;
+    }
+
 	private boolean scanNodes(final List<ComputeMetadata> leakedNodes, final Set<? extends ComputeMetadata> allNodes, final String... prefixes) {
 		boolean foundPendingNodes = false;
 		for (final ComputeMetadata computeMetadata : allNodes) {
@@ -220,30 +229,22 @@ public abstract class JCloudsCloudService extends AbstractCloudService {
 			case UNRECOGNIZED:
 			case SUSPENDED:
 			default:
-				if (name == null || name.length() == 0) {						
-					LogUtils.log("WARNING! Found a non-terminated node with an empty name. " 
-							+ "The test can't tell if this is a leaked node or not! Node details: "
-							+ computeMetadata);						
-				} else {
-					for (String prefix : prefixes) {
-						if (name.startsWith(prefix)) {
-							if (status.equals(Status.PENDING)) {
-								// node is transitioning from one state to another 
-								// 		- might be shutting down, might be starting up!
-								// Must try again later.
-								foundPendingNodes = true;
-								LogUtils.log("While scanning for leaked nodes, found a node in state PENDING. " 
-										+ "Leak scan will be retried. Node in state pending was: "
-										+ computeMetadata);
-							} else {
-								LogUtils.log("ERROR: Found a leaking node: " + computeMetadata);
-								leakedNodes.add(computeMetadata);
-							}
-						}
-					}
-	
-				}
-	
+                for (String prefix : prefixes) {
+                    if (isNodeFitsTestPrefix(computeMetadata,prefix)){
+                        if (status.equals(Status.PENDING)) {
+                            // node is transitioning from one state to another
+                            // 		- might be shutting down, might be starting up!
+                            // Must try again later.
+                            foundPendingNodes = true;
+                            LogUtils.log("While scanning for leaked nodes, found a node in state PENDING. "
+                                    + "Leak scan will be retried. Node in state pending was: "
+                                    + computeMetadata);
+                        } else {
+                            LogUtils.log("ERROR: Found a leaking node: " + computeMetadata);
+                            leakedNodes.add(computeMetadata);
+                        }
+                    }
+                }
 				break;
 			}
 		}

@@ -38,7 +38,7 @@ import java.util.concurrent.Future;
 public class Ec2ConcurrentInstallUninstallTest extends NewAbstractCloudTest {
 
     private static String applicationName = "petclinic-simple";
-    private static final String APP_PATH = ScriptUtils.getBuildRecipesApplicationsPath() + System.getProperty("line.separator") + applicationName;
+    private static final String APP_PATH = ScriptUtils.getBuildRecipesApplicationsPath() + "/" + applicationName;
     private static final int NUM_OF_THREADS = 6;
     private static final int TIMEOUT = 30;
     protected Application application;

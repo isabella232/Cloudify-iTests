@@ -9,6 +9,7 @@ import org.cloudifysource.dsl.utils.ServiceUtils;
 import org.openspaces.admin.gsa.GridServiceAgent;
 import org.openspaces.admin.gsa.events.GridServiceAgentAddedEventListener;
 import org.openspaces.admin.gsa.events.GridServiceAgentLifecycleEventListener;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -80,5 +81,12 @@ public class AgentRestartTest extends AbstractAgentMaintenanceModeTest {
 		super.customizeCloud();
 		getService().setSudo(false);
 		getService().getProperties().put("keyFile", "testKey.pem");
+	}
+	
+	@Override
+	@AfterClass(alwaysRun = true)
+	protected void teardown() throws Exception {
+		uninstallServiceIfFound(SERVICE_NAME);
+		super.teardown();
 	}
 }

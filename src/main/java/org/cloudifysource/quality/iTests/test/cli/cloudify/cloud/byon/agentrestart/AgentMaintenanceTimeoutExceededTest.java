@@ -8,6 +8,7 @@ import java.util.concurrent.TimeUnit;
 import org.openspaces.admin.gsa.GridServiceAgent;
 import org.openspaces.admin.gsa.events.GridServiceAgentAddedEventListener;
 import org.openspaces.admin.gsa.events.GridServiceAgentLifecycleEventListener;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -71,4 +72,11 @@ public class AgentMaintenanceTimeoutExceededTest extends AbstractAgentMaintenanc
 		LogUtils.log("ESM has recovered successfully. uninstalling service " + SERVICE_NAME);
 		uninstallServiceAndWait(SERVICE_NAME);
     }
+    
+	@Override
+	@AfterClass(alwaysRun = true)
+	protected void teardown() throws Exception {
+		uninstallServiceIfFound(SERVICE_NAME);
+		super.teardown();
+	}
 }

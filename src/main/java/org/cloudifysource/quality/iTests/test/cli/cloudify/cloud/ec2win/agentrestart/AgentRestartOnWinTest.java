@@ -25,7 +25,8 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.cloudifysource.dsl.rest.response.ApplicationDescription;
-import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.byon.agentrestart.AbstractAgentMaintenanceModeTest;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.NewAbstractCloudTest;
 import org.cloudifysource.restclient.GSRestClient;
 import org.cloudifysource.restclient.RestClient;
 import org.cloudifysource.restclient.RestException;
@@ -42,8 +43,12 @@ import com.j_spaces.kernel.PlatformVersion;
  * @author adaml
  *
  */
-public class AgentRestartOnWinTest extends AbstractAgentMaintenanceModeTest {
+public class AgentRestartOnWinTest extends NewAbstractCloudTest {
+	
+	private static final String SERVICE_NAME = "simpleRestartAgent";
+	protected static final String APP_NAME = "default";
 	private static final int INSTALL_SERVICE_TIMEOUT_MIN = 30;
+	private static final int INFINITY_MINUTES = 600;
 	private RestClient newClient;
 	private GSRestClient oldClient;
 	
@@ -140,8 +145,24 @@ public class AgentRestartOnWinTest extends AbstractAgentMaintenanceModeTest {
 	
 	@Override
 	@AfterClass(alwaysRun = true)
-	protected void teardown() throws Exception {
+	public void teardown() throws Exception {
 		uninstallServiceIfFound(SERVICE_NAME);
 		super.teardown();
 	}
+	
+	private void startMaintenanceMode(final long timeoutInSeconds) throws IOException, InterruptedException {
+    	CommandTestUtils.runCommand("connect " + this.getRestUrl() + ";" 
+    			+ " invoke simpleRestartAgent startMaintenanceMode " + timeoutInSeconds);
+	}
+    
+    private String getServicePath(final String serviceName) {
+    	return CommandTestUtils.getPath("src/main/resources/apps/USM/usm/" + serviceName);
+    }
+    
+	private void restartWinMachine() throws IOException, InterruptedException {
+    	final String connectCommand 		= "connect " + this.getRestUrl();
+    	final String shutdownCommand 	= connectCommand + ";invoke simpleRestartAgent restartWindows";
+    	String shutdownOut = CommandTestUtils.runCommandAndWait(shutdownCommand);
+    	assertTrue(shutdownOut.contains("invocation completed successfully."));
+    }
 }

@@ -85,12 +85,4 @@ public class AbstractAgentMaintenanceModeTest extends AbstractByonCloudTest {
     	String shutdownOut = CommandTestUtils.runCommandAndWait(shutdownCommand);
     	assertTrue(shutdownOut.contains("invocation completed successfully."));
     }
-	
-	protected void restartWinMachine() throws IOException, InterruptedException {
-    	final String connectCommand 		= "connect " + this.getRestUrl();
-    	final String shutdownCommand 	= connectCommand + ";invoke simpleRestartAgent restartWindows";
-    	String shutdownOut = CommandTestUtils.runCommandAndWait(shutdownCommand);
-    	assertTrue(shutdownOut.contains("invocation completed successfully."));
-    }
-
 }

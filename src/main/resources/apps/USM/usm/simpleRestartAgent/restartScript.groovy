@@ -1,6 +1,6 @@
 import org.apache.commons.lang.StringUtils;
         
-		String shutdownCommand;
+		String restartCommand;
         String operatingSystem = System.getProperty("os.name");
         
         if (StringUtils.isEmpty(operatingSystem)) {
@@ -8,13 +8,13 @@ import org.apache.commons.lang.StringUtils;
         }
         
         if (operatingSystem.contains("Linux") || operatingSystem.contains("Mac OS X")) {
-            shutdownCommand = "sudo shutdown -h now";
+            restartCommand = "/sbin/shutdown -r now";
         }
         else if (operatingSystem.contains("Windows")) {
-            shutdownCommand = "shutdown.exe -s -t 0";
+            restartCommand = "shutdown.exe /r /t 00";
         }
         else {
             throw new RuntimeException("Unsupported operating system.");
         }
-        Runtime.getRuntime().exec(shutdownCommand);
+        Runtime.getRuntime().exec(restartCommand);
         System.exit(0);

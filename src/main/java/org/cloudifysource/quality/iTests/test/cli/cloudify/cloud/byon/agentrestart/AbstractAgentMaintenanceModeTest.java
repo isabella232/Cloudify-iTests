@@ -27,6 +27,7 @@ public class AbstractAgentMaintenanceModeTest extends AbstractByonCloudTest {
 	protected final static String absolutePuName = ServiceUtils.getAbsolutePUName(APP_NAME, SERVICE_NAME);
 	protected static final String REBOOT_COMMAND = "sudo reboot";
 	protected static final long DEFAULT_WAIT_MINUTES = DEFAULT_TEST_TIMEOUT / 2;
+	protected static final int INFINITY_MINUTES = 600;
 	
 	
 	protected void startMaintenanceMode(final long timeoutInSeconds) throws IOException, InterruptedException {
@@ -81,6 +82,13 @@ public class AbstractAgentMaintenanceModeTest extends AbstractByonCloudTest {
 	protected void gracefullyShutdownAgent(final String puName) throws IOException, InterruptedException {
     	final String connectCommand 		= "connect " + this.getRestUrl();
     	final String shutdownCommand 	= connectCommand + ";invoke simpleRestartAgent shutdownAgent default.simpleRestartAgent";
+    	String shutdownOut = CommandTestUtils.runCommandAndWait(shutdownCommand);
+    	assertTrue(shutdownOut.contains("invocation completed successfully."));
+    }
+	
+	protected void restartWinMachine() throws IOException, InterruptedException {
+    	final String connectCommand 		= "connect " + this.getRestUrl();
+    	final String shutdownCommand 	= connectCommand + ";invoke simpleRestartAgent restartWindows";
     	String shutdownOut = CommandTestUtils.runCommandAndWait(shutdownCommand);
     	assertTrue(shutdownOut.contains("invocation completed successfully."));
     }

@@ -19,8 +19,6 @@ import org.testng.annotations.Test;
  */
 public class AgentRestartTest extends AbstractAgentMaintenanceModeTest {
 	
-	private static final int INFINITY_MINUTES = 600;
-
 	@BeforeClass(alwaysRun = true)
 	protected void bootstrap() throws Exception {
 		super.bootstrap();

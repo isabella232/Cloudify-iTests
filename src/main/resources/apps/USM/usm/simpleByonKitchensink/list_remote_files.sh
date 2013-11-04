@@ -1,1 +1,1 @@
-ls /tmp/byon/gs-files
+ls /tmp/$USER/gs-files

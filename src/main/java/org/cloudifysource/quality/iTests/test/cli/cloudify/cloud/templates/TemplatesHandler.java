@@ -193,7 +193,7 @@ public abstract class TemplatesHandler {
 		}
 	}
 
-	public void afterTemplateRemoved(final String templateName) {
+	private void afterTemplateRemoved(final String templateName) {
 		if (addedTemplates != null) {
 			final TemplatesFolderHandler folderHandler = addedTemplates.remove(templateName);
 			if (folderHandler != null) {

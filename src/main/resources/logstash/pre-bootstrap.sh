@@ -39,7 +39,7 @@ else
 	$WORKING_HOME_DIRECTORY/java.bin < $WORKING_HOME_DIRECTORY/input.txt > /dev/null
 	mv ~/logstash/java/*/* ~/logstash/java || error_exit $? 103 "Failed moving JDK installation"
 	rm -f $WORKING_HOME_DIRECTORY/input.txt
-    export JAVA_HOME=/home/ec2-user/logstash/java
+    export JAVA_HOME=~/logstash/java
 fi
 
 echo Downloading logstash to ~/

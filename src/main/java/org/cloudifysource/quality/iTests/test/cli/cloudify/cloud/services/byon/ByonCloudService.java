@@ -167,7 +167,7 @@ public class ByonCloudService extends AbstractCloudService {
 		
 		propsToReplace.put("numberOfManagementMachines 1", "numberOfManagementMachines "  + getNumberOfManagementMachines());
 		propsToReplace.put("\"org.cloudifysource.clearRemoteDirectoryOnStart\":\"false\"", "\"org.cloudifysource.clearRemoteDirectoryOnStart\":\"true\"");
-		propsToReplace.put("/tmp/gs-files", "/tmp/byon/gs-files");
+		propsToReplace.put("/tmp/gs-files", "/tmp/tgrid/gs-files");
 		this.getAdditionalPropsToReplace().putAll(propsToReplace);
 		
 		// add a pem file
@@ -297,7 +297,7 @@ public class ByonCloudService extends AbstractCloudService {
 
 	private void cleanGSFilesOnAllHosts() {
 		
-		String command = "rm -rf /tmp/byon/gs-files";
+		String command = "rm -rf /tmp/tgrid/gs-files";
 		if (sudo) {
 			command = "sudo " + command;
 		}

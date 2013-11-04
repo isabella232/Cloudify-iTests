@@ -18,18 +18,19 @@ import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.NewAbstractClou
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.byon.ByonCloudService;
 
 public class AbstractByonCloudTest extends NewAbstractCloudTest {
-	
+
+    protected Admin admin;
+
 	@Override
 	protected void beforeTeardown() throws Exception {
+        LogUtils.log("Closing admin");
 		closeAdmin();
 		((ByonCloudService) this.cloudService).cleanCronTasks();
 	}
-	
+
 	protected boolean isFilteredAdmin() {
 		return false;
 	}
-
-	protected Admin admin;
 
 	public ByonCloudService getService() {
 		return (ByonCloudService) super.getService();
@@ -38,13 +39,13 @@ public class AbstractByonCloudTest extends NewAbstractCloudTest {
 	@Override
 	protected void afterBootstrap() throws Exception {
 		super.afterBootstrap();
+        LogUtils.log("Creating admin");
 		admin = super.createAdminAndWaitForManagement();
 	}
 	
 	@Override
 	protected AdminFactory createAdminFactory() {
 
-        LogUtils.log("Creating admin factory");
 		ByonCloudService byonService = getService();
 		AdminFactory factory = super.createAdminFactory();
 		String[] managementHosts;
@@ -75,7 +76,6 @@ public class AbstractByonCloudTest extends NewAbstractCloudTest {
 	}
 
 	protected void closeAdmin() {
-        LogUtils.log("Closing admin");
 		if (admin != null) {
 			admin.close();
 			admin = null;

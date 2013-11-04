@@ -151,8 +151,9 @@ public class AgentRestartOnWinTest extends NewAbstractCloudTest {
 	}
 	
 	private void startMaintenanceMode(final long timeoutInSeconds) throws IOException, InterruptedException {
-    	CommandTestUtils.runCommand("connect " + this.getRestUrl() + ";" 
+    	String output = CommandTestUtils.runCommandAndWait("connect " + this.getRestUrl() + ";" 
     			+ " invoke simpleRestartAgent startMaintenanceMode " + timeoutInSeconds);
+    	assertTrue(output.contains("invocation completed successfully."));
 	}
     
     private String getServicePath(final String serviceName) {

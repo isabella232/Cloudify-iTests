@@ -67,6 +67,12 @@ public class Ec2WinSshTest extends Ec2WinExamplesTest{
     public void testPetclinicSimple() throws Exception {
     	// TODO Auto-generated method stub
     }
+	
+	@Test(enabled = false)
+    @Override
+	public void testLinuxAgent() throws Exception {
+		
+	}
 
 	@Override
 	@AfterClass(alwaysRun = true)

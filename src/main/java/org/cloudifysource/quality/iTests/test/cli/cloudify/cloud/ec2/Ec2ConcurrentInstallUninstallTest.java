@@ -35,6 +35,7 @@ import java.util.concurrent.Future;
  * The management machine's template is SMALL_LINUX but it's attributes (hardwareId,memory) are set as LARGE_LINUX in order to
  * support concurrent installation without crashing.
  */
+//CLOUDIFY-2192
 public class Ec2ConcurrentInstallUninstallTest extends NewAbstractCloudTest {
 
     private static String applicationName = "petclinic-simple";
@@ -73,7 +74,7 @@ public class Ec2ConcurrentInstallUninstallTest extends NewAbstractCloudTest {
         return false;
     }
 
-    @Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
+    //@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
     public void testConcurrentInstallUninstall() throws IOException, DSLException {
         LogUtils.log("Reading Application from file : " + APP_PATH);
         application = ServiceReader.getApplicationFromFile(new File(APP_PATH)).getApplication();

@@ -17,12 +17,12 @@ public class RestErrorExceptionsTest extends AbstractLocalCloudTest{
 	public void testCommandsErrorMessages() throws IOException, InterruptedException {
 
 		String invokeOutput = CommandTestUtils.runCommandExpectedFail("connect " + this.restUrl + ";invoke someService CommandName");
-		AbstractTestSupport.assertTrue("Expecting output to contain \"Failed to locate service someService\"",
-                invokeOutput.contains("Failed to locate service someService"));
+		AbstractTestSupport.assertTrue("Expecting output to contain \"Missing resource : default.someService\"",
+                invokeOutput.contains("Missing resource : default.someService"));
 
 		String uninstallOutput = CommandTestUtils.runCommandExpectedFail("connect " + this.restUrl + "; uninstall-application someApplication");
-		AbstractTestSupport.assertTrue("Expecting output to contain \"Application someApplication could not be found\", but uninstallOutput = " 
-				+ uninstallOutput, uninstallOutput.contains("Application someApplication could not be found"));
+		AbstractTestSupport.assertTrue("Expecting output to contain \"Application [someApplication] could not be found\", but uninstallOutput = " 
+				+ uninstallOutput, uninstallOutput.contains("Application [someApplication] could not be found"));
 
 		String tailOutput = CommandTestUtils.runCommandExpectedFail("connect " + this.restUrl + "; tail someService 20");
 		AbstractTestSupport.assertTrue("Expecting output to contain \"Failed to locate service someService\"",

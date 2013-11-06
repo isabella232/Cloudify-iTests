@@ -425,7 +425,7 @@ public abstract class AbstractByonManagementPersistencyTest extends AbstractByon
     protected void customizeCloud() throws Exception {
         super.customizeCloud();
         getService().setNumberOfManagementMachines(numOfManagementMachines);
-        getService().getProperties().put("persistencePath", "/tmp/byon/persistency");
+        getService().getProperties().put("persistencePath", "/tmp/tgrid/persistency");
     }
 
     @Override

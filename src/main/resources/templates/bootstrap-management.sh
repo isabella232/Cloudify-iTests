@@ -67,7 +67,7 @@ source ${ENV_FILE_PATH}
 JAVA_32_URL="http://tarzan/builds/GigaSpacesBuilds/tools/quality/java/1.6.0_32/jdk-6u32-linux-i586.bin"
 JAVA_64_URL="http://tarzan/builds/GigaSpacesBuilds/tools/quality/java/1.6.0_32/jdk-6u32-linux-x64.bin"
 
-HOME_DIR="/tmp/byon"
+HOME_DIR="/tmp/`whoami`"
 
 if [ -d "$HOME_DIR/gigaspaces" ]; then
 	echo cleaning home directory from gigaspaces installation

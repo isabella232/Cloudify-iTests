@@ -129,7 +129,7 @@ cloud {
 						// Mandatory. Amount of RAM available to machine.
 						machineMemoryMB 5850
 						// Mandatory. Files from the local directory will be copied to this directory on the remote machine.
-						remoteDirectory "/tmp/byon/gs-files"
+						remoteDirectory "/tmp/tgrid/gs-files"
 						
 						// File transfer mode.
 						fileTransfer org.cloudifysource.domain.cloud.FileTransferModes.SCP

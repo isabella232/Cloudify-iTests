@@ -58,7 +58,7 @@ public class ByonCloudService extends AbstractCloudService {
 	 * this folder is where Cloudify will be downloaded to and extracted from. NOTE - this is not the WORKING_HOME_DIRECTORY.
 	 * if is also defined in the custom bootstrap-management.sh script we use in our tests. 
 	 */
-	public static final String BYON_HOME_FOLDER = "/tmp/byon";
+	public static final String BYON_HOME_FOLDER = "/tmp/tgrid";
 	
 	private String ipList;
 	private String[] machines;

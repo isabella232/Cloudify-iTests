@@ -31,6 +31,13 @@ public class InstallApplicationWithOverridesFileTest extends OverridesTest {
 	private static final String APPLICATION_WITH_OVERRIDES_FILE_DIR_PATH = 
 			CommandTestUtils.getPath("src/main/resources/apps/USM/usm/applications/simpleOverridesApplicationWithOverrideFile");
 
+	private static final String APPLICATION_SERVICE_NO_PROPERTIES_FILE1_DIR_PATH = 
+			CommandTestUtils.getPath("src/main/resources/apps/USM/usm/applications/simpleAppServiceWithoutProperties1");
+	private static final String OVERRIDES_FILE_PATH_1 = 
+			APPLICATION_SERVICE_NO_PROPERTIES_FILE1_DIR_PATH + "/overridesFile/simpleOverrides-application.overrides";
+	private static final String APPLICATION_SERVICE_NO_PROPERTIES_FILE2_DIR_PATH = 
+			CommandTestUtils.getPath("src/main/resources/apps/USM/usm/applications/simpleAppServiceWithoutProperties2");
+	
 	private static final Map<String, Object> EXPECTED_SERVICE_FIELDS = new HashMap<String, Object>();
 	static {
 		EXPECTED_SERVICE_FIELDS.put("icon", SERVICE_ICON);
@@ -130,6 +137,114 @@ public class InstallApplicationWithOverridesFileTest extends OverridesTest {
 		}
 	}
 
+	/**
+	 * Tests overrides properties of application's service. 
+	 * service does not have properties file.
+	 * application does not have properties file.
+	 * application has overrides file.
+	 * Uploads the application's overrides file before executing the REST API call.
+	 * Uses the REST API to install the application.
+	 * @throws IOException
+	 * @throws DSLException
+	 * @throws PackagingException
+	 * @throws InterruptedException
+	 */
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
+	public void installApplicationWithOverridesFileNoPropsFileAndServiceWithoutPropsFileTest() throws IOException, DSLException, PackagingException, InterruptedException {
+		try {
+			// install
+			install(restUrl, "application", APPLICATION_SERVICE_NO_PROPERTIES_FILE1_DIR_PATH, OVERRIDES_FILE_PATH_1);
+			// asserts
+			performAsserts();
+		} finally {
+			// un-install
+			uninstallApplicationIfFound(APPLICATION_OVERRIDEN_NAME);
+		}	
+	}
+	
+	/**
+	 * Tests overrides properties of application's service. 
+	 * service does not have properties file.
+	 * application does not have overrides file but have properties file.
+	 * The application's properties file is located in the application folder.
+	 * Uses CLI command (without the -overrides option) to install the service. 
+	 * @throws InterruptedException .
+	 * @throws IOException .
+	 */
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
+	public void installApplicationWithPropsFileNoOverridesFileAndServiceWithoutPropsFileTest() throws InterruptedException,
+	IOException {
+		try {
+			// install
+			install(restUrl, "application", APPLICATION_SERVICE_NO_PROPERTIES_FILE2_DIR_PATH, null);
+			// asserts
+			performAsserts();
+		} finally {
+			// un-install
+			uninstallApplicationIfFound(APPLICATION_OVERRIDEN_NAME);
+		}		
+	}
+	
+	/**
+	 * Tests overrides properties of application's service. 
+	 * service does not have properties file.
+	 * application does not have properties file.
+	 * application has overrides file.
+	 * Uploads the application's overrides file before executing the REST API call.
+	 * Uses the REST API to install the application.
+	 * @throws IOException
+	 * @throws DSLException
+	 * @throws PackagingException
+	 * @throws InterruptedException
+	 */
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
+	public void installApplicationWithOverridesFileNoPropsFileAndServiceWithoutPropsFileViaRestApiTest() 
+			throws IOException, DSLException, PackagingException, InterruptedException {
+		try {
+			NewRestTestUtils.installApplicationUsingNewRestApi(
+					restUrl, 
+					APPLICATION_OVERRIDEN_NAME, 
+					new File(APPLICATION_SERVICE_NO_PROPERTIES_FILE1_DIR_PATH), 
+					new File(OVERRIDES_FILE_PATH_1), 
+					null);
+			// asserts
+			performAsserts();
+		} finally {
+			// un-install
+			uninstallApplicationIfFound(APPLICATION_OVERRIDEN_NAME);
+		}
+	}
+	
+	
+	/**
+	 * Tests overrides properties of application's service.
+	 * service does not have properties file.
+	 * application does not have overrides file but has a properties file.
+	 * The application's properties file is located in the application folder.
+	 * Uses the REST API to install the application.
+	 * @throws IOException
+	 * @throws DSLException
+	 * @throws PackagingException
+	 * @throws InterruptedException
+	 */
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
+	public void installApplicationWithPropsFileNoOverridesFileAndServiceWithoutPropsFileViaRestApiTest() 
+			throws IOException, DSLException, PackagingException, InterruptedException {
+		try {
+			NewRestTestUtils.installApplicationUsingNewRestApi(
+					restUrl, 
+					APPLICATION_OVERRIDEN_NAME, 
+					new File(APPLICATION_SERVICE_NO_PROPERTIES_FILE2_DIR_PATH), 
+					null, 
+					null);
+			// asserts
+			performAsserts();
+		} finally {
+			// un-install
+			uninstallApplicationIfFound(APPLICATION_OVERRIDEN_NAME);
+		}
+	}
+	
 	private void performAsserts() {
 		ProcessingUnit processingUnit = getProcessingUnit(PU_NAME);
 		assertProcessingUnit(processingUnit);

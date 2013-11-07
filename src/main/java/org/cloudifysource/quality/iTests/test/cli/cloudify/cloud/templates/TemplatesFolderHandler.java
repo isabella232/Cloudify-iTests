@@ -59,7 +59,7 @@ public abstract class TemplatesFolderHandler {
 		return addCustomTemplate(templateDetails);
 	}
 	
-	public TemplateDetails createTemplate(final String templateName, final File templateFile, final String uploadDirName) {
+	public TemplateDetails createTemplate(final String templateName, final File templateFile, final String uploadDirName, boolean isForServiceInstallation) {
 		// get and set template name
 		final int suffix = numLastAddedTemplate.getAndIncrement();
 		String updatedTemplateName = templateName;
@@ -68,7 +68,8 @@ public abstract class TemplatesFolderHandler {
 		}
 		// create the template
 		TemplateDetails createdTemplate = TemplatesUtils.createTemplate(updatedTemplateName, templateFile, folder, uploadDirName);
-		
+		createdTemplate.setForServiceInstallation(isForServiceInstallation);
+
 		// updates if needed
 		updateTemplateFile(createdTemplate);
 		updatePropertiesFile(createdTemplate);
@@ -78,7 +79,7 @@ public abstract class TemplatesFolderHandler {
 	
 	public TemplateDetails addCustomTemplate(final TemplateDetails template) {
 		TemplateDetails createTemplate = 
-				createTemplate(template.getTemplateName(), template.getTemplateFile(), template.getUploadDirName());
+				createTemplate(template.getTemplateName(), template.getTemplateFile(), template.getUploadDirName(), template.isForServiceInstallation());
 		String templateName = createTemplate.getTemplateName();
 		templates.put(templateName, createTemplate);
 		if (template.isExpectedToFailOnAdd()) {

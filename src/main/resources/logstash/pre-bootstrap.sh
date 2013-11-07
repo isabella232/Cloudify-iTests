@@ -52,4 +52,5 @@ echo java home: $JAVA_HOME
 
 mkdir ~/logstash/logs
 touch ~/logstash/logs/logstash-shipper-log.txt
+echo running command $JAVA_HOME/bin/java -jar logstash-1.1.13.jar agent -f ~/gs-files/upload/cloudify-overrides/config/logstash/logstash-shipper.conf -l ~/logstash/logs/logstash-shipper-log.txt&
 $JAVA_HOME/bin/java -jar logstash-1.1.13.jar agent -f ~/gs-files/upload/cloudify-overrides/config/logstash/logstash-shipper.conf -l ~/logstash/logs/logstash-shipper-log.txt&

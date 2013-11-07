@@ -27,20 +27,19 @@ else
 	export GIGASPACES_ORIGINAL_JAVA_HOME=$JAVA_HOME
 
 	echo Downloading JDK from $GIGASPACES_AGENT_ENV_JAVA_URL
-	echo running cmd wget -q -O $WORKING_HOME_DIRECTORY/java.bin $GIGASPACES_AGENT_ENV_JAVA_URL
-	chmod 777 $WORKING_HOME_DIRECTORY/ -R
-	wget -q -O $WORKING_HOME_DIRECTORY/java.bin $GIGASPACES_AGENT_ENV_JAVA_URL || error_exit $? 101 "Failed downloading Java installation from $GIGASPACES_AGENT_ENV_JAVA_URL"
-	chmod +x $WORKING_HOME_DIRECTORY/java.bin
-	echo -e "\n" > $WORKING_HOME_DIRECTORY/input.txt
+	echo running cmd wget -q -O ~/java.bin $GIGASPACES_AGENT_ENV_JAVA_URL
+	wget -q -O ~/java.bin $GIGASPACES_AGENT_ENV_JAVA_URL || error_exit $? 101 "Failed downloading Java installation from $GIGASPACES_AGENT_ENV_JAVA_URL"
+	chmod +x ~/java.bin
+	echo -e "\n" > ~/input.txt
 	rm -rf ~/logstash/java || error_exit $? 102 "Failed removing old java installation directory"
 	mkdir ~/logstash
 	mkdir ~/logstash/java
 	cd ~/logstash/java
 
 	echo Installing JDK
-	$WORKING_HOME_DIRECTORY/java.bin < $WORKING_HOME_DIRECTORY/input.txt > /dev/null
+	~/java.bin < ~/input.txt > /dev/null
 	mv ~/logstash/java/*/* ~/logstash/java || error_exit $? 103 "Failed moving JDK installation"
-	rm -f $WORKING_HOME_DIRECTORY/input.txt
+	rm -f ~/input.txt
     export JAVA_HOME=~/logstash/java
 fi
 

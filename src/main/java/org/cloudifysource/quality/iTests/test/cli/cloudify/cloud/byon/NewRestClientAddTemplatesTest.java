@@ -153,7 +153,7 @@ public class NewRestClientAddTemplatesTest extends AbstractByonAddRemoveTemplate
 				CloudifyConstants.DEFAULT_APPLICATION_NAME, 
 				serviceName, 
 				5, 
-				"template [notExistTemplate] does not exist at clouds template list");
+				"template [notExistTemplate] does not exist at cloud templates list");
 	}
 
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, enabled = true)

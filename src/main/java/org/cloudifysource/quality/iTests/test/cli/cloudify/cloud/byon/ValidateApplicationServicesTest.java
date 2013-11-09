@@ -59,7 +59,7 @@ public class ValidateApplicationServicesTest extends AbstractByonCloudTest {
 					APP_NAME, 
 					appFolder, 
 					null /* overrides file */, 
-					"template [TEMPLATE_1] does not exist at clouds template list");
+					"template [TEMPLATE_1] does not exist at cloud templates list");
 	}
 	
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, enabled = true)
@@ -79,7 +79,7 @@ public class ValidateApplicationServicesTest extends AbstractByonCloudTest {
 					APP_NAME, 
 					appFolder, 
 					null /* overrides file */, 
-					"template [STORAGE_TEMPLATE] does not exist at clouds template list");
+					"template [STORAGE_TEMPLATE] does not exist at cloud templates list");
 	}
 	
 	

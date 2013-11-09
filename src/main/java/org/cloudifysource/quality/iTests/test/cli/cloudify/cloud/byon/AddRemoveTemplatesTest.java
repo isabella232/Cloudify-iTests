@@ -120,7 +120,7 @@ public class AddRemoveTemplatesTest extends AbstractByonAddRemoveTemplatesTest {
 
 		AssertUtils.assertNotNull(output);
 		AssertUtils.assertTrue("installation with non-existent template [" + templateName + "] succeeded, output was " 
-		+ output, output.contains("template [" + templateName + "] does not exist at clouds template list"));
+		+ output, output.contains("template [" + templateName + "] does not exist at cloud templates list"));
 	}
 
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, enabled = true)

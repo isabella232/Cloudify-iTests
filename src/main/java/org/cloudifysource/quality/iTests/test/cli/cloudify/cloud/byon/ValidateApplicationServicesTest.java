@@ -54,7 +54,7 @@ public class ValidateApplicationServicesTest extends AbstractByonCloudTest {
 		super.bootstrap();
 	}
 	
-	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, enabled = false)
+	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, enabled = true)
 	public void testMissingTemplate() throws IOException, DSLException, PackagingException {
 		File appFolder = new File(NOT_EXIST_TEMPLATE_APP_FOLDER_PATH);
 		NewRestTestUtils.installApplicationUsingNewRestApi(

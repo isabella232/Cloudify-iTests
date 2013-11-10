@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.NewAbstractCloudTest;
-import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 
 /**
@@ -32,14 +31,8 @@ public abstract class AbstractCustomCloudDriverTest extends NewAbstractCloudTest
 		return false;
 	}
 	
-
 	public void installService() throws IOException, InterruptedException {
 		installServiceAndWait(SIMPLE_SERVICE_PATH, SIMPLE_SERVICE_NAME);
-	}
-	
-	@AfterClass
-	public void teardown() throws Exception {		
-		super.teardown();					
 	}
 	
 	@Override

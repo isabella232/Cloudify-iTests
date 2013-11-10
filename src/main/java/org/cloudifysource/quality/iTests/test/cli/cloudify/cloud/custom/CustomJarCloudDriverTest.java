@@ -4,6 +4,7 @@ import java.io.File;
 
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
 import org.codehaus.plexus.util.FileUtils;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
 
 /**
@@ -31,5 +32,10 @@ public class CustomJarCloudDriverTest extends AbstractCustomCloudDriverTest {
         // Set the cloud driver class name to the external cloud class name inside the jar.
         super.getService().getAdditionalPropsToReplace().put("org.cloudifysource.esc.driver.provisioning.jclouds.DefaultProvisioningDriver", 
         													"external.provisioning.driver.ExternalProvisioningDriver");
+	}
+	
+	@AfterClass
+	public void teardown() throws Exception {		
+		super.teardown();					
 	}
 }

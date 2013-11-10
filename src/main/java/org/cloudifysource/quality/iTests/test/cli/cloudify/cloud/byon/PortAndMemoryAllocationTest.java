@@ -67,12 +67,13 @@ public class PortAndMemoryAllocationTest extends AbstractByonCloudTest {
 					isPortOccupied(restHostAddress, components.getWebui().getPort()));
 			
 			//The three GSCs LRMI ports (RESTful, Webui and space)
-			assertTrue("GSC LRMI port " + initGscPort + " not occupied as expected", 
-					isPortOccupied(restHostAddress, initGscPort));
-			assertTrue("GSC LRMI port " + initGscPort + 1 + " not occupied as expected", 
+			// CLI admin will occupie 7010 and so GSCs will start from 7011 and above. 
+			assertTrue("GSC LRMI port " + (initGscPort + 1) + " not occupied as expected", 
 					isPortOccupied(restHostAddress, initGscPort + 1));
-			assertTrue("GSC LRMI port " + initGscPort + 2 + " not occupied as expected", 
+			assertTrue("GSC LRMI port " + (initGscPort + 2) + " not occupied as expected", 
 					isPortOccupied(restHostAddress, initGscPort + 2));
+			assertTrue("GSC LRMI port " + (initGscPort + 3) + " not occupied as expected", 
+					isPortOccupied(restHostAddress, initGscPort + 3));
 		}
 		LogUtils.log("asserting service machine LRMI ports are occupied");
 		//validate new service machine agent and gsc port

@@ -16,7 +16,7 @@ import iTests.framework.utils.LogUtils;
 
 import java.io.File;
 
-import org.cloudifysource.dsl.Service;
+import org.cloudifysource.domain.Service;
 import org.cloudifysource.dsl.internal.ServiceReader;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.junit.Assert;

@@ -73,5 +73,5 @@ if %selenium.browser% == Firefox (
 )
 
 @echo transferring reports to tgrid from %BUILD_TEST_DIR%
-xcopy %BUILD_LOCATION% W:\%BUILD_NUMBER%\%BUILD_FOLDER% /s /i /y
+@rem xcopy %BUILD_LOCATION% W:\%BUILD_NUMBER%\%BUILD_FOLDER% /s /i /y
 xcopy %BUILD_TEST_DIR%\%SUITE_NAME% W:\%BUILD_NUMBER%\%SUITE_NAME% /s /i /y

@@ -32,7 +32,6 @@ public class ByonTemplatesFolderHandler extends TemplatesFolderHandler {
 	private final String BASIC_TEMPLATE_FILE_NAME = "byon_basic_template";
 	private final String TEMPLATE_NAME_STRING = "TEMPLATE_NAME";
 
-	private static final String UPLOAD_PROPERTY_NAME = "uploadDir";
 	private static final String NODE_IP_PROPERTY_NAME = "node_ip";
 	private static final String NODE_ID_PROPERTY_NAME = "node_id";
 

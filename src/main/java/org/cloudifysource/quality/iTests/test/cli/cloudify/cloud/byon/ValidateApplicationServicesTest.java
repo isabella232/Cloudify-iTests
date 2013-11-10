@@ -17,10 +17,13 @@ package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.byon;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Map;
 
 import org.cloudifysource.dsl.internal.DSLException;
 import org.cloudifysource.dsl.internal.packaging.PackagingException;
 import org.cloudifysource.dsl.internal.packaging.ZipUtils;
+import org.cloudifysource.dsl.rest.response.AddTemplateResponse;
+import org.cloudifysource.dsl.rest.response.AddTemplatesResponse;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.NewRestTestUtils;
@@ -35,7 +38,7 @@ public class ValidateApplicationServicesTest extends AbstractByonCloudTest {
     private static final String NOT_EXIST_TEMPLATE_APP_FOLDER_PATH = 
     		CommandTestUtils.getPath("src/main/resources/apps/USM/usm/applications/simple-with-template");
     private static final String SIMPLE_APP_FOLDER_PATH = 
-    		CommandTestUtils.getPath("src/main/resources/apps/USM/usm/applications/simple");
+    		CommandTestUtils.getPath("src/main/resources/apps/USM/usm/applications/simpleWithSimpleService");
 	private static final String NOT_EXIST_STORAGE_TEMPLATE_APP_FOLDER_PATH = 
     		CommandTestUtils.getPath("src/main/resources/apps/USM/usm/applications/simple-with-storage-template");
 	private static final String STORAGE_TEMPLATE_FOLDER_PATH = 
@@ -51,7 +54,7 @@ public class ValidateApplicationServicesTest extends AbstractByonCloudTest {
 		super.bootstrap();
 	}
 	
-	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, enabled = true)
+	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, enabled = false)
 	public void testMissingTemplate() throws IOException, DSLException, PackagingException {
 		File appFolder = new File(NOT_EXIST_TEMPLATE_APP_FOLDER_PATH);
 		NewRestTestUtils.installApplicationUsingNewRestApi(
@@ -64,24 +67,29 @@ public class ValidateApplicationServicesTest extends AbstractByonCloudTest {
 	
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, enabled = true)
 	public void testMissingStorgaeTemplate() throws IOException, DSLException, PackagingException {
+		String restUrl = getRestUrl();
 		try {
 			
-			File templatesFolder = new File(STORAGE_TEMPLATE_FOLDER_PATH);
 			File templatesPackedFile = File.createTempFile("packedStorageTempalte", ".zip");
-			ZipUtils.zip(templatesFolder, templatesPackedFile);
-			TemplatesCommandsRestAPI.addTemplates(getRestUrl(), templatesPackedFile);
-		} catch (Exception e) {
-			Assert.fail("failed to add storage template: " + e.getLocalizedMessage());
-		} 
-		File appFolder = new File(NOT_EXIST_STORAGE_TEMPLATE_APP_FOLDER_PATH);
-		NewRestTestUtils.installApplicationUsingNewRestApi(
-					getRestUrl(), 
+			ZipUtils.zip(new File(STORAGE_TEMPLATE_FOLDER_PATH), templatesPackedFile);
+			AddTemplatesResponse addedTemplates = TemplatesCommandsRestAPI.addTemplates(restUrl, templatesPackedFile);
+			
+			File appFolder = new File(NOT_EXIST_STORAGE_TEMPLATE_APP_FOLDER_PATH);
+			NewRestTestUtils.installApplicationUsingNewRestApi(
+					restUrl, 
 					APP_NAME, 
 					appFolder, 
 					null /* overrides file */, 
 					"template [STORAGE_TEMPLATE] does not exist at cloud templates list");
+		
+			Map<String, AddTemplateResponse> templates = addedTemplates.getTemplates();
+			for (String templateName : templates.keySet()) {				
+				TemplatesCommandsRestAPI.removeTemplate(restUrl, templateName, false, null);
+			}
+		} catch (Exception e) {
+			Assert.fail("failed to add storage template: " + e.getLocalizedMessage());
+		} 
 	}
-	
 	
 	/**
 	 * Tests that the ValidateApplicationServices can handle service without the compute part.

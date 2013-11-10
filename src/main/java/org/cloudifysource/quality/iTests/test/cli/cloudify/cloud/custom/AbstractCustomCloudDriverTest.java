@@ -14,7 +14,7 @@ import org.testng.annotations.BeforeClass;
 public abstract class AbstractCustomCloudDriverTest extends NewAbstractCloudTest {
 	
 	final private static String SIMPLE_SERVICE_PATH = "src/main/resources/apps/USM/usm/simple";
-	final private static String SIMPLE_SERVICE_NAME = "simple";
+	final protected String SIMPLE_SERVICE_NAME = "simple";
 
 	@Override
 	protected String getCloudName() {

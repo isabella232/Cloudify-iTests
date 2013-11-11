@@ -33,6 +33,7 @@ import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.templates.Templ
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.templates.TemplatesFolderHandler;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.templates.TemplatesUtils;
 import org.cloudifysource.restclient.exceptions.RestClientException;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -322,6 +323,12 @@ public class NewRestClientAddTemplatesTest extends AbstractByonAddRemoveTemplate
 		folderHandler2.addCustomTemplate(duplicateTemplate);
 
 		templatesHandler.assertExpectedList();
+	}
+	
+	@Override
+	@AfterClass(alwaysRun = true)
+	protected void teardown() throws Exception {
+		super.teardown();
 	}
 
 }

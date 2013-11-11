@@ -12,7 +12,6 @@ import java.net.SocketAddress;
 import org.cloudifysource.domain.cloud.GridComponents;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
 import org.openspaces.admin.machine.Machine;
-import org.testng.annotations.AfterClass;
 /**
  * This test uses a predefined cloud groovy holding all of the service grid port and memory config 
  * and asserts these config properties were indeed used.
@@ -173,10 +172,5 @@ public class PortAndMemoryAllocationTest extends AbstractByonCloudTest {
 		File newCloudFile = new File(CLOUD_GROOVY_PATH);
 		getService().setCloudGroovy(newCloudFile);
 		super.customizeCloud();
-	}
-	
-	@AfterClass(alwaysRun = true)
-	protected void teardown() throws Exception {
-		super.teardown();
 	}
 }

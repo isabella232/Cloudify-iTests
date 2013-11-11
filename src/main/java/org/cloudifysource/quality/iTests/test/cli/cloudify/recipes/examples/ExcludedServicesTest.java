@@ -9,7 +9,7 @@ import java.io.File;
 import java.io.IOException;
 
 import org.apache.commons.io.FileUtils;
-import org.cloudifysource.quality.iTests.framework.utils.JGitUtils;
+import iTests.framework.utils.JGitUtils;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.AbstractLocalCloudTest;
 import org.testng.annotations.AfterClass;

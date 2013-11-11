@@ -4,7 +4,7 @@ import iTests.framework.testng.annotations.TestConfiguration;
 import iTests.framework.tools.SGTestHelper;
 import iTests.framework.utils.ScriptUtils;
 
-import org.cloudifysource.quality.iTests.framework.utils.JGitUtils;
+import iTests.framework.utils.JGitUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.AbstractServicesTest;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;

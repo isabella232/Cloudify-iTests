@@ -5,7 +5,7 @@ import iTests.framework.tools.SGTestHelper;
 import java.io.File;
 
 import org.apache.commons.io.FileUtils;
-import org.cloudifysource.quality.iTests.framework.utils.JGitUtils;
+import iTests.framework.utils.JGitUtils;
 import iTests.framework.utils.LogUtils;
 import iTests.framework.utils.ScriptUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.AbstractLocalCloudTest;

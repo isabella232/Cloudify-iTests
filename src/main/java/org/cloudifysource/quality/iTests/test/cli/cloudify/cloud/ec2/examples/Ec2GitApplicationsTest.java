@@ -3,7 +3,7 @@ package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.ec2.examples;
 import iTests.framework.tools.SGTestHelper;
 import iTests.framework.utils.ScriptUtils;
 
-import org.cloudifysource.quality.iTests.framework.utils.JGitUtils;
+import iTests.framework.utils.JGitUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.AbstractExamplesTest;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;

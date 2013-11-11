@@ -109,11 +109,11 @@ else
 	export GIGASPACES_ORIGINAL_JAVA_HOME=$JAVA_HOME
 
 	echo Downloading JDK from $GIGASPACES_AGENT_ENV_JAVA_URL
-	wget -q -O $WORKING_HOME_DIRECTORY/java.bin $GIGASPACES_AGENT_ENV_JAVA_URL || error_exit $? "Failed downloading Java installation from $GIGASPACES_AGENT_ENV_JAVA_URL"
+	wget -O $WORKING_HOME_DIRECTORY/java.bin $GIGASPACES_AGENT_ENV_JAVA_URL || error_exit $? "Failed downloading Java installation from $GIGASPACES_AGENT_ENV_JAVA_URL"
 	chmod +x $WORKING_HOME_DIRECTORY/java.bin
 	echo -e "\n" > $WORKING_HOME_DIRECTORY/input.txt
 	rm -rf $HOME_DIR/java || error_exit $? "Failed removing old java installation directory"
-	mkdir $HOME_DIR/java
+	mkdir -p $HOME_DIR/java
 	cd $HOME_DIR/java
 
 	echo Installing JDK
@@ -127,18 +127,18 @@ export EXT_JAVA_OPTIONS="-Dcom.gs.multicast.enabled=false"
 
 if [ ! -z "$GIGASPACES_LINK" ]; then
 	echo Downloading cloudify installation from $GIGASPACES_LINK.tar.gz
-	wget -q $GIGASPACES_LINK.tar.gz -O $WORKING_HOME_DIRECTORY/gigaspaces.tar.gz || error_exit $? "Failed downloading cloudify installation"
+	wget $GIGASPACES_LINK.tar.gz -O $WORKING_HOME_DIRECTORY/gigaspaces.tar.gz || error_exit $? "Failed downloading cloudify installation"
 fi
 
 if [ ! -z "$GIGASPACES_OVERRIDES_LINK" ]; then
 	echo Downloading cloudify overrides from $GIGASPACES_OVERRIDES_LINK.tar.gz
-	wget -q $GIGASPACES_OVERRIDES_LINK.tar.gz -O $WORKING_HOME_DIRECTORY/gigaspaces_overrides.tar.gz || error_exit $? "Failed downloading cloudify overrides"
+	wget $GIGASPACES_OVERRIDES_LINK.tar.gz -O $WORKING_HOME_DIRECTORY/gigaspaces_overrides.tar.gz || error_exit $? "Failed downloading cloudify overrides"
 fi
 
 # Todo: Check this condition
 if [ ! -d "$HOME_DIR/gigaspaces" -o $WORKING_HOME_DIRECTORY/gigaspaces.tar.gz -nt $HOME_DIR/gigaspaces ]; then
 	rm -rf $HOME_DIR/gigaspaces || error_exit $? "Failed removing old gigaspaces directory"
-	mkdir $HOME_DIR/gigaspaces || error_exit $? "Failed creating gigaspaces directory"
+	mkdir -p $HOME_DIR/gigaspaces || error_exit $? "Failed creating gigaspaces directory"
 
 	# 2 is the error level threshold. 1 means only warnings
 	# this is needed for testing purposes on zip files created on the windows platform
@@ -247,6 +247,20 @@ run_script "post-bootstrap"
 cat <(crontab -l) <(echo "@reboot nohup /tmp/$USER/gigaspaces/tools/cli/cloudify.sh $START_COMMAND $START_COMMAND_ARGS") | crontab -
 
 ./cloudify.sh $START_COMMAND $START_COMMAND_ARGS
+
+echo Cleaning home directory : $WORKING_HOME_DIRECTORY
+
+if [ -f $WORKING_HOME_DIRECTORY/gigaspaces.tar.gz ]; then
+	rm $WORKING_HOME_DIRECTORY/gigaspaces.tar.gz
+fi
+
+if [ -f $WORKING_HOME_DIRECTORY/gigaspaces_overrides.tar.gz ]; then
+	rm $WORKING_HOME_DIRECTORY/gigaspaces_overrides.tar.gz
+fi
+
+if [ -f $WORKING_HOME_DIRECTORY/java.bin ]; then
+	rm $WORKING_HOME_DIRECTORY/java.bin
+fi
 
 RETVAL=$?
 

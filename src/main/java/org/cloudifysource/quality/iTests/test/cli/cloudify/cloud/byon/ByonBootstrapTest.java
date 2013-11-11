@@ -1,5 +1,6 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.byon;
 
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.Test;
 
 import org.cloudifysource.quality.iTests.test.cli.cloudify.security.SecurityConstants;
@@ -22,6 +23,11 @@ public class ByonBootstrapTest extends AbstractByonCloudTest {
 			.user(SecurityConstants.USER_PWD_ALL_ROLES).password(SecurityConstants.USER_PWD_ALL_ROLES);
 		super.bootstrap(bootstrapper);
 		super.teardown();
+	}
+	
+	@AfterMethod(alwaysRun = true)
+	public void closeAdmin() {
+		super.closeAdmin();
 	}
 
 }

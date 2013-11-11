@@ -29,6 +29,7 @@ import org.cloudifysource.domain.cloud.FileTransferModes;
 import org.cloudifysource.dsl.internal.CloudifyConstants;
 import org.cloudifysource.dsl.utils.IPUtils;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -151,6 +152,11 @@ public class CleanGSFilesByonTest extends AbstractByonCloudTest {
 		}
 
 		return objectsExist;
+	}
+	
+	@AfterMethod(alwaysRun = true)
+	public void closeAdmin() {
+		super.closeAdmin();
 	}
 
 }

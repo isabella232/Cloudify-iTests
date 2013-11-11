@@ -66,6 +66,7 @@ public class AppSharedProvisioningTest extends AbstractSharedProvisioningByonClo
 		super.uninstallApplicationIfFound(APPLICATION_TWO);
 	}
 	
+	@Override
 	@AfterClass(alwaysRun = true)
 	protected void teardown() throws Exception {
 		super.teardown();

@@ -32,7 +32,8 @@ service {
 	
 	customCommands ([
 		"cmd1" : { println "This is the cmd1 custom command"},
-		"cmd3" : { throw new Exception("This is an error test")}
+		"cmd3" : { throw new Exception("This is an error test")},
+		"listRemoteFiles" : "listRemote.sh"
 	])
 
 	

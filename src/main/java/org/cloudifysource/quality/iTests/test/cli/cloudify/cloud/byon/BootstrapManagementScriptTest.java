@@ -18,6 +18,7 @@
 
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.byon;
 
+import iTests.framework.tools.SGTestHelper;
 import iTests.framework.utils.AssertUtils;
 import iTests.framework.utils.IOUtils;
 import iTests.framework.utils.ScriptUtils;
@@ -27,6 +28,7 @@ import org.cloudifysource.esc.installer.EnvironmentFileBuilder;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.byon.ByonCloudService;
 import org.cloudifysource.utilitydomain.openspaces.OpenspacesConstants;
+import org.cloudifysource.utilitydomain.openspaces.OpenspacesDomainUtils;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
@@ -39,6 +41,8 @@ import java.util.concurrent.TimeoutException;
 
 /**
  * Tests the functionality of the generic bootstrap-management script we provide.
+ *
+ * NOTE : This test cannot run a windows machine.
  *
  * @author Eli Polonsky
  * @since 3.0.0
@@ -58,6 +62,12 @@ public class BootstrapManagementScriptTest {
      */
     @BeforeClass
     public static void prepareService() throws Exception {
+
+        if (ScriptUtils.isWindows()) {
+            throw new UnsupportedOperationException("Cannot run this test on a windows box since it runs a shell "
+                    + "script");
+        }
+
         byonCloudService = new ByonCloudService();
         byonCloudService.init(BootstrapManagementScriptTest.class.getSimpleName());
         byonCloudService.injectCloudAuthenticationDetails();
@@ -109,11 +119,17 @@ public class BootstrapManagementScriptTest {
 
     /**
      * Clean the machine by killing all java processes that were started during the bootstrap stage.
+     *
      * @throws TimeoutException In case the kill operation times out.
      */
     @AfterClass
-    public void teardown() throws TimeoutException {
-//        ScriptUtils.executeCommandLine("killall -9 java", AbstractTestSupport.DEFAULT_TEST_TIMEOUT);
+    public void clean() throws TimeoutException {
+        if (SGTestHelper.isDevMode() && ScriptUtils.isLinuxMachine()) {
+            throw new UnsupportedOperationException("Cannot kill all java processes on a linux box in dev mode since "
+                    + "this will kill the IDE process. Please make sure all java processes started by this test are "
+                    + "shutdown");
+        }
+        ScriptUtils.executeCommandLine("killall -9 java", AbstractTestSupport.DEFAULT_TEST_TIMEOUT);
     }
 
 
@@ -126,6 +142,9 @@ public class BootstrapManagementScriptTest {
      * 3. Prepare shared environment variables.
      * 4. Source this environment to the bootstrap-management script.
      * 5. Run the script.
+     *
+     * NOTE : We run the script so that it will fail fast.
+     *        We are not interested in actually launching the agent. // TODO - Are we?
      *
      *
      * @param mode The mode to run the script in. 'agent' or 'management'.
@@ -140,9 +159,11 @@ public class BootstrapManagementScriptTest {
         environmentFileBuilder.exportVar("LUS_IP_ADDRESS", "127.0.0.1:" + OpenspacesConstants.DEFAULT_LUS_PORT);
         environmentFileBuilder.exportVar("GSA_MODE", mode);
         environmentFileBuilder.exportVar("MACHINE_IP_ADDRESS", "127.0.0.1");
+        environmentFileBuilder.exportVar("GIGASPACES_LINK",
+                OpenspacesDomainUtils.getCloudDependentConfig().getDownloadUrl());
         environmentFileBuilder.exportVar("WORKING_HOME_DIRECTORY", byonCloudService.getPathToCloudFolder());
-        environmentFileBuilder.exportVar("CLOUD_FILE", new File(byonCloudService.getPathToCloudFolder(),
-                "byon-cloud.groovy").getAbsolutePath());
+        environmentFileBuilder.exportVar("CLOUD_FILE", new File(byonCloudService.getPathToCloudGroovy())
+                .getAbsolutePath());
 
         environmentFileBuilder.build();
 

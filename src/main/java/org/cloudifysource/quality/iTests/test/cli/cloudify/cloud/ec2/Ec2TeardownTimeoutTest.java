@@ -46,10 +46,11 @@ public class Ec2TeardownTimeoutTest extends NewAbstractCloudTest {
      */
     @Test(timeOut = DEFAULT_TEST_TIMEOUT)
     public void testTimeout() throws Exception {
+        getService().getBootstrapper().verbose(true).teardownExpectedToFail(true);
         super.teardown();
         String teardownOutput = getService().getBootstrapper().getLastActionOutput();
-        AssertUtils.assertTrue("Teardown output does not contian the correct timeout error",
-                teardownOutput.contains("timeout"));
+        AssertUtils.assertTrue("Teardown output does not contain a timeout error",
+                teardownOutput.contains("TimeoutException"));
     }
 
     @Override

@@ -17,6 +17,10 @@
  */
 
 /**
+<<<<<<< HEAD
  * This package contains tests that run on byon cloud.
+=======
+ * This package contains tests the run the BYON cloud driver.
+>>>>>>> 716f2aa... CLOUDIFY-2204 added test and some refinments to the script used by tests
  */
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.byon;

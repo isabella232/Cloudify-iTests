@@ -18,9 +18,15 @@
 
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.byon;
 
+import com.google.common.io.Resources;
 import iTests.framework.utils.AssertUtils;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.CloudServiceManager;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.byon.ByonCloudService;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+
+import java.io.File;
+import java.net.URL;
 
 /**
  * CLOUDIFY-2196.
@@ -36,7 +42,12 @@ public class ByonTeardownTimeoutTest extends AbstractByonCloudTest {
      */
     @BeforeClass(alwaysRun = true)
     public void bootstrap() throws Exception {
-        super.bootstrap();
+        ByonCloudService service = (ByonCloudService) CloudServiceManager.getInstance().getCloudService(getCloudName());
+        URL resource = Resources.getResource("org/cloudifysource/quality/iTests/test/byonteardowntimeouttest/byon" +
+                "-cloud" +
+                ".groovy");
+        service.setCloudGroovy(new File(resource.getPath()));
+        super.bootstrap(service);
     }
 
     /**
@@ -45,10 +56,11 @@ public class ByonTeardownTimeoutTest extends AbstractByonCloudTest {
      */
     @Test(timeOut = DEFAULT_TEST_TIMEOUT)
     public void testTimeout() throws Exception {
+        getService().getBootstrapper().verbose(true).teardownExpectedToFail(true);
         super.teardown();
         String teardownOutput = getService().getBootstrapper().getLastActionOutput();
-        AssertUtils.assertTrue("Teardown output does not contian the correct timeout error",
-                teardownOutput.contains("timeout"));
+        AssertUtils.assertTrue("Teardown output does not contain a timeout error",
+                teardownOutput.contains("TimeoutException"));
     }
 
     @Override

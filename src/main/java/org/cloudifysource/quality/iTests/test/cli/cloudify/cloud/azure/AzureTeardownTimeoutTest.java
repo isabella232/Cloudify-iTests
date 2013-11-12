@@ -20,6 +20,7 @@ package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.azure;
 
 import iTests.framework.utils.AssertUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.NewAbstractCloudTest;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -46,10 +47,19 @@ public class AzureTeardownTimeoutTest extends NewAbstractCloudTest {
      */
     @Test(timeOut = DEFAULT_TEST_TIMEOUT)
     public void testTimeout() throws Exception {
+        getService().getBootstrapper().verbose(true).teardownExpectedToFail(true);
         super.teardown();
         String teardownOutput = getService().getBootstrapper().getLastActionOutput();
-        AssertUtils.assertTrue("Teardown output does not contian the correct timeout error",
-                teardownOutput.contains("timeout"));
+        AssertUtils.assertTrue("Teardown output does not contain a timeout error",
+                teardownOutput.contains("TimeoutException"));
+    }
+
+    /**
+     * Cleanup any leaking services that may have been caused because of the small timeout.
+     */
+    @AfterClass
+    public void teardown() {
+        getService().scanLeakedAgentAndManagementNodes();
     }
 
     @Override

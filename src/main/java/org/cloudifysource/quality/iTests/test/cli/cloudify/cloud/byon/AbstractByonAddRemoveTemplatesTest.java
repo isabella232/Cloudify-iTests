@@ -37,7 +37,7 @@ public abstract class AbstractByonAddRemoveTemplatesTest extends AbstractByonClo
 	String[] machines;
 	protected ByonTemplatesHandler templatesHandler;
 	SimpleServiceCreator serviceCreator;
-	List<String> defaultTemplates;
+	protected List<String> defaultTemplates;
 	protected String username;
 	protected String password;
 

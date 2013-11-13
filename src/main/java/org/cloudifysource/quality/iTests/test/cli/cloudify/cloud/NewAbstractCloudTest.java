@@ -143,7 +143,7 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 
         beforeBootstrap();
 
-        String branchName = System.getProperty("branch.name", "").replace("_","-");
+        String branchName = System.getProperty("branch.name", "dev").replace("_","-");
         LogUtils.log("Branch name is : " + branchName);
         final String prefix = System.getProperty("user.name") + "-"  + branchName + "-" + this.getClass().getSimpleName().toLowerCase() + "-";
 

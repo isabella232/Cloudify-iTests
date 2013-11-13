@@ -2,6 +2,7 @@ package org.cloudifysource.quality.iTests.framework.utils.compute;
 
 import com.google.common.base.Predicate;
 
+import com.google.inject.Module;
 import org.cloudifysource.domain.cloud.Cloud;
 import org.cloudifysource.esc.driver.provisioning.MachineDetails;
 import org.cloudifysource.esc.jclouds.JCloudsDeployer;
@@ -28,7 +29,7 @@ public class JcloudsComputeApiHelper implements ComputeApiHelper {
     public JcloudsComputeApiHelper(final Cloud cloud, final String region) {
         try {
             this.deployer = new JCloudsDeployer(cloud.getProvider().getProvider(), cloud.getUser().getUser(),
-                    cloud.getUser().getApiKey(), new Properties());
+                    cloud.getUser().getApiKey(), new Properties(), new HashSet<Module>());
             this.region = region;
         } catch (final Exception e) {
             throw new RuntimeException("Failed to initialize compute helper : " + e.getMessage(), e);

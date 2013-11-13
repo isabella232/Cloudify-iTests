@@ -1,5 +1,13 @@
 package org.cloudifysource.quality.iTests.framework.utils;
 
+import iTests.framework.utils.AssertUtils;
+import org.cloudifysource.esc.driver.provisioning.ElasticMachineProvisioningCloudifyAdapter;
+import org.openspaces.admin.gsa.GSAReservationId;
+import org.openspaces.admin.gsa.GridServiceAgent;
+import org.openspaces.admin.zone.config.ExactZonesConfig;
+import org.openspaces.admin.zone.config.ExactZonesConfigurer;
+import org.openspaces.grid.gsm.machines.StartedGridServiceAgent;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -10,25 +18,20 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import iTests.framework.utils.AssertUtils;
-import org.cloudifysource.esc.driver.provisioning.ElasticMachineProvisioningCloudifyAdapter;
-import org.openspaces.admin.gsa.GSAReservationId;
-import org.openspaces.admin.gsa.GridServiceAgent;
-import org.openspaces.admin.zone.config.ExactZonesConfig;
-import org.openspaces.admin.zone.config.ExactZonesConfigurer;
-
 public class ByonMachinesUtils {
 
 	public static GridServiceAgent startNewByonMachine (ElasticMachineProvisioningCloudifyAdapter elasticMachineProvisioningCloudifyAdapter, long duration,TimeUnit timeUnit) throws Exception {	
 		ExactZonesConfig zones = new ExactZonesConfig();
 		GSAReservationId reservationId = GSAReservationId.randomGSAReservationId();
-		return elasticMachineProvisioningCloudifyAdapter.startMachine(zones, reservationId, duration, timeUnit);
+		return elasticMachineProvisioningCloudifyAdapter.startMachine(zones, reservationId, null, duration,
+                timeUnit).getAgent();
 	}
 	
 	public static GridServiceAgent startNewByonMachineWithZones (ElasticMachineProvisioningCloudifyAdapter elasticMachineProvisioningCloudifyAdapter,String[] zoneList, long duration,TimeUnit timeUnit) throws Exception {	
 		ExactZonesConfig zones = new ExactZonesConfigurer().addZones(zoneList).create();
 		GSAReservationId reservationId = GSAReservationId.randomGSAReservationId();
-		return elasticMachineProvisioningCloudifyAdapter.startMachine(zones, reservationId, duration, timeUnit);
+		return elasticMachineProvisioningCloudifyAdapter.startMachine(zones, reservationId, null, duration,
+                timeUnit).getAgent();
 	}
 
 	public static GridServiceAgent[] startNewByonMachines(
@@ -97,7 +100,8 @@ public class ByonMachinesUtils {
     }
 	
 	public static void stopByonMachine (ElasticMachineProvisioningCloudifyAdapter elasticMachineProvisioningCloudifyAdapter, GridServiceAgent agent ,long duration,TimeUnit timeUnit) throws Exception {
-		elasticMachineProvisioningCloudifyAdapter.stopMachine(agent, duration, timeUnit);
+        StartedGridServiceAgent startedGridServiceAgent = new StartedGridServiceAgent(agent, null);
+		elasticMachineProvisioningCloudifyAdapter.stopMachine(startedGridServiceAgent, duration, timeUnit);
 	}
 
 }

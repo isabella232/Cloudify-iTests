@@ -19,6 +19,7 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.azure;
 
 import iTests.framework.utils.AssertUtils;
+import iTests.framework.utils.LogUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.NewAbstractCloudTest;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -55,11 +56,12 @@ public class AzureTeardownTimeoutTest extends NewAbstractCloudTest {
     }
 
     /**
-     * Cleanup any leaking services that may have been caused because of the small timeout.
+     * Cleanup any leaking services that may have been caused from of the small timeout.
      */
-    @AfterClass
-    public void teardown() {
-        getService().scanLeakedAgentAndManagementNodes();
+    @AfterClass(alwaysRun = true)
+    public void scan() {
+        LogUtils.log("Scanning for leaked management nodes");
+        getService().scanLeakedManagementNodes();
     }
 
     @Override

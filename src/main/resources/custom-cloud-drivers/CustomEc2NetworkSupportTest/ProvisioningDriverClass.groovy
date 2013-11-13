@@ -31,6 +31,7 @@ public class ProvisioningDriverClass extends org.cloudifysource.esc.driver.provi
 	throws CloudProvisioningException {
 		super.setConfig(configuration);
 		this.network = configuration.getNetwork();
+
 		logger.info("Called setConfig. network is: " + this.network);
 		if(this.network != null) {
 			logger.info("Number of network incoming access rules: " + this.network.getAccessRules().getIncoming().size())

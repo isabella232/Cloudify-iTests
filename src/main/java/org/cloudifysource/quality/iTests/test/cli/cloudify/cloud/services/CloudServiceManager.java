@@ -23,6 +23,7 @@ import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.ec2.Ec
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.ec2.Ec2WinCloudService;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.hp.HpCloudService;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.rackspace.RackspaceCloudService;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.softlayer.SoftlayerCloudService;
 
 public class CloudServiceManager {
 
@@ -65,9 +66,11 @@ public class CloudServiceManager {
 			cloudService = new MicrosoftAzureCloudService();
 		} else if ("dynamic-byon".equalsIgnoreCase(cloudName)) {
 			cloudService = new DynamicByonCloudService();
-		} else {
-			throw new IllegalArgumentException("Cloud name not supported: " + cloudName);
-		}
+		} else if ("softlayer".equalsIgnoreCase(cloudName)) {
+            cloudService = new SoftlayerCloudService(cloudName);
+        } else {
+            throw new IllegalArgumentException("Cloud name not supported: " + cloudName);
+        }
 
 		return cloudService;
 	}

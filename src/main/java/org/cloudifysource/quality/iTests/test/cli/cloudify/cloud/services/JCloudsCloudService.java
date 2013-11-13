@@ -14,6 +14,8 @@ import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadata.Status;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
+import org.jclouds.softlayer.compute.functions.VirtualGuestToNodeMetadata;
+import org.jclouds.softlayer.compute.functions.VirtualGuestToReducedNodeMetaData;
 
 import java.util.*;
 import java.util.Map.Entry;
@@ -54,9 +56,8 @@ public abstract class JCloudsCloudService extends AbstractCloudService {
 	
 			@Override
 			protected void configure() {
-				bind(
-						AWSEC2ReviseParsedImage.class).to(
-						WindowsServerEC2ReviseParsedImage.class);
+				bind(AWSEC2ReviseParsedImage.class).to(WindowsServerEC2ReviseParsedImage.class);
+                bind(VirtualGuestToNodeMetadata.class).to(VirtualGuestToReducedNodeMetaData.class);
 			}
 	
 		});

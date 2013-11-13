@@ -8,6 +8,15 @@ import iTests.framework.utils.LogUtils;
 import iTests.framework.utils.SSHUtils;
 import iTests.framework.utils.ScriptUtils;
 import iTests.framework.utils.WebUtils;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
+import org.cloudifysource.domain.cloud.Cloud;
+import org.cloudifysource.dsl.internal.ServiceReader;
+import org.cloudifysource.quality.iTests.framework.utils.CloudBootstrapper;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.CloudTestUtils;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
+import org.openspaces.admin.Admin;
+import org.testng.Assert;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -19,22 +28,11 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Random;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.StringUtils;
-import org.cloudifysource.domain.cloud.Cloud;
-import org.cloudifysource.dsl.internal.ServiceReader;
-import org.cloudifysource.quality.iTests.framework.utils.CloudBootstrapper;
-import org.cloudifysource.quality.iTests.test.cli.cloudify.CloudTestUtils;
-import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
-import org.openspaces.admin.Admin;
-import org.testng.Assert;
-
 public abstract class AbstractCloudService implements CloudService {
 
     private static final int MAX_HOSTNAME_LENGTH = 35;
     private static final int MAX_VOLUME_NAME_LENGTH = 45;
     protected static final String RELATIVE_ESC_PATH = "/clouds/";
-    protected static final String UPLOAD_FOLDER = "upload";
     protected static final String CREDENTIALS_FOLDER = System.getProperty("iTests.credentialsFolder",
             SGTestHelper.getSGTestRootDir() + "/src/main/resources/credentials");
     protected static final boolean enableLogstash = Boolean.parseBoolean(System.getProperty("iTests.enableLogstash", "false"));

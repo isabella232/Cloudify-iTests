@@ -121,6 +121,7 @@ else
 	mv $HOME_DIR/java/*/* $HOME_DIR/java || error_exit $? "Failed moving JDK installation"
 	rm -f $WORKING_HOME_DIRECTORY/input.txt
     export JAVA_HOME=$HOME_DIR/java
+    rm -f $WORKING_HOME_DIRECTORY/java.bin || error_exit $? 136 "Failed deleting java.bin from home directory"
 fi
 
 export EXT_JAVA_OPTIONS="-Dcom.gs.multicast.enabled=false"
@@ -143,6 +144,7 @@ if [ ! -d "$HOME_DIR/gigaspaces" -o $WORKING_HOME_DIRECTORY/gigaspaces.tar.gz -n
 	# 2 is the error level threshold. 1 means only warnings
 	# this is needed for testing purposes on zip files created on the windows platform
 	tar xfz $WORKING_HOME_DIRECTORY/gigaspaces.tar.gz -C $HOME_DIR/gigaspaces || error_exit_on_level $? "Failed extracting cloudify installation" 2
+	rm -f $WORKING_HOME_DIRECTORY/gigaspaces.tar.gz error_exit $? 134 "Failed deleting gigaspaces.tar.gz from home directory"
 
 	# Todo: consider removing this line
 	chmod -R 777 $HOME_DIR/gigaspaces || error_exit $? "Failed changing permissions in cloudify installion"
@@ -151,6 +153,7 @@ if [ ! -d "$HOME_DIR/gigaspaces" -o $WORKING_HOME_DIRECTORY/gigaspaces.tar.gz -n
 	if [ ! -z "$GIGASPACES_OVERRIDES_LINK" ]; then
 		echo Copying overrides into cloudify distribution
 		tar xfz $WORKING_HOME_DIRECTORY/gigaspaces_overrides.tar.gz -C $HOME_DIR/gigaspaces || error_exit_on_level $? "Failed extracting cloudify overrides" 2
+		rm -f $WORKING_HOME_DIRECTORY/gigaspaces_overrides.tar.gz error_exit $? 135 "Failed deleting gigaspaces_overrides.tar.gz from home directory"
 	fi
 fi
 
@@ -249,18 +252,6 @@ cat <(crontab -l) <(echo "@reboot nohup /tmp/$USER/gigaspaces/tools/cli/cloudify
 ./cloudify.sh $START_COMMAND $START_COMMAND_ARGS
 
 echo Cleaning home directory : $WORKING_HOME_DIRECTORY
-
-if [ -f $WORKING_HOME_DIRECTORY/gigaspaces.tar.gz ]; then
-	rm $WORKING_HOME_DIRECTORY/gigaspaces.tar.gz
-fi
-
-if [ -f $WORKING_HOME_DIRECTORY/gigaspaces_overrides.tar.gz ]; then
-	rm $WORKING_HOME_DIRECTORY/gigaspaces_overrides.tar.gz
-fi
-
-if [ -f $WORKING_HOME_DIRECTORY/java.bin ]; then
-	rm $WORKING_HOME_DIRECTORY/java.bin
-fi
 
 RETVAL=$?
 

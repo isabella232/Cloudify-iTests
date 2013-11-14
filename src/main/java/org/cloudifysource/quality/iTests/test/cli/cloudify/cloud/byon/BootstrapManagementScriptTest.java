@@ -172,8 +172,8 @@ public class BootstrapManagementScriptTest {
         File envFile = new File(byonCloudService.getPathToCloudFolder(), environmentFileName);
         FileUtils.writeStringToFile(envFile, environmentFileBuilder.toString());
 
-        File pathToScript = Paths.get(byonCloudService.getPathToCloudFolder(), "upload",
-                "bootstrap-management.sh").toFile();
+        File pathToScript = new File(byonCloudService.getPathToCloudFolder() + File.separator + "upload",
+                "bootstrap-management.sh");
 
         ScriptUtils.executeCommandLine("bash " + pathToScript.getAbsolutePath(),
                 AbstractTestSupport.DEFAULT_TEST_TIMEOUT);

@@ -242,7 +242,8 @@ cloud {
 				"org.cloudifysource.clearRemoteDirectoryOnStart":"false",
 				"itemsToClean": ([
 					"/tmp/gs-files/gigaspaces.tar.gz"
-				])
+				]),
+                "org.cloudifysource.stop-management-timeout-in-minutes" : 15
 			])
 
 }

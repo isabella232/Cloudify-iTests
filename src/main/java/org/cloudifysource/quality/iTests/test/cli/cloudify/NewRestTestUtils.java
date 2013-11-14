@@ -19,11 +19,18 @@ import iTests.framework.utils.LogUtils;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import junit.framework.Assert;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -33,6 +40,7 @@ import org.cloudifysource.domain.Application;
 import org.cloudifysource.domain.Service;
 import org.cloudifysource.dsl.internal.CloudifyConstants;
 import org.cloudifysource.dsl.internal.CloudifyConstants.DeploymentState;
+import org.cloudifysource.dsl.internal.CloudifyErrorMessages;
 import org.cloudifysource.dsl.internal.DSLException;
 import org.cloudifysource.dsl.internal.ServiceReader;
 import org.cloudifysource.dsl.internal.packaging.Packager;
@@ -40,21 +48,30 @@ import org.cloudifysource.dsl.internal.packaging.PackagingException;
 import org.cloudifysource.dsl.rest.request.InstallApplicationRequest;
 import org.cloudifysource.dsl.rest.request.InstallServiceRequest;
 import org.cloudifysource.dsl.rest.response.ApplicationDescription;
+import org.cloudifysource.dsl.rest.response.ControllerDetails;
 import org.cloudifysource.dsl.rest.response.DeploymentEvent;
 import org.cloudifysource.dsl.rest.response.DeploymentEvents;
 import org.cloudifysource.dsl.rest.response.InstallApplicationResponse;
 import org.cloudifysource.dsl.rest.response.InstallServiceResponse;
 import org.cloudifysource.dsl.rest.response.ServiceDescription;
+import org.cloudifysource.dsl.rest.response.ShutdownManagementResponse;
 import org.cloudifysource.dsl.rest.response.UninstallApplicationResponse;
 import org.cloudifysource.dsl.rest.response.UninstallServiceResponse;
+import org.cloudifysource.dsl.utils.ServiceUtils;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.cloudifysource.restclient.RestClient;
 import org.cloudifysource.restclient.exceptions.RestClientException;
+import org.cloudifysource.shell.ConditionLatch;
+import org.cloudifysource.shell.exceptions.CLIException;
+import org.codehaus.jackson.JsonProcessingException;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.testng.AssertJUnit;
 
 import com.j_spaces.kernel.PlatformVersion;
 
 public class NewRestTestUtils {
+
+	private static final int POLLING_INTERVAL_MILLISECONDS = 1000;
 
 	public static InstallApplicationResponse installApplicationUsingNewRestApi(final String restUrl,
 			final String applicationName,
@@ -194,6 +211,79 @@ public class NewRestTestUtils {
 					+ "], error message: " + e.getMessageFormattedText());
 		}
 		return uninstallResposne;
+	}
+	
+	public static ShutdownManagementResponse shutdownManagers(final String restUrl, final String expectedFailureMsg, final long timeoutMinutes, final File managersFile) 
+			throws RestClientException, InterruptedException, TimeoutException, CLIException, JsonProcessingException, IOException {
+		
+		// connect to the REST
+		RestClient restClient = createAndConnect(restUrl);
+		
+		// shutdown the managers
+		ShutdownManagementResponse response = null;
+		try {
+			 response = restClient.shutdownManagers();
+		} catch (RestClientException e) {
+			final String actualMsg = e.getMessageFormattedText();
+			if (expectedFailureMsg != null) {
+				Assert.assertTrue("error message " + actualMsg + " doesn't contain the expected failure messgae ["
+						+ expectedFailureMsg + "]",
+						actualMsg.contains(expectedFailureMsg));
+			} else {
+				throw e;
+			}
+		}
+		
+		// write managers to file
+		if (managersFile != null) {
+			final List<ControllerDetails> managers = Arrays.asList(response.getControllers());
+			final ObjectMapper mapper = new ObjectMapper();
+			final String managersAsString = mapper.writeValueAsString(managers);
+			FileUtils.writeStringToFile(managersFile, managersAsString);
+		}
+		
+		// wait for shutdown
+		waitForManagersToShutDown(response.getControllers(), new URL(restUrl).getPort(), timeoutMinutes);
+		
+		return response;
+	}
+	
+	private static void waitForManagersToShutDown(final ControllerDetails[] managers, final int port, 
+			final long timeoutMinutes) throws InterruptedException, TimeoutException, CLIException {
+		final Set<ControllerDetails> managersStillUp = new HashSet<ControllerDetails>();
+		managersStillUp.addAll(Arrays.asList(managers));
+
+		final ConditionLatch conditionLatch =
+				new ConditionLatch()
+		.pollingInterval(POLLING_INTERVAL_MILLISECONDS, TimeUnit.MILLISECONDS)
+		.timeout(timeoutMinutes, TimeUnit.MINUTES)
+		.timeoutErrorMessage(CloudifyErrorMessages.SHUTDOWN_MANAGERS_TIMEOUT.getName());
+
+		conditionLatch.waitFor(new ConditionLatch.Predicate() {
+
+			@Override
+			public boolean isDone() throws CLIException, InterruptedException {
+
+				final Iterator<ControllerDetails> iterator = managersStillUp.iterator();
+				while (iterator.hasNext()) {
+					final ControllerDetails manager = iterator.next();
+					final String host =
+							manager.isBootstrapToPublicIp() ? manager.getPublicIp() : manager.getPrivateIp();
+							if (ServiceUtils.isPortFree(host, port)) {
+								iterator.remove();
+								LogUtils.log("manager [" + host + "] is down.");
+								if (managersStillUp.isEmpty()) {
+									LogUtils.log("all ports are free.");
+									return true;
+								}
+								LogUtils.log(managersStillUp.size() + " managers more to check");
+							} else {
+								LogUtils.log("manager [" + host + "] is still up.");
+							}
+				}
+				return false;
+			}
+		});
 	}
 
 	static void waitForServiceInstallation(final RestClient restClient, final String restUrl, final String appName,

@@ -21,6 +21,7 @@ public abstract class DefaultBootstrapValidationTest extends NewAbstractCloudTes
 		bootstrapper = new CloudBootstrapper();
 		bootstrapper.scanForLeakedNodes(true);
 		bootstrapper.setBootstrapExpectedToFail(true);
+        bootstrapper.skipValidation(false);
 	}
 
 

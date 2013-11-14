@@ -1,15 +1,14 @@
 package org.cloudifysource.quality.iTests.framework.utils;
 
 import iTests.framework.utils.LogUtils;
-
-import java.io.IOException;
-import java.net.URL;
-
 import org.apache.commons.lang.StringUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CloudTestUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils.ProcessResult;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.security.SecurityConstants;
+
+import java.io.IOException;
+import java.net.URL;
 
 
 
@@ -264,7 +263,10 @@ public abstract class Bootstrapper {
 			    .append("-timeout")
 			    .append(" ")
 			    .append(timeoutInMinutes).append(" ");
-		if (force) {
+        if (verbose) {
+            builder.append("--verbose").append(" ");
+        }
+        if (force) {
 			builder.append("-force").append(" ");
 		}
 		builder.append(provider);

@@ -7,8 +7,9 @@ import java.util.List;
 
 import org.cloudifysource.domain.Service;
 import org.cloudifysource.dsl.internal.ServiceReader;
-import org.cloudifysource.esc.driver.provisioning.CloudProvisioningException;
 import org.cloudifysource.esc.driver.provisioning.openstack.OpenStackQuantumClient;
+import org.cloudifysource.esc.driver.provisioning.openstack.OpenstackException;
+import org.cloudifysource.esc.driver.provisioning.openstack.OpenstackJsonSerializationException;
 import org.cloudifysource.esc.driver.provisioning.openstack.rest.SecurityGroup;
 import org.cloudifysource.quality.iTests.framework.utils.ServiceInstaller;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
@@ -59,28 +60,12 @@ public class OpenstackTest extends NewAbstractCloudTest {
         final Service service = ServiceReader.getServiceFromFile(new File(relativePath, "securityGroup-service.groovy"));
         AssertUtils.assertTrue("the service " + service.getName() + " is not running", output.contains(service.getName()));
 
-        // Assert security groups are created
-        // command = "connect " + restUrl + ";list-instances securityGroups";
-        // output = CommandTestUtils.runCommandAndWait(command);
-        // Pattern p = new Pattern("([0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3})");
-        // Matcher matcher = p.matcher(output);
-        // AssertUtils.assertTrue("Service public address not found", matcher.find());
-        // String serviceInstanceIp = matcher.group(1);
-
         this.assertSecurityGroups();
 
         installer.uninstall();
     }
 
-    // @Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
-    private void assertSecurityGroups() throws CloudProvisioningException {
-
-        // try {
-        // service.init("openstacktest");
-        // service.setMachinePrefix("victor--openstacktest");
-        // } catch (Exception e) {
-        // e.printStackTrace();
-        // }
+    private void assertSecurityGroups() throws OpenstackException {
 
         final OpenStackQuantumClient quantum = this.createQuantumClient();
 
@@ -137,7 +122,7 @@ public class OpenstackTest extends NewAbstractCloudTest {
         return null;
     }
 
-    private OpenStackQuantumClient createQuantumClient() {
+    private OpenStackQuantumClient createQuantumClient() throws OpenstackJsonSerializationException {
         final String imageId = this.getCloudProperty(OpenstackService.IMAGE_PROP);
         final String region = imageId.split("/")[0];
         final OpenStackQuantumClient client = new OpenStackQuantumClient(

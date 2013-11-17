@@ -79,8 +79,7 @@ public class InstallServiceOnCloudUsingRestClientTest extends NewAbstractCloudTe
 		request.setDebugAll(false);
 		request.setSelfHealing(true);
 		request.setServiceFileName("simple-service.groovy");
-		//set timeout
-		request.setTimeoutInMillis(INSTALL_TIMEOUT_MILLIS);
+		
 		
 		//make install service API call
 		client.installService(DEFAULT_APPLICATION_NAME, SERVICE_NAME, request);

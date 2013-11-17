@@ -8,3 +8,4 @@
 *.iml
 *.pem
 /transaction.log
+/.idea

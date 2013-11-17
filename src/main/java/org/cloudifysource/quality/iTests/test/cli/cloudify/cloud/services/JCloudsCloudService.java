@@ -57,7 +57,7 @@ public abstract class JCloudsCloudService extends AbstractCloudService {
 			@Override
 			protected void configure() {
 				bind(AWSEC2ReviseParsedImage.class).to(WindowsServerEC2ReviseParsedImage.class);
-                bind(VirtualGuestToNodeMetadata.class).to(VirtualGuestToReducedNodeMetaData.class);
+//                bind(VirtualGuestToNodeMetadata.class).to(VirtualGuestToReducedNodeMetaData.class);
 			}
 	
 		});

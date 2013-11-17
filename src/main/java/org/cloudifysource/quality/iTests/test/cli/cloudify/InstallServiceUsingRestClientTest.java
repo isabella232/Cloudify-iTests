@@ -68,8 +68,6 @@ public class InstallServiceUsingRestClientTest extends AbstractLocalCloudTest {
 		request.setDebugAll(false);
 		request.setSelfHealing(true);
 		request.setServiceFileName(SERVICE_FILE_NAME);
-		//set timeout
-		request.setTimeoutInMillis(INSTALL_TIMEOUT_MILLIS);
 		
 		//make install service API call
 		InstallServiceResponse installServiceRespone = client.installService(DEFAULT_APPLICATION_NAME, SERVICE_NAME, request);

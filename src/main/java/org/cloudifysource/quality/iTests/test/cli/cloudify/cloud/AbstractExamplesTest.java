@@ -95,6 +95,10 @@ public abstract class AbstractExamplesTest extends NewAbstractCloudTest {
         doTest(localGitAppsPath + "/redmine-puppet", null);
     }
 
+    protected void testHelloPuppet(String localGitAppsPath) throws Exception {
+        doTest(localGitAppsPath + "/hello-puppet", null);
+    }
+
     protected void testStorm(String localGitAppsPath) throws Exception {
         doTest(localGitAppsPath + "/storm", null);
     }

@@ -276,7 +276,7 @@
         <dependency>
             <groupId>iTests.framework</groupId>
             <artifactId>iTests-framework</artifactId>
-            <version>1.0.28-SNAPSHOT</version>
+            <version>1.0.27-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.littleshoot</groupId>
@@ -322,6 +322,13 @@
                     <version>${gsVersion}</version>
                     <scope>system</scope>
                     <systemPath>${cloudify.home}/lib/required/gs-openspaces.jar</systemPath>
+                </dependency>
+                <dependency>
+                    <groupId>org.apache.jclouds</groupId>
+                    <artifactId>softlayer-fixed</artifactId>
+                    <version>${jcloudsVersion}</version>
+                    <scope>system</scope>
+                    <systemPath>${cloudify.home}/lib/platform/esm/softlayer-fixed-1.6.2-incubating.jar</systemPath>
                 </dependency>
                 <dependency>
                     <groupId>com.gigaspaces</groupId>
@@ -381,13 +388,21 @@
 			</activation>
 			<dependencies>
                 <dependency>
+                    <groupId>org.apache.jclouds</groupId>
+                    <artifactId>softlayer-fixed</artifactId>
+                    <version>${jcloudsVersion}</version>
+                    <scope>system</scope>
+                    <systemPath>${cloudify.home}/lib/platform/esm/softlayer-fixed-1.6.2-incubating.jar</systemPath>
+                </dependency>
+                <dependency>
                     <groupId>org.cloudifysource</groupId>
                     <artifactId>version</artifactId>
                     <version>${cloudifyVersion}</version>
                     <scope>system</scope>
                     <systemPath>${cloudify.home}/lib/required/version.jar</systemPath>
                 </dependency>
-				<dependency>
+
+                <dependency>
 					<groupId>com.gigaspaces</groupId>
 					<artifactId>gs-openspaces</artifactId>
 					<version>${gsVersion}</version>

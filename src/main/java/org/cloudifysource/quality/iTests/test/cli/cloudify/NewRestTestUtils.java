@@ -34,7 +34,6 @@ import java.util.concurrent.TimeoutException;
 import junit.framework.Assert;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.time.DateUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpGet;
@@ -148,7 +147,6 @@ public class NewRestTestUtils {
 		request.setServiceFolderUploadKey(serviceFolderUploadKey);
 		final String serviceOverridesUploadKey = NewRestTestUtils.upload(restClient, serviceOverridesFile);
 		request.setServiceOverridesUploadKey(serviceOverridesUploadKey);
-		request.setTimeoutInMillis(DateUtils.MILLIS_PER_MINUTE * timeoutInMinutes);
 
 		// install service and wait
 		InstallServiceResponse installService = null;

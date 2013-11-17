@@ -89,8 +89,6 @@ public class InstallApplicationUsingRestClientTest extends AbstractLocalCloudTes
 		request.setDebugAll(false);
 		request.setSelfHealing(true);
 		request.setApplicationName(applicationName);
-		// set timeout
-		request.setTimeoutInMillis(INSTALL_TIMEOUT_MILLIS);
 
 		// make install service API call
 		client.installApplication(applicationName, request);

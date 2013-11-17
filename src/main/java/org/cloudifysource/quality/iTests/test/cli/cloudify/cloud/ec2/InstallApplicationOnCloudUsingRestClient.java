@@ -89,9 +89,6 @@ public class InstallApplicationOnCloudUsingRestClient extends
 		request.setDebugAll(false);
 		request.setSelfHealing(true);
 		request.setApplicationName(APPLICATION_NAME);
-		//set timeout
-		request.setTimeoutInMillis(INSTALL_TIMEOUT_MILLIS);
-		
 		//make install service API call
 		client.installApplication(APPLICATION_NAME, request);
 		//wait for the application to reach STARTED state.

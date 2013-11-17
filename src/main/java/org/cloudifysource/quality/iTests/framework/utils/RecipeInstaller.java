@@ -23,7 +23,6 @@ import org.cloudifysource.dsl.rest.response.InstallApplicationResponse;
 import org.cloudifysource.dsl.rest.response.InstallServiceResponse;
 import org.cloudifysource.dsl.rest.response.ServiceDescription;
 import org.cloudifysource.dsl.rest.response.UploadResponse;
-import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CloudTestUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.security.SecurityConstants;
@@ -394,8 +393,6 @@ public abstract class RecipeInstaller {
             request.setDebugAll(this.isDebugAll());
             request.setSelfHealing(this.isDisableSelfHealing());
 
-            // set timeout
-            request.setTimeoutInMillis(AbstractTestSupport.EXTENDED_TEST_TIMEOUT);
             // make install service API call
             installServiceResponse = client.installService("default", recipeName, request);
         } else if (this instanceof ApplicationInstaller) {
@@ -408,8 +405,6 @@ public abstract class RecipeInstaller {
             request.setDebugAll(this.isDebugAll());
             request.setSelfHealing(this.isDisableSelfHealing());
             request.setApplicationName(recipeName);
-            // set timeout
-            request.setTimeoutInMillis(TimeUnit.MINUTES.toMillis(this.getTimeoutInMinutes()));
 
             // make install service API call
             installApplicationResponse = client.installApplication(recipeName, request);

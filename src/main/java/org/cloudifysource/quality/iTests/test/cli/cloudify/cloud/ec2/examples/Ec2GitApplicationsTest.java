@@ -80,6 +80,11 @@ public class Ec2GitApplicationsTest extends AbstractExamplesTest {
         super.testRedminePuppet(localGitRepoPath + "/apps");
     }
 
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
+    public void testHelloPuppet() throws Exception {
+        super.testHelloPuppet(localGitRepoPath + "/apps");
+    }
+
     // requires a non existing template
     @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = false)
     public void testStorm() throws Exception {

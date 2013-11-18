@@ -375,6 +375,13 @@
                 </dependency>
                 <dependency>
                     <groupId>org.cloudifysource</groupId>
+                    <artifactId>esc-config</artifactId>
+                    <version>${cloudifyVersion}</version>
+                    <scope>system</scope>
+                    <systemPath>${cloudify.home}/lib/platform/esm/esc-config.jar</systemPath>
+                </dependency>
+                <dependency>
+                    <groupId>org.cloudifysource</groupId>
                     <artifactId>USM</artifactId>
                     <version>${cloudifyVersion}</version>
                     <scope>system</scope>
@@ -452,6 +459,13 @@
 					<scope>system</scope>
 					<systemPath>${cloudify.home}/lib/platform/esm/esc.jar</systemPath>
 				</dependency>
+                <dependency>
+                    <groupId>org.cloudifysource</groupId>
+                    <artifactId>esc-config</artifactId>
+                    <version>${cloudifyVersion}</version>
+                    <scope>system</scope>
+                    <systemPath>${cloudify.home}/lib/platform/esm/esc-config.jar</systemPath>
+                </dependency>
 				<dependency>
 					<groupId>org.cloudifysource</groupId>
 					<artifactId>USM</artifactId>

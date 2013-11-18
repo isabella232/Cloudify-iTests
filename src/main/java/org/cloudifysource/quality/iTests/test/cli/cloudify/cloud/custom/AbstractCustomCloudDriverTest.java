@@ -15,6 +15,9 @@ public abstract class AbstractCustomCloudDriverTest extends NewAbstractCloudTest
 	
 	final private static String SIMPLE_SERVICE_PATH = "src/main/resources/apps/USM/usm/simple";
 	final protected String SIMPLE_SERVICE_NAME = "simple";
+	
+	final private static String SIMPLE_NETWORK_SERVICE_PATH = "src/main/resources/custom-network-drivers/services/simpleNetwork";
+	final protected String SIMPLE_NETWORK_SERVICE_NAME = "simpleNetwork";
 
 	@Override
 	protected String getCloudName() {
@@ -41,5 +44,10 @@ public abstract class AbstractCustomCloudDriverTest extends NewAbstractCloudTest
         final String cloudFolder = getService().getPathToCloudFolder();
         File libFolder = new File(cloudFolder, "lib");
         libFolder.mkdir();
+	}
+
+	public void installNetworkService() throws IOException, InterruptedException {
+		installServiceAndWait(SIMPLE_NETWORK_SERVICE_PATH, SIMPLE_NETWORK_SERVICE_NAME);
+		
 	}
 }

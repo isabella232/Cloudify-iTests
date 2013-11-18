@@ -82,6 +82,11 @@ public class Ec2GitServicesTest extends AbstractServicesTest {
         testService("mysql");
     }
 
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
+    public void testChefMysql() throws Exception{
+        testService("chef-mysql");
+    }
+
     //not our recipe. fails.
     @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = false)
     public void testNginx() throws Exception{

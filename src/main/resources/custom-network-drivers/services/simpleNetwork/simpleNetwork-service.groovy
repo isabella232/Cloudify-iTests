@@ -35,7 +35,7 @@ service {
 	customCommands ([
 		"cmd1" : { println "This is the cmd1 custom command"},
 		"cmd3" : { throw new Exception("This is an error test")},
-		"is" : {return context.getNetwork().allocateFloatingIP("lalala")}
+		"is" : {return context.getNetwork().allocateFloatingIP("poolName", null)}
 	])
 
 	

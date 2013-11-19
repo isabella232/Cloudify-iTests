@@ -1,9 +1,10 @@
 package org.cloudifysource.quality.iTests.test.esm.stateless.manual.memory;
 
+import iTests.framework.utils.AssertUtils;
+import iTests.framework.utils.AssertUtils.RepetitiveConditionProvider;
 import iTests.framework.utils.DeploymentUtils;
 import iTests.framework.utils.GsmTestUtils;
 import iTests.framework.utils.LogUtils;
-import iTests.framework.utils.AssertUtils.RepetitiveConditionProvider;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,6 +20,7 @@ import org.openspaces.admin.pu.ProcessingUnit;
 import org.openspaces.admin.pu.elastic.ElasticStatelessProcessingUnitDeployment;
 import org.openspaces.admin.pu.elastic.config.ManualCapacityScaleConfigurer;
 import org.openspaces.core.util.MemoryUnit;
+import org.openspaces.grid.gsm.machines.plugins.exceptions.ElasticMachineProvisioningException;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
@@ -31,7 +33,8 @@ import com.gigaspaces.log.LogEntryMatchers;
 
 public class DedicatedStatelessManualFailoverAwareTest extends AbstractFromXenToByonGSMTest {
 
-    private String EXPECTED_ESM_LOG_STATEMENT ="failover-aware-provisioning-driver";
+    private static final String UNEXPECTED_ESM_LOG_STATEMENT = ElasticMachineProvisioningException.class.getName();
+	private static final String EXPECTED_ESM_LOG_STATEMENT ="failover-aware-provisioning-driver";
 
 	@BeforeMethod
     public void beforeTest() {
@@ -70,6 +73,7 @@ public class DedicatedStatelessManualFailoverAwareTest extends AbstractFromXenTo
         repetitiveAssertNumberOfGSAsRemoved(1, OPERATION_TIMEOUT);
         repetitiveAssertFailoverAware();
         GsmTestUtils.waitForScaleToCompleteIgnoreCpuSla(pu, 1, OPERATION_TIMEOUT);
+        repetitiveAssertNoStartMachineFailures();
         assertUndeployAndWait(pu);        
     }
 
@@ -102,7 +106,7 @@ public class DedicatedStatelessManualFailoverAwareTest extends AbstractFromXenTo
     			"org.cloudifysource.quality.iTests.FailoverAwareByonProvisioningDriver", //new class
     			"location-aware-provisioning-byon", "2.1-SNAPSHOT"); //jar
     }
-
+    
     private void repetitiveAssertFailoverAware() {
     	
     	final ElasticServiceManager esm = admin.getElasticServiceManagers().waitForAtLeastOne(OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
@@ -116,6 +120,23 @@ public class DedicatedStatelessManualFailoverAwareTest extends AbstractFromXenTo
                 final int count = logEntries.logEntries().size();
                 LogUtils.log("Exepcted at least one "+ EXPECTED_ESM_LOG_STATEMENT + " log entries. Actual :" + count);
                 return count > 0;
+            }
+        } , OPERATION_TIMEOUT);
+    }
+    
+    private void repetitiveAssertNoStartMachineFailures() {
+    	
+    	final ElasticServiceManager esm = admin.getElasticServiceManagers().waitForAtLeastOne(OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
+        LogUtils.log("Checking there is no "+ UNEXPECTED_ESM_LOG_STATEMENT  + " log entry before undeploying PU");
+        final LogEntryMatcher logMatcher = LogEntryMatchers.containsString(EXPECTED_ESM_LOG_STATEMENT);
+        AssertUtils.repetitiveAssertConditionHolds("Unexpected " + UNEXPECTED_ESM_LOG_STATEMENT +" log", new RepetitiveConditionProvider() {
+            
+            @Override
+            public boolean getCondition() {
+                final LogEntries logEntries = esm.logEntries(logMatcher);
+                final int count = logEntries.logEntries().size();
+                LogUtils.log("Exepcted no "+ UNEXPECTED_ESM_LOG_STATEMENT + " log entries. Actual :" + count);
+                return count == 0;
             }
         } , OPERATION_TIMEOUT);
     }

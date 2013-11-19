@@ -1,13 +1,18 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.openstack;
 
-import iTests.framework.utils.AssertUtils;
-
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import junit.framework.Assert;
+
+import org.apache.commons.lang3.StringUtils;
 import org.cloudifysource.domain.Service;
 import org.cloudifysource.dsl.internal.ServiceReader;
-import org.cloudifysource.esc.driver.provisioning.openstack.OpenStackQuantumClient;
+import org.cloudifysource.dsl.utils.ServiceUtils;
+import org.cloudifysource.esc.driver.provisioning.openstack.OpenStackNetworkClient;
 import org.cloudifysource.esc.driver.provisioning.openstack.OpenstackException;
 import org.cloudifysource.esc.driver.provisioning.openstack.OpenstackJsonSerializationException;
 import org.cloudifysource.esc.driver.provisioning.openstack.rest.SecurityGroup;
@@ -22,6 +27,7 @@ import org.testng.annotations.Test;
 
 public class OpenstackTest extends NewAbstractCloudTest {
 
+    private static final String IP_REGEX = "([1-9][0-9]{0,2}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3})";
     private OpenstackService service;
 
     @Override
@@ -42,7 +48,7 @@ public class OpenstackTest extends NewAbstractCloudTest {
     }
 
     @Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
-    public void testSampleSecurityGroupApplication() throws Exception {
+    public void testInstallSampleSecurityGroupService() throws Exception {
 
         final String relativePath = "src/main/resources/apps/USM/usm/networks/openstack/secgroups";
         final String servicePath = CommandTestUtils.getPath(relativePath);
@@ -58,7 +64,7 @@ public class OpenstackTest extends NewAbstractCloudTest {
         String command = "connect " + restUrl + ";list-services";
         String output = CommandTestUtils.runCommandAndWait(command);
         final Service service = ServiceReader.getServiceFromFile(new File(relativePath, "securityGroup-service.groovy"));
-        AssertUtils.assertTrue("the service " + service.getName() + " is not running", output.contains(service.getName()));
+        assertTrue("the service " + service.getName() + " is not running", output.contains(service.getName()));
 
         this.assertSecurityGroups();
 
@@ -67,50 +73,45 @@ public class OpenstackTest extends NewAbstractCloudTest {
 
     private void assertSecurityGroups() throws OpenstackException {
 
-        final OpenStackQuantumClient quantum = this.createQuantumClient();
+        final OpenStackNetworkClient quantum = this.createQuantumClient();
 
         final List<SecurityGroup> securityGroups = quantum.getSecurityGroupsByPrefix(this.service.getMachinePrefix());
-        AssertUtils.assertFalse("No security groups found", securityGroups.isEmpty());
+        assertTrue("No security groups found", !securityGroups.isEmpty());
         // Expect 6 secgroups: management, agent, cluster, application, service and another one for service's public rules.
-        AssertUtils.assertEquals(6, securityGroups.size());
+        assertEquals(6, securityGroups.size());
 
         final SecurityGroup management = this.retrieveSecgroup(securityGroups, "management");
-        AssertUtils.assertNotNull("No management security group found", management);
-        AssertUtils.assertNotNull("No rules found in management security group", management.getSecurityGroupRules());
+        assertNotNull("No management security group found", management);
+        assertNotNull("No rules found in management security group", management.getSecurityGroupRules());
         // > 2 because there is 2 default egress rules
-        AssertUtils.assertTrue("There should be rules in management security group", management.getSecurityGroupRules().length > 2);
+        assertTrue("There should be rules in management security group", management.getSecurityGroupRules().length > 2);
 
         final SecurityGroup agent = this.retrieveSecgroup(securityGroups, "agent");
-        AssertUtils.assertNotNull("No agent security group found", agent);
-        AssertUtils.assertNotNull("No rules found in agent security group", agent.getSecurityGroupRules());
+        assertNotNull("No agent security group found", agent);
+        assertNotNull("No rules found in agent security group", agent.getSecurityGroupRules());
         // > 2 because there is 2 default egress rules
-        AssertUtils.assertTrue("There should be rules in agent security group", agent.getSecurityGroupRules().length > 2);
+        assertTrue("There should be rules in agent security group", agent.getSecurityGroupRules().length > 2);
 
         final SecurityGroup cluster = this.retrieveSecgroup(securityGroups, "cluster");
-        AssertUtils.assertNotNull("No cluster security group found", cluster);
-        AssertUtils.assertNotNull("No rules found in cluster security group", cluster.getSecurityGroupRules());
-        // There is 2 egress rules ipv4 and ipv6 open to all
-        AssertUtils.assertTrue("There should be 2 rules in cluster security group (got " + cluster.getSecurityGroupRules().length + ")"
+        assertNotNull("No cluster security group found", cluster);
+        assertNotNull("No rules found in cluster security group", cluster.getSecurityGroupRules());
+        // There is 2 egress rules ipv4 and ipv6
+        assertTrue("There should be 2 rules in cluster security group (got " + cluster.getSecurityGroupRules().length + ")"
                 , cluster.getSecurityGroupRules() == null || cluster.getSecurityGroupRules().length == 2);
 
         final SecurityGroup appli = this.retrieveSecgroup(securityGroups, "default");
-        AssertUtils.assertNotNull("No application security group found", appli);
-        AssertUtils.assertNotNull("No rules found in application security group", appli.getSecurityGroupRules());
-        // There is 2 egress rules ipv4 and ipv6 open to all
-        AssertUtils.assertEquals("There should 2 rules in application security group (got " + appli.getSecurityGroupRules().length + ")"
+        assertNotNull("No application security group found", appli);
+        assertNotNull("No rules found in application security group", appli.getSecurityGroupRules());
+        // There is 2 egress rules ipv4 and ipv6
+        assertEquals("There should 2 rules in application security group (got " + appli.getSecurityGroupRules().length + ")"
                 , 2, appli.getSecurityGroupRules().length);
 
         final SecurityGroup serviceSecgroup = this.retrieveSecgroup(securityGroups, "securityGroups");
-        AssertUtils.assertNotNull("No service security group found", serviceSecgroup);
-        AssertUtils.assertNotNull("No rules found in service security group", serviceSecgroup.getSecurityGroupRules());
-        AssertUtils.assertEquals("There should 7 rules in application security group (got " + serviceSecgroup.getSecurityGroupRules().length + ")"
-                , 7, serviceSecgroup.getSecurityGroupRules().length);
-
-        final SecurityGroup servicePublic = this.retrieveSecgroup(securityGroups, "securityGroups-public");
-        AssertUtils.assertNotNull("No service security group found", servicePublic);
-        AssertUtils.assertNotNull("No rules found in service security group", servicePublic.getSecurityGroupRules());
-        AssertUtils.assertEquals("There should 3 rules in application security group (got " + servicePublic.getSecurityGroupRules().length + ")"
-                , 3, servicePublic.getSecurityGroupRules().length);
+        assertNotNull("No service security group found", serviceSecgroup);
+        assertNotNull("No rules found in service security group", serviceSecgroup.getSecurityGroupRules());
+        // There is 2 egress rules, port 22 for the management network and 6 others declared in the service DSL
+        assertEquals("There should 9 rules in application security group (got " + serviceSecgroup.getSecurityGroupRules().length + ")"
+                , 9, serviceSecgroup.getSecurityGroupRules().length);
     }
 
     private SecurityGroup retrieveSecgroup(List<SecurityGroup> securityGroups, String suffix) {
@@ -122,16 +123,72 @@ public class OpenstackTest extends NewAbstractCloudTest {
         return null;
     }
 
-    private OpenStackQuantumClient createQuantumClient() throws OpenstackJsonSerializationException {
+    @Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
+    public void testFloatingIp() throws Exception {
+        String serviceName = "floatingips";
+
+        String relativePath = "src/main/resources/apps/USM/usm/networks/openstack/floatingips";
+        String servicePath = CommandTestUtils.getPath(relativePath);
+        this.installServiceAndWait(servicePath, serviceName);
+
+        // Assert that the service is installed
+        String command = "connect " + getRestUrl() + ";list-services";
+        String output = CommandTestUtils.runCommandAndWait(command);
+        final Service service = ServiceReader.getServiceFromFile(new File(relativePath, "floatingips-service.groovy"));
+        assertTrue("the service " + service.getName() + " is not running", output.contains(service.getName()));
+
+        // Get the public ip
+        output = this.invoke(serviceName, "getPublicAddress");
+        Pattern compile = Pattern.compile(".*Result: " + IP_REGEX);
+        Matcher matcher = compile.matcher(output);
+        assertTrue("Cannot retrieve public ip address", matcher.find());
+        assertNotNull("Could not parse public ip address", matcher.group(1));
+        String publicAddress = matcher.group(1);
+        assertTrue("Port on " + publicAddress + ":22 should be occupied ", ServiceUtils.isPortOccupied(publicAddress, 22));
+
+        // Assert unassignment and release of a floating ip
+        output = this.invoke(serviceName, "releaseFloatingIp");
+        sleep(20000L);
+        assertTrue("Port on " + publicAddress + ":22 should be free ", ServiceUtils.isPortFree(publicAddress, 22));
+
+        // Assert allocate and assignment of a floating ip
+        output = this.invoke(serviceName, "assignFloatingIp");
+        compile = Pattern.compile(".*Result: " + IP_REGEX);
+        matcher = compile.matcher(output);
+        Assert.assertTrue("Cannot retrieve the floating ip", matcher.find());
+        String newFloatingIp = matcher.group(1);
+        assertNotNull("Could not parse the floating ip", newFloatingIp);
+        sleep(10000L);
+        assertTrue("Port on " + newFloatingIp + ":22 should be occupied ", ServiceUtils.isPortOccupied(newFloatingIp, 22));
+
+        // Assert application nic existance
+        output = this.invoke(serviceName, "getApplicationNetworkIp");
+        compile = Pattern.compile(".*Result: " + IP_REGEX);
+        matcher = compile.matcher(output);
+        assertTrue("Cannot retrieve application ip address", matcher.find());
+        assertNotNull("Could not parse application ip address", matcher.group(1));
+        this.uninstallServiceAndWait(serviceName);
+    }
+
+    private String invoke(String serviceName, String customCommand) throws IOException, InterruptedException {
+        String command = String.format("connect %s; invoke %s %s", getRestUrl(), serviceName, customCommand);
+        String output = CommandTestUtils.runCommandAndWait(command);
+        return output;
+
+    }
+
+    private OpenStackNetworkClient createQuantumClient() throws OpenstackJsonSerializationException {
         final String imageId = this.getCloudProperty(OpenstackService.IMAGE_PROP);
         final String region = imageId.split("/")[0];
-        final OpenStackQuantumClient client = new OpenStackQuantumClient(
+        String networkServiceName = this.getCloudProperty(OpenstackService.NETWORK_SERVICE_PROP);
+        networkServiceName = StringUtils.isEmpty(networkServiceName) ? null : networkServiceName;
+        final OpenStackNetworkClient client = new OpenStackNetworkClient(
                 this.getCloudProperty(OpenstackService.ENDPOINT_PROP),
                 this.getCloudProperty(OpenstackService.USER_PROP),
                 this.getCloudProperty(OpenstackService.API_KEY_PROP),
                 this.getCloudProperty(OpenstackService.TENANT_PROP),
                 region,
-                "v2.0");
+                networkServiceName);
         return client;
     }
 

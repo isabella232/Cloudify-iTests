@@ -134,17 +134,18 @@ public class CloudBootstrapper extends Bootstrapper {
 				.append(cloudOverridesFile.getAbsolutePath().replace("\\", "/"));
 		}
 
+        if (skipValidation) {
+            builder.append("-skip-validation ");
+        }
+
         if (StringUtils.isNotBlank(useExistingFilePath)) {
             builder.append("-use-existing-from-file ").append(useExistingFilePath);
         }
 
         if (useExisting) {
-            builder.append("-use-existing");
+            builder.append("-use-existing ");
         }
 
-        if (skipValidation) {
-            builder.append("-skip-validation");
-        }
 
 		return builder.toString();
 	}

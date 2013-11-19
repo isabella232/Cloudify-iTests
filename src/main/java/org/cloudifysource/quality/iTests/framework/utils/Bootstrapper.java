@@ -350,7 +350,7 @@ public abstract class Bootstrapper {
 		}
         if (restUrl != null) {
             try {
-                CloudTestUtils.dumpMachines(restUrl, SecurityConstants.USER_PWD_ALL_ROLES, SecurityConstants.USER_PWD_ALL_ROLES);
+                CloudTestUtils.dumpMachinesNewRestAPI(restUrl, SecurityConstants.USER_PWD_ALL_ROLES, SecurityConstants.USER_PWD_ALL_ROLES);
             } catch (Exception e) {
                 LogUtils.log("Failed downloading logs : " + e.getMessage());
             }
@@ -368,7 +368,7 @@ public abstract class Bootstrapper {
 		}
         if (restUrl != null) {
             try {
-                CloudTestUtils.dumpMachines(restUrl, SecurityConstants.USER_PWD_ALL_ROLES, SecurityConstants.USER_PWD_ALL_ROLES);
+                CloudTestUtils.dumpMachinesNewRestAPI(restUrl, SecurityConstants.USER_PWD_ALL_ROLES, SecurityConstants.USER_PWD_ALL_ROLES);
             } catch (Exception e) {
                 LogUtils.log("Failed downloading logs : " + e.getMessage());
             }

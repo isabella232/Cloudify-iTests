@@ -267,14 +267,9 @@ public abstract class AbstractCloudService implements CloudService {
         String[] restUrls = getRestUrls();
 
         try {
-            String url = null;
             if (restUrls != null) {
-
-                try {
-                    url = restUrls[0] + "/service/dump/machines/?fileSizeLimit=50000000";
-                } catch (Exception e) {
-                    LogUtils.log("Failed to create dump for this url - " + url, e);
-                }
+            	
+            	CloudTestUtils.dumpMachinesNewRestAPI(restUrls[0]);
 
                 if (!bootstrapper.isForce()) {
                     // this is to connect to the cloud before tearing down.

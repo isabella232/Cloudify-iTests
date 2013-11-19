@@ -1,9 +1,11 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud;
 
-import com.gigaspaces.internal.utils.StringUtils;
 import iTests.framework.utils.AssertUtils;
 import iTests.framework.utils.LogUtils;
 import iTests.framework.utils.ScriptUtils;
+
+import java.io.File;
+import java.io.IOException;
 
 import org.cloudifysource.domain.cloud.compute.ComputeTemplate;
 import org.cloudifysource.dsl.internal.CloudifyConstants;
@@ -22,8 +24,7 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 
-import java.io.File;
-import java.io.IOException;
+import com.gigaspaces.internal.utils.StringUtils;
 
 public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 
@@ -395,21 +396,16 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
         }
 
         final String restUrl = getRestUrl();
-        String url = null;
-        try {
-            String cloudifyUser = null;
-            String cloudifyPassword = null;
+        String cloudifyUser = null;
+        String cloudifyPassword = null;
 
-            url = restUrl + "/service/dump/machines/?fileSizeLimit=50000000";
-            if (cloudService.getBootstrapper().isSecured()) {
-                cloudifyUser = SecurityConstants.USER_PWD_ALL_ROLES;
-                cloudifyPassword = SecurityConstants.USER_PWD_ALL_ROLES;
-            }
-            CloudTestUtils.dumpMachines(restUrl, cloudifyUser, cloudifyPassword);
-
-        } catch (final Exception e) {
-            LogUtils.log("Failed to create dump for this url - " + url, e);
+        if (cloudService.getBootstrapper().isSecured()) {
+        	cloudifyUser = SecurityConstants.USER_PWD_ALL_ROLES;
+        	cloudifyPassword = SecurityConstants.USER_PWD_ALL_ROLES;
         }
+        CloudTestUtils.dumpMachinesNewRestAPI(restUrl, cloudifyUser, cloudifyPassword);
+
+        
     }
 
     protected File getPemFile() {

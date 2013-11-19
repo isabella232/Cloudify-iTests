@@ -20,10 +20,13 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -50,6 +53,9 @@ import org.cloudifysource.dsl.rest.response.ApplicationDescription;
 import org.cloudifysource.dsl.rest.response.ControllerDetails;
 import org.cloudifysource.dsl.rest.response.DeploymentEvent;
 import org.cloudifysource.dsl.rest.response.DeploymentEvents;
+import org.cloudifysource.dsl.rest.response.GetMachineDumpFileResponse;
+import org.cloudifysource.dsl.rest.response.GetMachinesDumpFileResponse;
+import org.cloudifysource.dsl.rest.response.GetPUDumpFileResponse;
 import org.cloudifysource.dsl.rest.response.InstallApplicationResponse;
 import org.cloudifysource.dsl.rest.response.InstallServiceResponse;
 import org.cloudifysource.dsl.rest.response.ServiceDescription;
@@ -246,6 +252,124 @@ public class NewRestTestUtils {
 		return response;
 	}
 	
+	public static File getPUDumpFile(final String restUrl, final long fileZiseLimit, final String errMessageContain) 
+			throws IOException {
+
+		// connect to the REST
+		RestClient restClient = createAndConnect(restUrl);
+
+		// get dump data using REST API
+		GetPUDumpFileResponse response = null;
+		try {
+			response = restClient.getPUDumpFile(fileZiseLimit);
+			if (errMessageContain != null) {
+				Assert.fail("RestClientException expected [" + errMessageContain + "]");
+			}
+			// write the result data to a temporary file.
+			File file = File.createTempFile("dump", ".zip");
+			FileUtils.writeByteArrayToFile(file , response.getDumpData());
+			return file;
+		} catch (RestClientException e) {
+			if (errMessageContain == null) {
+				Assert.fail("Failed to get PU dump - " + e.getMessage());
+			} else {
+				String message = e.getMessageFormattedText();
+				Assert.assertTrue("error messgae [" + message + "] does not contain " + errMessageContain, 
+						message.contains(errMessageContain));
+			}
+		}
+		return null;
+	}
+	
+	public static File getMachineDumpFile(final String restUrl, final String ip, 
+			final String processors, final long fileZiseLimit, final String errMessageContain) 
+					throws IOException {
+		// connect to the REST
+		RestClient restClient = createAndConnect(restUrl);
+
+		// get dump data using REST API
+		GetMachineDumpFileResponse response = null;
+		try {
+			response = restClient.getMachineDumpFile(ip, fileZiseLimit, processors);
+			if (errMessageContain != null) {
+				Assert.fail("RestClientException expected [" + errMessageContain + "]");
+			}
+			// write the result data to a temporary file.
+			File file = File.createTempFile("dump", ".zip");
+			FileUtils.writeByteArrayToFile(file , response.getDumpBytes());
+			return file;
+		} catch (RestClientException e) {
+			if (errMessageContain == null) {
+				Assert.fail("Failed to get machine dump - " + e.getMessage());
+			} else {
+				String message = e.getMessageFormattedText();
+				Assert.assertTrue("error messgae [" + message + "] does not contain " + errMessageContain, 
+						message.contains(errMessageContain));
+			}
+		}
+		return null;
+	}
+
+
+	public static Map<String, File> getMachinesDumpFile(final String restUrl, final long fileZiseLimit) 
+			throws IOException {
+		return getMachinesDumpFile(restUrl, "", "", null, fileZiseLimit, null);
+	}
+
+	public static Map<String, File> getMachinesDumpFile(final String restUrl) 
+			throws IOException {
+		return getMachinesDumpFile(restUrl, "", "", null, 0, null);
+	}
+
+	public static Map<String, File> getMachinesDumpFile(final String restUrl,
+			final String processors, final long fileZiseLimit, final String errMessageContain) 
+			throws IOException {
+		return getMachinesDumpFile(restUrl, "", "", processors, fileZiseLimit, errMessageContain);
+	}
+	
+	public static Map<String, File> getMachinesDumpFile(final String restUrl, 
+			final String username, final String password) 
+			throws IOException {
+		return getMachinesDumpFile(restUrl, username, password, null, 0, null);
+	}
+
+	public static Map<String, File> getMachinesDumpFile(final String restUrl, 
+			final String username, final String password,
+			final String processors, final long fileZiseLimit, final String errMessageContain) 
+					throws IOException {
+		// connect to the REST
+		RestClient restClient = createAndConnect(restUrl, username, password);
+
+		// get dump data using REST API
+		GetMachinesDumpFileResponse response = null;
+		try {
+			response = restClient.getMachinesDumpFile(processors, fileZiseLimit);
+			if (errMessageContain != null) {
+				Assert.fail("RestClientException expected [" + errMessageContain + "]");
+			}
+			// write the result data to a temporary file.
+			Map<String, byte[]> dumpBytesPerIP = response.getDumpBytesPerIP();
+			Map<String, File> dumpFilesPerIP = new HashMap<String, File>(dumpBytesPerIP.size());
+			for (Entry<String, byte[]> entry : dumpBytesPerIP.entrySet()) {
+				File file = File.createTempFile("dump", ".zip");
+				file.deleteOnExit();
+				FileUtils.writeByteArrayToFile(file , entry.getValue());
+				dumpFilesPerIP.put(entry.getKey(), file);
+			}
+			return dumpFilesPerIP;
+		} catch (RestClientException e) {
+			if (errMessageContain == null) {
+				Assert.fail("Failed to get machines dump - " + e.getMessage());
+			} else {
+				String message = e.getMessageFormattedText();
+				Assert.assertTrue("error messgae [" + message + "] does not contain " + errMessageContain, 
+						message.contains(errMessageContain));
+			}
+		}
+		return null;
+	}
+	
+	
 	private static void waitForManagersToShutDown(final ControllerDetails[] managers, final int port, 
 			final long timeoutMinutes) throws InterruptedException, TimeoutException, CLIException {
 		final Set<ControllerDetails> managersStillUp = new HashSet<ControllerDetails>();
@@ -397,22 +521,38 @@ public class NewRestTestUtils {
 		}
 	}
 
+	public static RestClient createAndConnect(final String restUrl, final String username, final String password) {
+		RestClient restClient = create(restUrl, username, password);
+		connect(restClient);
+		return restClient;
+	}
+	
 	public static RestClient createAndConnect(final String restUrl) {
+		RestClient restClient = create(restUrl, "", "");
+		connect(restClient);
+		return restClient;
+	}
+	
+	public static RestClient create(final String restUrl, final String username, final String password) {
 		RestClient restClient = null;
 		try {
 			final String apiVersion = PlatformVersion.getVersion();
-			restClient = new RestClient(new URL(restUrl), "", "", apiVersion);
+			restClient = new RestClient(new URL(restUrl), username, password, apiVersion);
 		} catch (final Exception e) {
 			Assert.fail("failed to create rest client with url " + restUrl + ", error message: " + e.getMessage());
 		}
+		return restClient;
+	}
+
+	
+	public static void connect(final RestClient restClient) {
 		try {
 			restClient.connect();
 		} catch (final RestClientException e) {
 			Assert.fail("failed to connect: " + e.getMessageFormattedText());
 		}
-		return restClient;
 	}
-
+	
 	static String upload(final RestClient restClient, final File toUploadFile) {
 		if (toUploadFile == null) {
 			return null;

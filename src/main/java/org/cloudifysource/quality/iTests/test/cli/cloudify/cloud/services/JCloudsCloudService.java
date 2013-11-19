@@ -174,9 +174,9 @@ public abstract class JCloudsCloudService extends AbstractCloudService {
                             String publicAddress = ((NodeMetadata) leakedNode).getPublicAddresses().iterator().next();
                             String managerIp = IPUtils.getSafeIpAddress(publicAddress) + ":" + DEFAULT_REST_PORT;
                             if (getBootstrapper().isSecured()) {
-                                CloudTestUtils.dumpMachines("https://" + managerIp, SecurityConstants.USER_PWD_ALL_ROLES, SecurityConstants.USER_PWD_ALL_ROLES);
+                                CloudTestUtils.dumpMachinesNewRestAPI("https://" + managerIp, SecurityConstants.USER_PWD_ALL_ROLES, SecurityConstants.USER_PWD_ALL_ROLES);
                             } else {
-                                CloudTestUtils.dumpMachines("http://" + managerIp, null, null);
+                                CloudTestUtils.dumpMachinesNewRestAPI("http://" + managerIp, null, null);
                             }
                             LogUtils.log("Leaked management machine logs dumped successfully");
                         } catch (Exception e) {

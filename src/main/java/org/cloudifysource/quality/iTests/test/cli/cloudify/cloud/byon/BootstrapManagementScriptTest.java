@@ -137,11 +137,12 @@ public class BootstrapManagementScriptTest {
         EnvironmentFileBuilder environmentFileBuilder = new EnvironmentFileBuilder(ScriptLanguages.LINUX_SHELL,
                 new HashMap<String, String>());
 
+        String newCloudifyURL = byonCloudService.replaceCloudifyURL();
+
         environmentFileBuilder.exportVar("LUS_IP_ADDRESS", "127.0.0.1:" + OpenspacesConstants.DEFAULT_LUS_PORT);
         environmentFileBuilder.exportVar("GSA_MODE", mode);
         environmentFileBuilder.exportVar("MACHINE_IP_ADDRESS", "127.0.0.1");
-        environmentFileBuilder.exportVar("GIGASPACES_LINK",
-                OpenspacesDomainUtils.getCloudDependentConfig().getDownloadUrl());
+        environmentFileBuilder.exportVar("GIGASPACES_LINK", newCloudifyURL);
         environmentFileBuilder.exportVar("WORKING_HOME_DIRECTORY", byonCloudService.getPathToCloudFolder());
         environmentFileBuilder.exportVar("CLOUD_FILE", new File(byonCloudService.getPathToCloudGroovy())
                 .getAbsolutePath());

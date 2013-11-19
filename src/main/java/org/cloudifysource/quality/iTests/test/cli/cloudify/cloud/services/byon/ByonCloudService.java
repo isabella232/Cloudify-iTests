@@ -206,7 +206,7 @@ public class ByonCloudService extends AbstractCloudService {
         IOUtils.replaceFile(standardCustomization, customCustomization);
     }
 
-	public void replaceCloudifyURL() throws IOException {
+	public String replaceCloudifyURL() throws IOException {
 		String buildNumber = PlatformVersion.getBuildNumber();
 		String version = PlatformVersion.getVersion();
 		String milestone = PlatformVersion.getMilestone();
@@ -228,6 +228,7 @@ public class ByonCloudService extends AbstractCloudService {
 		LogUtils.log("replacing cloudify url with : " + newCloudifyURL);
 		propsToReplace.put("cloudifyUrl \".+\"", "cloudifyUrl \"" + newCloudifyURL + '"');
 		this.getAdditionalPropsToReplace().putAll(propsToReplace);
+        return newCloudifyURL;
 	}
 	
 	//used for byon running on ec2

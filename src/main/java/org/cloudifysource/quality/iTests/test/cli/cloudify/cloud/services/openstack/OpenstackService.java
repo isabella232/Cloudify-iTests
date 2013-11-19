@@ -25,7 +25,8 @@ public class OpenstackService extends AbstractCloudService {
     public static final String KEYFILE_PROP = "keyFile";
     public static final String ENDPOINT_PROP = "openstackUrl";
     public static final String HARDWARE_PROP = "hardwareId";
-    public static final String IMAGE_PROP = "linuxImageId";
+    public static final String IMAGE_PROP = "imageId";
+    public static final String NETWORK_SERVICE_PROP = "networkServiceName";
 
     private final Properties properties = getCloudProperties(CREDENTIALS_PROPERTIES);
 
@@ -38,6 +39,7 @@ public class OpenstackService extends AbstractCloudService {
     private String endpoint = properties.getProperty("endpoint");
     private String hardwareId = properties.getProperty("hardwareId");
     private String imageId = properties.getProperty("imageId");
+    private String networkServiceName = properties.getProperty("networkServiceName");
 
     private boolean securityEnabled = false;
 
@@ -70,6 +72,9 @@ public class OpenstackService extends AbstractCloudService {
         getProperties().put(KEYPAIR_PROP, this.keyPair);
         getProperties().put(KEYFILE_PROP, sshKeyPemName);
         getProperties().put(ENDPOINT_PROP, this.endpoint);
+        if (networkServiceName != null) {
+            getProperties().put(NETWORK_SERVICE_PROP, this.networkServiceName);
+        }
 
         getProperties().put(HARDWARE_PROP, this.hardwareId);
         getProperties().put(IMAGE_PROP, this.imageId);

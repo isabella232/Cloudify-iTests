@@ -27,7 +27,6 @@ import org.cloudifysource.esc.installer.EnvironmentFileBuilder;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.byon.ByonCloudService;
 import org.cloudifysource.utilitydomain.openspaces.OpenspacesConstants;
-import org.cloudifysource.utilitydomain.openspaces.OpenspacesDomainUtils;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;

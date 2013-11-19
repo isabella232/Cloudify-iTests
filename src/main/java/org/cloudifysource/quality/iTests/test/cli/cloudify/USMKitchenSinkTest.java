@@ -15,11 +15,10 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
 import java.util.zip.ZipFile;
 
-import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.io.FileUtils;
 import org.cloudifysource.domain.Service;
 import org.cloudifysource.dsl.internal.CloudifyConstants;
 import org.cloudifysource.dsl.internal.DSLException;
@@ -29,7 +28,6 @@ import org.cloudifysource.dsl.utils.ServiceUtils;
 import org.cloudifysource.quality.iTests.framework.utils.ServiceInstaller;
 import org.cloudifysource.quality.iTests.framework.utils.usm.USMTestUtils;
 import org.cloudifysource.restclient.ErrorStatusException;
-import org.cloudifysource.restclient.GSRestClient;
 import org.cloudifysource.restclient.RestException;
 import org.cloudifysource.restclient.exceptions.RestClientException;
 import org.cloudifysource.shell.exceptions.CLIException;
@@ -63,7 +61,6 @@ import com.gigaspaces.log.ContinuousLogEntryMatcher;
 import com.gigaspaces.log.LogEntries;
 import com.gigaspaces.log.LogEntry;
 import com.gigaspaces.log.LogProcessType;
-import com.j_spaces.kernel.PlatformVersion;
 
 public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 
@@ -144,7 +141,7 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 
 		checkServiceType();
 
-		checkPUDump();
+		checkDump();
 
 		verifyUninstallManagementFails();
 
@@ -305,48 +302,25 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 				gsmZones.contains("localcloud"));
 	}
 
-	private void checkPUDump() throws IOException, RestException {
+	private void checkDump() throws IOException, RestException {
 
-		final String[] dumpUrls = {
-				"/service/dump/processing-units/",
-				"/service/dump/machine/"
-						+ admin.getMachines().getMachines()[0].getHostAddress()
-						+ "/" };
-		// Test dump processingUnit and machine according to ip
-		final GSRestClient rc = new GSRestClient("", "", new URL(
-				restUrl),
-				PlatformVersion.getVersionNumber());
-		for (final String dumpURI : dumpUrls) {
+		// Test dump processingUnit
+		File puDumpFile = NewRestTestUtils.getPUDumpFile(restUrl, 0, null);
+		Assert.assertTrue("The dump zip file doesn't contain any entries [" + puDumpFile.getAbsolutePath() + "]", 
+				new ZipFile(puDumpFile).size() != 0);
 
-			final String encodedResult = (String) rc.get(dumpURI);
-			LogUtils.log("Machine dump downloaded successfully");
+		// Test dump  machine according to ip
+		File machineDumpFile = NewRestTestUtils.getMachineDumpFile(restUrl, admin.getMachines().getMachines()[0].getHostAddress(), null, 0, null);
+		Assert.assertTrue("The dump zip file doesn't contain any entries [" + machineDumpFile.getAbsolutePath() + "]", 
+				new ZipFile(machineDumpFile).size() != 0);
 
-			final byte[] result = Base64.decodeBase64(encodedResult);
-			final File dumpFile = File.createTempFile("dump", ".zip");
-			FileUtils.writeByteArrayToFile(dumpFile, result);
-
-			final ZipFile zip = new ZipFile(dumpFile);
-			Assert.assertTrue("The dump zip file doesn't contain any entries. "
-					+ dumpURI, zip.size() != 0);
+		// Test dump for all machines
+		Map<String, File> machinesDumpFile = NewRestTestUtils.getMachinesDumpFile(restUrl);
+		for (Entry<String, File> entry : machinesDumpFile.entrySet()) {
+			File dumpFile = entry.getValue();
+			Assert.assertTrue("The dump zip file [" + machinesDumpFile + "] of machine [" + entry.getKey() + "] doesn't contain any entries.", 
+					new ZipFile(dumpFile).size() != 0);
 		}
-
-		// Test dump for a ll machines
-		final String machinesDumpUri = "/service/dump/machines/";
-		@SuppressWarnings("unchecked")
-		final Map<String, Object> resultsMap = (Map<String, Object>) rc.get(machinesDumpUri);
-		LogUtils.log("Machines dump downloaded successfully");
-
-		for (final String key : resultsMap.keySet()) {
-			final byte[] result = Base64.decodeBase64(resultsMap.get(key)
-					.toString());
-			final File dumpFile = File.createTempFile("dumpMachines", ".zip");
-			FileUtils.writeByteArrayToFile(dumpFile, result);
-			final ZipFile zip = new ZipFile(dumpFile);
-			Assert.assertTrue("The dump zip file doesn't contain any entries. "
-					+ machinesDumpUri, zip.size() != 0);
-
-		}
-
 	}
 
 	// Check that the "service type" is exposed in the service map obtained by

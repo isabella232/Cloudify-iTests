@@ -18,8 +18,11 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import junit.framework.Assert;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
@@ -149,10 +152,31 @@ public class CloudTestUtils {
         return list;
     }
 
-    public static void dumpMachines(String restUrl) throws Exception {
-        dumpMachines(restUrl, "", "");
+    public static void dumpMachinesNewRestAPI(final String restUrl) {
+    	dumpMachinesNewRestAPI(restUrl, "", "");
     }
-
+    
+    public static void dumpMachinesNewRestAPI(final String restUrl, final String username, final String password) {
+        LogUtils.log("Downloading machines dump");
+		try {
+			Map<String, File> machinesDumpFiles = NewRestTestUtils.getMachinesDumpFile(restUrl, username, password);
+			LogUtils.log("Machines dump downloaded successfully");
+			
+			DateFormat date1 = new SimpleDateFormat("dd-MM-yyyy");
+			DateFormat hour = new SimpleDateFormat("HH-mm-ss-SSS");
+			for (Entry<String, File> entry : machinesDumpFiles.entrySet()) {
+				Date date = new Date();
+				File zipFile = new File(DumpUtils.getTestFolder().getAbsolutePath() 
+						+ File.separator + date1.format(date) + "_" + hour.format(date) + "_ip" + entry.getKey() + "_dump.zip");
+				zipFile.deleteOnExit();
+				FileUtils.moveFile(entry.getValue(), zipFile);
+				LogUtils.log("> Logs: " + zipFile.getAbsolutePath() + "\n");
+			}
+		} catch (IOException e) {
+            Assert.fail("Failed to create dump. Error message: " + e.getLocalizedMessage());
+		}
+    }
+    
     public static void dumpMachines(String restUrl, String username, String password) throws Exception {
         LogUtils.log("Downloading machines dump");
         String machinesDumpUri = "/service/dump/machines/";

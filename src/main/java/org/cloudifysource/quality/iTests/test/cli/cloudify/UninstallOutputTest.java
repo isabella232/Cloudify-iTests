@@ -154,7 +154,7 @@ public class UninstallOutputTest extends AbstractLocalCloudTest {
 			// dump machines before uninstall
 			if (!enableLogstash) {
 				try {
-					CloudTestUtils.dumpMachines(restUrl, SecurityConstants.USER_PWD_ALL_ROLES, SecurityConstants.USER_PWD_ALL_ROLES);
+					CloudTestUtils.dumpMachinesNewRestAPI(restUrl, SecurityConstants.USER_PWD_ALL_ROLES, SecurityConstants.USER_PWD_ALL_ROLES);
 				} catch (Exception e) {
 					LogUtils.log("Failed to dump machines.", e);
 				}

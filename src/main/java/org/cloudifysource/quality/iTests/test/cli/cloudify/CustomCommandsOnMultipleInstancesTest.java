@@ -1,17 +1,20 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify;
 
+import iTests.framework.utils.LogUtils;
+
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.concurrent.TimeUnit;
 
 import junit.framework.Assert;
 
 import org.cloudifysource.dsl.utils.ServiceUtils;
+import org.cloudifysource.quality.iTests.framework.utils.usm.USMTestUtils;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.openspaces.admin.pu.ProcessingUnit;
+import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
-
-import iTests.framework.utils.LogUtils;
-import org.cloudifysource.quality.iTests.framework.utils.usm.USMTestUtils;
 
 public class CustomCommandsOnMultipleInstancesTest extends AbstractLocalCloudTest {
 	
@@ -28,13 +31,22 @@ public class CustomCommandsOnMultipleInstancesTest extends AbstractLocalCloudTes
 		totalInstances = pu.getTotalNumberOfInstances();
 	}
 
-	private void uninstallService() throws IOException, InterruptedException {
+	
+	@BeforeTest
+	public void init() 
+	throws MalformedURLException {
+		installService();
+	}
+	
+	
+	@AfterTest
+	public void cleanup() throws IOException, InterruptedException {
 		super.uninstallService(SERVICE_NAME);
 	}
 	
+	
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT , groups="1", enabled = true)
 	public void testPrintCommand() throws Exception {
-		installService();
 		LogUtils.log("Checking print command on all instances");
 		checkPrintCommand();
 		
@@ -42,12 +54,10 @@ public class CustomCommandsOnMultipleInstancesTest extends AbstractLocalCloudTes
 		for(int i=1 ; i<= totalInstances ; i++) {
 			checkPrintCommand(i);
 		}
-		uninstallService();
 	}
 	
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT , groups="1", enabled = true)
 	public void testParamsCommand() throws Exception {
-		installService();
 		LogUtils.log("Checking params command on all instances");
 		checkParamsCommand();
 		
@@ -55,13 +65,11 @@ public class CustomCommandsOnMultipleInstancesTest extends AbstractLocalCloudTes
 		for(int i=1 ; i<= totalInstances ; i++) {
 			checkParamsCommand(i);
 		}
-		uninstallService();
 	}
 	
 	//TODO: enable test once the dependency bug in the CLI is resolved.
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT , groups="1", enabled = true)
-	public void testXceptionCommand() throws Exception {
-		installService();
+	public void testExceptionCommand() throws Exception {
 		LogUtils.log("Checking exception command on all instances");
 		checkExceptionCommand();
 		
@@ -69,12 +77,10 @@ public class CustomCommandsOnMultipleInstancesTest extends AbstractLocalCloudTes
 		for(int i=1 ; i<= totalInstances ; i++) {
 			checkExceptionCommand(i);
 		}
-		uninstallService();
 	}
 	
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT , groups="1", enabled = true)
 	public void testRunScriptCommand() throws Exception {
-		installService();
 		LogUtils.log("Checking runScript command on all instances");
 		checkRunScriptCommand();
 		
@@ -82,12 +88,10 @@ public class CustomCommandsOnMultipleInstancesTest extends AbstractLocalCloudTes
 		for(int i=1 ; i<= totalInstances ; i++) {
 			checkRunScriptCommand(i);
 		}
-		uninstallService();
 	}
 	
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT , groups="1", enabled = true)
 	public void testContextCommand() throws Exception {
-		installService();
 		LogUtils.log("Checking context command on all instances");
 		checkContextCommand();
 		
@@ -95,8 +99,30 @@ public class CustomCommandsOnMultipleInstancesTest extends AbstractLocalCloudTes
 		for(int i=1 ; i<= totalInstances ; i++) {
 			checkContextCommand(i);
 		}
-		uninstallService();
 	}
+	
+	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT , groups="1", enabled = true)
+	public void testMissingParams() throws Exception {
+		LogUtils.log("Checking params command with missing params on all instances");
+		checkMissingParams();
+		
+		LogUtils.log("Starting to check unexpected result by instance id");
+		for(int i=1 ; i<= totalInstances ; i++) {
+			checkMissingParams(i);
+		}
+	}
+	
+	
+	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT , groups="1", enabled = true)
+	public void testWrongInstanceNumber() throws Exception {
+		LogUtils.log("Invoking print command on wrong instance number (2)");
+		
+		String invokeResult = CommandTestUtils.runCommandExpectedFail("connect " + restUrl + ";use-application default" 
+				+ "; invoke -instanceid 2 simpleCustomCommandsMultipleInstances print");
+		assertTrue("wrong error message: " + invokeResult, invokeResult.contains("Instance 2 of service " +
+				"default.simpleCustomCommandsMultipleInstances of application default could not be reached"));
+	}
+	
 	
 	private void checkPrintCommand() throws IOException, InterruptedException {
 		String invokePrintResult = runCommand("connect " + restUrl + ";use-application default" 
@@ -144,6 +170,29 @@ public class CustomCommandsOnMultipleInstancesTest extends AbstractLocalCloudTes
 			Assert.assertFalse("should not recive any output from instance" + i ,invokeParamsResult.contains("instance #" + i));
 		}
 	}
+	
+	
+	private void checkMissingParams() throws IOException, InterruptedException {
+		String invokeParamsResult = CommandTestUtils.runCommandExpectedFail("connect " + restUrl + ";use-application "
+				+ "default; invoke simpleCustomCommandsMultipleInstances params");
+		
+		for(int i=1 ; i <= totalInstances ; i++){
+			AbstractTestSupport.assertTrue("Custom command 'params' called without parameters returned unexpected"
+				+ " result from instance #" + i + ": " + invokeParamsResult,
+                invokeParamsResult.contains("Invoke command on instance #" + i + "@127.0.0.1 returned an unexpected value"));
+		}
+	}
+	
+	
+	private void checkMissingParams(int instanceid) throws IOException, InterruptedException {
+		String invokeParamsResult = CommandTestUtils.runCommandExpectedFail("connect " + restUrl + ";use-application" +
+				" default; invoke -instanceid " + instanceid + " simpleCustomCommandsMultipleInstances params");
+		
+		AbstractTestSupport.assertTrue("wrong error message: " + invokeParamsResult, invokeParamsResult.contains(
+			"Error invoking pu instance default.simpleCustomCommandsMultipleInstances:1. "
+			+ "Cause: java.lang.ClassNotFoundException"));
+	}
+	
 	
 	private void checkExceptionCommand() throws IOException, InterruptedException {
 		String invokeExceptionResult = CommandTestUtils.runCommandExpectedFail("connect " + restUrl + ";use-application default" 

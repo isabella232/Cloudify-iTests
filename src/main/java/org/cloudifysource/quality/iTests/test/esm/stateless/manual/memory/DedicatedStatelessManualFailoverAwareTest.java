@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
+import org.cloudifysource.esc.driver.provisioning.CloudifyMachineProvisioningConfig;
 import org.cloudifysource.esc.driver.provisioning.byon.ByonProvisioningDriver;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CloudTestUtils;
 import org.cloudifysource.quality.iTests.test.esm.AbstractFromXenToByonGSMTest;
@@ -60,18 +61,7 @@ public class DedicatedStatelessManualFailoverAwareTest extends AbstractFromXenTo
     public void testFailedMachineDetails() throws Exception {
     	repetitiveAssertNumberOfGSAsRemoved(0, OPERATION_TIMEOUT);
     	
-        final File archive = DeploymentUtils.getArchive("simpleStatelessPu.jar");
-        final ElasticStatelessProcessingUnitDeployment deployment =
-                new ElasticStatelessProcessingUnitDeployment(archive)
-                .memoryCapacityPerContainer(1, MemoryUnit.GIGABYTES)
-        		.scale(
-	                new ManualCapacityScaleConfigurer()
-	                .memoryCapacity(1, MemoryUnit.GIGABYTES)
-	                .create());
-        
-        deployment.dedicatedMachineProvisioning(getMachineProvisioningConfig());
-
-        final ProcessingUnit pu = super.deploy(deployment);
+        final ProcessingUnit pu = deployProcessingUnitOnSeperateMachine();
         GsmTestUtils.waitForScaleToCompleteIgnoreCpuSla(pu, 1, OPERATION_TIMEOUT);
         repetitiveAssertNumberOfGSAsRemoved(0, OPERATION_TIMEOUT);
     	        
@@ -82,6 +72,23 @@ public class DedicatedStatelessManualFailoverAwareTest extends AbstractFromXenTo
         GsmTestUtils.waitForScaleToCompleteIgnoreCpuSla(pu, 1, OPERATION_TIMEOUT);
         assertUndeployAndWait(pu);        
     }
+
+	private ProcessingUnit deployProcessingUnitOnSeperateMachine() {
+		final File archive = DeploymentUtils.getArchive("simpleStatelessPu.jar");
+        final ElasticStatelessProcessingUnitDeployment deployment =
+                new ElasticStatelessProcessingUnitDeployment(archive)
+                .memoryCapacityPerContainer(1, MemoryUnit.GIGABYTES)
+        		.scale(
+	                new ManualCapacityScaleConfigurer()
+	                .memoryCapacity(1, MemoryUnit.GIGABYTES)
+	                .create());
+        
+        final CloudifyMachineProvisioningConfig provisioningConfig = getMachineProvisioningConfig();
+        provisioningConfig.setDedicatedManagementMachines(true); // do not deploy instance on management machine, since it is going down.
+		deployment.dedicatedMachineProvisioning(provisioningConfig);
+
+        return super.deploy(deployment);
+	}
 
     private GridServiceAgent getAgent(ProcessingUnit pu) {
     	return pu.getInstances()[0].getGridServiceContainer().getGridServiceAgent();

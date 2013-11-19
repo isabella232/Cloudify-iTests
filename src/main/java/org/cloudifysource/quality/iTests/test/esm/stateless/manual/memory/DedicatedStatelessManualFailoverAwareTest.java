@@ -34,7 +34,7 @@ import com.gigaspaces.log.LogEntryMatchers;
 public class DedicatedStatelessManualFailoverAwareTest extends AbstractFromXenToByonGSMTest {
 
     private static final String UNEXPECTED_ESM_LOG_STATEMENT = ElasticMachineProvisioningException.class.getName();
-	private static final String EXPECTED_ESM_LOG_STATEMENT ="failover-aware-provisioning-driver";
+    private static final String EXPECTED_ESM_LOG_STATEMENT ="failover-aware-provisioning-driver";
 
 	@BeforeMethod
     public void beforeTest() {
@@ -69,12 +69,18 @@ public class DedicatedStatelessManualFailoverAwareTest extends AbstractFromXenTo
         repetitiveAssertNumberOfGSAsRemoved(0, OPERATION_TIMEOUT);
     	        
         // stop machine and check ESM log that it starts a machine that is aware of the failed machine.
-        stopByonMachine(getElasticMachineProvisioningCloudifyAdapter(), getAgent(pu), OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
+        final GridServiceAgent agent = getAgent(pu);
+        LogUtils.log("Stopping agent " + agent.getUid());
+        stopByonMachine(getElasticMachineProvisioningCloudifyAdapter(), agent, OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
         repetitiveAssertNumberOfGSAsRemoved(1, OPERATION_TIMEOUT);
+        
+        // check CLOUDIFY-2180
         repetitiveAssertFailoverAware();
         GsmTestUtils.waitForScaleToCompleteIgnoreCpuSla(pu, 1, OPERATION_TIMEOUT);
+        
+        // check ESM not tried to start too many machines, which would eventually result in machine start failure
         repetitiveAssertNoStartMachineFailures();
-        assertUndeployAndWait(pu);        
+        assertUndeployAndWait(pu);
     }
 
 	private ProcessingUnit deployProcessingUnitOnSeperateMachine() {
@@ -128,7 +134,7 @@ public class DedicatedStatelessManualFailoverAwareTest extends AbstractFromXenTo
     	
     	final ElasticServiceManager esm = admin.getElasticServiceManagers().waitForAtLeastOne(OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
         LogUtils.log("Checking there is no "+ UNEXPECTED_ESM_LOG_STATEMENT  + " log entry before undeploying PU");
-        final LogEntryMatcher logMatcher = LogEntryMatchers.containsString(EXPECTED_ESM_LOG_STATEMENT);
+        final LogEntryMatcher logMatcher = LogEntryMatchers.containsString(UNEXPECTED_ESM_LOG_STATEMENT);
         AssertUtils.repetitiveAssertConditionHolds("Unexpected " + UNEXPECTED_ESM_LOG_STATEMENT +" log", new RepetitiveConditionProvider() {
             
             @Override
@@ -138,6 +144,6 @@ public class DedicatedStatelessManualFailoverAwareTest extends AbstractFromXenTo
                 LogUtils.log("Exepcted no "+ UNEXPECTED_ESM_LOG_STATEMENT + " log entries. Actual :" + count);
                 return count == 0;
             }
-        } , OPERATION_TIMEOUT);
+        } , TimeUnit.SECONDS.toMillis(30));
     }
 }

@@ -498,7 +498,7 @@ public class AbstractLocalCloudTest extends AbstractTestSupport {
 			}
         }
         if (!dumpPerformed && !enableLogstash) {
-            CloudTestUtils.dumpMachines(restUrl, SecurityConstants.USER_PWD_ALL_ROLES, SecurityConstants.USER_PWD_ALL_ROLES);
+            CloudTestUtils.dumpMachinesNewRestAPI(restUrl, SecurityConstants.USER_PWD_ALL_ROLES, SecurityConstants.USER_PWD_ALL_ROLES);
         }
 
 

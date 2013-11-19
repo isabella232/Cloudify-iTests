@@ -347,6 +347,16 @@ public class NewRestTestUtils {
 			if (errMessageContain != null) {
 				Assert.fail("RestClientException expected [" + errMessageContain + "]");
 			}
+			// write the result data to a temporary file.
+			Map<String, byte[]> dumpBytesPerIP = response.getDumpBytesPerIP();
+			Map<String, File> dumpFilesPerIP = new HashMap<String, File>(dumpBytesPerIP.size());
+			for (Entry<String, byte[]> entry : dumpBytesPerIP.entrySet()) {
+				File file = File.createTempFile("dump", ".zip");
+				file.deleteOnExit();
+				FileUtils.writeByteArrayToFile(file , entry.getValue());
+				dumpFilesPerIP.put(entry.getKey(), file);
+			}
+			return dumpFilesPerIP;
 		} catch (RestClientException e) {
 			if (errMessageContain == null) {
 				Assert.fail("Failed to get machines dump - " + e.getMessage());
@@ -356,16 +366,7 @@ public class NewRestTestUtils {
 						message.contains(errMessageContain));
 			}
 		}
-		// write the result data to a temporary file.
-		Map<String, byte[]> dumpBytesPerIP = response.getDumpBytesPerIP();
-		Map<String, File> dumpFilesPerIP = new HashMap<String, File>(dumpBytesPerIP.size());
-		for (Entry<String, byte[]> entry : dumpBytesPerIP.entrySet()) {
-			File file = File.createTempFile("dump", ".zip");
-			file.deleteOnExit();
-			FileUtils.writeByteArrayToFile(file , entry.getValue());
-			dumpFilesPerIP.put(entry.getKey(), file);
-		}
-		return dumpFilesPerIP;
+		return null;
 	}
 	
 	

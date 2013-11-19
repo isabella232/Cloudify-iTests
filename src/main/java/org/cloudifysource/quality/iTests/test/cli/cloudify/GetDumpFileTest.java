@@ -121,10 +121,7 @@ public class GetDumpFileTest extends AbstractLocalCloudTest {
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, enabled = true)
 	public void testGetMachinesDumpFileUnknownProcessor() 
 			throws RestClientException, IOException {
-		Map<String, File> dumpFiles = NewRestTestUtils.getMachinesDumpFile(restUrl, "unknown", 5, "Unknown processor type: unknown");
-		for (Entry<String, File> entry : dumpFiles.entrySet()) {
-			assertMachineDumpFiles(entry.getValue(), null);
-		}
+		NewRestTestUtils.getMachinesDumpFile(restUrl, "unknown", 5, "Unknown processor type: unknown");
 	}
 	
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, enabled = true)
@@ -132,7 +129,7 @@ public class GetDumpFileTest extends AbstractLocalCloudTest {
 			throws RestClientException, IOException {
 		Map<String, File> dumpFiles = NewRestTestUtils.getMachinesDumpFile(restUrl, ProcessorTypes.LOG.getName(), 0, null);
 		for (Entry<String, File> entry : dumpFiles.entrySet()) {
-			assertMachineDumpFiles(entry.getValue(), null);
+			assertMachineDumpFiles(entry.getValue(), ProcessorTypes.LOG.getName());
 		}
 	}
 	

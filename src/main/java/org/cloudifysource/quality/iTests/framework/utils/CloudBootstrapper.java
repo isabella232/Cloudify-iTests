@@ -134,6 +134,10 @@ public class CloudBootstrapper extends Bootstrapper {
 				.append(cloudOverridesFile.getAbsolutePath().replace("\\", "/"));
 		}
 
+        if (skipValidation) {
+            builder.append("-skip-validation ");
+        }
+
         if (StringUtils.isNotBlank(useExistingFilePath)) {
             builder.append("-use-existing-from-file ").append(useExistingFilePath);
         }
@@ -142,9 +146,6 @@ public class CloudBootstrapper extends Bootstrapper {
             builder.append("-use-existing ");
         }
 
-        if (skipValidation) {
-            builder.append("-skip-validation");
-        }
 
 		return builder.toString();
 	}

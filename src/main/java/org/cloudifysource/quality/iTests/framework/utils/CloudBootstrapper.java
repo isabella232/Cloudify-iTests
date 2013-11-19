@@ -139,7 +139,7 @@ public class CloudBootstrapper extends Bootstrapper {
         }
 
         if (useExisting) {
-            builder.append("-use-existing");
+            builder.append("-use-existing ");
         }
 
         if (skipValidation) {

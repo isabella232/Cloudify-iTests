@@ -3,7 +3,6 @@ package org.cloudifysource.quality.iTests.test.cli.cloudify;
 import iTests.framework.utils.LogUtils;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.util.concurrent.TimeUnit;
 
 import junit.framework.Assert;
@@ -12,34 +11,31 @@ import org.cloudifysource.dsl.utils.ServiceUtils;
 import org.cloudifysource.quality.iTests.framework.utils.usm.USMTestUtils;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.openspaces.admin.pu.ProcessingUnit;
-import org.testng.annotations.AfterTest;
-import org.testng.annotations.BeforeTest;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 public class CustomCommandsOnMultipleInstancesTest extends AbstractLocalCloudTest {
 	
+	private static final String SERVICE_PATH = "src/main/resources/apps/USM/usm/simpleCustomCommandsMultipleInstances";
 	private static final String SERVICE_NAME = "simpleCustomCommandsMultipleInstances";
 	
 	private int totalInstances;
 
-	private void installService() {
-		installService(SERVICE_NAME);
+	
+	@BeforeClass
+	public void init() 
+	throws InterruptedException, IOException {
+		installServiceAndWait(SERVICE_PATH, SERVICE_NAME, false/*not expected to fail*/);
         
 		final String absolutePUName = ServiceUtils.getAbsolutePUName(DEFAULT_APPLICATION_NAME, SERVICE_NAME);
 		final ProcessingUnit pu = admin.getProcessingUnits().waitFor(absolutePUName , AbstractTestSupport.OPERATION_TIMEOUT , TimeUnit.MILLISECONDS);
 		AbstractTestSupport.assertTrue("USM Service State is NOT RUNNING", USMTestUtils.waitForPuRunningState(absolutePUName, AbstractTestSupport.OPERATION_TIMEOUT, TimeUnit.MILLISECONDS, admin));
 		totalInstances = pu.getTotalNumberOfInstances();
 	}
-
-	
-	@BeforeTest
-	public void init() 
-	throws MalformedURLException {
-		installService();
-	}
 	
 	
-	@AfterTest
+	@AfterClass
 	public void cleanup() throws IOException, InterruptedException {
 		super.uninstallService(SERVICE_NAME);
 	}

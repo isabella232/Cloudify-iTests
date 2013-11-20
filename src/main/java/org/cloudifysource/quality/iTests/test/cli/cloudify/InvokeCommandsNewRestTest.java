@@ -26,9 +26,7 @@ import org.cloudifysource.restclient.exceptions.RestClientException;
 import org.cloudifysource.restclient.exceptions.RestClientResponseException;
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.testng.annotations.AfterClass;
-import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 public class InvokeCommandsNewRestTest extends AbstractLocalCloudTest {

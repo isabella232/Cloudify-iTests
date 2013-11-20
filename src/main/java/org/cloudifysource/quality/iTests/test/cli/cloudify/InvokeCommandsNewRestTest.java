@@ -25,8 +25,8 @@ import org.cloudifysource.restclient.InvocationResult;
 import org.cloudifysource.restclient.exceptions.RestClientException;
 import org.cloudifysource.restclient.exceptions.RestClientResponseException;
 import org.openspaces.admin.pu.ProcessingUnit;
-import org.testng.annotations.AfterTest;
-import org.testng.annotations.BeforeTest;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 public class InvokeCommandsNewRestTest extends AbstractLocalCloudTest {
@@ -52,7 +52,7 @@ public class InvokeCommandsNewRestTest extends AbstractLocalCloudTest {
 	CommandInvoker commandInvoker;
 	private int totalInstances;
 	
-	@BeforeTest
+	@BeforeClass
 	public void init() 
 	throws MalformedURLException {
 		commandInvoker = new CommandInvoker(restUrl);
@@ -60,7 +60,7 @@ public class InvokeCommandsNewRestTest extends AbstractLocalCloudTest {
 	}
 	
 	
-	@AfterTest
+	@AfterClass
 	public void cleanup() throws IOException, InterruptedException {
 		super.uninstallService(SERVICE_NAME);
 	}

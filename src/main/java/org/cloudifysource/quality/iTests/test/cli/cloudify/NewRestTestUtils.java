@@ -358,10 +358,10 @@ public class NewRestTestUtils {
 			}
 			return dumpFilesPerIP;
 		} catch (RestClientException e) {
+			String message = e.getMessageFormattedText();
 			if (errMessageContain == null) {
-				Assert.fail("Failed to get machines dump - " + e.getMessage());
+				Assert.fail("Failed to get machines dump - " + message);
 			} else {
-				String message = e.getMessageFormattedText();
 				Assert.assertTrue("error messgae [" + message + "] does not contain " + errMessageContain, 
 						message.contains(errMessageContain));
 			}

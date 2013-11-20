@@ -15,6 +15,7 @@ import org.cloudifysource.dsl.internal.ServiceReader;
 import org.cloudifysource.quality.iTests.framework.utils.CloudBootstrapper;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CloudTestUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.security.SecurityConstants;
 import org.openspaces.admin.Admin;
 import org.testng.Assert;
 
@@ -270,7 +271,8 @@ public abstract class AbstractCloudService implements CloudService {
             if (restUrls != null) {
 
                 if(!enableLogstash){
-                    CloudTestUtils.dumpMachinesNewRestAPI(restUrls[0]);
+                    CloudTestUtils.dumpMachinesNewRestAPI(
+                    		restUrls[0], SecurityConstants.USER_PWD_ALL_ROLES, SecurityConstants.USER_PWD_ALL_ROLES);
                 }
 
                 if (!bootstrapper.isForce()) {

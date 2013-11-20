@@ -21,7 +21,7 @@ import com.j_spaces.kernel.PlatformVersion;
 public abstract class AbstractServicesTest extends NewAbstractCloudTest {
 
 	private static final String STATUS_PROPERTY = "DeclaringClass-Enumerator";
-
+    private static final int DEFAULT_INSTALLATION_TIMEOUT = 50;
 	private static String serviceName;
 
 	@AfterMethod
@@ -32,7 +32,7 @@ public abstract class AbstractServicesTest extends NewAbstractCloudTest {
 
 
 	public void testService(String serviceFolderPath, String overrideServiceName) throws IOException, InterruptedException, RestException, PackagingException, DSLException{
-		testService(serviceFolderPath, overrideServiceName, 10);
+		testService(serviceFolderPath, overrideServiceName, DEFAULT_INSTALLATION_TIMEOUT);
 	}
 
  	public void testService(String serviceFolderPath, String overrideServiceName, final int timeoutMins) throws IOException, InterruptedException, RestException, PackagingException, DSLException{

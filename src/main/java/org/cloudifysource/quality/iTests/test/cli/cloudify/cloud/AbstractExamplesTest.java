@@ -31,6 +31,7 @@ import java.util.Map;
 public abstract class AbstractExamplesTest extends NewAbstractCloudTest {
 
 	private static final int WINDOWS_INSTALLATION_TIMEOUT = 50;
+    private static final int DEFAULT_INSTALLATION_TIMEOUT = 50;
 	private static String applicationName;
 
 	@AfterMethod
@@ -160,7 +161,7 @@ public abstract class AbstractExamplesTest extends NewAbstractCloudTest {
 			applicationName = applicationName + "-win";
 			installApplicationAndWait(applicationPath, applicationName, WINDOWS_INSTALLATION_TIMEOUT);
 		} else {
-			installApplicationAndWait(applicationPath, applicationName, 30);
+			installApplicationAndWait(applicationPath, applicationName, DEFAULT_INSTALLATION_TIMEOUT);
 		}
 
 		verifyServices(applicationName, application.getServices());

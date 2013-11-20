@@ -1,6 +1,5 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify;
 
-import com.gigaspaces.datasource.SpaceDataSource;
 import iTests.framework.tools.SGTestHelper;
 import iTests.framework.utils.DeploymentUtils;
 import iTests.framework.utils.DumpUtils;
@@ -151,10 +150,6 @@ public class CloudTestUtils {
             list.add(url);
         }
         return list;
-    }
-
-    public static void dumpMachinesNewRestAPI(final String restUrl) {
-    	dumpMachinesNewRestAPI(restUrl, "", "");
     }
     
     public static void dumpMachinesNewRestAPI(final String restUrl, final String username, final String password) {

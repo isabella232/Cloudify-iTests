@@ -1,5 +1,6 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify;
 
+import com.gigaspaces.datasource.SpaceDataSource;
 import iTests.framework.tools.SGTestHelper;
 import iTests.framework.utils.DeploymentUtils;
 import iTests.framework.utils.DumpUtils;
@@ -176,7 +177,11 @@ public class CloudTestUtils {
             Assert.fail("Failed to create dump. Error message: " + e.getLocalizedMessage());
 		}
     }
-    
+
+    /**
+    * @deprecated since 9.7 - use dumpMachinesNewRestAPI instead.
+    **/
+    @Deprecated
     public static void dumpMachines(String restUrl, String username, String password) throws Exception {
         LogUtils.log("Downloading machines dump");
         String machinesDumpUri = "/service/dump/machines/";

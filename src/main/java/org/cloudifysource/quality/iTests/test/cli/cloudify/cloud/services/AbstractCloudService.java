@@ -268,8 +268,10 @@ public abstract class AbstractCloudService implements CloudService {
 
         try {
             if (restUrls != null) {
-            	
-            	CloudTestUtils.dumpMachinesNewRestAPI(restUrls[0]);
+
+                if(!enableLogstash){
+                    CloudTestUtils.dumpMachinesNewRestAPI(restUrls[0]);
+                }
 
                 if (!bootstrapper.isForce()) {
                     // this is to connect to the cloud before tearing down.

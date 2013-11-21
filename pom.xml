@@ -19,11 +19,20 @@
 	</properties>
 
 	<repositories>
+
 		<repository>
 			<id>org.openspaces</id>
 			<url>http://maven-repository.openspaces.org</url>
 		</repository>
-	</repositories>
+
+        <!-- We need this repo for the softlayer jclouds fix -->
+
+        <repository>
+            <id>my.mvn.repo</id>
+            <url>https://github.com/iliapolo/maven-repo/raw/master</url>
+        </repository>
+
+    </repositories>
 
 	<pluginRepositories>
 		<pluginRepository>
@@ -43,7 +52,12 @@
 	</dependencyManagement>
 
 	<dependencies>
-		<dependency>
+        <dependency>
+            <groupId>org.apache.jclouds.provider</groupId>
+            <artifactId>softlayer-fixed</artifactId>
+            <version>${jcloudsVersion}</version>
+        </dependency>
+        <dependency>
 			<groupId>com.gigaspaces</groupId>
 			<artifactId>gs-openspaces</artifactId>
 			<version>${gsVersion}</version>
@@ -154,7 +168,13 @@
 			<groupId>org.apache.jclouds</groupId>
 			<artifactId>jclouds-allcompute</artifactId>
 			<version>${jcloudsVersion}</version>
-		</dependency>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.jclouds.provider</groupId>
+                    <artifactId>softlayer</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 		<dependency>
 			<groupId>org.apache.jclouds</groupId>
 			<artifactId>jclouds-blobstore</artifactId>

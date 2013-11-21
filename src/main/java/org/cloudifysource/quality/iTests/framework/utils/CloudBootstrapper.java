@@ -127,16 +127,17 @@ public class CloudBootstrapper extends Bootstrapper {
 		if (noWebServices) {
 			builder.append("-no-web-services ");
 		}
-		if (cloudOverrides != null && !cloudOverrides.isEmpty()) {
+
+        if (skipValidation) {
+            builder.append("-skip-validation ");
+        }
+
+        if (cloudOverrides != null && !cloudOverrides.isEmpty()) {
 			File cloudOverridesFile = IOUtils.createTempOverridesFile(cloudOverrides);
 			builder
 				.append("-cloud-overrides").append(" ")
 				.append(cloudOverridesFile.getAbsolutePath().replace("\\", "/"));
 		}
-
-        if (skipValidation) {
-            builder.append("-skip-validation ");
-        }
 
         if (StringUtils.isNotBlank(useExistingFilePath)) {
             builder.append("-use-existing-from-file ").append(useExistingFilePath);

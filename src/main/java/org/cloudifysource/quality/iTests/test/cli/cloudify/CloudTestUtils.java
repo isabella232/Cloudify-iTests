@@ -1,11 +1,17 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify;
 
+import com.j_spaces.kernel.PlatformVersion;
 import iTests.framework.tools.SGTestHelper;
 import iTests.framework.utils.DeploymentUtils;
 import iTests.framework.utils.DumpUtils;
 import iTests.framework.utils.IOUtils;
 import iTests.framework.utils.LogUtils;
 import iTests.framework.utils.WebUtils;
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.CloudService;
+import org.cloudifysource.restclient.GSRestClient;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,16 +27,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import junit.framework.Assert;
-
-import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.StringUtils;
-import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.CloudService;
-import org.cloudifysource.restclient.GSRestClient;
-
-import com.j_spaces.kernel.PlatformVersion;
 
 public class CloudTestUtils {
 
@@ -169,7 +165,7 @@ public class CloudTestUtils {
 				LogUtils.log("> Logs: " + zipFile.getAbsolutePath() + "\n");
 			}
 		} catch (IOException e) {
-            Assert.fail("Failed to create dump. Error message: " + e.getLocalizedMessage());
+            LogUtils.log("Failed to create dump. Error message: " + e.getLocalizedMessage());
 		}
     }
 

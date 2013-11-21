@@ -274,7 +274,9 @@ public abstract class AbstractCloudService implements CloudService {
                     CloudTestUtils.dumpMachinesNewRestAPI(
                     		restUrls[0], SecurityConstants.USER_PWD_ALL_ROLES, SecurityConstants.USER_PWD_ALL_ROLES);
                 }
-
+            }
+        } finally {
+            if (restUrls != null) {
                 if (!bootstrapper.isForce()) {
                     // this is to connect to the cloud before tearing down.
                     bootstrapper.setRestUrl(restUrls[0]);
@@ -282,7 +284,6 @@ public abstract class AbstractCloudService implements CloudService {
                 bootstrapper.teardown();
                 afterTeardown();
             }
-        } finally {
             if (!bootstrapper.isTeardownExpectedToFail()) {
                 scanForLeakedAgentAndManagementNodes();
             } else {

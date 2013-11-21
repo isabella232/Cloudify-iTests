@@ -135,12 +135,12 @@ public class CloudBootstrapper extends Bootstrapper {
         if (cloudOverrides != null && !cloudOverrides.isEmpty()) {
 			File cloudOverridesFile = IOUtils.createTempOverridesFile(cloudOverrides);
 			builder
-				.append("-cloud-overrides").append(" ")
-				.append(cloudOverridesFile.getAbsolutePath().replace("\\", "/"));
+				.append("-cloud-overrides ")
+				.append(cloudOverridesFile.getAbsolutePath().replace("\\", "/")).append(" ");
 		}
 
         if (StringUtils.isNotBlank(useExistingFilePath)) {
-            builder.append("-use-existing-from-file ").append(useExistingFilePath);
+            builder.append("-use-existing-from-file ").append(useExistingFilePath).append(" ");
         }
 
         if (useExisting) {

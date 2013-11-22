@@ -43,6 +43,8 @@ public class InvokeCommandsNewRestTest extends AbstractLocalCloudTest {
 	private static final String CUSTOM_COMMAND_CONTEXT_EXPECTED_OUTPUT = "Service Dir is:";
 	private static final String CUSTOM_COMMAND_RUN_SCRIPT_EXPECTED_OUTPUT = "Result: 2";
 	private static final String CUSTOM_COMMAND_EXCEPTION_EXPECTED_OUTPUT = "This is an error test";
+	private static final String CUSTOM_COMMAND_MISSING_PARAMS_EXPECTED_OUTPUT = "A closure entry failed to call"
+			+ " method \"params\" with arguments \"[]\". Invalid method name or arguments.";
 	
 	private static final String INVOCATION_SUCCESS_OUTPUT = "OK from instance #";
 	private static final String INVOCATION_FAILURE_OUTPUT = "FAILED from instance #";
@@ -136,25 +138,15 @@ public class InvokeCommandsNewRestTest extends AbstractLocalCloudTest {
 		final List<String> params = new ArrayList<String>();
 		
 		LogUtils.log("Checking params command with missing params on all instances");
-		testCommandInvocationOnServiceExpectTheUnexpected(CUSTOM_COMMAND_PARAMS, params, 
-				"Invoke command on instance #1@127.0.0.1 returned an unexpected value");
+		testCommandInvocationOnServiceExpectFailure(CUSTOM_COMMAND_PARAMS, params, 
+				CUSTOM_COMMAND_MISSING_PARAMS_EXPECTED_OUTPUT);
 		
-		LogUtils.log("Checking params command with missing params on instance id 1");
-		try {
-			commandInvoker.restInvokeInstanceCommand(DEFAULT_APPLICATION_NAME, 
-					SERVICE_NAME, 1, CUSTOM_COMMAND_PARAMS, params);
-			// an exception was not thrown - something is wrong
-			Assert.fail("Custom command \"" + CUSTOM_COMMAND_PRINT + "\" was invoked on an invalid instance number but"
-					+ " an exception wasn't thrown");
-		} catch (RestClientResponseException e) {
-			// if we're here - good! let's verify this is the correct exception
-			assertTrue("wrong status code, expected 400, found: " + e.getStatusCode(), e.getStatusCode() == 400);
-			assertTrue("wrong error message: " + e.getMessageFormattedText(), e.getMessageFormattedText().contains(
-					"Error invoking pu instance default.simpleCustomCommandsMultipleInstances:1. Cause: java.lang.ClassNotFoundException: dslEntity$_run_closure3_closure6"));
-		} catch (Exception e) {
-			AssertFail("Invalid exception caught, expected to catch RestClientResponseException", e);
+		LogUtils.log("Starting to params command with missing params by instance id");
+		for(int i=1 ; i<= totalInstances ; i++) {
+			testCommandInvocationOnInstanceExpectFailure(i, CUSTOM_COMMAND_PARAMS, params, 
+					CUSTOM_COMMAND_MISSING_PARAMS_EXPECTED_OUTPUT);
 		}
-
+		
 	}
 	
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT , groups="1", enabled = true)

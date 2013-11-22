@@ -174,8 +174,9 @@ public class CustomCommandsOnMultipleInstancesTest extends AbstractLocalCloudTes
 		
 		for(int i=1 ; i <= totalInstances ; i++){
 			AbstractTestSupport.assertTrue("Custom command 'params' called without parameters returned unexpected"
-				+ " result from instance #" + i + ": " + invokeParamsResult,
-                invokeParamsResult.contains("Invoke command on instance #" + i + "@127.0.0.1 returned an unexpected value"));
+					+ " result from instance #" + i + ": " + invokeParamsResult
+                    , invokeParamsResult.contains("FAILED from instance #" + i) 
+                    && invokeParamsResult.contains("Invalid method name or arguments"));
 		}
 	}
 	
@@ -184,9 +185,10 @@ public class CustomCommandsOnMultipleInstancesTest extends AbstractLocalCloudTes
 		String invokeParamsResult = CommandTestUtils.runCommandExpectedFail("connect " + restUrl + ";use-application" +
 				" default; invoke -instanceid " + instanceid + " simpleCustomCommandsMultipleInstances params");
 		
-		AbstractTestSupport.assertTrue("wrong error message: " + invokeParamsResult, invokeParamsResult.contains(
-			"Error invoking pu instance default.simpleCustomCommandsMultipleInstances:1. "
-			+ "Cause: java.lang.ClassNotFoundException"));
+		AbstractTestSupport.assertTrue("Custom command 'params' called without parameters returned unexpected result "
+				+ "from instance #" + instanceid + ": " + invokeParamsResult,
+                invokeParamsResult.contains("FAILED from instance #" + instanceid) 
+                && invokeParamsResult.contains("Invalid method name or arguments"));
 	}
 	
 	

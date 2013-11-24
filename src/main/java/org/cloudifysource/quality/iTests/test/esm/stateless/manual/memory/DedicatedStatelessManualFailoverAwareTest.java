@@ -35,7 +35,9 @@ public class DedicatedStatelessManualFailoverAwareTest extends AbstractFromXenTo
 
     private static final String UNEXPECTED_ESM_LOG_STATEMENT = ElasticMachineProvisioningException.class.getName();
     private static final String EXPECTED_ESM_LOG_STATEMENT ="failover-aware-provisioning-driver";
-
+    
+    ProcessingUnit pu;
+    
 	@BeforeMethod
     public void beforeTest() {
         super.beforeTestInit();
@@ -62,12 +64,24 @@ public class DedicatedStatelessManualFailoverAwareTest extends AbstractFromXenTo
      */
     @Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled=true)
     public void testFailedMachineDetails() throws Exception {
-    	repetitiveAssertNumberOfGSAsRemoved(0, OPERATION_TIMEOUT);
-    	
-        final ProcessingUnit pu = deployProcessingUnitOnSeperateMachine();
-        GsmTestUtils.waitForScaleToCompleteIgnoreCpuSla(pu, 1, OPERATION_TIMEOUT);
-        repetitiveAssertNumberOfGSAsRemoved(0, OPERATION_TIMEOUT);
-    	        
+        deployPu();
+        machineFailover();
+    }
+
+    /**
+     * CLOUDIFY-2180
+     * Tests that after failover the cloud driver #start() method receives MachineInfo of the failed machine.
+     * Machine is killed only after ESM is restarted. This checks the ESM persists context to space.
+     * Note: This test does not test what happens when machine fails while ESM is restarting.
+     */
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled=true)
+    public void testFailedMachineDetailsAfterEsmRestart() throws Exception {
+        deployPu();
+        restartEsm();
+        machineFailover();
+    }
+
+    private void machineFailover() throws Exception {
         // stop machine and check ESM log that it starts a machine that is aware of the failed machine.
         final GridServiceAgent agent = getAgent(pu);
         LogUtils.log("Stopping agent " + agent.getUid());
@@ -145,5 +159,13 @@ public class DedicatedStatelessManualFailoverAwareTest extends AbstractFromXenTo
                 return count == 0;
             }
         } , TimeUnit.SECONDS.toMillis(30));
+    }
+    
+
+    private void deployPu() {
+        repetitiveAssertNumberOfGSAsRemoved(0, OPERATION_TIMEOUT);
+        pu = deployProcessingUnitOnSeperateMachine();
+        GsmTestUtils.waitForScaleToCompleteIgnoreCpuSla(pu, 1, OPERATION_TIMEOUT);
+        repetitiveAssertNumberOfGSAsRemoved(0, OPERATION_TIMEOUT);
     }
 }

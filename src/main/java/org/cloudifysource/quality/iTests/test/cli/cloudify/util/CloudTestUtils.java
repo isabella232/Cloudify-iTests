@@ -1,4 +1,4 @@
-package org.cloudifysource.quality.iTests.test.cli.cloudify;
+package org.cloudifysource.quality.iTests.test.cli.cloudify.util;
 
 import com.j_spaces.kernel.PlatformVersion;
 import iTests.framework.tools.SGTestHelper;

@@ -11,28 +11,12 @@
  * specific language governing permissions and limitations under the License.
  * *****************************************************************************
  */
-package org.cloudifysource.quality.iTests.test.cli.cloudify;
+package org.cloudifysource.quality.iTests.test.cli.cloudify.util;
 
+import com.j_spaces.kernel.PlatformVersion;
 import iTests.framework.utils.AssertUtils;
 import iTests.framework.utils.LogUtils;
-
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-
 import junit.framework.Assert;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -72,7 +56,21 @@ import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.testng.AssertJUnit;
 
-import com.j_spaces.kernel.PlatformVersion;
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 public class NewRestTestUtils {
 
@@ -271,7 +269,7 @@ public class NewRestTestUtils {
 			return file;
 		} catch (RestClientException e) {
 			if (errMessageContain == null) {
-				Assert.fail("Failed to get PU dump - " + e.getMessage());
+				LogUtils.log("Failed to get PU dump - " + e.getMessage());
 			} else {
 				String message = e.getMessageFormattedText();
 				Assert.assertTrue("error messgae [" + message + "] does not contain " + errMessageContain, 
@@ -282,8 +280,8 @@ public class NewRestTestUtils {
 	}
 	
 	public static File getMachineDumpFile(final String restUrl, final String ip, 
-			final String processors, final long fileZiseLimit, final String errMessageContain) 
-					throws IOException {
+			final String processors, final long fileZiseLimit, final String errMessageContain)
+            throws IOException, RestClientException {
 		// connect to the REST
 		RestClient restClient = createAndConnect(restUrl);
 
@@ -292,7 +290,7 @@ public class NewRestTestUtils {
 		try {
 			response = restClient.getMachineDumpFile(ip, fileZiseLimit, processors);
 			if (errMessageContain != null) {
-				Assert.fail("RestClientException expected [" + errMessageContain + "]");
+				LogUtils.log("RestClientException expected [" + errMessageContain + "]");
 			}
 			// write the result data to a temporary file.
 			File file = File.createTempFile("dump", ".zip");
@@ -300,43 +298,43 @@ public class NewRestTestUtils {
 			return file;
 		} catch (RestClientException e) {
 			if (errMessageContain == null) {
-				Assert.fail("Failed to get machine dump - " + e.getMessage());
+				LogUtils.log("Failed to get machine dump - " + e.getMessage());
 			} else {
 				String message = e.getMessageFormattedText();
-				Assert.assertTrue("error messgae [" + message + "] does not contain " + errMessageContain, 
-						message.contains(errMessageContain));
+				LogUtils.log("Error messgae [" + message + "] does not contain " + errMessageContain);
+
 			}
 		}
 		return null;
 	}
 
 
-	public static Map<String, File> getMachinesDumpFile(final String restUrl, final long fileZiseLimit) 
-			throws IOException {
+	public static Map<String, File> getMachinesDumpFile(final String restUrl, final long fileZiseLimit)
+            throws IOException, RestClientException {
 		return getMachinesDumpFile(restUrl, "", "", null, fileZiseLimit, null);
 	}
 
-	public static Map<String, File> getMachinesDumpFile(final String restUrl) 
-			throws IOException {
+	public static Map<String, File> getMachinesDumpFile(final String restUrl)
+            throws IOException, RestClientException {
 		return getMachinesDumpFile(restUrl, "", "", null, 0, null);
 	}
 
 	public static Map<String, File> getMachinesDumpFile(final String restUrl,
-			final String processors, final long fileZiseLimit, final String errMessageContain) 
-			throws IOException {
+			final String processors, final long fileZiseLimit, final String errMessageContain)
+            throws IOException, RestClientException {
 		return getMachinesDumpFile(restUrl, "", "", processors, fileZiseLimit, errMessageContain);
 	}
 	
 	public static Map<String, File> getMachinesDumpFile(final String restUrl, 
-			final String username, final String password) 
-			throws IOException {
+			final String username, final String password)
+            throws IOException, RestClientException {
 		return getMachinesDumpFile(restUrl, username, password, null, 0, null);
 	}
 
 	public static Map<String, File> getMachinesDumpFile(final String restUrl, 
 			final String username, final String password,
-			final String processors, final long fileZiseLimit, final String errMessageContain) 
-					throws IOException {
+			final String processors, final long fileZiseLimit, final String errMessageContain)
+            throws IOException, RestClientException {
 		// connect to the REST
 		RestClient restClient = createAndConnect(restUrl, username, password);
 
@@ -521,49 +519,33 @@ public class NewRestTestUtils {
 		}
 	}
 
-	public static RestClient createAndConnect(final String restUrl, final String username, final String password) {
+	public static RestClient createAndConnect(final String restUrl, final String username, final String password)
+            throws RestClientException, MalformedURLException {
 		RestClient restClient = create(restUrl, username, password);
-		connect(restClient);
+        restClient.connect();
 		return restClient;
 	}
 	
-	public static RestClient createAndConnect(final String restUrl) {
+	public static RestClient createAndConnect(final String restUrl) throws RestClientException, MalformedURLException {
 		RestClient restClient = create(restUrl, "", "");
-		connect(restClient);
+        restClient.connect();
 		return restClient;
 	}
 	
-	public static RestClient create(final String restUrl, final String username, final String password) {
+	public static RestClient create(final String restUrl, final String username, final String password)
+            throws MalformedURLException, RestClientException {
 		RestClient restClient = null;
-		try {
-			final String apiVersion = PlatformVersion.getVersion();
-			restClient = new RestClient(new URL(restUrl), username, password, apiVersion);
-		} catch (final Exception e) {
-			Assert.fail("failed to create rest client with url " + restUrl + ", error message: " + e.getMessage());
-		}
+        final String apiVersion = PlatformVersion.getVersion();
+        restClient = new RestClient(new URL(restUrl), username, password, apiVersion);
 		return restClient;
 	}
 
-	
-	public static void connect(final RestClient restClient) {
-		try {
-			restClient.connect();
-		} catch (final RestClientException e) {
-			Assert.fail("failed to connect: " + e.getMessageFormattedText());
-		}
-	}
-	
-	static String upload(final RestClient restClient, final File toUploadFile) {
+	static String upload(final RestClient restClient, final File toUploadFile) throws RestClientException {
 		if (toUploadFile == null) {
 			return null;
 		}
 		String serviceFolderUploadKey = null;
-		try {
-			serviceFolderUploadKey = restClient.upload(null, toUploadFile).getUploadKey();
-		} catch (final RestClientException e) {
-			Assert.fail("failed to upload [" + toUploadFile
-					+ "], error message: " + e.getMessageFormattedText());
-		}
+        serviceFolderUploadKey = restClient.upload(null, toUploadFile).getUploadKey();
 		return serviceFolderUploadKey;
 	}
 

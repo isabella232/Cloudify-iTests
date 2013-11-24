@@ -344,13 +344,13 @@
                     <scope>system</scope>
                     <systemPath>${cloudify.home}/lib/required/gs-openspaces.jar</systemPath>
                 </dependency>
-                <!--dependency>
+                <dependency>
                     <groupId>org.apache.jclouds</groupId>
                     <artifactId>softlayer-fixed</artifactId>
                     <version>${jcloudsVersion}</version>
                     <scope>system</scope>
                     <systemPath>${cloudify.home}/lib/platform/esm/softlayer-fixed-1.6.2-incubating.jar</systemPath>
-                </dependency-->
+                </dependency>
                 <dependency>
                     <groupId>com.gigaspaces</groupId>
                     <artifactId>gs-runtime</artifactId>
@@ -415,13 +415,13 @@
 				<activeByDefault>false</activeByDefault>
 			</activation>
 			<dependencies>
-                <!--dependency>
+                <dependency>
                     <groupId>org.apache.jclouds</groupId>
                     <artifactId>softlayer-fixed</artifactId>
                     <version>${jcloudsVersion}</version>
                     <scope>system</scope>
                     <systemPath>${cloudify.home}/lib/platform/esm/softlayer-fixed-1.6.2-incubating.jar</systemPath>
-                </dependency-->
+                </dependency>
                 <dependency>
                     <groupId>org.cloudifysource</groupId>
                     <artifactId>version</artifactId>

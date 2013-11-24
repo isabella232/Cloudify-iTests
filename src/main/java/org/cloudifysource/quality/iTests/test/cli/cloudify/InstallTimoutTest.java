@@ -1,10 +1,7 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify;
 
-import java.io.IOException;
-
-import org.testng.annotations.Test;
-
 import iTests.framework.utils.LogUtils;
+import org.testng.annotations.Test;
 /**
  * Validate a Timeout exception is being thrown in the CLI 
  * after the service/application installation timeout has ended.
@@ -18,7 +15,7 @@ import iTests.framework.utils.LogUtils;
 public class InstallTimoutTest extends AbstractLocalCloudTest{
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
-	public void testServiceInstallTimout() throws IOException, InterruptedException{
+	public void testServiceInstallTimout() throws Exception {
 		
 		String usmServicePath = getUsmApplicationPath("simpleTimeout/simpleTimeout");
 		
@@ -41,7 +38,7 @@ public class InstallTimoutTest extends AbstractLocalCloudTest{
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
-	public void testApplicationInstallTimout() throws IOException, InterruptedException{
+	public void testApplicationInstallTimout() throws Exception {
 		String usmServicePath = getUsmApplicationPath("simpleTimeout");
 		
 		long preInstallTimeMillis = System.currentTimeMillis();

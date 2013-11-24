@@ -11,39 +11,39 @@
  *******************************************************************************/
 package org.cloudifysource.quality.iTests.test.cli.cloudify;
 
-import iTests.framework.utils.AssertUtils;
-import iTests.framework.utils.AssertUtils.RepetitiveConditionProvider;
-import iTests.framework.utils.LogUtils;
-import iTests.framework.utils.ScriptUtils;
+ import iTests.framework.utils.AssertUtils;
+ import iTests.framework.utils.AssertUtils.RepetitiveConditionProvider;
+ import iTests.framework.utils.LogUtils;
+ import iTests.framework.utils.ScriptUtils;
+ import junit.framework.Assert;
+ import org.apache.http.HttpResponse;
+ import org.apache.http.HttpStatus;
+ import org.apache.http.StatusLine;
+ import org.cloudifysource.dsl.internal.CloudifyConstants;
+ import org.cloudifysource.dsl.internal.DSLException;
+ import org.cloudifysource.dsl.internal.packaging.PackagingException;
+ import org.cloudifysource.dsl.rest.response.InstallApplicationResponse;
+ import org.cloudifysource.dsl.rest.response.ServiceDescription;
+ import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
+ import org.cloudifysource.quality.iTests.test.cli.cloudify.security.SecurityConstants;
+ import org.cloudifysource.quality.iTests.test.cli.cloudify.util.CloudTestUtils;
+ import org.cloudifysource.quality.iTests.test.cli.cloudify.util.NewRestTestUtils;
+ import org.cloudifysource.restclient.RestClient;
+ import org.cloudifysource.restclient.RestClientExecutor;
+ import org.cloudifysource.restclient.exceptions.RestClientException;
+ import org.cloudifysource.restclient.exceptions.RestClientIOException;
+ import org.openspaces.admin.pu.ProcessingUnitInstance;
+ import org.openspaces.admin.pu.events.ProcessingUnitInstanceAddedEventListener;
+ import org.openspaces.admin.pu.events.ProcessingUnitInstanceRemovedEventListener;
+ import org.testng.annotations.Test;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.concurrent.TimeUnit;
-
-import junit.framework.Assert;
-
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.StatusLine;
-import org.cloudifysource.dsl.internal.CloudifyConstants;
-import org.cloudifysource.dsl.internal.DSLException;
-import org.cloudifysource.dsl.internal.packaging.PackagingException;
-import org.cloudifysource.dsl.rest.response.InstallApplicationResponse;
-import org.cloudifysource.dsl.rest.response.ServiceDescription;
-import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
-import org.cloudifysource.quality.iTests.test.cli.cloudify.security.SecurityConstants;
-import org.cloudifysource.restclient.RestClient;
-import org.cloudifysource.restclient.RestClientExecutor;
-import org.cloudifysource.restclient.exceptions.RestClientException;
-import org.cloudifysource.restclient.exceptions.RestClientIOException;
-import org.openspaces.admin.pu.ProcessingUnitInstance;
-import org.openspaces.admin.pu.events.ProcessingUnitInstanceAddedEventListener;
-import org.openspaces.admin.pu.events.ProcessingUnitInstanceRemovedEventListener;
-import org.testng.annotations.Test;
+ import java.io.File;
+ import java.io.IOException;
+ import java.util.HashMap;
+ import java.util.List;
+ import java.util.Map;
+ import java.util.Map.Entry;
+ import java.util.concurrent.TimeUnit;
 
 /**
  * Checks the output of the uninstall process.
@@ -69,7 +69,7 @@ public class UninstallOutputTest extends AbstractLocalCloudTest {
 	 * @throws RestClientException
 	 */
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
-	public void uninstallApplicationTest() throws IOException, InterruptedException, DSLException, PackagingException, RestClientException {
+	public void uninstallApplicationTest() throws Exception {
 
 		ProcessingUnitInstanceAddedEventListener addedListener = getAddedListener();
 		ProcessingUnitInstanceRemovedEventListener removedListener = getRemovedListener();
@@ -79,7 +79,8 @@ public class UninstallOutputTest extends AbstractLocalCloudTest {
 		try {
 			// install
 			File applicationFolder = new File(PETCLINIC_PATH);
-			InstallApplicationResponse response = NewRestTestUtils.installApplicationUsingNewRestApi(restUrl, PETCLINIC_NAME, applicationFolder);
+			InstallApplicationResponse response = NewRestTestUtils
+                    .installApplicationUsingNewRestApi(restUrl, PETCLINIC_NAME, applicationFolder);
 
 			// get all services planned instances
 			Map<String, Integer> servicesPlannedInstances = new HashMap<String, Integer>();
@@ -154,7 +155,8 @@ public class UninstallOutputTest extends AbstractLocalCloudTest {
 			// dump machines before uninstall
 			if (!enableLogstash) {
 				try {
-					CloudTestUtils.dumpMachinesNewRestAPI(restUrl, SecurityConstants.USER_PWD_ALL_ROLES, SecurityConstants.USER_PWD_ALL_ROLES);
+					CloudTestUtils.dumpMachinesNewRestAPI(restUrl, SecurityConstants.USER_PWD_ALL_ROLES,
+                            SecurityConstants.USER_PWD_ALL_ROLES);
 				} catch (Exception e) {
 					LogUtils.log("Failed to dump machines.", e);
 				}
@@ -228,10 +230,10 @@ public class UninstallOutputTest extends AbstractLocalCloudTest {
 	 * @throws RestClientException
 	 */
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT, groups = "1", enabled = false)
-	public void uninstallServiceTest() throws IOException, InterruptedException, RestClientException {
+	public void uninstallServiceTest() throws Exception {
 		// install
 		File serviceFolder = new File(SERVICE_PATH);
-		NewRestTestUtils.installServiceUsingNewRestAPI(restUrl, serviceFolder , CloudifyConstants.DEFAULT_APPLICATION_NAME, SERVICE_NAME, 5);
+		NewRestTestUtils.installServiceUsingNewRestAPI(restUrl, serviceFolder , CloudifyConstants.DEFAULT_APPLICATION_NAME, SERVICE_NAME);
 		RestClient restClient = NewRestTestUtils.createAndConnect(restUrl);
 		ServiceDescription serviceDescription = restClient.getServiceDescription(CloudifyConstants.DEFAULT_APPLICATION_NAME, SERVICE_NAME);
 		int installed = serviceDescription.getInstanceCount();

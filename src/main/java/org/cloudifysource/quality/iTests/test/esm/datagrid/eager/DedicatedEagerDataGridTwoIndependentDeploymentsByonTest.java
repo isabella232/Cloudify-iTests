@@ -8,7 +8,7 @@ import java.util.concurrent.TimeUnit;
 import junit.framework.Assert;
 
 import org.cloudifysource.esc.driver.provisioning.byon.ByonProvisioningDriver;
-import org.cloudifysource.quality.iTests.test.cli.cloudify.CloudTestUtils;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.util.CloudTestUtils;
 import org.cloudifysource.quality.iTests.test.esm.AbstractFromXenToByonGSMTest;
 import org.openspaces.admin.gsa.GridServiceAgent;
 import org.openspaces.admin.pu.ProcessingUnit;

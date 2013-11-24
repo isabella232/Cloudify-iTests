@@ -15,10 +15,6 @@
  *******************************************************************************/
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.byon;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Map;
-
 import org.cloudifysource.dsl.internal.DSLException;
 import org.cloudifysource.dsl.internal.packaging.PackagingException;
 import org.cloudifysource.dsl.internal.packaging.ZipUtils;
@@ -26,12 +22,16 @@ import org.cloudifysource.dsl.rest.response.AddTemplateResponse;
 import org.cloudifysource.dsl.rest.response.AddTemplatesResponse;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
-import org.cloudifysource.quality.iTests.test.cli.cloudify.NewRestTestUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.templates.TemplatesCommandsRestAPI;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.util.NewRestTestUtils;
 import org.junit.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Map;
 
 public class ValidateApplicationServicesTest extends AbstractByonCloudTest {
 
@@ -56,7 +56,7 @@ public class ValidateApplicationServicesTest extends AbstractByonCloudTest {
 	}
 	
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, enabled = true)
-	public void testMissingTemplate() throws IOException, DSLException, PackagingException {
+	public void testMissingTemplate() throws Exception {
 		File appFolder = new File(NOT_EXIST_TEMPLATE_APP_FOLDER_PATH);
 		NewRestTestUtils.installApplicationUsingNewRestApi(
 					getRestUrl(), 
@@ -99,7 +99,7 @@ public class ValidateApplicationServicesTest extends AbstractByonCloudTest {
 	 * @throws PackagingException
 	 */
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, enabled = true)
-	public void testServiceWithoutCompute() throws IOException, DSLException, PackagingException {
+	public void testServiceWithoutCompute() throws Exception {
 		File appFolder = new File(SIMPLE_APP_FOLDER_PATH);
 		NewRestTestUtils.installApplicationUsingNewRestApi(
 					getRestUrl(), 

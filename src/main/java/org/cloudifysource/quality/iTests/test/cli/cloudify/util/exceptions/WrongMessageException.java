@@ -23,5 +23,26 @@ package org.cloudifysource.quality.iTests.test.cli.cloudify.util.exceptions;
  *
  * @author Eli Polonsky
  */
-public class WrongMessageException {
+public class WrongMessageException extends Exception {
+
+    private String actualMessage;
+    private String expectedMessage;
+
+    public WrongMessageException(final String actualMessage, final String expectedMessage) {
+        super(message(actualMessage, expectedMessage));
+        this.actualMessage = actualMessage;
+        this.expectedMessage = expectedMessage;
+    }
+
+    public String getActualMessage() {
+        return actualMessage;
+    }
+
+    public String getExpectedMessage() {
+        return expectedMessage;
+    }
+
+    private static String message(final String actualMessage, final String expectedMessage) {
+        return "Excepted message [" + expectedMessage + "] did not match actual message [" + actualMessage + "]";
+    }
 }

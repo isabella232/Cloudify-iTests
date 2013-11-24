@@ -58,7 +58,7 @@ public abstract class AbstractScalingRulesCloudTest extends NewAbstractCloudTest
 		executor = Executors.newScheduledThreadPool(NUMBER_OF_HTTP_GET_THREADS);
 	}
 
-	public void cleanup() throws IOException, InterruptedException {
+	public void cleanup() throws Exception {
 		
 		stopThreads();
 		

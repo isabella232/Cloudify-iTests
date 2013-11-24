@@ -1,10 +1,6 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.ec2win;
 
 import iTests.framework.utils.LogUtils;
-
-import java.io.File;
-import java.io.IOException;
-
 import org.apache.commons.io.FileUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.NewAbstractSecurityCloudTest;
@@ -13,6 +9,9 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+
+import java.io.File;
+import java.io.IOException;
 
 public class Ec2WinSecurityTest extends NewAbstractSecurityCloudTest {
 
@@ -52,7 +51,7 @@ public class Ec2WinSecurityTest extends NewAbstractSecurityCloudTest {
 	}
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 10, enabled = true)
-	public void installAndUninstallTest() throws IOException, InterruptedException {
+	public void installAndUninstallTest() throws Exception {
 
 		installAndUninstall(SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, false);
 		installAndUninstall(SecurityConstants.USER_PWD_APP_MANAGER, SecurityConstants.USER_PWD_APP_MANAGER, false);
@@ -63,7 +62,7 @@ public class Ec2WinSecurityTest extends NewAbstractSecurityCloudTest {
 	}
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
-	public void installAndUninstallWithDifferentUsersTest() throws IOException, InterruptedException {
+	public void installAndUninstallWithDifferentUsersTest() throws Exception {
 
 		String output = "no output";
 		
@@ -180,7 +179,7 @@ public class Ec2WinSecurityTest extends NewAbstractSecurityCloudTest {
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
-	public void installAndUninstallWithDifferentGroup() throws IOException, InterruptedException {
+	public void installAndUninstallWithDifferentGroup() throws Exception {
 		
 		String output = "no output";
 		
@@ -301,7 +300,7 @@ public class Ec2WinSecurityTest extends NewAbstractSecurityCloudTest {
 		}
 	}
 	
-	public void installAndUninstall(String user, String password, boolean isInstallExpectedToFail) throws IOException, InterruptedException{
+	public void installAndUninstall(String user, String password, boolean isInstallExpectedToFail) throws Exception {
 		
 		String output = installApplicationAndWait(SIMPLE_APP_PATH, SIMPLE_APP_NAME, TIMEOUT_IN_MINUTES, user, password, isInstallExpectedToFail, null);
 		

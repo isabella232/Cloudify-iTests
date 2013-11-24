@@ -16,12 +16,10 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify;
 
 import iTests.framework.utils.LogUtils;
-
-import java.io.File;
-import java.io.IOException;
-
 import org.apache.commons.io.FileUtils;
 import org.testng.annotations.Test;
+
+import java.io.File;
 
 public class TailCommandTest extends AbstractLocalCloudTest {
 	
@@ -34,7 +32,7 @@ public class TailCommandTest extends AbstractLocalCloudTest {
 	private static final String EXPECTED_SYSTEM_OUT_LOG_ENTRY = "system.out: Still alive...";
     
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
-	public void testTailByServiceInstanceId() throws IOException, InterruptedException {
+	public void testTailByServiceInstanceId() throws Exception {
 		installService();
 		String runCommand = runCommand("connect " + this.restUrl + 
 				";tail --verbose -instanceId 1 simple 30; " + "exit");
@@ -44,7 +42,7 @@ public class TailCommandTest extends AbstractLocalCloudTest {
 		uninstallService();
 	}
 
-	private void uninstallService() throws IOException, InterruptedException {
+	private void uninstallService() throws Exception {
 		uninstallService(SERVICE_NAME);
 	}
 
@@ -55,7 +53,7 @@ public class TailCommandTest extends AbstractLocalCloudTest {
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
-	public void testTailByServiceInstanceHostAddress() throws IOException, InterruptedException {
+	public void testTailByServiceInstanceHostAddress() throws Exception {
 		installService();
 		String runCommand = runCommand("connect " + this.restUrl + 
 				";tail --verbose -hostAddress " + admin.getMachines().getMachines()[0].getHostAddress() + " simple 30; " + "exit");
@@ -66,7 +64,7 @@ public class TailCommandTest extends AbstractLocalCloudTest {
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
-	public void testTailByServiceName() throws IOException, InterruptedException {
+	public void testTailByServiceName() throws Exception {
 		installService();
 		String runCommand = runCommand("connect " + this.restUrl + 
 				";tail --verbose simple 30; " + "exit");
@@ -77,7 +75,7 @@ public class TailCommandTest extends AbstractLocalCloudTest {
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
-	public void testSaveTailToFile() throws IOException, InterruptedException {
+	public void testSaveTailToFile() throws Exception {
 		installService();
 		File tempDirectory = FileUtils.getTempDirectory();
 		File file = new File(tempDirectory, "tempLogFile.txt");
@@ -92,7 +90,7 @@ public class TailCommandTest extends AbstractLocalCloudTest {
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
-	public void testTailOfOverThousandLines() throws IOException, InterruptedException {
+	public void testTailOfOverThousandLines() throws Exception {
 		installService();
 		File tempDirectory = FileUtils.getTempDirectory();
 		File file = new File(tempDirectory, "tempLogFile.txt");

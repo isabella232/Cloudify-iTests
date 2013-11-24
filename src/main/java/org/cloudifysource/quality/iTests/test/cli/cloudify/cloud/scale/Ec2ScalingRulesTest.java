@@ -16,8 +16,6 @@
 
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.scale;
 
-import java.io.IOException;
-
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
@@ -50,7 +48,7 @@ public class Ec2ScalingRulesTest extends AbstractScalingRulesCloudTest{
 	
 	
 	@AfterMethod
-	public void cleanup() throws IOException, InterruptedException {
+	public void cleanup() throws Exception {
 		super.cleanup();
 		
 	}

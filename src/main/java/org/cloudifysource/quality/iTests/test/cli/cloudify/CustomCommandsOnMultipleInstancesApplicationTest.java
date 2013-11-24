@@ -1,17 +1,16 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify;
 
-import java.io.IOException;
-import java.util.concurrent.TimeUnit;
-
+import iTests.framework.utils.LogUtils;
 import org.cloudifysource.dsl.internal.DSLException;
 import org.cloudifysource.dsl.utils.ServiceUtils;
+import org.cloudifysource.quality.iTests.framework.utils.usm.USMTestUtils;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import iTests.framework.utils.LogUtils;
-import org.cloudifysource.quality.iTests.framework.utils.usm.USMTestUtils;
+import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 public class CustomCommandsOnMultipleInstancesApplicationTest extends AbstractLocalCloudTest {
 
@@ -230,7 +229,7 @@ public class CustomCommandsOnMultipleInstancesApplicationTest extends AbstractLo
         AbstractTestSupport.assertTrue("USM Service State is NOT RUNNING", USMTestUtils.waitForPuRunningState(absolutePUNameSimple2, 60, TimeUnit.SECONDS, admin));
 	}
 	
-	private void uninstallApplication() throws IOException, InterruptedException {
+	private void uninstallApplication() throws Exception {
 		uninstallApplication(APPLICATION_NAME);
 	}
 

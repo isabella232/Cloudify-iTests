@@ -192,9 +192,7 @@ public class Ec2ConcurrentInstallUninstallTest extends NewAbstractCloudTest {
         public void run() {
             try {
                 uninstallApplicationAndWait(applicationName+index, false, TIMEOUT);
-            } catch (IOException e) {
-                AssertFail("Failed to uninstall", e);
-            } catch (InterruptedException e) {
+            } catch (Exception e) {
                 AssertFail("Failed to uninstall", e);
             }
         }

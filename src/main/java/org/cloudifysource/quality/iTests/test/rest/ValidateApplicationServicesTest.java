@@ -22,7 +22,7 @@ import junit.framework.Assert;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.AbstractLocalCloudTest;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
-import org.cloudifysource.quality.iTests.test.cli.cloudify.NewRestTestUtils;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.util.NewRestTestUtils;
 import org.testng.annotations.Test;
 
 public class ValidateApplicationServicesTest extends AbstractLocalCloudTest {

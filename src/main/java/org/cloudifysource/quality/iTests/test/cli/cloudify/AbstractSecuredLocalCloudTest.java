@@ -2,12 +2,6 @@ package org.cloudifysource.quality.iTests.test.cli.cloudify;
 
 import iTests.framework.utils.LogUtils;
 import iTests.framework.utils.WebUtils;
-
-import java.io.File;
-import java.io.IOException;
-import java.net.InetAddress;
-import java.net.URL;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.cloudifysource.dsl.internal.CloudifyConstants;
@@ -19,12 +13,18 @@ import org.cloudifysource.quality.iTests.framework.utils.ServiceInstaller;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils.ProcessResult;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.security.SecurityConstants;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.util.CloudTestUtils;
 import org.cloudifysource.utilitydomain.openspaces.OpenspacesConstants;
 import org.openspaces.admin.Admin;
 import org.openspaces.admin.AdminFactory;
 import org.openspaces.admin.application.Applications;
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.openspaces.admin.pu.ProcessingUnits;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.URL;
 
 public class AbstractSecuredLocalCloudTest extends AbstractTestSupport {
 
@@ -49,7 +49,7 @@ public class AbstractSecuredLocalCloudTest extends AbstractTestSupport {
 	protected static final String MANAGEMENT_APPLICATION_NAME = "management";
     private static final boolean enableLogstash = Boolean.parseBoolean(System.getProperty("iTests.enableLogstash", "false"));
 
-	protected void installAndUninstallTest() throws IOException,InterruptedException {
+	protected void installAndUninstallTest() throws Exception {
 		installAndUninstall(SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, false);
 		installAndUninstall(SecurityConstants.USER_PWD_APP_MANAGER, SecurityConstants.USER_PWD_APP_MANAGER, false);
 		installAndUninstall(SecurityConstants.USER_PWD_CLOUD_ADMIN_AND_APP_MANAGER, SecurityConstants.USER_PWD_CLOUD_ADMIN_AND_APP_MANAGER, false);
@@ -234,7 +234,7 @@ public class AbstractSecuredLocalCloudTest extends AbstractTestSupport {
 		
 	}
 
-	public void installAndUninstall(String user, String password, boolean isInstallExpectedToFail) throws IOException, InterruptedException{
+	public void installAndUninstall(String user, String password, boolean isInstallExpectedToFail) throws Exception {
 
 		String output = installApplicationAndWait(SIMPLE_APP_PATH, SIMPLE_APP_NAME, TIMEOUT_IN_MINUTES, user, password, isInstallExpectedToFail, null);
 
@@ -278,7 +278,7 @@ public class AbstractSecuredLocalCloudTest extends AbstractTestSupport {
 	}
 
 	protected String uninstallApplicationAndWait(String applicationPath, String applicationName, int timeout, final String cloudifyUsername,
-			final String cloudifyPassword, boolean isExpectedToFail, final String authGroups) throws IOException, InterruptedException {
+			final String cloudifyPassword, boolean isExpectedToFail, final String authGroups) throws Exception {
 
 		ApplicationInstaller applicationInstaller = new ApplicationInstaller(getRestUrl(), applicationName);
 		applicationInstaller.recipePath(applicationPath);
@@ -327,7 +327,7 @@ public class AbstractSecuredLocalCloudTest extends AbstractTestSupport {
 	}
 
 	protected String uninstallServiceAndWait(String servicePath, String serviceName, int timeout, final String cloudifyUsername,
-			final String cloudifyPassword, boolean isExpectedToFail, final String authGroups) throws IOException, InterruptedException {
+			final String cloudifyPassword, boolean isExpectedToFail, final String authGroups) throws Exception {
 
 		ServiceInstaller serviceInstaller = new ServiceInstaller(getRestUrl(), serviceName);
 		serviceInstaller.recipePath(servicePath);
@@ -549,7 +549,8 @@ public class AbstractSecuredLocalCloudTest extends AbstractTestSupport {
             }
         }
         if (!dumpPerformed && !enableLogstash) {
-            CloudTestUtils.dumpMachinesNewRestAPI(getRestUrl(), SecurityConstants.USER_PWD_ALL_ROLES, SecurityConstants.USER_PWD_ALL_ROLES);
+            CloudTestUtils.dumpMachinesNewRestAPI(getRestUrl(), SecurityConstants.USER_PWD_ALL_ROLES,
+                    SecurityConstants.USER_PWD_ALL_ROLES);
         }
 
 

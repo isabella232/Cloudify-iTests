@@ -1,22 +1,17 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud;
 
+import com.j_spaces.kernel.PlatformVersion;
 import iTests.framework.utils.AssertUtils;
 import iTests.framework.utils.LogUtils;
+import org.cloudifysource.domain.Service;
+import org.cloudifysource.dsl.internal.ServiceReader;
+import org.cloudifysource.restclient.GSRestClient;
+import org.testng.annotations.AfterMethod;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Map;
-
-import org.cloudifysource.domain.Service;
-import org.cloudifysource.dsl.internal.DSLException;
-import org.cloudifysource.dsl.internal.ServiceReader;
-import org.cloudifysource.dsl.internal.packaging.PackagingException;
-import org.cloudifysource.restclient.GSRestClient;
-import org.cloudifysource.restclient.RestException;
-import org.testng.annotations.AfterMethod;
-
-import com.j_spaces.kernel.PlatformVersion;
 
 public abstract class AbstractServicesTest extends NewAbstractCloudTest {
 
@@ -31,11 +26,12 @@ public abstract class AbstractServicesTest extends NewAbstractCloudTest {
 	}
 
 
-	public void testService(String serviceFolderPath, String overrideServiceName) throws IOException, InterruptedException, RestException, PackagingException, DSLException{
+	public void testService(String serviceFolderPath, String overrideServiceName) throws Exception {
 		testService(serviceFolderPath, overrideServiceName, DEFAULT_INSTALLATION_TIMEOUT);
 	}
 
- 	public void testService(String serviceFolderPath, String overrideServiceName, final int timeoutMins) throws IOException, InterruptedException, RestException, PackagingException, DSLException{
+ 	public void testService(String serviceFolderPath, String overrideServiceName,
+                            final int timeoutMins) throws Exception {
 		LogUtils.log("Reading Service from file : " + serviceFolderPath);
 		Service service = ServiceReader.readService(new File(serviceFolderPath));
 		LogUtils.log("Succesfully read Service : " + service);

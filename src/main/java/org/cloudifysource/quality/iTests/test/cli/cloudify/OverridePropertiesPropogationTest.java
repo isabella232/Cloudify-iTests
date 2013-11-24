@@ -1,20 +1,18 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify;
 
+import groovy.util.ConfigObject;
+import groovy.util.ConfigSlurper;
+import iTests.framework.tools.SGTestHelper;
+import iTests.framework.utils.AssertUtils;
+import org.cloudifysource.dsl.utils.ServiceUtils;
+import org.cloudifysource.quality.iTests.framework.utils.ApplicationInstaller;
+import org.cloudifysource.quality.iTests.framework.utils.ServiceInstaller;
+import org.testng.annotations.Test;
+
 import java.io.File;
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.cloudifysource.dsl.utils.ServiceUtils;
-import org.testng.annotations.Test;
-
-import iTests.framework.tools.SGTestHelper;
-import org.cloudifysource.quality.iTests.framework.utils.ApplicationInstaller;
-import iTests.framework.utils.AssertUtils;
-import org.cloudifysource.quality.iTests.framework.utils.ServiceInstaller;
-import groovy.util.ConfigObject;
-import groovy.util.ConfigSlurper;
 
 public class OverridePropertiesPropogationTest extends AbstractLocalCloudTest {
 	
@@ -32,7 +30,7 @@ public class OverridePropertiesPropogationTest extends AbstractLocalCloudTest {
 	}
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
-	public void testInstallService() throws IOException, InterruptedException {
+	public void testInstallService() throws Exception {
 		
 		ServiceInstaller tomcatInstaller = new ServiceInstaller(restUrl, "tomcat");
 		tomcatInstaller.recipePath(TOMCAT_SERVICE_PATH);
@@ -47,7 +45,7 @@ public class OverridePropertiesPropogationTest extends AbstractLocalCloudTest {
 	}
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
-	public void testInstallApplication() throws IOException, InterruptedException {
+	public void testInstallApplication() throws Exception {
 
 		ApplicationInstaller travelInstaller = new ApplicationInstaller(restUrl, "travel");
 		travelInstaller.recipePath(TRAVEL_APP_PATH);

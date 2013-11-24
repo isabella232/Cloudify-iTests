@@ -9,7 +9,7 @@ import org.cloudifysource.esc.driver.provisioning.byon.ByonProvisioningDriver;
 import org.cloudifysource.quality.iTests.framework.utils.CloudBootstrapper;
 import org.cloudifysource.quality.iTests.framework.utils.ServiceInstaller;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
-import org.cloudifysource.quality.iTests.test.cli.cloudify.CloudTestUtils;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.util.CloudTestUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.CloudService;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.CloudServiceManager;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.security.SecurityConstants;

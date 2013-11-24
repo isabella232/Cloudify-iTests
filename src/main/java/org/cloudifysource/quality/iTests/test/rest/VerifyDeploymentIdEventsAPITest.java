@@ -11,21 +11,17 @@
  *******************************************************************************/
 package org.cloudifysource.quality.iTests.test.rest;
 
-import java.io.IOException;
-import java.util.List;
+ import junit.framework.Assert;
+ import org.cloudifysource.dsl.internal.CloudifyMessageKeys;
+ import org.cloudifysource.dsl.rest.response.ServiceDescription;
+ import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
+ import org.cloudifysource.quality.iTests.test.cli.cloudify.AbstractLocalCloudTest;
+ import org.cloudifysource.quality.iTests.test.cli.cloudify.util.NewRestTestUtils;
+ import org.cloudifysource.restclient.RestClient;
+ import org.cloudifysource.restclient.exceptions.RestClientException;
+ import org.testng.annotations.Test;
 
-import junit.framework.Assert;
-
-import org.cloudifysource.dsl.internal.CloudifyMessageKeys;
-import org.cloudifysource.dsl.internal.DSLException;
-import org.cloudifysource.dsl.internal.packaging.PackagingException;
-import org.cloudifysource.dsl.rest.response.ServiceDescription;
-import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
-import org.cloudifysource.quality.iTests.test.cli.cloudify.AbstractLocalCloudTest;
-import org.cloudifysource.quality.iTests.test.cli.cloudify.NewRestTestUtils;
-import org.cloudifysource.restclient.RestClient;
-import org.cloudifysource.restclient.exceptions.RestClientException;
-import org.testng.annotations.Test;
+ import java.util.List;
 
 /**
  * Tests the verification of deploymentId in events API.
@@ -41,7 +37,7 @@ public class VerifyDeploymentIdEventsAPITest extends AbstractLocalCloudTest {
 	private static final String NOT_EXIST_DEPLOYMENT_ID = "not-exist-deployment-id";
 	
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, enabled = true)
-    public void getLastEventsTest(){
+    public void getLastEventsTest() throws Exception {
 	       RestClient restClient = NewRestTestUtils.createAndConnect(restUrl);
 			try {
 				restClient.getLastEvent(NOT_EXIST_DEPLOYMENT_ID);
@@ -52,7 +48,7 @@ public class VerifyDeploymentIdEventsAPITest extends AbstractLocalCloudTest {
     }
 	
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, enabled = true)
-    public void getDeploymentEventsTest(){
+    public void getDeploymentEventsTest() throws Exception {
 	       RestClient restClient = NewRestTestUtils.createAndConnect(restUrl);
 			try {
 				restClient.getDeploymentEvents(NOT_EXIST_DEPLOYMENT_ID, 0, -1);
@@ -63,7 +59,7 @@ public class VerifyDeploymentIdEventsAPITest extends AbstractLocalCloudTest {
 	}
 	
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, enabled = true)
-    public void getServiceDescriptionsTest() throws IOException, DSLException, PackagingException{
+    public void getServiceDescriptionsTest() throws Exception {
 	       RestClient restClient = NewRestTestUtils.createAndConnect(restUrl);
 			try {
                 List<ServiceDescription> serviceDescriptions =

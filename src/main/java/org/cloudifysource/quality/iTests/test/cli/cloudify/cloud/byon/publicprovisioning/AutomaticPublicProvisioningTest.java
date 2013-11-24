@@ -1,18 +1,17 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.byon.publicprovisioning;
 
-import java.io.IOException;
-import java.util.concurrent.TimeUnit;
-
+import iTests.framework.utils.AssertUtils;
+import iTests.framework.utils.LogUtils;
 import org.cloudifysource.dsl.utils.ServiceUtils;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.openspaces.admin.pu.ProcessingUnitInstance;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
-import iTests.framework.utils.AssertUtils;
-import iTests.framework.utils.LogUtils;
+import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 public class AutomaticPublicProvisioningTest extends AbstractPublicProvisioningByonCloudTest {
 	
@@ -29,7 +28,7 @@ public class AutomaticPublicProvisioningTest extends AbstractPublicProvisioningB
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
-	public void testAutoScalingPublicProvisioning() throws IOException, InterruptedException {
+	public void testAutoScalingPublicProvisioning() throws Exception {
 		
 		installAutomaticPublicProvisioningServiceAndWait(SERVICE_NAME, 1, 128, 0, DEFAULT_TEMPLATE_NAME, false);
 		

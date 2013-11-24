@@ -2,19 +2,17 @@ package org.cloudifysource.quality.iTests.test.cli.cloudify.recipes.examples;
 
 import iTests.framework.testng.annotations.TestConfiguration;
 import iTests.framework.tools.SGTestHelper;
+import iTests.framework.utils.JGitUtils;
 import iTests.framework.utils.LogUtils;
 import iTests.framework.utils.ScriptUtils;
-
-import java.io.File;
-import java.io.IOException;
-
 import org.apache.commons.io.FileUtils;
-import iTests.framework.utils.JGitUtils;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.AbstractLocalCloudTest;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+
+import java.io.File;
 
 
 public class ExcludedServicesTest extends AbstractLocalCloudTest { 
@@ -146,12 +144,12 @@ public class ExcludedServicesTest extends AbstractLocalCloudTest {
         doTest("zookeeper");
     }
 
-    private void doTest(String recipeName) throws IOException, InterruptedException {
+    private void doTest(String recipeName) throws Exception {
     	installServiceAndWait(localGitRepoPath + "/services/" + recipeName, recipeName, false);
     	uninstallService(recipeName);
     }
 
-    private void doTest(final String recipeName, final int timeoutInMinutes) throws IOException, InterruptedException {
+    private void doTest(final String recipeName, final int timeoutInMinutes) throws Exception {
         installServiceAndWait(localGitRepoPath + "/services/" + recipeName, recipeName, false, timeoutInMinutes);
         uninstallService(recipeName);
     }

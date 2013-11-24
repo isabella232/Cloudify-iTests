@@ -1,16 +1,14 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.byon;
 
-import java.io.IOException;
-import java.util.concurrent.TimeUnit;
-
+import iTests.framework.utils.NetworkUtils;
+import iTests.framework.utils.ScriptUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.springframework.util.StringUtils;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import iTests.framework.utils.NetworkUtils;
-import iTests.framework.utils.ScriptUtils;
+import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -28,7 +26,7 @@ public class NamesAsIPsByonTest extends AbstractByonCloudTest {
 	}
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
-	public void testPetclinic() throws IOException, InterruptedException{
+	public void testPetclinic() throws Exception {
 
 		installApplicationAndWait(ScriptUtils.getBuildPath() + "/recipes/apps/petclinic-simple", "petclinic");
 		assertTrue("petclinic.mongod is not up - install failed", admin.getProcessingUnits().waitFor("petclinic.mongod", OPERATION_TIMEOUT, TimeUnit.MILLISECONDS) != null);

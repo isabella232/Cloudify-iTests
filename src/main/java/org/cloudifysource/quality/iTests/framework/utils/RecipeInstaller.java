@@ -23,7 +23,7 @@ import org.cloudifysource.dsl.rest.response.InstallApplicationResponse;
 import org.cloudifysource.dsl.rest.response.InstallServiceResponse;
 import org.cloudifysource.dsl.rest.response.ServiceDescription;
 import org.cloudifysource.dsl.rest.response.UploadResponse;
-import org.cloudifysource.quality.iTests.test.cli.cloudify.CloudTestUtils;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.util.CloudTestUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.security.SecurityConstants;
 import org.cloudifysource.restclient.GSRestClient;
@@ -274,7 +274,7 @@ public abstract class RecipeInstaller {
 
 
 
-    public String uninstall() throws IOException, InterruptedException {
+    public String uninstall() throws Exception {
 
         final boolean enableLogstash = Boolean.parseBoolean(System.getProperty("iTests.enableLogstash", "false"));
         String uninstallCommand = null;
@@ -290,7 +290,7 @@ public abstract class RecipeInstaller {
             excpectedResult = "Application " + recipeName + " uninstalled successfully";
         }
 
-        if(!enableLogstash){
+        if (!enableLogstash) {
             CloudTestUtils.dumpMachinesNewRestAPI(restUrl, SecurityConstants.USER_PWD_ALL_ROLES, SecurityConstants.USER_PWD_ALL_ROLES);
         }
 

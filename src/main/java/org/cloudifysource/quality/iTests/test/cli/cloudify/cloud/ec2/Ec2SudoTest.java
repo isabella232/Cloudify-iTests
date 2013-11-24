@@ -16,8 +16,6 @@
 
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.ec2;
 
-import java.io.IOException;
-
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.NewAbstractCloudTest;
 import org.testng.annotations.AfterClass;
@@ -40,7 +38,7 @@ public class Ec2SudoTest extends NewAbstractCloudTest {
 	}
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT)
-	public void testSudo() throws IOException, InterruptedException {
+	public void testSudo() throws Exception {
 		installServiceAndWait(RECIPE_DIR_PATH, serviceName);
 		String invokeResult = CommandTestUtils.runCommandAndWait("connect " + getRestUrl()
 				+ "; invoke groovy sudo");

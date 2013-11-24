@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import org.cloudifysource.esc.driver.provisioning.byon.ByonProvisioningDriver;
-import org.cloudifysource.quality.iTests.test.cli.cloudify.CloudTestUtils;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.util.CloudTestUtils;
 import org.cloudifysource.quality.iTests.test.esm.AbstractFromXenToByonGSMTest;
 import org.openspaces.admin.esm.ElasticServiceManager;
 import org.openspaces.admin.pu.ProcessingUnit;

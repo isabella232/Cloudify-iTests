@@ -2,7 +2,7 @@ package org.cloudifysource.quality.iTests.framework.utils;
 
 import iTests.framework.utils.LogUtils;
 import org.apache.commons.lang.StringUtils;
-import org.cloudifysource.quality.iTests.test.cli.cloudify.CloudTestUtils;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.util.CloudTestUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils.ProcessResult;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.security.SecurityConstants;

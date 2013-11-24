@@ -1,20 +1,14 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-
+import iTests.framework.utils.AssertUtils;
 import org.cloudifysource.dsl.internal.CloudifyConstants;
 import org.cloudifysource.quality.iTests.framework.utils.ApplicationInstaller;
-import iTests.framework.utils.AssertUtils;
 import org.cloudifysource.quality.iTests.framework.utils.LocalCloudBootstrapper;
 import org.cloudifysource.quality.iTests.framework.utils.ProcessUtils;
 import org.cloudifysource.quality.iTests.framework.utils.ServiceInstaller;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils.ProcessResult;
 import org.cloudifysource.utilitydomain.openspaces.OpenspacesConstants;
-import org.hyperic.sigar.SigarException;
 import org.openspaces.admin.Admin;
 import org.openspaces.admin.AdminFactory;
 import org.openspaces.admin.application.Application;
@@ -22,6 +16,11 @@ import org.openspaces.admin.pu.ProcessingUnit;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 public class NewAbstractLocalCloudTest extends AbstractTestSupport {
 	
@@ -45,7 +44,7 @@ public class NewAbstractLocalCloudTest extends AbstractTestSupport {
 	}
 	
     @AfterMethod(alwaysRun = true)
-    public void cleanup() throws SigarException, IOException, InterruptedException {
+    public void cleanup() throws Exception {
     	
     	uninstallApplications();
     	uninstallService();
@@ -59,7 +58,7 @@ public class NewAbstractLocalCloudTest extends AbstractTestSupport {
     	
     }
 	
-    private void uninstallApplications() throws IOException, InterruptedException {
+    private void uninstallApplications() throws Exception {
 		
     	ApplicationInstaller installer;
     	for (Application app : admin.getApplications() ) {
@@ -73,7 +72,7 @@ public class NewAbstractLocalCloudTest extends AbstractTestSupport {
 		
 	}
 
-	private void uninstallService() throws IOException, InterruptedException {
+	private void uninstallService() throws Exception {
 
 		ServiceInstaller installer;
     	for (ProcessingUnit pu : admin.getProcessingUnits() ) {

@@ -1,13 +1,8 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.ec2.persistence;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-
+import iTests.framework.utils.SSHUtils;
 import org.cloudifysource.dsl.internal.CloudifyConstants;
 import org.cloudifysource.dsl.utils.ServiceUtils;
-import iTests.framework.utils.SSHUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils.ProcessResult;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.NewAbstractCloudTest;
@@ -15,6 +10,11 @@ import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 public class Ec2PersistentManagerTest extends NewAbstractCloudTest {
 
@@ -41,7 +41,7 @@ public class Ec2PersistentManagerTest extends NewAbstractCloudTest {
 	}
 
 	@Test
-	public void test() throws IOException, InterruptedException {
+	public void test() throws Exception {
 
 		final String restPath = createRemoteRestPath();
 		final String ipAddress = createServerIpAddress();

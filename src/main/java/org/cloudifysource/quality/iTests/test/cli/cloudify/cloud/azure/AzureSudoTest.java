@@ -6,8 +6,6 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import java.io.IOException;
-
 /**
  * Created with IntelliJ IDEA.
  * User: elip
@@ -30,7 +28,7 @@ public class AzureSudoTest extends NewAbstractCloudTest {
     }
 
     @Test(timeOut = DEFAULT_TEST_TIMEOUT)
-    public void testSudo() throws IOException, InterruptedException {
+    public void testSudo() throws Exception {
         installServiceAndWait(RECIPE_DIR_PATH, serviceName);
         String invokeResult = CommandTestUtils.runCommandAndWait("connect " + getRestUrl()
                 + "; invoke groovy sudo");

@@ -1,7 +1,5 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.security;
 
-import java.io.IOException;
-
 import org.cloudifysource.quality.iTests.framework.utils.LocalCloudBootstrapper;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.AbstractSecuredLocalCloudTest;
@@ -9,6 +7,8 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+
+import java.io.IOException;
 
 public class LocalCloudSecurityTest extends AbstractSecuredLocalCloudTest {
 	
@@ -21,7 +21,7 @@ public class LocalCloudSecurityTest extends AbstractSecuredLocalCloudTest {
 	
 	
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT, enabled = true)
-	public void installAndUninstalApplWithDifferentUsersTest() throws IOException, InterruptedException {
+	public void installAndUninstalApplWithDifferentUsersTest() throws Exception {
 		
 		installApplicationAndWait(SIMPLE_APP_PATH, SIMPLE_APP_NAME, TIMEOUT_IN_MINUTES, SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, false, null);
 
@@ -33,7 +33,7 @@ public class LocalCloudSecurityTest extends AbstractSecuredLocalCloudTest {
 	
 	
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT, enabled = true)
-	public void installAndUninstalServicelWithDifferentUsersTest() throws IOException, InterruptedException {
+	public void installAndUninstalServicelWithDifferentUsersTest() throws Exception {
 		
 		installServiceAndWait(SIMPLE_SERVICE_PATH, SIMPLE_SERVICE_NAME, TIMEOUT_IN_MINUTES, SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, false, null);
 
@@ -72,7 +72,7 @@ public class LocalCloudSecurityTest extends AbstractSecuredLocalCloudTest {
 	
 	
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT, enabled = true)
-	public void installingAndViewingServiceTest() throws IOException, InterruptedException{
+	public void installingAndViewingServiceTest() throws Exception {
 		// Dan (app manager) installs service simple without auth-groups
 		installServiceAndWait(SIMPLE_SERVICE_PATH, SIMPLE_SERVICE_NAME, TIMEOUT_IN_MINUTES, SecurityConstants.USER_PWD_APP_MANAGER, SecurityConstants.USER_PWD_APP_MANAGER, false, null);
 		
@@ -134,7 +134,7 @@ public class LocalCloudSecurityTest extends AbstractSecuredLocalCloudTest {
 	
 	
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT, enabled = true)
-	public void installAndUninstallAppWithDifferentGroup() throws IOException, InterruptedException {
+	public void installAndUninstallAppWithDifferentGroup() throws Exception {
 		
 		String output = "no output";
 		
@@ -146,7 +146,7 @@ public class LocalCloudSecurityTest extends AbstractSecuredLocalCloudTest {
 	
 	
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT, enabled = true)
-	public void installAndUninstallServiceWithDifferentGroup() throws IOException, InterruptedException {
+	public void installAndUninstallServiceWithDifferentGroup() throws Exception {
 		
 		String output = "no output";
 		
@@ -158,7 +158,7 @@ public class LocalCloudSecurityTest extends AbstractSecuredLocalCloudTest {
 	
 	
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT, enabled = true)
-	public void testInstallAndUninstall() throws IOException, InterruptedException {
+	public void testInstallAndUninstall() throws Exception {
 		super.installAndUninstallTest();
 	}
 	

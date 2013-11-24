@@ -1,11 +1,11 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.byon;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
+import org.cloudifysource.quality.iTests.framework.utils.ApplicationInstaller;
+import org.cloudifysource.quality.iTests.framework.utils.ServiceInstaller;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.byon.ByonCloudService;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.byon.MultipleTemplatesByonCloudService;
 import org.openspaces.admin.gsa.GridServiceAgent;
 import org.openspaces.admin.machine.Machine;
 import org.testng.annotations.AfterClass;
@@ -13,11 +13,10 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
-import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.byon.ByonCloudService;
-import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.byon.MultipleTemplatesByonCloudService;
-import org.cloudifysource.quality.iTests.framework.utils.ApplicationInstaller;
-import org.cloudifysource.quality.iTests.framework.utils.ServiceInstaller;
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * CLOUDIFY-1128.
@@ -45,7 +44,7 @@ public class CloudOverridesTest extends AbstractByonCloudTest {
 	
 	
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, enabled = true)
-	public void testInstallService() throws IOException, InterruptedException {
+	public void testInstallService() throws Exception {
 		
 		File createOverridesFile = null;
 		try {
@@ -70,7 +69,7 @@ public class CloudOverridesTest extends AbstractByonCloudTest {
 	}
 
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT, enabled = true)
-	public void testInstallApplication() throws IOException, InterruptedException {
+	public void testInstallApplication() throws Exception {
 		
 		File cloudOverridesFile = null;
 	
@@ -97,7 +96,7 @@ public class CloudOverridesTest extends AbstractByonCloudTest {
 	}
 	
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT, enabled = true)
-	public void testSetInstances() throws IOException, InterruptedException {
+	public void testSetInstances() throws Exception {
 		
 		File createOverridesFile = null;
 		try {

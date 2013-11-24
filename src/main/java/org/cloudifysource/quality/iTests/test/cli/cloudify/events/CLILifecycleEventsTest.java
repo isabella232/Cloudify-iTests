@@ -141,8 +141,8 @@ public class CLILifecycleEventsTest extends AbstractLocalCloudTest {
      * @throws DSLException
      */
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
-	public void testApplicationUnInstallLifecycleLogs() 
-			throws IOException, InterruptedException, DSLException {
+	public void testApplicationUnInstallLifecycleLogs()
+            throws Exception {
 
 		String usmApplicationPath = getUsmApplicationPath("groovyApp");
 		File applicationFile = new File(usmApplicationPath, "groovyApp-application.groovy");
@@ -177,8 +177,8 @@ public class CLILifecycleEventsTest extends AbstractLocalCloudTest {
      * @throws DSLException
      */
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
-	public void testServiceUnInstallLifecycleLogs() 
-			throws IOException, InterruptedException, PackagingException, DSLException {
+	public void testServiceUnInstallLifecycleLogs()
+            throws Exception {
 		
 		String usmServicePath = getUsmServicePath("groovy");
 		Service service = ServiceReader.readService(new File(usmServicePath));

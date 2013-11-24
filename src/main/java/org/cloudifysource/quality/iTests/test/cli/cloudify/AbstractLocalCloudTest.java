@@ -39,6 +39,7 @@ import org.cloudifysource.quality.iTests.framework.utils.LocalCloudBootstrapper;
 import org.cloudifysource.quality.iTests.framework.utils.ServiceInstaller;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.security.SecurityConstants;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.util.CloudTestUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.util.RepositoryMirrorHelper;
 import org.cloudifysource.restclient.ErrorStatusException;
 import org.cloudifysource.restclient.StringUtils;
@@ -446,7 +447,7 @@ public class AbstractLocalCloudTest extends AbstractTestSupport {
 		return CommandTestUtils.runCommandAndWait(command);
 	}
 	
-	protected String uninstallApplication(final String applicationName) throws IOException, InterruptedException {
+	protected String uninstallApplication(final String applicationName) throws Exception {
         ApplicationInstaller applicationInstaller = new ApplicationInstaller(restUrl, applicationName);
         applicationInstaller.waitForFinish(true);
         return applicationInstaller.uninstall();
@@ -458,7 +459,7 @@ public class AbstractLocalCloudTest extends AbstractTestSupport {
 		applicationInstaller.uninstallIfFound();
 	}
 
-	protected String uninstallService(final String serviceName) throws IOException, InterruptedException {
+	protected String uninstallService(final String serviceName) throws Exception {
         ServiceInstaller serviceInstaller = new ServiceInstaller(restUrl, serviceName);
         serviceInstaller.waitForFinish(true);
         return serviceInstaller.uninstall();
@@ -498,7 +499,8 @@ public class AbstractLocalCloudTest extends AbstractTestSupport {
 			}
         }
         if (!dumpPerformed && !enableLogstash) {
-            CloudTestUtils.dumpMachinesNewRestAPI(restUrl, SecurityConstants.USER_PWD_ALL_ROLES, SecurityConstants.USER_PWD_ALL_ROLES);
+            CloudTestUtils.dumpMachinesNewRestAPI(restUrl, SecurityConstants.USER_PWD_ALL_ROLES,
+                    SecurityConstants.USER_PWD_ALL_ROLES);
         }
 
 

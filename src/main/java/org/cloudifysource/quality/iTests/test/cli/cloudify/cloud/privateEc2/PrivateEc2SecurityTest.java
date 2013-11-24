@@ -80,7 +80,7 @@ public class PrivateEc2SecurityTest extends NewAbstractSecurityCloudTest {
     }
 
     protected void installAndUninstallApplication(final String cloudifyUsername, final String cloudifyPassword, boolean isExpectedToFail)
-            throws IOException, InterruptedException {
+            throws Exception {
         String output = this.installApplicationAndWait(cloudifyUsername, cloudifyPassword, isExpectedToFail);
 
         if (isExpectedToFail) {

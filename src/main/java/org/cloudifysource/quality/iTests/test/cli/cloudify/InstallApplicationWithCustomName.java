@@ -11,19 +11,15 @@
  *******************************************************************************/
 package org.cloudifysource.quality.iTests.test.cli.cloudify;
 
-import iTests.framework.utils.AssertUtils;
+ import iTests.framework.utils.AssertUtils;
+ import junit.framework.Assert;
+ import org.apache.commons.lang.StringUtils;
+ import org.cloudifysource.dsl.rest.response.InstallApplicationResponse;
+ import org.cloudifysource.dsl.rest.response.UninstallApplicationResponse;
+ import org.cloudifysource.quality.iTests.test.cli.cloudify.util.NewRestTestUtils;
+ import org.testng.annotations.Test;
 
-import java.io.File;
-import java.io.IOException;
-
-import junit.framework.Assert;
-
-import org.apache.commons.lang.StringUtils;
-import org.cloudifysource.dsl.internal.DSLException;
-import org.cloudifysource.dsl.internal.packaging.PackagingException;
-import org.cloudifysource.dsl.rest.response.InstallApplicationResponse;
-import org.cloudifysource.dsl.rest.response.UninstallApplicationResponse;
-import org.testng.annotations.Test;
+ import java.io.File;
 
 public class InstallApplicationWithCustomName extends AbstractLocalCloudTest {
 	private static final String APPLICATION_MODIFIED_NAME = "groovyAppNewName";
@@ -34,8 +30,8 @@ public class InstallApplicationWithCustomName extends AbstractLocalCloudTest {
 	
 	// using the CLI to install application with a customized name (use the -name option).
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, groups = "1")
-	public void installApplicationWithCustomNameCLITest() 
-			throws IOException, InterruptedException {
+	public void installApplicationWithCustomNameCLITest()
+            throws Exception {
 
         StringBuilder installationCommand = new StringBuilder()
         .append("install-application").append(" ")
@@ -54,10 +50,11 @@ public class InstallApplicationWithCustomName extends AbstractLocalCloudTest {
 	
 	// using the new REST client to install application with a customized name (pass the customized name in the request).
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, groups = "1")
-	public void installApplicationWithCustomNameRestClientTest() 
-			throws IOException, InterruptedException, DSLException, PackagingException {
+	public void installApplicationWithCustomNameRestClientTest()
+            throws Exception {
 		InstallApplicationResponse response = 
-				NewRestTestUtils.installApplicationUsingNewRestApi(restUrl, APPLICATION_MODIFIED_NAME, new File(APPLICATION_DIR_PATH), null, null);
+				NewRestTestUtils.installApplicationUsingNewRestApi(restUrl, APPLICATION_MODIFIED_NAME,
+                        new File(APPLICATION_DIR_PATH), null, null);
 		Assert.assertNotNull(response);
 		String installDeploymentID = response.getDeploymentID();
 		Assert.assertFalse(StringUtils.isBlank(installDeploymentID));

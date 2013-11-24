@@ -5,14 +5,6 @@ import iTests.framework.utils.AssertUtils;
 import iTests.framework.utils.AssertUtils.RepetitiveConditionProvider;
 import iTests.framework.utils.GridServiceContainersCounter;
 import iTests.framework.utils.LogUtils;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import org.cloudifysource.dsl.internal.CloudifyConstants;
 import org.cloudifysource.dsl.utils.ServiceUtils;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
@@ -34,6 +26,13 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+
 public class ScalingRulesRecipeTest extends AbstractLocalCloudTest {
 
 	private static final String SERVICE_NAME = "customServiceMonitor";
@@ -53,7 +52,7 @@ public class ScalingRulesRecipeTest extends AbstractLocalCloudTest {
 	}
 	
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT, enabled = true)
-	public void customServiceMonitorsAutoScalingTest() throws InterruptedException, IOException {
+	public void customServiceMonitorsAutoScalingTest() throws Exception {
 		
 		final InternalProcessingUnit pu = (InternalProcessingUnit) admin.getProcessingUnits().waitFor(ABSOLUTE_SERVICE_NAME, AbstractTestSupport.OPERATION_TIMEOUT,TimeUnit.MILLISECONDS);
 		initAlerts();

@@ -42,7 +42,7 @@ public class BootstrapCloudWithOverridesTest extends AbstractByonCloudTest {
 	}
 	
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT, enabled = true)
-	public void testOverridesDuringBootstrap() throws IOException, InterruptedException {
+	public void testOverridesDuringBootstrap() throws Exception {
 		
 		List<Machine> machines = getAllMachines();
 		

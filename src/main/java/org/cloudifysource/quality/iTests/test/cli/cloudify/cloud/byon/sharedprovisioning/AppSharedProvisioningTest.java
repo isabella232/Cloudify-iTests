@@ -1,8 +1,7 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.byon.sharedprovisioning;
 
-import java.io.IOException;
-import java.util.Set;
-
+import iTests.framework.utils.AssertUtils;
+import iTests.framework.utils.ProcessingUnitUtils;
 import org.cloudifysource.dsl.internal.CloudifyConstants;
 import org.cloudifysource.dsl.utils.ServiceUtils;
 import org.openspaces.admin.machine.Machine;
@@ -11,8 +10,8 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import iTests.framework.utils.AssertUtils;
-import iTests.framework.utils.ProcessingUnitUtils;
+import java.io.IOException;
+import java.util.Set;
 
 public class AppSharedProvisioningTest extends AbstractSharedProvisioningByonCloudTest {
 		
@@ -28,7 +27,7 @@ public class AppSharedProvisioningTest extends AbstractSharedProvisioningByonClo
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
-	public void testTwoApplications() throws IOException, InterruptedException {
+	public void testTwoApplications() throws Exception {
 		super.installManualAppSharedProvisioningApplicationAndWait(APPLICATION_ONE);
 		super.installManualAppSharedProvisioningApplicationAndWait(APPLICATION_TWO);
 		
@@ -46,7 +45,7 @@ public class AppSharedProvisioningTest extends AbstractSharedProvisioningByonClo
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
-	public void testTwoServicesOnOneApplication() throws IOException, InterruptedException {
+	public void testTwoServicesOnOneApplication() throws Exception {
 		super.installManualAppSharedProvisioningServiceAndWait(SERVICE_ONE);
 		super.installManualAppSharedProvisioningServiceAndWait(SERVICE_TWO);
 		

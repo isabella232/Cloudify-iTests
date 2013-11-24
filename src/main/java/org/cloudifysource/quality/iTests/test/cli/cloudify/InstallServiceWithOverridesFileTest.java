@@ -1,15 +1,15 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify;
 
+import junit.framework.Assert;
+import org.cloudifysource.dsl.internal.CloudifyConstants;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.util.NewRestTestUtils;
+import org.openspaces.admin.pu.ProcessingUnit;
+import org.testng.annotations.Test;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-
-import junit.framework.Assert;
-
-import org.cloudifysource.dsl.internal.CloudifyConstants;
-import org.openspaces.admin.pu.ProcessingUnit;
-import org.testng.annotations.Test;
 
 /**
  * 
@@ -49,20 +49,19 @@ public class InstallServiceWithOverridesFileTest extends OverridesTest {
 	 * @throws InterruptedException
 	 */
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
-	public void serviceWithExternalOverridesFileViaRestApiTest() throws IOException, InterruptedException {
+	public void serviceWithExternalOverridesFileViaRestApiTest() throws Exception {
 
 		final File serviceDir = new File(SERVICE_DIR_PATH);
 		final File overridesFile = new File(OVERRIDES_FILE_PATH);
 
 		try {
 			NewRestTestUtils.installServiceUsingNewRestAPI(
-					restUrl, 
-					serviceDir, 
-					CloudifyConstants.DEFAULT_APPLICATION_NAME, 
-					SERVICE_NAME, 
-					overridesFile, 
-					5, 
-					null);
+                    restUrl,
+                    serviceDir,
+                    CloudifyConstants.DEFAULT_APPLICATION_NAME,
+                    SERVICE_NAME,
+                    overridesFile,
+                    null);
 
 			// get PU
 			final ProcessingUnit processingUnit = getProcessingUnit("default." + SERVICE_NAME);
@@ -87,7 +86,7 @@ public class InstallServiceWithOverridesFileTest extends OverridesTest {
 	 * @throws InterruptedException
 	 */
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
-	public void serviceWithOverridesFileViaRestApiTest() throws IOException, InterruptedException {
+	public void serviceWithOverridesFileViaRestApiTest() throws Exception {
 
 		final File serviceDir = new File(SERVICE_WITH_OVERRIDES_FILE_DIR_PATH);
 
@@ -96,8 +95,8 @@ public class InstallServiceWithOverridesFileTest extends OverridesTest {
 					restUrl, 
 					serviceDir, 
 					CloudifyConstants.DEFAULT_APPLICATION_NAME, 
-					SERVICE_WITH_OVERRIDES_NAME, 
-					5);
+					SERVICE_WITH_OVERRIDES_NAME
+            );
 
 			// get PU
 			final ProcessingUnit processingUnit = getProcessingUnit("default." + SERVICE_WITH_OVERRIDES_NAME);
@@ -122,7 +121,7 @@ public class InstallServiceWithOverridesFileTest extends OverridesTest {
 	 */
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
 	public void serviceWithExternalOverridesFileTest()
-			throws InterruptedException, IOException {
+            throws Exception {
 		serviceOverridesTest(SERVICE_NAME, SERVICE_DIR_PATH, OVERRIDES_FILE_PATH);
 	}
   
@@ -134,13 +133,12 @@ public class InstallServiceWithOverridesFileTest extends OverridesTest {
 	 * @throws IOException .
 	 */
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
-	public void serviceWithOverridesFileTest() throws InterruptedException,
-	IOException {
+	public void serviceWithOverridesFileTest() throws Exception {
 		serviceOverridesTest(SERVICE_WITH_OVERRIDES_NAME, SERVICE_WITH_OVERRIDES_FILE_DIR_PATH, null);
 	}
 
 	private void serviceOverridesTest(final String serviceName, final String serviceDirPath,
-			final String overridesFilePath) throws IOException, InterruptedException {
+			final String overridesFilePath) throws Exception {
 
 		try {
 			// install
@@ -168,7 +166,7 @@ public class InstallServiceWithOverridesFileTest extends OverridesTest {
 	 * @throws IOException 
 	 */
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
-	public void installServiceWithoutPropertiesFileWithOverridesFileViaRestApiTest() throws IOException, InterruptedException {
+	public void installServiceWithoutPropertiesFileWithOverridesFileViaRestApiTest() throws Exception {
 		
 		final File serviceDir = new File(SERVICE_WITHOUT_PROPERTIES_FILE_DIR_PATH);
 
@@ -179,8 +177,7 @@ public class InstallServiceWithOverridesFileTest extends OverridesTest {
 					CloudifyConstants.DEFAULT_APPLICATION_NAME, 
 					SERVICE_NAME, 
 					new File(OVERRIDES_WITHOUT_PROPERTIES_FILE_PATH),
-					5,
-					null);
+                    null);
 
 			// get PU
 			final ProcessingUnit processingUnit = getProcessingUnit("default." + SERVICE_NAME);
@@ -204,7 +201,7 @@ public class InstallServiceWithOverridesFileTest extends OverridesTest {
 	 * @throws IOException 
 	 */
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
-	public void installServiceWithoutPropertiesFileWithOverridesFileTest() throws IOException, InterruptedException {
+	public void installServiceWithoutPropertiesFileWithOverridesFileTest() throws Exception {
 		serviceOverridesTest(SERVICE_NAME, SERVICE_WITHOUT_PROPERTIES_FILE_DIR_PATH, OVERRIDES_WITHOUT_PROPERTIES_FILE_PATH);
 	}
 	

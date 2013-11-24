@@ -1,12 +1,7 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify;
 
 import iTests.framework.utils.LogUtils;
-
-import java.io.IOException;
-import java.util.concurrent.TimeUnit;
-
 import junit.framework.Assert;
-
 import org.cloudifysource.dsl.utils.ServiceUtils;
 import org.cloudifysource.quality.iTests.framework.utils.usm.USMTestUtils;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
@@ -14,6 +9,9 @@ import org.openspaces.admin.pu.ProcessingUnit;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+
+import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 public class CustomCommandsOnMultipleInstancesTest extends AbstractLocalCloudTest {
 	
@@ -36,7 +34,7 @@ public class CustomCommandsOnMultipleInstancesTest extends AbstractLocalCloudTes
 	
 	
 	@AfterClass
-	public void cleanup() throws IOException, InterruptedException {
+	public void cleanup() throws Exception  {
 		super.uninstallService(SERVICE_NAME);
 	}
 	

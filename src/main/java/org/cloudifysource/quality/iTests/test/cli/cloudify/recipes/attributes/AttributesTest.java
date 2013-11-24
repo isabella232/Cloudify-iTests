@@ -2,10 +2,6 @@ package org.cloudifysource.quality.iTests.test.cli.cloudify.recipes.attributes;
 
 import iTests.framework.utils.AssertUtils;
 import iTests.framework.utils.LogUtils;
-
-import java.io.IOException;
-import java.util.concurrent.TimeUnit;
-
 import org.cloudifysource.dsl.internal.DSLException;
 import org.cloudifysource.dsl.utils.ServiceUtils;
 import org.cloudifysource.quality.iTests.framework.utils.usm.USMTestUtils;
@@ -15,6 +11,9 @@ import org.openspaces.admin.pu.ProcessingUnit;
 import org.openspaces.core.GigaSpace;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 public class AttributesTest extends AbstractLocalCloudTest {
 
@@ -163,7 +162,7 @@ public class AttributesTest extends AbstractLocalCloudTest {
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
-	public void testRemoveAttributesBeforeInstallService() throws IOException, InterruptedException {
+	public void testRemoveAttributesBeforeInstallService() throws Exception {
 		CommandTestUtils.runCommandUsingFile("connect " + this.restUrl
 				+ "; set-attributes -scope service:" + SETTER_SERVICE_NAME +  " '{\"att1\":\"SomeAttribute1\"}'");
 		String sertterServiceUri = "applications/" + MAIN_APPLICATION_NAME + "/" + SETTER_SERVICE_NAME;
@@ -177,7 +176,7 @@ public class AttributesTest extends AbstractLocalCloudTest {
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
-	public void testRemoveAttributesBeforeInstallApplication() throws IOException, InterruptedException, DSLException {
+	public void testRemoveAttributesBeforeInstallApplication() throws Exception {
 		CommandTestUtils.runCommandUsingFile("connect " + this.restUrl + ";use-application " + MAIN_APPLICATION_NAME
 				+ "; set-attributes -scope application '{\"att1\":\"SomeAttribute1\"}'");
 		installApplication();
@@ -554,7 +553,7 @@ public class AttributesTest extends AbstractLocalCloudTest {
 				USMTestUtils.waitForPuRunningState(absolutePUNameSimple2, 60, TimeUnit.SECONDS, admin));
 	}
 
-	private void uninstallApplication() throws IOException, InterruptedException {
+	private void uninstallApplication() throws Exception {
 		uninstallApplication(MAIN_APPLICATION_NAME);
 	}
 

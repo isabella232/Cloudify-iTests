@@ -1,10 +1,6 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.byon.publicprovisioning;
 
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
+import iTests.framework.utils.AssertUtils;
 import org.cloudifysource.dsl.utils.ServiceUtils;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
@@ -15,7 +11,10 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import iTests.framework.utils.AssertUtils;
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 /**
  * CLOUDIFY-1353 
@@ -44,7 +43,7 @@ public class PublicProvisioningWithManagementMachineTest extends AbstractPublicP
 	 * @throws InterruptedException
 	 */
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, enabled = true)
-	public void testTwoLargeInstances() throws IOException, InterruptedException {
+	public void testTwoLargeInstances() throws Exception {
 		
 		Machine managementMachine = getManagementMachines().get(0);
 
@@ -86,7 +85,7 @@ public class PublicProvisioningWithManagementMachineTest extends AbstractPublicP
 	 * @throws InterruptedException
 	 */
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, enabled = true)
-	public void testTwoSmallInstances() throws IOException, InterruptedException {
+	public void testTwoSmallInstances() throws Exception {
 		
 		Machine managementMachine = getManagementMachines().get(0);
 				

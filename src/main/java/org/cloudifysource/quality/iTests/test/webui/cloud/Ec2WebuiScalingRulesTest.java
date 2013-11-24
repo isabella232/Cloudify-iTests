@@ -16,10 +16,11 @@
 
 package org.cloudifysource.quality.iTests.test.webui.cloud;
 
-import java.io.IOException;
-import java.net.UnknownHostException;
-import java.util.List;
-
+import com.gigaspaces.webuitf.LoginPage;
+import com.gigaspaces.webuitf.MainNavigation;
+import com.gigaspaces.webuitf.dashboard.DashboardTab;
+import com.gigaspaces.webuitf.dashboard.events.DashboardEventsGrid;
+import com.gigaspaces.webuitf.events.WebUIAdminEvent;
 import iTests.framework.utils.AssertUtils;
 import iTests.framework.utils.LogUtils;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
@@ -31,11 +32,8 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import com.gigaspaces.webuitf.LoginPage;
-import com.gigaspaces.webuitf.MainNavigation;
-import com.gigaspaces.webuitf.dashboard.DashboardTab;
-import com.gigaspaces.webuitf.dashboard.events.DashboardEventsGrid;
-import com.gigaspaces.webuitf.events.WebUIAdminEvent;
+import java.net.UnknownHostException;
+import java.util.List;
 
 
 public class Ec2WebuiScalingRulesTest extends AbstractScalingRulesCloudTest {
@@ -99,7 +97,7 @@ public class Ec2WebuiScalingRulesTest extends AbstractScalingRulesCloudTest {
 	}
 		
 	@AfterMethod
-	public void cleanup() throws IOException, InterruptedException {
+	public void cleanup() throws Exception {
 		super.cleanup();
 	}
 	

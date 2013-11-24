@@ -1,7 +1,5 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud;
 
-import java.io.IOException;
-
 import org.apache.commons.lang.StringUtils;
 import org.cloudifysource.quality.iTests.framework.utils.ApplicationInstaller;
 import org.cloudifysource.quality.iTests.framework.utils.CloudBootstrapper;
@@ -10,6 +8,8 @@ import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.CloudService;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.CloudServiceManager;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.security.SecurityConstants;
+
+import java.io.IOException;
 
 public abstract class NewAbstractSecurityCloudTest extends NewAbstractCloudTest {
 	
@@ -60,7 +60,7 @@ public abstract class NewAbstractSecurityCloudTest extends NewAbstractCloudTest 
 	}
 
 	protected String uninstallApplicationAndWait(String applicationPath, String applicationName, int timeout, final String cloudifyUsername,
-			final String cloudifyPassword, boolean isExpectedToFail, final String authGroups) throws IOException, InterruptedException {
+			final String cloudifyPassword, boolean isExpectedToFail, final String authGroups) throws Exception {
 
 		ApplicationInstaller applicationInstaller = new ApplicationInstaller(getRestUrl(), applicationName);
 		applicationInstaller.recipePath(applicationPath);
@@ -108,7 +108,7 @@ public abstract class NewAbstractSecurityCloudTest extends NewAbstractCloudTest 
 	}
 	
 	protected String uninstallServiceAndWait(String servicePath, String serviceName, int timeout, final String cloudifyUsername,
-			final String cloudifyPassword, boolean isExpectedToFail, final String authGroups) throws IOException, InterruptedException {
+			final String cloudifyPassword, boolean isExpectedToFail, final String authGroups) throws Exception {
 
 		ServiceInstaller serviceInstaller = new ServiceInstaller(getRestUrl(), serviceName);
 		serviceInstaller.recipePath(servicePath);

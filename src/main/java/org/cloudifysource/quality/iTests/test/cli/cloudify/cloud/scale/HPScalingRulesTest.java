@@ -16,8 +16,6 @@
 
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.scale;
 
-import java.io.IOException;
-
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
@@ -43,7 +41,7 @@ public class HPScalingRulesTest extends AbstractScalingRulesCloudTest{
 	}
 	
 	@AfterMethod
-	public void cleanup() throws IOException, InterruptedException {
+    public void cleanup() throws Exception {
 		super.cleanup();
 	}
 	

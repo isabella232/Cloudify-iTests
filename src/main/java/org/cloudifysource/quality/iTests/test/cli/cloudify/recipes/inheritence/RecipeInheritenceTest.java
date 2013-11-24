@@ -1,8 +1,10 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.recipes.inheritence;
 
-import java.io.IOException;
-import java.util.concurrent.TimeUnit;
-
+import com.gigaspaces.log.AllLogEntryMatcher;
+import com.gigaspaces.log.ContinuousLogEntryMatcher;
+import com.gigaspaces.log.LogEntries;
+import com.gigaspaces.log.LogEntry;
+import com.gigaspaces.log.LogProcessType;
 import org.cloudifysource.domain.Application;
 import org.cloudifysource.domain.Service;
 import org.cloudifysource.dsl.internal.DSLException;
@@ -13,11 +15,8 @@ import org.openspaces.admin.pu.ProcessingUnit;
 import org.openspaces.admin.pu.ProcessingUnitInstance;
 import org.testng.annotations.Test;
 
-import com.gigaspaces.log.AllLogEntryMatcher;
-import com.gigaspaces.log.ContinuousLogEntryMatcher;
-import com.gigaspaces.log.LogEntries;
-import com.gigaspaces.log.LogEntry;
-import com.gigaspaces.log.LogProcessType;
+import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 public class RecipeInheritenceTest extends AbstractLocalCloudTest {
 
@@ -33,7 +32,7 @@ public class RecipeInheritenceTest extends AbstractLocalCloudTest {
      * @throws DSLException
      */
     @Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
-    public void overrideTomcatPortTest() throws PackagingException, IOException, InterruptedException, DSLException {
+    public void overrideTomcatPortTest() throws Exception {
     	app =  installApplication("travelExtendedTomcatPortOverride");
         Service s1 = app.getServices().get(0);
         Service s2 = app.getServices().get(1);
@@ -53,7 +52,7 @@ public class RecipeInheritenceTest extends AbstractLocalCloudTest {
      * @throws DSLException
      */
     @Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
-    public void overrideTomcatNumInstancesTest() throws PackagingException, IOException, InterruptedException, DSLException {
+    public void overrideTomcatNumInstancesTest() throws Exception  {
        app=  installApplication("travelExtendedTomcatNumInstancesOverride");
 
         int tomcatInstances = admin.getProcessingUnits().getProcessingUnit("travelExtendedTomcatNumInstancesOverride.tomcat").getInstances().length;
@@ -69,7 +68,7 @@ public class RecipeInheritenceTest extends AbstractLocalCloudTest {
      * @throws DSLException
      */
     @Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
-    public void overrideCassandraInitFileTest() throws PackagingException, IOException, InterruptedException, DSLException {
+    public void overrideCassandraInitFileTest() throws Exception  {
         String EXPECTED_PROCESS_PRINTOUTS = "THIS IS OVERRIDED CASSANDRA_POSTSTART.GROOVY";
         app = installApplication("travelExtended");
 

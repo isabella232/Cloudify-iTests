@@ -11,7 +11,10 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.CloudService;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.util.exceptions.FailedToCreateDumpException;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.util.exceptions.WrongMessageException;
 import org.cloudifysource.restclient.GSRestClient;
+import org.cloudifysource.restclient.exceptions.RestClientException;
 
 import java.io.File;
 import java.io.IOException;
@@ -148,25 +151,25 @@ public class CloudTestUtils {
         return list;
     }
     
-    public static void dumpMachinesNewRestAPI(final String restUrl, final String username, final String password) {
+    public static void dumpMachinesNewRestAPI(
+            final String restUrl,
+            final String username,
+            final String password) throws FailedToCreateDumpException, RestClientException, WrongMessageException,
+                                          IOException {
         LogUtils.log("Downloading machines dump");
-		try {
-			Map<String, File> machinesDumpFiles = NewRestTestUtils.getMachinesDumpFile(restUrl, username, password);
-			LogUtils.log("Machines dump downloaded successfully");
-			
-			DateFormat date1 = new SimpleDateFormat("dd-MM-yyyy");
-			DateFormat hour = new SimpleDateFormat("HH-mm-ss-SSS");
-			for (Entry<String, File> entry : machinesDumpFiles.entrySet()) {
-				Date date = new Date();
-				File zipFile = new File(DumpUtils.getTestFolder().getAbsolutePath() 
-						+ File.separator + date1.format(date) + "_" + hour.format(date) + "_ip" + entry.getKey() + "_dump.zip");
-				zipFile.deleteOnExit();
-				FileUtils.moveFile(entry.getValue(), zipFile);
-				LogUtils.log("> Logs: " + zipFile.getAbsolutePath() + "\n");
-			}
-		} catch (IOException e) {
-            LogUtils.log("Failed to create dump. Error message: " + e.getLocalizedMessage());
-		}
+        Map<String, File> machinesDumpFiles = NewRestTestUtils.getMachinesDumpFile(restUrl, username, password);
+        LogUtils.log("Machines dump downloaded successfully");
+
+        DateFormat date1 = new SimpleDateFormat("dd-MM-yyyy");
+        DateFormat hour = new SimpleDateFormat("HH-mm-ss-SSS");
+        for (Entry<String, File> entry : machinesDumpFiles.entrySet()) {
+            Date date = new Date();
+            File zipFile = new File(DumpUtils.getTestFolder().getAbsolutePath()
+                    + File.separator + date1.format(date) + "_" + hour.format(date) + "_ip" + entry.getKey() + "_dump.zip");
+            zipFile.deleteOnExit();
+            FileUtils.moveFile(entry.getValue(), zipFile);
+            LogUtils.log("> Logs: " + zipFile.getAbsolutePath() + "\n");
+        }
     }
 
     /**

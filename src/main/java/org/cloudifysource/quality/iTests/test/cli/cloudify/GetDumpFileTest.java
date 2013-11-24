@@ -15,22 +15,21 @@
  *******************************************************************************/
 package org.cloudifysource.quality.iTests.test.cli.cloudify;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
-
 import junit.framework.Assert;
-
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.cloudifysource.dsl.internal.ProcessorTypes;
 import org.cloudifysource.dsl.internal.packaging.ZipUtils;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
-import org.cloudifysource.restclient.exceptions.RestClientException;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.util.NewRestTestUtils;
 import org.testng.annotations.Test;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * 
@@ -45,36 +44,36 @@ public class GetDumpFileTest extends AbstractLocalCloudTest {
 
 
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, enabled = true)
-	public void testGetPUDumpFile() 
-			throws IOException, RestClientException {
-		File dumpFile = NewRestTestUtils.getPUDumpFile(restUrl, 0, null);
+	public void testGetPUDumpFile()
+            throws Exception {
+		File dumpFile = NewRestTestUtils.getProcessingUnitsDumpFile(restUrl, 0, null);
 		assertMachineDumpFiles(dumpFile, ProcessorTypes.PROCESSING_UNITS.getName());
 	}
 	
 	
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, enabled = true)
-	public void testGetPUDumpFileTooLarge() 
-			throws IOException, RestClientException {
-		NewRestTestUtils.getPUDumpFile(restUrl, 5, "exceeds file size limit [5]");
+	public void testGetPUDumpFileTooLarge()
+            throws Exception {
+		NewRestTestUtils.getProcessingUnitsDumpFile(restUrl, 5, "exceeds file size limit [5]");
 	}
 	
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, enabled = true)
-	public void testGetMachineDumpFile() 
-			throws RestClientException, IOException {
+	public void testGetMachineDumpFile()
+            throws Exception {
 		File dumpFile = NewRestTestUtils.getMachineDumpFile(restUrl, LOCAL_HOST, null, 0, null);
 		assertMachineDumpFiles(dumpFile, null);
 	}
 
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, enabled = true)
-	public void testGetMachineDumpFileLogProcessor() 
-			throws RestClientException, IOException {
+	public void testGetMachineDumpFileLogProcessor()
+            throws Exception {
 		File dumpFile = NewRestTestUtils.getMachineDumpFile(restUrl, LOCAL_HOST, ProcessorTypes.LOG.getName(), 0, null);
 		assertMachineDumpFiles(dumpFile, ProcessorTypes.LOG.getName());
 	}
 	
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, enabled = true)
-	public void testGetMachineDumpFileSummaryAndPUProcessors() 
-			throws RestClientException, IOException {
+	public void testGetMachineDumpFileSummaryAndPUProcessors()
+            throws Exception {
 		String processorsList = ProcessorTypes.PROCESSING_UNITS.getName() + "," + ProcessorTypes.SUMMARY.getName();
 		File dumpFile = NewRestTestUtils.getMachineDumpFile(restUrl, LOCAL_HOST, processorsList, 0, null);
 		assertMachineDumpFiles(dumpFile, processorsList);
@@ -82,27 +81,27 @@ public class GetDumpFileTest extends AbstractLocalCloudTest {
 
 
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, enabled = true)
-	public void testGetMachineDumpFileBlankProcessors() 
-			throws RestClientException, IOException {
+	public void testGetMachineDumpFileBlankProcessors()
+            throws Exception {
 		File dumpFile = NewRestTestUtils.getMachineDumpFile(restUrl, LOCAL_HOST, "", 0, null);
 		assertMachineDumpFiles(dumpFile, null);
 	}
 	
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, enabled = true)
-	public void testGetMachineDumpFileUnknownProcessor() 
-			throws RestClientException, IOException {
+	public void testGetMachineDumpFileUnknownProcessor()
+            throws Exception {
 		NewRestTestUtils.getMachineDumpFile(restUrl, LOCAL_HOST, "unknown", 5, "Unknown processor type: unknown");
 	}
 	
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, enabled = true)
-	public void testGetMachineDumpFileTooLarge() 
-			throws RestClientException, IOException {
+	public void testGetMachineDumpFileTooLarge()
+            throws Exception {
 		NewRestTestUtils.getMachineDumpFile(restUrl, LOCAL_HOST, null, 5, "exceeds file size limit [5]");
 	}
 	
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, enabled = true)
-	public void testGetMachinesDumpFile() 
-			throws IOException, RestClientException {
+	public void testGetMachinesDumpFile()
+            throws Exception {
 		Map<String, File> dumpFiles = NewRestTestUtils.getMachinesDumpFile(restUrl);
 		for (Entry<String, File> entry : dumpFiles.entrySet()) {
 			assertMachineDumpFiles(entry.getValue(), null);
@@ -110,8 +109,8 @@ public class GetDumpFileTest extends AbstractLocalCloudTest {
 	}
 	
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, enabled = true)
-	public void testGetMachinesDumpFileTooLarge() 
-			throws IOException, RestClientException {
+	public void testGetMachinesDumpFileTooLarge()
+            throws Exception {
 		Map<String, File> dumpFiles = NewRestTestUtils.getMachinesDumpFile(restUrl, 0);
 		for (Entry<String, File> entry : dumpFiles.entrySet()) {
 			assertMachineDumpFiles(entry.getValue(), null);
@@ -119,14 +118,14 @@ public class GetDumpFileTest extends AbstractLocalCloudTest {
 	}
 	
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, enabled = true)
-	public void testGetMachinesDumpFileUnknownProcessor() 
-			throws RestClientException, IOException {
+	public void testGetMachinesDumpFileUnknownProcessor()
+            throws Exception {
 		NewRestTestUtils.getMachinesDumpFile(restUrl, "unknown", 5, "Unknown processor type: unknown");
 	}
 	
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, enabled = true)
-	public void testGetMachinesDumpFilelogProcessor() 
-			throws RestClientException, IOException {
+	public void testGetMachinesDumpFilelogProcessor()
+            throws Exception {
 		Map<String, File> dumpFiles = NewRestTestUtils.getMachinesDumpFile(restUrl, ProcessorTypes.LOG.getName(), 0, null);
 		for (Entry<String, File> entry : dumpFiles.entrySet()) {
 			assertMachineDumpFiles(entry.getValue(), ProcessorTypes.LOG.getName());

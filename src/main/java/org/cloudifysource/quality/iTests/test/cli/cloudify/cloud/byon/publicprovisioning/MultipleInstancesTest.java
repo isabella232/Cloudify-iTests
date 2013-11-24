@@ -1,8 +1,6 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.byon.publicprovisioning;
 
-import java.io.IOException;
-import java.util.concurrent.TimeUnit;
-
+import iTests.framework.utils.AssertUtils;
 import org.cloudifysource.dsl.utils.ServiceUtils;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.openspaces.admin.pu.ProcessingUnit;
@@ -10,7 +8,7 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import iTests.framework.utils.AssertUtils;
+import java.util.concurrent.TimeUnit;
 
 public class MultipleInstancesTest extends AbstractPublicProvisioningByonCloudTest {	
 	
@@ -27,7 +25,7 @@ public class MultipleInstancesTest extends AbstractPublicProvisioningByonCloudTe
 	}
 	
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, enabled = true)
-	public void testTwoInstancesOfTheSameServiceOnOneMachine() throws IOException, InterruptedException {
+	public void testTwoInstancesOfTheSameServiceOnOneMachine() throws Exception {
 
 		// this should install both service instances on the same machine
 		installManualPublicProvisioningServiceAndWait(GROOVY, 2, 128, 0, DEFAULT_TEMPLATE_NAME, false);

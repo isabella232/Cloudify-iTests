@@ -19,7 +19,6 @@ import iTests.framework.utils.LogUtils;
 import junit.framework.Assert;
 import org.apache.commons.io.FileUtils;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.SystemDefaultHttpClient;
 import org.cloudifysource.domain.Application;
@@ -48,13 +47,13 @@ import org.cloudifysource.dsl.rest.response.UninstallApplicationResponse;
 import org.cloudifysource.dsl.rest.response.UninstallServiceResponse;
 import org.cloudifysource.dsl.utils.ServiceUtils;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.util.exceptions.FailedToCreateDumpException;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.util.exceptions.WrongMessageException;
 import org.cloudifysource.restclient.RestClient;
 import org.cloudifysource.restclient.exceptions.RestClientException;
 import org.cloudifysource.shell.ConditionLatch;
 import org.cloudifysource.shell.exceptions.CLIException;
-import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.testng.AssertJUnit;
 
 import java.io.File;
 import java.io.IOException;
@@ -72,22 +71,35 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-public class NewRestTestUtils {
+/**
+ * Utility class for methods that use the new rest implementation.
+ */
+public final class NewRestTestUtils {
+
+    /**
+     * Avoid instantiation
+     */
+    private NewRestTestUtils() {
+
+    }
 
 	private static final int POLLING_INTERVAL_MILLISECONDS = 1000;
 
-	public static InstallApplicationResponse installApplicationUsingNewRestApi(final String restUrl,
+	public static InstallApplicationResponse installApplicationUsingNewRestApi(
+            final String restUrl,
 			final String applicationName,
-			final File applicationFolder)
-			throws IOException, DSLException, PackagingException {
+			final File applicationFolder) throws IOException, DSLException, PackagingException, RestClientException,
+                                                 WrongMessageException {
 		return installApplicationUsingNewRestApi(restUrl, applicationName, applicationFolder, null, null);
 	}
 
-	public static InstallApplicationResponse installApplicationUsingNewRestApi(final String restUrl,
+	public static InstallApplicationResponse installApplicationUsingNewRestApi(
+            final String restUrl,
 			final String applicationName,
-			final File applicationFolder, final File applicationOverridesFile,
-			final String expectedFailureMsg)
-			throws IOException, DSLException, PackagingException {
+			final File applicationFolder,
+            final File applicationOverridesFile,
+			final String expectedFailureMsg) throws IOException, DSLException, PackagingException,
+                                                    RestClientException, WrongMessageException {
 		// create application zip file
 		final Application application =
 				ServiceReader.getApplicationFromFile(applicationFolder, applicationOverridesFile).getApplication();
@@ -107,34 +119,33 @@ public class NewRestTestUtils {
 		try {
 			installationResponse = restClient.installApplication(applicationName, request);
 			if (expectedFailureMsg != null) {
-				Assert.fail("expectedFailureMsg: " + expectedFailureMsg);
+				throw new RuntimeException("expectedFailureMsg: " + expectedFailureMsg);
 			}
 			final String deploymentID = installationResponse.getDeploymentID();
-			NewRestTestUtils.waitForApplicationInstallation(restClient, restUrl, applicationName, deploymentID);
+			NewRestTestUtils.waitForApplicationInstallation(restClient, applicationName, deploymentID);
 		} catch (final RestClientException e) {
 			final String actualMsg = e.getMessageFormattedText();
-			if (expectedFailureMsg != null) {
-				Assert.assertTrue("error message [" + actualMsg + "] doesn't contain the expected failure messgae [" + expectedFailureMsg + "]", 
-						actualMsg.contains(expectedFailureMsg));
+			if (expectedFailureMsg != null && !actualMsg.contains(expectedFailureMsg)) {
+                // failure was expected, but not this one.
+                throw new WrongMessageException(actualMsg, expectedFailureMsg);
 			} else {
-				Assert.fail("failed to install application [" + applicationFolder.getAbsolutePath()
-						+ "], error message: " + actualMsg);
+                throw e;
 			}
 		}
 		return installationResponse;
 	}
 
-	public static InstallServiceResponse installServiceUsingNewRestAPI(final String restUrl, final File serviceFolder,
-			final String applicationName, final String serviceName, final File serviceOverridesFile,
-			final int timeoutInMinutes, final String expectedFailureMsg) {
-		File packedFile = null;
-		try {
-			// create zip file
-			final Service service = ServiceReader.readService(null, serviceFolder, null, true, serviceOverridesFile);
-			packedFile = Packager.pack(serviceFolder, service, new LinkedList<File>());
-		} catch (final Exception e) {
-			AssertJUnit.fail("failed to zip templates folder: " + e.getMessage());
-		}
+	public static InstallServiceResponse installServiceUsingNewRestAPI(
+            final String restUrl,
+            final File serviceFolder,
+            final String applicationName,
+            final String serviceName,
+            final File serviceOverridesFile,
+            final String expectedFailureMsg) throws DSLException, IOException, PackagingException,
+                                                    RestClientException, WrongMessageException {
+
+		final Service service = ServiceReader.readService(null, serviceFolder, null, true, serviceOverridesFile);
+        File packedFile = Packager.pack(serviceFolder, service, new LinkedList<File>());
 
 		// create rest client and connect
 		final RestClient restClient = NewRestTestUtils.createAndConnect(restUrl);
@@ -152,88 +163,90 @@ public class NewRestTestUtils {
 			installService = restClient.installService(applicationName, serviceName, request);
 			final String deploymentID = installService.getDeploymentID();
 			NewRestTestUtils
-					.waitForServiceInstallation(restClient, restUrl, applicationName, serviceName, deploymentID);
+					.waitForServiceInstallation(restClient, applicationName, serviceName, deploymentID);
 		} catch (final RestClientException e) {
-			final String actualMsg = e.getMessageFormattedText();
-			if (expectedFailureMsg != null) {
-				Assert.assertTrue("error message " + actualMsg + " doesn't contain the expected failure messgae ["
-						+ expectedFailureMsg + "]",
-						actualMsg.contains(expectedFailureMsg));
-			} else {
-				Assert.fail("failed to install service [" + serviceFolder.getAbsolutePath()
-						+ "], error message: " + actualMsg);
-			}
+            final String actualMsg = e.getMessageFormattedText();
+            if (expectedFailureMsg != null && !actualMsg.contains(expectedFailureMsg)) {
+                // failure was expected, but not this one.
+                throw new WrongMessageException(actualMsg, expectedFailureMsg);
+            } else {
+                throw e;
+            }
 		}
 		return installService;
 	}
 
-	public static InstallServiceResponse installServiceUsingNewRestAPI(final String restUrl, final File serviceFolder,
-			final String applicationName, final String serviceName, final int timeoutInMinutes,
-			final String expectedFailureMsg) {
+	public static InstallServiceResponse installServiceUsingNewRestAPI(
+            final String restUrl,
+            final File serviceFolder,
+            final String applicationName,
+            final String serviceName,
+            final String expectedFailureMsg) throws DSLException, WrongMessageException, PackagingException,
+                                                   RestClientException, IOException {
 		return installServiceUsingNewRestAPI(restUrl, serviceFolder, applicationName, serviceName, null,
-				timeoutInMinutes, expectedFailureMsg);
+                expectedFailureMsg);
 	}
 
-	public static InstallServiceResponse installServiceUsingNewRestAPI(final String restUrl, final File serviceFolder,
-			final String applicationName, final String serviceName, final int timeoutInMinutes) {
-		return installServiceUsingNewRestAPI(restUrl, serviceFolder, applicationName, serviceName, timeoutInMinutes,
-				null);
+	public static InstallServiceResponse installServiceUsingNewRestAPI(
+            final String restUrl,
+            final File serviceFolder,
+            final String applicationName,
+            final String serviceName) throws DSLException, WrongMessageException, PackagingException,
+                                            RestClientException, IOException {
+		return installServiceUsingNewRestAPI(restUrl, serviceFolder, applicationName, serviceName, null);
 	}
 
-	public static UninstallServiceResponse uninstallServiceUsingNewRestClient(final String restUrl,
-			final String serviceName, final String deploymentID, final int timeoutInMinutes) {
+	public static UninstallServiceResponse uninstallServiceUsingNewRestClient(
+            final String restUrl,
+			final String serviceName,
+            final String deploymentID,
+            final int timeoutInMinutes) throws RestClientException, MalformedURLException {
+
 		// create rest client and connect
 		final RestClient restClient = NewRestTestUtils.createAndConnect(restUrl);
 		// uninstall service and wait
-		UninstallServiceResponse uninstallService = null;
-		try {
-			uninstallService =
-					restClient.uninstallService(CloudifyConstants.DEFAULT_APPLICATION_NAME, serviceName,
-							timeoutInMinutes);
-			NewRestTestUtils.waitForServiceUninstall(restUrl, CloudifyConstants.DEFAULT_APPLICATION_NAME, serviceName,
-					deploymentID);
-		} catch (final RestClientException e) {
-			Assert.fail("failed to uninstall service [" + serviceName
-					+ "], error message: " + e.getMessageFormattedText());
-		}
+        UninstallServiceResponse uninstallService = restClient.uninstallService(CloudifyConstants
+                .DEFAULT_APPLICATION_NAME, serviceName, timeoutInMinutes);
+        waitForServiceUninstall(restUrl,
+                serviceName, deploymentID);
 		return uninstallService;
 	}
 
 	public static UninstallApplicationResponse uninstallApplicationUsingNewRestClient(
-			final String restUrl, final String appName, final String deploymentID, final int timeoutInMinutes) {
+			final String restUrl,
+            final String appName,
+            final String deploymentID,
+            final int timeoutInMinutes) throws RestClientException, MalformedURLException {
 		// create rest client and connect
 		final RestClient restClient = NewRestTestUtils.createAndConnect(restUrl);
 		// uninstall service and wait
-		UninstallApplicationResponse uninstallResposne = null;
-		try {
-			uninstallResposne = restClient.uninstallApplication(appName, timeoutInMinutes);
-			NewRestTestUtils.waitForApplicationUninstall(restUrl, appName, deploymentID);
-		} catch (final RestClientException e) {
-			Assert.fail("failed to uninstall application [" + appName
-					+ "], error message: " + e.getMessageFormattedText());
-		}
+        UninstallApplicationResponse uninstallResposne = restClient.uninstallApplication(appName, timeoutInMinutes);
+        waitForApplicationUninstall(restUrl, appName, deploymentID);
 		return uninstallResposne;
 	}
 	
-	public static ShutdownManagementResponse shutdownManagers(final String restUrl, final String expectedFailureMsg, final long timeoutMinutes, final File managersFile) 
-			throws RestClientException, InterruptedException, TimeoutException, CLIException, JsonProcessingException, IOException {
+	public static ShutdownManagementResponse shutdownManagers(
+            final String restUrl,
+            final String expectedFailureMsg,
+            final long timeoutMinutes,
+            final File managersFile) throws RestClientException, InterruptedException, TimeoutException,
+                                            CLIException, IOException, WrongMessageException {
 		
 		// connect to the REST
 		RestClient restClient = createAndConnect(restUrl);
 		
 		// shutdown the managers
-		ShutdownManagementResponse response = null;
+		ShutdownManagementResponse response;
 		try {
 			 response = restClient.shutdownManagers();
 		} catch (RestClientException e) {
-			final String actualMsg = e.getMessageFormattedText();
-			if (expectedFailureMsg != null) {
-				Assert.assertTrue("error message " + actualMsg + " doesn't contain the expected failure messgae ["
-						+ expectedFailureMsg + "]",
-						actualMsg.contains(expectedFailureMsg));
-			} else {
-				throw e;
-			}
+            final String actualMsg = e.getMessageFormattedText();
+            if (expectedFailureMsg != null && !actualMsg.contains(expectedFailureMsg)) {
+                // failure was expected, but not this one.
+                throw new WrongMessageException(actualMsg, expectedFailureMsg);
+            } else {
+                throw e;
+            }
 		}
 		
 		// write managers to file
@@ -250,18 +263,21 @@ public class NewRestTestUtils {
 		return response;
 	}
 	
-	public static File getPUDumpFile(final String restUrl, final long fileZiseLimit, final String errMessageContain) 
-			throws IOException {
+	public static File getProcessingUnitsDumpFile(
+            final String restUrl,
+            final long fileSizeLimit,
+            final String errMessageContain)
+            throws IOException, RestClientException, WrongMessageException, FailedToCreateDumpException {
 
 		// connect to the REST
 		RestClient restClient = createAndConnect(restUrl);
 
 		// get dump data using REST API
-		GetPUDumpFileResponse response = null;
+		GetPUDumpFileResponse response;
 		try {
-			response = restClient.getPUDumpFile(fileZiseLimit);
+			response = restClient.getPUDumpFile(fileSizeLimit);
 			if (errMessageContain != null) {
-				Assert.fail("RestClientException expected [" + errMessageContain + "]");
+				throw new WrongMessageException("", errMessageContain);
 			}
 			// write the result data to a temporary file.
 			File file = File.createTempFile("dump", ".zip");
@@ -269,19 +285,21 @@ public class NewRestTestUtils {
 			return file;
 		} catch (RestClientException e) {
 			if (errMessageContain == null) {
-				LogUtils.log("Failed to get PU dump - " + e.getMessage());
+				throw new FailedToCreateDumpException(e.getMessage());
 			} else {
 				String message = e.getMessageFormattedText();
-				Assert.assertTrue("error messgae [" + message + "] does not contain " + errMessageContain, 
-						message.contains(errMessageContain));
+                throw new WrongMessageException(message, errMessageContain);
 			}
 		}
-		return null;
 	}
 	
-	public static File getMachineDumpFile(final String restUrl, final String ip, 
-			final String processors, final long fileZiseLimit, final String errMessageContain)
-            throws IOException, RestClientException {
+	public static File getMachineDumpFile(
+            final String restUrl,
+            final String ip,
+			final String processors,
+            final long fileZiseLimit,
+            final String errMessageContain) throws IOException, RestClientException,
+                                                   FailedToCreateDumpException, WrongMessageException {
 		// connect to the REST
 		RestClient restClient = createAndConnect(restUrl);
 
@@ -298,48 +316,58 @@ public class NewRestTestUtils {
 			return file;
 		} catch (RestClientException e) {
 			if (errMessageContain == null) {
-				LogUtils.log("Failed to get machine dump - " + e.getMessage());
+                throw new FailedToCreateDumpException(e.getMessage());
 			} else {
-				String message = e.getMessageFormattedText();
-				LogUtils.log("Error messgae [" + message + "] does not contain " + errMessageContain);
-
+                String message = e.getMessageFormattedText();
+                throw new WrongMessageException(message, errMessageContain);
 			}
 		}
-		return null;
 	}
 
-
-	public static Map<String, File> getMachinesDumpFile(final String restUrl, final long fileZiseLimit)
-            throws IOException, RestClientException {
+	public static Map<String, File> getMachinesDumpFile(
+            final String restUrl,
+            final long fileZiseLimit) throws IOException, RestClientException,
+                                             WrongMessageException, FailedToCreateDumpException {
 		return getMachinesDumpFile(restUrl, "", "", null, fileZiseLimit, null);
 	}
 
-	public static Map<String, File> getMachinesDumpFile(final String restUrl)
-            throws IOException, RestClientException {
+	public static Map<String, File> getMachinesDumpFile(
+            final String restUrl) throws IOException, RestClientException,
+                                         WrongMessageException, FailedToCreateDumpException {
 		return getMachinesDumpFile(restUrl, "", "", null, 0, null);
 	}
 
-	public static Map<String, File> getMachinesDumpFile(final String restUrl,
-			final String processors, final long fileZiseLimit, final String errMessageContain)
-            throws IOException, RestClientException {
+	public static Map<String, File> getMachinesDumpFile(
+            final String restUrl,
+			final String processors,
+            final long fileZiseLimit,
+            final String errMessageContain) throws IOException, RestClientException,
+                                                   WrongMessageException, FailedToCreateDumpException {
 		return getMachinesDumpFile(restUrl, "", "", processors, fileZiseLimit, errMessageContain);
 	}
 	
-	public static Map<String, File> getMachinesDumpFile(final String restUrl, 
-			final String username, final String password)
-            throws IOException, RestClientException {
+	public static Map<String, File> getMachinesDumpFile(
+            final String restUrl,
+			final String username,
+            final String password) throws IOException, RestClientException,
+                                         WrongMessageException, FailedToCreateDumpException {
 		return getMachinesDumpFile(restUrl, username, password, null, 0, null);
 	}
 
-	public static Map<String, File> getMachinesDumpFile(final String restUrl, 
-			final String username, final String password,
-			final String processors, final long fileZiseLimit, final String errMessageContain)
-            throws IOException, RestClientException {
+	public static Map<String, File> getMachinesDumpFile(
+            final String restUrl,
+			final String username,
+            final String password,
+			final String processors,
+            final long fileZiseLimit,
+            final String errMessageContain) throws IOException, RestClientException,
+                                                   WrongMessageException, FailedToCreateDumpException {
+
 		// connect to the REST
 		RestClient restClient = createAndConnect(restUrl, username, password);
 
 		// get dump data using REST API
-		GetMachinesDumpFileResponse response = null;
+		GetMachinesDumpFileResponse response;
 		try {
 			response = restClient.getMachinesDumpFile(processors, fileZiseLimit);
 			if (errMessageContain != null) {
@@ -358,26 +386,26 @@ public class NewRestTestUtils {
 		} catch (RestClientException e) {
 			String message = e.getMessageFormattedText();
 			if (errMessageContain == null) {
-				Assert.fail("Failed to get machines dump - " + message);
+                throw new FailedToCreateDumpException(e.getMessage());
 			} else {
-				Assert.assertTrue("error messgae [" + message + "] does not contain " + errMessageContain, 
-						message.contains(errMessageContain));
-			}
+                throw new WrongMessageException(message, errMessageContain);			}
 		}
-		return null;
 	}
 	
 	
-	private static void waitForManagersToShutDown(final ControllerDetails[] managers, final int port, 
+	private static void waitForManagersToShutDown(
+            final ControllerDetails[] managers,
+            final int port,
 			final long timeoutMinutes) throws InterruptedException, TimeoutException, CLIException {
-		final Set<ControllerDetails> managersStillUp = new HashSet<ControllerDetails>();
-		managersStillUp.addAll(Arrays.asList(managers));
 
-		final ConditionLatch conditionLatch =
-				new ConditionLatch()
-		.pollingInterval(POLLING_INTERVAL_MILLISECONDS, TimeUnit.MILLISECONDS)
-		.timeout(timeoutMinutes, TimeUnit.MINUTES)
-		.timeoutErrorMessage(CloudifyErrorMessages.SHUTDOWN_MANAGERS_TIMEOUT.getName());
+		final Set<ControllerDetails> managersStillUp = new HashSet<ControllerDetails>();
+
+        managersStillUp.addAll(Arrays.asList(managers));
+
+		final ConditionLatch conditionLatch = new ConditionLatch()
+		    .pollingInterval(POLLING_INTERVAL_MILLISECONDS, TimeUnit.MILLISECONDS)
+		    .timeout(timeoutMinutes, TimeUnit.MINUTES)
+		    .timeoutErrorMessage(CloudifyErrorMessages.SHUTDOWN_MANAGERS_TIMEOUT.getName());
 
 		conditionLatch.waitFor(new ConditionLatch.Predicate() {
 
@@ -391,14 +419,14 @@ public class NewRestTestUtils {
 							manager.isBootstrapToPublicIp() ? manager.getPublicIp() : manager.getPrivateIp();
 							if (ServiceUtils.isPortFree(host, port)) {
 								iterator.remove();
-								LogUtils.log("manager [" + host + "] is down.");
+								LogUtils.log("Manager [" + host + "] is down.");
 								if (managersStillUp.isEmpty()) {
-									LogUtils.log("all ports are free.");
+									LogUtils.log("All ports are free.");
 									return true;
 								}
 								LogUtils.log(managersStillUp.size() + " managers more to check");
 							} else {
-								LogUtils.log("manager [" + host + "] is still up.");
+								LogUtils.log("Manager [" + host + "] is still up.");
 							}
 				}
 				return false;
@@ -406,9 +434,12 @@ public class NewRestTestUtils {
 		});
 	}
 
-	static void waitForServiceInstallation(final RestClient restClient, final String restUrl, final String appName,
-			final String serviceName, final String deploymentId)
-			throws RestClientException {
+	public static void waitForServiceInstallation(
+            final RestClient restClient,
+            final String appName,
+            final String serviceName,
+            final String deploymentId) throws RestClientException {
+
 		LogUtils.log("Waiting for service deployment state to be " + DeploymentState.STARTED);
 		AssertUtils.repetitiveAssertTrue(serviceName + " service failed to deploy",
 				new AssertUtils.RepetitiveConditionProvider() {
@@ -418,11 +449,8 @@ public class NewRestTestUtils {
 							final ServiceDescription serviceDescription =
 									restClient.getServiceDescription(appName, serviceName);
 							if (serviceDescription != null && serviceDescription.getServiceName().equals(serviceName)) {
-								if (DeploymentState.STARTED.equals(serviceDescription.getServiceState())) {
-									return true;
-								}
-								return false;
-							}
+                                return DeploymentState.STARTED.equals(serviceDescription.getServiceState());
+                            }
 						} catch (final RestClientException e) {
 							LogUtils.log("Failed getting service description with deploymentId " + deploymentId
 									+ " error message: " + e.getMessageFormattedText());
@@ -432,8 +460,10 @@ public class NewRestTestUtils {
 				}, AbstractTestSupport.OPERATION_TIMEOUT * 3);
 	}
 
-	static void waitForApplicationInstallation(final RestClient restClient, final String restUrl,
-			final String applicationName, final String deploymentID) {
+	public static void waitForApplicationInstallation(
+            final RestClient restClient,
+            final String applicationName,
+            final String deploymentID) {
 
 		LogUtils.log("Waiting for service deployment state to be " + DeploymentState.STARTED);
 		AssertUtils.repetitiveAssertTrue(applicationName + " service failed to deploy",
@@ -458,65 +488,61 @@ public class NewRestTestUtils {
 				}, AbstractTestSupport.OPERATION_TIMEOUT * 3);
 	}
 
-	static void waitForServiceUninstall(final String restUrl, final String appName, final String serviceName,
-			final String deploymentId) {
-		try {
+	public static void waitForServiceUninstall(
+            final String restUrl,
+            final String serviceName,
+            final String deploymentId) throws RestClientException, MalformedURLException {
 			final RestClient restClient = NewRestTestUtils.createAndConnect(restUrl);
-			AssertUtils.repetitiveAssertTrue("uninstall service failed " + serviceName,
-					new AssertUtils.RepetitiveConditionProvider() {
-						@Override
-						public boolean getCondition() {
-							try {
-								final DeploymentEvents deploymentEvents =
-										restClient.getDeploymentEvents(deploymentId, 0, -1);
-								final List<DeploymentEvent> events = deploymentEvents.getEvents();
-								for (final DeploymentEvent deploymentEvent : events) {
-									final String description = deploymentEvent.getDescription();
-									if (description.equals(CloudifyConstants.UNDEPLOYED_SUCCESSFULLY_EVENT)) {
-										return true;
-									}
-								}
-							} catch (final RestClientException e) {
-								LogUtils.log("Failed getting deployment events with deploymentId " + deploymentId
-										+ " error message: " + e.getMessageFormattedText());
-							}
-							return false;
-						}
-					}, AbstractTestSupport.OPERATION_TIMEOUT * 3);
-		} catch (final Exception e1) {
-			Assert.fail("failed to create GSRestClient with url " + restUrl + " and version "
-					+ PlatformVersion.getVersionNumber());
-		}
+        AssertUtils.repetitiveAssertTrue("uninstall service failed " + serviceName,
+                new AssertUtils.RepetitiveConditionProvider() {
+                    @Override
+                    public boolean getCondition() {
+                        try {
+                            final DeploymentEvents deploymentEvents =
+                                    restClient.getDeploymentEvents(deploymentId, 0, -1);
+                            final List<DeploymentEvent> events = deploymentEvents.getEvents();
+                            for (final DeploymentEvent deploymentEvent : events) {
+                                final String description = deploymentEvent.getDescription();
+                                if (description.equals(CloudifyConstants.UNDEPLOYED_SUCCESSFULLY_EVENT)) {
+                                    return true;
+                                }
+                            }
+                        } catch (final RestClientException e) {
+                            LogUtils.log("Failed getting deployment events with deploymentId " + deploymentId
+                                    + " error message: " + e.getMessageFormattedText());
+                        }
+                        return false;
+                    }
+                },
+                AbstractTestSupport.OPERATION_TIMEOUT * 3);
 	}
 
-	static void waitForApplicationUninstall(final String restUrl, final String appName, final String deploymentId) {
-		try {
+	public static void waitForApplicationUninstall(
+            final String restUrl,
+            final String appName,
+            final String deploymentId) throws RestClientException, MalformedURLException {
 			final RestClient restClient = NewRestTestUtils.createAndConnect(restUrl);
-			AssertUtils.repetitiveAssertTrue("uninstall application failed " + appName,
-					new AssertUtils.RepetitiveConditionProvider() {
-						@Override
-						public boolean getCondition() {
-							try {
-								final DeploymentEvents deploymentEvents =
-										restClient.getDeploymentEvents(deploymentId, 0, -1);
-								final List<DeploymentEvent> events = deploymentEvents.getEvents();
-								for (final DeploymentEvent deploymentEvent : events) {
-									final String description = deploymentEvent.getDescription();
-									if (description.equals(CloudifyConstants.UNDEPLOYED_SUCCESSFULLY_EVENT)) {
-										return true;
-									}
-								}
-							} catch (final RestClientException e) {
-								LogUtils.log("Failed getting deployment events with deploymentId " + deploymentId
-										+ " error message: " + e.getMessageFormattedText());
-							}
-							return false;
-						}
-					}, AbstractTestSupport.OPERATION_TIMEOUT * 3);
-		} catch (final Exception e1) {
-			Assert.fail("failed to create GSRestClient with url " + restUrl + " and version "
-					+ PlatformVersion.getVersionNumber());
-		}
+        AssertUtils.repetitiveAssertTrue("uninstall application failed " + appName,
+                new AssertUtils.RepetitiveConditionProvider() {
+                    @Override
+                    public boolean getCondition() {
+                        try {
+                            final DeploymentEvents deploymentEvents =
+                                    restClient.getDeploymentEvents(deploymentId, 0, -1);
+                            final List<DeploymentEvent> events = deploymentEvents.getEvents();
+                            for (final DeploymentEvent deploymentEvent : events) {
+                                final String description = deploymentEvent.getDescription();
+                                if (description.equals(CloudifyConstants.UNDEPLOYED_SUCCESSFULLY_EVENT)) {
+                                    return true;
+                                }
+                            }
+                        } catch (final RestClientException e) {
+                            LogUtils.log("Failed getting deployment events with deploymentId " + deploymentId
+                                    + " error message: " + e.getMessageFormattedText());
+                        }
+                        return false;
+                    }
+                }, AbstractTestSupport.OPERATION_TIMEOUT * 3);
 	}
 
 	public static RestClient createAndConnect(final String restUrl, final String username, final String password)
@@ -544,16 +570,15 @@ public class NewRestTestUtils {
 		if (toUploadFile == null) {
 			return null;
 		}
-		String serviceFolderUploadKey = null;
+		String serviceFolderUploadKey;
         serviceFolderUploadKey = restClient.upload(null, toUploadFile).getUploadKey();
 		return serviceFolderUploadKey;
 	}
 
-	public static HttpResponse sendGetRequest(final String uri) throws ClientProtocolException, IOException {
+	public static HttpResponse sendGetRequest(final String uri) throws IOException {
 		final SystemDefaultHttpClient httpClient = new SystemDefaultHttpClient();
 		final HttpGet request = new HttpGet(uri);
-		final HttpResponse response = httpClient.execute(request);
-		return response;
+        return httpClient.execute(request);
 	}
 
 }

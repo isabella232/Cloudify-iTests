@@ -13,11 +13,14 @@ import org.cloudifysource.quality.iTests.framework.utils.ApplicationInstaller;
 import org.cloudifysource.quality.iTests.framework.utils.CloudBootstrapper;
 import org.cloudifysource.quality.iTests.framework.utils.ServiceInstaller;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
-import org.cloudifysource.quality.iTests.test.cli.cloudify.CloudTestUtils;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.util.CloudTestUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.CloudService;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.CloudServiceManager;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.security.SecurityConstants;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.util.exceptions.FailedToCreateDumpException;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.util.exceptions.WrongMessageException;
+import org.cloudifysource.restclient.exceptions.RestClientException;
 import org.openspaces.admin.Admin;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -182,7 +185,7 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
     }
 
 
-    protected void doSanityTest(String applicationFolderName, String applicationName) throws IOException, InterruptedException {
+    protected void doSanityTest(String applicationFolderName, String applicationName) throws Exception {
         LogUtils.log("installing application " + applicationName + " on " + cloudService.getCloudName());
         String applicationPath = ScriptUtils.getBuildPath() + "/recipes/apps/" + applicationFolderName;
         installApplicationAndWait(applicationPath, applicationName);
@@ -244,15 +247,16 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
         return applicationInstaller.install();
     }
 
-    protected String uninstallApplicationAndWait(String applicationName) throws IOException, InterruptedException {
+    protected String uninstallApplicationAndWait(String applicationName) throws Exception {
         return uninstallApplicationAndWait(applicationName, false);
     }
     
-    protected String uninstallApplicationAndWait(String applicationName, boolean isExpectedFail) throws IOException, InterruptedException {
+    protected String uninstallApplicationAndWait(String applicationName, boolean isExpectedFail) throws Exception {
     	return uninstallApplicationAndWait(applicationName, isExpectedFail, 5);
     }
     
-    protected String uninstallApplicationAndWait(String applicationName, boolean isExpectedFail, int timeout) throws IOException, InterruptedException {
+    protected String uninstallApplicationAndWait(String applicationName, boolean isExpectedFail,
+                                                 int timeout) throws Exception {
         ApplicationInstaller applicationInstaller = new ApplicationInstaller(getRestUrl(), applicationName);
         applicationInstaller.waitForFinish(true);
         applicationInstaller.timeoutInMinutes(timeout);
@@ -284,7 +288,7 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
     }
 
 
-    protected String uninstallServiceAndWait(String serviceName, boolean isExpectedFail) throws IOException, InterruptedException {
+    protected String uninstallServiceAndWait(String serviceName, boolean isExpectedFail) throws Exception {
         ServiceInstaller serviceInstaller = new ServiceInstaller(getRestUrl(), serviceName);
         serviceInstaller.waitForFinish(true);
         serviceInstaller.expectToFail(isExpectedFail);
@@ -292,7 +296,7 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
         return output;
     }
     
-    protected String uninstallServiceAndWait(String serviceName) throws IOException, InterruptedException {
+    protected String uninstallServiceAndWait(String serviceName) throws Exception {
     	return uninstallServiceAndWait(serviceName, false);
     }
 
@@ -388,7 +392,8 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
         return cloudService.getWebuiUrls()[0];
     }
 
-    protected void dumpMachines() {
+    protected void dumpMachines()
+            throws RestClientException, WrongMessageException, FailedToCreateDumpException, IOException {
 
         final boolean enableLogstash = Boolean.parseBoolean(System.getProperty("iTests.enableLogstash", "false"));
         if(enableLogstash){

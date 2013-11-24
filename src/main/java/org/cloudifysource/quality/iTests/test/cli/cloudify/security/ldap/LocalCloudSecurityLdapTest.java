@@ -1,7 +1,5 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.security.ldap;
 
-import java.io.IOException;
-
 import org.cloudifysource.quality.iTests.framework.utils.LocalCloudBootstrapper;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.AbstractSecuredLocalCloudTest;
@@ -10,6 +8,8 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+
+import java.io.IOException;
 
 public class LocalCloudSecurityLdapTest extends AbstractSecuredLocalCloudTest {
 
@@ -25,7 +25,7 @@ public class LocalCloudSecurityLdapTest extends AbstractSecuredLocalCloudTest {
 	
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
-	public void installAndUninstallAppWithDifferentUsersTest() throws IOException, InterruptedException {
+	public void installAndUninstallAppWithDifferentUsersTest() throws Exception {
 		
 		installApplicationAndWait(SIMPLE_APP_PATH, SIMPLE_APP_NAME, TIMEOUT_IN_MINUTES, SecurityConstants.USER_PWD_CLOUD_ADMIN, SecurityConstants.USER_PWD_CLOUD_ADMIN, false, null);
 
@@ -37,7 +37,7 @@ public class LocalCloudSecurityLdapTest extends AbstractSecuredLocalCloudTest {
 	
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
-	public void installAndUninstallServiceWithDifferentUsersTest() throws IOException, InterruptedException {
+	public void installAndUninstallServiceWithDifferentUsersTest() throws Exception {
 		
 		installServiceAndWait(SIMPLE_SERVICE_PATH, SIMPLE_SERVICE_NAME, TIMEOUT_IN_MINUTES, SecurityConstants.USER_PWD_CLOUD_ADMIN, SecurityConstants.USER_PWD_CLOUD_ADMIN, false, null);
 
@@ -74,56 +74,56 @@ public class LocalCloudSecurityLdapTest extends AbstractSecuredLocalCloudTest {
 	}
 	
 	
-	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT, enabled = false)
-	public void installingAndViewingServiceTest() throws IOException, InterruptedException{
-		// Dan (app manager) installs service simple without auth-groups (so the default is GE)
-		installServiceAndWait(SIMPLE_SERVICE_PATH, SIMPLE_SERVICE_NAME, TIMEOUT_IN_MINUTES, SecurityConstants.USER_PWD_APP_MANAGER, SecurityConstants.USER_PWD_APP_MANAGER, false, null);
-		
-		verifyServiceVisibleLists(SIMPLE_SERVICE_NAME, SecurityConstants.APP_MANAGER_DESCRIPTIN, SecurityConstants.USER_PWD_CLOUD_ADMIN, SecurityConstants.USER_PWD_CLOUD_ADMIN, SecurityConstants.CLOUD_ADMIN_DESCRIPTIN, true);
-		verifyServiceVisibleLists(SIMPLE_SERVICE_NAME, SecurityConstants.APP_MANAGER_DESCRIPTIN, SecurityConstants.USER_PWD_CLOUD_ADMIN_AND_APP_MANAGER, SecurityConstants.USER_PWD_CLOUD_ADMIN_AND_APP_MANAGER, SecurityConstants.CLOUD_ADMIN_AND_APP_MANAGER_DESCRIPTION, false);
-		verifyServiceVisibleLists(SIMPLE_SERVICE_NAME, SecurityConstants.APP_MANAGER_DESCRIPTIN, SecurityConstants.USER_PWD_APP_MANAGER, SecurityConstants.USER_PWD_APP_MANAGER, SecurityConstants.APP_MANAGER_DESCRIPTIN, true);
-		verifyServiceVisibleLists(SIMPLE_SERVICE_NAME, SecurityConstants.APP_MANAGER_DESCRIPTIN, SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, SecurityConstants.APP_MANAGER_AND_VIEWER_DESCRIPTIN, false);
-		verifyServiceVisibleLists(SIMPLE_SERVICE_NAME, SecurityConstants.APP_MANAGER_DESCRIPTIN, SecurityConstants.USER_PWD_VIEWER, SecurityConstants.USER_PWD_VIEWER, SecurityConstants.VIEWER_DESCRIPTIN, true);
-		verifyServiceVisibleLists(SIMPLE_SERVICE_NAME, SecurityConstants.APP_MANAGER_DESCRIPTIN, SecurityConstants.USER_PWD_NO_ROLE, SecurityConstants.USER_PWD_NO_ROLE, SecurityConstants.NO_ROLE_DESCRIPTIN, false);
-		
-		uninstallServiceAndWait(SIMPLE_SERVICE_PATH, SIMPLE_SERVICE_NAME, TIMEOUT_IN_MINUTES, SecurityConstants.USER_PWD_APP_MANAGER, SecurityConstants.USER_PWD_APP_MANAGER, false, null);
-		
-		// Don (app manager and viewer) installs service groovy without auth-groups (so the default is Cellcom)
-		installServiceAndWait(GROOVY_SERVICE_PATH, GROOVY_SERVICE_NAME, TIMEOUT_IN_MINUTES, SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, false, null);
-		
-		verifyServiceVisibleLists(GROOVY_SERVICE_NAME, SecurityConstants.APP_MANAGER_AND_VIEWER_DESCRIPTIN, SecurityConstants.USER_PWD_CLOUD_ADMIN, SecurityConstants.USER_PWD_CLOUD_ADMIN, SecurityConstants.CLOUD_ADMIN_DESCRIPTIN, true);
-		verifyServiceVisibleLists(GROOVY_SERVICE_NAME, SecurityConstants.APP_MANAGER_AND_VIEWER_DESCRIPTIN, SecurityConstants.USER_PWD_CLOUD_ADMIN_AND_APP_MANAGER, SecurityConstants.USER_PWD_CLOUD_ADMIN_AND_APP_MANAGER, SecurityConstants.CLOUD_ADMIN_AND_APP_MANAGER_DESCRIPTION, false);
-		verifyServiceVisibleLists(GROOVY_SERVICE_NAME, SecurityConstants.APP_MANAGER_AND_VIEWER_DESCRIPTIN, SecurityConstants.USER_PWD_APP_MANAGER, SecurityConstants.USER_PWD_APP_MANAGER, SecurityConstants.APP_MANAGER_DESCRIPTIN, false);
-		verifyServiceVisibleLists(GROOVY_SERVICE_NAME, SecurityConstants.APP_MANAGER_AND_VIEWER_DESCRIPTIN, SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, SecurityConstants.APP_MANAGER_AND_VIEWER_DESCRIPTIN, true);
-		verifyServiceVisibleLists(GROOVY_SERVICE_NAME, SecurityConstants.APP_MANAGER_AND_VIEWER_DESCRIPTIN, SecurityConstants.USER_PWD_VIEWER, SecurityConstants.USER_PWD_VIEWER, SecurityConstants.VIEWER_DESCRIPTIN, true);
-		verifyServiceVisibleLists(GROOVY_SERVICE_NAME, SecurityConstants.APP_MANAGER_AND_VIEWER_DESCRIPTIN, SecurityConstants.USER_PWD_NO_ROLE, SecurityConstants.USER_PWD_NO_ROLE, SecurityConstants.NO_ROLE_DESCRIPTIN, false);
-		
-		uninstallServiceAndWait(GROOVY_SERVICE_PATH, GROOVY_SERVICE_NAME, TIMEOUT_IN_MINUTES, SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, false, null);
-		
-		// Dana (cloud admin and app manager) installs service simple with auth-group = ROLE_APPMANAGERS
-		installServiceAndWait(SIMPLE_SERVICE_PATH, SIMPLE_SERVICE_NAME, TIMEOUT_IN_MINUTES, SecurityConstants.USER_PWD_CLOUD_ADMIN_AND_APP_MANAGER, SecurityConstants.USER_PWD_CLOUD_ADMIN_AND_APP_MANAGER, false, SecurityConstants.BEZEQ_GROUP);
-		
-		verifyServiceVisibleLists(SIMPLE_SERVICE_NAME, SecurityConstants.APP_MANAGER_DESCRIPTIN, SecurityConstants.USER_PWD_CLOUD_ADMIN, SecurityConstants.USER_PWD_CLOUD_ADMIN, SecurityConstants.CLOUD_ADMIN_DESCRIPTIN, true);
-		verifyServiceVisibleLists(SIMPLE_SERVICE_NAME, SecurityConstants.APP_MANAGER_DESCRIPTIN, SecurityConstants.USER_PWD_CLOUD_ADMIN_AND_APP_MANAGER, SecurityConstants.USER_PWD_CLOUD_ADMIN_AND_APP_MANAGER, SecurityConstants.CLOUD_ADMIN_AND_APP_MANAGER_DESCRIPTION, true);
-		verifyServiceVisibleLists(SIMPLE_SERVICE_NAME, SecurityConstants.APP_MANAGER_DESCRIPTIN, SecurityConstants.USER_PWD_APP_MANAGER, SecurityConstants.USER_PWD_APP_MANAGER, SecurityConstants.APP_MANAGER_DESCRIPTIN, false);
-		verifyServiceVisibleLists(SIMPLE_SERVICE_NAME, SecurityConstants.APP_MANAGER_DESCRIPTIN, SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, SecurityConstants.APP_MANAGER_AND_VIEWER_DESCRIPTIN, false);
-		verifyServiceVisibleLists(SIMPLE_SERVICE_NAME, SecurityConstants.APP_MANAGER_DESCRIPTIN, SecurityConstants.USER_PWD_VIEWER, SecurityConstants.USER_PWD_VIEWER, SecurityConstants.VIEWER_DESCRIPTIN, false);
-		verifyServiceVisibleLists(SIMPLE_SERVICE_NAME, SecurityConstants.APP_MANAGER_DESCRIPTIN, SecurityConstants.USER_PWD_NO_ROLE, SecurityConstants.USER_PWD_NO_ROLE, SecurityConstants.NO_ROLE_DESCRIPTIN, false);
-		
-		uninstallServiceAndWait(SIMPLE_SERVICE_PATH, SIMPLE_SERVICE_NAME, TIMEOUT_IN_MINUTES, SecurityConstants.USER_PWD_CLOUD_ADMIN_AND_APP_MANAGER, SecurityConstants.USER_PWD_CLOUD_ADMIN_AND_APP_MANAGER, false, null);
-	}
-	
-	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
 	public void installAppWithWrongGroup() throws IOException, InterruptedException {
-		
+
 		String output = "no output";
-		
+
 		output = installApplicationAndWait(SIMPLE_APP_PATH, SIMPLE_APP_NAME, TIMEOUT_IN_MINUTES, SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, true, SecurityConstants.GE_GROUP);
-		
+
 		assertTrue("install-application succeeded with authGroup " + SecurityConstants.GE_GROUP + " for: " + SecurityConstants.APP_MANAGER_AND_VIEWER_DESCRIPTIN, output.contains(SecurityConstants.ACCESS_DENIED_MESSAGE));
 	}
-	
+
+
+    @Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT, enabled = false)
+    public void installingAndViewingServiceTest() throws Exception {
+        // Dan (app manager) installs service simple without auth-groups (so the default is GE)
+        installServiceAndWait(SIMPLE_SERVICE_PATH, SIMPLE_SERVICE_NAME, TIMEOUT_IN_MINUTES, SecurityConstants.USER_PWD_APP_MANAGER, SecurityConstants.USER_PWD_APP_MANAGER, false, null);
+
+        verifyServiceVisibleLists(SIMPLE_SERVICE_NAME, SecurityConstants.APP_MANAGER_DESCRIPTIN, SecurityConstants.USER_PWD_CLOUD_ADMIN, SecurityConstants.USER_PWD_CLOUD_ADMIN, SecurityConstants.CLOUD_ADMIN_DESCRIPTIN, true);
+        verifyServiceVisibleLists(SIMPLE_SERVICE_NAME, SecurityConstants.APP_MANAGER_DESCRIPTIN, SecurityConstants.USER_PWD_CLOUD_ADMIN_AND_APP_MANAGER, SecurityConstants.USER_PWD_CLOUD_ADMIN_AND_APP_MANAGER, SecurityConstants.CLOUD_ADMIN_AND_APP_MANAGER_DESCRIPTION, false);
+        verifyServiceVisibleLists(SIMPLE_SERVICE_NAME, SecurityConstants.APP_MANAGER_DESCRIPTIN, SecurityConstants.USER_PWD_APP_MANAGER, SecurityConstants.USER_PWD_APP_MANAGER, SecurityConstants.APP_MANAGER_DESCRIPTIN, true);
+        verifyServiceVisibleLists(SIMPLE_SERVICE_NAME, SecurityConstants.APP_MANAGER_DESCRIPTIN, SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, SecurityConstants.APP_MANAGER_AND_VIEWER_DESCRIPTIN, false);
+        verifyServiceVisibleLists(SIMPLE_SERVICE_NAME, SecurityConstants.APP_MANAGER_DESCRIPTIN, SecurityConstants.USER_PWD_VIEWER, SecurityConstants.USER_PWD_VIEWER, SecurityConstants.VIEWER_DESCRIPTIN, true);
+        verifyServiceVisibleLists(SIMPLE_SERVICE_NAME, SecurityConstants.APP_MANAGER_DESCRIPTIN, SecurityConstants.USER_PWD_NO_ROLE, SecurityConstants.USER_PWD_NO_ROLE, SecurityConstants.NO_ROLE_DESCRIPTIN, false);
+
+        uninstallServiceAndWait(SIMPLE_SERVICE_PATH, SIMPLE_SERVICE_NAME, TIMEOUT_IN_MINUTES, SecurityConstants.USER_PWD_APP_MANAGER, SecurityConstants.USER_PWD_APP_MANAGER, false, null);
+
+        // Don (app manager and viewer) installs service groovy without auth-groups (so the default is Cellcom)
+        installServiceAndWait(GROOVY_SERVICE_PATH, GROOVY_SERVICE_NAME, TIMEOUT_IN_MINUTES, SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, false, null);
+
+        verifyServiceVisibleLists(GROOVY_SERVICE_NAME, SecurityConstants.APP_MANAGER_AND_VIEWER_DESCRIPTIN, SecurityConstants.USER_PWD_CLOUD_ADMIN, SecurityConstants.USER_PWD_CLOUD_ADMIN, SecurityConstants.CLOUD_ADMIN_DESCRIPTIN, true);
+        verifyServiceVisibleLists(GROOVY_SERVICE_NAME, SecurityConstants.APP_MANAGER_AND_VIEWER_DESCRIPTIN, SecurityConstants.USER_PWD_CLOUD_ADMIN_AND_APP_MANAGER, SecurityConstants.USER_PWD_CLOUD_ADMIN_AND_APP_MANAGER, SecurityConstants.CLOUD_ADMIN_AND_APP_MANAGER_DESCRIPTION, false);
+        verifyServiceVisibleLists(GROOVY_SERVICE_NAME, SecurityConstants.APP_MANAGER_AND_VIEWER_DESCRIPTIN, SecurityConstants.USER_PWD_APP_MANAGER, SecurityConstants.USER_PWD_APP_MANAGER, SecurityConstants.APP_MANAGER_DESCRIPTIN, false);
+        verifyServiceVisibleLists(GROOVY_SERVICE_NAME, SecurityConstants.APP_MANAGER_AND_VIEWER_DESCRIPTIN, SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, SecurityConstants.APP_MANAGER_AND_VIEWER_DESCRIPTIN, true);
+        verifyServiceVisibleLists(GROOVY_SERVICE_NAME, SecurityConstants.APP_MANAGER_AND_VIEWER_DESCRIPTIN, SecurityConstants.USER_PWD_VIEWER, SecurityConstants.USER_PWD_VIEWER, SecurityConstants.VIEWER_DESCRIPTIN, true);
+        verifyServiceVisibleLists(GROOVY_SERVICE_NAME, SecurityConstants.APP_MANAGER_AND_VIEWER_DESCRIPTIN, SecurityConstants.USER_PWD_NO_ROLE, SecurityConstants.USER_PWD_NO_ROLE, SecurityConstants.NO_ROLE_DESCRIPTIN, false);
+
+        uninstallServiceAndWait(GROOVY_SERVICE_PATH, GROOVY_SERVICE_NAME, TIMEOUT_IN_MINUTES, SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, false, null);
+
+        // Dana (cloud admin and app manager) installs service simple with auth-group = ROLE_APPMANAGERS
+        installServiceAndWait(SIMPLE_SERVICE_PATH, SIMPLE_SERVICE_NAME, TIMEOUT_IN_MINUTES, SecurityConstants.USER_PWD_CLOUD_ADMIN_AND_APP_MANAGER, SecurityConstants.USER_PWD_CLOUD_ADMIN_AND_APP_MANAGER, false, SecurityConstants.BEZEQ_GROUP);
+
+        verifyServiceVisibleLists(SIMPLE_SERVICE_NAME, SecurityConstants.APP_MANAGER_DESCRIPTIN, SecurityConstants.USER_PWD_CLOUD_ADMIN, SecurityConstants.USER_PWD_CLOUD_ADMIN, SecurityConstants.CLOUD_ADMIN_DESCRIPTIN, true);
+        verifyServiceVisibleLists(SIMPLE_SERVICE_NAME, SecurityConstants.APP_MANAGER_DESCRIPTIN, SecurityConstants.USER_PWD_CLOUD_ADMIN_AND_APP_MANAGER, SecurityConstants.USER_PWD_CLOUD_ADMIN_AND_APP_MANAGER, SecurityConstants.CLOUD_ADMIN_AND_APP_MANAGER_DESCRIPTION, true);
+        verifyServiceVisibleLists(SIMPLE_SERVICE_NAME, SecurityConstants.APP_MANAGER_DESCRIPTIN, SecurityConstants.USER_PWD_APP_MANAGER, SecurityConstants.USER_PWD_APP_MANAGER, SecurityConstants.APP_MANAGER_DESCRIPTIN, false);
+        verifyServiceVisibleLists(SIMPLE_SERVICE_NAME, SecurityConstants.APP_MANAGER_DESCRIPTIN, SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, SecurityConstants.APP_MANAGER_AND_VIEWER_DESCRIPTIN, false);
+        verifyServiceVisibleLists(SIMPLE_SERVICE_NAME, SecurityConstants.APP_MANAGER_DESCRIPTIN, SecurityConstants.USER_PWD_VIEWER, SecurityConstants.USER_PWD_VIEWER, SecurityConstants.VIEWER_DESCRIPTIN, false);
+        verifyServiceVisibleLists(SIMPLE_SERVICE_NAME, SecurityConstants.APP_MANAGER_DESCRIPTIN, SecurityConstants.USER_PWD_NO_ROLE, SecurityConstants.USER_PWD_NO_ROLE, SecurityConstants.NO_ROLE_DESCRIPTIN, false);
+
+        uninstallServiceAndWait(SIMPLE_SERVICE_PATH, SIMPLE_SERVICE_NAME, TIMEOUT_IN_MINUTES, SecurityConstants.USER_PWD_CLOUD_ADMIN_AND_APP_MANAGER, SecurityConstants.USER_PWD_CLOUD_ADMIN_AND_APP_MANAGER, false, null);
+    }
+
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
 	public void installServiceWithWrongGroup() throws IOException, InterruptedException {
 		
@@ -136,7 +136,7 @@ public class LocalCloudSecurityLdapTest extends AbstractSecuredLocalCloudTest {
 	
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
-	public void installAndUninstallAppWithDifferentGroup() throws IOException, InterruptedException {
+	public void installAndUninstallAppWithDifferentGroup() throws Exception {
 		
 		String output = "no output";
 		
@@ -148,7 +148,7 @@ public class LocalCloudSecurityLdapTest extends AbstractSecuredLocalCloudTest {
 	
 	
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT, enabled = true)
-	public void installAndUninstallServiceWithDifferentGroup() throws IOException, InterruptedException {
+	public void installAndUninstallServiceWithDifferentGroup() throws Exception {
 		
 		String output = "no output";
 		
@@ -160,7 +160,7 @@ public class LocalCloudSecurityLdapTest extends AbstractSecuredLocalCloudTest {
 	
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
-	public void testInstallAndUninstall() throws IOException, InterruptedException {
+	public void testInstallAndUninstall() throws Exception {
 		super.installAndUninstallTest();
 	}
 	

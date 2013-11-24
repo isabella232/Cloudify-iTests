@@ -1,24 +1,22 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.byon.sharedprovisioning;
 
-import java.io.IOException;
-import java.util.Set;
-
+import iTests.framework.utils.AssertUtils;
+import iTests.framework.utils.ProcessingUnitUtils;
 import org.cloudifysource.dsl.internal.CloudifyConstants;
 import org.cloudifysource.dsl.utils.ServiceUtils;
+import org.cloudifysource.quality.iTests.framework.utils.ApplicationInstaller;
+import org.cloudifysource.quality.iTests.framework.utils.CloudBootstrapper;
+import org.cloudifysource.quality.iTests.framework.utils.ServiceInstaller;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.CloudService;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.CloudServiceManager;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.security.SecurityConstants;
 import org.openspaces.admin.machine.Machine;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.CloudService;
-import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.CloudServiceManager;
-import org.cloudifysource.quality.iTests.test.cli.cloudify.security.SecurityConstants;
-import org.cloudifysource.quality.iTests.framework.utils.ApplicationInstaller;
-import iTests.framework.utils.AssertUtils;
-import org.cloudifysource.quality.iTests.framework.utils.CloudBootstrapper;
-import iTests.framework.utils.ProcessingUnitUtils;
-import org.cloudifysource.quality.iTests.framework.utils.ServiceInstaller;
+import java.util.Set;
 
 public class TenantSharedProvisioningTest extends AbstractSharedProvisioningByonCloudTest {
 		
@@ -44,7 +42,7 @@ public class TenantSharedProvisioningTest extends AbstractSharedProvisioningByon
 	}
 	
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, enabled = true)
-	public void testTwoTenant() throws IOException, InterruptedException {
+	public void testTwoTenant() throws Exception {
 
 		super.installManualTenantSharedProvisioningApplicationAndWait("ROLE_CLOUDADMINS", APPLICATION_ONE);
 		super.installManualTenantSharedProvisioningApplicationAndWait("ROLE_APPMANAGERS", APPLICATION_TWO);
@@ -71,7 +69,7 @@ public class TenantSharedProvisioningTest extends AbstractSharedProvisioningByon
 	
 	
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, enabled = true)
-	public void testTwoServicesOnOneTenant() throws IOException, InterruptedException {
+	public void testTwoServicesOnOneTenant() throws Exception {
 		super.installManualTenantSharedProvisioningServiceAndWait("ROLE_CLOUDADMINS", SERVICE_ONE);
 		super.installManualTenantSharedProvisioningServiceAndWait("ROLE_CLOUDADMINS", SERVICE_TWO);
 		

@@ -26,7 +26,7 @@ import junit.framework.Assert;
 import org.apache.commons.io.FileUtils;
 import org.cloudifysource.quality.iTests.framework.utils.CloudBootstrapper;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
-import org.cloudifysource.quality.iTests.test.cli.cloudify.NewRestTestUtils;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.util.NewRestTestUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.byon.AbstractByonAddRemoveTemplatesTest;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.templates.TemplatesCommandsRestAPI;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.templates.TemplatesFolderHandler;

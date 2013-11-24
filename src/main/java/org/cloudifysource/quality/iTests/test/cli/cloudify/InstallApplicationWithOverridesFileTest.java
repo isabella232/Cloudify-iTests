@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.cloudifysource.dsl.internal.DSLException;
 import org.cloudifysource.dsl.internal.packaging.PackagingException;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.util.NewRestTestUtils;
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.testng.annotations.Test;
 
@@ -96,12 +97,12 @@ public class InstallApplicationWithOverridesFileTest extends OverridesTest {
 	 */
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
 	public void applicationWithOverridesFileNewRestApiTest()
-			throws IOException, DSLException, PackagingException, InterruptedException {
+            throws Exception {
 		try {
 			NewRestTestUtils.installApplicationUsingNewRestApi(
-					restUrl, 
-					APPLICATION_OVERRIDEN_NAME, 
-					new File(APPLICATION_WITH_OVERRIDES_FILE_DIR_PATH));
+                    restUrl,
+                    APPLICATION_OVERRIDEN_NAME,
+                    new File(APPLICATION_WITH_OVERRIDES_FILE_DIR_PATH));
 			// asserts
 			performAsserts();
 		} finally {
@@ -121,7 +122,7 @@ public class InstallApplicationWithOverridesFileTest extends OverridesTest {
 	 */
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
 	public void applicationWithExternalOverridesFileNewRestApiTest()
-			throws IOException, DSLException, PackagingException, InterruptedException {
+            throws Exception {
 		try {
 			NewRestTestUtils.installApplicationUsingNewRestApi(
 					restUrl, 
@@ -198,8 +199,8 @@ public class InstallApplicationWithOverridesFileTest extends OverridesTest {
 	 * @throws InterruptedException
 	 */
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
-	public void installApplicationWithOverridesFileNoPropsFileAndServiceWithoutPropsFileViaRestApiTest() 
-			throws IOException, DSLException, PackagingException, InterruptedException {
+	public void installApplicationWithOverridesFileNoPropsFileAndServiceWithoutPropsFileViaRestApiTest()
+            throws Exception {
 		try {
 			NewRestTestUtils.installApplicationUsingNewRestApi(
 					restUrl, 
@@ -228,8 +229,8 @@ public class InstallApplicationWithOverridesFileTest extends OverridesTest {
 	 * @throws InterruptedException
 	 */
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
-	public void installApplicationWithPropsFileNoOverridesFileAndServiceWithoutPropsFileViaRestApiTest() 
-			throws IOException, DSLException, PackagingException, InterruptedException {
+	public void installApplicationWithPropsFileNoOverridesFileAndServiceWithoutPropsFileViaRestApiTest()
+            throws Exception {
 		try {
 			NewRestTestUtils.installApplicationUsingNewRestApi(
 					restUrl, 

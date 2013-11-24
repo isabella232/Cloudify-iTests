@@ -1,18 +1,7 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify;
 
 import iTests.framework.utils.LogUtils;
-
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-
 import junit.framework.Assert;
-
 import org.apache.commons.lang.StringUtils;
 import org.cloudifysource.dsl.internal.CloudifyConstants.InvocationStatus;
 import org.cloudifysource.dsl.rest.response.InvokeInstanceCommandResponse;
@@ -28,6 +17,14 @@ import org.openspaces.admin.pu.ProcessingUnit;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+
+import java.net.MalformedURLException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 public class InvokeCommandsNewRestTest extends AbstractLocalCloudTest {
 
@@ -63,7 +60,7 @@ public class InvokeCommandsNewRestTest extends AbstractLocalCloudTest {
 	
 	
 	@AfterClass
-	public void cleanup() throws IOException, InterruptedException {
+	public void cleanup() throws Exception {
 		super.uninstallService(SERVICE_NAME);
 	}
 	
@@ -367,7 +364,7 @@ public class InvokeCommandsNewRestTest extends AbstractLocalCloudTest {
 	}
 	
 	
-	private void uninstallService() throws IOException, InterruptedException {
+	private void uninstallService() throws Exception {
 		super.uninstallService(SERVICE_NAME);
 	}
 	

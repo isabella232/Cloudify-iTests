@@ -1,14 +1,13 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.byon;
 
-import java.io.File;
-import java.io.IOException;
-
 import org.cloudifysource.esc.driver.provisioning.byon.ByonProvisioningDriver;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
-import org.cloudifysource.quality.iTests.test.cli.cloudify.CloudTestUtils;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.util.CloudTestUtils;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+
+import java.io.File;
 
 /**
  * 
@@ -24,7 +23,7 @@ public class ProvisioningContextByonTest extends AbstractByonCloudTest {
 	}
 
 	@Override
-	public void beforeBootstrap() throws IOException {
+	public void beforeBootstrap() throws Exception {
 
 		final String newCloudDriverClazz = "CustomCloudDriver";
 
@@ -37,7 +36,7 @@ public class ProvisioningContextByonTest extends AbstractByonCloudTest {
 	}
 
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, enabled = true)
-	public void installTomcatTest() throws IOException, InterruptedException {
+	public void installTomcatTest() throws Exception {
 		try {
 			installServiceAndWait("tomcat", "tomcat");
 		} finally {

@@ -1,24 +1,14 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify;
 
+import com.gigaspaces.internal.sigar.SigarHolder;
+import com.gigaspaces.log.AllLogEntryMatcher;
+import com.gigaspaces.log.ContinuousLogEntryMatcher;
+import com.gigaspaces.log.LogEntries;
+import com.gigaspaces.log.LogEntry;
+import com.gigaspaces.log.LogProcessType;
 import iTests.framework.utils.AssertUtils;
 import iTests.framework.utils.LogUtils;
 import iTests.framework.utils.ScriptUtils;
-
-import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.UnknownHostException;
-import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.concurrent.TimeUnit;
-import java.util.zip.ZipFile;
-
 import org.cloudifysource.domain.Service;
 import org.cloudifysource.dsl.internal.CloudifyConstants;
 import org.cloudifysource.dsl.internal.DSLException;
@@ -27,8 +17,8 @@ import org.cloudifysource.dsl.internal.packaging.PackagingException;
 import org.cloudifysource.dsl.utils.ServiceUtils;
 import org.cloudifysource.quality.iTests.framework.utils.ServiceInstaller;
 import org.cloudifysource.quality.iTests.framework.utils.usm.USMTestUtils;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.util.NewRestTestUtils;
 import org.cloudifysource.restclient.ErrorStatusException;
-import org.cloudifysource.restclient.RestException;
 import org.cloudifysource.restclient.exceptions.RestClientException;
 import org.cloudifysource.shell.exceptions.CLIException;
 import org.cloudifysource.shell.rest.RestAdminFacade;
@@ -55,12 +45,20 @@ import org.openspaces.pu.service.ServiceMonitors;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import com.gigaspaces.internal.sigar.SigarHolder;
-import com.gigaspaces.log.AllLogEntryMatcher;
-import com.gigaspaces.log.ContinuousLogEntryMatcher;
-import com.gigaspaces.log.LogEntries;
-import com.gigaspaces.log.LogEntry;
-import com.gigaspaces.log.LogProcessType;
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.UnknownHostException;
+import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.concurrent.TimeUnit;
+import java.util.zip.ZipFile;
 
 public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 
@@ -104,8 +102,7 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 	}
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
-	public void testKitchenSink() throws IOException, InterruptedException, PackagingException, DSLException,
-			RestException, RestClientException {
+	public void testKitchenSink() throws Exception {
 
 		installer.install();
 
@@ -302,10 +299,10 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 				gsmZones.contains("localcloud"));
 	}
 
-	private void checkDump() throws IOException, RestException {
+	private void checkDump() throws Exception {
 
 		// Test dump processingUnit
-		File puDumpFile = NewRestTestUtils.getPUDumpFile(restUrl, 0, null);
+		File puDumpFile = NewRestTestUtils.getProcessingUnitsDumpFile(restUrl, 0, null);
 		Assert.assertTrue("The dump zip file doesn't contain any entries [" + puDumpFile.getAbsolutePath() + "]", 
 				new ZipFile(puDumpFile).size() != 0);
 

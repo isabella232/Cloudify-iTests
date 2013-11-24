@@ -5,8 +5,8 @@ import com.google.inject.Module;
 import iTests.framework.utils.LogUtils;
 import org.cloudifysource.dsl.utils.IPUtils;
 import org.cloudifysource.esc.jclouds.WindowsServerEC2ReviseParsedImage;
-import org.cloudifysource.quality.iTests.test.cli.cloudify.CloudTestUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.security.SecurityConstants;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.util.CloudTestUtils;
 import org.jclouds.ContextBuilder;
 import org.jclouds.aws.ec2.compute.strategy.AWSEC2ReviseParsedImage;
 import org.jclouds.compute.ComputeServiceContext;
@@ -15,8 +15,13 @@ import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadata.Status;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map.Entry;
+import java.util.Properties;
+import java.util.Set;
 
 public abstract class JCloudsCloudService extends AbstractCloudService {
 

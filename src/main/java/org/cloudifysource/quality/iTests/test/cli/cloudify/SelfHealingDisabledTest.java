@@ -52,7 +52,7 @@ public class SelfHealingDisabledTest extends AbstractLocalCloudTest {
 	}
 
     @Test(timeOut = DEFAULT_TEST_TIMEOUT, groups = "1", enabled = true)
-    public void testNoSelfHealingApplication() throws IOException, InterruptedException {
+    public void testNoSelfHealingApplication() throws Exception {
 
         ApplicationInstaller installer = new ApplicationInstaller(restUrl, "groovyApp");
         installer.setDisableSelfHealing(true);

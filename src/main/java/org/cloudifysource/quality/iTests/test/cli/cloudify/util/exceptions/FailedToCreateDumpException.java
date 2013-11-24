@@ -31,7 +31,8 @@ package org.cloudifysource.quality.iTests.test.cli.cloudify.util.exceptions;
  */
 public class FailedToCreateDumpException extends Exception {
 
-
-
+    public FailedToCreateDumpException(final String message) {
+        super(message);
+    }
 
 }

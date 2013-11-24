@@ -11,20 +11,17 @@
  *******************************************************************************/
 package org.cloudifysource.quality.iTests.test.cli.cloudify;
 
-import iTests.framework.utils.AssertUtils;
+ import iTests.framework.utils.AssertUtils;
+ import junit.framework.Assert;
+ import org.cloudifysource.dsl.internal.CloudifyConstants;
+ import org.cloudifysource.dsl.rest.response.InstallServiceResponse;
+ import org.cloudifysource.dsl.rest.response.ServiceDescription;
+ import org.cloudifysource.dsl.rest.response.UninstallServiceResponse;
+ import org.cloudifysource.quality.iTests.test.cli.cloudify.util.NewRestTestUtils;
+ import org.cloudifysource.restclient.RestClient;
+ import org.testng.annotations.Test;
 
-import java.io.File;
-import java.io.IOException;
-
-import junit.framework.Assert;
-
-import org.cloudifysource.dsl.internal.CloudifyConstants;
-import org.cloudifysource.dsl.rest.response.InstallServiceResponse;
-import org.cloudifysource.dsl.rest.response.ServiceDescription;
-import org.cloudifysource.dsl.rest.response.UninstallServiceResponse;
-import org.cloudifysource.restclient.RestClient;
-import org.cloudifysource.restclient.exceptions.RestClientException;
-import org.testng.annotations.Test;
+ import java.io.File;
 
 public class InstallServiceWithCustomName extends AbstractLocalCloudTest {
 	private static final String SERVICE_UPDATED_NAME = "simpleNewName";
@@ -34,8 +31,8 @@ public class InstallServiceWithCustomName extends AbstractLocalCloudTest {
 	
 	// using the CLI to install service with a customized name (use the -name option).
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, groups = "1", enabled = true)
-	public void installServiceWithCustomNameCLITest() 
-			throws IOException, InterruptedException {
+	public void installServiceWithCustomNameCLITest()
+            throws Exception {
 
         StringBuilder installationCommand = new StringBuilder()
         .append("install-service").append(" ")
@@ -54,10 +51,11 @@ public class InstallServiceWithCustomName extends AbstractLocalCloudTest {
 	
 	// using the new REST client to install service with a customized name (pass the customized name in the request).
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, groups = "1", enabled = true)
-	public void installServiceWithCustomNameRestClientTest() 
-			throws IOException, InterruptedException, RestClientException {
-		InstallServiceResponse response = NewRestTestUtils.installServiceUsingNewRestAPI(restUrl, new File(SERVICE_DIR_PATH), 
-				CloudifyConstants.DEFAULT_APPLICATION_NAME, SERVICE_UPDATED_NAME, INSTALL_TIMEOUT_MILLIS, null);
+	public void installServiceWithCustomNameRestClientTest()
+            throws Exception {
+		InstallServiceResponse response = NewRestTestUtils
+                .installServiceUsingNewRestAPI(restUrl, new File(SERVICE_DIR_PATH),
+                        CloudifyConstants.DEFAULT_APPLICATION_NAME, SERVICE_UPDATED_NAME, null);
 		String deploymentID = response.getDeploymentID();
 		RestClient restClient = NewRestTestUtils.createAndConnect(restUrl);
 		ServiceDescription serviceDescription = restClient.getServiceDescription(CloudifyConstants.DEFAULT_APPLICATION_NAME, SERVICE_UPDATED_NAME);

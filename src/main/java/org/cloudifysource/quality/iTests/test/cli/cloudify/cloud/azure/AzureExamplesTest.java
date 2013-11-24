@@ -1,20 +1,19 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.azure;
 
-import java.io.File;
-import java.io.IOException;
-
+import iTests.framework.tools.SGTestHelper;
+import iTests.framework.utils.LogUtils;
+import iTests.framework.utils.ScriptUtils;
 import org.apache.commons.io.FileUtils;
+import org.cloudifysource.quality.iTests.framework.utils.ApplicationInstaller;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.NewAbstractCloudTest;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.NewAbstractCloudTest;
-import iTests.framework.tools.SGTestHelper;
-import org.cloudifysource.quality.iTests.framework.utils.ApplicationInstaller;
-import iTests.framework.utils.LogUtils;
-import iTests.framework.utils.ScriptUtils;
+import java.io.File;
+import java.io.IOException;
 
 public class AzureExamplesTest extends NewAbstractCloudTest {
 	
@@ -45,7 +44,7 @@ public class AzureExamplesTest extends NewAbstractCloudTest {
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 5, enabled = true)
-	public void testTravel() throws IOException, InterruptedException {
+	public void testTravel() throws Exception {
 		LogUtils.log("installing application travel on azure");
 		String applicationPath = ScriptUtils.getBuildPath() + "/recipes/apps/travel-azure";
 		ApplicationInstaller applicationInstaller = new ApplicationInstaller(getRestUrl(), "travel");
@@ -58,7 +57,7 @@ public class AzureExamplesTest extends NewAbstractCloudTest {
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 5, enabled = true)
-	public void testPetclinicSimple() throws IOException, InterruptedException {
+	public void testPetclinicSimple() throws Exception {
 		LogUtils.log("installing application petclinic-simple on azure");
 		String applicationPath = ScriptUtils.getBuildPath() + "/recipes/apps/petclinic-simple-azure";
 		ApplicationInstaller applicationInstaller = new ApplicationInstaller(getRestUrl(), "petclinic");
@@ -71,7 +70,7 @@ public class AzureExamplesTest extends NewAbstractCloudTest {
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 5, enabled = true)
-	public void testHelloWorld() throws IOException, InterruptedException {
+	public void testHelloWorld() throws Exception {
 		LogUtils.log("installing application helloworld on azure");
 		String applicationPath = ScriptUtils.getBuildPath() + "/recipes/apps/helloworld-azure";
 		ApplicationInstaller applicationInstaller = new ApplicationInstaller(getRestUrl(), "helloworld");

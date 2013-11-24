@@ -1,25 +1,23 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.ec2.bigdata;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-
+import iTests.framework.tools.SGTestHelper;
+import iTests.framework.utils.LogUtils;
+import iTests.framework.utils.ScriptUtils;
+import iTests.framework.utils.WebUtils;
 import junit.framework.Assert;
-
 import org.apache.commons.io.FileUtils;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.NewAbstractCloudTest;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.ec2.Ec2CloudService;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
-import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.NewAbstractCloudTest;
-import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.ec2.Ec2CloudService;
-import iTests.framework.tools.SGTestHelper;
-import iTests.framework.utils.LogUtils;
-import iTests.framework.utils.ScriptUtils;
-import iTests.framework.utils.WebUtils;
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 /**
  * runs on ec2<p>
  * loops several times:<p>
@@ -176,7 +174,7 @@ public class RepetativeInstallAndUninstallStockDemoWithProblemAtInstallEc2Test e
 	}
 	
 	@AfterMethod
-	public void cleanUp() throws IOException, InterruptedException {
+	public void cleanUp() throws Exception {
 		if ((getService() != null) && (getService().getRestUrls() != null)) {
 			String command = "connect " + getRestUrl() + ";list-applications";
 			String output = CommandTestUtils.runCommandAndWait(command);

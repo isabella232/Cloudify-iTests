@@ -1,27 +1,5 @@
 package org.cloudifysource.quality.iTests.test.webui.cloud;
 
-import iTests.framework.utils.AssertUtils;
-import iTests.framework.utils.AssertUtils.RepetitiveConditionProvider;
-import iTests.framework.utils.LogUtils;
-import iTests.framework.utils.ScriptUtils;
-
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.UnknownHostException;
-import java.util.List;
-import java.util.Map;
-
-import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
-import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.NewAbstractCloudTest;
-import org.cloudifysource.quality.iTests.test.webui.WebuiTestUtils;
-import org.cloudifysource.restclient.GSRestClient;
-import org.cloudifysource.restclient.RestException;
-import org.openspaces.admin.pu.DeploymentStatus;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Test;
-
 import com.gigaspaces.webuitf.LoginPage;
 import com.gigaspaces.webuitf.MainNavigation;
 import com.gigaspaces.webuitf.WebConstants;
@@ -46,6 +24,25 @@ import com.gigaspaces.webuitf.topology.physicalpanel.PhysicalPanel;
 import com.gigaspaces.webuitf.topology.recipes.RecipesPanel;
 import com.gigaspaces.webuitf.topology.recipes.selectionpanel.RecipeFolderNode;
 import com.j_spaces.kernel.PlatformVersion;
+import iTests.framework.utils.AssertUtils;
+import iTests.framework.utils.AssertUtils.RepetitiveConditionProvider;
+import iTests.framework.utils.LogUtils;
+import iTests.framework.utils.ScriptUtils;
+import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.NewAbstractCloudTest;
+import org.cloudifysource.quality.iTests.test.webui.WebuiTestUtils;
+import org.cloudifysource.restclient.GSRestClient;
+import org.cloudifysource.restclient.RestException;
+import org.openspaces.admin.pu.DeploymentStatus;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
+
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.UnknownHostException;
+import java.util.List;
+import java.util.Map;
 
 public class Ec2WebuiCloudBasicTest extends NewAbstractCloudTest {
 	
@@ -102,7 +99,7 @@ public class Ec2WebuiCloudBasicTest extends NewAbstractCloudTest {
 	
 		
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT)
-	public void basicTest() throws InterruptedException, IOException, RestException {
+	public void basicTest() throws Exception {
 		LogUtils.log("Starting test - ec2 webui cloud");
 		applicationPath = ScriptUtils.getBuildPath() + "/recipes/apps/" + applicationFolderName;		
 		installApplicationAndWait(applicationPath, applicationName);

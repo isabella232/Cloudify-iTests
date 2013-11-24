@@ -1,13 +1,13 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.byon;
 
-import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Test;
-
-import org.cloudifysource.quality.iTests.framework.utils.ApplicationInstaller;
 import iTests.framework.utils.AssertUtils;
 import iTests.framework.utils.ScriptUtils;
+
+import org.cloudifysource.quality.iTests.framework.utils.ApplicationInstaller;
+import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
 
 public class TeardownWithoutUninstallTest extends AbstractByonCloudTest {
 	
@@ -53,7 +53,7 @@ public class TeardownWithoutUninstallTest extends AbstractByonCloudTest {
 		// override so as to not close the admin. we need it after teardown
 	}
 	
-	@AfterMethod(alwaysRun = true)
+	@AfterClass(alwaysRun = true)
 	public void closeAdmin() {
 		super.closeAdmin();
 	}

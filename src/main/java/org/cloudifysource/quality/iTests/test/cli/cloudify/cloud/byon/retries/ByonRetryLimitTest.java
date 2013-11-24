@@ -45,7 +45,7 @@ public class ByonRetryLimitTest extends AbstractByonCloudTest {
     private static int EXPECTED_NUM_OF_ATTEMPTS;
 
     @BeforeClass(alwaysRun = true)
-    private void beforeClass() throws Exception {
+    protected void beforeClass() throws Exception {
         super.bootstrap();
     }
 

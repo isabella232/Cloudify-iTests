@@ -284,11 +284,14 @@ public final class NewRestTestUtils {
 			FileUtils.writeByteArrayToFile(file , response.getDumpData());
 			return file;
 		} catch (RestClientException e) {
+			String message = e.getMessageFormattedText();
 			if (errMessageContain == null) {
-				throw new FailedToCreateDumpException(e.getMessage());
+				throw new FailedToCreateDumpException(message);
 			} else {
-				String message = e.getMessageFormattedText();
-                throw new WrongMessageException(message, errMessageContain);
+				if  (!message.contains(errMessageContain)) {
+					throw new WrongMessageException(message, errMessageContain);
+				}
+				return null;
 			}
 		}
 	}
@@ -315,11 +318,14 @@ public final class NewRestTestUtils {
 			FileUtils.writeByteArrayToFile(file , response.getDumpBytes());
 			return file;
 		} catch (RestClientException e) {
+			String message = e.getMessageFormattedText();
 			if (errMessageContain == null) {
-                throw new FailedToCreateDumpException(e.getMessage());
+                throw new FailedToCreateDumpException(message);
 			} else {
-                String message = e.getMessageFormattedText();
-                throw new WrongMessageException(message, errMessageContain);
+                if (!message.contains(errMessageContain)) {
+                	throw new WrongMessageException(message, errMessageContain);
+                }
+                return null;
 			}
 		}
 	}
@@ -386,13 +392,16 @@ public final class NewRestTestUtils {
 		} catch (RestClientException e) {
 			String message = e.getMessageFormattedText();
 			if (errMessageContain == null) {
-                throw new FailedToCreateDumpException(e.getMessage());
+				throw new FailedToCreateDumpException(message);
 			} else {
-                throw new WrongMessageException(message, errMessageContain);			}
+				if (!message.contains(errMessageContain)) {
+					throw new WrongMessageException(message, errMessageContain);
+				}
+				return null;
+			}
 		}
 	}
-	
-	
+
 	private static void waitForManagersToShutDown(
             final ControllerDetails[] managers,
             final int port,

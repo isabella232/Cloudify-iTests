@@ -39,7 +39,7 @@ public class RepetativeInstallAndUninstallStockDemoWithProblemAtInstallEc2Test e
 	private String newPostStartScriptPath = null;
 	private Ec2CloudService service;
 	private String restUrl;
-	private final String stockdemoAppPath = CommandTestUtils.getPath("src/main/resources/apps/USM/usm/applications/stockdemo");
+	private final String stockdemoAppPath = CommandTestUtils.getPath("src/main/resources/apps/cloudify/recipes/stockdemo");
 
 	private File cloudPluginDir = new File(ScriptUtils.getBuildPath() + "/clouds/ec2");
 	private URL stockdemoUrl;

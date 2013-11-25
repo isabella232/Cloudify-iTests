@@ -43,7 +43,7 @@ public class RepetativeInstallAndUninstallStockDemoWithProblemAtInstallTest exte
 	public void installAndUninstallTest() throws Exception {
 
 		stockdemoUrl = new URL("http://" + InetAddress.getLocalHost().getHostAddress() + ":8080/stockdemo.StockDemo/");
-		String stockdemoAppPath = CommandTestUtils.getPath("src/main/resources/apps/USM/usm/applications/stockdemo");
+		String stockdemoAppPath = CommandTestUtils.getPath("src/main/resources/apps/cloudify/recipes/stockdemo");
 		
 		final File workStockDemoAppFolder = new File(new File(stockdemoAppPath).getParent(), "stockdemo-work");
 		

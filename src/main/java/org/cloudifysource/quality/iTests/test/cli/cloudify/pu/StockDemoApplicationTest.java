@@ -23,7 +23,7 @@ public class StockDemoApplicationTest extends AbstractLocalCloudTest {
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
 	public void testStockdemoApplication() throws Exception {
 		//If running locally, read test description first.
-		String applicationDir = SGTestHelper.getSGTestRootDir().replace("\\", "/") + "/src/main/resources/apps/USM/usm/applications/stockdemo";
+		String applicationDir = SGTestHelper.getSGTestRootDir().replace("\\", "/") + "/src/main/resources/apps/cloudify/recipes/stockdemo";
 		String command = "connect " + restUrl + ";" + "install-application " + "--verbose -timeout 25 " + applicationDir;
 		CommandTestUtils.runCommandAndWait(command);
 		

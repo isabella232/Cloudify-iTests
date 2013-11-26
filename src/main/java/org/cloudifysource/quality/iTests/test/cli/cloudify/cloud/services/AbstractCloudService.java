@@ -170,9 +170,9 @@ public abstract class AbstractCloudService implements CloudService {
         if(cloudName.equalsIgnoreCase("byon")){
             IOUtils.copyFile(pathToLogstash + "/byon/pre-bootstrap.sh", preBootstrapScriptPath);
         }
-        if(cloudName.equalsIgnoreCase("rackspace")){
-            IOUtils.copyFile(pathToLogstash + "/rackspace/pre-bootstrap.sh", preBootstrapScriptPath);
-        }
+//        if(cloudName.equalsIgnoreCase("rackspace")){
+//            IOUtils.copyFile(pathToLogstash + "/rackspace/pre-bootstrap.sh", preBootstrapScriptPath);
+//        }
         else{
             IOUtils.copyFile(pathToLogstash + "/pre-bootstrap.sh", preBootstrapScriptPath);
         }

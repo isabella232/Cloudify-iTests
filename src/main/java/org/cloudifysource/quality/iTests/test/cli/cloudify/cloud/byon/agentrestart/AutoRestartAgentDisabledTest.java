@@ -31,10 +31,10 @@ public class AutoRestartAgentDisabledTest extends AbstractAgentMaintenanceModeTe
     	
     	final String ip = IPUtils.resolveHostNameToIp(hostName);
     	LogUtils.log("listing all crontab scheduled tasks");
-    	final String output = SSHUtils.runCommand(ip, DEFAULT_TEST_TIMEOUT / 2, 
-				LIST_CRONTAB_TASKS, 
-				MavenUtils.username, 
-				MavenUtils.password, true);
+    	final String output = SSHUtils.runCommand(ip, DEFAULT_TEST_TIMEOUT / 2,
+				LIST_CRONTAB_TASKS,
+				MavenUtils.username,
+				MavenUtils.password);
     	LogUtils.log(output);
     	assertTrue("crontab contains auto restart agent task", 
     			!output.contains("@reboot nohup /tmp/tgrid/gigaspaces/tools/cli/cloudify.sh start-management"));

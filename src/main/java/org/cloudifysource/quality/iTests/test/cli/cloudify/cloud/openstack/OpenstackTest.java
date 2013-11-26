@@ -77,8 +77,8 @@ public class OpenstackTest extends NewAbstractCloudTest {
 
         final List<SecurityGroup> securityGroups = quantum.getSecurityGroupsByPrefix(this.service.getMachinePrefix());
         assertTrue("No security groups found", !securityGroups.isEmpty());
-        // Expect 6 secgroups: management, agent, cluster, application, service and another one for service's public rules.
-        assertEquals(6, securityGroups.size());
+        // Expect 5 secgroups: management, agent, cluster, application, service.
+        assertEquals(5, securityGroups.size());
 
         final SecurityGroup management = this.retrieveSecgroup(securityGroups, "management");
         assertNotNull("No management security group found", management);

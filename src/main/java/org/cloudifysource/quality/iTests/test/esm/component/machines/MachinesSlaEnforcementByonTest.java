@@ -17,6 +17,7 @@ import org.openspaces.admin.internal.admin.InternalAdmin;
 import org.openspaces.admin.space.SpaceDeployment;
 import org.openspaces.grid.gsm.machines.CapacityMachinesSlaPolicy;
 import org.openspaces.grid.gsm.machines.MachinesSlaEnforcement;
+import org.openspaces.grid.gsm.machines.MachinesSlaEnforcementState;
 import org.openspaces.grid.gsm.machines.exceptions.GridServiceAgentSlaEnforcementPendingContainerDeallocationException;
 import org.openspaces.grid.gsm.machines.exceptions.MachinesSlaEnforcementInProgressException;
 import org.testng.Assert;
@@ -46,7 +47,7 @@ public class MachinesSlaEnforcementByonTest extends AbstractMachinesSlaEnforceme
 		super.beforeTestInit();
 
 		updateMachineProvisioningConfig(getMachineProvisioningConfig());
-		machinesSlaEnforcement = new MachinesSlaEnforcement();
+		machinesSlaEnforcement = new MachinesSlaEnforcement(new MachinesSlaEnforcementState());
 	}
 
 	@BeforeClass(alwaysRun=true)

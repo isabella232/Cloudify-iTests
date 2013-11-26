@@ -8,6 +8,7 @@ import org.openspaces.admin.gsa.GridServiceManagerOptions;
 import org.openspaces.admin.space.SpaceDeployment;
 import org.openspaces.grid.gsm.machines.CapacityMachinesSlaPolicy;
 import org.openspaces.grid.gsm.machines.MachinesSlaEnforcement;
+import org.openspaces.grid.gsm.machines.MachinesSlaEnforcementState;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
@@ -25,7 +26,7 @@ public class MachinesSlaEnforcementTwoManagementMachinesByonTest extends Abstrac
 		super.beforeTestInit();
         
         updateMachineProvisioningConfig(getMachineProvisioningConfig());
-        machinesSlaEnforcement = new MachinesSlaEnforcement();
+        machinesSlaEnforcement = new MachinesSlaEnforcement(new MachinesSlaEnforcementState());
     }
 	
 	@BeforeClass

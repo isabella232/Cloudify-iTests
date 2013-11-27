@@ -107,6 +107,9 @@ public class InstallAndUninstallPUTest extends AbstractLocalCloudTest {
 	}
 	
 	private String getUsmServicePath(String dirOrFilename) {
+        if(MIRROR_SERVICE_FOLDER_NAME.equals(dirOrFilename)){
+            return CommandTestUtils.getPath("src/main/resources/apps/cloudify/recipes/stockdemo/" + dirOrFilename);
+        }
 		return CommandTestUtils.getPath("src/main/resources/apps/USM/usm/" + dirOrFilename);
 	}
 }

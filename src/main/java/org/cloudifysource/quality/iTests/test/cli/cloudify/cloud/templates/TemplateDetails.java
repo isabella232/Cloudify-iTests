@@ -97,4 +97,5 @@ public class TemplateDetails {
 		final TemplateDetails templateDetails = (TemplateDetails) obj;
 		return this.templateName.equals(templateDetails.getTemplateName());
 	}
+
 }

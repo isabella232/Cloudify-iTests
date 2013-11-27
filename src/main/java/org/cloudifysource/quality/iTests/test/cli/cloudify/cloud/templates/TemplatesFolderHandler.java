@@ -14,13 +14,12 @@ import org.apache.commons.io.FileUtils;
 
 public abstract class TemplatesFolderHandler {
 	protected File folder;
-	private List<String> expectedFailedTemplates;
-	private List<String> expectedToBeAddedTempaltes;
-	private Map<String, TemplateDetails> templates;
+	protected List<String> expectedFailedTemplates;
+	protected List<String> expectedToBeAddedTempaltes;
+	protected Map<String, TemplateDetails> templates;
 	private AtomicInteger numLastAddedTemplate;
 	
 	public TemplatesFolderHandler(final File folder) {
-		super();
 		this.folder = folder;
 		this.templates = new HashMap<String, TemplateDetails>();
 		this.expectedFailedTemplates = new LinkedList<String>();
@@ -59,40 +58,37 @@ public abstract class TemplatesFolderHandler {
 		return addCustomTemplate(templateDetails);
 	}
 	
-	public TemplateDetails createTemplate(final String templateName, final File templateFile, final String uploadDirName, boolean isForServiceInstallation) {
+	public TemplateDetails addCustomTemplate(final TemplateDetails template) {
+		
 		// get and set template name
 		final int suffix = numLastAddedTemplate.getAndIncrement();
-		String updatedTemplateName = templateName;
+		String updatedTemplateName = template.getTemplateName();
 		if (updatedTemplateName == null) {
 			updatedTemplateName = folder.getName() + "_" + suffix;
+			template.setTemplateName(updatedTemplateName);
 		}
+		template.setTemplateFolder(folder);
 		// create the template
-		TemplateDetails createdTemplate = TemplatesUtils.createTemplate(updatedTemplateName, templateFile, folder, uploadDirName);
-		createdTemplate.setForServiceInstallation(isForServiceInstallation);
+		TemplateDetails createdTemplate = 
+				getTempalteCreator().createCustomTemplate(template);
+		createdTemplate.setForServiceInstallation(template.isForServiceInstallation());
 
-		// updates if needed
-		updateTemplateFile(createdTemplate);
+		// updates properties if needed
 		updatePropertiesFile(createdTemplate);
+		
+		templates.put(updatedTemplateName, createdTemplate);
+		if (template.isExpectedToFailOnAdd()) {
+			expectedFailedTemplates.add(updatedTemplateName);
+		} else {
+			expectedToBeAddedTempaltes.add(updatedTemplateName);
+		}
 		
 		return createdTemplate;
 	}
-	
-	public TemplateDetails addCustomTemplate(final TemplateDetails template) {
-		TemplateDetails createTemplate = 
-				createTemplate(template.getTemplateName(), template.getTemplateFile(), template.getUploadDirName(), template.isForServiceInstallation());
-		String templateName = createTemplate.getTemplateName();
-		templates.put(templateName, createTemplate);
-		if (template.isExpectedToFailOnAdd()) {
-			expectedFailedTemplates.add(templateName);
-		} else {
-			expectedToBeAddedTempaltes.add(templateName);
-		}
-		return createTemplate;
-	}
 
-	public abstract File updateTemplateFile(final TemplateDetails templateFile);
 	public abstract void updatePropertiesFile(final TemplateDetails template);
-
+	public abstract TemplateCreator getTempalteCreator();
+	
 	public File getFolder() {
 		return folder;
 	}

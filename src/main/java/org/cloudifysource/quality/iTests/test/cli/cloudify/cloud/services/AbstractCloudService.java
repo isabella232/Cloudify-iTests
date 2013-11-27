@@ -170,9 +170,9 @@ public abstract class AbstractCloudService implements CloudService {
         if(cloudName.equalsIgnoreCase("byon")){
             IOUtils.copyFile(pathToLogstash + "/byon/pre-bootstrap.sh", preBootstrapScriptPath);
         }
-//        if(cloudName.equalsIgnoreCase("rackspace")){
-//            IOUtils.copyFile(pathToLogstash + "/rackspace/pre-bootstrap.sh", preBootstrapScriptPath);
-//        }
+        if(cloudName.equalsIgnoreCase("rackspace")){
+            IOUtils.copyFile(pathToLogstash + "/rackspace/pre-bootstrap.sh", preBootstrapScriptPath);
+        }
         else{
             IOUtils.copyFile(pathToLogstash + "/pre-bootstrap.sh", preBootstrapScriptPath);
         }
@@ -198,6 +198,8 @@ public abstract class AbstractCloudService implements CloudService {
 
         String logstashConfInBuildPath = getPathToCloudFolder() + "/upload/cloudify-overrides/config/logstash";
         FileUtils.forceMkdir(new File(logstashConfInBuildPath));
+
+        LogUtils.log("copying shipper conf file to " + logstashConfInBuildPath);
         IOUtils.copyFile(confFilePath, logstashConfInBuildPath + "/logstash-shipper.conf");
 
         IOUtils.replaceFileWithMove(new File(confFilePath), new File(backupFilePath));

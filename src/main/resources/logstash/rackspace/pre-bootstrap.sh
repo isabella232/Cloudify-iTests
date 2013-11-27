@@ -27,6 +27,7 @@ else
 	export GIGASPACES_ORIGINAL_JAVA_HOME=$JAVA_HOME
 
 	echo Downloading JDK from $GIGASPACES_AGENT_ENV_JAVA_URL
+	echo running cmd wget -q -O $WORKING_HOME_DIRECTORY/java.bin $GIGASPACES_AGENT_ENV_JAVA_URL
 	wget -q -O $WORKING_HOME_DIRECTORY/java.bin $GIGASPACES_AGENT_ENV_JAVA_URL || error_exit $? 101 "Failed downloading Java installation from $GIGASPACES_AGENT_ENV_JAVA_URL"
 	chmod +x $WORKING_HOME_DIRECTORY/java.bin
 	echo -e "\n" > $WORKING_HOME_DIRECTORY/input.txt
@@ -51,4 +52,13 @@ echo java home: $JAVA_HOME
 
 mkdir ~/logstash/logs
 touch ~/logstash/logs/logstash-shipper-log.txt
+echo running (rackspace) command $JAVA_HOME/bin/java -jar logstash-1.2.2.jar agent -f ~/gs-files/upload/cloudify-overrides/config/logstash/logstash-shipper.conf -l ~/logstash/logs/logstash-shipper-log.txt&
 $JAVA_HOME/bin/java -jar logstash-1.2.2.jar agent -f /home/root/gs-files/upload/cloudify-overrides/config/logstash/logstash-shipper.conf -l ~/logstash/logs/logstash-shipper-log.txt&
+
+cd /home/root/gs-files
+echo filed in gs-files:
+ll
+
+cd upload
+echo filed in upload:
+ll

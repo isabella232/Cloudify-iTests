@@ -65,25 +65,42 @@ public class DedicatedStatelessManualFailoverAwareTest extends AbstractFromXenTo
     @Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled=true)
     public void testFailedMachineDetails() throws Exception {
         deployPu();
-        machineFailover();
+        machineFailover(getAgent(pu));
+        assertUndeployAndWait(pu);
     }
 
     /**
      * CLOUDIFY-2180
      * Tests that after failover the cloud driver #start() method receives MachineInfo of the failed machine.
      * Machine is killed only after ESM is restarted. This checks the ESM persists context to space.
-     * Note: This test does not test what happens when machine fails while ESM is restarting.
      */
     @Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled=true)
     public void testFailedMachineDetailsAfterEsmRestart() throws Exception {
         deployPu();
-        restartEsm();
-        machineFailover();
+        restartEsmAndWait();
+        machineFailover(getAgent(pu));
+        assertUndeployAndWait(pu);
     }
 
-    private void machineFailover() throws Exception {
-        // stop machine and check ESM log that it starts a machine that is aware of the failed machine.
+    /**
+     * CLOUDIFY-2180
+     * Tests that after failover the cloud driver #start() method receives MachineInfo of the failed machine.
+     * Machine is killed while ESM is down. This checks the ESM persists context to space and can detect machine failure while it was down.
+     */
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled=true)
+    public void testFailedMachineWhileEsmIsDown() throws Exception {
+        deployPu();
+        // hold reference to agent before restarting the lus 
         final GridServiceAgent agent = getAgent(pu);
+        final ElasticServiceManager[] esms = admin.getElasticServiceManagers().getManagers();
+        assertEquals("Expected only 1 ESM instance. instead found " + esms.length, 1, esms.length);
+        killEsm();
+        machineFailover(agent);
+        assertUndeployAndWait(pu);
+    }
+
+    private void machineFailover(GridServiceAgent agent) throws Exception {
+        // stop machine and check ESM log that it starts a machine that is aware of the failed machine.
         LogUtils.log("Stopping agent " + agent.getUid());
         stopByonMachine(getElasticMachineProvisioningCloudifyAdapter(), agent, OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
         repetitiveAssertNumberOfGSAsRemoved(1, OPERATION_TIMEOUT);
@@ -94,7 +111,6 @@ public class DedicatedStatelessManualFailoverAwareTest extends AbstractFromXenTo
         
         // check ESM not tried to start too many machines, which would eventually result in machine start failure
         repetitiveAssertNoStartMachineFailures();
-        assertUndeployAndWait(pu);
     }
 
 	private ProcessingUnit deployProcessingUnitOnSeperateMachine() {

@@ -17,6 +17,7 @@ import org.cloudifysource.esc.driver.provisioning.ElasticMachineProvisioningClou
 import org.cloudifysource.quality.iTests.framework.utils.ByonMachinesUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.byon.AbstractByonCloudTest;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.byon.ByonCloudService;
+import org.openspaces.admin.GridComponent;
 import org.openspaces.admin.esm.ElasticServiceManager;
 import org.openspaces.admin.esm.ElasticServiceManagers;
 import org.openspaces.admin.esm.events.ElasticServiceManagerAddedEventListener;
@@ -336,7 +337,7 @@ public class AbstractFromXenToByonGSMTest extends AbstractByonCloudTest {
 	} 
 	
 
-    protected void restartEsm() throws InterruptedException {
+    protected void restartEsmAndWait() throws InterruptedException {
         final ElasticServiceManagers elasticServiceManagers = admin.getElasticServiceManagers();
         final ElasticServiceManager esm = elasticServiceManagers.waitForAtLeastOne(OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
         assertNotNull("Failed discovering esm", esm);
@@ -353,15 +354,25 @@ public class AbstractFromXenToByonGSMTest extends AbstractByonCloudTest {
         };
         elasticServiceManagers.getElasticServiceManagerAdded().add(eventListener);
         try {
-            final String ipAddress = esm.getMachine().getHostAddress();
-            final int pid = (int) esm.getVirtualMachine().getDetails().getPid();
-            boolean killed = SSHUtils.killProcess(ipAddress, pid);
-            assertTrue("Failed killing ESM", killed);
+            killGridComponent(esm);
             boolean latchZero = newEsmStarted.await(OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
             assertTrue("Timedout waiting for new ESM to start", latchZero);
         }
         finally {
             elasticServiceManagers.getElasticServiceManagerAdded().remove(eventListener);
         }
+    }
+
+    protected void killEsm() {
+        final ElasticServiceManagers elasticServiceManagers = admin.getElasticServiceManagers();
+        final ElasticServiceManager esm = elasticServiceManagers.waitForAtLeastOne(OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
+        assertNotNull("Failed discovering esm", esm);
+        killGridComponent(esm);
+    }
+    private void killGridComponent(final GridComponent component) {
+        final String ipAddress = component.getMachine().getHostAddress();
+        final int pid = (int) component.getVirtualMachine().getDetails().getPid();
+        final boolean killed = SSHUtils.killProcess(ipAddress, pid);
+        assertTrue("Failed killing " + component.getClass().getSimpleName() + " " + component.getUid(), killed);
     }
 }

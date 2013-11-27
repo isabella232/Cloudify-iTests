@@ -57,12 +57,12 @@ $JAVA_HOME/bin/java -jar logstash-1.2.2.jar agent -f /home/root/gs-files/upload/
 
 cd /home/root/gs-files
 echo filed in gs-files:
-ll
+
 
 cd upload
 echo filed in upload:
-ll
 
-cd /home/root/gigaspaces/
+
+cd /root/gigaspaces/
 echo files in /home/root/gigaspaces:
-ll
+

@@ -125,11 +125,11 @@ public final class NewRestTestUtils {
 			NewRestTestUtils.waitForApplicationInstallation(restClient, applicationName, deploymentID);
 		} catch (final RestClientException e) {
 			final String actualMsg = e.getMessageFormattedText();
-			if (expectedFailureMsg != null && !actualMsg.contains(expectedFailureMsg)) {
-                // failure was expected, but not this one.
-                throw new WrongMessageException(actualMsg, expectedFailureMsg);
-			} else {
-                throw e;
+			if (expectedFailureMsg == null) {
+				throw e;
+			} else if (!actualMsg.contains(expectedFailureMsg)) {
+				// failure was expected, but not this one.
+				throw new WrongMessageException(actualMsg, expectedFailureMsg);				
 			}
 		}
 		return installationResponse;
@@ -165,13 +165,13 @@ public final class NewRestTestUtils {
 			NewRestTestUtils
 					.waitForServiceInstallation(restClient, applicationName, serviceName, deploymentID);
 		} catch (final RestClientException e) {
-            final String actualMsg = e.getMessageFormattedText();
-            if (expectedFailureMsg != null && !actualMsg.contains(expectedFailureMsg)) {
-                // failure was expected, but not this one.
-                throw new WrongMessageException(actualMsg, expectedFailureMsg);
-            } else {
-                throw e;
-            }
+			final String actualMsg = e.getMessageFormattedText();
+			if (expectedFailureMsg == null) {
+				throw e;
+			} else if (!actualMsg.contains(expectedFailureMsg)) {
+				// failure was expected, but not this one.
+				throw new WrongMessageException(actualMsg, expectedFailureMsg);				
+			}
 		}
 		return installService;
 	}
@@ -236,17 +236,17 @@ public final class NewRestTestUtils {
 		RestClient restClient = createAndConnect(restUrl);
 		
 		// shutdown the managers
-		ShutdownManagementResponse response;
+		ShutdownManagementResponse response = null;
 		try {
-			 response = restClient.shutdownManagers();
+			response = restClient.shutdownManagers();
 		} catch (RestClientException e) {
-            final String actualMsg = e.getMessageFormattedText();
-            if (expectedFailureMsg != null && !actualMsg.contains(expectedFailureMsg)) {
-                // failure was expected, but not this one.
-                throw new WrongMessageException(actualMsg, expectedFailureMsg);
-            } else {
-                throw e;
-            }
+			final String actualMsg = e.getMessageFormattedText();
+			if (expectedFailureMsg == null) {
+				throw e;
+			} else if (!actualMsg.contains(expectedFailureMsg)) {
+				// failure was expected, but not this one.
+				throw new WrongMessageException(actualMsg, expectedFailureMsg);				
+			}
 		}
 		
 		// write managers to file
@@ -262,7 +262,7 @@ public final class NewRestTestUtils {
 		
 		return response;
 	}
-	
+
 	public static File getProcessingUnitsDumpFile(
             final String restUrl,
             final long fileSizeLimit,

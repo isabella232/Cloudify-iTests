@@ -52,7 +52,7 @@ echo java home: $JAVA_HOME
 
 mkdir ~/logstash/logs
 touch ~/logstash/logs/logstash-shipper-log.txt
-echo running (rackspace) command $JAVA_HOME/bin/java -jar logstash-1.2.2.jar agent -f ~/gs-files/upload/cloudify-overrides/config/logstash/logstash-shipper.conf -l ~/logstash/logs/logstash-shipper-log.txt&
+echo in rackspace running command $JAVA_HOME/bin/java -jar logstash-1.2.2.jar agent -f ~/gs-files/upload/cloudify-overrides/config/logstash/logstash-shipper.conf -l ~/logstash/logs/logstash-shipper-log.txt&
 $JAVA_HOME/bin/java -jar logstash-1.2.2.jar agent -f /home/root/gs-files/upload/cloudify-overrides/config/logstash/logstash-shipper.conf -l ~/logstash/logs/logstash-shipper-log.txt&
 
 cd /home/root/gs-files
@@ -61,4 +61,8 @@ ll
 
 cd upload
 echo filed in upload:
+ll
+
+cd /home/root/gigaspaces/
+echo files in /home/root/gigaspaces:
 ll

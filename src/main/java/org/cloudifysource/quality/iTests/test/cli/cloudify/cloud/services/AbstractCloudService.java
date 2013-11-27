@@ -185,6 +185,9 @@ public abstract class AbstractCloudService implements CloudService {
         if(cloudName.equalsIgnoreCase("byon")){
             remoteBuildPath = "/tmp/tgrid/gigaspaces";
         }
+        if(cloudName.equalsIgnoreCase("rackspace")){
+            remoteBuildPath = "/home/root/gigaspaces";
+        }
         else{
             remoteBuildPath = "/home/ec2-user/gigaspaces";
         }

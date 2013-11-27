@@ -28,8 +28,8 @@ import org.apache.commons.io.FileUtils;
 import org.cloudifysource.dsl.internal.DSLUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
 
-public class TemplatesUtils {
-	private final static String TEMPLATES_ROOT_PATH = CommandTestUtils.getPath("src/main/resources/templates");
+public class TemplateCreator {
+	protected final static String TEMPLATES_ROOT_PATH = CommandTestUtils.getPath("src/main/resources/templates");
 	private final static String BASIC_TEMPLATE_FILE_NAME = "basic_template";
 
 	private final static String TEMPLATE_NAME_STRING = "TEMPLATE_NAME";
@@ -39,16 +39,24 @@ public class TemplatesUtils {
 	
 	private static final String UPLOAD_PROPERTY_NAME = "uploadDir";
 	
-	public static TemplateDetails createTemplate(final String templateName, final File templateFile, 
+	public TemplateDetails getNewTempalte() {
+		return new TemplateDetails();
+	}
+	
+	public TemplateDetails createTemplate(final String templateName, final File templateFile, 
 			final File templateFolder, final String uploadDirName) {
 		
-		TemplateDetails template = new TemplateDetails();
-		template .setTemplateFolder(templateFolder);
+		TemplateDetails template = getNewTempalte();
+		template.setTemplateFolder(templateFolder);
+		
+		// name
 		String updatedTemplateName = templateName;
 		if (updatedTemplateName == null) {
 			updatedTemplateName = templateFolder.getName();
 		}
 		template.setTemplateName(updatedTemplateName);
+		
+		// template file
 		File updatedTemplateFile = templateFile;
 		if (updatedTemplateFile == null) {
 			updatedTemplateFile = new File(templateFolder, updatedTemplateName + DSLUtils.TEMPLATE_DSL_FILE_NAME_SUFFIX);
@@ -69,6 +77,7 @@ public class TemplatesUtils {
 		template.setTemplateFile(updatedTemplateFile);
 		replaceStringInFile(getBasicTemplateFile(), updatedTemplateFile, TEMPLATE_NAME_STRING, updatedTemplateName);
 
+		// upload directory
 		String updatedUploadDirName = uploadDirName;
 		if (updatedUploadDirName == null) {
 			updatedUploadDirName = UPLOAD_DIR_NAME_PREFIX + "_" + templateFolder.getName();
@@ -77,18 +86,19 @@ public class TemplatesUtils {
 		final File uploadFolder = new File(templateFolder, updatedUploadDirName);
 		uploadFolder.mkdir();
 		
+		// bootstrap management file
 		final File updatedBootstrapManagementFile = new File(uploadFolder, BOOTSTRAP_MANAGEMENT_FILE_NAME);
 		replaceStringInFile(getBasicBootstrapManagementFile(), updatedBootstrapManagementFile,
 				UPLOAD_DIR_NAME_STRING, updatedUploadDirName);
 
-		
+		// properties file
 		File templatePropsFile = createPropertiesFileForTemplate(template);
 		template.setTemplatePropertiesFile(templatePropsFile);
 		
 		return template;
 	}
 	
-	public static File createPropertiesFileForTemplate(final TemplateDetails template) {
+	public File createPropertiesFileForTemplate(final TemplateDetails template) {
 		final Properties props = new Properties();
 		if (template.getUploadDirName() != null) {
 			props.put(UPLOAD_PROPERTY_NAME, template.getUploadDirName());
@@ -122,7 +132,7 @@ public class TemplatesUtils {
 		return templatePropsFile;
 	}
 	
-	public static void replaceStringInFile(final File readFrom, final File writeTo, final String stringToReplace,
+	public void replaceStringInFile(final File readFrom, final File writeTo, final String stringToReplace,
 			final String replacement) {
 		BufferedReader reader = null;
 		try {
@@ -155,11 +165,15 @@ public class TemplatesUtils {
 		}
 	}
 	
-	public static File getBasicTemplateFile() {
+	public File getBasicTemplateFile() {
 		return new File(TEMPLATES_ROOT_PATH, BASIC_TEMPLATE_FILE_NAME);
 	}
 	
-	public static File getBasicBootstrapManagementFile() {
+	public File getBasicBootstrapManagementFile() {
 		return new File(TEMPLATES_ROOT_PATH, BOOTSTRAP_MANAGEMENT_FILE_NAME);
+	}
+	
+	public TemplateDetails createCustomTemplate(TemplateDetails template) {
+		return createTemplate(template.getTemplateName(), template.getTemplateFile(), template.getTemplateFolder(), template.getUploadDirName());
 	}
 }

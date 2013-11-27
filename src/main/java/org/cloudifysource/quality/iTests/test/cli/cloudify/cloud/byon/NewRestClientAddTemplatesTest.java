@@ -31,7 +31,7 @@ import org.cloudifysource.quality.iTests.test.cli.cloudify.util.NewRestTestUtils
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.templates.TemplateDetails;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.templates.TemplatesCommandsRestAPI;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.templates.TemplatesFolderHandler;
-import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.templates.TemplatesUtils;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.templates.TemplateCreator;
 import org.cloudifysource.restclient.exceptions.RestClientException;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -316,7 +316,7 @@ public class NewRestClientAddTemplatesTest extends AbstractByonAddRemoveTemplate
 		File duplicateFile = new File(folder2, "duplicate" + DSLUtils.TEMPLATE_DSL_FILE_NAME_SUFFIX);
 		FileUtils.copyFile(template.getTemplateFile(), duplicateFile);
 		TemplateDetails duplicateTemplate = 
-				TemplatesUtils.createTemplate(template.getTemplateName(), duplicateFile , folder2, null);
+				new TemplateCreator().createTemplate(template.getTemplateName(), duplicateFile , folder2, null);
 		duplicateTemplate.setExpectedToFailOnAdd(true);		
 		folderHandler2.addCustomTemplate(duplicateTemplate);
 

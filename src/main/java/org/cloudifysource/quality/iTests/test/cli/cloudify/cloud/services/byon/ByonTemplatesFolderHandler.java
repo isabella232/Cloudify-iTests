@@ -23,13 +23,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 import junit.framework.Assert;
 
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.templates.ByonTemplateCreator;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.templates.TemplateDetails;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.templates.TemplatesFolderHandler;
-import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.templates.TemplatesUtils;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.templates.TemplateCreator;
 
 public class ByonTemplatesFolderHandler extends TemplatesFolderHandler {
 	private final String TEMPLATES_ROOT_PATH = CommandTestUtils.getPath("src/main/resources/templates");
-	private final String BASIC_TEMPLATE_FILE_NAME = "byon_basic_template";
+	private static final String BYON_BASIC_TEMPLATE_FILE_NAME = "byon_basic_template";
 	private final String TEMPLATE_NAME_STRING = "TEMPLATE_NAME";
 
 	private static final String NODE_IP_PROPERTY_NAME = "node_ip";
@@ -78,11 +79,8 @@ public class ByonTemplatesFolderHandler extends TemplatesFolderHandler {
 	}
 
 	@Override
-	public File updateTemplateFile(final TemplateDetails template) {
-		File templateFile = template.getTemplateFile();
-		TemplatesUtils.replaceStringInFile(new File(TEMPLATES_ROOT_PATH, BASIC_TEMPLATE_FILE_NAME), 
-				templateFile, TEMPLATE_NAME_STRING, template.getTemplateName());
-		return null;
+	public TemplateCreator getTempalteCreator() {
+		return new ByonTemplateCreator();
 	}
 
 }

@@ -46,6 +46,7 @@ public class AbstractFromXenToByonGSMTest extends AbstractByonCloudTest {
 	public final static String STANDARD_MACHINE_MEMORY_MB = "5850";
     public final static String LRMI_BIND_PORT_RANGE = "7010-7110";
 	public final static int NUM_OF_CORES = 2;
+	protected static final boolean ENABLE_LOGSTASH = Boolean.parseBoolean(System.getProperty("iTests.enableLogstash", "false"));
 	private static final long RESERVED_MEMORY_PER_MACHINE_MEGABYTES_DISCOVERED = 128;
 	private MachinesEventsCounter machineEventsCounter;
 	private ElasticMachineProvisioningCloudifyAdapter elasticMachineProvisioningCloudifyAdapter;
@@ -131,6 +132,7 @@ public class AbstractFromXenToByonGSMTest extends AbstractByonCloudTest {
 		config.setCloudConfigurationDirectory(getService().getPathToCloudFolder());
 		elasticMachineProvisioningCloudifyAdapter.setProperties(config.getProperties());		
 		elasticMachineProvisioningCloudifyAdapter.afterPropertiesSet();
+		elasticMachineProvisioningCloudifyAdapter.blockingAfterPropertiesSet();
 		
 		ElasticGridServiceAgentProvisioningProgressChangedEventListener agentEventListener = new ElasticGridServiceAgentProvisioningProgressChangedEventListener() {
 
@@ -220,6 +222,9 @@ public class AbstractFromXenToByonGSMTest extends AbstractByonCloudTest {
         if (gsaCounter != null) {
         	gsaCounter.close();
         }
+        if (!ENABLE_LOGSTASH) {
+            DumpUtils.dumpLogs(admin);
+        }
         // undeploy all zombie pu's
         ProcessingUnits processingUnits = admin.getProcessingUnits();
 		if (processingUnits.getSize() > 0) {
@@ -227,7 +232,13 @@ public class AbstractFromXenToByonGSMTest extends AbstractByonCloudTest {
         }
         for (ProcessingUnit pu : processingUnits) {
         	//cleanup
-        	pu.undeploy();
+        	boolean undeploySucceeded = pu.undeployAndWait(OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
+        	if (undeploySucceeded) {
+        	    LogUtils.log(this.getClass() + " afterTest undeployed " + pu.getName());
+        	}
+        	else {
+        	    LogUtils.log(this.getClass() + " afterTest failed to undeploy " + pu.getName());
+        	}
         }
         // stoping all machines and ProvisioningCloudifyAdapter
         try {
@@ -244,7 +255,7 @@ public class AbstractFromXenToByonGSMTest extends AbstractByonCloudTest {
         catch (Exception e) {
             AssertUtils.assertFail("destroying elasticMachineProvisioningCloudifyAdapter failed: "+e.getCause());
         }
-        DumpUtils.dumpLogs(admin);
+        
 	}
 
 

@@ -1,16 +1,15 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.ec2.bigdata;
 
+import iTests.framework.tools.SGTestHelper;
+
 import java.io.File;
 import java.io.IOException;
 
 import org.apache.commons.io.FileUtils;
-import iTests.framework.tools.SGTestHelper;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
-import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.NewAbstractCloudTest;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 public class StockDemoApplicationTest extends NewAbstractCloudTest {

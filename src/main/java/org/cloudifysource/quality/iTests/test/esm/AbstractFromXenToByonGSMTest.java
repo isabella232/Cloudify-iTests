@@ -46,6 +46,7 @@ public class AbstractFromXenToByonGSMTest extends AbstractByonCloudTest {
 	public final static String STANDARD_MACHINE_MEMORY_MB = "5850";
     public final static String LRMI_BIND_PORT_RANGE = "7010-7110";
 	public final static int NUM_OF_CORES = 2;
+	protected static final boolean ENABLE_LOGSTASH = Boolean.parseBoolean(System.getProperty("iTests.enableLogstash", "false"));
 	private static final long RESERVED_MEMORY_PER_MACHINE_MEGABYTES_DISCOVERED = 128;
 	private MachinesEventsCounter machineEventsCounter;
 	private ElasticMachineProvisioningCloudifyAdapter elasticMachineProvisioningCloudifyAdapter;
@@ -221,7 +222,9 @@ public class AbstractFromXenToByonGSMTest extends AbstractByonCloudTest {
         if (gsaCounter != null) {
         	gsaCounter.close();
         }
-        DumpUtils.dumpLogs(admin);
+        if (!ENABLE_LOGSTASH) {
+            DumpUtils.dumpLogs(admin);
+        }
         // undeploy all zombie pu's
         ProcessingUnits processingUnits = admin.getProcessingUnits();
 		if (processingUnits.getSize() > 0) {

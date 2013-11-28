@@ -58,6 +58,11 @@ public class DedicatedStatelessManualFailoverAwareTest extends AbstractFromXenTo
         super.teardownAfterClass();
     }
 
+    @Override
+    protected String getCloudName() {
+        return "byon-xap-cloudify-management-space";
+    }
+    
     /**
      * CLOUDIFY-2180
      * Tests that after failover the cloud driver #start() method receives MachineInfo of the failed machine.

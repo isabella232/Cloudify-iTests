@@ -53,7 +53,14 @@ public class CloudServiceManager {
 			cloudService = new ByonCloudService();
 			CloudBootstrapper bootstrapper = new CloudBootstrapper();
 			bootstrapper.noWebServices(true);
+			bootstrapper.noManagementSpace(true);
 			cloudService.setBootstrapper(bootstrapper);
+		} else if ("byon-xap-cloudify-management-space".equalsIgnoreCase(cloudName)) {
+            cloudService = new ByonCloudService();
+            CloudBootstrapper bootstrapper = new CloudBootstrapper();
+            bootstrapper.noWebServices(true);
+            bootstrapper.noManagementSpace(false);
+            cloudService.setBootstrapper(bootstrapper);
 		} else if ("ec2".equalsIgnoreCase(cloudName)) {
 			cloudService = new Ec2CloudService();
 		} else if ("ec2-win".equalsIgnoreCase(cloudName)) {

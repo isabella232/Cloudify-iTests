@@ -16,11 +16,14 @@ public class CloudBootstrapper extends Bootstrapper {
     private CloudService cloudService;
     private String provider;
 	private boolean noWebServices = false;
+	private boolean noManagementSpace = false;
 	private String useExistingFilePath = "";
 	private String cloudFolderPath = "";
 	private boolean useExisting = false;
     private boolean skipValidation = true;
 	private Map<String, Object> cloudOverrides;
+
+    
 	
 	public CloudBootstrapper() {
 		super(DEFAULT_BOOTSTRAP_CLOUD_TIMEOUT);
@@ -92,6 +95,15 @@ public class CloudBootstrapper extends Bootstrapper {
 		return noWebServices;
 	}
 	
+	public CloudBootstrapper noManagementSpace(final boolean noManagementSpace) {
+        this.noManagementSpace = noManagementSpace;
+        return this;
+    }
+    
+    public boolean isNoManagementSpace() {
+        return noManagementSpace;
+    }
+	
 	public CloudBootstrapper cloudOverrides(final Map<String, Object> overrides) {
 		this.cloudOverrides = overrides;
 		return this;
@@ -127,6 +139,10 @@ public class CloudBootstrapper extends Bootstrapper {
 		if (noWebServices) {
 			builder.append("-no-web-services ");
 		}
+		
+		if (noManagementSpace) {
+            builder.append("-no-management-space ");
+        }
 
         if (skipValidation) {
             builder.append("-skip-validation ");

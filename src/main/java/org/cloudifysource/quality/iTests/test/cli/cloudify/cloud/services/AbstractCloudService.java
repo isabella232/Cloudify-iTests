@@ -170,8 +170,8 @@ public abstract class AbstractCloudService implements CloudService {
         if(cloudName.equalsIgnoreCase("byon")){
             IOUtils.copyFile(pathToLogstash + "/byon/pre-bootstrap.sh", preBootstrapScriptPath);
         }
-        if(cloudName.equalsIgnoreCase("rackspace")){
-            IOUtils.copyFile(pathToLogstash + "/rackspace/pre-bootstrap.sh", preBootstrapScriptPath);
+        if(cloudName.equalsIgnoreCase("rackspace") || cloudName.equalsIgnoreCase("hp")){
+            IOUtils.copyFile(pathToLogstash + "/rackspace_and_hp/pre-bootstrap.sh", preBootstrapScriptPath);
         }
         else{
             IOUtils.copyFile(pathToLogstash + "/pre-bootstrap.sh", preBootstrapScriptPath);
@@ -185,11 +185,11 @@ public abstract class AbstractCloudService implements CloudService {
         if(cloudName.equalsIgnoreCase("byon")){
             remoteBuildPath = "/tmp/tgrid/gigaspaces";
         }
-        if(cloudName.equalsIgnoreCase("rackspace")){
-            remoteBuildPath = "/root/gigaspaces";
+        if(cloudName.contains("ec2")){
+            remoteBuildPath = "/home/ec2-user/gigaspaces";
         }
         else{
-            remoteBuildPath = "/home/ec2-user/gigaspaces";
+            remoteBuildPath = "/root/gigaspaces";
         }
 
         IOUtils.replaceTextInFile(confFilePath, "<path_to_build>", remoteBuildPath);

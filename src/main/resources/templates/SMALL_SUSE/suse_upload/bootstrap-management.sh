@@ -7,7 +7,8 @@
 # Parameters the should be exported beforehand:
 # 	$LUS_IP_ADDRESS - Ip of the head node that runs a LUS and ESM. May be my IP. (Required)
 #   $GSA_MODE - 'agent' if this node should join an already running node. Otherwise, any value.
-#	$NO_WEB_SERVICES - 'true' if web-services (rest, webui) should not be deployed (only if GSA_MODE != 'agent')
+#   $NO_WEB_SERVICES - 'true' if web-services (rest, webui) should not be deployed (only if GSA_MODE != 'agent')
+#   $NO_MANAGEMENT_SPACE - 'true' if cloudifyManagementSpace should not be deployed (only if GSA_MODE != 'agent')
 #   $MACHINE_IP_ADDRESS - The IP of this server (Useful if multiple NICs exist)
 # 	$WORKING_HOME_DIRECTORY - This is where the files were copied to (cloudify installation, etc..)
 #	$GIGASPACES_LINK - If this url is found, it will be downloaded to $WORKING_HOME_DIRECTORY/gigaspaces.zip
@@ -226,8 +227,11 @@ else
 	START_COMMAND="start-management"
 	START_COMMAND_ARGS="${START_COMMAND_ARGS} -cloud-file ${CLOUD_FILE}"
 	if [ "$NO_WEB_SERVICES" = "true" ]; then
-		START_COMMAND_ARGS="${START_COMMAND_ARGS} -no-web-services -no-management-space"
+		START_COMMAND_ARGS="${START_COMMAND_ARGS} -no-web-services"
 	fi
+	if [ "$NO_MANAGEMENT_SPACE" = "true" ]; then
+		START_COMMAND_ARGS="${START_COMMAND_ARGS} -no-management-space"
+	fi	
 fi	
 
 # Execute post-bootstrap customization script if exists

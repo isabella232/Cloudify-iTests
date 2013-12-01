@@ -270,15 +270,15 @@ public abstract class AbstractCloudService implements CloudService {
     public void teardownCloud() throws Exception {
 
         String[] restUrls = getRestUrls();
-        Set<String> privateUrls = new HashSet<String>();
-
-        for(String resturl : restUrls){
-            final GSRestClient client = new GSRestClient("", "", new URL(resturl), PlatformVersion.getVersionNumber());
-            String privateIpUrl = "ProcessingUnits/Names/appName/Instances/0/ServiceDetailsByServiceId/USM/Attributes/Cloud%20Private%20IP";
-            String privateIp = (String)client.getAdminData(privateIpUrl).get("Cloud Private IP");
-            LogUtils.log("adding private ip " + privateIp);
-            privateUrls.add(privateIp);
-        }
+//        Set<String> privateUrls = new HashSet<String>();
+//
+//        for(String resturl : restUrls){
+//            final GSRestClient client = new GSRestClient("", "", new URL(resturl), PlatformVersion.getVersionNumber());
+//            String privateIpUrl = "ProcessingUnits/Names/appName/Instances/0/ServiceDetailsByServiceId/USM/Attributes/Cloud%20Private%20IP";
+//            String privateIp = (String)client.getAdminData(privateIpUrl).get("Cloud Private IP");
+//            LogUtils.log("adding private ip " + privateIp);
+//            privateUrls.add(privateIp);
+//        }
 
         try {
             if (restUrls != null) {
@@ -378,13 +378,13 @@ public abstract class AbstractCloudService implements CloudService {
                         }
                     }
 
-                    for(String privateRestUrl : privateUrls){
-
-                        if(ipAndPort.contains(privateRestUrl)){
-                            LogUtils.log("In private ip search. shutting down redis client on " + ipAndPort);
-                            SSHUtils.runCommand(logstashHost, timeoutMilli, "cd " + redisSrcDir + "; ./redis-cli client kill " + ipAndPort, user, pemFile);
-                        }
-                    }
+//                    for(String privateRestUrl : privateUrls){
+//
+//                        if(ipAndPort.contains(privateRestUrl)){
+//                            LogUtils.log("In private ip search. shutting down redis client on " + ipAndPort);
+//                            SSHUtils.runCommand(logstashHost, timeoutMilli, "cd " + redisSrcDir + "; ./redis-cli client kill " + ipAndPort, user, pemFile);
+//                        }
+//                    }
                 }
             }
         }

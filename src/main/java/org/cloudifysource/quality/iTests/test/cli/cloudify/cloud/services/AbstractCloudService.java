@@ -1,5 +1,6 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services;
 
+import com.j_spaces.kernel.PlatformVersion;
 import iTests.framework.tools.SGTestHelper;
 import iTests.framework.utils.AssertUtils;
 import iTests.framework.utils.AssertUtils.RepetitiveConditionProvider;
@@ -16,6 +17,7 @@ import org.cloudifysource.quality.iTests.framework.utils.CloudBootstrapper;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.util.CloudTestUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.security.SecurityConstants;
+import org.cloudifysource.restclient.GSRestClient;
 import org.openspaces.admin.Admin;
 import org.testng.Assert;
 
@@ -24,10 +26,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Random;
+import java.util.*;
 
 public abstract class AbstractCloudService implements CloudService {
 
@@ -271,6 +270,15 @@ public abstract class AbstractCloudService implements CloudService {
     public void teardownCloud() throws Exception {
 
         String[] restUrls = getRestUrls();
+        Set<String> privateUrls = new HashSet<String>();
+
+        for(String resturl : restUrls){
+            final GSRestClient client = new GSRestClient("", "", new URL(resturl), PlatformVersion.getVersionNumber());
+            String privateIpUrl = "ProcessingUnits/Names/appName/Instances/0/ServiceDetailsByServiceId/USM/Attributes/Cloud%20Private%20IP";
+            String privateIp = (String)client.getAdminData(privateIpUrl).get("Cloud Private IP");
+            LogUtils.log("adding private ip " + privateIp);
+            privateUrls.add(privateIp);
+        }
 
         try {
             if (restUrls != null) {
@@ -360,15 +368,21 @@ public abstract class AbstractCloudService implements CloudService {
                     ipAndPort = output.substring(ipAndPortStartIndex, ipAndPortEndIndex);
                     currentIndex = ipAndPortEndIndex;
 
-                    if(restUrls != null){
-                        for(String restUrl : restUrls){
+                    for(String restUrl : restUrls){
 
-                            int ipStartIndex = restUrl.indexOf(":") + 3;
-                            String ip = restUrl.substring(ipStartIndex, restUrl.indexOf(":", ipStartIndex));
-                            if(ipAndPort.contains(ip)){
-                                LogUtils.log("shutting down redis client on " + ipAndPort);
-                                SSHUtils.runCommand(logstashHost, timeoutMilli, "cd " + redisSrcDir + "; ./redis-cli client kill " + ipAndPort, user, pemFile);
-                            }
+                        int ipStartIndex = restUrl.indexOf(":") + 3;
+                        String ip = restUrl.substring(ipStartIndex, restUrl.indexOf(":", ipStartIndex));
+                        if(ipAndPort.contains(ip)){
+                            LogUtils.log("shutting down redis client on " + ipAndPort);
+                            SSHUtils.runCommand(logstashHost, timeoutMilli, "cd " + redisSrcDir + "; ./redis-cli client kill " + ipAndPort, user, pemFile);
+                        }
+                    }
+
+                    for(String privateRestUrl : privateUrls){
+
+                        if(ipAndPort.contains(privateRestUrl)){
+                            LogUtils.log("In private ip search. shutting down redis client on " + ipAndPort);
+                            SSHUtils.runCommand(logstashHost, timeoutMilli, "cd " + redisSrcDir + "; ./redis-cli client kill " + ipAndPort, user, pemFile);
                         }
                     }
                 }

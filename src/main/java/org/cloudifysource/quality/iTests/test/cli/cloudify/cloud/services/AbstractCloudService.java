@@ -270,15 +270,15 @@ public abstract class AbstractCloudService implements CloudService {
     public void teardownCloud() throws Exception {
 
         String[] restUrls = getRestUrls();
-//        Set<String> privateUrls = new HashSet<String>();
-//
-//        for(String resturl : restUrls){
-//            final GSRestClient client = new GSRestClient("", "", new URL(resturl), PlatformVersion.getVersionNumber());
-//            String privateIpUrl = "ProcessingUnits/Names/appName/Instances/0/ServiceDetailsByServiceId/USM/Attributes/Cloud%20Private%20IP";
-//            String privateIp = (String)client.getAdminData(privateIpUrl).get("Cloud Private IP");
-//            LogUtils.log("adding private ip " + privateIp);
-//            privateUrls.add(privateIp);
-//        }
+        Set<String> privateUrls = new HashSet<String>();
+
+        for(String resturl : restUrls){
+            final GSRestClient client = new GSRestClient("", "", new URL(resturl), PlatformVersion.getVersionNumber());
+            String privateIpUrl = "ProcessingUnits/Names/rest/Instances/0/JVMDetails/EnvironmentVariables";
+            String privateIp = (String)client.getAdminData(privateIpUrl).get("GIGASPACES_AGENT_ENV_PRIVATE_IP");
+            LogUtils.log("adding private ip " + privateIp);
+            privateUrls.add(privateIp);
+        }
 
         try {
             if (restUrls != null) {
@@ -368,23 +368,26 @@ public abstract class AbstractCloudService implements CloudService {
                     ipAndPort = output.substring(ipAndPortStartIndex, ipAndPortEndIndex);
                     currentIndex = ipAndPortEndIndex;
 
-                    for(String restUrl : restUrls){
+                    if(restUrls != null){
 
-                        int ipStartIndex = restUrl.indexOf(":") + 3;
-                        String ip = restUrl.substring(ipStartIndex, restUrl.indexOf(":", ipStartIndex));
-                        if(ipAndPort.contains(ip)){
-                            LogUtils.log("shutting down redis client on " + ipAndPort);
-                            SSHUtils.runCommand(logstashHost, timeoutMilli, "cd " + redisSrcDir + "; ./redis-cli client kill " + ipAndPort, user, pemFile);
+                        for(String restUrl : restUrls){
+
+                            int ipStartIndex = restUrl.indexOf(":") + 3;
+                            String ip = restUrl.substring(ipStartIndex, restUrl.indexOf(":", ipStartIndex));
+                            if(ipAndPort.contains(ip)){
+                                LogUtils.log("shutting down redis client on " + ipAndPort);
+                                SSHUtils.runCommand(logstashHost, timeoutMilli, "cd " + redisSrcDir + "; ./redis-cli client kill " + ipAndPort, user, pemFile);
+                            }
                         }
                     }
 
-//                    for(String privateRestUrl : privateUrls){
-//
-//                        if(ipAndPort.contains(privateRestUrl)){
-//                            LogUtils.log("In private ip search. shutting down redis client on " + ipAndPort);
-//                            SSHUtils.runCommand(logstashHost, timeoutMilli, "cd " + redisSrcDir + "; ./redis-cli client kill " + ipAndPort, user, pemFile);
-//                        }
-//                    }
+                    for(String privateRestUrl : privateUrls){
+
+                        if(ipAndPort.contains(privateRestUrl)){
+                            LogUtils.log("In private ip search. shutting down redis client on " + ipAndPort);
+                            SSHUtils.runCommand(logstashHost, timeoutMilli, "cd " + redisSrcDir + "; ./redis-cli client kill " + ipAndPort, user, pemFile);
+                        }
+                    }
                 }
             }
         }

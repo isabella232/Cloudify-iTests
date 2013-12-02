@@ -271,8 +271,10 @@ public abstract class AbstractCloudService implements CloudService {
 
         String[] restUrls = getRestUrls();
 
-        for(String url : restUrls){
-            LogUtils.log("rest url: " + url);
+        if (restUrls != null) {
+            for(String url : restUrls){
+                LogUtils.log("rest url: " + url);
+            }
         }
 
         Set<String> privateUrls = new HashSet<String>();

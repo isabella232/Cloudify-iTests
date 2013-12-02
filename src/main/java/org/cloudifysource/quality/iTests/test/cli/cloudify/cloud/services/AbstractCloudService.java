@@ -279,7 +279,7 @@ public abstract class AbstractCloudService implements CloudService {
 
         Set<String> privateUrls = new HashSet<String>();
 
-        if (restUrls != null) {
+        if (restUrls != null && enableLogstash) {
             for(String resturl : restUrls){
                 final GSRestClient client = new GSRestClient("", "", new URL(resturl), PlatformVersion.getVersionNumber());
                 String privateIpUrl = "ProcessingUnits/Names/rest/Instances/0/JVMDetails/EnvironmentVariables";

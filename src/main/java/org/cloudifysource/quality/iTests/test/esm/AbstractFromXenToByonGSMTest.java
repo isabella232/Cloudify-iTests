@@ -7,11 +7,16 @@ import iTests.framework.utils.GridServiceContainersCounter;
 import iTests.framework.utils.LogUtils;
 import iTests.framework.utils.SSHUtils;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import org.cloudifysource.domain.cloud.Cloud;
 import org.cloudifysource.domain.cloud.compute.ComputeTemplate;
+import org.cloudifysource.dsl.internal.CloudifyConstants;
 import org.cloudifysource.esc.driver.provisioning.CloudifyMachineProvisioningConfig;
 import org.cloudifysource.esc.driver.provisioning.ElasticMachineProvisioningCloudifyAdapter;
 import org.cloudifysource.quality.iTests.framework.utils.ByonMachinesUtils;
@@ -28,7 +33,6 @@ import org.openspaces.admin.machine.Machine;
 import org.openspaces.admin.machine.events.ElasticMachineProvisioningProgressChangedEvent;
 import org.openspaces.admin.machine.events.ElasticMachineProvisioningProgressChangedEventListener;
 import org.openspaces.admin.pu.ProcessingUnit;
-import org.openspaces.admin.pu.ProcessingUnits;
 import org.openspaces.admin.pu.elastic.ElasticStatefulProcessingUnitDeployment;
 import org.openspaces.admin.pu.elastic.ElasticStatelessProcessingUnitDeployment;
 import org.openspaces.admin.pu.elastic.config.DiscoveredMachineProvisioningConfig;
@@ -226,8 +230,14 @@ public class AbstractFromXenToByonGSMTest extends AbstractByonCloudTest {
             DumpUtils.dumpLogs(admin);
         }
         // undeploy all zombie pu's
-        ProcessingUnits processingUnits = admin.getProcessingUnits();
-		if (processingUnits.getSize() > 0) {
+        List<ProcessingUnit> processingUnits = new ArrayList<ProcessingUnit>(Arrays.asList(admin.getProcessingUnits().getProcessingUnits()));
+		final Iterator<ProcessingUnit> iterator = processingUnits.iterator();
+		while (iterator.hasNext()) {
+		    if (iterator.next().getName().equals(CloudifyConstants.MANAGEMENT_SPACE_NAME)) {
+		        iterator.remove();
+		    }
+		}
+        if (processingUnits.size() > 0) {
         	LogUtils.log(this.getClass() + " test has not undeployed all processing units !!!");
         }
         for (ProcessingUnit pu : processingUnits) {

@@ -47,7 +47,6 @@ public class InstallApplicationUsingRestClientTest extends AbstractLocalCloudTes
 	private final String APPLICATION_FOLDER_PATH = SGTestHelper.getSGTestRootDir() +
 			"/src/main/resources/apps/USM/usm/applications/groovyApp";
 	private static final int INSTALL_TIMEOUT_IN_MINUTES = 15;
-	private static final int INSTALL_TIMEOUT_MILLIS = INSTALL_TIMEOUT_IN_MINUTES * 60 * 1000;
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true, groups = "1")
 	public void testApplicationInstall()

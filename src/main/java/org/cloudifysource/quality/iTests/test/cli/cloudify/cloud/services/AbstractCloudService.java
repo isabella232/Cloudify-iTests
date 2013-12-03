@@ -16,8 +16,11 @@ import org.cloudifysource.quality.iTests.framework.utils.CloudBootstrapper;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.security.SecurityConstants;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.util.CloudTestUtils;
+import org.cloudifysource.restclient.GSRestClient;
 import org.openspaces.admin.Admin;
 import org.testng.Assert;
+
+import com.j_spaces.kernel.PlatformVersion;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -25,9 +28,11 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Random;
+import java.util.Set;
 
 public abstract class AbstractCloudService implements CloudService {
 

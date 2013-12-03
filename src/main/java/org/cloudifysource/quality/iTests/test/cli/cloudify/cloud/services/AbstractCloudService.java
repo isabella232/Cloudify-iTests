@@ -1,5 +1,6 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services;
 
+import com.j_spaces.kernel.PlatformVersion;
 import iTests.framework.tools.SGTestHelper;
 import iTests.framework.utils.AssertUtils;
 import iTests.framework.utils.AssertUtils.RepetitiveConditionProvider;
@@ -20,8 +21,6 @@ import org.cloudifysource.restclient.GSRestClient;
 import org.openspaces.admin.Admin;
 import org.testng.Assert;
 
-import com.j_spaces.kernel.PlatformVersion;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -33,7 +32,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Random;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 public abstract class AbstractCloudService implements CloudService {
 
@@ -288,8 +286,9 @@ public abstract class AbstractCloudService implements CloudService {
 
         if (restUrls != null && enableLogstash) {
             for(String resturl : restUrls){
-                final GSRestClient client = new GSRestClient("", "", new URL(resturl), PlatformVersion.getVersionNumber());
-                String privateIpUrl = "ProcessingUnits/Names/rest/Instances/0/JVMDetails/EnvironmentVariables/GIGASPACES_AGENT_ENV_PRIVATE_IP";
+                final GSRestClient client = new GSRestClient("", "", new URL(resturl), PlatformVersion
+                        .getVersionNumber());
+                String privateIpUrl = "ProcessingUnits/Names/rest/Instances/0/JVMDetails/EnvironmentVariables";
                 String privateIp = (String)client.getAdminData(privateIpUrl).get("GIGASPACES_AGENT_ENV_PRIVATE_IP");
                 LogUtils.log("adding private ip " + privateIp);
                 privateUrls.add(privateIp);

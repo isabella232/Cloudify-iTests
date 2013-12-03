@@ -289,10 +289,9 @@ public abstract class AbstractCloudService implements CloudService {
         if (restUrls != null && enableLogstash) {
             for(String resturl : restUrls){
                 final GSRestClient client = new GSRestClient("", "", new URL(resturl), PlatformVersion.getVersionNumber());
-                String privateIpUrl = "ProcessingUnits/Names/rest/Instances/0/JVMDetails/EnvironmentVariables";
+                String privateIpUrl = "ProcessingUnits/Names/rest/Instances/0/JVMDetails/EnvironmentVariables/GIGASPACES_AGENT_ENV_PRIVATE_IP";
                 String privateIp = (String)client.getAdminData(privateIpUrl).get("GIGASPACES_AGENT_ENV_PRIVATE_IP");
-                LogUtils.log("sleeping in teardown... adding private ip " + privateIp);
-                TimeUnit.SECONDS.sleep(60 * 4);
+                LogUtils.log("adding private ip " + privateIp);
                 privateUrls.add(privateIp);
             }
         }

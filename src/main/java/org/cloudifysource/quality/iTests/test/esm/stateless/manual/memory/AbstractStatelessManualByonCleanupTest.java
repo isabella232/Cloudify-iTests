@@ -38,7 +38,7 @@ public abstract class AbstractStatelessManualByonCleanupTest extends AbstractFro
         		getService(),
         		ByonProvisioningDriver.class.getName(),	//old class
         		cloudDriverClassName, //new class
-        		"location-aware-provisioning-byon", "2.1-SNAPSHOT" //jar
+        		"location-aware-provisioning-byon", "2.2-SNAPSHOT" //jar
         );
     }
     

@@ -8,6 +8,7 @@ import iTests.framework.utils.LogUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 import org.cloudifysource.esc.driver.provisioning.CloudifyMachineProvisioningConfig;
@@ -119,9 +120,16 @@ public class DedicatedStatelessManualFailoverAwareTest extends AbstractFromXenTo
     }
 
 	private ProcessingUnit deployProcessingUnitOnSeperateMachine() {
-		final File archive = DeploymentUtils.getArchive("simpleStatelessPu.jar");
+		final String name = "simpleStatelessPu";
+	    final File archive = DeploymentUtils.getArchive(name + ".jar");
+        final String puName = name +String.valueOf(new Random().nextInt());
+        
+        // it is very important for puName to change between tests and not to change between esm restarts
+        // this allows the FailoverAwareByonProvisioningDriver mock to read and write state to files 
+        // and recover from esm failures that way.
         final ElasticStatelessProcessingUnitDeployment deployment =
                 new ElasticStatelessProcessingUnitDeployment(archive)
+                .name(puName)
                 .memoryCapacityPerContainer(1, MemoryUnit.GIGABYTES)
         		.scale(
 	                new ManualCapacityScaleConfigurer()
@@ -145,7 +153,7 @@ public class DedicatedStatelessManualFailoverAwareTest extends AbstractFromXenTo
     			getService(),
     			ByonProvisioningDriver.class.getName(), //old class
     			"org.cloudifysource.quality.iTests.FailoverAwareByonProvisioningDriver", //new class
-    			"location-aware-provisioning-byon", "2.1-SNAPSHOT"); //jar
+    			"location-aware-provisioning-byon", "2.2-SNAPSHOT"); //jar
     }
     
     private void repetitiveAssertFailoverAware() {

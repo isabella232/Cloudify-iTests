@@ -63,6 +63,12 @@ public class SoftlayerCloudService extends JCloudsCloudService {
     }
 
     @Override
+    public void setMachinePrefix(final String machinePrefix) {
+        super.setMachinePrefix(machinePrefix);
+        super.setMachinePrefix(super.getMachinePrefix().substring(0, 15));
+    }
+
+    @Override
     public String getUser() {
         return user;
     }

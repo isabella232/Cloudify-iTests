@@ -157,18 +157,24 @@ public class DedicatedStatelessManualFailoverAwareTest extends AbstractFromXenTo
     }
     
     private void repetitiveAssertFailoverAware() {
-    	
-    	final ElasticServiceManager esm = admin.getElasticServiceManagers().waitForAtLeastOne(OPERATION_TIMEOUT, TimeUnit.MILLISECONDS);
+
         LogUtils.log("Waiting for 1 "+ EXPECTED_ESM_LOG_STATEMENT  + " log entry before undeploying PU");
         final LogEntryMatcher logMatcher = LogEntryMatchers.containsString(EXPECTED_ESM_LOG_STATEMENT);
         repetitiveAssertTrue("Expected " + EXPECTED_ESM_LOG_STATEMENT +" log", new RepetitiveConditionProvider() {
             
             @Override
             public boolean getCondition() {
-                final LogEntries logEntries = esm.logEntries(logMatcher);
-                final int count = logEntries.logEntries().size();
-                LogUtils.log("Exepcted at least one "+ EXPECTED_ESM_LOG_STATEMENT + " log entries. Actual :" + count);
-                return count > 0;
+                final ElasticServiceManager[] esms = admin.getElasticServiceManagers().getManagers();
+                if (esms.length != 1) {
+                    LogUtils.log("Exepcted exactly 1 esm. Discovered " + esms.length);
+                    return false;
+                }
+                else {
+                    final LogEntries logEntries = esms[0].logEntries(logMatcher);
+                    final int count = logEntries.logEntries().size();
+                    LogUtils.log("Exepcted at least one "+ EXPECTED_ESM_LOG_STATEMENT + " log entries. Actual :" + count);
+                    return count > 0;
+                }
             }
         } , OPERATION_TIMEOUT);
     }

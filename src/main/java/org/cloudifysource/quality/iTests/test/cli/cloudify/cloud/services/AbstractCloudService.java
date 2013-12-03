@@ -33,6 +33,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 public abstract class AbstractCloudService implements CloudService {
 
@@ -291,6 +292,7 @@ public abstract class AbstractCloudService implements CloudService {
                 String privateIpUrl = "ProcessingUnits/Names/rest/Instances/0/JVMDetails/EnvironmentVariables";
                 String privateIp = (String)client.getAdminData(privateIpUrl).get("GIGASPACES_AGENT_ENV_PRIVATE_IP");
                 LogUtils.log("sleeping in teardown... adding private ip " + privateIp);
+                TimeUnit.SECONDS.sleep(60 * 4);
                 privateUrls.add(privateIp);
             }
         }

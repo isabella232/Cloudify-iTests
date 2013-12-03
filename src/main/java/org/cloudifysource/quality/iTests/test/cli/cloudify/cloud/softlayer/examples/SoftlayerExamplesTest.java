@@ -56,7 +56,7 @@ public class SoftlayerExamplesTest extends AbstractExamplesTest {
         super.testHelloWorld();
     }
 
-    @Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
+    @Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = false)
     public void testTravelChef() throws Exception {
         super.testTravelChef();
     }

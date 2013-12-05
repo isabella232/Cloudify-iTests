@@ -31,9 +31,10 @@ import org.testng.annotations.Test;
  */
 public class ReadDSLMultipleTimesTest extends AbstractTestSupport{
 
+	private static final long TWO_SECONDS_MILLIS = 2000;
 	private final String APPLICATIONS_PATH = CommandTestUtils.getBuildApplicationsPath();
 	private final ExecutorService executor = Executors.newFixedThreadPool(10);
-	private List<FutureTask<Void>> taskList = new ArrayList<FutureTask<Void>>();
+	private final List<FutureTask<Void>> taskList = new ArrayList<FutureTask<Void>>();
 	
 	// test executes for 2 hours.
 	private final long EXECUTION_TIME_MILLIS = 7200000;
@@ -53,7 +54,7 @@ public class ReadDSLMultipleTimesTest extends AbstractTestSupport{
 				for (FutureTask<Void> runningTask : taskList) {
 					runningTask.get(1, TimeUnit.SECONDS);
 				}
-				Thread.sleep(2000);
+				Thread.sleep(TWO_SECONDS_MILLIS);
 			} catch (TimeoutException e) {
 				// timeout exception is ignored.
 			} catch (final Throwable e) {
@@ -85,9 +86,9 @@ public class ReadDSLMultipleTimesTest extends AbstractTestSupport{
 										dslReader.setWorkDir(recipeFile.getParentFile());
 										dslReader.setDslFileNameSuffix(DSLUtils.SERVICE_DSL_FILE_NAME_SUFFIX);
 										dslReader.readDslEntity(Service.class);
-									} catch (Error e) {
+									} catch (final Error e) {
 										if (e instanceof OutOfMemoryError) {
-											throw new RuntimeException("Out of memory.");
+											throw new RuntimeException("Out of memory.", e);
 										}
 									}
 								}

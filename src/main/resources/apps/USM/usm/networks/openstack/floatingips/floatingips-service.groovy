@@ -22,7 +22,7 @@ service {
             println "allocating/assigning new floating ip"
             org.cloudifysource.domain.context.network.NetworkFacade network = context.getNetwork()
             // TODO Should get the pool name dynamically (net-ext)
-            def floatingIp = network.allocateFloatingIP("net-ext", null)
+            def floatingIp = network.allocateFloatingIP("network_ext", null)
             println "successfully allocated floating ip ${floatingIp}"
             try {
                 def machineId= context.getMachineID()

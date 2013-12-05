@@ -44,6 +44,7 @@ public class OpenstackTest extends NewAbstractCloudTest {
     @BeforeClass(alwaysRun = true)
     protected void bootstrap() throws Exception {
         service = new OpenstackService();
+        service.setMachinePrefix("itest-");
         super.bootstrap(service, null);
     }
 
@@ -78,7 +79,8 @@ public class OpenstackTest extends NewAbstractCloudTest {
         final List<SecurityGroup> securityGroups = quantum.getSecurityGroupsByPrefix(this.service.getMachinePrefix());
         assertTrue("No security groups found", !securityGroups.isEmpty());
         // Expect 5 secgroups: management, agent, cluster, application, service.
-        assertEquals(5, securityGroups.size());
+        // There can be more secgroups if other test has failed to uninstall, in that case there can be remaining secgroup of other service/application.
+        assertTrue("Expected at least 5 security groups, got " + securityGroups.size(), securityGroups.size() >= 5);
 
         final SecurityGroup management = this.retrieveSecgroup(securityGroups, "management");
         assertNotNull("No management security group found", management);

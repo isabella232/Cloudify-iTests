@@ -1,14 +1,9 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.azure;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.concurrent.TimeoutException;
-
+import com.gigaspaces.internal.utils.StringUtils;
+import iTests.framework.tools.SGTestHelper;
+import iTests.framework.utils.IOUtils;
+import iTests.framework.utils.LogUtils;
 import org.apache.commons.io.FileUtils;
 import org.cloudifysource.esc.driver.provisioning.azure.client.MicrosoftAzureException;
 import org.cloudifysource.esc.driver.provisioning.azure.client.MicrosoftAzureRestClient;
@@ -21,12 +16,16 @@ import org.cloudifysource.esc.driver.provisioning.azure.model.HostedService;
 import org.cloudifysource.esc.driver.provisioning.azure.model.HostedServices;
 import org.cloudifysource.esc.driver.provisioning.azure.model.NetworkConfigurationSet;
 import org.cloudifysource.esc.driver.provisioning.azure.model.Role;
-import iTests.framework.tools.SGTestHelper;
-import iTests.framework.utils.IOUtils;
-import iTests.framework.utils.LogUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.AbstractCloudService;
 
-import com.gigaspaces.internal.utils.StringUtils;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.concurrent.TimeoutException;
 
 public class MicrosoftAzureCloudService extends AbstractCloudService {
     private static final String AZURE_CERT_PROPERTIES = CREDENTIALS_FOLDER + "/cloud/azure/azure-cred.properties";
@@ -172,6 +171,20 @@ public class MicrosoftAzureCloudService extends AbstractCloudService {
 		final String mgmtPrefix = getCloud().getProvider().getManagementGroup();
 		return scanNodesWithPrefix(mgmtPrefix);
 	}
+
+    public boolean scanForLeakingCloudServices() throws TimeoutException, MicrosoftAzureException,
+            InterruptedException {
+        List<HostedService> hostedServices = azureClient.listHostedServices().getHostedServices();
+        for (HostedService hostedService : hostedServices) {
+            try {
+                LogUtils.log("Found a leaking cloud service " + hostedService.getServiceName());
+                azureClient.deleteCloudService(hostedService.getServiceName(), System.currentTimeMillis() + 60 * 1000);
+            } catch (final Exception e) {
+                LogUtils.log("Failed deleting cloud service " + e.getMessage());
+            }
+        }
+        return hostedServices.size() > 0;
+    }
 	
 	private boolean scanNodesWithPrefix(final String... prefixes) {
 		

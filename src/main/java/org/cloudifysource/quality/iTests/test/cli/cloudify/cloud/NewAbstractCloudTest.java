@@ -184,7 +184,6 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
         afterTeardown();
     }
 
-
     protected void doSanityTest(String applicationFolderName, String applicationName) throws Exception {
         LogUtils.log("installing application " + applicationName + " on " + cloudService.getCloudName());
         String applicationPath = ScriptUtils.getBuildPath() + "/recipes/apps/" + applicationFolderName;

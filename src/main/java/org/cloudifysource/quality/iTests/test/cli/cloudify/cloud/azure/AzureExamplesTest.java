@@ -1,11 +1,13 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.azure;
 
 import iTests.framework.tools.SGTestHelper;
+import iTests.framework.utils.AssertUtils;
 import iTests.framework.utils.LogUtils;
 import iTests.framework.utils.ScriptUtils;
 import org.apache.commons.io.FileUtils;
 import org.cloudifysource.quality.iTests.framework.utils.ApplicationInstaller;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.NewAbstractCloudTest;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.azure.MicrosoftAzureCloudService;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
@@ -37,12 +39,7 @@ public class AzureExamplesTest extends NewAbstractCloudTest {
 		File newAzureApplication = new File(SGTestHelper.getSGTestRootDir() + "/src/main/resources/apps/cloudify/recipes/" + applicationName);
 		FileUtils.copyDirectoryToDirectory(newAzureApplication, appsDir);
 	}
-	
-	@AfterClass(alwaysRun = true)
-	protected void teardown() throws Exception {
-		super.teardown();
-	}
-	
+
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 5, enabled = true)
 	public void testTravel() throws Exception {
 		LogUtils.log("installing application travel on azure");
@@ -93,7 +90,14 @@ public class AzureExamplesTest extends NewAbstractCloudTest {
 		super.scanForLeakedAgentNodes();
 	}
 
-	@Override
+    @AfterClass(alwaysRun = true)
+    protected void teardown() throws Exception {
+        super.teardown();
+        AssertUtils.assertFalse("Found leaking cloud services after teardown ended",
+                ((MicrosoftAzureCloudService) getService()).scanForLeakingCloudServices());
+    }
+
+    @Override
 	protected String getCloudName() {
 		return "azure";
 	}

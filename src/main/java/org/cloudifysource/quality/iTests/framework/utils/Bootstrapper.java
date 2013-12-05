@@ -2,10 +2,10 @@ package org.cloudifysource.quality.iTests.framework.utils;
 
 import iTests.framework.utils.LogUtils;
 import org.apache.commons.lang.StringUtils;
-import org.cloudifysource.quality.iTests.test.cli.cloudify.util.CloudTestUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils.ProcessResult;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.security.SecurityConstants;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.util.CloudTestUtils;
 
 import java.io.IOException;
 import java.net.URL;
@@ -28,8 +28,18 @@ public abstract class Bootstrapper {
 	private boolean verbose = true;
 	private boolean freshBootstrap = true;
 	private boolean scanForLeakedNodes = true;
+
     private URL[] restAdminUrls;
     private int numberOfManagementMachines;
+
+    public void setRestUrl(String restUrl) {
+        this.restUrl = restUrl;
+    }
+
+    public Bootstrapper setRestAdminUrls(URL[] restAdminUrls) {
+        this.restAdminUrls = restAdminUrls;
+        return this;
+    }
 
     public void setNumberOfManagementMachines(final int numberOfManagementMachines) {
         this.numberOfManagementMachines = numberOfManagementMachines;
@@ -73,20 +83,12 @@ public abstract class Bootstrapper {
 		return lastActionOutput;
 	}
 
-	public String getRestUrl() {
-		return restUrl;
-	}
-
 	public boolean isBootstrapExpectedToFail() {
 		return bootstrapExpectedToFail;
 	}
 
 	public void setBootstrapExpectedToFail(boolean isAboutToFail) {
 		bootstrapExpectedToFail = isAboutToFail;
-	}
-
-	public void setRestUrl(String restUrl) {
-		this.restUrl = restUrl;
 	}
 
 	public abstract String getCustomOptions() throws Exception;

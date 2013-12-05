@@ -1,23 +1,23 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.azure;
 
-import java.net.InetAddress;
-import java.net.URL;
-import java.util.concurrent.TimeoutException;
-
+import iTests.framework.utils.AssertUtils;
+import iTests.framework.utils.AssertUtils.RepetitiveConditionProvider;
+import iTests.framework.utils.LogUtils;
 import org.cloudifysource.esc.driver.provisioning.azure.client.MicrosoftAzureException;
 import org.cloudifysource.esc.driver.provisioning.azure.client.MicrosoftAzureRestClient;
 import org.cloudifysource.esc.driver.provisioning.azure.model.Deployment;
 import org.cloudifysource.esc.driver.provisioning.azure.model.Disk;
 import org.cloudifysource.esc.driver.provisioning.azure.model.Disks;
-import iTests.framework.utils.AssertUtils;
-import iTests.framework.utils.AssertUtils.RepetitiveConditionProvider;
-import iTests.framework.utils.LogUtils;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.NewAbstractCloudTest;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.azure.MicrosoftAzureCloudService;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+
+import java.net.InetAddress;
+import java.net.URL;
+import java.util.concurrent.TimeoutException;
 
 /**
  * CLOUDIFY-1432
@@ -52,10 +52,10 @@ public class LeakingOSDiskTest extends NewAbstractCloudTest {
 		LogUtils.log("Manually deleting the cloud service...");
 		azureClient.deleteCloudService(deploymentByIp.getHostedServiceName(), System.currentTimeMillis() + AbstractTestSupport.OPERATION_TIMEOUT);
 
-		getService().getBootstrapper().force(true).setRestUrl(null);
+        // rest urls are null since we don't to try and execute a dump operation.
+		getService().getBootstrapper().force(true).setRestAdminUrls(null).setRestUrl(null);
 		
 		// wait for the remaining disk to detach
-		
 		LogUtils.log("Waiting for the disk to detach...");
 		RepetitiveConditionProvider condition = new AssertUtils.RepetitiveConditionProvider() {
 			
@@ -73,7 +73,7 @@ public class LeakingOSDiskTest extends NewAbstractCloudTest {
 		AssertUtils.repetitiveAssertTrue("Timed out waiting for disk to detach", condition, AbstractTestSupport.OPERATION_TIMEOUT);
 		
 		// this was the bug. teardown should delete the zombie disk
-		super.teardown();
+        super.teardown();
 
 		Disk remainingDIsk = getRemainingDisk();
 		if (remainingDIsk != null) {

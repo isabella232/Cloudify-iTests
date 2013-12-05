@@ -1,29 +1,31 @@
 /*
- * ******************************************************************************
- *  * Copyright (c) 2012 GigaSpaces Technologies Ltd. All rights reserved
- *  *
- *  * Licensed under the Apache License, Version 2.0 (the "License");
- *  * you may not use this file except in compliance with the License.
- *  * You may obtain a copy of the License at
- *  *
- *  *       http://www.apache.org/licenses/LICENSE-2.0
- *  *
- *  * Unless required by applicable law or agreed to in writing, software
- *  * distributed under the License is distributed on an "AS IS" BASIS,
- *  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  * See the License for the specific language governing permissions and
- *  * limitations under the License.
- *  ******************************************************************************
+ * Copyright (c) 2011 GigaSpaces Technologies Ltd. All rights reserved
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.azure;
 
 import iTests.framework.utils.AssertUtils;
 import iTests.framework.utils.LogUtils;
+import org.cloudifysource.esc.driver.provisioning.azure.client.MicrosoftAzureException;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.NewAbstractCloudTest;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.azure.MicrosoftAzureCloudService;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+
+import java.util.concurrent.TimeoutException;
 
 /**
  * CLOUDIFY-2196.
@@ -59,9 +61,11 @@ public class AzureTeardownTimeoutTest extends NewAbstractCloudTest {
      * Cleanup any leaking services that may have been caused from of the small timeout.
      */
     @AfterClass(alwaysRun = true)
-    public void scan() {
+    public void scan() throws InterruptedException, TimeoutException, MicrosoftAzureException {
         LogUtils.log("Scanning for leaked management nodes");
         getService().scanLeakedManagementNodes();
+        AssertUtils.assertFalse("Found leaking cloud services after teardown ended",
+                ((MicrosoftAzureCloudService) getService()).scanForLeakingCloudServices());
     }
 
     @Override

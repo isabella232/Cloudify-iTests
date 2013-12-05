@@ -304,10 +304,13 @@ public abstract class AbstractCloudService implements CloudService {
                 }
             }
         } finally {
-            if (restUrls != null) {
+
+            if (restUrls != null || bootstrapper.isForce()) {
                 if (!bootstrapper.isForce()) {
                     // this is to connect to the cloud before tearing down.
-                    bootstrapper.setRestUrl(restUrls[0]);
+                    if (restUrls != null && restUrls.length > 0) {
+                        bootstrapper.setRestUrl(restUrls[0]);
+                    }
                 }
                 bootstrapper.teardown();
                 afterTeardown();

@@ -1,7 +1,9 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.azure;
 
+import iTests.framework.utils.AssertUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.NewAbstractCloudTest;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.azure.MicrosoftAzureCloudService;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -44,6 +46,8 @@ public class AzureSudoTest extends NewAbstractCloudTest {
     @AfterClass(alwaysRun = true)
     protected void teardown() throws Exception {
         super.teardown();
+        AssertUtils.assertFalse("Found leaking cloud services after teardown ended",
+                ((MicrosoftAzureCloudService) getService()).scanForLeakingCloudServices());
     }
 
     @Override

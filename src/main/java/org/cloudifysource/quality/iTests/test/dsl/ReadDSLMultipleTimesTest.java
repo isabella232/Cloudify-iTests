@@ -39,7 +39,7 @@ public class ReadDSLMultipleTimesTest extends AbstractTestSupport{
 	// test executes for 2 hours.
 	private final long EXECUTION_TIME_MILLIS = 7200000;
 
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
 	public void testReadDSLMultipleTimes() throws Exception {
 		final long startTime = System.currentTimeMillis();
 		for (int i = 0; i < 10; i++) {

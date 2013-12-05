@@ -39,7 +39,7 @@ public class UnsupportedOperationErrorMsgTest extends AbstractLocalCloudTest {
 	private static final String OPERATION_NAME = "getServiceStatus";
 
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, enabled = true)
-	public void removeTemplateAndTryToInstallService() throws MalformedURLException {
+	public void UnsupportedGetServiceStatusOperationTest() throws MalformedURLException {
 		
 		
 		DefaultHttpClient httpClient = new SystemDefaultHttpClient();

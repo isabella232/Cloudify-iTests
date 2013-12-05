@@ -284,7 +284,7 @@ public class AddRemoveTemplatesTest extends AbstractByonAddRemoveTemplatesTest {
 		folderHandler.addCustomTemplate(duplicateTemplate);
 		String response = templatesHandler.addTemplatesToCloud(folderHandler);
 		templatesHandler.assertExpectedList();
-		Assert.assertTrue(response.contains("Template with name [" + tempalteName + "] already exist in folder"));
+		Assert.assertTrue(response.contains("template with the name [" + tempalteName + "] already exist in folder"));
 	}
 
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, enabled = true)

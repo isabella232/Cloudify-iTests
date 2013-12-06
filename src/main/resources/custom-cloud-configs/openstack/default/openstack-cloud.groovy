@@ -133,7 +133,7 @@ cloud {
 						// file transfer protocol
 						fileTransfer org.cloudifysource.domain.cloud.FileTransferModes.SCP
 	
-						username username
+						username "ubuntu"
                         
 						// Additional template options.
 						// When used with the default driver, the option names are considered

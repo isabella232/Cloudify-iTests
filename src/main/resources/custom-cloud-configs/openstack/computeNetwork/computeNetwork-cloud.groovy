@@ -36,7 +36,7 @@ cloud {
 				localDirectory "upload"
 				keyFile keyFile
 				fileTransfer org.cloudifysource.domain.cloud.FileTransferModes.SCP
-				username username
+				username "ubuntu"
 				options ([
                             _COMPUTE_SERVICE_NAME_,
                             _NETWORK_SERVICE_NAME_,
@@ -49,7 +49,7 @@ cloud {
 				])
 				privileged true
 				computeNetwork {
-					networks (["SOME_INTERNAL_NETWORK_1","SOME_INTERNAL_NETWORK_2"])
+					networks (["SOME_INTERNAL_NETWORK_1"])
 				}
 			}
 		])

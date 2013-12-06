@@ -554,4 +554,14 @@ public class OpenstackCloudifyDriverLauncher {
         this.skipExternalNetworking = skipExternalNetworking;
     }
 
+	
+    /**
+     *  Assert that a network with the given name doesn't exist in Openstack environment.
+     * @throws OpenstackException
+     */
+    public void assertNetworkNotExists(String networkName) throws OpenstackException {
+    	  Network network = networkApi.getNetworkByName(networkName);
+          AssertUtils.assertNull("Network '" + networkName + "' should be removed", network);		
+	}
+
 }

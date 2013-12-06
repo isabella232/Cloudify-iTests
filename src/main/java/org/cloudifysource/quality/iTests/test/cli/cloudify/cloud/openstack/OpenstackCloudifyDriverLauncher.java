@@ -556,12 +556,16 @@ public class OpenstackCloudifyDriverLauncher {
 
 	
     /**
-     *  Assert that a network with the given name doesn't exist in Openstack environment.
+     *  Assert that networks with the given names doesn't exist in environment.
      * @throws OpenstackException
      */
-    public void assertNetworkNotExists(String networkName) throws OpenstackException {
-    	  Network network = networkApi.getNetworkByName(networkName);
-          AssertUtils.assertNull("Network '" + networkName + "' should be removed", network);		
+    public void assertNetworksNotExists(List<String> networkNames) throws OpenstackException {
+    	
+    	for (String networkName : networkNames) {    	
+    		Network network = networkApi.getNetworkByName(networkName);
+            AssertUtils.assertNull("Network '" + networkName + "' must not exist.", network);	
+    	
+    	}           
 	}
 
 }

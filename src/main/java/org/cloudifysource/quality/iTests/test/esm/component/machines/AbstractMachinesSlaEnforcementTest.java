@@ -58,6 +58,8 @@ public abstract class AbstractMachinesSlaEnforcementTest extends AbstractFromXen
 		        }
 			}
 			machineProvisioning = new ElasticMachineProvisioningCloudifyAdapter();
+			//clears byon deployer in use machine map in order to free machines in each test
+	        ElasticMachineProvisioningCloudifyAdapter.clearContext();
 	        machineProvisioning.setAdmin(admin);
 	        config.setCloudConfigurationDirectory(getService().getPathToCloudFolder());
 	        machineProvisioning.setProperties(config.getProperties());
@@ -69,6 +71,7 @@ public abstract class AbstractMachinesSlaEnforcementTest extends AbstractFromXen
 	        machineProvisioning.setElasticMachineProvisioningProgressChangedEventListener(machineEventListener);
 	        try {
 	            machineProvisioning.afterPropertiesSet();
+	            machineProvisioning.blockingAfterPropertiesSet();
 	        } catch (final Exception e) {
 	            e.printStackTrace();
 	            Assert.fail("Failed to initialize elastic scale handler",e);

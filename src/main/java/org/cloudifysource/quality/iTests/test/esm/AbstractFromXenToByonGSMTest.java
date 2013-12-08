@@ -22,6 +22,7 @@ import org.cloudifysource.esc.driver.provisioning.ElasticMachineProvisioningClou
 import org.cloudifysource.quality.iTests.framework.utils.ByonMachinesUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.byon.AbstractByonCloudTest;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.byon.ByonCloudService;
+import org.cloudifysource.quality.iTests.test.esm.component.machines.AbstractMachinesSlaEnforcementTest;
 import org.openspaces.admin.GridComponent;
 import org.openspaces.admin.esm.ElasticServiceManager;
 import org.openspaces.admin.esm.ElasticServiceManagers;
@@ -125,6 +126,9 @@ public class AbstractFromXenToByonGSMTest extends AbstractByonCloudTest {
         return SSHUtils.killProcess(ipAddress, pid);
     }
 
+    /**
+     * @see AbstractMachinesSlaEnforcementTest#updateMachineProvisioningConfig()
+     */
     private void initElasticMachineProvisioningCloudifyAdapter () throws Exception {
         elasticMachineProvisioningCloudifyAdapter = new ElasticMachineProvisioningCloudifyAdapter ();
         //clears byon deployer in use machine map in order to free machines in each test
@@ -168,7 +172,7 @@ public class AbstractFromXenToByonGSMTest extends AbstractByonCloudTest {
             initElasticMachineProvisioningCloudifyAdapter();
         }
         catch (Exception e){
-            AssertUtils.assertFail("Init to Elastic machine provisioning cloudify adapter failed: " + e.getCause());
+            AssertUtils.assertFail("Init to Elastic machine provisioning cloudify adapter failed: " + e.getCause(),e);
         }
         agentEventListener = new ElasticGridServiceAgentProvisioningProgressChangedEventListener() {
 

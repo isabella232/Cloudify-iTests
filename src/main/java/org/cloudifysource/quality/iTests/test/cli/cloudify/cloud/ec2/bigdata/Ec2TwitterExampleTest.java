@@ -40,7 +40,7 @@ public class Ec2TwitterExampleTest extends NewAbstractCloudTest {
 	private static final String PROD_APP_FOLDER_NAME = APP_FOLDER_NAME + "-prod";
 	private static final String DEV_APP_FOLDER_NAME = APP_FOLDER_NAME + "-dev";
 	private static final String GLOBAL_COUNTER_PROPERTY = "org.openspaces.bigdata.common.counters.GlobalCounter";
-	private final static String ENTRIES_AMOUNT_REST_URL = "/admin/Spaces/Names/space/Spaces/Names/space/RuntimeDetails/CountPerClassName/" + GLOBAL_COUNTER_PROPERTY;
+	private final static String ENTRIES_AMOUNT_REST_URL = "/admin/Spaces/Names/space/RuntimeDetails/CountPerClassName/" + GLOBAL_COUNTER_PROPERTY;
 	private static final int EXPECTED_NUMBER_OF_UNIQUE_WORDS_IN_MOCK_TWEETS = 84;
 	private static final String BIG_DATA_APP_APPLICATION_GROOVY = "bigDataApp-application.groovy";
 	private static final String DEV_APP_OVERRIDE = SGTestHelper.getSGTestRootDir() + "/src/main/resources/apps/cloudify/recipes/" + APP_FOLDER_NAME + "-dev-override";

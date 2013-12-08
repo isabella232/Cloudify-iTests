@@ -213,7 +213,7 @@ public class MachinesSlaEnforcementByonTest extends AbstractMachinesSlaEnforceme
 
 	}
 
-	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT , enabled = false)
+	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT , enabled = true)
 	public void minimumNumberOfMachinesTest() throws InterruptedException  {
 		repetitiveAssertNumberOfGSAsAdded(1, AbstractFromXenToByonGSMTest.OPERATION_TIMEOUT);
     	repetitiveAssertNumberOfGSAsRemoved(0, AbstractFromXenToByonGSMTest.OPERATION_TIMEOUT);
@@ -306,13 +306,13 @@ public class MachinesSlaEnforcementByonTest extends AbstractMachinesSlaEnforceme
 		endpoint = createEndpoint(pu, machinesSlaEnforcement);
 
 		repetitiveAssertNumberOfGSAsAdded(1, AbstractFromXenToByonGSMTest.OPERATION_TIMEOUT);
-		enforceNumberOfMachines(2,bigContainer);
+		enforceNumberOfMachinesOneContainerPerMachine(2,bigContainer);
 
 		Assert.assertEquals(admin.getGridServiceAgents().getAgents().length,3);
 		repetitiveAssertNumberOfGSAsAdded(3, AbstractFromXenToByonGSMTest.OPERATION_TIMEOUT);
 		repetitiveAssertNumberOfGSAsRemoved(0, AbstractFromXenToByonGSMTest.OPERATION_TIMEOUT);
 
-		enforceNumberOfMachines(1,bigContainer);
+		enforceNumberOfMachinesOneContainerPerMachine(1,bigContainer);
 
 		Assert.assertEquals(admin.getGridServiceAgents().getAgents().length,2);
 		repetitiveAssertNumberOfGSAsAdded(3, AbstractFromXenToByonGSMTest.OPERATION_TIMEOUT);
@@ -340,7 +340,7 @@ public class MachinesSlaEnforcementByonTest extends AbstractMachinesSlaEnforceme
 		endpoint = createEndpoint(pu, machinesSlaEnforcement);
 
 		repetitiveAssertNumberOfGSAsAdded(1, AbstractFromXenToByonGSMTest.OPERATION_TIMEOUT);
-		enforceNumberOfMachines(2,bigContainer);
+		enforceNumberOfMachinesOneContainerPerMachine(2,bigContainer);
 
 		repetitiveAssertNumberOfGSAsAdded(3, AbstractFromXenToByonGSMTest.OPERATION_TIMEOUT);
 		repetitiveAssertNumberOfGSAsRemoved(0, AbstractFromXenToByonGSMTest.OPERATION_TIMEOUT);
@@ -352,7 +352,7 @@ public class MachinesSlaEnforcementByonTest extends AbstractMachinesSlaEnforceme
 		}
 
 		//scale in
-		final CapacityMachinesSlaPolicy sla = createSla(1,bigContainer);
+		final CapacityMachinesSlaPolicy sla = createSlaOneContainerPerMachine(1,bigContainer);
 		final AtomicBoolean evacuated = new AtomicBoolean(false);
 		final AtomicReference<Throwable> ex = new AtomicReference<Throwable>();
 		final CountDownLatch latch = new CountDownLatch(1);

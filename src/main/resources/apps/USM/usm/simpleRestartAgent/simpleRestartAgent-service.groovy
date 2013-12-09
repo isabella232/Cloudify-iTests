@@ -23,7 +23,7 @@ service {
 			Admin admin = context.getAdmin();
 			ProcessingUnit serviceProcessingUnit = admin.getProcessingUnits().waitFor(processingUnitName, 1, TimeUnit.MINUTES);
 			serviceProcessingUnit.waitFor(1, 1, TimeUnit.MINUTES);
-			GridServiceAgent gridServiceAgent = serviceProcessingUnit.getInstances().[0].getMachine().getGridServiceAgent();
+			GridServiceAgent gridServiceAgent = serviceProcessingUnit.getInstances()[0].getMachine().getGridServiceAgent();
 			gridServiceAgent.shutdown();
 		},
 		"startMaintenanceModeLong" : {context.startMaintenanceMode(10l, TimeUnit.MINUTES)},

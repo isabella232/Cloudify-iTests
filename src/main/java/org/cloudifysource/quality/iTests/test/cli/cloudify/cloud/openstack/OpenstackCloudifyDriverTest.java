@@ -2,18 +2,19 @@ package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.openstack;
 
 import iTests.framework.utils.AssertUtils;
 
-import java.util.Collection;
-import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import junit.framework.Assert;
 
 import org.cloudifysource.domain.Service;
 import org.cloudifysource.domain.cloud.Cloud;
-import org.cloudifysource.domain.cloud.compute.ComputeTemplate;
-import org.cloudifysource.domain.cloud.compute.ComputeTemplateNetwork;
 import org.cloudifysource.domain.cloud.network.NetworkConfiguration;
+import org.cloudifysource.dsl.internal.ServiceReader;
 import org.cloudifysource.esc.driver.provisioning.CloudProvisioningException;
+import org.cloudifysource.esc.driver.provisioning.ComputeDriverConfiguration;
 import org.cloudifysource.esc.driver.provisioning.MachineDetails;
+import org.cloudifysource.esc.driver.provisioning.openstack.OpenStackCloudifyDriver;
+import org.cloudifysource.esc.driver.provisioning.openstack.OpenStackNetworkClient;
 import org.cloudifysource.esc.driver.provisioning.openstack.OpenstackException;
 import org.cloudifysource.esc.driver.provisioning.openstack.SecurityGroupNames;
 import org.cloudifysource.esc.driver.provisioning.openstack.rest.Network;
@@ -22,8 +23,6 @@ import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-
-import com.beust.jcommander.internal.Lists;
 
 /**
  * To run this test, you will have to create the credential file here : ./src/main/resources/credentials/cloud/openstack/openstack.properties.<br />
@@ -46,244 +45,194 @@ import com.beust.jcommander.internal.Lists;
  */
 public class OpenstackCloudifyDriverTest extends AbstractTestSupport {
 
-	private OpenstackCloudifyDriverLauncher launcher;
+    private static final String SOME_INTERNAL_NETWORK_1 = "SOME_INTERNAL_NETWORK_1";
+    private static final String SOME_INTERNAL_NETWORK_2 = "SOME_INTERNAL_NETWORK_2";
 
-	@BeforeMethod
-	public void init() throws Exception {
-		launcher = new OpenstackCloudifyDriverLauncher();
-		launcher.setNetworkServiceName("quantum");
-	}
-	
-	    @AfterMethod
-	    public void clean() throws Exception {
-	        launcher.cleanOpenstackResources();
-	    }
+    private OpenstackCloudifyDriverLauncher launcher;
 
-	@Test
-	public void testStartManagementMachinesWithDefaultTemplate() throws Exception {
-		Cloud cloud = launcher.createCloud("/default/openstack-cloud.groovy");
-		MachineDetails[] mds = launcher.startManagementMachines(cloud);
-		for (MachineDetails md : mds) {
-			assertNotNull("Machine id is null", md.getMachineId());
-			assertNotNull("Private ip is null", md.getPrivateAddress());
-			assertNotNull("Public ip is null", md.getPublicAddress());
-			launcher.assertFloatingIpBindToServer(md.getPublicAddress(), md.getMachineId());
-		}
+    /**
+     * Create supposing existing networks.
+     */
+    public void createExpectedExistingNetworks(OpenStackNetworkClient networkApi) throws OpenstackException {
+        createExistingNetwork(networkApi, SOME_INTERNAL_NETWORK_1, 1);
+        createExistingNetwork(networkApi, SOME_INTERNAL_NETWORK_2, 2);
+    }
 
-		String prefix = cloud.getProvider().getManagementGroup();
-		launcher.assertRouterExists(prefix);
-		NetworkConfiguration networkConfiguration = cloud.getCloudNetwork().getManagement().getNetworkConfiguration();
-		launcher.assertNetworkExists(prefix + networkConfiguration.getName());
-		launcher.assertSubnetExists(prefix + networkConfiguration.getName(), networkConfiguration.getSubnets().get(0).getName());
-		launcher.assertSubnetSize(prefix + networkConfiguration.getName(), 1);
+    private void createExistingNetwork(OpenStackNetworkClient networkApi, String networkName, int nbSubnet) throws OpenstackException {
+        Network network = new Network();
+        network.setName(networkName);
+        String networkId = networkApi.createNetworkIfNotExists(network).getId();
 
-		launcher.stopManagementMachines(cloud);
-	}
+        for (int i = 0; i < nbSubnet; i++) {
+            Subnet requestSubnet = new Subnet();
+            requestSubnet.setName(networkName + "_subnet_" + i);
+            requestSubnet.setCidr("15" + i + ".0.0.0/24");
+            requestSubnet.setIpVersion("4");
+            requestSubnet.setNetworkId(networkId);
+            networkApi.createSubnet(requestSubnet);
+        }
 
-	@Test
-	public void testStartMachineWithDefaultTemplateAndSecgroupService() throws Exception {
-		Cloud cloud = launcher.createCloud("/default/openstack-cloud.groovy");
-		Service service = launcher.getService("secgroups/securityGroup-service.groovy");
+    }
 
-		MachineDetails md = launcher.startMachineWithManagement(service, cloud);
-		assertNotNull("Machine id is null", md.getMachineId());
-		assertNotNull("Private ip is null", md.getPrivateAddress());
-		assertNotNull("Public ip is null", md.getPublicAddress());
-		launcher.assertFloatingIpBindToServer(md.getPublicAddress(), md.getMachineId());
+    /**
+     * Clean supposing existing networks
+     */
+    public void cleanExpectedExistingNetworks(OpenStackNetworkClient networkApi) throws OpenstackException {
+        String[] existingNetworkNames = { SOME_INTERNAL_NETWORK_1, SOME_INTERNAL_NETWORK_2 };
+        for (String name : existingNetworkNames) {
+            networkApi.deleteNetworkByName(name);
+        }
 
-		String prefix = cloud.getProvider().getManagementGroup();
-		NetworkConfiguration networkConfiguration = cloud.getCloudNetwork().getTemplates().get("APPLICATION_NET");
-		launcher.assertNetworkExists(prefix + networkConfiguration.getName());
-		launcher.assertSubnetExists(prefix + networkConfiguration.getName(), networkConfiguration.getSubnets().get(0).getName());
-		launcher.assertSubnetSize(prefix + networkConfiguration.getName(), 1);
+    }
 
-		launcher.stopMachineWithManagement(service, cloud, md.getPrivateAddress());
-	}
+    @BeforeMethod
+    public void init() throws Exception {
+        launcher = new OpenstackCloudifyDriverLauncher();
+        launcher.setNetworkServiceName("quantum");
+    }
 
-	@Test
-	public void testStartMachineWithComputeNetworkTemplateAndSecgroupService() throws Exception {
-	
-		launcher.setSkipExternalNetworking(true);
-		Cloud cloud = launcher.createCloud("/computeNetwork/computeNetwork-cloud.groovy");
-		Service service = launcher.getService("secgroups/securityGroup-service.groovy");
+    @AfterMethod
+    public void clean() throws Exception {
+        launcher.cleanOpenstackResources();
+    }
 
-		Collection<ComputeTemplate> computeTemplates = cloud.getCloudCompute().getTemplates().values();
-		List<String> networks = getAllNetworksFromComputeTemplates(computeTemplates);	
-		List<String> createdNetworks = createNetworksFromComputeTemplates (networks);
+    @Test
+    public void testtest() throws Exception {
 
-		for (String networkName : createdNetworks) {    	
-			launcher.assertNetworkExists(networkName);
-		}
+        Cloud cloud = ServiceReader.readCloudFromDirectory("C:/cloudify-deployment/gigaspaces-cloudify-2.7.0-m8-b5992-64/clouds/openstack");
 
-		MachineDetails md = launcher.startMachineWithManagement(service, cloud);
-		assertNotNull("Machine id is null", md.getMachineId());
-		assertNotNull("Private ip is null", md.getPrivateAddress());
-		AssertUtils.assertNull("Public ip should be null", md.getPublicAddress());
-		launcher.assertNoFloatingIp(md.getMachineId());
+        final ComputeDriverConfiguration configuration = new ComputeDriverConfiguration();
+        configuration.setCloud(cloud);
+        configuration.setManagement(true);
 
-		String prefix = cloud.getProvider().getManagementGroup();
-		SecurityGroupNames secgroupnames = new SecurityGroupNames(prefix, OpenstackCloudifyDriverLauncher.DEFAULT_APPLICATION_NAME, service.getName());
-		launcher.assertSecurityGroupExists(secgroupnames.getApplicationName());
-		launcher.assertSecurityGroupExists(secgroupnames.getServiceName());
-		launcher.assertSecurityGroupIncomingRulesNumber(secgroupnames.getServiceName(), service.getNetwork().getAccessRules().getIncoming().size());
-		launcher.assertNoRouter(prefix);
+        OpenStackCloudifyDriver driver = new OpenStackCloudifyDriver();
+        driver.setConfig(configuration);
+        MachineDetails[] mds = driver.startManagementMachines(null, 60, TimeUnit.MINUTES);
+    }
 
-		launcher.stopMachineWithManagement(service, cloud, md.getPrivateAddress());
-		cleanCreatedTestNetworks(createdNetworks);
-		
-		launcher.assertNetworksNotExists(createdNetworks);
-	}	
-	
-	/**
-	 * No network template is defined in for Management in the DSL (cloudNetwork/computeTemplate) 
-	 * @throws Exception
-	 */	
-	@Test (expectedExceptions=CloudProvisioningException.class)
-	public void testStartManagementWithNoNetworkTemplateDefined () throws Exception {
-		
-		launcher.setSkipExternalNetworking(true);
-		Cloud cloud = launcher.createCloud("/mng-no-network-at-all/mng-no-network-at-all-cloud.groovy");
-		launcher.startManagementMachines(cloud);	
-		Assert.fail("CloudProvisioningException should be thrown, No network template is defined in cloudNetwork/computeTemplate .");
-	}
-	
-	
-	/**
-	 * Management Network template is defined in Management compute template, but its doesn't
-	 * exist in the environment.
-	 * @throws Exception
-	 */	
-	@Test (expectedExceptions=CloudProvisioningException.class)
-	public void testStartManagementWithNotExistingNetworkDefinedInComputeTemplate () throws Exception {
-		
-		launcher.setSkipExternalNetworking(true);
-		
-		Cloud cloud = launcher.createCloud("/mng-network-template-in-compute/mng-network-template-in-compute-cloud.groovy");	
-		Collection<ComputeTemplate> computeTemplates = cloud.getCloudCompute().getTemplates().values();	
-		List<String> networks = getAllNetworksFromComputeTemplates(computeTemplates);
-		
-		// Verify that the defined networks are not in the environment already	
-		launcher.assertNetworksNotExists(networks);	
-		launcher.startManagementMachines(cloud);
-		
-		Assert.fail("CloudProvisioningException should be thrown, the defined network doesn't exist in the environment");
-	}
-	
-	
-	/**
-	 * Management Network template is defined in Management compute template and it does
-	 * exist already in the environment .
-	 * @throws Exception
-	 */	
-	@Test 
-	public void testStartManagementWithExistingNetworkDefinedInComputeTemplate () throws Exception {
-		
-		launcher.setSkipExternalNetworking(true);
-		Cloud cloud = launcher.createCloud("/mng-network-template-in-compute/mng-network-template-in-compute-cloud.groovy");
-		
-		Collection<ComputeTemplate> computeTemplates = cloud.getCloudCompute().getTemplates().values();	
-		List<String> networks = getAllNetworksFromComputeTemplates(computeTemplates);
-		
-		// Verify that the defined networks are not in the environment already	
-		launcher.assertNetworksNotExists(networks);
-		
-		// create networks for the test
-		List<String> createdNetworks = createNetworksFromComputeTemplates (networks);		
-		
-		// checks the management machine
-		MachineDetails md = launcher.startManagementMachines(cloud)[0];
-		Assert.assertNotNull(md.getMachineId());
-		Assert.assertNotNull(md.getPrivateAddress());
-			
-		launcher.stopManagementMachines(cloud);
-		
-		cleanCreatedTestNetworks(createdNetworks);
-		
-		// Verify that the created networks are not in the environment after clean
-		launcher.assertNetworksNotExists(createdNetworks);
-			
-	}
-					
-	// Agents
-	
-	@Test (expectedExceptions=CloudProvisioningException.class)
-	public void testAgentWithNoNetworkTemplateDefined () throws Exception {
-		
-		Cloud cloud = launcher.createCloud("/default/openstack-cloud.groovy");
-		Service service = launcher.getService("agt-network-template-not-exist/agt-network-template-not-exist-service.groovy");
-		
-		Collection<ComputeTemplate> computeTemplates = cloud.getCloudCompute().getTemplates().values();	
-		List<String> networks = getAllNetworksFromComputeTemplates(computeTemplates);
-		
-		// Verify that the defined networks are not in the environment already	
-		launcher.assertNetworksNotExists(networks);
-		
-		MachineDetails md = launcher.startMachineWithManagement(service, cloud);
-		Assert.fail("CloudProvisioningException should be thrown, the defined template network doesn't exist in DSL");
-				
-	}
+    @Test
+    public void testStartManagementMachinesWithDefaultTemplate() throws Exception {
+        Cloud cloud = launcher.createCloud("/default/openstack-cloud.groovy");
+        MachineDetails[] mds = launcher.startManagementMachines(cloud);
+        for (MachineDetails md : mds) {
+            assertNotNull("Machine id is null", md.getMachineId());
+            assertNotNull("Private ip is null", md.getPrivateAddress());
+            assertNotNull("Public ip is null", md.getPublicAddress());
+            launcher.assertFloatingIpBindToServer(md.getPublicAddress(), md.getMachineId());
+        }
 
-	
-	/**
-	 * Retrieves all networks 
-	 * @param computeTemplates
-	 * @return
-	 */
-	
-	private List<String> getAllNetworksFromComputeTemplates(Collection<ComputeTemplate> computeTemplates) {
-	
-		List<String> networks = Lists.newArrayList(); 
-		
-		for (ComputeTemplate ct : computeTemplates) {
-			ComputeTemplateNetwork computeNetwork = ct.getComputeNetwork();
-			if (computeNetwork != null) {
-				List<String> computeNetworks = computeNetwork.getNetworks();  			
-				for (String networkName : computeNetworks) {				
-					networks.add(networkName);
-				}
-			}		
-		}
-		return networks;	
-	}
-	
+        String prefix = cloud.getProvider().getManagementGroup();
+        launcher.assertRouterExists(prefix);
+        NetworkConfiguration networkConfiguration = cloud.getCloudNetwork().getManagement().getNetworkConfiguration();
+        launcher.assertNetworkExists(prefix + networkConfiguration.getName());
+        launcher.assertSubnetExists(prefix + networkConfiguration.getName(), networkConfiguration.getSubnets().get(0).getName());
+        launcher.assertSubnetSize(prefix + networkConfiguration.getName(), 1);
 
-	/**
-	 * Creates networks that were specified in service DSL for test purpose. 
-	 * @param computeTemplates
-	 * @return
-	 * @throws OpenstackException
-	 */
-	private List<String> createNetworksFromComputeTemplates(List<String> networks) throws OpenstackException {
-		List<String> createdNetworks = Lists.newArrayList(); 
+        launcher.stopManagementMachines(cloud);
+    }
 
-		Subnet subnet = new Subnet();
-		subnet.setName("subnet");
-		subnet.setCidr("192.168.0.0/24");
-		subnet.setIpVersion("4");
+    @Test
+    public void testStartMachineWithDefaultTemplateAndSecgroupService() throws Exception {
+        Cloud cloud = launcher.createCloud("/default/openstack-cloud.groovy");
+        Service service = launcher.getService("secgroups/securityGroup-service.groovy");
 
-		for (String networkName : networks) {
-			Network network = new Network(); 
-			network.setName(networkName);
-			String networkId = launcher.getNetworkApi().createNetworkIfNotExists(network).getId();				
-			subnet.setNetworkId(networkId);
-			createdNetworks.add(networkName);
-			launcher.getNetworkApi().createSubnet(subnet);
-		}		
-		return createdNetworks;
-	}
-	
-	/**
-	 * Removes networks with the gives names from openstack environment 
-	 * @param createdNetworks
-	 * @throws OpenstackException
-	 */
-	private void  cleanCreatedTestNetworks(List<String> createdNetworks) throws OpenstackException {
-		
-		for (String networkName : createdNetworks) {    	
-			launcher.getNetworkApi().deleteNetworkByName(networkName);
-		}	
-	}
-	
-	
-	
+        MachineDetails md = launcher.startMachineWithManagement(service, cloud);
+
+        assertNotNull("Machine id is null", md.getMachineId());
+        assertNotNull("Private ip is null", md.getPrivateAddress());
+        assertNotNull("Public ip is null", md.getPublicAddress());
+        launcher.assertFloatingIpBindToServer(md.getPublicAddress(), md.getMachineId());
+
+        String prefix = cloud.getProvider().getManagementGroup();
+        SecurityGroupNames secgroupnames = new SecurityGroupNames(prefix, OpenstackCloudifyDriverLauncher.DEFAULT_APPLICATION_NAME, service.getName());
+        launcher.assertSecurityGroupIncomingRulesNumber(secgroupnames.getServiceName(), service.getNetwork().getAccessRules().getIncoming().size());
+
+        NetworkConfiguration networkConfiguration = cloud.getCloudNetwork().getTemplates().get("APPLICATION_NET");
+        launcher.assertNetworkExists(prefix + networkConfiguration.getName());
+        launcher.assertSubnetExists(prefix + networkConfiguration.getName(), networkConfiguration.getSubnets().get(0).getName());
+        launcher.assertSubnetSize(prefix + networkConfiguration.getName(), 1);
+
+        launcher.stopMachineWithManagement(service, cloud, md.getPrivateAddress());
+    }
+
+    @Test
+    public void testStartMachineWithComputeNetworkTemplateAndSecgroupService() throws Exception {
+
+        launcher.setSkipExternalNetworking(true);
+        Cloud cloud = launcher.createCloud("/computeNetwork/computeNetwork-cloud.groovy");
+        Service service = launcher.getService("secgroups/securityGroup-service.groovy");
+
+        this.createExpectedExistingNetworks(launcher.getNetworkApi());
+        try {
+
+            MachineDetails md = launcher.startMachineWithManagement(service, cloud);
+            assertNotNull("Machine id is null", md.getMachineId());
+            assertNotNull("Private ip is null", md.getPrivateAddress());
+            AssertUtils.assertNull("Public ip should be null", md.getPublicAddress());
+            launcher.assertNoFloatingIp(md.getMachineId());
+
+            String prefix = cloud.getProvider().getManagementGroup();
+            SecurityGroupNames secgroupnames = new SecurityGroupNames(prefix, OpenstackCloudifyDriverLauncher.DEFAULT_APPLICATION_NAME, service.getName());
+            launcher.assertSecurityGroupIncomingRulesNumber(secgroupnames.getServiceName(), service.getNetwork().getAccessRules().getIncoming().size());
+            launcher.assertNoRouter(prefix);
+
+            launcher.stopMachineWithManagement(service, cloud, md.getPrivateAddress());
+        } finally {
+            this.cleanExpectedExistingNetworks(launcher.getNetworkApi());
+        }
+    }
+
+    /**
+     * Management Network template is defined in Management compute template, but its doesn't
+     * exist in the environment.
+     * 
+     * @throws Exception
+     */
+    @Test(expectedExceptions = CloudProvisioningException.class)
+    public void testStartManagementWithNotExistingNetworkDefinedInComputeTemplate() throws Exception {
+        launcher.setSkipExternalNetworking(true);
+        Cloud cloud = launcher.createCloud("/mng-network-template-in-compute/mng-network-template-in-compute-cloud.groovy");
+
+        launcher.startManagementMachines(cloud);
+        Assert.fail("CloudProvisioningException should be thrown, the defined network doesn't exist in the environment");
+    }
+
+    /**
+     * Management Network template is defined in Management compute template and it does
+     * exist already in the environment.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testStartManagementWithExistingNetworkDefinedInComputeTemplate() throws Exception {
+        launcher.setSkipExternalNetworking(true);
+        Cloud cloud = launcher.createCloud("/mng-network-template-in-compute/mng-network-template-in-compute-cloud.groovy");
+        this.createExpectedExistingNetworks(launcher.getNetworkApi());
+        try {
+
+            // checks the management machine
+            MachineDetails md = launcher.startManagementMachines(cloud)[0];
+            Assert.assertNotNull(md.getMachineId());
+            Assert.assertNotNull(md.getPrivateAddress());
+
+            launcher.stopManagementMachines(cloud);
+        } finally {
+            this.cleanExpectedExistingNetworks(launcher.getNetworkApi());
+        }
+    }
+
+    /**
+     * Installation of a service which specify with a incorrect network template.
+     * TODO Should be a unit test.
+     * 
+     * @throws Exception
+     */
+    @Test(expectedExceptions = CloudProvisioningException.class)
+    public void testAgentWithNoNetworkTemplateDefined() throws Exception {
+        Cloud cloud = launcher.createCloud("/default/openstack-cloud.groovy");
+        Service service = launcher.getService("agt-network-template-not-exist/agt-network-template-not-exist-service.groovy");
+        launcher.startMachineWithManagement(service, cloud);
+        Assert.fail("CloudProvisioningException should be thrown, the defined template network doesn't exist in DSL");
+    }
+
 }

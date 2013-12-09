@@ -125,7 +125,7 @@ public class OpenstackCloudifyDriverLauncher {
             service.getAdditionalPropsToReplace().put(oldValue, "");
         }
 
-        if (this.networkServiceName != null) {
+        if (this.skipExternalNetworking != null) {
             String oldValue = "_SKIP_EXTERNAL_NETWORKING_,";
             String newValue = "\"skipExternalNetworking\" : \"" + this.skipExternalNetworking + "\",";
             service.getAdditionalPropsToReplace().put(oldValue, newValue);
@@ -260,8 +260,59 @@ public class OpenstackCloudifyDriverLauncher {
         OpenStackCloudifyDriver driver = new OpenStackCloudifyDriver();
         driver.setConfig(configuration);
         MachineDetails[] mds = driver.startManagementMachines(null, END_TIME, TimeUnit.MINUTES);
-        this.assertManagerSecurityGroups(cloud);
+        this.assertManagementSecurityGroups(cloud);
+        this.assertManagementAttachedSecurityGroups(mds, cloud.getProvider().getManagementGroup());
         return mds;
+    }
+
+    /**
+     * Assert that cluster, agent and management exist.
+     * 
+     * @param cloud
+     * @throws OpenstackException
+     */
+    private void assertManagementSecurityGroups(Cloud cloud) throws OpenstackException {
+        List<SecurityGroup> secgroups = networkApi.getSecurityGroupsByPrefix(TEST_PREFIX);
+        AssertUtils.assertNotNull("Management security groups are missing", secgroups);
+        AssertUtils.assertEquals("When bootstrapping the driver must create 3 secgroups. Actual: " + secgroups, 3, secgroups.size());
+
+        Set<String> names = new HashSet<String>(3);
+        for (SecurityGroup secgroup : secgroups) {
+            names.add(secgroup.getName());
+        }
+
+        SecurityGroupNames secgroupnames = new SecurityGroupNames(cloud.getProvider().getManagementGroup(), null, null);
+        AssertUtils.assertTrue("Management security group not found. Got: " + names, names.contains(secgroupnames.getManagementName()));
+        AssertUtils.assertTrue("Agent security group not found. Got: " + names, names.contains(secgroupnames.getAgentName()));
+        AssertUtils.assertTrue("Cluster security group not found. Got: " + names, names.contains(secgroupnames.getClusterName()));
+
+        SecurityGroup mngSecgroup = networkApi.getSecurityGroupsByName(secgroupnames.getManagementName());
+        AssertUtils.assertNotNull("Missing management security rules", mngSecgroup.getSecurityGroupRules());
+        AssertUtils.assertTrue("Missing management security rules", mngSecgroup.getSecurityGroupRules().length > 2);
+
+        SecurityGroup agentSecgroup = networkApi.getSecurityGroupsByName(secgroupnames.getAgentName());
+        AssertUtils.assertNotNull("Missing agent security rules", agentSecgroup.getSecurityGroupRules());
+        AssertUtils.assertTrue("Missing agent security rules", agentSecgroup.getSecurityGroupRules().length > 2);
+    }
+
+    private void assertManagementAttachedSecurityGroups(MachineDetails[] mds, String managementGroup) throws OpenstackException {
+
+        SecurityGroupNames secgroupnames = new SecurityGroupNames(managementGroup, null, null);
+        SecurityGroup mngSecgroup = networkApi.getSecurityGroupsByName(secgroupnames.getManagementName());
+        SecurityGroup clusterSecgroup = networkApi.getSecurityGroupsByName(secgroupnames.getClusterName());
+
+        for (MachineDetails md : mds) {
+            List<Port> ports = networkApi.getPortsByDeviceId(md.getMachineId());
+            AssertUtils.assertNotNull("Cannot find a ports on management VM '" + md.getMachineId() + "'", ports);
+            for (Port port : ports) {
+                Network network = networkApi.getNetwork(port.getNetworkId());
+                Set<String> securityGroups = port.getSecurityGroups();
+                AssertUtils.assertTrue("Management security group not found on port attached to network '" + network.getName() + "'",
+                        securityGroups.contains(mngSecgroup.getId()));
+                AssertUtils.assertTrue("Cluster security group not found on port attached to network '" + network.getName() + "'",
+                        securityGroups.contains(clusterSecgroup.getId()));
+            }
+        }
     }
 
     /**
@@ -327,7 +378,64 @@ public class OpenstackCloudifyDriverLauncher {
         OpenStackCloudifyDriver driver = new OpenStackCloudifyDriver();
         driver.setConfig(configuration);
         MachineDetails md = driver.startMachine(null, END_TIME, TimeUnit.MINUTES);
+        this.assertAgentSecurityGroups(cloud, service.getName());
+        this.assertAgentAttachedSecurityGroups(md, cloud.getProvider().getManagementGroup(), service.getName());
         return md;
+    }
+
+    /**
+     * Assert that cluster, agent and management exist.
+     * 
+     * @param cloud
+     * @throws OpenstackException
+     */
+    private void assertAgentSecurityGroups(Cloud cloud, String serviceName) throws OpenstackException {
+        List<SecurityGroup> secgroups = networkApi.getSecurityGroupsByPrefix(TEST_PREFIX);
+        AssertUtils.assertNotNull("Agent security groups not found", secgroups);
+
+        Set<String> names = new HashSet<String>();
+        for (SecurityGroup secgroup : secgroups) {
+            names.add(secgroup.getName());
+        }
+
+        SecurityGroupNames secgroupnames = new SecurityGroupNames(cloud.getProvider().getManagementGroup(), DEFAULT_APPLICATION_NAME, serviceName);
+        AssertUtils.assertTrue("Agent security group not found. Got: " + names, names.contains(secgroupnames.getAgentName()));
+        AssertUtils.assertTrue("Cluster security group not found. Got: " + names, names.contains(secgroupnames.getClusterName()));
+        AssertUtils.assertTrue("Application security group not found. Got: " + names, names.contains(secgroupnames.getApplicationName()));
+        AssertUtils.assertTrue("Service security group not found. Got: " + names, names.contains(secgroupnames.getServiceName()));
+
+        SecurityGroup mngSecgroup = networkApi.getSecurityGroupsByName(secgroupnames.getApplicationName());
+        AssertUtils.assertNotNull("Missing application security rules", mngSecgroup.getSecurityGroupRules());
+        // Application security groups should not have rules unless the default rules from openstack (2 egress rules for ipv4 and ipv6).
+        AssertUtils.assertTrue("Application security groups should not have rules", mngSecgroup.getSecurityGroupRules().length == 2);
+
+        SecurityGroup agentSecgroup = networkApi.getSecurityGroupsByName(secgroupnames.getServiceName());
+        AssertUtils.assertNotNull("Missing service security rules", agentSecgroup.getSecurityGroupRules());
+        AssertUtils.assertTrue("Missing service security rules", agentSecgroup.getSecurityGroupRules().length >= 2);
+    }
+
+    private void assertAgentAttachedSecurityGroups(MachineDetails md, String managementGroup, String serviceName) throws OpenstackException {
+
+        SecurityGroupNames secgroupnames = new SecurityGroupNames(managementGroup, DEFAULT_APPLICATION_NAME, serviceName);
+        SecurityGroup agentSecgroup = networkApi.getSecurityGroupsByName(secgroupnames.getAgentName());
+        SecurityGroup clusterSecgroup = networkApi.getSecurityGroupsByName(secgroupnames.getClusterName());
+        SecurityGroup appliSecgroup = networkApi.getSecurityGroupsByName(secgroupnames.getApplicationName());
+        SecurityGroup serviceSecgroup = networkApi.getSecurityGroupsByName(secgroupnames.getServiceName());
+
+        List<Port> ports = networkApi.getPortsByDeviceId(md.getMachineId());
+        AssertUtils.assertNotNull("Cannot find a ports on management VM '" + md.getMachineId() + "'", ports);
+        for (Port port : ports) {
+            Network network = networkApi.getNetwork(port.getNetworkId());
+            Set<String> securityGroups = port.getSecurityGroups();
+            AssertUtils.assertTrue("Agent security group not found on port attached to network '" + network.getName() + "'",
+                    securityGroups.contains(agentSecgroup.getId()));
+            AssertUtils.assertTrue("Cluster security group not found on port attached to network '" + network.getName() + "'",
+                    securityGroups.contains(clusterSecgroup.getId()));
+            AssertUtils.assertTrue("Application security group not found on port attached to network '" + network.getName() + "'",
+                    securityGroups.contains(appliSecgroup.getId()));
+            AssertUtils.assertTrue("Service security group not found on port attached to network '" + network.getName() + "'",
+                    securityGroups.contains(serviceSecgroup.getId()));
+        }
     }
 
     /**
@@ -376,30 +484,6 @@ public class OpenstackCloudifyDriverLauncher {
     public void stopMachineWithManagement(Service service, Cloud cloud, String serverIp, String template) throws Exception {
         this.stopMachine(service, cloud, serverIp, template);
         this.stopManagementMachines(cloud);
-    }
-
-    private void assertManagerSecurityGroups(Cloud cloud) throws OpenstackException {
-        List<SecurityGroup> secgroups = networkApi.getSecurityGroupsByPrefix(TEST_PREFIX);
-        AssertUtils.assertNotNull("Management security groups are missing", secgroups);
-        AssertUtils.assertEquals("When bootstrapping the driver must create 3 secgroups. Actual: " + secgroups, 3, secgroups.size());
-
-        Set<String> names = new HashSet<String>(3);
-        for (SecurityGroup secgroup : secgroups) {
-            names.add(secgroup.getName());
-        }
-
-        SecurityGroupNames secgroupnames = new SecurityGroupNames(cloud.getProvider().getManagementGroup(), null, null);
-        AssertUtils.assertTrue("Management security group not found. Got: " + names, names.contains(secgroupnames.getManagementName()));
-        AssertUtils.assertTrue("Agent security group not found. Got: " + names, names.contains(secgroupnames.getAgentName()));
-        AssertUtils.assertTrue("Cluster security group not found. Got: " + names, names.contains(secgroupnames.getClusterName()));
-
-        SecurityGroup mngSecgroup = networkApi.getSecurityGroupsByName(secgroupnames.getManagementName());
-        AssertUtils.assertNotNull("Missing management security rules", mngSecgroup.getSecurityGroupRules());
-        AssertUtils.assertTrue("Missing management security rules", mngSecgroup.getSecurityGroupRules().length > 2);
-
-        SecurityGroup agentSecgroup = networkApi.getSecurityGroupsByName(secgroupnames.getAgentName());
-        AssertUtils.assertNotNull("Missing agent security rules", agentSecgroup.getSecurityGroupRules());
-        AssertUtils.assertTrue("Missing agent security rules", agentSecgroup.getSecurityGroupRules().length > 2);
     }
 
     private void assertNoResourcesLeft(Set<String> floatingips) throws OpenstackException {
@@ -554,18 +638,18 @@ public class OpenstackCloudifyDriverLauncher {
         this.skipExternalNetworking = skipExternalNetworking;
     }
 
-	
     /**
-     *  Assert that networks with the given names doesn't exist in environment.
+     * Assert that networks with the given names doesn't exist in Openstack environment.
+     * 
      * @throws OpenstackException
      */
     public void assertNetworksNotExists(List<String> networkNames) throws OpenstackException {
-    	
-    	for (String networkName : networkNames) {    	
-    		Network network = networkApi.getNetworkByName(networkName);
-            AssertUtils.assertNull("Network '" + networkName + "' must not exist.", network);	
-    	
-    	}           
-	}
+
+        for (String networkName : networkNames) {
+            Network network = networkApi.getNetworkByName(networkName);
+            AssertUtils.assertNull("Network '" + networkName + "' must not exist.", network);
+
+        }
+    }
 
 }

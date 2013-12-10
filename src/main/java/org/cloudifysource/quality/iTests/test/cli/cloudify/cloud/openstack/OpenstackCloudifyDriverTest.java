@@ -51,11 +51,11 @@ public class OpenstackCloudifyDriverTest extends AbstractTestSupport {
      * Create supposing existing networks.
      */
     public void createExpectedExistingNetworks(OpenStackNetworkClient networkApi) throws OpenstackException {
-        createExistingNetwork(networkApi, COMPUTE_SOME_INTERNAL_NETWORK_1, 1);
-        createExistingNetwork(networkApi, COMPUTE_SOME_INTERNAL_NETWORK_2, 2);
+        createExistingNetwork(networkApi, COMPUTE_SOME_INTERNAL_NETWORK_1, 1, 1); // 151.0.0.0/24
+        createExistingNetwork(networkApi, COMPUTE_SOME_INTERNAL_NETWORK_2, 2, 2); // 152.0.0.0/24 and 152.1.0.0/24
     }
 
-    private void createExistingNetwork(OpenStackNetworkClient networkApi, String networkName, int nbSubnet) throws OpenstackException {
+    private void createExistingNetwork(OpenStackNetworkClient networkApi, String networkName, int networkIndex, int nbSubnet) throws OpenstackException {
         Network network = new Network();
         network.setName(networkName);
         String networkId = networkApi.createNetworkIfNotExists(network).getId();
@@ -63,7 +63,7 @@ public class OpenstackCloudifyDriverTest extends AbstractTestSupport {
         for (int i = 0; i < nbSubnet; i++) {
             Subnet requestSubnet = new Subnet();
             requestSubnet.setName(networkName + "_subnet_" + i);
-            requestSubnet.setCidr("15" + i + ".0.0.0/24");
+            requestSubnet.setCidr("15" + networkIndex + "." + i + ".0.0/24");
             requestSubnet.setIpVersion("4");
             requestSubnet.setNetworkId(networkId);
             networkApi.createSubnet(requestSubnet);
@@ -94,26 +94,31 @@ public class OpenstackCloudifyDriverTest extends AbstractTestSupport {
     }
 
     // ***************************************************************
-    // ******** START MANAGEMENT MACHINE TESTS
+    // ******** startManagementMachines tests
     // ***************************************************************
 
     @Test
     public void testStartManagementMachinesWithNetworkTemplate() throws Exception {
         Cloud cloud = launcher.createCloud("/cloudNetwork/cloudNetwork-cloud.groovy");
+
         MachineDetails[] mds = launcher.startManagementMachines(cloud);
-        for (MachineDetails md : mds) {
-            assertNotNull("Machine id is null", md.getMachineId());
-            assertNotNull("Private ip is null", md.getPrivateAddress());
-            assertNotNull("Public ip is null", md.getPublicAddress());
-            launcher.assertFloatingIpBindToServer(md);
-        }
 
         String prefix = cloud.getProvider().getManagementGroup();
-        launcher.assertRouterExists(prefix);
         NetworkConfiguration networkConfiguration = cloud.getCloudNetwork().getManagement().getNetworkConfiguration();
+
+        launcher.assertRouterExists(prefix);
         launcher.assertNetworkExists(prefix + networkConfiguration.getName());
         launcher.assertSubnetExists(prefix + networkConfiguration.getName(), networkConfiguration.getSubnets().get(0).getName());
         launcher.assertSubnetSize(prefix + networkConfiguration.getName(), 1);
+
+        for (MachineDetails md : mds) {
+            assertNotNull("Machine id is null", md.getMachineId());
+            assertNotNull("Private ip is null", md.getPrivateAddress());
+            assertTrue("Private ip is not from subnet 177.70.0.0/24", md.getPrivateAddress().startsWith("177.70.0."));
+            assertNotNull("Public ip is null", md.getPublicAddress());
+            launcher.assertFloatingIpBindToServer(md);
+            launcher.assertVMBoundToNetwork(md.getMachineId(), prefix + networkConfiguration.getName());
+        }
 
         launcher.stopManagementMachines(cloud);
     }
@@ -151,7 +156,7 @@ public class OpenstackCloudifyDriverTest extends AbstractTestSupport {
      * @throws Exception
      */
     @Test
-    public void testStartManagementWithComputeNetwork() throws Exception {
+    public void testStartManagementMachinesWithComputeNetwork() throws Exception {
         launcher.setSkipExternalNetworking(true);
         Cloud cloud = launcher.createCloud("/computeNetwork/computeNetwork-cloud.groovy");
         try {
@@ -161,12 +166,35 @@ public class OpenstackCloudifyDriverTest extends AbstractTestSupport {
             for (MachineDetails md : mds) {
                 assertNotNull("Machine id is null", md.getMachineId());
                 assertNotNull("Private ip is null", md.getPrivateAddress());
-                assertTrue("Private ip is not from subnet 150.0.0.0/24", md.getPrivateAddress().startsWith("150.0.0."));
+                assertTrue("Private ip is not from subnet 151.0.0.0/24", md.getPrivateAddress().startsWith("151.0.0."));
                 launcher.assertNoFloatingIp(md.getMachineId());
                 launcher.assertVMBoundToNetwork(md.getMachineId(), COMPUTE_SOME_INTERNAL_NETWORK_1);
                 launcher.assertVMBoundToNetwork(md.getMachineId(), COMPUTE_SOME_INTERNAL_NETWORK_2);
-                launcher.stopManagementMachines(cloud);
             }
+            launcher.stopManagementMachines(cloud);
+        } finally {
+            this.cleanExpectedExistingNetworks(launcher.getNetworkApi());
+        }
+    }
+
+    @Test
+    public void testStartMultipleManagementMachinesWithComputeNetwork() throws Exception {
+        int nbManagementMachines = 5;
+        launcher.setSkipExternalNetworking(true);
+        Cloud cloud = launcher.createCloud("/computeNetwork/computeNetwork-cloud.groovy");
+        cloud.getProvider().setNumberOfManagementMachines(nbManagementMachines);
+        try {
+            this.createExpectedExistingNetworks(launcher.getNetworkApi());
+            MachineDetails[] mds = launcher.startManagementMachines(cloud);
+            for (MachineDetails md : mds) {
+                assertNotNull("Machine id is null", md.getMachineId());
+                assertNotNull("Private ip is null", md.getPrivateAddress());
+                assertTrue("Private ip is not from subnet 151.0.0.0/24", md.getPrivateAddress().startsWith("151.0.0."));
+                launcher.assertNoFloatingIp(md.getMachineId());
+                launcher.assertVMBoundToNetwork(md.getMachineId(), COMPUTE_SOME_INTERNAL_NETWORK_1);
+                launcher.assertVMBoundToNetwork(md.getMachineId(), COMPUTE_SOME_INTERNAL_NETWORK_2);
+            }
+            launcher.stopManagementMachines(cloud);
         } finally {
             this.cleanExpectedExistingNetworks(launcher.getNetworkApi());
         }
@@ -196,7 +224,7 @@ public class OpenstackCloudifyDriverTest extends AbstractTestSupport {
     }
 
     // ***************************************************************
-    // ******** START MACHINE TESTS
+    // ******** startMachine Tests
     // ***************************************************************
 
     @Test

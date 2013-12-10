@@ -5,7 +5,7 @@ cloud {
     name = "openstack"
 
     configuration {
-        managementMachineTemplate "MANAGER"
+        managementMachineTemplate "LINUX"
     }
 
     provider {
@@ -28,7 +28,7 @@ cloud {
     cloudCompute {
 
         templates ([
-            MANAGER : computeTemplate{
+            LINUX : computeTemplate{
                 imageId imageId
                 remoteDirectory remoteDirectory
                 machineMemoryMB 1600
@@ -44,7 +44,7 @@ cloud {
                     "keyPairName" : keyPair
                 ])
                 overrides ([
-                    "jclouds.endpoint": openstackUrl
+                    "openstack.endpoint": openstackUrl
                 ])
                 computeNetwork {
                     networks (["SOME_INTERNAL_NETWORK_1","SOME_INTERNAL_NETWORK_2"])

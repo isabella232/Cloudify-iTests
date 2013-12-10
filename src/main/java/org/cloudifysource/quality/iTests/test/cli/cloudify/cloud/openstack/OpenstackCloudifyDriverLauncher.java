@@ -19,12 +19,12 @@ import org.cloudifysource.dsl.internal.ServiceReader;
 import org.cloudifysource.dsl.internal.packaging.PackagingException;
 import org.cloudifysource.esc.driver.provisioning.ComputeDriverConfiguration;
 import org.cloudifysource.esc.driver.provisioning.MachineDetails;
+import org.cloudifysource.esc.driver.provisioning.openstack.GroupNamesPrefixing;
 import org.cloudifysource.esc.driver.provisioning.openstack.OpenStackCloudifyDriver;
 import org.cloudifysource.esc.driver.provisioning.openstack.OpenStackComputeClient;
 import org.cloudifysource.esc.driver.provisioning.openstack.OpenStackNetworkClient;
 import org.cloudifysource.esc.driver.provisioning.openstack.OpenstackException;
 import org.cloudifysource.esc.driver.provisioning.openstack.OpenstackJsonSerializationException;
-import org.cloudifysource.esc.driver.provisioning.openstack.SecurityGroupNames;
 import org.cloudifysource.esc.driver.provisioning.openstack.rest.FloatingIp;
 import org.cloudifysource.esc.driver.provisioning.openstack.rest.Network;
 import org.cloudifysource.esc.driver.provisioning.openstack.rest.NovaServer;
@@ -281,7 +281,7 @@ public class OpenstackCloudifyDriverLauncher {
             names.add(secgroup.getName());
         }
 
-        SecurityGroupNames secgroupnames = new SecurityGroupNames(cloud.getProvider().getManagementGroup(), null, null);
+        GroupNamesPrefixing secgroupnames = new GroupNamesPrefixing(cloud.getProvider().getManagementGroup(), null, null);
         AssertUtils.assertTrue("Management security group not found. Got: " + names, names.contains(secgroupnames.getManagementName()));
         AssertUtils.assertTrue("Agent security group not found. Got: " + names, names.contains(secgroupnames.getAgentName()));
         AssertUtils.assertTrue("Cluster security group not found. Got: " + names, names.contains(secgroupnames.getClusterName()));
@@ -297,7 +297,7 @@ public class OpenstackCloudifyDriverLauncher {
 
     private void assertManagementAttachedSecurityGroups(MachineDetails[] mds, String managementGroup) throws OpenstackException {
 
-        SecurityGroupNames secgroupnames = new SecurityGroupNames(managementGroup, null, null);
+        GroupNamesPrefixing secgroupnames = new GroupNamesPrefixing(managementGroup, null, null);
         SecurityGroup mngSecgroup = networkApi.getSecurityGroupsByName(secgroupnames.getManagementName());
         SecurityGroup clusterSecgroup = networkApi.getSecurityGroupsByName(secgroupnames.getClusterName());
 
@@ -370,7 +370,8 @@ public class OpenstackCloudifyDriverLauncher {
         configuration.setCloud(cloud);
         configuration.setManagement(false);
         configuration.setNetwork(service.getNetwork());
-        String serviceCloudTemplate = service.getCompute() == null ? DEFAULT_TEMPLATE : service.getCompute().getTemplate();
+        String serviceCloudTemplate = service.getCompute() == null || service.getCompute().getTemplate().isEmpty() ? DEFAULT_TEMPLATE : service.getCompute()
+                .getTemplate();
         configuration.setCloudTemplate(serviceCloudTemplate);
         configuration.setServiceName(DEFAULT_APPLICATION_NAME + "." + service.getName());
 
@@ -397,7 +398,7 @@ public class OpenstackCloudifyDriverLauncher {
             names.add(secgroup.getName());
         }
 
-        SecurityGroupNames secgroupnames = new SecurityGroupNames(cloud.getProvider().getManagementGroup(), DEFAULT_APPLICATION_NAME, serviceName);
+        GroupNamesPrefixing secgroupnames = new GroupNamesPrefixing(cloud.getProvider().getManagementGroup(), DEFAULT_APPLICATION_NAME, serviceName);
         AssertUtils.assertTrue("Agent security group not found. Got: " + names, names.contains(secgroupnames.getAgentName()));
         AssertUtils.assertTrue("Cluster security group not found. Got: " + names, names.contains(secgroupnames.getClusterName()));
         AssertUtils.assertTrue("Application security group not found. Got: " + names, names.contains(secgroupnames.getApplicationName()));
@@ -415,7 +416,7 @@ public class OpenstackCloudifyDriverLauncher {
 
     private void assertAgentAttachedSecurityGroups(MachineDetails md, String managementGroup, String serviceName) throws OpenstackException {
 
-        SecurityGroupNames secgroupnames = new SecurityGroupNames(managementGroup, DEFAULT_APPLICATION_NAME, serviceName);
+        GroupNamesPrefixing secgroupnames = new GroupNamesPrefixing(managementGroup, DEFAULT_APPLICATION_NAME, serviceName);
         SecurityGroup agentSecgroup = networkApi.getSecurityGroupsByName(secgroupnames.getAgentName());
         SecurityGroup clusterSecgroup = networkApi.getSecurityGroupsByName(secgroupnames.getClusterName());
         SecurityGroup appliSecgroup = networkApi.getSecurityGroupsByName(secgroupnames.getApplicationName());

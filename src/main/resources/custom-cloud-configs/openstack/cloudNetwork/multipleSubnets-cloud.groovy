@@ -83,7 +83,7 @@ cloud {
                     "keyPairName" : keyPair
                 ])
                 overrides ([
-                    "jclouds.endpoint": openstackUrl
+                    "openstack.endpoint": openstackUrl
                 ])
             }
         ])

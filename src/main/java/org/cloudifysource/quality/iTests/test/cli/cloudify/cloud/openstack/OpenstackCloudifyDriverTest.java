@@ -1,7 +1,6 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.openstack;
 
 import iTests.framework.utils.AssertUtils;
-import junit.framework.Assert;
 
 import org.cloudifysource.domain.ComputeDetails;
 import org.cloudifysource.domain.Service;
@@ -10,9 +9,9 @@ import org.cloudifysource.domain.cloud.Cloud;
 import org.cloudifysource.domain.cloud.network.NetworkConfiguration;
 import org.cloudifysource.esc.driver.provisioning.CloudProvisioningException;
 import org.cloudifysource.esc.driver.provisioning.MachineDetails;
+import org.cloudifysource.esc.driver.provisioning.openstack.GroupNamesPrefixing;
 import org.cloudifysource.esc.driver.provisioning.openstack.OpenStackNetworkClient;
 import org.cloudifysource.esc.driver.provisioning.openstack.OpenstackException;
-import org.cloudifysource.esc.driver.provisioning.openstack.SecurityGroupNames;
 import org.cloudifysource.esc.driver.provisioning.openstack.rest.Network;
 import org.cloudifysource.esc.driver.provisioning.openstack.rest.Subnet;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
@@ -211,7 +210,6 @@ public class OpenstackCloudifyDriverTest extends AbstractTestSupport {
         launcher.setSkipExternalNetworking(true);
         Cloud cloud = launcher.createCloud("/computeNetwork/computeNetwork-cloud.groovy");
         launcher.startManagementMachines(cloud);
-        Assert.fail("CloudProvisioningException should be thrown, the defined network doesn't exist in the environment");
     }
 
     @Test(expectedExceptions = CloudProvisioningException.class, enabled = false)
@@ -220,7 +218,6 @@ public class OpenstackCloudifyDriverTest extends AbstractTestSupport {
         launcher.setSkipExternalNetworking(true);
         Cloud cloud = launcher.createCloud("/noNetworkAtAll/noNetworkAtAll-cloud.groovy");
         launcher.startManagementMachines(cloud);
-        Assert.fail("CloudProvisioningException should be thrown, the defined network doesn't exist in the environment");
     }
 
     // ***************************************************************
@@ -241,13 +238,14 @@ public class OpenstackCloudifyDriverTest extends AbstractTestSupport {
         launcher.assertFloatingIpBindToServer(md);
 
         String prefix = cloud.getProvider().getManagementGroup();
-        SecurityGroupNames secgroupnames = new SecurityGroupNames(prefix, OpenstackCloudifyDriverLauncher.DEFAULT_APPLICATION_NAME, service.getName());
+        GroupNamesPrefixing secgroupnames = new GroupNamesPrefixing(prefix, OpenstackCloudifyDriverLauncher.DEFAULT_APPLICATION_NAME, service.getName());
         launcher.assertSecurityGroupIncomingRulesNumber(secgroupnames.getServiceName(), service.getNetwork().getAccessRules().getIncoming().size());
 
         NetworkConfiguration networkConfiguration = cloud.getCloudNetwork().getTemplates().get("APPLICATION_NET");
-        launcher.assertNetworkExists(prefix + networkConfiguration.getName());
-        launcher.assertSubnetExists(prefix + networkConfiguration.getName(), networkConfiguration.getSubnets().get(0).getName());
-        launcher.assertSubnetSize(prefix + networkConfiguration.getName(), 1);
+        String appliNetworkName = secgroupnames.getApplicationName() + "-" + networkConfiguration.getName();
+        launcher.assertNetworkExists(appliNetworkName);
+        launcher.assertSubnetExists(appliNetworkName, networkConfiguration.getSubnets().get(0).getName());
+        launcher.assertSubnetSize(appliNetworkName, 1);
 
         launcher.stopMachineWithManagement(service, cloud, md.getPrivateAddress());
     }
@@ -268,22 +266,24 @@ public class OpenstackCloudifyDriverTest extends AbstractTestSupport {
         launcher.assertFloatingIpBindToServer(md);
 
         String prefix = cloud.getProvider().getManagementGroup();
-        SecurityGroupNames secgroupnames = new SecurityGroupNames(prefix, OpenstackCloudifyDriverLauncher.DEFAULT_APPLICATION_NAME, service.getName());
+        GroupNamesPrefixing secgroupnames = new GroupNamesPrefixing(prefix, OpenstackCloudifyDriverLauncher.DEFAULT_APPLICATION_NAME, service.getName());
         launcher.assertSecurityGroupIncomingRulesNumber(secgroupnames.getServiceName(), 0);
 
         NetworkConfiguration mngNetConfig = cloud.getCloudNetwork().getManagement().getNetworkConfiguration();
         NetworkConfiguration netConfig = cloud.getCloudNetwork().getTemplates().get(TEMPLATE_APPLICATION_NET2);
-        launcher.assertNetworkExists(prefix + netConfig.getName());
-        launcher.assertSubnetExists(prefix + netConfig.getName(), netConfig.getSubnets().get(0).getName());
-        launcher.assertSubnetExists(prefix + netConfig.getName(), netConfig.getSubnets().get(1).getName());
-        launcher.assertSubnetSize(prefix + netConfig.getName(), 2);
+        String appliNetworkName = secgroupnames.getApplicationName() + "-" + netConfig.getName();
+        launcher.assertNetworkExists(appliNetworkName);
+        launcher.assertSubnetExists(appliNetworkName, netConfig.getSubnets().get(0).getName());
+        launcher.assertSubnetExists(appliNetworkName, netConfig.getSubnets().get(1).getName());
+        launcher.assertSubnetSize(appliNetworkName, 2);
         launcher.assertVMBoundToNetwork(md.getMachineId(), prefix + mngNetConfig.getName());
-        launcher.assertVMBoundToNetwork(md.getMachineId(), prefix + netConfig.getName());
+        launcher.assertVMBoundToNetwork(md.getMachineId(), appliNetworkName);
 
         launcher.stopMachineWithManagement(service, cloud, md.getPrivateAddress());
     }
 
-    @Test
+    @Test(enabled = false)
+    // Not relevant
     public void testStartMachineWithComputeNetworkUsingManagerNetwork() throws Exception {
 
         launcher.setSkipExternalNetworking(true);
@@ -296,12 +296,12 @@ public class OpenstackCloudifyDriverTest extends AbstractTestSupport {
             MachineDetails md = launcher.startMachineWithManagement(service, cloud);
             assertNotNull("Machine id is null", md.getMachineId());
             assertNotNull("Private ip is null", md.getPrivateAddress());
-            assertTrue("Private ip is not from subnet 177.70.0.0/24. Got " + md.getPrivateAddress(), md.getPrivateAddress().startsWith("177.70.0."));
+            assertTrue("Private ip is not from subnet 151.0.0.0/24. Got " + md.getPrivateAddress(), md.getPrivateAddress().startsWith("151.0.0."));
             AssertUtils.assertNull("Public ip should be null", md.getPublicAddress());
             launcher.assertNoFloatingIp(md.getMachineId());
 
             String prefix = cloud.getProvider().getManagementGroup();
-            SecurityGroupNames secgroupnames = new SecurityGroupNames(prefix, OpenstackCloudifyDriverLauncher.DEFAULT_APPLICATION_NAME, service.getName());
+            GroupNamesPrefixing secgroupnames = new GroupNamesPrefixing(prefix, OpenstackCloudifyDriverLauncher.DEFAULT_APPLICATION_NAME, service.getName());
             launcher.assertSecurityGroupIncomingRulesNumber(secgroupnames.getServiceName(), service.getNetwork().getAccessRules().getIncoming().size());
             launcher.assertNoRouter(prefix);
 

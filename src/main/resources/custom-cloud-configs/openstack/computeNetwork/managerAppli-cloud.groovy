@@ -49,6 +49,28 @@ cloud {
                 computeNetwork {
                     networks (["SOME_INTERNAL_NETWORK_1","SOME_INTERNAL_NETWORK_2"])
                 }
+            },
+            APPLI : computeTemplate{
+                imageId imageId
+                remoteDirectory remoteDirectory
+                machineMemoryMB 1600
+                hardwareId hardwareId
+                localDirectory "upload"
+                keyFile keyFile
+                fileTransfer org.cloudifysource.domain.cloud.FileTransferModes.SCP
+                username "ubuntu"
+                options ([
+                    _COMPUTE_SERVICE_NAME_,
+                    _NETWORK_SERVICE_NAME_,
+                    _SKIP_EXTERNAL_NETWORKING_,
+                    "keyPairName" : keyPair
+                ])
+                overrides ([
+                    "jclouds.endpoint": openstackUrl
+                ])
+                computeNetwork {
+                    networks (["SOME_INTERNAL_NETWORK_2"])
+                }
             }
         ])
     }

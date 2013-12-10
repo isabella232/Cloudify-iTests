@@ -1,9 +1,14 @@
+/***************
+ * Cloud configuration file for the Openstack cloud. *
+ * This configuration doesn't contain any network template (nor cloudNetwork/computeTemplate)
+ */
 cloud {
     name = "openstack"
 
     configuration {
         managementMachineTemplate "LINUX"
     }
+
     provider {
         provider "openstack-nova"
         machineNamePrefix "cloudify-agent-"
@@ -12,40 +17,12 @@ cloud {
         numberOfManagementMachines 1
         reservedMemoryCapacityPerMachineInMB 1024
     }
+
     user {
         user "${tenant}:${user}"
         apiKey apiKey
     }
-    cloudNetwork {
-        management {
-            networkConfiguration {
-                name "Cloudify-Management-Network"
-                subnets ([
-                    subnet {
-                        name "Cloudify-Management-Subnet"
-                        range "177.86.0.0/24"
-                        options ([ "gateway" : "177.86.0.111" ])
-                    }
-                ])
-                custom ([ "associateFloatingIpOnBootstrap" : "true" ])
-            }
-        }
-        templates ([
-            "APPLICATION_NET" : networkConfiguration {
-                name  "Cloudify-Application-Network"
-                subnets {
-                    subnet {
-                        name "Cloudify-Application-Subnet"
-                        range "160.0.0.0/24"
-                        options {
-                            gateway "null"
-                        }
-                    }
-                }
-                custom ([ "associateFloatingIpOnBootstrap" : "true" ])
-            }
-        ])
-    }
+
     cloudCompute {
         templates ([
             LINUX : computeTemplate{

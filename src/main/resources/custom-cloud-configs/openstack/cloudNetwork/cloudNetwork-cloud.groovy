@@ -4,7 +4,6 @@ cloud {
     configuration {
         managementMachineTemplate "LINUX"
     }
-
     provider {
         provider "openstack-nova"
         machineNamePrefix "cloudify-agent-"
@@ -13,12 +12,37 @@ cloud {
         numberOfManagementMachines 1
         reservedMemoryCapacityPerMachineInMB 1024
     }
-
     user {
         user "${tenant}:${user}"
         apiKey apiKey
     }
-
+    cloudNetwork {
+        management {
+            networkConfiguration {
+                name "Cloudify-Management-Network"
+                subnets ([
+                    subnet {
+                        name "Cloudify-Management-Subnet1"
+                        range "177.70.0.0/24"
+                        options ([ "gateway" : "177.70.0.1" ])
+                    }
+                ])
+                custom ([ "associateFloatingIpOnBootstrap" : "true" ])
+            }
+        }
+        templates ([
+            "APPLICATION_NET" : networkConfiguration {
+                name "Cloudify-Application-Network"
+                subnets {
+                    subnet {
+                        name "Cloudify-Application-Subnet1"
+                        range "160.1.0.0/24"
+                    }
+                }
+                custom ([ "associateFloatingIpOnBootstrap" : "true" ])
+            }
+        ])
+    }
     cloudCompute {
         templates ([
             LINUX : computeTemplate{
@@ -38,9 +62,6 @@ cloud {
                 overrides ([
                     "jclouds.endpoint": openstackUrl
                 ])
-                computeNetwork {
-                    networks (["SOME_INTERNAL_NETWORK_1"])
-                }
             }
         ])
     }

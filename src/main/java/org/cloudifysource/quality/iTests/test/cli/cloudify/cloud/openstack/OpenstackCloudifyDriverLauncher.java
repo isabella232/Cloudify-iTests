@@ -354,25 +354,24 @@ public class OpenstackCloudifyDriverLauncher {
     /**
      * Start an agent VM using {@link OpenStackCloudifyDriver#startMachine(org.cloudifysource.esc.driver.provisioning.ProvisioningContext, long, TimeUnit)}
      * using parameters configuration.<br />
-     * Be aware that an agent VMs require that the management security groups and management networks are already created in Openstack, that is why it would
-     * be preferable to use {@link OpenstackCloudifyDriverLauncher#startMachineWithManagement(Service, Cloud, String)}.
+     * Be aware that an agent VMs require that the management security groups and management networks are already created in Openstack, you may want to use
+     * {@link OpenstackCloudifyDriverLauncher#startMachineWithManagement()}.
      * 
      * @param service
      *            The service recipe to use.
      * @param cloud
      *            The cloud object.
-     * @param template
-     *            The compute template to use.
      * @return
      *         The machine details object.
      * @throws Exception
      */
-    public MachineDetails startMachine(Service service, Cloud cloud, String template) throws Exception {
+    public MachineDetails startMachine(Service service, Cloud cloud) throws Exception {
         final ComputeDriverConfiguration configuration = new ComputeDriverConfiguration();
         configuration.setCloud(cloud);
-        configuration.setCloudTemplate(template);
         configuration.setManagement(false);
         configuration.setNetwork(service.getNetwork());
+        String serviceCloudTemplate = service.getCompute() == null ? DEFAULT_TEMPLATE : service.getCompute().getTemplate();
+        configuration.setCloudTemplate(serviceCloudTemplate);
         configuration.setServiceName(DEFAULT_APPLICATION_NAME + "." + service.getName());
 
         OpenStackCloudifyDriver driver = new OpenStackCloudifyDriver();
@@ -468,12 +467,7 @@ public class OpenstackCloudifyDriverLauncher {
 
     public MachineDetails startMachineWithManagement(Service service, Cloud cloud) throws Exception {
         this.startManagementMachines(cloud);
-        return this.startMachine(service, cloud, DEFAULT_TEMPLATE);
-    }
-
-    public MachineDetails startMachineWithManagement(Service service, Cloud cloud, String template) throws Exception {
-        this.startManagementMachines(cloud);
-        return this.startMachine(service, cloud, template);
+        return this.startMachine(service, cloud);
     }
 
     public void stopMachineWithManagement(Service service, Cloud cloud, String serverIp) throws Exception {
@@ -572,15 +566,38 @@ public class OpenstackCloudifyDriverLauncher {
         AssertUtils.assertFail("Subnet '" + subnetName + "' not found");
     }
 
+    public void assertVMBoundToNetwork(String serverId, String networkName) throws OpenstackException {
+
+        Network network = networkApi.getNetworkByName(networkName);
+        Port port = networkApi.getPort(serverId, network.getId());
+
+        boolean isTrue = network.getSubnets().length == port.getFixedIps().size();
+        AssertUtils.assertTrue("The server '" + serverId + "' is not bound to all subnets of network '" + networkName + "'", isTrue);
+        // List<RouteFixedIp> fixedIps = port.getFixedIps();
+        //
+        // Set<String> vmSubnetIds = new HashSet<String>();
+        // for (RouteFixedIp routeFixedIp : fixedIps) {
+        // vmSubnetIds.add(routeFixedIp.getSubnetId());
+        // }
+        //
+        // String[] networkSubnetIds = network.getSubnets();
+        // for (String subnetId : networkSubnetIds) {
+        // AssertUtils.assertTrue("The server '" + serverId + "' is not bound to subnet '" + subnetId + "'", vmSubnetIds.contains(subnetId));
+        // }
+
+    }
+
     /**
      * Assert that a floating IP is correctly bind to a server.
      */
-    public void assertFloatingIpBindToServer(String floatingIpAddr, String serverId) throws OpenstackException {
+    public void assertFloatingIpBindToServer(MachineDetails md) throws OpenstackException {
+        String serverId = md.getMachineId();
         List<Port> ports = networkApi.getPortsByDeviceId(serverId);
         for (Port port : ports) {
             FloatingIp floatingip = networkApi.getFloatingIpByPortId(port.getId());
             if (floatingip != null) {
-                AssertUtils.assertEquals("Wrong floating ip address bind to server '" + serverId + "'", floatingip.getFloatingIpAddress(), floatingIpAddr);
+                AssertUtils.assertEquals("Wrong floating ip address bind to server '" + serverId + "'", floatingip.getFloatingIpAddress(),
+                        md.getPublicAddress());
                 return;
             }
         }

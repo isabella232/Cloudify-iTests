@@ -23,58 +23,69 @@ import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
 import org.testng.annotations.Test;
 
 /**
- * this test tried to reproduce a known issue in groovy that causes a PermGen Exception.
- * it is disabled by default since it takes 2 hours to run and should only be executed pre-release.
+ * This test tries to reproduce an issue in Groovy that causes a PermGen OOME Exception.
+ * Multithrading is used to simulate a specific scenario where a tomcat service receives
+ * multiple parallel requests, each for parsing a large amount of scripts. Basically what that means
+ * is that having a single process running multiple threads would accelerate the leak and OOME.  
  * 
  * @author adaml
  *
  */
 public class ReadDSLMultipleTimesTest extends AbstractTestSupport{
 
+	private static final String OUT_OF_MEMORY_MESSAGE = "OOME";
+	private static final int NUMBER_OF_THREADS = 3;
 	private static final long TWO_SECONDS_MILLIS = 2000;
-	private final String APPLICATIONS_PATH = CommandTestUtils.getBuildApplicationsPath();
-	private final ExecutorService executor = Executors.newFixedThreadPool(10);
+	private static final String APPLICATIONS_PATH = CommandTestUtils.getBuildApplicationsPath();
+
+	private final ExecutorService executor = Executors.newFixedThreadPool(NUMBER_OF_THREADS);
 	private final List<FutureTask<Void>> taskList = new ArrayList<FutureTask<Void>>();
-	
-	// test executes for 2 hours.
-	private final long EXECUTION_TIME_MILLIS = 7200000;
+
+	// test executes for 10 minutes.
+	private final long EXECUTION_TIME_MILLIS = TimeUnit.MINUTES.toMillis(10);
 
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
 	public void testReadDSLMultipleTimes() throws Exception {
+		LogUtils.log("Using " + APPLICATIONS_PATH + " as Groovy Service files home dir.");
+		
 		final long startTime = System.currentTimeMillis();
-		for (int i = 0; i < 10; i++) {
+		LogUtils.log("Creating " + NUMBER_OF_THREADS + " task threads.");
+		for (int i = 0; i < NUMBER_OF_THREADS; i++) {
 			final FutureTask<Void> task = createTask();
 			taskList.add(task);
 			executor.execute(task);
-			
 		}
+		
+		LogUtils.log("Task threads created and running. Waiting for OutOfMemoryError to occur...");
 		while ((System.currentTimeMillis() - startTime) < EXECUTION_TIME_MILLIS) {
-
 			try {
 				for (FutureTask<Void> runningTask : taskList) {
 					runningTask.get(1, TimeUnit.SECONDS);
 				}
 				Thread.sleep(TWO_SECONDS_MILLIS);
-			} catch (TimeoutException e) {
+			} catch (final TimeoutException e) {
 				// timeout exception is ignored.
 			} catch (final Throwable e) {
-				if (e.getMessage().contains("Out of memory")) {
-					LogUtils.log("PermGen exception thrown. exception message is: " + e.getMessage());
-					LogUtils.log("full stack trace is: " + ExceptionUtils.getFullStackTrace(e));
-					AssertFail("test failed. class cache leak found");
+				LogUtils.log(ExceptionUtils.getFullStackTrace(e));
+				if (e.getMessage().contains(OUT_OF_MEMORY_MESSAGE)) {
+					AssertFail("PermGen OOME thrown. This is an indication of a memory leak.");
 				}
+				AssertFail("a Runtime exception terminated this test unexpectedly.");
 			}
-
 		}
 	}
-	
+
 	private FutureTask<Void> createTask() { 
 		return new FutureTask<Void>(
 				new Callable<Void>() {
 					@Override
 					public Void call() throws Exception {
+						Iterator<File> groovyFiles = FileUtils.iterateFiles(new File(APPLICATIONS_PATH), new String[]{"groovy"}, true);
+						if (!groovyFiles.hasNext()) {
+							throw new AssertionError("Destination folder must contain Groovy service files.");
+						}
+						// Run forever.
 						while (true) {
-							Iterator<File> groovyFiles = FileUtils.iterateFiles(new File(APPLICATIONS_PATH), new String[]{"groovy"}, true);
 							while (groovyFiles.hasNext()) {
 								File recipeFile = groovyFiles.next();
 								if (recipeFile.getName().contains("-service")) {
@@ -88,8 +99,9 @@ public class ReadDSLMultipleTimesTest extends AbstractTestSupport{
 										dslReader.readDslEntity(Service.class);
 									} catch (final Error e) {
 										if (e instanceof OutOfMemoryError) {
-											throw new RuntimeException("Out of memory.", e);
-										}
+											throw new RuntimeException(OUT_OF_MEMORY_MESSAGE, e);
+										} 
+										throw new RuntimeException(e);
 									}
 								}
 							}
@@ -97,7 +109,4 @@ public class ReadDSLMultipleTimesTest extends AbstractTestSupport{
 					}
 				});
 	}
-
-
-
 }

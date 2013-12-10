@@ -141,28 +141,29 @@ public class AbstractSecuredLocalCloudTest extends AbstractTestSupport {
 				// && output.toLowerCase().contains("Full authentication is required to access this resource".toLowerCase()));
 	}
 
-	protected void verifyApplicationVisibleLists(String installer, String viewerName, String viewerPassword, String viewerDescription, String appName, boolean isVisible) throws IOException, InterruptedException {
+	
+	protected void verifyApplicationVisibleLists(String installer, String viewerName, String viewerPassword, String viewerDescription, String appName, boolean expectedToBeVisible) throws IOException, InterruptedException {
 
 		String output = "no output";
 
-
-		if(isVisible){
+		
+		if (expectedToBeVisible) {
 			output = listApplications(viewerName, viewerPassword, false);
 			assertTrue(viewerDescription + " doesn't see the application of " + installer, output.contains(appName));
 		}
-		else{
+		else {
 			output = listApplications(viewerName, viewerPassword, true);
 			assertTrue(viewerDescription + " sees the application of " + installer, !output.contains(appName));
 		}
 
 
-		if(isVisible){
-			if(appName.equalsIgnoreCase(SIMPLE_APP_NAME)){	
+		if (expectedToBeVisible) {
+			if (appName.equalsIgnoreCase(SIMPLE_APP_NAME)){	
 
 				output = listServices(viewerName, viewerPassword, SIMPLE_APP_NAME, false);
 				assertTrue(viewerDescription + " doesn't see the services of " + installer, output.contains(SIMPLE_APP_NAME + "." + SIMPLE_SERVICE_NAME));
 			}
-			else{
+			else {
 
 				output = listServices(viewerName, viewerPassword, GROOVY_APP_NAME, true);
 				assertTrue(viewerDescription + " doesn't see the services of " + installer, output.contains(GROOVY_APP_NAME + "." + GROOVY_SERVICE_NAME) && output.contains(GROOVY_APP_NAME + "." + GROOVY2_SERVICE_NAME));
@@ -170,13 +171,13 @@ public class AbstractSecuredLocalCloudTest extends AbstractTestSupport {
 			}
 
 		}
-		else{	
-			if(appName.equalsIgnoreCase(SIMPLE_APP_NAME)){
+		else {	
+			if (appName.equalsIgnoreCase(SIMPLE_APP_NAME)) {
 
 				output = listServices(viewerName, viewerPassword, SIMPLE_APP_NAME, true);
 				assertTrue(viewerDescription + " sees the services of " + installer, !output.contains(SIMPLE_APP_NAME + "." + SIMPLE_SERVICE_NAME));			
 			}
-			else{
+			else {
 
 				output = listServices(viewerName, viewerPassword, GROOVY_APP_NAME, true);
 				assertTrue(viewerDescription + " sees the services of " + installer, !(output.contains(GROOVY_APP_NAME + "." + GROOVY_SERVICE_NAME) || output.contains(GROOVY_APP_NAME + "." + GROOVY2_SERVICE_NAME)));							
@@ -184,28 +185,28 @@ public class AbstractSecuredLocalCloudTest extends AbstractTestSupport {
 		}
 
 
-		if(appName.equalsIgnoreCase(SIMPLE_APP_NAME)){
+		if(appName.equalsIgnoreCase(SIMPLE_APP_NAME)) {
 
 
-			if(isVisible){	
+			if (expectedToBeVisible){	
 				output = listInstances(viewerName, viewerPassword, SIMPLE_APP_NAME, SIMPLE_SERVICE_NAME, false);
 				assertTrue(viewerDescription + " doesn't see the instances of " + installer, output.contains(INSTANCE_VERIFICATION_STRING));
 			}
-			else{
+			else {
 				output = listInstances(viewerName, viewerPassword, SIMPLE_APP_NAME, SIMPLE_SERVICE_NAME, true);
 				assertTrue(viewerDescription + " sees the instances of " + installer, !output.contains(INSTANCE_VERIFICATION_STRING));
 
 			}
 
 		}
-		else{	
+		else {	
 
 
-			if(isVisible){	
+			if (expectedToBeVisible) {	
 				output = listInstances(viewerName, viewerPassword, GROOVY_APP_NAME, GROOVY_SERVICE_NAME, false);
 				assertTrue(viewerDescription + " doesn't see the instances of " + installer, output.contains(INSTANCE_VERIFICATION_STRING));			
 			}
-			else{
+			else {
 				output = listInstances(viewerName, viewerPassword, GROOVY_APP_NAME, GROOVY_SERVICE_NAME, true);
 				assertTrue(viewerDescription + " sees the instances of " + installer, !output.contains(INSTANCE_VERIFICATION_STRING));							
 			}

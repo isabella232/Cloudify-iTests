@@ -23,49 +23,77 @@ public class LocalCloudSecurityTest extends AbstractSecuredLocalCloudTest {
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT, enabled = true)
 	public void installAndUninstalApplWithDifferentUsersTest() throws Exception {
 		
+		// installing the "simple" application as Don, which has roles "appmanager" and "viewer". The auth-groups will be Don's group: "Cellcom".
 		installApplicationAndWait(SIMPLE_APP_PATH, SIMPLE_APP_NAME, TIMEOUT_IN_MINUTES, SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, false, null);
 
+		// attempting to uninstall the application as John, which has only the "viewer" role. Should fail!
 		String output = uninstallApplicationAndWait(SIMPLE_APP_PATH, SIMPLE_APP_NAME, TIMEOUT_IN_MINUTES, SecurityConstants.USER_PWD_VIEWER, SecurityConstants.USER_PWD_VIEWER, true, null);
 		AbstractTestSupport.assertTrue("uninstall access granted to " + SecurityConstants.VIEWER_DESCRIPTIN, output.contains(SecurityConstants.ACCESS_DENIED_MESSAGE));
 
-		uninstallApplicationAndWait(SIMPLE_APP_PATH, SIMPLE_APP_NAME, TIMEOUT_IN_MINUTES, SecurityConstants.USER_PWD_APP_MANAGER, SecurityConstants.USER_PWD_APP_MANAGER, false, null);
+		// attempting to uninstall the application as Dan, which has the "appmanager" role, but is not in group "Cellcom". Should fail!
+		output = uninstallApplicationAndWait(SIMPLE_APP_PATH, SIMPLE_APP_NAME, TIMEOUT_IN_MINUTES, SecurityConstants.USER_PWD_APP_MANAGER, SecurityConstants.USER_PWD_APP_MANAGER, true, null);
+		AbstractTestSupport.assertTrue("Application \"" + SIMPLE_APP_NAME + "\" was wrongfully visible to and uninstalled by " + SecurityConstants.APP_MANAGER_DESCRIPTIN, output.contains(SecurityConstants.RESOURCE_NOT_FOUND));
+		
+		// attempting to uninstall the service as Amanda, which has the "cloudadmin" role, and is in group "Cellcom". Should succeed.
+		uninstallApplicationAndWait(SIMPLE_APP_PATH, SIMPLE_APP_NAME, TIMEOUT_IN_MINUTES, SecurityConstants.USER_PWD_CLOUD_ADMIN, SecurityConstants.USER_PWD_CLOUD_ADMIN, false, null);
 	}
 	
 	
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT, enabled = true)
 	public void installAndUninstalServicelWithDifferentUsersTest() throws Exception {
 		
+		// installing the "simple" service as Don, which has roles "appmanager" and "viewer". The auth-groups will be Don's group: "Cellcom".
 		installServiceAndWait(SIMPLE_SERVICE_PATH, SIMPLE_SERVICE_NAME, TIMEOUT_IN_MINUTES, SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, false, null);
-
+		
+		// attempting to uninstall the service as John, which has only the "viewer" role. Should fail!
 		String output = uninstallServiceAndWait(SIMPLE_SERVICE_PATH, SIMPLE_SERVICE_NAME, TIMEOUT_IN_MINUTES, SecurityConstants.USER_PWD_VIEWER, SecurityConstants.USER_PWD_VIEWER, true, null);
 		AbstractTestSupport.assertTrue("uninstall access granted to " + SecurityConstants.VIEWER_DESCRIPTIN, output.contains(SecurityConstants.ACCESS_DENIED_MESSAGE));
+		
+		// attempting to uninstall the service as Dan, which has the "appmanager" role, but is not in group "Cellcom". Should fail!
+		output = uninstallServiceAndWait(SIMPLE_SERVICE_PATH, SIMPLE_SERVICE_NAME, TIMEOUT_IN_MINUTES, SecurityConstants.USER_PWD_APP_MANAGER, SecurityConstants.USER_PWD_APP_MANAGER, true, null);
+		AbstractTestSupport.assertTrue("Service \"" + SIMPLE_APP_NAME + "\" was wrongfully visible to and uninstalled by " + SecurityConstants.APP_MANAGER_DESCRIPTIN, output.contains(SecurityConstants.MISSING_RESOURCE));
 
-		uninstallServiceAndWait(SIMPLE_SERVICE_PATH, SIMPLE_SERVICE_NAME, TIMEOUT_IN_MINUTES, SecurityConstants.USER_PWD_APP_MANAGER, SecurityConstants.USER_PWD_APP_MANAGER, false, null);
+		// attempting to uninstall the service as Amanda, which has the "cloudadmin" role, and is in group "Cellcom". Should succeed.
+		uninstallServiceAndWait(SIMPLE_SERVICE_PATH, SIMPLE_SERVICE_NAME, TIMEOUT_IN_MINUTES, SecurityConstants.USER_PWD_CLOUD_ADMIN, SecurityConstants.USER_PWD_CLOUD_ADMIN, false, null);
 	}
 	
 
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT, enabled = true)
 	public void installingAndViewingAppTest() throws IOException, InterruptedException{
 
+		// installing the "simple" application as Dan, which has the role "appmanager". The auth-groups will be Dan's group: "GE".
 		installApplicationAndWait(SIMPLE_APP_PATH, SIMPLE_APP_NAME, TIMEOUT_IN_MINUTES, SecurityConstants.USER_PWD_APP_MANAGER, SecurityConstants.USER_PWD_APP_MANAGER, false, null);
+		// installing the "groovy" application as Don, which has roles "appmanager" and "viewer". The auth-groups will be Don's group: "Cellcom".
 		installApplicationAndWait(GROOVY_APP_PATH, GROOVY_APP_NAME, TIMEOUT_IN_MINUTES, SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, false, null);
 
-		verifyApplicationVisibleLists(SecurityConstants.APP_MANAGER_DESCRIPTIN, SecurityConstants.USER_PWD_CLOUD_ADMIN, SecurityConstants.USER_PWD_CLOUD_ADMIN, SecurityConstants.CLOUD_ADMIN_DESCRIPTIN, SIMPLE_APP_NAME, false);
-		verifyApplicationVisibleLists(SecurityConstants.APP_MANAGER_AND_VIEWER_DESCRIPTIN, SecurityConstants.USER_PWD_CLOUD_ADMIN, SecurityConstants.USER_PWD_CLOUD_ADMIN, SecurityConstants.CLOUD_ADMIN_DESCRIPTIN, GROOVY_APP_NAME, false);
+		// checks if app "simple" can be viewed by Amanda, which has role "cloudadmin" and groups "Bezeq, GE, Cellcom". Expected - true.
+		verifyApplicationVisibleLists(SecurityConstants.APP_MANAGER_DESCRIPTIN, SecurityConstants.USER_PWD_CLOUD_ADMIN, SecurityConstants.USER_PWD_CLOUD_ADMIN, SecurityConstants.CLOUD_ADMIN_DESCRIPTIN, SIMPLE_APP_NAME, true);
+		// same check for app "groovy". Expected - true.
+		verifyApplicationVisibleLists(SecurityConstants.APP_MANAGER_AND_VIEWER_DESCRIPTIN, SecurityConstants.USER_PWD_CLOUD_ADMIN, SecurityConstants.USER_PWD_CLOUD_ADMIN, SecurityConstants.CLOUD_ADMIN_DESCRIPTIN, GROOVY_APP_NAME, true);
 		
-		verifyApplicationVisibleLists(SecurityConstants.APP_MANAGER_DESCRIPTIN, SecurityConstants.USER_PWD_CLOUD_ADMIN_AND_APP_MANAGER, SecurityConstants.USER_PWD_CLOUD_ADMIN_AND_APP_MANAGER, SecurityConstants.CLOUD_ADMIN_AND_APP_MANAGER_DESCRIPTION, SIMPLE_APP_NAME, true);
-		verifyApplicationVisibleLists(SecurityConstants.APP_MANAGER_AND_VIEWER_DESCRIPTIN, SecurityConstants.USER_PWD_CLOUD_ADMIN_AND_APP_MANAGER, SecurityConstants.USER_PWD_CLOUD_ADMIN_AND_APP_MANAGER, SecurityConstants.CLOUD_ADMIN_AND_APP_MANAGER_DESCRIPTION, GROOVY_APP_NAME, true);
-		
+		// checks if app "simple" can be viewed by Dana, which has roles "cloudadmin" and "appmanager", and group "Bezeq". Expected - false, because Dana is not a member of GE.
+		verifyApplicationVisibleLists(SecurityConstants.APP_MANAGER_DESCRIPTIN, SecurityConstants.USER_PWD_CLOUD_ADMIN_AND_APP_MANAGER, SecurityConstants.USER_PWD_CLOUD_ADMIN_AND_APP_MANAGER, SecurityConstants.CLOUD_ADMIN_AND_APP_MANAGER_DESCRIPTION, SIMPLE_APP_NAME, false);
+		// same check for app "groovy". Expected - false, because Dana is not a member of Cellcom.
+		verifyApplicationVisibleLists(SecurityConstants.APP_MANAGER_AND_VIEWER_DESCRIPTIN, SecurityConstants.USER_PWD_CLOUD_ADMIN_AND_APP_MANAGER, SecurityConstants.USER_PWD_CLOUD_ADMIN_AND_APP_MANAGER, SecurityConstants.CLOUD_ADMIN_AND_APP_MANAGER_DESCRIPTION, GROOVY_APP_NAME, false);
+				
+		// checks if app "simple" can be viewed by Dan, which has the role "appmanager", and group "GE". Expected - true.
 		verifyApplicationVisibleLists(SecurityConstants.APP_MANAGER_DESCRIPTIN, SecurityConstants.USER_PWD_APP_MANAGER, SecurityConstants.USER_PWD_APP_MANAGER, SecurityConstants.APP_MANAGER_DESCRIPTIN, SIMPLE_APP_NAME, true);
-		verifyApplicationVisibleLists(SecurityConstants.APP_MANAGER_AND_VIEWER_DESCRIPTIN, SecurityConstants.USER_PWD_APP_MANAGER, SecurityConstants.USER_PWD_APP_MANAGER, SecurityConstants.APP_MANAGER_DESCRIPTIN, GROOVY_APP_NAME, true);
+		// same check for app "groovy". Expected - false, because Dan is not a member of Cellcom.
+		verifyApplicationVisibleLists(SecurityConstants.APP_MANAGER_AND_VIEWER_DESCRIPTIN, SecurityConstants.USER_PWD_APP_MANAGER, SecurityConstants.USER_PWD_APP_MANAGER, SecurityConstants.APP_MANAGER_DESCRIPTIN, GROOVY_APP_NAME, false);
 		
-		verifyApplicationVisibleLists(SecurityConstants.APP_MANAGER_DESCRIPTIN, SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, SecurityConstants.APP_MANAGER_AND_VIEWER_DESCRIPTIN, SIMPLE_APP_NAME, true);
+		// checks if app "simple" can be viewed by Don, which has roles "appmanager" and "viewer", and group "Cellcom". Expected - false, because Don is not a member of GE.
+		verifyApplicationVisibleLists(SecurityConstants.APP_MANAGER_DESCRIPTIN, SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, SecurityConstants.APP_MANAGER_AND_VIEWER_DESCRIPTIN, SIMPLE_APP_NAME, false);
+		// same check for app "groovy". Expected - true.
 		verifyApplicationVisibleLists(SecurityConstants.APP_MANAGER_AND_VIEWER_DESCRIPTIN, SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, SecurityConstants.APP_MANAGER_AND_VIEWER_DESCRIPTIN, GROOVY_APP_NAME, true);
 		
-		verifyApplicationVisibleLists(SecurityConstants.APP_MANAGER_DESCRIPTIN, SecurityConstants.USER_PWD_VIEWER, SecurityConstants.USER_PWD_VIEWER, SecurityConstants.VIEWER_DESCRIPTIN, SIMPLE_APP_NAME, false);
+		// checks if app "simple" can be viewed by John, which has the role "viewer", and groups "GE, Cellcom". Expected - true.
+		verifyApplicationVisibleLists(SecurityConstants.APP_MANAGER_DESCRIPTIN, SecurityConstants.USER_PWD_VIEWER, SecurityConstants.USER_PWD_VIEWER, SecurityConstants.VIEWER_DESCRIPTIN, SIMPLE_APP_NAME, true);
+		// same check for app "groovy". Expected - true.
 		verifyApplicationVisibleLists(SecurityConstants.APP_MANAGER_AND_VIEWER_DESCRIPTIN, SecurityConstants.USER_PWD_VIEWER, SecurityConstants.USER_PWD_VIEWER, SecurityConstants.VIEWER_DESCRIPTIN, GROOVY_APP_NAME, true);
 		
+		// checks if app "simple" can be viewed by Jane, which has no roles, and groups "Bezeq". Expected - false, because Jane does not have any role.
 		verifyApplicationVisibleLists(SecurityConstants.APP_MANAGER_DESCRIPTIN, SecurityConstants.USER_PWD_NO_ROLE, SecurityConstants.USER_PWD_NO_ROLE, SecurityConstants.NO_ROLE_DESCRIPTIN, SIMPLE_APP_NAME, false);
+		// same check for app "groovy". Expected - false, because Jane does not have any role.
 		verifyApplicationVisibleLists(SecurityConstants.APP_MANAGER_AND_VIEWER_DESCRIPTIN, SecurityConstants.USER_PWD_NO_ROLE, SecurityConstants.USER_PWD_NO_ROLE, SecurityConstants.NO_ROLE_DESCRIPTIN, GROOVY_APP_NAME, false);
 
 	}
@@ -73,38 +101,59 @@ public class LocalCloudSecurityTest extends AbstractSecuredLocalCloudTest {
 	
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT, enabled = true)
 	public void installingAndViewingServiceTest() throws Exception {
-		// Dan (app manager) installs service simple without auth-groups
+		
+		// installing the "simple" service as Dan, which has the role "appmanager". The auth-groups will be Dan's group: "GE".
 		installServiceAndWait(SIMPLE_SERVICE_PATH, SIMPLE_SERVICE_NAME, TIMEOUT_IN_MINUTES, SecurityConstants.USER_PWD_APP_MANAGER, SecurityConstants.USER_PWD_APP_MANAGER, false, null);
 		
-		verifyServiceVisibleLists(SIMPLE_SERVICE_NAME, SecurityConstants.APP_MANAGER_DESCRIPTIN, SecurityConstants.USER_PWD_CLOUD_ADMIN, SecurityConstants.USER_PWD_CLOUD_ADMIN, SecurityConstants.CLOUD_ADMIN_DESCRIPTIN, false);
-		verifyServiceVisibleLists(SIMPLE_SERVICE_NAME, SecurityConstants.APP_MANAGER_DESCRIPTIN, SecurityConstants.USER_PWD_CLOUD_ADMIN_AND_APP_MANAGER, SecurityConstants.USER_PWD_CLOUD_ADMIN_AND_APP_MANAGER, SecurityConstants.CLOUD_ADMIN_AND_APP_MANAGER_DESCRIPTION, true);
+		// checks if service "simple" can be viewed by Amanda, which has role "cloudadmin" and groups "Bezeq, GE, Cellcom". Expected - true.
+		verifyServiceVisibleLists(SIMPLE_SERVICE_NAME, SecurityConstants.APP_MANAGER_DESCRIPTIN, SecurityConstants.USER_PWD_CLOUD_ADMIN, SecurityConstants.USER_PWD_CLOUD_ADMIN, SecurityConstants.CLOUD_ADMIN_DESCRIPTIN, true);
+		// checks if service "simple" can be viewed by Dana, which has roles "cloudadmin" and "appmanager", and group "Bezeq". Expected - false, because Dana is not a member of GE.
+		verifyServiceVisibleLists(SIMPLE_SERVICE_NAME, SecurityConstants.APP_MANAGER_DESCRIPTIN, SecurityConstants.USER_PWD_CLOUD_ADMIN_AND_APP_MANAGER, SecurityConstants.USER_PWD_CLOUD_ADMIN_AND_APP_MANAGER, SecurityConstants.CLOUD_ADMIN_AND_APP_MANAGER_DESCRIPTION, false);
+		// checks if service "simple" can be viewed by Dan, which has the role "appmanager", and group "GE". Expected - true.
 		verifyServiceVisibleLists(SIMPLE_SERVICE_NAME, SecurityConstants.APP_MANAGER_DESCRIPTIN, SecurityConstants.USER_PWD_APP_MANAGER, SecurityConstants.USER_PWD_APP_MANAGER, SecurityConstants.APP_MANAGER_DESCRIPTIN, true);
-		verifyServiceVisibleLists(SIMPLE_SERVICE_NAME, SecurityConstants.APP_MANAGER_DESCRIPTIN, SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, SecurityConstants.APP_MANAGER_AND_VIEWER_DESCRIPTIN, true);
-		verifyServiceVisibleLists(SIMPLE_SERVICE_NAME, SecurityConstants.APP_MANAGER_DESCRIPTIN, SecurityConstants.USER_PWD_VIEWER, SecurityConstants.USER_PWD_VIEWER, SecurityConstants.VIEWER_DESCRIPTIN, false);
+		// checks if service "simple" can be viewed by Don, which has roles "appmanager" and "viewer", and group "Cellcom". Expected - false, because Don is not a member of GE.
+		verifyServiceVisibleLists(SIMPLE_SERVICE_NAME, SecurityConstants.APP_MANAGER_DESCRIPTIN, SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, SecurityConstants.APP_MANAGER_AND_VIEWER_DESCRIPTIN, false);
+		// checks if service "simple" can be viewed by John, which has the role "viewer", and groups "GE, Cellcom". Expected - true.
+		verifyServiceVisibleLists(SIMPLE_SERVICE_NAME, SecurityConstants.APP_MANAGER_DESCRIPTIN, SecurityConstants.USER_PWD_VIEWER, SecurityConstants.USER_PWD_VIEWER, SecurityConstants.VIEWER_DESCRIPTIN, true);
+		// checks if service "simple" can be viewed by Jane, which has no roles, and groups "Bezeq". Expected - false, because Jane does not have any role.
 		verifyServiceVisibleLists(SIMPLE_SERVICE_NAME, SecurityConstants.APP_MANAGER_DESCRIPTIN, SecurityConstants.USER_PWD_NO_ROLE, SecurityConstants.USER_PWD_NO_ROLE, SecurityConstants.NO_ROLE_DESCRIPTIN, false);
 		
+		// uninstall service "simple" by Dan
 		uninstallServiceAndWait(SIMPLE_SERVICE_PATH, SIMPLE_SERVICE_NAME, TIMEOUT_IN_MINUTES, SecurityConstants.USER_PWD_APP_MANAGER, SecurityConstants.USER_PWD_APP_MANAGER, false, null);
 		
-		// Don (app manager and viewer) installs service groovy without auth-groups
+		// installing the "groovy" service as Don, which has roles "appmanager" and "viewer". The auth-groups will be Don's group: "Cellcom".
 		installServiceAndWait(GROOVY_SERVICE_PATH, GROOVY_SERVICE_NAME, TIMEOUT_IN_MINUTES, SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, false, null);
 		
-		verifyServiceVisibleLists(GROOVY_SERVICE_NAME, SecurityConstants.APP_MANAGER_AND_VIEWER_DESCRIPTIN, SecurityConstants.USER_PWD_CLOUD_ADMIN, SecurityConstants.USER_PWD_CLOUD_ADMIN, SecurityConstants.CLOUD_ADMIN_DESCRIPTIN, false);
-		verifyServiceVisibleLists(GROOVY_SERVICE_NAME, SecurityConstants.APP_MANAGER_AND_VIEWER_DESCRIPTIN, SecurityConstants.USER_PWD_CLOUD_ADMIN_AND_APP_MANAGER, SecurityConstants.USER_PWD_CLOUD_ADMIN_AND_APP_MANAGER, SecurityConstants.CLOUD_ADMIN_AND_APP_MANAGER_DESCRIPTION, true);
-		verifyServiceVisibleLists(GROOVY_SERVICE_NAME, SecurityConstants.APP_MANAGER_AND_VIEWER_DESCRIPTIN, SecurityConstants.USER_PWD_APP_MANAGER, SecurityConstants.USER_PWD_APP_MANAGER, SecurityConstants.APP_MANAGER_DESCRIPTIN, true);
+		// checks if service "groovy" can be viewed by Amanda, which has role "cloudadmin" and groups "Bezeq, GE, Cellcom". Expected - true.
+		verifyServiceVisibleLists(GROOVY_SERVICE_NAME, SecurityConstants.APP_MANAGER_AND_VIEWER_DESCRIPTIN, SecurityConstants.USER_PWD_CLOUD_ADMIN, SecurityConstants.USER_PWD_CLOUD_ADMIN, SecurityConstants.CLOUD_ADMIN_DESCRIPTIN, true);
+		// checks if service "groovy" can be viewed by Dana, which has roles "cloudadmin" and "appmanager", and group "Bezeq". Expected - false, because Dana is not a member of Cellcom.
+		verifyServiceVisibleLists(GROOVY_SERVICE_NAME, SecurityConstants.APP_MANAGER_AND_VIEWER_DESCRIPTIN, SecurityConstants.USER_PWD_CLOUD_ADMIN_AND_APP_MANAGER, SecurityConstants.USER_PWD_CLOUD_ADMIN_AND_APP_MANAGER, SecurityConstants.CLOUD_ADMIN_AND_APP_MANAGER_DESCRIPTION, false);
+		// checks if service "groovy" can be viewed by Dan, which has the role "appmanager", and group "GE". Expected - false, because Dan is not a member of Cellcom.
+		verifyServiceVisibleLists(GROOVY_SERVICE_NAME, SecurityConstants.APP_MANAGER_AND_VIEWER_DESCRIPTIN, SecurityConstants.USER_PWD_APP_MANAGER, SecurityConstants.USER_PWD_APP_MANAGER, SecurityConstants.APP_MANAGER_DESCRIPTIN, false);
+		// checks if service "groovy" can be viewed by Don, which has roles "appmanager" and "viewer", and group "Cellcom". Expected - true.
 		verifyServiceVisibleLists(GROOVY_SERVICE_NAME, SecurityConstants.APP_MANAGER_AND_VIEWER_DESCRIPTIN, SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, SecurityConstants.APP_MANAGER_AND_VIEWER_DESCRIPTIN, true);
+		// checks if service "groovy" can be viewed by John, which has the role "viewer", and groups "GE, Cellcom". Expected - true.
 		verifyServiceVisibleLists(GROOVY_SERVICE_NAME, SecurityConstants.APP_MANAGER_AND_VIEWER_DESCRIPTIN, SecurityConstants.USER_PWD_VIEWER, SecurityConstants.USER_PWD_VIEWER, SecurityConstants.VIEWER_DESCRIPTIN, true);
+		// checks if service "groovy" can be viewed by Jane, which has no roles, and groups "Bezeq". Expected - false, because Jane does not have any role.
 		verifyServiceVisibleLists(GROOVY_SERVICE_NAME, SecurityConstants.APP_MANAGER_AND_VIEWER_DESCRIPTIN, SecurityConstants.USER_PWD_NO_ROLE, SecurityConstants.USER_PWD_NO_ROLE, SecurityConstants.NO_ROLE_DESCRIPTIN, false);
 		
-		uninstallServiceAndWait(GROOVY_SERVICE_PATH, GROOVY_SERVICE_NAME, TIMEOUT_IN_MINUTES, SecurityConstants.USER_PWD_APP_MANAGER, SecurityConstants.USER_PWD_APP_MANAGER, false, null);
+		// uninstall service "groovy" by Don
+		uninstallServiceAndWait(GROOVY_SERVICE_PATH, GROOVY_SERVICE_NAME, TIMEOUT_IN_MINUTES, SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, false, null);
 		
-		// Dana (cloud admin and app manager) installs service simple with auth-group = ROLE_APPMANAGERS
-		installServiceAndWait(SIMPLE_SERVICE_PATH, SIMPLE_SERVICE_NAME, TIMEOUT_IN_MINUTES, SecurityConstants.USER_PWD_CLOUD_ADMIN_AND_APP_MANAGER, SecurityConstants.USER_PWD_CLOUD_ADMIN_AND_APP_MANAGER, false, SecurityConstants.APPMANAGERS_GROUP);
+		// Amanda (cloud admin) installs service simple with specific auth-group: "Bezeq"
+		installServiceAndWait(SIMPLE_SERVICE_PATH, SIMPLE_SERVICE_NAME, TIMEOUT_IN_MINUTES, SecurityConstants.USER_PWD_CLOUD_ADMIN, SecurityConstants.USER_PWD_CLOUD_ADMIN, false, SecurityConstants.BEZEQ_GROUP);
 		
-		verifyServiceVisibleLists(SIMPLE_SERVICE_NAME, SecurityConstants.APP_MANAGER_DESCRIPTIN, SecurityConstants.USER_PWD_CLOUD_ADMIN, SecurityConstants.USER_PWD_CLOUD_ADMIN, SecurityConstants.CLOUD_ADMIN_DESCRIPTIN, false);
+		// checks if service "simple" can be viewed by Amanda, which has role "cloudadmin" and groups "Bezeq, GE, Cellcom". Expected - true.
+		verifyServiceVisibleLists(SIMPLE_SERVICE_NAME, SecurityConstants.APP_MANAGER_DESCRIPTIN, SecurityConstants.USER_PWD_CLOUD_ADMIN, SecurityConstants.USER_PWD_CLOUD_ADMIN, SecurityConstants.CLOUD_ADMIN_DESCRIPTIN, true);
+		// checks if service "simple" can be viewed by Dana, which has roles "cloudadmin" and "appmanager", and group "Bezeq". Expected - true.
 		verifyServiceVisibleLists(SIMPLE_SERVICE_NAME, SecurityConstants.APP_MANAGER_DESCRIPTIN, SecurityConstants.USER_PWD_CLOUD_ADMIN_AND_APP_MANAGER, SecurityConstants.USER_PWD_CLOUD_ADMIN_AND_APP_MANAGER, SecurityConstants.CLOUD_ADMIN_AND_APP_MANAGER_DESCRIPTION, true);
-		verifyServiceVisibleLists(SIMPLE_SERVICE_NAME, SecurityConstants.APP_MANAGER_DESCRIPTIN, SecurityConstants.USER_PWD_APP_MANAGER, SecurityConstants.USER_PWD_APP_MANAGER, SecurityConstants.APP_MANAGER_DESCRIPTIN, true);
-		verifyServiceVisibleLists(SIMPLE_SERVICE_NAME, SecurityConstants.APP_MANAGER_DESCRIPTIN, SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, SecurityConstants.APP_MANAGER_AND_VIEWER_DESCRIPTIN, true);
+		// checks if service "simple" can be viewed by Dan, which has the role "appmanager", and group "GE". Expected - false, because Dan is not a member of Bezeq.
+		verifyServiceVisibleLists(SIMPLE_SERVICE_NAME, SecurityConstants.APP_MANAGER_DESCRIPTIN, SecurityConstants.USER_PWD_APP_MANAGER, SecurityConstants.USER_PWD_APP_MANAGER, SecurityConstants.APP_MANAGER_DESCRIPTIN, false);
+		// checks if service "simple" can be viewed by Don, which has roles "appmanager" and "viewer", and group "Cellcom". Expected - false, because Don is not a member of Bezeq.
+		verifyServiceVisibleLists(SIMPLE_SERVICE_NAME, SecurityConstants.APP_MANAGER_DESCRIPTIN, SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, SecurityConstants.APP_MANAGER_AND_VIEWER_DESCRIPTIN, false);
+		// checks if service "simple" can be viewed by John, which has the role "viewer", and groups "GE, Cellcom". Expected - false, because Don is not a member of Bezeq.
 		verifyServiceVisibleLists(SIMPLE_SERVICE_NAME, SecurityConstants.APP_MANAGER_DESCRIPTIN, SecurityConstants.USER_PWD_VIEWER, SecurityConstants.USER_PWD_VIEWER, SecurityConstants.VIEWER_DESCRIPTIN, false);
+		// checks if service "simple" can be viewed by Jane, which has no roles, and groups "Bezeq". Expected - false, because Jane does not have any role.
 		verifyServiceVisibleLists(SIMPLE_SERVICE_NAME, SecurityConstants.APP_MANAGER_DESCRIPTIN, SecurityConstants.USER_PWD_NO_ROLE, SecurityConstants.USER_PWD_NO_ROLE, SecurityConstants.NO_ROLE_DESCRIPTIN, false);
 		
 		uninstallServiceAndWait(SIMPLE_SERVICE_PATH, SIMPLE_SERVICE_NAME, TIMEOUT_IN_MINUTES, SecurityConstants.USER_PWD_CLOUD_ADMIN_AND_APP_MANAGER, SecurityConstants.USER_PWD_CLOUD_ADMIN_AND_APP_MANAGER, false, null);
@@ -135,24 +184,26 @@ public class LocalCloudSecurityTest extends AbstractSecuredLocalCloudTest {
 	
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT, enabled = true)
 	public void installAndUninstallAppWithDifferentGroup() throws Exception {
-		
 		String output = "no output";
 		
-		installApplicationAndWait(SIMPLE_APP_PATH, SIMPLE_APP_NAME, TIMEOUT_IN_MINUTES, SecurityConstants.USER_PWD_CLOUD_ADMIN_AND_APP_MANAGER, SecurityConstants.USER_PWD_CLOUD_ADMIN_AND_APP_MANAGER, false, SecurityConstants.CLOUDADMINS_GROUP);
-		output = uninstallApplicationAndWait(SIMPLE_APP_PATH, SIMPLE_APP_NAME, TIMEOUT_IN_MINUTES, SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, true, null);
+		// Dana (cloudadmin and appmanager) installs application simple with specific auth-group: "Bezeq"
+		installApplicationAndWait(SIMPLE_APP_PATH, SIMPLE_APP_NAME, TIMEOUT_IN_MINUTES, SecurityConstants.USER_PWD_CLOUD_ADMIN_AND_APP_MANAGER, SecurityConstants.USER_PWD_CLOUD_ADMIN_AND_APP_MANAGER, false, SecurityConstants.BEZEQ_GROUP);
 		
+		// Don (appmanger and viewer) uninstalls the service. Expected to fail because Don is not a member of group "Bezeq"
+		output = uninstallApplicationAndWait(SIMPLE_APP_PATH, SIMPLE_APP_NAME, TIMEOUT_IN_MINUTES, SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, true, null);
 		AbstractTestSupport.assertTrue("unseen application uninstall succeeded", output.contains(SecurityConstants.RESOURCE_NOT_FOUND));
 	}
 	
 	
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT, enabled = true)
 	public void installAndUninstallServiceWithDifferentGroup() throws Exception {
-		
 		String output = "no output";
 		
-		installServiceAndWait(SIMPLE_SERVICE_PATH, SIMPLE_SERVICE_NAME, TIMEOUT_IN_MINUTES, SecurityConstants.USER_PWD_CLOUD_ADMIN_AND_APP_MANAGER, SecurityConstants.USER_PWD_CLOUD_ADMIN_AND_APP_MANAGER, false, SecurityConstants.CLOUDADMINS_GROUP);
-		output = uninstallServiceAndWait(SIMPLE_SERVICE_PATH, SIMPLE_SERVICE_NAME, TIMEOUT_IN_MINUTES, SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, true, null);
+		// Dana (cloudadmin and appmanager) installs service simple with specific auth-group: "Bezeq"
+		installServiceAndWait(SIMPLE_SERVICE_PATH, SIMPLE_SERVICE_NAME, TIMEOUT_IN_MINUTES, SecurityConstants.USER_PWD_CLOUD_ADMIN_AND_APP_MANAGER, SecurityConstants.USER_PWD_CLOUD_ADMIN_AND_APP_MANAGER, false, SecurityConstants.BEZEQ_GROUP);
 		
+		// Don (appmanger and viewer) uninstalls the application. Expected to fail because Don is not a member of group "Bezeq"
+		output = uninstallServiceAndWait(SIMPLE_SERVICE_PATH, SIMPLE_SERVICE_NAME, TIMEOUT_IN_MINUTES, SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, SecurityConstants.USER_PWD_APP_MANAGER_AND_VIEWER, true, null);
 		AbstractTestSupport.assertTrue("unseen service uninstall succeeded", output.contains(SecurityConstants.MISSING_RESOURCE));
 	}
 	
@@ -172,7 +223,6 @@ public class LocalCloudSecurityTest extends AbstractSecuredLocalCloudTest {
 		super.testLogin();			
 	}
 
-
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT, enabled = true)
 	public void connectWithNonexistentUserTest() throws IOException, InterruptedException {
 		super.testConnectWithNonExistingUser();			
@@ -191,7 +241,7 @@ public class LocalCloudSecurityTest extends AbstractSecuredLocalCloudTest {
 
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT, enabled = true)
 	public void connectWithWrongPassword() throws IOException, InterruptedException {
-		super.testConnectWithWrongPassword();			
+		super.testConnectWithWrongPassword();
 
 	}
 

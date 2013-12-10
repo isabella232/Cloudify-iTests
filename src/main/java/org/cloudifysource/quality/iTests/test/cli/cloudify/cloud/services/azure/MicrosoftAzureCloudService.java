@@ -135,7 +135,7 @@ public class MicrosoftAzureCloudService extends AbstractCloudService {
             LogUtils.log("Actual storage account name to be used is " + storageAccountName);
         }
 		propsToReplace.put("ENTER_STORAGE_ACCOUNT", storageAccountName);
-		IOUtils.replaceTextInFile(getPathToCloudGroovy(), propsToReplace);	
+		IOUtils.replaceTextInFile(getPathToCloudGroovy(), propsToReplace);
 	}
 
 	@Override

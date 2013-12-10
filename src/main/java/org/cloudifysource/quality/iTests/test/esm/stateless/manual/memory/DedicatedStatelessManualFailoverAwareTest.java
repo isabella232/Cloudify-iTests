@@ -17,7 +17,6 @@ import org.cloudifysource.quality.iTests.test.cli.cloudify.util.CloudTestUtils;
 import org.cloudifysource.quality.iTests.test.esm.AbstractFromXenToByonGSMTest;
 import org.openspaces.admin.esm.ElasticServiceManager;
 import org.openspaces.admin.gsa.GridServiceAgent;
-import org.openspaces.admin.internal.esm.InternalElasticServiceManager;
 import org.openspaces.admin.pu.ProcessingUnit;
 import org.openspaces.admin.pu.elastic.ElasticStatelessProcessingUnitDeployment;
 import org.openspaces.admin.pu.elastic.config.ManualCapacityScaleConfigurer;
@@ -85,24 +84,12 @@ public class DedicatedStatelessManualFailoverAwareTest extends AbstractFromXenTo
     public void testFailedMachineDetailsAfterEsmRestart() throws Exception {
         deployPu();
         restartEsmAndWait();
-        waitForElasticServiceManagerToEnforceScale(); //TODO: [itaif] Remove this line. Need to make sure that Space recovery is atomic with state recovery in ESM
+        //TODO: [itaif] Remove the wait/sleep lines after fixing the bug. 
+        //To fix the bug need to make sure that Space MachinesSlaEnforcementState#fromMachinesState() happens after
+        //See DMSEE#validateAllProcessingUnitsRecoveredStateOnEsmStart()
+        Thread.sleep(20000);
         machineFailover(getAgent(pu));
         assertUndeployAndWait(pu);
-    }
-
-    private void waitForElasticServiceManagerToEnforceScale() {
-        AssertUtils.repetitiveAssertConditionHolds("Expected for new ESM to enforce the pu sla", new RepetitiveConditionProvider() {
-
-            @Override
-            public boolean getCondition() {
-                final ElasticServiceManager[] esms = admin.getElasticServiceManagers().getManagers();
-                if (esms.length != 1) {
-                    LogUtils.log("Exepcted exactly 1 esm. Discovered " + esms.length);
-                    return false;
-                }
-                return ((InternalElasticServiceManager) esms[0]).isManagingProcessingUnitAndScaleNotInProgressNoCache(pu);
-            }
-        }, OPERATION_TIMEOUT);
     }
 
     /**

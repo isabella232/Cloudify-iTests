@@ -34,7 +34,7 @@ public class LocalCloudSecurityTest extends AbstractSecuredLocalCloudTest {
 		output = uninstallApplicationAndWait(SIMPLE_APP_PATH, SIMPLE_APP_NAME, TIMEOUT_IN_MINUTES, SecurityConstants.USER_PWD_APP_MANAGER, SecurityConstants.USER_PWD_APP_MANAGER, true, null);
 		AbstractTestSupport.assertTrue("Application \"" + SIMPLE_APP_NAME + "\" was wrongfully visible to and uninstalled by " + SecurityConstants.APP_MANAGER_DESCRIPTIN, output.contains(SecurityConstants.RESOURCE_NOT_FOUND));
 		
-		// attempting to uninstall the service as Amanda, which has the "cloudadmin" role, and is in group "Cellcom". Should succeed.
+		// attempting to uninstall the application as Amanda, which has the "cloudadmin" role, and is in group "Cellcom". Should succeed.
 		uninstallApplicationAndWait(SIMPLE_APP_PATH, SIMPLE_APP_NAME, TIMEOUT_IN_MINUTES, SecurityConstants.USER_PWD_CLOUD_ADMIN, SecurityConstants.USER_PWD_CLOUD_ADMIN, false, null);
 	}
 	

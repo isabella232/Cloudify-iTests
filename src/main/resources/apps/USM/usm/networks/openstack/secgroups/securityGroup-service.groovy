@@ -22,6 +22,7 @@ service {
     }
 
     network {
+        template "APPLICATION_NET"
         accessRules {
             incoming = ([
                 accessRule {

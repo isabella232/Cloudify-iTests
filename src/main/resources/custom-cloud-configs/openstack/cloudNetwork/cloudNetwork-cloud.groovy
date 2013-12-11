@@ -54,8 +54,6 @@ cloud {
                 keyFile keyFile
                 username "ubuntu"
                 options ([
-                    _COMPUTE_SERVICE_NAME_,
-                    _NETWORK_SERVICE_NAME_,
                     _SKIP_EXTERNAL_NETWORKING_,
                     "keyPairName" : keyPair
                 ])

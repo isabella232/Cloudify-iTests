@@ -12,17 +12,16 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.lang3.StringUtils;
 import org.cloudifysource.domain.Service;
 import org.cloudifysource.domain.cloud.Cloud;
 import org.cloudifysource.dsl.internal.ServiceReader;
 import org.cloudifysource.dsl.internal.packaging.PackagingException;
 import org.cloudifysource.esc.driver.provisioning.ComputeDriverConfiguration;
 import org.cloudifysource.esc.driver.provisioning.MachineDetails;
-import org.cloudifysource.esc.driver.provisioning.openstack.GroupNamesPrefixing;
 import org.cloudifysource.esc.driver.provisioning.openstack.OpenStackCloudifyDriver;
 import org.cloudifysource.esc.driver.provisioning.openstack.OpenStackComputeClient;
 import org.cloudifysource.esc.driver.provisioning.openstack.OpenStackNetworkClient;
+import org.cloudifysource.esc.driver.provisioning.openstack.OpenStackResourcePrefixes;
 import org.cloudifysource.esc.driver.provisioning.openstack.OpenstackException;
 import org.cloudifysource.esc.driver.provisioning.openstack.OpenstackJsonSerializationException;
 import org.cloudifysource.esc.driver.provisioning.openstack.rest.FloatingIp;
@@ -44,6 +43,11 @@ import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.openst
  */
 public class OpenstackCloudifyDriverLauncher {
 
+    static final String TEMPLATE_APPLICATION_NET = "APPLICATION_NET";
+    static final String TEMPLATE_APPLICATION_NET2 = "APPLICATION_NET2";
+    static final String COMPUTE_SOME_INTERNAL_NETWORK_1 = "SOME_INTERNAL_NETWORK_1";
+    static final String COMPUTE_SOME_INTERNAL_NETWORK_2 = "SOME_INTERNAL_NETWORK_2";
+
     static final String DEFAULT_TEMPLATE = "LINUX";
     static final String DEFAULT_APPLICATION_NAME = "default";
 
@@ -56,9 +60,41 @@ public class OpenstackCloudifyDriverLauncher {
     private OpenStackComputeClient computeApi;
     private OpenStackNetworkClient networkApi;
 
-    private String computeServiceName;
-    private String networkServiceName;
     private Boolean skipExternalNetworking;
+
+    /**
+     * Create supposing existing networks.
+     */
+    public void createExpectedExistingNetworks() throws OpenstackException {
+        createExistingNetwork(COMPUTE_SOME_INTERNAL_NETWORK_1, 1, 1); // 151.0.0.0/24
+        createExistingNetwork(COMPUTE_SOME_INTERNAL_NETWORK_2, 2, 2); // 152.0.0.0/24 and 152.1.0.0/24
+    }
+
+    private void createExistingNetwork(String networkName, int networkIndex, int nbSubnet) throws OpenstackException {
+        Network network = new Network();
+        network.setName(networkName);
+        String networkId = networkApi.createNetworkIfNotExists(network).getId();
+
+        for (int i = 0; i < nbSubnet; i++) {
+            Subnet requestSubnet = new Subnet();
+            requestSubnet.setName(networkName + "_subnet_" + i);
+            requestSubnet.setCidr("15" + networkIndex + "." + i + ".0.0/24");
+            requestSubnet.setIpVersion("4");
+            requestSubnet.setNetworkId(networkId);
+            networkApi.createSubnet(requestSubnet);
+        }
+
+    }
+
+    /**
+     * Clean supposing existing networks
+     */
+    public void cleanExpectedExistingNetworks() throws OpenstackException {
+        String[] existingNetworkNames = { COMPUTE_SOME_INTERNAL_NETWORK_1, COMPUTE_SOME_INTERNAL_NETWORK_2 };
+        for (String name : existingNetworkNames) {
+            networkApi.deleteNetworkByName(name);
+        }
+    }
 
     /**
      * Configure the cloud DSL.<br />
@@ -82,6 +118,7 @@ public class OpenstackCloudifyDriverLauncher {
         Cloud cloud = ServiceReader.readCloudFromDirectory(service.getPathToCloudFolder());
         this.computeApi = this.createComputeClient(service);
         this.networkApi = this.createNetworkClient(service);
+        this.cleanExpectedExistingNetworks();
         this.cleanOpenstackResources();
         return cloud;
     }
@@ -107,24 +144,6 @@ public class OpenstackCloudifyDriverLauncher {
     }
 
     private void addOverrideProps(final OpenstackService service) {
-        if (this.computeServiceName != null) {
-            String oldValue = "_COMPUTE_SERVICE_NAME_,";
-            String newValue = "\"computeServiceName\" : \"" + this.computeServiceName + "\",";
-            service.getAdditionalPropsToReplace().put(oldValue, newValue);
-        } else {
-            String oldValue = "_COMPUTE_SERVICE_NAME_,";
-            service.getAdditionalPropsToReplace().put(oldValue, "");
-        }
-
-        if (this.networkServiceName != null) {
-            String oldValue = "_NETWORK_SERVICE_NAME_,";
-            String newValue = "\"networkServiceName\" : \"" + this.networkServiceName + "\",";
-            service.getAdditionalPropsToReplace().put(oldValue, newValue);
-        } else {
-            String oldValue = "_NETWORK_SERVICE_NAME_,";
-            service.getAdditionalPropsToReplace().put(oldValue, "");
-        }
-
         if (this.skipExternalNetworking != null) {
             String oldValue = "_SKIP_EXTERNAL_NETWORKING_,";
             String newValue = "\"skipExternalNetworking\" : \"" + this.skipExternalNetworking + "\",";
@@ -138,24 +157,18 @@ public class OpenstackCloudifyDriverLauncher {
     private OpenStackNetworkClient createNetworkClient(final OpenstackService service) throws OpenstackJsonSerializationException {
         final String imageId = service.getCloudProperty(OpenstackService.IMAGE_PROP);
         final String region = imageId.split("/")[0];
-        String networkServiceName = service.getCloudProperty(OpenstackService.NETWORK_SERVICE_PROP);
-        networkServiceName = StringUtils.isEmpty(networkServiceName) ? null : networkServiceName;
         OpenStackNetworkClient networkApi = new OpenStackNetworkClient(
                 service.getCloudProperty(OpenstackService.ENDPOINT_PROP),
                 service.getCloudProperty(OpenstackService.USER_PROP),
                 service.getCloudProperty(OpenstackService.API_KEY_PROP),
                 service.getCloudProperty(OpenstackService.TENANT_PROP),
-                region,
-                networkServiceName);
+                region);
         return networkApi;
     }
 
     private OpenStackComputeClient createComputeClient(final OpenstackService service) throws OpenstackJsonSerializationException {
         final String imageId = service.getCloudProperty(OpenstackService.IMAGE_PROP);
         final String region = imageId.split("/")[0];
-
-        String computeServiceName = service.getCloudProperty(OpenstackService.COMPUTE_SERVICE_PROP);
-        computeServiceName = StringUtils.isEmpty(computeServiceName) ? null : computeServiceName;
         OpenStackComputeClient computeApi = new OpenStackComputeClient(
                 service.getCloudProperty(OpenstackService.ENDPOINT_PROP),
                 service.getCloudProperty(OpenstackService.USER_PROP),
@@ -281,7 +294,7 @@ public class OpenstackCloudifyDriverLauncher {
             names.add(secgroup.getName());
         }
 
-        GroupNamesPrefixing secgroupnames = new GroupNamesPrefixing(cloud.getProvider().getManagementGroup(), null, null);
+        OpenStackResourcePrefixes secgroupnames = new OpenStackResourcePrefixes(cloud.getProvider().getManagementGroup(), null, null);
         AssertUtils.assertTrue("Management security group not found. Got: " + names, names.contains(secgroupnames.getManagementName()));
         AssertUtils.assertTrue("Agent security group not found. Got: " + names, names.contains(secgroupnames.getAgentName()));
         AssertUtils.assertTrue("Cluster security group not found. Got: " + names, names.contains(secgroupnames.getClusterName()));
@@ -297,7 +310,7 @@ public class OpenstackCloudifyDriverLauncher {
 
     private void assertManagementAttachedSecurityGroups(MachineDetails[] mds, String managementGroup) throws OpenstackException {
 
-        GroupNamesPrefixing secgroupnames = new GroupNamesPrefixing(managementGroup, null, null);
+        OpenStackResourcePrefixes secgroupnames = new OpenStackResourcePrefixes(managementGroup, null, null);
         SecurityGroup mngSecgroup = networkApi.getSecurityGroupsByName(secgroupnames.getManagementName());
         SecurityGroup clusterSecgroup = networkApi.getSecurityGroupsByName(secgroupnames.getClusterName());
 
@@ -398,7 +411,7 @@ public class OpenstackCloudifyDriverLauncher {
             names.add(secgroup.getName());
         }
 
-        GroupNamesPrefixing secgroupnames = new GroupNamesPrefixing(cloud.getProvider().getManagementGroup(), DEFAULT_APPLICATION_NAME, serviceName);
+        OpenStackResourcePrefixes secgroupnames = new OpenStackResourcePrefixes(cloud.getProvider().getManagementGroup(), DEFAULT_APPLICATION_NAME, serviceName);
         AssertUtils.assertTrue("Agent security group not found. Got: " + names, names.contains(secgroupnames.getAgentName()));
         AssertUtils.assertTrue("Cluster security group not found. Got: " + names, names.contains(secgroupnames.getClusterName()));
         AssertUtils.assertTrue("Application security group not found. Got: " + names, names.contains(secgroupnames.getApplicationName()));
@@ -416,7 +429,7 @@ public class OpenstackCloudifyDriverLauncher {
 
     private void assertAgentAttachedSecurityGroups(MachineDetails md, String managementGroup, String serviceName) throws OpenstackException {
 
-        GroupNamesPrefixing secgroupnames = new GroupNamesPrefixing(managementGroup, DEFAULT_APPLICATION_NAME, serviceName);
+        OpenStackResourcePrefixes secgroupnames = new OpenStackResourcePrefixes(managementGroup, DEFAULT_APPLICATION_NAME, serviceName);
         SecurityGroup agentSecgroup = networkApi.getSecurityGroupsByName(secgroupnames.getAgentName());
         SecurityGroup clusterSecgroup = networkApi.getSecurityGroupsByName(secgroupnames.getClusterName());
         SecurityGroup appliSecgroup = networkApi.getSecurityGroupsByName(secgroupnames.getApplicationName());
@@ -456,9 +469,11 @@ public class OpenstackCloudifyDriverLauncher {
     public void stopMachine(Service service, Cloud cloud, String serverIp, String template) throws Exception {
         final ComputeDriverConfiguration configuration = new ComputeDriverConfiguration();
         configuration.setCloud(cloud);
-        configuration.setCloudTemplate(template);
         configuration.setManagement(false);
         configuration.setNetwork(service.getNetwork());
+        String serviceCloudTemplate = service.getCompute() == null || service.getCompute().getTemplate().isEmpty() ? DEFAULT_TEMPLATE : service.getCompute()
+                .getTemplate();
+        configuration.setCloudTemplate(serviceCloudTemplate);
         configuration.setServiceName(DEFAULT_APPLICATION_NAME + "." + service.getName());
 
         OpenStackCloudifyDriver driver = new OpenStackCloudifyDriver();
@@ -642,14 +657,6 @@ public class OpenstackCloudifyDriverLauncher {
 
     public OpenStackNetworkClient getNetworkApi() {
         return networkApi;
-    }
-
-    public void setComputeServiceName(String computeServiceName) {
-        this.computeServiceName = computeServiceName;
-    }
-
-    public void setNetworkServiceName(String networkServiceName) {
-        this.networkServiceName = networkServiceName;
     }
 
     public void setSkipExternalNetworking(Boolean skipExternalNetworking) {

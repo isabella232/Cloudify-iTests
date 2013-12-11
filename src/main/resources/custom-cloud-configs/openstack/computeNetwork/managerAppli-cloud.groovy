@@ -38,8 +38,6 @@ cloud {
                 fileTransfer org.cloudifysource.domain.cloud.FileTransferModes.SCP
                 username "ubuntu"
                 options ([
-                    _COMPUTE_SERVICE_NAME_,
-                    _NETWORK_SERVICE_NAME_,
                     _SKIP_EXTERNAL_NETWORKING_,
                     "keyPairName" : keyPair
                 ])
@@ -60,8 +58,6 @@ cloud {
                 fileTransfer org.cloudifysource.domain.cloud.FileTransferModes.SCP
                 username "ubuntu"
                 options ([
-                    _COMPUTE_SERVICE_NAME_,
-                    _NETWORK_SERVICE_NAME_,
                     _SKIP_EXTERNAL_NETWORKING_,
                     "keyPairName" : keyPair
                 ])

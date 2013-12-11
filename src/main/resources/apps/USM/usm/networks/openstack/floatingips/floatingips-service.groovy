@@ -32,6 +32,7 @@ service {
                 return floatingIp
             } catch(e) {
                 println "couldn't assign floating ip, release ${floatingIp} from the pool."
+                e.printStackTrace()
                 network.releaseFloatingIP(floatingIp, null)
                 return context.attributes.thisInstance["floatingIp"]
             }

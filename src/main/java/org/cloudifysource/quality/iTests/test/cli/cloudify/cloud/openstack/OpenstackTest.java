@@ -8,7 +8,6 @@ import java.util.regex.Pattern;
 
 import junit.framework.Assert;
 
-import org.apache.commons.lang3.StringUtils;
 import org.cloudifysource.domain.Service;
 import org.cloudifysource.dsl.internal.ServiceReader;
 import org.cloudifysource.dsl.utils.ServiceUtils;
@@ -46,6 +45,12 @@ public class OpenstackTest extends NewAbstractCloudTest {
         service = new OpenstackService();
         service.setMachinePrefix("itest-");
         super.bootstrap(service, null);
+    }
+
+    @Override
+    @AfterClass(alwaysRun = true)
+    protected void teardown() throws Exception {
+        super.teardown();
     }
 
     @Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
@@ -163,7 +168,7 @@ public class OpenstackTest extends NewAbstractCloudTest {
         sleep(10000L);
         assertTrue("Port on " + newFloatingIp + ":22 should be occupied ", ServiceUtils.isPortOccupied(newFloatingIp, 22));
 
-        // Assert application nic existance
+        // Assert application NIC existence
         output = this.invoke(serviceName, "getApplicationNetworkIp");
         compile = Pattern.compile(".*Result: " + IP_REGEX);
         matcher = compile.matcher(output);
@@ -182,15 +187,12 @@ public class OpenstackTest extends NewAbstractCloudTest {
     private OpenStackNetworkClient createQuantumClient() throws OpenstackJsonSerializationException {
         final String imageId = this.getCloudProperty(OpenstackService.IMAGE_PROP);
         final String region = imageId.split("/")[0];
-        String networkServiceName = this.getCloudProperty(OpenstackService.NETWORK_SERVICE_PROP);
-        networkServiceName = StringUtils.isEmpty(networkServiceName) ? null : networkServiceName;
         final OpenStackNetworkClient client = new OpenStackNetworkClient(
                 this.getCloudProperty(OpenstackService.ENDPOINT_PROP),
                 this.getCloudProperty(OpenstackService.USER_PROP),
                 this.getCloudProperty(OpenstackService.API_KEY_PROP),
                 this.getCloudProperty(OpenstackService.TENANT_PROP),
-                region,
-                networkServiceName);
+                region);
         return client;
     }
 
@@ -198,9 +200,4 @@ public class OpenstackTest extends NewAbstractCloudTest {
         return service.getCloudProperty(key);
     }
 
-    @Override
-    @AfterClass(alwaysRun = true)
-    protected void teardown() throws Exception {
-        super.teardown();
-    }
 }

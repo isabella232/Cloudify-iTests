@@ -16,6 +16,7 @@ package org.cloudifysource.quality.iTests.test.cli.cloudify.util;
 import com.j_spaces.kernel.PlatformVersion;
 import iTests.framework.utils.AssertUtils;
 import iTests.framework.utils.LogUtils;
+import iTests.framework.utils.ScriptUtils;
 import junit.framework.Assert;
 import org.apache.commons.io.FileUtils;
 import org.apache.http.HttpResponse;
@@ -32,6 +33,7 @@ import org.cloudifysource.dsl.internal.packaging.Packager;
 import org.cloudifysource.dsl.internal.packaging.PackagingException;
 import org.cloudifysource.dsl.rest.request.InstallApplicationRequest;
 import org.cloudifysource.dsl.rest.request.InstallServiceRequest;
+import org.cloudifysource.dsl.rest.request.SetServiceInstancesRequest;
 import org.cloudifysource.dsl.rest.response.ApplicationDescription;
 import org.cloudifysource.dsl.rest.response.ControllerDetails;
 import org.cloudifysource.dsl.rest.response.DeploymentEvent;
@@ -187,6 +189,23 @@ public final class NewRestTestUtils {
                 expectedFailureMsg);
 	}
 
+	public static InstallServiceResponse installServiceUsingNewRestAPI(            
+			final String restUrl,
+            final String applicationName,
+            final String serviceName) 
+            		throws DSLException, WrongMessageException, PackagingException, RestClientException, IOException {
+		String gigaDir = ScriptUtils.getBuildPath();	
+		String serviceFolderPath = gigaDir + "/recipes/services/" + serviceName;
+		File serviceFolder = new File(serviceFolderPath);
+		if (!serviceFolder.exists()) {
+			throw new IllegalArgumentException("service folder " + serviceFolder + " does not exist.");
+		} 
+		if (!serviceFolder.isDirectory()) {
+			throw new IllegalArgumentException("service folder " + serviceFolder + " is not a folder.");
+		}
+		return installServiceUsingNewRestAPI(restUrl, serviceFolder, applicationName, serviceName, null);
+	}
+	
 	public static InstallServiceResponse installServiceUsingNewRestAPI(
             final String restUrl,
             final File serviceFolder,
@@ -277,6 +296,7 @@ public final class NewRestTestUtils {
 		try {
 			response = restClient.getPUDumpFile(fileSizeLimit);
 			if (errMessageContain != null) {
+				LogUtils.log("RestClientException expected [" + errMessageContain + "]");
 				throw new WrongMessageException("", errMessageContain);
 			}
 			// write the result data to a temporary file.
@@ -398,6 +418,29 @@ public final class NewRestTestUtils {
 					throw new WrongMessageException(message, errMessageContain);
 				}
 				return null;
+			}
+		}
+	}
+
+	public static void setServiceInstances(final String restUrl, final SetServiceInstancesRequest request, 
+			final String applicationName, final String serviceName, final String errMessageContain) 
+			throws MalformedURLException, RestClientException, WrongMessageException {
+		RestClient restClient = createAndConnect(restUrl);
+		try {
+			restClient.setServiceInstances(applicationName, serviceName, request);
+			if (errMessageContain != null) {
+				LogUtils.log("RestClientException expected [" + errMessageContain + "]");
+				throw new WrongMessageException("", errMessageContain);
+			}
+			waitForInstances(restClient, request.getCount(), serviceName, applicationName);
+		} catch (RestClientException e) {
+			String message = e.getMessageFormattedText();
+			if (errMessageContain == null) {
+				throw e;
+			} else {
+				if  (!message.contains(errMessageContain)) {
+					throw new WrongMessageException(message, errMessageContain);
+				}
 			}
 		}
 	}
@@ -554,6 +597,25 @@ public final class NewRestTestUtils {
                 }, AbstractTestSupport.OPERATION_TIMEOUT * 3);
 	}
 
+	private static void waitForInstances(final RestClient restClient, final int count, final String serviceName, final String appName) {
+		LogUtils.log("Waiting for service instances count to be " + count);
+		AssertUtils.repetitiveAssertTrue(serviceName + " service failed to deploy",
+				new AssertUtils.RepetitiveConditionProvider() {
+					@Override
+					public boolean getCondition() {
+						try {
+							final ServiceDescription serviceDescription =
+									restClient.getServiceDescription(appName, serviceName);
+							return count == serviceDescription.getInstanceCount();
+						} catch (final RestClientException e) {
+							LogUtils.log("Failed getting service description " + serviceName
+									+ ". error message: " + e.getMessageFormattedText());
+						}
+						return false;
+					}
+				}, AbstractTestSupport.OPERATION_TIMEOUT * 3);
+	}
+	
 	public static RestClient createAndConnect(final String restUrl, final String username, final String password)
             throws RestClientException, MalformedURLException {
 		RestClient restClient = create(restUrl, username, password);

@@ -31,7 +31,7 @@ public class TenantSharedProvisioningTest extends AbstractSharedProvisioningByon
 	protected void bootstrap() throws Exception {
 		
 		CloudBootstrapper bootstrapper = new CloudBootstrapper();
-		bootstrapper.user(SecurityConstants.USER_PWD_CLOUD_ADMIN_AND_APP_MANAGER).password(SecurityConstants.USER_PWD_CLOUD_ADMIN_AND_APP_MANAGER).secured(true)
+		bootstrapper.user(SecurityConstants.USER_PWD_CLOUD_ADMIN).password(SecurityConstants.USER_PWD_CLOUD_ADMIN).secured(true)
 			.securityFilePath(SecurityConstants.BUILD_SECURITY_FILE_PATH)
 			.keystoreFilePath(SecurityConstants.DEFAULT_KEYSTORE_FILE_PATH)
 			.keystorePassword(SecurityConstants.DEFAULT_KEYSTORE_PASSWORD);
@@ -44,8 +44,8 @@ public class TenantSharedProvisioningTest extends AbstractSharedProvisioningByon
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, enabled = true)
 	public void testTwoTenant() throws Exception {
 
-		super.installManualTenantSharedProvisioningApplicationAndWait("ROLE_CLOUDADMINS", APPLICATION_ONE);
-		super.installManualTenantSharedProvisioningApplicationAndWait("ROLE_APPMANAGERS", APPLICATION_TWO);
+		super.installManualTenantSharedProvisioningApplicationAndWait(SecurityConstants.BEZEQ_GROUP, APPLICATION_ONE);
+		super.installManualTenantSharedProvisioningApplicationAndWait(SecurityConstants.CELLCOM_GROUP, APPLICATION_TWO);
 		
 		Set<Machine> applicationOneMachines = ProcessingUnitUtils.getMachinesOfApplication(admin, APPLICATION_ONE);
 		Set<Machine> applicationTwoMachines = ProcessingUnitUtils.getMachinesOfApplication(admin, APPLICATION_TWO);
@@ -55,12 +55,12 @@ public class TenantSharedProvisioningTest extends AbstractSharedProvisioningByon
 				!applicationOneMachines.removeAll(applicationTwoMachines));
 		
 		ApplicationInstaller applicationOneInstaller = new ApplicationInstaller(getRestUrl(), APPLICATION_ONE);
-		applicationOneInstaller.cloudifyPassword("Dana").cloudifyUsername("Dana");
+		applicationOneInstaller.cloudifyPassword(SecurityConstants.USER_PWD_CLOUD_ADMIN).cloudifyUsername(SecurityConstants.USER_PWD_CLOUD_ADMIN);
 		applicationOneInstaller.recipePath(APPLICATION_ONE);
 		applicationOneInstaller.uninstall();
 		
 		ApplicationInstaller applicationTwoInstaller = new ApplicationInstaller(getRestUrl(), APPLICATION_TWO);
-		applicationTwoInstaller.cloudifyPassword("Dana").cloudifyUsername("Dana");
+		applicationTwoInstaller.cloudifyPassword(SecurityConstants.USER_PWD_CLOUD_ADMIN).cloudifyUsername(SecurityConstants.USER_PWD_CLOUD_ADMIN);
 		applicationTwoInstaller.recipePath(APPLICATION_TWO);
 		applicationTwoInstaller.uninstall();
 
@@ -70,8 +70,8 @@ public class TenantSharedProvisioningTest extends AbstractSharedProvisioningByon
 	
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 2, enabled = true)
 	public void testTwoServicesOnOneTenant() throws Exception {
-		super.installManualTenantSharedProvisioningServiceAndWait("ROLE_CLOUDADMINS", SERVICE_ONE);
-		super.installManualTenantSharedProvisioningServiceAndWait("ROLE_CLOUDADMINS", SERVICE_TWO);
+		super.installManualTenantSharedProvisioningServiceAndWait(SecurityConstants.BEZEQ_GROUP, SERVICE_ONE);
+		super.installManualTenantSharedProvisioningServiceAndWait(SecurityConstants.BEZEQ_GROUP, SERVICE_TWO);
 		
 		Set<Machine> serviceOneMachines = ProcessingUnitUtils.getMachinesOfService(admin, ServiceUtils.getAbsolutePUName(CloudifyConstants.DEFAULT_APPLICATION_NAME, SERVICE_ONE));
 		Set<Machine> serviceTwoMachines = ProcessingUnitUtils.getMachinesOfService(admin, ServiceUtils.getAbsolutePUName(CloudifyConstants.DEFAULT_APPLICATION_NAME, SERVICE_TWO));
@@ -80,12 +80,12 @@ public class TenantSharedProvisioningTest extends AbstractSharedProvisioningByon
 				serviceOneMachines.equals(serviceTwoMachines));
 		
 		ServiceInstaller serviceOneInstaller = new ServiceInstaller(getRestUrl(), SERVICE_ONE);
-		serviceOneInstaller.cloudifyPassword("Dana").cloudifyUsername("Dana");
+		serviceOneInstaller.cloudifyPassword(SecurityConstants.USER_PWD_CLOUD_ADMIN).cloudifyUsername(SecurityConstants.USER_PWD_CLOUD_ADMIN);
 		serviceOneInstaller.recipePath(SERVICE_ONE);
 		serviceOneInstaller.uninstall();
 		
 		ServiceInstaller serviceTwoInstaller = new ServiceInstaller(getRestUrl(), SERVICE_TWO);
-		serviceTwoInstaller.cloudifyPassword("Dana").cloudifyUsername("Dana");
+		serviceTwoInstaller.cloudifyPassword(SecurityConstants.USER_PWD_CLOUD_ADMIN).cloudifyUsername(SecurityConstants.USER_PWD_CLOUD_ADMIN);
 		serviceTwoInstaller.recipePath(SERVICE_TWO);
 		serviceTwoInstaller.uninstall();
 	}

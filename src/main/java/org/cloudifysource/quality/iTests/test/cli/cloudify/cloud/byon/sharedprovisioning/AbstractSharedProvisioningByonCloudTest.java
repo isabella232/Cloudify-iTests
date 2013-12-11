@@ -9,6 +9,7 @@ import iTests.framework.utils.IOUtils;
 import org.cloudifysource.quality.iTests.framework.utils.ServiceInstaller;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.byon.AbstractByonCloudTest;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.security.SecurityConstants;
 
 public class AbstractSharedProvisioningByonCloudTest extends AbstractByonCloudTest {
 
@@ -62,8 +63,8 @@ public class AbstractSharedProvisioningByonCloudTest extends AbstractByonCloudTe
 			// install
 
 			ApplicationInstaller installer = new ApplicationInstaller(getRestUrl(), applicationName);
-			installer.cloudifyUsername("Dana");
-			installer.cloudifyPassword("Dana");
+			installer.cloudifyUsername(SecurityConstants.USER_PWD_CLOUD_ADMIN);
+			installer.cloudifyPassword(SecurityConstants.USER_PWD_CLOUD_ADMIN);
 			installer.waitForFinish(true);
 			installer.recipePath("groovy-tenant-shared-provisioning");
 			installer.authGroups(authGroup);
@@ -115,8 +116,8 @@ public class AbstractSharedProvisioningByonCloudTest extends AbstractByonCloudTe
 			// install
 			ServiceInstaller installer = new ServiceInstaller(getRestUrl(), serviceName);
 			installer.waitForFinish(true).recipePath("groovy-tenant-shared-provisioning");
-			installer.cloudifyPassword("Dana");
-			installer.cloudifyUsername("Dana");
+			installer.cloudifyPassword(SecurityConstants.USER_PWD_CLOUD_ADMIN);
+			installer.cloudifyUsername(SecurityConstants.USER_PWD_CLOUD_ADMIN);
 			installer.authGroups(authGroups);
 			installer.install();
 		} finally {

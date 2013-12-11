@@ -18,7 +18,7 @@ public class Ec2TeardownAfterInstallSecurityTest extends NewAbstractSecurityClou
 	
 	@AfterClass(alwaysRun = true)
 	public void teardown() throws Exception {
-		super.teardown();
+		getService().scanLeakedAgentAndManagementNodes();
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)

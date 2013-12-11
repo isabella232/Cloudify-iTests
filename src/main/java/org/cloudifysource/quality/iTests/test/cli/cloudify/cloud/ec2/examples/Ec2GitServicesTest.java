@@ -34,7 +34,7 @@ public class Ec2GitServicesTest extends AbstractServicesTest {
         testService("apache");
     }
 
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = false)
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
     public void testApacheLB() throws Exception {
         testService("apacheLB");
     }
@@ -44,9 +44,9 @@ public class Ec2GitServicesTest extends AbstractServicesTest {
     public void testBigInsights() throws Exception{
         testService("biginsights");
     }
-    
+
     //cant run on localcloud??
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = false)
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
     public void testCouchbase() throws Exception{
     	testService("couchbase");
     }
@@ -57,10 +57,10 @@ public class Ec2GitServicesTest extends AbstractServicesTest {
         testService("couchdb");
     }
 
-    
+
     //works
     @TestConfiguration(os = {TestConfiguration.VM.MAC, TestConfiguration.VM.UNIX} )
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = false)
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
     public void testElasticSearch() throws Exception{
         testService("elasticsearch");
     }
@@ -71,18 +71,18 @@ public class Ec2GitServicesTest extends AbstractServicesTest {
         testService("groovy-utils");
     }
     //should work
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = false)
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
     public void testJboss() throws Exception{
         testService("jboss", 20);
     }
 
     //works
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = false)
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
     public void testMysql() throws Exception{
         testService("mysql");
     }
 
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = false)
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
     public void testChefMysql() throws Exception{
         testService("chef-mysql");
     }
@@ -107,7 +107,7 @@ public class Ec2GitServicesTest extends AbstractServicesTest {
 
     //ubuntu only. works
     @TestConfiguration(os = TestConfiguration.VM.UNIX)
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = false)
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
     public void testPuppet() throws Exception{
         testService("puppet");
     }
@@ -125,7 +125,7 @@ public class Ec2GitServicesTest extends AbstractServicesTest {
     }
 
     //works
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = false)
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
     public void testSolr() throws Exception{
         testService("solr");
     }
@@ -135,16 +135,16 @@ public class Ec2GitServicesTest extends AbstractServicesTest {
     public void testStormNimbus() throws Exception{
         testService("storm/storm-nimbus");
     }
-    
+
     //should work. takes time to install.
     @Test(timeOut = DEFAULT_TEST_TIMEOUT * 3, enabled = false)
     public void testStormSupervisor() throws Exception{
         testService("storm/storm-supervisor");
     }
-    
+
     //linux only. works
     @TestConfiguration(os = {TestConfiguration.VM.MAC, TestConfiguration.VM.UNIX} )
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = false)
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
     public void testVertx() throws Exception{
         testService("vertx");
     }
@@ -158,16 +158,16 @@ public class Ec2GitServicesTest extends AbstractServicesTest {
 
     //linux only. works
     @TestConfiguration(os = {TestConfiguration.VM.MAC, TestConfiguration.VM.UNIX} )
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = false)
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
     public void testZookeeper() throws Exception{
         testService("zookeeper");
     }
-    
+
     @AfterClass(alwaysRun = true)
     protected void teardown() throws Exception {
         super.teardown();
     }
-    
+
     private void testService(String serviceName) throws Exception {
     	testService(localGitRepoPath + "/services/" + serviceName, null);
     }

@@ -26,7 +26,6 @@ public class OpenstackService extends AbstractCloudService {
     public static final String ENDPOINT_PROP = "openstackUrl";
     public static final String HARDWARE_PROP = "hardwareId";
     public static final String IMAGE_PROP = "imageId";
-    public static final String NETWORK_SERVICE_PROP = "networkServiceName";
 
     private final Properties properties = getCloudProperties(CREDENTIALS_PROPERTIES);
 
@@ -39,7 +38,6 @@ public class OpenstackService extends AbstractCloudService {
     private String endpoint = properties.getProperty("endpoint");
     private String hardwareId = properties.getProperty("hardwareId");
     private String imageId = properties.getProperty("imageId");
-    private String networkServiceName = properties.getProperty("networkServiceName");
 
     private boolean securityEnabled = false;
 
@@ -72,15 +70,12 @@ public class OpenstackService extends AbstractCloudService {
         getProperties().put(KEYPAIR_PROP, this.keyPair);
         getProperties().put(KEYFILE_PROP, sshKeyPemName);
         getProperties().put(ENDPOINT_PROP, this.endpoint);
-        if (networkServiceName != null) {
-            getProperties().put(NETWORK_SERVICE_PROP, this.networkServiceName);
-        }
 
         getProperties().put(HARDWARE_PROP, this.hardwareId);
         getProperties().put(IMAGE_PROP, this.imageId);
 
-        propsToReplace.put("cloudify-agent-", getMachinePrefix() + "test-agent");
-        propsToReplace.put("cloudify-manager-", getMachinePrefix() + "test-manager-");
+        propsToReplace.put("cloudify-agent-", getMachinePrefix() + "agent-");
+        propsToReplace.put("cloudify-manager-", getMachinePrefix() + "manager-");
         propsToReplace.put("numberOfManagementMachines 1", "numberOfManagementMachines " + getNumberOfManagementMachines());
         propsToReplace.put("javaUrl", "// javaUrl");
 
@@ -118,11 +113,13 @@ public class OpenstackService extends AbstractCloudService {
             return null;
         }
         String property = (String) props.getProperty(key);
-        if (property.startsWith("\"")) {
-            property = property.substring(1);
-        }
-        if (property.endsWith("\"")) {
-            property = property.substring(0, property.length() - 1);
+        if (property != null) {
+            if (property.startsWith("\"")) {
+                property = property.substring(1);
+            }
+            if (property.endsWith("\"")) {
+                property = property.substring(0, property.length() - 1);
+            }
         }
         return property;
     }

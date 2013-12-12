@@ -31,10 +31,7 @@ public class Ec2ChefServerExampleTest extends NewAbstractCloudTest {
     private static final String APP_NAME = "default";
     private static final String UPDATECOOKBOOKS_COMMAND = "updateCookbooks tar http://repository.cloudifysource.org/chef-cookbooks/mysql_cookbook_with_deps.tgz \"\"";
     private static final String LISTCOOKBOOKS_COMMAND = "listCookbooks";
-    private static final String CLEANUPCOOKBOOKS_COMMAND = "cleanupCookbooks";
-    private static final String CLEANUPNODE_COMMAND = "cleanupNode newNode";
-    private static final String KNIFE_COMMAND = "knife node create newNode";
-    private static final String EXPECTED_AFTER_UPDATECOOKBOOKS_COMMAND = null;
+    private static final String EXPECTED_RESULT_UPDATECOOKBOOKS_COMMAND = null;
     private static final String EXPECTED_LISTCOOKBOOKES_AFTER_UPDATECOOKBOOKS_COMMAND = "\n" +
             "apt            1.4.2\n" +
             "chef_handler   1.0.6\n" +
@@ -43,11 +40,16 @@ public class Ec2ChefServerExampleTest extends NewAbstractCloudTest {
             "ohai           1.1.8\n" +
             "openssl        1.0.0\n" +
             "windows        1.2.12\n";
-
-    private static final String EXPECTED_RESULT_FROM_CLEANUPCOOKBOOKS_COMMAND = "0";
-    private static final String EXPECTED_RESULT_FROM_CLEANUPNODE_COMMAND = "newNode cleaned up";
-    private static final String EXPECTED_RESULT_FROM_KNIFE_COMMAND = "<Fill this one later>";
-
+    private static final String CLEANUPCOOKBOOKS_COMMAND = "cleanupCookbooks";
+    private static final String EXPECTED_RESULT_CLEANUPCOOKBOOKS_COMMAND = "0";
+    private static final String CREATENODE_COMMAND = "createNode newNode";
+    private static final String EXPECTED_RESULT_CREATENODE_COMMAND = "\n" +
+            "Updated Node newNode!\n";
+    private static final String KNIFE_COMMAND = "knife node list";
+    private static final String EXPECTED_RESULT_KNIFE_COMMAND = "\n" +
+            "newNode\n";
+    private static final String CLEANUPNODE_COMMAND = "cleanupNode newNode";
+    private static final String EXPECTED_RESULT_CLEANUPNODE_COMMAND = "newNode cleaned up";
 
     @Override
     protected String getCloudName() {
@@ -59,13 +61,11 @@ public class Ec2ChefServerExampleTest extends NewAbstractCloudTest {
         return false;
     }
 
-
     @BeforeClass (alwaysRun = true)
     protected void bootstrap() throws Exception {
         super.bootstrap();
     }
 
-    @Override
     @AfterClass(alwaysRun = true)
     protected void teardown() throws Exception {
         super.teardown();
@@ -80,7 +80,7 @@ public class Ec2ChefServerExampleTest extends NewAbstractCloudTest {
 
         response = customCommand(UPDATECOOKBOOKS_COMMAND);
         result = getCustomCommandResult(response);
-        Assert.assertEquals(result, EXPECTED_AFTER_UPDATECOOKBOOKS_COMMAND);
+        Assert.assertEquals(result, EXPECTED_RESULT_UPDATECOOKBOOKS_COMMAND);
 
         response = customCommand(LISTCOOKBOOKS_COMMAND);
         result = getCustomCommandResult(response);
@@ -88,15 +88,19 @@ public class Ec2ChefServerExampleTest extends NewAbstractCloudTest {
 
         response = customCommand(CLEANUPCOOKBOOKS_COMMAND);
         result = getCustomCommandResult(response);
-        Assert.assertEquals(result, EXPECTED_RESULT_FROM_CLEANUPCOOKBOOKS_COMMAND);
+        Assert.assertEquals(result, EXPECTED_RESULT_CLEANUPCOOKBOOKS_COMMAND);
+
+        response = customCommand(CREATENODE_COMMAND);
+        result = getCustomCommandResult(response);
+        Assert.assertEquals(result, EXPECTED_RESULT_CREATENODE_COMMAND);
 
         response = customCommand(KNIFE_COMMAND);
         result = getCustomCommandResult(response);
-        Assert.assertEquals(result, EXPECTED_RESULT_FROM_KNIFE_COMMAND);
+        Assert.assertEquals(result, EXPECTED_RESULT_KNIFE_COMMAND);
 
         response = customCommand(CLEANUPNODE_COMMAND);
         result = getCustomCommandResult(response);
-        Assert.assertEquals(result, EXPECTED_RESULT_FROM_CLEANUPNODE_COMMAND);
+        Assert.assertEquals(result, EXPECTED_RESULT_CLEANUPNODE_COMMAND);
 
         uninstallAndVerify();
     }
@@ -112,7 +116,7 @@ public class Ec2ChefServerExampleTest extends NewAbstractCloudTest {
         List<String> params = new ArrayList<String>();
         if (commandArr.length > 1) {
             command = commandArr[0];
-            LogUtils.log("command: "+command);
+            LogUtils.log("Invoking command: "+command);
             for (int i=1 ; i<commandArr.length ; i++) {
                 params.add(commandArr[i]);
             }
@@ -130,8 +134,8 @@ public class Ec2ChefServerExampleTest extends NewAbstractCloudTest {
     }
 
     private void installAndVerify() throws Exception {
-            installServiceAndWait(ScriptUtils.getBuildRecipesServicesPath()+"/"+SERVICE_NAME,SERVICE_NAME, 25); // timeout in min
-            verifyApplicationInstallation(SERVICE_NAME);
+        installServiceAndWait(ScriptUtils.getBuildRecipesServicesPath()+"/"+SERVICE_NAME,SERVICE_NAME, 25); // timeout in min
+        verifyApplicationInstallation(SERVICE_NAME);
     }
 
     private void verifyApplicationInstallation(String appName) throws Exception {

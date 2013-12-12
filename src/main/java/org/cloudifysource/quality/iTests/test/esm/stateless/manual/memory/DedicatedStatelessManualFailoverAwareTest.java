@@ -84,10 +84,6 @@ public class DedicatedStatelessManualFailoverAwareTest extends AbstractFromXenTo
     public void testFailedMachineDetailsAfterEsmRestart() throws Exception {
         deployPu();
         restartEsmAndWait();
-        //TODO: [itaif] Remove the wait/sleep lines after fixing the bug. 
-        //To fix the bug need to make sure that Space MachinesSlaEnforcementState#fromMachinesState() happens after
-        //See DMSEE#validateAllProcessingUnitsRecoveredStateOnEsmStart()
-        Thread.sleep(20000);
         machineFailover(getAgent(pu));
         assertUndeployAndWait(pu);
     }

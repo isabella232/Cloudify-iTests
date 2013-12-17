@@ -15,6 +15,7 @@ service {
 	}
 
 	customCommands ([
-		"listRemoteFiles" : "list_remote_files.sh"
+		"listRemoteFiles" : "list_remote_files.sh",
+		"isLocalcloud" : {"isLocalcloud="+context.isLocalCloud()}
 	])
 }

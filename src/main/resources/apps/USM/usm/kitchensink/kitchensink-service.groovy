@@ -1,4 +1,5 @@
 import framework.utils.usm.StringWrapper
+import org.cloudifysource.domain.context.ServiceInstance
 import Helper
 
 // test for grab
@@ -67,7 +68,8 @@ service {
 				"cmd7" : {x -> "Single parameter test:parameter=" + x},
 				"cmd8" : "errorScript.groovy",
 				"cmd9" : { new AntBuilder().sequential { echo ("Hello World")}; return null },
-				"cmd10": "sysPropsTest.groovy"
+				"cmd10": "sysPropsTest.groovy",
+				"cmd11" : {"isLocalcloud="+context.isLocalCloud()}
 			])
 
 

@@ -55,6 +55,8 @@ public class ByonKitchenSinkTest extends AbstractByonCloudTest {
 		LogUtils.log("asserting key file not copied to agent machines.");
 		assertMachineKeyFileNotCopied();
 		
+		checkIsLocalcloudServiceContext();
+		
 	}
 	
     private void assertMachineKeyFileNotCopied() throws IOException, InterruptedException {
@@ -71,6 +73,13 @@ public class ByonKitchenSinkTest extends AbstractByonCloudTest {
     	LogUtils.log("command output was: " + output);
     	assertTrue("invocation failed", output.contains("invocation completed successfully."));
     	return output;
+	}
+	
+	private void checkIsLocalcloudServiceContext() throws IOException, InterruptedException {
+		final String invokeResult = CommandTestUtils.runCommandAndWait("connect "
+				+ this.getRestUrl()
+				+ "; invoke kitchensink-service isLocalcloud");
+		assertTrue("invocation output did not contain expected string 'isLocalcloud=true'. output:" + invokeResult , invokeResult.contains("isLocalcloud=false"));
 	}
 
 	protected String getServicePath(final String serviceName) {

@@ -33,7 +33,7 @@ import org.testng.annotations.Test;
 
 public class SetServiceInstancesIllegalCountTest extends AbstractLocalCloudTest {
 	private static final String APP_NAME = CloudifyConstants.DEFAULT_APPLICATION_NAME;
-	private static final String SERVICE_NAME = "tomcat";
+	private static final String SERVICE_NAME = "simple";
 	private static final int SET_INSTANCES_TIMEOUT = 1;
 	private static final int UNINSTALL_SERVICE_TIMEOUT = 5;
 	
@@ -65,7 +65,6 @@ public class SetServiceInstancesIllegalCountTest extends AbstractLocalCloudTest 
 			Assert.assertEquals("expected error message code to be - " + CloudifyErrorMessages.INVALID_INSTANCES_COUNT.getName() 
 					+ " but got - " + messageCode, CloudifyErrorMessages.INVALID_INSTANCES_COUNT.getName(), messageCode);
 		}
-		
 		NewRestTestUtils.uninstallServiceUsingNewRestClient(restUrl, SERVICE_NAME, installServiceResponse.getDeploymentID(), UNINSTALL_SERVICE_TIMEOUT);
 	}
 }

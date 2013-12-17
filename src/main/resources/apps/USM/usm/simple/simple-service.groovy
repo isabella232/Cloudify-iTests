@@ -1,6 +1,7 @@
 service {
 	name "simple"
 	type "UNDEFINED"
+	elastic true
 	
 	lifecycle {
 

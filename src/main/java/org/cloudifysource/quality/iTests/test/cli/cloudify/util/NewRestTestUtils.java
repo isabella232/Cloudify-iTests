@@ -13,11 +13,27 @@
  */
 package org.cloudifysource.quality.iTests.test.cli.cloudify.util;
 
-import com.j_spaces.kernel.PlatformVersion;
 import iTests.framework.utils.AssertUtils;
 import iTests.framework.utils.LogUtils;
-import iTests.framework.utils.ScriptUtils;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+
 import junit.framework.Assert;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -49,6 +65,7 @@ import org.cloudifysource.dsl.rest.response.UninstallApplicationResponse;
 import org.cloudifysource.dsl.rest.response.UninstallServiceResponse;
 import org.cloudifysource.dsl.utils.ServiceUtils;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.util.exceptions.FailedToCreateDumpException;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.util.exceptions.WrongMessageException;
 import org.cloudifysource.restclient.RestClient;
@@ -57,21 +74,7 @@ import org.cloudifysource.shell.ConditionLatch;
 import org.cloudifysource.shell.exceptions.CLIException;
 import org.codehaus.jackson.map.ObjectMapper;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+import com.j_spaces.kernel.PlatformVersion;
 
 /**
  * Utility class for methods that use the new rest implementation.
@@ -194,8 +197,7 @@ public final class NewRestTestUtils {
             final String applicationName,
             final String serviceName) 
             		throws DSLException, WrongMessageException, PackagingException, RestClientException, IOException {
-		String gigaDir = ScriptUtils.getBuildPath();	
-		String serviceFolderPath = gigaDir + "/recipes/services/" + serviceName;
+		String serviceFolderPath = CommandTestUtils.getPath("src/main/resources/apps/USM/usm/" + serviceName);
 		File serviceFolder = new File(serviceFolderPath);
 		if (!serviceFolder.exists()) {
 			throw new IllegalArgumentException("service folder " + serviceFolder + " does not exist.");

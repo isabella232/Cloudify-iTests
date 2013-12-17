@@ -121,6 +121,7 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 		ContinuousLogEntryMatcher matcher =
 				new ContinuousLogEntryMatcher(new AllLogEntryMatcher(), new AllLogEntryMatcher());
 
+		checkIsLocalcloudServiceContext();
 		// run tests
 		checkManagementComponentPidsAreEqual();
 
@@ -185,6 +186,13 @@ public class USMKitchenSinkTest extends AbstractLocalCloudTest {
 		assertTrue("Process port is still open! Process did not shut down as expected",
 				ServiceUtils.isPortFree(host, 7777));
 
+	}
+	
+	private void checkIsLocalcloudServiceContext() throws IOException, InterruptedException {
+		final String invokeResult = runCommand("connect "
+				+ restUrl
+				+ "; invoke kitchensink-service cmd11");
+		assertTrue("invocation output did not contain expected string 'isLocalcloud=true'. output:" + invokeResult , invokeResult.contains("isLocalcloud=true"));
 	}
 
 	private void verifyUninstallManagementFails() throws IOException, InterruptedException, RestClientException {

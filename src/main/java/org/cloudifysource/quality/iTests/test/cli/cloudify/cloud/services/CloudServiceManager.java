@@ -22,6 +22,7 @@ import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.byon.D
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.ec2.Ec2CloudService;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.ec2.Ec2WinCloudService;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.hp.HpCloudService;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.openstack.OpenstackService;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.rackspace.RackspaceCloudService;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.softlayer.SoftlayerCloudService;
 
@@ -63,6 +64,8 @@ public class CloudServiceManager {
             cloudService.setBootstrapper(bootstrapper);
 		} else if ("ec2".equalsIgnoreCase(cloudName)) {
 			cloudService = new Ec2CloudService();
+        } else if ("openstack".equalsIgnoreCase(cloudName)) {
+            cloudService = new OpenstackService();
 		} else if ("ec2-win".equalsIgnoreCase(cloudName)) {
 			cloudService = new Ec2WinCloudService();
 		} else if ("hp".equalsIgnoreCase(cloudName)) {

@@ -16,7 +16,7 @@ import org.cloudifysource.quality.iTests.test.cli.cloudify.security.SecurityCons
 
 public class OpenstackService extends AbstractCloudService {
 
-    private static final String CREDENTIALS_PROPERTIES = CREDENTIALS_FOLDER + "/cloud/openstack/openstack.properties";
+    private static final String CREDENTIALS_PROPERTIES = CREDENTIALS_FOLDER + "/cloud/openstack/openstack-cred.properties";
 
     public static final String USER_PROP = "user";
     public static final String TENANT_PROP = "tenant";
@@ -35,7 +35,7 @@ public class OpenstackService extends AbstractCloudService {
     private String tenant = properties.getProperty("tenant");
     private String apiKey = properties.getProperty("apiKey");
     private String keyPair = properties.getProperty("keyPair");
-    private String endpoint = properties.getProperty("endpoint");
+    private String endpoint = properties.getProperty("openstackUrl");
     private String hardwareId = properties.getProperty("hardwareId");
     private String imageId = properties.getProperty("imageId");
 
@@ -78,6 +78,8 @@ public class OpenstackService extends AbstractCloudService {
         propsToReplace.put("cloudify-manager-", getMachinePrefix() + "manager-");
         propsToReplace.put("numberOfManagementMachines 1", "numberOfManagementMachines " + getNumberOfManagementMachines());
         propsToReplace.put("javaUrl", "// javaUrl");
+        propsToReplace.put("// \"externalRouterName\" : \"router-ext\",", "\"externalRouterName\" : \"hpclouddev-router\",");
+
 
         String pathToCloudGroovy = getPathToCloudGroovy();
         IOUtils.replaceTextInFile(pathToCloudGroovy, propsToReplace);

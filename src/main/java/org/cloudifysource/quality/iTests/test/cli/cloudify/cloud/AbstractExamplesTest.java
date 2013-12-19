@@ -130,6 +130,10 @@ public abstract class AbstractExamplesTest extends NewAbstractCloudTest {
 		doTest(localGitAppsPath + "/jboss-mysql", null);
 	}
 
+    protected void testHttpSession(String localGitAppsPath) throws Exception {
+        doTest(localGitAppsPath + "/HttpSession", null);
+    }
+
 	protected void doTest(String applicationPath, String overrideApplicationName) throws Exception {
 		LogUtils.log("Reading Application from file : " + applicationPath);
 		Application application = ServiceReader.getApplicationFromFile(new File(applicationPath)).getApplication();

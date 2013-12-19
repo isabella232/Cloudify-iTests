@@ -114,6 +114,11 @@ public class Ec2GitApplicationsTest extends AbstractExamplesTest {
         super.testMysqlJboss(localGitRepoPath + "/apps");
     }
 
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
+    public void testHttpSession() throws Exception {
+        super.testHttpSession(localGitRepoPath + "/apps");
+    }
+
     @AfterClass(alwaysRun = true)
     protected void teardown() throws Exception {
         super.teardown();

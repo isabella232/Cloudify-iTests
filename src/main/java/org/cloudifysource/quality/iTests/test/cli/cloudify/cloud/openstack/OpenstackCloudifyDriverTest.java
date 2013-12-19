@@ -343,4 +343,32 @@ public class OpenstackCloudifyDriverTest extends AbstractTestSupport {
             launcher.cleanExpectedExistingNetworks();
         }
     }
+
+    @Test
+    public void testStartMachineWithOnlyManagementNetwork() throws Exception {
+        Cloud cloud = launcher.createCloud("/cloudNetwork/onlyManagementNetwork-cloud.groovy");
+        Service service = launcher.getService("secgroups/securityGroup-service.groovy");
+
+        // Remove networkTemplate
+        service.getNetwork().setTemplate(null);
+
+        MachineDetails md = launcher.startMachineWithManagement(service, cloud);
+        assertNotNull("Machine id is null", md.getMachineId());
+        assertNotNull("Private ip is null", md.getPrivateAddress());
+        assertTrue("Private ip is not from subnet 177.70.0.0/24. Got " + md.getPrivateAddress(), md.getPrivateAddress().startsWith("177.70.0."));
+        assertNotNull("Public ip is null", md.getPublicAddress());
+        launcher.assertFloatingIpBindToServer(md);
+
+        String prefix = cloud.getProvider().getManagementGroup();
+        OpenStackResourcePrefixes prefixes = new OpenStackResourcePrefixes(prefix, OpenstackCloudifyDriverLauncher.DEFAULT_APPLICATION_NAME, service.getName());
+        launcher.assertSecurityGroupIncomingRulesNumber(prefixes.getServiceName(), service.getNetwork().getAccessRules().getIncoming().size());
+
+        NetworkConfiguration networkConfiguration = cloud.getCloudNetwork().getManagement().getNetworkConfiguration();
+        launcher.assertNetworkExists(prefix + networkConfiguration.getName());
+        launcher.assertVMBoundToNetwork(md.getMachineId(), prefix + networkConfiguration.getName());
+        launcher.assertSubnetExists(prefix + networkConfiguration.getName(), networkConfiguration.getSubnets().get(0).getName());
+        launcher.assertSubnetSize(prefix + networkConfiguration.getName(), 1);
+
+        launcher.stopMachineWithManagement(service, cloud, md.getPrivateAddress());
+    }
 }

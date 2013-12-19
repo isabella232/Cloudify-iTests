@@ -78,7 +78,7 @@ public class ByonKitchenSinkTest extends AbstractByonCloudTest {
 	private void checkIsLocalcloudServiceContext() throws IOException, InterruptedException {
 		final String invokeResult = CommandTestUtils.runCommandAndWait("connect "
 				+ this.getRestUrl()
-				+ "; invoke kitchensink-service isLocalcloud");
+				+ "; invoke " + SERVICE_NAME + " isLocalcloud");
 		assertTrue("invocation output did not contain expected string 'isLocalcloud=true'. output:" + invokeResult , invokeResult.contains("isLocalcloud=false"));
 	}
 

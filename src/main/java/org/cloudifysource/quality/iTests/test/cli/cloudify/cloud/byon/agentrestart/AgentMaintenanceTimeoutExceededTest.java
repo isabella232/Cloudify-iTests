@@ -5,6 +5,7 @@ import iTests.framework.utils.LogUtils;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
+import org.cloudifysource.dsl.utils.ServiceUtils;
 import org.openspaces.admin.gsa.GridServiceAgent;
 import org.openspaces.admin.gsa.events.GridServiceAgentAddedEventListener;
 import org.openspaces.admin.gsa.events.GridServiceAgentLifecycleEventListener;
@@ -62,7 +63,7 @@ public class AgentMaintenanceTimeoutExceededTest extends AbstractAgentMaintenanc
 		admin.addEventListener(agentListener);
     	
 		// Shutdown agent. This machine should not start again.
-		gracefullyShutdownAgent(absolutePuName);
+		gracefullyShutdownAgent(ServiceUtils.getAbsolutePUName("default", SERVICE_NAME));
 		
     	LogUtils.log("Waiting for esm to recover from agent shutdown.");
     	// The recovery should be as normal meaning a new machine should be allocated.

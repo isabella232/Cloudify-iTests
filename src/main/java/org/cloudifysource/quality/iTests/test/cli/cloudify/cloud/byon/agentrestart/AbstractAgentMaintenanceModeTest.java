@@ -13,6 +13,7 @@ import org.cloudifysource.dsl.utils.IPUtils;
 import org.cloudifysource.dsl.utils.ServiceUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.byon.AbstractByonCloudTest;
+import org.openspaces.admin.gsa.GridServiceAgent;
 import org.openspaces.admin.pu.ProcessingUnit;
 
 /**
@@ -81,10 +82,12 @@ public class AbstractAgentMaintenanceModeTest extends AbstractByonCloudTest {
 				admin.getMachines().getSize() == numberOfMachines);
 	}
 	
-	protected void gracefullyShutdownAgent(final String puName) throws IOException, InterruptedException {
-    	final String connectCommand 		= "connect " + this.getRestUrl();
-    	final String shutdownCommand 	= connectCommand + ";invoke simpleRestartAgent shutdownAgent default.simpleRestartAgent";
-    	String shutdownOut = CommandTestUtils.runCommandAndWait(shutdownCommand);
-    	assertTrue(shutdownOut.contains("invocation completed successfully."));
+	protected void gracefullyShutdownAgent(final String absolutePUName) {
+		LogUtils.log("Shutting down the only agent for service " + absolutePUName);
+		ProcessingUnit serviceProcessingUnit = admin.getProcessingUnits().waitFor(absolutePUName, 1, TimeUnit.MINUTES);
+		serviceProcessingUnit.waitFor(1, 1, TimeUnit.MINUTES);
+		GridServiceAgent gridServiceAgent = serviceProcessingUnit.getInstances()[0].getMachine().getGridServiceAgent();
+		gridServiceAgent.shutdown();
+		LogUtils.log("agent shut down successfully");
     }
 }

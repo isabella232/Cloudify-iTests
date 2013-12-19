@@ -6,6 +6,7 @@ import org.cloudifysource.dsl.internal.CloudifyConstants;
 import org.cloudifysource.dsl.rest.response.InvokeServiceCommandResponse;
 import org.cloudifysource.quality.iTests.framework.utils.CommandInvoker;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.NewAbstractCloudTest;
 import org.cloudifysource.restclient.InvocationResult;
 import org.cloudifysource.restclient.exceptions.RestClientException;
@@ -28,14 +29,15 @@ import java.util.regex.Pattern;
  * Time: 1:44 PM
  */
 public class Ec2XAP9xTest extends NewAbstractCloudTest {
+    private static final String LOCAL_GIT_REPO_PATH = ScriptUtils.getBuildPath() + "/git-recipes-" + Ec2XAP9xTest.class.getSimpleName();;
     private static final String XAP9X_MANAGEMENT = "xap-management";
     private static final String XAP9X_CONTAINER = "xap-container";
     private static final String SG_VALIDATOR = "sgvalidator";
-    private static final String XAP9X_MANAGEMENT_PATH = "xap9x/xap-management";
-    private static final String XAP9X_CONTAINER_PATH = "xap9x/xap-container";
-    private static final String SG_VALIDATOR_PATH = "sgvalidator";
+    private static final String XAP9X_MANAGEMENT_PATH = LOCAL_GIT_REPO_PATH+"/services/xap9x/xap-management";
+    private static final String XAP9X_CONTAINER_PATH = LOCAL_GIT_REPO_PATH+"/services/xap9x/xap-container";
+    private static final String SG_VALIDATOR_PATH = CommandTestUtils.getPath("src/main/resources/apps/cloudify/recipes/sgvalidator");
     private static final String APP_NAME = "default";
-    private static final String BRANCH_NAME = "development";
+    private static final String BRANCH_NAME = "master";
     private static final String PUURL = "https://s3-eu-west-1.amazonaws.com/gigaspaces-maven-repository-eu/com/gigaspaces/quality/sgtest/apps/listeners/Space/3.0.0-SNAPSHOT/Space-3.0.0-SNAPSHOT.jar";
     private static final String DEPLOYPU_COMMAND = "deploy-pu pu-using-deploy-pu "+PUURL+" partitioned-sync2backup 2 1 2 2";
     private static final String UNDEPLOYGRID_DEPLOYPU_COMMAND = "undeploy-grid pu-using-deploy-pu";
@@ -238,8 +240,7 @@ public class Ec2XAP9xTest extends NewAbstractCloudTest {
     }
 
     private String installAndVerify(String servicePath, String serviceName) throws Exception {
-        String localGitRepoPath = ScriptUtils.getBuildPath() + "/git-recipes-" + this.getClass().getSimpleName();;
-        String result = installServiceAndWait(localGitRepoPath + "/services/" + servicePath, serviceName,15);
+        String result = installServiceAndWait(servicePath, serviceName,15);
 
         verifyPUInstallation(serviceName);
         return result;

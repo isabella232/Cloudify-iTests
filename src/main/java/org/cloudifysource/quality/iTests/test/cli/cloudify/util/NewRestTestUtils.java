@@ -146,29 +146,45 @@ public final class NewRestTestUtils {
             final String applicationName,
             final String serviceName,
             final File serviceOverridesFile,
+            final String expectedFailureMsg) 
+            		throws DSLException, IOException, PackagingException, RestClientException, WrongMessageException {
+		return installServiceUsingNewRestAPI(restUrl, null, serviceFolder, applicationName, serviceName, serviceOverridesFile, expectedFailureMsg);
+		
+	}
+	
+	public static InstallServiceResponse installServiceUsingNewRestAPI(
+            final String restUrl,
+            final RestClient restClient,
+            final File serviceFolder,
+            final String applicationName,
+            final String serviceName,
+            final File serviceOverridesFile,
             final String expectedFailureMsg) throws DSLException, IOException, PackagingException,
                                                     RestClientException, WrongMessageException {
 
 		final Service service = ServiceReader.readService(null, serviceFolder, null, true, serviceOverridesFile);
         File packedFile = Packager.pack(serviceFolder, service, new LinkedList<File>());
 
-		// create rest client and connect
-		final RestClient restClient = NewRestTestUtils.createAndConnect(restUrl);
+		// create rest client and connect if needed
+        RestClient client = restClient;
+        if (restClient == null) {
+        	client = NewRestTestUtils.createAndConnect(restUrl);
+        }
 
 		// upload
 		final InstallServiceRequest request = new InstallServiceRequest();
-		final String serviceFolderUploadKey = NewRestTestUtils.upload(restClient, packedFile);
+		final String serviceFolderUploadKey = NewRestTestUtils.upload(client, packedFile);
 		request.setServiceFolderUploadKey(serviceFolderUploadKey);
-		final String serviceOverridesUploadKey = NewRestTestUtils.upload(restClient, serviceOverridesFile);
+		final String serviceOverridesUploadKey = NewRestTestUtils.upload(client, serviceOverridesFile);
 		request.setServiceOverridesUploadKey(serviceOverridesUploadKey);
 
 		// install service and wait
 		InstallServiceResponse installService = null;
 		try {
-			installService = restClient.installService(applicationName, serviceName, request);
+			installService = client.installService(applicationName, serviceName, request);
 			final String deploymentID = installService.getDeploymentID();
 			NewRestTestUtils
-					.waitForServiceInstallation(restClient, applicationName, serviceName, deploymentID);
+					.waitForServiceInstallation(client, applicationName, serviceName, deploymentID);
 		} catch (final RestClientException e) {
 			final String actualMsg = e.getMessageFormattedText();
 			if (expectedFailureMsg == null) {
@@ -188,7 +204,7 @@ public final class NewRestTestUtils {
             final String serviceName,
             final String expectedFailureMsg) throws DSLException, WrongMessageException, PackagingException,
                                                    RestClientException, IOException {
-		return installServiceUsingNewRestAPI(restUrl, serviceFolder, applicationName, serviceName, null,
+		return installServiceUsingNewRestAPI(restUrl, null, serviceFolder, applicationName, serviceName, null,
                 expectedFailureMsg);
 	}
 
@@ -215,6 +231,22 @@ public final class NewRestTestUtils {
             final String serviceName) throws DSLException, WrongMessageException, PackagingException,
                                             RestClientException, IOException {
 		return installServiceUsingNewRestAPI(restUrl, serviceFolder, applicationName, serviceName, null);
+	}
+	
+	public static InstallServiceResponse installServiceUsingNewRestAPI(
+            final String restUrl,
+            final File serviceFolder,
+            final String serviceName) throws DSLException, WrongMessageException, PackagingException,
+                                            RestClientException, IOException {
+		return installServiceUsingNewRestAPI(restUrl, serviceFolder, CloudifyConstants.DEFAULT_APPLICATION_NAME, serviceName, null);
+	}
+	
+	public static InstallServiceResponse installServiceUsingNewRestAPI(
+            final RestClient restClient,
+            final File serviceFolder,
+            final String serviceName) throws DSLException, WrongMessageException, PackagingException,
+                                            RestClientException, IOException {
+		return installServiceUsingNewRestAPI(null, restClient, serviceFolder, CloudifyConstants.DEFAULT_APPLICATION_NAME, serviceName, null, null);
 	}
 
 	public static UninstallServiceResponse uninstallServiceUsingNewRestClient(

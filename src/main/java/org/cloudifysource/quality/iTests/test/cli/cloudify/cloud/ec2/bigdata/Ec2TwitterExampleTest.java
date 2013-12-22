@@ -19,6 +19,7 @@ import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.NewAbstractClou
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.type.TypeFactory;
 import org.codehaus.jackson.type.JavaType;
+import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -160,7 +161,9 @@ public class Ec2TwitterExampleTest extends NewAbstractCloudTest {
 		try {
 			newEntriesAmountJsonMap = jsonToMap(newEntriesString);
 		} catch (IOException e) {
-			throw new RuntimeException(e);
+			Assert.fail("failed to get global counter " + service.toString(), e);
+			//never reached
+			return -1;
 		}
 		final String newEntriesAmountString = (String) newEntriesAmountJsonMap.get(GLOBAL_COUNTER_PROPERTY);			
 		final int newEntriesAmount = Integer.parseInt(newEntriesAmountString);

@@ -26,28 +26,36 @@ import org.testng.annotations.Test;
  * This test tries to reproduce an issue in Groovy that causes a PermGen OOME Exception.
  * Multithrading is used to simulate a specific scenario where a tomcat service receives
  * multiple parallel requests, each for parsing a large amount of scripts. Basically what that means
- * is that having a single process running multiple threads would accelerate the leak and OOME.  
+ * is that having a single process running multiple threads would accelerate the leak and OOME.
+ * 
+ * To debug this test it is recommended to set vm arguments "-Xms256m -Xmx256m -XX:PermSize=35m -XX:MaxPermSize=35m"
  * 
  * @author adaml
  *
  */
 public class ReadDSLMultipleTimesTest extends AbstractTestSupport{
 
+	private static final int ETERNITY = 100000;
 	private static final String OUT_OF_MEMORY_MESSAGE = "OOME";
 	private static final int NUMBER_OF_THREADS = 3;
 	private static final long TWO_SECONDS_MILLIS = 2000;
 	private static final String APPLICATIONS_PATH = CommandTestUtils.getBuildApplicationsPath();
 
-	private final ExecutorService executor = Executors.newFixedThreadPool(NUMBER_OF_THREADS);
-	private final List<FutureTask<Void>> taskList = new ArrayList<FutureTask<Void>>();
+	private ExecutorService executor = Executors.newFixedThreadPool(NUMBER_OF_THREADS);
+	private List<FutureTask<Void>> taskList = new ArrayList<FutureTask<Void>>();
 
 	// test executes for 10 minutes.
-	private final long EXECUTION_TIME_MILLIS = TimeUnit.MINUTES.toMillis(10);
+	private final long TEN_MINUTE_MILLIS = TimeUnit.MINUTES.toMillis(10);
 
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
+	// Tests leak over a long period of time.
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = false)
 	public void testReadDSLMultipleTimes() throws Exception {
+		startReadDSLMultipleTimes(TEN_MINUTE_MILLIS, 10);
+	}
+
+	public void startReadDSLMultipleTimes(final long duration, final int numberOfThreads) throws Exception {
 		LogUtils.log("Using " + APPLICATIONS_PATH + " as Groovy Service files home dir.");
-		
+
 		final long startTime = System.currentTimeMillis();
 		LogUtils.log("Creating " + NUMBER_OF_THREADS + " task threads.");
 		for (int i = 0; i < NUMBER_OF_THREADS; i++) {
@@ -55,9 +63,9 @@ public class ReadDSLMultipleTimesTest extends AbstractTestSupport{
 			taskList.add(task);
 			executor.execute(task);
 		}
-		
+
 		LogUtils.log("Task threads created and running. Waiting for OutOfMemoryError to occur...");
-		while ((System.currentTimeMillis() - startTime) < EXECUTION_TIME_MILLIS) {
+		while ((System.currentTimeMillis() - startTime) < TEN_MINUTE_MILLIS) {
 			try {
 				for (FutureTask<Void> runningTask : taskList) {
 					runningTask.get(1, TimeUnit.SECONDS);
@@ -73,6 +81,12 @@ public class ReadDSLMultipleTimesTest extends AbstractTestSupport{
 				AssertFail("a Runtime exception terminated this test unexpectedly.");
 			}
 		}
+		LogUtils.log("Execution duration ended. Terminating executor service.");
+		executor.shutdownNow();
+		executor.awaitTermination(5, TimeUnit.MINUTES);
+		assertTrue("Executor was not terminated as expected.", executor.isShutdown());
+		executor = Executors.newFixedThreadPool(NUMBER_OF_THREADS);
+		taskList = new ArrayList<FutureTask<Void>>();
 	}
 
 	private FutureTask<Void> createTask() { 
@@ -80,12 +94,12 @@ public class ReadDSLMultipleTimesTest extends AbstractTestSupport{
 				new Callable<Void>() {
 					@Override
 					public Void call() throws Exception {
-						Iterator<File> groovyFiles = FileUtils.iterateFiles(new File(APPLICATIONS_PATH), new String[]{"groovy"}, true);
-						if (!groovyFiles.hasNext()) {
-							throw new AssertionError("Destination folder must contain Groovy service files.");
-						}
-						// Run forever.
-						while (true) {
+						for (int i = 0; i < ETERNITY; i++) {
+							Iterator<File> groovyFiles = FileUtils.iterateFiles(new File(APPLICATIONS_PATH), new String[]{"groovy"}, true);
+							if (!groovyFiles.hasNext()) {
+								throw new AssertionError("Destination folder must contain Groovy service files.");
+							}
+							//						 Run forever.
 							while (groovyFiles.hasNext()) {
 								File recipeFile = groovyFiles.next();
 								if (recipeFile.getName().contains("-service")) {
@@ -96,7 +110,9 @@ public class ReadDSLMultipleTimesTest extends AbstractTestSupport{
 										dslReader.setDslFile(recipeFile);
 										dslReader.setWorkDir(recipeFile.getParentFile());
 										dslReader.setDslFileNameSuffix(DSLUtils.SERVICE_DSL_FILE_NAME_SUFFIX);
-										dslReader.readDslEntity(Service.class);
+										Service service = dslReader.readDslEntity(Service.class);
+										System.out.println("Service File read: " + service.getName());
+										Thread.sleep(1000);
 									} catch (final Error e) {
 										if (e instanceof OutOfMemoryError) {
 											throw new RuntimeException(OUT_OF_MEMORY_MESSAGE, e);
@@ -106,6 +122,7 @@ public class ReadDSLMultipleTimesTest extends AbstractTestSupport{
 								}
 							}
 						}
+						return null;
 					}
 				});
 	}

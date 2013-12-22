@@ -45,21 +45,12 @@ public class ReadDSLMultipleTimesTest extends AbstractTestSupport{
 	private List<FutureTask<Void>> taskList = new ArrayList<FutureTask<Void>>();
 
 	// test executes for 10 minutes.
-	private final long ONE_MINUTE_MILLIS = TimeUnit.MINUTES.toMillis(10);
-
-
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
-	public void testMultithreadOverTime() throws Exception {
-		for (int i = 0; i < 10; i++) {
-			LogUtils.log("Starting " + (i+1) + " iteration of reading service files.");
-			startReadDSLMultipleTimes(ONE_MINUTE_MILLIS, NUMBER_OF_THREADS);
-		}
-	}
+	private final long TEN_MINUTE_MILLIS = TimeUnit.MINUTES.toMillis(10);
 
 	// Tests leak over a long period of time.
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = false)
 	public void testReadDSLMultipleTimes() throws Exception {
-		startReadDSLMultipleTimes(ONE_MINUTE_MILLIS * 10, 10);
+		startReadDSLMultipleTimes(TEN_MINUTE_MILLIS, 10);
 	}
 
 	public void startReadDSLMultipleTimes(final long duration, final int numberOfThreads) throws Exception {
@@ -74,7 +65,7 @@ public class ReadDSLMultipleTimesTest extends AbstractTestSupport{
 		}
 
 		LogUtils.log("Task threads created and running. Waiting for OutOfMemoryError to occur...");
-		while ((System.currentTimeMillis() - startTime) < ONE_MINUTE_MILLIS) {
+		while ((System.currentTimeMillis() - startTime) < TEN_MINUTE_MILLIS) {
 			try {
 				for (FutureTask<Void> runningTask : taskList) {
 					runningTask.get(1, TimeUnit.SECONDS);

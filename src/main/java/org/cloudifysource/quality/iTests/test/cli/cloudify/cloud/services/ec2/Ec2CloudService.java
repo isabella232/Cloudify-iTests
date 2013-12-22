@@ -8,6 +8,7 @@ import java.util.Properties;
 
 import org.apache.commons.io.FileUtils;
 import iTests.framework.utils.IOUtils;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.AbstractCloudService;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.JCloudsCloudService;
 
 public class Ec2CloudService extends JCloudsCloudService {
@@ -106,6 +107,9 @@ public class Ec2CloudService extends JCloudsCloudService {
 				+ getNumberOfManagementMachines());
 
         propsToReplace.put("cloudify-storage-volume", getVolumePrefix());
+        if(AbstractCloudService.enableLogstash){
+            propsToReplace.put("\"jclouds.ec2.ami-query\":\"\",", "\"jclouds.ec2.ami-query\":\"\",\"jclouds.compute.poll-status.initial-period\":\"1000l\",\"jclouds.compute.poll-status.max-period\":\"20000l\",");
+        }
 
         IOUtils.replaceTextInFile(getPathToCloudGroovy(), propsToReplace);
 

@@ -75,7 +75,7 @@ public class Ec2TwitterExampleTest extends NewAbstractCloudTest {
 	}
 
     // uses list-feeder and writes to file.
-	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = false)
+	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
 	public void testTwitterDev() throws Exception {
 		testTwitter(DEV_APP_FOLDER_NAME, devAppName, false);
 	}
@@ -87,7 +87,7 @@ public class Ec2TwitterExampleTest extends NewAbstractCloudTest {
 	}
 
     // uses list-feeder and writes to DB.
-    @Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = false)
+    @Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
 	public void testTwitterDefault() throws Exception {
         isDefaultMode = true;
 		testTwitter(APP_FOLDER_NAME, appName, true);

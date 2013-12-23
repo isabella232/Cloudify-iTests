@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+import iTests.framework.utils.LogUtils;
 import org.apache.commons.io.FileUtils;
 import iTests.framework.utils.IOUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.AbstractCloudService;
@@ -107,7 +108,10 @@ public class Ec2CloudService extends JCloudsCloudService {
 				+ getNumberOfManagementMachines());
 
         propsToReplace.put("cloudify-storage-volume", getVolumePrefix());
+
+        LogUtils.log("In ec2 service. logstash enabled: " + AbstractCloudService.enableLogstash);
         if(AbstractCloudService.enableLogstash){
+            LogUtils.log("adding jclouds overrides");
             propsToReplace.put("\"jclouds.ec2.ami-query\":\"\",", "\"jclouds.ec2.ami-query\":\"\",\"jclouds.compute.poll-status.initial-period\":\"1000l\",\"jclouds.compute.poll-status.max-period\":\"20000l\",");
         }
 

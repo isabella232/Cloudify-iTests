@@ -39,26 +39,22 @@ public class ReadDSLMultipleTimesTest extends AbstractTestSupport{
 	private static final long TASK_POLLING_INTERVAL = 2000;
 	// The number of parallal threads.
 	private static final int NUMBER_OF_THREADS = 10;
-	/**
-	 * The test duration. test executes for 20 minutes.
-	 */
-	private final long TEST_DURATION_MILLIS = TimeUnit.MINUTES.toMillis(20);
+
+	// The test duration. test executes for 20 minutes.
+	private static final long TEST_DURATION_MILLIS = TimeUnit.MINUTES.toMillis(20);
 	
 	private static final int ETERNITY = 100000;
 	private static final String OUT_OF_MEMORY_MESSAGE = "OOME";
 	private static final String APPLICATIONS_PATH = CommandTestUtils.getBuildApplicationsPath();
-	private ExecutorService executor = Executors.newFixedThreadPool(NUMBER_OF_THREADS);
-	private List<FutureTask<Void>> taskList = new ArrayList<FutureTask<Void>>();
+	
+	private final ExecutorService executor = Executors.newFixedThreadPool(NUMBER_OF_THREADS);
+	private final List<FutureTask<Void>> taskList = new ArrayList<FutureTask<Void>>();
 
-	// Tests leak over a long period of time.
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
+	// Tests memory leak over a long duration of time.
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
 	public void testReadDSLMultipleTimes() throws Exception {
-		startReadDSLMultipleTimes(TEST_DURATION_MILLIS, NUMBER_OF_THREADS);
-	}
-
-	public void startReadDSLMultipleTimes(final long duration, final int numberOfThreads) throws Exception {
 		LogUtils.log("Using " + APPLICATIONS_PATH + " as Groovy Service files home dir.");
-
+		
 		final long startTime = System.currentTimeMillis();
 		LogUtils.log("Creating " + NUMBER_OF_THREADS + " task threads.");
 		for (int i = 0; i < NUMBER_OF_THREADS; i++) {
@@ -66,7 +62,7 @@ public class ReadDSLMultipleTimesTest extends AbstractTestSupport{
 			taskList.add(task);
 			executor.execute(task);
 		}
-
+		
 		LogUtils.log("Task threads created and running. Waiting for OutOfMemoryError to occur...");
 		while ((System.currentTimeMillis() - startTime) < TEST_DURATION_MILLIS) {
 			try {

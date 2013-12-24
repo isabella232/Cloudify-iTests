@@ -35,22 +35,25 @@ import org.testng.annotations.Test;
  */
 public class ReadDSLMultipleTimesTest extends AbstractTestSupport{
 
+	
+	private static final long TASK_POLLING_INTERVAL = 2000;
+	// The number of parallal threads.
+	private static final int NUMBER_OF_THREADS = 10;
+	/**
+	 * The test duration. test executes for 20 minutes.
+	 */
+	private final long TEST_DURATION_MILLIS = TimeUnit.MINUTES.toMillis(20);
+	
 	private static final int ETERNITY = 100000;
 	private static final String OUT_OF_MEMORY_MESSAGE = "OOME";
-	private static final int NUMBER_OF_THREADS = 3;
-	private static final long TWO_SECONDS_MILLIS = 2000;
 	private static final String APPLICATIONS_PATH = CommandTestUtils.getBuildApplicationsPath();
-
 	private ExecutorService executor = Executors.newFixedThreadPool(NUMBER_OF_THREADS);
 	private List<FutureTask<Void>> taskList = new ArrayList<FutureTask<Void>>();
 
-	// test executes for 10 minutes.
-	private final long TEN_MINUTE_MILLIS = TimeUnit.MINUTES.toMillis(10);
-
 	// Tests leak over a long period of time.
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = false)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)
 	public void testReadDSLMultipleTimes() throws Exception {
-		startReadDSLMultipleTimes(TEN_MINUTE_MILLIS, 10);
+		startReadDSLMultipleTimes(TEST_DURATION_MILLIS, NUMBER_OF_THREADS);
 	}
 
 	public void startReadDSLMultipleTimes(final long duration, final int numberOfThreads) throws Exception {
@@ -65,12 +68,12 @@ public class ReadDSLMultipleTimesTest extends AbstractTestSupport{
 		}
 
 		LogUtils.log("Task threads created and running. Waiting for OutOfMemoryError to occur...");
-		while ((System.currentTimeMillis() - startTime) < TEN_MINUTE_MILLIS) {
+		while ((System.currentTimeMillis() - startTime) < TEST_DURATION_MILLIS) {
 			try {
 				for (FutureTask<Void> runningTask : taskList) {
-					runningTask.get(1, TimeUnit.SECONDS);
+					runningTask.get(500, TimeUnit.MILLISECONDS);
 				}
-				Thread.sleep(TWO_SECONDS_MILLIS);
+				Thread.sleep(TASK_POLLING_INTERVAL);
 			} catch (final TimeoutException e) {
 				// timeout exception is ignored.
 			} catch (final Throwable e) {
@@ -81,12 +84,6 @@ public class ReadDSLMultipleTimesTest extends AbstractTestSupport{
 				AssertFail("a Runtime exception terminated this test unexpectedly.");
 			}
 		}
-		LogUtils.log("Execution duration ended. Terminating executor service.");
-		executor.shutdownNow();
-		executor.awaitTermination(5, TimeUnit.MINUTES);
-		assertTrue("Executor was not terminated as expected.", executor.isShutdown());
-		executor = Executors.newFixedThreadPool(NUMBER_OF_THREADS);
-		taskList = new ArrayList<FutureTask<Void>>();
 	}
 
 	private FutureTask<Void> createTask() { 
@@ -94,12 +91,12 @@ public class ReadDSLMultipleTimesTest extends AbstractTestSupport{
 				new Callable<Void>() {
 					@Override
 					public Void call() throws Exception {
+						// Run forever.
 						for (int i = 0; i < ETERNITY; i++) {
 							Iterator<File> groovyFiles = FileUtils.iterateFiles(new File(APPLICATIONS_PATH), new String[]{"groovy"}, true);
 							if (!groovyFiles.hasNext()) {
 								throw new AssertionError("Destination folder must contain Groovy service files.");
 							}
-							//						 Run forever.
 							while (groovyFiles.hasNext()) {
 								File recipeFile = groovyFiles.next();
 								if (recipeFile.getName().contains("-service")) {
@@ -111,8 +108,7 @@ public class ReadDSLMultipleTimesTest extends AbstractTestSupport{
 										dslReader.setWorkDir(recipeFile.getParentFile());
 										dslReader.setDslFileNameSuffix(DSLUtils.SERVICE_DSL_FILE_NAME_SUFFIX);
 										Service service = dslReader.readDslEntity(Service.class);
-										System.out.println("Service File read: " + service.getName());
-										Thread.sleep(1000);
+										LogUtils.log("Service File read: " + service.getName());
 									} catch (final Error e) {
 										if (e instanceof OutOfMemoryError) {
 											throw new RuntimeException(OUT_OF_MEMORY_MESSAGE, e);
@@ -122,7 +118,7 @@ public class ReadDSLMultipleTimesTest extends AbstractTestSupport{
 								}
 							}
 						}
-						return null;
+						throw new RuntimeException("Task thread should run for the entire duration of the test.");
 					}
 				});
 	}

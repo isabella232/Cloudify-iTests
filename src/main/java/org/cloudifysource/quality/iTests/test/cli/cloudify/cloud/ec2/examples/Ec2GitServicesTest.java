@@ -107,7 +107,7 @@ public class Ec2GitServicesTest extends AbstractServicesTest {
 
     //ubuntu only. works
     @TestConfiguration(os = TestConfiguration.VM.UNIX)
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = false)
     public void testPuppet() throws Exception{
         testService("puppet");
     }

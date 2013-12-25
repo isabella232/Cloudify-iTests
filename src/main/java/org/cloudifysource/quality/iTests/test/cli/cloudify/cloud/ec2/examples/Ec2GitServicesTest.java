@@ -29,12 +29,12 @@ public class Ec2GitServicesTest extends AbstractServicesTest {
         JGitUtils.clone(localGitRepoPath, remotePath, BRANCH_NAME);
     }
 
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = false)
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
     public void testApache() throws Exception {
         testService("apache");
     }
 
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = false)
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
     public void testApacheLB() throws Exception {
         testService("apacheLB");
     }
@@ -46,7 +46,7 @@ public class Ec2GitServicesTest extends AbstractServicesTest {
     }
 
     //cant run on localcloud??
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = false)
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
     public void testCouchbase() throws Exception{
     	testService("couchbase");
     }
@@ -60,7 +60,7 @@ public class Ec2GitServicesTest extends AbstractServicesTest {
 
     //works
     @TestConfiguration(os = {TestConfiguration.VM.MAC, TestConfiguration.VM.UNIX} )
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = false)
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
     public void testElasticSearch() throws Exception{
         testService("elasticsearch");
     }
@@ -71,18 +71,18 @@ public class Ec2GitServicesTest extends AbstractServicesTest {
         testService("groovy-utils");
     }
     //should work
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = false)
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
     public void testJboss() throws Exception{
         testService("jboss", 20);
     }
 
     //works
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = false)
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
     public void testMysql() throws Exception{
         testService("mysql");
     }
 
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = false)
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
     public void testChefMysql() throws Exception{
         testService("chef-mysql");
     }
@@ -125,7 +125,7 @@ public class Ec2GitServicesTest extends AbstractServicesTest {
     }
 
     //works
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = false)
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
     public void testSolr() throws Exception{
         testService("solr");
     }
@@ -144,7 +144,7 @@ public class Ec2GitServicesTest extends AbstractServicesTest {
 
     //linux only. works
     @TestConfiguration(os = {TestConfiguration.VM.MAC, TestConfiguration.VM.UNIX} )
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = false)
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
     public void testVertx() throws Exception{
         testService("vertx");
     }
@@ -158,7 +158,7 @@ public class Ec2GitServicesTest extends AbstractServicesTest {
 
     //linux only. works
     @TestConfiguration(os = {TestConfiguration.VM.MAC, TestConfiguration.VM.UNIX} )
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = false)
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
     public void testZookeeper() throws Exception{
         testService("zookeeper");
     }

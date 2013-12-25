@@ -112,6 +112,11 @@ public class Ec2GitServicesTest extends AbstractServicesTest {
         testService("puppet");
     }
 
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
+    public void testPuppetAgent() throws Exception{
+        testService("puppet-agent");
+    }
+
     //dont work. should work as part of an app.
     @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = false)
     public void testRails() throws Exception{

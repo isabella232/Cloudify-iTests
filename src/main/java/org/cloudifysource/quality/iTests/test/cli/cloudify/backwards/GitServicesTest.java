@@ -23,7 +23,7 @@ public class GitServicesTest extends AbstractLocalCloudTest {
    protected void bootstrap() throws Exception {
       localGitRepoPath = ScriptUtils.getBuildPath() + "/git-recipes-" + this.getClass().getSimpleName() ;
       String remotePath = "https://github.com/CloudifySource/cloudify-recipes.git";
-      JGitUtils.clone(localGitRepoPath, remotePath, "2_6_2");
+      JGitUtils.clone(localGitRepoPath, remotePath, SGTestHelper.getBackwardsRecipesBranch());
    }
 
    @Test(timeOut = DEFAULT_TEST_TIMEOUT, enabled = true)

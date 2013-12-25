@@ -20,6 +20,7 @@
  MAVEN_PROJECTS_VERSION_CLOUDIFY=${18}
  ENABLE_LOGSTASH=${19}
  S3_MIRROR=${20}
+ BACKWARDS_RECIPES_BRANCH=${21}
  EXT_JAVA_OPTIONS="${EXT_JAVA_OPTIONS} -Dcom.gs.work=${SUITE_WORK_DIR} -Dcom.gs.deploy=${SUITE_DEPLOY_DIR} -Dcom.gs.multicast.enabled=false"; export EXT_JAVA_OPTIONS
 
 echo clouds=$SUPPORTED_CLOUDS
@@ -62,7 +63,8 @@ mvn test -e -U -P ${PROFILE} \
 -Dmaven.repo.local=${MAVEN_REPO_LOCAL} \
 -DgsVersion=${MAVEN_PROJECTS_VERSION_XAP} \
 -DcloudifyVersion=${MAVEN_PROJECTS_VERSION_CLOUDIFY} \
--Dorg.cloudifysource.repository.mirror=${S3_MIRROR}
+-Dorg.cloudifysource.repository.mirror=${S3_MIRROR} \
+-Dorg.cloudifysource.recipes-backwards.branch=${BACKWARDS_RECIPES_BRANCH}
 
 #return java exit code.
 exit $?

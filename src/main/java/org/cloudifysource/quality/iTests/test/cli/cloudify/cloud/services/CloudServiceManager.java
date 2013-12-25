@@ -21,6 +21,7 @@ import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.byon.B
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.byon.DynamicByonCloudService;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.ec2.Ec2CloudService;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.ec2.Ec2WinCloudService;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.exoscale.ExoscaleCloudService;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.hp.HpCloudService;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.openstack.OpenstackService;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.rackspace.RackspaceCloudService;
@@ -78,7 +79,9 @@ public class CloudServiceManager {
 			cloudService = new DynamicByonCloudService();
 		} else if ("softlayer".equalsIgnoreCase(cloudName)) {
             cloudService = new SoftlayerCloudService(cloudName);
-        } else {
+        } else if ("exoscale".equalsIgnoreCase(cloudName)) {
+            cloudService = new ExoscaleCloudService(cloudName);
+        }else {
             throw new IllegalArgumentException("Cloud name not supported: " + cloudName);
         }
 

@@ -39,7 +39,20 @@ public class RackspaceServicesTest extends AbstractServicesTest{
         super.testService(ScriptUtils.getBuildRecipesServicesPath() + "/apacheLB", null, 30);
     }
 
-	@Override
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
+    public void testTomcat() throws Exception {
+        super.testService(ScriptUtils.getBuildRecipesServicesPath() + "/tomcat", null);
+    }
+
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
+    public void testCassandra() throws Exception {
+        super.testService(ScriptUtils.getBuildRecipesServicesPath() + "/cassandra", null);
+    }
+
+    //add mongo
+
+
+    @Override
 	@AfterClass(alwaysRun = true)
 	protected void teardown() throws Exception {
 		super.teardown();

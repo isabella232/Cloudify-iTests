@@ -34,11 +34,6 @@ public class Ec2GitServicesTest extends AbstractServicesTest {
         testService("apache");
     }
 
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
-    public void testApacheLB() throws Exception {
-        testService("apacheLB");
-    }
-
     //tested as part of an app
     @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = false)
     public void testBigInsights() throws Exception{
@@ -56,7 +51,6 @@ public class Ec2GitServicesTest extends AbstractServicesTest {
     public void testCouchDBe() throws Exception{
         testService("couchdb");
     }
-
 
     //works
     @TestConfiguration(os = {TestConfiguration.VM.MAC, TestConfiguration.VM.UNIX} )
@@ -127,12 +121,6 @@ public class Ec2GitServicesTest extends AbstractServicesTest {
     @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = false)
     public void testRedis() throws Exception{
         testService("redis");
-    }
-
-    //works
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
-    public void testSolr() throws Exception{
-        testService("solr");
     }
 
     //depends on zookeeper??

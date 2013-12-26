@@ -1,4 +1,4 @@
-package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.openstack.examples;
+package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.softlayer.examples;
 
 import iTests.framework.utils.ScriptUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.AbstractServicesTest;
@@ -6,11 +6,11 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-public class HPGrizzlyServicesTest extends AbstractServicesTest {
+public class SoftlayerServicesTest extends AbstractServicesTest {
 
 	@Override
 	protected String getCloudName() {
-		return "hp";
+		return "softlayer";
 	}
 	
 	@BeforeClass(alwaysRun = true)
@@ -37,8 +37,21 @@ public class HPGrizzlyServicesTest extends AbstractServicesTest {
     public void testApacheLB() throws Exception {
         super.testService(ScriptUtils.getBuildRecipesServicesPath() + "/apacheLB", null);
     }
-    
-	@AfterClass(alwaysRun = true)
+
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
+    public void testTomcat() throws Exception {
+        super.testService(ScriptUtils.getBuildRecipesServicesPath() + "/tomcat", null);
+    }
+
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
+    public void testCassandra() throws Exception {
+        super.testService(ScriptUtils.getBuildRecipesServicesPath() + "/cassandra", null);
+    }
+
+    //add mongo
+
+
+    @AfterClass(alwaysRun = true)
 	protected void teardown() throws Exception {
 		super.teardown();
 	}

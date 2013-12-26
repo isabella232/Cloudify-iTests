@@ -23,7 +23,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 
-public class HPGrizzlyExamplesTest extends AbstractExamplesTest {
+public class OpenstackExamplesTest extends AbstractExamplesTest {
 
 	@BeforeClass(alwaysRun = true)
 	protected void bootstrap() throws Exception {

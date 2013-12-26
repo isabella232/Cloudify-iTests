@@ -37,8 +37,21 @@ public class HPServicesTest extends AbstractServicesTest {
     public void testApacheLB() throws Exception {
         super.testService(ScriptUtils.getBuildRecipesServicesPath() + "/apacheLB", null);
     }
-    
-	@AfterClass(alwaysRun = true)
+
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
+    public void testTomcat() throws Exception {
+        super.testService(ScriptUtils.getBuildRecipesServicesPath() + "/tomcat", null);
+    }
+
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
+    public void testCassandra() throws Exception {
+        super.testService(ScriptUtils.getBuildRecipesServicesPath() + "/cassandra", null);
+    }
+
+    //add mongo
+
+
+    @AfterClass(alwaysRun = true)
 	protected void teardown() throws Exception {
 		super.teardown();
 	}

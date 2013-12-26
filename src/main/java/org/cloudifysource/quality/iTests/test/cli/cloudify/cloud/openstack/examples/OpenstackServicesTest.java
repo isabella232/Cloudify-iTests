@@ -1,17 +1,16 @@
-package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.ec2.examples;
+package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.openstack.examples;
 
 import iTests.framework.utils.ScriptUtils;
-
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.AbstractServicesTest;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-public class Ec2ServicesTest extends AbstractServicesTest{
+public class OpenstackServicesTest extends AbstractServicesTest {
 
 	@Override
 	protected String getCloudName() {
-		return "ec2";
+		return "hp";
 	}
 	
 	@BeforeClass(alwaysRun = true)
@@ -52,7 +51,7 @@ public class Ec2ServicesTest extends AbstractServicesTest{
     //add mongo
 
 
-	@AfterClass(alwaysRun = true)
+    @AfterClass(alwaysRun = true)
 	protected void teardown() throws Exception {
 		super.teardown();
 	}

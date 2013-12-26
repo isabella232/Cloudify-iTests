@@ -17,6 +17,7 @@ public class CloudBootstrapper extends Bootstrapper {
     private String provider;
 	private boolean noWebServices = false;
 	private boolean noManagementSpace = false;
+	private boolean noManagementSpaceContainer = false;
 	private String useExistingFilePath = "";
 	private String cloudFolderPath = "";
 	private boolean useExisting = false;
@@ -99,6 +100,11 @@ public class CloudBootstrapper extends Bootstrapper {
         this.noManagementSpace = noManagementSpace;
         return this;
     }
+	
+	public CloudBootstrapper noManagementSpaceContainer(final boolean noManagementSpaceContainer) {
+        this.noManagementSpaceContainer = noManagementSpaceContainer;
+        return this;
+    }
     
     public boolean isNoManagementSpace() {
         return noManagementSpace;
@@ -143,6 +149,10 @@ public class CloudBootstrapper extends Bootstrapper {
 		if (noManagementSpace) {
             builder.append("-no-management-space ");
         }
+		
+		if (noManagementSpaceContainer) {
+            builder.append("-no-management-space-container ");
+		}
 
         if (skipValidation) {
             builder.append("-skip-validation ");

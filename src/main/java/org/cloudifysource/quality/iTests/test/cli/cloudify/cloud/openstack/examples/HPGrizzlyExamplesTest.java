@@ -35,35 +35,35 @@ public class HPGrizzlyExamplesTest extends AbstractExamplesTest {
 		return "openstack";
 	}
 	
-//	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
-//	public void testTravel() throws Exception {
-//		super.testTravel();
-//	}
-//
-//	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
-//	public void testPetclinicSimple() throws Exception {
-//		super.testPetclinicSimple();
-//	}
-//
-//	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
-//	public void testPetclinic() throws Exception {
-//		super.testPetclinic();
-//	}
+	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
+	public void testTravel() throws Exception {
+		super.testTravel();
+	}
+
+	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
+	public void testPetclinicSimple() throws Exception {
+		super.testPetclinicSimple();
+	}
+
+	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
+	public void testPetclinic() throws Exception {
+		super.testPetclinic();
+	}
 	
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
 	public void testHelloWorld() throws Exception {
 		super.testHelloWorld();
 	}
 
-//    @Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
-//    public void testTravelChef() throws Exception {
-//        super.testTravelChef();
-//    }
-//
-//    @Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
-//    public void testStatelessAndStateful() throws Exception {
-//        super.testStatelessAndStateful();
-//    }
+    @Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
+    public void testTravelChef() throws Exception {
+        super.testTravelChef();
+    }
+
+    @Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
+    public void testStatelessAndStateful() throws Exception {
+        super.testStatelessAndStateful();
+    }
 	
 	@AfterClass(alwaysRun = true)
 	protected void teardown() throws Exception {

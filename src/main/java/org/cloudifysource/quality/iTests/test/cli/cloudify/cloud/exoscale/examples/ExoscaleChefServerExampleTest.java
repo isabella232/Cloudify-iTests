@@ -1,4 +1,4 @@
-package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.exoscale;
+package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.exoscale.examples;
 
 import iTests.framework.utils.LogUtils;
 import iTests.framework.utils.ScriptUtils;

@@ -14,7 +14,7 @@
  * limitations under the License.
  *******************************************************************************/
 
-package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.exoscale;
+package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.exoscale.examples;
 
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.AbstractExamplesTest;

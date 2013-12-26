@@ -4,7 +4,6 @@ import iTests.framework.tools.SGTestHelper;
 import iTests.framework.utils.JGitUtils;
 import iTests.framework.utils.ScriptUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.AbstractExamplesTest;
-import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.ec2.examples.Ec2GitApplicationsTest;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -124,6 +123,4 @@ public class OpenstackGitApplicationTest extends AbstractExamplesTest {
     protected void teardown() throws Exception {
         super.teardown();
     }
-}
-
 }

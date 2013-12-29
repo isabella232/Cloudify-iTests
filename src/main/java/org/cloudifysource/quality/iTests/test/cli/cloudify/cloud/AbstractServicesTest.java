@@ -6,6 +6,7 @@ import iTests.framework.utils.LogUtils;
 import org.cloudifysource.domain.Service;
 import org.cloudifysource.dsl.internal.ServiceReader;
 import org.cloudifysource.restclient.GSRestClient;
+import org.cloudifysource.restclient.RestException;
 import org.testng.annotations.AfterMethod;
 
 import java.io.File;
@@ -15,7 +16,8 @@ import java.util.Map;
 
 public abstract class AbstractServicesTest extends NewAbstractCloudTest {
 
-	private static final String STATUS_PROPERTY = "DeclaringClass-Enumerator";
+    public static final long ASSERT_TIMEOUT_MILLI = 10 * 1000;
+    private static final String STATUS_PROPERTY = "DeclaringClass-Enumerator";
     private static final int DEFAULT_INSTALLATION_TIMEOUT = 50;
 	private static String serviceName;
 
@@ -46,13 +48,23 @@ public abstract class AbstractServicesTest extends NewAbstractCloudTest {
 
         installServiceAndWait(serviceFolderPath, serviceName, timeoutMins);
  		String restUrl = getRestUrl();
-		GSRestClient client = new GSRestClient("", "", new URL(restUrl), PlatformVersion.getVersionNumber());
+		final GSRestClient client = new GSRestClient("", "", new URL(restUrl), PlatformVersion.getVersionNumber());
         LogUtils.log("Querying status of service " + serviceName + " from rest");
-		Map<String, Object> entriesJsonMap  = client.getAdminData("ProcessingUnits/Names/default." + serviceName + "/Status");
-		String serviceStatus = (String)entriesJsonMap.get(STATUS_PROPERTY);
 
-		AssertUtils.assertEquals("intact", serviceStatus.toLowerCase());
+        final StringBuilder serviceStatus = new StringBuilder();
 
+        AssertUtils.repetitiveAssertTrue("expected:<intact> but was:<" + serviceStatus.toString() + ">", new AssertUtils.RepetitiveConditionProvider() {
+            @Override
+            public boolean getCondition() {
+                try {
+                    serviceStatus.delete(0, serviceStatus.length());
+                    serviceStatus.append(client.getAdminData("ProcessingUnits/Names/default." + serviceName + "/Status").get(STATUS_PROPERTY));
+                } catch (RestException e) {
+                    e.printStackTrace();
+                }
+                return "intact".equalsIgnoreCase(serviceStatus.toString());
+            }
+        }, ASSERT_TIMEOUT_MILLI);
 		uninstallServiceAndWait(serviceName);
 	}
 

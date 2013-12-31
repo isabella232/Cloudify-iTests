@@ -1,5 +1,6 @@
 package org.cloudifysource.quality.iTests.framework.utils.storage;
 
+import iTests.framework.utils.LogUtils;
 import org.apache.commons.lang.StringUtils;
 import org.cloudifysource.domain.cloud.Cloud;
 import org.cloudifysource.esc.driver.provisioning.storage.StorageProvisioningException;
@@ -39,8 +40,8 @@ public class Ec2StorageApiHelper extends JcloudsStorageApiHelper {
         this.context = computeContext;
         this.tagApi = getTagApi();
         this.client = EC2Client.class.cast(context.unwrap(EC2ApiMetadata.CONTEXT_TOKEN).getApi()).getElasticBlockStoreServices();
-
     }
+
 
     @Override
     public Set<VolumeDetails> getVolumesByPrefix(String prefix) throws StorageProvisioningException {
@@ -48,9 +49,11 @@ public class Ec2StorageApiHelper extends JcloudsStorageApiHelper {
         Set<VolumeDetails> volumes = new HashSet<VolumeDetails>();
 
         Set<Volume> allVolumes = getAllVolumes();
+        LogUtils.log("Retrieved all volumes in region " + region + " : " + allVolumes);
         for (Volume vol : allVolumes) {
             if (vol.getId() != null) {
                 String volName = getVolumeName(vol.getId());
+                LogUtils.log("Volume with id " + vol.getId() + " is named " + volName);
                 if (!StringUtils.isBlank(volName) &&  volName.toLowerCase().contains(prefix)) {
                     VolumeDetails details = new VolumeDetails();
                     details.setName(volName);

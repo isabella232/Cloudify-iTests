@@ -51,7 +51,7 @@ mvn test -e -U -P ${PROFILE} \
 -Dsgtest.numOfSuites=${SUITE_NUMBER} \
 -Dorg.apache.commons.logging.Log=org.apache.commons.logging.impl.Jdk14Logger \
 -Dcom.gs.logging.level.config=true \
--Djava.util.logging.config.file=/export/tgrid/sgtest3.0-cloudify/bin/../logging/sgtest_logging.properties \
+-Djava.util.logging.config.file=/export/tgrid/sgtest3.0-cloudify/config/sgtest_logging.properties \
 -Dsgtest.buildFolder=../ \
 -DiTests.url=http://192.168.9.121:8087/sgtest3.0-cloudify/ \
 -Dcom.gs.work=${SUITE_WORK_DIR} \

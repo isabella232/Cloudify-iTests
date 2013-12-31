@@ -58,5 +58,5 @@ cp ${Cloudify_iTests_HOME}/src/main/config/gs_logging.properties /export/tgrid/s
 rm -f ${BUILD_DIR}/config/gs_logging.properties
 cp ${Cloudify_iTests_HOME}/src/main/config/gs_logging.properties ${BUILD_DIR}/config/
 
-rm -f ${BUILD_DIR}/config/sgtest_logging.properties
+rm -f /export/tgrid/sgtest3.0-cloudify/config/sgtest_logging.properties
 cp ${Cloudify_iTests_HOME}/src/main/config/sgtest_logging.properties /export/tgrid/sgtest3.0-cloudify/config/

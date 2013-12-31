@@ -1,12 +1,12 @@
 package org.cloudifysource.quality.iTests.framework.utils.compute;
 
 import com.google.common.base.Predicate;
-
 import com.google.inject.Module;
 import org.cloudifysource.domain.cloud.Cloud;
 import org.cloudifysource.esc.driver.provisioning.MachineDetails;
 import org.cloudifysource.esc.jclouds.JCloudsDeployer;
 import org.codehaus.plexus.util.StringUtils;
+import org.jclouds.compute.config.ComputeServiceProperties;
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.NodeMetadata;
 
@@ -29,7 +29,7 @@ public class JcloudsComputeApiHelper implements ComputeApiHelper {
     public JcloudsComputeApiHelper(final Cloud cloud, final String region) {
         try {
             this.deployer = new JCloudsDeployer(cloud.getProvider().getProvider(), cloud.getUser().getUser(),
-                    cloud.getUser().getApiKey(), new Properties(), new HashSet<Module>());
+                    cloud.getUser().getApiKey(), setupProperties(), new HashSet<Module>());
             this.region = region;
         } catch (final Exception e) {
             throw new RuntimeException("Failed to initialize compute helper : " + e.getMessage(), e);
@@ -75,5 +75,12 @@ public class JcloudsComputeApiHelper implements ComputeApiHelper {
     @Override
     public void shutdownServerByAttachmentId(String attachmentId) {
         deployer.shutdownMachine(region + "/" + attachmentId);
+    }
+
+    private Properties setupProperties() {
+        Properties properties = new Properties();
+        properties.setProperty(ComputeServiceProperties.POLL_INITIAL_PERIOD, "5000");
+        properties.setProperty(ComputeServiceProperties.POLL_MAX_PERIOD, "20000");
+        return properties;
     }
 }

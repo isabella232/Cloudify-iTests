@@ -31,7 +31,7 @@ public class PrivateImageTest extends AbstractExamplesTest {
 	@Override
 	protected void customizeCloud() throws Exception {
         super.customizeCloud();
-        getService().getProperties().put("linuxImageId", "DFW/b62d6bc6-4dd6-44c2-8910-effa6e098cf9");
+        getService().getProperties().put("linuxImageId", "DFW/2452746d-8d75-41d0-a49c-68be8ad32f2b");
 	}
 	
 }

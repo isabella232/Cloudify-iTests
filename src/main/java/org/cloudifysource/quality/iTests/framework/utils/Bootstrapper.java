@@ -237,7 +237,7 @@ public abstract class Bootstrapper {
 	public ProcessResult teardown() throws IOException, InterruptedException {
 
 		StringBuilder connectCommandBuilder = new StringBuilder();
-		if (restUrl != null) {
+		if (restUrl != null && !force) { // no sense in connecting to the rest server if use -force anyway
 			connectCommandBuilder.append("connect").append(" ");
 			if (StringUtils.isNotBlank(user) && StringUtils.isNotBlank(password)){
 				connectCommandBuilder.append("-user").append(" ")

@@ -26,6 +26,7 @@ public class OpenstackService extends AbstractCloudService {
     public static final String ENDPOINT_PROP = "openstackUrl";
     public static final String HARDWARE_PROP = "hardwareId";
     public static final String IMAGE_PROP = "imageId";
+    public static final String AVAILABILITY_ZONE_PROP = "availabilityZone";
 
     private final Properties properties = getCloudProperties(CREDENTIALS_PROPERTIES);
 
@@ -40,6 +41,7 @@ public class OpenstackService extends AbstractCloudService {
     private String imageId = properties.getProperty("imageId");
 
     private boolean securityEnabled = false;
+    private String availabilityZone = "az1";
 
     public OpenstackService() {
         super("openstack");
@@ -74,12 +76,14 @@ public class OpenstackService extends AbstractCloudService {
         getProperties().put(HARDWARE_PROP, this.hardwareId);
         getProperties().put(IMAGE_PROP, this.imageId);
 
+        getProperties().put(AVAILABILITY_ZONE_PROP, this.availabilityZone);
+
         propsToReplace.put("cloudify-agent-", getMachinePrefix() + "agent-");
         propsToReplace.put("cloudify-manager-", getMachinePrefix() + "manager-");
         propsToReplace.put("numberOfManagementMachines 1", "numberOfManagementMachines " + getNumberOfManagementMachines());
         propsToReplace.put("javaUrl", "// javaUrl");
         propsToReplace.put("// \"externalRouterName\" : \"router-ext\",", "\"externalRouterName\" : \"hpclouddev-router\",");
-
+        propsToReplace.put("// Optional. Use existing security groups.", "\"securityGroups\" : [\"default\"] as String[],");
 
         String pathToCloudGroovy = getPathToCloudGroovy();
         IOUtils.replaceTextInFile(pathToCloudGroovy, propsToReplace);

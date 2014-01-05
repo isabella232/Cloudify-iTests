@@ -304,15 +304,16 @@ public abstract class AbstractCloudManagementPersistencyTest extends NewAbstract
     }
     
     private boolean waitForRestAdminToDetectMachineFailure(String restUrl, int expectedNumberOfManagement, long timeout, TimeUnit unit)
-    		throws InterruptedException {
+    		throws InterruptedException, MalformedURLException, RestException {
+    	GSRestClient restClient = new GSRestClient("", "", new URL(restUrl), PlatformVersion.getVersionNumber());
     	LogUtils.log("Waiting for rest admin to detect machine failure");
     	long end = System.currentTimeMillis() + unit.toMillis(timeout);
     	while (end > System.currentTimeMillis()) {
     		int gsmCount = 0;
     		try {
-    			gsmCount = Integer.parseInt((String)this.client.getAdmin("GridServiceManagers/").get("Size"));
-    		} catch (Exception e) {
-    			//Do nothing.
+    			gsmCount = Integer.parseInt((String)restClient.getAdmin("GridServiceManagers/").get("Size"));
+    		} catch (final Exception e) {
+    			LogUtils.log("Failed getting GSM instance count.");
     		}
     		if (gsmCount == expectedNumberOfManagement) {
     			return true;

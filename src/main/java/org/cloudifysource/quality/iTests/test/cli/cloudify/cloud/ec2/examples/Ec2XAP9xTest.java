@@ -39,16 +39,18 @@ public class Ec2XAP9xTest extends NewAbstractCloudTest {
     private static final String APP_NAME = "default";
     private static final String BRANCH_NAME = "master";
     private static final String PUURL = "https://s3-eu-west-1.amazonaws.com/gigaspaces-maven-repository-eu/com/gigaspaces/quality/sgtest/apps/listeners/Space/3.0.0-SNAPSHOT/Space-3.0.0-SNAPSHOT.jar";
-    private static final String DEPLOYPU_COMMAND = "deploy-pu pu-using-deploy-pu "+PUURL+" partitioned-sync2backup 2 1 2 2";
+    private static final String DEPLOYPU_COMMAND = "deploy-pu pu-using-deploy-pu "+PUURL+" partitioned-sync2backup 1 1 0 0";
     private static final String UNDEPLOYGRID_DEPLOYPU_COMMAND = "undeploy-grid pu-using-deploy-pu";
     private static final String DEPLOYPUBASIC_COMMAND = "deploy-pu-basic "+PUURL;
     private static final String UNDEPLOYGRID_DEPLOYPUBASIC_COMMAND = "undeploy-grid Space-3.0.0-SNAPSHOT.jar";
-    private static final String DEPLOYGRID_COMMAND = "deploy-grid pu-using-deploy-grid partitioned-sync2backup 1 0 1 1";
+    private static final String DEPLOYGRID_COMMAND = "deploy-grid pu-using-deploy-grid partitioned-sync2backup 1 1 0 0";
     private static final String UNDEPLOYGRID_DEPLOYGRID_COMMAND = "undeploy-grid pu-using-deploy-grid";
+    private static final String DEPLOYGRIDBASIC_COMMAND = "deploy-grid-basic puusing-deploygridbasic";
+    private static final String UNDEPLOYGRID_DEPLOYGRIDBASIC_COMMAND = "undeploy-grid puusing-deploygridbasic";
 
-    protected static final String CREDENTIALS_FOLDER = System.getProperty("iTests.credentialsFolder",
-            SGTestHelper.getSGTestRootDir() + "/src/main/resources/credentials");
-    private static File propsFile = new File(CREDENTIALS_FOLDER + "/xap/xap.properties");
+    //This grid is already deployed by the recipe but we need these lines for validateInstance and undeploy command
+    private static final String DEPLOYGRID_MYDATAGRID_COMMAND = "deploy-grid-basic myDataGrid"; // partitioned-sync2backup 1 0 1 1
+    private static final String UNDEPLOYGRID_MYDATAGRID_COMMAND = "undeploy-grid myDataGrid";
 
     @Override
     protected String getCloudName() {
@@ -68,24 +70,6 @@ public class Ec2XAP9xTest extends NewAbstractCloudTest {
             String remotePath = "https://github.com/CloudifySource/cloudify-recipes.git";
             JGitUtils.clone(localGitRepoPath, remotePath, BRANCH_NAME);
         }
-
-        //Get XAP license from properties file
-        Properties props;
-        try {
-            props = IOUtils.readPropertiesFromFile(propsFile);
-        } catch (final Exception e) {
-            throw new IllegalStateException("Failed reading properties file : " + e.getMessage());
-        }
-        String xapLicense = props.getProperty("xap_license");
-
-        //Add license to xap-management
-        IOUtils.replaceTextInFile(localGitRepoPath+"/services/xap9x/xap-management/xap-management-service.properties",
-                "license=\"\"",
-                "license=\""+xapLicense+"\"");
-        //Add license to xap-container
-        IOUtils.replaceTextInFile(localGitRepoPath+"/services/xap9x/xap-container/xap-container-service.properties",
-                "license=\"\"",
-                "license=\""+xapLicense+"\"");
 
         super.bootstrap();
     }
@@ -111,9 +95,19 @@ public class Ec2XAP9xTest extends NewAbstractCloudTest {
 
         //Install and verify xap-container
         installAndVerify(XAP9X_CONTAINER_PATH,XAP9X_CONTAINER);
+
         //Install and verify sgvalidator
         installAndVerify(SG_VALIDATOR_PATH,SG_VALIDATOR);
 
+
+        // First validate and undeploy myDataGrid that the container-service deploy
+        validateInstance(lookuplocators,DEPLOYGRID_MYDATAGRID_COMMAND);
+        //undeploy-grid
+        response = customCommand(UNDEPLOYGRID_MYDATAGRID_COMMAND, XAP9X_MANAGEMENT);
+        result = getCustomCommandResult(response);
+        Assert.assertEquals(result.getInvocationStatus(), CloudifyConstants.InvocationStatus.SUCCESS);
+
+        
         //deploy-pu
         response = customCommand(DEPLOYPU_COMMAND, XAP9X_MANAGEMENT);
         result = getCustomCommandResult(response);
@@ -144,7 +138,17 @@ public class Ec2XAP9xTest extends NewAbstractCloudTest {
         result = getCustomCommandResult(response);
         Assert.assertEquals(result.getInvocationStatus(), CloudifyConstants.InvocationStatus.SUCCESS);
 
-        uninstallAndVerify();
+        //deploy-grid
+        response = customCommand(DEPLOYGRIDBASIC_COMMAND, XAP9X_MANAGEMENT);
+        result = getCustomCommandResult(response);
+        Assert.assertEquals(result.getInvocationStatus(), CloudifyConstants.InvocationStatus.SUCCESS);
+        validateInstance(lookuplocators,DEPLOYGRIDBASIC_COMMAND);
+        //undeploy-grid
+        response = customCommand(UNDEPLOYGRID_DEPLOYGRIDBASIC_COMMAND, XAP9X_MANAGEMENT);
+        result = getCustomCommandResult(response);
+        Assert.assertEquals(result.getInvocationStatus(), CloudifyConstants.InvocationStatus.SUCCESS);
+
+        //uninstallAndVerify();
     }
 
     private void validateInstance(String lookuplocators, String deploypuCommand) throws Exception {
@@ -170,6 +174,12 @@ public class Ec2XAP9xTest extends NewAbstractCloudTest {
             backups = "0";
             maxPerVM = "1";
             maxPerMachine = "1";
+        } else if (deployCmdArr[0].equals("deploy-grid-basic")) {
+            gridname = deployCmdArr[1];
+            partitions = "1";
+            backups = "1";
+            maxPerVM = "0";
+            maxPerMachine = "0";
         } else {
             throw new Exception("Unknown command. Please recheck the command or add it to validateInstance function.");
         }
@@ -240,7 +250,7 @@ public class Ec2XAP9xTest extends NewAbstractCloudTest {
     }
 
     private String installAndVerify(String servicePath, String serviceName) throws Exception {
-        String result = installServiceAndWait(servicePath, serviceName,15);
+        String result = installServiceAndWait(servicePath, serviceName,25);
 
         verifyPUInstallation(serviceName);
         return result;

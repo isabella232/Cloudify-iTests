@@ -277,28 +277,33 @@ public abstract class AbstractCloudManagementPersistencyTest extends NewAbstract
     	assertTrue("Failed waiting for rest admin to detect machine failure.", result);
     	
     	LogUtils.log("Attemting to uninstall application. This should fail.");
-    	String uninstallApplicationOutput = uninstallApplicationAndWait(SIMPLE_APPLICATION_NAME, true);
+    	String uninstallApplicationOutput = 
+    			CommandTestUtils.runCommandExpectedFail("connect " + managingManagementMachineUrl + ";uninstall-application " + SIMPLE_APPLICATION_NAME);
     	assertGsmFailureOutput(uninstallApplicationOutput);
 
     	LogUtils.log("Attemting to uninstall service. This should fail.");
-    	String uninstallServiceOutput = uninstallServiceAndWait(SCALABLE_SERVICE_NAME, true);
+    	String uninstallServiceOutput = 
+    			CommandTestUtils.runCommandExpectedFail("connect " + managingManagementMachineUrl + ";uninstall-service " + SCALABLE_SERVICE_NAME);
     	assertGsmFailureOutput(uninstallServiceOutput);
 
     	LogUtils.log("Attempting to install a simple service. This is expected to fail");
-    	String installServiceOutput = installServiceAndWait(SCALABLE_SERVICE_PATH, MOCK_SERVICE_NAME, true);
+    	String installServiceOutput = 
+    			CommandTestUtils.runCommandExpectedFail("connect " + managingManagementMachineUrl + ";install-service -name " + MOCK_SERVICE_NAME + " " + SCALABLE_SERVICE_PATH);
     	LogUtils.log("asserting service installation failed due to gsm failure");
     	assertGsmFailureOutput(installServiceOutput);
 
     	LogUtils.log("Attempting to install a simple application. This is expected to fail.");
-    	String installApplicationOutput = installApplicationAndWait(SIMPLE_APPLICATION_PATH, MOCK_APPLICATION_NAME, 15, true);
+    	String installApplicationOutput = 
+    			CommandTestUtils.runCommandExpectedFail("connect " + managingManagementMachineUrl + ";install-application -name " + MOCK_APPLICATION_NAME + " " + SIMPLE_APPLICATION_PATH);
     	assertGsmFailureOutput(installApplicationOutput);
 
     	LogUtils.log("Attempting to manually scale service " + SCALABLE_SERVICE_NAME + ". This should fail");
-    	String manualScaleOutput = scaleServiceUsingCommand(2, true);
+    	String manualScaleOutput = 
+    			CommandTestUtils.runCommandExpectedFail("connect " + managingManagementMachineUrl + ";set-instances " + SCALABLE_SERVICE_NAME + " 2");
     	assertGsmFailureOutput(manualScaleOutput);
 
         LogUtils.log("Attempting to list applications. This should succeed");
-        String output = getService().getBootstrapper().listApplications(false);
+        String output = CommandTestUtils.runCommandAndWait("connect " + managingManagementMachineUrl + "; list-applications;");
         AssertUtils.assertTrue("failed to list applications while one management is down.", output.contains(SIMPLE_APPLICATION_NAME));
 
     }

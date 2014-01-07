@@ -34,12 +34,12 @@ public class Ec2StorageDeleteOnExitTest extends AbstractStorageAllocationTest {
 
     @Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true, priority=1)
     public void testLinuxGlobalSla() throws Exception {
-        storageAllocationTester.testDeleteOnExitFalseLinuxGlobalSla();
+        storageAllocationTester.testDeleteOnExitFalseLinuxGlobalSla("SMALL_LINUX");
     }
     
     @Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true, priority=2)
     public void testLinux() throws Exception {
-        storageAllocationTester.testDeleteOnExitFalseLinux();
+        storageAllocationTester.testDeleteOnExitFalseLinux("SMALL_LINUX");
     }
     
 

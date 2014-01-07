@@ -8,10 +8,12 @@ import org.cloudifysource.quality.iTests.framework.utils.CloudBootstrapper;
 import org.cloudifysource.quality.iTests.framework.utils.compute.ComputeApiHelper;
 import org.cloudifysource.quality.iTests.framework.utils.compute.JcloudsComputeApiHelper;
 import org.cloudifysource.quality.iTests.framework.utils.storage.Ec2StorageApiHelper;
+import org.cloudifysource.quality.iTests.framework.utils.storage.OpenstackStorageApiHelper;
 import org.cloudifysource.quality.iTests.framework.utils.storage.StorageAllocationTester;
 import org.cloudifysource.quality.iTests.framework.utils.storage.StorageApiHelper;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.CloudService;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.ec2.Ec2CloudService;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.openstack.OpenstackService;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -76,21 +78,24 @@ public abstract class AbstractStorageAllocationTest extends NewAbstractCloudTest
     }
 
     private ComputeApiHelper initComputeHelper() {
-        if (getCloudName().equals("ec2") || getCloudName().equals("hp") || getCloudName().equals("rackspace")) {
+        if (getCloudName().equals("ec2") || getCloudName().equals("hp") || getCloudName().equals("rackspace") || getCloudName().equals("openstack")) {
             return new JcloudsComputeApiHelper(getService().getCloud(), getService().getRegion());
         }
         throw new UnsupportedOperationException("Cannot init compute helper for non jclouds providers!");
     }
 
-
     private StorageApiHelper initStorageHelper() {
         if (getCloudName().equals("ec2")) {
-            return new Ec2StorageApiHelper(getService().getCloud(),
-                    "SMALL_LINUX",
-                    ((Ec2CloudService)getService()).getRegion(),
-                    ((Ec2CloudService)getService()).getComputeServiceContext());
+            return new Ec2StorageApiHelper(getService().getCloud()
+                    ,"SMALL_LINUX"
+                    ,((Ec2CloudService)getService()).getRegion()
+                    ,((Ec2CloudService)getService()).getComputeServiceContext());
+        }if (getCloudName().equals("openstack")) {
+            return new OpenstackStorageApiHelper(getService().getCloud()
+                    ,"MEDIUM_LINUX"
+                    ,((OpenstackService)getService()).getComputeServiceContext());
         }
-        throw new UnsupportedOperationException("Cannot init storage helper for clouds that are not ec2");
+        throw new UnsupportedOperationException("Cannot init storage helper for clouds that are not ec2 or Openstack");
     }
 
     public void scanForLeakedVolumes(final String name) throws TimeoutException, StorageProvisioningException {

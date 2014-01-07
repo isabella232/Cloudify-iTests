@@ -74,7 +74,10 @@ public abstract class JCloudsCloudService extends AbstractCloudService {
 		for (Entry<String, Object> entry : entries) {
 			overrides.setProperty(entry.getKey(), (String)entry.getValue());
 		}
-		
+        if(getCloud().getName().equalsIgnoreCase("openstack")){
+            overrides.setProperty("jclouds.endpoint", "https://region-b.geo-1.identity.hpcloudsvc.com:35357/v2.0/");
+            overrides.setProperty("jclouds.api-version", "2");
+        }
 		addOverrides(overrides);	
 		
 		final String provider = getCloud().getProvider().getProvider();

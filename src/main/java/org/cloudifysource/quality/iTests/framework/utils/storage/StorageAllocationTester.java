@@ -69,95 +69,95 @@ public class StorageAllocationTester {
 
     /* Test Methods to be called by test classes */
 
-    public void testStorageVolumeMountedLinux() throws Exception {
+    public void testStorageVolumeMountedLinux(String computeTemplateName) throws Exception {
         String folderName = "simple-storage-with-custom-commands";
         final String servicePath = CommandTestUtils.getPath("/src/main/resources/apps/USM/usm/staticstorage/" + folderName);
         folderName = copyServiceToRecipesFolder(servicePath, folderName);
-        setTemplate(RECIPES_SERVICES_FOLDER + "/" + folderName, "SMALL_LINUX", true);
+        setTemplate(RECIPES_SERVICES_FOLDER + "/" + folderName, computeTemplateName, true);
         testStorageVolumeMounted(folderName);
     }
 
-    public void testStorageVolumeMountedUbuntu() throws Exception {
+    public void testStorageVolumeMountedUbuntu(String computeTemplateName) throws Exception {
         String folderName = "simple-storage-with-custom-commands";
         final String servicePath = CommandTestUtils.getPath("/src/main/resources/apps/USM/usm/staticstorage/" + folderName);
         folderName = copyServiceToRecipesFolder(servicePath, folderName);
-        setTemplate(RECIPES_SERVICES_FOLDER + "/" + folderName, "SMALL_UBUNTU", false);
+        setTemplate(RECIPES_SERVICES_FOLDER + "/" + folderName, computeTemplateName, false);
         testStorageVolumeMounted(folderName);
     }
 
-    public void testWriteToStorageLinux() throws Exception {
+    public void testWriteToStorageLinux(String computeTemplateName) throws Exception {
         String folderName = "simple-storage-with-custom-commands";
         final String servicePath = CommandTestUtils.getPath("/src/main/resources/apps/USM/usm/staticstorage/" + folderName);
         folderName = copyServiceToRecipesFolder(servicePath, folderName);
-        setTemplate(RECIPES_SERVICES_FOLDER + "/" + folderName, "SMALL_LINUX", true);
+        setTemplate(RECIPES_SERVICES_FOLDER + "/" + folderName, computeTemplateName, true);
         testWriteToStorage(folderName);
     }
 
-    public void testWriteToStorageUbuntu() throws Exception {
+    public void testWriteToStorageUbuntu(String computeTemplateName) throws Exception {
         String folderName = "simple-storage-with-custom-commands";
         final String servicePath = CommandTestUtils.getPath("/src/main/resources/apps/USM/usm/staticstorage/" + folderName);
         folderName = copyServiceToRecipesFolder(servicePath, folderName);
-        setTemplate(RECIPES_SERVICES_FOLDER + "/" + folderName, "SMALL_UBUNTU", false);
+        setTemplate(RECIPES_SERVICES_FOLDER + "/" + folderName, computeTemplateName, false);
         testWriteToStorage(folderName);
     }
 
-    public void testMountLinux() throws Exception {
+    public void testMountLinux(String computeTemplateName) throws Exception {
         String folderName = "simple-storage-with-custom-commands";
         final String servicePath = CommandTestUtils.getPath("/src/main/resources/apps/USM/usm/staticstorage/" + folderName);
         folderName = copyServiceToRecipesFolder(servicePath, folderName);
-        setTemplate(RECIPES_SERVICES_FOLDER + "/" + folderName, "SMALL_LINUX", true);
+        setTemplate(RECIPES_SERVICES_FOLDER + "/" + folderName, computeTemplateName, true);
         testMount(folderName);
     }
 
-    public void testMountUbuntu() throws Exception {
+    public void testMountUbuntu(String computeTemplateName) throws Exception {
         String folderName = "simple-storage-with-custom-commands";
         final String servicePath = CommandTestUtils.getPath("/src/main/resources/apps/USM/usm/staticstorage/" + folderName);
         folderName = copyServiceToRecipesFolder(servicePath, folderName);
-        setTemplate(RECIPES_SERVICES_FOLDER + "/" + folderName, "SMALL_UBUNTU", false);
+        setTemplate(RECIPES_SERVICES_FOLDER + "/" + folderName, computeTemplateName, false);
         testMount(folderName);
     }
 
-    public void testInstallWithStorageLinux() throws Exception {
+    public void testInstallWithStorageLinux(String computeTemplateName) throws Exception {
         String folderName = "simple-storage";
         final String servicePath = CommandTestUtils.getPath("/src/main/resources/apps/USM/usm/staticstorage/" + folderName);
         folderName = copyServiceToRecipesFolder(servicePath, folderName);
-        setTemplate(RECIPES_SERVICES_FOLDER + "/" + folderName, "SMALL_LINUX", true);
+        setTemplate(RECIPES_SERVICES_FOLDER + "/" + folderName, computeTemplateName, true);
         testInstallWithStorage(folderName);
     }
 
-    public void testInstallWithStorageUbuntu() throws Exception {
+    public void testInstallWithStorageUbuntu(String computeTemplateName) throws Exception {
         String folderName = "simple-storage";
         final String servicePath = CommandTestUtils.getPath("/src/main/resources/apps/USM/usm/staticstorage/" + folderName);
         folderName = copyServiceToRecipesFolder(servicePath, folderName);
-        setTemplate(RECIPES_SERVICES_FOLDER + "/" + folderName, "SMALL_UBUNTU", false);
+        setTemplate(RECIPES_SERVICES_FOLDER + "/" + folderName, computeTemplateName, false);
         testInstallWithStorage(folderName);
     }
 
-    public void testInstallWithDynamicStorageLinux() throws Exception {
+    public void testInstallWithDynamicStorageLinux(String computeTemplateName) throws Exception {
         String folderName = "create-and-attach";
         final String servicePath = CommandTestUtils.getPath("/src/main/resources/apps/USM/usm/dynamicstorage/" + folderName);
         folderName = copyServiceToRecipesFolder(servicePath, folderName);
-        setTemplate(RECIPES_SERVICES_FOLDER + "/" + folderName, "SMALL_LINUX", true);
+        setTemplate(RECIPES_SERVICES_FOLDER + "/" + folderName, computeTemplateName, true);
         testInstallWithStorage(folderName);
     }
 
-    public void testInstallWithDynamicStorageUbuntu() throws Exception {
+    public void testInstallWithDynamicStorageUbuntu(String computeTemplateName) throws Exception {
         String folderName = "create-and-attach";
         final String servicePath = CommandTestUtils.getPath("/src/main/resources/apps/USM/usm/dynamicstorage/" + folderName);
         folderName = copyServiceToRecipesFolder(servicePath, folderName);
-        setTemplate(RECIPES_SERVICES_FOLDER + "/" + folderName, "SMALL_UBUNTU", false);
+        setTemplate(RECIPES_SERVICES_FOLDER + "/" + folderName, computeTemplateName, false);
         testInstallWithStorage(folderName);
     }
 
-    public void testDeleteOnExitFalseLinux() throws Exception {
+    public void testDeleteOnExitFalseLinux(String computeTemplateName) throws Exception {
         String folderName = "simple-storage";
         final String servicePath = CommandTestUtils.getPath("/src/main/resources/apps/USM/usm/staticstorage/" + folderName);
         folderName = copyServiceToRecipesFolder(servicePath, folderName);
-        setTemplate(RECIPES_SERVICES_FOLDER + "/" + folderName, "SMALL_LINUX", true);
+        setTemplate(RECIPES_SERVICES_FOLDER + "/" + folderName, computeTemplateName, true);
         testDeleteOnExitFalse(folderName);
     }
     
-    public void testDeleteOnExitFalseLinuxGlobalSla() throws Exception {
+    public void testDeleteOnExitFalseLinuxGlobalSla(String computeTemplateName) throws Exception {
         String folderName = "simple-storage-global-sla";
         final String servicePath = CommandTestUtils.getPath("/src/main/resources/apps/USM/usm/staticstorage/" + folderName);
         folderName = copyServiceToRecipesFolder(servicePath, folderName);
@@ -165,15 +165,15 @@ public class StorageAllocationTester {
         testDeleteOnExitFalse(folderName);
     }
 
-    public void testDeleteOnExitFalseUbuntu() throws Exception {
+    public void testDeleteOnExitFalseUbuntu(String computeTemplateName) throws Exception {
         String folderName = "simple-storage";
         final String servicePath = CommandTestUtils.getPath("/src/main/resources/apps/USM/usm/staticstorage/" + folderName);
         folderName = copyServiceToRecipesFolder(servicePath, folderName);
-        setTemplate(RECIPES_SERVICES_FOLDER + "/" + folderName, "SMALL_UBUNTU", false);
+        setTemplate(RECIPES_SERVICES_FOLDER + "/" + folderName, computeTemplateName, false);
         testDeleteOnExitFalse(folderName);
     }
 
-    public void testFaultyInstallLinux() throws Exception {
+    public void testFaultyInstallLinux(String computeTemplateName) throws Exception {
         String folderName = "faulty-install";
         final String servicePath = CommandTestUtils.getPath("/src/main/resources/apps/USM/usm/staticstorage/" + folderName);
         folderName = copyServiceToRecipesFolder(servicePath, folderName);
@@ -181,27 +181,27 @@ public class StorageAllocationTester {
         testFaultyInstall(folderName);
     }
 
-    public void testFaultyInstallUbuntu() throws Exception {
+    public void testFaultyInstallUbuntu(String computeTemplateName) throws Exception {
         String folderName = "faulty-install";
         final String servicePath = CommandTestUtils.getPath("/src/main/resources/apps/USM/usm/staticstorage/" + folderName);
         folderName = copyServiceToRecipesFolder(servicePath, folderName);
-        setTemplate(RECIPES_SERVICES_FOLDER + "/" + folderName, "SMALL_UBUNTU", false);
+        setTemplate(RECIPES_SERVICES_FOLDER + "/" + folderName, computeTemplateName, false);
         testFaultyInstall(folderName);
     }
 
-    public void testFailedToAttachLinux() throws Exception {
+    public void testFailedToAttachLinux(String computeTemplateName) throws Exception {
         String folderName = "simple-storage";
         final String servicePath = CommandTestUtils.getPath("/src/main/resources/apps/USM/usm/staticstorage/" + folderName);
         folderName = copyServiceToRecipesFolder(servicePath, folderName);
-        setTemplate(RECIPES_SERVICES_FOLDER + "/" + folderName, "SMALL_LINUX", true);
+        setTemplate(RECIPES_SERVICES_FOLDER + "/" + folderName, computeTemplateName, true);
         testFailedToAttach(folderName);
     }
 
-    public void testFailedToAttachUbuntu() throws Exception {
+    public void testFailedToAttachUbuntu(String computeTemplateName) throws Exception {
         final String folderName = "simple-storage";
         final String servicePath = CommandTestUtils.getPath("/src/main/resources/apps/USM/usm/staticstorage/" + folderName);
         copyServiceToRecipesFolder(servicePath, folderName);
-        setTemplate(RECIPES_SERVICES_FOLDER + "/" + folderName, "SMALL_UBUNTU", false);
+        setTemplate(RECIPES_SERVICES_FOLDER + "/" + folderName, computeTemplateName, false);
         testFailedToAttach(folderName);
     }
 
@@ -737,8 +737,10 @@ public class StorageAllocationTester {
 
         AssertUtils.assertNotNull("could not find the required volume after install service", ourVolume);
         LogUtils.log("Found volume : " + ourVolume);
+
         // also check it is attached.
         AssertUtils.assertEquals("the volume should have one attachments", 1, storageApiHelper.getVolumeAttachments(ourVolume.getId()).size());
+
 
         // TODO elip - assert Volume configuration?
 

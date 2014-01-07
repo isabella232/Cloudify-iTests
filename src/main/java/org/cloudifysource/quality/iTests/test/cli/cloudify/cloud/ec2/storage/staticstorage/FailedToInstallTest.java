@@ -37,7 +37,7 @@ public class FailedToInstallTest extends AbstractStorageAllocationTest {
 
     @Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true, groups = AbstractTestSupport.SUSPECTED)
     public void testLinux() throws Exception {
-        storageAllocationTester.testFaultyInstallLinux();
+        storageAllocationTester.testFaultyInstallLinux("SMALL_LINUX");
     }
 
     @AfterMethod

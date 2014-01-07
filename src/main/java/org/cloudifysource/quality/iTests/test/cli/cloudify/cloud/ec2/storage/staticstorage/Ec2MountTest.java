@@ -29,7 +29,7 @@ public class Ec2MountTest extends AbstractStorageAllocationTest {
 
     @Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
     public void testLinux() throws Exception {
-        storageAllocationTester.testStorageVolumeMountedLinux();
+        storageAllocationTester.testStorageVolumeMountedLinux("SMALL_LINUX");
     }
 
     @AfterMethod

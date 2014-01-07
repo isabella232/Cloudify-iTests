@@ -1,4 +1,4 @@
-package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.hp.storage.staticstorage;
+package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.openstack.storage.staticstorage;
 
 import java.util.concurrent.TimeoutException;
 
@@ -15,9 +15,9 @@ import org.testng.annotations.Test;
 
 /**
  * Author: nirb
- * Date: 25/02/13
+ * Date: 21/02/13
  */
-public class HpFailedToInstallTest extends AbstractStorageAllocationTest {
+public class OpenstackMountTest extends AbstractStorageAllocationTest {
 
     @BeforeClass(alwaysRun = true)
     protected void bootstrap() throws Exception {
@@ -26,7 +26,7 @@ public class HpFailedToInstallTest extends AbstractStorageAllocationTest {
 
     @Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
     public void testLinux() throws Exception {
-        storageAllocationTester.testFaultyInstallLinux();
+        storageAllocationTester.testStorageVolumeMountedLinux("MEDIUM_LINUX");
     }
 
     @AfterMethod
@@ -49,10 +49,9 @@ public class HpFailedToInstallTest extends AbstractStorageAllocationTest {
         super.teardown();
     }
 
-
     @Override
     protected String getCloudName() {
-        return "hp";
+        return "openstack";
     }
 
     @Override

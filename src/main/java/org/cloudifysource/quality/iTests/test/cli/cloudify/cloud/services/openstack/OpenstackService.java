@@ -11,10 +11,10 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.io.FileUtils;
-import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.AbstractCloudService;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.JCloudsCloudService;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.security.SecurityConstants;
 
-public class OpenstackService extends AbstractCloudService {
+public class OpenstackService extends JCloudsCloudService {
 
     private static final String CREDENTIALS_PROPERTIES = CREDENTIALS_FOLDER + "/cloud/openstack/openstack-cred.properties";
 
@@ -30,8 +30,6 @@ public class OpenstackService extends AbstractCloudService {
 
     private final Properties properties = getCloudProperties(CREDENTIALS_PROPERTIES);
 
-    protected static final String US_EAST_REGION = "us-east-1";
-
     private String user = properties.getProperty("user");
     private String tenant = properties.getProperty("tenant");
     private String apiKey = properties.getProperty("apiKey");
@@ -39,9 +37,9 @@ public class OpenstackService extends AbstractCloudService {
     private String endpoint = properties.getProperty("openstackUrl");
     private String hardwareId = properties.getProperty("hardwareId");
     private String imageId = properties.getProperty("imageId");
+    private String availabilityZone = properties.getProperty("availabilityZone");
 
     private boolean securityEnabled = false;
-    private String availabilityZone = "az1";
 
     public OpenstackService() {
         super("openstack");
@@ -56,7 +54,7 @@ public class OpenstackService extends AbstractCloudService {
 
     @Override
     public String getRegion() {
-        return System.getProperty("ec2.region", US_EAST_REGION);
+        return System.getProperty(availabilityZone);
     }
 
     @Override
@@ -72,10 +70,8 @@ public class OpenstackService extends AbstractCloudService {
         getProperties().put(KEYPAIR_PROP, this.keyPair);
         getProperties().put(KEYFILE_PROP, sshKeyPemName);
         getProperties().put(ENDPOINT_PROP, this.endpoint);
-
         getProperties().put(HARDWARE_PROP, this.hardwareId);
         getProperties().put(IMAGE_PROP, this.imageId);
-
         getProperties().put(AVAILABILITY_ZONE_PROP, this.availabilityZone);
 
         propsToReplace.put("cloudify-agent-", getMachinePrefix() + "agent-");
@@ -83,7 +79,6 @@ public class OpenstackService extends AbstractCloudService {
         propsToReplace.put("numberOfManagementMachines 1", "numberOfManagementMachines " + getNumberOfManagementMachines());
         propsToReplace.put("javaUrl", "// javaUrl");
         propsToReplace.put("// \"externalRouterName\" : \"router-ext\",", "\"externalRouterName\" : \"hpclouddev-router\",");
-        propsToReplace.put("// Optional. Use existing security groups.", "\"securityGroups\" : [\"default\"] as String[],");
 
         String pathToCloudGroovy = getPathToCloudGroovy();
         IOUtils.replaceTextInFile(pathToCloudGroovy, propsToReplace);
@@ -128,5 +123,10 @@ public class OpenstackService extends AbstractCloudService {
             }
         }
         return property;
+    }
+
+    @Override
+    public void addOverrides(Properties overridesProps) {
+
     }
 }

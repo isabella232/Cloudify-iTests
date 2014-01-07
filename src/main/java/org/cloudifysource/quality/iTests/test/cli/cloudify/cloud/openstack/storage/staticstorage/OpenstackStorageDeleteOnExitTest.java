@@ -1,4 +1,4 @@
-package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.hp.storage.staticstorage;
+package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.openstack.storage.staticstorage;
 
 import java.util.concurrent.TimeoutException;
 
@@ -17,11 +17,11 @@ import org.testng.annotations.Test;
  * Author: nirb
  * Date: 21/02/13
  */
-public class HpStorageDeleteOnExitTest extends AbstractStorageAllocationTest {
+public class OpenstackStorageDeleteOnExitTest extends AbstractStorageAllocationTest {
 
     @Override
     protected String getCloudName() {
-        return "hp";
+        return "openstack";
     }
 
     @BeforeClass(alwaysRun = true)
@@ -37,7 +37,7 @@ public class HpStorageDeleteOnExitTest extends AbstractStorageAllocationTest {
 
     @Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
     public void testLinux() throws Exception {
-        storageAllocationTester.testDeleteOnExitFalseLinux();
+        storageAllocationTester.testDeleteOnExitFalseLinux("MEDIUM_LINUX");
     }
 
 

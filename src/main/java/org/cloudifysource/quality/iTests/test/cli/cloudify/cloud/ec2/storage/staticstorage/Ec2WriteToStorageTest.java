@@ -30,7 +30,7 @@ public class Ec2WriteToStorageTest extends AbstractStorageAllocationTest {
 
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
 	public void testLinux() throws Exception {
-        storageAllocationTester.testWriteToStorageLinux();
+        storageAllocationTester.testWriteToStorageLinux("SMALL_LINUX");
 	}
 
     @AfterMethod

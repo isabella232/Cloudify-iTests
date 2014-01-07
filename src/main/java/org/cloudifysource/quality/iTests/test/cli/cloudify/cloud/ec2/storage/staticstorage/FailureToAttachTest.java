@@ -36,7 +36,7 @@ public class FailureToAttachTest extends AbstractStorageAllocationTest {
 
     @Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true, groups = AbstractTestSupport.SUSPECTED)
     public void testLinux() throws Exception {
-        storageAllocationTester.testFailedToAttachLinux();
+        storageAllocationTester.testFailedToAttachLinux("SMALL_LINUX");
     }
 
     @Override

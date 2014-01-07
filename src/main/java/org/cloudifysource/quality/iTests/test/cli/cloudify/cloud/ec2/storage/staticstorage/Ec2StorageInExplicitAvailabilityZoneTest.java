@@ -32,7 +32,7 @@ public class Ec2StorageInExplicitAvailabilityZoneTest extends AbstractStorageAll
 
     @Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
     public void testLinux() throws Exception {
-        storageAllocationTester.testInstallWithStorageLinux();
+        storageAllocationTester.testInstallWithStorageLinux("SMALL_LINUX");
     }
 
     @AfterMethod

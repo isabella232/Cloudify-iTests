@@ -1,7 +1,20 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.ec2.examples;
 
-import iTests.framework.tools.SGTestHelper;
-import iTests.framework.utils.*;
+import iTests.framework.utils.JGitUtils;
+import iTests.framework.utils.LogUtils;
+import iTests.framework.utils.ScriptUtils;
+import iTests.framework.utils.WebUtils;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.cloudifysource.dsl.internal.CloudifyConstants;
 import org.cloudifysource.dsl.rest.response.InvokeServiceCommandResponse;
 import org.cloudifysource.quality.iTests.framework.utils.CommandInvoker;
@@ -15,13 +28,6 @@ import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * User: yohana

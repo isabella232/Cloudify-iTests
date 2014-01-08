@@ -1,23 +1,20 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud;
 
+import com.gigaspaces.internal.utils.StringUtils;
 import iTests.framework.utils.AssertUtils;
 import iTests.framework.utils.LogUtils;
 import iTests.framework.utils.ScriptUtils;
-
-import java.io.File;
-import java.io.IOException;
-
 import org.cloudifysource.domain.cloud.compute.ComputeTemplate;
 import org.cloudifysource.dsl.internal.CloudifyConstants;
 import org.cloudifysource.quality.iTests.framework.utils.ApplicationInstaller;
 import org.cloudifysource.quality.iTests.framework.utils.CloudBootstrapper;
 import org.cloudifysource.quality.iTests.framework.utils.ServiceInstaller;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
-import org.cloudifysource.quality.iTests.test.cli.cloudify.util.CloudTestUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.CloudService;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.CloudServiceManager;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.security.SecurityConstants;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.util.CloudTestUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.util.exceptions.FailedToCreateDumpException;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.util.exceptions.WrongMessageException;
 import org.cloudifysource.restclient.exceptions.RestClientException;
@@ -27,7 +24,8 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 
-import com.gigaspaces.internal.utils.StringUtils;
+import java.io.File;
+import java.io.IOException;
 
 public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 
@@ -143,9 +141,6 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
         this.cloudService.init(this.getClass().getSimpleName());
 
         LogUtils.log("Customizing cloud");
-        customizeCloud();
-
-        beforeBootstrap();
 
         String branchName = System.getProperty("branch.name", "dev").replace("_","-");
         LogUtils.log("Branch name is : " + branchName);
@@ -153,6 +148,11 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 
         this.cloudService.setMachinePrefix(prefix);
         this.cloudService.setVolumePrefix(prefix);
+
+        customizeCloud();
+
+        beforeBootstrap();
+
         String bootstrapOutput = this.cloudService.bootstrapCloud();
         parseBootstrapOutput(bootstrapOutput);
 

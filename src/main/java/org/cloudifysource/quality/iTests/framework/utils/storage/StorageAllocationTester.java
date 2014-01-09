@@ -161,7 +161,7 @@ public class StorageAllocationTester {
         String folderName = "simple-storage-global-sla";
         final String servicePath = CommandTestUtils.getPath("/src/main/resources/apps/USM/usm/staticstorage/" + folderName);
         folderName = copyServiceToRecipesFolder(servicePath, folderName);
-        setTemplate(RECIPES_SERVICES_FOLDER + "/" + folderName, "SMALL_LINUX", true);
+        setTemplate(RECIPES_SERVICES_FOLDER + "/" + folderName, computeTemplateName, true);
         testDeleteOnExitFalse(folderName);
     }
 
@@ -177,7 +177,7 @@ public class StorageAllocationTester {
         String folderName = "faulty-install";
         final String servicePath = CommandTestUtils.getPath("/src/main/resources/apps/USM/usm/staticstorage/" + folderName);
         folderName = copyServiceToRecipesFolder(servicePath, folderName);
-        setTemplate(RECIPES_SERVICES_FOLDER + "/" + folderName, "SMALL_LINUX", true);
+        setTemplate(RECIPES_SERVICES_FOLDER + "/" + folderName, computeTemplateName, true);
         testFaultyInstall(folderName);
     }
 

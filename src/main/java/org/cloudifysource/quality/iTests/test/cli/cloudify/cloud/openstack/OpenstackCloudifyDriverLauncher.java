@@ -54,7 +54,7 @@ public class OpenstackCloudifyDriverLauncher {
 
     private static final String SERVICES_RELATIVE_PATH = "src/main/resources/apps/USM/usm/networks/openstack/";
 
-    private static final String TEST_PREFIX = "nirb-itest-os-";
+    private static final String TEST_PREFIX = "openstack-test-itest-os-";
 
     private static long END_TIME = System.currentTimeMillis() + 1000L * 60l * 15l; // 15min
 

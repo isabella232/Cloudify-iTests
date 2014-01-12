@@ -25,6 +25,7 @@ public class OpenstackService extends JCloudsCloudService {
     public static final String KEYFILE_PROP = "keyFile";
     public static final String ENDPOINT_PROP = "openstackUrl";
     public static final String HARDWARE_PROP = "hardwareId";
+    public static final String SMALL_HARDWARE_PROP = "smallHardwareId";
     public static final String IMAGE_PROP = "imageId";
     public static final String AVAILABILITY_ZONE_PROP = "availabilityZone";
 
@@ -36,6 +37,7 @@ public class OpenstackService extends JCloudsCloudService {
     private String keyPair = properties.getProperty("keyPair");
     private String endpoint = properties.getProperty("openstackUrl");
     private String hardwareId = properties.getProperty("hardwareId");
+    private String smallHardwareId = properties.getProperty("smallHardwareId");
     private String imageId = properties.getProperty("imageId");
     private String availabilityZone = properties.getProperty("availabilityZone");
 
@@ -71,6 +73,7 @@ public class OpenstackService extends JCloudsCloudService {
         getProperties().put(KEYFILE_PROP, sshKeyPemName);
         getProperties().put(ENDPOINT_PROP, this.endpoint);
         getProperties().put(HARDWARE_PROP, this.hardwareId);
+        getProperties().put(SMALL_HARDWARE_PROP, this.smallHardwareId);
         getProperties().put(IMAGE_PROP, this.imageId);
         getProperties().put(AVAILABILITY_ZONE_PROP, this.availabilityZone);
 

@@ -7,10 +7,7 @@ import iTests.framework.utils.LogUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 import org.cloudifysource.domain.Service;
@@ -415,7 +412,9 @@ public class OpenstackCloudifyDriverLauncher {
         configuration.setCloud(cloud);
         configuration.setManagement(false);
         configuration.setNetwork(service.getNetwork());
-        String serviceCloudTemplate = service.getCompute() == null || service.getCompute().getTemplate().isEmpty() ? DEFAULT_TEMPLATE : service.getCompute()
+        String managementMachineTemplate = cloud.getConfiguration().getManagementMachineTemplate();
+
+        String serviceCloudTemplate = service.getCompute() == null || service.getCompute().getTemplate().isEmpty() ? managementMachineTemplate : service.getCompute()
                 .getTemplate();
         configuration.setCloudTemplate(serviceCloudTemplate);
         configuration.setServiceName(DEFAULT_APPLICATION_NAME + "." + service.getName());
@@ -670,6 +669,25 @@ public class OpenstackCloudifyDriverLauncher {
         for (Port port : ports) {
             FloatingIp floatingip = networkApi.getFloatingIpByPortId(port.getId());
             AssertUtils.assertNull("Floating ip for server '" + serverId + "' not expected", floatingip);
+        }
+    }
+
+    /**
+     * Assert that a server has no floating IP. Checks only for management machine.
+     */
+    public void assertAssignedFloatingIp(String serverId) throws OpenstackException {
+        List<Port> ports = networkApi.getPortsByDeviceId(serverId);
+        List<Network> networks = networkApi.getNetworkByPrefix(TEST_PREFIX);
+        List<String> networkIds = new LinkedList<String>();
+
+        for(Network network : networks){
+            networkIds.add(network.getId());
+        }
+        for (Port port : ports) {
+            if(networkIds.contains(port.getNetworkId())){
+                FloatingIp floatingip = networkApi.getFloatingIpByPortId(port.getId());
+                AssertUtils.assertNotNull("Floating ip for server '" + serverId + "' expected", floatingip);
+            }
         }
     }
 

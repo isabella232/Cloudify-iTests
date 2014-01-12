@@ -108,8 +108,10 @@ public class OpenstackCloudifyDriverTest extends AbstractTestSupport {
      * <ul>
      * <li>Use network template with multiple subnets.</li>
      * </ul>
+     *
+     * Disabled. There is a limitation on starting 2 subnets on one network.
      */
-    @Test(enabled = true)
+    @Test(enabled = false)
     public void testStartManagementMachinesWithNetworkTemplateAndMultipleSubnets() throws Exception {
         Map<String, String> additionalProps = new HashMap<String, String>();
 
@@ -198,12 +200,16 @@ public class OpenstackCloudifyDriverTest extends AbstractTestSupport {
      * <ul>
      * <li>Use computeNetworks.</li>
      * </ul>
+     * <ul>
+     * <li>The test creates 2 networks and uses the computeNetwork closure to connect the management machine to them.</li>
+     * </ul>
+     *
+     *
      */
     @Test(enabled = true)
     public void testStartManagementMachinesWithComputeNetwork() throws Exception {
         Map<String, String> additionalProps = new HashMap<String, String>();
 
-        additionalProps.put("// \"computeServiceName\" : \"nova\",", "// \"computeServiceName\" : \"nova\",\n\t\t\"skipExternalNetworking\" : \"true\",");
         additionalProps.put("// Optional. Use existing networks.", "computeNetwork {\n" +
                 "\t\t\t\t\tnetworks ([\"SOME_INTERNAL_NETWORK_1\",\"SOME_INTERNAL_NETWORK_2\"])\n" +
                 "\t\t\t\t }\n // Optional. Use existing networks.");
@@ -218,8 +224,8 @@ public class OpenstackCloudifyDriverTest extends AbstractTestSupport {
             for (MachineDetails md : mds) {
                 assertNotNull("Machine id is null", md.getMachineId());
                 assertNotNull("Private ip is null", md.getPrivateAddress());
-                assertTrue("Private ip is not from subnet 151.0.0.0/24", md.getPrivateAddress().startsWith("151.0.0."));
-                launcher.assertNoFloatingIp(md.getMachineId());
+                assertTrue("Private ip is not from subnet 177.86.0.0/24", md.getPrivateAddress().startsWith("177.86.0."));
+                launcher.assertAssignedFloatingIp(md.getMachineId());
                 launcher.assertVMBoundToNetwork(md.getMachineId(), COMPUTE_SOME_INTERNAL_NETWORK_1);
                 launcher.assertVMBoundToNetwork(md.getMachineId(), COMPUTE_SOME_INTERNAL_NETWORK_2);
             }
@@ -236,13 +242,15 @@ public class OpenstackCloudifyDriverTest extends AbstractTestSupport {
      * <ul>
      * <li>Use network templates</li>
      * </ul>
+     * <ul>
+     * <li>The test creates 2 networks and uses the computeNetwork closure to connect multiple management machines to them.</li>
+     * </ul>
      */
     @Test
     public void testStartMultipleManagementMachinesWithComputeNetwork() throws Exception {
-        int nbManagementMachines = 5;
+        int nbManagementMachines = 3;
         Map<String, String> additionalProps = new HashMap<String, String>();
 
-        additionalProps.put("// \"computeServiceName\" : \"nova\",", "// \"computeServiceName\" : \"nova\",\n\t\t\"skipExternalNetworking\" : \"true\",");
         additionalProps.put("// Optional. Use existing networks.", "computeNetwork {\n" +
                 "\t\t\t\t\tnetworks ([\"SOME_INTERNAL_NETWORK_1\",\"SOME_INTERNAL_NETWORK_2\"])\n" +
                 "\t\t\t\t }\n // Optional. Use existing networks.");
@@ -257,8 +265,8 @@ public class OpenstackCloudifyDriverTest extends AbstractTestSupport {
             for (MachineDetails md : mds) {
                 assertNotNull("Machine id is null", md.getMachineId());
                 assertNotNull("Private ip is null", md.getPrivateAddress());
-                assertTrue("Private ip is not from subnet 151.0.0.0/24", md.getPrivateAddress().startsWith("151.0.0."));
-                launcher.assertNoFloatingIp(md.getMachineId());
+                assertTrue("Private ip is not from subnet 177.86.0.0/24", md.getPrivateAddress().startsWith("177.86.0."));
+                launcher.assertAssignedFloatingIp(md.getMachineId());
                 launcher.assertVMBoundToNetwork(md.getMachineId(), COMPUTE_SOME_INTERNAL_NETWORK_1);
                 launcher.assertVMBoundToNetwork(md.getMachineId(), COMPUTE_SOME_INTERNAL_NETWORK_2);
             }
@@ -275,11 +283,14 @@ public class OpenstackCloudifyDriverTest extends AbstractTestSupport {
      * <ul>
      * <li>Use computeNetworks but networks does not exists.</li>
      * </ul>
+     * <ul>
+     * <li>The test tries to start a management machine which is defined to connect to networks that does not exist.
+     * machine start expected to fail.</li>
+     * </ul>
      */
     @Test(expectedExceptions = CloudProvisioningException.class)
     public void testStartManagementWithComputeTemplateButNetworksDoNotExist() throws Exception {
         Map<String, String> additionalProps = new HashMap<String, String>();
-        additionalProps.put("// \"computeServiceName\" : \"nova\",", "// \"computeServiceName\" : \"nova\",\n\t\t\"skipExternalNetworking\" : \"true\",");
         additionalProps.put("// Optional. Use existing networks.", "computeNetwork {\n" +
                 "\t\t\t\t\tnetworks ([\"SOME_INTERNAL_NETWORK_1\",\"SOME_INTERNAL_NETWORK_2\"])\n" +
                 "\t\t\t\t }\n // Optional. Use existing networks.");
@@ -298,6 +309,9 @@ public class OpenstackCloudifyDriverTest extends AbstractTestSupport {
      * <li>Start management machine.</li>
      * <li>Start agent.</li>
      * <li>Use network template.</li>
+     * <ul>
+     * <li>This test starts a management machine and installs a service with network access rules.</li>
+     * </ul>
      * </ul>
      */
     @Test
@@ -337,8 +351,10 @@ public class OpenstackCloudifyDriverTest extends AbstractTestSupport {
      * <li>Start agent.</li>
      * <li>Use network template with multiple subnets.</li>
      * </ul>
+     *
+     * Disabled. There is a limitation on starting 2 subnets on one network.
      */
-    @Test
+    @Test(enabled = false)
     public void testStartMachineWithMultipleSubnets() throws Exception {
         Map<String, String> additionalProps = new HashMap<String, String>();
 
@@ -439,7 +455,6 @@ public class OpenstackCloudifyDriverTest extends AbstractTestSupport {
         additionalProps.put("MEDIUM_LINUX : computeTemplate", "MANAGER : computeTemplate");
         additionalProps.put("keyFile keyFile", "keyFile keyFile\n" +
                 "                fileTransfer org.cloudifysource.domain.cloud.FileTransferModes.SCP");
-        additionalProps.put("// \"computeServiceName\" : \"nova\",", "// \"computeServiceName\" : \"nova\",\n\t\t\"skipExternalNetworking\" : \"true\",");
         additionalProps.put("// Optional. Use existing networks.", "computeNetwork {\n" +
                 "\t\t\t\t\tnetworks ([\"SOME_INTERNAL_NETWORK_1\",\"SOME_INTERNAL_NETWORK_2\"])\n" +
                 "\t\t\t\t }\n // Optional. Use existing networks.");

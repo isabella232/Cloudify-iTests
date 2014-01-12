@@ -502,7 +502,9 @@ public class OpenstackCloudifyDriverLauncher {
         configuration.setCloud(cloud);
         configuration.setManagement(false);
         configuration.setNetwork(service.getNetwork());
-        String serviceCloudTemplate = service.getCompute() == null || service.getCompute().getTemplate().isEmpty() ? DEFAULT_TEMPLATE : service.getCompute()
+        String managementMachineTemplate = cloud.getConfiguration().getManagementMachineTemplate();
+
+        String serviceCloudTemplate = service.getCompute() == null || service.getCompute().getTemplate().isEmpty() ? managementMachineTemplate : service.getCompute()
                 .getTemplate();
         configuration.setCloudTemplate(serviceCloudTemplate);
         configuration.setServiceName(DEFAULT_APPLICATION_NAME + "." + service.getName());

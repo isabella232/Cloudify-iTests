@@ -19,6 +19,9 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * To run this test, you will have to create the credential file here : ./src/main/resources/credentials/cloud/openstack/openstack.properties.<br />
  * An property example:
@@ -41,6 +44,7 @@ import org.testng.annotations.Test;
 public class OpenstackCloudifyDriverTest extends AbstractTestSupport {
 
     private OpenstackCloudifyDriverLauncher launcher;
+    private Cloud cloud;
 
     @BeforeMethod
     public void init() throws Exception {
@@ -49,7 +53,7 @@ public class OpenstackCloudifyDriverTest extends AbstractTestSupport {
 
     @AfterMethod
     public void clean() throws Exception {
-        launcher.cleanOpenstackResources();
+        launcher.cleanOpenstackResources(cloud);
     }
 
     // ***************************************************************
@@ -67,14 +71,20 @@ public class OpenstackCloudifyDriverTest extends AbstractTestSupport {
      */
     @Test
     public void testStartManagementMachinesWithNetworkTemplate() throws Exception {
-        Cloud cloud = launcher.createCloud("/cloudNetwork/cloudNetwork-cloud.groovy");
+        Map<String, String> additionalProps = new HashMap<String, String>();
+
+        additionalProps.put("range \"177.86.0.0/24\"", "range \"177.70.0.0/24\"");
+        additionalProps.put("\"gateway\" : \"177.86.0.111\"", "\"gateway\" : \"177.70.0.1\"");
+        additionalProps.put("range \"160.0.0.0/24\"", "range \"160.1.0.0/24\"");
+
+        cloud = launcher.createCloud(null, additionalProps);
 
         MachineDetails[] mds = launcher.startManagementMachines(cloud);
 
         String prefix = cloud.getProvider().getManagementGroup();
         NetworkConfiguration networkConfiguration = cloud.getCloudNetwork().getManagement().getNetworkConfiguration();
 
-        launcher.assertRouterExists(prefix);
+        launcher.assertRouterExistsByFullName(launcher.getManagementRouterNameFromDsl(cloud));
         launcher.assertNetworkExists(prefix + networkConfiguration.getName());
         launcher.assertSubnetExists(prefix + networkConfiguration.getName(), networkConfiguration.getSubnets().get(0).getName());
         launcher.assertSubnetSize(prefix + networkConfiguration.getName(), 1);
@@ -99,9 +109,65 @@ public class OpenstackCloudifyDriverTest extends AbstractTestSupport {
      * <li>Use network template with multiple subnets.</li>
      * </ul>
      */
-    @Test
+    @Test(enabled = true)
     public void testStartManagementMachinesWithNetworkTemplateAndMultipleSubnets() throws Exception {
-        Cloud cloud = launcher.createCloud("/cloudNetwork/multipleSubnets-cloud.groovy");
+        Map<String, String> additionalProps = new HashMap<String, String>();
+
+        additionalProps.put("subnet \\{\r\n" +
+                "\t\t\t\t\t\tname \"Cloudify-Management-Subnet\"\r\n" +
+                "\t\t\t\t\t\trange \"177.86.0.0/24\"\r\n" +
+                "\t\t\t\t\t\toptions \\(\\[ \"gateway\" : \"177.86.0.111\" ]\\)\r\n" +
+                "\t\t\t\t\t}", "subnet {\n" +
+                "                        name \"Cloudify-Management-Subnet1\"\n" +
+                "                        range \"177.70.0.0/24\"\n" +
+                "                        options ([ \"gateway\" : \"177.70.0.1\" ])\n" +
+                "                    },\n" +
+                "                    subnet {\n" +
+                "                        name \"Cloudify-Management-Subnet2\"\n" +
+                "                        range \"177.80.0.0/24\"\n" +
+                "                        options ([ \"gateway\" : \"null\" ])\n" +
+                "                    }");
+        additionalProps.put("\"APPLICATION_NET\" : networkConfiguration \\{\r\n" +
+                "\t\t\t\tname  \"Cloudify-Application-Network\"\r\n" +
+                "\t\t\t\tsubnets \\{\r\n" +
+                "\t\t\t\t\tsubnet \\{\r\n" +
+                "\t\t\t\t\t\tname \"Cloudify-Application-Subnet\"\r\n" +
+                "\t\t\t\t\t\trange \"160.0.0.0/24\"\r\n" +
+                "\t\t\t\t\t\toptions \\{ gateway \"null\" \\}\r\n" +
+                "\t\t\t\t\t\\}\r\n" +
+                "\t\t\t\t\\}\r\n" +
+                "\t\t\t\tcustom \\(\\[ \"associateFloatingIpOnBootstrap\" : \"true\" ]\\)\r\n" +
+                "\t\t\t\\}", "\"APPLICATION_NET\" : networkConfiguration {\n" +
+                "                name \"Cloudify-Application-Network\"\n" +
+                "                subnets {\n" +
+                "                    subnet {\n" +
+                "                        name \"Cloudify-Application-Subnet1\"\n" +
+                "                        range \"160.1.0.0/24\"\n" +
+                "                    }\n" +
+                "                    subnet {\n" +
+                "                        name \"Cloudify-Application-Subnet2\"\n" +
+                "                        range \"160.2.0.0/24\"\n" +
+                "                    }\n" +
+                "                }\n" +
+                "                custom ([ \"associateFloatingIpOnBootstrap\" : \"true\" ])\n" +
+                "            },\n" +
+                "            \"APPLICATION_NET2\" : networkConfiguration {\n" +
+                "                name \"Cloudify-Application-Network2\"\n" +
+                "                subnets {\n" +
+                "                    subnet {\n" +
+                "                        name \"Cloudify-Application-Subnet1\"\n" +
+                "                        range \"162.1.0.0/24\"\n" +
+                "                    }\n" +
+                "                    subnet {\n" +
+                "                        name \"Cloudify-Application-Subnet2\"\n" +
+                "                        range \"162.2.0.0/24\"\n" +
+                "                    }\n" +
+                "                }\n" +
+                "                custom ([ \"associateFloatingIpOnBootstrap\" : \"true\" ])\n" +
+                "            }");
+
+        cloud = launcher.createCloud(null, additionalProps);
+
         MachineDetails[] mds = launcher.startManagementMachines(cloud);
 
         String prefix = cloud.getProvider().getManagementGroup();
@@ -114,7 +180,7 @@ public class OpenstackCloudifyDriverTest extends AbstractTestSupport {
             launcher.assertFloatingIpBindToServer(md);
 
             NetworkConfiguration networkConfiguration = cloud.getCloudNetwork().getManagement().getNetworkConfiguration();
-            launcher.assertRouterExists(prefix);
+            launcher.assertRouterExistsByFullName(launcher.getManagementRouterNameFromDsl(cloud));
             launcher.assertNetworkExists(prefix + networkConfiguration.getName());
             launcher.assertSubnetExists(prefix + networkConfiguration.getName(), networkConfiguration.getSubnets().get(0).getName());
             launcher.assertSubnetExists(prefix + networkConfiguration.getName(), networkConfiguration.getSubnets().get(1).getName());
@@ -133,10 +199,18 @@ public class OpenstackCloudifyDriverTest extends AbstractTestSupport {
      * <li>Use computeNetworks.</li>
      * </ul>
      */
-    @Test
+    @Test(enabled = true)
     public void testStartManagementMachinesWithComputeNetwork() throws Exception {
-        launcher.setSkipExternalNetworking(true);
-        Cloud cloud = launcher.createCloud("/computeNetwork/computeNetwork-cloud.groovy");
+        Map<String, String> additionalProps = new HashMap<String, String>();
+
+        additionalProps.put("// \"computeServiceName\" : \"nova\",", "// \"computeServiceName\" : \"nova\",\n\t\t\"skipExternalNetworking\" : \"true\",");
+        additionalProps.put("// Optional. Use existing networks.", "computeNetwork {\n" +
+                "\t\t\t\t\tnetworks ([\"SOME_INTERNAL_NETWORK_1\",\"SOME_INTERNAL_NETWORK_2\"])\n" +
+                "\t\t\t\t }\n // Optional. Use existing networks.");
+        additionalProps.put("keyFile keyFile", "keyFile keyFile\n" +
+                "                fileTransfer org.cloudifysource.domain.cloud.FileTransferModes.SCP");
+        cloud = launcher.createCloud(null, additionalProps);
+
         try {
             launcher.createExpectedExistingNetworks();
 
@@ -166,8 +240,16 @@ public class OpenstackCloudifyDriverTest extends AbstractTestSupport {
     @Test
     public void testStartMultipleManagementMachinesWithComputeNetwork() throws Exception {
         int nbManagementMachines = 5;
-        launcher.setSkipExternalNetworking(true);
-        Cloud cloud = launcher.createCloud("/computeNetwork/computeNetwork-cloud.groovy");
+        Map<String, String> additionalProps = new HashMap<String, String>();
+
+        additionalProps.put("// \"computeServiceName\" : \"nova\",", "// \"computeServiceName\" : \"nova\",\n\t\t\"skipExternalNetworking\" : \"true\",");
+        additionalProps.put("// Optional. Use existing networks.", "computeNetwork {\n" +
+                "\t\t\t\t\tnetworks ([\"SOME_INTERNAL_NETWORK_1\",\"SOME_INTERNAL_NETWORK_2\"])\n" +
+                "\t\t\t\t }\n // Optional. Use existing networks.");
+        additionalProps.put("keyFile keyFile", "keyFile keyFile\n" +
+                "                fileTransfer org.cloudifysource.domain.cloud.FileTransferModes.SCP");
+        cloud = launcher.createCloud(null, additionalProps);
+
         cloud.getProvider().setNumberOfManagementMachines(nbManagementMachines);
         try {
             launcher.createExpectedExistingNetworks();
@@ -196,8 +278,14 @@ public class OpenstackCloudifyDriverTest extends AbstractTestSupport {
      */
     @Test(expectedExceptions = CloudProvisioningException.class)
     public void testStartManagementWithComputeTemplateButNetworksDoNotExist() throws Exception {
-        launcher.setSkipExternalNetworking(true);
-        Cloud cloud = launcher.createCloud("/computeNetwork/computeNetwork-cloud.groovy");
+        Map<String, String> additionalProps = new HashMap<String, String>();
+        additionalProps.put("// \"computeServiceName\" : \"nova\",", "// \"computeServiceName\" : \"nova\",\n\t\t\"skipExternalNetworking\" : \"true\",");
+        additionalProps.put("// Optional. Use existing networks.", "computeNetwork {\n" +
+                "\t\t\t\t\tnetworks ([\"SOME_INTERNAL_NETWORK_1\",\"SOME_INTERNAL_NETWORK_2\"])\n" +
+                "\t\t\t\t }\n // Optional. Use existing networks.");
+        additionalProps.put("keyFile keyFile", "keyFile keyFile\n" +
+                "                fileTransfer org.cloudifysource.domain.cloud.FileTransferModes.SCP");
+        cloud = launcher.createCloud(null, additionalProps);
         launcher.startManagementMachines(cloud);
     }
 
@@ -214,7 +302,13 @@ public class OpenstackCloudifyDriverTest extends AbstractTestSupport {
      */
     @Test
     public void testStartMachineWithNetworkTemplate() throws Exception {
-        Cloud cloud = launcher.createCloud("/cloudNetwork/cloudNetwork-cloud.groovy");
+        Map<String, String> additionalProps = new HashMap<String, String>();
+
+        additionalProps.put("range \"177.86.0.0/24\"", "range \"177.70.0.0/24\"");
+        additionalProps.put("\"gateway\" : \"177.86.0.111\"", "\"gateway\" : \"177.70.0.1\"");
+        additionalProps.put("range \"160.0.0.0/24\"", "range \"160.1.0.0/24\"");
+        cloud = launcher.createCloud(null, additionalProps);
+
         Service service = launcher.getService("secgroups/securityGroup-service.groovy");
         MachineDetails md = launcher.startMachineWithManagement(service, cloud);
 
@@ -246,7 +340,62 @@ public class OpenstackCloudifyDriverTest extends AbstractTestSupport {
      */
     @Test
     public void testStartMachineWithMultipleSubnets() throws Exception {
-        Cloud cloud = launcher.createCloud("/cloudNetwork/multipleSubnets-cloud.groovy");
+        Map<String, String> additionalProps = new HashMap<String, String>();
+
+        additionalProps.put("subnet \\{\r\n" +
+                "\t\t\t\t\t\tname \"Cloudify-Management-Subnet\"\r\n" +
+                "\t\t\t\t\t\trange \"177.86.0.0/24\"\r\n" +
+                "\t\t\t\t\t\toptions \\(\\[ \"gateway\" : \"177.86.0.111\" ]\\)\r\n" +
+                "\t\t\t\t\t}", "subnet {\n" +
+                "                        name \"Cloudify-Management-Subnet1\"\n" +
+                "                        range \"177.70.0.0/24\"\n" +
+                "                        options ([ \"gateway\" : \"177.70.0.1\" ])\n" +
+                "                    },\n" +
+                "                    subnet {\n" +
+                "                        name \"Cloudify-Management-Subnet2\"\n" +
+                "                        range \"177.80.0.0/24\"\n" +
+                "                        options ([ \"gateway\" : \"null\" ])\n" +
+                "                    }");
+        additionalProps.put("\"APPLICATION_NET\" : networkConfiguration \\{\r\n" +
+                "\t\t\t\tname  \"Cloudify-Application-Network\"\r\n" +
+                "\t\t\t\tsubnets \\{\r\n" +
+                "\t\t\t\t\tsubnet \\{\r\n" +
+                "\t\t\t\t\t\tname \"Cloudify-Application-Subnet\"\r\n" +
+                "\t\t\t\t\t\trange \"160.0.0.0/24\"\r\n" +
+                "\t\t\t\t\t\toptions \\{ gateway \"null\" \\}\r\n" +
+                "\t\t\t\t\t\\}\r\n" +
+                "\t\t\t\t\\}\r\n" +
+                "\t\t\t\tcustom \\(\\[ \"associateFloatingIpOnBootstrap\" : \"true\" ]\\)\r\n" +
+                "\t\t\t\\}", "\"APPLICATION_NET\" : networkConfiguration {\n" +
+                "                name \"Cloudify-Application-Network\"\n" +
+                "                subnets {\n" +
+                "                    subnet {\n" +
+                "                        name \"Cloudify-Application-Subnet1\"\n" +
+                "                        range \"160.1.0.0/24\"\n" +
+                "                    }\n" +
+                "                    subnet {\n" +
+                "                        name \"Cloudify-Application-Subnet2\"\n" +
+                "                        range \"160.2.0.0/24\"\n" +
+                "                    }\n" +
+                "                }\n" +
+                "                custom ([ \"associateFloatingIpOnBootstrap\" : \"true\" ])\n" +
+                "            },\n" +
+                "            \"APPLICATION_NET2\" : networkConfiguration {\n" +
+                "                name \"Cloudify-Application-Network2\"\n" +
+                "                subnets {\n" +
+                "                    subnet {\n" +
+                "                        name \"Cloudify-Application-Subnet1\"\n" +
+                "                        range \"162.1.0.0/24\"\n" +
+                "                    }\n" +
+                "                    subnet {\n" +
+                "                        name \"Cloudify-Application-Subnet2\"\n" +
+                "                        range \"162.2.0.0/24\"\n" +
+                "                    }\n" +
+                "                }\n" +
+                "                custom ([ \"associateFloatingIpOnBootstrap\" : \"true\" ])\n" +
+                "            }");
+
+        cloud = launcher.createCloud(null, additionalProps);
         Service service = launcher.getService("secgroups/securityGroup-service.groovy");
         service.getNetwork().setTemplate(TEMPLATE_APPLICATION_NET2);
         MachineDetails md = launcher.startMachineWithManagement(service, cloud);
@@ -284,9 +433,39 @@ public class OpenstackCloudifyDriverTest extends AbstractTestSupport {
      */
     @Test
     public void testStartMachineWithComputeNetworkUsingManagerNetwork() throws Exception {
+        Map<String, String> additionalProps = new HashMap<String, String>();
 
-        launcher.setSkipExternalNetworking(true);
-        Cloud cloud = launcher.createCloud("/computeNetwork/managerAppli-cloud.groovy");
+        additionalProps.put("managementMachineTemplate \"MEDIUM_LINUX\"", "managementMachineTemplate \"MANAGER\"");
+        additionalProps.put("MEDIUM_LINUX : computeTemplate", "MANAGER : computeTemplate");
+        additionalProps.put("keyFile keyFile", "keyFile keyFile\n" +
+                "                fileTransfer org.cloudifysource.domain.cloud.FileTransferModes.SCP");
+        additionalProps.put("// \"computeServiceName\" : \"nova\",", "// \"computeServiceName\" : \"nova\",\n\t\t\"skipExternalNetworking\" : \"true\",");
+        additionalProps.put("// Optional. Use existing networks.", "computeNetwork {\n" +
+                "\t\t\t\t\tnetworks ([\"SOME_INTERNAL_NETWORK_1\",\"SOME_INTERNAL_NETWORK_2\"])\n" +
+                "\t\t\t\t }\n // Optional. Use existing networks.");
+        additionalProps.put("custom \\(\\[\"openstack.compute.zone\":availabilityZone]\\)", "custom ([\"openstack.compute.zone\":availabilityZone])\n" +
+                "\t\t\t\\},\n" +
+                "            APPLI : computeTemplate{\n" +
+                "                imageId imageId\n" +
+                "                remoteDirectory remoteDirectory\n" +
+                "                machineMemoryMB 1600\n" +
+                "                hardwareId hardwareId\n" +
+                "                localDirectory \"upload\"\n" +
+                "                keyFile keyFile\n" +
+                "                fileTransfer org.cloudifysource.domain.cloud.FileTransferModes.SCP\n" +
+                "                username \"ubuntu\"\n" +
+                "                options ([\n" +
+                "                    _SKIP_EXTERNAL_NETWORKING_,\n" +
+                "                    \"keyPairName\" : keyPair\n" +
+                "                ])\n" +
+                "                overrides ([\n" +
+                "                    \"openstack.endpoint\": openstackUrl\n" +
+                "                ])\n" +
+                "                computeNetwork {\n" +
+                "                    networks ([\"SOME_INTERNAL_NETWORK_2\"])\n" +
+                "                }");
+
+        cloud = launcher.createCloud(null, additionalProps);
         Service service = launcher.getService("secgroups/securityGroup-service.groovy");
         ComputeDetails computeDetails = new ComputeDetails();
         computeDetails.setTemplate("APPLI");
@@ -318,7 +497,38 @@ public class OpenstackCloudifyDriverTest extends AbstractTestSupport {
 
     @Test
     public void testStartMachineWithComputeNetwork() throws Exception {
-        Cloud cloud = launcher.createCloud("/computeNetwork/managerAppli-cloud.groovy");
+        Map<String, String> additionalProps = new HashMap<String, String>();
+
+        additionalProps.put("managementMachineTemplate \"MEDIUM_LINUX\"", "managementMachineTemplate \"MANAGER\"");
+        additionalProps.put("MEDIUM_LINUX : computeTemplate", "MANAGER : computeTemplate");
+        additionalProps.put("keyFile keyFile", "keyFile keyFile\n" +
+                "                fileTransfer org.cloudifysource.domain.cloud.FileTransferModes.SCP");
+        additionalProps.put("// Optional. Use existing networks.", "computeNetwork {\n" +
+                "\t\t\t\t\tnetworks ([\"SOME_INTERNAL_NETWORK_1\",\"SOME_INTERNAL_NETWORK_2\"])\n" +
+                "\t\t\t\t }\n // Optional. Use existing networks.");
+        additionalProps.put("custom \\(\\[\"openstack.compute.zone\":availabilityZone]\\)", "custom ([\"openstack.compute.zone\":availabilityZone])\n" +
+                "\t\t\t\\},\n" +
+                "            APPLI : computeTemplate{\n" +
+                "                imageId imageId\n" +
+                "                remoteDirectory remoteDirectory\n" +
+                "                machineMemoryMB 1600\n" +
+                "                hardwareId hardwareId\n" +
+                "                localDirectory \"upload\"\n" +
+                "                keyFile keyFile\n" +
+                "                fileTransfer org.cloudifysource.domain.cloud.FileTransferModes.SCP\n" +
+                "                username \"ubuntu\"\n" +
+                "                options ([\n" +
+                "                    _SKIP_EXTERNAL_NETWORKING_,\n" +
+                "                    \"keyPairName\" : keyPair\n" +
+                "                ])\n" +
+                "                overrides ([\n" +
+                "                    \"openstack.endpoint\": openstackUrl\n" +
+                "                ])\n" +
+                "                computeNetwork {\n" +
+                "                    networks ([\"SOME_INTERNAL_NETWORK_2\"])\n" +
+                "                }");
+
+        cloud = launcher.createCloud(null, additionalProps);
         Service service = launcher.getService("secgroups/securityGroup-service.groovy");
 
         // Remove networkTemplate
@@ -346,7 +556,13 @@ public class OpenstackCloudifyDriverTest extends AbstractTestSupport {
 
     @Test
     public void testStartMachineWithOnlyManagementNetwork() throws Exception {
-        Cloud cloud = launcher.createCloud("/cloudNetwork/onlyManagementNetwork-cloud.groovy");
+        Map<String, String> additionalProps = new HashMap<String, String>();
+
+        additionalProps.put("range \"177.86.0.0/24\"", "range \"177.70.0.0/24\"");
+        additionalProps.put("\"gateway\" : \"177.86.0.111\"", "\"gateway\" : \"177.70.0.1\"");
+        additionalProps.put("Cloudify-Management-Subnet", "Cloudify-Management-Subnet1");
+
+        cloud = launcher.createCloud(null, additionalProps);
         Service service = launcher.getService("secgroups/securityGroup-service.groovy");
 
         // Remove networkTemplate

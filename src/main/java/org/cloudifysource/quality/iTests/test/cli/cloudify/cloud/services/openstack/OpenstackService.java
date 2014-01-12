@@ -28,6 +28,7 @@ public class OpenstackService extends JCloudsCloudService {
     public static final String SMALL_HARDWARE_PROP = "smallHardwareId";
     public static final String IMAGE_PROP = "imageId";
     public static final String AVAILABILITY_ZONE_PROP = "availabilityZone";
+    public static final String ROUTER_NAME = "routerName";
 
     private final Properties properties = getCloudProperties(CREDENTIALS_PROPERTIES);
 
@@ -40,6 +41,7 @@ public class OpenstackService extends JCloudsCloudService {
     private String smallHardwareId = properties.getProperty("smallHardwareId");
     private String imageId = properties.getProperty("imageId");
     private String availabilityZone = properties.getProperty("availabilityZone");
+    private String routerName = properties.getProperty("routerName");
 
     private boolean securityEnabled = false;
 
@@ -76,12 +78,13 @@ public class OpenstackService extends JCloudsCloudService {
         getProperties().put(SMALL_HARDWARE_PROP, this.smallHardwareId);
         getProperties().put(IMAGE_PROP, this.imageId);
         getProperties().put(AVAILABILITY_ZONE_PROP, this.availabilityZone);
+        getProperties().put(ROUTER_NAME, this.routerName);
 
         propsToReplace.put("cloudify-agent-", getMachinePrefix() + "agent-");
         propsToReplace.put("cloudify-manager-", getMachinePrefix() + "manager-");
         propsToReplace.put("numberOfManagementMachines 1", "numberOfManagementMachines " + getNumberOfManagementMachines());
         propsToReplace.put("javaUrl", "// javaUrl");
-        propsToReplace.put("// \"externalRouterName\" : \"router-ext\",", "\"externalRouterName\" : \"hpclouddev-router\",");
+        propsToReplace.put("// \"externalRouterName\" : \"router-ext\",", "\"externalRouterName\" : routerName,");
 
         String pathToCloudGroovy = getPathToCloudGroovy();
         IOUtils.replaceTextInFile(pathToCloudGroovy, propsToReplace);

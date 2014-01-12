@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -53,7 +54,7 @@ public class OpenstackCloudifyDriverLauncher {
 
     private static final String SERVICES_RELATIVE_PATH = "src/main/resources/apps/USM/usm/networks/openstack/";
 
-    private static final String TEST_PREFIX = "itest-os-";
+    private static final String TEST_PREFIX = "nirb-itest-os-";
 
     private static long END_TIME = System.currentTimeMillis() + 1000L * 60l * 15l; // 15min
 
@@ -67,7 +68,7 @@ public class OpenstackCloudifyDriverLauncher {
      */
     public void createExpectedExistingNetworks() throws OpenstackException {
         createExistingNetwork(COMPUTE_SOME_INTERNAL_NETWORK_1, 1, 1); // 151.0.0.0/24
-        createExistingNetwork(COMPUTE_SOME_INTERNAL_NETWORK_2, 2, 2); // 152.0.0.0/24 and 152.1.0.0/24
+        createExistingNetwork(COMPUTE_SOME_INTERNAL_NETWORK_2, 2, 1); // 152.0.0.0/24 and 152.1.0.0/24
     }
 
     private void createExistingNetwork(String networkName, int networkIndex, int nbSubnet) throws OpenstackException {
@@ -106,24 +107,34 @@ public class OpenstackCloudifyDriverLauncher {
      * <li>Read the cloud file from $CLOUDIFY_HOME/clouds/copy_of_openstack/openstack-cloud.properties.</li>
      * <li>Clean existing tests resources in Openstack.</li>
      * <li>Return the cloud object.</li>
-     * 
+     *
      * @param overrideCloud
      *            The relative path to the cloud groovy file.
+     * @param additionalProps
+     *            Additional properties to replace in the cloud driver dsl.
      * @return The cloud object read from $CLOUDIFY_HOME/clouds/copy_of_openstack/openstack-cloud.properties
      * @exception Exception
      *                When error occurs.
      */
-    public Cloud createCloud(String overrideCloud) throws Exception {
-        OpenstackService service = this.createOpenstackService(overrideCloud);
+    public Cloud createCloud(String overrideCloud, Map<String,String> additionalProps) throws Exception {
+        OpenstackService service = this.createOpenstackService(overrideCloud, additionalProps);
         Cloud cloud = ServiceReader.readCloudFromDirectory(service.getPathToCloudFolder());
         this.computeApi = this.createComputeClient(service);
         this.networkApi = this.createNetworkClient(service);
         this.cleanExpectedExistingNetworks();
-        this.cleanOpenstackResources();
+        this.cleanOpenstackResources(cloud);
         return cloud;
     }
 
+    public Cloud createCloud(String overrideCloud) throws Exception {
+        return createCloud(overrideCloud, null);
+    }
+
     private OpenstackService createOpenstackService(String overrideCloud) throws Exception, IOException {
+        return createOpenstackService(overrideCloud, null);
+    }
+
+    private OpenstackService createOpenstackService(String overrideCloud, Map<String,String> additionalProps) throws Exception, IOException {
         final OpenstackService service = new OpenstackService();
         service.setMachinePrefix(TEST_PREFIX);
         service.init(this.getClass().getSimpleName());
@@ -134,6 +145,10 @@ public class OpenstackCloudifyDriverLauncher {
             IOUtils.replaceFile(originalCloudGroovy, customCloudFile);
             new File(service.getPathToCloudFolder(), customCloudFile.getName())
                     .renameTo(new File(service.getPathToCloudFolder(), originalCloudGroovy.getName()));
+        }
+
+        if(additionalProps != null){
+            service.getAdditionalPropsToReplace().putAll(additionalProps);
         }
 
         service.injectCloudAuthenticationDetails();
@@ -182,7 +197,7 @@ public class OpenstackCloudifyDriverLauncher {
      * Remove all tests resources from Openstack environment.<br />
      * It uses prefix name to delete the resources.
      */
-    public void cleanOpenstackResources() throws Exception {
+    public void cleanOpenstackResources(Cloud cloud) throws Exception {
         List<NovaServer> servers = computeApi.getServers();
         Set<String> remainingServerIds = new HashSet<String>();
 
@@ -228,16 +243,33 @@ public class OpenstackCloudifyDriverLauncher {
 
         // Clean remaining routers
         List<Router> routers = networkApi.getRouters();
+
+        String mngRouterName = "";
+        if(cloud != null){
+            mngRouterName = this.getManagementRouterNameFromDsl(cloud);
+        }
+
         for (Router router : routers) {
             String rName = router.getName();
-            if (rName != null && rName.startsWith(TEST_PREFIX)) {
+            if (rName != null && (rName.startsWith(TEST_PREFIX) || rName.equals(mngRouterName))) {
                 List<Port> ports = networkApi.getPortsByDeviceId(router.getId());
+                List<Network> relevantNetworks = networkApi.getNetworkByPrefix(TEST_PREFIX);
                 for (Port port : ports) {
                     for (RouteFixedIp route : port.getFixedIps()) {
-                        networkApi.deleteRouterInterface(router.getId(), route.getSubnetId());
+                        for(Network network : relevantNetworks){
+
+                            // disconnect from the main router only interfaces that connect to relevant testing networks.
+                            for(String subnetId : network.getSubnets()){
+                                if(subnetId.equals(route.getSubnetId())){
+                                    networkApi.deleteRouterInterface(router.getId(), route.getSubnetId());
+                                }
+                            }
+                        }
                     }
                 }
-                networkApi.deleteRouter(router.getId());
+                if(!rName.equals(mngRouterName)){
+                    networkApi.deleteRouter(router.getId());
+                }
             }
         }
 
@@ -259,7 +291,7 @@ public class OpenstackCloudifyDriverLauncher {
      * {@link OpenStackCloudifyDriver#startManagementMachines(org.cloudifysource.esc.driver.provisioning.ManagementProvisioningContext, long, TimeUnit)} using
      * the given cloud object.<br />
      * It will also make assertions to verify that management security groups are successfully created.
-     * 
+     *
      * @param cloud
      *            The cloud object.
      * @return Management machine details.
@@ -280,7 +312,7 @@ public class OpenstackCloudifyDriverLauncher {
 
     /**
      * Assert that cluster, agent and management exist.
-     * 
+     *
      * @param cloud
      * @throws OpenstackException
      */
@@ -331,7 +363,7 @@ public class OpenstackCloudifyDriverLauncher {
     /**
      * Stop a management VM using {@link OpenStackCloudifyDriver#stopMachine(String, long, TimeUnit)} using the given cloud object.<br />
      * It will also make assertions to verify that all Openstack resources has been removed.
-     * 
+     *
      * @param cloud
      *            The cloud object.
      * @throws Exception
@@ -369,7 +401,7 @@ public class OpenstackCloudifyDriverLauncher {
      * using parameters configuration.<br />
      * Be aware that an agent VMs require that the management security groups and management networks are already created in Openstack, you may want to use
      * {@link OpenstackCloudifyDriverLauncher#startMachineWithManagement()}.
-     * 
+     *
      * @param service
      *            The service recipe to use.
      * @param cloud
@@ -398,7 +430,7 @@ public class OpenstackCloudifyDriverLauncher {
 
     /**
      * Assert that cluster, agent and management exist.
-     * 
+     *
      * @param cloud
      * @throws OpenstackException
      */
@@ -453,7 +485,7 @@ public class OpenstackCloudifyDriverLauncher {
 
     /**
      * Stop an agent VM using {@link OpenStackCloudifyDriver#stopMachine(String, long, TimeUnit)} using parameters configuration.<br />
-     * 
+     *
      * @param service
      *            The service recipe to use.
      * @param cloud
@@ -543,6 +575,16 @@ public class OpenstackCloudifyDriverLauncher {
         String name = prefix + "management-public-router";
         Router router = networkApi.getRouterByName(name);
         AssertUtils.assertNotNull("Router '" + name + "' not found", router);
+    }
+
+    public void assertRouterExistsByFullName(String name) throws OpenstackException {
+        Router router = networkApi.getRouterByName(name);
+        AssertUtils.assertNotNull("Router '" + name + "' not found", router);
+    }
+
+    public String getManagementRouterNameFromDsl(Cloud cloud){
+        String managementMachineTemplate = cloud.getConfiguration().getManagementMachineTemplate();
+        return (String)cloud.getCloudCompute().getTemplates().get(managementMachineTemplate).getOptions().get("externalRouterName");
     }
 
     public void assertNoRouter(String prefix) throws OpenstackException {
@@ -665,7 +707,7 @@ public class OpenstackCloudifyDriverLauncher {
 
     /**
      * Assert that networks with the given names doesn't exist in Openstack environment.
-     * 
+     *
      * @throws OpenstackException
      */
     public void assertNetworksNotExists(List<String> networkNames) throws OpenstackException {

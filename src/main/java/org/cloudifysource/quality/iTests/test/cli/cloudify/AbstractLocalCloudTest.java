@@ -22,6 +22,7 @@ import java.util.Set;
 
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -481,7 +482,8 @@ public class AbstractLocalCloudTest extends AbstractTestSupport {
 					installer.uninstall();
                     dumpPerformed = true;
 				} catch (Throwable t) {
-					LogUtils.log("Failed to uninstall application " + applicationName);
+					LogUtils.log("Failed to uninstall application " + applicationName
+                            + " : " + ExceptionUtils.getStackTrace(t));
 				}
 			}
 		}
@@ -494,7 +496,8 @@ public class AbstractLocalCloudTest extends AbstractTestSupport {
 					installer.uninstall();
                     dumpPerformed = true;
 				} catch (Throwable t) {
-					LogUtils.log("Failed to uninstall service " + serviceName);
+					LogUtils.log("Failed to uninstall service " + serviceName
+                            + " : " + ExceptionUtils.getStackTrace(t));
 				}
 			}
         }

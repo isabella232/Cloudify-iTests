@@ -44,11 +44,11 @@ public class GridServiceNamesTest extends AbstractWebUILocalCloudTest {
 	private final static String EXPECTED_ESM_SERVICES_NAME = "Orchestrators";
 	private final static String EXPECTED_LUS_SERVICES_NAME = "Discovery Services";	
 
-	private final static String GSA_SERVICE_NAME = "agent";
-	private final static String GSM_SERVICE_NAME = "deployer";
-	private final static String GSC_SERVICE_NAME = "usm";	
-	private final static String ESM_SERVICE_NAME = "orchestrator";
-	private final static String LUS_SERVICE_NAME = "discovery service";
+	private final static String GSA_SERVICE_NAME = "Agent";
+	private final static String GSM_SERVICE_NAME = "Deployer";
+	private final static String GSC_SERVICE_NAME = "USM";
+	private final static String ESM_SERVICE_NAME = "Orchestrator";
+	private final static String LUS_SERVICE_NAME = "Discovery Service";
 
 
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT)

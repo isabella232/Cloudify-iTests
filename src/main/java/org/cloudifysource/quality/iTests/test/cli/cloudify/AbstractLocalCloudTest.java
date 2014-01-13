@@ -1,28 +1,17 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify;
 
+import com.gigaspaces.internal.sigar.SigarHolder;
+import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.WebResource;
+import com.sun.jersey.api.client.config.DefaultClientConfig;
 import iTests.framework.tools.SGTestHelper;
 import iTests.framework.utils.AssertUtils;
 import iTests.framework.utils.LogUtils;
 import iTests.framework.utils.SSHUtils;
 import iTests.framework.utils.ScriptUtils;
 import iTests.framework.utils.WebUtils;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.InetAddress;
-import java.net.URL;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -39,9 +28,8 @@ import org.cloudifysource.quality.iTests.framework.utils.ApplicationInstaller;
 import org.cloudifysource.quality.iTests.framework.utils.LocalCloudBootstrapper;
 import org.cloudifysource.quality.iTests.framework.utils.ServiceInstaller;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
-import org.cloudifysource.quality.iTests.test.cli.cloudify.security.SecurityConstants;
-import org.cloudifysource.quality.iTests.test.cli.cloudify.util.CloudTestUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.util.RepositoryMirrorHelper;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.util.exceptions.FailedToCleanupEnvironmentAfterTestException;
 import org.cloudifysource.restclient.ErrorStatusException;
 import org.cloudifysource.restclient.StringUtils;
 import org.cloudifysource.shell.exceptions.CLIException;
@@ -67,10 +55,18 @@ import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeSuite;
 
-import com.gigaspaces.internal.sigar.SigarHolder;
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.api.client.config.DefaultClientConfig;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.InetAddress;
+import java.net.URL;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 public class AbstractLocalCloudTest extends AbstractTestSupport {
 
@@ -472,7 +468,9 @@ public class AbstractLocalCloudTest extends AbstractTestSupport {
             return;
         }
 
-        boolean dumpPerformed = false;
+        Map<String, Throwable> serviceErrors = new HashMap<String, Throwable>();
+        Map<String, Throwable> applicationErrors = new HashMap<String, Throwable>();
+
 		Applications applications = admin.getApplications();
 		for (org.openspaces.admin.application.Application application : applications) {
 			String applicationName = application.getName();
@@ -480,10 +478,10 @@ public class AbstractLocalCloudTest extends AbstractTestSupport {
 				ApplicationInstaller installer = new ApplicationInstaller(restUrl, applicationName);
 				try {
 					installer.uninstall();
-                    dumpPerformed = true;
 				} catch (Throwable t) {
-					LogUtils.log("Failed to uninstall application " + applicationName
-                            + " : " + ExceptionUtils.getStackTrace(t));
+					LogUtils.log("Failed to uninstall application " + applicationName + " : " + t.getMessage());
+                    // accumulate errors
+                    applicationErrors.put(applicationName, t);
 				}
 			}
 		}
@@ -494,22 +492,22 @@ public class AbstractLocalCloudTest extends AbstractTestSupport {
 				ServiceInstaller installer = new ServiceInstaller(serviceName, serviceName);
 				try {
 					installer.uninstall();
-                    dumpPerformed = true;
 				} catch (Throwable t) {
-					LogUtils.log("Failed to uninstall service " + serviceName
-                            + " : " + ExceptionUtils.getStackTrace(t));
+					LogUtils.log("Failed to uninstall service " + serviceName + " : " + t.getMessage());
+                    // accumulate errors
+                    serviceErrors.put(serviceName, t);
 				}
 			}
         }
-        if (!dumpPerformed && !enableLogstash) {
-            CloudTestUtils.dumpMachinesNewRestAPI(restUrl, SecurityConstants.USER_PWD_ALL_ROLES,
-                    SecurityConstants.USER_PWD_ALL_ROLES);
-        }
 
+        if (!serviceErrors.isEmpty() || !applicationErrors.isEmpty()) {
+            // at least one error
+            throw new FailedToCleanupEnvironmentAfterTestException(serviceErrors, applicationErrors);
+        }
 
     }
 
-	protected void doTest(String applicationPath, String applicationFolderName, String applicationName) throws Exception {
+    protected void doTest(String applicationPath, String applicationFolderName, String applicationName) throws Exception {
 
 		LogUtils.log("installing application " + applicationName);
 

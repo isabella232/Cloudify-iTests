@@ -32,7 +32,7 @@ public class HPExamplesTest extends AbstractExamplesTest {
 		
 	@Override
 	protected String getCloudName() {
-		return "hp";
+		return "hp-folsom";
 	}
 	
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)

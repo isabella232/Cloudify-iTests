@@ -462,15 +462,13 @@ public class OpenstackCloudifyDriverTest extends AbstractTestSupport {
                 "\t\t\t\\},\n" +
                 "            APPLI : computeTemplate{\n" +
                 "                imageId imageId\n" +
-                "                remoteDirectory remoteDirectory\n" +
+                "                remoteDirectory \"/root/gs-files\"\n" +
                 "                machineMemoryMB 1600\n" +
                 "                hardwareId hardwareId\n" +
                 "                localDirectory \"upload\"\n" +
                 "                keyFile keyFile\n" +
-                "                fileTransfer org.cloudifysource.domain.cloud.FileTransferModes.SCP\n" +
                 "                username \"ubuntu\"\n" +
                 "                options ([\n" +
-                "                    _SKIP_EXTERNAL_NETWORKING_,\n" +
                 "                    \"keyPairName\" : keyPair\n" +
                 "                ])\n" +
                 "                overrides ([\n" +
@@ -494,7 +492,7 @@ public class OpenstackCloudifyDriverTest extends AbstractTestSupport {
             assertNotNull("Machine id is null", md.getMachineId());
             assertNotNull("Private ip is null", md.getPrivateAddress());
             // Private IP network should be "SOME_INTERNAL_NETWORK_2"
-            assertTrue("Private ip is not from subnet 152.0.0.0/24. Got " + md.getPrivateAddress(), md.getPrivateAddress().startsWith("152.0.0."));
+            assertTrue("Private ip is not from subnet 177.86.0.114/24. Got " + md.getPrivateAddress(), md.getPrivateAddress().startsWith("177.86.0."));
             AssertUtils.assertNull("Public ip should be null", md.getPublicAddress());
             launcher.assertNoFloatingIp(md.getMachineId());
 
@@ -525,15 +523,13 @@ public class OpenstackCloudifyDriverTest extends AbstractTestSupport {
                 "\t\t\t\\},\n" +
                 "            APPLI : computeTemplate{\n" +
                 "                imageId imageId\n" +
-                "                remoteDirectory remoteDirectory\n" +
+                "                remoteDirectory \"/root/gs-files\"\n" +
                 "                machineMemoryMB 1600\n" +
                 "                hardwareId hardwareId\n" +
                 "                localDirectory \"upload\"\n" +
                 "                keyFile keyFile\n" +
-                "                fileTransfer org.cloudifysource.domain.cloud.FileTransferModes.SCP\n" +
                 "                username \"ubuntu\"\n" +
                 "                options ([\n" +
-                "                    _SKIP_EXTERNAL_NETWORKING_,\n" +
                 "                    \"keyPairName\" : keyPair\n" +
                 "                ])\n" +
                 "                overrides ([\n" +
@@ -560,7 +556,7 @@ public class OpenstackCloudifyDriverTest extends AbstractTestSupport {
             MachineDetails md = launcher.startMachineWithManagement(service, cloud);
             assertNotNull("Machine id is null", md.getMachineId());
             assertNotNull("Private ip is null", md.getPrivateAddress());
-            assertTrue("Private ip is not from subnet 152.0.0.0/24. Got " + md.getPrivateAddress(), md.getPrivateAddress().startsWith("152.0.0."));
+            assertTrue("Private ip is not from subnet 177.86.0.114/24. Got " + md.getPrivateAddress(), md.getPrivateAddress().startsWith("177.86.0."));
             Assert.assertNull("Public ip should be null", md.getPublicAddress());
             launcher.assertVMBoundToNetwork(md.getMachineId(), COMPUTE_SOME_INTERNAL_NETWORK_2);
 

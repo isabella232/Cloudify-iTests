@@ -1,4 +1,4 @@
-package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.hp;
+package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.hpfolsom;
 
 import iTests.framework.utils.IOUtils;
 import org.apache.commons.io.FileUtils;
@@ -10,8 +10,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-public class HpCloudService extends JCloudsCloudService {
-    private static final String HP_CERT_PROPERTIES = CREDENTIALS_FOLDER + "/cloud/hp/hp-cred.properties";
+public class HpFolsomCloudService extends JCloudsCloudService {
+    private static final String HP_CERT_PROPERTIES = CREDENTIALS_FOLDER + "/cloud/hp-folsom/hp-cred.properties";
 
     private Properties certProperties = getCloudProperties(HP_CERT_PROPERTIES);
 
@@ -22,8 +22,8 @@ public class HpCloudService extends JCloudsCloudService {
 
 	private final String securityGroup = certProperties.getProperty("securityGroup");
 
-	public HpCloudService() {
-		super("hp");
+	public HpFolsomCloudService() {
+		super("hp-folsom");
 	}
 
 	public String getTenant() {

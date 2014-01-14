@@ -10,7 +10,7 @@ public class OpenstackServicesTest extends AbstractServicesTest {
 
 	@Override
 	protected String getCloudName() {
-		return "hp";
+		return "hp-folsom";
 	}
 	
 	@BeforeClass(alwaysRun = true)

@@ -21,7 +21,7 @@ public class OpenstackSimpleStorageTest extends AbstractStorageAllocationTest{
 
     @Override
     protected String getCloudName() {
-        return "openstack";
+        return "hp-grizzly";
     }
 
     @BeforeClass(alwaysRun = true)

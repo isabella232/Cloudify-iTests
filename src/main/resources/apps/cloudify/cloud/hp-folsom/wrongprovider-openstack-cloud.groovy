@@ -1,5 +1,5 @@
 /***************
- * Cloud configuration file for the Amazon ec2 cloud. Uses the default jclouds-based cloud driver.
+ * Cloud configuration file for the HP Folsom cloud. Uses the default jclouds-based cloud driver.
  * See org.cloudifysource.domain.cloud.Cloud for more details.
  * @author barakme
  *
@@ -7,7 +7,7 @@
 
 cloud {
 	// Mandatory. The name of the cloud, as it will appear in the Cloudify UI.
-	name = "HP"
+	name = "hp-folsom"
 
 	/********
 	 * General configuration information about the cloud driver implementation.

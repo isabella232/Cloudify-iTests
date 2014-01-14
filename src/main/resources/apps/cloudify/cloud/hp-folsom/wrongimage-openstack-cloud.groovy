@@ -1,5 +1,5 @@
 /***************
- * Cloud configuration file for the Amazon ec2 cloud. Uses the default jclouds-based cloud driver.
+ * Cloud configuration file for the HP Folsom cloud. Uses the default jclouds-based cloud driver.
  * See org.cloudifysource.domain.cloud.Cloud for more details.
  * @author barakme
  *
@@ -7,7 +7,7 @@
 
 cloud {
 	// Mandatory. The name of the cloud, as it will appear in the Cloudify UI.
-	name = "HP"
+	name = "hp-folsom"
 
 	/********
 	 * General configuration information about the cloud driver implementation.
@@ -106,7 +106,7 @@ cloud {
 					// Mandatory. Template Name.
 					SMALL_LINUX : computeTemplate{
 						// Mandatory. Image ID.
-						imageId linuxImageId
+						imageId "wrongimage/id"
 						
 						// file transfer protocol
 						fileTransfer org.cloudifysource.domain.cloud.FileTransferModes.SFTP
@@ -116,7 +116,7 @@ cloud {
 						// Mandatory. Amount of RAM available to machine.
 						machineMemoryMB 1600
 						// Mandatory. Hardware ID.
-						hardwareId "wronghardwareid"
+						hardwareId hardwareId
 						// Mandatory. All files from this LOCAL directory will be copied to the remote machine directory.
 						localDirectory "upload"
 						// Optional. Name of key file to use for authenticating to the remot machine. Remove this line if key files

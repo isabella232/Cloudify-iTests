@@ -7,7 +7,11 @@ import iTests.framework.utils.LogUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.cloudifysource.domain.Service;
@@ -30,7 +34,7 @@ import org.cloudifysource.esc.driver.provisioning.openstack.rest.RouteFixedIp;
 import org.cloudifysource.esc.driver.provisioning.openstack.rest.Router;
 import org.cloudifysource.esc.driver.provisioning.openstack.rest.SecurityGroup;
 import org.cloudifysource.esc.driver.provisioning.openstack.rest.Subnet;
-import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.openstack.OpenstackService;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.hpgrizzly.HpGrizzlyCloudService;
 
 /**
  * This class help to test the driver {@link OpenStackCloudifyDriver} without actually performing a cloudify bootstrap.<br />
@@ -114,7 +118,7 @@ public class OpenstackCloudifyDriverLauncher {
      *                When error occurs.
      */
     public Cloud createCloud(String overrideCloud, Map<String,String> additionalProps) throws Exception {
-        OpenstackService service = this.createOpenstackService(overrideCloud, additionalProps);
+        HpGrizzlyCloudService service = this.createHpGrizzlyService(overrideCloud, additionalProps);
         Cloud cloud = ServiceReader.readCloudFromDirectory(service.getPathToCloudFolder());
         this.computeApi = this.createComputeClient(service);
         this.networkApi = this.createNetworkClient(service);
@@ -127,12 +131,12 @@ public class OpenstackCloudifyDriverLauncher {
         return createCloud(overrideCloud, null);
     }
 
-    private OpenstackService createOpenstackService(String overrideCloud) throws Exception, IOException {
-        return createOpenstackService(overrideCloud, null);
+    private HpGrizzlyCloudService createHpGrizzlyService(String overrideCloud) throws Exception, IOException {
+        return createHpGrizzlyService(overrideCloud, null);
     }
 
-    private OpenstackService createOpenstackService(String overrideCloud, Map<String,String> additionalProps) throws Exception, IOException {
-        final OpenstackService service = new OpenstackService();
+    private HpGrizzlyCloudService createHpGrizzlyService(String overrideCloud, Map<String,String> additionalProps) throws Exception, IOException {
+        final HpGrizzlyCloudService service = new HpGrizzlyCloudService();
         service.setMachinePrefix(TEST_PREFIX);
         service.init(this.getClass().getSimpleName());
         if (overrideCloud != null) {
@@ -155,7 +159,7 @@ public class OpenstackCloudifyDriverLauncher {
         return service;
     }
 
-    private void addOverrideProps(final OpenstackService service) {
+    private void addOverrideProps(final HpGrizzlyCloudService service) {
         if (this.skipExternalNetworking != null) {
             String oldValue = "_SKIP_EXTERNAL_NETWORKING_,";
             String newValue = "\"skipExternalNetworking\" : \"" + this.skipExternalNetworking + "\",";
@@ -166,26 +170,26 @@ public class OpenstackCloudifyDriverLauncher {
         }
     }
 
-    private OpenStackNetworkClient createNetworkClient(final OpenstackService service) throws OpenstackJsonSerializationException {
-        final String imageId = service.getCloudProperty(OpenstackService.IMAGE_PROP);
+    private OpenStackNetworkClient createNetworkClient(final HpGrizzlyCloudService service) throws OpenstackJsonSerializationException {
+        final String imageId = service.getCloudProperty(HpGrizzlyCloudService.IMAGE_PROP);
         final String region = imageId.split("/")[0];
         OpenStackNetworkClient networkApi = new OpenStackNetworkClient(
-                service.getCloudProperty(OpenstackService.ENDPOINT_PROP),
-                service.getCloudProperty(OpenstackService.USER_PROP),
-                service.getCloudProperty(OpenstackService.API_KEY_PROP),
-                service.getCloudProperty(OpenstackService.TENANT_PROP),
+                service.getCloudProperty(HpGrizzlyCloudService.ENDPOINT_PROP),
+                service.getCloudProperty(HpGrizzlyCloudService.USER_PROP),
+                service.getCloudProperty(HpGrizzlyCloudService.API_KEY_PROP),
+                service.getCloudProperty(HpGrizzlyCloudService.TENANT_PROP),
                 region);
         return networkApi;
     }
 
-    private OpenStackComputeClient createComputeClient(final OpenstackService service) throws OpenstackJsonSerializationException {
-        final String imageId = service.getCloudProperty(OpenstackService.IMAGE_PROP);
+    private OpenStackComputeClient createComputeClient(final HpGrizzlyCloudService service) throws OpenstackJsonSerializationException {
+        final String imageId = service.getCloudProperty(HpGrizzlyCloudService.IMAGE_PROP);
         final String region = imageId.split("/")[0];
         OpenStackComputeClient computeApi = new OpenStackComputeClient(
-                service.getCloudProperty(OpenstackService.ENDPOINT_PROP),
-                service.getCloudProperty(OpenstackService.USER_PROP),
-                service.getCloudProperty(OpenstackService.API_KEY_PROP),
-                service.getCloudProperty(OpenstackService.TENANT_PROP),
+                service.getCloudProperty(HpGrizzlyCloudService.ENDPOINT_PROP),
+                service.getCloudProperty(HpGrizzlyCloudService.USER_PROP),
+                service.getCloudProperty(HpGrizzlyCloudService.API_KEY_PROP),
+                service.getCloudProperty(HpGrizzlyCloudService.TENANT_PROP),
                 region);
         return computeApi;
     }

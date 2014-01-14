@@ -1,9 +1,13 @@
+/***************
+ * Cloud configuration file for the hp-grizzly cloud
+ */
 cloud {
-    name = "openstack"
+    name = "hp-grizzly"
 
     configuration {
         managementMachineTemplate "LINUX"
     }
+
     provider {
         provider "openstack-nova"
         machineNamePrefix "cloudify-agent-"
@@ -12,26 +16,17 @@ cloud {
         numberOfManagementMachines 1
         reservedMemoryCapacityPerMachineInMB 1024
     }
+
+    /*************
+     * Cloud authentication information
+     */
     user {
         user "${tenant}:${user}"
         apiKey apiKey
     }
-    cloudNetwork {
-        management {
-            networkConfiguration {
-                name "Cloudify-Management-Network"
-                subnets ([
-                    subnet {
-                        name "Cloudify-Management-Subnet1"
-                        range "177.70.0.0/24"
-                        options ([ "gateway" : "177.70.0.1" ])
-                    }
-                ])
-                custom ([ "associateFloatingIpOnBootstrap" : "true" ])
-            }
-        }
-    }
+
     cloudCompute {
+
         templates ([
             LINUX : computeTemplate{
                 imageId imageId
@@ -40,6 +35,7 @@ cloud {
                 hardwareId hardwareId
                 localDirectory "upload"
                 keyFile keyFile
+                fileTransfer org.cloudifysource.domain.cloud.FileTransferModes.SCP
                 username "ubuntu"
                 options ([
                     _SKIP_EXTERNAL_NETWORKING_,
@@ -48,6 +44,9 @@ cloud {
                 overrides ([
                     "openstack.endpoint": openstackUrl
                 ])
+                computeNetwork {
+                    networks (["SOME_INTERNAL_NETWORK_1","SOME_INTERNAL_NETWORK_2"])
+                }
             }
         ])
     }

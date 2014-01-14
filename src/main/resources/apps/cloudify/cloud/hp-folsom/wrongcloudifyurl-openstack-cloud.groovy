@@ -7,7 +7,7 @@
 
 cloud {
 	// Mandatory. The name of the cloud, as it will appear in the Cloudify UI.
-	name = "HP"
+	name = "hp-folsom"
 
 	/********
 	 * General configuration information about the cloud driver implementation.
@@ -42,7 +42,7 @@ cloud {
 		// different HTTP server instead.
 		// IMPORTANT: the default linux bootstrap script appends '.tar.gz' to the url whereas the default windows script appends '.zip'.
 		// Therefore, if setting a custom URL, make sure to leave out the suffix.
-		// cloudifyUrl "http://repository.cloudifysource.org/org/cloudifysource/2.5.0-RC/gigaspaces-cloudify-2.5.0-rc-b3993.zip"
+		cloudifyUrl "http://repository.cloudifysource.org/org/cloudifysource/2.5.0-RC/gigaspaces-cloudify-2.5.0-rc-b3993wrong"
 
 		// Mandatory. The prefix for new machines started for servies.
 		machineNamePrefix "cloudify-agent-"
@@ -72,7 +72,7 @@ cloud {
 	user {
 		// Optional. Identity used to access cloud.
 		// When used with the default driver, maps to the identity used to create the ComputeServiceContext.
-		user "hpcloud@gigaspaces.com:wronguser"
+		user "${tenant}:${user}"
 
 		// Optional. Key used to access cloud.
 		// When used with the default driver, maps to the credential used to create the ComputeServiceContext.

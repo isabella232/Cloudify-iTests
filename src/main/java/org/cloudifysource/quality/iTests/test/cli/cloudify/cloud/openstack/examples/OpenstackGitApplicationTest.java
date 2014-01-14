@@ -16,7 +16,7 @@ public class OpenstackGitApplicationTest extends AbstractExamplesTest {
 
     @Override
     protected String getCloudName() {
-        return "openstack";
+        return "hp-grizzly";
     }
 
     @BeforeClass(alwaysRun = true)

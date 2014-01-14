@@ -1,4 +1,4 @@
-package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.openstack;
+package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.hpgrizzly;
 
 import iTests.framework.utils.IOUtils;
 import iTests.framework.utils.LogUtils;
@@ -14,9 +14,9 @@ import org.apache.commons.io.FileUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.JCloudsCloudService;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.security.SecurityConstants;
 
-public class OpenstackService extends JCloudsCloudService {
+public class HpGrizzlyCloudService extends JCloudsCloudService {
 
-    private static final String CREDENTIALS_PROPERTIES = CREDENTIALS_FOLDER + "/cloud/openstack/openstack-cred.properties";
+    private static final String CREDENTIALS_PROPERTIES = CREDENTIALS_FOLDER + "/cloud/hp-grizzly/hp-grizzly-cred.properties";
 
     public static final String USER_PROP = "user";
     public static final String TENANT_PROP = "tenant";
@@ -45,13 +45,13 @@ public class OpenstackService extends JCloudsCloudService {
 
     private boolean securityEnabled = false;
 
-    public OpenstackService() {
-        super("openstack");
+    public HpGrizzlyCloudService() {
+        super("hp-grizzly");
         LogUtils.log("credentials file is at: " + CREDENTIALS_PROPERTIES);
     }
 
-    public OpenstackService(boolean securityEnabled) {
-        super("openstack");
+    public HpGrizzlyCloudService(boolean securityEnabled) {
+        super("hp-grizzly");
         LogUtils.log("credentials file is at: " + CREDENTIALS_PROPERTIES);
         this.securityEnabled = securityEnabled;
     }

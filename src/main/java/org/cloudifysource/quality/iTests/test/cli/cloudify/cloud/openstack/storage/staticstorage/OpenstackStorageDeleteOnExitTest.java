@@ -21,7 +21,7 @@ public class OpenstackStorageDeleteOnExitTest extends AbstractStorageAllocationT
 
     @Override
     protected String getCloudName() {
-        return "openstack";
+        return "hp-grizzly";
     }
 
     @BeforeClass(alwaysRun = true)

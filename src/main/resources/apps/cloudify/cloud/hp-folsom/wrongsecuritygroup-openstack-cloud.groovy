@@ -1,5 +1,5 @@
 /***************
- * Cloud configuration file for the Amazon ec2 cloud. Uses the default jclouds-based cloud driver.
+ * Cloud configuration file for the HP Folsom cloud. Uses the default jclouds-based cloud driver.
  * See org.cloudifysource.domain.cloud.Cloud for more details.
  * @author barakme
  *
@@ -7,7 +7,7 @@
 
 cloud {
 	// Mandatory. The name of the cloud, as it will appear in the Cloudify UI.
-	name = "HP"
+	name = "hp-folsom"
 
 	/********
 	 * General configuration information about the cloud driver implementation.
@@ -106,7 +106,7 @@ cloud {
 					// Mandatory. Template Name.
 					SMALL_LINUX : computeTemplate{
 						// Mandatory. Image ID.
-						imageId "wrongimage/id"
+						imageId linuxImageId
 						
 						// file transfer protocol
 						fileTransfer org.cloudifysource.domain.cloud.FileTransferModes.SFTP
@@ -128,7 +128,7 @@ cloud {
 						// When used with the default driver, the option names are considered
 						// method names invoked on the TemplateOptions object with the value as the parameter.
 						options ([
-									"securityGroupNames" : [securityGroup]as String[],
+									"securityGroupNames" : ["wrong"]as String[],
 									"keyPairName" : keyPair,
 									"generateKeyPair": false,
 									"autoAssignFloatingIp": false

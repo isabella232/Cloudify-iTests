@@ -1,5 +1,5 @@
 /***************
- * Cloud configuration file for the Amazon ec2 cloud. Uses the default jclouds-based cloud driver.
+ * Cloud configuration file for the HP Folsom cloud. Uses the default jclouds-based cloud driver.
  * See org.cloudifysource.domain.cloud.Cloud for more details.
  * @author barakme
  *
@@ -7,7 +7,7 @@
 
 cloud {
 	// Mandatory. The name of the cloud, as it will appear in the Cloudify UI.
-	name = "HP"
+	name = "hp-folsom"
 
 	/********
 	 * General configuration information about the cloud driver implementation.
@@ -72,7 +72,7 @@ cloud {
 	user {
 		// Optional. Identity used to access cloud.
 		// When used with the default driver, maps to the identity used to create the ComputeServiceContext.
-		user "${tenant}:${user}"
+		user "hpcloud@gigaspaces.com:wronguser"
 
 		// Optional. Key used to access cloud.
 		// When used with the default driver, maps to the credential used to create the ComputeServiceContext.
@@ -129,7 +129,7 @@ cloud {
 						// method names invoked on the TemplateOptions object with the value as the parameter.
 						options ([
 									"securityGroupNames" : [securityGroup]as String[],
-									"keyPairName" : "wrongkeypair",
+									"keyPairName" : keyPair,
 									"generateKeyPair": false,
 									"autoAssignFloatingIp": false
 								])

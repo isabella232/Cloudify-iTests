@@ -19,7 +19,7 @@ import org.cloudifysource.quality.iTests.framework.utils.ServiceInstaller;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.NewAbstractCloudTest;
-import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.openstack.OpenstackService;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.hpgrizzly.HpGrizzlyCloudService;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -27,11 +27,11 @@ import org.testng.annotations.Test;
 public class OpenstackTest extends NewAbstractCloudTest {
 
     private static final String IP_REGEX = "([1-9][0-9]{0,2}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3})";
-    private OpenstackService service;
+    private HpGrizzlyCloudService service;
 
     @Override
     protected String getCloudName() {
-        return "openstack";
+        return "hp-grizzly";
     }
 
     @Override
@@ -42,7 +42,7 @@ public class OpenstackTest extends NewAbstractCloudTest {
     @Override
     @BeforeClass(alwaysRun = true)
     protected void bootstrap() throws Exception {
-        service = new OpenstackService();
+        service = new HpGrizzlyCloudService();
         service.setMachinePrefix("itest-");
         super.bootstrap(service, null);
     }
@@ -185,13 +185,13 @@ public class OpenstackTest extends NewAbstractCloudTest {
     }
 
     private OpenStackNetworkClient createQuantumClient() throws OpenstackJsonSerializationException {
-        final String imageId = this.getCloudProperty(OpenstackService.IMAGE_PROP);
+        final String imageId = this.getCloudProperty(HpGrizzlyCloudService.IMAGE_PROP);
         final String region = imageId.split("/")[0];
         final OpenStackNetworkClient client = new OpenStackNetworkClient(
-                this.getCloudProperty(OpenstackService.ENDPOINT_PROP),
-                this.getCloudProperty(OpenstackService.USER_PROP),
-                this.getCloudProperty(OpenstackService.API_KEY_PROP),
-                this.getCloudProperty(OpenstackService.TENANT_PROP),
+                this.getCloudProperty(HpGrizzlyCloudService.ENDPOINT_PROP),
+                this.getCloudProperty(HpGrizzlyCloudService.USER_PROP),
+                this.getCloudProperty(HpGrizzlyCloudService.API_KEY_PROP),
+                this.getCloudProperty(HpGrizzlyCloudService.TENANT_PROP),
                 region);
         return client;
     }

@@ -47,7 +47,7 @@ public class HPScalingRulesTest extends AbstractScalingRulesCloudTest{
 	
 	@Override
 	protected String getCloudName() {
-		return "hp";
+		return "hp-folsom";
 	}
 	
 	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 3, enabled = true)

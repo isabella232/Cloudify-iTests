@@ -2,6 +2,11 @@ package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud;
 
 import iTests.framework.utils.AssertUtils;
 import iTests.framework.utils.LogUtils;
+
+import java.util.HashSet;
+import java.util.Set;
+import java.util.concurrent.TimeoutException;
+
 import org.cloudifysource.esc.driver.provisioning.storage.StorageProvisioningException;
 import org.cloudifysource.esc.driver.provisioning.storage.VolumeDetails;
 import org.cloudifysource.quality.iTests.framework.utils.CloudBootstrapper;
@@ -13,11 +18,7 @@ import org.cloudifysource.quality.iTests.framework.utils.storage.StorageAllocati
 import org.cloudifysource.quality.iTests.framework.utils.storage.StorageApiHelper;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.CloudService;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.ec2.Ec2CloudService;
-import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.openstack.OpenstackService;
-
-import java.util.HashSet;
-import java.util.Set;
-import java.util.concurrent.TimeoutException;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.hpgrizzly.HpGrizzlyCloudService;
 
 /**
  * Created with IntelliJ IDEA.
@@ -78,7 +79,7 @@ public abstract class AbstractStorageAllocationTest extends NewAbstractCloudTest
     }
 
     private ComputeApiHelper initComputeHelper() {
-        if (getCloudName().equals("ec2") || getCloudName().equals("hp") || getCloudName().equals("rackspace") || getCloudName().equals("openstack")) {
+        if (getCloudName().equals("ec2") || getCloudName().equals("hp-folsom") || getCloudName().equals("rackspace") || getCloudName().equals("hp-grizzly")) {
             return new JcloudsComputeApiHelper(getService().getCloud(), getService().getRegion());
         }
         throw new UnsupportedOperationException("Cannot init compute helper for non jclouds providers!");
@@ -90,10 +91,10 @@ public abstract class AbstractStorageAllocationTest extends NewAbstractCloudTest
                     ,"SMALL_LINUX"
                     ,((Ec2CloudService)getService()).getRegion()
                     ,((Ec2CloudService)getService()).getComputeServiceContext());
-        }if (getCloudName().equals("openstack")) {
+        }if (getCloudName().equals("hp-grizzly")) {
             return new OpenstackStorageApiHelper(getService().getCloud()
                     ,"MEDIUM_LINUX"
-                    ,((OpenstackService)getService()).getComputeServiceContext());
+                    ,((HpGrizzlyCloudService)getService()).getComputeServiceContext());
         }
         throw new UnsupportedOperationException("Cannot init storage helper for clouds that are not ec2 or Openstack");
     }

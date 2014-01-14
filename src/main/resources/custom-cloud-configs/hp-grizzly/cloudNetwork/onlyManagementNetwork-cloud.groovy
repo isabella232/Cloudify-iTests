@@ -1,5 +1,5 @@
 cloud {
-    name = "openstack"
+    name = "hp-grizzly"
 
     configuration {
         managementMachineTemplate "LINUX"
@@ -30,18 +30,6 @@ cloud {
                 custom ([ "associateFloatingIpOnBootstrap" : "true" ])
             }
         }
-        templates ([
-            "APPLICATION_NET" : networkConfiguration {
-                name "Cloudify-Application-Network"
-                subnets {
-                    subnet {
-                        name "Cloudify-Application-Subnet1"
-                        range "160.1.0.0/24"
-                    }
-                }
-                custom ([ "associateFloatingIpOnBootstrap" : "true" ])
-            }
-        ])
     }
     cloudCompute {
         templates ([

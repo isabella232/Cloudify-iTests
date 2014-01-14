@@ -1,5 +1,5 @@
 /***************
- * Cloud configuration file for the Amazon ec2 cloud. Uses the default jclouds-based cloud driver.
+ * Cloud configuration file for the HP Folsom cloud. Uses the default jclouds-based cloud driver.
  * See org.cloudifysource.domain.cloud.Cloud for more details.
  * @author barakme
  *
@@ -7,7 +7,7 @@
 
 cloud {
 	// Mandatory. The name of the cloud, as it will appear in the Cloudify UI.
-	name = "HP"
+	name = "hp-folsom"
 
 	/********
 	 * General configuration information about the cloud driver implementation.
@@ -42,7 +42,7 @@ cloud {
 		// different HTTP server instead.
 		// IMPORTANT: the default linux bootstrap script appends '.tar.gz' to the url whereas the default windows script appends '.zip'.
 		// Therefore, if setting a custom URL, make sure to leave out the suffix.
-		cloudifyUrl "http://repository.cloudifysource.org/org/cloudifysource/2.5.0-RC/gigaspaces-cloudify-2.5.0-rc-b3993wrong"
+		// cloudifyUrl "http://repository.cloudifysource.org/org/cloudifysource/2.5.0-RC/gigaspaces-cloudify-2.5.0-rc-b3993.zip"
 
 		// Mandatory. The prefix for new machines started for servies.
 		machineNamePrefix "cloudify-agent-"
@@ -116,7 +116,7 @@ cloud {
 						// Mandatory. Amount of RAM available to machine.
 						machineMemoryMB 1600
 						// Mandatory. Hardware ID.
-						hardwareId hardwareId
+						hardwareId "wronghardwareid"
 						// Mandatory. All files from this LOCAL directory will be copied to the remote machine directory.
 						localDirectory "upload"
 						// Optional. Name of key file to use for authenticating to the remot machine. Remove this line if key files

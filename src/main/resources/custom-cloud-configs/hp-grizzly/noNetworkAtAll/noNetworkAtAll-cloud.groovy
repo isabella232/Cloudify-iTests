@@ -1,9 +1,9 @@
 /***************
- * Cloud configuration file for the Openstack cloud. *
+ * Cloud configuration file for the hp-grizzly cloud
  * This configuration doesn't contain any network template (nor cloudNetwork/computeTemplate)
  */
 cloud {
-    name = "openstack"
+    name = "hp-grizzly"
 
     configuration {
         managementMachineTemplate "LINUX"

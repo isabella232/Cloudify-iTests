@@ -53,7 +53,7 @@ public class OpenstackChefServerExampleTest extends NewAbstractCloudTest {
 
     @Override
     protected String getCloudName() {
-        return "openstack";
+        return "hp-grizzly";
     }
 
     @Override

@@ -33,7 +33,7 @@ public class OpenstackValidationTest extends DefaultBootstrapValidationTest {
 
 	@Override
 	protected String getCloudName() {
-		return "hp";
+		return "hp-folsom";
 	}
 
 }

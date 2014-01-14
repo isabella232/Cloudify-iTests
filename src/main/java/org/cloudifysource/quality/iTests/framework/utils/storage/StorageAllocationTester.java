@@ -141,6 +141,13 @@ public class StorageAllocationTester {
         testInstallWithStorage(folderName);
     }
 
+    public void testInstallWithDynamicStorageLinux(String computeTemplateName, String servicePath) throws Exception {
+        String folderName = "create-and-attach";
+        folderName = copyServiceToRecipesFolder(servicePath, folderName);
+        setTemplate(RECIPES_SERVICES_FOLDER + "/" + folderName, computeTemplateName, true);
+        testInstallWithStorage(folderName);
+    }
+
     public void testInstallWithDynamicStorageUbuntu(String computeTemplateName) throws Exception {
         String folderName = "create-and-attach";
         final String servicePath = CommandTestUtils.getPath("/src/main/resources/apps/USM/usm/dynamicstorage/" + folderName);
@@ -705,7 +712,10 @@ public class StorageAllocationTester {
 
         String serviceName = ServiceReader.readService(new File(ScriptUtils.getBuildRecipesServicesPath() + "/" + folderName)).getName();
 
-        final String expectedMountOutput = "/dev/xvdc on /storage type ext4 (rw)";
+        String expectedMountOutput = "/dev/xvdc on /storage type ext4 (rw)";
+        if(cloudService.getCloud().getName().equalsIgnoreCase("openstack")){
+            expectedMountOutput = "/dev/vdc on /storage type ext3 (rw)";
+        }
 
         installer = new ServiceInstaller(restUrl, serviceName);
         installer.recipePath(folderName);

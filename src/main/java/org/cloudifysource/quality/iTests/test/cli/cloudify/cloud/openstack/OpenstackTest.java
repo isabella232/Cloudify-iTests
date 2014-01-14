@@ -61,7 +61,7 @@ public class OpenstackTest extends NewAbstractCloudTest {
 
         final String restUrl = getRestUrl();
 
-        final ServiceInstaller installer = new ServiceInstaller(restUrl, "securityGroups", "openstack");
+        final ServiceInstaller installer = new ServiceInstaller(restUrl, "securityGroups", "hp-grizzly");
         installer.recipePath(servicePath);
         installer.waitForFinish(true);
         installer.install();

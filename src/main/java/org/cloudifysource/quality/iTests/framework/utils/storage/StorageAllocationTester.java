@@ -713,7 +713,7 @@ public class StorageAllocationTester {
         String serviceName = ServiceReader.readService(new File(ScriptUtils.getBuildRecipesServicesPath() + "/" + folderName)).getName();
 
         String expectedMountOutput = "/dev/xvdc on /storage type ext4 (rw)";
-        if(cloudService.getCloud().getName().equalsIgnoreCase("openstack")){
+        if(cloudService.getCloud().getName().equalsIgnoreCase("hp-grizzly")){
             expectedMountOutput = "/dev/vdc on /storage type ext3 (rw)";
         }
 

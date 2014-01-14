@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.Properties;
 
 public class HpCloudService extends JCloudsCloudService {
-    private static final String HP_CERT_PROPERTIES = CREDENTIALS_FOLDER + "/cloud/hp/hp-cred.properties";
+    private static final String HP_CERT_PROPERTIES = CREDENTIALS_FOLDER + "/cloud/hp-folsom/hp-cred.properties";
 
     private Properties certProperties = getCloudProperties(HP_CERT_PROPERTIES);
 
@@ -23,7 +23,7 @@ public class HpCloudService extends JCloudsCloudService {
 	private final String securityGroup = certProperties.getProperty("securityGroup");
 
 	public HpCloudService() {
-		super("hp");
+		super("hp-folsom");
 	}
 
 	public String getTenant() {

@@ -10,7 +10,7 @@ public class HPServicesTest extends AbstractServicesTest {
 
 	@Override
 	protected String getCloudName() {
-		return "hp-folsom";
+		return "hp";
 	}
 	
 	@BeforeClass(alwaysRun = true)

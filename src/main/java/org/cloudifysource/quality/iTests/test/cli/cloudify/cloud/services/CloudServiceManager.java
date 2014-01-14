@@ -71,7 +71,7 @@ public class CloudServiceManager {
             cloudService = new OpenstackService();
 		} else if ("ec2-win".equalsIgnoreCase(cloudName)) {
 			cloudService = new Ec2WinCloudService();
-		} else if ("hp-folsom".equalsIgnoreCase(cloudName)) {
+		} else if ("hp".equalsIgnoreCase(cloudName)) {
 			cloudService = new HpCloudService();
 		} else if ("rackspace".equalsIgnoreCase(cloudName)) {
 			cloudService = new RackspaceCloudService();

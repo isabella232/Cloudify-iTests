@@ -43,7 +43,6 @@ public class OpenstackTest extends NewAbstractCloudTest {
     @BeforeClass(alwaysRun = true)
     protected void bootstrap() throws Exception {
         service = new HpGrizzlyCloudService();
-        service.setMachinePrefix("itest-");
         super.bootstrap(service, null);
     }
 

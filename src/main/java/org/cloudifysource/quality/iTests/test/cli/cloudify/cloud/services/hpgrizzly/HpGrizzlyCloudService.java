@@ -81,7 +81,7 @@ public class HpGrizzlyCloudService extends JCloudsCloudService {
         getProperties().put(ROUTER_NAME, this.routerName);
 
         propsToReplace.put("cloudify-agent-", getMachinePrefix() + "agent-");
-        propsToReplace.put("cloudify-manager-", getMachinePrefix() + "manager-");
+        propsToReplace.put("cloudify-manager", getMachinePrefix() + "manager-");
         propsToReplace.put("numberOfManagementMachines 1", "numberOfManagementMachines " + getNumberOfManagementMachines());
         propsToReplace.put("javaUrl", "// javaUrl");
         propsToReplace.put("// \"externalRouterName\" : \"router-ext\",", "\"externalRouterName\" : routerName,");

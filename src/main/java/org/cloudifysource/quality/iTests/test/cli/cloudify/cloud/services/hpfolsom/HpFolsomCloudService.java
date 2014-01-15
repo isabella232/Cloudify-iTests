@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.Properties;
 
 public class HpFolsomCloudService extends JCloudsCloudService {
-    private static final String HP_CERT_PROPERTIES = CREDENTIALS_FOLDER + "/cloud/hp-folsom/hp-cred.properties";
+    private static final String HP_CERT_PROPERTIES = CREDENTIALS_FOLDER + "/cloud/hp-folsom/hp-folsom-cred.properties";
 
     private Properties certProperties = getCloudProperties(HP_CERT_PROPERTIES);
 

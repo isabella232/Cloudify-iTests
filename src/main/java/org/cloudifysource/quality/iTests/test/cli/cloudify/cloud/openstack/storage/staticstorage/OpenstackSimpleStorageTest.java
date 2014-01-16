@@ -32,7 +32,7 @@ public class OpenstackSimpleStorageTest extends AbstractStorageAllocationTest{
 
     @Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
     public void testLinux() throws Exception {
-        storageAllocationTester.testInstallWithStorageLinux("MEDIUM_LINUX");
+        storageAllocationTester.testInstallWithStorageLinux("SMALL_LINUX");
     }
 
     @AfterMethod

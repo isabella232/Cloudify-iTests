@@ -37,7 +37,7 @@ public class OpenstackStorageDeleteOnExitTest extends AbstractStorageAllocationT
 
     @Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
     public void testLinux() throws Exception {
-        storageAllocationTester.testDeleteOnExitFalseLinux("MEDIUM_LINUX");
+        storageAllocationTester.testDeleteOnExitFalseLinux("SMALL_LINUX");
     }
 
 

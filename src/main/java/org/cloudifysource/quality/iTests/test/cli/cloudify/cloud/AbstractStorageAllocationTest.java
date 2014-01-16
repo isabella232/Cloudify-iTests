@@ -93,7 +93,7 @@ public abstract class AbstractStorageAllocationTest extends NewAbstractCloudTest
                     ,((Ec2CloudService)getService()).getComputeServiceContext());
         }if (getCloudName().equals("hp-grizzly")) {
             return new OpenstackStorageApiHelper(getService().getCloud()
-                    ,"MEDIUM_LINUX"
+                    ,"SMALL_LINUX"
                     ,((HpGrizzlyCloudService)getService()).getComputeServiceContext());
         }
         throw new UnsupportedOperationException("Cannot init storage helper for clouds that are not ec2 or Openstack");
@@ -133,7 +133,7 @@ public abstract class AbstractStorageAllocationTest extends NewAbstractCloudTest
         }
     }
 
-    public void waitForVolumeAvailable(final String volumeId) throws TimeoutException {
+    public void waitForVolumeAvailable(final String volumeId) throws TimeoutException, StorageProvisioningException {
 
         final long end = System.currentTimeMillis() + VOLUME_WAIT_TIMEOUT;
 

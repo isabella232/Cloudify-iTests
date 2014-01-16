@@ -803,7 +803,7 @@ public class StorageAllocationTester {
         return folderName;
     }
 
-    private void setTemplate(final String path, final String computeTemplateName, boolean useManagement) throws Exception {
+    public void setTemplate(final String path, final String computeTemplateName, boolean useManagement) throws Exception {
         File serviceFile = DSLReader.findDefaultDSLFile(org.cloudifysource.dsl.internal.DSLUtils.SERVICE_DSL_FILE_NAME_SUFFIX, new File(path));
         Map<String, String> props = new HashMap<String,String>();
         props.put("ENTER_TEMPLATE", computeTemplateName);

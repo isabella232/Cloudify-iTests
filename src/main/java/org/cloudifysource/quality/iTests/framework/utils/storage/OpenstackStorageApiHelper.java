@@ -62,7 +62,15 @@ public class OpenstackStorageApiHelper extends JcloudsStorageApiHelper {
 
     @Override
     public VolumeDetails getVolumeById(String volumeId) throws StorageProvisioningException {
-        return null;
+        final VolumeDetails volumeDetails = new VolumeDetails();
+        Volume volume = getActualVolumeById(volumeId);
+
+        volumeDetails.setId(volume.getId());
+        volumeDetails.setName(volume.getName());
+        volumeDetails.setSize(volume.getSize());
+        volumeDetails.setLocation(volume.getZone());
+
+        return volumeDetails;
     }
 
     @Override
@@ -71,8 +79,8 @@ public class OpenstackStorageApiHelper extends JcloudsStorageApiHelper {
     }
 
     @Override
-    public boolean isVolumeAvailable(String volumeId) {
-        return false;
+    public boolean isVolumeAvailable(String volumeId) throws StorageProvisioningException {
+        return "available".equalsIgnoreCase(getVolumeStatus(volumeId));
     }
 
     @Override
@@ -81,8 +89,8 @@ public class OpenstackStorageApiHelper extends JcloudsStorageApiHelper {
     }
 
     @Override
-    public String getVolumeStatus(String volumeId) {
-        return null;
+    public String getVolumeStatus(String volumeId) throws StorageProvisioningException {
+        return getActualVolumeById(volumeId).getStatus().value();
     }
 
     @Override
@@ -119,5 +127,15 @@ public class OpenstackStorageApiHelper extends JcloudsStorageApiHelper {
         }
 
         return novaContext.getApi().getVolumeAttachmentExtensionForZone(region);
+    }
+
+    public Volume getActualVolumeById(String volumeId) throws StorageProvisioningException {
+        Optional<? extends VolumeApi> volumeApi = getVolumeApi();
+        if (!volumeApi.isPresent()) {
+            throw new StorageProvisioningException("Failed to list all volumes.");
+        }
+
+        Volume volume = volumeApi.get().get(volumeId);
+        return volume;
     }
 }

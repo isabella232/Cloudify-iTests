@@ -29,11 +29,11 @@ public interface StorageApiHelper {
 
     boolean isVolumeDeleting(final String volumeId);
 
-    boolean isVolumeAvailable(final String volumeId);
+    boolean isVolumeAvailable(final String volumeId) throws StorageProvisioningException;
 
     boolean isVolumeCreating(final String volumeId);
 
-    String getVolumeStatus(final String volumeId);
+    String getVolumeStatus(final String volumeId) throws StorageProvisioningException ;
 
     Set<String> getVolumeAttachments(final String volumeId);
 

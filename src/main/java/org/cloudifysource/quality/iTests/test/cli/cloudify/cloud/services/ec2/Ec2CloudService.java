@@ -112,7 +112,7 @@ public class Ec2CloudService extends JCloudsCloudService {
         LogUtils.log("In ec2 service. logstash enabled: " + AbstractCloudService.enableLogstash);
         if(AbstractCloudService.enableLogstash){
             LogUtils.log("adding jclouds overrides");
-            propsToReplace.put("\"jclouds.ec2.ami-query\":\"\",", "\"jclouds.ec2.ami-query\":\"\",\"jclouds.retries-delay-start\":\"1000l\",");
+            propsToReplace.put("\"jclouds.ec2.ami-query\":\"\",", "\"jclouds.ec2.ami-query\":\"\",\"jclouds.retries-delay-start\":\"1000\",");
         }
 
         IOUtils.replaceTextInFile(getPathToCloudGroovy(), propsToReplace);

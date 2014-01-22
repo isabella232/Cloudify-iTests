@@ -39,7 +39,7 @@ public class ExoscaleGitApplicationTest extends AbstractExamplesTest {
         super.testDrupalBabies(localGitRepoPath + "/apps");
     }
 
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = false)
     public void testDrupalChef() throws Exception {
         super.testDrupalChef(localGitRepoPath + "/apps");
     }
@@ -70,17 +70,17 @@ public class ExoscaleGitApplicationTest extends AbstractExamplesTest {
         super.testPetclinicJboss(localGitRepoPath + "/apps");
     }
 
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = false)
     public void testRedmine() throws Exception {
         super.testRedmine(localGitRepoPath + "/apps");
     }
 
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = false)
     public void testRedminePuppet() throws Exception {
         super.testRedminePuppet(localGitRepoPath + "/apps");
     }
 
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = false)
     public void testHelloPuppet() throws Exception {
         super.testHelloPuppet(localGitRepoPath + "/apps");
     }

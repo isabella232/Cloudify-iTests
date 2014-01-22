@@ -71,7 +71,7 @@ public class ExoscaleChefServerExampleTest extends NewAbstractCloudTest {
         super.teardown();
     }
 
-    @Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
+    @Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = false)
     public void testChef() throws Exception {
         installAndVerify();
 

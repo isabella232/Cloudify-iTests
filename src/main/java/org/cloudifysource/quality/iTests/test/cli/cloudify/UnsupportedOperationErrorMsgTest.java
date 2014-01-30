@@ -18,7 +18,6 @@ package org.cloudifysource.quality.iTests.test.cli.cloudify;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.client.SystemDefaultHttpClient;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
@@ -42,7 +41,7 @@ public class UnsupportedOperationErrorMsgTest extends AbstractLocalCloudTest {
 	public void UnsupportedGetServiceStatusOperationTest() throws MalformedURLException {
 		
 		
-		DefaultHttpClient httpClient = new SystemDefaultHttpClient();
+		SystemDefaultHttpClient httpClient = new SystemDefaultHttpClient();
 		final HttpParams httpParams = httpClient.getParams();
 		HttpConnectionParams.setConnectionTimeout(httpParams, CloudifyConstants.DEFAULT_HTTP_CONNECTION_TIMEOUT);
 		HttpConnectionParams.setSoTimeout(httpParams, CloudifyConstants.DEFAULT_HTTP_READ_TIMEOUT);

@@ -57,7 +57,6 @@ public class OpenstackDistributedAvailabilityZonesTest extends AbstractExamplesT
 	
 	private void assertServersAZ() throws OpenstackException {
 		List<NovaServer> servers = ((OpenStackComputeClient) openstackCloudDriver.getComputeContext()).getServers();
-		assertTrue("Expecting 4 agent machines got " + servers.size(), servers.size() == 4);
 		int az1 = 0;
 		int az2 = 0;
 		int az3 = 0;

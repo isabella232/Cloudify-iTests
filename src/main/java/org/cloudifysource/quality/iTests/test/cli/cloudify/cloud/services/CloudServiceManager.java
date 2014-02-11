@@ -56,7 +56,6 @@ public class CloudServiceManager {
 			CloudBootstrapper bootstrapper = new CloudBootstrapper();
 			bootstrapper.noWebServices(true);
 			bootstrapper.noManagementSpace(true);
-			bootstrapper.noManagementSpaceContainer(true);
 			cloudService.setBootstrapper(bootstrapper);
 		} else if ("byon-xap-cloudify-management-space".equalsIgnoreCase(cloudName)) {
             cloudService = new ByonCloudService();

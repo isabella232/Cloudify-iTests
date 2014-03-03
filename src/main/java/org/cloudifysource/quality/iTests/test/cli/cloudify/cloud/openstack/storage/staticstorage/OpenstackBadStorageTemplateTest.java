@@ -1,26 +1,13 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.openstack.storage.staticstorage;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import iTests.framework.utils.AssertUtils;
+
 import java.util.concurrent.TimeoutException;
 
-import iTests.framework.tools.SGTestHelper;
-import iTests.framework.utils.AssertUtils;
-import iTests.framework.utils.LogUtils;
-import iTests.framework.utils.ScriptUtils;
-import org.cloudifysource.dsl.internal.DSLReader;
 import org.cloudifysource.esc.driver.provisioning.storage.StorageProvisioningException;
-import org.cloudifysource.quality.iTests.framework.utils.ApplicationInstaller;
-import org.cloudifysource.quality.iTests.framework.utils.RecipeInstaller;
-import org.cloudifysource.quality.iTests.framework.utils.ServiceInstaller;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.AbstractStorageAllocationTest;
-import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.ec2.Ec2CloudService;
-import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.hpgrizzly.HpGrizzlyCloudService;
-import org.hibernate.usertype.LoggableUserType;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;

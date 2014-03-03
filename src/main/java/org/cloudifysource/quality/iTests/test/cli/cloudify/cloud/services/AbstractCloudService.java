@@ -43,6 +43,7 @@ public abstract class AbstractCloudService implements CloudService {
     protected static final boolean enableLogstash = Boolean.parseBoolean(System.getProperty("iTests.enableLogstash", "false"));
     private static File propsFile = new File(CREDENTIALS_FOLDER + "/logstash/logstash.properties");
     protected String logstashHost;
+    protected String machinePrefix;
 
     private static final int TEN_SECONDS_IN_MILLIS = 10000;
 
@@ -50,7 +51,6 @@ public abstract class AbstractCloudService implements CloudService {
 
     private int numberOfManagementMachines = 1;
     private URL[] webUIUrls;
-    private String machinePrefix;
     private String volumePrefix;
     private Map<String, String> additionalPropsToReplace = new HashMap<String, String>();
     private Cloud cloud;

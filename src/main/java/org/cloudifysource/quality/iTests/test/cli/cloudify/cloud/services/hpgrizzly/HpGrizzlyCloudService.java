@@ -6,10 +6,7 @@ import iTests.framework.utils.LogUtils;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
 import org.apache.commons.io.FileUtils;
 import org.cloudifysource.esc.driver.provisioning.CloudProvisioningException;
@@ -26,7 +23,7 @@ import org.cloudifysource.esc.driver.provisioning.openstack.rest.SecurityGroup;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.JCloudsCloudService;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.security.SecurityConstants;
 
-import edu.emory.mathcs.backport.java.util.Arrays;
+
 
 public class HpGrizzlyCloudService extends JCloudsCloudService {
 

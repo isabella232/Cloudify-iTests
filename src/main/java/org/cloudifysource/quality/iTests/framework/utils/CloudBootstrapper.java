@@ -22,6 +22,7 @@ public class CloudBootstrapper extends Bootstrapper {
 	private String cloudFolderPath = "";
 	private boolean useExisting = false;
     private boolean skipValidation = true;
+    private boolean terminateNow = false;
 	private Map<String, Object> cloudOverrides;
 
     
@@ -94,6 +95,15 @@ public class CloudBootstrapper extends Bootstrapper {
 	
 	public boolean isNoWebServices() {
 		return noWebServices;
+	}
+	
+    public CloudBootstrapper terminateNow(final boolean terminateNow) {
+		this.terminateNow = terminateNow;
+		return this;
+	}
+	
+	public boolean isTerminateNow() {
+		return terminateNow;
 	}
 	
 	public CloudBootstrapper noManagementSpace(final boolean noManagementSpace) {

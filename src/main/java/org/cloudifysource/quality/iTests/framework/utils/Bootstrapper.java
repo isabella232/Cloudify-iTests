@@ -22,6 +22,7 @@ public abstract class Bootstrapper {
 	private String keystoreFilePath;
 	private String keystorePassword;
 	private boolean force = false;
+	private boolean terminateNow = false;
 	private String restUrl;
 	private boolean bootstrapExpectedToFail = false;
 	private boolean teardownExpectedToFail = false;
@@ -60,6 +61,14 @@ public abstract class Bootstrapper {
 	
 	public boolean isForce() {
 		return force;
+	}
+	
+    public void terminateNow(final boolean terminateNow) {
+		this.terminateNow = terminateNow;
+	}
+	
+	public boolean isTerminateNow() {
+		return terminateNow;
 	}
 	
 	public boolean isTeardownExpectedToFail() {
@@ -237,7 +246,7 @@ public abstract class Bootstrapper {
 	public ProcessResult teardown() throws IOException, InterruptedException {
 
 		StringBuilder connectCommandBuilder = new StringBuilder();
-		if (restUrl != null && !force) { // no sense in connecting to the rest server if use -force anyway
+		if (restUrl != null && !force && !terminateNow) { // no sense in connecting to the rest server if using -force or -terminate-now anyway
 			connectCommandBuilder.append("connect").append(" ");
 			if (StringUtils.isNotBlank(user) && StringUtils.isNotBlank(password)){
 				connectCommandBuilder.append("-user").append(" ")
@@ -271,6 +280,9 @@ public abstract class Bootstrapper {
         if (force) {
 			builder.append("-force").append(" ");
 		}
+        if (terminateNow) {
+        	builder.append("-terminate-now").append(" ");
+        }
 		builder.append(provider);
 		if (teardownExpectedToFail) {
 			String output = CommandTestUtils.runCommandExpectedFail(connectCommandBuilder.toString() + builder.toString());

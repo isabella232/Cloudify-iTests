@@ -40,7 +40,7 @@ public class OpenstackTerminateNowTest extends NewAbstractCloudTest {
 	private static final String PROPERTY_USER = "user";
 	private static final String PROPERTY_TENANT = "tenant";
 	private static final String USM_SERVICES_PATH = "src/main/resources/apps/USM/usm/";
-	private static final String SIMPLE_SERVICE = "simple";
+	private static final String SERVICE_NAME = "simple-with-network";
 	private static final String NON_CLOUDIFY_SECURITY_GROUP = "TestTerminateNowSecurityGroup";
 	private static final String SHARED_TESTING_ROUTER = "hpclouddev-router";
 	private HpGrizzlyCloudService service;
@@ -56,6 +56,10 @@ public class OpenstackTerminateNowTest extends NewAbstractCloudTest {
 		super.bootstrap(service);
 		cloud = service.getCloud();
 		initClients();
+        
+        // install service with network
+		String simpleServicePath = CommandTestUtils.getPath(USM_SERVICES_PATH + SERVICE_NAME);
+        super.installServiceAndWait(simpleServicePath, SERVICE_NAME);
 	}
 	
 	
@@ -96,10 +100,6 @@ public class OpenstackTerminateNowTest extends NewAbstractCloudTest {
 		String managementPrefix = cloud.getProvider().getManagementGroup();
         String agentPrefix = cloud.getProvider().getMachineNamePrefix();
         
-        // install service with storage
-		String simpleServicePath = CommandTestUtils.getPath(USM_SERVICES_PATH + SIMPLE_SERVICE);
-        super.installServiceAndWait(simpleServicePath, SIMPLE_SERVICE);
-        
         // create a security group without the prefix, named : "TestTerminateNowSecurityGroup"
         SecurityGroup customSecurityGroup = createSecurityGroup(NON_CLOUDIFY_SECURITY_GROUP);
 
@@ -107,7 +107,7 @@ public class OpenstackTerminateNowTest extends NewAbstractCloudTest {
         assertServersCount(1, managementPrefix);
         assertServersCount(1, agentPrefix);
         assertRoutersCount(1, SHARED_TESTING_ROUTER);
-        assertNetworksCount(1, managementPrefix);
+        assertNetworksCount(2, managementPrefix);
         assertSecurityGroupsCount(5, managementPrefix);
         assertSecurityGroupsCount(1, NON_CLOUDIFY_SECURITY_GROUP);
         
@@ -167,6 +167,7 @@ public class OpenstackTerminateNowTest extends NewAbstractCloudTest {
 	
 	private void assertServersCount(final int expectedServersCount, final String prefix) throws OpenstackException {
 		int serversCount = computeClient.getServersByPrefix(prefix).size();
+		
         assertTrue("expected " + expectedServersCount + " server(s) with prefix " + prefix + " but found " 
         		+ serversCount, serversCount == expectedServersCount);
 	}

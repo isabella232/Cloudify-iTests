@@ -97,21 +97,19 @@ public class HpGrizzlyCloudService extends JCloudsCloudService {
 			return true;
 		}
 		
-		final String managementGroup = getCloud().getProvider().getManagementGroup();
-		final String prefix = managementGroup == null ? this.machinePrefix : managementGroup;
-		leakedSecurityResult = scanForLeakedSecurityGroups(prefix);
-		leakedNetworksResult = scanForLeakedNetworkComponents(prefix);
+		leakedSecurityResult = scanForLeakedSecurityGroups();
+		leakedNetworksResult = scanForLeakedNetworkComponents();
 
 		return leakedNodesResult && leakedNetworksResult && leakedSecurityResult;
 	}
 
-	private boolean scanForLeakedNetworkComponents(final String prefix) {
+	private boolean scanForLeakedNetworkComponents() {
 		List<Router> routers = null;
 		List<Network> networksByPrefix = null;
 		boolean networksResult = true;
 		boolean routerResult = true;
 		try {
-			networksByPrefix = networkClient.getNetworkByPrefix(prefix);
+			networksByPrefix = networkClient.getNetworkByPrefix(this.machinePrefix);
 		} catch (final OpenstackException e) {
 			LogUtils.log("Failed listing all aviliable networks. Network and router leak scan failed. Reason " + e.getMessage(), e);
 		}
@@ -130,7 +128,7 @@ public class HpGrizzlyCloudService extends JCloudsCloudService {
 					removeLeakedNetwork(network);
 				}
 				// after removing all interfaces, remove routers with name prefix.
-				if (router.getName().startsWith(prefix)) {
+				if (router.getName().startsWith(this.machinePrefix)) {
 					routerResult = false;
 					LogUtils.log("Found leaking router: " + router.getName() + ". Attempting to delete resource.");
 					try {
@@ -185,11 +183,11 @@ public class HpGrizzlyCloudService extends JCloudsCloudService {
 		}
 	}
 
-	private boolean scanForLeakedSecurityGroups(final String prefix) {
+	private boolean scanForLeakedSecurityGroups() {
 		boolean result = true;
 		List<SecurityGroup> securityGroupsByName = null;
 		try {
-			securityGroupsByName = this.networkClient.getSecurityGroupsByPrefix(prefix);
+			securityGroupsByName = this.networkClient.getSecurityGroupsByPrefix(this.machinePrefix);
 		} catch (final OpenstackException e) {
 			LogUtils.log("Failed getting security group list. Reason " + e.getMessage(), e);
 		}

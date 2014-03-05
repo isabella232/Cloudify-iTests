@@ -100,13 +100,6 @@ public abstract class DefaultBootstrapValidationTest extends NewAbstractCloudTes
 				bootstrapOutput.contains("Invalid cloudify URL"));
 	}
 
-
-	@AfterClass
-	public void teardown() throws Exception {
-		super.teardown();
-	}
-
-
 	@Override
 	protected boolean isReusableCloud() {
 		return false;

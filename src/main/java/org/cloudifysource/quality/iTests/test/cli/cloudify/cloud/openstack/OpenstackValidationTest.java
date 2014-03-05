@@ -1,6 +1,7 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.openstack;
 
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.DefaultBootstrapValidationTest;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
 
 public class OpenstackValidationTest extends DefaultBootstrapValidationTest {
@@ -34,6 +35,11 @@ public class OpenstackValidationTest extends DefaultBootstrapValidationTest {
 	@Override
 	protected String getCloudName() {
 		return "hp-folsom";
+	}
+	
+	@AfterClass
+	public void teardown() throws Exception {
+		super.teardown();
 	}
 
 }

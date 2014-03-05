@@ -1,6 +1,7 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.openstack.storage.staticstorage;
 
 import iTests.framework.utils.AssertUtils;
+import iTests.framework.utils.LogUtils;
 
 import java.util.concurrent.TimeoutException;
 
@@ -46,16 +47,18 @@ public class OpenstackBadStorageTemplateTest extends AbstractStorageAllocationTe
         uninstallServiceIfFound("groovy");
     }
 
-    @AfterClass
-    public void scanForLeakes() throws TimeoutException, StorageProvisioningException {
-        super.scanForLeakedVolumesCreatedViaTemplate("SMALL_BLOCK");
-    }
-
     @AfterClass(alwaysRun = true)
-    protected void teardown() throws Exception {
-        super.teardown();
+    public void scanForLeakes() throws TimeoutException, StorageProvisioningException {
+    	try {
+    		super.scanForLeakedVolumesCreatedViaTemplate("SMALL_BLOCK");
+    	} finally {
+    		try {
+				super.teardown();
+			} catch (final Exception e) {
+				LogUtils.log("WARNING!! failed tearing down cloud. Leaked resources may be found. Reason: " + e.getMessage(), e);
+			}
+    	}
     }
-
 
     @Override
     protected String getCloudName() {

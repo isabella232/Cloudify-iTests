@@ -7,6 +7,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.cloudifysource.dsl.utils.ServiceUtils;
 import org.openspaces.admin.gsa.GridServiceAgent;
+import org.openspaces.admin.gsa.GridServiceAgents;
 import org.openspaces.admin.gsa.events.GridServiceAgentAddedEventListener;
 import org.openspaces.admin.gsa.events.GridServiceAgentLifecycleEventListener;
 import org.testng.annotations.AfterClass;
@@ -20,6 +21,8 @@ import org.testng.annotations.Test;
  */
 public class AgentRestartTest extends AbstractAgentMaintenanceModeTest {
 	
+	private static final long TEN_SECONDS_MILLIS = 10000;
+
 	@BeforeClass(alwaysRun = true)
 	protected void bootstrap() throws Exception {
 		super.bootstrap();
@@ -74,6 +77,54 @@ public class AgentRestartTest extends AbstractAgentMaintenanceModeTest {
 		
 		LogUtils.log("ESM has recovered successfully. uninstalling service " + SERVICE_NAME);
 		uninstallServiceAndWait(SERVICE_NAME);
+    }
+    
+    
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
+    public void testAgentRestartAfterTimeoutExpires() throws Exception {
+    	installServiceAndWait(getServicePath(SERVICE_NAME), SERVICE_NAME);
+    	
+    	final String absolutePuName = ServiceUtils.getAbsolutePUName(APP_NAME, SERVICE_NAME);
+    	
+    	LogUtils.log("Starting maintenance mode for pu with name " + absolutePuName + " for 5 minutes");
+    	final long maintenanceModeStartTime = System.currentTimeMillis();
+    	
+    	final String serviceIPBefore = getServiceIP(absolutePuName);
+    	
+    	startMaintenanceMode(TimeUnit.MINUTES.toSeconds(5));
+    	
+    	gracefullyShutdownAgent(absolutePuName);
+    	
+    	
+    	GridServiceAgents gridServiceAgents = admin.getGridServiceAgents();
+    	
+    	while (gridServiceAgents.getSize() != 1) {
+    		LogUtils.log("Waiting for admin to detect agent failure...");
+    		Thread.sleep(TEN_SECONDS_MILLIS);
+    		gridServiceAgents = admin.getGridServiceAgents();
+    	}
+    	LogUtils.log("Agent failure was detected by the admin.");
+    	
+    	while (gridServiceAgents.getSize() != 2) {
+    		LogUtils.log("Waiting for agent to restart after maintenance mode duration expires..");
+    		Thread.sleep(TEN_SECONDS_MILLIS);
+    		gridServiceAgents = admin.getGridServiceAgents();
+    	}
+    	LogUtils.log("agent recovery was detected by the admin.");
+    	
+    	final String serviceIPAfter = getServiceIP(absolutePuName);
+    	
+    	long recoveryDuration = TimeUnit.MILLISECONDS.toMinutes(System.currentTimeMillis() - maintenanceModeStartTime);
+    	
+    	LogUtils.log("asserting maintenance mode duration.");
+    	assertTrue("Agent recovered before maintenance period expired.", recoveryDuration >= 5);
+    	assertTrue("Agent recovery took more time then expected.", recoveryDuration <= 10);
+    	
+    	LogUtils.log("asserting new agent was provisioned on new machine.");
+    	assertTrue("Expecting service instance to start on a different machine.", !serviceIPBefore.equals(serviceIPAfter));
+    	
+    	uninstallServiceAndWait(SERVICE_NAME);
+    	
     }
     
 	@Override

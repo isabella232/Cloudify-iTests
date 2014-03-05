@@ -6,6 +6,8 @@ import iTests.framework.utils.SSHUtils;
 
 import java.io.IOException;
 import java.net.InetAddress;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.concurrent.TimeUnit;
 
@@ -13,8 +15,12 @@ import org.cloudifysource.dsl.utils.IPUtils;
 import org.cloudifysource.dsl.utils.ServiceUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.byon.AbstractByonCloudTest;
+import org.cloudifysource.restclient.GSRestClient;
+import org.cloudifysource.restclient.RestException;
 import org.openspaces.admin.gsa.GridServiceAgent;
 import org.openspaces.admin.pu.ProcessingUnit;
+
+import com.j_spaces.kernel.PlatformVersion;
 
 /**
  * 
@@ -90,4 +96,14 @@ public class AbstractAgentMaintenanceModeTest extends AbstractByonCloudTest {
 		gridServiceAgent.shutdown();
 		LogUtils.log("agent shut down successfully");
     }
+	
+	protected String getServiceIP(String serviceName) throws RestException, MalformedURLException {
+		final GSRestClient client = new GSRestClient("", "", new URL(getRestUrl()), PlatformVersion
+                .getVersionNumber());
+		LogUtils.log("getting private IP for service named '" + serviceName + "'");
+		String privateIpUrl = "ProcessingUnits/Names/" + serviceName + "/Instances/0/JVMDetails/EnvironmentVariables/GIGASPACES_AGENT_ENV_PRIVATE_IP";
+		String ipAddress = (String) client.getAdminData(privateIpUrl).get("GIGASPACES_AGENT_ENV_PRIVATE_IP");
+		LogUtils.log("found service ip address: " + ipAddress);
+        return ipAddress;
+	}
 }

@@ -54,7 +54,7 @@
 	<dependencies>
         <dependency>
             <groupId>org.apache.jclouds.provider</groupId>
-            <artifactId>softlayer-fixed</artifactId>
+            <artifactId>softlayer-all</artifactId>
             <version>${jcloudsVersion}</version>
         </dependency>
         <dependency>
@@ -346,10 +346,10 @@
                 </dependency>
                 <dependency>
                     <groupId>org.apache.jclouds</groupId>
-                    <artifactId>softlayer-fixed</artifactId>
+                    <artifactId>softlayer-all</artifactId>
                     <version>${jcloudsVersion}</version>
                     <scope>system</scope>
-                    <systemPath>${cloudify.home}/lib/platform/esm/softlayer-fixed-1.6.2-incubating.jar</systemPath>
+                    <systemPath>${cloudify.home}/lib/platform/esm/softlayer-all-1.6.2-incubating.jar</systemPath>
                 </dependency>
                 <dependency>
                     <groupId>com.gigaspaces</groupId>
@@ -417,10 +417,10 @@
 			<dependencies>
                 <dependency>
                     <groupId>org.apache.jclouds</groupId>
-                    <artifactId>softlayer-fixed</artifactId>
+                    <artifactId>softlayer-all</artifactId>
                     <version>${jcloudsVersion}</version>
                     <scope>system</scope>
-                    <systemPath>${cloudify.home}/lib/platform/esm/softlayer-fixed-1.6.2-incubating.jar</systemPath>
+                    <systemPath>${cloudify.home}/lib/platform/esm/softlayer-all-1.6.2-incubating.jar</systemPath>
                 </dependency>
                 <dependency>
                     <groupId>org.cloudifysource</groupId>

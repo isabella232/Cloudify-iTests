@@ -110,7 +110,14 @@ public class AgentRestartTest extends AbstractAgentMaintenanceModeTest {
     		Thread.sleep(TEN_SECONDS_MILLIS);
     		gridServiceAgents = admin.getGridServiceAgents();
     	}
-    	LogUtils.log("agent recovery was detected by the admin.");
+    	LogUtils.log("agent recovery was detected by the admin. Waiting for service instance to start...");
+    	
+    	final boolean serviceStarted = admin.getProcessingUnits()
+    			.getProcessingUnit(ServiceUtils.getAbsolutePUName("default", SERVICE_NAME)).waitFor(1, 10, TimeUnit.MINUTES);
+    	if (!serviceStarted) {
+    		AssertFail("Service did not recover after agent recovery from maintenance mode.");
+    	}
+    	LogUtils.log("Service " + SERVICE_NAME + " started successfully.");
     	
     	final String serviceIPAfter = getServiceIP(absolutePuName);
     	

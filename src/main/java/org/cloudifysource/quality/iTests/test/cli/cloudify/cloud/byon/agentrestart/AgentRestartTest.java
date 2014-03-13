@@ -113,12 +113,18 @@ public class AgentRestartTest extends AbstractAgentMaintenanceModeTest {
     	LogUtils.log("agent recovery was detected by the admin. Waiting for service instance to start...");
     	
     	final boolean serviceStarted = admin.getProcessingUnits()
-    			.getProcessingUnit(ServiceUtils.getAbsolutePUName("default", SERVICE_NAME)).waitFor(1, 10, TimeUnit.MINUTES);
+    			.getProcessingUnit(absolutePuName).waitFor(1, 10, TimeUnit.MINUTES);
     	if (!serviceStarted) {
     		AssertFail("Service did not recover after agent recovery from maintenance mode.");
     	}
-    	LogUtils.log("Service " + SERVICE_NAME + " started successfully.");
+    	LogUtils.log("Agent recovered successfully. Waiting for service to recover.");
     	
+    	final boolean isServiceStarted = admin.getProcessingUnits().getProcessingUnit(
+    			ServiceUtils.getAbsolutePUName("default", SERVICE_NAME)).waitFor(1, 10, TimeUnit.MINUTES);
+    	
+    	if (!isServiceStarted) {
+    		AssertFail("service did not recover after agent restart.");
+    	}
     	final String serviceIPAfter = getServiceIP(absolutePuName);
     	
     	long recoveryDuration = TimeUnit.MILLISECONDS.toMinutes(System.currentTimeMillis() - maintenanceModeStartTime);

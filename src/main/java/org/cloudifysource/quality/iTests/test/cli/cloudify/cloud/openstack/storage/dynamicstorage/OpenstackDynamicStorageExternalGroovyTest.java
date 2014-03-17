@@ -12,10 +12,10 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 /**
- * Author: nirb
- * Date: 21/02/13
+ * Author: noak
  */
-public class OpenstackSimpleDynamicStorageTest extends AbstractStorageAllocationTest{
+
+public class OpenstackDynamicStorageExternalGroovyTest extends AbstractStorageAllocationTest{
 
     @Override
     protected String getCloudName() {
@@ -26,12 +26,17 @@ public class OpenstackSimpleDynamicStorageTest extends AbstractStorageAllocation
     protected void bootstrap() throws Exception {
         super.bootstrap();
     }
+    
+    @Override
+    protected void customizeCloud() throws Exception {
+        super.customizeCloud();
+    }
 
 
     @Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
-    public void testLinux() throws Exception {
-        final String servicePath = CommandTestUtils.getPath("/src/main/resources/apps/USM/usm/dynamicstorage/openstack/create-and-attach");
-        storageAllocationTester.testInstallWithDynamicStorageLinux("SMALL_LINUX", servicePath, "create-and-attach");
+    public void testStorageOnExternalGroovy() throws Exception {
+        final String servicePath = CommandTestUtils.getPath("/src/main/resources/apps/USM/usm/dynamicstorage/openstack/detach-on-external-groovy");
+        storageAllocationTester.testInstallWithDynamicStorageLinux("SMALL_LINUX", servicePath, "detach-on-external-groovy");
     }
 
     @AfterMethod

@@ -39,15 +39,15 @@ import com.j_spaces.kernel.PlatformVersion;
 /**
  *
  * Provides some generic test cases to be used by tests that run on different clouds.
- * Created with IntelliJ IDEA.
- * User: elip
- * Date: 4/10/13
- * Time: 5:48 PM
- * To change this template use File | Settings | File Templates.
+ * User: elip, noak
  */
 public class StorageAllocationTester {
-
-    private String restUrl;
+	
+	private static final long AFTER_ATTACH_TIMEOUT = 10 * 1000;
+    private static final String SIMPLE_STORAGE_SERVICE_WITH_CUSTOM_COMMANDS = "simple-storage-with-custom-commands";
+    private static final String LOCATION_AWARE_SIMPLE_STORAGE_SERVICE = "multi-az";
+    
+	private String restUrl;
     private StorageApiHelper storageApiHelper;
     private CloudService cloudService;
     private ComputeApiHelper computeApiHelper;
@@ -70,7 +70,7 @@ public class StorageAllocationTester {
     /* Test Methods to be called by test classes */
 
     public void testStorageVolumeMountedLinux(String computeTemplateName) throws Exception {
-        String folderName = "simple-storage-with-custom-commands";
+        String folderName = SIMPLE_STORAGE_SERVICE_WITH_CUSTOM_COMMANDS;
         final String servicePath = CommandTestUtils.getPath("/src/main/resources/apps/USM/usm/staticstorage/" + folderName);
         folderName = copyServiceToRecipesFolder(servicePath, folderName);
         setTemplate(RECIPES_SERVICES_FOLDER + "/" + folderName, computeTemplateName, true);
@@ -78,7 +78,7 @@ public class StorageAllocationTester {
     }
 
     public void testStorageVolumeMountedUbuntu(String computeTemplateName) throws Exception {
-        String folderName = "simple-storage-with-custom-commands";
+        String folderName = SIMPLE_STORAGE_SERVICE_WITH_CUSTOM_COMMANDS;
         final String servicePath = CommandTestUtils.getPath("/src/main/resources/apps/USM/usm/staticstorage/" + folderName);
         folderName = copyServiceToRecipesFolder(servicePath, folderName);
         setTemplate(RECIPES_SERVICES_FOLDER + "/" + folderName, computeTemplateName, false);
@@ -86,7 +86,7 @@ public class StorageAllocationTester {
     }
 
     public void testWriteToStorageLinux(String computeTemplateName) throws Exception {
-        String folderName = "simple-storage-with-custom-commands";
+        String folderName = SIMPLE_STORAGE_SERVICE_WITH_CUSTOM_COMMANDS;
         final String servicePath = CommandTestUtils.getPath("/src/main/resources/apps/USM/usm/staticstorage/" + folderName);
         folderName = copyServiceToRecipesFolder(servicePath, folderName);
         setTemplate(RECIPES_SERVICES_FOLDER + "/" + folderName, computeTemplateName, true);
@@ -94,7 +94,7 @@ public class StorageAllocationTester {
     }
 
     public void testWriteToStorageUbuntu(String computeTemplateName) throws Exception {
-        String folderName = "simple-storage-with-custom-commands";
+        String folderName = SIMPLE_STORAGE_SERVICE_WITH_CUSTOM_COMMANDS;
         final String servicePath = CommandTestUtils.getPath("/src/main/resources/apps/USM/usm/staticstorage/" + folderName);
         folderName = copyServiceToRecipesFolder(servicePath, folderName);
         setTemplate(RECIPES_SERVICES_FOLDER + "/" + folderName, computeTemplateName, false);
@@ -102,7 +102,7 @@ public class StorageAllocationTester {
     }
 
     public void testMountLinux(String computeTemplateName) throws Exception {
-        String folderName = "simple-storage-with-custom-commands";
+        String folderName = SIMPLE_STORAGE_SERVICE_WITH_CUSTOM_COMMANDS;
         final String servicePath = CommandTestUtils.getPath("/src/main/resources/apps/USM/usm/staticstorage/" + folderName);
         folderName = copyServiceToRecipesFolder(servicePath, folderName);
         setTemplate(RECIPES_SERVICES_FOLDER + "/" + folderName, computeTemplateName, true);
@@ -110,7 +110,7 @@ public class StorageAllocationTester {
     }
 
     public void testMountUbuntu(String computeTemplateName) throws Exception {
-        String folderName = "simple-storage-with-custom-commands";
+        String folderName = SIMPLE_STORAGE_SERVICE_WITH_CUSTOM_COMMANDS;
         final String servicePath = CommandTestUtils.getPath("/src/main/resources/apps/USM/usm/staticstorage/" + folderName);
         folderName = copyServiceToRecipesFolder(servicePath, folderName);
         setTemplate(RECIPES_SERVICES_FOLDER + "/" + folderName, computeTemplateName, false);
@@ -141,8 +141,8 @@ public class StorageAllocationTester {
         testInstallWithStorage(folderName);
     }
 
-    public void testInstallWithDynamicStorageLinux(String computeTemplateName, String servicePath) throws Exception {
-        String folderName = "create-and-attach";
+    public void testInstallWithDynamicStorageLinux(String computeTemplateName, String servicePath, String folderName) 
+    		throws Exception {
         folderName = copyServiceToRecipesFolder(servicePath, folderName);
         setTemplate(RECIPES_SERVICES_FOLDER + "/" + folderName, computeTemplateName, true);
         testInstallWithStorage(folderName);
@@ -310,19 +310,18 @@ public class StorageAllocationTester {
 
     }
 
+    /**
+     * Installs a service that also uses a static storage.
+     * Verifies the a volume was created and attached to a compute instance.
+     * Performs fail-over - the instance is killed and the test waits for a new one instance to be created, for the 
+     * service to be installed and for the volume to be created and attached.
+     * Verifies the volume is indeed created and attached accordingly.
+     * Eventually uninstalls the service.
+     * @throws Exception .
+     */
     public void testFailover() throws Exception {
 
-        String folderName = "simple-storage-with-custom-commands";
-        final String servicePath = CommandTestUtils.getPath("/src/main/resources/apps/USM/usm/staticstorage/" + folderName);
-        folderName = copyServiceToRecipesFolder(servicePath, folderName);
-        setTemplate(RECIPES_SERVICES_FOLDER + "/" + folderName, "SMALL_LINUX", false);
-
-        final String serviceName = ServiceReader.readService(new File(ScriptUtils.getBuildRecipesServicesPath() + "/" + folderName)).getName();
-
-        installer = new ServiceInstaller(restUrl, serviceName);
-        installer.recipePath(folderName);
-        installer.setDisableSelfHealing(true);
-        installer.install();
+        final String serviceName = installServiceWithStaticStorage();
 
         LogUtils.log("Searching for volumes created by the service installation");
         // the install should have created and attached a volume with a name prefix of the class name. see customizeCloud below.
@@ -336,31 +335,201 @@ public class StorageAllocationTester {
         Set<String> volumeAttachments = storageApiHelper.getVolumeAttachments(ourVolume.getId());
         String instanceId = volumeAttachments.iterator().next();
 
-        LogUtils.log("Shutting down agent");
-        computeApiHelper.shutdownServerByAttachmentId(instanceId);
+        // triggering fail-over and waiting for a complete service recovery
+        performFailover(instanceId, serviceName);
+        
+        LogUtils.log("Deleting the original volume created by the service installation");
+        storageApiHelper.deleteVolume(ourVolume.getId());
 
-        final GSRestClient client = new GSRestClient("", "", new URL(restUrl), PlatformVersion.getVersionNumber());
+        LogUtils.log("Searching for volumes created by the service failover healing");
+        // the install should have created and attached a volume with a name prefix of the class name. see customizeCloud below.
+        Set<VolumeDetails> allVolumes = storageApiHelper.getVolumesByPrefix(getVolumePrefixForTemplate("SMALL_BLOCK"));
+        VolumeDetails newVolume = allVolumes.iterator().next();
 
-        LogUtils.log("Waiting for service " + serviceName + " to restart on a new machine");
+        AssertUtils.assertNotNull("could not find the required volume after service failover healing", newVolume);
+        LogUtils.log("Found volume : " + newVolume);
+        // also check it is attached.
+        AssertUtils.assertEquals("the volume should have one attachments", 1, storageApiHelper.getVolumeAttachments(newVolume.getId()).size());
 
-        AssertUtils.repetitiveAssertTrue("Service " + serviceName + " didn't break", new AssertUtils.RepetitiveConditionProvider() {
+        installer.uninstall();
+    }
+	
+    
+    /**
+     * Installs a service that also uses a static storage, and deployed on multiple availability zones.
+     * Verifies the a volume was created and attached to a compute instance.
+     * The original volume and instance location is noted, and later compared to the location of the new
+     * Performs fail-over - the instance is killed and the test waits for a new one instance to be created, for the 
+     * service to be installed and for the volume to be created and attached.
+     * Verifies the volume is indeed created and attached accordingly, in the original zone.
+     * Eventually uninstalls the service.
+     * 
+     * @throws Exception .
+     */
+	 public void testFailoverLocationAware() throws Exception {
+
+		final String serviceName = installLocationAwareServiceWithStaticStorage();
+		final String storageTemplateName = getVolumePrefixForTemplate("SMALL_BLOCK");
+		
+		testFailoverLocationAware(serviceName, storageTemplateName);
+		
+		installer.uninstall();		
+	 }
+	 
+	 
+    /**
+     * Uses a pre-installed service that also uses a static storage, and deployed on multiple availability zones.
+     * Verifies the a volume was created and attached to a compute instance.
+     * The original volume and instance location is noted, and later compared to the location of the new
+     * Performs fail-over - the instance is killed and the test waits for a new one instance to be created, for the 
+     * service to be installed and for the volume to be created and attached.
+     * Verifies the volume is indeed created and attached accordingly, in the original zone.
+     * 
+     * @throws Exception .
+     */
+	 public void testFailoverLocationAware(final String serviceName, final String storageTemplateName) throws Exception {
+		 
+		 // get all volumes with the prefix of this service
+        LogUtils.log("Searching for volumes created by the service installation");
+        final String volumePrefix = getVolumePrefixForTemplate(storageTemplateName);
+        LogUtils.log("Searching volumes with prefix: " + volumePrefix);
+        Set<VolumeDetails> originalVolumeSet = storageApiHelper.getVolumesByPrefix(volumePrefix);
+        AssertUtils.assertTrue("Failed to find volumes with prefix: " + volumePrefix, originalVolumeSet != null 
+        		&& !originalVolumeSet.isEmpty());
+        
+        // take the first volume in the set (doesn't matter which) and note the volume's location
+        VolumeDetails originalVolume = originalVolumeSet.iterator().next();
+        String volumeId = originalVolume.getId();
+        AssertUtils.assertNotNull("could not find the required volume after install service", originalVolume);
+        LogUtils.log("Found volume : " + originalVolume);
+        String originalVolumeLocation = originalVolume.getLocation();
+        LogUtils.log("Original volume location: " + originalVolumeLocation);
+        
+        
+        // check it is attached to an instance, in the same location
+        Set<String> originalAttachedInstances = storageApiHelper.getVolumeAttachments(volumeId);
+        AssertUtils.assertEquals("the volume should have one attachments, but has: " + originalAttachedInstances.size(), 1, 
+        		originalAttachedInstances.size());
+        String instanceId = originalAttachedInstances.iterator().next();
+        MachineDetails instance = computeApiHelper.getServerById(instanceId);        
+        AssertUtils.assertNotNull("Failed to find the instanc attached to volume " + volumeId 
+        		+ ", expected instance id: " + instanceId, instance);        		
+        String originalInstanceLocation = instance.getLocationId();
+        LogUtils.log("Original instance location: " + originalInstanceLocation);
+
+        // ******************************************************************************
+        // ********************** this is the important part! ***************************
+        // ****** triggering fail-over and waiting for a complete service recovery ******
+        // ******************************************************************************
+        performFailover(instanceId, serviceName);
+        
+        // delete the volume after fail over
+        // TODO noak: remove that after we support volume clean-up/re-attachment following failover
+        LogUtils.log("Deleting the original volume created by the service installation");
+        storageApiHelper.deleteVolume(originalVolume.getId());
+
+        // the install should have created and attached a single volume with the same prefix and in the same location
+        LogUtils.log("Searching for volumes created by the service failover healing");
+        Set<VolumeDetails> newVolumeSet = storageApiHelper.getVolumesByPrefix(getVolumePrefixForTemplate(storageTemplateName));
+        Set<VolumeDetails> createdVolumes = getNewlyCreatedVolumes(originalVolumeSet, newVolumeSet);
+        AssertUtils.assertTrue("A new volume was not created after fail-over", createdVolumes != null 
+        		&& !createdVolumes.isEmpty());
+        AssertUtils.assertTrue("Too many volumes created after fail-over: " + createdVolumes, createdVolumes.size() == 1);
+        VolumeDetails newVolume = createdVolumes.iterator().next();
+        LogUtils.log("Found volume : " + newVolume);
+
+        // verify the new volume is in the same AZ as the original volume
+        String newVolumeLocation = newVolume.getLocation();
+        AssertUtils.assertTrue("the original volume location was " + originalVolumeLocation + " but the new volume" 
+        		+ " is located on " + newVolumeLocation, originalVolumeLocation.equalsIgnoreCase(newVolumeLocation));
+
+        // check it is attached to an instance, in the same location
+        Set<String> newAttachedInstances = storageApiHelper.getVolumeAttachments(newVolume.getId());
+        AssertUtils.assertEquals("the volume should have one attachments", 1, newAttachedInstances.size());
+        String newInstanceId = newAttachedInstances.iterator().next();
+        // verify the new instance is found (not null)
+        MachineDetails newInstance = computeApiHelper.getServerById(newInstanceId);
+        AssertUtils.assertNotNull("could not find the new instance after service failover healing, instance id: " 
+        		+ newInstanceId, newInstance);
+        LogUtils.log("After fail over and healing, found new instance with id: " + newInstanceId);
+        
+        // verify the new instance is in the same AZ as the original instance
+        String newInstanceLocation = newInstance.getLocationId();
+        AssertUtils.assertTrue("the original instance location was " + originalInstanceLocation + " but the new " 
+        		+ " instance is located on " + newInstanceLocation, originalInstanceLocation.equalsIgnoreCase(newInstanceLocation));
+    }
+	 
+    
+	private String installServiceWithStaticStorage() throws IOException, DSLException, PackagingException, Exception,
+			InterruptedException {
+
+        final String servicePath = CommandTestUtils.getPath("/src/main/resources/apps/USM/usm/staticstorage/" + SIMPLE_STORAGE_SERVICE_WITH_CUSTOM_COMMANDS);
+        String folderName = copyServiceToRecipesFolder(servicePath, SIMPLE_STORAGE_SERVICE_WITH_CUSTOM_COMMANDS);
+        setTemplate(RECIPES_SERVICES_FOLDER + "/" + folderName, "SMALL_LINUX", false);
+
+        final String serviceName = ServiceReader.readService(new File(ScriptUtils.getBuildRecipesServicesPath() + "/" + folderName)).getName();
+
+        installer = new ServiceInstaller(restUrl, serviceName);
+        installer.recipePath(folderName);
+        installer.setDisableSelfHealing(true);
+        installer.install();
+		return serviceName;
+	}
+	
+	
+	private String installLocationAwareServiceWithStaticStorage() throws IOException, DSLException, PackagingException, Exception,
+			InterruptedException {
+
+		final String servicePath = CommandTestUtils.getPath("/src/main/resources/apps/USM/usm/staticstorage/" + LOCATION_AWARE_SIMPLE_STORAGE_SERVICE);
+		String folderName = copyServiceToRecipesFolder(servicePath, LOCATION_AWARE_SIMPLE_STORAGE_SERVICE);
+		setTemplate(RECIPES_SERVICES_FOLDER + "/" + folderName, "SMALL_LINUX", false);
+		
+		final String serviceName = ServiceReader.readService(new File(ScriptUtils.getBuildRecipesServicesPath() + "/" + folderName)).getName();
+		
+		installer = new ServiceInstaller(restUrl, serviceName);
+		installer.recipePath(folderName);
+		installer.setDisableSelfHealing(true);
+		installer.install();
+		return serviceName;
+	}
+    
+
+    /**
+     * triggering fail-over and waiting for a complete service recovery.
+     * 
+     * @param instanceId The id of the instance to terminate
+     * @param serviceName The name of the service the instance is associated with
+     * @throws Exception
+     */
+	private void performFailover(final String instanceId, final String serviceName)
+			throws Exception {
+		
+		final GSRestClient client = new GSRestClient("", "", new URL(restUrl), PlatformVersion.getVersionNumber());
+		
+		final String serviceRestUrl = "ProcessingUnits/Names/default." + serviceName;
+        final int originalNumberOfInstances = (Integer) client.getAdminData(serviceRestUrl).get("Instances-Size");
+        LogUtils.log("Original number of " + serviceName + " instances is " + originalNumberOfInstances + " (before failover)");
+        
+		LogUtils.log("Shutting down agent");
+        computeApiHelper.shutdownServerById(instanceId);
+
+        LogUtils.log("Waiting for service " + serviceName + " to terminate a machine");
+		
+		AssertUtils.repetitiveAssertTrue("Service " + serviceName + " didn't break", new AssertUtils.RepetitiveConditionProvider() {
             @Override
             public boolean getCondition() {
-            try {
-                // we don't know which service the agent we shutdown belonged to.
-                // query all installed services to find out.
-                String serviceRestUrl = "ProcessingUnits/Names/default." + serviceName;
-                int numberOfInstances = (Integer)client.getAdminData(serviceRestUrl).get("Instances-Size");
-                LogUtils.log("Number of " + serviceName + " instances is " + numberOfInstances);
-                if (numberOfInstances < 1) {
-                    LogUtils.log(serviceName + " service broke. it now has only " + numberOfInstances + " instances");
-                    return true;
-                }
-                return false;
-            } catch (RestException e) {
-                throw new RuntimeException(e);
-            }
-
+            	boolean done = false;
+	            try {
+	                int newNumberOfInstances = (Integer) client.getAdminData(serviceRestUrl).get("Instances-Size");
+	                LogUtils.log("Number of " + serviceName + " instances is " + newNumberOfInstances);
+	                if (newNumberOfInstances < originalNumberOfInstances) {
+	                    LogUtils.log(serviceName + " service broke. it now has only " + newNumberOfInstances + " instance(s)");
+	                    done = true;
+	                }
+	                return done;
+	            } catch (RestException e) {
+	                throw new RuntimeException(e);
+	            }
             }
         } , AbstractTestSupport.OPERATION_TIMEOUT * 4);
 
@@ -369,19 +538,21 @@ public class StorageAllocationTester {
         AssertUtils.repetitiveAssertTrue(serviceName + " service did not recover", new AssertUtils.RepetitiveConditionProvider() {
             @Override
             public boolean getCondition() {
+            	boolean done = false;
                 final String brokenServiceRestUrl = "ProcessingUnits/Names/default." + serviceName;
                 try {
-                    int numOfInst = (Integer) client.getAdminData(brokenServiceRestUrl).get("Instances-Size");
-                    LogUtils.log("Number of " + serviceName + " instances is " + numOfInst);
-                    return (1 == numOfInst);
+                    int newNumberOfInstances = (Integer) client.getAdminData(brokenServiceRestUrl).get("Instances-Size");
+                    LogUtils.log("Number of " + serviceName + " instances is " + newNumberOfInstances);
+                    if (newNumberOfInstances == originalNumberOfInstances) {
+                    	LogUtils.log(serviceName + " recovered. it now has " + newNumberOfInstances + " instance(s)");
+                    	done = true;
+                    }
+                    return done;
                 } catch (RestException e) {
                     throw new RuntimeException("caught a RestException", e);
                 }
             }
         } , AbstractTestSupport.OPERATION_TIMEOUT * 3);
-
-        LogUtils.log("Deleting the original volume created by the service installation");
-        storageApiHelper.deleteVolume(ourVolume.getId());
 
         LogUtils.log("Waiting for USM_State to be " + CloudifyConstants.USMState.RUNNING);
         AssertUtils.repetitiveAssertTrue(serviceName + " service did not reach USM_State of RUNNING", new AssertUtils.RepetitiveConditionProvider() {
@@ -398,24 +569,18 @@ public class StorageAllocationTester {
                 }
             }
         } , AbstractTestSupport.OPERATION_TIMEOUT * 3);
-
-        LogUtils.log("Searching for volumes created by the service failover healing");
-        // the install should have created and attached a volume with a name prefix of the class name. see customizeCloud below.
-        Set<VolumeDetails> allVolumes = storageApiHelper.getVolumesByPrefix(getVolumePrefixForTemplate("SMALL_BLOCK"));
-        VolumeDetails ourVolumeNew = allVolumes.iterator().next();
-
-        AssertUtils.assertNotNull("could not find the required volume after service failover healing", ourVolumeNew);
-        LogUtils.log("Found volume : " + ourVolumeNew);
-        // also check it is attached.
-        AssertUtils.assertEquals("the volume should have one attachments", 1, storageApiHelper.getVolumeAttachments(ourVolumeNew.getId()).size());
-
-        installer.uninstall();
-
-    }
-
+        
+        // the USM state might become "Running" too fast, even before volume recovery completed
+        // sleep to allow volume recovery to complete
+        // see CLOUDIFY-1551
+        Thread.sleep(AFTER_ATTACH_TIMEOUT);
+	}
+	
+	
     private String getVolumePrefixForTemplate(final String template) {
         return cloudService.getCloud().getCloudStorage().getTemplates().get(template).getNamePrefix();
     }
+    
 
     public void testDynamicStorageAttachmentLinux() throws Exception {
         String folderName = "attach-only";
@@ -687,7 +852,7 @@ public class StorageAllocationTester {
         LogUtils.log("Detaching volume");
         VolumeDetails vol = storageApiHelper.getVolumesByPrefix(getVolumePrefixForTemplate("SMALL_BLOCK")).iterator().next();
         String attachmentId = storageApiHelper.getVolumeAttachments(vol.getId()).iterator().next();
-        storageApiHelper.detachVolume(vol.getId(), computeApiHelper.getServerByAttachmentId(attachmentId).getPrivateAddress());
+        storageApiHelper.detachVolume(vol.getId(), computeApiHelper.getServerById(attachmentId).getPrivateAddress());
 
         //asserting the file is not in the mounted directory
         LogUtils.log("listing all files inside mounted storage folder. running 'ls /storage/' command");
@@ -697,7 +862,7 @@ public class StorageAllocationTester {
 
         LogUtils.log("Reattaching the volume to the service machine");
 
-        MachineDetails agent = computeApiHelper.getServerByAttachmentId(attachmentId);
+        MachineDetails agent = computeApiHelper.getServerById(attachmentId);
         storageApiHelper.attachVolume(vol.getId(), cloudService.getCloud().getCloudStorage().getTemplates().get("SMALL_BLOCK").getDeviceName(), agent.getPrivateAddress());
         invokeCommand(serviceName, "mount");
 
@@ -734,14 +899,14 @@ public class StorageAllocationTester {
     private void testInstallWithStorage(final String folderName) throws Exception {
 
         String serviceName = ServiceReader.readService(new File(ScriptUtils.getBuildRecipesServicesPath() + "/" + folderName)).getName();
-
         installer = new ServiceInstaller(restUrl, serviceName);
         installer.recipePath(folderName);
         installer.install();
 
+        String volumesPrefix = getVolumePrefixForTemplate("SMALL_BLOCK");
         LogUtils.log("Searching for volumes created by the service installation");
         // the install should have created and attached a volume with a name prefix of the class name. see customizeCloud below.
-        Set<VolumeDetails> volumesAfterInstallation = storageApiHelper.getVolumesByPrefix(getVolumePrefixForTemplate("SMALL_BLOCK"));
+        Set<VolumeDetails> volumesAfterInstallation = storageApiHelper.getVolumesByPrefix(volumesPrefix);
         AssertUtils.assertTrue("No volumes were created after the service installation.", !volumesAfterInstallation.isEmpty());
         VolumeDetails ourVolume = volumesAfterInstallation.iterator().next();
 
@@ -749,12 +914,20 @@ public class StorageAllocationTester {
         LogUtils.log("Found volume : " + ourVolume);
 
         // also check it is attached.
-        AssertUtils.assertEquals("the volume should have one attachments", 1, storageApiHelper.getVolumeAttachments(ourVolume.getId()).size());
-
+        AssertUtils.assertEquals("the volume should have one attachments", 1, 
+        		storageApiHelper.getVolumeAttachments(ourVolume.getId()).size());
 
         // TODO elip - assert Volume configuration?
 
-        installer.uninstall();
+        String uninstallOutput = installer.uninstall();
+        String expectedOutput = "Successfully undeployed " + serviceName;
+        AssertUtils.assertTrue("Uninstall-service did not return the expected output: \"" + expectedOutput + "\"."
+        		+ " The returned output was: " + uninstallOutput, uninstallOutput.contains(expectedOutput));
+        
+        // assert volume was detached
+        Set<VolumeDetails> volumesAfterUninstall = storageApiHelper.getVolumesByPrefix(volumesPrefix);
+        AssertUtils.assertTrue("Uninstall-service did not remove volumes with prefix: " + volumesPrefix, 
+        		volumesAfterUninstall.isEmpty());
     }
 
     private void testDeleteOnExitFalse(final String folderName) throws Exception {
@@ -850,5 +1023,34 @@ public class StorageAllocationTester {
             LogUtils.log("Could not find any volumes with prefix " + volumePrefixForTemplate + " that are being created");
         }
         return creatingVolumes;
+    }
+    
+    /**
+     * Compares the sets of the original volumes and the new volumes and returns only the newly created volumes
+     * @param originalVolumeSet
+     * @param newVolumeSet
+     * @return
+     */
+    private Set<VolumeDetails> getNewlyCreatedVolumes(final Set<VolumeDetails> originalVolumeSet, final Set<VolumeDetails> newVolumeSet) {
+    	Set<VolumeDetails> createdVolumes = new HashSet<VolumeDetails>();
+    	String volumeId;
+    	
+    	for (VolumeDetails volume : newVolumeSet) {
+    		boolean volumeFound = false;
+    		volumeId = volume.getId();
+    		
+    		for (VolumeDetails originalVolume : originalVolumeSet) {
+    			if (originalVolume.getId().equalsIgnoreCase(volumeId)) {
+    				volumeFound = true;
+    				break;
+    			}
+    		}
+    		
+    		if (!volumeFound) {
+    			createdVolumes.add(volume);
+    		}
+    	}
+    	
+    	return createdVolumes;
     }
 }

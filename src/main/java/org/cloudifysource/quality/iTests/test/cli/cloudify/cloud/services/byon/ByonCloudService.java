@@ -359,5 +359,20 @@ public class ByonCloudService extends AbstractCloudService {
 		}
 		return props.getProperty(IP_LIST_PROPERTY);
 	}
+	
+	@Override
+	public boolean supportsComputeApi() {
+		return true;
+	}
+
+	@Override
+	public boolean supportsStorageApi() {
+		return false;
+	}
+
+	@Override
+	public boolean supportNetworkApi() {
+		return false;
+	}
 
 }

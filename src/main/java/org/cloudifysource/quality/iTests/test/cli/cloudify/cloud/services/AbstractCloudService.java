@@ -1,6 +1,5 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services;
 
-import com.j_spaces.kernel.PlatformVersion;
 import iTests.framework.tools.SGTestHelper;
 import iTests.framework.utils.AssertUtils;
 import iTests.framework.utils.AssertUtils.RepetitiveConditionProvider;
@@ -9,17 +8,6 @@ import iTests.framework.utils.LogUtils;
 import iTests.framework.utils.SSHUtils;
 import iTests.framework.utils.ScriptUtils;
 import iTests.framework.utils.WebUtils;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.StringUtils;
-import org.cloudifysource.domain.cloud.Cloud;
-import org.cloudifysource.dsl.internal.ServiceReader;
-import org.cloudifysource.quality.iTests.framework.utils.CloudBootstrapper;
-import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
-import org.cloudifysource.quality.iTests.test.cli.cloudify.security.SecurityConstants;
-import org.cloudifysource.quality.iTests.test.cli.cloudify.util.CloudTestUtils;
-import org.cloudifysource.restclient.GSRestClient;
-import org.openspaces.admin.Admin;
-import org.testng.Assert;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -33,9 +21,24 @@ import java.util.Properties;
 import java.util.Random;
 import java.util.Set;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
+import org.cloudifysource.domain.cloud.Cloud;
+import org.cloudifysource.dsl.internal.DSLException;
+import org.cloudifysource.dsl.internal.ServiceReader;
+import org.cloudifysource.quality.iTests.framework.utils.CloudBootstrapper;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.security.SecurityConstants;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.util.CloudTestUtils;
+import org.cloudifysource.restclient.GSRestClient;
+import org.openspaces.admin.Admin;
+import org.testng.Assert;
+
+import com.j_spaces.kernel.PlatformVersion;
+
 public abstract class AbstractCloudService implements CloudService {
 
-    private static final int MAX_HOSTNAME_LENGTH = 35;
+    private static final int MAX_NAME_LENGTH = 35;
     private static final int MAX_VOLUME_NAME_LENGTH = 45;
     protected static final String RELATIVE_ESC_PATH = "/clouds/";
     protected static final String CREDENTIALS_FOLDER = System.getProperty("iTests.credentialsFolder",
@@ -110,16 +113,7 @@ public abstract class AbstractCloudService implements CloudService {
     }
 
     public void setMachinePrefix(String machinePrefix) {
-        if (machinePrefix.length() > MAX_HOSTNAME_LENGTH) {
-            Random random = new Random();
-            String rand = Integer.toString(random.nextInt(99999));
-            String substring = machinePrefix.substring(0, MAX_HOSTNAME_LENGTH - 6);
-            substring = substring + rand;
-            LogUtils.log("machinePrefix " + machinePrefix + " is too long. using " + substring + " as actual machine prefix");
-            this.machinePrefix = substring;
-        } else {
-            this.machinePrefix = machinePrefix;
-        }
+        this.machinePrefix = machinePrefix;
     }
 
     public String getVolumePrefix() {
@@ -151,21 +145,44 @@ public abstract class AbstractCloudService implements CloudService {
     public abstract String getApiKey();
 
     @Override
-    public void init(final String uniqueName) throws Exception {
+    public void init(final String classBasedName) throws Exception {
 
-        this.cloudUniqueName = uniqueName.toLowerCase();
-        this.cloudFolderName = cloudName + "_" + cloudUniqueName;
-        bootstrapper.provider(this.cloudFolderName);
-        bootstrapper.setCloudService(this);
+    	bootstrapper.setCloudService(this);
+    	
+        this.cloudUniqueName = calcUniqueName(classBasedName);;
+        LogUtils.log("cloudUniqueName: " + cloudUniqueName);
+        setMachinePrefix(cloudUniqueName);
+        setVolumePrefix(cloudUniqueName);
+        
+        cloudFolderName = cloudName + "-" + cloudUniqueName;
+        LogUtils.log("Cloud folder name: " + cloudFolderName);
+        bootstrapper.provider(cloudFolderName);
         deleteServiceFolders();
         createCloudFolder();
 
+        // reading cloud to support the creation of *HelperApi objects in the tester that uses this cloud service
+        // the cloud object is populated again later on bootstrap, after cloud customization may have taken place
+        this.cloud = loadConfiguredCloud();
+
         if(enableLogstash){
-            prepareLogstash(uniqueName);
+            prepareLogstash(cloudUniqueName);
         }
     }
 
-    private void prepareLogstash(String tagClassName) throws Exception {
+	private String calcUniqueName(final String classBasedName) {
+		String rand = Integer.toString((new Random()).nextInt(99999));
+        String branchName = System.getProperty("branch.name", "dev");
+        LogUtils.log("Branch name is : " + branchName);
+        String uniqueName = System.getProperty("user.name") + "-" + rand + "-" + branchName + "-" + classBasedName.toLowerCase() + "-";
+        uniqueName = uniqueName.replace("_","-");
+        if (uniqueName.length() > MAX_NAME_LENGTH) {
+        	uniqueName = StringUtils.substring(uniqueName, 0, MAX_NAME_LENGTH);
+        }
+		return uniqueName;
+	}
+
+    
+	private void prepareLogstash(String tagClassName) throws Exception {
 
         initLogstashHost();
         String pathToLogstash = SGTestHelper.getSGTestRootDir() + "/src/main/resources/logstash";
@@ -436,17 +453,7 @@ public abstract class AbstractCloudService implements CloudService {
 
     	String output = "";
         overrideLogsFile();
-        if (customCloudGroovy != null) {
-        	// use a custom grooyv file if defined
-        	File originalCloudGroovy = new File(getPathToCloudGroovy());
-        	IOUtils.replaceFile(originalCloudGroovy, customCloudGroovy);
-        }
-        injectCloudAuthenticationDetails();
-        replaceProps();
-
-        writePropertiesToCloudFolder(getProperties());
-        // Load updated configuration file into POJO
-        this.cloud = ServiceReader.readCloud(new File(getPathToCloudGroovy()));
+        this.cloud = loadConfiguredCloud();
 
         if (bootstrapper.isScanForLeakedNodes()) {
             scanForLeakedAgentAndManagementNodes();
@@ -485,6 +492,20 @@ public abstract class AbstractCloudService implements CloudService {
         
         return output;
     }
+
+	private Cloud loadConfiguredCloud() throws IOException, DSLException {
+		if (customCloudGroovy != null) {
+        	// use a custom grooyv file if defined
+        	File originalCloudGroovy = new File(getPathToCloudGroovy());
+        	IOUtils.replaceFile(originalCloudGroovy, customCloudGroovy);
+        }
+        injectCloudAuthenticationDetails();
+        replaceProps();
+
+        writePropertiesToCloudFolder(getProperties());
+        // Load updated configuration file into POJO
+        return ServiceReader.readCloud(new File(getPathToCloudGroovy()));
+	}
 
     private void printPropertiesFile() throws IOException {
         LogUtils.log(FileUtils.readFileToString(new File(getPathToCloudFolder(), getCloudName() + "-cloud.properties")));
@@ -665,4 +686,5 @@ public abstract class AbstractCloudService implements CloudService {
         }
         logstashHost = props.getProperty("logstash_server_host");
     }
+    
 }

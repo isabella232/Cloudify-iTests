@@ -82,4 +82,19 @@ public class SoftlayerCloudService extends JCloudsCloudService {
     public String getRegion() {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
+
+	@Override
+	public boolean supportsComputeApi() {
+		return false;
+	}
+
+	@Override
+	public boolean supportsStorageApi() {
+		return false;
+	}
+
+	@Override
+	public boolean supportNetworkApi() {
+		return false;
+	}
 }

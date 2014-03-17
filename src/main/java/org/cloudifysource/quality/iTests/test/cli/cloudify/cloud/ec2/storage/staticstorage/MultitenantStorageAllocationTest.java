@@ -1,7 +1,9 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.ec2.storage.staticstorage;
 
-import org.cloudifysource.esc.driver.provisioning.storage.StorageProvisioningException;
 import iTests.framework.tools.SGTestHelper;
+
+import java.io.File;
+
 import org.cloudifysource.quality.iTests.framework.utils.ApplicationInstaller;
 import org.cloudifysource.quality.iTests.framework.utils.RecipeInstaller;
 import org.cloudifysource.quality.iTests.framework.utils.ServiceInstaller;
@@ -12,9 +14,6 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-
-import java.io.File;
-import java.util.concurrent.TimeoutException;
 
 /**
  * CLOUDIFY-1595
@@ -84,12 +83,12 @@ public class MultitenantStorageAllocationTest extends AbstractStorageAllocationT
     }
 
     @AfterClass
-    public void scanForLeakesFromGroovy1() throws TimeoutException, StorageProvisioningException {
+    public void scanForLeakesFromGroovy1() throws Exception {
         super.scanForLeakedVolumesCreatedViaTemplate("GROOVY1");
     }
 
     @AfterClass
-    public void scanForLeakesFromGroovy2() throws TimeoutException, StorageProvisioningException {
+    public void scanForLeakesFromGroovy2() throws Exception {
         super.scanForLeakedVolumesCreatedViaTemplate("GROOVY2");
     }
 

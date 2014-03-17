@@ -65,12 +65,14 @@ public class HpGrizzlyCloudService extends JCloudsCloudService {
 	public HpGrizzlyCloudService() {
 		super("hp-grizzly");
 		LogUtils.log("credentials file is at: " + CREDENTIALS_PROPERTIES);
+		this.getBootstrapper().skipValidation(false);
 	}
 
 	public HpGrizzlyCloudService(boolean securityEnabled) {
 		super("hp-grizzly");
 		LogUtils.log("credentials file is at: " + CREDENTIALS_PROPERTIES);
 		this.securityEnabled = securityEnabled;
+		this.getBootstrapper().skipValidation(false);
 	}
 
 	@Override
@@ -288,12 +290,22 @@ public class HpGrizzlyCloudService extends JCloudsCloudService {
 	}
 
 	@Override
-	public void setMachinePrefix(final String machinePrefix) {
-		this.machinePrefix = machinePrefix;
+	public void addOverrides(Properties overridesProps) {
+
 	}
 
 	@Override
-	public void addOverrides(Properties overridesProps) {
+	public boolean supportsComputeApi() {
+		return true;
+	}
 
+	@Override
+	public boolean supportsStorageApi() {
+		return true;
+	}
+
+	@Override
+	public boolean supportNetworkApi() {
+		return true;
 	}
 }

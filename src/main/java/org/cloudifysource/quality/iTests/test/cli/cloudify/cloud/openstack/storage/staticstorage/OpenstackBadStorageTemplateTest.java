@@ -3,9 +3,6 @@ package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.openstack.stor
 import iTests.framework.utils.AssertUtils;
 import iTests.framework.utils.LogUtils;
 
-import java.util.concurrent.TimeoutException;
-
-import org.cloudifysource.esc.driver.provisioning.storage.StorageProvisioningException;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.AbstractStorageAllocationTest;
@@ -48,7 +45,7 @@ public class OpenstackBadStorageTemplateTest extends AbstractStorageAllocationTe
     }
 
     @AfterClass(alwaysRun = true)
-    public void scanForLeakes() throws TimeoutException, StorageProvisioningException {
+    public void scanForLeakes() throws Exception {
     	try {
     		super.scanForLeakedVolumesCreatedViaTemplate("SMALL_BLOCK");
     	} finally {

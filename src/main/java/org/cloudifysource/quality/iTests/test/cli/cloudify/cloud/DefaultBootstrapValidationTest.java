@@ -7,7 +7,6 @@ import java.io.File;
 import java.io.IOException;
 
 import org.cloudifysource.quality.iTests.framework.utils.CloudBootstrapper;
-import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 
 public abstract class DefaultBootstrapValidationTest extends NewAbstractCloudTest {

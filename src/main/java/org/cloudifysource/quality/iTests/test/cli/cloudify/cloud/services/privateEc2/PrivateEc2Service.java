@@ -123,4 +123,19 @@ public class PrivateEc2Service extends AbstractCloudService {
     public String getKeyPair() {
         return keyPair;
     }
+
+	@Override
+	public boolean supportsComputeApi() {
+		return false;
+	}
+
+	@Override
+	public boolean supportsStorageApi() {
+		return false;
+	}
+
+	@Override
+	public boolean supportNetworkApi() {
+		return false;
+	}
 }

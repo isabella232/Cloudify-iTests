@@ -75,4 +75,10 @@ public interface CloudService {
     Map<String, String> getAdditionalPropsToReplace();
 
     String getRegion();
+    
+    boolean supportsComputeApi();
+    
+    boolean supportsStorageApi();
+    
+    boolean supportNetworkApi();
 }

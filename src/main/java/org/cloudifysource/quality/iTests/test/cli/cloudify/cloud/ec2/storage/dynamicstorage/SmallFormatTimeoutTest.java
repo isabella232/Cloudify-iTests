@@ -1,8 +1,5 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.ec2.storage.dynamicstorage;
 
-import java.util.concurrent.TimeoutException;
-
-import org.cloudifysource.esc.driver.provisioning.storage.StorageProvisioningException;
 import org.cloudifysource.quality.iTests.framework.utils.ApplicationInstaller;
 import org.cloudifysource.quality.iTests.framework.utils.RecipeInstaller;
 import org.cloudifysource.quality.iTests.framework.utils.ServiceInstaller;
@@ -42,7 +39,7 @@ public class SmallFormatTimeoutTest extends AbstractStorageAllocationTest {
     }
 
     @AfterClass
-    public void scanForLeakes() throws TimeoutException, StorageProvisioningException {
+    public void scanForLeakes() throws Exception {
         super.scanForLeakedVolumesCreatedViaTemplate("SMALL_BLOCK");
     }
 	

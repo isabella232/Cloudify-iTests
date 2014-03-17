@@ -81,7 +81,7 @@ public class JcloudsComputeApiHelper implements ComputeApiHelper {
     }
 
     @Override
-    public MachineDetails getServerByAttachmentId(String attachmentId) {
+    public MachineDetails getServerById(String attachmentId) {
         NodeMetadata serverByID = deployer.getServerByID(region + "/" + attachmentId);
         MachineDetails machineDetails = new MachineDetails();
         machineDetails.setPublicAddress(serverByID.getPrivateAddresses().iterator().next());
@@ -90,8 +90,8 @@ public class JcloudsComputeApiHelper implements ComputeApiHelper {
     }
 
     @Override
-    public void shutdownServerByAttachmentId(String attachmentId) {
-        deployer.shutdownMachine(region + "/" + attachmentId);
+    public void shutdownServerById(String serverId) {
+        deployer.shutdownMachine(region + "/" + serverId);
     }
 
     private Properties setupProperties() {

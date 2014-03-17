@@ -99,4 +99,19 @@ public class HpFolsomCloudService extends JCloudsCloudService {
 		
 	}
 
+	@Override
+	public boolean supportsComputeApi() {
+		return true;
+	}
+
+	@Override
+	public boolean supportsStorageApi() {
+		return false;
+	}
+
+	@Override
+	public boolean supportNetworkApi() {
+		return false;
+	}
+
 }

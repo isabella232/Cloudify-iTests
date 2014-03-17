@@ -308,4 +308,19 @@ public class MicrosoftAzureCloudService extends AbstractCloudService {
 		File uploadDir = new File(getPathToCloudFolder() + "/upload");
 		FileUtils.copyFileToDirectory(pfxFilePath, uploadDir);
 	}
+
+	@Override
+	public boolean supportsComputeApi() {
+		return false;
+	}
+
+	@Override
+	public boolean supportsStorageApi() {
+		return false;
+	}
+
+	@Override
+	public boolean supportNetworkApi() {
+		return false;
+	}
 }

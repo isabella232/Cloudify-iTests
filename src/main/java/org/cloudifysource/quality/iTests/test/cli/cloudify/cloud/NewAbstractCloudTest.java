@@ -1,18 +1,39 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud;
 
-import com.gigaspaces.internal.utils.StringUtils;
 import iTests.framework.utils.AssertUtils;
 import iTests.framework.utils.LogUtils;
 import iTests.framework.utils.ScriptUtils;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.lang.StringUtils;
+import org.cloudifysource.domain.cloud.Cloud;
 import org.cloudifysource.domain.cloud.compute.ComputeTemplate;
+import org.cloudifysource.domain.cloud.network.CloudNetwork;
+import org.cloudifysource.domain.cloud.network.ManagementNetwork;
+import org.cloudifysource.domain.cloud.network.NetworkConfiguration;
+import org.cloudifysource.domain.cloud.network.Subnet;
 import org.cloudifysource.dsl.internal.CloudifyConstants;
 import org.cloudifysource.quality.iTests.framework.utils.ApplicationInstaller;
 import org.cloudifysource.quality.iTests.framework.utils.CloudBootstrapper;
 import org.cloudifysource.quality.iTests.framework.utils.ServiceInstaller;
+import org.cloudifysource.quality.iTests.framework.utils.compute.ComputeApiHelper;
+import org.cloudifysource.quality.iTests.framework.utils.compute.JcloudsComputeApiHelper;
+import org.cloudifysource.quality.iTests.framework.utils.compute.OpenstackComputeApiHelper;
+import org.cloudifysource.quality.iTests.framework.utils.network.NetworkApiHelper;
+import org.cloudifysource.quality.iTests.framework.utils.network.OpenstackNetworkApiHelper;
+import org.cloudifysource.quality.iTests.framework.utils.storage.Ec2StorageApiHelper;
+import org.cloudifysource.quality.iTests.framework.utils.storage.OpenstackStorageApiHelper;
+import org.cloudifysource.quality.iTests.framework.utils.storage.StorageApiHelper;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.CloudService;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.CloudServiceManager;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.ec2.Ec2CloudService;
+import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.hpgrizzly.HpGrizzlyCloudService;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.security.SecurityConstants;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.util.CloudTestUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.util.exceptions.FailedToCreateDumpException;
@@ -24,20 +45,47 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 
-import java.io.File;
-import java.io.IOException;
-
 public abstract class NewAbstractCloudTest extends AbstractTestSupport {
-
-    private static final int TEN_SECONDS_IN_MILLIS = 10000;
 
     public static final int SERVICE_INSTALLATION_TIMEOUT_IN_MINUTES = 10;
 
+    private static final int TEN_SECONDS_IN_MILLIS = 10000;
     private static final int MAX_SCAN_RETRY = 3;
+	private static final String CIDR_SEPARATOR = "/";
+	private static final String GATEWAY_OPTION_KEY = "gateway";
+	private static final String NULL_GATEWAY = "null";
 
     protected CloudService cloudService;
+    protected ComputeApiHelper computeApiHelper;
+    protected StorageApiHelper storageApiHelper;
+    protected NetworkApiHelper networkApiHelper;
 
-    protected void customizeCloud() throws Exception {}
+    protected void customizeCloud() throws Exception {
+    	
+    	if (this.networkApiHelper != null) {
+    		
+        	// set unused subnet ranges to avoid overlapping existing subnets
+            Map<String, String> propsToReplace = this.cloudService.getAdditionalPropsToReplace();
+            CloudNetwork cloudNetwork = this.cloudService.getCloud().getCloudNetwork();
+            
+            if (cloudNetwork != null) {
+            	// set valid IP ranges for the management network
+            	ManagementNetwork managementNetwork = cloudNetwork.getManagement();
+            	if (managementNetwork != null) {
+            		// replace subnets is they are already used by this tenant (e.g. by another test)
+            		setValidNetworkSettings(propsToReplace, managementNetwork.getNetworkConfiguration());
+            	}
+            	
+                // do the same for the application networks
+            	Map<String, NetworkConfiguration> networkTemplates = cloudNetwork.getTemplates();
+            	if (networkTemplates != null) {
+            		for (NetworkConfiguration networkConfig : networkTemplates.values()) {
+            			setValidNetworkSettings(propsToReplace, networkConfig);
+            		}
+            	}
+            }
+        }
+    }
 
     protected void beforeBootstrap() throws Exception {}
     
@@ -48,8 +96,8 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
     protected void beforeTeardown() throws Exception {}
 
     protected void afterTeardown() throws Exception {}
-
-
+    
+    
     /******
      * Returns the name of the cloud, as used in the bootstrap-cloud command.
      *
@@ -142,12 +190,17 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 
         LogUtils.log("Customizing cloud");
 
-        String branchName = System.getProperty("branch.name", "dev").replace("_","-");
-        LogUtils.log("Branch name is : " + branchName);
-        final String prefix = System.getProperty("user.name") + "-"  + branchName + "-" + this.getClass().getSimpleName().toLowerCase() + "-";
-
-        this.cloudService.setMachinePrefix(prefix);
-        this.cloudService.setVolumePrefix(prefix);
+        if (cloudService.supportsComputeApi()) {
+        	computeApiHelper = initComputeHelper(cloudService);
+        }
+        
+        if (cloudService.supportsStorageApi()) {
+        	storageApiHelper = initStorageHelper(cloudService);
+        }
+        
+        if (cloudService.supportNetworkApi()) {
+        	networkApiHelper = initNetworkHelper(cloudService);	
+        }
 
         customizeCloud();
 
@@ -161,6 +214,52 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
         }
     }
 
+    
+    private ComputeApiHelper initComputeHelper(final CloudService cloudService) {
+    	
+    	final Cloud cloud = cloudService.getCloud();
+    	final String cloudName = cloudService.getCloudName();
+    	    	
+        if (cloudName.equals("ec2") || cloudName.equals("hp-folsom") || cloudName.equals("rackspace")) {
+            return new JcloudsComputeApiHelper(cloud, cloudService.getRegion());
+        } else if (cloudName.equals("hp-grizzly")) {
+        	final String managementTemplateName = cloud.getConfiguration().getManagementMachineTemplate();
+        	return new OpenstackComputeApiHelper(cloud, managementTemplateName);
+        }
+        
+        throw new UnsupportedOperationException("Cannot init compute helper for non jclouds or Openstack providers!");
+    }
+    
+
+    private StorageApiHelper initStorageHelper(final CloudService cloudService) {
+    	
+    	final Cloud cloud = cloudService.getCloud();
+    	final String cloudName = cloudService.getCloudName();
+    	
+        if (cloudName.equals("ec2")) {
+            return new Ec2StorageApiHelper(cloud, "SMALL_LINUX", ((Ec2CloudService) cloudService).getRegion(),
+                    ((Ec2CloudService) cloudService).getComputeServiceContext());
+        } else if (cloudName.equals("hp-grizzly")) {
+            return new OpenstackStorageApiHelper(cloud, cloud.getConfiguration().getManagementMachineTemplate(),
+            		((HpGrizzlyCloudService) cloudService).getComputeServiceContext());
+        }
+        
+        throw new UnsupportedOperationException("Cannot init storage helper for clouds that are not ec2 or Openstack");
+    }
+    
+    
+    private NetworkApiHelper initNetworkHelper(final CloudService cloudService) {
+    	
+    	final Cloud cloud = cloudService.getCloud();
+    	final String cloudName = cloudService.getCloudName();
+    	
+    	if (cloudName.equals("hp-grizzly")) {
+            return new OpenstackNetworkApiHelper(cloud, "SMALL_LINUX");
+    	} else {
+    		return null;
+    	}
+    }
+    
     protected void teardown() throws Exception {
 
         beforeTeardown();
@@ -169,6 +268,7 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
             LogUtils.log("No teardown was executed as the cloud instance for this class was not created");
             return;
         }
+        
         this.cloudService.teardownCloud();
         afterTeardown();
     }
@@ -330,7 +430,7 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 		serviceInstaller.cloudifyUsername(cloudifyUsername);
 		serviceInstaller.cloudifyPassword(cloudifyPassword);
 		serviceInstaller.expectToFail(isExpectedToFail);
-		if (org.apache.commons.lang.StringUtils.isNotBlank(authGroups)) {
+		if (StringUtils.isNotBlank(authGroups)) {
 			serviceInstaller.authGroups(authGroups);
 		}
 
@@ -382,7 +482,7 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
             }
         }
         if (finalUrl == null) {
-            Assert.fail("Failed to find a working rest URL. tried : " + StringUtils.arrayToCommaDelimitedString(restUrls));
+            Assert.fail("Failed to find a working rest URL. tried : " + StringUtils.join(restUrls, ","));
         }
         return finalUrl;
     }
@@ -443,4 +543,39 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
             startIndex = 0;
         return ans.substring(startIndex, ans.length());
     }
+    
+    
+    /**
+     * Validates the set subnet ranges are not already being used. If they are - sets valid (unused) ranges instead.
+     * Also, sets the gateway IP according to the subnet range.
+     * 
+     * @param propsToReplace a map of properties to replace
+     * @param networkConfiguration the network configuration to validate
+     * @throws Exception Indicates a valid subnet range could not be found
+     */
+	private void setValidNetworkSettings(Map<String, String> propsToReplace, NetworkConfiguration networkConfiguration)
+			throws Exception {
+		
+		List<Subnet> subnets = networkConfiguration.getSubnets();
+		for (Subnet subnet : subnets) {
+			String origSubnetRange = StringUtils.substringBefore(subnet.getRange(), CIDR_SEPARATOR);
+			String validSubnetRange = networkApiHelper.getValidSubnetRange(subnet.getRange());
+			if (!origSubnetRange.equalsIgnoreCase(validSubnetRange)) {
+				propsToReplace.put(origSubnetRange, validSubnetRange);	
+			}
+			
+			// replace the gateway accordingly
+			Map<String, String> options = subnet.getOptions();
+			if (options != null && options.size() > 0) {
+				String origGateway = options.get(GATEWAY_OPTION_KEY);
+				if (StringUtils.isNotBlank(origGateway) && !origGateway.equalsIgnoreCase(NULL_GATEWAY)) {
+					String validGateway = networkApiHelper.getGatewayForSubnet(validSubnetRange);
+					if (!origGateway.equalsIgnoreCase(validGateway)) {
+						propsToReplace.put(origGateway, validGateway);						
+					}
+				}
+			}
+		}
+	}
+	
 }

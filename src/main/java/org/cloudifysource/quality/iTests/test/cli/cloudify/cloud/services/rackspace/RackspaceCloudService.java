@@ -59,4 +59,22 @@ public class RackspaceCloudService extends JCloudsCloudService {
     public void addOverrides(Properties overridesProps) {
 
     }
+
+
+	@Override
+	public boolean supportsComputeApi() {
+		return true;
+	}
+
+
+	@Override
+	public boolean supportsStorageApi() {
+		return false;
+	}
+
+
+	@Override
+	public boolean supportNetworkApi() {
+		return false;
+	}
 }

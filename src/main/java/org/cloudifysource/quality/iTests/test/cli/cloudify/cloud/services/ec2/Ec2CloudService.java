@@ -137,4 +137,20 @@ public class Ec2CloudService extends JCloudsCloudService {
 	public String getCertProperty(final String key) {
 		return this.certProperties.getProperty(key);
 	}
+	
+	@Override
+	public boolean supportsComputeApi() {
+		return true;
+	}
+
+	@Override
+	public boolean supportsStorageApi() {
+		return true;
+	}
+
+	@Override
+	public boolean supportNetworkApi() {
+		return false;
+	}
+
 }

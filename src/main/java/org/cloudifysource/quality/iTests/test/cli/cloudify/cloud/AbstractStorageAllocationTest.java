@@ -10,15 +10,8 @@ import java.util.concurrent.TimeoutException;
 import org.cloudifysource.esc.driver.provisioning.storage.StorageProvisioningException;
 import org.cloudifysource.esc.driver.provisioning.storage.VolumeDetails;
 import org.cloudifysource.quality.iTests.framework.utils.CloudBootstrapper;
-import org.cloudifysource.quality.iTests.framework.utils.compute.ComputeApiHelper;
-import org.cloudifysource.quality.iTests.framework.utils.compute.JcloudsComputeApiHelper;
-import org.cloudifysource.quality.iTests.framework.utils.storage.Ec2StorageApiHelper;
-import org.cloudifysource.quality.iTests.framework.utils.storage.OpenstackStorageApiHelper;
 import org.cloudifysource.quality.iTests.framework.utils.storage.StorageAllocationTester;
-import org.cloudifysource.quality.iTests.framework.utils.storage.StorageApiHelper;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.CloudService;
-import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.ec2.Ec2CloudService;
-import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.hpgrizzly.HpGrizzlyCloudService;
 
 /**
  * Created with IntelliJ IDEA.
@@ -31,13 +24,14 @@ public abstract class AbstractStorageAllocationTest extends NewAbstractCloudTest
 
     private static final long VOLUME_WAIT_TIMEOUT = 3 * 60 * 1000;
 
-    protected StorageApiHelper storageApiHelper;
-    protected ComputeApiHelper computeApiHelper;
+    
+    
     protected StorageAllocationTester storageAllocationTester;
 
     @Override
     protected void customizeCloud() throws Exception {
         super.customizeCloud();
+        
         //change management template into LARGE_LINUX in ec2 tests
         if (getCloudName().equals("ec2")) {
             String oldMgtTemplate = "managementMachineTemplate \"SMALL_LINUX\"";
@@ -70,36 +64,15 @@ public abstract class AbstractStorageAllocationTest extends NewAbstractCloudTest
         }
     }
 
+    
     @Override
     protected void bootstrap(CloudService service, CloudBootstrapper bootstrapper) throws Exception {
         super.bootstrap(service, bootstrapper);
-        storageApiHelper = initStorageHelper();
-        computeApiHelper = initComputeHelper();
         storageAllocationTester = new StorageAllocationTester(getRestUrl(), storageApiHelper, getService(), computeApiHelper);
     }
 
-    private ComputeApiHelper initComputeHelper() {
-        if (getCloudName().equals("ec2") || getCloudName().equals("hp-folsom") || getCloudName().equals("rackspace") || getCloudName().equals("hp-grizzly")) {
-            return new JcloudsComputeApiHelper(getService().getCloud(), getService().getRegion());
-        }
-        throw new UnsupportedOperationException("Cannot init compute helper for non jclouds providers!");
-    }
 
-    private StorageApiHelper initStorageHelper() {
-        if (getCloudName().equals("ec2")) {
-            return new Ec2StorageApiHelper(getService().getCloud()
-                    ,"SMALL_LINUX"
-                    ,((Ec2CloudService)getService()).getRegion()
-                    ,((Ec2CloudService)getService()).getComputeServiceContext());
-        }if (getCloudName().equals("hp-grizzly")) {
-            return new OpenstackStorageApiHelper(getService().getCloud()
-                    ,"SMALL_LINUX"
-                    ,((HpGrizzlyCloudService)getService()).getComputeServiceContext());
-        }
-        throw new UnsupportedOperationException("Cannot init storage helper for clouds that are not ec2 or Openstack");
-    }
-
-    public void scanForLeakedVolumes(final String name) throws TimeoutException, StorageProvisioningException {
+    public void scanForLeakedVolumes(final String name) throws Exception {
 
         LogUtils.log("Scanning for leaking volumes with name " + name);
         Set<VolumeDetails> volumesByName = storageApiHelper.getVolumesByPrefix(name);
@@ -120,7 +93,7 @@ public abstract class AbstractStorageAllocationTest extends NewAbstractCloudTest
                     LogUtils.log("Volume attachments are : " + volumeAttachments);
                     String attachmentId = volumeAttachments.iterator().next();
                     LogUtils.log("Detaching attachment[" + attachmentId + "] before deletion");
-                    storageApiHelper.detachVolume(volumeByName.getId(), computeApiHelper.getServerByAttachmentId(attachmentId).getPrivateAddress());
+                    storageApiHelper.detachVolume(volumeByName.getId(), computeApiHelper.getServerById(attachmentId).getPrivateAddress());
                 }
                 waitForVolumeAvailable(volumeByName.getId());
                 LogUtils.log("Deleting volume " + volumeByName.getId());
@@ -153,10 +126,9 @@ public abstract class AbstractStorageAllocationTest extends NewAbstractCloudTest
         throw new TimeoutException("Timed out waiting for volume " + volumeId + " to reach status AVAILABLE");
     }
 
-    public void scanForLeakedVolumesCreatedViaTemplate(final String templateName) throws TimeoutException, StorageProvisioningException {
+    public void scanForLeakedVolumesCreatedViaTemplate(final String templateName) throws Exception {
         final String name = getService().getCloud().getCloudStorage().getTemplates().get(templateName).getNamePrefix();
         scanForLeakedVolumes(name);
     }
-
-
+    
 }

@@ -35,7 +35,7 @@ public interface StorageApiHelper {
 
     String getVolumeStatus(final String volumeId) throws StorageProvisioningException ;
 
-    Set<String> getVolumeAttachments(final String volumeId);
+    Set<String> getVolumeAttachments(final String volumeId) throws StorageProvisioningException;
 
     String getVolumeName(final String volumeId) throws StorageProvisioningException;
 }

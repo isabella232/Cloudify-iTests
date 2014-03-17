@@ -27,7 +27,7 @@ public class VolumeStateChangeTest extends AbstractStorageAllocationTest {
 	}
 	
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
-	public void testLinux() throws Exception {
+	public void testStateChangeOfDynamicVolume() throws Exception {
 		//this will install a service having one static storage and one dynamic storage started on the postStart event.
         installServiceAndWait(SERVICE_PATH, SERVICE_NAME, false);
         

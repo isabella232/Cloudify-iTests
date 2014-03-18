@@ -149,7 +149,7 @@ public abstract class AbstractCloudService implements CloudService {
 
     	bootstrapper.setCloudService(this);
     	
-        this.cloudUniqueName = calcUniqueName(classBasedName);;
+        this.cloudUniqueName = calcUniqueName(classBasedName);
         LogUtils.log("cloudUniqueName: " + cloudUniqueName);
         setMachinePrefix(cloudUniqueName);
         setVolumePrefix(cloudUniqueName);

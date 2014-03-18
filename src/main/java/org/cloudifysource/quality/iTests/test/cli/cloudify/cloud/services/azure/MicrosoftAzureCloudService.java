@@ -121,8 +121,8 @@ public class MicrosoftAzureCloudService extends AbstractCloudService {
 		getProperties().put("pfxPassword", PFX_PASSWORD);
 		
 		final Map<String, String> propsToReplace = new HashMap<String, String>();
-		propsToReplace.put("cloudify_agent_", getMachinePrefix().toLowerCase() + "cloudify-agent");
-		propsToReplace.put("cloudify_manager", getMachinePrefix().toLowerCase() + "cloudify-manager");
+		propsToReplace.put("machineNamePrefix \"cloudify_agent_\"", "machineNamePrefix \"" + getMachinePrefix() + "-cloudify-agent\"");
+		propsToReplace.put("managementGroup \"cloudify_manager\"", "managementGroup \"" + getMachinePrefix() + "-cloudify-manager\"");
 		propsToReplace.put("ENTER_AVAILABILITY_SET", userName);
 		propsToReplace.put("ENTER_DEPLOYMENT_SLOT", "Staging");
 		propsToReplace.put("ENTER_VIRTUAL_NETWORK_SITE_NAME", virtualNetworkSiteName);

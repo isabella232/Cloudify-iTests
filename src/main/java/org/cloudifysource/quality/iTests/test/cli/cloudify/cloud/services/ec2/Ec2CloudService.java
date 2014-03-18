@@ -102,8 +102,8 @@ public class Ec2CloudService extends JCloudsCloudService {
         getProperties().put(USER_PROP, user);
         getProperties().put(API_KEY_PROP, apiKey);
 
-		propsToReplace.put("cloudify-agent-", getMachinePrefix() + "cloudify-agent");
-		propsToReplace.put("cloudify-manager", getMachinePrefix() + "cloudify-manager");
+		propsToReplace.put("machineNamePrefix \"cloudify-agent-\"", "machineNamePrefix \"" + getMachinePrefix() + "-cloudify-agent\"");
+		propsToReplace.put("managementGroup \"cloudify-manager\"", "managementGroup \"" + getMachinePrefix() + "-cloudify-manager\"");
 		propsToReplace.put("numberOfManagementMachines 1", "numberOfManagementMachines "
 				+ getNumberOfManagementMachines());
 

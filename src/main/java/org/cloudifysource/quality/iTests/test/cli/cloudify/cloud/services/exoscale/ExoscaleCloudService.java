@@ -63,8 +63,8 @@ public class ExoscaleCloudService extends AbstractCloudService {
         getProperties().put(TEMPLATE_PROP, this.tamplateId);
         getProperties().put(CLOUD_STACK_API_ENDPOINT_PROP, this.cloudStackAPIEndpoint);
         getProperties().put(COMPUTE_OFFERING_ID_PROP, this.computeOfferingId);
-        propsToReplace.put("cloudify-agent-", getMachinePrefix() + "agent-");
-        propsToReplace.put("cloudify-manager-", getMachinePrefix() + "manager-");
+		propsToReplace.put("machineNamePrefix \"cloudify-agent-\"", "machineNamePrefix \"" + getMachinePrefix() + "-cloudify-agent-\"");
+		propsToReplace.put("managementGroup \"cloudify-manager-\"", "managementGroup \"" + getMachinePrefix() + "-cloudify-manager-\"");
         propsToReplace.put("numberOfManagementMachines 1", "numberOfManagementMachines " + getNumberOfManagementMachines());
         propsToReplace.put("javaUrl", "// javaUrl");
 

@@ -26,8 +26,8 @@ public class Ec2WinCloudService extends Ec2CloudService {
 
 	@Override
 	public void injectCloudAuthenticationDetails() throws IOException {
-		getAdditionalPropsToReplace().put("cloudifyagent", getMachinePrefix() + "cloudify-agent");
-		getAdditionalPropsToReplace().put("cloudifymanager", getMachinePrefix() + "cloudify-manager");
+		getAdditionalPropsToReplace().put("machineNamePrefix \"cloudifyagent\"", "machineNamePrefix \"" + getMachinePrefix() + "-cloudify-agent\"");
+		getAdditionalPropsToReplace().put("managementGroup \"cloudifymanager\"", "managementGroup \"" + getMachinePrefix() + "-cloudify-manager\"");
 		super.injectCloudAuthenticationDetails();
 		getProperties().put(HARDWARE_ID_PROP, "m1.large");
 

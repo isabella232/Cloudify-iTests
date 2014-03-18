@@ -78,8 +78,8 @@ public class HpFolsomCloudService extends JCloudsCloudService {
 
 		final Map<String, String> propsToReplace = new HashMap<String, String>();
 		
-		propsToReplace.put("cloudify-agent-", getMachinePrefix() + "cloudify-agent");
-		propsToReplace.put("cloudify-manager", getMachinePrefix() + "cloudify-manager");
+		propsToReplace.put("machineNamePrefix \"cloudify-agent-\"", "machineNamePrefix \"" + getMachinePrefix() + "-cloudify-agent\"");
+		propsToReplace.put("managementGroup \"cloudify-manager\"", "managementGroup \"" + getMachinePrefix() + "-cloudify-manager\"");
 		propsToReplace.put("numberOfManagementMachines 1", "numberOfManagementMachines "
 				+ getNumberOfManagementMachines());
 		propsToReplace.put("fileTransfer org.cloudifysource.domain.cloud.FileTransferModes.SFTP",

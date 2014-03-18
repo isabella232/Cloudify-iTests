@@ -55,8 +55,8 @@ public class SoftlayerCloudService extends JCloudsCloudService {
         getProperties().put(API_KEY_PROP, apiKey);
 
         // inject prefixes
-        getAdditionalPropsToReplace().put("cloudify-agent-", getMachinePrefix() + "cloudify-agent");
-        getAdditionalPropsToReplace().put("cloudify-manager", getMachinePrefix() + "cloudify-manager");
+        getAdditionalPropsToReplace().put("machineNamePrefix \"cloudify-agent-\"", "machineNamePrefix \"" + getMachinePrefix() + "-cloudify-agent-\"");
+        getAdditionalPropsToReplace().put("managementGroup \"cloudify-manager\"", "managementGroup \"" + getMachinePrefix() + "-cloudify-manager\"");
         getAdditionalPropsToReplace().put("numberOfManagementMachines 1", "numberOfManagementMachines "
                 + getNumberOfManagementMachines());
 

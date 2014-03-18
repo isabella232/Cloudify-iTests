@@ -153,8 +153,8 @@ public class ByonCloudService extends AbstractCloudService {
 		getProperties().put("keyFile", keyFile);
 		
 		Map<String, String> propsToReplace = new HashMap<String,String>();
-		propsToReplace.put("cloudify_agent_", getMachinePrefix() + "cloudify-agent");
-		propsToReplace.put("cloudify_manager", getMachinePrefix() + "cloudify-manager");
+		propsToReplace.put("machineNamePrefix \"cloudify_agent_\"", "machineNamePrefix \"" + getMachinePrefix() + "-cloudify-agent\"");
+		propsToReplace.put("managementGroup \"cloudify_manager\"", "managementGroup \"" + getMachinePrefix() + "-cloudify-manager\"");
 		propsToReplace.put("// cloudifyUrl", "cloudifyUrl");
 		
 		if (!sudo) {

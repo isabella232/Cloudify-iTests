@@ -70,8 +70,8 @@ public class PrivateEc2Service extends AbstractCloudService {
         getProperties().put(BUCKET_NAME_PROP, "private-ec2-upload");
         getProperties().put(BUCKET_LOCATION_ID_PROP, "eu-west-1");
 
-        propsToReplace.put("cloudify-agent-", getMachinePrefix() + "cloudify-agent");
-        propsToReplace.put("cloudify-manager", getMachinePrefix() + "cloudify-manager");
+		propsToReplace.put("machineNamePrefix \"cloudify-agent-\"", "machineNamePrefix \"" + getMachinePrefix() + "-cloudify-agent\"");
+		propsToReplace.put("managementGroup \"cloudify-manager\"", "managementGroup \"" + getMachinePrefix() + "-cloudify-manager\"");
         propsToReplace.put("numberOfManagementMachines 1", "numberOfManagementMachines "
                 + getNumberOfManagementMachines());
 

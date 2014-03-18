@@ -220,7 +220,8 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
     	final Cloud cloud = cloudService.getCloud();
     	final String cloudName = cloudService.getCloudName();
     	    	
-        if (cloudName.equals("ec2") || cloudName.equals("hp-folsom") || cloudName.equals("rackspace")) {
+        if (cloudName.equals("ec2") || cloudName.equals("hp-folsom") 
+        		|| cloudName.equals("rackspace") || cloudName.equals("ec2-win")) {
             return new JcloudsComputeApiHelper(cloud, cloudService.getRegion());
         } else if (cloudName.equals("hp-grizzly")) {
         	final String managementTemplateName = cloud.getConfiguration().getManagementMachineTemplate();

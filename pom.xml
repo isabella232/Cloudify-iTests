@@ -20,17 +20,17 @@
 
 	<repositories>
 
-		<repository>
+        <repository>
 			<id>org.openspaces</id>
 			<url>http://maven-repository.openspaces.org</url>
 		</repository>
 
         <!-- We need this repo for the softlayer jclouds fix -->
-
         <repository>
-            <id>my.mvn.repo</id>
+            <id>github.maven</id>
             <url>https://github.com/CloudifySource/maven-repo/raw/master</url>
         </repository>
+
 
     </repositories>
 

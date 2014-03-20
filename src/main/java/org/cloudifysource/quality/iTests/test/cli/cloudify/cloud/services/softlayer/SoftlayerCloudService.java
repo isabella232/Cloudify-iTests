@@ -84,17 +84,17 @@ public class SoftlayerCloudService extends JCloudsCloudService {
     }
 
 	@Override
-	public boolean supportsComputeApi() {
+	public boolean isComputeApiHelperSupported() {
 		return false;
 	}
 
 	@Override
-	public boolean supportsStorageApi() {
+	public boolean isStorageApiHelperSupported() {
 		return false;
 	}
 
 	@Override
-	public boolean supportNetworkApi() {
+	public boolean isNetworkApiHelperSupported() {
 		return false;
 	}
 }

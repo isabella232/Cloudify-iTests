@@ -6,7 +6,11 @@ import iTests.framework.utils.LogUtils;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 import org.apache.commons.io.FileUtils;
 import org.cloudifysource.esc.driver.provisioning.CloudProvisioningException;
@@ -20,6 +24,12 @@ import org.cloudifysource.esc.driver.provisioning.openstack.rest.Port;
 import org.cloudifysource.esc.driver.provisioning.openstack.rest.RouteFixedIp;
 import org.cloudifysource.esc.driver.provisioning.openstack.rest.Router;
 import org.cloudifysource.esc.driver.provisioning.openstack.rest.SecurityGroup;
+import org.cloudifysource.quality.iTests.framework.utils.compute.ComputeApiHelper;
+import org.cloudifysource.quality.iTests.framework.utils.compute.OpenstackComputeApiHelper;
+import org.cloudifysource.quality.iTests.framework.utils.network.NetworkApiHelper;
+import org.cloudifysource.quality.iTests.framework.utils.network.OpenstackNetworkApiHelper;
+import org.cloudifysource.quality.iTests.framework.utils.storage.OpenstackStorageApiHelper;
+import org.cloudifysource.quality.iTests.framework.utils.storage.StorageApiHelper;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.JCloudsCloudService;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.security.SecurityConstants;
 
@@ -295,17 +305,33 @@ public class HpGrizzlyCloudService extends JCloudsCloudService {
 	}
 
 	@Override
-	public boolean supportsComputeApi() {
+	public boolean isComputeApiHelperSupported() {
 		return true;
 	}
 
 	@Override
-	public boolean supportsStorageApi() {
+	public boolean isStorageApiHelperSupported() {
 		return true;
 	}
 
 	@Override
-	public boolean supportNetworkApi() {
+	public boolean isNetworkApiHelperSupported() {
 		return true;
+	}
+	
+	@Override
+	public ComputeApiHelper createComputeApiHelper() {
+		final String managementTemplateName = getCloud().getConfiguration().getManagementMachineTemplate();
+    	return new OpenstackComputeApiHelper(getCloud(), managementTemplateName);
+	}
+	
+	@Override
+	public StorageApiHelper createStorageApiHelper() {
+		return new OpenstackStorageApiHelper(getCloud(), getCloud().getConfiguration().getManagementMachineTemplate(),
+        		getComputeServiceContext());
+	}
+	
+	public NetworkApiHelper createnetwApiHelper() {
+		return new OpenstackNetworkApiHelper(getCloud(), getCloud().getConfiguration().getManagementMachineTemplate());
 	}
 }

@@ -361,17 +361,17 @@ public class ByonCloudService extends AbstractCloudService {
 	}
 	
 	@Override
-	public boolean supportsComputeApi() {
-		return true;
-	}
-
-	@Override
-	public boolean supportsStorageApi() {
+	public boolean isComputeApiHelperSupported() {
 		return false;
 	}
 
 	@Override
-	public boolean supportNetworkApi() {
+	public boolean isStorageApiHelperSupported() {
+		return false;
+	}
+
+	@Override
+	public boolean isNetworkApiHelperSupported() {
 		return false;
 	}
 

@@ -20,7 +20,7 @@ public class Ec2WinCloudService extends Ec2CloudService {
 	}
 	
 	@Override
-	public boolean supportsStorageApi() {
+	public boolean isStorageApiHelperSupported() {
 		return false;
 	}
 

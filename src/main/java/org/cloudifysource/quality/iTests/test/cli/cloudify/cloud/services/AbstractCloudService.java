@@ -27,6 +27,9 @@ import org.cloudifysource.domain.cloud.Cloud;
 import org.cloudifysource.dsl.internal.DSLException;
 import org.cloudifysource.dsl.internal.ServiceReader;
 import org.cloudifysource.quality.iTests.framework.utils.CloudBootstrapper;
+import org.cloudifysource.quality.iTests.framework.utils.compute.ComputeApiHelper;
+import org.cloudifysource.quality.iTests.framework.utils.network.NetworkApiHelper;
+import org.cloudifysource.quality.iTests.framework.utils.storage.StorageApiHelper;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.security.SecurityConstants;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.util.CloudTestUtils;
@@ -687,4 +690,29 @@ public abstract class AbstractCloudService implements CloudService {
         logstashHost = props.getProperty("logstash_server_host");
     }
     
+    /** 
+     * creates a compute API helper for this cloud service.
+     * By default throws UnsupportedOperationException.
+     */
+    public ComputeApiHelper createComputeApiHelper() {
+    	 throw new UnsupportedOperationException("Compute API helper not supported for cloud: " + cloud.getName());
+    }
+    
+    
+    /** 
+     * creates a storage API helper for this cloud.
+     * By default throws UnsupportedOperationException.
+     */
+    public StorageApiHelper createStorageApiHelper() {
+    	throw new UnsupportedOperationException("Storage API helper not supported for cloud: " + cloud.getName());
+    }
+    
+    
+    /** 
+     * creates a network API helper for this cloud.
+     * By default throws UnsupportedOperationException.
+     */
+    public NetworkApiHelper createNetworkApiHelper() {
+    	throw new UnsupportedOperationException("Network API helper not supported for cloud: " + cloud.getName());
+    }
 }

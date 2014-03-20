@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.cloudifysource.domain.cloud.Cloud;
 import org.cloudifysource.domain.cloud.compute.ComputeTemplate;
 import org.cloudifysource.domain.cloud.network.CloudNetwork;
 import org.cloudifysource.domain.cloud.network.ManagementNetwork;
@@ -21,19 +20,12 @@ import org.cloudifysource.quality.iTests.framework.utils.ApplicationInstaller;
 import org.cloudifysource.quality.iTests.framework.utils.CloudBootstrapper;
 import org.cloudifysource.quality.iTests.framework.utils.ServiceInstaller;
 import org.cloudifysource.quality.iTests.framework.utils.compute.ComputeApiHelper;
-import org.cloudifysource.quality.iTests.framework.utils.compute.JcloudsComputeApiHelper;
-import org.cloudifysource.quality.iTests.framework.utils.compute.OpenstackComputeApiHelper;
 import org.cloudifysource.quality.iTests.framework.utils.network.NetworkApiHelper;
-import org.cloudifysource.quality.iTests.framework.utils.network.OpenstackNetworkApiHelper;
-import org.cloudifysource.quality.iTests.framework.utils.storage.Ec2StorageApiHelper;
-import org.cloudifysource.quality.iTests.framework.utils.storage.OpenstackStorageApiHelper;
 import org.cloudifysource.quality.iTests.framework.utils.storage.StorageApiHelper;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.CloudService;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.CloudServiceManager;
-import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.ec2.Ec2CloudService;
-import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.hpgrizzly.HpGrizzlyCloudService;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.security.SecurityConstants;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.util.CloudTestUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.util.exceptions.FailedToCreateDumpException;
@@ -190,16 +182,16 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 
         LogUtils.log("Customizing cloud");
 
-        if (cloudService.supportsComputeApi()) {
-        	computeApiHelper = initComputeHelper(cloudService);
+        if (cloudService.isComputeApiHelperSupported()) {
+        	computeApiHelper = cloudService.createComputeApiHelper();
         }
         
-        if (cloudService.supportsStorageApi()) {
-        	storageApiHelper = initStorageHelper(cloudService);
+        if (cloudService.isStorageApiHelperSupported()) {
+        	storageApiHelper = cloudService.createStorageApiHelper();
         }
         
-        if (cloudService.supportNetworkApi()) {
-        	networkApiHelper = initNetworkHelper(cloudService);	
+        if (cloudService.isNetworkApiHelperSupported()) {
+        	networkApiHelper = cloudService.createNetworkApiHelper();	
         }
 
         customizeCloud();
@@ -214,53 +206,7 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
         }
     }
 
-    
-    private ComputeApiHelper initComputeHelper(final CloudService cloudService) {
-    	
-    	final Cloud cloud = cloudService.getCloud();
-    	final String cloudName = cloudService.getCloudName();
-    	    	
-        if (cloudName.equals("ec2") || cloudName.equals("hp-folsom") 
-        		|| cloudName.equals("rackspace") || cloudName.equals("ec2-win")) {
-            return new JcloudsComputeApiHelper(cloud, cloudService.getRegion());
-        } else if (cloudName.equals("hp-grizzly")) {
-        	final String managementTemplateName = cloud.getConfiguration().getManagementMachineTemplate();
-        	return new OpenstackComputeApiHelper(cloud, managementTemplateName);
-        }
-        
-        throw new UnsupportedOperationException("Cannot init compute helper for non jclouds or Openstack providers!");
-    }
-    
 
-    private StorageApiHelper initStorageHelper(final CloudService cloudService) {
-    	
-    	final Cloud cloud = cloudService.getCloud();
-    	final String cloudName = cloudService.getCloudName();
-    	
-        if (cloudName.equals("ec2")) {
-            return new Ec2StorageApiHelper(cloud, "SMALL_LINUX", ((Ec2CloudService) cloudService).getRegion(),
-                    ((Ec2CloudService) cloudService).getComputeServiceContext());
-        } else if (cloudName.equals("hp-grizzly")) {
-            return new OpenstackStorageApiHelper(cloud, cloud.getConfiguration().getManagementMachineTemplate(),
-            		((HpGrizzlyCloudService) cloudService).getComputeServiceContext());
-        }
-        
-        throw new UnsupportedOperationException("Cannot init storage helper for clouds that are not ec2 or Openstack");
-    }
-    
-    
-    private NetworkApiHelper initNetworkHelper(final CloudService cloudService) {
-    	
-    	final Cloud cloud = cloudService.getCloud();
-    	final String cloudName = cloudService.getCloudName();
-    	
-    	if (cloudName.equals("hp-grizzly")) {
-            return new OpenstackNetworkApiHelper(cloud, "SMALL_LINUX");
-    	} else {
-    		return null;
-    	}
-    }
-    
     protected void teardown() throws Exception {
 
         beforeTeardown();

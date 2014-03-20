@@ -5,6 +5,8 @@ import com.google.inject.Module;
 import iTests.framework.utils.LogUtils;
 import org.cloudifysource.dsl.utils.IPUtils;
 import org.cloudifysource.esc.jclouds.WindowsServerEC2ReviseParsedImage;
+import org.cloudifysource.quality.iTests.framework.utils.compute.ComputeApiHelper;
+import org.cloudifysource.quality.iTests.framework.utils.compute.JcloudsComputeApiHelper;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.security.SecurityConstants;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.util.CloudTestUtils;
 import org.jclouds.ContextBuilder;
@@ -257,5 +259,11 @@ public abstract class JCloudsCloudService extends AbstractCloudService {
 		}
 		return foundPendingNodes;
 	}
+	
+	
+	@Override
+	public ComputeApiHelper createComputeApiHelper() {
+		return new JcloudsComputeApiHelper(getCloud(), getRegion());
+	}	
 
 }

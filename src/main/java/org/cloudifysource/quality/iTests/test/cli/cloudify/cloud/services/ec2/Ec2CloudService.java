@@ -9,6 +9,9 @@ import java.util.Properties;
 import iTests.framework.utils.LogUtils;
 import org.apache.commons.io.FileUtils;
 import iTests.framework.utils.IOUtils;
+
+import org.cloudifysource.quality.iTests.framework.utils.storage.Ec2StorageApiHelper;
+import org.cloudifysource.quality.iTests.framework.utils.storage.StorageApiHelper;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.AbstractCloudService;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.JCloudsCloudService;
 
@@ -102,8 +105,8 @@ public class Ec2CloudService extends JCloudsCloudService {
         getProperties().put(USER_PROP, user);
         getProperties().put(API_KEY_PROP, apiKey);
 
-		propsToReplace.put("machineNamePrefix \"cloudify-agent-\"", "machineNamePrefix \"" + getMachinePrefix() + "-cloudify-agent\"");
-		propsToReplace.put("managementGroup \"cloudify-manager\"", "managementGroup \"" + getMachinePrefix() + "-cloudify-manager\"");
+		propsToReplace.put("machineNamePrefix \"cloudify-agent-\"", "machineNamePrefix \"" + getMachinePrefix() + "cloudify-agent-\"");
+		propsToReplace.put("managementGroup \"cloudify-manager\"", "managementGroup \"" + getMachinePrefix() + "cloudify-manager\"");
 		propsToReplace.put("numberOfManagementMachines 1", "numberOfManagementMachines "
 				+ getNumberOfManagementMachines());
 
@@ -139,18 +142,24 @@ public class Ec2CloudService extends JCloudsCloudService {
 	}
 	
 	@Override
-	public boolean supportsComputeApi() {
+	public boolean isComputeApiHelperSupported() {
 		return true;
 	}
 
 	@Override
-	public boolean supportsStorageApi() {
+	public boolean isStorageApiHelperSupported() {
 		return true;
 	}
 
 	@Override
-	public boolean supportNetworkApi() {
+	public boolean isNetworkApiHelperSupported() {
 		return false;
+	}
+	
+	@Override
+	public StorageApiHelper createStorageApiHelper() {
+		return new Ec2StorageApiHelper(getCloud(), "SMALL_LINUX", getRegion(),
+				getComputeServiceContext());
 	}
 
 }

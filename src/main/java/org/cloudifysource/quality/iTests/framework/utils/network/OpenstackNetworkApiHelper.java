@@ -39,10 +39,10 @@ public class OpenstackNetworkApiHelper implements NetworkApiHelper {
 	private OpenStackNetworkClient networkClient;
 	
 	
-	public OpenstackNetworkApiHelper(final Cloud cloud, final String templateName) {
-		ComputeTemplate computeTemplate = cloud.getCloudCompute().getTemplates().get(templateName);
+	public OpenstackNetworkApiHelper(final Cloud cloud, final String computeTemplateName) {
+		ComputeTemplate computeTemplate = cloud.getCloudCompute().getTemplates().get(computeTemplateName);
 		if (computeTemplate == null) {
-			throw new IllegalStateException("Template with name \"" + templateName + "\" could not be found.");
+			throw new IllegalStateException("Template with name \"" + computeTemplateName + "\" could not be found.");
 		}
 
 		String endpoint = null;

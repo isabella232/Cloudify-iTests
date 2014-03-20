@@ -7,6 +7,9 @@ import org.cloudifysource.domain.cloud.Cloud;
 import org.openspaces.admin.Admin;
 
 import org.cloudifysource.quality.iTests.framework.utils.CloudBootstrapper;
+import org.cloudifysource.quality.iTests.framework.utils.compute.ComputeApiHelper;
+import org.cloudifysource.quality.iTests.framework.utils.network.NetworkApiHelper;
+import org.cloudifysource.quality.iTests.framework.utils.storage.StorageApiHelper;
 
 /**
  * Every supported cloud must have a service that implements this interface in order to be included in the test cycle.
@@ -76,9 +79,16 @@ public interface CloudService {
 
     String getRegion();
     
-    boolean supportsComputeApi();
+    boolean isComputeApiHelperSupported();
     
-    boolean supportsStorageApi();
+    boolean isStorageApiHelperSupported();
     
-    boolean supportNetworkApi();
+    boolean isNetworkApiHelperSupported();
+    
+    ComputeApiHelper createComputeApiHelper();
+    
+    StorageApiHelper createStorageApiHelper();
+    
+    NetworkApiHelper createNetworkApiHelper();
+    
 }

@@ -29,7 +29,7 @@
 
         <repository>
             <id>my.mvn.repo</id>
-            <url>https://github.com/iliapolo/maven-repo/raw/ibm-launch</url>
+            <url>https://github.com/CloudifySource/maven-repo/raw/master</url>
         </repository>
 
     </repositories>
@@ -54,7 +54,7 @@
 	<dependencies>
         <dependency>
             <groupId>org.apache.jclouds.provider</groupId>
-            <artifactId>softlayer-fixed</artifactId>
+            <artifactId>softlayer-cci</artifactId>
             <version>${jcloudsVersion}</version>
         </dependency>
         <dependency>

@@ -340,7 +340,7 @@
                 </dependency>
                 <dependency>
                     <groupId>org.apache.jclouds</groupId>
-                    <artifactId>softlayer-cci</artifactId>
+                    <artifactId>softlayer-fixed</artifactId>
                     <version>${jcloudsVersion}</version>
                     <scope>system</scope>
                     <systemPath>${cloudify.home}/lib/platform/esm/softlayer-fixed-1.6.2-incubating.jar</systemPath>
@@ -411,7 +411,7 @@
 			<dependencies>
                 <dependency>
                     <groupId>org.apache.jclouds</groupId>
-                    <artifactId>softlayer-cci</artifactId>
+                    <artifactId>softlayer-fixed</artifactId>
                     <version>${jcloudsVersion}</version>
                     <scope>system</scope>
                     <systemPath>${cloudify.home}/lib/platform/esm/softlayer-fixed-1.6.2-incubating.jar</systemPath>

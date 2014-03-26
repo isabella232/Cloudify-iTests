@@ -213,8 +213,8 @@ public class OpenstackCloudifyDriverTest extends AbstractTestSupport {
         additionalProps.put("// Optional. Use existing networks.", "computeNetwork {\n" +
                 "\t\t\t\t\tnetworks ([\"SOME_INTERNAL_NETWORK_1\",\"SOME_INTERNAL_NETWORK_2\"])\n" +
                 "\t\t\t\t }\n // Optional. Use existing networks.");
-        additionalProps.put("keyFile keyFile", "keyFile keyFile\n" +
-                "                fileTransfer org.cloudifysource.domain.cloud.FileTransferModes.SCP");
+        additionalProps.put("FileTransferModes.SFTP", "FileTransferModes.SCP");
+
         cloud = launcher.createCloud(null, additionalProps);
 
         try {
@@ -254,8 +254,8 @@ public class OpenstackCloudifyDriverTest extends AbstractTestSupport {
         additionalProps.put("// Optional. Use existing networks.", "computeNetwork {\n" +
                 "\t\t\t\t\tnetworks ([\"SOME_INTERNAL_NETWORK_1\",\"SOME_INTERNAL_NETWORK_2\"])\n" +
                 "\t\t\t\t }\n // Optional. Use existing networks.");
-        additionalProps.put("keyFile keyFile", "keyFile keyFile\n" +
-                "                fileTransfer org.cloudifysource.domain.cloud.FileTransferModes.SCP");
+        additionalProps.put("FileTransferModes.SFTP", "FileTransferModes.SCP");
+
         cloud = launcher.createCloud(null, additionalProps);
 
         cloud.getProvider().setNumberOfManagementMachines(nbManagementMachines);
@@ -294,8 +294,8 @@ public class OpenstackCloudifyDriverTest extends AbstractTestSupport {
         additionalProps.put("// Optional. Use existing networks.", "computeNetwork {\n" +
                 "\t\t\t\t\tnetworks ([\"SOME_INTERNAL_NETWORK_1\",\"SOME_INTERNAL_NETWORK_2\"])\n" +
                 "\t\t\t\t }\n // Optional. Use existing networks.");
-        additionalProps.put("keyFile keyFile", "keyFile keyFile\n" +
-                "                fileTransfer org.cloudifysource.domain.cloud.FileTransferModes.SCP");
+        additionalProps.put("FileTransferModes.SFTP", "FileTransferModes.SCP");
+
         cloud = launcher.createCloud(null, additionalProps);
         launcher.startManagementMachines(cloud);
     }
@@ -453,8 +453,8 @@ public class OpenstackCloudifyDriverTest extends AbstractTestSupport {
 
         additionalProps.put("managementMachineTemplate \"MEDIUM_LINUX\"", "managementMachineTemplate \"MANAGER\"");
         additionalProps.put("MEDIUM_LINUX : computeTemplate", "MANAGER : computeTemplate");
-        additionalProps.put("keyFile keyFile", "keyFile keyFile\n" +
-                "                fileTransfer org.cloudifysource.domain.cloud.FileTransferModes.SCP");
+        additionalProps.put("FileTransferModes.SFTP", "FileTransferModes.SCP");
+
         additionalProps.put("// Optional. Use existing networks.", "computeNetwork {\n" +
                 "\t\t\t\t\tnetworks ([\"SOME_INTERNAL_NETWORK_1\",\"SOME_INTERNAL_NETWORK_2\"])\n" +
                 "\t\t\t\t }\n // Optional. Use existing networks.");
@@ -514,8 +514,8 @@ public class OpenstackCloudifyDriverTest extends AbstractTestSupport {
 
         additionalProps.put("managementMachineTemplate \"MEDIUM_LINUX\"", "managementMachineTemplate \"MANAGER\"");
         additionalProps.put("MEDIUM_LINUX : computeTemplate", "MANAGER : computeTemplate");
-        additionalProps.put("keyFile keyFile", "keyFile keyFile\n" +
-                "                fileTransfer org.cloudifysource.domain.cloud.FileTransferModes.SCP");
+        additionalProps.put("FileTransferModes.SFTP", "FileTransferModes.SCP");
+
         additionalProps.put("// Optional. Use existing networks.", "computeNetwork {\n" +
                 "\t\t\t\t\tnetworks ([\"SOME_INTERNAL_NETWORK_1\",\"SOME_INTERNAL_NETWORK_2\"])\n" +
                 "\t\t\t\t }\n // Optional. Use existing networks.");

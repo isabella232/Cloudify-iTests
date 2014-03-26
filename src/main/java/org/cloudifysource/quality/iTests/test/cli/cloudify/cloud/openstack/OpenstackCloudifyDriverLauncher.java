@@ -199,6 +199,11 @@ public class OpenstackCloudifyDriverLauncher {
      * It uses prefix name to delete the resources.
      */
     public void cleanOpenstackResources(Cloud cloud) throws Exception {
+    	if (computeApi == null) {
+    		// this means the compute API was never initialized, and therefore not used to create any resources
+    		return;
+    	}
+    	
         List<NovaServer> servers = computeApi.getServers();
         Set<String> remainingServerIds = new HashSet<String>();
 

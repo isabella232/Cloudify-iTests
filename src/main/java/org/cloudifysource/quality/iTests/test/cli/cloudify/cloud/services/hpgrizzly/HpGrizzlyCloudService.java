@@ -331,7 +331,8 @@ public class HpGrizzlyCloudService extends JCloudsCloudService {
         		getComputeServiceContext());
 	}
 	
-	public NetworkApiHelper createnetwApiHelper() {
+	@Override
+	public NetworkApiHelper createNetworkApiHelper() {
 		return new OpenstackNetworkApiHelper(getCloud(), getCloud().getConfiguration().getManagementMachineTemplate());
 	}
 }

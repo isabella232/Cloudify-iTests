@@ -74,7 +74,11 @@ public class JcloudsComputeApiHelper implements ComputeApiHelper {
         Set<MachineDetails> machineDetailsSet = new HashSet<MachineDetails>();
         for (NodeMetadata node: servers) {
             MachineDetails machineDetails = new MachineDetails();
+            String nodeId = org.apache.commons.lang.StringUtils.substringAfter(node.getId(), "/");
+            machineDetails.setMachineId(nodeId);
+            machineDetails.setLocationId(node.getLocation().getId());
             machineDetails.setPublicAddress(node.getPublicAddresses().iterator().next());
+            machineDetails.setPrivateAddress(node.getPrivateAddresses().iterator().next());
             machineDetailsSet.add(machineDetails);
         }
         return machineDetailsSet;

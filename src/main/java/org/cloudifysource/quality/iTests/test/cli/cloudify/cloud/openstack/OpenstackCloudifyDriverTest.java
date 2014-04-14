@@ -6,11 +6,13 @@ import static org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.openstac
 import static org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.openstack.OpenstackCloudifyDriverLauncher.TEMPLATE_APPLICATION_NET2;
 import iTests.framework.utils.AssertUtils;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.cloudifysource.domain.ComputeDetails;
 import org.cloudifysource.domain.Service;
 import org.cloudifysource.domain.cloud.Cloud;
 import org.cloudifysource.domain.cloud.network.NetworkConfiguration;
-import org.cloudifysource.esc.driver.provisioning.CloudProvisioningException;
 import org.cloudifysource.esc.driver.provisioning.MachineDetails;
 import org.cloudifysource.esc.driver.provisioning.openstack.OpenStackResourcePrefixes;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
@@ -18,9 +20,6 @@ import org.junit.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * To run this test, you will have to create the credential file here : ./src/main/resources/credentials/cloud/openstack/openstack.properties.<br />
@@ -55,7 +54,8 @@ public class OpenstackCloudifyDriverTest extends AbstractTestSupport {
     public void clean() throws Exception {
         launcher.cleanOpenstackResources(cloud);
     }
-
+    
+    
     // ***************************************************************
     // ******** startManagementMachines tests
     // ***************************************************************
@@ -69,7 +69,7 @@ public class OpenstackCloudifyDriverTest extends AbstractTestSupport {
      * </ul>
      * 
      */
-    @Test
+    @Test(enabled = false)
     public void testStartManagementMachinesWithNetworkTemplate() throws Exception {
         Map<String, String> additionalProps = new HashMap<String, String>();
 
@@ -206,7 +206,7 @@ public class OpenstackCloudifyDriverTest extends AbstractTestSupport {
      *
      *
      */
-    @Test(enabled = true)
+    @Test(enabled = false)
     public void testStartManagementMachinesWithComputeNetwork() throws Exception {
         Map<String, String> additionalProps = new HashMap<String, String>();
 
@@ -246,7 +246,7 @@ public class OpenstackCloudifyDriverTest extends AbstractTestSupport {
      * <li>The test creates 2 networks and uses the computeNetwork closure to connect multiple management machines to them.</li>
      * </ul>
      */
-    @Test
+    @Test(enabled = false)
     public void testStartMultipleManagementMachinesWithComputeNetwork() throws Exception {
         int nbManagementMachines = 3;
         Map<String, String> additionalProps = new HashMap<String, String>();
@@ -288,7 +288,8 @@ public class OpenstackCloudifyDriverTest extends AbstractTestSupport {
      * machine start expected to fail.</li>
      * </ul>
      */
-    @Test(expectedExceptions = CloudProvisioningException.class)
+    //@Test(expectedExceptions = CloudProvisioningException.class)
+    @Test(enabled = false)
     public void testStartManagementWithComputeTemplateButNetworksDoNotExist() throws Exception {
         Map<String, String> additionalProps = new HashMap<String, String>();
         additionalProps.put("// Optional. Use existing networks.", "computeNetwork {\n" +
@@ -314,7 +315,7 @@ public class OpenstackCloudifyDriverTest extends AbstractTestSupport {
      * </ul>
      * </ul>
      */
-    @Test
+    @Test(enabled = false)
     public void testStartMachineWithNetworkTemplate() throws Exception {
         Map<String, String> additionalProps = new HashMap<String, String>();
 
@@ -447,7 +448,7 @@ public class OpenstackCloudifyDriverTest extends AbstractTestSupport {
      * <li>Use computeNetwork for application network.</li>
      * </ul>
      */
-    @Test
+    @Test(enabled = false)
     public void testStartMachineWithComputeNetworkUsingManagerNetwork() throws Exception {
         Map<String, String> additionalProps = new HashMap<String, String>();
 
@@ -508,7 +509,7 @@ public class OpenstackCloudifyDriverTest extends AbstractTestSupport {
         }
     }
 
-    @Test
+    @Test(enabled = false)
     public void testStartMachineWithComputeNetwork() throws Exception {
         Map<String, String> additionalProps = new HashMap<String, String>();
 
@@ -565,7 +566,7 @@ public class OpenstackCloudifyDriverTest extends AbstractTestSupport {
         }
     }
 
-    @Test
+    @Test(enabled = false)
     public void testStartMachineWithOnlyManagementNetwork() throws Exception {
         Map<String, String> additionalProps = new HashMap<String, String>();
 
@@ -598,4 +599,5 @@ public class OpenstackCloudifyDriverTest extends AbstractTestSupport {
 
         launcher.stopMachineWithManagement(service, cloud, md.getPrivateAddress());
     }
+
 }

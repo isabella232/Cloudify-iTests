@@ -116,6 +116,7 @@ public abstract class AbstractCloudService implements CloudService {
     }
 
     public void setMachinePrefix(String machinePrefix) {
+        LogUtils.log("setting machine prefix to: " + machinePrefix);
         this.machinePrefix = machinePrefix;
     }
 

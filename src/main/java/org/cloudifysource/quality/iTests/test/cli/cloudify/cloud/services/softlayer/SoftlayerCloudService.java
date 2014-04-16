@@ -18,6 +18,7 @@
 
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.softlayer;
 
+import iTests.framework.utils.LogUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.JCloudsCloudService;
 
 import java.io.IOException;
@@ -55,6 +56,7 @@ public class SoftlayerCloudService extends JCloudsCloudService {
         getProperties().put(API_KEY_PROP, apiKey);
 
         // inject prefixes
+        LogUtils.log("In SoftlayerCloudService. Injecting prefix " + getMachinePrefix());
         getAdditionalPropsToReplace().put("machineNamePrefix \"cloudify-agent-\"", "machineNamePrefix \"" + getMachinePrefix() + "-cloudify-agent-\"");
         getAdditionalPropsToReplace().put("managementGroup \"cloudify-manager\"", "managementGroup \"" + getMachinePrefix() + "-cloudify-manager\"");
         getAdditionalPropsToReplace().put("numberOfManagementMachines 1", "numberOfManagementMachines "
@@ -64,6 +66,7 @@ public class SoftlayerCloudService extends JCloudsCloudService {
 
     @Override
     public void setMachinePrefix(final String machinePrefix) {
+        LogUtils.log("In SoftlayerCloudService. Setting machine prefix to: " + machinePrefix);
         super.setMachinePrefix(machinePrefix);
         super.setMachinePrefix(super.getMachinePrefix().substring(0, 15));
     }

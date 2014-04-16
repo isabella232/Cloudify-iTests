@@ -174,7 +174,10 @@ public abstract class AbstractCloudService implements CloudService {
 
 	private String calcUniqueName(final String classBasedName) {
 		String rand = Integer.toString((new Random()).nextInt(99999));
-        String branchName = System.getProperty("branch.name", "dev");
+        String branchName = System.getProperty("branch.name");
+        if (StringUtils.isBlank(branchName)) {
+            branchName = "dev";
+        }
         LogUtils.log("Branch name is : " + branchName);
         String uniqueName = System.getProperty("user.name") + "-" + rand + "-" + branchName + "-" + classBasedName.toLowerCase() + "-";
         uniqueName = uniqueName.replace("_","-");

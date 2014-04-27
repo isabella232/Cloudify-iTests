@@ -155,7 +155,7 @@ public class DedicatedStatelessManualPerZoneByonFailoverTest extends AbstractFro
     			getService(),
     			ByonProvisioningDriver.class.getName(), //old class
     			"org.cloudifysource.quality.iTests.LocationAwareByonProvisioningDriver", //new class
-    			"location-aware-provisioning-byon", "2.2-SNAPSHOT"); //jar
+    			"location-aware-provisioning-byon", "2.3-SNAPSHOT"); //jar
     }
 
     public String toClassName(String className) {

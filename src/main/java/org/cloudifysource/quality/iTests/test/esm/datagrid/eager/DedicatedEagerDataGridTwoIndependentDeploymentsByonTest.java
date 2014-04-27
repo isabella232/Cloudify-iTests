@@ -135,7 +135,7 @@ public class DedicatedEagerDataGridTwoIndependentDeploymentsByonTest extends Abs
     			getService(),
     			ByonProvisioningDriver.class.getName(), //old class
     			"org.cloudifysource.quality.iTests.BasicLocationAwareByonProvisioningDriver", //new class
-    			"location-aware-provisioning-byon", "2.2-SNAPSHOT"); //jar
+    			"location-aware-provisioning-byon", "2.3-SNAPSHOT"); //jar
     }
 
     public String toClassName(String className) {

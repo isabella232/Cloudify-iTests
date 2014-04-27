@@ -153,7 +153,7 @@ public class DedicatedStatelessManualFailoverAwareTest extends AbstractFromXenTo
     			getService(),
     			ByonProvisioningDriver.class.getName(), //old class
     			"org.cloudifysource.quality.iTests.FailoverAwareByonProvisioningDriver", //new class
-    			"location-aware-provisioning-byon", "2.2-SNAPSHOT"); //jar
+    			"location-aware-provisioning-byon", "2.3-SNAPSHOT"); //jar
     }
     
     private void repetitiveAssertFailoverAware() {

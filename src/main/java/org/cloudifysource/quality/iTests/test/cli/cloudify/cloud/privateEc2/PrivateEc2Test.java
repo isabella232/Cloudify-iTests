@@ -47,6 +47,33 @@ public class PrivateEc2Test extends NewAbstractCloudTest {
 		final ApplicationInstaller installer = new ApplicationInstaller(restUrl, null);
 		installer.setApplicationName("sampleApplication");
 		installer.recipePath(applicationDirectory.getAbsolutePath());
+		installer.waitForFinish(true);
+		installer.install();
+
+		final Application application =
+				ServiceReader.getApplicationFromFile(new File(applicationPath)).getApplication();
+
+		final String command = "connect " + restUrl + ";use-application sampleApplication;list-services";
+		final String output = CommandTestUtils.runCommandAndWait(command);
+
+		for (final Service singleService : application.getServices()) {
+			AssertUtils.assertTrue("the service " + singleService.getName() + " is not running",
+					output.contains(singleService.getName()));
+		}
+	}
+	
+	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
+	public void testSampleApplicationWithCustomCloudConfiguration() throws Exception {
+
+		final String applicationPath = "src/main/resources/private-ec2/recipes/apps/sampleApplication";
+		final File applicationDirectory = new File(applicationPath);
+		Assert.assertTrue(applicationDirectory.exists() && applicationDirectory.isDirectory(),
+				"Expected directory at: " + applicationDirectory.getAbsolutePath());
+
+		final String restUrl = getRestUrl();
+		final ApplicationInstaller installer = new ApplicationInstaller(restUrl, null);
+		installer.setApplicationName("sampleApplication");
+		installer.recipePath(applicationDirectory.getAbsolutePath());
 		final File cfnTemplatesDirectory = new File("src/main/resources/private-ec2/cfn-templates");
 		Assert.assertTrue(cfnTemplatesDirectory.exists() && cfnTemplatesDirectory.isDirectory(),
 				"Expected directory at: " + cfnTemplatesDirectory.getAbsolutePath());

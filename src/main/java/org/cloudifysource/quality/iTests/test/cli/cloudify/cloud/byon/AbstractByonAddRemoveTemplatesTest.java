@@ -10,6 +10,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
 
 import junit.framework.Assert;
 
@@ -60,18 +62,32 @@ public abstract class AbstractByonAddRemoveTemplatesTest extends AbstractByonClo
 			Assert.fail("Not enough management machines to use.");
 		}
 		mngMachinesIP = new String[numOfMngMachines];
-		final StringBuilder ipListBuilder = new StringBuilder();
+		final StringBuilder origIpListBuilder = new StringBuilder();
+		for (String machine : machines) {
+			if (origIpListBuilder.length() > 0) {
+				origIpListBuilder.append(",");
+			}
+			origIpListBuilder.append(machine);
+		}
+		
+		final StringBuilder newIpListBuilder = new StringBuilder();
 		for (int i = 0; i < numOfMngMachines; i++) {
 			final String nextMachine = machines[i];
 			mngMachinesIP[i] = nextMachine;
 			if (i > 0) {
-				ipListBuilder.append(",");
+				newIpListBuilder.append(",");
 			}
-			ipListBuilder.append(nextMachine);
+			newIpListBuilder.append(nextMachine);
 		}
 		getService().setNumberOfManagementMachines(numOfMngMachines);
-		LogUtils.log("Updating MNG machine IPs: " + ipListBuilder);
-		getService().setIpList(ipListBuilder.toString());
+		LogUtils.log("Updating MNG machine IPs: " + newIpListBuilder);
+		getService().setIpList(newIpListBuilder.toString());
+		
+        
+        
+        // set a list of avalability zones to span
+        Map<String, String> propsToReplace = this.cloudService.getAdditionalPropsToReplace();
+        propsToReplace.put(Pattern.quote(origIpListBuilder.toString()), newIpListBuilder.toString());
 	}
 
 	@Override
@@ -147,7 +163,8 @@ public abstract class AbstractByonAddRemoveTemplatesTest extends AbstractByonClo
 
 	protected void assertRightUploadDir(final String serviceName, final String expectedUploadDirName) {
 		final ProcessingUnits processingUnits = admin.getProcessingUnits();
-		final ProcessingUnit processingUnit = processingUnits.getProcessingUnit("default." + serviceName);
+		final ProcessingUnit processingUnit = processingUnits.waitFor("default." + serviceName, 30, TimeUnit.SECONDS);
+		processingUnit.waitFor(1, 30, TimeUnit.SECONDS);
 		final ProcessingUnitInstance processingUnitInstance = processingUnit.getInstances()[0];
 		final Collection<ServiceDetails> detailes = processingUnitInstance.getServiceDetailsByServiceId().values();
 		final Map<String, Object> allDetails = new HashMap<String, Object>();

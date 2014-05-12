@@ -187,6 +187,14 @@ public class StorageAllocationTester {
         setTemplate(RECIPES_SERVICES_FOLDER + "/" + folderName, computeTemplateName, true);
         testFaultyInstall(folderName);
     }
+    
+    public void testFaultyInstallLinux(String computeTemplateName, final String folderName) throws Exception {
+        final String servicePath = CommandTestUtils.getPath("/src/main/resources/apps/USM/usm/staticstorage/" + folderName);
+        String targetFolderName = copyServiceToRecipesFolder(servicePath, folderName);
+        setTemplate(RECIPES_SERVICES_FOLDER + "/" + targetFolderName, computeTemplateName, true);
+        testFaultyInstall(targetFolderName);
+    }
+    
 
     public void testFaultyInstallUbuntu(String computeTemplateName) throws Exception {
         String folderName = "faulty-install";

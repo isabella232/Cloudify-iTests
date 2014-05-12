@@ -23,7 +23,7 @@ public class OpenstackFailedToInstallTest extends AbstractStorageAllocationTest 
 
     @Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
     public void testLinux() throws Exception {
-        storageAllocationTester.testFaultyInstallLinux("SMALL_LINUX");
+        storageAllocationTester.testFaultyInstallLinux("SMALL_LINUX", "openstack-faulty-install");
     }
 
     @AfterMethod

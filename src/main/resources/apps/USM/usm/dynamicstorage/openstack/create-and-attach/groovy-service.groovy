@@ -18,7 +18,7 @@ service {
 		def volumeId = null;
 		def device = "/dev/vdc"
 		def path = "/teststorage"
-		def fs = "ext3"
+		def fs = "ext4"
 	
 		init { println "This is the init event" }
 		preInstall {println "This is the preInstall event" }

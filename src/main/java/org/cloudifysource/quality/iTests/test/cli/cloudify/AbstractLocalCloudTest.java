@@ -282,8 +282,11 @@ public class AbstractLocalCloudTest extends AbstractTestSupport {
 				LogUtils.log("Found a leaking process: " + procDetails);
 				failed = true;
 				if (!SGTestHelper.isDevMode()) {
+					LogUtils.log("Not in Dev mode");
                     AbstractTestSupport.killProcessesByIDs(new HashSet<String>(Arrays
 							.asList("" + pid)));
+				} else {
+					LogUtils.log("Running in Dev mode, not killing processes");
 				}
 			}
 

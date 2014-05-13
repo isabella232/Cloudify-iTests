@@ -179,10 +179,12 @@ public abstract class AbstractTestSupport {
         final DefaultProcessKiller dpk = new DefaultProcessKiller();
         dpk.setKillRetries(10);
         for (final String pid : processesIDs) {
+        	LogUtils.log("Attempting to kill leaking process: " + pid);
             final long processID = Long.valueOf(pid);
             try {
                 dpk.killProcess(processID);
             } catch (final Exception e) {
+            	LogUtils.log("Failed to kill process " + pid, e);
                 e.printStackTrace();
             }
         }

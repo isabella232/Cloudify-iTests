@@ -29,12 +29,14 @@ public class OpenstackStorageDeleteOnExitTest extends AbstractStorageAllocationT
     @Override
     protected void customizeCloud() throws Exception {
         super.customizeCloud();
-        getService().getAdditionalPropsToReplace().put("deleteOnExit true", "deleteOnExit false");
+        getService().getAdditionalPropsToReplace().put("deleteOnExit false", "deleteOnExit true");
+        getService().getAdditionalPropsToReplace().put("ext3", "ext4");
+        getService().getAdditionalPropsToReplace().put("cloudify-storage-volume", "cloudify-volume-test-delete-on-exit");
     }
 
     @Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
     public void testLinux() throws Exception {
-        storageAllocationTester.testDeleteOnExitFalseLinux("SMALL_LINUX");
+        storageAllocationTester.testDeleteOnExitTrueLinux("SMALL_LINUX");
     }
 
 
@@ -62,4 +64,5 @@ public class OpenstackStorageDeleteOnExitTest extends AbstractStorageAllocationT
     protected boolean isReusableCloud() {
         return false;
     }
+    
 }

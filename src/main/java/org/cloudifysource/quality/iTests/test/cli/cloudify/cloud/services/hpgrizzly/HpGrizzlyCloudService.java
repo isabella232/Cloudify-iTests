@@ -196,11 +196,13 @@ public class HpGrizzlyCloudService extends JCloudsCloudService {
 		boolean result = true;
 		List<SecurityGroup> securityGroupsByName = null;
 		try {
+			LogUtils.log("Getting security groups by prefix: " + this.machinePrefix);
 			securityGroupsByName = this.networkClient.getSecurityGroupsByPrefix(this.machinePrefix);
 		} catch (final OpenstackException e) {
 			LogUtils.log("Failed getting security group list. Reason " + e.getMessage(), e);
 		}
-		if (securityGroupsByName.size() > 0) {
+		if (securityGroupsByName != null && securityGroupsByName.size() > 0) {
+			// leak found
 			result = false;
 			for (final SecurityGroup securityGroup : securityGroupsByName) {
 				try {
@@ -211,7 +213,10 @@ public class HpGrizzlyCloudService extends JCloudsCloudService {
 					LogUtils.log("Failed to delete security group. Reason: " + e.getMessage(), e);
 				}
 			}
+		} else {
+			LogUtils.log("No security groups found with prefix: " + machinePrefix);
 		}
+		
 		return result;
 	}
 

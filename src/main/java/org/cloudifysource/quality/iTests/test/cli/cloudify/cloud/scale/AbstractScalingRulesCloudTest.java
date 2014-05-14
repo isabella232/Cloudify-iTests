@@ -297,7 +297,10 @@ public abstract class AbstractScalingRulesCloudTest extends NewAbstractCloudTest
 
 		final String publicIpAttrName = "Cloud Public IP";
 		final String zonesAttrName = "zones";
-		for (String instanceUrl : getInstancesUrls(absoluteServiceName)) {
+		final List<String> instancesUrls = getInstancesUrls(absoluteServiceName);
+		LogUtils.log("Found " + instancesUrls.size() + " instances of service " + absoluteServiceName);
+		
+		for (String instanceUrl : instancesUrls) {
 			
 			URL publicIpUrl = new URL(instanceUrl +"/ServiceDetailsByServiceId/USM/Attributes/"+publicIpAttrName.replace(" ","%20"));
 			String publicIpResponse = WebUtils.getURLContent(publicIpUrl);
@@ -325,6 +328,21 @@ public abstract class AbstractScalingRulesCloudTest extends NewAbstractCloudTest
 				}
 				if (publicIp != null && agentZones != null && agentZones.isStasfies(zones)) {
 					instancesDetails.add(new InstanceDetails(publicIp,agentZones));
+				} else {
+					String msg = "This instance does not match the requested criteria: ";
+					if (publicIp != null) {
+						msg += "public ip: " + publicIp;
+					} else {
+						msg += "public ip is null";
+					}
+					
+					if (agentZones != null) {
+						msg += ", agentZones is " + agentZones;
+					} else {
+						msg += ", agentZones is null";
+					}
+					
+					LogUtils.log(msg);
 				}
 			} catch (final HttpResponseException e) {
 				// agent has no zones. this is ok, can happen if the cloud driver did not start the agent on a specific location.

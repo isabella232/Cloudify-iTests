@@ -29,7 +29,7 @@ public class OpenstackSimpleStorageTest extends AbstractStorageAllocationTest{
 
     @Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
     public void testLinux() throws Exception {
-        storageAllocationTester.testInstallWithStorageLinux("SMALL_LINUX");
+        storageAllocationTester.testInstallWithStorageLinux("SMALL_LINUX", false /*deleteOnExit*/);
     }
 
     @AfterMethod
@@ -52,7 +52,13 @@ public class OpenstackSimpleStorageTest extends AbstractStorageAllocationTest{
         super.teardown();
     }
 
-
+    @Override
+    protected void customizeCloud() throws Exception {
+        super.customizeCloud();
+        getService().getAdditionalPropsToReplace().put("ext3", "ext4");
+        getService().getAdditionalPropsToReplace().put("cloudify-storage-volume", "cloudify-storage-volume-simple-test");
+    }
+    
     @Override
     protected boolean isReusableCloud() {
         return false;

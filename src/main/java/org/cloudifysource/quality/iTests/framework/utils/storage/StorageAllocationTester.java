@@ -118,11 +118,15 @@ public class StorageAllocationTester {
     }
 
     public void testInstallWithStorageLinux(String computeTemplateName) throws Exception {
+    	testInstallWithStorageLinux(computeTemplateName, true);
+    }
+    
+    public void testInstallWithStorageLinux(String computeTemplateName, final boolean deleteOnExit) throws Exception {
         String folderName = "simple-storage";
         final String servicePath = CommandTestUtils.getPath("/src/main/resources/apps/USM/usm/staticstorage/" + folderName);
         folderName = copyServiceToRecipesFolder(servicePath, folderName);
         setTemplate(RECIPES_SERVICES_FOLDER + "/" + folderName, computeTemplateName, true);
-        testInstallWithStorage(folderName);
+        testInstallWithStorage(folderName, deleteOnExit);
     }
 
     public void testInstallWithStorageUbuntu(String computeTemplateName) throws Exception {
@@ -162,6 +166,14 @@ public class StorageAllocationTester {
         folderName = copyServiceToRecipesFolder(servicePath, folderName);
         setTemplate(RECIPES_SERVICES_FOLDER + "/" + folderName, computeTemplateName, true);
         testDeleteOnExitFalse(folderName);
+    }
+    
+    public void testDeleteOnExitTrueLinux(String computeTemplateName) throws Exception {
+        String folderName = "simple-storage";
+        final String servicePath = CommandTestUtils.getPath("/src/main/resources/apps/USM/usm/staticstorage/" + folderName);
+        folderName = copyServiceToRecipesFolder(servicePath, folderName);
+        setTemplate(RECIPES_SERVICES_FOLDER + "/" + folderName, computeTemplateName, true);
+        testDeleteOnExitTrue(folderName);
     }
     
     public void testDeleteOnExitFalseLinuxGlobalSla(String computeTemplateName) throws Exception {
@@ -904,7 +916,12 @@ public class StorageAllocationTester {
         installer.uninstall();
     }
 
+    
     private void testInstallWithStorage(final String folderName) throws Exception {
+    	testInstallWithStorage(folderName, true);
+    }
+    
+    private void testInstallWithStorage(final String folderName, final boolean deleteOnExit) throws Exception {
 
         String serviceName = ServiceReader.readService(new File(ScriptUtils.getBuildRecipesServicesPath() + "/" + folderName)).getName();
         installer = new ServiceInstaller(restUrl, serviceName);
@@ -926,7 +943,7 @@ public class StorageAllocationTester {
         		storageApiHelper.getVolumeAttachments(ourVolume.getId()).size());
 
         // TODO elip - assert Volume configuration?
-
+        LogUtils.log("Undeploying service: " + serviceName);
         String uninstallOutput = installer.uninstall();
         String expectedOutput = "Successfully undeployed " + serviceName;
         AssertUtils.assertTrue("Uninstall-service did not return the expected output: \"" + expectedOutput + "\"."
@@ -934,8 +951,24 @@ public class StorageAllocationTester {
         
         // assert volume was detached
         Set<VolumeDetails> volumesAfterUninstall = storageApiHelper.getVolumesByPrefix(volumesPrefix);
-        AssertUtils.assertTrue("Uninstall-service did not remove volumes with prefix: " + volumesPrefix, 
-        		volumesAfterUninstall.isEmpty());
+        
+        if (deleteOnExit) {
+        	// volume is expected to be deleted after uninstall
+            AssertUtils.assertTrue("Uninstall-service did not remove volumes with prefix: " + volumesPrefix, 
+            		volumesAfterUninstall.isEmpty());
+        } else {
+        	// volume should remain after uninstall, verify that it's still there
+            AssertUtils.assertTrue("Uninstall-service wronfully removed volumes with prefix: " + volumesPrefix, 
+            		volumesAfterUninstall.size() > 0);
+
+            // now we can remove the volume
+            VolumeDetails volumeDetails = volumesAfterUninstall.iterator().next();
+            LogUtils.log("Volume " +   volumeDetails.getName() + "[" + volumeDetails.getId() + "]" +
+            		" found after uninstall. This is expected. Deleting the volume now.");
+            
+            storageApiHelper.deleteVolume(volumeDetails.getId());
+        }
+                
     }
 
     private void testDeleteOnExitFalse(final String folderName) throws Exception {
@@ -964,11 +997,42 @@ public class StorageAllocationTester {
         // the install should have created and attached a volume with a name prefix of the class name. see customizeCloud below.
         ourVolume = storageApiHelper.getVolumesByPrefix(getVolumePrefixForTemplate("SMALL_BLOCK")).iterator().next();
 
-        AssertUtils.assertNotNull("could not find the required volume after install service", ourVolume);
+        AssertUtils.assertNotNull("could not find the required volume after uninstall service", ourVolume);
         LogUtils.log("Found volume : " + ourVolume);
         storageApiHelper.deleteVolume(ourVolume.getId());
 
     }
+    
+    
+    private void testDeleteOnExitTrue(final String folderName) throws Exception {
+
+        String serviceName = ServiceReader.readService(new File(ScriptUtils.getBuildRecipesServicesPath() + "/" + folderName)).getName();
+
+        installer = new ServiceInstaller(restUrl, serviceName);
+        installer.recipePath(folderName);
+        installer.setDisableSelfHealing(true);
+        installer.install();
+
+        LogUtils.log("Searching for volumes created by the service installation");
+        // the install should have created and attached a volume with a name prefix of the class name. see customizeCloud below.
+        VolumeDetails ourVolume = storageApiHelper.getVolumesByPrefix(getVolumePrefixForTemplate("SMALL_BLOCK")).iterator().next();
+
+        AssertUtils.assertNotNull("could not find the required volume after install service", ourVolume);
+        LogUtils.log("Found volume : " + ourVolume);
+        // also check it is attached.
+        AssertUtils.assertEquals("the volume should have one attachments", 1, storageApiHelper.getVolumeAttachments(ourVolume.getId()).size());
+
+        // TODO elip - assert Volume configuration?
+
+        installer.uninstall();
+
+        LogUtils.log("Searching for volumes created by the service after uninstall");
+        // the install should have created and attached a volume with a name prefix of the class name. see customizeCloud below.
+        Set<VolumeDetails> volumeDetails = storageApiHelper.getVolumesByPrefix(getVolumePrefixForTemplate("SMALL_BLOCK"));
+
+        AssertUtils.assertTrue("Found a leaking volume after uninstall service", volumeDetails.isEmpty());
+    }
+    
 
     private String copyServiceToRecipesFolder(final String path, final String originalFolderName) throws IOException, DSLException, PackagingException {
         String buildRecipesServicesPath = ScriptUtils.getBuildRecipesServicesPath();

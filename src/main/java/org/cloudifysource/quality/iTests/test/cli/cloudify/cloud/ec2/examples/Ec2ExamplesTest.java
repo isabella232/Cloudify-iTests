@@ -55,7 +55,7 @@ public class Ec2ExamplesTest extends AbstractExamplesTest {
 		super.testHelloWorld();
 	}
 	
-	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = false)
+	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
 	public void testTravelChef() throws Exception {
 		super.testTravelChef();
 	}

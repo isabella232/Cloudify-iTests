@@ -324,7 +324,12 @@ public class StorageAllocationTester {
 
         // after uninstall the volumes should be deleted
         for (VolumeDetails vol : volumesByName) {
+        	LogUtils.log("Found volume: " + vol);
+        	
             VolumeDetails currentVol = storageApiHelper.getVolumeById(vol.getId());
+            if (currentVol != null) {
+            	LogUtils.log("Volume status: " + storageApiHelper.getVolumeStatus(currentVol.getId()));
+            }
             AssertUtils.assertTrue("volume with id " + vol.getId() + " was not deleted after uninstall", currentVol == null || storageApiHelper.isVolumeDeleting(currentVol.getId()));
         }
 

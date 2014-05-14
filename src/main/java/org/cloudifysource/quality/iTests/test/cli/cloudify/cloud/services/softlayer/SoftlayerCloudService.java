@@ -18,11 +18,10 @@
 
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.softlayer;
 
-import iTests.framework.utils.LogUtils;
-import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.JCloudsCloudService;
-
 import java.io.IOException;
 import java.util.Properties;
+
+import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.JCloudsCloudService;
 
 /**
  * Provides bootstrapping and teardown for softlayer cloud.

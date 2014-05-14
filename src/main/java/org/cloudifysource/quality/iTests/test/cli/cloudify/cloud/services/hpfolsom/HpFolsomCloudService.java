@@ -1,6 +1,8 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.hpfolsom;
 
 import iTests.framework.utils.IOUtils;
+import iTests.framework.utils.LogUtils;
+
 import org.apache.commons.io.FileUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services.JCloudsCloudService;
 
@@ -24,6 +26,8 @@ public class HpFolsomCloudService extends JCloudsCloudService {
 
 	public HpFolsomCloudService() {
 		super("hp-folsom");
+		LogUtils.log("credentials file is at: " + HP_CERT_PROPERTIES);
+		this.getBootstrapper().skipValidation(false);
 	}
 
 	public String getTenant() {

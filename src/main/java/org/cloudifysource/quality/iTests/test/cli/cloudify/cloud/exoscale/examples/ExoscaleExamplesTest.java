@@ -55,8 +55,7 @@ public class ExoscaleExamplesTest extends AbstractExamplesTest {
 		super.testHelloWorld();
 	}
 
-	// travel-chef requires a small ubuntu template. Does not exist in exoscale cloud driver
-    @Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = false)
+    @Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
     public void testTravelChef() throws Exception {
         super.testTravelChef();
     }

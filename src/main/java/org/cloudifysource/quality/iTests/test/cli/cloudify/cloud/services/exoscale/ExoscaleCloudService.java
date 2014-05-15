@@ -22,7 +22,8 @@ public class ExoscaleCloudService extends AbstractCloudService {
     public static final String KEYFILE_PROP = "sshKeypairFile";
     public static final String PERSISTENT_PATH_PROP = "persistencePath";
     public static final String ZONE_PROP = "zoneId";
-    public static final String TEMPLATE_PROP = "tamplateId";
+    public static final String TEMPLATE_PROP = "templateId";
+    public static final String UBUNTU_TEMPLATE_PROP = "ubuntuTemplateId";
     public static final String CLOUD_STACK_API_ENDPOINT_PROP = "cloudStackAPIEndpoint";
     public static final String COMPUTE_OFFERING_ID_PROP = "computeOfferingId";
 
@@ -34,7 +35,8 @@ public class ExoscaleCloudService extends AbstractCloudService {
     private String sshKeypairName = certProperties.getProperty("sshKeypairName");
     private String sshKeypairFile = certProperties.getProperty("sshKeypairFile");
     private String zoneId = certProperties.getProperty("zoneId");
-    private String tamplateId = certProperties.getProperty("tamplateId");
+    private String templateId = certProperties.getProperty("templateId");
+    private String ubuntuTemplateId = certProperties.getProperty("ubuntuTemplateId");
 
 
 
@@ -60,7 +62,8 @@ public class ExoscaleCloudService extends AbstractCloudService {
         getProperties().put(KEYFILE_PROP, this.sshKeypairFile);
         getProperties().put(PERSISTENT_PATH_PROP, this.persistencePath);
         getProperties().put(ZONE_PROP, this.zoneId);
-        getProperties().put(TEMPLATE_PROP, this.tamplateId);
+        getProperties().put(TEMPLATE_PROP, this.templateId);
+        getProperties().put(UBUNTU_TEMPLATE_PROP, this.ubuntuTemplateId);
         getProperties().put(CLOUD_STACK_API_ENDPOINT_PROP, this.cloudStackAPIEndpoint);
         getProperties().put(COMPUTE_OFFERING_ID_PROP, this.computeOfferingId);
 		propsToReplace.put("machineNamePrefix \"cloudify-agent-\"", "machineNamePrefix \"" + getMachinePrefix() + "-cloudify-agent-\"");

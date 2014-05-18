@@ -176,19 +176,47 @@ public abstract class AbstractTestSupport {
 
     public static void killProcessesByIDs(final Set<String> processesIDs) {
 
-        final DefaultProcessKiller dpk = new DefaultProcessKiller();
-        dpk.setKillRetries(10);
         for (final String pid : processesIDs) {
-        	LogUtils.log("Attempting to kill leaking process: " + pid);
-            final long processID = Long.valueOf(pid);
-            try {
-                dpk.killProcess(processID);
-            } catch (final Exception e) {
-            	LogUtils.log("Failed to kill process " + pid, e);
-                e.printStackTrace();
-            }
+        	boolean processKilled = killUsingSigar(pid);
+        	if (!processKilled) {
+        		killProcessUsingCommand(pid);
+        	}
         }
     }
+
+    private static boolean killProcessUsingCommand(String pid) {
+    	try {
+    		LogUtils.log("Attempting to kill leaking process " + pid + " using kill command");
+    		final Runtime rt = Runtime.getRuntime();
+    		if (System.getProperty("os.name").toLowerCase().indexOf("windows") > -1) {
+    			rt.exec("taskkill /F /PID " + pid);
+    		}
+    		else {
+    			rt.exec("kill -9 " + pid);
+    		}
+    		return true;
+    	} catch (final Exception e) {
+    		LogUtils.log("Failed to kill process " + pid, e);
+    		e.printStackTrace();
+    		return false;
+    	}
+
+    }
+
+	private static boolean killUsingSigar(final String pid) {
+		LogUtils.log("Attempting to kill leaking process " + pid + " using sigar");
+		final DefaultProcessKiller dpk = new DefaultProcessKiller();
+		dpk.setKillRetries(10);
+		final long processID = Long.valueOf(pid);
+		try {
+		    dpk.killProcess(processID);
+		    return true;
+		} catch (final Exception e) {
+			LogUtils.log("Failed to kill process " + pid, e);
+		    e.printStackTrace();
+		    return false;
+		}
+	}
 
     public static Set<String> getLocalProcesses() throws IOException, InterruptedException {
         final Set<String> result = new HashSet<String>();

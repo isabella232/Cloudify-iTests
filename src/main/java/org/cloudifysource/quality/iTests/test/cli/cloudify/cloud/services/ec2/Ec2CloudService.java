@@ -104,6 +104,18 @@ public class Ec2CloudService extends JCloudsCloudService {
 		getProperties().put(KEYFILE_PROP, this.keyPair + ".pem");
         getProperties().put(USER_PROP, user);
         getProperties().put(API_KEY_PROP, apiKey);
+        // to be removed. used for chef testing
+        propsToReplace.put("remoteDirectory \"/home/ubuntu/gs-files\""+ System.getProperty("line.separator") +"\t\t\t\t\t\t" +
+        		"// Mandatory. Amount of RAM available to machine."+ System.getProperty("line.separator") +"\t\t\t\t\t\t" +
+        		"machineMemoryMB 1600"+ System.getProperty("line.separator") +"\t\t\t\t\t\t" +
+        		"// Mandatory. Hardware ID."+ System.getProperty("line.separator") +"\t\t\t\t\t\t" +
+        		"hardwareId hardwareId", 
+        		
+        		"remoteDirectory \"/home/ubuntu/gs-files\""+ System.getProperty("line.separator") +"\t\t\t\t\t\t" +
+                		"// Mandatory. Amount of RAM available to machine."+ System.getProperty("line.separator") +"\t\t\t\t\t\t" +
+                		"machineMemoryMB 1600"+ System.getProperty("line.separator") +"\t\t\t\t\t\t" +
+                		"// Mandatory. Hardware ID."+ System.getProperty("line.separator") +"\t\t\t\t\t\t" +
+                		"hardwareId mediumHardwareId");
 
 		propsToReplace.put("machineNamePrefix \"cloudify-agent-\"", "machineNamePrefix \"" + getMachinePrefix() + "cloudify-agent-\"");
 		propsToReplace.put("managementGroup \"cloudify-manager\"", "managementGroup \"" + getMachinePrefix() + "cloudify-manager\"");

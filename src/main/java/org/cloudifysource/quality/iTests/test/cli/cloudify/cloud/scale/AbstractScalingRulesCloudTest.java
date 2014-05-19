@@ -47,7 +47,7 @@ public abstract class AbstractScalingRulesCloudTest extends NewAbstractCloudTest
 	private static final String APPLICATION_NAME = "petclinic";
 	private static final String TOMCAT_SERVICE_NAME = "tomcat";
 	
-	private static final int NUMBER_OF_HTTP_GET_THREADS = 10;
+	private static final int NUMBER_OF_HTTP_GET_THREADS = 20;
 	private static final int THROUGHPUT_PER_THREAD = 1;
 	private static final int TOMCAT_PORT = 8080;
 

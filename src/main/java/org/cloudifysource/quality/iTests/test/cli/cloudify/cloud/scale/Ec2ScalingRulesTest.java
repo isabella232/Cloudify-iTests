@@ -41,7 +41,7 @@ public class Ec2ScalingRulesTest extends AbstractScalingRulesCloudTest{
 		super.startExecutorService();
 	}
 
-	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 3, enabled = true)
+	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
 	public void testPetclinicSimpleScalingRules() throws Exception {
 		super.testPetclinicSimpleScalingRules();
 	}

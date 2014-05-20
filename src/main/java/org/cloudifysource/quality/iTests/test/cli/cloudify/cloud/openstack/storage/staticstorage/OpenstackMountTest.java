@@ -20,10 +20,18 @@ public class OpenstackMountTest extends AbstractStorageAllocationTest {
     protected void bootstrap() throws Exception {
         super.bootstrap();
     }
+    
+    @Override
+    protected void customizeCloud() throws Exception {
+        super.customizeCloud();
+        getService().getAdditionalPropsToReplace().put("deleteOnExit false", "deleteOnExit true");
+        getService().getAdditionalPropsToReplace().put("ext3", "ext4");
+        getService().getAdditionalPropsToReplace().put("cloudify-storage-volume", "cloudify-volume-mount-test");
+    }
 
     @Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
     public void testLinux() throws Exception {
-        storageAllocationTester.testStorageVolumeMountedLinux("SMALL_LINUX");
+        storageAllocationTester.testStorageVolumeMountedLinux("SMALL_LINUX", "openstack-simple-storage-with-custom-commands");
     }
 
     @AfterMethod

@@ -68,13 +68,15 @@ public class StorageAllocationTester {
     private static final String RECIPES_SERVICES_FOLDER = ScriptUtils.getBuildRecipesServicesPath();
 
     /* Test Methods to be called by test classes */
-
     public void testStorageVolumeMountedLinux(String computeTemplateName) throws Exception {
-        String folderName = SIMPLE_STORAGE_SERVICE_WITH_CUSTOM_COMMANDS;
+    	testStorageVolumeMountedLinux(computeTemplateName, SIMPLE_STORAGE_SERVICE_WITH_CUSTOM_COMMANDS);
+    }
+    
+    public void testStorageVolumeMountedLinux(String computeTemplateName, final String folderName) throws Exception {
         final String servicePath = CommandTestUtils.getPath("/src/main/resources/apps/USM/usm/staticstorage/" + folderName);
-        folderName = copyServiceToRecipesFolder(servicePath, folderName);
-        setTemplate(RECIPES_SERVICES_FOLDER + "/" + folderName, computeTemplateName, true);
-        testStorageVolumeMounted(folderName);
+        String targetFolderName = copyServiceToRecipesFolder(servicePath, folderName);
+        setTemplate(RECIPES_SERVICES_FOLDER + "/" + targetFolderName, computeTemplateName, true);
+        testStorageVolumeMounted(targetFolderName);
     }
 
     public void testStorageVolumeMountedUbuntu(String computeTemplateName) throws Exception {
@@ -904,7 +906,7 @@ public class StorageAllocationTester {
 
         String expectedMountOutput = "/dev/xvdc on /storage type ext4 (rw)";
         if(cloudService.getCloud().getName().equalsIgnoreCase("hp-grizzly")){
-            expectedMountOutput = "/dev/vdc on /storage type ext3 (rw)";
+            expectedMountOutput = "/dev/vdc on /storage type ext4 (rw)";
         }
 
         installer = new ServiceInstaller(restUrl, serviceName);

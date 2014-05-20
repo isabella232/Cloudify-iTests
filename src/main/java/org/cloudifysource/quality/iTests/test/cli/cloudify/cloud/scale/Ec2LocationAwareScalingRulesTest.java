@@ -64,7 +64,7 @@ public class Ec2LocationAwareScalingRulesTest extends AbstractScalingRulesCloudT
 	}
 		
 	@Override
-	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 2, enabled = true)
+	@Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
 	public void testPetclinicSimpleScalingRules() throws Exception {	
 		
 		final String applicationPath = getApplicationPath();

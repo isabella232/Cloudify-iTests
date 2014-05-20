@@ -20,6 +20,13 @@ public class OpenstackFailedToInstallTest extends AbstractStorageAllocationTest 
     protected void bootstrap() throws Exception {
         super.bootstrap();
     }
+    
+    @Override
+    protected void customizeCloud() throws Exception {
+        super.customizeCloud();
+        getService().getAdditionalPropsToReplace().put("deleteOnExit false", "deleteOnExit true");
+        getService().getAdditionalPropsToReplace().put("cloudify-storage-volume", "cloudify-volume-faulty-install-test");
+    }
 
     @Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
     public void testLinux() throws Exception {

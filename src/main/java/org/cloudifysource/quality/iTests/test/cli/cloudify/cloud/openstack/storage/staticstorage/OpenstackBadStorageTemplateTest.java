@@ -25,6 +25,7 @@ public class OpenstackBadStorageTemplateTest extends AbstractStorageAllocationTe
     @Override
     protected void customizeCloud() throws Exception {
         super.customizeCloud();
+        getService().getAdditionalPropsToReplace().put("deleteOnExit false", "deleteOnExit true");
         getService().getAdditionalPropsToReplace().put("deviceName \"/dev/vdc\"", "deviceName \"/dev/dc\"");
     }
 

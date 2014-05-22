@@ -6,6 +6,8 @@ import iTests.framework.utils.LogUtils;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.cloudifysource.domain.Service;
 import org.cloudifysource.dsl.internal.ServiceReader;
@@ -28,13 +30,17 @@ public abstract class AbstractServicesTest extends NewAbstractCloudTest {
 		super.scanForLeakedAgentNodes();
 	}
 
-
 	public void testService(String serviceFolderPath, String overrideServiceName) throws Exception {
 		testService(serviceFolderPath, overrideServiceName, DEFAULT_INSTALLATION_TIMEOUT);
 	}
 
+	public void testService(String serviceFolderPath, String overrideServiceName,
+            final int timeoutMins) throws Exception {
+		testService(serviceFolderPath, overrideServiceName, timeoutMins, new HashMap<String, String>());
+	}
+	
  	public void testService(String serviceFolderPath, String overrideServiceName,
-                            final int timeoutMins) throws Exception {
+                            final int timeoutMins, Map<String, String> envVars) throws Exception {
 		LogUtils.log("Reading Service from file : " + serviceFolderPath);
 		Service service = ServiceReader.readService(new File(serviceFolderPath));
 		LogUtils.log("Succesfully read Service : " + service);
@@ -46,8 +52,7 @@ public abstract class AbstractServicesTest extends NewAbstractCloudTest {
 			serviceName = overrideServiceName;
 		}
 
-
-        installServiceAndWait(serviceFolderPath, serviceName, timeoutMins);
+        installServiceAndWait(serviceFolderPath, serviceName, timeoutMins, envVars);
  		String restUrl = getRestUrl();
 		final GSRestClient client = new GSRestClient("", "", new URL(restUrl), PlatformVersion.getVersionNumber());
         LogUtils.log("Querying status of service " + serviceName + " from rest");

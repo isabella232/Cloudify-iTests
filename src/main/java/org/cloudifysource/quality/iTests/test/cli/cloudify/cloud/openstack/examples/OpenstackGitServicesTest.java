@@ -1,5 +1,8 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.openstack.examples;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import iTests.framework.testng.annotations.TestConfiguration;
 import iTests.framework.tools.SGTestHelper;
 import iTests.framework.utils.JGitUtils;
@@ -156,10 +159,15 @@ public class OpenstackGitServicesTest extends AbstractServicesTest {
     }
 
     private void testService(String serviceName) throws Exception {
-        testService(localGitRepoPath + "/services/" + serviceName, null);
+    	Map<String, String> envVars = new HashMap<String, String>();
+    	envVars.put("REST_CLIENT_OPTIONS", "-Dorg.cloudifysource.cli.restclient.socket-timeout=180000");
+        testService(localGitRepoPath + "/services/" + serviceName, null/*overrideServiceName*/, 
+        		50 /*timeout*/, envVars);
     }
 
     private void testService(final String serviceName, final int timeoutInMinutes) throws Exception {
-        testService(localGitRepoPath + "/services/" + serviceName, null, timeoutInMinutes);
+    	Map<String, String> envVars = new HashMap<String, String>();
+    	envVars.put("REST_CLIENT_OPTIONS", "-Dorg.cloudifysource.cli.restclient.socket-timeout=180000");
+        testService(localGitRepoPath + "/services/" + serviceName, null, timeoutInMinutes, envVars);
     }
 }

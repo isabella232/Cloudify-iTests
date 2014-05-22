@@ -6,6 +6,7 @@ import iTests.framework.utils.ScriptUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -356,6 +357,14 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
         return installServiceAndWait(servicePath, serviceName, SERVICE_INSTALLATION_TIMEOUT_IN_MINUTES, false);
     }
 
+    protected String installServiceAndWait(String servicePath, String serviceName, int timeout, int numOfInstances, Map<String, String> envVars) throws IOException, InterruptedException {
+        return installServiceAndWait(servicePath, serviceName, timeout, false, false, numOfInstances, envVars);
+    }
+    
+    protected String installServiceAndWait(String servicePath, String serviceName, int timeout, Map<String, String> envVars) throws IOException, InterruptedException {
+        return installServiceAndWait(servicePath, serviceName, timeout, false, envVars);
+    }
+    
     protected String installServiceAndWait(String servicePath, String serviceName, int timeout, int numOfInstances) throws IOException, InterruptedException {
         return installServiceAndWait(servicePath, serviceName, timeout, false, false, numOfInstances);
     }
@@ -366,6 +375,10 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 
     protected String installServiceAndWait(String servicePath, String serviceName, int timeout , boolean expectToFail) throws IOException, InterruptedException {
         return installServiceAndWait(servicePath, serviceName, timeout, expectToFail, false, 0);
+    }
+    
+    protected String installServiceAndWait(String servicePath, String serviceName, int timeout , boolean expectToFail, Map<String, String> envVars) throws IOException, InterruptedException {
+        return installServiceAndWait(servicePath, serviceName, timeout, expectToFail, false, 0, envVars);
     }
     
 	protected String installServiceAndWait(String servicePath, String serviceName, int timeout, final String cloudifyUsername,
@@ -384,13 +397,18 @@ public abstract class NewAbstractCloudTest extends AbstractTestSupport {
 		return serviceInstaller.install();
 	}
 
-    protected String installServiceAndWait(String servicePath, String serviceName, int timeout , boolean expectToFail, boolean disableSelfHealing, int numOfInstances) throws IOException, InterruptedException {
+	protected String installServiceAndWait(String servicePath, String serviceName, int timeout , boolean expectToFail, boolean disableSelfHealing, int numOfInstances) throws IOException, InterruptedException {
+		return installServiceAndWait(servicePath, serviceName, timeout, expectToFail, disableSelfHealing, numOfInstances, new HashMap<String, String>());
+	}
+	
+    protected String installServiceAndWait(String servicePath, String serviceName, int timeout , boolean expectToFail, boolean disableSelfHealing, int numOfInstances, Map<String, String> envVars) throws IOException, InterruptedException {
         ServiceInstaller serviceInstaller = new ServiceInstaller(getRestUrl(), serviceName);
         serviceInstaller.recipePath(servicePath);
         serviceInstaller.waitForFinish(true);
         serviceInstaller.expectToFail(expectToFail);
         serviceInstaller.timeoutInMinutes(timeout);
         serviceInstaller.setDisableSelfHealing(disableSelfHealing);
+        serviceInstaller.setEnvVars(envVars);
 
         String output = serviceInstaller.install();
 

@@ -1,19 +1,22 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify;
 
+import iTests.framework.tools.SGTestHelper;
+import iTests.framework.utils.AssertUtils;
+import iTests.framework.utils.LogUtils;
+import iTests.framework.utils.ScriptUtils;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.text.MessageFormat;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.commons.io.FileUtils;
-import iTests.framework.tools.SGTestHelper;
-import iTests.framework.utils.AssertUtils;
-import iTests.framework.utils.LogUtils;
-import iTests.framework.utils.ScriptUtils;
 
 public class CommandTestUtils {
 
@@ -31,6 +34,10 @@ public class CommandTestUtils {
 	public static String runCommand(final String command, boolean wait, boolean failCommand) throws IOException, InterruptedException {
 		return runLocalCommand( getCloudifyCommand(command), wait, failCommand);
 	}
+	
+	public static String runCommand(final String command, Map<String, String> envVars, boolean wait, boolean failCommand) throws IOException, InterruptedException {
+		return runLocalCommand( getCloudifyCommand(command), envVars, wait, failCommand);
+	}
 
 	public static ProcessOutputPair runCommand(final String command, long timeoutMillis, boolean backgroundConsole, boolean waitForForegroundConsole,
                                                boolean failCommand, AtomicReference<ThreadSignal> threadSignal, final Map<String, String> additionalProcessVariables, final String... expectedMessages) throws IOException, InterruptedException{
@@ -45,7 +52,11 @@ public class CommandTestUtils {
 	 * @throws InterruptedException 
 	 */
 	public static ProcessResult runCloudifyCommandAndWait(final String cloudifyCommand) throws IOException, InterruptedException {
-		final Process process = startProcess(getCloudifyCommand(cloudifyCommand));
+		return runCloudifyCommandAndWait(cloudifyCommand, new HashMap<String, String>());
+	}
+	
+	public static ProcessResult runCloudifyCommandAndWait(final String cloudifyCommand, final Map<String, String> envVars) throws IOException, InterruptedException {
+		final Process process = startProcess(getCloudifyCommand(cloudifyCommand), envVars);
 	    ProcessResult handleCliOutput = handleCliOutput(process);
 	    if (handleCliOutput.getExitcode() != 0) {
 			AssertUtils.assertFail("CLI execution did not end succesfully, exit code was " + handleCliOutput.getExitcode() + 
@@ -65,7 +76,12 @@ public class CommandTestUtils {
 
     public static String runLocalCommand(final String command, boolean wait, boolean failCommand) throws IOException, InterruptedException {
 
-        final Process process = startProcess(command);
+    	return runLocalCommand(command, new HashMap<String, String>(), wait, failCommand);
+    }
+    
+    public static String runLocalCommand(final String command, final Map<String, String> envVars, boolean wait, boolean failCommand) throws IOException, InterruptedException {
+
+        final Process process = startProcess(command, envVars);
 
         if(wait)
             return handleCliOutput(process, failCommand);
@@ -73,9 +89,9 @@ public class CommandTestUtils {
             return null;
     }
     
-    private static Process startProcess(String command)
-    		throws IOException {
-    	
+
+    
+    private static Process startProcess(String command, final Map<String, String> envVars) throws IOException {
     	String cmdLine = command;
     	if (isWindows()) {
     		// need to use the call command to intercept the cloudify batch file return code.
@@ -84,15 +100,22 @@ public class CommandTestUtils {
     	
     	final String[] parts = cmdLine.split(" ");
     	final ProcessBuilder pb = new ProcessBuilder(parts);
+    	
     	pb.redirectErrorStream(true);
-        if(enableLogstash && command.contains("bootstrap")){
+
+        // apply additional environment variables if set
+        for (Entry<String, String> envVar : envVars.entrySet()) {
+        	pb.environment().put(envVar.getKey(), envVar.getValue());
+        }
+        
+    	if(enableLogstash && command.contains("bootstrap")){
             String suiteId = "suite_" + System.getProperty("iTests.suiteId", "0");
             String systemProperties = System.getenv("EXT_JAVA_OPTIONS");
             if(systemProperties == null){
                 systemProperties = "";
             }
-            LogUtils.log("env properties before addition: " + systemProperties);
-            LogUtils.log("pb properties before addition: " + pb.environment().get("EXT_JAVA_OPTIONS"));
+            LogUtils.log("system EXT_JAVA_OPTIONS properties before logstash addition: " + systemProperties);
+            LogUtils.log("pb EXT_JAVA_OPTIONS properties before logstash addition: " + pb.environment().get("EXT_JAVA_OPTIONS"));
 
             String logsPatternProperty = "com.gigaspaces.logger.RollingFileHandler.filename-pattern";
             String logsPatternValue = "{homedir}/logs/" + suiteId + "/{date,yyyy-MM-dd~HH.mm}-gigaspaces-{service}-{host}-{pid}.log";
@@ -100,11 +123,11 @@ public class CommandTestUtils {
             pb.environment().put("EXT_JAVA_OPTIONS", systemProperties + " -D" + logsPatternProperty + "=" + logsPatternValue);
 
             systemProperties = System.getenv("EXT_JAVA_OPTIONS");
-            LogUtils.log("env properties after addition: " + systemProperties);
-            LogUtils.log("pb properties after addition: " + pb.environment().get("EXT_JAVA_OPTIONS"));
-
+            LogUtils.log("system EXT_JAVA_OPTIONS properties after logstash addition: " + systemProperties);
+            LogUtils.log("pb EXT_JAVA_OPTIONS properties after logstash addition: " + pb.environment().get("EXT_JAVA_OPTIONS"));
         }
-
+        
+        LogUtils.log("command is executed with env: \"" + pb.environment() + "\"");        
     	LogUtils.log("Executing Command line: " + cmdLine);
     	
     	final Process process = pb.start();
@@ -194,6 +217,10 @@ public class CommandTestUtils {
 	public static String runCommandAndWait(final String command) throws IOException, InterruptedException {
 		return runCommand(command, true, false);
 	}
+	
+	public static String runCommandAndWait(final String command, final Map<String, String> envVars) throws IOException, InterruptedException {
+		return runCommand(command, envVars, true, false);
+	}
 
 	/**
 	 * @param command
@@ -205,8 +232,16 @@ public class CommandTestUtils {
 		return runCommand(command, true, true);
 	}
 	
+	public static String runCommandExpectedFail(final String command, final Map<String, String> envVars) throws IOException, InterruptedException {
+		return runCommand(command, envVars, true, true);
+	}
+	
 	public static String runCommand(final String command) throws IOException, InterruptedException {
 		return runCommand(command, false, false);
+	}
+	
+	public static String runCommand(final String command, final Map<String ,String> envVars) throws IOException, InterruptedException {
+		return runCommand(command, envVars, false, false);
 	}
 	
 	public static String runCommandUsingFile(final String command) throws IOException, InterruptedException {

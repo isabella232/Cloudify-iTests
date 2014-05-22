@@ -3,6 +3,15 @@ package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.ec2.examples;
 import iTests.framework.utils.LogUtils;
 import iTests.framework.utils.ScriptUtils;
 import iTests.framework.utils.WebUtils;
+
+import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.cloudifysource.dsl.rest.response.InvokeServiceCommandResponse;
 import org.cloudifysource.quality.iTests.framework.utils.CommandInvoker;
 import org.cloudifysource.quality.iTests.test.AbstractTestSupport;
@@ -13,13 +22,6 @@ import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-
-import java.io.IOException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * User: yohana
@@ -134,7 +136,9 @@ public class Ec2ChefServerExampleTest extends NewAbstractCloudTest {
     }
 
     private void installAndVerify() throws Exception {
-        installServiceAndWait(ScriptUtils.getBuildRecipesServicesPath()+"/"+SERVICE_NAME,SERVICE_NAME, 25); // timeout in min
+    	Map<String, String> envVars = new HashMap<String, String>();
+    	envVars.put("REST_CLIENT_OPTIONS", "-Dorg.cloudifysource.cli.restclient.socket-timeout=180000");
+        installServiceAndWait(ScriptUtils.getBuildRecipesServicesPath()+"/"+SERVICE_NAME,SERVICE_NAME, 25, envVars); // timeout in min
         verifyApplicationInstallation(SERVICE_NAME);
     }
 

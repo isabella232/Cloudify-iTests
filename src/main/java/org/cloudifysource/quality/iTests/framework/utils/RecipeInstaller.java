@@ -7,6 +7,7 @@ import iTests.framework.utils.LogUtils;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -46,6 +47,7 @@ public abstract class RecipeInstaller {
     private long timeoutInMinutes;
     private boolean waitForFinish = true;
     private boolean expectToFail = false;
+    private Map<String, String> envVars;    
     private String cloudifyUsername;
     private String cloudifyPassword;
     private String authGroups;
@@ -73,6 +75,15 @@ public abstract class RecipeInstaller {
     public RecipeInstaller setDisableSelfHealing(boolean disableSelfHealing) {
         this.disableSelfHealing = disableSelfHealing;
         return this;
+    }
+    
+    public RecipeInstaller setEnvVars(Map<String, String> envVars) {
+        this.envVars = envVars;
+        return this;
+    }
+    
+    public Map<String, String> getEnvVars() {
+    	return envVars;
     }
 
     public String getRestUrl() {
@@ -208,6 +219,7 @@ public abstract class RecipeInstaller {
             recipeName = ((ApplicationInstaller) this).getApplicationName();
             excpectedResult = "Application " + recipeName + " installed successfully";
         }
+        
 
         if (recipePath == null) {
             throw new IllegalStateException("recipe path cannot be null. please use setRecipePath before calling install");
@@ -259,16 +271,20 @@ public abstract class RecipeInstaller {
             return connectCommand + ";" + installationCommand;
         }
 
+        if (envVars == null) {
+        	envVars = new HashMap<String, String>();
+        }
+        
         if (expectToFail) {
-            return CommandTestUtils.runCommandExpectedFail(connectCommand + ";" + installationCommand);
+            return CommandTestUtils.runCommandExpectedFail(connectCommand + ";" + installationCommand, envVars);
         }
         if (waitForFinish) {
-            String output = CommandTestUtils.runCommandAndWait(connectCommand + ";" + installationCommand);
+            String output = CommandTestUtils.runCommandAndWait(connectCommand + ";" + installationCommand, envVars);
             AssertUtils.assertTrue("Installation of " + recipeName + " was expected to succeed, but it failed",
                     output.toLowerCase().contains(excpectedResult.toLowerCase()));
             return output;
         } else {
-            return CommandTestUtils.runCommand(connectCommand + ";" + installationCommand);
+            return CommandTestUtils.runCommand(connectCommand + ";" + installationCommand, envVars);
         }
     }
 

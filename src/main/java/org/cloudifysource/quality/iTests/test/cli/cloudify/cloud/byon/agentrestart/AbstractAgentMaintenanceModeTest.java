@@ -6,7 +6,6 @@ import iTests.framework.utils.SSHUtils;
 
 import java.io.IOException;
 import java.net.InetAddress;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.concurrent.TimeUnit;
@@ -16,7 +15,6 @@ import org.cloudifysource.dsl.utils.ServiceUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.CommandTestUtils;
 import org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.byon.AbstractByonCloudTest;
 import org.cloudifysource.restclient.GSRestClient;
-import org.cloudifysource.restclient.RestException;
 import org.openspaces.admin.gsa.GridServiceAgent;
 import org.openspaces.admin.pu.ProcessingUnit;
 
@@ -97,13 +95,23 @@ public class AbstractAgentMaintenanceModeTest extends AbstractByonCloudTest {
 		LogUtils.log("agent shut down successfully");
     }
 	
-	protected String getServiceIP(String serviceName) throws RestException, MalformedURLException {
+	protected String getServiceIP(String serviceName, long duration, TimeUnit unit) throws Exception {
 		final GSRestClient client = new GSRestClient("", "", new URL(getRestUrl()), PlatformVersion
-                .getVersionNumber());
-		LogUtils.log("getting private IP for service named '" + serviceName + "'");
-		String privateIpUrl = "ProcessingUnits/Names/" + serviceName + "/Instances/0/JVMDetails/EnvironmentVariables/GIGASPACES_AGENT_ENV_PRIVATE_IP";
-		String ipAddress = (String) client.getAdminData(privateIpUrl).get("GIGASPACES_AGENT_ENV_PRIVATE_IP");
-		LogUtils.log("found service ip address: " + ipAddress);
-        return ipAddress;
+				.getVersionNumber());
+		long end = System.currentTimeMillis() + unit.toMillis(duration);
+		Exception ex = null;
+		while (System.currentTimeMillis() < end) {
+			try {
+				LogUtils.log("getting private IP for service named '" + serviceName + "'");
+				String privateIpUrl = "ProcessingUnits/Names/" + serviceName + "/Instances/0/JVMDetails/EnvironmentVariables/GIGASPACES_AGENT_ENV_PRIVATE_IP";
+				String ipAddress = (String) client.getAdminData(privateIpUrl).get("GIGASPACES_AGENT_ENV_PRIVATE_IP");
+				LogUtils.log("found service ip address: " + ipAddress);
+				return ipAddress;
+			} catch (Exception e) {
+				Thread.sleep(1000);
+				ex = e;
+			}
+		}
+		throw ex;
 	}
 }

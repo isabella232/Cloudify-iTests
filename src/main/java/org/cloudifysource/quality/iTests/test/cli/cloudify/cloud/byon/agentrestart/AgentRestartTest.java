@@ -28,7 +28,7 @@ public class AgentRestartTest extends AbstractAgentMaintenanceModeTest {
 		super.bootstrap();
 	}
 	
-    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = true)
+    @Test(timeOut = DEFAULT_TEST_TIMEOUT * 4, enabled = false)
     public void testAgentRestart() throws Exception {
         installServiceAndWait(getServicePath(SERVICE_NAME), SERVICE_NAME);
         final String absolutePuName = ServiceUtils.getAbsolutePUName(APP_NAME, SERVICE_NAME);
@@ -89,7 +89,7 @@ public class AgentRestartTest extends AbstractAgentMaintenanceModeTest {
     	LogUtils.log("Starting maintenance mode for pu with name " + absolutePuName + " for 5 minutes");
     	final long maintenanceModeStartTime = System.currentTimeMillis();
     	
-    	final String serviceIPBefore = getServiceIP(absolutePuName);
+    	final String serviceIPBefore = getServiceIP(absolutePuName, 5, TimeUnit.MINUTES);
     	
     	startMaintenanceMode(TimeUnit.MINUTES.toSeconds(5));
     	
@@ -125,7 +125,7 @@ public class AgentRestartTest extends AbstractAgentMaintenanceModeTest {
     	if (!isServiceStarted) {
     		AssertFail("service did not recover after agent restart.");
     	}
-    	final String serviceIPAfter = getServiceIP(absolutePuName);
+    	final String serviceIPAfter = getServiceIP(absolutePuName, 5, TimeUnit.MINUTES);
     	
     	long recoveryDuration = TimeUnit.MILLISECONDS.toMinutes(System.currentTimeMillis() - maintenanceModeStartTime);
     	

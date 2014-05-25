@@ -50,7 +50,7 @@ public class ExternalGroovyWithAdminAPIPortTest extends AbstractByonCloudTest {
 			CommandTestUtils.getPath("src/main/resources/apps/USM/usm/services/simpleCustomCmd");
 	private static final String SERVICE_NAME = "simple";
 	private static final String CUSTOM_COMMAND_NAME = "init";
-	private static final long NETSTAT_TIMEOUT_MILLIS = 1000;
+	private static final long NETSTAT_TIMEOUT_MILLIS = 1000 * 10;// Ten seconds
 	
 	private RestClient restClient;
 	

@@ -11,7 +11,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<cloudify.home>${env.CLOUDIFY_HOME}</cloudify.home>
-		<gsVersion>9.7.1-SNAPSHOT</gsVersion>
+		<gsVersion>9.1.0-SNAPSHOT</gsVersion>
 		<cloudifyVersion>2.7.1-SNAPSHOT</cloudifyVersion>
 		<springVersion>3.1.3.RELEASE</springVersion>
 		<hibernateVersion>3.6.10.Final</hibernateVersion>

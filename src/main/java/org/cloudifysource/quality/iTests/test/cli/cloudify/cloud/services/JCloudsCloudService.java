@@ -1,8 +1,15 @@
 package org.cloudifysource.quality.iTests.test.cli.cloudify.cloud.services;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Module;
 import iTests.framework.utils.LogUtils;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.Properties;
+import java.util.Set;
+
 import org.cloudifysource.dsl.utils.IPUtils;
 import org.cloudifysource.esc.jclouds.WindowsServerEC2ReviseParsedImage;
 import org.cloudifysource.quality.iTests.framework.utils.compute.ComputeApiHelper;
@@ -17,17 +24,14 @@ import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadata.Status;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.Properties;
-import java.util.Set;
+import com.google.inject.AbstractModule;
+import com.google.inject.Module;
 
 public abstract class JCloudsCloudService extends AbstractCloudService {
 
-    protected final String LOCATION_ID_PROP = "locationId";
+	protected final int TERMINATE_NODE_ATTEMPTS = 3;
+	protected final int TERMINATE_NODE_SLEEP_MILLIS = 10 * 1000;
+	protected final String LOCATION_ID_PROP = "locationId";
     protected final String HARDWARE_ID_PROP = "hardwareId";
     protected final String KEYPAIR_PROP = "keyPair";
     protected final String KEYFILE_PROP = "keyFile";
@@ -194,11 +198,25 @@ public abstract class JCloudsCloudService extends AbstractCloudService {
                         }
                     }
 				}
-				LogUtils.log("Killing node: " + leakedNode.getName() + ": " + leakedNode);
-				try {
-					this.context.getComputeService().destroyNode(leakedNode.getId());
-				} catch (final Exception e) {
-					LogUtils.log("Failed to kill a leaked node. This machine may be leaking!", e);
+				
+				boolean deleted = false;
+				for (int i=0; i < TERMINATE_NODE_ATTEMPTS && !deleted; i++){
+					LogUtils.log("Attempt number " + (i+1) + " to kill node: " + leakedNode.getName() + ": " 
+							+ leakedNode);
+					try {
+						this.context.getComputeService().destroyNode(leakedNode.getId());
+						deleted = true;
+					} catch (final Exception e) {
+						LogUtils.log("Failed to kill a leaked node at attempt number " + (i+1) + "; sleeping before trying again", e);
+						try {
+							Thread.sleep(TERMINATE_NODE_SLEEP_MILLIS);
+						} catch (InterruptedException ie) {
+							// ignore
+						}
+					}
+				}
+				if (!deleted) {
+					LogUtils.log("Failed to kill node: " + leakedNode.getName() + ", it may be leaking!");
 				}
 			}
 	

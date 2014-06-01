@@ -11,6 +11,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.apache.commons.io.FileUtils;
 import org.cloudifysource.esc.driver.provisioning.CloudProvisioningException;
@@ -38,7 +40,10 @@ import org.cloudifysource.quality.iTests.test.cli.cloudify.security.SecurityCons
 public class HpGrizzlyCloudService extends JCloudsCloudService {
 
 	private static final String CREDENTIALS_PROPERTIES = CREDENTIALS_FOLDER + "/cloud/hp-grizzly/hp-grizzly-cred.properties";
+	private static final String TERMINATE_NOW_COMMAND = "teardown-cloud -terminate-now hp-grizzly";
 
+	public static final int DELETE_SECURITY_GROUPS_ATTEMPTS = 3;
+	public static final int DELETE_SECURITY_GROUPS_SLEEP_MILLIS = 10 * 1000;
 	public static final String USER_PROP = "user";
 	public static final String TENANT_PROP = "tenant";
 	public static final String API_KEY_PROP = "apiKey";
@@ -92,9 +97,12 @@ public class HpGrizzlyCloudService extends JCloudsCloudService {
 
 	@Override
 	public boolean scanLeakedAgentAndManagementNodes() {
+		boolean leakNotFound = true;
+		
 		boolean leakedNodesResult = super.scanLeakedAgentAndManagementNodes();
 		boolean leakedSecurityResult = true;
 		boolean leakedNetworksResult = true;
+		
 		try {
 			initCloudDriver();
 			initNetworkClient();
@@ -108,8 +116,38 @@ public class HpGrizzlyCloudService extends JCloudsCloudService {
 		
 		leakedSecurityResult = scanForLeakedSecurityGroups();
 		leakedNetworksResult = scanForLeakedNetworkComponents();
+		
+		leakNotFound = leakedNodesResult && leakedNetworksResult && leakedSecurityResult;
 
-		return leakedNodesResult && leakedNetworksResult && leakedSecurityResult;
+		return leakNotFound;
+	}
+	
+	@Override
+	public void beforeBootstrap() throws Exception {
+		// kill all cloud resources that are prefixed with the current username
+		forceTerminateCloudResources(System.getProperty("user.name") + "-");
+	}
+	
+	@Override
+	public void afterTeardown() throws Exception {
+		// kill all cloud resources that are prefixed with the current username
+		forceTerminateCloudResources(System.getProperty("user.name") + "-");
+	}
+	
+	private void forceTerminateCloudResources(final String prefix) throws CloudProvisioningException, TimeoutException {
+		LogUtils.log("Attempting to terminate cloud resources that match the prefix \"" + prefix + "\"");
+		OpenStackCloudifyDriver customPrefixCloudDriver = new OpenStackCloudifyDriver();
+		ComputeDriverConfiguration conf = new ComputeDriverConfiguration();
+		getCloud().getProvider().setManagementGroup(prefix);
+		getCloud().getProvider().setMachineNamePrefix(prefix);
+		conf.setCloud(getCloud());
+		conf.setServiceName("default.simple");
+		conf.setCloudTemplate("SMALL_LINUX");
+		conf.setManagement(true);
+		customPrefixCloudDriver.setConfig(conf);
+		customPrefixCloudDriver.terminateAllResources(2, TimeUnit.MINUTES);
+		customPrefixCloudDriver.close();
+		customPrefixCloudDriver = null;
 	}
 
 	private boolean scanForLeakedNetworkComponents() {
@@ -204,13 +242,26 @@ public class HpGrizzlyCloudService extends JCloudsCloudService {
 		if (securityGroupsByName != null && securityGroupsByName.size() > 0) {
 			// leak found
 			result = false;
+			boolean deleted;
 			for (final SecurityGroup securityGroup : securityGroupsByName) {
-				try {
-					LogUtils.log("Found leaking security group '" + securityGroup.getName() + "'.");
-					this.networkClient.deleteSecurityGroup(securityGroup.getId());
-					LogUtils.log("Security group '" + securityGroup.getName() + "' deleted successfully.");
-				} catch (final OpenstackException e) {
-					LogUtils.log("Failed to delete security group. Reason: " + e.getMessage(), e);
+				// attempting to delete security groups several times
+				deleted = false;
+				for (int i=0; i < DELETE_SECURITY_GROUPS_ATTEMPTS && !deleted; i++) {
+					try {
+						LogUtils.log("Found leaking security group '" + securityGroup.getName() + "'.");
+						this.networkClient.deleteSecurityGroup(securityGroup.getId());
+						deleted = true;
+						LogUtils.log("Security group '" + securityGroup.getName() + "' deleted successfully "
+								+ "on attempt number " + (i+1));
+					} catch (final OpenstackException e) {
+						LogUtils.log("Failed to delete security group on attempt " + (i+1) + ". Reason: " 
+								+ e.getMessage(), e);
+						try {
+							Thread.sleep(DELETE_SECURITY_GROUPS_SLEEP_MILLIS);
+						} catch (InterruptedException ie) {
+							// ignore
+						}
+					}					
 				}
 			}
 		} else {

@@ -466,11 +466,12 @@ public abstract class AbstractCloudService implements CloudService {
             scanForLeakedAgentAndManagementNodes();
         }
 
-        beforeBootstrap();
 
         printCloudConfigFile();
 
         printPropertiesFile();
+        
+        beforeBootstrap();
 
         bootstrapper.setNumberOfManagementMachines(numberOfManagementMachines);
         if (bootstrapper.isNoWebServices()) {
@@ -518,6 +519,7 @@ public abstract class AbstractCloudService implements CloudService {
         LogUtils.log(FileUtils.readFileToString(new File(getPathToCloudFolder(), getCloudName() + "-cloud.properties")));
     }
 
+    
     private void scanForLeakedAgentAndManagementNodes() {
 
         if (cloud == null) {
@@ -542,7 +544,9 @@ public abstract class AbstractCloudService implements CloudService {
                 }
                 break;
             } catch (final Exception t) {
-                first = t;
+            	if (first == null) {
+            		first = t;            		
+            	}
                 LogUtils.log("Failed scaning for leaked nodes. attempt number " + (i + 1), t);
             }
         }

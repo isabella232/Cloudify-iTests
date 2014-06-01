@@ -160,14 +160,14 @@ public class OpenstackGitServicesTest extends AbstractServicesTest {
 
     private void testService(String serviceName) throws Exception {
     	Map<String, String> envVars = new HashMap<String, String>();
-    	envVars.put("REST_CLIENT_OPTIONS", "-Dorg.cloudifysource.cli.restclient.socket-timeout=180000");
+    	envVars.put("REST_CLIENT_OPTIONS", "-Dorg.cloudifysource.cli.restclient.socket-timeout=240000");
         testService(localGitRepoPath + "/services/" + serviceName, null/*overrideServiceName*/, 
         		50 /*timeout*/, envVars);
     }
 
     private void testService(final String serviceName, final int timeoutInMinutes) throws Exception {
     	Map<String, String> envVars = new HashMap<String, String>();
-    	envVars.put("REST_CLIENT_OPTIONS", "-Dorg.cloudifysource.cli.restclient.socket-timeout=180000");
+    	envVars.put("REST_CLIENT_OPTIONS", "-Dorg.cloudifysource.cli.restclient.socket-timeout=240000");
         testService(localGitRepoPath + "/services/" + serviceName, null, timeoutInMinutes, envVars);
     }
 }

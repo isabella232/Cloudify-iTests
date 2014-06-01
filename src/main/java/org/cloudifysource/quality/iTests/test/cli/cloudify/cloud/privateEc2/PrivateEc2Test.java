@@ -60,6 +60,8 @@ public class PrivateEc2Test extends NewAbstractCloudTest {
 			AssertUtils.assertTrue("the service " + singleService.getName() + " is not running",
 					output.contains(singleService.getName()));
 		}
+		
+		installer.uninstall();
 	}
 	
 	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
@@ -91,6 +93,8 @@ public class PrivateEc2Test extends NewAbstractCloudTest {
 			AssertUtils.assertTrue("the service " + singleService.getName() + " is not running",
 					output.contains(singleService.getName()));
 		}
+		
+		installer.uninstall();
 	}
 
 	@Override

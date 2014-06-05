@@ -15,6 +15,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import org.apache.commons.io.FileUtils;
+import org.cloudifysource.domain.cloud.CloudProvider;
 import org.cloudifysource.esc.driver.provisioning.CloudProvisioningException;
 import org.cloudifysource.esc.driver.provisioning.ComputeDriverConfiguration;
 import org.cloudifysource.esc.driver.provisioning.openstack.OpenStackCloudifyDriver;
@@ -137,9 +138,16 @@ public class HpGrizzlyCloudService extends JCloudsCloudService {
 	private void forceTerminateCloudResources(final String prefix) throws CloudProvisioningException, TimeoutException {
 		LogUtils.log("Attempting to terminate cloud resources that match the prefix \"" + prefix + "\"");
 		OpenStackCloudifyDriver customPrefixCloudDriver = new OpenStackCloudifyDriver();
+		
+		// temporarily change the cloud's prefix to terminate all resources with that prefix
+		CloudProvider cloudProvider = getCloud().getProvider();
+		String origManagerPrefix = cloudProvider.getManagementGroup();
+		String origAgentPrefix = cloudProvider.getMachineNamePrefix();
+		cloudProvider.setManagementGroup(prefix);
+		cloudProvider.setMachineNamePrefix(prefix);
+		
+		// call the cloud driver to terminate all machines with the set prefixes
 		ComputeDriverConfiguration conf = new ComputeDriverConfiguration();
-		getCloud().getProvider().setManagementGroup(prefix);
-		getCloud().getProvider().setMachineNamePrefix(prefix);
 		conf.setCloud(getCloud());
 		conf.setServiceName("default.simple");
 		conf.setCloudTemplate("SMALL_LINUX");
@@ -148,6 +156,10 @@ public class HpGrizzlyCloudService extends JCloudsCloudService {
 		customPrefixCloudDriver.terminateAllResources(2, TimeUnit.MINUTES);
 		customPrefixCloudDriver.close();
 		customPrefixCloudDriver = null;
+		
+		// re-set the original prefixes for this service's machines
+		cloudProvider.setManagementGroup(origManagerPrefix);
+		cloudProvider.setMachineNamePrefix(origAgentPrefix);
 	}
 
 	private boolean scanForLeakedNetworkComponents() {

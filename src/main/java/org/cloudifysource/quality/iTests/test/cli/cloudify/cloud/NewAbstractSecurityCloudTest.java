@@ -52,6 +52,7 @@ public abstract class NewAbstractSecurityCloudTest extends NewAbstractCloudTest 
 		applicationInstaller.cloudifyUsername(cloudifyUsername);
 		applicationInstaller.cloudifyPassword(cloudifyPassword);
 		applicationInstaller.expectToFail(isExpectedToFail);
+		applicationInstaller.timeoutInMinutes(timeout);
 		if (StringUtils.isNotBlank(authGroups)) {
 			applicationInstaller.authGroups(authGroups);
 		}

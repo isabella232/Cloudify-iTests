@@ -195,7 +195,7 @@ public class RepetitiveActualServiceFailoverTest extends AbstractLocalCloudTest 
 	}
 	private boolean isTomcatPageExists() throws MalformedURLException, Exception {
 		
-       return WebUtils.isURLAvailable(new URL("http://" + machineA.getHostAddress() + ":8080"));
+       return WebUtils.isURLAvailable(new URL("http://" + machineA.getHostAddress() + ":8080/examples/"));
 	}
 	
 	private Long getTomcatPId() throws UnknownHostException {

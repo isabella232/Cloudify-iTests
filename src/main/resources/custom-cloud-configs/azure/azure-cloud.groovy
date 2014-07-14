@@ -55,7 +55,7 @@ cloud {
 				SMALL_LINUX : computeTemplate{
 					
 
-					imageId "5112500ae3b842c8b9c604889f8753c3__OpenLogic-CentOS-65-20140121"
+					imageId "5112500ae3b842c8b9c604889f8753c3__OpenLogic-CentOS-65-20140606"
 					machineMemoryMB 1600
 					hardwareId "Small"
 					localDirectory "upload"
@@ -94,7 +94,7 @@ cloud {
 				TOMCAT : computeTemplate{
 				
 
-					imageId "5112500ae3b842c8b9c604889f8753c3__OpenLogic-CentOS-65-20140121"
+					imageId "5112500ae3b842c8b9c604889f8753c3__OpenLogic-CentOS-65-20140606"
 
 					machineMemoryMB 1600
 					hardwareId "Small"

@@ -78,7 +78,11 @@ public abstract class JCloudsCloudService extends AbstractCloudService {
 		
 		Set<Entry<String, Object>> entries = getCloud().getCloudCompute().getTemplates().get(getCloud().getConfiguration().getManagementMachineTemplate()).getOverrides().entrySet();
 		for (Entry<String, Object> entry : entries) {
-			overrides.setProperty(entry.getKey(), (String)entry.getValue());
+			if (entry.getValue() instanceof Integer) {
+				overrides.setProperty(entry.getKey(), Integer.toString((Integer)entry.getValue()));
+			} else {
+				overrides.setProperty(entry.getKey(), (String)entry.getValue());
+			}
 		}
         if(getCloud().getName().equalsIgnoreCase("hp-grizzly")){
             overrides.setProperty("jclouds.endpoint", "https://region-b.geo-1.identity.hpcloudsvc.com:35357/v2.0/");

@@ -10,7 +10,7 @@ public class SoftlayerServicesTest extends AbstractServicesTest {
 
 	@Override
 	protected String getCloudName() {
-		return "softlayer";
+		return "softlayer-cci";
 	}
 	
 	@BeforeClass(alwaysRun = true)

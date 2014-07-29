@@ -78,7 +78,7 @@ public class CloudServiceManager {
 			cloudService = new MicrosoftAzureCloudService();
 		} else if ("dynamic-byon".equalsIgnoreCase(cloudName)) {
 			cloudService = new DynamicByonCloudService();
-		} else if ("softlayer".equalsIgnoreCase(cloudName)) {
+		} else if ("softlayer-cci".equalsIgnoreCase(cloudName)) {
             cloudService = new SoftlayerCloudService(cloudName);
         } else if ("exoscale".equalsIgnoreCase(cloudName)) {
             cloudService = new ExoscaleCloudService(cloudName);

@@ -138,7 +138,7 @@ public class Ec2ChefServerExampleTest extends NewAbstractCloudTest {
     private void installAndVerify() throws Exception {
     	Map<String, String> envVars = new HashMap<String, String>();
     	envVars.put("REST_CLIENT_OPTIONS", "-Dorg.cloudifysource.cli.restclient.socket-timeout=180000");
-        installServiceAndWait(ScriptUtils.getBuildRecipesServicesPath()+"/"+SERVICE_NAME,SERVICE_NAME, 25, envVars); // timeout in min
+        installServiceAndWait(ScriptUtils.getBuildRecipesServicesPath()+"/"+SERVICE_NAME,SERVICE_NAME, 60, envVars); // timeout in min
         verifyApplicationInstallation(SERVICE_NAME);
     }
 

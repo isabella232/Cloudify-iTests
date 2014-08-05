@@ -45,7 +45,7 @@ public class ExoscaleExamplesTest extends AbstractExamplesTest {
 		super.testPetclinicSimple();
 	}
 
-	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true)
+	@Test(timeOut = AbstractTestSupport.DEFAULT_TEST_TIMEOUT * 4, enabled = true, groups = AbstractTestSupport.SUSPECTED)
 	public void testPetclinic() throws Exception {
 		super.testPetclinic();
 	}
